@@ -1,6 +1,7 @@
 defmodule Lotta.Release do
   @moduledoc """
-    Release tasks like database migrations
+  Used for executing DB release tasks when run in production without Mix
+  installed.
   """
   require Logger
 
@@ -17,6 +18,7 @@ defmodule Lotta.Release do
 
   def migrate do
     for repo <- repos() do
+      Logger.notice("Migrating public schema ...")
       {:ok, _, _} =
         Migrator.with_repo(
           repo,
@@ -33,9 +35,12 @@ defmodule Lotta.Release do
     {:ok, pid} = Repo.start_link(config)
     Repo.put_dynamic_repo(pid)
 
+    customers = Repo.all(Tenant, prefix: "public")
+    Logger.notice("Migrating #{Enum.count(customers)} customer schemas ...")
     Enum.each(
-      Repo.all(Tenant, prefix: "public"),
+      customers,
       fn tenant ->
+        Logger.notice("Customer #{tenant.title} with schema #{tenant.prefix} is being migrated ...")
         TenantSelector.run_migrations(prefix: tenant.prefix, dynamic_repo: pid)
       end
     )
@@ -59,9 +64,9 @@ defmodule Lotta.Release do
   end
 
   def build_elasticsearch_indexes do
-    Application.load(@app)
-    IO.puts("Building indexes...")
+    load_app()
 
+    Logger.info("Building search indexes...")
     Enum.each(@elasticsearch_clusters, fn cluster ->
       Enum.each(
         @elasticsearch_indexes,
@@ -70,8 +75,9 @@ defmodule Lotta.Release do
     end)
   end
 
-  defp repos do
+  defp repos, do: Application.fetch_env!(@app, :ecto_repos)
+
+  defp load_app do
     Application.load(@app)
-    Application.fetch_env!(@app, :ecto_repos)
   end
 end

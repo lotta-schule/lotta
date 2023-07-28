@@ -1,8 +1,7 @@
 # The version of Alpine to use for the final image
-ARG ALPINE_VERSION=3.17
+ARG ALPINE_VERSION=3.18
 
-FROM elixir:1.14.3-alpine AS builder
-WORKDIR /app
+FROM elixir:1.15-alpine AS builder
 
 ENV MIX_ENV=prod
 
@@ -40,7 +39,6 @@ RUN mix release
 
 # From this line onwards, we're in a new image, which will be the image used in production
 FROM alpine:${ALPINE_VERSION}
-WORKDIR /app
 
 EXPOSE 4000
 
@@ -55,10 +53,10 @@ RUN apk update && \
     libstdc++
 
 RUN mkdir -p /app
+WORKDIR /app
 
 COPY --from=builder /app/_build/prod/rel/lotta ./
 RUN chown -R nobody: /app
-
 USER nobody
 
 ENV HOME=/app

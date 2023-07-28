@@ -8,11 +8,7 @@ image_tag =
     _ -> nil
   end
 
-if env do
-  config :lotta, :environment, env
-else
-  config :lotta, :environment, config_env()
-end
+config :lotta, :environment, env || config_env()
 
 if config_env() == :prod do
   config :lotta, :base_uri,

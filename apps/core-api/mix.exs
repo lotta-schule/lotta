@@ -65,19 +65,19 @@ defmodule Lotta.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.0"},
+      {:phoenix, "~> 1.7.7"},
       {:phoenix_pubsub, "~> 2.1"},
       {:phoenix_live_dashboard, "~> 0.5"},
       {:phoenix_ecto, "~> 4.2"},
       {:ecto_sql, "~> 3.6"},
       {:ecto_psql_extras, "~> 0.6"},
-      {:absinthe, "~> 1.6.3", override: true},
+      {:absinthe, "~> 1.7.5"},
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_phoenix, "~> 2.0"},
-      {:dataloader, "~> 1.0"},
-      {:corsica, "~> 1.1.3"},
+      {:dataloader, "~> 2.0"},
+      {:corsica, "~> 2.1.2"},
       {:postgrex, ">= 0.0.0"},
-      {:gettext, "~> 0.18.0"},
+      {:gettext, "~> 0.22.3"},
       {:jason, "~> 1.4.0"},
       {:plug_cowboy, "~> 2.4"},
       {:comeonin, "~> 5.3.1"},
@@ -96,7 +96,7 @@ defmodule Lotta.MixProject do
       {:gen_rmq, "~> 4.0"},
       {:ex_ical, "~> 0.2.0"},
       {:timex, "~> 3.7"},
-      {:sentry, "~> 8.0"},
+      {:sentry, "~> 8.1"},
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},
       {:elasticsearch, "~> 1.0"},
@@ -112,10 +112,10 @@ defmodule Lotta.MixProject do
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
       # OpenTelemetry
       {:opentelemetry, "~> 1.2"},
-      {:opentelemetry_exporter, "~> 1.4"},
-      {:opentelemetry_phoenix, "~> 1.1"},
       {:opentelemetry_absinthe, "~> 2.0"},
       {:opentelemetry_ecto, "~> 1.1"},
+      {:opentelemetry_exporter, "~> 1.6"},
+      {:opentelemetry_phoenix, "~> 1.1"},
       {:opentelemetry_redix, "~> 0.1"},
       {:opentelemetry_tesla, "~> 2.2"}
     ]
