@@ -1,4 +1,4 @@
-mutation CreateArticle($article: ArticleInput) {
+mutation CreateArticle($article: ArticleInput!) {
     article: createArticle(article: $article) {
         id
         insertedAt

@@ -1,4 +1,4 @@
-mutation UpdateUser($id: ID!, $groups: [SelectUserGroupInput]) {
+mutation UpdateUser($id: ID!, $groups: [SelectUserGroupInput!]) {
     user: UpdateUser(id: $id, groups: $groups) {
         id
         groups {

@@ -1,4 +1,4 @@
-mutation UpdateTenant($tenant: TenantInput) {
+mutation UpdateTenant($tenant: TenantInput!) {
     tenant: updateTenant(tenant: $tenant) {
         id
         title

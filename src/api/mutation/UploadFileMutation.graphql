@@ -1,4 +1,4 @@
-mutation UploadFile($file: Upload!, $parentDirectoryId: ID) {
+mutation UploadFile($file: Upload!, $parentDirectoryId: ID!) {
     file: uploadFile(file: $file, parentDirectoryId: $parentDirectoryId) {
         id
         insertedAt

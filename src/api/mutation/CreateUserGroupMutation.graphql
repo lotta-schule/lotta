@@ -1,4 +1,4 @@
-mutation CreateUserGroup($group: UserGroupInput) {
+mutation CreateUserGroup($group: UserGroupInput!) {
     group: createUserGroup(group: $group) {
         id
         name
