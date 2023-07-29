@@ -12,9 +12,7 @@ import Config
 # config :lotta, LottaWeb.Endpoint, url: [host: "localhost"]
 
 # Do not print debug messages in production
-config :logger,
-  level: :debug,
-  handle_sasl_reports: true
+config :logger, level: :info
 
 # ## SSL Support
 #

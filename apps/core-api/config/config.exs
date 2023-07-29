@@ -42,6 +42,9 @@ config :lotta, Lotta.Elasticsearch.Cluster,
     hackney: [pool: :elasticsearch_pool]
   ]
 
+config :sentry,
+  included_environments: []
+
 config :lotta, Lotta.Mailer, default_sender: "mail@lotta.schule"
 
 config :lotta, LottaWeb.Auth.AccessToken,
@@ -57,20 +60,15 @@ config :lotta, :default_user, %{
 config :argon2_elixir,
   argon2_type: 1
 
-config :sentry,
-  included_environments: ~w(production staging),
-  environment_name: Atom.to_string(Mix.env())
-
 config :tesla, adapter: Tesla.Adapter.Hackney
 
 config :logger, :console,
-  format: "$time $metadata[$level] $message\n"
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id],
+  backends: [:console, Sentry.LoggerBackend]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
-
-# set standard locale
-config :gettext, :default_locale, "de"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

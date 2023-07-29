@@ -139,9 +139,4 @@ if config_env() == :prod do
     root_source_code_paths: [File.cwd!()],
     filter: Lotta.SentryFilter
 
-  config :logger,
-    backends: [:console, Sentry.LoggerBackend],
-    level: :warning,
-    compile_time_purge_level: :info,
-    format: "$time $metadata[$level] $message\n"
 end

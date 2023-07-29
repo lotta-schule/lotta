@@ -57,5 +57,5 @@ config :junit_formatter,
   include_filename?: true,
   include_file_line?: true
 
-# Print only errors during test
-config :logger, level: :error
+# Print only warnings and errors during test
+config :logger, level: :warning
