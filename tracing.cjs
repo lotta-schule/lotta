@@ -16,7 +16,7 @@ const { ConnectInstrumentation } = OpenTelemetryInstrumentationConnect;
 
 // configure the SDK to export telemetry data to the console
 // enable all auto-instrumentations from the meta package
-const exporterOptions  = {
+const exporterOptions = {
     url: 'http://tempo.monitoring:4318/v1/traces',
 };
 const traceExporter = new OTLPTraceExporter(exporterOptions);
@@ -26,10 +26,22 @@ const sdk = new NodeSDK({
             process.env.SERVICE_NAME || 'web',
         [SemanticResourceAttributes.SERVICE_NAMESPACE]:
             process.env.SERVICE_NAMESPACE,
+        [SemanticResourceAttributes.CONTAINER_IMAGE_NAME]: (
+            process.env.IMAGE_NAME ?? ''
+        ).split(':')[0],
+        [SemanticResourceAttributes.CONTAINER_IMAGE_TAG]: (
+            process.env.IMAGE_NAME ?? ''
+        ).split(':')[1],
     }),
     traceExporter,
     instrumentations: [
-        new HttpInstrumentation(),
+        new HttpInstrumentation({
+            ignoreIncomingRequestHook: (req) => {
+                return req.url.match(
+                    /\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map|json)$/i
+                );
+            },
+        }),
         new ConnectInstrumentation(),
         new FetchInstrumentation(),
     ],
@@ -42,4 +54,3 @@ process.on('SIGTERM', () => {
         .catch((error) => console.log('Error terminating tracing', error))
         .finally(() => process.exit(0));
 });
-
