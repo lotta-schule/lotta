@@ -118,7 +118,7 @@ export const MessageBubble = React.memo(
                 </div>
                 <div className={styles.messageWrapper}>
                     <div className={styles.message}>
-                        {message.files?.length && (
+                        {!!message.files?.length && (
                             <div className={styles.files} data-testid="message-attachments">
                                 {message.files.map(file => (
                                     <div className={styles.file} key={file.id}>
@@ -151,7 +151,7 @@ export const MessageBubble = React.memo(
                                                 small
                                                 target={'_blank'}
                                                 icon={
-                                                    <Icon icon={faCloudArrowDown} size={'lg'} />
+                                                    <Icon icon={faCloudArrowDown} className={styles.downloadIcon} size={'lg'} />
                                                 }
                                                 role={'link'}
                                                 title={`${file.filename} herunterladen`}

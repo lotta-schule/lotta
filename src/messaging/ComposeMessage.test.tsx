@@ -1,11 +1,27 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
-import { SomeUser, SomeUserin } from 'test/fixtures';
+import { SomeUser, SomeUserin, imageFile as mockImageFile } from 'test/fixtures';
+import { FileExplorerProps } from 'shared/fileExplorer/FileExplorer';
 import { ComposeMessage } from './ComposeMessage';
 import { MessageModel } from 'model';
 import userEvent from '@testing-library/user-event';
 
 import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
+
+const mockReact = React;
+jest.mock('../shared/fileExplorer/FileExplorer', () => {
+    const originalModule = jest.requireActual('../shared/fileExplorer/FileExplorer');
+    return {
+        __esModule: true,
+        ...originalModule,
+        FileExplorer: ({ onSelect }: FileExplorerProps) => {
+            mockReact.useEffect(() => {
+                onSelect?.([mockImageFile as any]);
+            }, []);
+            return null;
+        }
+    };
+});
 
 describe('shared/layouts/messagingLayout/ComposeMessage', () => {
     it('should render the shared', () => {
@@ -57,6 +73,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
     });
 
     describe('send form', () => {
+
         it('should send a user a message', async () => {
             const fireEvent = userEvent.setup();
             let didCallMutation = false;
@@ -118,6 +135,66 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
             });
             expect(screen.getByRole('textbox')).toHaveFocus();
             expect(screen.getByRole('textbox')).toHaveValue('');
+        });
+
+        it('should send a user a file message while keeping typed message', async () => {
+            const additionalMocks = [
+                {
+                    request: {
+                        query: SendMessageMutation,
+                        variables: {
+                            message: {
+                                content: '',
+                                files: [{ id: mockImageFile.id }],
+                                recipientUser: { id: SomeUserin.id },
+                                recipientGroup: undefined,
+                            },
+                        },
+                    },
+                    result: jest.fn(() => ({
+                        data: {
+                            message: {
+                                id: 1,
+                                content: 'Hallo!',
+                                files: [mockImageFile],
+                                user: SomeUser,
+                                recipientGroup: null,
+                                insertedAt: new Date().toString(),
+                                updatedAt: new Date().toString(),
+                                conversation: {
+                                    id: 99900,
+                                    insertedAt: new Date().toString(),
+                                    updatedAt: new Date().toString(),
+                                    users: [SomeUser, SomeUserin],
+                                    groups: [],
+                                    messages: [],
+                                    unreadMessages: 0,
+                                },
+                            },
+                        },
+                    }))
+                    ,
+                },
+            ];
+            const screen = render(
+                <ComposeMessage
+                    destination={{
+                        user: SomeUserin,
+                    }}
+                />,
+                {},
+                { currentUser: SomeUser, additionalMocks }
+            );
+            userEvent.type(screen.getByRole('textbox'), 'Hallo!');
+            userEvent.click(screen.getByRole('button', { name: /datei anhängen/i }));
+
+            await waitFor(() => {
+                expect(additionalMocks[0].result).toHaveBeenCalled();
+            });
+
+            expect(screen.getByRole('textbox')).toHaveFocus();
+            // Text should be kept when the user has sent an image
+            expect(screen.getByRole('textbox')).toHaveValue('Hallo!');
         });
 
         it('should send form on ENTER', async () => {

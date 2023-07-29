@@ -2,8 +2,8 @@
 
 Web Client for Lotta Project
 
-[![pipeline status](https://gitlab.com/lotta-schule/api-server/badges/develop/pipeline.svg)](https://gitlab.com/medienportal/api-server/commits/develop)
-[![coverage report](https://gitlab.com/lotta-schule/api-server/badges/develop/coverage.svg)](https://gitlab.com/medienportal/api-server/commits/develop)
+[![pipeline status](https://github.com/lotta-schule/web/actions/workflows/build.yaml/badge.svg)](https://github.com/lotta-schule/web/actions/)
+[![codecov](https://codecov.io/gh/lotta-schule/web/branch/main/graph/badge.svg?token=FAT99O6QKV)](https://codecov.io/gh/lotta-schule/web)
 
 ## What is Lotta
 

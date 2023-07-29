@@ -1,3 +1,5 @@
+require('./tracing.cjs');
+
 const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
@@ -9,9 +11,6 @@ const port = process.env.PORT || 3000;
 
 const startServer = async () => {
     await app.prepare();
-    const { tracing } = await import('./tracing.mjs');
-
-    tracing.start();
 
     const server = createServer((req, res) => {
         const parsedUrl = parse(req.url, true);

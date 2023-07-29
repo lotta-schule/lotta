@@ -16,7 +16,7 @@ interface SelectFileButtonProps {
     onChangeFileExplorerVisibility?(isFileExplorerVisible: boolean): void;
 }
 
-export const SelectFileButton = React.memo<SelectFileButtonProps>(
+export const SelectFileButton = React.memo(
     ({
         label,
         fileFilter,
@@ -25,7 +25,7 @@ export const SelectFileButton = React.memo<SelectFileButtonProps>(
         buttonComponent,
         buttonComponentProps,
         onChangeFileExplorerVisibility,
-    }) => {
+    }: SelectFileButtonProps) => {
         const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] =
             React.useState(false);
         const fileExplorerOptions: Partial<FileExplorerProps> = {};
