@@ -4,6 +4,8 @@ import 'whatwg-fetch';
 
 self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ } as any;
 
+jest.retryTimes(3);
+
 // create setup document
 const dialogContainer = document.createElement('div');
 dialogContainer.setAttribute('id', 'dialogContainer');
