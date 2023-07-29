@@ -53,7 +53,7 @@ defmodule Lotta.Repo.TenantMigrations.AddMetadataToFilesAndFileConversions do
           end
 
         {:error, reason} ->
-          Logger.warn("error fetching filesize: #{inspect(reason)}")
+          Logger.warning("error fetching filesize: #{inspect(reason)}")
       end
     end)
   end

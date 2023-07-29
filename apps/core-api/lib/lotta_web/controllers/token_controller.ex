@@ -35,7 +35,7 @@ defmodule LottaWeb.TokenController do
           })
 
         {:error, reason} ->
-          Logger.warn("Error when requesting refresh token exchange: #{inspect(reason)}")
+          Logger.warning("Error when requesting refresh token exchange: #{inspect(reason)}")
 
           conn
           |> put_status(401)

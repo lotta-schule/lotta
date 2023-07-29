@@ -188,7 +188,7 @@ defmodule LottaWeb.UserResolver do
     else
       error ->
         if error do
-          Logger.warn(inspect(error))
+          Logger.warning(inspect(error))
         end
 
         {:error, "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut."}

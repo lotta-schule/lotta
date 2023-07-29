@@ -350,7 +350,7 @@ defmodule Lotta.Accounts do
           Redix.command(:redix, ["DEL", key])
           {:ok, user}
         else
-          Logger.warn("User, token and reset token do not match for #{email}")
+          Logger.warning("User, token and reset token do not match for #{email}")
           {:error, :invalid_token}
         end
 

@@ -101,7 +101,7 @@ defmodule Lotta.Queue.MediaConversionConsumer do
   end
 
   def handle_error(message, reason) do
-    Logger.warn("#{inspect(reason)} - Failed to process message: #{inspect(message)}")
+    Logger.warning("#{inspect(reason)} - Failed to process message: #{inspect(message)}")
 
     reject(message)
   end
