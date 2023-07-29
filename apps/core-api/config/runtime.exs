@@ -132,7 +132,7 @@ if config_env() == :prod do
 
   config :sentry,
     dsn: System.get_env("SENTRY_DSN"),
-    environment_name: String.to_atom(env || "development"),
+    environment_name: String.downcase(env || "development"),
     included_environments: ~w(production staging),
     release: image_tag,
     enable_source_code_context: true,
