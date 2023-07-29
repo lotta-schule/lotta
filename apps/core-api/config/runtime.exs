@@ -143,6 +143,5 @@ if config_env() == :prod do
     backends: [:console, Sentry.LoggerBackend],
     level: :warning,
     compile_time_purge_level: :info,
-    format: "$time $metadata[$level] $message\n",
-    metadata: [:request_id]
+    format: "$time $metadata[$level] $message\n"
 end
