@@ -69,7 +69,7 @@ export const CategoryArticleRedirectSelection =
                                             )}
                                             alt={`Vorschaubild zum Beitrag "${article.title}"`}
                                             width={80}
-                                            aspectRatio={'4:3'}
+                                            aspectRatio={'3:2'}
                                         />
                                     ),
                                     description: (

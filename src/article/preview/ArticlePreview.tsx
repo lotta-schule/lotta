@@ -119,7 +119,7 @@ export const ArticlePreview = React.memo(
                                     <ResponsiveImage
                                         className={styles.previewImage}
                                         width={400}
-                                        aspectRatio={'4:3'}
+                                        aspectRatio={'3:2'}
                                         src={File.getFileRemoteLocation(
                                             baseUrl,
                                             article.previewImageFile
@@ -140,7 +140,7 @@ export const ArticlePreview = React.memo(
                                     <ResponsiveImage
                                         className={styles.previewImage}
                                         width={400}
-                                        aspectRatio={'4:3'}
+                                        aspectRatio={'3:2'}
                                         src={File.getFileRemoteLocation(
                                             baseUrl,
                                             article.previewImageFile
