@@ -84,6 +84,7 @@ export const EmptyDirectoryTableRow = React.memo(() => {
                     <Button
                         className={styles.deleteButton}
                         disabled={isLoading}
+                        onClick={() => deleteDirectory()}
                         variant={'error'}
                         icon={
                             <Icon
