@@ -193,7 +193,7 @@
     &.densed {
         .containerGrid {
             display: grid;
-            grid-template: 2.4em 1fr / 10% 75% 13%;
+            grid-template: 2.4em 1fr / 15% auto 7em;
             grid-column-gap: var(--lotta-spacing);
             @media screen and (max-width: $max-xs) {
                 grid-template: 2em 1fr / 20% 60% 15%;
@@ -204,7 +204,12 @@
                 grid-row-start: 1;
                 grid-row-end: 3;
                 .previewImage {
-                    width: 100%;
+                    height: 100%;
+                    width: auto;
+                    max-width: 100%;
+                    @media screen and (max-width: $max-md) {
+                        object-fit: contain;
+                    }
                 }
             }
 
@@ -237,9 +242,11 @@
                 grid-column: 3;
                 grid-row: 2;
                 align-self: end;
+                padding-right: var(--lotta-spacing);
             }
             .buttonSection {
                 padding-top: 0px;
+                padding-right: var(--lotta-spacing);
             }
             .editGridItem {
                 grid-column: 3;

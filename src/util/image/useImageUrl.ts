@@ -3,7 +3,7 @@ import * as React from 'react';
 export type ProcessingOptions = {
     width?: number;
     height?: number;
-    aspectRatio?: '1:1' | '4:3' | '16:9' | '6:1';
+    aspectRatio?: '1:1' | '4:3' | '3:2' | '16:9' | '6:1';
     resize?: 'contain' | 'cover' | 'inside' | 'outside';
     format?: 'jpg' | 'png' | 'webp' | 'tiff';
 };
