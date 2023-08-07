@@ -88,6 +88,33 @@ describe('shared/editor/GroupSelect', () => {
         });
     });
 
+    describe('when the user has no groups to select from', () => {
+        it('should disable the input field and the checkbox', async () => {
+            const screen = render(
+                <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
+                {},
+                { userGroups: [] }
+            );
+
+            expect(screen.getByRole('combobox')).toBeDisabled();
+            expect(screen.getByRole('checkbox')).toBeDisabled();
+        });
+
+        it('should disable the input field and the checkbox even when having group selected', async () => {
+            const screen = render(
+                <GroupSelect
+                    selectedGroups={[lehrerGroup]}
+                    onSelectGroups={() => {}}
+                />,
+                {},
+                { userGroups: [] }
+            );
+
+            expect(screen.getByRole('combobox')).toBeDisabled();
+            expect(screen.getByRole('checkbox')).toBeDisabled();
+        });
+    });
+
     describe('publicly available checkbox', () => {
         it('should be checked when no groups are selected', async () => {
             const screen = render(

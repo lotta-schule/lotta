@@ -67,7 +67,7 @@ export const GroupSelect = React.memo(
                 >
                     <ComboBox
                         fullWidth
-                        disabled={disabled}
+                        disabled={disabled || !groups.length}
                         title={label ?? 'Gruppe suchen'}
                         items={groups.map((group) => ({
                             label: group.name,
@@ -117,7 +117,7 @@ export const GroupSelect = React.memo(
                     <div data-testid="GroupSelectSelection">
                         {hidePublicGroupSelection !== true && (
                             <Checkbox
-                                isDisabled={disabled}
+                                isDisabled={disabled || !groups.length}
                                 isSelected={selectedGroups.length === 0}
                                 aria-label={
                                     publicGroupSelectionLabel ??
