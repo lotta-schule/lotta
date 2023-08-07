@@ -9,8 +9,8 @@ export interface ArticlesPageProps {
     error?: Error | null;
 }
 
-export const ArticlesPage = React.memo<ArticlesPageProps>(
-    ({ articles, error }) => {
+export const ArticlesPage = React.memo(
+    ({ articles, error }: ArticlesPageProps) => {
         return (
             <>
                 <Main>
