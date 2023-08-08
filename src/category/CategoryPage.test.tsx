@@ -76,7 +76,7 @@ describe('shared/article/CategoryLayout', () => {
             const headerContent = await screen.findByTestId('HeaderContent');
             const image = headerContent.querySelector('img');
             expect(image).toBeVisible();
-            const imageUrl = new URL(image!.src);
+            const imageUrl = new URL(image!.srcset.split(' ')[0]);
             expect(imageUrl.pathname).toEqual('//storage/f/123');
         });
 

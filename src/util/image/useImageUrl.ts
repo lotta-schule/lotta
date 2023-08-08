@@ -52,7 +52,8 @@ export const useImageUrl = (
         aspectRatio,
         resize = 'cover',
         format,
-    }: ProcessingOptions = {}
+    }: ProcessingOptions = {},
+    { maxDisplayWidth = 1920 }: { maxDisplayWidth?: number } = {}
 ) => {
     const getUrlForDimensions = React.useCallback(
         (dimensions: { width?: number; height?: number }) => {
@@ -76,34 +77,33 @@ export const useImageUrl = (
             return {};
         }
         if (width) {
+            const supportedSlices = new Set(
+                [0.5, 1, 2, 3].map((m) => {
+                    const w = m * width;
+                    return w > maxDisplayWidth * 2 ? maxDisplayWidth * 2 : w;
+                })
+            );
             return Object.fromEntries(
-                new Array(Math.floor((width * 1.5) / 200))
-                    .fill(0)
-                    .map((_, i) => {
-                        const currentWidth = (i + 1) * 200 + (width % 200);
-                        const currentHeight =
-                            height && (i + 1) * 200 + (height % 200);
-                        return [
-                            `${currentWidth}w`,
-                            getUrlForDimensions({
-                                width: currentWidth,
-                                height: currentHeight,
-                            }),
-                        ];
-                    })
+                [...supportedSlices].map((currentWidth) => {
+                    const currentHeight =
+                        height && currentWidth * (height / width);
+                    return [
+                        `${currentWidth}w`,
+                        getUrlForDimensions({
+                            width: currentWidth,
+                            height: currentHeight,
+                        }),
+                    ];
+                })
             );
         } else if (height) {
             return Object.fromEntries(
-                new Array(Math.floor((height * 1.5) / 200))
+                new Array(3)
                     .fill(0)
-                    .map((_, i) => {
-                        const currentHeight =
-                            height && (i + 1) * 200 + (height % 200);
-                        return [
-                            `${currentHeight}h`,
-                            getUrlForDimensions({ height: currentHeight }),
-                        ];
-                    })
+                    .map((_, i) => [
+                        `${i + 1}x`,
+                        getUrlForDimensions({ height: height * (i + 1) }),
+                    ])
             );
         } else {
             return {};

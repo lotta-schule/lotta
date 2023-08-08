@@ -172,7 +172,10 @@ describe('shared/article/ArticlePreview', () => {
             ).toBeVisible();
             expect(
                 screen.getByRole('img', { name: /vorschaubild/i })
-            ).toHaveAttribute('src', expect.stringContaining('/storage/f/123'));
+            ).toHaveAttribute(
+                'srcset',
+                expect.stringContaining('/storage/f/123')
+            );
         });
 
         describe('EditMode', () => {
