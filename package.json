@@ -46,7 +46,7 @@
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@jest/globals": "^29.6.1",
         "@jumpn/utils-graphql": "^0.6.0",
-        "@lotta-schule/hubert": "^0.0.32",
+        "@lotta-schule/hubert": "^0.0.33",
         "@lotta-schule/theme": "^0.0.7",
         "@opentelemetry/api": "^1.4.1",
         "@opentelemetry/context-zone": "^1.15.0",
