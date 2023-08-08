@@ -53,7 +53,7 @@ export const useImageUrl = (
         resize = 'cover',
         format,
     }: ProcessingOptions = {},
-    { maxDisplayWidth }: { maxDisplayWidth: number } = { maxDisplayWidth: 1920 }
+    { maxDisplayWidth = 1920 }: { maxDisplayWidth?: number } = {}
 ) => {
     const getUrlForDimensions = React.useCallback(
         (dimensions: { width?: number; height?: number }) => {
