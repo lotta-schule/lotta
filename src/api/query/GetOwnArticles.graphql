@@ -44,6 +44,7 @@ query GetOwnArticles {
         users {
             id
             nickname
+            name
         }
     }
 }

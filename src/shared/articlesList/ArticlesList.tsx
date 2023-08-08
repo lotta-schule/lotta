@@ -16,7 +16,7 @@ export interface ArticlesListProps {
     articles: ArticleModel[];
 }
 
-export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
+export const ArticlesList = React.memo(({ articles }: ArticlesListProps) => {
     const { baseUrl } = useServerData();
 
     const articleSorter = React.useCallback(
