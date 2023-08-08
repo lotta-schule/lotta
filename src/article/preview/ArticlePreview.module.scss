@@ -204,9 +204,9 @@
                 grid-row-start: 1;
                 grid-row-end: 3;
                 .previewImage {
-                    height: 100%;
-                    width: auto;
-                    max-width: 100%;
+                    width: 100%;
+                    height: auto;
+                    max-height: 100%;
                     @media screen and (max-width: $max-md) {
                         object-fit: contain;
                     }
