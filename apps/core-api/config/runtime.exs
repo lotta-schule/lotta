@@ -138,5 +138,4 @@ if config_env() == :prod do
     enable_source_code_context: true,
     root_source_code_paths: [File.cwd!()],
     filter: Lotta.SentryFilter
-
 end
