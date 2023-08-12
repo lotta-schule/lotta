@@ -4,11 +4,11 @@ defmodule Lotta.MixProject do
   def project do
     [
       app: :lotta,
-      version: "3.5.8",
+      version: "4.0.0",
       name: "Lotta API Server",
       source_url: "https://github.com/lotta-schule/core",
       homepage_url: "https://lotta.schule",
-      elixir: "~> 1.13",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
