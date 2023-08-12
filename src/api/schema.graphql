@@ -4,6 +4,12 @@ schema {
   subscription: RootSubscriptionType
 }
 
+"""Exposes a URL that specifies the behavior of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behavior of this scalar."""
+  url: String!
+) on SCALAR
+
 type Article {
   category: Category
   contentModules: [ContentModule]
@@ -239,6 +245,7 @@ type MediaUsage {
 type Message {
   content: String
   conversation: Conversation
+  files: [File]
   id: ID
   insertedAt: DateTime
   updatedAt: DateTime
@@ -247,6 +254,7 @@ type Message {
 
 input MessageInput {
   content: String
+  files: [SelectFileInput]
   recipientGroup: SelectUserGroupInput
   recipientUser: SelectUserInput
 }

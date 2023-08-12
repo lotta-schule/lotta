@@ -16,7 +16,7 @@ export interface ArticlesListProps {
     articles: ArticleModel[];
 }
 
-export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
+export const ArticlesList = React.memo(({ articles }: ArticlesListProps) => {
     const { baseUrl } = useServerData();
 
     const articleSorter = React.useCallback(
@@ -72,7 +72,7 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
                                         <ResponsiveImage
                                             className={styles.previewImage}
                                             width={60}
-                                            aspectRatio={'4:3'}
+                                            aspectRatio={'3:2'}
                                             src={File.getFileRemoteLocation(
                                                 baseUrl,
                                                 article.previewImageFile

@@ -1,4 +1,4 @@
-mutation UpdateCategory($id: ID!, $category: UpdateCategoryInput) {
+mutation UpdateCategory($id: ID!, $category: UpdateCategoryInput!) {
     category: updateCategory(id: $id, category: $category) {
         id
         title

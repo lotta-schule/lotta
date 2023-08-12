@@ -34,7 +34,8 @@ export const Header = React.memo<HeaderProps>(
                             width={900}
                             aspectRatio={'6:1'}
                             resize={'cover'}
-                            sizes="(min-width: 600px) 70vw, 100vw"
+                            maxDisplayWidth={700}
+                            sizes="(max-width: 960px) 95vw, 700px"
                         />
                     )}
                     <div className={styles.headerContent}>{children}</div>

@@ -14,10 +14,10 @@ import styles from './ImageContent.module.scss';
 export type ImageContentProps = {
     file?: FileModel | null;
     alt: string;
-} & Omit<ResponsiveImageProps, 'src' | 'alt'>;
+} & Omit<ResponsiveImageProps, 'src' | 'alt' | 'ref'>;
 
-export const ImageContent = React.memo<ImageContentProps>(
-    ({ file, className, ...props }) => {
+export const ImageContent = React.memo(
+    ({ file, className, ...props }: ImageContentProps) => {
         const { baseUrl } = useServerData();
         const imageSource = file
             ? File.getFileRemoteLocation(baseUrl, file)
@@ -25,8 +25,8 @@ export const ImageContent = React.memo<ImageContentProps>(
         return imageSource ? (
             <ResponsiveImage
                 src={imageSource}
-                width={1600}
-                sizes={'(max-width: 960px) 100vw, 80vw'}
+                width={400}
+                sizes={'(max-width: 960px) 80vw, 80vw'}
                 {...props}
                 className={clsx(
                     { [styles.clickableImage]: !!props.onClick },

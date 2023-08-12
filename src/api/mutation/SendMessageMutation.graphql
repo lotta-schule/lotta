@@ -1,4 +1,4 @@
-mutation SendMessage($message: MessageInput) {
+mutation SendMessage($message: MessageInput!) {
     message: createMessage(message: $message) {
         id
         content

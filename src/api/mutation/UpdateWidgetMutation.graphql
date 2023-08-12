@@ -1,4 +1,4 @@
-mutation UpdateWidget($id: ID!, $widget: WidgetInput) {
+mutation UpdateWidget($id: ID!, $widget: WidgetInput!) {
     widget: updateWidget(id: $id, widget: $widget) {
         id
         title

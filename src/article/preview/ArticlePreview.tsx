@@ -24,16 +24,11 @@ import { TagsSelect } from '../editor/TagsSelect';
 import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import Link from 'next/link';
-import getConfig from 'next/config';
 import clsx from 'clsx';
 
 import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
 
 import styles from './ArticlePreview.module.scss';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
 
 interface ArticlePreviewProps {
     article: ArticleModel;
@@ -118,13 +113,14 @@ export const ArticlePreview = React.memo(
                                 {article.previewImageFile ? (
                                     <ResponsiveImage
                                         className={styles.previewImage}
-                                        width={400}
-                                        aspectRatio={'4:3'}
+                                        width={150}
+                                        aspectRatio={'3:2'}
                                         src={File.getFileRemoteLocation(
                                             baseUrl,
                                             article.previewImageFile
                                         )}
                                         alt={`Vorschaubild zu ${article.title}`}
+                                        maxDisplayWidth={400}
                                     />
                                 ) : (
                                     <PlaceholderImage
@@ -139,13 +135,15 @@ export const ArticlePreview = React.memo(
                                 article.previewImageFile && (
                                     <ResponsiveImage
                                         className={styles.previewImage}
-                                        width={400}
-                                        aspectRatio={'4:3'}
+                                        width={150}
+                                        aspectRatio={'3:2'}
+                                        sizes={'(max-width: 599px) 20vw, 200px'}
                                         src={File.getFileRemoteLocation(
                                             baseUrl,
                                             article.previewImageFile
                                         )}
                                         alt={`Vorschaubild zu ${article.title}`}
+                                        maxDisplayWidth={400}
                                     />
                                 )
                             )}

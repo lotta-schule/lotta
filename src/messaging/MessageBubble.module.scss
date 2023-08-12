@@ -47,7 +47,6 @@
             display: grid;
             grid-template-columns: auto 1fr 7.5em;
             grid-template-rows: 1.5em auto;
-
         }
         .previewWrapper {
             grid-row: 1 / span 2;
@@ -68,6 +67,7 @@
         }
         .downloadButton {
             grid-column: 2;
+            align-self: end;
             & > * {
                 display: inline-flex;
             }
@@ -77,11 +77,14 @@
         }
         .filesize {
             grid-column: 3;
-            padding-top: calc(1.5 * var(--lotta-spacing));
             padding-left: var(--lotta-spacing);
+            padding-bottom: calc(0.6 * var(--lotta-spacing));
+            color: rgba(var(--lotta-text-color), 0.5);
+            font-size: 0.8rem;
+            align-self: end;
         }
         @media screen and (max-width: $max-xs) {
-            font-size: .9em;
+            font-size: 0.9em;
             .file {
                 grid-template-columns: auto;
                 grid-template-rows: auto;

@@ -88,7 +88,7 @@ export const FileUsageModal = React.memo(() => {
                                         <ResponsiveImage
                                             resize={'contain'}
                                             width={100}
-                                            aspectRatio={'4:3'}
+                                            aspectRatio={'3:2'}
                                             src={File.getFileRemoteLocation(
                                                 baseUrl,
                                                 usage.article.previewImageFile

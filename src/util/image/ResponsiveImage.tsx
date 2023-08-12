@@ -6,6 +6,7 @@ export type ResponsiveImageProps = {
     alt: string;
     width?: number;
     height?: number;
+    maxDisplayWidth?: number;
 } & Omit<
     React.DetailedHTMLProps<
         React.ImgHTMLAttributes<HTMLImageElement>,
@@ -15,7 +16,7 @@ export type ResponsiveImageProps = {
 > &
     Omit<ProcessingOptions, 'width' | 'height'>;
 
-export const ResponsiveImage = React.memo<ResponsiveImageProps>(
+export const ResponsiveImage = React.memo(
     ({
         src,
         alt,
@@ -26,25 +27,28 @@ export const ResponsiveImage = React.memo<ResponsiveImageProps>(
         aspectRatio,
         resize,
         sizes,
+        maxDisplayWidth,
         ...imgProps
-    }) => {
-        const { customStyle, sizeMap, url } = useImageUrl(src, {
-            width,
-            height,
-            aspectRatio,
-            resize,
-        });
-
+    }: ResponsiveImageProps) => {
+        const { customStyle, sizeMap } = useImageUrl(
+            src,
+            {
+                width,
+                height,
+                aspectRatio,
+                resize,
+            },
+            { maxDisplayWidth }
+        );
         return (
             <img
                 className={className}
-                src={url ?? ''}
                 srcSet={Object.entries(sizeMap)
                     .map(([size, src]) => `${src} ${size}`)
                     .join(', ')}
                 alt={alt}
                 style={{ ...customStyle, ...style }}
-                sizes={sizes ?? '100%'}
+                sizes={sizes}
                 {...imgProps}
             />
         );

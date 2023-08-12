@@ -1,12 +1,17 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel } from 'model';
-import { ErrorMessage } from '@lotta-schule/hubert';
+import { Button, ErrorMessage } from '@lotta-schule/hubert';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';
 import DeleteDirectoryMutation from 'api/mutation/DeleteDirectoryMutation.graphql';
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
+import { Icon } from 'shared/Icon';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import clsx from 'clsx';
+
+import styles from './EmptyDirectoryTableRow.module.scss';
 
 export const EmptyDirectoryTableRow = React.memo(() => {
     const [state, dispatch] = React.useContext(fileExplorerContext);
@@ -55,7 +60,7 @@ export const EmptyDirectoryTableRow = React.memo(() => {
     );
 
     return (
-        <tr style={{ cursor: 'inherit' }}>
+        <tr className={styles.root}>
             <td
                 colSpan={state.mode === FileExplorerMode.ViewAndEdit ? 5 : 4}
                 style={{
@@ -76,16 +81,23 @@ export const EmptyDirectoryTableRow = React.memo(() => {
                     </em>
                 </p>
                 <p>
-                    <a
-                        style={isLoading ? { color: 'inherit' } : {}}
-                        onClick={() => {
-                            if (!isLoading) {
-                                deleteDirectory();
-                            }
-                        }}
+                    <Button
+                        className={styles.deleteButton}
+                        disabled={isLoading}
+                        onClick={() => deleteDirectory()}
+                        variant={'error'}
+                        icon={
+                            <Icon
+                                icon={faTrash}
+                                className={clsx(
+                                    styles.leftIcon,
+                                    styles.iconSmall
+                                )}
+                            />
+                        }
                     >
                         Ordner löschen
-                    </a>
+                    </Button>
                 </p>
             </td>
         </tr>
