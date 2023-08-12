@@ -115,13 +115,15 @@ defmodule LottaWeb.FileResolver do
     category_files =
       from(f in Storage.File,
         join: c in Category,
-        where: f.user_id == ^current_user.id and c.banner_image_file_id == f.id
+        on: c.banner_image_file_id == f.id,
+        where: f.user_id == ^current_user.id
       )
 
     article_files =
       from(f in Storage.File,
         join: a in Article,
-        where: f.user_id == ^current_user.id and a.preview_image_file_id == f.id
+        on: a.preview_image_file_id == f.id,
+        where: f.user_id == ^current_user.id
       )
 
     article_cm_files =

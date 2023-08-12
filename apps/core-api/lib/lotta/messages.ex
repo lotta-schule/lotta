@@ -10,7 +10,6 @@ defmodule Lotta.Messages do
   alias Lotta.Repo
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Messages.{Conversation, Message}
-  alias Lotta.Storage
   alias Lotta.Storage.File
 
   def data() do
