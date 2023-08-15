@@ -73,7 +73,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
         return (
             <RouterContext.Provider value={testRouter}>
                 <I18nextProvider i18n={i18n}>
-                    <HubertProvider theme={defaultTheme}>
+                    <HubertProvider>
                         <MockedProvider
                             mocks={[
                                 ...defaultMocks,

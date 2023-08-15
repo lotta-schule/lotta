@@ -1,4 +1,10 @@
-import { FileModelType, UserModel } from 'model';
+import {
+    DirectoryModel,
+    FileConversionModel,
+    FileModel,
+    FileModelType,
+    UserModel,
+} from 'model';
 
 /*
  *
@@ -23,7 +29,7 @@ export const lehrerGroup = {
     name: 'Lehrer',
     sortKey: 2000,
     isAdminGroup: false,
-    enrollmentTokens: ['uhfhurehwuehf']
+    enrollmentTokens: ['uhfhurehwuehf'],
 };
 
 export const elternGroup = {
@@ -43,7 +49,7 @@ export const schuelerGroup = {
     name: 'Schüler',
     sortKey: 2000,
     isAdminGroup: false,
-    enrollmentTokens: ['ajf82j84h2h', 'uishfiji2j38f']
+    enrollmentTokens: ['ajf82j84h2h', 'uishfiji2j38f'],
 };
 
 export const userGroups = [adminGroup, lehrerGroup, schuelerGroup, elternGroup];
@@ -54,41 +60,37 @@ export const userGroups = [adminGroup, lehrerGroup, schuelerGroup, elternGroup];
  *
  */
 
-export const logosDirectory = {
+export const logosDirectory: DirectoryModel = {
     id: '8743',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Logos',
     parentDirectory: null,
-    usage: [],
 };
 
-export const profilDirectory = {
+export const profilDirectory: DirectoryModel = {
     id: '8744',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Profil',
     parentDirectory: null,
-    usage: [],
 };
 
-export const podcastsDirectory = {
+export const podcastsDirectory: DirectoryModel = {
     id: '8745',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Profil',
     parentDirectory: null,
-    usage: [],
 };
 
-export const schulweitDirectory = {
+export const schulweitDirectory: DirectoryModel = {
     id: '8746',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Schulweit',
     parentDirectory: null,
     user: null,
-    usage: [],
 };
 
 /*
@@ -107,7 +109,7 @@ export const imageFile = {
     updatedAt: '2001-01-01 14:15',
     fileConversions: [],
     usage: [],
-};
+} as Partial<FileModel> as FileModel;
 
 export const otherImageFile = {
     id: '245',
@@ -119,7 +121,7 @@ export const otherImageFile = {
     updatedAt: '2001-01-01 14:15',
     fileConversions: [],
     usage: [],
-};
+} as Partial<FileModel> as FileModel;
 
 export const documentFile = {
     id: '5445',
@@ -131,7 +133,7 @@ export const documentFile = {
     updatedAt: '1848-02-21 00:00',
     fileConversions: [],
     usage: [],
-};
+} as Partial<FileModel> as FileModel;
 
 export const convertedDocumentFile = {
     id: '5545',
@@ -168,7 +170,7 @@ export const convertedDocumentFile = {
             mimeType: 'plain/text',
         },
     ],
-};
+} as Partial<FileModel> as FileModel;
 
 export const movieFile = {
     id: '75000',
@@ -237,7 +239,7 @@ export const movieFile = {
             updatedAt: '2001-01-21 00:00',
         },
     ],
-};
+} as Partial<FileModel> as FileModel;
 
 export const audioFile = {
     id: '99000',
@@ -266,7 +268,7 @@ export const audioFile = {
             updatedAt: '2001-01-21 00:00',
         },
     ],
-};
+} as Partial<FileModel> as FileModel;
 
 export const powerpointFile = {
     id: '20',
@@ -287,7 +289,7 @@ export const powerpointFile = {
             updatedAt: '2001-01-21 00:00',
         },
     ],
-};
+} as Partial<FileModel> as FileModel;
 
 /*
  *

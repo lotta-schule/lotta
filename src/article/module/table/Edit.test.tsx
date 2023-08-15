@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor, fireEvent } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { LehrerListe } from 'test/fixtures';
 import { Edit } from './Edit';
 import { excelPasteTransfer, numbersPasteTransfer } from './mockData';
@@ -146,7 +146,7 @@ describe('shared/article/module/table/Edit', () => {
                 const contentModule = {
                     ...tableContentModule,
                     content: {
-                        rows: tableContentModule.content.rows.map((row) =>
+                        rows: tableContentModule.content.rows.map((row: any) =>
                             row.slice(0, 1)
                         ),
                     },

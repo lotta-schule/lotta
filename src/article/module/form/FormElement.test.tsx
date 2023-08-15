@@ -272,7 +272,6 @@ describe('shared/article/module/form/FormElement', () => {
                     element={{
                         element: 'file',
                         name: 'blabla1',
-                        maxSize: 1024 * 1024,
                     }}
                     value={''}
                     onSetValue={setValueFn}
