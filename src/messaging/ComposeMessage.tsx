@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
-import { Button, ErrorMessage, Input, Tooltip } from '@lotta-schule/hubert';
+import { Button, ErrorMessage, Input } from '@lotta-schule/hubert';
 import {
     NewMessageDestination,
     MessageModel,
@@ -108,7 +108,9 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                 if (!message.files?.length) {
                     setContent('');
                 }
-                inputRef.current?.focus();
+                setTimeout(() => {
+                    inputRef.current?.focus();
+                }, 500);
                 onSent?.(message as MessageModel);
             },
         });
@@ -132,7 +134,7 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                             icon: <Icon icon={faPaperclip} size="lg" />,
                             className: styles.button,
                             disabled: isLoading,
-                            ['aria-label']: 'Datei anhängen.'
+                            ['aria-label']: 'Datei anhängen.',
                         }}
                         onSelect={(files: FileModel[]) => {
                             createMessage({

@@ -52,7 +52,8 @@ describe('administration/users/GroupList', () => {
         ).toEqual(1);
     });
 
-    it('should open the EditGroupDialog when clicking on the group name', () => {
+    it('should open the EditGroupDialog when clicking on the group name', async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <GroupList />,
             {},
@@ -61,7 +62,7 @@ describe('administration/users/GroupList', () => {
             }
         );
         const groupLI = screen.getByRole('listitem', { name: 'Administrator' });
-        userEvent.click(groupLI);
+        await fireEvent.click(groupLI);
         waitFor(() => {
             expect(
                 screen.getByRole('dialog', {

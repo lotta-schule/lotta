@@ -55,6 +55,7 @@ describe('src/messaging/MessagingView', () => {
     });
 
     it('should select a conversation', async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <MessagingView />,
             {},
@@ -64,7 +65,7 @@ describe('src/messaging/MessagingView', () => {
             }
         );
 
-        userEvent.click(
+        await fireEvent.click(
             await screen.findByRole('button', { name: /Unterhaltung mit Lui/i })
         );
 
@@ -73,6 +74,7 @@ describe('src/messaging/MessagingView', () => {
 
     describe('create new message', () => {
         it('should select an available conversation when chosing the user', async () => {
+            const fireEvent = userEvent.setup();
             const searchUsersMock = [
                 {
                     request: {
@@ -92,22 +94,22 @@ describe('src/messaging/MessagingView', () => {
                 }
             );
 
-            userEvent.click(
+            await fireEvent.click(
                 await screen.findByRole('button', { name: /neue nachricht/i })
             );
 
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Lui'
             );
-            userEvent.click(
+            await fireEvent.click(
                 await screen.findByRole('option', { name: /Lui/i })
             );
 
             await waitFor(() => {
                 expect(screen.getByTestId('message-destination')).toBeVisible();
             });
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: 'Nachricht verfassen' })
             );
 
@@ -123,6 +125,7 @@ describe('src/messaging/MessagingView', () => {
         });
 
         it('should show the new message view when selecting a new user', async () => {
+            const fireEvent = userEvent.setup();
             const searchUsersMock = [
                 {
                     request: {
@@ -182,22 +185,22 @@ describe('src/messaging/MessagingView', () => {
                 }
             );
 
-            userEvent.click(
+            await fireEvent.click(
                 await screen.findByRole('button', { name: /neue nachricht/i })
             );
 
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Michel'
             );
-            userEvent.click(
+            await fireEvent.click(
                 await screen.findByRole('option', { name: /Michel/i })
             );
 
             await waitFor(() => {
                 expect(screen.getByTestId('message-destination')).toBeVisible();
             });
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: 'Nachricht verfassen' })
             );
 

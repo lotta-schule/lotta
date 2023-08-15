@@ -40,8 +40,13 @@ export interface FormConfiguration {
     elements: FormElement[];
 }
 
-export const Form = React.memo<FormProps>(
-    ({ contentModule, isEditModeEnabled, showResults, onUpdateModule }) => {
+export const Form = React.memo(
+    ({
+        contentModule,
+        isEditModeEnabled,
+        showResults,
+        onUpdateModule,
+    }: FormProps) => {
         const [isFormResultsDialogOpen, setIsFormResultsDialogOpen] =
             React.useState(false);
         return (

@@ -20,7 +20,8 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
         render(<TagsSelect value={[]} onChange={() => {}} />, {}, {});
     });
 
-    it('should show a delete button for tags', () => {
+    it('should show a delete button for tags', async () => {
+        const fireEvent = userEvent.setup();
         const fn = jest.fn();
         const screen = render(
             <TagsSelect value={['tag1']} onChange={fn} />,
@@ -29,11 +30,12 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
         );
         const tagElement = screen.getByTestId('Tag');
         expect(tagElement.querySelector('button')).toBeVisible();
-        userEvent.click(tagElement.querySelector('button')!);
+        await fireEvent.click(tagElement.querySelector('button')!);
         expect(fn).toHaveBeenCalledWith([]);
     });
 
     it('should show the correct options', async () => {
+        const fireEvent = userEvent.setup();
         const resFn = jest.fn(() => ({
             data: { tags: ['tag', 'noch ein tag', 'wieder-tag'] },
         }));
@@ -45,7 +47,7 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
         await waitFor(() => {
             expect(resFn).toHaveBeenCalled();
         });
-        userEvent.click(
+        await fireEvent.click(
             screen.getByRole('button', { name: /vorschläge anzeigen/i })
         );
         await waitFor(() => {
@@ -57,6 +59,7 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
     });
 
     it('should call onChange with the selected tag', async () => {
+        const fireEvent = userEvent.setup();
         const resFn = jest.fn(() => ({
             data: { tags: ['tag', 'noch ein tag', 'wieder-tag'] },
         }));
@@ -69,17 +72,20 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
         await waitFor(() => {
             expect(resFn).toHaveBeenCalled();
         });
-        userEvent.click(
+        await fireEvent.click(
             screen.getByRole('button', { name: /vorschläge anzeigen/i })
         );
         await waitFor(() => {
             expect(screen.getByRole('listbox')).toBeVisible();
         });
-        userEvent.click(screen.getByRole('option', { name: /noch ein tag/i }));
+        await fireEvent.click(
+            screen.getByRole('option', { name: /noch ein tag/i })
+        );
         expect(onChangeFn).toHaveBeenCalledWith(['noch ein tag']);
     });
 
     it('should deselect an already selected tag', async () => {
+        const fireEvent = userEvent.setup();
         const resFn = jest.fn(() => ({
             data: { tags: ['tag', 'noch ein tag', 'wieder-tag'] },
         }));
@@ -96,13 +102,15 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
             expect(resFn).toHaveBeenCalled();
         });
         await new Promise((resolve) => setTimeout(resolve, 50));
-        userEvent.click(
+        await fireEvent.click(
             screen.getByRole('button', { name: /vorschläge anzeigen/i })
         );
         await waitFor(() => {
             expect(screen.getByRole('listbox')).toBeVisible();
         });
-        userEvent.click(screen.getByRole('option', { name: /noch ein tag/i }));
+        await fireEvent.click(
+            screen.getByRole('option', { name: /noch ein tag/i })
+        );
         expect(onChangeFn).toHaveBeenCalledWith(['tag']);
     });
 });

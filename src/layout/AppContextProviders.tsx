@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HubertProvider } from '@lotta-schule/hubert';
+import { GlobalStyles, HubertProvider } from '@lotta-schule/hubert';
 import { DefaultThemes } from '@lotta-schule/theme';
 import { CategoryModel, TenantModel, UserModel } from 'model';
 import { AppHead } from './AppHead';
@@ -31,36 +31,44 @@ export interface AppContextProvidersProps {
     currentUser: UserModel | null;
     requestBaseUrl: string;
     tenant: TenantModel;
+    children?: React.ReactNode;
 }
 
-const TenantContextProviders = React.memo(({ children }) => {
-    const tenant = useTenant();
+export type TenantContextProvidersProps = {
+    children: React.ReactNode;
+};
 
-    return (
-        <HubertProvider
-            theme={{
-                ...defaultTheme,
-                ...tenant.configuration.customTheme,
-            }}
-            supportedFonts={fonts}
-        >
-            <Authentication />
-            <UploadQueueProvider>
-                <AppHead />
-                <BaseLayout>{children}</BaseLayout>
-            </UploadQueueProvider>
-        </HubertProvider>
-    );
-});
+const TenantContextProviders = React.memo(
+    ({ children }: TenantContextProvidersProps) => {
+        const tenant = useTenant();
+        const customTheme = tenant.configuration.customTheme;
+
+        const theme = {
+            ...defaultTheme,
+            ...customTheme,
+        };
+
+        return (
+            <HubertProvider>
+                <GlobalStyles theme={theme} supportedFonts={fonts} />
+                <Authentication />
+                <UploadQueueProvider>
+                    <AppHead />
+                    <BaseLayout>{children}</BaseLayout>
+                </UploadQueueProvider>
+            </HubertProvider>
+        );
+    }
+);
 TenantContextProviders.displayName = 'TenantContextProviders';
 
-export const AppContextProviders: React.FC<AppContextProvidersProps> = ({
+export const AppContextProviders = ({
     tenant,
     categories,
     currentUser,
     requestBaseUrl,
     children,
-}) => {
+}: AppContextProvidersProps) => {
     const firstBrowserInit = React.useRef(false);
 
     const client = getApolloClient({ tenant });

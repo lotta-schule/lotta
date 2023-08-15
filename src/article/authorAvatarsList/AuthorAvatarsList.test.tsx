@@ -1,7 +1,7 @@
-import userEvent from '@testing-library/user-event';
 import { SomeUser, SomeUserin } from 'test/fixtures';
 import { render } from 'test/util';
 import { AuthorAvatarsList } from './AuthorAvatarsList';
+import userEvent from '@testing-library/user-event';
 
 describe('AuthorAvatarsList', () => {
     const users = [SomeUser, SomeUserin];
@@ -13,7 +13,8 @@ describe('AuthorAvatarsList', () => {
     });
 
     describe('Editing', () => {
-        it('should show a delete button when "onUpdate" function is given', () => {
+        it('should show a delete button when "onUpdate" function is given', async () => {
+            const fireEvent = userEvent.setup();
             const fn = jest.fn();
             const screen = render(
                 <AuthorAvatarsList users={users} onUpdate={fn} />
@@ -21,7 +22,7 @@ describe('AuthorAvatarsList', () => {
             expect(
                 screen.getByRole('button', { name: /che entfernen/i })
             ).toBeVisible();
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /che entfernen/i })
             );
             expect(fn).toHaveBeenCalledWith([SomeUserin]);

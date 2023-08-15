@@ -122,6 +122,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
             });
 
             it('should reset the value when None is selected', async () => {
+                const fireEvent = userEvent.setup();
                 const screen = render(
                     <CategoryEditor
                         selectedCategory={{
@@ -132,7 +133,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                     />
                 );
 
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('radio', { name: /nicht weitergeleitet/i })
                 );
                 expect(
@@ -174,6 +175,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
             });
 
             it('should show the category select when internal category link is selected', async () => {
+                const fireEvent = userEvent.setup();
                 const screen = render(
                     <CategoryEditor
                         selectedCategory={internalFaecherCategoy}
@@ -181,7 +183,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                     />
                 );
 
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('radio', {
                         name: /kategorie weiterleiten/i,
                     })
@@ -227,6 +229,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
             });
 
             it('should show the article search when internal article link is selected', async () => {
+                const fireEvent = userEvent.setup();
                 const screen = render(
                     <CategoryEditor
                         selectedCategory={internalFaecherCategoy}
@@ -234,7 +237,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                     />
                 );
 
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('radio', {
                         name: /beitrag weiterleiten/i,
                     })
@@ -275,6 +278,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
             });
 
             it('should show the textinput with a default URL when external link is selected', async () => {
+                const fireEvent = userEvent.setup();
                 const screen = render(
                     <CategoryEditor
                         selectedCategory={externalFaecherCategoy}
@@ -282,7 +286,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                     />
                 );
 
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('radio', {
                         name: /im internet weiterleiten/i,
                     })
@@ -309,6 +313,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
     describe('update the category', () => {
         it('should update the category with correct data', async () => {
+            const fireEvent = userEvent.setup();
             const onSave = jest.fn(() => ({
                 data: { category: { ...FaecherCategory, widgets: [] } },
             }));
@@ -356,16 +361,21 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                 }
             );
 
-            userEvent.type(
-                screen.getByRole('textbox', { name: /name der kategorie/i }),
-                '{selectall}Neue Fächer'
-            );
-            userEvent.click(
+            const categoryTitleInput = screen.getByRole('textbox', {
+                name: /name der kategorie/i,
+            }) as HTMLInputElement;
+            await fireEvent.type(categoryTitleInput, 'Neue Fächer', {
+                initialSelectionStart: 0,
+                initialSelectionEnd: categoryTitleInput.value.length,
+            });
+            await fireEvent.click(
                 screen.getByRole('checkbox', {
                     name: /auf der startseite verstecken/i,
                 })
             );
-            userEvent.click(screen.getByRole('button', { name: /speichern/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /speichern/i })
+            );
             await waitFor(() => {
                 expect(onSave).toHaveBeenCalled();
             });
@@ -387,6 +397,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         });
 
         it('should show delete dialog on click', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <CategoryEditor
                     selectedCategory={FaecherCategory}
@@ -394,7 +405,9 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                 />
             );
 
-            userEvent.click(screen.getByRole('button', { name: /löschen/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /löschen/i })
+            );
             await waitFor(() => {
                 expect(screen.getByRole('dialog')).toBeVisible();
             });

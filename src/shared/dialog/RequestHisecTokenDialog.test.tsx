@@ -40,6 +40,7 @@ describe('shared/dialog/RequestHisecToken', () => {
         });
 
         it('should reset the password field when opening the dialog again', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <RequestHisecTokenDialog
                     isOpen={true}
@@ -49,7 +50,7 @@ describe('shared/dialog/RequestHisecToken', () => {
                 { currentUser: SomeUser }
             );
 
-            userEvent.type(screen.getByLabelText('Passwort:'), 'test');
+            await fireEvent.type(screen.getByLabelText('Passwort:'), 'test');
 
             screen.rerender(
                 <RequestHisecTokenDialog
@@ -91,14 +92,15 @@ describe('shared/dialog/RequestHisecToken', () => {
         );
     });
 
-    it('button should be enabled when a password is entered', () => {
+    it('button should be enabled when a password is entered', async () => {
+        const fireEvent = userEvent.setup();
         render(
             <RequestHisecTokenDialog isOpen onRequestClose={() => {}} />,
             {},
             { currentUser: SomeUser }
         );
         expect(screen.getByRole('button', { name: /senden/ })).toBeDisabled();
-        userEvent.type(screen.getByLabelText('Passwort:'), 'pw123');
+        await fireEvent.type(screen.getByLabelText('Passwort:'), 'pw123');
         expect(
             screen.getByRole('button', { name: /senden/ })
         ).not.toBeDisabled();
@@ -106,6 +108,7 @@ describe('shared/dialog/RequestHisecToken', () => {
 
     describe('send form', () => {
         it('should close the dialog returning the token', async () => {
+            const fireEvent = userEvent.setup();
             const additionalMocks = [
                 {
                     request: {
@@ -123,8 +126,10 @@ describe('shared/dialog/RequestHisecToken', () => {
                 {},
                 { currentUser: SomeUser, additionalMocks }
             );
-            userEvent.type(screen.getByLabelText('Passwort:'), 'pw123');
-            userEvent.click(screen.getByRole('button', { name: /senden/ }));
+            await fireEvent.type(screen.getByLabelText('Passwort:'), 'pw123');
+            await fireEvent.click(
+                screen.getByRole('button', { name: /senden/ })
+            );
 
             await waitFor(() => {
                 expect(onClose).toHaveBeenCalledWith('abc');
@@ -159,14 +164,17 @@ describe('shared/dialog/RequestHisecToken', () => {
             });
         });
 
-        it('should clear the form and call onAbort when clicking the "Abort" button', () => {
+        it('should clear the form and call onAbort when clicking the "Abort" button', async () => {
+            const fireEvent = userEvent.setup();
             const onClose = jest.fn();
             render(
                 <RequestHisecTokenDialog isOpen onRequestClose={onClose} />,
                 {},
                 { currentUser: SomeUser }
             );
-            userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /abbrechen/i })
+            );
             expect(onClose).toHaveBeenCalledWith(null);
         });
     });

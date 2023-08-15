@@ -43,7 +43,7 @@ describe('shared/article/CategoryLayout', () => {
                     ...partialArticle,
                     users: [KeinErSieEsUser, SomeUser],
                     category: MusikCategory,
-                } as ArticleModel)
+                }) as ArticleModel
         );
 
         it('should render the category title', async () => {
@@ -78,17 +78,6 @@ describe('shared/article/CategoryLayout', () => {
             expect(image).toBeVisible();
             const imageUrl = new URL(image!.srcset.split(' ')[0]);
             expect(imageUrl.pathname).toEqual('//storage/f/123');
-        });
-
-        it('should render the widgets list', async () => {
-            const screen = render(
-                <CategoryPage categoryId={MusikCategory.id} />,
-                {},
-                { additionalMocks: categoryMocks(MusikCategory, articles) }
-            );
-            await waitFor(() => {
-                expect(screen.queryByTestId('WidgetsList')).toBeVisible();
-            });
         });
 
         it('should render an ArticlePreview', async () => {

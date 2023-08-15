@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor, fireEvent } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { LehrerListe } from 'test/fixtures';
 import { Edit } from './Edit';
 import { excelPasteTransfer, numbersPasteTransfer } from './mockData';
@@ -33,6 +33,7 @@ describe('shared/article/module/table/Edit', () => {
 
     describe('editor table cells', () => {
         it('should editor a cell when entering text', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((cm) => {
                 expect(cm.content).toEqual({
                     rows: [
@@ -57,9 +58,9 @@ describe('shared/article/module/table/Edit', () => {
                 screen.getByRole('cell', { name: 'Lehrer E' })
             ).toBeInTheDocument();
             const input = screen.getByDisplayValue('Lehrer E');
-            userEvent.clear(input);
-            userEvent.type(input, 'Der Mr Lehrer E');
-            userEvent.click(screen.getByRole('table')); // blur input
+            await fireEvent.clear(input);
+            await fireEvent.type(input, 'Der Mr Lehrer E');
+            await fireEvent.click(screen.getByRole('table')); // blur input
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
@@ -67,6 +68,7 @@ describe('shared/article/module/table/Edit', () => {
 
         describe('navigate via enter key', () => {
             it('should jump to next column', async () => {
+                const fireEvent = userEvent.setup();
                 const callback = jest.fn();
                 const screen = render(
                     <Edit
@@ -75,8 +77,8 @@ describe('shared/article/module/table/Edit', () => {
                     />
                 );
                 const input = screen.getByDisplayValue('Kürzel');
-                userEvent.click(input);
-                userEvent.type(input, '{enter}');
+                await fireEvent.click(input);
+                await fireEvent.type(input, '{enter}');
                 await waitFor(() => {
                     expect(screen.getByDisplayValue('Name')).toHaveFocus();
                 });
@@ -84,6 +86,7 @@ describe('shared/article/module/table/Edit', () => {
             });
 
             it('should jump to next row', async () => {
+                const fireEvent = userEvent.setup();
                 const callback = jest.fn();
                 const screen = render(
                     <Edit
@@ -92,8 +95,8 @@ describe('shared/article/module/table/Edit', () => {
                     />
                 );
                 const input = screen.getByDisplayValue('Name');
-                userEvent.click(input);
-                userEvent.type(input, '{enter}');
+                await fireEvent.click(input);
+                await fireEvent.type(input, '{enter}');
                 await waitFor(() => {
                     expect(screen.getByDisplayValue('LAb')).toHaveFocus();
                 });
@@ -101,6 +104,7 @@ describe('shared/article/module/table/Edit', () => {
             });
 
             it('should create a new row when on last element', async () => {
+                const fireEvent = userEvent.setup();
                 let contentModule = tableContentModule;
                 let didCallCallback = false;
                 const callback = jest.fn((cm) => {
@@ -118,8 +122,8 @@ describe('shared/article/module/table/Edit', () => {
                     />
                 );
                 const input = screen.getByDisplayValue('Lehrer F');
-                userEvent.click(input);
-                userEvent.type(input, '{enter}');
+                await fireEvent.click(input);
+                await fireEvent.type(input, '{enter}');
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
@@ -142,7 +146,7 @@ describe('shared/article/module/table/Edit', () => {
                 const contentModule = {
                     ...tableContentModule,
                     content: {
-                        rows: tableContentModule.content.rows.map((row) =>
+                        rows: tableContentModule.content.rows.map((row: any) =>
                             row.slice(0, 1)
                         ),
                     },
@@ -177,6 +181,7 @@ describe('shared/article/module/table/Edit', () => {
             });
 
             it('should remove a column when clicking the button', async () => {
+                const fireEvent = userEvent.setup();
                 const callback = jest.fn((cm) => {
                     expect(cm.content).toEqual({
                         rows: [
@@ -199,13 +204,14 @@ describe('shared/article/module/table/Edit', () => {
                 const button = screen.getByRole('button', {
                     name: /spalte entfernen/i,
                 });
-                userEvent.click(button);
+                await fireEvent.click(button);
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
             });
 
             it('should insert a column when clicking the button', async () => {
+                const fireEvent = userEvent.setup();
                 let contentModule = tableContentModule;
                 const callback = jest.fn((cm) => {
                     cm.content.rows[0].length === 1;
@@ -220,7 +226,7 @@ describe('shared/article/module/table/Edit', () => {
                 const button = screen.getByRole('button', {
                     name: /spalte hinzufügen/i,
                 });
-                await userEvent.click(button);
+                await fireEvent.click(button);
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
@@ -238,6 +244,7 @@ describe('shared/article/module/table/Edit', () => {
             });
 
             it('should remove a row when clicking the button', async () => {
+                const fireEvent = userEvent.setup();
                 const callback = jest.fn((cm) => {
                     expect(cm.content).toEqual({
                         rows: [
@@ -259,13 +266,14 @@ describe('shared/article/module/table/Edit', () => {
                 const button = screen.getByRole('button', {
                     name: /zeile entfernen/i,
                 });
-                userEvent.click(button);
+                await fireEvent.click(button);
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
             });
 
             it('should insert a row when clicking the button', async () => {
+                const fireEvent = userEvent.setup();
                 let contentModule = tableContentModule;
                 const callback = jest.fn((cm) => {
                     expect(cm.content.rows).toHaveLength(8);
@@ -280,7 +288,7 @@ describe('shared/article/module/table/Edit', () => {
                 const button = screen.getByRole('button', {
                     name: /zeile hinzufügen/i,
                 });
-                userEvent.click(button);
+                await fireEvent.click(button);
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
@@ -301,6 +309,7 @@ describe('shared/article/module/table/Edit', () => {
 
     describe('pasting from other application', () => {
         it('should paste from excel to top-most upper-left corner', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((cm) => {
                 expect(cm.content).toEqual({
                     rows: [
@@ -321,16 +330,15 @@ describe('shared/article/module/table/Edit', () => {
                 />
             );
             const upperLeftInput = screen.getByDisplayValue('Kürzel');
-            userEvent.click(upperLeftInput);
-            fireEvent.paste(upperLeftInput, {
-                clipboardData: excelPasteTransfer,
-            });
+            await fireEvent.click(upperLeftInput);
+            await fireEvent.paste(excelPasteTransfer as any);
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
         });
 
         it('should paste from numbers to top-most upper-left corner', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((cm) => {
                 expect(cm.content).toEqual({
                     rows: [
@@ -351,16 +359,15 @@ describe('shared/article/module/table/Edit', () => {
                 />
             );
             const upperLeftInput = screen.getByDisplayValue('Kürzel');
-            userEvent.click(upperLeftInput);
-            fireEvent.paste(upperLeftInput, {
-                clipboardData: numbersPasteTransfer,
-            });
+            await fireEvent.click(upperLeftInput);
+            await fireEvent.paste(numbersPasteTransfer as any);
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
         });
 
         it('should expand the current grid if pastet to the bottom right corner', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((cm) => {
                 expect(cm.content).toEqual({
                     rows: [
@@ -422,10 +429,8 @@ describe('shared/article/module/table/Edit', () => {
                 />
             );
             const bottomRightInput = screen.getByDisplayValue('Lehrer E');
-            userEvent.click(bottomRightInput);
-            fireEvent.paste(bottomRightInput, {
-                clipboardData: numbersPasteTransfer,
-            });
+            await fireEvent.click(bottomRightInput);
+            fireEvent.paste(numbersPasteTransfer as any);
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });

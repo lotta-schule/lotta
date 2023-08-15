@@ -79,6 +79,7 @@ describe('pages/admin/users/list', () => {
         });
 
         it('Can filter the users by name', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <UserList />,
                 {},
@@ -90,7 +91,7 @@ describe('pages/admin/users/list', () => {
             await waitFor(() => {
                 expect(didCall).toEqual(true);
             });
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('textbox', { name: /name filtern/i }),
                 'Ernesto'
             );
@@ -99,6 +100,7 @@ describe('pages/admin/users/list', () => {
         });
 
         it('Can filter the users by group', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <UserList />,
                 {},
@@ -110,7 +112,7 @@ describe('pages/admin/users/list', () => {
             await waitFor(() => {
                 expect(didCall).toEqual(true);
             });
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /vorschläge/i })
             );
             await waitFor(() => {
@@ -118,7 +120,9 @@ describe('pages/admin/users/list', () => {
                     screen.getByRole('option', { name: /lehrer/i })
                 ).toBeVisible();
             });
-            userEvent.click(screen.getByRole('option', { name: /lehrer/i }));
+            await fireEvent.click(
+                screen.getByRole('option', { name: /lehrer/i })
+            );
 
             expect(await screen.findAllByRole('row')).toHaveLength(2);
             expect(screen.getByRole('cell', { name: /luisa drinalda/i }));
@@ -127,6 +131,7 @@ describe('pages/admin/users/list', () => {
 
     describe('select a userAvatar', () => {
         it('should open a popup when clicking a row', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <UserList />,
                 {},
@@ -140,13 +145,14 @@ describe('pages/admin/users/list', () => {
             });
             const userRow = screen.getAllByRole('row')[2];
             expect(userRow).toBeDefined();
-            userEvent.click(userRow);
+            await fireEvent.click(userRow);
             await waitFor(() => {
                 expect(screen.getByRole('dialog')).toBeVisible();
             });
         });
 
         it('should open a popup when selecting a userAvatar from the search', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <UserList />,
                 {},
@@ -158,7 +164,7 @@ describe('pages/admin/users/list', () => {
             expect(
                 screen.getByRole('combobox', { name: /nutzer suchen/i })
             ).toBeVisible();
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Michel'
             );
@@ -168,7 +174,9 @@ describe('pages/admin/users/list', () => {
             await waitFor(() => {
                 expect(screen.queryAllByRole('option')).toHaveLength(1);
             });
-            userEvent.click(screen.getByRole('option', { name: /michel/i }));
+            await fireEvent.click(
+                screen.getByRole('option', { name: /michel/i })
+            );
             await waitFor(() => {
                 expect(screen.getByRole('dialog')).toBeVisible();
             });

@@ -9,6 +9,7 @@ import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graph
 
 describe('administration/categories/categories/CategoryArticleRedirectSelection', () => {
     it('should show a search field and select an article', async () => {
+        const fireEvent = userEvent.setup();
         const selectRedirectPath = jest.fn();
         const screen = render(
             <CategoryArticleRedirectSelection
@@ -36,7 +37,7 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
                 name: /beitrag als weiterleitungsziel/i,
             })
         ).toBeVisible();
-        userEvent.type(
+        await fireEvent.type(
             screen.getByRole('combobox', {
                 name: /beitrag als weiterleitungsziel/i,
             }),
@@ -47,7 +48,7 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
                 screen.getByRole('option', { name: /Computerexperten/ })
             ).toBeVisible();
         });
-        userEvent.click(
+        await fireEvent.click(
             screen.getByRole('option', { name: /Computerexperten/ })
         );
 

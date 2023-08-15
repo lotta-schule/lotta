@@ -83,6 +83,7 @@ describe('shared/fileExplorer/FileTable', () => {
             });
 
             it('should show select all checkbox when SelectMultiple is enabled', async () => {
+                const fireEvent = userEvent.setup();
                 let state: typeof defaultState = {
                     ...defaultState,
                     currentPath: [{ id: null }, parentDirectory],
@@ -104,7 +105,7 @@ describe('shared/fileExplorer/FileTable', () => {
                         screen.queryByRole('checkbox', { name: /alle wählen/i })
                     ).not.toBeNull();
                 });
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('checkbox', { name: /alle wählen/i })
                 );
                 expect(onUpdate).toHaveBeenCalled();
@@ -113,6 +114,7 @@ describe('shared/fileExplorer/FileTable', () => {
 
             describe('marking files', () => {
                 it('should mark a file on click', async () => {
+                    const fireEvent = userEvent.setup();
                     let state: typeof defaultState = {
                         ...defaultState,
                         currentPath: [{ id: null }, parentDirectory],
@@ -133,7 +135,7 @@ describe('shared/fileExplorer/FileTable', () => {
                             screen.getByRole('row', { name: /Dateiname.jpg/ })
                         ).toBeVisible();
                     });
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('row', { name: /Dateiname.jpg/ })
                     );
                     expect(onUpdate).toHaveBeenCalled();
@@ -147,6 +149,7 @@ describe('shared/fileExplorer/FileTable', () => {
                 });
 
                 it('should mark a next file on keyboard up', async () => {
+                    const fireEvent = userEvent.setup();
                     let state: typeof defaultState = {
                         ...defaultState,
                         currentPath: [{ id: null }, parentDirectory],
@@ -167,10 +170,10 @@ describe('shared/fileExplorer/FileTable', () => {
                             screen.getByRole('row', { name: /Kaenguru.wav/ })
                         ).toBeVisible();
                     });
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('row', { name: /Kaenguru.wav/ })
                     );
-                    userEvent.type(screen.container, '{arrowup}');
+                    await fireEvent.type(screen.container, '{ArrowUp}');
                     expect(onUpdate).toHaveBeenCalled();
                     await waitFor(() => {
                         expect(state.markedFiles).toHaveLength(1);
@@ -182,6 +185,7 @@ describe('shared/fileExplorer/FileTable', () => {
                 });
 
                 it('should ALSO mark a next file on SHIFT keyboard up', async () => {
+                    const fireEvent = userEvent.setup();
                     let state: typeof defaultState = {
                         ...defaultState,
                         currentPath: [{ id: null }, parentDirectory],
@@ -202,10 +206,13 @@ describe('shared/fileExplorer/FileTable', () => {
                             screen.getByRole('row', { name: /Kaenguru.wav/ })
                         ).toBeVisible();
                     });
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('row', { name: /Kaenguru.wav/ })
                     );
-                    userEvent.type(screen.container, '{shift}{arrowup}');
+                    await fireEvent.type(
+                        screen.container,
+                        '{Shift>}{ArrowUp}{/Shift}'
+                    );
                     expect(onUpdate).toHaveBeenCalled();
                     await waitFor(() => {
                         expect(state.markedFiles).toHaveLength(2);
@@ -221,6 +228,7 @@ describe('shared/fileExplorer/FileTable', () => {
                 });
 
                 it('should mark a next file on keyboard down', async () => {
+                    const fireEvent = userEvent.setup();
                     let state: typeof defaultState = {
                         ...defaultState,
                         currentPath: [{ id: null }, parentDirectory],
@@ -244,10 +252,10 @@ describe('shared/fileExplorer/FileTable', () => {
                             screen.getByRole('row', { name: /Dateiname.jpg/ })
                         ).toBeVisible();
                     });
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('row', { name: /Dateiname.jpg/ })
                     );
-                    userEvent.type(screen.container, '{arrowdown}');
+                    await fireEvent.type(screen.container, '{ArrowDown}');
                     expect(onUpdate).toHaveBeenCalled();
                     await waitFor(() => {
                         expect(state.markedFiles).toHaveLength(1);
@@ -259,6 +267,7 @@ describe('shared/fileExplorer/FileTable', () => {
                 });
 
                 it('should ALSO mark a next file on SHIFT keyboard down', async () => {
+                    const fireEvent = userEvent.setup();
                     let state: typeof defaultState = {
                         ...defaultState,
                         currentPath: [{ id: null }, parentDirectory],
@@ -282,10 +291,13 @@ describe('shared/fileExplorer/FileTable', () => {
                             screen.getByRole('row', { name: /Dateiname.jpg/ })
                         ).toBeVisible();
                     });
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('row', { name: /Dateiname.jpg/ })
                     );
-                    userEvent.type(screen.container, '{shift}{arrowdown}');
+                    await fireEvent.type(
+                        screen.container,
+                        '{Shift>}{ArrowDown}{/Shift}'
+                    );
                     expect(onUpdate).toHaveBeenCalled();
                     await waitFor(() => {
                         expect(state.markedFiles).toHaveLength(2);
@@ -301,6 +313,7 @@ describe('shared/fileExplorer/FileTable', () => {
                 });
 
                 it('should mark all files on SHIFT first file and last file', async () => {
+                    const fireEvent = userEvent.setup();
                     let state: typeof defaultState = {
                         ...defaultState,
                         currentPath: [{ id: null }, parentDirectory],
@@ -321,13 +334,15 @@ describe('shared/fileExplorer/FileTable', () => {
                             screen.getByRole('row', { name: /Amelie.mp4/ })
                         ).toBeVisible();
                     });
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('row', { name: /Amelie.mp4/ })
                     );
-                    userEvent.click(
-                        screen.getByRole('row', { name: /praesi.ppt/ }),
-                        { shiftKey: true }
+
+                    await fireEvent.keyboard('{Shift>}');
+                    await fireEvent.click(
+                        screen.getByRole('row', { name: /praesi.ppt/ })
                     );
+                    await fireEvent.keyboard('{/Shift}');
                     expect(onUpdate).toHaveBeenCalled();
                     await waitFor(() => {
                         expect(state.markedFiles).toHaveLength(7);
@@ -335,6 +350,7 @@ describe('shared/fileExplorer/FileTable', () => {
                 });
 
                 it('should mark any second file by holding META on click', async () => {
+                    const fireEvent = userEvent.setup();
                     let state: typeof defaultState = {
                         ...defaultState,
                         currentPath: [{ id: null }, parentDirectory],
@@ -355,13 +371,15 @@ describe('shared/fileExplorer/FileTable', () => {
                             screen.getByRole('row', { name: /Dateiname.jpg/ })
                         ).toBeVisible();
                     });
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('row', { name: /Dateiname.jpg/ })
                     );
-                    userEvent.click(
-                        screen.getByRole('row', { name: /amelie.mp4/i }),
-                        { metaKey: true }
+
+                    await fireEvent.keyboard('{Meta>}');
+                    await fireEvent.click(
+                        screen.getByRole('row', { name: /amelie.mp4/i })
                     );
+                    await fireEvent.keyboard('{/Meta}');
                     expect(onUpdate).toHaveBeenCalled();
                     await waitFor(() => {
                         expect(state.markedFiles).toHaveLength(2);
@@ -377,6 +395,7 @@ describe('shared/fileExplorer/FileTable', () => {
                 });
 
                 it('should do nothing when arrow up is pressed while first file is selected', async () => {
+                    const fireEvent = userEvent.setup();
                     let state: typeof defaultState = {
                         ...defaultState,
                         currentPath: [{ id: null }, parentDirectory],
@@ -396,10 +415,10 @@ describe('shared/fileExplorer/FileTable', () => {
                             screen.getByRole('row', { name: /amelie.mp4/i })
                         ).toBeVisible();
                     });
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('row', { name: /amelie.mp4/i })
                     );
-                    userEvent.type(screen.container, '{arrowup}');
+                    await fireEvent.type(screen.container, '{ArrowUp}');
                     await waitFor(() => {
                         expect(state.markedFiles).toHaveLength(1);
                         expect(state.markedFiles[0]).toHaveProperty(
@@ -410,6 +429,7 @@ describe('shared/fileExplorer/FileTable', () => {
                 });
 
                 it('should do nothing when arrow down is pressed while last file is selected', async () => {
+                    const fireEvent = userEvent.setup();
                     let state: typeof defaultState = {
                         ...defaultState,
                         currentPath: [{ id: null }, parentDirectory],
@@ -429,10 +449,10 @@ describe('shared/fileExplorer/FileTable', () => {
                             screen.getByRole('row', { name: /praesi.ppt/i })
                         ).toBeVisible();
                     });
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('row', { name: /praesi.ppt/i })
                     );
-                    userEvent.type(screen.container, '{arrowdown}');
+                    await fireEvent.type(screen.container, '{ArrowDown}');
                     await waitFor(() => {
                         expect(state.markedFiles).toHaveLength(1);
                         expect(state.markedFiles[0]).toHaveProperty(

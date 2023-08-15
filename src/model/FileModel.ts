@@ -10,8 +10,8 @@ export interface DirectoryModel {
     insertedAt: string;
     updatedAt: string;
     name: string;
-    user?: Partial<UserModel>;
-    parentDirectory?: Partial<DirectoryModel>;
+    user?: Partial<UserModel> | null;
+    parentDirectory?: Partial<DirectoryModel> | null;
 }
 
 export enum FileModelType {
@@ -43,6 +43,8 @@ export interface FileConversionModel {
     fileType: FileModelType;
     format: string;
     mimeType: string;
+    insertedAt: string;
+    updatedAt: string;
 }
 
 export type FileModelUsageLocation = Partial<FileModelTenantUsageLocation> &

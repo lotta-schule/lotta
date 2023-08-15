@@ -46,6 +46,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
 
     describe('selected category', () => {
         it('should select a category on click', async () => {
+            const fireEvent = userEvent.setup();
             let selectedCategory = null;
             const onSelectCategory = jest.fn(
                 (category) => (selectedCategory = category)
@@ -62,7 +63,9 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
                     screen.getByRole('button', { name: /start/i })
                 ).toBeVisible();
             });
-            userEvent.click(screen.getByRole('button', { name: /start/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            );
             await waitFor(() => {
                 expect(onSelectCategory).toHaveBeenCalled();
             });

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { WidgetModel, WidgetModelType } from 'model';
+import { Tabbar, Tab, SwipeableViews } from '@lotta-schule/hubert';
 import { Widget } from 'category/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
@@ -8,8 +9,6 @@ import { useScrollEvent } from 'util/useScrollEvent';
 import { WidgetIcon } from 'category/widgets/WidgetIcon';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Tabbar, Tab } from '@lotta-schule/hubert';
-import SwipeableViews from 'react-swipeable-views';
 import clsx from 'clsx';
 
 import styles from './WidgetsList.module.scss';
@@ -78,27 +77,12 @@ export const WidgetsList = React.memo<WidgetsListProps>(
             200,
             [wrapperRef.current, widgets.length]
         );
-
         if (currentTabIndex === null) {
             return null;
         }
 
         const activeTabIndex =
             currentTabIndex < shownWidgets.length ? currentTabIndex : 0;
-
-        const swipeableViews = (
-            <SwipeableViews
-                axis={'x'}
-                slideStyle={{ overflow: 'hidden' }}
-                index={activeTabIndex}
-                onChangeIndex={(newIndex) => setCurrentTabIndex(newIndex)}
-                className={styles.swipeableViewsContainer}
-            >
-                {shownWidgets.map((widget) => (
-                    <Widget key={widget.id} widget={widget} />
-                ))}
-            </SwipeableViews>
-        );
 
         return (
             <div
@@ -155,10 +139,18 @@ export const WidgetsList = React.memo<WidgetsListProps>(
                                 />
                             ))}
                         </Tabbar>
-                        {swipeableViews}
+                        <SwipeableViews
+                            className={styles.swipeableViewsContainer}
+                            selectedIndex={activeTabIndex}
+                            onChange={setCurrentTabIndex}
+                        >
+                            {shownWidgets.map((widget) => (
+                                <Widget key={widget.id} widget={widget} />
+                            ))}
+                        </SwipeableViews>
                     </>
                 )}
-                {shownWidgets && shownWidgets.length === 1 && swipeableViews}
+                {shownWidgets && shownWidgets.length === 1}
                 {children}
             </div>
         );

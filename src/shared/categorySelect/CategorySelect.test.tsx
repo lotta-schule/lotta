@@ -15,6 +15,7 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
     });
 
     it('should select the category', async () => {
+        const fireEvent = userEvent.setup();
         const onSelectCategory = jest.fn();
         const screen = render(
             <CategorySelect
@@ -22,7 +23,7 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
                 onSelectCategory={onSelectCategory}
             />
         );
-        userEvent.selectOptions(
+        await fireEvent.selectOptions(
             screen.getByRole('combobox', { name: /wählen/i }),
             await screen.findByRole('option', { name: /material/i })
         );
@@ -42,32 +43,39 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
 
     describe('option listing options', () => {
         it('show all categories as options', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <CategorySelect
                     selectedCategory={null}
                     onSelectCategory={() => {}}
                 />
             );
-            userEvent.click(screen.getByRole('combobox', { name: /wählen/i }));
+            await fireEvent.click(
+                screen.getByRole('combobox', { name: /wählen/i })
+            );
             await waitFor(() => {
                 expect(screen.getAllByRole('option')).toHaveLength(15);
             });
         });
 
         it('show all categories as options', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <CategorySelect
                     selectedCategory={null}
                     onSelectCategory={() => {}}
                 />
             );
-            userEvent.click(screen.getByRole('combobox', { name: /wählen/i }));
+            await fireEvent.click(
+                screen.getByRole('combobox', { name: /wählen/i })
+            );
             await waitFor(() => {
                 expect(screen.getAllByRole('option')).toHaveLength(15);
             });
         });
 
         it('should not show subcategories if hideSubCategories is given', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <CategorySelect
                     hideSubCategories
@@ -75,13 +83,16 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
                     onSelectCategory={() => {}}
                 />
             );
-            userEvent.click(screen.getByRole('combobox', { name: /wählen/i }));
+            await fireEvent.click(
+                screen.getByRole('combobox', { name: /wählen/i })
+            );
             await waitFor(() => {
                 expect(screen.getAllByRole('option')).toHaveLength(5);
             });
         });
 
         it('should not show sidenav categories if hideSidenav is given', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <CategorySelect
                     hideSidenav
@@ -89,7 +100,9 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
                     onSelectCategory={() => {}}
                 />
             );
-            userEvent.click(screen.getByRole('combobox', { name: /wählen/i }));
+            await fireEvent.click(
+                screen.getByRole('combobox', { name: /wählen/i })
+            );
             await waitFor(() => {
                 expect(screen.getAllByRole('option')).toHaveLength(13);
             });

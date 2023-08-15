@@ -86,6 +86,7 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
         });
 
         it('should assign new group on click', async () => {
+            const fireEvent = userEvent.setup();
             let mutationHasBeenCalled = false;
             const user = {
                 ...SomeUser,
@@ -137,13 +138,13 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
             );
             expect(assignedGroups).toHaveTextContent(/Administrator/i);
 
-            userEvent.click(
+            await fireEvent.click(
                 await screen.findByRole('button', { name: /vorschläge/i })
             );
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });
-            userEvent.click(
+            await fireEvent.click(
                 await screen.findByRole('option', { name: 'Eltern' })
             );
 
@@ -153,6 +154,7 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
         });
 
         it('should unassign new group on click', async () => {
+            const fireEvent = userEvent.setup();
             let mutationHasBeenCalled = false;
             const user = {
                 ...SomeUser,
@@ -195,13 +197,13 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
             );
             expect(assignedGroups).toHaveTextContent('Administrator');
 
-            userEvent.click(
+            await fireEvent.click(
                 await screen.findByRole('button', { name: /vorschläge/i })
             );
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });
-            userEvent.click(
+            await fireEvent.click(
                 await screen.findByRole('option', { name: 'Eltern' })
             );
 
@@ -212,13 +214,14 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
     });
 
     it('should open delete user dialog when delete button is clicked', async () => {
+        const fireEvent = userEvent.setup();
         const user = { ...SomeUser, groups: [], assignedGroups: [] };
         const screen = render(
             <EditUserPermissionsDialog user={user} onRequestClose={() => {}} />,
             {},
             { additionalMocks: mocks(user) }
         );
-        userEvent.click(
+        await fireEvent.click(
             screen.getByRole('button', { name: /benutzer löschen/i })
         );
         await waitFor(() => {

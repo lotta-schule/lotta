@@ -9,6 +9,7 @@ interface SelectFileOverlayProps {
     description?: string;
     allowDeletion?: boolean;
     style?: React.CSSProperties;
+    children?: React.ReactNode | Iterable<React.ReactNode>;
     fileFilter?(file: FileModel): boolean;
     onSelectFile(file: FileModel | null): void;
 }

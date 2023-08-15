@@ -72,7 +72,8 @@ describe('shared/article/ArticlePreview', () => {
             ).toHaveValue('Weihnachtsmarkt');
         });
 
-        it('and call update callback when edited', () => {
+        it('and call update callback when edited', async () => {
+            const fireEvent = userEvent.setup();
             const fn = jest.fn();
             const screen = render(
                 <ArticlePreview
@@ -82,10 +83,13 @@ describe('shared/article/ArticlePreview', () => {
                 {},
                 { currentUser: SomeUser }
             );
-            userEvent.type(
-                screen.getByRole('textbox', { name: /article title/i }),
-                '{selectall}A'
-            );
+            const titleInput = screen.getByRole('textbox', {
+                name: /article title/i,
+            }) as HTMLInputElement;
+            await fireEvent.type(titleInput, 'A', {
+                initialSelectionStart: 0,
+                initialSelectionEnd: titleInput.value.length,
+            });
             expect(fn).toHaveBeenCalledWith({ ...Weihnachtsmarkt, title: 'A' });
         });
     });
@@ -123,7 +127,8 @@ describe('shared/article/ArticlePreview', () => {
             );
         });
 
-        it('and call update callback when edited', () => {
+        it('and call update callback when edited', async () => {
+            const fireEvent = userEvent.setup();
             const fn = jest.fn();
             const screen = render(
                 <ArticlePreview
@@ -133,10 +138,13 @@ describe('shared/article/ArticlePreview', () => {
                 {},
                 { currentUser: SomeUser }
             );
-            userEvent.type(
-                screen.getByRole('textbox', { name: /article preview text/i }),
-                '{selectall}A'
-            );
+            const previewInput = screen.getByRole('textbox', {
+                name: /article preview text/i,
+            }) as HTMLInputElement;
+            await fireEvent.type(previewInput, 'A', {
+                initialSelectionStart: 0,
+                initialSelectionEnd: previewInput.value.length,
+            });
             expect(fn).toHaveBeenCalledWith({
                 ...Weihnachtsmarkt,
                 preview: 'A',
@@ -230,7 +238,8 @@ describe('shared/article/ArticlePreview', () => {
             expect(tag.querySelector('svg')).toBeVisible();
         });
 
-        it('should delete the tag when DeleteButton is clicked', () => {
+        it('should delete the tag when DeleteButton is clicked', async () => {
+            const fireEvent = userEvent.setup();
             const fn = jest.fn();
             const screen = render(
                 <ArticlePreview
@@ -241,7 +250,7 @@ describe('shared/article/ArticlePreview', () => {
                 { currentUser: SomeUser }
             );
             const tag = screen.getByTestId('Tag');
-            userEvent.click(tag.querySelector('svg')!);
+            await fireEvent.click(tag.querySelector('svg')!);
             expect(fn).toHaveBeenCalledWith({
                 ...Weihnachtsmarkt,
                 tags: [],
@@ -249,6 +258,7 @@ describe('shared/article/ArticlePreview', () => {
         });
 
         it('should add a new tag', async () => {
+            const fireEvent = userEvent.setup();
             const fn = jest.fn();
             const screen = render(
                 <ArticlePreview
@@ -258,7 +268,7 @@ describe('shared/article/ArticlePreview', () => {
                 {},
                 { currentUser: SomeUser }
             );
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('combobox', { name: /tag hinzufügen/i }),
                 'Neu{enter}'
             );
@@ -314,7 +324,8 @@ describe('shared/article/ArticlePreview', () => {
                 ).toBeVisible();
             });
 
-            it('should show the "delete" button for authors when in EditMode', () => {
+            it('should show the "delete" button for authors when in EditMode', async () => {
+                const fireEvent = userEvent.setup();
                 const fn = jest.fn();
                 const screen = render(
                     <ArticlePreview
@@ -326,7 +337,7 @@ describe('shared/article/ArticlePreview', () => {
                 );
                 const avatarsList = screen.getByTestId('AuthorAvatarsList');
                 expect(avatarsList.querySelector('button')).toBeVisible();
-                userEvent.click(avatarsList.querySelector('button')!);
+                await fireEvent.click(avatarsList.querySelector('button')!);
                 expect(fn).toHaveBeenCalledWith({
                     ...WeihnachtsmarktWithUsers,
                     users: [SomeUserin],
@@ -334,6 +345,7 @@ describe('shared/article/ArticlePreview', () => {
             });
             describe('should show warning when removing oneself', () => {
                 it('show a warning when userAvatar tries to remove him/herself and close the popup on abort', async () => {
+                    const fireEvent = userEvent.setup();
                     const onUpdate = jest.fn();
                     const screen = render(
                         <ArticlePreview
@@ -343,7 +355,7 @@ describe('shared/article/ArticlePreview', () => {
                         {},
                         { currentUser: SomeUser }
                     );
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('button', { name: /che entfernen/i })
                     );
                     await waitFor(() => {
@@ -355,7 +367,7 @@ describe('shared/article/ArticlePreview', () => {
                     expect(
                         screen.getByRole('dialog').querySelectorAll('button')[0]
                     ).toHaveTextContent(/abbrechen/i);
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('dialog').querySelectorAll('button')[0]
                     );
                     await waitFor(() => {
@@ -364,6 +376,7 @@ describe('shared/article/ArticlePreview', () => {
                 });
 
                 it('show a warning when userAvatar tries to remove him/herself and remove userAvatar on confirm', async () => {
+                    const fireEvent = userEvent.setup();
                     const onUpdate = jest.fn();
                     const screen = render(
                         <ArticlePreview
@@ -373,7 +386,7 @@ describe('shared/article/ArticlePreview', () => {
                         {},
                         { currentUser: SomeUser }
                     );
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('button', { name: /che entfernen/i })
                     );
                     await waitFor(() => {
@@ -385,7 +398,7 @@ describe('shared/article/ArticlePreview', () => {
                     expect(
                         screen.getByRole('dialog').querySelectorAll('button')[1]
                     ).toHaveTextContent(/entfernen/i);
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('dialog').querySelectorAll('button')[1]
                     );
 

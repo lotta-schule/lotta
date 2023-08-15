@@ -142,6 +142,7 @@ describe('shared/editor/GroupSelect', () => {
         });
 
         it('should add all groups when checkbox is unchecked', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((newGroups) => {
                 expect(newGroups.map((g: UserGroupModel) => g.name)).toEqual([
                     'Administrator',
@@ -157,7 +158,7 @@ describe('shared/editor/GroupSelect', () => {
 
             const selection = await screen.findByLabelText(/alle sichtbar/i);
 
-            userEvent.click(selection);
+            await fireEvent.click(selection);
 
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
@@ -165,6 +166,7 @@ describe('shared/editor/GroupSelect', () => {
         });
 
         it('should remove all groups when checkbox is checked', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((newGroups) => {
                 expect(newGroups.map((g: UserGroupModel) => g.name)).toEqual(
                     []
@@ -180,7 +182,7 @@ describe('shared/editor/GroupSelect', () => {
 
             const selection = await screen.findByLabelText(/alle sichtbar/i);
 
-            userEvent.click(selection);
+            await fireEvent.click(selection);
 
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
@@ -246,6 +248,7 @@ describe('shared/editor/GroupSelect', () => {
 
     describe('should manipulate selected groups', () => {
         it('should send deselection request when clicking on group\'s "X"', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((newGroups) => {
                 expect(
                     newGroups.map((g: UserGroupModel) => g.name).sort()
@@ -259,7 +262,9 @@ describe('shared/editor/GroupSelect', () => {
                 {}
             );
 
-            userEvent.click(await screen.findByLabelText(/Schüler löschen/));
+            await fireEvent.click(
+                await screen.findByLabelText(/Schüler löschen/)
+            );
 
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
@@ -269,12 +274,13 @@ describe('shared/editor/GroupSelect', () => {
 
     describe('listbox options', () => {
         it('should provide all groups as options when clicking into the input field', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
                 {}
             );
 
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /vorschläge/i })
             );
 
@@ -297,19 +303,20 @@ describe('shared/editor/GroupSelect', () => {
         });
 
         it('should reset the search filter when searchfield is blurred', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
                 {}
             );
 
             const combobox = screen.getByRole('combobox');
-            userEvent.type(combobox, 'Schü');
+            await fireEvent.type(combobox, 'Schü');
 
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });
 
-            userEvent.tab();
+            await fireEvent.tab();
 
             await waitFor(() => {
                 expect(screen.getByRole('combobox')).toHaveValue('');
@@ -320,6 +327,7 @@ describe('shared/editor/GroupSelect', () => {
         });
 
         it('should show selected options with a checkmark', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <GroupSelect
                     selectedGroups={[lehrerGroup]}
@@ -328,7 +336,7 @@ describe('shared/editor/GroupSelect', () => {
                 {}
             );
 
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /vorschläge/i })
             );
 
@@ -353,6 +361,7 @@ describe('shared/editor/GroupSelect', () => {
             };
 
             it('should select a group after having clicked on it', async () => {
+                const fireEvent = userEvent.setup();
                 const callback = jest.fn((groups) => {
                     expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
                         'Administrator',
@@ -370,7 +379,7 @@ describe('shared/editor/GroupSelect', () => {
                     { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('button', { name: /vorschläge/i })
                 );
 
@@ -381,7 +390,7 @@ describe('shared/editor/GroupSelect', () => {
                     name: 'Schüler',
                 });
 
-                userEvent.click(selectedOption);
+                await fireEvent.click(selectedOption);
 
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
@@ -389,6 +398,7 @@ describe('shared/editor/GroupSelect', () => {
             });
 
             it('should select only all admin groups after having clicked on one', async () => {
+                const fireEvent = userEvent.setup();
                 const callback = jest.fn((groups) => {
                     expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
                         'Administrator',
@@ -405,7 +415,7 @@ describe('shared/editor/GroupSelect', () => {
                     { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('button', { name: /vorschläge/i })
                 );
 
@@ -416,7 +426,7 @@ describe('shared/editor/GroupSelect', () => {
                     name: 'Administrator',
                 });
 
-                userEvent.click(selectedOption);
+                await fireEvent.click(selectedOption);
 
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
@@ -424,6 +434,7 @@ describe('shared/editor/GroupSelect', () => {
             });
 
             it('should deselect a selected non-admin group after having clicked on it', async () => {
+                const fireEvent = userEvent.setup();
                 const callback = jest.fn((groups) => {
                     expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
                         'Administrator',
@@ -439,7 +450,7 @@ describe('shared/editor/GroupSelect', () => {
                     { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('button', { name: /vorschläge/i })
                 );
 
@@ -451,7 +462,7 @@ describe('shared/editor/GroupSelect', () => {
                     name: 'Lehrer',
                 });
 
-                userEvent.click(selectedOption);
+                await fireEvent.click(selectedOption);
 
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
@@ -459,6 +470,7 @@ describe('shared/editor/GroupSelect', () => {
             });
 
             it('should deselect all selected groups after having clicked on a selected admin group', async () => {
+                const fireEvent = userEvent.setup();
                 const callback = jest.fn((groups) => {
                     expect(groups.map((g: UserGroupModel) => g.name)).toEqual(
                         []
@@ -474,7 +486,7 @@ describe('shared/editor/GroupSelect', () => {
                     { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('button', { name: /vorschläge/i })
                 );
 
@@ -486,7 +498,7 @@ describe('shared/editor/GroupSelect', () => {
                     name: 'Administrator',
                 });
 
-                userEvent.click(selectedOption);
+                await fireEvent.click(selectedOption);
 
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
@@ -495,6 +507,7 @@ describe('shared/editor/GroupSelect', () => {
 
             describe('with disableGroupExclusivity enabled', () => {
                 it('should select a group after having clicked on it', async () => {
+                    const fireEvent = userEvent.setup();
                     const callback = jest.fn((groups) => {
                         expect(
                             groups.map((g: UserGroupModel) => g.name)
@@ -510,7 +523,7 @@ describe('shared/editor/GroupSelect', () => {
                         {}
                     );
 
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('button', { name: /vorschläge/i })
                     );
 
@@ -522,7 +535,7 @@ describe('shared/editor/GroupSelect', () => {
                         name: 'Schüler',
                     });
 
-                    userEvent.click(selectedOption);
+                    await fireEvent.click(selectedOption);
 
                     await waitFor(() => {
                         expect(callback).toHaveBeenCalled();
@@ -530,6 +543,7 @@ describe('shared/editor/GroupSelect', () => {
                 });
 
                 it('should deselect a selected group after having clicked on it', async () => {
+                    const fireEvent = userEvent.setup();
                     const callback = jest.fn((groups) => {
                         expect(
                             groups.map((g: UserGroupModel) => g.name)
@@ -545,7 +559,7 @@ describe('shared/editor/GroupSelect', () => {
                         {}
                     );
 
-                    userEvent.click(
+                    await fireEvent.click(
                         screen.getByRole('button', { name: /vorschläge/i })
                     );
 
@@ -557,7 +571,7 @@ describe('shared/editor/GroupSelect', () => {
                         name: 'Administrator',
                     });
 
-                    userEvent.click(selectedOption);
+                    await fireEvent.click(selectedOption);
 
                     await waitFor(() => {
                         expect(callback).toHaveBeenCalled();

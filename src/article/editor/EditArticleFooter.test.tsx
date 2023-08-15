@@ -36,6 +36,7 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
         });
 
         it('should show dates button when userAvatar is not admin and open 1rticleDatesEditor', async () => {
+            const fireEvent = userEvent.setup();
             const adminUser = { ...SomeUser, groups: [adminGroup] };
             const screen = render(
                 <EditArticleFooter
@@ -50,7 +51,7 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
             expect(
                 screen.getByRole('button', { name: /edit dates/i })
             ).toBeVisible();
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /edit dates/i })
             );
             await waitFor(() => {
@@ -60,7 +61,8 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
     });
 
     describe('save article', () => {
-        it('call the save callback', () => {
+        it('call the save callback', async () => {
+            const fireEvent = userEvent.setup();
             const onSave = jest.fn();
             const screen = render(
                 <EditArticleFooter
@@ -71,13 +73,16 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
                 {},
                 { currentUser: { ...SomeUser } }
             );
-            userEvent.click(screen.getByRole('button', { name: /speichern/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /speichern/i })
+            );
             expect(onSave).toHaveBeenCalled();
         });
     });
 
     describe('delete article', () => {
         it('show the modal and delete the article on confirmation', async () => {
+            const fireEvent = userEvent.setup();
             const onDelete = jest.fn(() => ({
                 data: {
                     article: { id: Weihnachtsmarkt.id },
@@ -104,13 +109,13 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
                     additionalMocks: mocks,
                 }
             );
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /beitrag löschen/i })
             );
             await waitFor(() => {
                 expect(screen.getByRole('dialog')).toBeVisible();
             });
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', {
                     name: /Beitrag endgültig löschen/,
                 })
@@ -122,6 +127,7 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
         });
 
         it('show the modal and hide it again on cancellation', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <EditArticleFooter
                     article={{ ...Weihnachtsmarkt, readyToPublish: false }}
@@ -131,13 +137,13 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
                 {},
                 { currentUser: { ...SomeUser } }
             );
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /beitrag löschen/i })
             );
             await waitFor(() => {
                 expect(screen.queryByRole('dialog')).toBeVisible();
             });
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /beitrag behalten/i })
             );
             await waitFor(() => {

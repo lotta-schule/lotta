@@ -1,13 +1,13 @@
-import React from 'react';
+import * as React from 'react';
 import { render, screen, waitFor } from 'test/util';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { WidgetModel, WidgetModelType } from 'model';
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
-import userEvents from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 
 const widgets: WidgetModel[] = [
     {
-        id: 1,
+        id: '1',
         title: 'WidgetOne',
         type: WidgetModelType.Calendar,
         configuration: {},
@@ -15,7 +15,7 @@ const widgets: WidgetModel[] = [
         iconImageFile: null,
     },
     {
-        id: 2,
+        id: '2',
         title: 'WidgetTwo',
         type: WidgetModelType.Calendar,
         configuration: {},
@@ -23,7 +23,7 @@ const widgets: WidgetModel[] = [
         iconImageFile: null,
     },
     {
-        id: 3,
+        id: '3',
         title: 'WidgetThree',
         type: WidgetModelType.Calendar,
         configuration: {},
@@ -31,7 +31,7 @@ const widgets: WidgetModel[] = [
         iconImageFile: null,
     },
     {
-        id: 4,
+        id: '4',
         title: 'W Number 4',
         type: WidgetModelType.Calendar,
         configuration: {},
@@ -39,7 +39,7 @@ const widgets: WidgetModel[] = [
         iconImageFile: null,
     },
     {
-        id: 5,
+        id: '5',
         title: 'W Number 5',
         type: WidgetModelType.Calendar,
         configuration: {},
@@ -135,6 +135,7 @@ describe('shared/layouts/SearchLayout', () => {
 
         describe('select widgets', () => {
             it('should select a widget when clicked', async () => {
+                const fireEvent = userEvent.setup();
                 const setSelectedWidgets = jest.fn();
                 render(
                     <CategoryWidgetSelector
@@ -146,7 +147,7 @@ describe('shared/layouts/SearchLayout', () => {
                 );
 
                 const w0 = await screen.findByLabelText('WidgetOne');
-                await userEvents.click(w0);
+                await fireEvent.click(w0);
                 await waitFor(() => {
                     expect(setSelectedWidgets).toHaveBeenCalledWith([
                         widgets[0],
@@ -155,6 +156,7 @@ describe('shared/layouts/SearchLayout', () => {
             });
 
             it('should deselect when clicked but already selected', async () => {
+                const fireEvent = userEvent.setup();
                 const setSelectedWidgets = jest.fn();
                 render(
                     <CategoryWidgetSelector
@@ -166,13 +168,14 @@ describe('shared/layouts/SearchLayout', () => {
                 );
 
                 const w0 = await screen.findByLabelText('WidgetOne');
-                await userEvents.click(w0);
+                await fireEvent.click(w0);
                 await waitFor(() => {
                     expect(setSelectedWidgets).toHaveBeenCalledWith([]);
                 });
             });
 
             it('should select all widgets when "toggle all" is clicked', async () => {
+                const fireEvent = userEvent.setup();
                 const setSelectedWidgets = jest.fn();
                 render(
                     <CategoryWidgetSelector
@@ -186,13 +189,14 @@ describe('shared/layouts/SearchLayout', () => {
                 const allToggler = await screen.findByLabelText(
                     'Alle Marginalen aktivieren'
                 );
-                await userEvents.click(allToggler);
+                await fireEvent.click(allToggler);
                 await waitFor(() => {
                     expect(setSelectedWidgets).toHaveBeenCalledWith(widgets);
                 });
             });
 
             it('should deselect all widgets when all are selected and "toggle all" is clicked', async () => {
+                const fireEvent = userEvent.setup();
                 const setSelectedWidgets = jest.fn();
                 render(
                     <CategoryWidgetSelector
@@ -206,7 +210,7 @@ describe('shared/layouts/SearchLayout', () => {
                 const allToggler = await screen.findByLabelText(
                     'Alle Marginalen aktivieren'
                 );
-                await userEvents.click(allToggler);
+                await fireEvent.click(allToggler);
                 await waitFor(() => {
                     expect(setSelectedWidgets).toHaveBeenCalledWith([]);
                 });

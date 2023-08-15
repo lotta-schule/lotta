@@ -71,6 +71,7 @@ export const SearchPage = () => {
                     <motion.div
                         className={styles.advancedSettings}
                         initial={'closed'}
+                        aria-expanded={isAdvancedSearchFormVisible}
                         animate={
                             isAdvancedSearchFormVisible ? 'open' : 'closed'
                         }
@@ -78,6 +79,7 @@ export const SearchPage = () => {
                             open: { opacity: 0, height: 0 },
                             closed: { opacity: 1, height: 'auto' },
                         }}
+                        data-testid={'advanced-search'}
                     >
                         <h3>Erweiterte Suche</h3>
                         <CategorySelect

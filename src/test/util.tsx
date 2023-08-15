@@ -37,7 +37,7 @@ export type TestSetupOptions = {
 } & ApolloMocksOptions;
 
 const ProviderFactory = (options: TestSetupOptions): React.FC => {
-    const ComponentClass: React.FC = ({ children }) => {
+    const ComponentClass = ({ children }: { children?: React.ReactNode }) => {
         const { cache, mocks: defaultMocks } = getDefaultApolloMocks(
             pick(options, ['currentUser', 'tenant', 'categories', 'userGroups'])
         );
@@ -73,7 +73,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
         return (
             <RouterContext.Provider value={testRouter}>
                 <I18nextProvider i18n={i18n}>
-                    <HubertProvider theme={defaultTheme}>
+                    <HubertProvider>
                         <MockedProvider
                             mocks={[
                                 ...defaultMocks,

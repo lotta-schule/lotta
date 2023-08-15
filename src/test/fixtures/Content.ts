@@ -1,4 +1,4 @@
-import { ContentModuleType } from 'model';
+import { ArticleModel, ContentModuleType } from 'model';
 /**
  *
  *
@@ -7,7 +7,7 @@ import { ContentModuleType } from 'model';
  *
  *
  */
-export const ComputerExperten = {
+export const ComputerExperten: ArticleModel = {
     id: '1',
     contentModules: [
         {
@@ -92,7 +92,7 @@ export const ComputerExperten = {
     published: true,
 };
 
-export const VivaLaRevolucion = {
+export const VivaLaRevolucion: ArticleModel = {
     id: '2',
     contentModules: [
         {
@@ -179,7 +179,7 @@ export const VivaLaRevolucion = {
     published: false,
 };
 
-export const Schulfest = {
+export const Schulfest: ArticleModel = {
     id: '3',
     contentModules: [
         {
@@ -292,7 +292,7 @@ export const Schulfest = {
     published: false,
 };
 
-export const Weihnachtsmarkt = {
+export const Weihnachtsmarkt: ArticleModel = {
     id: '4',
     contentModules: [
         {
@@ -405,7 +405,7 @@ export const Weihnachtsmarkt = {
     published: false,
 };
 
-export const Klausurenplan = {
+export const Klausurenplan: ArticleModel = {
     id: '5',
     contentModules: [
         {
@@ -444,7 +444,7 @@ export const Klausurenplan = {
     published: false,
 };
 
-export const LehrerListe = {
+export const LehrerListe: ArticleModel = {
     id: '5',
     contentModules: [
         {

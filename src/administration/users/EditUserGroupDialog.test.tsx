@@ -75,6 +75,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
             });
 
             it('should update the title on blur', async () => {
+                const fireEvent = userEvent.setup();
                 const saveCallback = jest.fn(() => ({
                     data: { group: { ...lehrerGroup, name: 'Neuer Name' } },
                 }));
@@ -100,19 +101,21 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                     {},
                     { additionalMocks: [...additionalMocks, saveMock] }
                 );
-                userEvent.type(
-                    await screen.findByRole('textbox', {
-                        name: /gruppenname/i,
-                    }),
-                    '{selectall}Neuer Name'
-                );
-                userEvent.tab();
+                const groupNameInput = (await screen.findByRole('textbox', {
+                    name: /gruppenname/i,
+                })) as HTMLInputElement;
+                await fireEvent.type(groupNameInput, 'Neuer Name', {
+                    initialSelectionStart: 0,
+                    initialSelectionEnd: groupNameInput.value.length,
+                });
+                await fireEvent.tab();
                 await waitFor(() => {
                     expect(saveCallback).toHaveBeenCalled();
                 });
             });
 
             it('should update the title on ENTER', async () => {
+                const fireEvent = userEvent.setup();
                 const saveCallback = jest.fn(() => ({
                     data: { group: { ...lehrerGroup, name: 'Neuer Name' } },
                 }));
@@ -138,12 +141,14 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                     {},
                     { additionalMocks: [...additionalMocks, saveMock] }
                 );
-                userEvent.type(
-                    await screen.findByRole('textbox', {
-                        name: /gruppenname/i,
-                    }),
-                    '{selectall}Neuer Name{enter}'
-                );
+                const groupNameInput = (await screen.findByRole('textbox', {
+                    name: /gruppenname/i,
+                })) as HTMLInputElement;
+                await fireEvent.clear(groupNameInput);
+                await fireEvent.type(groupNameInput, 'Neuer Name{Enter}', {
+                    initialSelectionStart: 0,
+                    initialSelectionEnd: groupNameInput.value.length,
+                });
                 await waitFor(() => {
                     expect(saveCallback).toHaveBeenCalled();
                 });
@@ -180,6 +185,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
             });
 
             it('should update the admin setting', async () => {
+                const fireEvent = userEvent.setup();
                 const saveCallback = jest.fn(() => ({
                     data: { group: { ...adminGroup, adminGroup: false } },
                 }));
@@ -208,7 +214,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                         userGroups: groupsWithSecondAdmin,
                     }
                 );
-                userEvent.click(
+                await fireEvent.click(
                     await screen.findByRole('checkbox', {
                         name: /administratorrechte/i,
                     })
@@ -227,8 +233,13 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                     {},
                     { additionalMocks }
                 );
+
+                await waitFor(() => {
+                    expect(screen.queryByRole('progressbar')).toBeNull();
+                });
+
                 expect(
-                    await screen.findByRole('checkbox', {
+                    screen.getByRole('checkbox', {
                         name: /administratorrecht/i,
                     })
                 ).toBeDisabled();
@@ -237,6 +248,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
 
         describe('update the enrollment tokens', () => {
             it('should update the enrollment tokens', async () => {
+                const fireEvent = userEvent.setup();
                 const saveCallback = jest.fn(() => ({
                     data: { group: { ...lehrerGroup, name: 'Lehrer' } },
                 }));
@@ -265,7 +277,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                     {},
                     { additionalMocks: [...additionalMocks, saveMock] }
                 );
-                userEvent.type(
+                await fireEvent.type(
                     await screen.findByPlaceholderText(/einschreibeschlüssel/i),
                     'NeuerToken{enter}'
                 );
@@ -277,6 +289,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
 
         describe('delete group', () => {
             it('should show a delete button for a group and show dialog', async () => {
+                const fireEvent = userEvent.setup();
                 const onRequestClose = jest.fn();
                 const screen = render(
                     <EditUserGroupDialog
@@ -305,7 +318,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                         ],
                     }
                 );
-                userEvent.click(
+                await fireEvent.click(
                     await screen.findByRole('button', { name: /löschen/i })
                 );
                 const dialog = await screen.findByRole('dialog', {
@@ -319,7 +332,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                     name: /löschen/i,
                 });
 
-                userEvent.click(deleteButton);
+                await fireEvent.click(deleteButton);
 
                 await waitFor(() => {
                     expect(onRequestClose).toHaveBeenCalled();

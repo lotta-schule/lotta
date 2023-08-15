@@ -5,7 +5,6 @@ import { SearchPage } from './SearchPage';
 import userEvent from '@testing-library/user-event';
 
 import SearchQuery from 'api/query/SearchQuery.graphql';
-import { act } from 'react-dom/test-utils';
 
 describe('pages/search', () => {
     describe('Search', () => {
@@ -21,6 +20,7 @@ describe('pages/search', () => {
         });
 
         it('should issue a search request after typing', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <SearchPage />,
                 {},
@@ -39,7 +39,7 @@ describe('pages/search', () => {
                     ],
                 }
             );
-            userEvent.type(screen.getByLabelText('Suchbegriff'), 'Test');
+            await fireEvent.type(screen.getByLabelText('Suchbegriff'), 'Test');
             await waitFor(() => {
                 const articlePreviews = screen.getAllByTestId('ArticlePreview');
                 expect(articlePreviews).toHaveLength(1);
@@ -49,27 +49,40 @@ describe('pages/search', () => {
 
         describe('filtering', () => {
             it('should open and close search filter', async () => {
+                const fireEvent = userEvent.setup();
                 const screen = render(<SearchPage />, {}, {});
-                userEvent.click(
-                    screen.getByRole('button', { name: /erweitert/i })
-                );
                 await waitFor(() => {
                     expect(
-                        screen.getByRole('heading', { name: /erweitert/i })
-                    ).toBeVisible();
+                        screen
+                            .getByTestId('advanced-search')
+                            .getAttribute('aria-expanded')
+                    ).toEqual('false');
                 });
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('button', { name: /erweitert/i })
                 );
                 await waitFor(() => {
                     expect(
-                        screen.getByRole('heading', { name: /erweitert/i })
-                    ).not.toBeVisible();
+                        screen
+                            .getByTestId('advanced-search')
+                            .getAttribute('aria-expanded')
+                    ).toEqual('true');
+                });
+                await new Promise((resolve) => setTimeout(resolve, 500));
+                await fireEvent.click(
+                    screen.getByRole('button', { name: /erweitert/i })
+                );
+                await waitFor(() => {
+                    expect(
+                        screen
+                            .getByTestId('advanced-search')
+                            .getAttribute('aria-expanded')
+                    ).toEqual('false');
                 });
             });
 
             it('should add category to filteroptions', async () => {
+                const fireEvent = userEvent.setup();
                 const resultFn = jest.fn(() => ({
                     data: { results: [ComputerExperten] },
                 }));
@@ -93,7 +106,7 @@ describe('pages/search', () => {
                         ],
                     }
                 );
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('button', { name: /erweitert/i })
                 );
                 const combobox = screen.getByRole('combobox', {
@@ -102,8 +115,11 @@ describe('pages/search', () => {
                 const faecherOption = await screen.findByRole('option', {
                     name: /fächer/i,
                 });
-                userEvent.selectOptions(combobox, faecherOption);
-                userEvent.type(screen.getByLabelText('Suchbegriff'), 'Test');
+                await fireEvent.selectOptions(combobox, faecherOption);
+                await fireEvent.type(
+                    screen.getByLabelText('Suchbegriff'),
+                    'Test'
+                );
                 await waitFor(() => {
                     expect(resultFn).toHaveBeenCalled();
                 });

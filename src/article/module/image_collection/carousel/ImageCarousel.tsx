@@ -1,11 +1,10 @@
 import * as React from 'react';
+import { Stepper, SwipeableViews } from '@lotta-schule/hubert';
 import { File } from 'util/model';
-import { Stepper } from '@lotta-schule/hubert';
-import { FileSorter } from '../Config';
 import { ContentModuleModel, FileModel } from 'model';
 import { useServerData } from 'shared/ServerDataContext';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import SwipeableViews from 'react-swipeable-views';
+import { FileSorter } from '../Config';
 
 import styles from './ImageCarousel.module.scss';
 
@@ -22,7 +21,7 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
         } = contentModule.configuration?.files ?? {};
         const maxSteps = contentModule.files.length;
 
-        const handleStepChange = React.useCallback((step) => {
+        const handleStepChange = React.useCallback((step: number) => {
             setActiveStep(step);
         }, []);
 
@@ -55,10 +54,8 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
                     className={styles.header}
                 />
                 <SwipeableViews
-                    index={activeStep}
-                    onChangeIndex={handleStepChange}
-                    axis={'x'}
-                    enableMouseEvents
+                    selectedIndex={activeStep}
+                    onChange={handleStepChange}
                     style={{ paddingBottom: '0.5em' }}
                 >
                     {sortedFiles.map((file, index) => (
@@ -70,7 +67,7 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
                             )}
                             {Math.abs(activeStep - index) <= 2 ? (
                                 <ResponsiveImage
-                                    width={1600}
+                                    width={1200}
                                     sizes={'(max-width: 600px) 100vw, 80vw'}
                                     aspectRatio={'16:9'}
                                     resize={'contain'}

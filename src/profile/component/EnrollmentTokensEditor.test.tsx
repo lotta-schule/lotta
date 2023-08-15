@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { EnrollmentTokensEditor } from './EnrollmentTokensEditor';
 import userEvent from '@testing-library/user-event';
@@ -34,6 +34,7 @@ describe('shared/EnrollmentTokensEditor', () => {
 
     describe('adding an enrollment token', () => {
         it('should add an entered token and add it on ENTER', async () => {
+            const fireEvent = userEvent.setup();
             const onUpdate = jest.fn();
             const screen = render(
                 <EnrollmentTokensEditor
@@ -41,8 +42,11 @@ describe('shared/EnrollmentTokensEditor', () => {
                     setTokens={onUpdate}
                 />
             );
-            userEvent.type(screen.getByRole('textbox'), 'nexttoken{enter}');
-            userEvent.tab();
+            await fireEvent.type(
+                screen.getByRole('textbox'),
+                'nexttoken{enter}'
+            );
+            await fireEvent.tab();
             await waitFor(() => {
                 expect(onUpdate).toHaveBeenCalledWith([
                     'token1',
@@ -61,6 +65,7 @@ describe('shared/EnrollmentTokensEditor', () => {
         });
 
         it('should add an entered token and add it on ","', async () => {
+            const fireEvent = userEvent.setup();
             const onUpdate = jest.fn();
             const screen = render(
                 <EnrollmentTokensEditor
@@ -68,7 +73,7 @@ describe('shared/EnrollmentTokensEditor', () => {
                     setTokens={onUpdate}
                 />
             );
-            userEvent.type(screen.getByRole('textbox'), 'nexttoken,');
+            await fireEvent.type(screen.getByRole('textbox'), 'nexttoken,');
             await waitFor(() => {
                 expect(onUpdate).toHaveBeenCalledWith([
                     'token1',
@@ -81,6 +86,7 @@ describe('shared/EnrollmentTokensEditor', () => {
         });
 
         it('should add an entered token and add it on " "', async () => {
+            const fireEvent = userEvent.setup();
             const onUpdate = jest.fn();
             const screen = render(
                 <EnrollmentTokensEditor
@@ -88,7 +94,7 @@ describe('shared/EnrollmentTokensEditor', () => {
                     setTokens={onUpdate}
                 />
             );
-            userEvent.type(screen.getByRole('textbox'), 'nexttoken ');
+            await fireEvent.type(screen.getByRole('textbox'), 'nexttoken ');
             await waitFor(() => {
                 expect(onUpdate).toHaveBeenCalledWith([
                     'token1',

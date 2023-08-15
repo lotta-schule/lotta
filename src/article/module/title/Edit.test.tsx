@@ -29,6 +29,7 @@ describe('shared/article/module/table/Edit', () => {
     });
 
     it('should correctly call the onUpateModule prop', async () => {
+        const fireEvent = userEvent.setup();
         const callback = jest.fn((cm) => {
             expect(cm.content.title).toEqual('Eine neue Überschrift');
         });
@@ -39,10 +40,10 @@ describe('shared/article/module/table/Edit', () => {
             />
         );
         const input = screen.getByRole('textbox');
-        userEvent.click(input);
-        userEvent.clear(input);
-        userEvent.type(input, 'Eine neue Überschrift');
-        userEvent.click(document.body);
+        await fireEvent.click(input);
+        await fireEvent.clear(input);
+        await fireEvent.type(input, 'Eine neue Überschrift');
+        await fireEvent.click(document.body);
         await waitFor(() => {
             expect(callback).toHaveBeenCalled();
         });
@@ -50,6 +51,7 @@ describe('shared/article/module/table/Edit', () => {
     });
 
     it('should reset title when clicking ESC', async () => {
+        const fireEvent = userEvent.setup();
         const callback = jest.fn((cm) => {
             expect(cm.content.title).toEqual('Na, wie war dein erster Tag?');
         });
@@ -60,8 +62,8 @@ describe('shared/article/module/table/Edit', () => {
             />
         );
         const input = screen.getByRole('textbox');
-        userEvent.clear(input);
-        userEvent.type(input, 'Eine neue Überschr{esc}');
+        await fireEvent.clear(input);
+        await fireEvent.type(input, 'Eine neue Überschr{Escape}');
         await waitFor(() => {
             expect(input).not.toHaveFocus();
         });

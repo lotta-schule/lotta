@@ -11,6 +11,7 @@ describe('CreateMessageDialog', () => {
         const SomeUserWithGroups = { ...SomeUser, groups: [schuelerGroup] };
 
         it('should not show the "groups" tab if userr has no groups', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <CreateMessageDialog
                     isOpen
@@ -21,7 +22,7 @@ describe('CreateMessageDialog', () => {
                 { currentUser: SomeUser }
             );
 
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /nachricht verfassen/i })
             );
             await waitFor(() => {
@@ -34,6 +35,7 @@ describe('CreateMessageDialog', () => {
         });
 
         it('should select a userAvatar and create the corresponding thread object', async () => {
+            const fireEvent = userEvent.setup();
             const additionalMocks = [
                 {
                     request: {
@@ -59,7 +61,7 @@ describe('CreateMessageDialog', () => {
                 { currentUser: SomeUserin, additionalMocks }
             );
 
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /nachricht verfassen/i })
             );
             await waitFor(() => {
@@ -68,8 +70,8 @@ describe('CreateMessageDialog', () => {
                 ).toBeVisible();
             });
 
-            userEvent.click(screen.getByRole('tab', { name: /nutzer/i }));
-            userEvent.type(
+            await fireEvent.click(screen.getByRole('tab', { name: /nutzer/i }));
+            await fireEvent.type(
                 screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Drinalda'
             );
@@ -84,7 +86,9 @@ describe('CreateMessageDialog', () => {
                 },
                 { timeout: 2000 }
             );
-            userEvent.click(screen.getByRole('option', { name: /drinalda/i }));
+            await fireEvent.click(
+                screen.getByRole('option', { name: /drinalda/i })
+            );
 
             await waitFor(() => {
                 expect(
@@ -92,7 +96,7 @@ describe('CreateMessageDialog', () => {
                 ).toHaveTextContent('Drinalda');
             });
 
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: 'Nachricht verfassen' })
             );
 
@@ -102,6 +106,7 @@ describe('CreateMessageDialog', () => {
         });
 
         it('should select a group and call the onConfirm with it', async () => {
+            const fireEvent = userEvent.setup();
             const onConfirm = jest.fn((destination) => {
                 expect(destination.user).not.toBeDefined();
                 expect(destination.group.name).toEqual('Schüler');
@@ -116,7 +121,7 @@ describe('CreateMessageDialog', () => {
                 { currentUser: SomeUserWithGroups }
             );
 
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /nachricht verfassen/i })
             );
             await waitFor(() => {
@@ -125,18 +130,20 @@ describe('CreateMessageDialog', () => {
                 ).toBeVisible();
             });
 
-            userEvent.click(screen.getByRole('tab', { name: /gruppe/i }));
+            await fireEvent.click(screen.getByRole('tab', { name: /gruppe/i }));
 
             await waitFor(() => {
                 expect(
                     screen.getByRole('combobox', { name: /gruppe wählen/i })
                 ).toBeVisible();
             });
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /vorschläge/i })
             );
             expect(screen.getAllByRole('option')).toHaveLength(1);
-            userEvent.click(screen.getByRole('option', { name: 'Schüler' }));
+            await fireEvent.click(
+                screen.getByRole('option', { name: 'Schüler' })
+            );
 
             await waitFor(() => {
                 expect(
@@ -144,7 +151,7 @@ describe('CreateMessageDialog', () => {
                 ).toHaveTextContent('Schüler');
             });
 
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: 'Nachricht verfassen' })
             );
 

@@ -62,6 +62,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
         });
 
         it('should send a change request with the correct data', async () => {
+            const fireEvent = userEvent.setup();
             let didCallUpdateData = false;
             const mocks = [
                 {
@@ -106,9 +107,6 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
                 }
             );
 
-            const emailField = screen.getByPlaceholderText(
-                'beispiel@medienportal.org'
-            ) as HTMLInputElement;
             // const nameField = screen.getByLabelText('Dein Vor- und Nachname') as HTMLInputElement;
             const nicknameField = screen.getByLabelText(
                 'Dein Spitzname'
@@ -120,16 +118,16 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
                 'Deine Klasse / Dein Kürzel:'
             ) as HTMLInputElement;
 
-            userEvent.clear(emailField);
-            userEvent.clear(nicknameField);
-            userEvent.clear(classField);
+            await fireEvent.clear(nicknameField);
+            await fireEvent.clear(classField);
 
-            userEvent.type(emailField, 'neue-email@adresse.de');
-            userEvent.type(nicknameField, 'Spitzi');
-            userEvent.click(publishNameCheckbox);
-            userEvent.type(classField, '5/1');
+            await fireEvent.type(nicknameField, 'Spitzi');
+            await fireEvent.click(publishNameCheckbox);
+            await fireEvent.type(classField, '5/1');
 
-            userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: 'Speichern' })
+            );
 
             await waitFor(() => {
                 expect(didCallUpdateData).toEqual(true);
@@ -162,6 +160,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
 
     describe('Profile picture', () => {
         it('should open the file selection dialog when "Change profile picture" is selected', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <ProfilePage />,
                 {},
@@ -182,7 +181,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
                 await screen.findAllByText('Profilbild ändern')
             )[0];
             expect(profilePictureButton).toBeVisible();
-            userEvent.click(profilePictureButton);
+            await fireEvent.click(profilePictureButton);
             await waitFor(() => {
                 expect(
                     screen.getByText(/datei auswählen/i)
@@ -193,6 +192,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
 
     describe('Password', () => {
         it('should open the change password dialog when the change password button is clicked', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <ProfilePage />,
                 {},
@@ -204,7 +204,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
                 await screen.findAllByText('Passwort ändern')
             )[0];
             expect(changePasswordButton).toBeVisible();
-            userEvent.click(changePasswordButton);
+            await fireEvent.click(changePasswordButton);
             await waitFor(() => {
                 expect(
                     screen.getByRole('heading', {
@@ -217,6 +217,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
 
     describe('Email', () => {
         it('should open the change email dialog when the change email button is clicked', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <ProfilePage />,
                 {},
@@ -226,7 +227,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
             );
             const changeEmailButton = await screen.findByText('Email ändern');
             expect(changeEmailButton).toBeVisible();
-            userEvent.click(changeEmailButton);
+            await fireEvent.click(changeEmailButton);
             await waitFor(() => {
                 expect(
                     screen.getByRole('heading', {

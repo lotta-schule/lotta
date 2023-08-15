@@ -20,7 +20,7 @@ export const ArticlesList = React.memo(({ articles }: ArticlesListProps) => {
     const { baseUrl } = useServerData();
 
     const articleSorter = React.useCallback(
-        (article1, article2) =>
+        (article1: ArticleModel, article2: ArticleModel) =>
             new Date(article2.updatedAt).getTime() -
             new Date(article1.updatedAt).getTime(),
         []

@@ -76,7 +76,8 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
         expect(screen.queryByRole('textbox')).toHaveFocus();
     });
 
-    it('should start with a disabled submit button, but should enable the button when text has been entered', () => {
+    it('should start with a disabled submit button, but should enable the button when text has been entered', async () => {
+        const fireEvent = userEvent.setup();
         render(
             <CreateCategoryDialog
                 isOpen
@@ -87,13 +88,14 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
         expect(
             screen.getByRole('button', { name: /erstellen/ })
         ).toBeDisabled();
-        userEvent.type(screen.getByRole('textbox'), 'Test');
+        await fireEvent.type(screen.getByRole('textbox'), 'Test');
         expect(
             screen.getByRole('button', { name: /erstellen/ })
         ).not.toBeDisabled();
     });
 
-    it('should reset the input field when dialog is closed and then reopened', () => {
+    it('should reset the input field when dialog is closed and then reopened', async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <CreateCategoryDialog
                 isOpen
@@ -101,7 +103,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
                 onAbort={() => {}}
             />
         );
-        userEvent.type(screen.getByRole('textbox'), 'Test');
+        await fireEvent.type(screen.getByRole('textbox'), 'Test');
         screen.rerender(
             <CreateCategoryDialog
                 isOpen={false}
@@ -120,6 +122,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
     });
 
     it('should clear the form and call onAbort when clicking the "Reset" button', async () => {
+        const fireEvent = userEvent.setup();
         const onAbort = jest.fn();
         render(
             <CreateCategoryDialog
@@ -128,8 +131,10 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
                 onAbort={onAbort}
             />
         );
-        userEvent.type(screen.getByRole('textbox'), 'Test');
-        userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
+        await fireEvent.type(screen.getByRole('textbox'), 'Test');
+        await fireEvent.click(
+            screen.getByRole('button', { name: /abbrechen/i })
+        );
 
         await waitFor(() => {
             expect(onAbort).toHaveBeenCalled();
@@ -153,6 +158,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
         });
 
         it('should create a main article with the given title', async () => {
+            const fireEvent = userEvent.setup();
             const onConfirm = jest.fn((createdCategory) => {
                 expect(createdCategory.id).toEqual(666);
                 expect(createdCategory.title).toEqual('Test');
@@ -168,8 +174,10 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
                 {},
                 { currentUser: SomeUser, additionalMocks: createMocks() }
             );
-            userEvent.type(screen.getByRole('textbox'), 'Test');
-            userEvent.click(screen.getByRole('button', { name: /erstellen/ }));
+            await fireEvent.type(screen.getByRole('textbox'), 'Test');
+            await fireEvent.click(
+                screen.getByRole('button', { name: /erstellen/ })
+            );
 
             await waitFor(() => {
                 expect(onConfirm).toHaveBeenCalled();
@@ -178,7 +186,8 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
     });
 
     describe('send for subcategory', () => {
-        it('should disable the submit button if no parentCategory is selected', () => {
+        it('should disable the submit button if no parentCategory is selected', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <CreateCategoryDialog
                     isOpen
@@ -189,8 +198,8 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
                 { currentUser: SomeUser }
             );
 
-            userEvent.type(screen.getByRole('textbox'), 'Test');
-            userEvent.click(
+            await fireEvent.type(screen.getByRole('textbox'), 'Test');
+            await fireEvent.click(
                 screen.getByRole('radio', { name: /subnavigation/i })
             );
             expect(
@@ -199,6 +208,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
         });
 
         it('should create an article', async () => {
+            const fireEvent = userEvent.setup();
             const onConfirm = jest.fn((createdCategory) => {
                 expect(createdCategory.title).toEqual('Test');
                 expect(createdCategory.isSidenav).toEqual(false);
@@ -224,18 +234,20 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
                 }
             );
 
-            userEvent.type(screen.getByRole('textbox'), 'Test');
-            userEvent.click(
+            await fireEvent.type(screen.getByRole('textbox'), 'Test');
+            await fireEvent.click(
                 screen.getByRole('radio', { name: /subnavigation/i })
             );
             await new Promise((resolve) => setTimeout(resolve, 500));
-            userEvent.selectOptions(
+            await fireEvent.selectOptions(
                 screen.getByRole('combobox', {
                     name: /übergeordnete kategorie/i,
                 }),
                 screen.getByRole('option', { name: /fächer/i })
             );
-            userEvent.click(screen.getByRole('button', { name: /erstellen/ }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /erstellen/ })
+            );
 
             await waitFor(() => {
                 expect(onConfirm).toHaveBeenCalled();
@@ -245,6 +257,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
 
     describe('send for sidenav', () => {
         it('should create an article', async () => {
+            const fireEvent = userEvent.setup();
             const onConfirm = jest.fn((createdCategory) => {
                 expect(createdCategory.id).toEqual(666);
                 expect(createdCategory.title).toEqual('Test');
@@ -265,11 +278,13 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
                 }
             );
 
-            userEvent.type(screen.getByRole('textbox'), 'Test');
-            userEvent.click(
+            await fireEvent.type(screen.getByRole('textbox'), 'Test');
+            await fireEvent.click(
                 screen.getByRole('radio', { name: /randnavigation/i })
             );
-            userEvent.click(screen.getByRole('button', { name: /erstellen/ }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /erstellen/ })
+            );
 
             await waitFor(() => {
                 expect(onConfirm).toHaveBeenCalled();

@@ -60,7 +60,9 @@ describe('shared/article/ArticleEditable', () => {
             );
             expect(downButton).toBeNull();
         });
-        it('should move the contentModule up when the button is clicked', () => {
+
+        it('should move the contentModule up when the button is clicked', async () => {
+            const fireEvent = userEvent.setup();
             const onUpdate = jest.fn((newArticle: ArticleModel) => {
                 expect(
                     newArticle.contentModules.map(({ id, sortKey }) => [
@@ -86,10 +88,11 @@ describe('shared/article/ArticleEditable', () => {
                 'button[aria-label*="oben bewegen"]'
             )!;
             expect(upButton).not.toBeNull();
-            userEvent.click(upButton);
+            await fireEvent.click(upButton);
             expect(onUpdate).toHaveBeenCalled();
         });
-        it('should move the contentModule down when the button is clicked', () => {
+        it('should move the contentModule down when the button is clicked', async () => {
+            const fireEvent = userEvent.setup();
             const onUpdate = jest.fn((newArticle: ArticleModel) => {
                 expect(
                     newArticle.contentModules.map(({ id, sortKey }) => [
@@ -115,7 +118,7 @@ describe('shared/article/ArticleEditable', () => {
                 'button[aria-label*="unten bewegen"]'
             )!;
             expect(downButton).not.toBeNull();
-            userEvent.click(downButton);
+            await fireEvent.click(downButton);
             expect(onUpdate).toHaveBeenCalled();
         });
     });

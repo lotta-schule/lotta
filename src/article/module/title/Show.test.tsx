@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render } from 'test/util';
 import { Klausurenplan } from 'test/fixtures';
 import { Show } from './Show';
