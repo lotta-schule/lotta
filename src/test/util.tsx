@@ -37,7 +37,7 @@ export type TestSetupOptions = {
 } & ApolloMocksOptions;
 
 const ProviderFactory = (options: TestSetupOptions): React.FC => {
-    const ComponentClass: React.FC = ({ children }) => {
+    const ComponentClass = ({ children }: { children?: React.ReactNode }) => {
         const { cache, mocks: defaultMocks } = getDefaultApolloMocks(
             pick(options, ['currentUser', 'tenant', 'categories', 'userGroups'])
         );

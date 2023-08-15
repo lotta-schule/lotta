@@ -71,7 +71,7 @@ export const EditArticlePage = React.memo<ArticlePageProps>(({ article }) => {
         {
             variables: { id: article.id },
             skip: isLoading || !!updatedArticleData?.article,
-            onSubscriptionData: ({ client, subscriptionData: { data } }) => {
+            onData: ({ client, data: { data } }) => {
                 if (data) {
                     client.writeQuery({
                         query: GetArticleQuery,

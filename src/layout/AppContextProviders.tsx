@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HubertProvider } from '@lotta-schule/hubert';
+import { GlobalStyles, HubertProvider } from '@lotta-schule/hubert';
 import { DefaultThemes } from '@lotta-schule/theme';
 import { CategoryModel, TenantModel, UserModel } from 'model';
 import { AppHead } from './AppHead';
@@ -41,15 +41,16 @@ export type TenantContextProvidersProps = {
 const TenantContextProviders = React.memo(
     ({ children }: TenantContextProvidersProps) => {
         const tenant = useTenant();
+        const customTheme = tenant.configuration.customTheme;
+
+        const theme = {
+            ...defaultTheme,
+            ...customTheme,
+        };
 
         return (
-            <HubertProvider
-                theme={{
-                    ...defaultTheme,
-                    ...tenant.configuration.customTheme,
-                }}
-                supportedFonts={fonts}
-            >
+            <HubertProvider>
+                <GlobalStyles theme={theme} supportedFonts={fonts} />
                 <Authentication />
                 <UploadQueueProvider>
                     <AppHead />

@@ -23,8 +23,8 @@ export const Authentication = React.memo(() => {
 
     useSubscription<{ message: MessageModel }>(ReceiveMessageSubscription, {
         skip: typeof window === 'undefined' || !currentUser,
-        onSubscriptionData: ({ client, subscriptionData }) => {
-            const message = subscriptionData.data?.message;
+        onData: ({ client, data }) => {
+            const message = data.data?.message;
             if (message && currentUser && message.user.id !== currentUser.id) {
                 const readConversationResult = client.readQuery<
                     { conversation: ConversationModel },

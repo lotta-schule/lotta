@@ -108,7 +108,7 @@ export const useImageUrl = (
         } else {
             return {};
         }
-    }, [imageUrl, width, height, getUrlForDimensions]);
+    }, [imageUrl, width, height, maxDisplayWidth, getUrlForDimensions]);
 
     const customStyle = React.useMemo(() => {
         const style: React.CSSProperties = {};
