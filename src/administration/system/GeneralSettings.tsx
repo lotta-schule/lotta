@@ -71,7 +71,7 @@ export const GeneralSettings = () => {
                     <tbody>
                         <tr>
                             <td>
-                                <Link href={`https://${tenant.host}`}>
+                                <Link href={`https://${tenant.host}`} legacyBehavior>
                                     {tenant.host}
                                 </Link>
                             </td>

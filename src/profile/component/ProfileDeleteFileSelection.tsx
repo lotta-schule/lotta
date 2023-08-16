@@ -113,13 +113,10 @@ export const ProfileDeleteFileSelection =
                                                 '[ Logo der Seite ]';
                                             return (
                                                 <li key={i}>
-                                                    <Link
-                                                        href={linkTarget}
-                                                        passHref
-                                                    >
-                                                        <a target={'_blank'}>
-                                                            {linkText}
-                                                        </a>
+                                                    <Link href={linkTarget} passHref target={'_blank'}>
+
+                                                        {linkText}
+
                                                     </Link>
                                                 </li>
                                             );

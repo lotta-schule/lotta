@@ -20,8 +20,8 @@ import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
 import { WidgetModel, ScheduleResult, WidgetModelType } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
-
 import Link from 'next/link';
+
 import clsx from 'clsx';
 
 import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';

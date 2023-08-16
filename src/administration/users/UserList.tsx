@@ -32,51 +32,49 @@ export const UserList = React.memo(() => {
     );
 
     const rows = React.useMemo(() => {
-        return (
-            data?.users
-                ?.filter((user) =>
-                    selectedGroupsFilter.length
-                        ? user.groups.find((group) =>
-                              selectedGroupsFilter.find(
-                                  (g) => g.id === group.id
-                              )
+        return data?.users
+            ?.filter((user) =>
+                selectedGroupsFilter.length
+                    ? user.groups.find((group) =>
+                          selectedGroupsFilter.find(
+                              (g) => g.id === group.id
                           )
-                        : true
-                )
-                ?.filter((user) =>
-                    filterText
-                        ? new RegExp(
-                              filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'),
-                              'igu'
-                          ).test(user.name!)
-                        : true
-                )
-                ?.map((user) => ({
-                    avatarImage: (
-                        <UserAvatar
-                            className={styles.avatar}
-                            user={user}
-                            size={25}
-                        />
-                    ),
-                    name: (
-                        <>
-                            {user.name}
-                            {user.nickname && (
-                                <>
-                                    {' '}
-                                    &nbsp; (<strong>{user.nickname}</strong>)
-                                </>
-                            )}
-                        </>
-                    ),
-                    groups: user.groups.map((g) => g.name).join(', '),
-                    lastSeen: user.lastSeen
-                        ? format(new Date(user.lastSeen), 'PPP', { locale: de })
-                        : '',
-                    user,
-                })) ?? []
-        );
+                      )
+                    : true
+            )
+            ?.filter((user) =>
+                filterText
+                    ? new RegExp(
+                          filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'),
+                          'igu'
+                      ).test(user.name!)
+                    : true
+            )
+            ?.map((user) => ({
+                avatarImage: (
+                    <UserAvatar
+                        className={styles.avatar}
+                        user={user}
+                        size={25}
+                    />
+                ),
+                name: (
+                    <>
+                        {user.name}
+                        {user.nickname && (
+                            <>
+                                {' '}
+                                &nbsp; (<strong>{user.nickname}</strong>)
+                            </>
+                        )}
+                    </>
+                ),
+                groups: user.groups.map((g) => g.name).join(', '),
+                lastSeen: user.lastSeen
+                    ? format(new Date(user.lastSeen), 'PPP', { locale: de })
+                    : '',
+                user,
+            })) ?? [];
     }, [data, filterText, selectedGroupsFilter]);
 
     return (

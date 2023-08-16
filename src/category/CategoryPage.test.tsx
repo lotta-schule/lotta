@@ -43,7 +43,7 @@ describe('shared/article/CategoryLayout', () => {
                     ...partialArticle,
                     users: [KeinErSieEsUser, SomeUser],
                     category: MusikCategory,
-                }) as ArticleModel
+                } as ArticleModel)
         );
 
         it('should render the category title', async () => {

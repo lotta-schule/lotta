@@ -73,15 +73,15 @@ export const ArticlePreview = React.memo(
             disableLink ? (
                 content
             ) : (
-                <Link href={Article.getPath(article)}>
-                    <a
-                        color={'inherit'}
-                        style={{ textDecoration: 'none' }}
-                        className={styles.link}
-                    >
-                        {content ?? ''}
-                    </a>
-                </Link>
+                (<Link
+                    href={Article.getPath(article)}
+                    color={'inherit'}
+                    style={{ textDecoration: 'none' }}
+                    className={styles.link}>
+
+                    {content ?? ''}
+
+                </Link>)
             );
 
         return (
@@ -313,7 +313,7 @@ export const ArticlePreview = React.memo(
                                                 edit: true,
                                             })}
                                             passHref
-                                        >
+                                            legacyBehavior>
                                             <Button
                                                 aria-label="Beitrag bearbeiten"
                                                 className={clsx(

@@ -76,7 +76,7 @@ export const UserNavigation = React.memo(() => {
                         label={'neuer Beitrag'}
                         className={styles.navigationButton}
                     ></NavigationButton>
-                    <Link href={'/search'} passHref>
+                    <Link href={'/search'} passHref legacyBehavior>
                         <NavigationButton
                             small
                             secondary
@@ -85,7 +85,7 @@ export const UserNavigation = React.memo(() => {
                             className={styles.navigationButton}
                         ></NavigationButton>
                     </Link>
-                    <Link href={'/messaging'} passHref>
+                    <Link href={'/messaging'} passHref legacyBehavior>
                         <NavigationButton
                             small
                             secondary
@@ -231,7 +231,7 @@ export const UserNavigation = React.memo(() => {
                     label={'Registrieren'}
                     className={clsx('secondary', 'small')}
                 ></NavigationButton>
-                <Link href={'/search'} passHref>
+                <Link href={'/search'} passHref legacyBehavior>
                     <NavigationButton
                         secondary
                         onClick={() => router.push('/search')}

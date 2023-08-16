@@ -63,42 +63,38 @@ export const ArticlesList = React.memo(({ articles }: ArticlesListProps) => {
                             <Link
                                 href={Article.getPath(article, { edit: true })}
                                 passHref
-                            >
-                                <a
-                                    className={styles.link}
-                                    title={`Beitrag "${article.title}" bearbeiten`}
-                                >
-                                    {article.previewImageFile && (
-                                        <ResponsiveImage
-                                            className={styles.previewImage}
-                                            width={60}
-                                            aspectRatio={'3:2'}
-                                            src={File.getFileRemoteLocation(
-                                                baseUrl,
-                                                article.previewImageFile
-                                            )}
-                                            alt={`Vorschaubild zum Beitrag "${article.title}"`}
-                                        />
-                                    )}
-                                    {article.title}
-                                </a>
+                                className={styles.link}
+                                title={`Beitrag "${article.title}" bearbeiten`}>
+
+                                {article.previewImageFile && (
+                                    <ResponsiveImage
+                                        className={styles.previewImage}
+                                        width={60}
+                                        aspectRatio={'3:2'}
+                                        src={File.getFileRemoteLocation(
+                                            baseUrl,
+                                            article.previewImageFile
+                                        )}
+                                        alt={`Vorschaubild zum Beitrag "${article.title}"`}
+                                    />
+                                )}
+                                {article.title}
+
                             </Link>
                         </td>
                         <td>
                             {article.category && (
-                                <Link
+                                (<Link
                                     href={Category.getPath(article.category)}
                                     passHref
-                                >
-                                    <a
-                                        className={styles.link}
-                                        title={`${Category.getPath(
-                                            article.category
-                                        )} öffnen`}
-                                    >
-                                        {article.category.title}
-                                    </a>
-                                </Link>
+                                    className={styles.link}
+                                    title={`${Category.getPath(
+                                        article.category
+                                    )} öffnen`}>
+
+                                    {article.category.title}
+
+                                </Link>)
                             )}
                         </td>
                         <td>
