@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { MockRouter, render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
 import { EditArticlePage } from './EditArticlePage';
 import { ArticleModel, ContentModuleModel, ContentModuleType } from 'model';
-import { Router } from 'next/router';
 import MockDate from 'mockdate';
 import userEvent from '@testing-library/user-event';
 
@@ -33,11 +32,21 @@ describe('article/EditArticlePage', () => {
                 },
             },
         }));
-    it('should render the EditArticleLayout without error', () => {
+    it('should render the EditArticleLayout without error', async () => {
         render(
             <EditArticlePage article={Weihnachtsmarkt} />,
             {},
-            { currentUser: SomeUser }
+            {
+                currentUser: SomeUser,
+                additionalMocks: [
+                    {
+                        request: {
+                            query: ArticleIsUpdatedSubscription,
+                            variables: { id: Weihnachtsmarkt.id },
+                        },
+                    },
+                ],
+            }
         );
     });
 
@@ -45,7 +54,17 @@ describe('article/EditArticlePage', () => {
         const screen = render(
             <EditArticlePage article={Weihnachtsmarkt} />,
             {},
-            { currentUser: SomeUser }
+            {
+                currentUser: SomeUser,
+                additionalMocks: [
+                    {
+                        request: {
+                            query: ArticleIsUpdatedSubscription,
+                            variables: { id: Weihnachtsmarkt.id },
+                        },
+                    },
+                ],
+            }
         );
         expect(screen.getByTestId('ArticleEditable')).toBeVisible();
     });
@@ -54,7 +73,17 @@ describe('article/EditArticlePage', () => {
         const screen = render(
             <EditArticlePage article={Weihnachtsmarkt} />,
             {},
-            { currentUser: SomeUser }
+            {
+                currentUser: SomeUser,
+                additionalMocks: [
+                    {
+                        request: {
+                            query: ArticleIsUpdatedSubscription,
+                            variables: { id: Weihnachtsmarkt.id },
+                        },
+                    },
+                ],
+            }
         );
         expect(screen.getByTestId('EditArticleFooter')).toBeVisible();
     });
@@ -64,7 +93,17 @@ describe('article/EditArticlePage', () => {
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser }
+                {
+                    currentUser: SomeUser,
+                    additionalMocks: [
+                        {
+                            request: {
+                                query: ArticleIsUpdatedSubscription,
+                                variables: { id: Weihnachtsmarkt.id },
+                            },
+                        },
+                    ],
+                }
             );
             expect(screen.getByTestId('AddModuleBar')).toBeVisible();
         });
@@ -74,7 +113,17 @@ describe('article/EditArticlePage', () => {
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser }
+                {
+                    currentUser: SomeUser,
+                    additionalMocks: [
+                        {
+                            request: {
+                                query: ArticleIsUpdatedSubscription,
+                                variables: { id: Weihnachtsmarkt.id },
+                            },
+                        },
+                    ],
+                }
             );
             expect(screen.queryAllByTestId('ContentModule')).toHaveLength(3);
             await fireEvent.click(
@@ -148,6 +197,12 @@ describe('article/EditArticlePage', () => {
                             },
                             result: onSave,
                         },
+                        {
+                            request: {
+                                query: ArticleIsUpdatedSubscription,
+                                variables: { id: Weihnachtsmarkt.id },
+                            },
+                        },
                     ],
                 }
             );
@@ -207,6 +262,9 @@ describe('article/EditArticlePage', () => {
                 },
             };
             const onSave = createOnSave(Weihnachtsmarkt, variables.article);
+            jest.requireMock('next/router').mockRouter.reset(
+                `/a/${Weihnachtsmarkt.id}/edit`
+            );
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
                 {},
@@ -220,13 +278,18 @@ describe('article/EditArticlePage', () => {
                             },
                             result: onSave,
                         },
+                        {
+                            request: {
+                                query: ArticleIsUpdatedSubscription,
+                                variables: { id: Weihnachtsmarkt.id },
+                            },
+                        },
                     ],
-                    router: {
-                        pathname: '/a/[slug]/editor',
-                        as: `/a/${Weihnachtsmarkt.id}/edit`,
-                        onPush: onPushLocation,
-                    },
                 }
+            );
+            jest.requireMock('next/router').mockRouter.events.on(
+                'routeChangeStart',
+                onPushLocation
             );
             await fireEvent.click(
                 screen.getByRole('button', { name: /titel/i })
@@ -400,59 +463,65 @@ describe('article/EditArticlePage', () => {
     describe('issue warning when userAvatar navigates away', () => {
         const originalConfirm = global.confirm;
         beforeEach(() => {
+            jest.requireMock('next/router').mockRouter.reset(
+                `/c/${Weihnachtsmarkt.id}`
+            );
             global.confirm = jest.fn(() => true);
         });
         afterEach(() => {
             global.confirm = originalConfirm;
         });
+
         it('should show a prompt if userAvatar has made a change', async () => {
             const fireEvent = userEvent.setup();
-            let router: Router;
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
                 {},
                 {
                     currentUser: SomeUser,
-                    router: {
-                        as: `/c/${Weihnachtsmarkt.id}`,
-                        getInstance: (_router) => {
-                            router = _router;
+                    additionalMocks: [
+                        {
+                            request: {
+                                query: ArticleIsUpdatedSubscription,
+                                variables: { id: Weihnachtsmarkt.id },
+                            },
                         },
-                    },
+                    ],
                 }
             );
             await fireEvent.type(
                 screen.getByRole('textbox', { name: /title/i }),
                 'Bla'
             );
-            await waitFor(() => {
-                expect(router).not.toBeNull();
-            });
-            router!.events.emit('routeChangeStart');
+            jest.requireMock('next/router').mockRouter.events.emit(
+                'routeChangeStart',
+                '/c/123'
+            );
             await waitFor(() => {
                 expect(global.confirm).toHaveBeenCalled();
             });
         });
 
         it('should not show a prompt if userAvatar has not made changes', async () => {
-            let router: Router;
             render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
                 {},
                 {
                     currentUser: SomeUser,
-                    router: {
-                        as: `/c/${Weihnachtsmarkt.id}`,
-                        getInstance: (_router) => {
-                            router = _router;
+                    additionalMocks: [
+                        {
+                            request: {
+                                query: ArticleIsUpdatedSubscription,
+                                variables: { id: Weihnachtsmarkt.id },
+                            },
                         },
-                    },
+                    ],
                 }
             );
-            await waitFor(() => {
-                expect(router).not.toBeNull();
-            });
-            router!.events.emit('routeChangeStart');
+            jest.requireMock('next/router').mockRouter.events.emit(
+                'routeChangeStart',
+                '/c/123'
+            );
             expect(global.confirm).not.toHaveBeenCalled();
         });
     });

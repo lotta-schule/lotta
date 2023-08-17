@@ -71,7 +71,9 @@ export const Navbar = React.memo(() => {
                                 <NavigationButton
                                     key={'home'}
                                     selected={isHomepage}
-                                    className={clsx(styles.navButton, {selected: isHomepage})}
+                                    className={clsx(styles.navButton, {
+                                        selected: isHomepage,
+                                    })}
                                 >
                                     {homepageCategory.title}
                                 </NavigationButton>
@@ -86,15 +88,20 @@ export const Navbar = React.memo(() => {
                                         : Category.getPath(category)
                                 }
                                 passHref
-                                legacyBehavior>
+                                legacyBehavior
+                            >
                                 <NavigationButton
-                                    selected={categoriesHierarchy.indexOf(
-                                        category.id
-                                    ) > -1}
-                                    className={clsx(styles.navButton, {
-                                        selected: categoriesHierarchy.indexOf(
+                                    selected={
+                                        categoriesHierarchy.indexOf(
                                             category.id
-                                        ) > -1 })}
+                                        ) > -1
+                                    }
+                                    className={clsx(styles.navButton, {
+                                        selected:
+                                            categoriesHierarchy.indexOf(
+                                                category.id
+                                            ) > -1,
+                                    })}
                                 >
                                     {category.title}
                                 </NavigationButton>
@@ -127,14 +134,16 @@ export const Navbar = React.memo(() => {
                                     : Category.getPath(category)
                             }
                             passHref
-                            legacyBehavior>
+                            legacyBehavior
+                        >
                             <NavigationButton
                                 key={category.id}
                                 small
                                 secondary
-                                selected={categoriesHierarchy.indexOf(
-                                    category.id
-                                ) > -1}
+                                selected={
+                                    categoriesHierarchy.indexOf(category.id) >
+                                    -1
+                                }
                                 className={clsx(styles.navButtonSecond, {
                                     selected:
                                         categoriesHierarchy.indexOf(

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render } from 'test/util';
 import { UserNavigationMobile } from './UserNavigationMobile';
 import { SomeUser, adminGroup } from 'test/fixtures';

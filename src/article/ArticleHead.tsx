@@ -21,11 +21,11 @@ export const ArticleHead = React.memo<ArticleHeadProps>(({ article }) => {
         { width: 1200, height: 630, resize: 'cover' }
     );
 
+    const title = `${article.title} ${tenant.title}`;
+
     return (
         <Head>
-            <title>
-                {article.title} &nbsp; {tenant.title}
-            </title>
+            <title>{title}</title>
             <meta name={'description'} content={article.preview} />
             <meta property={'og:site_name'} content={tenant.title} />
             <meta property={'og:type'} content={'article'} />
