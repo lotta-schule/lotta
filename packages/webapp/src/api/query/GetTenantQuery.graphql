@@ -1,18 +1,18 @@
 query GetTenant {
-    tenant {
+  tenant {
+    id
+    title
+    slug
+    host
+    configuration {
+      backgroundImageFile {
         id
-        title
-        slug
-        host
-        configuration {
-            backgroundImageFile {
-                id
-            }
-            logoImageFile {
-                id
-            }
-            customTheme
-            userMaxStorageConfig
-        }
+      }
+      logoImageFile {
+        id
+      }
+      customTheme
+      userMaxStorageConfig
     }
+  }
 }

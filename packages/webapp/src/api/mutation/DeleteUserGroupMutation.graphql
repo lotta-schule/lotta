@@ -1,5 +1,5 @@
 mutation DeleteUserGroup($id: ID!) {
-    group: deleteUserGroup(id: $id) {
-        id
-    }
+  group: deleteUserGroup(id: $id) {
+    id
+  }
 }

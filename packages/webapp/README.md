@@ -40,9 +40,9 @@ The project is a [nextjs](https://nextjs.org/) project.
 
 ### Installation
 
--   Make sure you have a running instance of the [lotta Core API Server](https://github.com/lotta-schule/core).
--   You will need an up-to-date version of nodejs installed.
-    See `.tools-version` file to maximize compatibility
+- Make sure you have a running instance of the [lotta Core API Server](https://github.com/lotta-schule/core).
+- You will need an up-to-date version of nodejs installed.
+  See `.tools-version` file to maximize compatibility
 
 ### Configuration
 

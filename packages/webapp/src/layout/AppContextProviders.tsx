@@ -23,102 +23,100 @@ import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 const defaultTheme = DefaultThemes.standard;
 
 const {
-    publicRuntimeConfig: { plausibleEndpoint },
+  publicRuntimeConfig: { plausibleEndpoint },
 } = getConfig();
 
 export interface AppContextProvidersProps {
-    categories: CategoryModel[] | null;
-    currentUser: UserModel | null;
-    requestBaseUrl: string;
-    tenant: TenantModel;
-    children?: React.ReactNode;
+  categories: CategoryModel[] | null;
+  currentUser: UserModel | null;
+  requestBaseUrl: string;
+  tenant: TenantModel;
+  children?: React.ReactNode;
 }
 
 export type TenantContextProvidersProps = {
-    children: React.ReactNode;
+  children: React.ReactNode;
 };
 
 const TenantContextProviders = React.memo(
-    ({ children }: TenantContextProvidersProps) => {
-        const tenant = useTenant();
-        const customTheme = tenant.configuration.customTheme;
+  ({ children }: TenantContextProvidersProps) => {
+    const tenant = useTenant();
+    const customTheme = tenant.configuration.customTheme;
 
-        const theme = {
-            ...defaultTheme,
-            ...customTheme,
-        };
+    const theme = {
+      ...defaultTheme,
+      ...customTheme,
+    };
 
-        return (
-            <HubertProvider>
-                <GlobalStyles theme={theme} supportedFonts={fonts} />
-                <Authentication />
-                <UploadQueueProvider>
-                    <AppHead />
-                    <BaseLayout>{children}</BaseLayout>
-                </UploadQueueProvider>
-            </HubertProvider>
-        );
-    }
+    return (
+      <HubertProvider>
+        <GlobalStyles theme={theme} supportedFonts={fonts} />
+        <Authentication />
+        <UploadQueueProvider>
+          <AppHead />
+          <BaseLayout>{children}</BaseLayout>
+        </UploadQueueProvider>
+      </HubertProvider>
+    );
+  }
 );
 TenantContextProviders.displayName = 'TenantContextProviders';
 
 export const AppContextProviders = ({
-    tenant,
-    categories,
-    currentUser,
-    requestBaseUrl,
-    children,
+  tenant,
+  categories,
+  currentUser,
+  requestBaseUrl,
+  children,
 }: AppContextProvidersProps) => {
-    const firstBrowserInit = React.useRef(false);
+  const firstBrowserInit = React.useRef(false);
 
-    const client = getApolloClient({ tenant });
-    if (!firstBrowserInit.current) {
-        client.writeQuery({
-            query: GetTenantQuery,
-            data: { tenant },
-        });
-        if (categories) {
-            client.writeQuery({
-                query: GetCategoriesQuery,
-                data: { categories },
-            });
-        }
-        if (currentUser) {
-            client.writeQuery({
-                query: GetCurrentUserQuery,
-                data: { currentUser },
-            });
-        }
-        if (typeof window !== 'undefined') {
-            const authToken = document.cookie.match(/AuthToken=(.+);?/i)?.[1];
-            if (authToken) {
-                localStorage.setItem('id', authToken);
-            }
-        }
-        firstBrowserInit.current = true;
+  const client = getApolloClient({ tenant });
+  if (!firstBrowserInit.current) {
+    client.writeQuery({
+      query: GetTenantQuery,
+      data: { tenant },
+    });
+    if (categories) {
+      client.writeQuery({
+        query: GetCategoriesQuery,
+        data: { categories },
+      });
     }
+    if (currentUser) {
+      client.writeQuery({
+        query: GetCurrentUserQuery,
+        data: { currentUser },
+      });
+    }
+    if (typeof window !== 'undefined') {
+      const authToken = document.cookie.match(/AuthToken=(.+);?/i)?.[1];
+      if (authToken) {
+        localStorage.setItem('id', authToken);
+      }
+    }
+    firstBrowserInit.current = true;
+  }
 
-    const baseUrl =
-        typeof window === undefined
-            ? requestBaseUrl
-            : requestBaseUrl ?? window.location.origin;
+  const baseUrl =
+    typeof window === undefined
+      ? requestBaseUrl
+      : requestBaseUrl ?? window.location.origin;
 
-    return (
-        <PlausibleProvider
-            selfHosted
-            enabled={!!plausibleEndpoint}
-            domain={tenant.host}
-            customDomain={plausibleEndpoint}
-        >
-            <ServerDataContextProvider value={{ baseUrl }}>
-                <ApolloProvider client={client}>
-                    <I18nextProvider i18n={i18n}>
-                        <TenantContextProviders>
-                            {children}
-                        </TenantContextProviders>
-                    </I18nextProvider>
-                </ApolloProvider>
-            </ServerDataContextProvider>
-        </PlausibleProvider>
-    );
+  return (
+    <PlausibleProvider
+      selfHosted
+      enabled={!!plausibleEndpoint}
+      domain={tenant.host}
+      customDomain={plausibleEndpoint}
+    >
+      <ServerDataContextProvider value={{ baseUrl }}>
+        <ApolloProvider client={client}>
+          <I18nextProvider i18n={i18n}>
+            <TenantContextProviders>{children}</TenantContextProviders>
+          </I18nextProvider>
+        </ApolloProvider>
+      </ServerDataContextProvider>
+    </PlausibleProvider>
+  );
 };

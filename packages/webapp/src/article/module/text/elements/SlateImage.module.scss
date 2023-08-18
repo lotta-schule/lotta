@@ -1,19 +1,19 @@
 .root {
-    position: relative;
-    box-sizing: border-box;
-    margin: var(--lotta-spacing);
-    cursor: inherit;
-    border: none;
-    max-width: 100%;
-    max-height: 100%;
-    img {
-        width: 100%;
-    }
+  position: relative;
+  box-sizing: border-box;
+  margin: var(--lotta-spacing);
+  cursor: inherit;
+  border: none;
+  max-width: 100%;
+  max-height: 100%;
+  img {
+    width: 100%;
+  }
 
-    &.isEditing {
-        cursor: pointer;
-    }
-    &.isSelected {
-        border: 1px solid rgba(var(--lotta-primary-color), 1);
-    }
+  &.isEditing {
+    cursor: pointer;
+  }
+  &.isSelected {
+    border: 1px solid rgba(var(--lotta-primary-color), 1);
+  }
 }

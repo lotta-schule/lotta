@@ -11,77 +11,74 @@ import styles from './SearchUserField.module.scss';
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 
 export interface SearchUserFieldProps {
-    style?: React.CSSProperties;
+  style?: React.CSSProperties;
 
-    className?: string;
+  className?: string;
 
-    label?: string | null;
+  label?: string | null;
 
-    disabled?: boolean;
+  disabled?: boolean;
 
-    /**
-     * Only needed when the users should be marked as 'selected'
-     * on the search results listbox.
-     */
-    selectedUsers?: UserModel[];
+  /**
+   * Only needed when the users should be marked as 'selected'
+   * on the search results listbox.
+   */
+  selectedUsers?: UserModel[];
 
-    onSelectUser(user: UserModel): void;
+  onSelectUser(user: UserModel): void;
 }
 
 export const SearchUserField = React.memo(
-    ({
-        className,
-        style,
-        label,
-        selectedUsers,
-        onSelectUser,
-        disabled,
-    }: SearchUserFieldProps) => {
-        const [execute, { data }] = useLazyQuery<
-            { users: UserModel[] },
-            { searchtext: string }
-        >(SearchUsersQuery);
+  ({
+    className,
+    style,
+    label,
+    selectedUsers,
+    onSelectUser,
+    disabled,
+  }: SearchUserFieldProps) => {
+    const [execute, { data }] = useLazyQuery<
+      { users: UserModel[] },
+      { searchtext: string }
+    >(SearchUsersQuery);
 
-        return (
-            <NoSsr>
-                <div
-                    className={clsx(styles.root, className)}
-                    style={style}
-                    data-testid="SearchUserField"
-                >
-                    <ComboBox
-                        fullWidth
-                        hideLabel
-                        disabled={disabled}
-                        title={label ?? 'Nutzer suchen'}
-                        className={styles.comboBox}
-                        items={async (searchtext) => {
-                            const { data } = await execute({
-                                variables: { searchtext },
-                            });
-                            return (data?.users ?? []).map((user) => ({
-                                key: user.id,
-                                label: User.getName(user),
-                                textValue: User.getName(user),
-                                selected: !!selectedUsers?.find(
-                                    (selectedUser) =>
-                                        selectedUser.id === user.id
-                                ),
-                                leftSection: <UserAvatar user={user} />,
-                            }));
-                        }}
-                        onSelect={(userId) => {
-                            const user = data?.users.find(
-                                (user) => user.id === userId
-                            );
-                            if (user) {
-                                onSelectUser?.(user);
-                            }
-                        }}
-                    />
-                </div>
-            </NoSsr>
-        );
-    }
+    return (
+      <NoSsr>
+        <div
+          className={clsx(styles.root, className)}
+          style={style}
+          data-testid="SearchUserField"
+        >
+          <ComboBox
+            fullWidth
+            hideLabel
+            disabled={disabled}
+            title={label ?? 'Nutzer suchen'}
+            className={styles.comboBox}
+            items={async (searchtext) => {
+              const { data } = await execute({
+                variables: { searchtext },
+              });
+              return (data?.users ?? []).map((user) => ({
+                key: user.id,
+                label: User.getName(user),
+                textValue: User.getName(user),
+                selected: !!selectedUsers?.find(
+                  (selectedUser) => selectedUser.id === user.id
+                ),
+                leftSection: <UserAvatar user={user} />,
+              }));
+            }}
+            onSelect={(userId) => {
+              const user = data?.users.find((user) => user.id === userId);
+              if (user) {
+                onSelectUser?.(user);
+              }
+            }}
+          />
+        </div>
+      </NoSsr>
+    );
+  }
 );
 SearchUserField.displayName = 'SearchUserField';

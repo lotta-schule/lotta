@@ -1,18 +1,18 @@
 mutation UpdateTenant($tenant: TenantInput!) {
-    tenant: updateTenant(tenant: $tenant) {
+  tenant: updateTenant(tenant: $tenant) {
+    id
+    title
+    slug
+    host
+    configuration {
+      backgroundImageFile {
         id
-        title
-        slug
-        host
-        configuration {
-            backgroundImageFile {
-                id
-            }
-            logoImageFile {
-                id
-            }
-            customTheme
-            userMaxStorageConfig
-        }
+      }
+      logoImageFile {
+        id
+      }
+      customTheme
+      userMaxStorageConfig
     }
+  }
 }

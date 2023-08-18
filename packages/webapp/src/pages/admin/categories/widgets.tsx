@@ -6,23 +6,23 @@ import { WidgetList } from 'administration/categories/WidgetList';
 import { GetServerSidePropsContext } from 'next';
 
 const WidgetsRoute = () => {
-    return (
-        <AdminPage
-            title={
-                <>
-                    <Icon icon={faSquareCaretRight} /> Marginalen
-                </>
-            }
-            component={WidgetList}
-            hasHomeLink
-        />
-    );
+  return (
+    <AdminPage
+      title={
+        <>
+          <Icon icon={faSquareCaretRight} /> Marginalen
+        </>
+      }
+      component={WidgetList}
+      hasHomeLink
+    />
+  );
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default WidgetsRoute;

@@ -1,7 +1,7 @@
 export {};
 
 declare global {
-    interface Window {
-        tid?: string;
-    }
+  interface Window {
+    tid?: string;
+  }
 }

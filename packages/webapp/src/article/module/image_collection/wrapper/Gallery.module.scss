@@ -1,18 +1,18 @@
 @import 'breakpoints';
 
 .root {
-    .img {
-        img {
-            max-width: 100%;
-            object-fit: cover;
-            aspect-ratio: 4 / 3;
-        }
+  .img {
+    img {
+      max-width: 100%;
+      object-fit: cover;
+      aspect-ratio: 4 / 3;
     }
+  }
 
-    .deleteButton {
-        position: absolute;
-        right: 1.5em;
-        top: 0.5em;
-        z-index: 200;
-    }
+  .deleteButton {
+    position: absolute;
+    right: 1.5em;
+    top: 0.5em;
+    z-index: 200;
+  }
 }

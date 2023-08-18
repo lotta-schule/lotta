@@ -1,11 +1,11 @@
 .root {
-    position: sticky !important;
-    z-index: 100;
-    .toolbar {
-        background-color: rgba(var(--lotta-box-background-color), 1);
-        padding: var(--lotta-spacing);
-    }
-    .buttonGroup {
-        margin-right: calc(0.5 * var(--lotta-spacing));
-    }
+  position: sticky !important;
+  z-index: 100;
+  .toolbar {
+    background-color: rgba(var(--lotta-box-background-color), 1);
+    padding: var(--lotta-spacing);
+  }
+  .buttonGroup {
+    margin-right: calc(0.5 * var(--lotta-spacing));
+  }
 }

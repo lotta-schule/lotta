@@ -1,12 +1,12 @@
 .root {
-    display: flex;
-    flex-direction: column;
-    .title {
-        padding-top: var(--lotta-spacing);
-        padding-bottom: var(--lotta-spacing);
-        padding-left: var(--lotta-spacing);
-        color: rgba(var(--lotta-text-color), 1);
-        background-color: transparent;
-        text-transform: uppercase;
-    }
+  display: flex;
+  flex-direction: column;
+  .title {
+    padding-top: var(--lotta-spacing);
+    padding-bottom: var(--lotta-spacing);
+    padding-left: var(--lotta-spacing);
+    color: rgba(var(--lotta-text-color), 1);
+    background-color: transparent;
+    text-transform: uppercase;
+  }
 }

@@ -6,23 +6,23 @@ import { UserList } from 'administration/users/UserList';
 import { GetServerSidePropsContext } from 'next';
 
 const ListRoute = () => {
-    return (
-        <AdminPage
-            title={
-                <>
-                    <Icon icon={faCircleUser} /> Nutzer
-                </>
-            }
-            hasHomeLink
-            component={UserList}
-        />
-    );
+  return (
+    <AdminPage
+      title={
+        <>
+          <Icon icon={faCircleUser} /> Nutzer
+        </>
+      }
+      hasHomeLink
+      component={UserList}
+    />
+  );
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default ListRoute;

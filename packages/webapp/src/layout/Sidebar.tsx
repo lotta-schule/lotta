@@ -10,55 +10,55 @@ import { useRouter } from 'next/router';
 import styles from './Sidebar.module.scss';
 
 export interface SidebarProps {
-    isEmpty?: boolean;
-    children?: any;
+  isEmpty?: boolean;
+  children?: any;
 }
 
 export const Sidebar = React.memo<SidebarProps>(({ children, isEmpty }) => {
-    const router = useRouter();
-    const isMobile = useIsMobile();
+  const router = useRouter();
+  const isMobile = useIsMobile();
 
-    const isMobileDrawerOpen = useReactiveVar(isMobileDrawerOpenVar);
-    const closeMobileDrawer = () => isMobileDrawerOpenVar(false);
+  const isMobileDrawerOpen = useReactiveVar(isMobileDrawerOpenVar);
+  const closeMobileDrawer = () => isMobileDrawerOpenVar(false);
 
-    React.useEffect(() => {
-        closeMobileDrawer();
-    }, [router.pathname]);
+  React.useEffect(() => {
+    closeMobileDrawer();
+  }, [router.pathname]);
 
-    if (isMobile) {
-        return (
-            <Drawer
-                data-testid={'BaseLayoutSidebar'}
-                isOpen={isMobileDrawerOpen}
-                onClose={closeMobileDrawer}
-            >
-                {isEmpty ? (
-                    <NoSsr>
-                        <WidgetsList widgets={[]} />
-                    </NoSsr>
-                ) : (
-                    children
-                )}
-                <Footer />
-            </Drawer>
-        );
-    } else if (isEmpty) {
-        // there must be a relative container for footer positioning
-        return (
-            <div
-                data-testid="BaseLayoutSidebar"
-                style={{ position: 'relative', width: 0 }}
-            >
-                <Footer />
-            </div>
-        );
-    } else {
-        return (
-            <aside data-testid="BaseLayoutSidebar" className={styles.root}>
-                {children}
-                <Footer />
-            </aside>
-        );
-    }
+  if (isMobile) {
+    return (
+      <Drawer
+        data-testid={'BaseLayoutSidebar'}
+        isOpen={isMobileDrawerOpen}
+        onClose={closeMobileDrawer}
+      >
+        {isEmpty ? (
+          <NoSsr>
+            <WidgetsList widgets={[]} />
+          </NoSsr>
+        ) : (
+          children
+        )}
+        <Footer />
+      </Drawer>
+    );
+  } else if (isEmpty) {
+    // there must be a relative container for footer positioning
+    return (
+      <div
+        data-testid="BaseLayoutSidebar"
+        style={{ position: 'relative', width: 0 }}
+      >
+        <Footer />
+      </div>
+    );
+  } else {
+    return (
+      <aside data-testid="BaseLayoutSidebar" className={styles.root}>
+        {children}
+        <Footer />
+      </aside>
+    );
+  }
 });
 Sidebar.displayName = 'BaseLayoutSidebar';

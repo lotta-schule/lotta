@@ -1,5 +1,5 @@
 mutation DeleteArticle($id: ID!) {
-    article: deleteArticle(id: $id) {
-        id
-    }
+  article: deleteArticle(id: $id) {
+    id
+  }
 }

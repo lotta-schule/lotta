@@ -1,563 +1,536 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import {
-    adminGroup,
-    imageFile,
-    KeinErSieEsUser,
-    SomeUser,
-    SomeUserin,
-    Weihnachtsmarkt,
+  adminGroup,
+  imageFile,
+  KeinErSieEsUser,
+  SomeUser,
+  SomeUserin,
+  Weihnachtsmarkt,
 } from 'test/fixtures';
 import { ArticlePreview } from './ArticlePreview';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/article/ArticlePreview', () => {
-    it('should render an ArticlePreview without error', () => {
-        render(
-            <ArticlePreview article={Weihnachtsmarkt} />,
+  it('should render an ArticlePreview without error', () => {
+    render(
+      <ArticlePreview article={Weihnachtsmarkt} />,
+      {},
+      { currentUser: SomeUser }
+    );
+  });
+
+  describe('should render title', () => {
+    it('as heading when disableLink prop is set', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} disableLink />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.getByRole('heading', { name: /article title/i })
+      ).toBeVisible();
+      expect(
+        screen.getByRole('heading', { name: /article title/i })
+      ).toHaveTextContent('Weihnachtsmarkt');
+      expect(
+        screen.queryByRole('link', { name: /weihnachtsmarkt/i })
+      ).toBeNull();
+    });
+
+    it('as link when disableLink prop is not set', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.getByRole('heading', { name: /article title/i })
+      ).toBeVisible();
+      expect(
+        screen.getByRole('heading', { name: /article title/i })
+      ).toHaveTextContent('Weihnachtsmarkt');
+      expect(
+        screen.getByRole('link', { name: /weihnachtsmarkt/i })
+      ).toBeVisible();
+    });
+
+    it('as editable when onUpdateArticle prop is given', () => {
+      const screen = render(
+        <ArticlePreview
+          article={Weihnachtsmarkt}
+          onUpdateArticle={jest.fn()}
+        />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.getByRole('textbox', { name: /article title/i })
+      ).toBeVisible();
+      expect(
+        screen.getByRole('textbox', { name: /article title/i })
+      ).toHaveValue('Weihnachtsmarkt');
+    });
+
+    it('and call update callback when edited', async () => {
+      const fireEvent = userEvent.setup();
+      const fn = jest.fn();
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={fn} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      const titleInput = screen.getByRole('textbox', {
+        name: /article title/i,
+      }) as HTMLInputElement;
+      await fireEvent.type(titleInput, 'A', {
+        initialSelectionStart: 0,
+        initialSelectionEnd: titleInput.value.length,
+      });
+      expect(fn).toHaveBeenCalledWith({ ...Weihnachtsmarkt, title: 'A' });
+    });
+  });
+
+  describe('Article Preview field', () => {
+    it('should render preview', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.getByText(
+          'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
+        )
+      ).toBeVisible();
+    });
+
+    it('as editable when onUpdateArticle prop is given', () => {
+      const screen = render(
+        <ArticlePreview
+          article={Weihnachtsmarkt}
+          onUpdateArticle={jest.fn()}
+        />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.getByRole('textbox', { name: /article preview text/i })
+      ).toBeVisible();
+      expect(
+        screen.getByRole('textbox', { name: /article preview text/i })
+      ).toHaveValue(
+        'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
+      );
+    });
+
+    it('and call update callback when edited', async () => {
+      const fireEvent = userEvent.setup();
+      const fn = jest.fn();
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={fn} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      const previewInput = screen.getByRole('textbox', {
+        name: /article preview text/i,
+      }) as HTMLInputElement;
+      await fireEvent.type(previewInput, 'A', {
+        initialSelectionStart: 0,
+        initialSelectionEnd: previewInput.value.length,
+      });
+      expect(fn).toHaveBeenCalledWith({
+        ...Weihnachtsmarkt,
+        preview: 'A',
+      });
+    });
+  });
+
+  describe('preview image', () => {
+    it('should not render if not available when not in EditMode', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(screen.queryByRole('img', { name: /vorschaubild/i })).toBeNull();
+    });
+
+    it('should render if available', () => {
+      const screen = render(
+        <ArticlePreview
+          article={{
+            ...Weihnachtsmarkt,
+            previewImageFile: imageFile as any,
+          }}
+        />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(screen.getByRole('img', { name: /vorschaubild/i })).toBeVisible();
+      expect(
+        screen.getByRole('img', { name: /vorschaubild/i })
+      ).toHaveAttribute('srcset', expect.stringContaining('/storage/f/123'));
+    });
+
+    describe('EditMode', () => {
+      it('as editable when onUpdateArticle prop is given', () => {
+        const screen = render(
+          <ArticlePreview
+            article={Weihnachtsmarkt}
+            onUpdateArticle={jest.fn()}
+          />,
+          {},
+          { currentUser: SomeUser }
+        );
+        expect(screen.getByTestId('EditOverlay')).toBeVisible();
+      });
+    });
+  });
+
+  describe('tags', () => {
+    it('should render tags', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(screen.getByTestId('Tag')).toHaveTextContent('La Revolucion');
+    });
+
+    it('should not show DeleteButton when in EditMode', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      const tag = screen.getByTestId('Tag');
+      expect(tag.querySelector('[data-testid="DeleteButton"]')).toBeNull();
+    });
+
+    it('should show DeleteButton when in EditMode', () => {
+      const screen = render(
+        <ArticlePreview
+          article={Weihnachtsmarkt}
+          onUpdateArticle={jest.fn()}
+        />,
+        {},
+        { currentUser: SomeUser }
+      );
+      const tag = screen.getByTestId('Tag');
+      expect(tag.querySelector('svg')).toBeVisible();
+    });
+
+    it('should delete the tag when DeleteButton is clicked', async () => {
+      const fireEvent = userEvent.setup();
+      const fn = jest.fn();
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={fn} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      const tag = screen.getByTestId('Tag');
+      await fireEvent.click(tag.querySelector('svg')!);
+      expect(fn).toHaveBeenCalledWith({
+        ...Weihnachtsmarkt,
+        tags: [],
+      });
+    });
+
+    it('should add a new tag', async () => {
+      const fireEvent = userEvent.setup();
+      const fn = jest.fn();
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={fn} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      await fireEvent.type(
+        screen.getByRole('combobox', { name: /tag hinzufügen/i }),
+        'Neu{enter}'
+      );
+      await waitFor(() => {
+        expect(fn).toHaveBeenCalledWith({
+          ...Weihnachtsmarkt,
+          tags: ['La Revolucion', 'Neu'],
+        });
+      });
+    });
+  });
+
+  describe('UpdateTime', () => {
+    it('should render last update time', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(screen.getByText('11.10.2020')).toBeVisible();
+    });
+  });
+
+  describe('Users List', () => {
+    const WeihnachtsmarktWithUsers = {
+      ...Weihnachtsmarkt,
+      users: [SomeUser, SomeUserin],
+    };
+    it('should render the users list', () => {
+      const screen = render(
+        <ArticlePreview article={WeihnachtsmarktWithUsers} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(screen.getByTestId('AuthorAvatarsList')).toBeVisible();
+      expect(screen.getAllByRole('img', { name: /profilbild/i })).toHaveLength(
+        2
+      );
+    });
+
+    describe('EditMode', () => {
+      it('should show the "add author" input field when in EditMode', () => {
+        const screen = render(
+          <ArticlePreview
+            article={WeihnachtsmarktWithUsers}
+            onUpdateArticle={jest.fn()}
+          />,
+          {},
+          { currentUser: SomeUser }
+        );
+        expect(
+          screen.getByRole('combobox', { name: /autor hinzufügen/i })
+        ).toBeVisible();
+      });
+
+      it('should show the "delete" button for authors when in EditMode', async () => {
+        const fireEvent = userEvent.setup();
+        const fn = jest.fn();
+        const screen = render(
+          <ArticlePreview
+            article={WeihnachtsmarktWithUsers}
+            onUpdateArticle={fn}
+          />,
+          {},
+          { currentUser: KeinErSieEsUser }
+        );
+        const avatarsList = screen.getByTestId('AuthorAvatarsList');
+        expect(avatarsList.querySelector('button')).toBeVisible();
+        await fireEvent.click(avatarsList.querySelector('button')!);
+        expect(fn).toHaveBeenCalledWith({
+          ...WeihnachtsmarktWithUsers,
+          users: [SomeUserin],
+        });
+      });
+      describe('should show warning when removing oneself', () => {
+        it('show a warning when userAvatar tries to remove him/herself and close the popup on abort', async () => {
+          const fireEvent = userEvent.setup();
+          const onUpdate = jest.fn();
+          const screen = render(
+            <ArticlePreview
+              article={WeihnachtsmarktWithUsers}
+              onUpdateArticle={onUpdate}
+            />,
             {},
             { currentUser: SomeUser }
-        );
+          );
+          await fireEvent.click(
+            screen.getByRole('button', { name: /che entfernen/i })
+          );
+          await waitFor(() => {
+            expect(screen.getByRole('dialog')).toBeVisible();
+          });
+          expect(
+            screen.getByRole('dialog').querySelectorAll('button')
+          ).toHaveLength(2);
+          expect(
+            screen.getByRole('dialog').querySelectorAll('button')[0]
+          ).toHaveTextContent(/abbrechen/i);
+          await fireEvent.click(
+            screen.getByRole('dialog').querySelectorAll('button')[0]
+          );
+          await waitFor(() => {
+            expect(screen.queryByRole('dialog')).toBeNull();
+          });
+        });
+
+        it('show a warning when userAvatar tries to remove him/herself and remove userAvatar on confirm', async () => {
+          const fireEvent = userEvent.setup();
+          const onUpdate = jest.fn();
+          const screen = render(
+            <ArticlePreview
+              article={WeihnachtsmarktWithUsers}
+              onUpdateArticle={onUpdate}
+            />,
+            {},
+            { currentUser: SomeUser }
+          );
+          await fireEvent.click(
+            screen.getByRole('button', { name: /che entfernen/i })
+          );
+          await waitFor(() => {
+            expect(screen.getByRole('dialog')).toBeVisible();
+          });
+          expect(
+            screen.getByRole('dialog').querySelectorAll('button')
+          ).toHaveLength(2);
+          expect(
+            screen.getByRole('dialog').querySelectorAll('button')[1]
+          ).toHaveTextContent(/entfernen/i);
+          await fireEvent.click(
+            screen.getByRole('dialog').querySelectorAll('button')[1]
+          );
+
+          expect(onUpdate).toHaveBeenCalledWith({
+            ...WeihnachtsmarktWithUsers,
+            users: [SomeUserin],
+          });
+        });
+      });
+    });
+  });
+
+  describe('Edit Button', () => {
+    const admin = { ...SomeUser, groups: [adminGroup] };
+
+    it('should be shown for admin', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} />,
+        {},
+        { currentUser: admin }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag bearbeiten/i })
+      ).toBeVisible();
     });
 
-    describe('should render title', () => {
-        it('as heading when disableLink prop is set', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} disableLink />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.getByRole('heading', { name: /article title/i })
-            ).toBeVisible();
-            expect(
-                screen.getByRole('heading', { name: /article title/i })
-            ).toHaveTextContent('Weihnachtsmarkt');
-            expect(
-                screen.queryByRole('link', { name: /weihnachtsmarkt/i })
-            ).toBeNull();
-        });
-
-        it('as link when disableLink prop is not set', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.getByRole('heading', { name: /article title/i })
-            ).toBeVisible();
-            expect(
-                screen.getByRole('heading', { name: /article title/i })
-            ).toHaveTextContent('Weihnachtsmarkt');
-            expect(
-                screen.getByRole('link', { name: /weihnachtsmarkt/i })
-            ).toBeVisible();
-        });
-
-        it('as editable when onUpdateArticle prop is given', () => {
-            const screen = render(
-                <ArticlePreview
-                    article={Weihnachtsmarkt}
-                    onUpdateArticle={jest.fn()}
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.getByRole('textbox', { name: /article title/i })
-            ).toBeVisible();
-            expect(
-                screen.getByRole('textbox', { name: /article title/i })
-            ).toHaveValue('Weihnachtsmarkt');
-        });
-
-        it('and call update callback when edited', async () => {
-            const fireEvent = userEvent.setup();
-            const fn = jest.fn();
-            const screen = render(
-                <ArticlePreview
-                    article={Weihnachtsmarkt}
-                    onUpdateArticle={fn}
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            const titleInput = screen.getByRole('textbox', {
-                name: /article title/i,
-            }) as HTMLInputElement;
-            await fireEvent.type(titleInput, 'A', {
-                initialSelectionStart: 0,
-                initialSelectionEnd: titleInput.value.length,
-            });
-            expect(fn).toHaveBeenCalledWith({ ...Weihnachtsmarkt, title: 'A' });
-        });
+    it('should not be shown for admin if disableEdit is set', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} disableEdit />,
+        {},
+        { currentUser: admin }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag bearbeiten/i })
+      ).toBeNull();
     });
 
-    describe('Article Preview field', () => {
-        it('should render preview', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.getByText(
-                    'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
-                )
-            ).toBeVisible();
-        });
-
-        it('as editable when onUpdateArticle prop is given', () => {
-            const screen = render(
-                <ArticlePreview
-                    article={Weihnachtsmarkt}
-                    onUpdateArticle={jest.fn()}
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.getByRole('textbox', { name: /article preview text/i })
-            ).toBeVisible();
-            expect(
-                screen.getByRole('textbox', { name: /article preview text/i })
-            ).toHaveValue(
-                'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
-            );
-        });
-
-        it('and call update callback when edited', async () => {
-            const fireEvent = userEvent.setup();
-            const fn = jest.fn();
-            const screen = render(
-                <ArticlePreview
-                    article={Weihnachtsmarkt}
-                    onUpdateArticle={fn}
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            const previewInput = screen.getByRole('textbox', {
-                name: /article preview text/i,
-            }) as HTMLInputElement;
-            await fireEvent.type(previewInput, 'A', {
-                initialSelectionStart: 0,
-                initialSelectionEnd: previewInput.value.length,
-            });
-            expect(fn).toHaveBeenCalledWith({
-                ...Weihnachtsmarkt,
-                preview: 'A',
-            });
-        });
+    it('should be shown for author', () => {
+      const screen = render(
+        <ArticlePreview article={{ ...Weihnachtsmarkt, users: [SomeUser] }} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag bearbeiten/i })
+      ).toBeVisible();
     });
 
-    describe('preview image', () => {
-        it('should not render if not available when not in EditMode', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.queryByRole('img', { name: /vorschaubild/i })
-            ).toBeNull();
-        });
-
-        it('should render if available', () => {
-            const screen = render(
-                <ArticlePreview
-                    article={{
-                        ...Weihnachtsmarkt,
-                        previewImageFile: imageFile as any,
-                    }}
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.getByRole('img', { name: /vorschaubild/i })
-            ).toBeVisible();
-            expect(
-                screen.getByRole('img', { name: /vorschaubild/i })
-            ).toHaveAttribute(
-                'srcset',
-                expect.stringContaining('/storage/f/123')
-            );
-        });
-
-        describe('EditMode', () => {
-            it('as editable when onUpdateArticle prop is given', () => {
-                const screen = render(
-                    <ArticlePreview
-                        article={Weihnachtsmarkt}
-                        onUpdateArticle={jest.fn()}
-                    />,
-                    {},
-                    { currentUser: SomeUser }
-                );
-                expect(screen.getByTestId('EditOverlay')).toBeVisible();
-            });
-        });
+    it('should not be shown for author if disableEdit is set', () => {
+      const screen = render(
+        <ArticlePreview
+          article={{ ...Weihnachtsmarkt, users: [SomeUser] }}
+          disableEdit
+        />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag bearbeiten/i })
+      ).toBeNull();
     });
 
-    describe('tags', () => {
-        it('should render tags', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(screen.getByTestId('Tag')).toHaveTextContent(
-                'La Revolucion'
-            );
-        });
-
-        it('should not show DeleteButton when in EditMode', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} />,
-                {},
-                { currentUser: SomeUser }
-            );
-            const tag = screen.getByTestId('Tag');
-            expect(
-                tag.querySelector('[data-testid="DeleteButton"]')
-            ).toBeNull();
-        });
-
-        it('should show DeleteButton when in EditMode', () => {
-            const screen = render(
-                <ArticlePreview
-                    article={Weihnachtsmarkt}
-                    onUpdateArticle={jest.fn()}
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            const tag = screen.getByTestId('Tag');
-            expect(tag.querySelector('svg')).toBeVisible();
-        });
-
-        it('should delete the tag when DeleteButton is clicked', async () => {
-            const fireEvent = userEvent.setup();
-            const fn = jest.fn();
-            const screen = render(
-                <ArticlePreview
-                    article={Weihnachtsmarkt}
-                    onUpdateArticle={fn}
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            const tag = screen.getByTestId('Tag');
-            await fireEvent.click(tag.querySelector('svg')!);
-            expect(fn).toHaveBeenCalledWith({
-                ...Weihnachtsmarkt,
-                tags: [],
-            });
-        });
-
-        it('should add a new tag', async () => {
-            const fireEvent = userEvent.setup();
-            const fn = jest.fn();
-            const screen = render(
-                <ArticlePreview
-                    article={Weihnachtsmarkt}
-                    onUpdateArticle={fn}
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            await fireEvent.type(
-                screen.getByRole('combobox', { name: /tag hinzufügen/i }),
-                'Neu{enter}'
-            );
-            await waitFor(() => {
-                expect(fn).toHaveBeenCalledWith({
-                    ...Weihnachtsmarkt,
-                    tags: ['La Revolucion', 'Neu'],
-                });
-            });
-        });
+    it('should not be shown for other userAvatar', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag bearbeiten/i })
+      ).toBeNull();
     });
 
-    describe('UpdateTime', () => {
-        it('should render last update time', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(screen.getByText('11.10.2020')).toBeVisible();
-        });
+    it('should not be shown for other userAvatar if disableEdit is set', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} disableEdit />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag bearbeiten/i })
+      ).toBeNull();
+    });
+  });
+
+  describe('Pin Button', () => {
+    const admin = { ...SomeUser, groups: [adminGroup] };
+
+    it('should be shown for admin', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} />,
+        {},
+        { currentUser: admin }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
+      ).toBeVisible();
     });
 
-    describe('Users List', () => {
-        const WeihnachtsmarktWithUsers = {
-            ...Weihnachtsmarkt,
-            users: [SomeUser, SomeUserin],
-        };
-        it('should render the users list', () => {
-            const screen = render(
-                <ArticlePreview article={WeihnachtsmarktWithUsers} />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(screen.getByTestId('AuthorAvatarsList')).toBeVisible();
-            expect(
-                screen.getAllByRole('img', { name: /profilbild/i })
-            ).toHaveLength(2);
-        });
-
-        describe('EditMode', () => {
-            it('should show the "add author" input field when in EditMode', () => {
-                const screen = render(
-                    <ArticlePreview
-                        article={WeihnachtsmarktWithUsers}
-                        onUpdateArticle={jest.fn()}
-                    />,
-                    {},
-                    { currentUser: SomeUser }
-                );
-                expect(
-                    screen.getByRole('combobox', { name: /autor hinzufügen/i })
-                ).toBeVisible();
-            });
-
-            it('should show the "delete" button for authors when in EditMode', async () => {
-                const fireEvent = userEvent.setup();
-                const fn = jest.fn();
-                const screen = render(
-                    <ArticlePreview
-                        article={WeihnachtsmarktWithUsers}
-                        onUpdateArticle={fn}
-                    />,
-                    {},
-                    { currentUser: KeinErSieEsUser }
-                );
-                const avatarsList = screen.getByTestId('AuthorAvatarsList');
-                expect(avatarsList.querySelector('button')).toBeVisible();
-                await fireEvent.click(avatarsList.querySelector('button')!);
-                expect(fn).toHaveBeenCalledWith({
-                    ...WeihnachtsmarktWithUsers,
-                    users: [SomeUserin],
-                });
-            });
-            describe('should show warning when removing oneself', () => {
-                it('show a warning when userAvatar tries to remove him/herself and close the popup on abort', async () => {
-                    const fireEvent = userEvent.setup();
-                    const onUpdate = jest.fn();
-                    const screen = render(
-                        <ArticlePreview
-                            article={WeihnachtsmarktWithUsers}
-                            onUpdateArticle={onUpdate}
-                        />,
-                        {},
-                        { currentUser: SomeUser }
-                    );
-                    await fireEvent.click(
-                        screen.getByRole('button', { name: /che entfernen/i })
-                    );
-                    await waitFor(() => {
-                        expect(screen.getByRole('dialog')).toBeVisible();
-                    });
-                    expect(
-                        screen.getByRole('dialog').querySelectorAll('button')
-                    ).toHaveLength(2);
-                    expect(
-                        screen.getByRole('dialog').querySelectorAll('button')[0]
-                    ).toHaveTextContent(/abbrechen/i);
-                    await fireEvent.click(
-                        screen.getByRole('dialog').querySelectorAll('button')[0]
-                    );
-                    await waitFor(() => {
-                        expect(screen.queryByRole('dialog')).toBeNull();
-                    });
-                });
-
-                it('show a warning when userAvatar tries to remove him/herself and remove userAvatar on confirm', async () => {
-                    const fireEvent = userEvent.setup();
-                    const onUpdate = jest.fn();
-                    const screen = render(
-                        <ArticlePreview
-                            article={WeihnachtsmarktWithUsers}
-                            onUpdateArticle={onUpdate}
-                        />,
-                        {},
-                        { currentUser: SomeUser }
-                    );
-                    await fireEvent.click(
-                        screen.getByRole('button', { name: /che entfernen/i })
-                    );
-                    await waitFor(() => {
-                        expect(screen.getByRole('dialog')).toBeVisible();
-                    });
-                    expect(
-                        screen.getByRole('dialog').querySelectorAll('button')
-                    ).toHaveLength(2);
-                    expect(
-                        screen.getByRole('dialog').querySelectorAll('button')[1]
-                    ).toHaveTextContent(/entfernen/i);
-                    await fireEvent.click(
-                        screen.getByRole('dialog').querySelectorAll('button')[1]
-                    );
-
-                    expect(onUpdate).toHaveBeenCalledWith({
-                        ...WeihnachtsmarktWithUsers,
-                        users: [SomeUserin],
-                    });
-                });
-            });
-        });
+    it('should not be shown for admin if disablePin is set', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} disablePin />,
+        {},
+        { currentUser: admin }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
+      ).toBeNull();
     });
 
-    describe('Edit Button', () => {
-        const admin = { ...SomeUser, groups: [adminGroup] };
-
-        it('should be shown for admin', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} />,
-                {},
-                { currentUser: admin }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag bearbeiten/i })
-            ).toBeVisible();
-        });
-
-        it('should not be shown for admin if disableEdit is set', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} disableEdit />,
-                {},
-                { currentUser: admin }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag bearbeiten/i })
-            ).toBeNull();
-        });
-
-        it('should be shown for author', () => {
-            const screen = render(
-                <ArticlePreview
-                    article={{ ...Weihnachtsmarkt, users: [SomeUser] }}
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag bearbeiten/i })
-            ).toBeVisible();
-        });
-
-        it('should not be shown for author if disableEdit is set', () => {
-            const screen = render(
-                <ArticlePreview
-                    article={{ ...Weihnachtsmarkt, users: [SomeUser] }}
-                    disableEdit
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag bearbeiten/i })
-            ).toBeNull();
-        });
-
-        it('should not be shown for other userAvatar', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag bearbeiten/i })
-            ).toBeNull();
-        });
-
-        it('should not be shown for other userAvatar if disableEdit is set', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} disableEdit />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag bearbeiten/i })
-            ).toBeNull();
-        });
+    it('should not be shown for author', () => {
+      const screen = render(
+        <ArticlePreview article={{ ...Weihnachtsmarkt, users: [SomeUser] }} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
+      ).toBeNull();
     });
 
-    describe('Pin Button', () => {
-        const admin = { ...SomeUser, groups: [adminGroup] };
-
-        it('should be shown for admin', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} />,
-                {},
-                { currentUser: admin }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
-            ).toBeVisible();
-        });
-
-        it('should not be shown for admin if disablePin is set', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} disablePin />,
-                {},
-                { currentUser: admin }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
-            ).toBeNull();
-        });
-
-        it('should not be shown for author', () => {
-            const screen = render(
-                <ArticlePreview
-                    article={{ ...Weihnachtsmarkt, users: [SomeUser] }}
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
-            ).toBeNull();
-        });
-
-        it('should not be shown for author if disablePin is set', () => {
-            const screen = render(
-                <ArticlePreview
-                    article={{ ...Weihnachtsmarkt, users: [SomeUser] }}
-                    disablePin
-                />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
-            ).toBeNull();
-        });
-
-        it('should not be shown for other userAvatar', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
-            ).toBeNull();
-        });
-
-        it('should not be shown for other userAvatar if disablePin is set', () => {
-            const screen = render(
-                <ArticlePreview article={Weihnachtsmarkt} disablePin />,
-                {},
-                { currentUser: SomeUser }
-            );
-            expect(
-                screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
-            ).toBeNull();
-        });
+    it('should not be shown for author if disablePin is set', () => {
+      const screen = render(
+        <ArticlePreview
+          article={{ ...Weihnachtsmarkt, users: [SomeUser] }}
+          disablePin
+        />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
+      ).toBeNull();
     });
+
+    it('should not be shown for other userAvatar', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
+      ).toBeNull();
+    });
+
+    it('should not be shown for other userAvatar if disablePin is set', () => {
+      const screen = render(
+        <ArticlePreview article={Weihnachtsmarkt} disablePin />,
+        {},
+        { currentUser: SomeUser }
+      );
+      expect(
+        screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
+      ).toBeNull();
+    });
+  });
 });

@@ -10,16 +10,16 @@ const handle = app.getRequestHandler();
 const port = process.env.PORT || 3000;
 
 const startServer = async () => {
-    await app.prepare();
+  await app.prepare();
 
-    const server = createServer((req, res) => {
-        const parsedUrl = parse(req.url, true);
-        handle(req, res, parsedUrl);
-    });
+  const server = createServer((req, res) => {
+    const parsedUrl = parse(req.url, true);
+    handle(req, res, parsedUrl);
+  });
 
-    server.listen(port, () => {
-        console.log(`> Lotta listening on http://localhost:${port}`);
-    });
+  server.listen(port, () => {
+    console.log(`> Lotta listening on http://localhost:${port}`);
+  });
 };
 
 startServer();

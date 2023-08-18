@@ -1,28 +1,28 @@
 mutation CreateCategory($category: CreateCategoryInput!) {
-    category: createCategory(category: $category) {
-        id
-        title
-        sortKey
-        isSidenav
-        isHomepage
-        hideArticlesFromHomepage
-        redirect
-        layoutName
-        bannerImageFile {
-            id
-        }
-        groups {
-            id
-            sortKey
-            name
-        }
-        category {
-            id
-            title
-            hideArticlesFromHomepage
-        }
-        widgets {
-            id
-        }
+  category: createCategory(category: $category) {
+    id
+    title
+    sortKey
+    isSidenav
+    isHomepage
+    hideArticlesFromHomepage
+    redirect
+    layoutName
+    bannerImageFile {
+      id
     }
+    groups {
+      id
+      sortKey
+      name
+    }
+    category {
+      id
+      title
+      hideArticlesFromHomepage
+    }
+    widgets {
+      id
+    }
+  }
 }

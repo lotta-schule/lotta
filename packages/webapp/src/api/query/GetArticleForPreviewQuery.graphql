@@ -1,25 +1,25 @@
 query GetArticleForPreview($id: ID!) {
-    article(id: $id) {
-        id
-        insertedAt
-        updatedAt
-        title
-        preview
-        tags
-        readyToPublish
-        published
-        previewImageFile {
-            id
-            mimeType
-            fileType
-        }
-        users {
-            id
-            nickname
-            name
-            avatarImageFile {
-                id
-            }
-        }
+  article(id: $id) {
+    id
+    insertedAt
+    updatedAt
+    title
+    preview
+    tags
+    readyToPublish
+    published
+    previewImageFile {
+      id
+      mimeType
+      fileType
     }
+    users {
+      id
+      nickname
+      name
+      avatarImageFile {
+        id
+      }
+    }
+  }
 }

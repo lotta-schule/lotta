@@ -1,0 +1,84 @@
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx-cloud",
+      "options": {
+        "cacheableOperations": [
+          "test",
+          "lint",
+          "typecheck",
+          "build",
+          "storybook:test",
+          "storybook:build",
+          "test:ci"
+        ],
+        "accessToken": "MjU3OGRjMmMtZjcyNS00ZjYzLWIzYzEtYWE3ODNjOTNmNzJmfHJlYWQtd3JpdGU="
+      }
+    }
+  },
+  "targetDefaults": {
+    "start": {
+      "dependsOn": [
+        "^start"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "^test"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage/"
+      ]
+    },
+    "typecheck": {
+      "dependsOn": [
+        "^typecheck"
+      ]
+    },
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/"
+      ]
+    },
+    "storybook:test": {
+      "dependsOn": [
+        "^storybook:test"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage/"
+      ]
+    },
+    "storybook:test:ci": {
+      "dependsOn": [
+        "^storybook:test:ci"
+      ]
+    },
+    "storybook:build": {
+      "dependsOn": [
+        "^storybook:build"
+      ],
+      "outputs": [
+        "{projectRoot}/storybook-static"
+      ]
+    },
+    "start:prod": {
+      "dependsOn": [
+        "^start:prod"
+      ]
+    },
+    "test:ci": {
+      "dependsOn": [
+        "^test:ci"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage"
+      ]
+    }
+  },
+  "affected": {
+    "defaultBase": "main"
+  }
+}

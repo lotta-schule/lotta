@@ -6,23 +6,23 @@ import { GroupList } from 'administration/users/GroupList';
 import { GetServerSidePropsContext } from 'next';
 
 const GroupsRoute = () => {
-    return (
-        <AdminPage
-            title={
-                <>
-                    <Icon icon={faUserGroup} /> Gruppen
-                </>
-            }
-            component={GroupList}
-            hasHomeLink
-        />
-    );
+  return (
+    <AdminPage
+      title={
+        <>
+          <Icon icon={faUserGroup} /> Gruppen
+        </>
+      }
+      component={GroupList}
+      hasHomeLink
+    />
+  );
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default GroupsRoute;

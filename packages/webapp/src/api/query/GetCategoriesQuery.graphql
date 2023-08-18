@@ -1,25 +1,25 @@
 query categories {
-    categories {
-        id
-        title
-        sortKey
-        isSidenav
-        isHomepage
-        hideArticlesFromHomepage
-        redirect
-        layoutName
-        bannerImageFile {
-            id
-        }
-        groups {
-            id
-            sortKey
-            name
-        }
-        category {
-            id
-            title
-            hideArticlesFromHomepage
-        }
+  categories {
+    id
+    title
+    sortKey
+    isSidenav
+    isHomepage
+    hideArticlesFromHomepage
+    redirect
+    layoutName
+    bannerImageFile {
+      id
     }
+    groups {
+      id
+      sortKey
+      name
+    }
+    category {
+      id
+      title
+      hideArticlesFromHomepage
+    }
+  }
 }

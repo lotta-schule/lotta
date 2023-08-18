@@ -5,24 +5,24 @@ import '@testing-library/jest-dom';
 // https://github.com/tmpvar/jsdom/issues/937
 // @ts-ignore
 window.getSelection = function () {
-    return {
-        addRange: function () {},
-        removeAllRanges: function () {},
-    };
+  return {
+    addRange: function () {},
+    removeAllRanges: function () {},
+  };
 };
 
 window.location = {
-    hash: '',
-    host: 'test.lotta.schule',
-    hostname: 'test.lotta.schule',
-    origin: 'http://test.lotta.schule',
-    href: 'http://test.lotta.schule',
-    port: '',
-    pathname: '/',
-    search: '',
-    protocol: 'http:',
-    ancestorOrigins: [] as any,
-    reload: () => {},
-    replace: () => {},
-    assign: (url) => Object.assign(window.location, { url: url }),
+  hash: '',
+  host: 'test.lotta.schule',
+  hostname: 'test.lotta.schule',
+  origin: 'http://test.lotta.schule',
+  href: 'http://test.lotta.schule',
+  port: '',
+  pathname: '/',
+  search: '',
+  protocol: 'http:',
+  ancestorOrigins: [] as any,
+  reload: () => {},
+  replace: () => {},
+  assign: (url) => Object.assign(window.location, { url: url }),
 };

@@ -1,15 +1,15 @@
 query GetUsage {
-    usage {
-        periodStart
-        periodEnd
-        storage {
-            usedTotal
-            filesTotal
-        }
-        media {
-            mediaFilesTotal
-            mediaFilesTotalDuration
-            mediaConversionCurrentPeriod
-        }
+  usage {
+    periodStart
+    periodEnd
+    storage {
+      usedTotal
+      filesTotal
     }
+    media {
+      mediaFilesTotal
+      mediaFilesTotalDuration
+      mediaConversionCurrentPeriod
+    }
+  }
 }

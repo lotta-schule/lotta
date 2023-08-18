@@ -1,14 +1,14 @@
 query widgets($categoryId: ID!) {
-    widgets(categoryId: $categoryId) {
-        id
-        title
-        type
-        configuration
-        iconImageFile {
-            id
-        }
-        groups {
-            id
-        }
+  widgets(categoryId: $categoryId) {
+    id
+    title
+    type
+    configuration
+    iconImageFile {
+      id
     }
+    groups {
+      id
+    }
+  }
 }

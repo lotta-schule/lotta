@@ -1,40 +1,40 @@
 mutation CreateArticle($article: ArticleInput!) {
-    article: createArticle(article: $article) {
-        id
-        insertedAt
-        updatedAt
-        title
-        preview
-        tags
-        readyToPublish
-        published
-        isPinnedToTop
-        previewImageFile {
-            id
-            mimeType
-            fileType
-            filename
-            filesize
-        }
-        contentModules {
-            id
-            type
-            content
-            sortKey
-        }
-        category {
-            id
-            title
-        }
-        groups {
-            id
-            sortKey
-            name
-        }
-        users {
-            id
-            nickname
-            name
-        }
+  article: createArticle(article: $article) {
+    id
+    insertedAt
+    updatedAt
+    title
+    preview
+    tags
+    readyToPublish
+    published
+    isPinnedToTop
+    previewImageFile {
+      id
+      mimeType
+      fileType
+      filename
+      filesize
     }
+    contentModules {
+      id
+      type
+      content
+      sortKey
+    }
+    category {
+      id
+      title
+    }
+    groups {
+      id
+      sortKey
+      name
+    }
+    users {
+      id
+      nickname
+      name
+    }
+  }
 }

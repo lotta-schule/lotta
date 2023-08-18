@@ -3,13 +3,13 @@ import { PrivacyPage } from 'privacy/PrivacyPage';
 import { GetServerSidePropsContext } from 'next';
 
 const PrivacyRoute = () => {
-    return <PrivacyPage />;
+  return <PrivacyPage />;
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default PrivacyRoute;

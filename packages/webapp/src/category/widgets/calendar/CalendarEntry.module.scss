@@ -1,47 +1,47 @@
 .root {
-    .tableline {
-        justify-content: flex-start;
-        font-size: 0.85rem;
-        line-height: 1.43;
-        &:hover {
-            background-color: rgba(var(--lotta-highlight-color), 0.3);
-        }
-
-        .summary {
-            font-weight: bolder;
-        }
-        .time {
-            font-size: 0.9em;
-            font-style: italic;
-        }
+  .tableline {
+    justify-content: flex-start;
+    font-size: 0.85rem;
+    line-height: 1.43;
+    &:hover {
+      background-color: rgba(var(--lotta-highlight-color), 0.3);
     }
 
-    .listItemTextDate {
-        width: 7.5em;
-        flex-shrink: 0;
-        &.has-dot {
-            padding-left: 1em;
-            & > svg {
-                margin-left: -1em;
-            }
-        }
+    .summary {
+      font-weight: bolder;
     }
+    .time {
+      font-size: 0.9em;
+      font-style: italic;
+    }
+  }
 
-    .calendarColorDot {
-        vertical-align: sub;
-        padding-right: 0.5em;
-        font-size: 0.5em;
-        vertical-align: baseline;
+  .listItemTextDate {
+    width: 7.5em;
+    flex-shrink: 0;
+    &.has-dot {
+      padding-left: 1em;
+      & > svg {
+        margin-left: -1em;
+      }
     }
+  }
 
-    .listItemTextEventDescription {
-        padding-left: 0.5em;
-        text-align: right;
-        hyphens: auto;
-        word-break: break-word;
-    }
+  .calendarColorDot {
+    vertical-align: sub;
+    padding-right: 0.5em;
+    font-size: 0.5em;
+    vertical-align: baseline;
+  }
 
-    .description {
-        font-size: 0.85rem;
-    }
+  .listItemTextEventDescription {
+    padding-left: 0.5em;
+    text-align: right;
+    hyphens: auto;
+    word-break: break-word;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
 }

@@ -5,25 +5,25 @@ import { isBlockActive, toggleBlock } from './SlateUtils';
 import { BlockElement } from './SlateCustomTypes';
 
 export interface EditToolbarMarkButtonProps {
-    mark: BlockElement['type'];
-    children?: any;
+  mark: BlockElement['type'];
+  children?: any;
 }
 
 export const EditToolbarBlockButton: React.FC<EditToolbarMarkButtonProps> = ({
-    mark,
-    children,
+  mark,
+  children,
 }) => {
-    const editor = useSlate();
+  const editor = useSlate();
 
-    return (
-        <Button
-            selected={isBlockActive(editor, mark)}
-            onMouseDown={(e: React.MouseEvent) => {
-                e.preventDefault();
-                toggleBlock(editor, mark);
-            }}
-        >
-            {children}
-        </Button>
-    );
+  return (
+    <Button
+      selected={isBlockActive(editor, mark)}
+      onMouseDown={(e: React.MouseEvent) => {
+        e.preventDefault();
+        toggleBlock(editor, mark);
+      }}
+    >
+      {children}
+    </Button>
+  );
 };

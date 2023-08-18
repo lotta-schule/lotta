@@ -6,23 +6,23 @@ import { ConstraintList } from 'administration/users/ConstraintsList';
 import { GetServerSidePropsContext } from 'next';
 
 const ConstraintsRoute = () => {
-    return (
-        <AdminPage
-            title={
-                <>
-                    <Icon icon={faExpand} /> Beschränkungen
-                </>
-            }
-            component={ConstraintList}
-            hasHomeLink
-        />
-    );
+  return (
+    <AdminPage
+      title={
+        <>
+          <Icon icon={faExpand} /> Beschränkungen
+        </>
+      }
+      component={ConstraintList}
+      hasHomeLink
+    />
+  );
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default ConstraintsRoute;

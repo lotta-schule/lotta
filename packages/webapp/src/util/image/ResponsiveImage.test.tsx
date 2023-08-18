@@ -1,25 +1,25 @@
 jest.mock('next/config', () => () => ({
-    publicRuntimeConfig: {
-        cloudimageToken: 'test',
-    },
+  publicRuntimeConfig: {
+    cloudimageToken: 'test',
+  },
 }));
 
 import { render } from 'test/util';
 import { ResponsiveImage } from './ResponsiveImage';
 
 describe('ResponsiveImage', () => {
-    it('should render', () => {
-        const { getByRole } = render(
-            <ResponsiveImage
-                src="https://via.placeholder.com/300"
-                alt="Test"
-                width={300}
-                style={{ border: '1px solid red' }}
-                sizes="(max-width: 600px) 100vw, 600px"
-                aspectRatio="16:9"
-            />
-        );
-        expect(getByRole('img')).toMatchInlineSnapshot(`
+  it('should render', () => {
+    const { getByRole } = render(
+      <ResponsiveImage
+        src="https://via.placeholder.com/300"
+        alt="Test"
+        width={300}
+        style={{ border: '1px solid red' }}
+        sizes="(max-width: 600px) 100vw, 600px"
+        aspectRatio="16:9"
+      />
+    );
+    expect(getByRole('img')).toMatchInlineSnapshot(`
             <img
               alt="Test"
               sizes="(max-width: 600px) 100vw, 600px"
@@ -27,5 +27,5 @@ describe('ResponsiveImage', () => {
               style="border: 1px solid red;"
             />
         `);
-    });
+  });
 });

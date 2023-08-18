@@ -1,3 +1,3 @@
 mutation SendFormResponseMutation($id: ID!, $response: Json!) {
-    sendFormResponse(contentModuleId: $id, response: $response)
+  sendFormResponse(contentModuleId: $id, response: $response)
 }

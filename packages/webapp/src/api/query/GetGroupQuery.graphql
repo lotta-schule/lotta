@@ -1,9 +1,9 @@
 query GetGroup($id: ID!) {
-    group(id: $id) {
-        id
-        name
-        isAdminGroup
-        sortKey
-        enrollmentTokens
-    }
+  group(id: $id) {
+    id
+    name
+    isAdminGroup
+    sortKey
+    enrollmentTokens
+  }
 }

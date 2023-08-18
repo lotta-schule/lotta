@@ -6,23 +6,23 @@ import { CategoryList } from 'administration/categories/CategoryList';
 import { GetServerSidePropsContext } from 'next';
 
 const CategoryListRoute = () => {
-    return (
-        <AdminPage
-            title={
-                <>
-                    <Icon icon={faShapes} size={'lg'} /> Kategorien
-                </>
-            }
-            component={CategoryList}
-            hasHomeLink
-        />
-    );
+  return (
+    <AdminPage
+      title={
+        <>
+          <Icon icon={faShapes} size={'lg'} /> Kategorien
+        </>
+      }
+      component={CategoryList}
+      hasHomeLink
+    />
+  );
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default CategoryListRoute;

@@ -3,13 +3,13 @@ import { SearchPage } from 'search/SearchPage';
 import { GetServerSidePropsContext } from 'next';
 
 const SearchRoute = () => {
-    return <SearchPage />;
+  return <SearchPage />;
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default SearchRoute;

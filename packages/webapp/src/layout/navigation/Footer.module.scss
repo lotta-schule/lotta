@@ -1,24 +1,24 @@
 @import 'breakpoints';
 
 .root {
-    display: none;
-    padding: 0 0.5em;
-    font-size: 0.8rem;
-    @media screen and (max-width: $max-sm) {
-        display: block;
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        text-align: center;
-    }
-    @media screen and (min-width: $min-md) {
-        display: block;
-        top: -0.5em;
-        right: -1em;
-        position: absolute;
-        transform: rotate(-90deg);
-        transform-origin: right;
-        width: max-content;
-    }
+  display: none;
+  padding: 0 0.5em;
+  font-size: 0.8rem;
+  @media screen and (max-width: $max-sm) {
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+  }
+  @media screen and (min-width: $min-md) {
+    display: block;
+    top: -0.5em;
+    right: -1em;
+    position: absolute;
+    transform: rotate(-90deg);
+    transform-origin: right;
+    width: max-content;
+  }
 }

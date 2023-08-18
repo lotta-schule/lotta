@@ -1,15 +1,15 @@
 .root {
-    width: 100%;
-    border-top: 1px solid rgba(var(--lotta-text-color), 1);
-    padding-top: calc(0.5 * var(--lotta-spacing));
-    padding-bottom: calc(0.5 * var(--lotta-spacing));
-    display: flex;
-    justify-content: space-between;
-    &.isError {
-        border-color: rgba(var(--lotta-error-color), 1);
-    }
+  width: 100%;
+  border-top: 1px solid rgba(var(--lotta-text-color), 1);
+  padding-top: calc(0.5 * var(--lotta-spacing));
+  padding-bottom: calc(0.5 * var(--lotta-spacing));
+  display: flex;
+  justify-content: space-between;
+  &.isError {
+    border-color: rgba(var(--lotta-error-color), 1);
+  }
 
-    .mainContent {
-        font-size: 0.8em;
-    }
+  .mainContent {
+    font-size: 0.8em;
+  }
 }

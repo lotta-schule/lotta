@@ -1,28 +1,28 @@
 query GetArticles($categoryId: ID, $filter: ArticleFilter) {
-    articles(categoryId: $categoryId, filter: $filter) {
-        id
-        insertedAt
-        updatedAt
-        title
-        preview
-        tags
-        readyToPublish
-        published
-        isPinnedToTop
-        previewImageFile {
-            id
-        }
-        category {
-            id
-            hideArticlesFromHomepage
-        }
-        users {
-            id
-            nickname
-            name
-            avatarImageFile {
-                id
-            }
-        }
+  articles(categoryId: $categoryId, filter: $filter) {
+    id
+    insertedAt
+    updatedAt
+    title
+    preview
+    tags
+    readyToPublish
+    published
+    isPinnedToTop
+    previewImageFile {
+      id
     }
+    category {
+      id
+      hideArticlesFromHomepage
+    }
+    users {
+      id
+      nickname
+      name
+      avatarImageFile {
+        id
+      }
+    }
+  }
 }

@@ -1,5 +1,5 @@
 mutation DeleteMessage($id: ID!) {
-    message: deleteMessage(id: $id) {
-        id
-    }
+  message: deleteMessage(id: $id) {
+    id
+  }
 }

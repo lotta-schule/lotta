@@ -1,135 +1,135 @@
 @import 'breakpoints';
 
 .root {
-    display: flex;
-    padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
-    margin-bottom: var(--lotta-spacing);
-    position: relative;
+  display: flex;
+  padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
+  margin-bottom: var(--lotta-spacing);
+  position: relative;
 
-    &.isActive {
-        flex-direction: row-reverse;
-        .message {
-            border-color: rgba(var(--lotta-primary-color), 1);
-            background-color: rgba(var(--lotta-primary-color), 0.3);
-            border-bottom-right-radius: 0;
-        }
-
-        .messageWrapper {
-            align-items: flex-end;
-        }
-    }
-
-    &:not(.isActive) .message {
-        border-bottom-left-radius: 0;
+  &.isActive {
+    flex-direction: row-reverse;
+    .message {
+      border-color: rgba(var(--lotta-primary-color), 1);
+      background-color: rgba(var(--lotta-primary-color), 0.3);
+      border-bottom-right-radius: 0;
     }
 
     .messageWrapper {
-        display: flex;
-        max-width: 80%;
-        flex-direction: column;
-        align-items: flex-start;
-        margin: 0 var(--lotta-spacing);
+      align-items: flex-end;
     }
+  }
 
-    .message {
-        padding: var(--lotta-spacing);
-        border: 1px solid rgba(var(--lotta-disabled-color), 0.5);
-        background: rgba(var(--lotta-disabled-color), 0.08);
-        border-radius: calc(3 * var(--lotta-border-radius));
-        hyphens: auto;
-        word-wrap: break-word;
-        word-break: break-word;
-        white-space: pre-wrap;
+  &:not(.isActive) .message {
+    border-bottom-left-radius: 0;
+  }
+
+  .messageWrapper {
+    display: flex;
+    max-width: 80%;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0 var(--lotta-spacing);
+  }
+
+  .message {
+    padding: var(--lotta-spacing);
+    border: 1px solid rgba(var(--lotta-disabled-color), 0.5);
+    background: rgba(var(--lotta-disabled-color), 0.08);
+    border-radius: calc(3 * var(--lotta-border-radius));
+    hyphens: auto;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+
+  .files {
+    .file {
+      display: grid;
+      grid-template-columns: auto 1fr 7.5em;
+      grid-template-rows: 1.5em auto;
     }
-
-    .files {
-        .file {
-            display: grid;
-            grid-template-columns: auto 1fr 7.5em;
-            grid-template-rows: 1.5em auto;
-        }
-        .previewWrapper {
-            grid-row: 1 / span 2;
-            margin: var(--lotta-spacing);
-            img {
-                max-height: 5em;
-                max-width: 7.5em;
-                width: auto;
-                height: auto;
-                border-radius: 4px;
-            }
-        }
-        .filename {
-            grid-column: 2 / span 2;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-        .downloadButton {
-            grid-column: 2;
-            align-self: end;
-            & > * {
-                display: inline-flex;
-            }
-        }
-        .downloadIcon {
-            padding: 0 var(--lotta-spacing);
-        }
-        .filesize {
-            grid-column: 3;
-            padding-left: var(--lotta-spacing);
-            padding-bottom: calc(0.6 * var(--lotta-spacing));
-            color: rgba(var(--lotta-text-color), 0.5);
-            font-size: 0.8rem;
-            align-self: end;
-        }
-        @media screen and (max-width: $max-xs) {
-            font-size: 0.9em;
-            .file {
-                grid-template-columns: auto;
-                grid-template-rows: auto;
-                margin-bottom: var(--lotta-spacing);
-            }
-            .previewWrapper {
-                grid-row: 1;
-                text-align: center;
-            }
-            .downloadButton {
-                grid-column: 1;
-                text-align: center;
-            }
-            .filename {
-                grid-column: 1;
-            }
-            .filesize {
-                text-align: right;
-                grid-column: 1;
-            }
-        }
+    .previewWrapper {
+      grid-row: 1 / span 2;
+      margin: var(--lotta-spacing);
+      img {
+        max-height: 5em;
+        max-width: 7.5em;
+        width: auto;
+        height: auto;
+        border-radius: 4px;
+      }
     }
-
-    .senderUser {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    .filename {
+      grid-column: 2 / span 2;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
-
-    .senderUserAvatar {
-        display: inline-block;
+    .downloadButton {
+      grid-column: 2;
+      align-self: end;
+      & > * {
+        display: inline-flex;
+      }
     }
-
-    .messageInformation {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 0.75em;
-        padding-top: 0.25em;
-
-        button {
-            padding: 0;
-            svg {
-                font-size: 1.5em;
-            }
-        }
+    .downloadIcon {
+      padding: 0 var(--lotta-spacing);
     }
+    .filesize {
+      grid-column: 3;
+      padding-left: var(--lotta-spacing);
+      padding-bottom: calc(0.6 * var(--lotta-spacing));
+      color: rgba(var(--lotta-text-color), 0.5);
+      font-size: 0.8rem;
+      align-self: end;
+    }
+    @media screen and (max-width: $max-xs) {
+      font-size: 0.9em;
+      .file {
+        grid-template-columns: auto;
+        grid-template-rows: auto;
+        margin-bottom: var(--lotta-spacing);
+      }
+      .previewWrapper {
+        grid-row: 1;
+        text-align: center;
+      }
+      .downloadButton {
+        grid-column: 1;
+        text-align: center;
+      }
+      .filename {
+        grid-column: 1;
+      }
+      .filesize {
+        text-align: right;
+        grid-column: 1;
+      }
+    }
+  }
+
+  .senderUser {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .senderUserAvatar {
+    display: inline-block;
+  }
+
+  .messageInformation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75em;
+    padding-top: 0.25em;
+
+    button {
+      padding: 0;
+      svg {
+        font-size: 1.5em;
+      }
+    }
+  }
 }

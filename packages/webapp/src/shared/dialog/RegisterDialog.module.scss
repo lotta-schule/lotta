@@ -1,22 +1,22 @@
 @import 'breakpoints';
 
 .form {
-    p {
-        margin-bottom: var(--lotta-spacing);
-        padding: var(--lotta-spacing);
-    }
+  p {
+    margin-bottom: var(--lotta-spacing);
+    padding: var(--lotta-spacing);
+  }
 
-    .gridContainer {
-        display: flex;
-        @media screen and (max-width: $max-xs) {
-            flex-wrap: wrap;
-        }
-        & > div {
-            flex: 1;
-            @media screen and (max-width: $max-xs) {
-                width: 100%;
-                flex: none;
-            }
-        }
+  .gridContainer {
+    display: flex;
+    @media screen and (max-width: $max-xs) {
+      flex-wrap: wrap;
     }
+    & > div {
+      flex: 1;
+      @media screen and (max-width: $max-xs) {
+        width: 100%;
+        flex: none;
+      }
+    }
+  }
 }

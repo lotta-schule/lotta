@@ -1,20 +1,20 @@
 query GetUsers {
-    users {
-        id
-        insertedAt
-        updatedAt
-        name
-        nickname
-        email
-        class
-        lastSeen
-        groups {
-            id
-            name
-            isAdminGroup
-        }
-        avatarImageFile {
-            id
-        }
+  users {
+    id
+    insertedAt
+    updatedAt
+    name
+    nickname
+    email
+    class
+    lastSeen
+    groups {
+      id
+      name
+      isAdminGroup
     }
+    avatarImageFile {
+      id
+    }
+  }
 }

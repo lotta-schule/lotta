@@ -4,13 +4,13 @@ import { AdminPage } from 'administration/AdminPage';
 import { Navigation } from 'administration/Navigation';
 
 const AdminRoute = () => {
-    return <AdminPage title={'Start'} component={Navigation} />;
+  return <AdminPage title={'Start'} component={Navigation} />;
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default AdminRoute;

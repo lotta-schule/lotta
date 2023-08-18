@@ -5,27 +5,27 @@ import { Header, Main, Sidebar } from 'layout';
 import { ArticlesList } from 'shared/articlesList/ArticlesList';
 
 export interface ArticlesPageProps {
-    articles: ArticleModel[];
-    error?: Error | null;
+  articles: ArticleModel[];
+  error?: Error | null;
 }
 
 export const ArticlesPage = React.memo(
-    ({ articles, error }: ArticlesPageProps) => {
-        return (
-            <>
-                <Main>
-                    <Header bannerImageUrl={'/bannerProfil.png'}>
-                        <h2>Meine Beiträge</h2>
-                    </Header>
+  ({ articles, error }: ArticlesPageProps) => {
+    return (
+      <>
+        <Main>
+          <Header bannerImageUrl={'/bannerProfil.png'}>
+            <h2>Meine Beiträge</h2>
+          </Header>
 
-                    <Box>
-                        <ErrorMessage error={error} />
-                        {articles && <ArticlesList articles={articles} />}
-                    </Box>
-                </Main>
-                <Sidebar isEmpty />
-            </>
-        );
-    }
+          <Box>
+            <ErrorMessage error={error} />
+            {articles && <ArticlesList articles={articles} />}
+          </Box>
+        </Main>
+        <Sidebar isEmpty />
+      </>
+    );
+  }
 );
 ArticlesPage.displayName = 'ProfileArticlesPage';

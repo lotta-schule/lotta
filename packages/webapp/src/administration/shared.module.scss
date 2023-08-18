@@ -1,40 +1,40 @@
 .headerBox {
-    display: block;
-    line-height: calc(3 * var(--lotta-spacing));
-    margin-bottom: calc(4 * var(--lotta-spacing));
-    background-color: rgba(var(--lotta-divider-color), 0.2);
+  display: block;
+  line-height: calc(3 * var(--lotta-spacing));
+  margin-bottom: calc(4 * var(--lotta-spacing));
+  background-color: rgba(var(--lotta-divider-color), 0.2);
 }
 
 .gridContainer {
-    display: flex;
-    margin-bottom: calc(3 * var(--lotta-spacing));
+  display: flex;
+  margin-bottom: calc(3 * var(--lotta-spacing));
 }
 
 .saveButtonContainer {
-    justify-content: flex-end;
-    button {
-        width: 20%;
-        max-width: 20em;
-        margin-right: calc(1 * var(--lotta-spacing));
-    }
+  justify-content: flex-end;
+  button {
+    width: 20%;
+    max-width: 20em;
+    margin-right: calc(1 * var(--lotta-spacing));
+  }
 }
 
 .gridItem {
-    flex: 1;
-    margin-right: calc(1 * var(--lotta-spacing));
+  flex: 1;
+  margin-right: calc(1 * var(--lotta-spacing));
 }
 
 .section {
-    margin-bottom: calc(2 * var(--lotta-spacing));
+  margin-bottom: calc(2 * var(--lotta-spacing));
 }
 
 .usageTable {
-    justify-content: stretch;
-    & > div {
-        flex: 1;
-        text-align: center;
-    }
-    & > :first-child {
-        flex: 0 1 16%;
-    }
+  justify-content: stretch;
+  & > div {
+    flex: 1;
+    text-align: center;
+  }
+  & > :first-child {
+    flex: 0 1 16%;
+  }
 }

@@ -9,44 +9,44 @@ import { insertImage } from './SlateUtils';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 
 export interface EditToolbarImageButtonProps {
-    onImageAdded?(): void;
+  onImageAdded?(): void;
 }
 
 export const EditToolbarImageButton: React.FC<EditToolbarImageButtonProps> = ({
-    onImageAdded,
+  onImageAdded,
 }) => {
-    const editor = useSlate();
-    const [lastEditorSelection, setLastEditorSelection] =
-        React.useState<Range | null>(null);
+  const editor = useSlate();
+  const [lastEditorSelection, setLastEditorSelection] =
+    React.useState<Range | null>(null);
 
-    const onClickImage = React.useCallback(
-        (file: FileModel) => {
-            if (lastEditorSelection) {
-                editor.apply({
-                    type: 'set_selection',
-                    properties: null,
-                    newProperties: lastEditorSelection,
-                });
-            }
-            insertImage(editor, file);
-            setTimeout(() => {
-                onImageAdded?.();
-            }, 100);
-        },
-        [editor, lastEditorSelection, onImageAdded]
-    );
+  const onClickImage = React.useCallback(
+    (file: FileModel) => {
+      if (lastEditorSelection) {
+        editor.apply({
+          type: 'set_selection',
+          properties: null,
+          newProperties: lastEditorSelection,
+        });
+      }
+      insertImage(editor, file);
+      setTimeout(() => {
+        onImageAdded?.();
+      }, 100);
+    },
+    [editor, lastEditorSelection, onImageAdded]
+  );
 
-    return (
-        <SelectFileButton
-            label={<Icon icon={faImage} />}
-            buttonComponent={Button}
-            buttonComponentProps={{ size: 'small', value: 'select-file' }}
-            onSelect={onClickImage}
-            onChangeFileExplorerVisibility={(visible) => {
-                if (visible) {
-                    setLastEditorSelection(editor.selection);
-                }
-            }}
-        />
-    );
+  return (
+    <SelectFileButton
+      label={<Icon icon={faImage} />}
+      buttonComponent={Button}
+      buttonComponentProps={{ size: 'small', value: 'select-file' }}
+      onSelect={onClickImage}
+      onChangeFileExplorerVisibility={(visible) => {
+        if (visible) {
+          setLastEditorSelection(editor.selection);
+        }
+      }}
+    />
+  );
 };

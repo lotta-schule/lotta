@@ -8,52 +8,46 @@ import { Tenant } from 'util/model/Tenant';
 import Head from 'next/head';
 
 export interface ArticleHeadProps {
-    article: ArticleModel;
+  article: ArticleModel;
 }
 
 export const ArticleHead = React.memo<ArticleHeadProps>(({ article }) => {
-    const { baseUrl } = useServerData();
-    const tenant = useTenant();
+  const { baseUrl } = useServerData();
+  const tenant = useTenant();
 
-    const { url: twitterImageUrl } = useImageUrl(
-        article?.previewImageFile &&
-            File.getFileRemoteLocation(baseUrl, article.previewImageFile),
-        { width: 1200, height: 630, resize: 'cover' }
-    );
+  const { url: twitterImageUrl } = useImageUrl(
+    article?.previewImageFile &&
+      File.getFileRemoteLocation(baseUrl, article.previewImageFile),
+    { width: 1200, height: 630, resize: 'cover' }
+  );
 
-    const title = `${article.title} ${tenant.title}`;
+  const title = `${article.title} ${tenant.title}`;
 
-    return (
-        <Head>
-            <title>{title}</title>
-            <meta name={'description'} content={article.preview} />
-            <meta property={'og:site_name'} content={tenant.title} />
-            <meta property={'og:type'} content={'article'} />
-            <meta
-                property={'og:url'}
-                content={Tenant.getAbsoluteUrl(
-                    tenant,
-                    Article.getPath(article)
-                )}
-            />
-            <meta property={'og:title'} content={article.title} />
-            <meta property={'og:description'} content={article.preview} />
-            <meta property={'og:url'} content={article.preview} />
-            <meta
-                property={'og:article:published_time'}
-                content={article.insertedAt}
-            />
-            <meta
-                property={'og:article:modified_time'}
-                content={article.updatedAt}
-            />
-            <meta property={'twitter:card'} content={article.preview} />
-            {article.previewImageFile && (
-                <meta property={'og:image'} content={twitterImageUrl ?? ''} />
-            )}
-            <meta property={'og:image:width'} content={'1800'} />
-            <meta property={'og:image:height'} content={'945'} />
-        </Head>
-    );
+  return (
+    <Head>
+      <title>{title}</title>
+      <meta name={'description'} content={article.preview} />
+      <meta property={'og:site_name'} content={tenant.title} />
+      <meta property={'og:type'} content={'article'} />
+      <meta
+        property={'og:url'}
+        content={Tenant.getAbsoluteUrl(tenant, Article.getPath(article))}
+      />
+      <meta property={'og:title'} content={article.title} />
+      <meta property={'og:description'} content={article.preview} />
+      <meta property={'og:url'} content={article.preview} />
+      <meta
+        property={'og:article:published_time'}
+        content={article.insertedAt}
+      />
+      <meta property={'og:article:modified_time'} content={article.updatedAt} />
+      <meta property={'twitter:card'} content={article.preview} />
+      {article.previewImageFile && (
+        <meta property={'og:image'} content={twitterImageUrl ?? ''} />
+      )}
+      <meta property={'og:image:width'} content={'1800'} />
+      <meta property={'og:image:height'} content={'945'} />
+    </Head>
+  );
 });
 ArticleHead.displayName = 'ArticleHead';

@@ -10,43 +10,36 @@ import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphq
 import { File } from 'util/model';
 
 export const CurrentDirectoryMenu = React.memo(() => {
-    const [path, setPath] = useSelectedDirectory();
-    const currentUser = useCurrentUser();
+  const [path, setPath] = useSelectedDirectory();
+  const currentUser = useCurrentUser();
 
-    const { data } = useQuery<{
-        directories: DirectoryModel[];
-    }>(GetDirectoriesAndFilesQuery, {
-        variables: {
-            parentDirectoryId: path.at(-1)?.id ?? null,
-        },
-    });
+  const { data } = useQuery<{
+    directories: DirectoryModel[];
+  }>(GetDirectoriesAndFilesQuery, {
+    variables: {
+      parentDirectoryId: path.at(-1)?.id ?? null,
+    },
+  });
 
-    const filter = (directory: DirectoryModel) =>
-        File.canEditDirectory(directory, currentUser);
+  const filter = (directory: DirectoryModel) =>
+    File.canEditDirectory(directory, currentUser);
 
-    return (
-        <div>
-            <Toolbar>
-                {path.map((c) => ('name' in c ? c.name : '')).join('/') || '/'}
-            </Toolbar>
-            <DirectoryMenu
-                directories={(data?.directories ?? []).filter(filter)}
-                parentDirectoryName={`.. (${
-                    (path.at(-1) as any)?.name ?? null
-                })`}
-                onSelectParent={
-                    path.length > 1
-                        ? () => setPath(path.slice(0, -1))
-                        : undefined
-                }
-                onSelectDirectory={(directory: DirectoryModel) => {
-                    setPath([
-                        ...path,
-                        { id: directory.id, name: directory.name },
-                    ]);
-                }}
-            />
-        </div>
-    );
+  return (
+    <div>
+      <Toolbar>
+        {path.map((c) => ('name' in c ? c.name : '')).join('/') || '/'}
+      </Toolbar>
+      <DirectoryMenu
+        directories={(data?.directories ?? []).filter(filter)}
+        parentDirectoryName={`.. (${(path.at(-1) as any)?.name ?? null})`}
+        onSelectParent={
+          path.length > 1 ? () => setPath(path.slice(0, -1)) : undefined
+        }
+        onSelectDirectory={(directory: DirectoryModel) => {
+          setPath([...path, { id: directory.id, name: directory.name }]);
+        }}
+      />
+    </div>
+  );
 });
 CurrentDirectoryMenu.displayName = 'CurrentDirectoryMenu';

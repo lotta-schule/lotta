@@ -6,23 +6,23 @@ import { GeneralSettings } from 'administration/system/GeneralSettings';
 import { GetServerSidePropsContext } from 'next';
 
 const GeneralRoute = () => {
-    return (
-        <AdminPage
-            title={
-                <>
-                    <Icon icon={faSliders} /> Grundeinstellungen
-                </>
-            }
-            component={GeneralSettings}
-            hasHomeLink
-        />
-    );
+  return (
+    <AdminPage
+      title={
+        <>
+          <Icon icon={faSliders} /> Grundeinstellungen
+        </>
+      }
+      component={GeneralSettings}
+      hasHomeLink
+    />
+  );
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default GeneralRoute;

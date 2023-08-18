@@ -9,41 +9,41 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import GetUsageQuery from 'api/query/GetUsageQuery.graphql';
 
 const UsageRoute = ({
-    usage,
-    loadUsageError: error,
+  usage,
+  loadUsageError: error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    return (
-        <AdminPage
-            title={
-                <>
-                    <Icon icon={faChartBar} /> Nutzung
-                </>
-            }
-            component={() => <Usage error={error} usage={usage} />}
-            hasHomeLink
-        />
-    );
+  return (
+    <AdminPage
+      title={
+        <>
+          <Icon icon={faChartBar} /> Nutzung
+        </>
+      }
+      component={() => <Usage error={error} usage={usage} />}
+      hasHomeLink
+    />
+  );
 };
 
 export const getServerSideProps = async ({
-    req,
+  req,
 }: GetServerSidePropsContext) => {
-    const {
-        data: { usage },
-        error,
-    } = await getApolloClient().query<{ usage: any }>({
-        query: GetUsageQuery,
-        context: {
-            headers: req?.headers,
-        },
-    });
+  const {
+    data: { usage },
+    error,
+  } = await getApolloClient().query<{ usage: any }>({
+    query: GetUsageQuery,
+    context: {
+      headers: req?.headers,
+    },
+  });
 
-    return {
-        props: {
-            usage,
-            loadUsageError: error ?? null,
-        },
-    };
+  return {
+    props: {
+      usage,
+      loadUsageError: error ?? null,
+    },
+  };
 };
 
 export default UsageRoute;

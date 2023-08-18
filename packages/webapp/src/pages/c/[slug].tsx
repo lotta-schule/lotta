@@ -9,61 +9,58 @@ import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 export const PREFETCH_COUNT = 10;
 
 const CategoryRoute = ({
-    articles,
-    categoryId,
+  articles,
+  categoryId,
 }: Required<InferGetServerSidePropsType<typeof getServerSideProps>>) => {
-    const didReadFromSSRCache = React.useRef(false);
-    if (
-        typeof window !== 'undefined' &&
-        didReadFromSSRCache.current === false
-    ) {
-        getApolloClient().writeQuery({
-            query: GetArticlesQuery,
-            variables: {
-                categoryId,
-                filter: { first: PREFETCH_COUNT },
-            },
-            data: { articles },
-        });
-        didReadFromSSRCache.current = true;
-    }
-    return <CategoryPage categoryId={categoryId} />;
+  const didReadFromSSRCache = React.useRef(false);
+  if (typeof window !== 'undefined' && didReadFromSSRCache.current === false) {
+    getApolloClient().writeQuery({
+      query: GetArticlesQuery,
+      variables: {
+        categoryId,
+        filter: { first: PREFETCH_COUNT },
+      },
+      data: { articles },
+    });
+    didReadFromSSRCache.current = true;
+  }
+  return <CategoryPage categoryId={categoryId} />;
 };
 
 export const getServerSideProps = async ({
-    params,
-    req,
+  params,
+  req,
 }: GetServerSidePropsContext) => {
-    if ((req as any).tenant === null) {
-        return { props: {} };
-    }
-    const rawCategoryId = (params?.slug as string)?.replace(/^(\d+).*/, '$1');
-    const categoryId = rawCategoryId === '0' ? null : rawCategoryId ?? null;
+  if ((req as any).tenant === null) {
+    return { props: {} };
+  }
+  const rawCategoryId = (params?.slug as string)?.replace(/^(\d+).*/, '$1');
+  const categoryId = rawCategoryId === '0' ? null : rawCategoryId ?? null;
 
-    let {
-        data: { articles },
-        error,
-    } = await getApolloClient().query<
-        { articles: ArticleModel[] },
-        { categoryId: ID | null; filter: ArticleFilter }
-    >({
-        query: GetArticlesQuery,
-        variables: {
-            categoryId: categoryId ?? null,
-            filter: { first: PREFETCH_COUNT },
-        },
-        context: {
-            headers: req?.headers,
-        },
-    });
+  let {
+    data: { articles },
+    error,
+  } = await getApolloClient().query<
+    { articles: ArticleModel[] },
+    { categoryId: ID | null; filter: ArticleFilter }
+  >({
+    query: GetArticlesQuery,
+    variables: {
+      categoryId: categoryId ?? null,
+      filter: { first: PREFETCH_COUNT },
+    },
+    context: {
+      headers: req?.headers,
+    },
+  });
 
-    return {
-        props: {
-            articles,
-            categoryId,
-            error: error ?? null,
-        },
-    };
+  return {
+    props: {
+      articles,
+      categoryId,
+      error: error ?? null,
+    },
+  };
 };
 
 export default CategoryRoute;

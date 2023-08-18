@@ -1,48 +1,48 @@
 @import 'breakpoints';
 
 .root {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  .sideView {
+    position: relative;
+    flex: 20em;
+    overflow: auto;
+    @media screen and (max-width: $max-sm) {
+      display: none;
+      &.active {
+        display: block;
+        margin-right: var(--lotta-spacing);
+      }
+    }
+    @media screen and (max-width: $max-xs) {
+      flex: 0 0 100%;
+    }
+  }
+
+  .messageView {
+    margin-left: var(--lotta-spacing);
+    padding: var(--lotta-spacing);
+    background-color: rgba(var(--lotta-box-background-color), 1);
+    flex: 1 2 100%;
+    overflow: auto;
     display: flex;
-    flex-direction: row;
-    width: 100%;
-
-    .sideView {
-        position: relative;
-        flex: 20em;
-        overflow: auto;
-        @media screen and (max-width: $max-sm) {
-            display: none;
-            &.active {
-                display: block;
-                margin-right: var(--lotta-spacing);
-            }
-        }
-        @media screen and (max-width: $max-xs) {
-            flex: 0 0 100%;
-        }
+    flex-direction: column;
+    @media screen and (max-width: $max-sm) {
+      margin-left: 0;
     }
-
-    .messageView {
-        margin-left: var(--lotta-spacing);
-        padding: var(--lotta-spacing);
-        background-color: rgba(var(--lotta-box-background-color), 1);
-        flex: 1 2 100%;
-        overflow: auto;
-        display: flex;
-        flex-direction: column;
-        @media screen and (max-width: $max-sm) {
-            margin-left: 0;
-        }
-        @media screen and (max-width: $max-xs) {
-            padding-left: 0px;
-            padding-right: 0px;
-        }
+    @media screen and (max-width: $max-xs) {
+      padding-left: 0px;
+      padding-right: 0px;
     }
+  }
 
-    .noMessagesWrapper {
-        display: flex;
-        flex: 1 1;
-        align-items: center;
-        justify-content: center;
-        color: rgba(var(--lotta-disabled-color), 1);
-    }
+  .noMessagesWrapper {
+    display: flex;
+    flex: 1 1;
+    align-items: center;
+    justify-content: center;
+    color: rgba(var(--lotta-disabled-color), 1);
+  }
 }

@@ -1,33 +1,33 @@
 mutation SendMessage($message: MessageInput!) {
-    message: createMessage(message: $message) {
+  message: createMessage(message: $message) {
+    id
+    content
+    insertedAt
+    updatedAt
+    user {
+      id
+      name
+      nickname
+      avatarImageFile {
         id
-        content
-        insertedAt
-        updatedAt
-        user {
-            id
-            name
-            nickname
-            avatarImageFile {
-                id
-            }
-        }
-        files {
-          id
-        }
-        conversation {
-            id
-            insertedAt
-            updatedAt
-            users {
-                id
-            }
-            groups {
-                id
-            }
-            messages {
-                id
-            }
-        }
+      }
     }
+    files {
+      id
+    }
+    conversation {
+      id
+      insertedAt
+      updatedAt
+      users {
+        id
+      }
+      groups {
+        id
+      }
+      messages {
+        id
+      }
+    }
+  }
 }

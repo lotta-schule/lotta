@@ -1,9 +1,9 @@
 mutation CreateUserGroup($group: UserGroupInput!) {
-    group: createUserGroup(group: $group) {
-        id
-        name
-        isAdminGroup
-        sortKey
-        enrollmentTokens
-    }
+  group: createUserGroup(group: $group) {
+    id
+    name
+    isAdminGroup
+    sortKey
+    enrollmentTokens
+  }
 }

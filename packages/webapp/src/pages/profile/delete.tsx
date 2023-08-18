@@ -3,13 +3,13 @@ import { GetServerSidePropsContext } from 'next';
 import { DeletePage } from 'profile/DeletePage';
 
 const DeleteRoute = () => {
-    return <DeletePage />;
+  return <DeletePage />;
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default DeleteRoute;

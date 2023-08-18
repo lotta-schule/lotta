@@ -5,21 +5,21 @@ import { CurrentDirectoryMenu } from './CurrentDirectoryMenu';
 import fileExplorerContext from '../context/FileExplorerContext';
 
 export interface DirectorySelectorProps {
-    onSelectDirectoryId(directoryId: ID | null): void;
+  onSelectDirectoryId(directoryId: ID | null): void;
 }
 
 export const DirectorySelector = React.memo<DirectorySelectorProps>(
-    ({ onSelectDirectoryId }) => {
-        const [{ currentPath }] = React.useContext(fileExplorerContext);
+  ({ onSelectDirectoryId }) => {
+    const [{ currentPath }] = React.useContext(fileExplorerContext);
 
-        return (
-            <SelectedDirectoryContextProvider
-                defaultPath={currentPath}
-                onSelectDirectoryId={onSelectDirectoryId}
-            >
-                <CurrentDirectoryMenu />
-            </SelectedDirectoryContextProvider>
-        );
-    }
+    return (
+      <SelectedDirectoryContextProvider
+        defaultPath={currentPath}
+        onSelectDirectoryId={onSelectDirectoryId}
+      >
+        <CurrentDirectoryMenu />
+      </SelectedDirectoryContextProvider>
+    );
+  }
 );
 DirectorySelector.displayName = 'DirectoryTree';

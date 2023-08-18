@@ -1,5 +1,5 @@
 mutation DeleteWidget($id: ID!) {
-    widget: deleteWidget(id: $id) {
-        id
-    }
+  widget: deleteWidget(id: $id) {
+    id
+  }
 }

@@ -1,49 +1,49 @@
 @import 'breakpoints';
 
 .toolbar {
-    @media screen and (max-width: $max-sm) {
-        flex-direction: column;
-        align-items: flex-start;
-        .actions {
-            align-self: flex-end;
-        }
+  @media screen and (max-width: $max-sm) {
+    flex-direction: column;
+    align-items: flex-start;
+    .actions {
+      align-self: flex-end;
     }
+  }
 }
 
 .spacer {
-    flex-grow: 1;
-    @media screen and (max-width: $max-sm) {
-        display: none;
-    }
+  flex-grow: 1;
+  @media screen and (max-width: $max-sm) {
+    display: none;
+  }
 }
 
 .title {
-    overflow: auto;
-    flex: 1 1 auto;
+  overflow: auto;
+  flex: 1 1 auto;
 }
 
 .actions {
-    color: rgba(var(--lotta-primary-color), 1);
-    display: flex;
-    flex: 0 0 auto;
+  color: rgba(var(--lotta-primary-color), 1);
+  display: flex;
+  flex: 0 0 auto;
 }
 
 .uploadButton {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
 }
 
 .breadcrumbs {
-    & [role='button'] {
-        pointer-events: none;
-        cursor: inherit;
-    }
-    .lotta-button-icon svg {
-        width: 1em;
-        height: 1em;
-    }
+  & [role='button'] {
+    pointer-events: none;
+    cursor: inherit;
+  }
+  .lotta-button-icon svg {
+    width: 1em;
+    height: 1em;
+  }
 }

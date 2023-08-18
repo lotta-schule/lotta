@@ -1,10 +1,10 @@
 query GetContentModuleResults($contentModuleId: ID!) {
-    contentModuleResults: contentModuleResults(
-        contentModuleId: $contentModuleId
-    ) {
-        id
-        insertedAt
-        updatedAt
-        result
-    }
+  contentModuleResults: contentModuleResults(
+    contentModuleId: $contentModuleId
+  ) {
+    id
+    insertedAt
+    updatedAt
+    result
+  }
 }

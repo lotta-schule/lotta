@@ -4,14 +4,14 @@ import { SomeUser } from 'test/fixtures';
 import { MessagingPage } from './MessagingPage';
 
 describe('pages/messaging', () => {
-    it('should show the page with title when user is logged in', async () => {
-        const screen = render(
-            <MessagingPage />,
-            {},
-            {
-                currentUser: SomeUser,
-            }
-        );
-        expect(screen.getByTestId('title')).toBeVisible();
-    });
+  it('should show the page with title when user is logged in', async () => {
+    const screen = render(
+      <MessagingPage />,
+      {},
+      {
+        currentUser: SomeUser,
+      }
+    );
+    expect(screen.getByTestId('title')).toBeVisible();
+  });
 });

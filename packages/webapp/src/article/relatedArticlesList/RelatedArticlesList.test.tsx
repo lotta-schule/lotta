@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import {
-    Weihnachtsmarkt,
-    ComputerExperten,
-    VivaLaRevolucion,
+  Weihnachtsmarkt,
+  ComputerExperten,
+  VivaLaRevolucion,
 } from 'test/fixtures';
 import { RelatedArticlesList } from './RelatedArticlesList';
 import { FetchResult } from '@apollo/client';
@@ -11,80 +11,78 @@ import { ArticleModel } from 'model';
 import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
 
 describe('shared/article/RelatedArticlesList', () => {
-    const getAdditionalMocks = (
-        result:
-            | FetchResult<{ articles: ArticleModel[] }>
-            | (() => FetchResult<{ articles: ArticleModel[] }>)
-    ) => [
+  const getAdditionalMocks = (
+    result:
+      | FetchResult<{ articles: ArticleModel[] }>
+      | (() => FetchResult<{ articles: ArticleModel[] }>)
+  ) => [
+    {
+      request: {
+        query: GetArticlesForTag,
+        variables: { tag: 'tag' },
+      },
+      result,
+    },
+  ];
+
+  it('should render a RelatedArticlesList without error', () => {
+    render(
+      <RelatedArticlesList tag={'tag'} />,
+      {},
+      { additionalMocks: getAdditionalMocks({ data: { articles: [] } }) }
+    );
+  });
+
+  describe('tag header', () => {
+    it('should be visible when results are found', async () => {
+      const screen = render(
+        <RelatedArticlesList tag={'tag'} />,
+        {},
         {
-            request: {
-                query: GetArticlesForTag,
-                variables: { tag: 'tag' },
-            },
-            result,
-        },
-    ];
-
-    it('should render a RelatedArticlesList without error', () => {
-        render(
-            <RelatedArticlesList tag={'tag'} />,
-            {},
-            { additionalMocks: getAdditionalMocks({ data: { articles: [] } }) }
-        );
+          additionalMocks: getAdditionalMocks({
+            data: { articles: [Weihnachtsmarkt] },
+          }),
+        }
+      );
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: /tag/ })).toBeVisible();
+      });
     });
 
-    describe('tag header', () => {
-        it('should be visible when results are found', async () => {
-            const screen = render(
-                <RelatedArticlesList tag={'tag'} />,
-                {},
-                {
-                    additionalMocks: getAdditionalMocks({
-                        data: { articles: [Weihnachtsmarkt] },
-                    }),
-                }
-            );
-            await waitFor(() => {
-                expect(
-                    screen.getByRole('heading', { name: /tag/ })
-                ).toBeVisible();
-            });
-        });
+    it('should not be shown when no results are found', async () => {
+      const resFn = jest.fn(() => ({ data: { articles: [] } }));
+      const screen = render(
+        <RelatedArticlesList tag={'tag'} />,
+        {},
+        {
+          additionalMocks: getAdditionalMocks(resFn),
+        }
+      );
+      await waitFor(() => {
+        expect(resFn).toHaveBeenCalled();
+      });
+      expect(screen.queryByRole('heading', { name: /tag/i })).toBeNull();
+    });
+  });
 
-        it('should not be shown when no results are found', async () => {
-            const resFn = jest.fn(() => ({ data: { articles: [] } }));
-            const screen = render(
-                <RelatedArticlesList tag={'tag'} />,
-                {},
-                {
-                    additionalMocks: getAdditionalMocks(resFn),
-                }
-            );
-            await waitFor(() => {
-                expect(resFn).toHaveBeenCalled();
-            });
-            expect(screen.queryByRole('heading', { name: /tag/i })).toBeNull();
-        });
+  it('should render the articles found for a given tag', async () => {
+    const resFn = jest.fn(() => ({
+      data: {
+        articles: [Weihnachtsmarkt, ComputerExperten, VivaLaRevolucion],
+      },
+    }));
+    const screen = render(
+      <RelatedArticlesList tag={'tag'} />,
+      {},
+      {
+        additionalMocks: getAdditionalMocks(resFn),
+      }
+    );
+
+    await waitFor(() => {
+      expect(resFn).toHaveBeenCalled();
     });
 
-    it('should render the articles found for a given tag', async () => {
-        const resFn = jest.fn(() => ({
-            data: {
-                articles: [Weihnachtsmarkt, ComputerExperten, VivaLaRevolucion],
-            },
-        }));
-        const screen = render(
-            <RelatedArticlesList tag={'tag'} />,
-            {},
-            {
-                additionalMocks: getAdditionalMocks(resFn),
-            }
-        );
-
-        await waitFor(() => {
-            expect(resFn).toHaveBeenCalled();
-        });
-
-        expect(screen.queryAllByTestId('ArticlePreview')).toHaveLength(3);
-    });
+    expect(screen.queryAllByTestId('ArticlePreview')).toHaveLength(3);
+  });
 });

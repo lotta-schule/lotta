@@ -1,15 +1,15 @@
 .root {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    padding-top: var(--lotta-spacing);
-    height: 3em;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding-top: var(--lotta-spacing);
+  height: 3em;
 
-    [role='combobox'] {
-        width: 100%;
-    }
+  [role='combobox'] {
+    width: 100%;
+  }
 }
 
 .plusButton {
-    float: left;
+  float: left;
 }

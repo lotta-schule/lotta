@@ -1,8 +1,8 @@
 query GetUserGroups {
-    userGroups {
-        id
-        name
-        isAdminGroup
-        sortKey
-    }
+  userGroups {
+    id
+    name
+    isAdminGroup
+    sortKey
+  }
 }

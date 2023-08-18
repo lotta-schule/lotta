@@ -3,13 +3,13 @@ import { RequestResetPage } from 'password/RequestResetPage';
 import { GetServerSidePropsContext } from 'next';
 
 const RequestResetRoute = () => {
-    return <RequestResetPage />;
+  return <RequestResetPage />;
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-    return {
-        props: {},
-    };
+  return {
+    props: {},
+  };
 };
 
 export default RequestResetRoute;

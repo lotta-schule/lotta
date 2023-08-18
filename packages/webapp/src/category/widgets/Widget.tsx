@@ -9,26 +9,20 @@ import { IFrame } from './iframe/IFrame';
 import styles from './Widget.module.scss';
 
 export interface WidgetProps {
-    widget: WidgetModel;
+  widget: WidgetModel;
 }
 
 export const Widget = React.memo<WidgetProps>(({ widget }) => {
-    if (widget.type === WidgetModelType.UserNavigationMobile) {
-        return <UserNavigationMobile />;
-    }
-    return (
-        <Box className={styles.root}>
-            <div className={styles.heading}>{widget.title}</div>
-            {widget.type === WidgetModelType.Calendar && (
-                <Calendar widget={widget} />
-            )}
-            {widget.type === WidgetModelType.Schedule && (
-                <Schedule widget={widget} />
-            )}
-            {widget.type === WidgetModelType.IFrame && (
-                <IFrame widget={widget} />
-            )}
-        </Box>
-    );
+  if (widget.type === WidgetModelType.UserNavigationMobile) {
+    return <UserNavigationMobile />;
+  }
+  return (
+    <Box className={styles.root}>
+      <div className={styles.heading}>{widget.title}</div>
+      {widget.type === WidgetModelType.Calendar && <Calendar widget={widget} />}
+      {widget.type === WidgetModelType.Schedule && <Schedule widget={widget} />}
+      {widget.type === WidgetModelType.IFrame && <IFrame widget={widget} />}
+    </Box>
+  );
 });
 Widget.displayName = 'Widget';

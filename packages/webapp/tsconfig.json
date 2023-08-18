@@ -4,9 +4,7 @@
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "dist",
-    "rootDirs": [
-      "src"
-    ],
+    "rootDirs": ["src"],
     "types": [],
     "typeRoots": [
       "src/@types",
@@ -29,7 +27,5 @@
       "path": "./hubert/tsconfig.json"
     }
   ],
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

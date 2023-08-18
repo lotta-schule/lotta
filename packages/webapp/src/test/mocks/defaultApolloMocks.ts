@@ -11,69 +11,69 @@ import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
 
 export interface ApolloMocksOptions {
-    currentUser?: UserModel;
-    tenant?: TenantModel;
-    userGroups?: UserGroupModel[];
-    tags?: string[];
-    categories?: (categories: CategoryModel[]) => CategoryModel[];
+  currentUser?: UserModel;
+  tenant?: TenantModel;
+  userGroups?: UserGroupModel[];
+  tags?: string[];
+  categories?: (categories: CategoryModel[]) => CategoryModel[];
 }
 export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
-    const mocks = [
-        {
-            request: { query: GetTenantQuery },
-            result: {
-                data: { tenant: { ...(options.tenant ?? tenant), id: 1 } },
-            },
+  const mocks = [
+    {
+      request: { query: GetTenantQuery },
+      result: {
+        data: { tenant: { ...(options.tenant ?? tenant), id: 1 } },
+      },
+    },
+    {
+      request: { query: GetUserGroupsQuery },
+      result: {
+        data: {
+          userGroups: [...(options.userGroups || userGroups || [])],
         },
-        {
-            request: { query: GetUserGroupsQuery },
-            result: {
-                data: {
-                    userGroups: [...(options.userGroups || userGroups || [])],
-                },
-            },
+      },
+    },
+    {
+      request: { query: GetCurrentUserQuery },
+      result: { data: { currentUser: options.currentUser ?? null } },
+    },
+    {
+      request: { query: GetTagsQuery },
+      result: {
+        data: {
+          tags: [...(options.tags || [])],
         },
-        {
-            request: { query: GetCurrentUserQuery },
-            result: { data: { currentUser: options.currentUser ?? null } },
+      },
+    },
+    {
+      request: { query: GetCategoriesQuery },
+      result: {
+        data: {
+          categories: (options.categories ?? identity)(allCategories),
         },
-        {
-            request: { query: GetTagsQuery },
-            result: {
-                data: {
-                    tags: [...(options.tags || [])],
-                },
-            },
-        },
-        {
-            request: { query: GetCategoriesQuery },
-            result: {
-                data: {
-                    categories: (options.categories ?? identity)(allCategories),
-                },
-            },
-        },
-        {
-            request: { query: ReceiveMessageSubscription },
-            result: {},
-        },
-    ];
-    const cache = new InMemoryCache({
-        addTypename: false,
-    });
+      },
+    },
+    {
+      request: { query: ReceiveMessageSubscription },
+      result: {},
+    },
+  ];
+  const cache = new InMemoryCache({
+    addTypename: false,
+  });
+  cache.writeQuery({
+    query: GetTenantQuery,
+    data: { tenant: options.tenant ?? tenant },
+  });
+  cache.writeQuery({
+    query: GetUserGroupsQuery,
+    data: { userGroups: options.userGroups ?? userGroups },
+  });
+  if (options.currentUser) {
     cache.writeQuery({
-        query: GetTenantQuery,
-        data: { tenant: options.tenant ?? tenant },
+      query: GetCurrentUserQuery,
+      data: { currentUser: options.currentUser },
     });
-    cache.writeQuery({
-        query: GetUserGroupsQuery,
-        data: { userGroups: options.userGroups ?? userGroups },
-    });
-    if (options.currentUser) {
-        cache.writeQuery({
-            query: GetCurrentUserQuery,
-            data: { currentUser: options.currentUser },
-        });
-    }
-    return { cache, mocks };
+  }
+  return { cache, mocks };
 };
