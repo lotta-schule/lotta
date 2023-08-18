@@ -4,15 +4,15 @@
     "compilerOptions": {
         "noEmit": true
     },
-    "references": {
-        "theme": {
+    "references": [
+        {
             "path": "./packages/theme/tsconfig.json"
         },
-        "storybook-addon-theme": {
+        {
             "path": "./packages/storybook-addon-theme/tsconfig.json"
         },
-        "hubert": {
+        {
             "path": "./packages/hubert/tsconfig.json"
         }
-    }
+    ]
 }
