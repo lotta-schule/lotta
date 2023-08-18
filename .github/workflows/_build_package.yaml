@@ -1,0 +1,40 @@
+---
+name: 'Build and pack npm package'
+
+on:
+  workflow_call:
+    inputs:
+      package-name:
+        type: string
+        required: true
+      dependencies:
+        type: string
+        required: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: Build dependencies
+        if: ${{ inputs.dependencies }}
+        run: |
+          while IFS=',' read -ra deps; do
+            for dep in "${deps[@]}"; do
+              npm -w @lotta-schule/$dep run build
+            done
+          done <<< "${{ inputs.dependencies }}"
+      - run: npm -w @lotta-schule/${{ package-name }} run build
+      - run: npm -w @lotta-schule/${{ package-name }} pack
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: npm-package-${{ package-name }}
+          path: lotta-schule-${{ package-name }}*.tgz
+          if-no-files-found: error

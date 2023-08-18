@@ -1,0 +1,113 @@
+---
+name: 'Run checks and tests'
+
+on:
+  workflow_call:
+    inputs:
+      package-name:
+        type: string
+        required: false
+      tasks:
+        type: string
+        required: false
+    secrets:
+      codecov-token:
+        required: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.tasks || contains(inputs.tasks, 'lint') }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: run npm lint task
+        run: |
+          if [ -z "${{ inputs.package-name }}" ]; then
+            npm run lint
+          else
+            npm -w ${{ format('@lotta-schule/{0}', inputs.package-name) }} run lint
+          fi
+
+  typecheck:
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.tasks || contains(inputs.tasks, 'typecheck') }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm -w @lotta-schule/theme run build
+        if: ${{ !inputs.package-name || inputs.package-name != 'theme' }}
+      - run: npm -w @lotta-schule/storybook-addon-theme run build
+        if: ${{ inputs.package-name != 'theme' && inputs.package-name != 'storybook-addon-theme' }}
+      - name: run npm typecheck task
+        run: |
+          if [ -z "${{ inputs.package-name }}" ]; then
+            npm run typecheck
+          else
+            npm -w ${{ format('@lotta-schule/{0}', inputs.package-name) }} run typecheck
+          fi
+
+  unit-tests:
+    name: Running unit tests
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.tasks || contains(inputs.tasks, 'unit-tests') }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm -w @lotta-schule/theme run build
+        if: ${{ !inputs.package-name || inputs.package-name != 'theme' }}
+      - name: 'Run npm test task'
+        run: |
+          if [ -z "${{ inputs.package-name }}" ]; then
+            npm test -- --ci --coverage
+          else
+            npm -w ${{ format('@lotta-schule/{0}', inputs.package-name) }} test -- --ci --coverage
+          fi
+      - uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.codecov-token }}
+          directory: ${{ (inputs.package-name && format('./packages/{0}/coverage', inputs.package-name)) || './coverage' }}
+          fail_ci_if_error: false
+          move_coverage_to_trash: true
+          verbose: true
+
+  interaction-tests:
+    name: Running interaction tests
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.package-name }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm -w @lotta-schule/theme run build
+      - run: npm -w @lotta-schule/storybook-addon-theme run build
+      - name: build test version
+        run: NODE_ENV=test npm run storybook:build
+      - name: Run storybook test-runner
+        run: npm run storybook:test:ci -- --coverage
+      - uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.codecov-token }}
+          directory: './coverage'
+          fail_ci_if_error: false
+          move_coverage_to_trash: true
+          verbose: true
