@@ -59,7 +59,7 @@ jobs:
       - run: npm -w @lotta-schule/hubert run storybook:build
         env:
           STORYBOOK_BASE_HREF: /${{ github.event.repository.name }}
-      - run: tar -czf storybook.tgz --directory=storybook-static .
+      - run: tar -czf storybook.tgz --directory=packages/hubert/storybook-static .
       - name: Upload package artifact
         uses: actions/upload-artifact@v3
         with:

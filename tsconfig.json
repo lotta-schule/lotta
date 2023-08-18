@@ -1,4 +1,18 @@
 {
     "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
-    "extends": "./tsconfig.base.json"
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "noEmit": true
+    },
+    "references": {
+        "theme": {
+            "path": "./packages/theme/tsconfig.json"
+        },
+        "storybook-addon-theme": {
+            "path": "./packages/storybook-addon-theme/tsconfig.json"
+        },
+        "hubert": {
+            "path": "./packages/hubert/tsconfig.json"
+        }
+    }
 }

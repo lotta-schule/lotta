@@ -6,12 +6,12 @@
     "license": "GPL-3.0-or-later",
     "scripts": {
         "start": "storybook dev -p 6006",
+        "test": "jest",
         "lint": "eslint --ext js,jsx,ts,tsx src",
         "typecheck": "tsc --noEmit",
-        "test": "jest",
+        "build": "concurrently 'rollup -c' 'tsc --emitDeclarationOnly'",
         "storybook:test": "test-storybook",
         "storybook:test:ci": "concurrently -k -s first -n \"STORYBOOK,TEST\" -c \"magenta,blue\" \"npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && npm run storybook:test -- --coverage\"",
-        "package:build": "rollup -c",
         "storybook:build": "storybook build --output-dir=storybook-static"
     },
     "type": "module",
@@ -104,7 +104,6 @@
         "postcss": "^8.4.28",
         "prettier": "^3.0.1",
         "rollup": "^3.28.0",
-        "rollup-plugin-dts": "^6.0.0",
         "rollup-plugin-esbuild": "^5.0.0",
         "rollup-plugin-postcss": "^4.0.2",
         "rollup-plugin-preserve-directives": "^0.2.0",

@@ -9,15 +9,6 @@ node_modules
 # coverage directory
 coverage
 
-# Storybook files
-.storybook/*
-*.stories.ts
-*.stories.tsx
-assets/*
-storybook-static
-storybook.tar.gz
-babel.config.js
-
 # test files
 *.test.ts
 *.test.tsx

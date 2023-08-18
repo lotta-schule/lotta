@@ -13,77 +13,89 @@ import { Menu, WithDescription } from './Menu';
 import styles from './MenuButton.module.scss';
 
 export type MenuButtonProps = {
-  buttonProps: Omit<ButtonProps, 'ref'>;
-  children: CollectionChildren<object>;
-  placement?: PopoverProps['placement'];
-  onOpenChange?: (_isOpen: boolean) => void;
-  onAction?: (_action: React.Key) => void;
+    buttonProps: Omit<ButtonProps, 'ref'>;
+    children: CollectionChildren<object>;
+    placement?: PopoverProps['placement'];
+    onOpenChange?: (_isOpen: boolean) => void;
+    onAction?: (_action: React.Key) => void;
 } & WithDescription;
 
 export const MenuButton = React.forwardRef(
-  (
-    { buttonProps, onOpenChange, placement, ...props }: MenuButtonProps,
-    forwardedRef: React.Ref<HTMLButtonElement | null>
-  ) => {
-    const isBrowser = typeof window !== 'undefined';
+    (
+        { buttonProps, onOpenChange, placement, ...props }: MenuButtonProps,
+        forwardedRef: React.Ref<HTMLButtonElement | null>
+    ) => {
+        const onOpenChangeRef = React.useRef(onOpenChange);
 
-    const ref = React.useRef<HTMLButtonElement>(null);
+        React.useEffect(() => {
+            onOpenChangeRef.current = onOpenChange;
+        }, [onOpenChange]);
 
-    React.useImperativeHandle(forwardedRef, () => ref.current);
+        const isBrowser = typeof window !== 'undefined';
 
-    const state = useMenuTriggerState({});
-    const { menuTriggerProps, menuProps } = useMenuTrigger(
-      { type: 'menu', isDisabled: buttonProps.disabled },
-      state,
-      ref
-    );
+        const ref = React.useRef<HTMLButtonElement>(null);
 
-    React.useEffect(() => {
-      onOpenChange?.(state.isOpen);
-    }, [state.isOpen]);
+        React.useImperativeHandle(forwardedRef, () => ref.current);
 
-    const element = React.useRef<HTMLDivElement | null>(null);
-    const { buttonProps: ariaButtonProps } = useButton(menuTriggerProps, ref);
+        const state = useMenuTriggerState({});
+        const { menuTriggerProps, menuProps } = useMenuTrigger(
+            { type: 'menu', isDisabled: buttonProps.disabled },
+            state,
+            ref
+        );
 
-    React.useEffect(() => () => element.current?.remove(), []);
+        React.useEffect(() => {
+            onOpenChangeRef.current?.(state.isOpen);
+        }, [state.isOpen]);
 
-    if (isBrowser && element.current === null) {
-      element.current = document.createElement('div');
-      const dialogContainer =
-        document.getElementById('dialogContainer') ||
-        (() => {
-          const container = document.createElement('div');
-          container.id = 'dialogContainer';
-          document.body.appendChild(container);
-          return container;
-        })();
-      dialogContainer.appendChild(element.current);
+        const element = React.useRef<HTMLDivElement | null>(null);
+        const { buttonProps: ariaButtonProps } = useButton(
+            menuTriggerProps,
+            ref
+        );
+
+        React.useEffect(() => () => element.current?.remove(), []);
+
+        if (isBrowser && element.current === null) {
+            element.current = document.createElement('div');
+            const dialogContainer =
+                document.getElementById('dialogContainer') ||
+                (() => {
+                    const container = document.createElement('div');
+                    container.id = 'dialogContainer';
+                    document.body.appendChild(container);
+                    return container;
+                })();
+            dialogContainer.appendChild(element.current);
+        }
+
+        return (
+            <>
+                <Button ref={ref} {...buttonProps} {...ariaButtonProps} />
+                {ref.current && (
+                    <Popover
+                        isOpen={state.isOpen}
+                        onClose={state.close}
+                        placement={placement}
+                        triggerRef={ref}
+                    >
+                        <Menu
+                            {...mergeProps(
+                                {
+                                    ...menuProps,
+                                    autoFocus: !!menuProps.autoFocus,
+                                },
+                                props
+                            )}
+                            className={styles.menu}
+                            onClose={state.close}
+                        >
+                            {props.children as any}
+                        </Menu>
+                    </Popover>
+                )}
+            </>
+        );
     }
-
-    return (
-      <>
-        <Button ref={ref} {...buttonProps} {...ariaButtonProps} />
-        {ref.current && (
-          <Popover
-            isOpen={state.isOpen}
-            onClose={state.close}
-            placement={placement}
-            triggerRef={ref}
-          >
-            <Menu
-              {...mergeProps(
-                { ...menuProps, autoFocus: !!menuProps.autoFocus },
-                props
-              )}
-              className={styles.menu}
-              onClose={state.close}
-            >
-              {props.children as any}
-            </Menu>
-          </Popover>
-        )}
-      </>
-    );
-  }
 );
 MenuButton.displayName = 'MenuButton';

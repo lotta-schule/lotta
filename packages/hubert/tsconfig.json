@@ -2,15 +2,25 @@
     "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
-        "declaration": true
+        "baseUrl": "src",
+        "outDir": "dist",
+        "rootDir": "src",
+        "types": [],
+        "typeRoots": [
+            "src/@types",
+            "node_modules/@types",
+            "../../node_modules/@types"
+        ],
+        "declaration": true,
+        "composite": true
     },
-    "composite": true,
     "references": [
         {
-            "path": "../storybook-addon-theme"
+            "path": "../storybook-addon-theme/tsconfig.json"
         },
         {
-            "path": "../theme"
+            "path": "../theme/tsconfig.json"
         }
-    ]
+    ],
+    "include": ["src/**/*"]
 }

@@ -7,12 +7,12 @@
     "license": "GPL-3.0-or-later",
     "scripts": {
         "test": "jest",
-        "build": "rollup -c, tsc",
         "lint": "eslint --ext js,jsx,ts,tsx src",
-        "typecheck": "tsc --noEmit"
+        "typecheck": "tsc --noEmit",
+        "build": "concurrently 'rollup -c' 'tsc --emitDeclarationOnly'"
     },
     "type": "module",
-    "source": "src/index.ts",
+    "source": "src/*.ts",
     "exports": {
         "./manager": {
             "default": "./dist/manager.js",

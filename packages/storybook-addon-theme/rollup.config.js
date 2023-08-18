@@ -12,7 +12,7 @@ export default [
         external: (id) => !/^[./]/.test(id),
         plugins: [
             esbuild({
-                include: /src\/.*\.[jt]s?$/,
+                include: /src\/.*\.[jt]sx?$/,
                 exclude: [/node_modules/],
             }),
         ],

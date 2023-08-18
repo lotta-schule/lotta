@@ -8,7 +8,7 @@ Web Client for Lotta Project
 ## What is Lotta
 
 Lotta is a simple-to use platform aimed at schools.
-Its comprehensible interface makes it easy for pupils and teachers
+Its comprehensible interface makes it easy for students and teachers
 to create a sophisticated webpage for their school,
 providing articles, files and media in access-controlled spaces.
 
@@ -16,22 +16,33 @@ See [https://lotta.schule](lotta.schule) for more information.
 
 ## What does this repository contain
 
-This repository contains the source code for the lotta web client.
+This repository contains the source code for the lotta web client,
+that is the entire nextjs web frontend that serves the user the
+server-prerendered react application, as well our component library
+[Hubert](packages/hubert/readme.md) which was specially tought for our needs.
 
-The lotta web client is the web frontend which connects to a lotta
-api, mainly over graphql.
+The lotta web client does not treat any data, but acts as merely
+more than a proxy, prerendering the ui and sending over requests
+to the [lotta core API Server](https://github.com/lotta-schule/core).
 
-The latest tagged commit is deployed, as is.
+The latest git tag is the currently deployed version that also runs
+unmodified on our infrastructure.
 
-We invite you to inspect the source code, but have not yet decided
-about the terms we want to apply, so please contact us if you have
-questions about licensing or contributing.
+We invite you to inspect the source code, and maybe even participate.
+We are aware that the current state of the repo is not particularly
+accessible, but we are happy to answer questions should they come up.
 
-We will probably change this situation soon.
+Just open an issue.
 
 ## Develop
 
 The project is a [nextjs](https://nextjs.org/) project.
+
+### Installation
+
+-   Make sure you have a running instance of the [lotta Core API Server](https://github.com/lotta-schule/core).
+-   You will need an up-to-date version of nodejs installed.
+    See `.tools-version` file to maximize compatibility
 
 ### Configuration
 
