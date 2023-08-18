@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 import styles from './select.module.scss';
 
-export type SelectProps = {} & React.HTMLProps<HTMLSelectElement>;
+export type SelectProps = React.HTMLProps<HTMLSelectElement>;
 
 export const Select = React.forwardRef<any, SelectProps>(
   ({ children, className, ...props }, ref) => (

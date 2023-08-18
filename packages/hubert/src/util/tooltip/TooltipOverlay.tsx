@@ -9,7 +9,7 @@ import styles from './Tooltip.module.scss';
 
 export interface TooltipOverlayProps
   extends React.HTMLAttributes<HTMLDivElement> {
-  label?: string | React.ReactElement<{}>;
+  label?: string | React.ReactElement;
   state: TooltipTriggerState;
 }
 

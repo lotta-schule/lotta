@@ -13,7 +13,7 @@ export type PopoverProps = {
   children: CollectionChildren<ListItemPreliminaryItem>;
   isOpen: boolean;
   onClose: () => void;
-  placement?: PopperProps<{}>['placement'];
+  placement?: PopperProps<unknown>['placement'];
   triggerRef: React.RefObject<HTMLElement>;
 };
 

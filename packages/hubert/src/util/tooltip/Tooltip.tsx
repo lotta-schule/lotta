@@ -8,7 +8,7 @@ import styles from './Tooltip.module.scss';
 
 export interface TooltipProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactElement;
-  label?: string | React.ReactElement<{}>;
+  label?: string | React.ReactElement;
   /**
    * The delay time for the tooltip to show up
    * @default 750

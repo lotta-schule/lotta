@@ -1,13 +1,10 @@
 {
-    "trailingComma": "es5",
-    "tabWidth": 4,
-    "singleQuote": true,
-    "overrides": [
-        {
-            "files": ["*.yml", "*.yaml", "*.html"],
-            "options": {
-                "tabWidth": 2
-            }
-        }
-    ]
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": ["*.yml", "*.yaml", "*.html"]
+    }
+  ]
 }
