@@ -30,11 +30,11 @@ jobs:
               npm -w @lotta-schule/$dep run build
             done
           done <<< "${{ inputs.dependencies }}"
-      - run: npm -w @lotta-schule/${{ package-name }} run build
-      - run: npm -w @lotta-schule/${{ package-name }} pack
+      - run: npm -w @lotta-schule/${{ inputs.package-name }} run build
+      - run: npm -w @lotta-schule/${{ inputs.package-name }} pack
       - name: Upload package artifact
         uses: actions/upload-artifact@v3
         with:
-          name: npm-package-${{ package-name }}
-          path: lotta-schule-${{ package-name }}*.tgz
+          name: npm-package-${{ inputs.package-name }}
+          path: lotta-schule-${{ inputs.package-name }}*.tgz
           if-no-files-found: error
