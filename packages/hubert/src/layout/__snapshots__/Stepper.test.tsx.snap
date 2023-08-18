@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Stepper should render a stepper 1`] = `
+<div
+  aria-valuemax="3"
+  aria-valuemin="1"
+  aria-valuenow="1"
+  class="root"
+  role="spinbutton"
+>
+  <button
+    aria-current="false"
+    aria-label="Vorheriger Schritt"
+    class="root root root small"
+    data-variant="default"
+    disabled=""
+    role="button"
+    type="button"
+  >
+    <span
+      class="icon icon"
+    >
+      <svg
+        aria-hidden="true"
+        class="root"
+        focusable="false"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15.41 16.59 10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"
+        />
+      </svg>
+    </span>
+    <span
+      class="label label"
+    >
+      vorheriges
+    </span>
+  </button>
+  <div>
+    1
+     / 
+    3
+  </div>
+  <button
+    aria-current="false"
+    aria-label="Nächster Schritt"
+    class="root root root small"
+    data-variant="default"
+    role="button"
+    type="button"
+  >
+    <span
+      class="icon icon"
+    >
+      <svg
+        aria-hidden="true"
+        class="root"
+        focusable="false"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"
+        />
+      </svg>
+    </span>
+    <span
+      class="label label"
+    >
+      nächstes
+    </span>
+  </button>
+</div>
+`;

@@ -1,0 +1,45 @@
+.root {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: stretch;
+  button {
+    color: rgba(var(--lotta-primary-color), 1);
+    background-color: #fff;
+    display: inline-block;
+    &:not(:only-child) {
+      &:not(:first-of-type):not(:last-of-type):not(.isFirstButton):not(.isLastButton) {
+        border-radius: 0;
+        border-right: 0;
+      }
+      &:first-of-type:not(.isLastButton),
+      &.isFirstButton {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-right: 0;
+      }
+      &:last-of-type:not(.isFirstButton),
+      &.isLastButton {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+    &.isFirstButton {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: 0;
+    }
+    &.isLastButton {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    &.fullWidth {
+      flex-grow: 1;
+    }
+    svg {
+      font-size: 1.3rem;
+    }
+  }
+  &.fullWidth {
+    width: 100%;
+  }
+}

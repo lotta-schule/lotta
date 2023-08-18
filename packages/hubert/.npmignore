@@ -1,0 +1,29 @@
+# dotfiles
+.*
+
+node_modules
+
+# typescript build artifacts
+*.tsbuildinfo
+
+# coverage directory
+coverage
+
+# Storybook files
+.storybook/*
+*.stories.ts
+*.stories.tsx
+assets/*
+storybook-static
+storybook.tar.gz
+babel.config.js
+
+# test files
+*.test.ts
+*.test.tsx
+jest.config.ts
+jest.setup.ts
+
+# subpackages
+packages/*
+

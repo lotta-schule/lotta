@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`list/ListItem should render a list item 1`] = `
+<li
+  class="li"
+>
+  <div
+    class="mainSection"
+  >
+    Item
+  </div>
+</li>
+`;

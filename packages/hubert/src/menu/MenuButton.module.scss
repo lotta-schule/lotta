@@ -1,0 +1,13 @@
+.root {
+  position: relative;
+  display: inline-block;
+  outline: none;
+
+  button:focus-visible {
+    outline: none;
+  }
+
+  .menu {
+    z-index: 5000;
+  }
+}

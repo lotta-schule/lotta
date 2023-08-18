@@ -1,0 +1,38 @@
+{
+    "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": "src",
+
+        "declarationDir": "./dist",
+        "outDir": "./dist",
+
+        "target": "ESNext",
+        "lib": ["dom", "esnext"],
+        "module": "esnext",
+        "moduleResolution": "node",
+
+        "typeRoots": [
+            "src/@types",
+            "node_modules/@types",
+            "../../node_modules/@types"
+        ],
+
+        "allowUmdGlobalAccess": false,
+        "allowJs": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+
+        "resolveJsonModule": true,
+        "jsx": "react-jsx",
+
+        "noEmit": true,
+        "noEmitHelpers": true,
+        "incremental": true
+    },
+    "exclude": ["node_modules", "test"],
+    "include": ["env.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx"]
+}

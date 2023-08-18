@@ -1,0 +1,8 @@
+.root {
+    color: rgba(var(--lotta-contrast-text-color));
+    border-width: 1px;
+    border-style: solid;
+    border-radius: var(--lotta-border-radius);
+    margin-bottom: var(--lotta-spacing);
+    padding: var(--lotta-spacing);
+}

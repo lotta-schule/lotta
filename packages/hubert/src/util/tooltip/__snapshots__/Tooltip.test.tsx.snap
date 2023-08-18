@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`util/Tooltip should render 1`] = `
+<div>
+  <div
+    class="root"
+  >
+    <div
+      class="trigger"
+    >
+      <button
+        aria-current="false"
+        class="root root"
+        data-variant="default"
+        role="button"
+        type="button"
+      >
+        <span
+          class="label"
+        >
+          Test
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

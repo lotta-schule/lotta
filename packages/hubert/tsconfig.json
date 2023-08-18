@@ -1,0 +1,16 @@
+{
+    "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "declaration": true
+    },
+    "composite": true,
+    "references": [
+        {
+            "path": "../storybook-addon-theme"
+        },
+        {
+            "path": "../theme"
+        }
+    ]
+}

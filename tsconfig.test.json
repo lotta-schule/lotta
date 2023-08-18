@@ -1,0 +1,14 @@
+{
+    "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "types": [
+            "node",
+            "jest",
+            "jest-dom",
+            "testing-library__jest-dom",
+            "testing-library__react",
+            "testing-library__react-hooks"
+        ]
+    }
+}

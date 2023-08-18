@@ -44,7 +44,7 @@ describe('messaging/MessageBubble', () => {
             expect(screen.getByTestId('message-attachments')).toBeVisible();
 
             expect(
-                screen.getAllByRole('link', { name: /herunterladen/ })
+                screen.getAllByRole('link', { name: /download/ })
             ).toHaveLength(2);
         });
     });
