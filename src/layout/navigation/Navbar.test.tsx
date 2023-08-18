@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Router } from 'next/router';
 import { FaecherCategory, FrancaisCategory } from 'test/fixtures/Tenant';
 import { render, waitFor } from 'test/util';
 import { Navbar } from './Navbar';
@@ -26,12 +25,11 @@ describe('shared/layouts/navigation/Navbar', () => {
     });
 
     it('it should render the correct amount of subcategories categories', async () => {
-        const screen = render(
-            <Navbar />,
-            {},
-            { router: { as: `/c/${FaecherCategory.id}` } }
+        jest.requireMock('next/router').mockRouter.reset(
+            `/c/${FaecherCategory.id}`
         );
 
+        const screen = render(<Navbar />, {});
         await waitFor(async () => {
             expect(
                 screen
@@ -47,19 +45,10 @@ describe('shared/layouts/navigation/Navbar', () => {
 
     // Problems mocking scrollIntoView
     it('should scroll to active nav item', async () => {
-        let router: Router;
-        const onPushLocation = jest.fn();
-        const screen = render(
-            <Navbar />,
-            {},
-            {
-                router: {
-                    as: `/c/${FaecherCategory.id}`,
-                    onPush: onPushLocation,
-                    getInstance: (_router: Router) => (router = _router),
-                },
-            }
+        jest.requireMock('next/router').mockRouter.reset(
+            `/c/${FaecherCategory.id}`
         );
+        const screen = render(<Navbar />);
 
         await waitFor(() => {
             expect(screen.getByTestId('nav-level2')).toHaveProperty(
@@ -68,11 +57,12 @@ describe('shared/layouts/navigation/Navbar', () => {
             );
         });
 
-        await router!.push(`/c/${FrancaisCategory.id}`);
+        jest.requireMock('next/router').mockRouter.push(
+            `/c/${FrancaisCategory.id}`
+        );
 
         await waitFor(() => {
-            expect(onPushLocation).toHaveBeenCalled();
+            expect(Element.prototype.scroll).toHaveBeenCalled();
         });
-        expect(Element.prototype.scroll).toHaveBeenCalled();
     });
 });

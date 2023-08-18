@@ -19,7 +19,7 @@ export const Navigation = React.memo(() => {
         <div className={styles.root}>
             <h3>Mein lotta</h3>
             <section className={styles.buttonRow}>
-                <Link href={'/admin/system/general'} passHref>
+                <Link href={'/admin/system/general'} passHref legacyBehavior>
                     <BaseButton
                         variant={'borderless'}
                         className={styles.button}
@@ -31,7 +31,7 @@ export const Navigation = React.memo(() => {
                     </BaseButton>
                 </Link>
 
-                <Link href={'/admin/system/presentation'} passHref>
+                <Link href={'/admin/system/presentation'} passHref legacyBehavior>
                     <BaseButton
                         variant={'borderless'}
                         className={styles.button}
@@ -43,7 +43,7 @@ export const Navigation = React.memo(() => {
                     </BaseButton>
                 </Link>
 
-                <Link href={'/admin/system/usage'} passHref>
+                <Link href={'/admin/system/usage'} passHref legacyBehavior>
                     <BaseButton
                         variant={'borderless'}
                         className={styles.button}
@@ -58,7 +58,7 @@ export const Navigation = React.memo(() => {
 
             <h3>Nutzer und Gruppen</h3>
             <section className={styles.buttonRow}>
-                <Link href={'/admin/users/list'} passHref>
+                <Link href={'/admin/users/list'} passHref legacyBehavior>
                     <BaseButton
                         variant={'borderless'}
                         className={styles.button}
@@ -70,7 +70,7 @@ export const Navigation = React.memo(() => {
                     </BaseButton>
                 </Link>
 
-                <Link href={'/admin/users/groups'} passHref>
+                <Link href={'/admin/users/groups'} passHref legacyBehavior>
                     <BaseButton
                         variant={'borderless'}
                         className={styles.button}
@@ -82,7 +82,7 @@ export const Navigation = React.memo(() => {
                     </BaseButton>
                 </Link>
 
-                <Link href={'/admin/users/constraints'} passHref>
+                <Link href={'/admin/users/constraints'} passHref legacyBehavior>
                     <BaseButton
                         variant={'borderless'}
                         className={styles.button}
@@ -97,7 +97,7 @@ export const Navigation = React.memo(() => {
 
             <h3>Kategorien und Marginalen</h3>
             <section className={styles.buttonRow}>
-                <Link href={'/admin/categories/list'} passHref>
+                <Link href={'/admin/categories/list'} passHref legacyBehavior>
                     <BaseButton
                         variant={'borderless'}
                         className={styles.button}
@@ -109,7 +109,7 @@ export const Navigation = React.memo(() => {
                     </BaseButton>
                 </Link>
 
-                <Link href={'/admin/categories/widgets'} passHref>
+                <Link href={'/admin/categories/widgets'} passHref legacyBehavior>
                     <BaseButton
                         variant={'borderless'}
                         className={styles.button}

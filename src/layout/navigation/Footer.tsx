@@ -19,15 +19,15 @@ export const Footer = React.memo(() => {
                                 category.redirect || Category.getPath(category)
                             }
                             passHref
-                        >
-                            <a data-testid="SidenavLink">{category.title}</a>
+                            data-testid="SidenavLink">
+                            {category.title}
                         </Link>
                         &nbsp;|&nbsp;
                     </React.Fragment>
                 );
             })}
-            <Link href={`/privacy`} passHref>
-                <a data-testid="SidenavLink">Datenschutz</a>
+            <Link href={`/privacy`} passHref data-testid="SidenavLink">
+                Datenschutz
             </Link>
         </div>
     );

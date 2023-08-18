@@ -158,108 +158,87 @@ export const FormElement = React.memo<FormElementProps>(
             }
             if (element.element === 'file') {
                 const maxSize = 15 * 1024 * 1024; // 15 MB
-                return (
-                    <>
-                        <ButtonGroup style={{ width: '100%' }}>
-                            <Button style={{ flex: '0 0 50%' }}>
-                                <input
-                                    type={'file'}
-                                    style={{
-                                        position: 'absolute',
-                                        left: 0,
-                                        top: 0,
-                                        height: '100%',
-                                        width: '100%',
-                                        opacity: 0,
-                                        cursor: 'pointer',
-                                    }}
-                                    onChange={(e) => {
-                                        const file = e.target.files?.item(0);
-                                        if (file) {
-                                            if (file.size > maxSize) {
-                                                alert(
-                                                    `Die Datei ist zu groß. Die Datei darf höchstens 15 MB groß sein.`
-                                                );
-                                            } else {
-                                                onSetValue(
-                                                    `file-upload://${JSON.stringify(
-                                                        {
-                                                            filesize: file.size,
-                                                            filename: file.name,
-                                                            filetype: file.type,
-                                                            blob: URL.createObjectURL(
-                                                                file
-                                                            ),
-                                                        }
-                                                    )}`
-                                                );
-                                            }
-                                        }
-                                    }}
-                                />
-                                {element.label || 'Datei hochladen'}
-                            </Button>
-                            {currentUser && (
-                                <SelectFileButton
-                                    label={`Aus 'Meine Dateien' wählen`}
-                                    buttonComponentProps={{
-                                        style: { flex: '0 0 50%' },
-                                        variant: 'contained',
-                                        color: 'primary',
-                                    }}
-                                    onSelect={(file: FileModel) => {
-                                        if (file.filesize > maxSize) {
+                return <>
+                    <ButtonGroup style={{ width: '100%' }}>
+                        <Button style={{ flex: '0 0 50%' }}>
+                            <input
+                                type={'file'}
+                                style={{
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 0,
+                                    height: '100%',
+                                    width: '100%',
+                                    opacity: 0,
+                                    cursor: 'pointer',
+                                }}
+                                onChange={(e) => {
+                                    const file = e.target.files?.item(0);
+                                    if (file) {
+                                        if (file.size > maxSize) {
                                             alert(
-                                                `Die Datei ist zu groß. Die Datei darf höchstens ${
-                                                    maxSize / 1024
-                                                } MB groß sein.`
+                                                `Die Datei ist zu groß. Die Datei darf höchstens 15 MB groß sein.`
                                             );
                                         } else {
                                             onSetValue(
-                                                `lotta-file-id://${JSON.stringify(
-                                                    file
+                                                `file-upload://${JSON.stringify(
+                                                    {
+                                                        filesize: file.size,
+                                                        filename: file.name,
+                                                        filetype: file.type,
+                                                        blob: URL.createObjectURL(
+                                                            file
+                                                        ),
+                                                    }
                                                 )}`
                                             );
                                         }
-                                    }}
-                                />
-                            )}
-                        </ButtonGroup>
-                        {!value && (
-                            <p style={{ marginTop: 0, textAlign: 'right' }}>
-                                <small>
-                                    max. Dateigröße: {maxSize / (1024 * 1024)}MB
-                                </small>
-                            </p>
-                        )}
-                        {value &&
-                            /^lotta-file-id:\/\/.+/.test(value as string) && (
-                                <p style={{ paddingLeft: '1.5em' }}>
-                                    &nbsp;
-                                    {
-                                        JSON.parse(
-                                            (value as string).replace(
-                                                /^lotta-file-id:\/\//,
-                                                ''
-                                            )
-                                        ).filename
                                     }
-                                    <Button
-                                        title={'Auswahl entfernen'}
-                                        onClick={() => onSetValue('')}
-                                        icon={
-                                            <Icon icon={faXmark} size={'lg'} />
-                                        }
-                                    />
-                                </p>
-                            )}
-                        {value && /^file-upload:\/\/.+/.test(value as string) && (
+                                }}
+                            />
+                            {element.label || 'Datei hochladen'}
+                        </Button>
+                        {currentUser && (
+                            <SelectFileButton
+                                label={`Aus 'Meine Dateien' wählen`}
+                                buttonComponentProps={{
+                                    style: { flex: '0 0 50%' },
+                                    variant: 'contained',
+                                    color: 'primary',
+                                }}
+                                onSelect={(file: FileModel) => {
+                                    if (file.filesize > maxSize) {
+                                        alert(
+                                            `Die Datei ist zu groß. Die Datei darf höchstens ${
+                                                maxSize / 1024
+                                            } MB groß sein.`
+                                        );
+                                    } else {
+                                        onSetValue(
+                                            `lotta-file-id://${JSON.stringify(
+                                                file
+                                            )}`
+                                        );
+                                    }
+                                }}
+                            />
+                        )}
+                    </ButtonGroup>
+                    {!value && (
+                        <p style={{ marginTop: 0, textAlign: 'right' }}>
+                            <small>
+                                max. Dateigröße: {maxSize / (1024 * 1024)}MB
+                            </small>
+                        </p>
+                    )}
+                    {value &&
+                        /^lotta-file-id:\/\/.+/.test(value as string) && (
                             <p style={{ paddingLeft: '1.5em' }}>
                                 &nbsp;
                                 {
                                     JSON.parse(
                                         (value as string).replace(
-                                            /^file-upload:\/\//,
+                                            /^lotta-file-id:\/\//,
                                             ''
                                         )
                                     ).filename
@@ -267,12 +246,31 @@ export const FormElement = React.memo<FormElementProps>(
                                 <Button
                                     title={'Auswahl entfernen'}
                                     onClick={() => onSetValue('')}
-                                    icon={<Icon icon={faXmark} size={'lg'} />}
+                                    icon={
+                                        <Icon icon={faXmark} size={'lg'} />
+                                    }
                                 />
                             </p>
                         )}
-                    </>
-                );
+                    {value && /^file-upload:\/\/.+/.test(value as string) && (
+                        <p style={{ paddingLeft: '1.5em' }}>
+                            &nbsp;
+                            {
+                                JSON.parse(
+                                    (value as string).replace(
+                                        /^file-upload:\/\//,
+                                        ''
+                                    )
+                                ).filename
+                            }
+                            <Button
+                                title={'Auswahl entfernen'}
+                                onClick={() => onSetValue('')}
+                                icon={<Icon icon={faXmark} size={'lg'} />}
+                            />
+                        </p>
+                    )}
+                </>;
             }
         })();
         if (formElement) {

@@ -36,6 +36,17 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
             {},
             {
                 currentUser: SomeUser,
+                additionalMocks: [
+                    {
+                        request: {
+                            query: GetDirectoriesAndFilesQuery,
+                            variables: { parentDirectoryId: null },
+                        },
+                        result: {
+                            data: { files: [], directories: rootDirectories },
+                        },
+                    },
+                ],
             }
         );
     });
@@ -212,16 +223,11 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
     it('The fourth page should show a "definitly delete account" button, which upon click should show a modal with another "definitly delete account" button', async () => {
         const fireEvent = userEvent.setup();
         let didCallDeleteMutation = false;
-        const onPushLocation = jest.fn(async (url: any) => {
-            expect(url).toEqual('/');
-            return true;
-        });
         const screen = render(
             <DeletePage />,
             {},
             {
                 currentUser: SomeUser,
-                router: { onPush: onPushLocation },
                 additionalMocks: [
                     {
                         request: {
@@ -310,7 +316,11 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
             expect(didCallDeleteMutation).toEqual(true);
         });
         await waitFor(() => {
-            expect(onPushLocation).toHaveBeenCalled();
+            expect(
+                jest
+                    .requireMock('next/router')
+                    .mockRouter._push.mock.calls.at(-1)?.[0]
+            ).toEqual('/');
         });
     }, 25_000);
 });

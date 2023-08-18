@@ -118,136 +118,134 @@ export const EditArticlePage = React.memo<ArticlePageProps>(({ article }) => {
         setIsArticleDirty(true);
     };
 
-    return (
-        <>
-            <Main>
-                <Article
-                    article={editedArticle}
-                    onUpdateArticle={changeArticle}
-                />
-                <AddModuleBar
-                    onAddModule={async (contentModule) => {
-                        changeArticle({
-                            ...editedArticle,
-                            contentModules: [
-                                ...editedArticle.contentModules,
-                                {
-                                    configuration: {},
-                                    ...contentModule,
-                                    insertedAt: new Date().toISOString(),
-                                    updatedAt: new Date().toISOString(),
-                                    sortKey: editedArticle.contentModules.length
-                                        ? Math.max(
-                                              ...editedArticle.contentModules.map(
-                                                  (cm) => cm.sortKey || 0
-                                              )
-                                          ) + 10
-                                        : 0,
-                                },
-                            ],
-                        });
-                    }}
-                />
-                <EditArticleFooter
-                    style={{ marginTop: '.5em' }}
-                    article={editedArticle}
-                    onUpdate={changeArticle}
-                    isLoading={isLoading}
-                    onSave={(additionalProps) => {
-                        const article = {
-                            ...(omit(editedArticle, [
-                                'isPinnedToTop',
-                            ]) as ArticleModel),
-                            ...additionalProps,
-                            contentModules: editedArticle.contentModules.map(
-                                (cm) => ({
-                                    ...cm,
-                                    content: cm.content
-                                        ? JSON.stringify(cm.content)
-                                        : cm.content,
-                                    configuration: JSON.stringify(
-                                        cm.configuration || {}
-                                    ),
-                                })
-                            ),
-                        };
-                        saveArticle({
-                            variables: {
-                                id: article.id,
-                                article: {
-                                    ...omit(article, ['id']),
-                                    contentModules: article.contentModules.map(
-                                        (cm) => ({
-                                            ...omit(
-                                                cm,
-                                                ...(/^-/.test(cm.id)
-                                                    ? ['id']
-                                                    : []),
-                                                'updatedAt',
-                                                'insertedAt'
-                                            ),
-                                            content: cm.content || null,
-                                            files: cm.files?.map(({ id }) => ({
-                                                id,
-                                            })),
-                                        })
-                                    ),
-                                    previewImageFile: article.previewImageFile
-                                        ? {
-                                              id: article.previewImageFile.id,
-                                          }
-                                        : null,
-                                    category: article.category
-                                        ? { id: article.category.id }
-                                        : null,
-                                    groups: article.groups.map(({ id }) => ({
-                                        id,
-                                    })),
-                                    users: article.users.map(({ id }) => ({
-                                        id,
-                                    })),
-                                },
+    return <>
+        <Main>
+            <Article
+                article={editedArticle}
+                onUpdateArticle={changeArticle}
+            />
+            <AddModuleBar
+                onAddModule={async (contentModule) => {
+                    changeArticle({
+                        ...editedArticle,
+                        contentModules: [
+                            ...editedArticle.contentModules,
+                            {
+                                configuration: {},
+                                ...contentModule,
+                                insertedAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString(),
+                                sortKey: editedArticle.contentModules.length
+                                    ? Math.max(
+                                          ...editedArticle.contentModules.map(
+                                              (cm) => cm.sortKey || 0
+                                          )
+                                      ) + 10
+                                    : 0,
                             },
-                        });
-                    }}
-                />
-                <Dialog
-                    open={isUpdatedArticleModalVisible}
-                    onRequestClose={() =>
-                        setIsUpdatedArticleModalVisible(false)
-                    }
-                    title={
-                        'Beitrag wurde von einem anderen Nutzer aktualisiert.'
-                    }
-                >
-                    <DialogContent>
-                        <p>Module des Beitrags von einem Nutzer verändert.</p>
-                        <p>
-                            Möchtest du den veränderten Beitrag laden?
-                            Allerdings gehen dadurch deine Änderungen verloren.
-                        </p>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            onClick={() =>
-                                setIsUpdatedArticleModalVisible(false)
-                            }
-                        >
-                            Nichts tun
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                changeArticle(article);
-                                setIsArticleDirty(false);
-                                setIsUpdatedArticleModalVisible(false);
-                            }}
-                        >
-                            Änderungen laden
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </Main>
-        </>
-    );
+                        ],
+                    });
+                }}
+            />
+            <EditArticleFooter
+                style={{ marginTop: '.5em' }}
+                article={editedArticle}
+                onUpdate={changeArticle}
+                isLoading={isLoading}
+                onSave={(additionalProps) => {
+                    const article = {
+                        ...(omit(editedArticle, [
+                            'isPinnedToTop',
+                        ]) as ArticleModel),
+                        ...additionalProps,
+                        contentModules: editedArticle.contentModules.map(
+                            (cm) => ({
+                                ...cm,
+                                content: cm.content
+                                    ? JSON.stringify(cm.content)
+                                    : cm.content,
+                                configuration: JSON.stringify(
+                                    cm.configuration || {}
+                                ),
+                            })
+                        ),
+                    };
+                    saveArticle({
+                        variables: {
+                            id: article.id,
+                            article: {
+                                ...omit(article, ['id']),
+                                contentModules: article.contentModules.map(
+                                    (cm) => ({
+                                        ...omit(
+                                            cm,
+                                            ...(/^-/.test(cm.id)
+                                                ? ['id']
+                                                : []),
+                                            'updatedAt',
+                                            'insertedAt'
+                                        ),
+                                        content: cm.content || null,
+                                        files: cm.files?.map(({ id }) => ({
+                                            id,
+                                        })),
+                                    })
+                                ),
+                                previewImageFile: article.previewImageFile
+                                    ? {
+                                          id: article.previewImageFile.id,
+                                      }
+                                    : null,
+                                category: article.category
+                                    ? { id: article.category.id }
+                                    : null,
+                                groups: article.groups.map(({ id }) => ({
+                                    id,
+                                })),
+                                users: article.users.map(({ id }) => ({
+                                    id,
+                                })),
+                            },
+                        },
+                    });
+                }}
+            />
+            <Dialog
+                open={isUpdatedArticleModalVisible}
+                onRequestClose={() =>
+                    setIsUpdatedArticleModalVisible(false)
+                }
+                title={
+                    'Beitrag wurde von einem anderen Nutzer aktualisiert.'
+                }
+            >
+                <DialogContent>
+                    <p>Module des Beitrags von einem Nutzer verändert.</p>
+                    <p>
+                        Möchtest du den veränderten Beitrag laden?
+                        Allerdings gehen dadurch deine Änderungen verloren.
+                    </p>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() =>
+                            setIsUpdatedArticleModalVisible(false)
+                        }
+                    >
+                        Nichts tun
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            changeArticle(article);
+                            setIsArticleDirty(false);
+                            setIsUpdatedArticleModalVisible(false);
+                        }}
+                    >
+                        Änderungen laden
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Main>
+    </>;
 });
 EditArticlePage.displayName = 'EditArticlePage';

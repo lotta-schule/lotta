@@ -6,6 +6,7 @@ import { identity } from 'lodash';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
+import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
 import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
 
@@ -13,6 +14,7 @@ export interface ApolloMocksOptions {
     currentUser?: UserModel;
     tenant?: TenantModel;
     userGroups?: UserGroupModel[];
+    tags?: string[];
     categories?: (categories: CategoryModel[]) => CategoryModel[];
 }
 export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
@@ -34,6 +36,14 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
         {
             request: { query: GetCurrentUserQuery },
             result: { data: { currentUser: options.currentUser ?? null } },
+        },
+        {
+            request: { query: GetTagsQuery },
+            result: {
+                data: {
+                    tags: [...(options.tags || [])],
+                },
+            },
         },
         {
             request: { query: GetCategoriesQuery },

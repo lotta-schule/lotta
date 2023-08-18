@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { pick } from 'lodash';
 import { HubertProvider } from '@lotta-schule/hubert';
-import { DefaultThemes } from '@lotta-schule/theme';
 import { render, RenderOptions } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
@@ -18,77 +17,38 @@ import {
 import fileExplorerContext, {
     defaultState as defaultFileExplorerState,
 } from 'shared/fileExplorer/context/FileExplorerContext';
-import { createRouter, Router } from 'next/router';
-import { RouterContext } from 'next/dist/shared/lib/router-context';
-
-const defaultTheme = DefaultThemes.standard;
 
 export type TestSetupOptions = {
     additionalMocks?: MockedResponse[];
-    router?: {
-        getInstance?: (router: Router) => void;
-        pathname?: string;
-        as?: string;
-        query?: any;
-        initialProps?: any;
-        onPush?: Router['push'];
-        onReplace?: Router['replace'];
-    };
 } & ApolloMocksOptions;
 
 const ProviderFactory = (options: TestSetupOptions): React.FC => {
     const ComponentClass = ({ children }: { children?: React.ReactNode }) => {
         const { cache, mocks: defaultMocks } = getDefaultApolloMocks(
-            pick(options, ['currentUser', 'tenant', 'categories', 'userGroups'])
+            pick(options, [
+                'currentUser',
+                'tenant',
+                'categories',
+                'userGroups',
+                'tags',
+            ])
         );
-
-        const testRouter = createRouter(
-            options?.router?.pathname ?? '',
-            { ...options?.router?.query },
-            options?.router?.as ?? '',
-            {
-                initialProps: { ...options?.router?.initialProps },
-                pageLoader: {
-                    getPageList: jest.fn(() => []),
-                    getMiddlewareList: jest.fn(() => []),
-                    getDataHref: jest.fn(() => '/'),
-                    _isSsg: jest.fn(async () => false),
-                    loadPage: jest.fn(async () => null),
-                },
-                App: jest.fn(),
-                Component: jest.fn(),
-            } as any
-        );
-        options?.router?.getInstance?.(testRouter);
-        testRouter.push = async (url: any, ...args) => {
-            window.history?.replaceState({}, '', url);
-            return options?.router?.onPush
-                ? options?.router?.onPush(url, ...args)
-                : Promise.resolve(true);
-        };
-        if (options?.router?.onReplace) {
-            testRouter.replace = options?.router?.onReplace;
-        }
 
         return (
-            <RouterContext.Provider value={testRouter}>
-                <I18nextProvider i18n={i18n}>
-                    <HubertProvider>
-                        <MockedProvider
-                            mocks={[
-                                ...defaultMocks,
-                                ...(options.additionalMocks || []),
-                            ]}
-                            addTypename={false}
-                            cache={cache}
-                        >
-                            <UploadQueueProvider>
-                                {children}
-                            </UploadQueueProvider>
-                        </MockedProvider>
-                    </HubertProvider>
-                </I18nextProvider>
-            </RouterContext.Provider>
+            <I18nextProvider i18n={i18n}>
+                <HubertProvider>
+                    <MockedProvider
+                        mocks={[
+                            ...defaultMocks,
+                            ...(options.additionalMocks || []),
+                        ]}
+                        addTypename={false}
+                        cache={cache}
+                    >
+                        <UploadQueueProvider>{children}</UploadQueueProvider>
+                    </MockedProvider>
+                </HubertProvider>
+            </I18nextProvider>
         );
     };
 
@@ -149,3 +109,66 @@ export const TestFileExplorerContextProvider: React.FC<
 
 // override render method
 export { customRender as render };
+
+export class MockRouter {
+    private _pathname: string = '/';
+    private _emitter = new (class {
+        _callbacks = new Map<string, Function[]>();
+        _on(event: string, callback: Function) {
+            this._callbacks.set(event, [
+                ...(this._callbacks.get(event) || []),
+                callback,
+            ]);
+        }
+        _off(event: string, callback: Function) {
+            if (this._callbacks.has(event)) {
+                this._callbacks.set(
+                    event,
+                    (this._callbacks.get(event) as Function[]).filter(
+                        (cb) => cb !== callback
+                    )
+                );
+            }
+        }
+        _emit(event: string, ...args: any[]) {
+            this._callbacks.get(event)?.forEach((cb) => cb(...args));
+        }
+        clear() {
+            this._callbacks.clear();
+        }
+        on = jest.fn(this._on.bind(this));
+        off = jest.fn(this._off.bind(this));
+        emit = jest.fn(this._emit.bind(this));
+    })();
+    private _history = new Set<string>(this._pathname);
+    private _push = jest.fn(
+        async (_pathname: string, _as = _pathname, _options?: any) => {
+            this._pathname = _pathname;
+            this._history.add(_pathname);
+            window.dispatchEvent(new Event('beforeunload'));
+            this._emitter.emit('routeChangeStart', _pathname);
+            this._emitter.emit('routeChangeComplete', _pathname);
+            this._emitter.emit('routeChangeEnd', _pathname);
+            return true;
+        }
+    );
+
+    reset(pathname = '/') {
+        this._emitter.clear();
+        this._history.clear();
+        this._push.mockReset();
+        this._pathname = pathname;
+        this._history.add(pathname);
+    }
+
+    push(pathname: string, asPath: string = pathname, options?: any) {
+        this._push(pathname, asPath, options);
+        this._pathname = pathname;
+        this._history.add(pathname);
+        this._emitter.emit('routeChangeStart', pathname);
+        this._emitter.emit('routeChangeComplete', pathname);
+        this._emitter.emit('routeChangeEnd', pathname);
+    }
+
+    events = this._emitter;
+}

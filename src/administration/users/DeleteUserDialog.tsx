@@ -118,10 +118,10 @@ export const DeleteUserDialog = React.memo<DeleteUserDialogProps>(
                                                         href={Article.getPath(
                                                             article
                                                         )}
-                                                    >
-                                                        <a target={'_blank'}>
-                                                            {article.title}
-                                                        </a>
+                                                        target={'_blank'}>
+
+                                                        {article.title}
+
                                                     </Link>
                                                 </li>
                                             )
