@@ -29,7 +29,7 @@ export interface FileExplorerProps {
 }
 
 export const FileExplorer = React.memo<FileExplorerProps>(
-  ({ style, className, multiple, fileFilter, onSelect }) => {
+  ({ style, className, multiple, fileFilter: _fileFilter, onSelect }) => {
     const { t } = useTranslation();
 
     const [state, dispatch] = React.useReducer<

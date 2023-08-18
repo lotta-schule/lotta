@@ -5,6 +5,7 @@ import {
   toObservable,
   unobserveOrCancel,
 } from '@absinthe/socket';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { compose } from 'flow-static-land/lib/Fun';
 import { print } from 'graphql';

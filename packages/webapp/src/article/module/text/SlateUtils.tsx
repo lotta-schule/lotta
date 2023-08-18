@@ -50,7 +50,7 @@ export const renderElement = ({
           {children}
         </p>
       );
-    case 'link':
+    case 'link': {
       const href = element.href;
       let isSameHost = false;
       try {
@@ -68,6 +68,7 @@ export const renderElement = ({
           {children}
         </a>
       );
+    }
     default:
       return <div {...attributes}>{children}</div>;
   }

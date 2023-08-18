@@ -3,7 +3,7 @@ import throttle from 'lodash/throttle';
 
 export const useScrollEvent = (
   callback: (e: Event) => void,
-  throttleThreshold: number = 250,
+  throttleThreshold = 250,
   dependencies: unknown[] = []
 ) => {
   const scrollCallback = React.useCallback(callback, [

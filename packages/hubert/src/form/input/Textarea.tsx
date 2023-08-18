@@ -16,7 +16,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const [parentHeight, setParentHeight] = React.useState('auto');
 
     React.useEffect(() => {
-      const height = `min(${textareaRef.current!.scrollHeight}px, ${
+      const height = `min(${textareaRef.current?.scrollHeight ?? 0}px, ${
         typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight ?? '100vh'
       })`;
       setParentHeight(height);
@@ -25,7 +25,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setTextareaHeight('auto');
-      setParentHeight(`${textareaRef.current!.scrollHeight}px`);
+      setParentHeight(`${textareaRef.current?.scrollHeight ?? 0}px`);
       setText(e.currentTarget.value);
       props.onChange?.(e);
     };
@@ -35,7 +35,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           {...props}
           ref={(instance) => {
-            textareaRef.current = instance!;
+            if (!instance) return;
+            textareaRef.current = instance;
             if (typeof ref === 'function') {
               ref(instance);
             } else if (ref) {

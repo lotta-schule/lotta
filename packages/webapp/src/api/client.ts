@@ -8,6 +8,7 @@ import {
 } from '@apollo/client';
 import { createLink } from 'apollo-v3-absinthe-upload-link';
 import { Socket as PhoenixSocket } from 'phoenix';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { hasSubscription } from '@jumpn/utils-graphql';
 import { JWT } from 'util/auth/jwt';

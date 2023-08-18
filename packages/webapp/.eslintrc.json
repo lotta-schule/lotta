@@ -1,8 +1,20 @@
 {
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/eslintrc.json",
   "extends": ["next/core-web-vitals", "prettier"],
   "plugins": ["prettier"],
+  "ignorePatterns": ["**/*.test.ts", "**/*.test.tsx", "src/test/util.tsx"],
   "rules": {
     "react/no-unescaped-entities": "off",
-    "@next/next/no-img-element": "off"
+    "@next/next/no-img-element": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "no-empty": "off",
+    "no-empty-pattern": "off"
   }
 }

@@ -138,7 +138,7 @@ export const File = {
     return this.canEditDirectory(directory, user);
   },
 
-  getFileRemoteLocation(baseUrl: string, file: FileModel, qs: string = '') {
+  getFileRemoteLocation(baseUrl: string, file: FileModel, qs = '') {
     return [baseUrl, 'storage', 'f', file.id]
       .join('/')
       .concat(qs ? `?${qs}` : '');

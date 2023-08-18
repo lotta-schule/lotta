@@ -17,8 +17,6 @@ import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 import 'nprogress/nprogress.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import { GlobalStyles } from '@lotta-schule/hubert';
-import { DefaultThemes } from '@lotta-schule/theme';
 
 config.autoAddCss = false;
 

@@ -3,8 +3,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "src",
-    "outDir": "dist",
-    "rootDirs": ["src"],
+    "outDir": ".next",
+    "rootDir": "src",
     "types": [],
     "typeRoots": [
       "src/@types",
@@ -14,17 +14,20 @@
     "declaration": true,
     "noEmit": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "incremental": true,
+    "module": "esnext",
+    "resolveJsonModule": true
   },
   "references": [
     {
-      "path": "./theme/tsconfig.json"
+      "path": "../theme"
     },
     {
-      "path": "./storybook-addon-theme/tsconfig.json"
+      "path": "../storybook-addon-theme"
     },
     {
-      "path": "./hubert/tsconfig.json"
+      "path": "../hubert"
     }
   ],
   "include": ["src/**/*"]

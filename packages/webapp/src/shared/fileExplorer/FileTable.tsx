@@ -59,7 +59,12 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
             bySearchFilter =
               !state.searchtext ||
               new RegExp(state.searchtext, 'i').test(file.filename);
-          } catch {}
+          } catch {
+            // It's fine if the regex is invalid
+            // There will just be no results and
+            // we do not count on the users being
+            // very firm with regexes
+          }
           return byFileFilter && bySearchFilter;
         })
         .sort((f1, f2) => f1.filename.localeCompare(f2.filename)) ?? [],

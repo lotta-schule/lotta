@@ -17,68 +17,62 @@
     }
   },
   "targetDefaults": {
-    "start": {
-      "dependsOn": [
-        "^start"
-      ]
-    },
     "test": {
-      "dependsOn": [
-        "^test"
-      ],
-      "outputs": [
-        "{projectRoot}/coverage/"
+      "dependsOn": [],
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "outputs": ["{projectRoot}/coverage/"]
+    },
+    "lint": {
+      "inputs": [
+        "default",
+        "{projectRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore"
       ]
     },
     "typecheck": {
-      "dependsOn": [
-        "^typecheck"
-      ]
+      "dependsOn": [],
+      "inputs": ["default", "{workspaceRoot}/tsconfig.base.json"]
     },
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "{projectRoot}/dist/"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist/"]
     },
     "storybook:test": {
-      "dependsOn": [
-        "^storybook:test"
-      ],
-      "outputs": [
-        "{projectRoot}/coverage/"
-      ]
+      "dependsOn": ["^storybook:test"],
+      "outputs": ["{projectRoot}/coverage/"]
     },
     "storybook:test:ci": {
-      "dependsOn": [
-        "^storybook:test:ci"
-      ]
+      "dependsOn": ["^storybook:test:ci"]
     },
     "storybook:build": {
-      "dependsOn": [
-        "^storybook:build"
-      ],
-      "outputs": [
-        "{projectRoot}/storybook-static"
-      ]
+      "dependsOn": ["^storybook:build"],
+      "outputs": ["{projectRoot}/storybook-static"]
     },
     "start:prod": {
-      "dependsOn": [
-        "^start:prod"
-      ]
+      "dependsOn": ["^start:prod"]
     },
     "test:ci": {
-      "dependsOn": [
-        "^test:ci"
-      ],
-      "outputs": [
-        "{projectRoot}/coverage"
-      ]
+      "dependsOn": ["^test:ci"],
+      "outputs": ["{projectRoot}/coverage"]
     }
   },
-  "affected": {
-    "defaultBase": "main"
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": [
+      "default",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/jest.setup.[jt]s",
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/src/test/util.[jt]sx?",
+      "!{projectRoot}/test-setup.[jt]s",
+      "!{projectRoot}/.eslintrc.json"
+    ],
+    "sharedGlobals": [],
+    "affected": {
+      "defaultBase": "main"
+    }
   }
 }

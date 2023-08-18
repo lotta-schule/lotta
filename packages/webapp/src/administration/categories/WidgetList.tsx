@@ -12,7 +12,6 @@ import { WidgetModel, WidgetModelType } from 'model';
 import { Widget } from 'util/model';
 import { WidgetNavigation } from './widgets/WidgetNavigation';
 import { WidgetEditor } from './widgets/WidgetEditor';
-import clsx from 'clsx';
 
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';

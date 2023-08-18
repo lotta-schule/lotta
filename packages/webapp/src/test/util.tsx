@@ -108,7 +108,7 @@ export const TestFileExplorerContextProvider: React.FC<
 export { customRender as render };
 
 export class MockRouter {
-  private _pathname: string = '/';
+  private _pathname = '/';
   private _emitter = new (class {
     _callbacks = new Map<string, Function[]>();
     _on(event: string, callback: Function) {

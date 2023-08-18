@@ -221,11 +221,11 @@ export const ArticlePreview = React.memo(
           </div>
           <div className={styles.authorsGridItem}>
             <AuthorAvatarsList
-              max={!!onUpdateArticle ? Infinity : undefined}
+              max={onUpdateArticle ? Infinity : undefined}
               users={article.users}
               className={styles.authorAvatarsList}
               onUpdate={
-                !!onUpdateArticle
+                onUpdateArticle
                   ? (users) => {
                       if (
                         users.length === article.users.length - 1 &&

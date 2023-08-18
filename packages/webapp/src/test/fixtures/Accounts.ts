@@ -1,10 +1,4 @@
-import {
-  DirectoryModel,
-  FileConversionModel,
-  FileModel,
-  FileModelType,
-  UserModel,
-} from 'model';
+import { DirectoryModel, FileModel, FileModelType, UserModel } from 'model';
 
 /*
  *

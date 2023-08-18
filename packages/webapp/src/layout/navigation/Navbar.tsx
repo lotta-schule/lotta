@@ -36,7 +36,7 @@ export const Navbar = React.memo(() => {
   );
   const mainCategories = (categories || []).filter(
     (category) =>
-      !Boolean(category.category) && !category.isSidenav && !category.isHomepage
+      !category.category && !category.isSidenav && !category.isHomepage
   );
   const subcategories = (categories || []).filter(
     (category) =>

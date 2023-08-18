@@ -9,7 +9,7 @@ import SendFormResponseMutation from 'api/mutation/SendFormResponseMutation.grap
 import styles from './Show.module.scss';
 
 export interface ShowProps {
-  contentModule: ContentModuleModel<{}, FormConfiguration>;
+  contentModule: ContentModuleModel<Record<string, string>, FormConfiguration>;
 }
 
 export const Show = React.memo<ShowProps>(({ contentModule }) => {
@@ -24,7 +24,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
     }),
     [contentModule.configuration]
   );
-  const [formData, setFormData] = React.useState<any>({});
+  const [formData, setFormData] = React.useState<Record<string, string>>({});
   const formRef = React.useRef<HTMLFormElement | null>(null);
 
   React.useEffect(() => {
@@ -108,7 +108,9 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
           <FormElement
             element={element}
             value={formData[element.name]}
-            onSetValue={(v) => setFormData({ ...formData, [element.name]: v })}
+            onSetValue={(v) =>
+              setFormData({ ...formData, [element.name]: v as string })
+            }
           />
         </section>
       ))}

@@ -39,7 +39,7 @@ export const EditUserGroupDialog = React.memo<EditUserGroupDialogProps>(
       error: loadDetailsError,
     } = useQuery<{ group: UserGroupModel }, { id: ID }>(GetGroupQuery, {
       variables: {
-        id: group?.id!,
+        id: group?.id ?? '', // We know that group is not null here becuase of the skip
       },
       skip: !group,
     });

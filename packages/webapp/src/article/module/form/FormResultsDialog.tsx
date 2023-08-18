@@ -18,7 +18,7 @@ import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
 export interface FormResultsDialogProps {
   isOpen: boolean;
   onRequestClose(): void;
-  contentModule: ContentModuleModel<{}, FormConfiguration>;
+  contentModule: ContentModuleModel<Record<string, string>, FormConfiguration>;
 }
 
 export const FormResultsDialog = React.memo<FormResultsDialogProps>(

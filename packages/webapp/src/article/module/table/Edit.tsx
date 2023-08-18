@@ -16,14 +16,7 @@ import {
 } from './Table';
 
 import styles from './Table.module.scss';
-import {
-  faBackwardStep,
-  faCaretDown,
-  faCaretUp,
-  faCircleMinus,
-  faCirclePlus,
-  faForwardStep,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCircleMinus, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from 'shared/Icon';
 
 interface EditProps {
@@ -181,12 +174,13 @@ export const Edit = React.memo<EditProps>(
                       convertedRows[rowI - relativePastePosition.row]?.[
                         colI - relativePastePosition.column
                       ];
-                    const contentCellAtPosition = contentRows[rowI]?.[colI];
+                    const contentCellAtPosition = contentRows[rowI]?.[colI] as
+                      | TableCellInterface
+                      | undefined;
                     if (convertedCellAtPosition) {
                       return convertedCellAtPosition;
                     } else {
                       return {
-                        // @ts-ignore
                         text: '',
                         ...contentCellAtPosition,
                       };

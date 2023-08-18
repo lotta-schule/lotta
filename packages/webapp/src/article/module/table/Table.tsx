@@ -13,7 +13,7 @@ export interface TableContent {
   rows: TableCell[][];
 }
 
-export interface TableConfiguration {}
+export type TableConfiguration = Record<never, never>; // Have done nothing yet
 
 export interface TableProps {
   contentModule: ContentModuleModel;

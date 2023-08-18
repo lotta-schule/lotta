@@ -14,7 +14,7 @@ export const User = {
     return user?.nickname || user?.name || '';
   },
 
-  getAvatarUrl(baseUrl: string, user?: UserModel | null, size: number = 100) {
+  getAvatarUrl(baseUrl: string, user?: UserModel | null, size = 100) {
     return user?.avatarImageFile
       ? createImageUrl(
           File.getFileRemoteLocation(baseUrl, user.avatarImageFile),

@@ -17,7 +17,7 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
     const { baseUrl } = useServerData();
     const [activeStep, setActiveStep] = React.useState(0);
     const filesConfiguration: {
-      [id: string]: { caption: string; sortKey: number };
+      [id: string]: { caption?: string; sortKey?: number };
     } = contentModule.configuration?.files ?? {};
     const maxSteps = contentModule.files.length;
 
@@ -28,9 +28,7 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
     const getConfiguration = (file: FileModel) => {
       if (filesConfiguration[file.id]) {
         return {
-          // @ts-ignore
           caption: '',
-          // @ts-ignore
           sortKey: 0,
           ...filesConfiguration[file.id],
         };

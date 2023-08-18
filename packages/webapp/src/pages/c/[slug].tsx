@@ -37,7 +37,7 @@ export const getServerSideProps = async ({
   const rawCategoryId = (params?.slug as string)?.replace(/^(\d+).*/, '$1');
   const categoryId = rawCategoryId === '0' ? null : rawCategoryId ?? null;
 
-  let {
+  const {
     data: { articles },
     error,
   } = await getApolloClient().query<

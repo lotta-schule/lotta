@@ -30,7 +30,6 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
   );
 
   const get = <T extends keyof FileModel>(prop: T): FileModel[T] =>
-    // @ts-ignore
     data?.file?.[prop] ?? file[prop];
 
   return (

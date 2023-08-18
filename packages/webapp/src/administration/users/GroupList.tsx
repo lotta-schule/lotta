@@ -90,7 +90,6 @@ export const GroupList = () => {
           newGroupsArray.splice(toIndex, 0, groups[fromIndex]);
           const from = fromIndex < toIndex ? fromIndex : toIndex;
           const to = toIndex > fromIndex ? toIndex + 1 : fromIndex + 1;
-          debugger;
           newGroupsArray.slice(from, to).forEach((group, index) => {
             if (group) {
               updateGroup({
