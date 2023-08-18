@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import {
     SomeUser,
