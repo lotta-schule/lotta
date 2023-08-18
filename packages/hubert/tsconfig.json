@@ -4,7 +4,7 @@
     "compilerOptions": {
         "baseUrl": "src",
         "outDir": "dist",
-        "rootDir": "src",
+        "rootDirs": ["src"],
         "types": [],
         "typeRoots": [
             "src/@types",

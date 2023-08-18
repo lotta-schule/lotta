@@ -1,10 +1,14 @@
 ARG SENTRY_AUTH_TOKEN
 ARG IMAGE_NAME
+ARG USE_LOCAL_HUBERT
 
 FROM node:20.5-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json ./
+# Copy our monorepo-dependencies IF they are available locally
+COPY packages/theme/dis[t]/ packages/theme/dist/
+COPY packages/hubert/dis[t]/ packages/hubert/dist/
 RUN npm ci
 
 # Rebuild the source code only when needed

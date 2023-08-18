@@ -1,4 +1,4 @@
-const baseConfig = require('./jest.base-config.cjs');
+const baseConfig = require('../../jest.base-config.cjs');
 
 const jestConfig = {
     ...baseConfig,
