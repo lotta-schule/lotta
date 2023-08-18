@@ -16,7 +16,7 @@ jobs:
 
   visual-testing:
     runs-on: ubuntu-latest
-    if: ${{ github.ref_name != 'main' }}
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
     steps:
       - uses: actions/checkout@v1
         with:
@@ -39,7 +39,7 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           skip: 'dependabot/**'
           buildScriptName: 'storybook:build'
-          autoAcceptChanges: 'develop'
+          autoAcceptChanges: 'main'
         env:
           NODE_ENV: test
 
@@ -56,7 +56,7 @@ jobs:
       - run: npm ci
       - run: npm -w @lotta-schule/theme run build
       - run: npm -w @lotta-schule/storybook-addon-theme run build
-      - run: npm run storybook:build
+      - run: npm -w @lotta-schule/hubert run storybook:build
         env:
           STORYBOOK_BASE_HREF: /${{ github.event.repository.name }}
       - run: tar -czf storybook.tgz --directory=storybook-static .
