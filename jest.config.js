@@ -31,5 +31,6 @@ module.exports = {
         '!src/stories/**',
         '!**/*.d.ts',
         '!**/node_modules/**',
+        '!src/test/util.tsx',
     ],
 };
