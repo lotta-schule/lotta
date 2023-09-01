@@ -8,7 +8,6 @@
     "build": "next build",
     "start:prod": "node server.js",
     "test": "jest",
-    "test:ci": "jest --reporters=jest-junit --reporters=default --ci --testResultsProcessor='jest-junit' --collectCoverageFrom='src/**/*.{ts,tsx}' --collectCoverageFrom='!src/**/*.stories.{ts,tsx}'",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "schema:download": "npx get-graphql-schema http://127.0.0.1:4000/api > src/api/schema.graphql"

@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "build": "concurrently 'rollup -c' 'tsc --emitDeclarationOnly'",
     "storybook:test": "test-storybook",
-    "storybook:test:ci": "concurrently -k -s first -n \"STORYBOOK,TEST\" -c \"magenta,blue\" \"npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && npm run storybook:test -- --coverage\"",
+    "storybook:pretest:ci": "NODE_ENV=test npm run storybook:build --output-dir=test-sb-static",
+    "storybook:test:ci": "concurrently -k -s first -n \"STORYBOOK,TEST\" -c \"magenta,blue\" \"npx http-server test-sb-static --port 6006 --silent\"\"wait-on tcp:6006 && npm run storybook:test -- --coverage\"",
     "storybook:build": "storybook build --output-dir=storybook-static"
   },
   "type": "module",
@@ -112,5 +113,42 @@
     "react": ">= 18.0.0",
     "react-dom": ">= 18.0.0",
     "sass": "^1.54.3"
+  },
+  "nx": {
+    "$schema": "https://raw.githubusercontent.com/nrwl/nx/master/packages/nx/schemas/project-schema.json",
+    "namedInputs": {
+      "default": [
+        "{projectRoot}/**/*"
+      ]
+    },
+    "targets": {
+      "start": {
+        "inputs": [
+          "default"
+        ],
+        "dependsOn": [
+          "^build"
+        ]
+      },
+      "storybook:pretest:ci": {
+        "inputs": [
+          "default"
+        ],
+        "outputs": [
+          "{projectRoot}/test-sb-static"
+        ]
+      },
+      "storybook:test:ci": {
+        "inputs": [
+          "{projectRoot}/test-sb-static"
+        ],
+        "outputs": [
+          "{projectRoot}/coverage/storybook"
+        ],
+        "dependsOn": [
+          "storybook:pretest:ci"
+        ]
+      }
+    }
   }
 }

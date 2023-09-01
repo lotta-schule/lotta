@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
-  "name": "lotta",
+  "name": "@lotta-schule/lotta",
   "description": "Lotta Web Monorepo",
   "workspaces": [
     "packages/*"

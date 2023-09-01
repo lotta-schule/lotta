@@ -8,7 +8,7 @@
     "plugin:react/recommended",
     "plugin:storybook/recommended"
   ],
-  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "plugins": ["react", "@typescript-eslint", "prettier", "react-hooks"],
   "ignorePatterns": [
     "**/*.d.ts",
     "**/*.test.ts",
@@ -27,5 +27,10 @@
         "argsIgnorePattern": "^_"
       }
     ]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }

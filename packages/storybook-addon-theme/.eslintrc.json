@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/eslintrc.json",
   "env": {
     "browser": true,
     "es2021": true
@@ -8,10 +9,9 @@
     "plugin:react-hooks/recommended",
     "plugin:storybook/recommended"
   ],
-  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "plugins": ["react", "@typescript-eslint", "prettier", "react-hooks"],
   "ignorePatterns": ["**/*.d.ts", "**/*.test.ts", "**/*.test.tsx"],
   "rules": {
-    "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "react/prop-types": "off",
     "react/no-unescaped-entities": "off",
@@ -21,5 +21,10 @@
         "argsIgnorePattern": "^_"
       }
     ]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }
