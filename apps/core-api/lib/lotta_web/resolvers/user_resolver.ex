@@ -71,7 +71,7 @@ defmodule LottaWeb.UserResolver do
 
   def get_current(_args, %{context: %Context{current_user: current_user}}) do
     if current_user do
-      Accounts.see_user(current_user)
+      Task.start(Accounts, :see_user, [current_user])
     end
 
     {:ok, current_user}

@@ -45,8 +45,6 @@ defmodule Lotta.Accounts.Authentication do
       )
 
     if verify_user_pass(user, given_pass) do
-      Accounts.see_user(user)
-
       user
       |> maybe_migrate_password_hashing_format(given_pass)
     else
