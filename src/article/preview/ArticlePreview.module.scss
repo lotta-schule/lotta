@@ -14,6 +14,12 @@
         }
     }
 
+    .hasUpdateDot {
+        color: rgb(var(--lotta-primary-color));
+        font-size: 0.45em;
+        vertical-align: middle;
+    }
+
     .containerGrid {
         display: grid;
         grid-template: auto 1fr auto auto / 15% 20% 57% 5%;

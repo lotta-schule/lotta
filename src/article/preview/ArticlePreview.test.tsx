@@ -280,6 +280,23 @@ describe('shared/article/ArticlePreview', () => {
             );
             expect(screen.getByText('11.10.2020')).toBeVisible();
         });
+
+        it('should render a "hasUpdate" dot when article has been updated', () => {
+            const screen = render(
+                <ArticlePreview article={Weihnachtsmarkt} />,
+                {},
+                { currentUser: SomeUser }
+            );
+            expect(screen.queryByTestId('updated-dot')).toBeNull();
+            const updatedArticle = {
+                ...Weihnachtsmarkt,
+                updatedAt: new Date(
+                    new Date(SomeUser.updatedAt).getTime() + 1000
+                ).toISOString(),
+            };
+            screen.rerender(<ArticlePreview article={updatedArticle} />);
+            expect(screen.getByTestId('updated-dot')).toBeVisible();
+        });
     });
 
     describe('Users List', () => {
