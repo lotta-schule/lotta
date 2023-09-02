@@ -16,6 +16,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set git identity
+        run: |
+          git config user.email lotta@einsa.net
+          git config user.name Lottaautomatica
+
       - name: Setup main branch for reference
         if: ${{ github.ref_name != 'main' }}
         run: git branch --track main origin/main
