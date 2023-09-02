@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "@lotta-schule/hubert",
-  "version": "4.1.0-alpha.3",
+  "version": "4.1.0-alpha.4",
   "description": "Component Library for lotta",
   "author": "Alexis Rinaldoni <alexis.rinaldoni@einsa.net>",
   "license": "GPL-3.0-or-later",
@@ -17,7 +17,7 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@headlessui/react": "^1.7.16",
-    "@lotta-schule/theme": "4.1.0-alpha.3",
+    "@lotta-schule/theme": "4.1.0-alpha.4",
     "@popperjs/core": "^2.11.8",
     "@react-aria/button": "^3.8.1",
     "@react-aria/checkbox": "^3.10.0",

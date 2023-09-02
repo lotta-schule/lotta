@@ -85,8 +85,15 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
-      - name: Bump version if on main
+      - name: Create commit and tag alpha version
         # TODO: Comment back when tested!
         # if: ${{ github.ref_name == 'main' }}
         run: |
-          npx lerna version --conventional-prerelease --preid alpha --allow-branch=feature/monoorepo -y
+          npx lerna version --conventional-prerelease \
+            --preid alpha --allow-branch=feature/monoorepo \
+            --no-changelog -y
+
+      - name: Create commit and tag alpha version
+        if: ${{ startsWith(github.ref_name, 'release/' }}
+        run: |
+          npx lerna version -y

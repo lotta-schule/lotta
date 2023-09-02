@@ -4,6 +4,16 @@ on:
   push:
 
 jobs:
+  debug-test:
+    name: 'Some debug info'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug Info
+        run: |
+          echo "message: ${{ github.event.head_commit.message }}"
+          echo "event: ${{ toJSON(github.event) }}"
+          echo "startsWith: ${{ startsWith(github.event.head_commit.message, 'chore(release): publish') }}"
+
   build-packages:
     if: "${{ startsWith(github.event.head_commit.message, 'chore(release): publish') }}"
     name: 'Build npm packages'
