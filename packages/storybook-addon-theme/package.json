@@ -24,7 +24,7 @@
     }
   },
   "devDependencies": {
-    "@lotta-schule/theme": "*",
+    "@lotta-schule/theme": "4.1.0-alpha.0",
     "@storybook/blocks": "^7.0.26",
     "@testing-library/jest-dom": "^5.16.5",
     "babel-jest": "^29.6.1",

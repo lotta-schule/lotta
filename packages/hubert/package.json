@@ -17,7 +17,7 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@headlessui/react": "^1.7.16",
-    "@lotta-schule/theme": "0.0.9",
+    "@lotta-schule/theme": "4.0.0-alpha.0",
     "@popperjs/core": "^2.11.8",
     "@react-aria/button": "^3.8.1",
     "@react-aria/checkbox": "^3.10.0",
@@ -53,7 +53,7 @@
     "@babel/preset-react": "^7.22.5",
     "@babel/preset-typescript": "^7.22.5",
     "@jest/globals": "^29.6.2",
-    "@lotta-schule/storybook-addon-theme": "0.0.8",
+    "@lotta-schule/storybook-addon-theme": "4.0.0-alpha.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",

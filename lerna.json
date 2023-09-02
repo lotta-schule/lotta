@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "version": "4.1.0-alpha.1",
+  "packages": ["packages/*"],
+  "npmClient": "npm",
+  "exact": true,
+  "conventionalCommits": true,
+  "conventionalPrerelease": true,
+  "preid": "alpha",
+  "push": false,
+  "gitTagVersion": false,
+  "createRelease": "github",
+  "allowBranch": ["main", "release/*"]
+}
