@@ -3,6 +3,8 @@ name: 'Package: Storybook-Addon-Theme'
 
 on:
   push:
+    branches:
+      - 'hotfix/**'
     paths:
       - 'packages/storybook-addon-theme/**'
 

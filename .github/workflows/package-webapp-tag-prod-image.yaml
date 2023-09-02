@@ -4,7 +4,7 @@ name: Tag Webapp Prod Image
 on:
   push:
     tags:
-      - '*'
+      - '4.*.*'
 
 jobs:
   tagProdVersion:

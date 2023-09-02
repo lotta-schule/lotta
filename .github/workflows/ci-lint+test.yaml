@@ -1,0 +1,63 @@
+---
+name: 'CI'
+on:
+  push:
+  pull_request:
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup main branch for reference
+        if: ${{ github.ref_name != 'main' }}
+        run: git branch --track main origin/main
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npx nx affected -t lint --parallel=3
+
+      - name: Typecheck
+        run: npx nx affected -t typecheck --parallel=3
+
+      - name: Run tests
+        run: npx nx affected -t test --parallel=3 --configuration=ci
+
+      - name: Upload Tests for storybook-addon-theme
+        uses: codecov/codecov-action@v2
+        with:
+          workin-directory: packages/storybook-addon-theme/
+          directory: coverage/
+          flags: storybook-addon-theme
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload Tests for hubert
+        uses: codecov/codecov-action@v2
+        with:
+          workin-directory: packages/hubert/
+          directory: coverage/
+          flags: hubert
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload Tests for Webapp
+        uses: codecov/codecov-action@v2
+        with:
+          workin-directory: packages/webapp/
+          directory: coverage/
+          flags: webapp
+          token: ${{ secrets.CODECOV_TOKEN }}

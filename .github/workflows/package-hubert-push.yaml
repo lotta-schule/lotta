@@ -3,6 +3,8 @@ name: 'Package: Hubert'
 
 on:
   push:
+    branches:
+      - 'hotfix/**'
     paths:
       - 'packages/hubert/**'
 

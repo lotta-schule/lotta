@@ -3,6 +3,8 @@ name: 'Package: Theme'
 
 on:
   push:
+    branches:
+      - 'hotfix/**'
     paths:
       - 'packages/theme/**'
 
