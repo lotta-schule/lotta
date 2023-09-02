@@ -9,7 +9,6 @@ jobs:
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
-    if: "${{ !startsWith(github.event.head_commit.message, 'chore(release): publish') }}"
     outputs:
       base_sha: ${{ steps.setSHAs.outputs.base }}
       head_sha: ${{ steps.setSHAs.outputs.head }}
@@ -45,7 +44,6 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-latest
-    # if: "${{ !startsWith(github.event.head_commit.message, 'chore(release): publish') }}"
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -113,7 +111,6 @@ jobs:
   prepare-builds:
     name: Prepare Builds
     runs-on: ubuntu-latest
-    # if: "${{ !startsWith(github.event.head_commit.message, 'chore(release): publish') }}"
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -168,3 +165,32 @@ jobs:
       head_sha: ${{ needs.lint.outputs.head }}
     secrets:
       npm-token: ${{ secrets.NPM_TOKEN }}
+
+  publish-storybook-page:
+    name: Publish Hubert Storybook as Github Page
+    needs:
+      - lint
+      - test
+      - prepare-builds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build storybook
+        run: npx nx build @lotta-schule/storybook-hubert
+
+      # Maybe think of deploying statically to S3 or so?
+      - name: 'Deploy Storybook as github page'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: packages/storybook-hubert/storybook-static
