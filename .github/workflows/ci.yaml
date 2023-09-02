@@ -9,12 +9,9 @@ jobs:
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
-    outputs:
-      base_sha: ${{ steps.setSHAs.outputs.base }}
-      head_sha: ${{ steps.setSHAs.outputs.head }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -24,7 +21,6 @@ jobs:
 
       - name: Setup NX
         uses: nrwl/nx-set-shas@v3
-        id: setSHAs
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -46,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -113,7 +109,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -160,9 +156,6 @@ jobs:
       - test
       - prepare-builds
     uses: ./.github/workflows/__deploy_npm_packages.yaml
-    with:
-      base_sha: ${{ needs.lint.outputs.base }}
-      head_sha: ${{ needs.lint.outputs.head }}
     secrets:
       npm-token: ${{ secrets.NPM_TOKEN }}
 
@@ -175,7 +168,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -189,8 +184,19 @@ jobs:
       - name: Build storybook
         run: npx nx build @lotta-schule/storybook-hubert
 
+      - name: Send to Chromatic
+        uses: chromaui/action@v1
+        with:
+          workingDir: './packages/storybook-hubert'
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          skip: 'dependabot/**'
+          autoAcceptChanges: 'main'
+          storybookBuildDir: storybook-static
+        env:
+          NODE_ENV: test
+
       # Maybe think of deploying statically to S3 or so?
       - name: 'Deploy Storybook as github page'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: packages/storybook-hubert/storybook-static
+          folder: ./packages/storybook-hubert/storybook-static

@@ -3,13 +3,6 @@ name: 'Deploy npm packages'
 
 on:
   workflow_call:
-    inputs:
-      base_sha:
-        type: string
-        required: true
-      head_sha:
-        type: string
-        required: true
     secrets:
       npm-token:
         required: true
@@ -18,14 +11,14 @@ jobs:
   push-packages:
     name: 'Push npm packages to registry'
     runs-on: ubuntu-latest
-    env:
-      NX_BASE: '${{ inputs.base_sha }}'
-      NX_HEAD: '${{ inputs.head_sha }}'
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3

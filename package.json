@@ -6,7 +6,12 @@
     "packages/*"
   ],
   "homepage": "https://lotta.schule",
-  "scripts": {},
+  "scripts": {
+    "dev": "nx run-many --target=dev --parallel",
+    "test": "nx run-many --target=test --parallel",
+    "lint": "nx run-many --target=lint --parallel",
+    "typecheck": "nx run-many --target=typecheck --parallel"
+  },
   "devDependencies": {
     "@nx/eslint-plugin": "^16.7.2",
     "@nx/workspace": "^16.7.1",
