@@ -41,15 +41,14 @@ jobs:
         run: npx nx run-many -t build
 
       - name: Publish to npm
-        run: |
-          npm -w @lotta-schule/theme publish
-          npm -w @lotta-schule/storybook-addon-theme publish
-          npm -w @lotta-schule/storybook-hubert publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
-
-          # # Maybe think of deploying statically to S3 or so?
-          # - name: 'Deploy Storybook as github page'
-          #   uses: JamesIves/github-pages-deploy-action@v4
-          #   with:
-          #     folder: packages/storybook-hubert/storybook-static
+        run: |
+          tag='latest'
+          version=$(cat lerna.json | jq -r .version)
+          if [[ $version == *'-'* ]]; then
+            tag=$(echo $version | sed -E 's/^.*-([a-z]*).*/\1/')
+          fi
+          npm -w @lotta-schule/theme publish --tag $tag
+          npm -w @lotta-schule/hubert publish --tag $tag
+          npm -w @lotta-schule/storybook-addon-theme publish --tag $tag
