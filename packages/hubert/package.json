@@ -6,15 +6,10 @@
   "author": "Alexis Rinaldoni <alexis.rinaldoni@einsa.net>",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "start": "storybook dev -p 6006",
     "test": "jest",
     "lint": "eslint --ext js,jsx,ts,tsx src",
     "typecheck": "tsc --noEmit",
-    "build": "concurrently 'rollup -c' 'tsc --emitDeclarationOnly'",
-    "storybook:test": "test-storybook",
-    "storybook:pretest:ci": "NODE_ENV=test npm run storybook:build --output-dir=test-sb-static",
-    "storybook:test:ci": "concurrently -k -s first -n \"STORYBOOK,TEST\" -c \"magenta,blue\" \"npx http-server test-sb-static --port 6006 --silent\"\"wait-on tcp:6006 && npm run storybook:test -- --coverage\"",
-    "storybook:build": "storybook build --output-dir=storybook-static"
+    "build": "rollup -c && tsc --emitDeclarationOnly"
   },
   "type": "module",
   "source": "src/index.ts",
@@ -58,21 +53,7 @@
     "@babel/preset-react": "^7.22.5",
     "@babel/preset-typescript": "^7.22.5",
     "@jest/globals": "^29.6.2",
-    "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
     "@lotta-schule/storybook-addon-theme": "0.0.8",
-    "@storybook/addon-a11y": "^7.2.3",
-    "@storybook/addon-actions": "^7.2.3",
-    "@storybook/addon-essentials": "^7.2.3",
-    "@storybook/addon-interactions": "^7.2.3",
-    "@storybook/addon-links": "^7.2.3",
-    "@storybook/addon-mdx-gfm": "^7.2.3",
-    "@storybook/blocks": "^7.2.3",
-    "@storybook/jest": "^0.1.0",
-    "@storybook/preset-scss": "^1.0.3",
-    "@storybook/react": "^7.2.3",
-    "@storybook/react-webpack5": "^7.2.3",
-    "@storybook/test-runner": "^0.13.0",
-    "@storybook/testing-library": "^0.2.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -82,7 +63,6 @@
     "@types/react-dom": "^18.2.7",
     "babel-jest": "^29.6.2",
     "babel-loader": "^9.1.3",
-    "concurrently": "^8.2.0",
     "css-loader": "^6.8.1",
     "esbuild": "^0.19.2",
     "eslint-plugin-react": "^7.33.1",
@@ -101,11 +81,6 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-preserve-directives": "^0.2.0",
     "sass": "^1.65.1",
-    "sass-loader": "^13.3.2",
-    "storybook": "^7.2.3",
-    "style-loader": "^3.3.3",
-    "wait-on": "^7.0.1",
-    "webpack": "^5.88.2",
     "whatwg-fetch": "^3.6.17"
   },
   "peerDependencies": {
@@ -113,42 +88,5 @@
     "react": ">= 18.0.0",
     "react-dom": ">= 18.0.0",
     "sass": "^1.54.3"
-  },
-  "nx": {
-    "$schema": "https://raw.githubusercontent.com/nrwl/nx/master/packages/nx/schemas/project-schema.json",
-    "namedInputs": {
-      "default": [
-        "{projectRoot}/**/*"
-      ]
-    },
-    "targets": {
-      "start": {
-        "inputs": [
-          "default"
-        ],
-        "dependsOn": [
-          "^build"
-        ]
-      },
-      "storybook:pretest:ci": {
-        "inputs": [
-          "default"
-        ],
-        "outputs": [
-          "{projectRoot}/test-sb-static"
-        ]
-      },
-      "storybook:test:ci": {
-        "inputs": [
-          "{projectRoot}/test-sb-static"
-        ],
-        "outputs": [
-          "{projectRoot}/coverage/storybook"
-        ],
-        "dependsOn": [
-          "storybook:pretest:ci"
-        ]
-      }
-    }
   }
 }

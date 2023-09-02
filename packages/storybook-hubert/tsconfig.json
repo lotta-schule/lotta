@@ -3,8 +3,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "src",
-    "outDir": "dist",
-    "rootDir": "src",
+    "rootDirs": ["src"],
     "types": [],
     "typeRoots": [
       "src/@types",
@@ -19,7 +18,7 @@
       "path": "../storybook-addon-theme/tsconfig.json"
     },
     {
-      "path": "../theme/tsconfig.json"
+      "path": "../hubert/tsconfig.json"
     }
   ],
   "include": ["src/**/*"]

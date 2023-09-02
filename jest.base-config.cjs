@@ -10,8 +10,7 @@
 const jestConfig = {
   clearMocks: true,
 
-  reporters: ['default', 'jest-junit'],
-  testResultsProcessor: 'jest-junit',
+  reporters: ['default', ['jest-junit', { outputDirectory: './coverage' }]],
 
   collectCoverage: false,
   collectCoverageFrom: [
@@ -19,7 +18,7 @@ const jestConfig = {
     'node_modules/**',
     '!**/*.d.ts',
   ],
-  coverageDirectory: './coverage/jest/',
+  coverageDirectory: './coverage',
   coveragePathIgnorePatterns: ['/node_modules/'],
   coverageProvider: 'babel',
   coverageReporters: ['text', 'cobertura'],

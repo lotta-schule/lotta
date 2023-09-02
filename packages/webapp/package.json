@@ -4,9 +4,8 @@
   "version": "4.0.0",
   "description": "Lotta Schule Webapp",
   "scripts": {
-    "start": "NODE_OPTIONS='--inspect' next dev",
+    "dev": "next dev",
     "build": "next build",
-    "start:prod": "node server.js",
     "test": "jest",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",

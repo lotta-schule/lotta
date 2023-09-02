@@ -16,6 +16,7 @@ import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 import 'nprogress/nprogress.css';
+import '@lotta-schule/hubert/dist/index.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 
 config.autoAddCss = false;
