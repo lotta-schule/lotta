@@ -1,0 +1,46 @@
+---
+name: 'CD'
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-packages:
+    name: 'Build npm packages'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run build task
+        run: npx nx run-many -t build
+
+      - name: Publish to npm
+        run: |
+          npm -w @lotta-schule/theme publish
+          npm -w @lotta-schule/storybook-addon-theme publish
+          npm -w @lotta-schule/storybook-hubert publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+
+      # Maybe think of deploying statically to S3 or so?
+      - name: 'Deploy Storybook as github page'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: packages/storybook-hubert/storybook-static

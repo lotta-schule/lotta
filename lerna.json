@@ -4,5 +4,12 @@
   "packages": ["packages/*"],
   "npmClient": "npm",
   "exact": true,
-  "allowBranch": ["main", "release/*"]
+  "changelogPreset": "conventionalcommits",
+  "allowBranch": ["main", "release/*"],
+  "forcePublish": true,
+  "command": {
+    "version": {
+      "gitTagCommand": "echo git gh-tag %s -m %s"
+    }
+  }
 }
