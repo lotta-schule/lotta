@@ -94,6 +94,6 @@ jobs:
             --no-changelog -y
 
       - name: Create commit and tag alpha version
-        if: ${{ startsWith(github.ref_name, 'release/' }}
+        if: ${{ startsWith(github.ref_name, 'release/') }}
         run: |
           npx lerna version -y
