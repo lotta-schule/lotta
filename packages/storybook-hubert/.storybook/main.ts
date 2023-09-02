@@ -32,7 +32,7 @@ const config: StorybookConfig = {
       loader: '@jsdevtools/coverage-istanbul-loader',
       enforce: 'post',
       include: join(process.cwd(), 'src'),
-      exclude: [/\.(e2e|spec|stories)\.ts$/, /node_modules/],
+      exclude: [/node_modules/],
     });
 
     config.module = config.module || {};
