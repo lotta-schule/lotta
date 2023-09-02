@@ -10,7 +10,8 @@
   "forcePublish": true,
   "command": {
     "version": {
-      "gitTagCommand": "echo git gh-tag %s -m %s"
+      "gitTagCommand": "echo git gh-tag %s -m %s",
+      "message": "chore(release): publish %s"
     }
   }
 }
