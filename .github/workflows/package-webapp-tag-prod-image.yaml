@@ -1,5 +1,5 @@
 ---
-name: Tag production image
+name: Tag Webapp Prod Image
 
 on:
   push:
