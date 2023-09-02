@@ -2,12 +2,12 @@
 name: 'CI'
 on:
   push:
-  pull_request:
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
 jobs:
   lint-test:
+    name: Lint Code and run tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo

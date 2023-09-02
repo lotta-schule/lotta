@@ -9,7 +9,7 @@
     "test": "jest",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
-    "build": "concurrently 'rollup -c' 'tsc --emitDeclarationOnly'"
+    "build": "concurrently 'ls -lsa ../theme/dist/' 'rollup -c' 'tsc --emitDeclarationOnly'"
   },
   "type": "module",
   "source": "src/*.ts",
