@@ -106,7 +106,7 @@ export const ArticlePreview = React.memo(
                                 allowDeletion
                                 style={{ width: '100%' }}
                                 label={'Vorschaubild ändern'}
-                                description={'[opt. Größe 1200 x 800 px]'}
+                                description={'[opt. Größe 1200x800]'}
                                 onSelectFile={(previewImageFile) =>
                                     onUpdateArticle({
                                         ...article,
