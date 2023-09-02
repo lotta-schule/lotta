@@ -55,42 +55,5 @@
     "wait-on": "^7.0.1",
     "webpack": "^5.88.2",
     "whatwg-fetch": "^3.6.17"
-  },
-  "nx": {
-    "$schema": "https://raw.githubusercontent.com/nrwl/nx/master/packages/nx/schemas/project-schema.json",
-    "namedInputs": {
-      "default": [
-        "{projectRoot}/**/*"
-      ]
-    },
-    "targets": {
-      "dev": {
-        "inputs": [
-          "default"
-        ],
-        "dependsOn": [
-          "^build"
-        ]
-      },
-      "e2e": {
-        "outputs": [
-          "{projectRoot}/coverage"
-        ],
-        "inputs": [
-          "{projectRoot}/test-sb-static"
-        ],
-        "dependsOn": [
-          "e2e:prepare"
-        ]
-      },
-      "e2e:prepare": {
-        "inputs": [
-          "default"
-        ],
-        "outputs": [
-          "{projectRoot}/test-sb-static"
-        ]
-      }
-    }
   }
 }
