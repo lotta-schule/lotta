@@ -1,21 +1,31 @@
 ---
-name: 'CD'
+name: 'Deploy npm packages'
+
 on:
-  push:
+  workflow_call:
+    inputs:
+      base_sha:
+        type: string
+        required: true
+      head_sha:
+        type: string
+        required: true
+    secrets:
+      npm-token:
+        required: true
 
 jobs:
-  build-packages:
-    if: "${{ startsWith(github.event.head_commit.message, 'chore(release): publish') }}"
-    name: 'Build npm packages'
+  push-packages:
+    name: 'Push npm packages to registry'
     runs-on: ubuntu-latest
+    env:
+      NX_BASE: '${{ inputs.base_sha }}'
+      NX_HEAD: '${{ inputs.head_sha }}'
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: Setup NX
-        uses: nrwl/nx-set-shas@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -38,8 +48,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
 
-      # Maybe think of deploying statically to S3 or so?
-      - name: 'Deploy Storybook as github page'
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: packages/storybook-hubert/storybook-static
+          # # Maybe think of deploying statically to S3 or so?
+          # - name: 'Deploy Storybook as github page'
+          #   uses: JamesIves/github-pages-deploy-action@v4
+          #   with:
+          #     folder: packages/storybook-hubert/storybook-static

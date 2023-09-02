@@ -6,20 +6,51 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
 jobs:
-  lint-test:
-    name: Lint Code and run tests
+  lint:
+    name: Lint Code
     runs-on: ubuntu-latest
     if: "${{ !startsWith(github.event.head_commit.message, 'chore(release): publish') }}"
+    outputs:
+      base_sha: ${{ steps.setSHAs.outputs.base }}
+      head_sha: ${{ steps.setSHAs.outputs.head }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Set git identity
-        run: |
-          git config user.email lotta@einsa.net
-          git config user.name Lottaautomatica
+      - name: Setup main branch for reference
+        if: ${{ github.ref_name != 'main' }}
+        run: git branch --track main origin/main
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
+        id: setSHAs
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npx nx affected -t lint
+
+      - name: Typecheck
+        run: npx nx affected -t typecheck
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    # if: "${{ !startsWith(github.event.head_commit.message, 'chore(release): publish') }}"
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Setup main branch for reference
         if: ${{ github.ref_name != 'main' }}
@@ -37,13 +68,7 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Lint
-        run: npx nx affected -t lint
-
-      - name: Typecheck
-        run: npx nx affected -t typecheck
-
-      - name: Run tests
+      - name: Run Unit / Component tests
         run: npx nx affected -t test --ci --collectCoverage --configuration=ci
 
       - name: Run end-to-end tests
@@ -85,6 +110,40 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
+  prepare-builds:
+    name: Prepare Builds
+    runs-on: ubuntu-latest
+    # if: "${{ !startsWith(github.event.head_commit.message, 'chore(release): publish') }}"
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set git identity
+        run: |
+          git config user.email lotta@einsa.net
+          git config user.name Lottaautomatica
+
+      - name: Setup main branch for reference
+        if: ${{ github.ref_name != 'main' }}
+        run: git branch --track main origin/main
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run build task
+        run: npx nx run-many -t build
+
       - name: Create commit and tag alpha version
         # TODO: Comment back when tested!
         # if: ${{ github.ref_name == 'main' }}
@@ -93,7 +152,19 @@ jobs:
             --preid alpha --allow-branch=feature/monoorepo \
             --no-changelog -y
 
-      - name: Create commit and tag alpha version
+      - name: Create commit and tag version
         if: ${{ startsWith(github.ref_name, 'release/') }}
         run: |
           npx lerna version -y
+
+  publish-npm-packages:
+    needs:
+      - lint
+      - test
+      - prepare-builds
+    uses: ./.github/workflows/__deploy_npm_packages.yaml
+    with:
+      base_sha: ${{ needs.lint.outputs.base }}
+      head_sha: ${{ needs.lint.outputs.head }}
+    secrets:
+      npm-token: ${{ secrets.NPM_TOKEN }}

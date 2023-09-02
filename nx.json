@@ -13,7 +13,7 @@
       "dependsOn": ["^build"]
     },
     "test": {
-      "dependsOn": [],
+      "dependsOn": ["^build"],
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
       "outputs": ["{projectRoot}/coverage"]
     },
