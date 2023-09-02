@@ -32,13 +32,16 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npx nx affected -t lint --parallel=3
+        run: npx nx affected -t lint
 
       - name: Typecheck
-        run: npx nx affected -t typecheck --parallel=3
+        run: npx nx affected -t typecheck
 
       - name: Run tests
-        run: npx nx affected -t test --parallel=3 --configuration=ci
+        run: npx nx affected -t test --ci --collectCoverage --configuration=ci
+
+      - name: Run end-to-end tests
+        run: npx nx affected -t e2e --configuration=ci
 
       - name: Upload Tests for storybook-addon-theme
         uses: codecov/codecov-action@v2
@@ -47,6 +50,7 @@ jobs:
           directory: coverage/
           flags: storybook-addon-theme
           token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
 
       - name: Upload Tests for hubert
         uses: codecov/codecov-action@v2
@@ -55,6 +59,16 @@ jobs:
           directory: coverage/
           flags: hubert
           token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+      - name: Upload Tests for hubert storybook
+        uses: codecov/codecov-action@v2
+        with:
+          working-directory: packages/storybook-hubert/
+          directory: coverage/
+          flags: storybook-hubert
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
 
       - name: Upload Tests for Webapp
         uses: codecov/codecov-action@v2
@@ -63,3 +77,4 @@ jobs:
           directory: coverage/
           flags: webapp
           token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
