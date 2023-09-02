@@ -1,6 +1,9 @@
+@import 'breakpoints';
+
 .root {
     display: inline-block;
     width: 100%;
+    min-height: 6em;
     border: 2px solid var(--lotta-color-secondary);
     position: relative;
 
@@ -23,13 +26,23 @@
     .removeButton {
         border: none;
         position: absolute;
-        top: var(--lotta-spacing);
-        right: var(--lotta-spacing);
+        top: calc(-1 * var(--lotta-spacing));
+        right: calc(-1 * var(--lotta-spacing));
     }
 
     .imageDescription {
         position: absolute;
         bottom: var(--lotta-spacing);
         font-size: 0.8rem;
+        text-align: center;
+        @media screen and (max-width: $max-md) {
+            font-size: 0.7rem;
+        }
+        @media screen and (max-width: $max-sm) {
+            font-size: 0.6rem;
+        }
+        @media screen and (max-width: $max-xs) {
+            font-size: 0.5rem;
+        }
     }
 }

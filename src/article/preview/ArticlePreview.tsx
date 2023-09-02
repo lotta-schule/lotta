@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
-import { faLocationDot, faPen } from '@fortawesome/free-solid-svg-icons';
-import { format } from 'date-fns';
+import {
+    faCircle,
+    faLocationDot,
+    faPen,
+} from '@fortawesome/free-solid-svg-icons';
+import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -102,7 +106,7 @@ export const ArticlePreview = React.memo(
                                 allowDeletion
                                 style={{ width: '100%' }}
                                 label={'Vorschaubild ändern'}
-                                description={'[opt. Größe 1200 x 800 px]'}
+                                description={'[opt. Größe 1200x800]'}
                                 onSelectFile={(previewImageFile) =>
                                     onUpdateArticle({
                                         ...article,
@@ -171,6 +175,23 @@ export const ArticlePreview = React.memo(
                                 aria-level={1}
                                 aria-label={'Article title'}
                             >
+                                {!isEmbedded &&
+                                    currentUser?.lastSeen &&
+                                    isBefore(
+                                        new Date(currentUser.lastSeen),
+                                        new Date(article.updatedAt)
+                                    ) && (
+                                        <span
+                                            data-testid={'updated-dot'}
+                                            role={'presentation'}
+                                        >
+                                            <Icon
+                                                icon={faCircle}
+                                                fontSize={'inherit'}
+                                                className={styles.hasUpdateDot}
+                                            />
+                                        </span>
+                                    )}
                                 {maybeLinked(article.title)}
                             </div>
                         )}
