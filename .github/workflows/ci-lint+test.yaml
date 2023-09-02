@@ -43,7 +43,7 @@ jobs:
       - name: Upload Tests for storybook-addon-theme
         uses: codecov/codecov-action@v2
         with:
-          workin-directory: packages/storybook-addon-theme/
+          working-directory: packages/storybook-addon-theme/
           directory: coverage/
           flags: storybook-addon-theme
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -51,7 +51,7 @@ jobs:
       - name: Upload Tests for hubert
         uses: codecov/codecov-action@v2
         with:
-          workin-directory: packages/hubert/
+          working-directory: packages/hubert/
           directory: coverage/
           flags: hubert
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
       - name: Upload Tests for Webapp
         uses: codecov/codecov-action@v2
         with:
-          workin-directory: packages/webapp/
+          working-directory: packages/webapp/
           directory: coverage/
           flags: webapp
           token: ${{ secrets.CODECOV_TOKEN }}
