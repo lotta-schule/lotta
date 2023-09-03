@@ -10,7 +10,9 @@
     "dev": "nx run-many --target=dev --parallel",
     "test": "nx run-many --target=test --parallel",
     "lint": "nx run-many --target=lint --parallel",
-    "typecheck": "nx run-many --target=typecheck --parallel"
+    "typecheck": "nx run-many --target=typecheck --parallel",
+    "nx": "nx",
+    "postinstall": "nx run-many --target=gen:package-lock"
   },
   "devDependencies": {
     "@nx/eslint-plugin": "^16.7.2",
