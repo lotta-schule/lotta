@@ -74,6 +74,6 @@ jobs:
           docker push ${{ steps.build.outputs.base-image }}
           for tag in $secondaryTags
           do
-            docker tag ${{ steps.build.outputs.base_image }} $IMAGE_NAME:$tag
+            docker tag ${{ steps.build.outputs.base-image }} $IMAGE_NAME:$tag
             docker push $IMAGE_NAME:$tag
           done
