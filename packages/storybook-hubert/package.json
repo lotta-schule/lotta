@@ -72,6 +72,15 @@
           "^build"
         ]
       },
+      "build": {
+        "outputs": [
+          "{projectRoot}/storybook-static"
+        ],
+        "inputs": "default",
+        "dependsOn": [
+          "^build"
+        ]
+      },
       "e2e": {
         "outputs": [
           "{projectRoot}/coverage"
