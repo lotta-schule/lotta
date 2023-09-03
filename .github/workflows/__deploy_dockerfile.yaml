@@ -50,12 +50,13 @@ jobs:
           ref: ${{ inputs.checkout-ref }}
 
       - name: Build docker image
-        id: outputs
+        id: build
         run: |
           tag=$(echo "${{ fromJSON(inputs.tags)[0] }}")
           base_image=$IMAGE_NAME:$tag
           docker build --build-arg IMAGE_NAME -t $base_image .
-          echo "base_image=$base_image" >> $GITHUB_OUTPUT
+          echo "base-image=$base_image" >> $GITHUB_OUTPUT
+          echo "Base image $base_image written to github output"
         working-directory: ${{ inputs.working-directory }}
 
       - name: docker login
@@ -70,7 +71,7 @@ jobs:
         run: |
           secondaryTags=$(echo "${{ inputs.tags }}" | jq -r '.[1:][]')
 
-          docker push ${{ steps.build.outputs.base_image }}
+          docker push ${{ steps.build.outputs.base-image }}
           for tag in $secondaryTags
           do
             docker tag ${{ steps.build.outputs.base_image }} $IMAGE_NAME:$tag
