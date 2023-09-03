@@ -229,5 +229,6 @@ jobs:
     with:
       name: lotta-schule/web
       tags: '["${{ needs.publish-npm-packages.outputs.version-name }}", "${{ needs.publish-npm-packages.outputs.tag-name }}", "develop"]'
+      working-directory: packages/webapp
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
