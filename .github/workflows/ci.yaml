@@ -228,6 +228,6 @@ jobs:
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: lotta-schule/web
-      tags: '["${{ needs.publish-npm-packages.outputs.version_name }}", "${{ needs.publish-npm-packages.outputs.tag_name }}", "develop"]'
+      tags: '["${{ needs.publish-npm-packages.outputs.version-name }}", "${{ needs.publish-npm-packages.outputs.tag-name }}", "develop"]'
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
