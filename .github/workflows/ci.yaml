@@ -237,6 +237,19 @@ jobs:
     secrets:
       npm-token: ${{ secrets.NPM_TOKEN }}
 
+  publish-docker-image:
+    needs:
+      - update-package-versions
+      - publish-npm-packages
+    uses: ./.github/workflows/__deploy_dockerfile.yaml
+    with:
+      name: lotta-schule/web
+      tags: '["${{ needs.publish-npm-packages.outputs.version-name }}", "${{ needs.publish-npm-packages.outputs.tag-name }}", "develop"]'
+      checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
+      working-directory: packages/webapp
+    secrets:
+      password: ${{ secrets.GITHUB_TOKEN }}
+
   publish-storybook-page:
     name: Publish Hubert Storybook as Github Page
     needs:
@@ -266,15 +279,3 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: ./packages/storybook-hubert/storybook-static
-
-  publish-docker-image:
-    needs:
-      - publish-npm-packages
-    uses: ./.github/workflows/__deploy_dockerfile.yaml
-    with:
-      name: lotta-schule/web
-      tags: '["${{ needs.publish-npm-packages.outputs.version-name }}", "${{ needs.publish-npm-packages.outputs.tag-name }}", "develop"]'
-      checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
-      working-directory: packages/webapp
-    secrets:
-      password: ${{ secrets.GITHUB_TOKEN }}
