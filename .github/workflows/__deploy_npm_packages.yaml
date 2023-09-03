@@ -41,7 +41,7 @@ jobs:
         run: npm ci
 
       - name: Run build task
-        run: npx nx run-many -t build
+        run: npm run nx run-many -- -t build
 
       - name: Publish to npm
         id: publish

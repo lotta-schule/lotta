@@ -9,8 +9,7 @@
     "test": "jest",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "gen:package-lock": "cp ../../package-lock.json ./ && npm i --package-lock-only --ignore-scripts",
-    "gen:graphql-schema": "npx get-graphql-schema http://127.0.0.1:4000/api > src/api/schema.graphql"
+    "schema:download": "npx get-graphql-schema http://127.0.0.1:4000/api > src/api/schema.graphql"
   },
   "proxy": "http://localhost:4000",
   "dependencies": {

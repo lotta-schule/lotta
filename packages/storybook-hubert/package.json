@@ -76,7 +76,9 @@
         "outputs": [
           "{projectRoot}/storybook-static"
         ],
-        "inputs": "default",
+        "inputs": [
+          "default"
+        ],
         "dependsOn": [
           "^build"
         ]
