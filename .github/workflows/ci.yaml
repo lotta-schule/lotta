@@ -169,7 +169,7 @@ jobs:
         run: npm ci
 
       - name: Build storybook
-        run: NODE_ENV=test npx nx build @lotta-schule/storybook-hubert
+        run: NODE_ENV=test npx nx build storybook-hubert
 
       - name: Send to Chromatic
         uses: chromaui/action@v1
@@ -214,7 +214,7 @@ jobs:
         run: npm ci
 
       - name: Build storybook
-        run: npx nx build @lotta-schule/storybook-hubert
+        run: npx nx build storybook-hubert
 
       # Maybe think of deploying statically to S3 or so?
       - name: 'Deploy Storybook as github page'
