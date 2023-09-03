@@ -69,7 +69,7 @@ jobs:
 
       - name: push image to registry
         run: |
-          secondaryTags=$(echo "${{ inputs.tags }}" | jq -r '.[1:][]')
+          secondaryTags=$(echo '${{ inputs.tags }}' | jq -r '.[1:][]')
 
           docker push ${{ steps.build.outputs.base-image }}
           for tag in $secondaryTags
