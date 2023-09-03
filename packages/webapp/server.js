@@ -1,15 +1,14 @@
-require('./tracing.cjs');
-
 const { createServer } = require('http');
 const { parse } = require('url');
-const next = require('next');
-
-const app = next({ dev: process.env.NODE_ENV !== 'production' });
-const handle = app.getRequestHandler();
 
 const port = process.env.PORT || 3000;
 
 const startServer = async () => {
+  require('./tracing.cjs');
+  const next = require('next');
+
+  const app = next({ dev: process.env.NODE_ENV !== 'production' });
+  const handle = app.getRequestHandler();
   await app.prepare();
 
   const server = createServer((req, res) => {
@@ -22,4 +21,6 @@ const startServer = async () => {
   });
 };
 
-startServer();
+require('./fetch.cjs')().then(() => {
+  startServer();
+});
