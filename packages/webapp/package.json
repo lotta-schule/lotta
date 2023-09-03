@@ -48,7 +48,7 @@
     "is-url": "^1.2.4",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.20",
-    "next": "^13.4.19",
+    "next": "^13.4.12",
     "next-plausible": "^3.11.1",
     "next-transpile-modules": "^10.0.1",
     "nprogress": "^0.2.0",
