@@ -11,7 +11,7 @@ const jestConfig = {
 
   transform: {
     ...baseConfig.transform,
-    '\\.(gql|graphql)$': 'jest-transform-graphql',
+    '\\.(gql|graphql)$': '@graphql-tools/jest-transform',
   },
 };
 
