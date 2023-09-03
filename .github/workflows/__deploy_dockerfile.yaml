@@ -17,6 +17,10 @@ on:
         type: string
         required: false
         default: '["${{ github.sha }}"]'
+      checkout-ref:
+        description: Ref to checkout the repository at
+        type: string
+        required: false
       registry:
         description: The docker registry to use. Defaults to ghcr.io
         type: string
@@ -41,6 +45,9 @@ jobs:
       IMAGE_NAME: '${{ inputs.registry }}/${{ inputs.name }}'
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+          ref: ${{ inputs.checkout-ref }}
 
       - name: Build docker image
         id: outputs

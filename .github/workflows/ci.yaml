@@ -104,19 +104,14 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
-  prepare-builds:
-    name: Prepare Builds
+  check-build:
+    name: Check the projects build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - name: Set git identity
-        run: |
-          git config user.email lotta@einsa.net
-          git config user.name Lottaautomatica
 
       - name: Setup main branch for reference
         if: ${{ github.ref_name != 'main' }}
@@ -135,20 +130,7 @@ jobs:
         run: npm ci
 
       - name: Run build task
-        run: npm run nx run-many -- -t build
-
-      - name: Create commit and tag alpha version
-        # TODO: Comment back when tested!
-        # if: ${{ github.ref_name == 'main' }}
-        run: |
-          npx lerna version --conventional-prerelease \
-            --preid alpha --allow-branch=feature/monoorepo \
-            --no-changelog -y
-
-      - name: Create commit and tag version
-        if: ${{ startsWith(github.ref_name, 'release/') }}
-        run: |
-          npx lerna version -y
+        run: npm run nx affected -- -t build
 
   storybook-chromatic:
     name: Storybook visual testing on Chromatic
@@ -182,27 +164,88 @@ jobs:
         env:
           NODE_ENV: test
 
-  publish-npm-packages:
+  update-package-versions:
+    name: Update the package.json versions and create commit
     needs:
       - lint
       - test
-      - prepare-builds
+      - check-build
+    runs-on: ubuntu-latest
+    outputs:
+      updated-sha: ${{ steps.updated-sha.sha }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set git identity
+        run: |
+          git config user.email lotta@einsa.net
+          git config user.name Lottaautomatica
+
+      - name: Setup main branch for reference
+        if: ${{ github.ref_name != 'main' }}
+        run: git branch --track main origin/main
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run build task
+        # TODO: This should run build only on libraries
+        # that are to be deployed as npm packages
+        run: npm run nx run-many -- -t build
+
+      - name: Create commit and tag alpha version
+        # TODO: Comment back when tested!
+        # if: ${{ github.ref_name == 'main' }}
+        run: |
+          npx lerna version --conventional-prerelease \
+            --preid alpha --allow-branch=feature/monoorepo \
+            --no-changelog -y
+
+      - name: Create commit and tag version
+        if: ${{ startsWith(github.ref_name, 'release/') }}
+        run: |
+          npx lerna version -y
+
+      - name: Output new commit sha
+        if: ${{ startsWith(github.ref_name, 'release/') }}
+        id: updated-sha
+        run: |
+          sha=$(git rev-parse HEAD)
+          echo "sha=$sha" >> $GITHUB_OUTPUT
+          echo "Saved new commit SHA $sha to output"
+
+  publish-npm-packages:
+    needs:
+      - update-package-versions
     uses: ./.github/workflows/__deploy_npm_packages.yaml
+    with:
+      checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
     secrets:
       npm-token: ${{ secrets.NPM_TOKEN }}
 
   publish-storybook-page:
     name: Publish Hubert Storybook as Github Page
     needs:
-      - lint
-      - test
-      - prepare-builds
+      - update-package-versions
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: ${{ needs.update-package-versions.outputs.updated-sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -229,6 +272,7 @@ jobs:
     with:
       name: lotta-schule/web
       tags: '["${{ needs.publish-npm-packages.outputs.version-name }}", "${{ needs.publish-npm-packages.outputs.tag-name }}", "develop"]'
+      checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
       working-directory: packages/webapp
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}

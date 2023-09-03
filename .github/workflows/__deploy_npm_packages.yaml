@@ -3,6 +3,11 @@ name: 'Deploy npm packages'
 
 on:
   workflow_call:
+    inputs:
+      checkout-ref:
+        description: Ref to checkout the repository at
+        type: string
+        required: false
     secrets:
       npm-token:
         required: true
@@ -26,6 +31,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: ${{ inputs.checkout-ref }}
 
       - name: Setup NX
         uses: nrwl/nx-set-shas@v3
