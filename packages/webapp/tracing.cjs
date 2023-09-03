@@ -3,6 +3,7 @@ const OpentelemetryExporterTraceHttp = require('@opentelemetry/exporter-trace-ot
 const OpenTelemetryResources = require('@opentelemetry/resources');
 const OpenTelemetrySemanticConventions = require('@opentelemetry/semantic-conventions');
 const OpenTelemetryInstrumentationHttp = require('@opentelemetry/instrumentation-http');
+const OpenTelemetryInstrumentationFetch = require('@opentelemetry/instrumentation-fetch');
 const OpenTelemetryInstrumentationConnect = require('@opentelemetry/instrumentation-connect');
 
 const { SemanticResourceAttributes } = OpenTelemetrySemanticConventions;
@@ -10,6 +11,7 @@ const { Resource } = OpenTelemetryResources;
 const { OTLPTraceExporter } = OpentelemetryExporterTraceHttp;
 const { NodeSDK } = OpenTelemetryNode;
 const { HttpInstrumentation } = OpenTelemetryInstrumentationHttp;
+const { FetchInstrumentation } = OpenTelemetryInstrumentationFetch;
 const { ConnectInstrumentation } = OpenTelemetryInstrumentationConnect;
 
 // configure the SDK to export telemetry data to the console
@@ -41,6 +43,7 @@ const sdk = new NodeSDK({
       },
     }),
     new ConnectInstrumentation(),
+    new FetchInstrumentation(),
   ],
 });
 
