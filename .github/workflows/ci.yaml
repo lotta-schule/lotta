@@ -207,6 +207,8 @@ jobs:
 
       - name: Create commit and tag alpha version
         # TODO: Comment back when tested!
+        # TODO: This must also be set in the condition in
+        # The "Output new commit sha" task!!
         # if: ${{ github.ref_name == 'main' }}
         run: |
           npx lerna version --conventional-prerelease \
@@ -219,7 +221,7 @@ jobs:
           npx lerna version -y
 
       - name: Output new commit sha
-        if: ${{ startsWith(github.ref_name, 'release/') }}
+        # if: ${{ startsWith(github.ref_name, 'release/') }}
         id: updated-sha
         run: |
           sha=$(git rev-parse HEAD)
