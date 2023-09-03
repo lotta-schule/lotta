@@ -9,15 +9,18 @@ on:
     outputs:
       version-name:
         description: 'The version of the package, as read from lerna.json'
-        value: ${{ jobs.push-packages.steps.outputs.publish.version-name }}
+        value: ${{ jobs.push-packages.outputs.version-name }}
       tag-name:
         description: 'The tag, can be latest or alpha'
-        value: ${{ jobs.push-packages.steps.outputs.publish.tag-name }}
+        value: ${{ jobs.push-packages.outputs.tag-name }}
 
 jobs:
   push-packages:
     name: 'Push npm packages to registry'
     runs-on: ubuntu-latest
+    outputs:
+      version-name: ${{ steps.publish.outputs.version-name }}
+      tag-name: ${{ steps.publish.outputs.tag-name }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
