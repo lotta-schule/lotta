@@ -3,6 +3,9 @@
 
 node_modules
 
+# We want the dist folder to be included in the repo
+!dist
+
 # typescript build artifacts
 *.tsbuildinfo
 

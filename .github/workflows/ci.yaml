@@ -172,7 +172,7 @@ jobs:
       - check-build
     runs-on: ubuntu-latest
     outputs:
-      updated-sha: ${{ steps.updated-sha.sha }}
+      updated-sha: ${{ steps.updated-sha.outputs.sha }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
