@@ -221,3 +221,13 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: ./packages/storybook-hubert/storybook-static
+
+  publish-docker-image:
+    needs:
+      - publish-npm-packages
+    uses: ./.github/workflows/__deploy_dockerfile.yaml
+    with:
+      name: lotta-schule/web
+      tags: '["${{ needs.publish-npm-packages.outputs.version_name }}", "${{ needs.publish-npm-packages.outputs.tag_name }}", "develop"]'
+    secrets:
+      password: ${{ secrets.GITHUB_TOKEN }}

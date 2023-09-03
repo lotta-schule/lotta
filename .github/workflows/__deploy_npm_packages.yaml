@@ -6,6 +6,13 @@ on:
     secrets:
       npm-token:
         required: true
+    outputs:
+      version_name:
+        description: 'The version of the package, as read from lerna.json'
+        value: ${{ jobs.publish.outputs.version_name }}
+      tag_name:
+        description: 'The tag, can be latest or alpha'
+        value: ${{ jobs.publish.outputs.tag_name }}
 
 jobs:
   push-packages:
@@ -34,6 +41,7 @@ jobs:
         run: npx nx run-many -t build
 
       - name: Publish to npm
+        id: publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
         run: |
@@ -45,3 +53,5 @@ jobs:
           npm -w @lotta-schule/theme publish --tag $tag
           npm -w @lotta-schule/hubert publish --tag $tag
           npm -w @lotta-schule/storybook-addon-theme publish --tag $tag
+          echo "version_name=$version" >> $GITHUB_OUTPUT
+          echo "tag_name=$tag" >> $GITHUB_OUTPUT

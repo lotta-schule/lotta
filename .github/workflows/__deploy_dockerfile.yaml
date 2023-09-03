@@ -1,0 +1,71 @@
+---
+name: 'Deploy Dockerfile'
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: The image name. Defaults to the name of the repository
+        type: string
+        required: false
+        default: ${{ github.repository }}
+      tags:
+        description: |
+          A stringified json string array of tags to be given to
+          the image. For example '["latest"]' or '["latest", "1.0.0"]'
+          Defaults to '["${{ github.sha }}"]'
+        type: string
+        required: false
+        default: '["${{ github.sha }}"]'
+      registry:
+        description: The docker registry to use. Defaults to ghcr.io
+        type: string
+        required: false
+        default: ghcr.io
+      working-directory:
+        type: string
+        required: false
+    secrets:
+      username:
+        description: |
+          The username to use. Defaults to ${{ github.actor }}
+        required: false
+      password:
+        required: true
+
+jobs:
+  build-image:
+    name: 'Build image from Dockerfile'
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: '${{ inputs.registry }}/${{ inputs.name }}'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build docker image
+        id: outputs
+        run: |
+          tag=$(echo "${{ fromJSON(inputs.tags)[0] }}")
+          base_image=$IMAGE_NAME:$tag
+          docker build --build-arg IMAGE_NAME -t $base_image .
+          echo "base_image=$base_image" >> $GITHUB_OUTPUT
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: docker login
+        uses: docker/login-action@v1.10.0
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ secrets.username || github.actor }}
+          password: ${{ secrets.password }}
+          working-directory: ${{ inputs.working-directory }}
+
+      - name: push image to registry
+        run: |
+          secondaryTags=$(echo "${{ inputs.tags }}" | jq -r '.[1:][]')
+
+          docker push ${{ steps.build.outputs.base_image }}
+          for tag in $secondaryTags
+          do
+            docker tag ${{ steps.build.outputs.base_image }} $IMAGE_NAME:$tag
+            docker push $IMAGE_NAME:$tag
+          done
