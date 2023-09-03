@@ -1,15 +1,15 @@
 ARG SENTRY_AUTH_TOKEN
-ARG IMAGE_NAME
-ARG USE_LOCAL_HUBERT
 
 FROM node:20.5-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json package-lock.json ./
-# Copy our monorepo-dependencies IF they are available locally
-COPY packages/theme/dis[t]/ packages/theme/dist/
-COPY packages/hubert/dis[t]/ packages/hubert/dist/
-RUN npm ci
+# We have no package-lock and package-lock generation
+# seems to be a bit messy with nx
+# We will start not using it and see how it goes ...
+# COPY package.json package-lock.json ./
+# RUN npm ci
+COPY package.json ./
+RUN npm install
 
 # Rebuild the source code only when needed
 FROM node:20.5-alpine AS builder
@@ -17,7 +17,8 @@ ARG SENTRY_AUTH_TOKEN
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
-RUN SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN} npm run build && npm install --production --ignore-scripts --prefer-offline
+RUN SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN} npm run build
+RUN npm prune --production
 
 FROM node:20.5-alpine AS runner
 WORKDIR /app
@@ -44,4 +45,4 @@ EXPOSE 3000
 # Uncomment the following line in case you want to disable telemetry.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "server.js"]
