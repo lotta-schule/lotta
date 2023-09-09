@@ -24,5 +24,6 @@ module.exports = () =>
       globalThis.fileFrom = fileFrom;
       globalThis.fileFromSync = fileFromSync;
       globalThis.FormData = FormData;
+      console.log(fetch);
     }
   );
