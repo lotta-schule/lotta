@@ -3,7 +3,7 @@ import { Theme } from '@lotta-schule/theme';
 import { CSSVariables } from './CSSVariables';
 import { ExternalFont, FontLoader } from './FontLoader';
 
-import './GlobalStyles.global.scss';
+import './GlobalStyles.module.scss';
 
 export type GlobalStylesProps = {
   theme: Theme;
