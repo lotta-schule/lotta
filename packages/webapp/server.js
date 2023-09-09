@@ -1,12 +1,15 @@
-const { createServer } = require('http');
-const { parse } = require('url');
+const { createServer } = require('node:http');
+const { parse } = require('node:url');
+const { Console } = require('node:console');
 
+const console = new Console({ stdout: process.stdout, stderr: process.stderr });
 const port = process.env.PORT || 3000;
 
 const originalFetch = globalThis.fetch;
 
 globalThis.fetch = async (url, options) => {
-  console.log(' fetch: ', { url, ...options });
+  console.trace('fetch');
+  console.log({ url, ...options });
   return originalFetch(url, options).then((res) => {
     console.log('fetch result: ');
     console.log({ res });

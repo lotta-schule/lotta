@@ -5,6 +5,7 @@
   "description": "Lotta Schule Webapp",
   "scripts": {
     "dev": "next dev",
+    "start:prod": "next start",
     "build": "next build",
     "test": "jest",
     "lint": "next lint",
