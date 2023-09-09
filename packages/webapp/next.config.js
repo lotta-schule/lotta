@@ -51,7 +51,7 @@ const nextConfig = {
     ];
   },
   sassOptions: {
-    includePaths: [resolve(__dirname, './styles')],
+    includePaths: [resolve(__dirname, './src/styles/util')],
   },
   eslint: {
     dirs: ['src'],

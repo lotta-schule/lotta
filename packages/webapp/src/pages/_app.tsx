@@ -1,3 +1,5 @@
+import '../styles/globals.css';
+
 import * as React from 'react';
 import { AppContext, AppProps } from 'next/app';
 import { add } from 'date-fns';
@@ -14,10 +16,6 @@ import JwtDecode from 'jwt-decode';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
-
-import 'nprogress/nprogress.css';
-import '@lotta-schule/hubert/dist/index.css';
-import '@fortawesome/fontawesome-svg-core/styles.css';
 
 config.autoAddCss = false;
 
