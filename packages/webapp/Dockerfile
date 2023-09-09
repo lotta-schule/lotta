@@ -1,6 +1,6 @@
 ARG SENTRY_AUTH_TOKEN
 
-FROM node:20.5-alpine AS deps
+FROM node:16-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 # We have no package-lock and package-lock generation
@@ -20,7 +20,7 @@ COPY --from=deps /app/node_modules ./node_modules
 RUN SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN} npm run build
 RUN npm prune --production
 
-FROM node:20.5-alpine AS runner
+FROM node:16-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
