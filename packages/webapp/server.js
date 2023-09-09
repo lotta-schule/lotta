@@ -3,6 +3,17 @@ const { parse } = require('url');
 
 const port = process.env.PORT || 3000;
 
+const originalFetch = globalThis.fetch;
+
+globalThis.fetch = async (url, options) => {
+  console.log(' fetch: ', { url, ...options });
+  return originalFetch(url, options).then((res) => {
+    console.log('fetch result: ');
+    console.log({ res });
+    return res;
+  });
+};
+
 const startServer = async () => {
   require('./tracing.cjs');
   const next = require('next');
@@ -21,6 +32,4 @@ const startServer = async () => {
   });
 };
 
-require('./fetch.cjs')().then(() => {
-  startServer();
-});
+startServer();
