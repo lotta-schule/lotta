@@ -35,7 +35,6 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/server.js ./server.js
 COPY --from=builder /app/tracing.cjs ./tracing.cjs
-COPY --from=builder /app/fetch.cjs ./fetch.cjs
 
 USER nextjs
 
