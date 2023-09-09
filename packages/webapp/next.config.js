@@ -56,13 +56,7 @@ const nextConfig = {
   eslint: {
     dirs: ['src'],
   },
-  experimental: {
-    logging: 'verbose',
-  },
   generateEtags: false,
-  httpAgentOptions: {
-    keepAlive: false,
-  },
   webpack(config) {
     config.module.rules.push({
       test: /\.test.(t|j)sx?$/,
