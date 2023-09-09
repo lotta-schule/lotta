@@ -189,9 +189,14 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
           },
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'X-Forwarded-Host': request.headers.host,
-            Accept: 'application/json',
+            'content-type': 'application/json',
+            'x-forwarded-host': request.headers.host,
+            ...Object.fromEntries(
+              Object.entries(request.headers).filter(
+                ([key]) =>
+                  key.startsWith('x-forwarded-') || key.startsWith('x-real')
+              )
+            ),
           },
         });
         const refreshResponseData = refreshResponse?.data;

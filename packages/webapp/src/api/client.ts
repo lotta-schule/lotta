@@ -15,7 +15,6 @@ import { JWT } from 'util/auth/jwt';
 import { TenantModel } from 'model';
 import { isAfter, sub } from 'date-fns';
 import { createAbsintheSocketLink } from './createAbsintheSocketLink';
-import { omit } from 'lodash';
 import axios, { AxiosRequestConfig } from 'axios';
 import getConfig from 'next/config';
 import { createCache } from './cache';
@@ -33,19 +32,17 @@ const createHeaders = (headers?: any) => {
   return Object.assign(
     {},
     {
-      ...(process.env.SKIP_HOST_HEADER_FORWARDING
-        ? (omit(headers ?? {}, ['host', 'content-type']) as Record<
-            string,
-            string
-          >)
-        : (omit(headers ?? {}, ['content-type']) as Record<string, string>)),
+      'x-forwarded-host': headers.host,
     },
-    {
-      ...(tenantSlugOverwrite && {
-        tenant: `slug:${tenantSlugOverwrite}`,
-      }),
-      'Content-Type': headers['content-type'],
-    }
+    Object.fromEntries(
+      Object.entries(headers).filter(
+        ([key]) =>
+          key.startsWith('x-forwarded-') ||
+          key.startsWith('x-real') ||
+          key === 'content-type'
+      )
+    ),
+    tenantSlugOverwrite ? { tenant: `slug:${tenantSlugOverwrite}` } : {}
   );
 };
 
