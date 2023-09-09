@@ -19,6 +19,8 @@ import axios, { AxiosRequestConfig } from 'axios';
 import getConfig from 'next/config';
 import { createCache } from './cache';
 
+const ALLOWED_HEADERS = ['accept', 'content-type', 'authorization'] as const;
+
 const {
   publicRuntimeConfig: { socketUrl, tenantSlugOverwrite },
 } = getConfig();
@@ -39,7 +41,7 @@ const createHeaders = (headers?: any) => {
         ([key]) =>
           key.startsWith('x-forwarded-') ||
           key.startsWith('x-real') ||
-          key === 'content-type'
+          ALLOWED_HEADERS.find((h) => h === key)
       )
     ),
     tenantSlugOverwrite ? { tenant: `slug:${tenantSlugOverwrite}` } : {}
