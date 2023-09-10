@@ -49,14 +49,14 @@ export const SwipeableViews = ({
           },
           x: {
             type: 'easeInOut',
-            damping: 2,
+            damping: 25,
           },
         }}
         drag={'x'}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={{
-          right: selectedIndex > 0 ? 1 : 0.25,
-          left: selectedIndex < views.length - 1 ? 1 : 0.25,
+          left: selectedIndex > 0 ? .25 : 0.0,
+          right: selectedIndex < views.length - 1 ? .25 : 0.0,
         }}
         onDragEnd={(_e: DragEvent, { offset, velocity }) => {
           const swipeOffsetThreshold = 25;
