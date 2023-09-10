@@ -1,0 +1,58 @@
+name: Fehlermeldung (Bugreport)
+description: |
+  Die Anwendung, im weitesten Sinne mit all ihren Bestandteilen,
+  verhält sich nicht wie erwartet oder erwünscht.
+title: "[Bug]: "
+assignees:
+  - BillyTheKing
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Danke für das Melden eines Fehlers.
+        Damit wir möglichst schnell und gezielt das Problem
+        angehen können, brauchen wir deine Zusammenarbeit!
+        Versuche dich kurz und präzise auszudrücken.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Bug-Beschreibung
+      description: |
+        Bitte beschreibe kurz und strukturiert, welches Problem
+        du bemerkt hast. Wie hat sich Lotta verhalten, und
+        was hast du stattdessen erwartet?
+      placeholder: Kurze präzise Problembeschreibung
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link zur Seite, auf der das Problem aufgefallen ist
+      description: |
+        Bitte einen möglichst präzisen Link zur Seite, auf der das
+        Problem aufgefallen ist. Am Besten direkt zur Seite / Kategorie /
+        Admin-Bereich / Startseite / Impressum ...
+    validations:
+      required: false
+  - type: dropdown
+    id: device
+    attributes:
+      label: Gerätekategorie
+      description: Bitte gib an, auf welchen Geräten das Problem auftritt
+      options:
+        - Mobiltelefon (iPhone / Android-Telefon)
+        - Tablet (iPad, Galaxy Tab o.ä.)
+        - Laptop / Desktop (PC, Mac, Chromebook)
+        - Trifft hier nicht zu
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: In welchem Browser ist das Problem aufgetreten
+      multiple: true
+      options:
+        - Firefox
+        - Chrome (Edge, Opera, ... )
+        - Safari
