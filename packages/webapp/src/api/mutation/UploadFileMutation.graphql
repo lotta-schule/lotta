@@ -1,0 +1,18 @@
+mutation UploadFile($file: Upload!, $parentDirectoryId: ID!) {
+  file: uploadFile(file: $file, parentDirectoryId: $parentDirectoryId) {
+    id
+    insertedAt
+    updatedAt
+    filename
+    filesize
+    mimeType
+    fileType
+    userId
+    parentDirectory {
+      id
+    }
+    fileConversions {
+      id
+    }
+  }
+}

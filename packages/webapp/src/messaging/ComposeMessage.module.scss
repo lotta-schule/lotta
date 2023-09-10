@@ -1,0 +1,32 @@
+@import 'breakpoints';
+
+.root {
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  .form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+  }
+
+  .textInputWrapper {
+    /* text input wrapper */
+    flex-grow: 1;
+  }
+  .textField {
+    resize: none;
+    @media screen and (max-width: $max-xs) {
+      margin-left: var(--lotta-spacing);
+      margin-right: var(--lotta-spacing);
+      width: 95%;
+    }
+  }
+
+  .button {
+    flex-grow: 0;
+    flex-shrink: 0;
+    align-self: center;
+  }
+}

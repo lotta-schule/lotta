@@ -1,5 +1,0 @@
-mutation DeleteUserGroup($id: ID!) {
-    group: deleteUserGroup(id: $id) {
-        id
-    }
-}

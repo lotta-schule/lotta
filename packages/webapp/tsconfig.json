@@ -1,0 +1,60 @@
+{
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
+  // we do not extend the base config for now because
+  // it causes headaches when building in the docker container
+  // We should change to building on the host machine instead
+  // on the next occasion
+  // "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "baseUrl": "src",
+    "outDir": ".next",
+    "types": [],
+    "typeRoots": [
+      "src/@types",
+      "node_modules/@types",
+      "../../node_modules/@types"
+    ],
+    "lib": [
+      "dom",
+      "es2020"
+    ],
+    "target": "ES2020",
+    "sourceMap": true,
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "allowUmdGlobalAccess": false,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "module": "esnext",
+    "resolveJsonModule": true
+  },
+  "references": [
+    {
+      "path": "../theme"
+    },
+    {
+      "path": "../storybook-addon-theme"
+    },
+    {
+      "path": "../hubert"
+    }
+  ],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

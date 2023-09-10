@@ -1,0 +1,33 @@
+.root {
+  .toolBar {
+    overflow: auto;
+    margin-bottom: calc(3 * var(--lotta-spacing));
+    button {
+      float: right;
+    }
+  }
+
+  .listsWrapper {
+    display: flex;
+    padding-bottom: var(--lotta-spacing);
+    ul {
+      flex: 1;
+      li {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        &:hover,
+        &:focus {
+          background-color: rgba(var(--lotta-primary-color), 0.1);
+          border-radius: var(--lotta-border-radius);
+        }
+        span {
+          .draghandleIcon {
+            fill: rgba(var(--lotta-text-color), 0.7);
+            margin-right: calc(2 * var(--lotta-spacing));
+          }
+        }
+      }
+    }
+  }
+}

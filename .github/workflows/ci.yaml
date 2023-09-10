@@ -1,0 +1,281 @@
+---
+name: 'CI'
+on:
+  push:
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup main branch for reference
+        if: ${{ github.ref_name != 'main' }}
+        run: git branch --track main origin/main
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run nx affected -- -t lint
+
+      - name: Typecheck
+        run: npm run nx affected -- -t typecheck
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup main branch for reference
+        if: ${{ github.ref_name != 'main' }}
+        run: git branch --track main origin/main
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run Unit / Component tests
+        run: npm run nx affected -- -t test --ci --collectCoverage --configuration=ci
+
+      - name: Run end-to-end tests
+        run: npm run nx affected -- -t e2e --configuration=ci
+
+      - name: Upload Tests for storybook-addon-theme
+        uses: codecov/codecov-action@v2
+        with:
+          working-directory: packages/storybook-addon-theme/
+          directory: coverage/
+          flags: storybook-addon-theme
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+      - name: Upload Tests for hubert
+        uses: codecov/codecov-action@v2
+        with:
+          working-directory: packages/hubert/
+          directory: coverage/
+          flags: hubert
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+      - name: Upload Tests for hubert storybook
+        uses: codecov/codecov-action@v2
+        with:
+          working-directory: packages/storybook-hubert/
+          directory: coverage/
+          flags: storybook-hubert
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+      - name: Upload Tests for Webapp
+        uses: codecov/codecov-action@v2
+        with:
+          working-directory: packages/webapp/
+          directory: coverage/
+          flags: webapp
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+  check-build:
+    name: Check the projects build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup main branch for reference
+        if: ${{ github.ref_name != 'main' }}
+        run: git branch --track main origin/main
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run build task
+        run: npm run nx affected -- -t build
+
+  storybook-chromatic:
+    name: Storybook visual testing on Chromatic
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build storybook
+        run: NODE_ENV=test npm run nx build storybook-hubert
+
+      - name: Send to Chromatic
+        uses: chromaui/action@v1
+        with:
+          workingDir: './packages/storybook-hubert'
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          skip: 'dependabot/**'
+          autoAcceptChanges: 'main'
+          storybookBuildDir: storybook-static
+        env:
+          NODE_ENV: test
+
+  update-package-versions:
+    name: Update the package.json versions and create commit
+    needs:
+      - lint
+      - test
+      - check-build
+    runs-on: ubuntu-latest
+    outputs:
+      updated-sha: ${{ steps.updated-sha.outputs.sha }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set git identity
+        run: |
+          git config user.email lotta@einsa.net
+          git config user.name Lottaautomatica
+
+      - name: Setup main branch for reference
+        if: ${{ github.ref_name != 'main' }}
+        run: git branch --track main origin/main
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run build task
+        # TODO: This should run build only on libraries
+        # that are to be deployed as npm packages
+        run: npm run nx run-many -- -t build
+
+      - name: Create commit and tag alpha version
+        if: ${{ github.ref_name == 'main' }}
+        run: |
+          npx lerna version --conventional-prerelease \
+            --preid alpha --no-changelog -y \
+            --git-tag-command 'echo 0' # We do not want it to really tag
+
+      - name: Create commit and tag version
+        if: ${{ startsWith(github.ref_name, 'release/') }}
+        run: |
+          npx lerna version -y --conventional-commits --conventional-graduate
+
+      - name: Output new commit sha
+        if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
+        id: updated-sha
+        run: |
+          sha=$(git rev-parse HEAD)
+          echo "sha=$sha" >> $GITHUB_OUTPUT
+          echo "Saved new commit SHA $sha to output"
+
+  publish-npm-packages:
+    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
+    needs:
+      - update-package-versions
+    uses: ./.github/workflows/__deploy_npm_packages.yaml
+    with:
+      checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
+    secrets:
+      npm-token: ${{ secrets.NPM_TOKEN }}
+
+  publish-docker-image:
+    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
+    needs:
+      - update-package-versions
+      - publish-npm-packages
+    uses: ./.github/workflows/__deploy_dockerfile.yaml
+    with:
+      name: lotta-schule/web
+      tags: '["${{ needs.publish-npm-packages.outputs.version-name }}", "${{ needs.publish-npm-packages.outputs.tag-name }}", "develop"]'
+      checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
+      working-directory: packages/webapp
+    secrets:
+      password: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-storybook-page:
+    if: ${{ github.ref_name == 'main' }}
+    name: Publish Hubert Storybook as Github Page
+    needs:
+      - update-package-versions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.update-package-versions.outputs.updated-sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build storybook
+        run: npm run nx build storybook-hubert
+
+      # Maybe think of deploying statically to S3 or so?
+      - name: 'Deploy Storybook as github page'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: ./packages/storybook-hubert/storybook-static

@@ -1,0 +1,76 @@
+.root {
+  position: relative;
+  border-width: 0;
+  border-color: transparent;
+  border-style: solid;
+  overflow: initial;
+  &.isEditModeEnabled {
+    border-width: 1px;
+  }
+  &.dragging {
+    border-color: rgb(var(--lotta-primary-color));
+    .dragbar {
+      background-color: rgba(var(--lotta-primary-color), 0.6);
+      opacity: 1;
+    }
+  }
+  &:hover,
+  &:focus-within {
+    border-color: rgb(var(--lotta-highlight-color));
+    .dragbar {
+      opacity: 0.8;
+    }
+  }
+  &.active {
+    border-color: rgb(var(--lotta-primary-color));
+    .dragbar {
+      opacity: 0.8;
+    }
+  }
+
+  .dragbar {
+    opacity: 0;
+    padding: 0.1em 0.5em;
+    height: 2.2em;
+    width: 100%;
+    background-color: rgb(var(--lotta-highlight-color));
+    display: flex;
+    justify-content: space-between;
+    transition: opacity 250ms ease-in;
+    & > span {
+      display: flex;
+    }
+  }
+
+  .leftButtonSection {
+    display: flex;
+    color: rgba(var(--lotta-text-color), 0.7);
+    & > * {
+      margin-right: var(--lotta-spacing);
+      margin-left: var(--lotta-spacing);
+    }
+  }
+
+  .dragbarButton {
+    padding: 0 5px;
+    height: 28px;
+    width: 28px;
+  }
+
+  .buttonIcon {
+    color: rgb(var(--lotta-highlight-color));
+  }
+
+  .activeButtonIcon {
+    color: rgba(var(--lotta-primary-color), 1);
+  }
+
+  .configSection {
+    position: absolute;
+    top: 2.25em;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: rgba(var(--lotta-box-background-color), 1);
+  }
+}

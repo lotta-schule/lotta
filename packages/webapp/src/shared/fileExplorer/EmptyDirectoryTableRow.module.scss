@@ -1,0 +1,16 @@
+.root {
+  cursor: 'inherit';
+  .deleteButton {
+    border-color: rgba(var(--lotta-error-color), 1);
+    background-color: rgba(var(--lotta-error-color), 1);
+    margin: calc(2 * var(--lotta-spacing)) auto;
+  }
+
+  .leftIcon {
+    margin-right: var(--lotta-spacing);
+  }
+
+  .iconSmall {
+    font-size: 20px;
+  }
+}

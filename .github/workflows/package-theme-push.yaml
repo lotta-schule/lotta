@@ -1,0 +1,43 @@
+---
+name: 'Package: Theme'
+
+on:
+  push:
+    branches:
+      - 'hotfix/**'
+    paths:
+      - 'packages/theme/**'
+
+jobs:
+  lint-test:
+    uses: ./.github/workflows/_lint-test.yaml
+    with:
+      package-name: 'theme'
+      tasks: 'lint, typecheck'
+    secrets:
+      codecov-token: ''
+
+  build:
+    uses: ./.github/workflows/_build_package.yaml
+    with:
+      package-name: theme
+
+  check-version-tag:
+    if: ${{ github.ref_name == 'main' }}
+    needs:
+      - lint-test
+      - build
+    uses: ./.github/workflows/_check_version_tag.yaml
+    with:
+      package-name: theme
+
+  publish-npm-package:
+    if: ${{ github.ref_name == 'main' }}
+    needs:
+      - check-version-tag
+    uses: ./.github/workflows/_deploy_package.yaml
+    with:
+      package-name: theme
+      tag-name: ${{ needs.check-version-tag.outputs.version-name }}
+    secrets:
+      npm-token: ${{ secrets.NPM_TOKEN }}

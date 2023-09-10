@@ -1,0 +1,14 @@
+.root {
+  position: relative;
+  display: block;
+  padding: var(--lotta-spacing);
+
+  & > .label {
+    display: block;
+    color: rgba(var(--lotta-label-text-color), 0.9);
+    font-size: 0.6rem;
+    line-height: 2em;
+    letter-spacing: 0.05rem;
+    text-transform: uppercase;
+  }
+}

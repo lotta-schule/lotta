@@ -1,0 +1,54 @@
+.root {
+  border-collapse: collapse;
+  width: 100%;
+  list-style: none;
+  background-color: rgb(var(--lotta-box-background-color));
+  padding: var(--lotta-spacing) 0;
+
+  .li {
+    display: flex;
+    align-items: center;
+    padding: var(--lotta-spacing);
+
+    .mainSection {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-sizing: border-box;
+      padding: var(--lotta-spacing);
+      margin: auto;
+    }
+
+    .listItemSecondaryText {
+      color: rgba(var(--lotta-label-text-color), 0.9);
+      font-size: smaller;
+    }
+
+    &.isFocused:not(.isSelected) {
+      background-color: rgba(var(--lotta-primary-color), 0.075);
+    }
+    &.isSelected {
+      background-color: rgba(var(--lotta-primary-color), 0.3);
+    }
+
+    &.isDisabled {
+      color: rgba(var(--lotta-disabled-color), 0.5);
+    }
+  }
+
+  .li.isDivider {
+    padding: calc(var(--lotta-spacing) / 2) 0;
+    hr {
+      margin: 1px;
+      width: 100%;
+    }
+  }
+
+  .li[role='menuitem']:not([disabled]) {
+    cursor: pointer;
+    &:hover {
+      background-color: rgba(var(--lotta-primary-color), 0.25);
+    }
+  }
+}

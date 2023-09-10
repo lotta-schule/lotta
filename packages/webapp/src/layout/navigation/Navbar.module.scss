@@ -1,0 +1,94 @@
+@import 'breakpoints';
+
+.root {
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+
+  .gridContainer {
+    display: flex;
+    & > div:first-child {
+      min-width: 100%;
+      @media screen and (max-width: $max-sm) {
+        // I am not sure why 4px but I think its because of the shadow maybe?
+        padding-right: calc(3rem - 4px);
+      }
+    }
+    .mobileBurgerMenuButton {
+      position: absolute;
+      right: 0;
+      background-color: rgba(var(--lotta-navigation-background-color), 1);
+      align-items: center;
+      box-shadow: -2px 0 2px rgba(0, 0, 0, 0.5);
+      display: none;
+      height: 100%;
+      z-index: 2001;
+      @media screen and (max-width: $max-sm) {
+        display: flex;
+        width: 3rem;
+        height: 48px;
+      }
+    }
+  }
+
+  a {
+    margin-left: calc(var(--lotta-spacing) * 2);
+    margin-right: calc(var(--lotta-spacing) * 2);
+    flex-grow: 1;
+  }
+  .navbar {
+    min-height: 64px;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    align-items: center;
+    overflow: auto;
+    background-color: rgba(var(--lotta-navigation-background-color), 1);
+    @media screen and (max-width: $max-sm) {
+      min-height: 48px;
+    }
+  }
+
+  .secondaryAppBar {
+    background-color: rgba(var(--lotta-box-background-color), 0.9) !important;
+    height: 40px;
+    border-top: 1.5px solid rgba(var(--lotta-primary-color), 1);
+    box-shadow: 0px 2px 2px rgba(var(--lotta-text-color), 0.2);
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    align-items: center;
+    overflow: auto hidden;
+  }
+
+  .navButtonSecond {
+    flex-grow: 1;
+    flex-shrink: 0;
+    color: rgba(var(--lotta-text-color), 1);
+    &.selected {
+      color: rgba(var(--lotta-primary-color), 1);
+    }
+  }
+
+  .iconButton {
+    color: rgba(var(--lotta-contrast-text-color), 1);
+    background-color: inherit;
+  }
+
+  button.placeholder {
+    display: none;
+    border: none;
+    background-color: inherit;
+    cursor: inherit;
+    @media screen and (max-width: $max-sm) {
+      min-width: 1px;
+      padding: 0;
+      height: 100%;
+      display: flex;
+    }
+  }
+
+  .menu {
+    color: rgba(var(--lotta-contrast-text-color), 1);
+  }
+}

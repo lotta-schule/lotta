@@ -1,0 +1,28 @@
+.root {
+  background-color: rgb(var(--lotta-box-background-color));
+  border-radius: var(--lotta-border-radius);
+  border: 1px solid rgb(var(--lotta-accent-grey-color));
+  width: 20em;
+  max-height: 350px;
+  overflow: auto;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 40px;
+  padding: 0;
+  margin-top: calc(var(--lotta-spacing) / 2);
+  overflow: auto;
+  li {
+    padding: var(--lotta-spacing);
+    border-bottom: 1px solid rgb(var(--lotta-accent-grey-color));
+    outline: none;
+    cursor: pointer;
+    &:last-of-type {
+      border-bottom: none;
+    }
+
+    .leftSection {
+      width: 2em;
+      flex: none;
+      display: flex;
+      justify-content: center;
+    }
+  }
+}

@@ -1,0 +1,25 @@
+.root {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--lotta-spacing);
+  justify-content: space-between;
+  min-height: 50px;
+  background-color: rgba(var(--lotta-divider-color), 0.2);
+
+  button {
+    margin: var(--lotta-spacing);
+
+    .lotta-button_text {
+      color: rgba(var(--lotta-text-color), 1);
+    }
+  }
+
+  button:disabled {
+    border: none;
+    color: rgba(var(--lotta-divider-color), 1);
+  }
+
+  button:last-of-type {
+    flex-direction: row-reverse;
+  }
+}

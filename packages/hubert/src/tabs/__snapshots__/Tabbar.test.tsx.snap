@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tabs/Tabbar snapshot test 1`] = `
+<div
+  class="tabbar"
+  role="tablist"
+>
+  <button
+    aria-selected="false"
+    class="root root root tab"
+    data-variant="default"
+    role="tab"
+    type="button"
+    value="0"
+  >
+    <span
+      class="label label"
+    >
+      Tab1 bla bla bla
+    </span>
+  </button>
+  <button
+    aria-selected="false"
+    class="root root root tab"
+    data-variant="default"
+    role="tab"
+    type="button"
+    value="1"
+  >
+    <span
+      class="label label"
+    >
+      Tab2
+    </span>
+  </button>
+  <button
+    aria-selected="false"
+    class="root root root tab"
+    data-variant="default"
+    role="tab"
+    type="button"
+    value="2"
+  >
+    <span
+      class="label label"
+    >
+      Tab3
+    </span>
+  </button>
+  <button
+    aria-selected="true"
+    class="root root root tab selected selected selected"
+    data-variant="default"
+    role="tab"
+    type="button"
+    value="3"
+  >
+    <span
+      class="label label"
+    >
+      Tab4 dingsi bumso
+    </span>
+  </button>
+  <button
+    aria-selected="false"
+    class="root root root tab"
+    data-variant="default"
+    role="tab"
+    type="button"
+    value="4"
+  >
+    <span
+      class="label label"
+    >
+      Tab5
+    </span>
+  </button>
+</div>
+`;

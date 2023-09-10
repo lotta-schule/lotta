@@ -1,0 +1,28 @@
+query GetArticlesForTag($tag: String!) {
+  articles: tag(tag: $tag) {
+    id
+    insertedAt
+    updatedAt
+    title
+    preview
+    tags
+    readyToPublish
+    isPinnedToTop
+    previewImageFile {
+      id
+      mimeType
+      fileType
+      filename
+      filesize
+    }
+    groups {
+      id
+      sortKey
+      name
+    }
+    category {
+      id
+      title
+    }
+  }
+}

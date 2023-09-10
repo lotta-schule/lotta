@@ -1,0 +1,31 @@
+.root {
+  .input {
+    margin-top: calc(1.5 * var(--lotta-spacing));
+    width: 100%;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .heading {
+    margin-top: calc(5 * var(--lotta-spacing));
+    padding-top: calc(3 * var(--lotta-spacing));
+    margin-bottom: var(--lotta-spacing);
+  }
+
+  .switchBase {
+    color: gray;
+  }
+
+  .saveButton {
+    float: right;
+    margin-bottom: calc(2 * var(--lotta-spacing));
+  }
+
+  .deleteDivider {
+    clear: both;
+    margin-bottom: calc(2 * var(--lotta-spacing));
+    margin-top: calc(2 * var(--lotta-spacing));
+  }
+}

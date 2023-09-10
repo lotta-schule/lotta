@@ -1,0 +1,225 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`List should render 1`] = `
+<ul
+  class="root"
+>
+  <li
+    class="li"
+  >
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+  </li>
+  <li
+    class="li"
+  >
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+  </li>
+  <li
+    class="li"
+  >
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+  </li>
+  <li
+    class="li"
+  >
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+  </li>
+</ul>
+`;
+
+exports[`List should render with subsection left 1`] = `
+<ul
+  class="root"
+>
+  <li
+    class="li"
+  >
+    <div>
+      <div
+        class="root"
+        role="img"
+        style="background-image: url();"
+      />
+    </div>
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+  </li>
+  <li
+    class="li"
+  >
+    <div>
+      <div
+        class="root"
+        role="img"
+        style="background-image: url();"
+      />
+    </div>
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+  </li>
+  <li
+    class="li"
+  >
+    <div>
+      <div
+        class="root"
+        role="img"
+        style="background-image: url();"
+      />
+    </div>
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+  </li>
+  <li
+    class="li"
+  >
+    <div>
+      <div
+        class="root"
+        role="img"
+        style="background-image: url();"
+      />
+    </div>
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+  </li>
+</ul>
+`;
+
+exports[`List should render with subsection right 1`] = `
+<ul
+  class="root"
+>
+  <li
+    class="li"
+  >
+    <div>
+      <div
+        class="root"
+        role="img"
+        style="background-image: url();"
+      />
+    </div>
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+    <div>
+      <button
+        aria-current="false"
+        class="root root"
+        data-variant="default"
+        role="button"
+        type="button"
+      >
+        <span
+          class="label"
+        >
+          Test
+        </span>
+      </button>
+    </div>
+  </li>
+  <li
+    class="li"
+  >
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+    <div>
+      <button
+        aria-current="false"
+        class="root root"
+        data-variant="default"
+        role="button"
+        type="button"
+      >
+        <span
+          class="label"
+        >
+          Test
+        </span>
+      </button>
+    </div>
+  </li>
+  <li
+    class="li"
+  >
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+    <div>
+      <button
+        aria-current="false"
+        class="root root"
+        data-variant="default"
+        role="button"
+        type="button"
+      >
+        <span
+          class="label"
+        >
+          Test
+        </span>
+      </button>
+    </div>
+  </li>
+  <li
+    class="li"
+  >
+    <div
+      class="mainSection"
+    >
+      Test
+    </div>
+    <div>
+      <button
+        aria-current="false"
+        class="root root"
+        data-variant="default"
+        role="button"
+        type="button"
+      >
+        <span
+          class="label"
+        >
+          Test
+        </span>
+      </button>
+    </div>
+  </li>
+</ul>
+`;

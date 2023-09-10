@@ -1,0 +1,25 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid;
+  border-color: rgb(var(--lotta-primary-color));
+  color: rgba(var(--lotta-primary-color), 1);
+  font-size: 0.7rem;
+  padding: 2px 4px;
+  margin-bottom: 10px;
+  margin-right: 4px;
+  border-radius: 4px;
+  max-width: 'max-content';
+  font-family: var(--lotta-text-font-family);
+}
+
+.deleteButton {
+  float: right;
+  margin-left: 2px;
+  padding: 0 !important;
+
+  & svg {
+    width: 0.5em;
+    height: 0.5em;
+  }
+}

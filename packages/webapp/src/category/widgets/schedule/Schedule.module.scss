@@ -1,0 +1,42 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: auto;
+  height: 100%;
+  td {
+    padding-left: calc(2 * var(--lotta-spacing));
+    padding-right: calc(2 * var(--lotta-spacing));
+  }
+
+  .date {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: var(--lotta-spacing);
+    a {
+      color: rgba(var(--lotta-text-color), 1);
+    }
+    & > span {
+      // the actual date
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .selectCoursesLinkWrapper {
+    padding: 0 calc(var(--lotta-spacing));
+  }
+
+  .updated {
+    color: rgba(var(--lotta-error-color), 1);
+    font-weight: bolder;
+  }
+
+  .notes {
+    margin-bottom: var(--lotta-spacing);
+    padding-left: var(--lotta-spacing);
+    border-left: 2px solid;
+    border-color: rgba(var(--lotta-text-color), 1);
+  }
+}

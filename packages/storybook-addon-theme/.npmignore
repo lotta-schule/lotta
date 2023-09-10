@@ -1,0 +1,19 @@
+# dotfiles
+.*
+
+node_modules
+
+# typescript build artifacts
+*.tsbuildinfo
+
+# We want the dist folder to be included in the repo
+!dist
+
+# coverage directory
+coverage
+
+# test files
+*.test.ts
+*.test.tsx
+jest.config.ts
+jest.setup.ts

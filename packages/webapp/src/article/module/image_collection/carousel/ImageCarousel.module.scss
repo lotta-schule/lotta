@@ -1,0 +1,31 @@
+.root {
+  width: 100%;
+  border: 1px solid rgba(var(--lotta-divider-color), 1);
+  border-radius: var(--lotta-border-radius);
+}
+
+.header {
+  border-bottom: 1px solid rgba(var(--lotta-divider-color), 1);
+  border-top-left-radius: var(--lotta-border-radius);
+  border-top-right-radius: var(--lotta-border-radius);
+}
+
+.imgContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+.subtitle {
+  position: absolute;
+  width: auto;
+  z-index: 1;
+  background: rgba(var(--lotta-contrast-text-color), 1);
+  bottom: 0;
+  padding: 0 calc(0.5 * var(--lotta-spacing));
+}

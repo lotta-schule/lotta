@@ -1,0 +1,33 @@
+.root {
+  color: rgba(var(--lotta-primary-color), 1);
+  font-weight: 200;
+  padding: 0.4em 0.8em;
+  align-items: center;
+
+  &:not(.small) {
+    min-height: 2.8em;
+  }
+
+  .icon {
+    display: flex;
+  }
+
+  .label {
+    margin: auto;
+    display: contents;
+  }
+
+  &.onlyIcon {
+    &:not(.grouped) {
+      border-radius: 50%;
+      border-color: transparent;
+      padding: 0.4em;
+
+      &:not([data-varaint='fill']) {
+        &:hover {
+          background-color: rgba(var(--lotta-primary-color), 0.2);
+        }
+      }
+    }
+  }
+}

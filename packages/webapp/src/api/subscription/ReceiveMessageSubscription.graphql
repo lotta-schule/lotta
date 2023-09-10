@@ -1,0 +1,32 @@
+subscription ReceiveMessage {
+  message: receiveMessage {
+    id
+    content
+    insertedAt
+    updatedAt
+    user {
+      id
+      name
+      nickname
+      avatarImageFile {
+        id
+      }
+    }
+    conversation {
+      id
+      updatedAt
+      groups {
+        id
+        name
+      }
+      users {
+        id
+        name
+        nickname
+        avatarImageFile {
+          id
+        }
+      }
+    }
+  }
+}

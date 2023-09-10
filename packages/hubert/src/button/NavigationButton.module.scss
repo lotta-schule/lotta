@@ -1,0 +1,51 @@
+.root {
+  &:is(button, a) {
+    white-space: nowrap;
+    padding: 0.3em;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    border-radius: 0.5em;
+    display: flex;
+    min-height: 0;
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: rgba(var(--lotta-contrast-text-color), 1);
+  }
+
+  &.selected {
+    background-color: transparent;
+  }
+
+  &:hover:is(button, a) {
+    background-color: rgba(var(--lotta-contrast-text-color), 0.1);
+    transition: linear;
+    transition-duration: 0.2s;
+  }
+
+  &.secondary {
+    color: rgba(var(--lotta-navigation-color), 1);
+    &:hover {
+      background-color: rgba(var(--lotta-navigation-color), 0.1);
+    }
+
+    &.selected {
+      color: rgba(var(--lotta-primary-color), 1);
+      font-weight: 600;
+      border: none;
+    }
+  }
+
+  .icon svg {
+    width: 0.8em;
+    height: 0.8em;
+  }
+
+  .icon ~ .label {
+    padding: 0;
+    margin-right: auto;
+  }
+}
+
+aside .lotta-navigation-button {
+  border-radius: 50%;
+}

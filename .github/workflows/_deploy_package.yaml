@@ -1,0 +1,45 @@
+---
+name: 'Dpeloy the npm package'
+
+on:
+  workflow_call:
+    inputs:
+      package-name:
+        type: string
+        required: true
+      tag-name:
+        required: false
+        type: string
+    secrets:
+      npm-token:
+        required: true
+
+jobs:
+  publish-npm-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: npm-package-${{ inputs.package-name }}
+
+      - name: publish to npm
+        run: |
+          npm publish lotta-schule-${{ inputs.package-name }}*.tgz
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+
+      - name: Create and push tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ inputs.tag-name || inputs.version }}",
+              sha: context.sha
+            })

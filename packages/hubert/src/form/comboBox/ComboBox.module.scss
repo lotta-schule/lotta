@@ -1,0 +1,57 @@
+.root {
+  display: inline-flex;
+  flex-direction: column;
+
+  &.isFullWidth {
+    width: 100%;
+  }
+
+  .inputWrapper {
+    position: relative;
+    display: flex;
+    input {
+      border-top-left-radius: 0.5em;
+      border-bottom-left-radius: 0.5em;
+      border-bottom: 0;
+      border-right: none;
+      border: 1px solid rgb(var(--lotta-primary-color));
+      &[disabled] {
+        border-color: rgb(var(--lotta-disabled-color));
+      }
+    }
+    input:focus {
+      border-top-right-radius: 0%;
+      background-color: rgba(var(--lotta-primary-color), 0.1);
+    }
+    &.withoutButton {
+      input {
+        border: none;
+        border-bottom: 1px solid rgb(var(--lotta-text-color));
+        border-top-left-radius: 0.5em;
+        border-top-right-radius: 0.5em;
+        border-bottom-left-radius: 0%;
+        &:focus {
+          border-bottom: 1px solid rgb(var(--lotta-primary-color));
+        }
+      }
+    }
+  }
+  .triggerButton {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-image: initial;
+    border: 1px solid rgb(var(--lotta-primary-color));
+    border-left: none;
+    &[disabled] {
+      border-color: rgb(var(--lotta-disabled-color));
+    }
+  }
+
+  .progress {
+    width: 1em;
+    height: 1em;
+    position: absolute;
+    right: calc(1em / 2);
+    top: calc(1em / 2);
+  }
+}

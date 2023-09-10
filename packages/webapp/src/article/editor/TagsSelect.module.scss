@@ -1,0 +1,19 @@
+.root {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .inputWrapper {
+    position: relative;
+    display: inline-flex;
+    flex: 1 0 8em;
+    input {
+      width: 100%;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    button {
+      min-height: auto;
+    }
+  }
+}

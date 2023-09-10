@@ -1,3 +1,0 @@
-query GetSchedule($widgetId: ID!, $date: Date) {
-    schedule(widgetId: $widgetId, date: $date)
-}

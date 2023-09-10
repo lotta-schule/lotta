@@ -1,0 +1,25 @@
+.root {
+  .circularProgress {
+    transition: all 0.35s ease-in;
+    position: absolute;
+    top: var(--lotta-spacing);
+    left: calc(var(--lotta-spacing) * 2);
+    opacity: 0;
+  }
+  .label {
+    transition: all 0.25s ease-in;
+    opacity: 1;
+    margin: 0
+      calc(var(--lotta-spacing) + calc(calc(1em + var(--lotta-spacing)) / 2));
+  }
+
+  &.isLoading {
+    .circularProgress {
+      opacity: 1;
+    }
+    .label {
+      margin: 0 0 0
+        calc(calc(2 * var(--lotta-spacing)) + calc(1em + var(--lotta-spacing)));
+    }
+  }
+}

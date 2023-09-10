@@ -1,9 +1,0 @@
-mutation DeleteDirectory($id: ID!) {
-    directory: deleteDirectory(id: $id) {
-        id
-        parentDirectory {
-            id
-            name
-        }
-    }
-}

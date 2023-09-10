@@ -1,0 +1,106 @@
+0 silly argv {
+0 silly argv   _: [ 'version' ],
+0 silly argv   'allow-branch': [ 'feature/monoorepo' ],
+0 silly argv   allowBranch: [ 'feature/monoorepo' ],
+0 silly argv   lernaVersion: '7.2.0',
+0 silly argv   '$0': 'node_modules/.bin/lerna'
+0 silly argv }
+1 notice cli v7.2.0
+2 verbose packageConfigs Explicit "packages" configuration found in lerna.json. Resolving packages using the configured glob(s): ["packages/*"]
+3 verbose rootPath /Users/arinaldoni/development/lotta/lotta
+4 info current version 4.1.0-alpha.1
+5 silly isAnythingCommitted
+6 verbose isAnythingCommitted 1
+7 silly getCurrentBranch
+8 verbose currentBranch feature/monoorepo
+9 silly hasTags
+10 verbose hasTags true
+11 silly git-describe.sync "103ce24e" => {"refCount":"2199","sha":"103ce24e","isDirty":false}
+12 info Assuming all packages changed
+13 verbose updated @lotta-schule/hubert
+14 verbose updated @lotta-schule/storybook-addon-theme
+15 verbose updated @lotta-schule/storybook-hubert
+16 verbose updated @lotta-schule/theme
+17 verbose updated @lotta-schule/webapp
+18 warn version Skipping working tree validation, proceed at your own risk
+19 verbose version Overriding version of @lotta-schule/hubert from 4.1.0-alpha.0 to 4.1.0-alpha.1
+20 verbose version Overriding version of @lotta-schule/storybook-addon-theme from 4.1.0-alpha.0 to 4.1.0-alpha.1
+21 verbose version Overriding version of @lotta-schule/storybook-hubert from 4.1.0-alpha.0 to 4.1.0-alpha.1
+22 verbose version Overriding version of @lotta-schule/theme from 4.1.0-alpha.0 to 4.1.0-alpha.1
+23 verbose version Overriding version of @lotta-schule/webapp from 4.1.0-alpha.0 to 4.1.0-alpha.1
+24 silly fixed for @lotta-schule/hubert at /Users/arinaldoni/development/lotta/lotta/packages/hubert
+25 verbose getChangelogConfig using preset "conventional-changelog-angular"
+26 silly npa Result {
+26 silly npa   type: 'tag',
+26 silly npa   registry: true,
+26 silly npa   where: undefined,
+26 silly npa   raw: 'conventional-changelog-angular',
+26 silly npa   name: 'conventional-changelog-angular',
+26 silly npa   escapedName: 'conventional-changelog-angular',
+26 silly npa   scope: undefined,
+26 silly npa   rawSpec: '',
+26 silly npa   saveSpec: null,
+26 silly npa   fetchSpec: 'latest',
+26 silly npa   gitRange: undefined,
+26 silly npa   gitCommittish: undefined,
+26 silly npa   hosted: undefined
+26 silly npa }
+27 verbose getChangelogConfig Attempting to resolve preset "conventional-changelog-angular"
+28 info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
+29 verbose fixed increment 4.1.0-alpha.1 by prerelease
+30 silly fixed for @lotta-schule/storybook-addon-theme at /Users/arinaldoni/development/lotta/lotta/packages/storybook-addon-theme
+31 verbose fixed increment 4.1.0-alpha.1 by prerelease
+32 silly fixed for @lotta-schule/storybook-hubert at /Users/arinaldoni/development/lotta/lotta/packages/storybook-hubert
+33 verbose fixed increment 4.1.0-alpha.1 by prerelease
+34 silly fixed for @lotta-schule/theme at /Users/arinaldoni/development/lotta/lotta/packages/theme
+35 verbose fixed increment 4.1.0-alpha.1 by prerelease
+36 silly fixed for @lotta-schule/webapp at /Users/arinaldoni/development/lotta/lotta/packages/webapp
+37 verbose fixed increment 4.1.0-alpha.1 by prerelease
+38 info execute Skipping git tag/commit
+39 info execute Skipping git push
+40 info execute Skipping releases
+41 silly lifecycle No script for "preversion" in "@lotta-schule/lotta", continuing
+42 silly lifecycle No script for "preversion" in "@lotta-schule/hubert", continuing
+43 silly lifecycle No script for "preversion" in "@lotta-schule/theme", continuing
+44 verbose version @lotta-schule/hubert has no lockfile. Skipping lockfile update.
+45 verbose version @lotta-schule/theme has no lockfile. Skipping lockfile update.
+46 silly lifecycle No script for "version" in "@lotta-schule/hubert", continuing
+47 silly fixed for @lotta-schule/hubert at /Users/arinaldoni/development/lotta/lotta/packages/hubert
+48 silly lifecycle No script for "version" in "@lotta-schule/theme", continuing
+49 silly fixed for @lotta-schule/theme at /Users/arinaldoni/development/lotta/lotta/packages/theme
+50 silly fixed writing new entry: "# 4.1.0-alpha.2 (2023-09-02)\n\n**Note:** Version bump only for package @lotta-schule/hubert\n\n\n\n"
+51 verbose fixed wrote /Users/arinaldoni/development/lotta/lotta/packages/hubert/CHANGELOG.md
+52 silly fixed writing new entry: "# 4.1.0-alpha.2 (2023-09-02)\n\n**Note:** Version bump only for package @lotta-schule/theme\n\n\n\n"
+53 verbose fixed wrote /Users/arinaldoni/development/lotta/lotta/packages/theme/CHANGELOG.md
+54 silly lifecycle No script for "preversion" in "@lotta-schule/storybook-addon-theme", continuing
+55 silly lifecycle No script for "preversion" in "@lotta-schule/webapp", continuing
+56 verbose version @lotta-schule/storybook-addon-theme has no lockfile. Skipping lockfile update.
+57 verbose version @lotta-schule/webapp has no lockfile. Skipping lockfile update.
+58 silly lifecycle No script for "version" in "@lotta-schule/storybook-addon-theme", continuing
+59 silly fixed for @lotta-schule/storybook-addon-theme at /Users/arinaldoni/development/lotta/lotta/packages/storybook-addon-theme
+60 silly lifecycle No script for "version" in "@lotta-schule/webapp", continuing
+61 silly fixed for @lotta-schule/webapp at /Users/arinaldoni/development/lotta/lotta/packages/webapp
+62 silly fixed writing new entry: "# 4.1.0-alpha.2 (2023-09-02)\n\n**Note:** Version bump only for package @lotta-schule/storybook-addon-theme\n\n\n\n"
+63 verbose fixed wrote /Users/arinaldoni/development/lotta/lotta/packages/storybook-addon-theme/CHANGELOG.md
+64 silly lifecycle No script for "preversion" in "@lotta-schule/storybook-hubert", continuing
+65 verbose version @lotta-schule/storybook-hubert has no lockfile. Skipping lockfile update.
+66 silly lifecycle No script for "version" in "@lotta-schule/storybook-hubert", continuing
+67 silly fixed for @lotta-schule/storybook-hubert at /Users/arinaldoni/development/lotta/lotta/packages/storybook-hubert
+68 silly fixed writing new entry: "# 4.1.0-alpha.2 (2023-09-02)\n\n**Note:** Version bump only for package @lotta-schule/webapp\n\n\n\n"
+69 verbose fixed wrote /Users/arinaldoni/development/lotta/lotta/packages/webapp/CHANGELOG.md
+70 silly fixed writing new entry: "# 4.1.0-alpha.2 (2023-09-02)\n\n**Note:** Version bump only for package @lotta-schule/storybook-hubert\n\n\n\n"
+71 verbose fixed wrote /Users/arinaldoni/development/lotta/lotta/packages/storybook-hubert/CHANGELOG.md
+72 silly root for @lotta-schule/lotta at /Users/arinaldoni/development/lotta/lotta
+73 silly root writing new entry: "# 4.1.0-alpha.2 (2023-09-02)\n\n\n### Bug Fixes\n\n* do not show topic markup if there is none ([8a594b2](https://github.com/lotta-schule/web/commit/8a594b2be69cb7dbd4f92adb3a664dc5f9185024))\n\n\n### Reverts\n\n* Revert \"Remove sentry from dockerfile\" ([58ee0bd](https://github.com/lotta-schule/web/commit/58ee0bd54afaa608030d71e11179eebdbc0c351c))\n* Revert \"Update nextjs (v12.2.6)\" ([176e6fb](https://github.com/lotta-schule/web/commit/176e6fb70b78cab05da14fc837313aa5c6cafdd4))\n* Revert \"React 18\" ([6ae9df7](https://github.com/lotta-schule/web/commit/6ae9df7d9c124023df0c61f3dbf0d9495c92e452))\n* Revert \"settings saved button for category management\" ([708e21a](https://github.com/lotta-schule/web/commit/708e21ad320908b22f44e0eb6bb1aebe542c0cdb))\n* Revert \"changed circual progress to linear progress display\" ([7cc4d92](https://github.com/lotta-schule/web/commit/7cc4d92146bf1d0ce04ec2d186ed46ad6c1fd0fa))\n* Revert \"style for category widget selector in category management, incl. hard coded suggestion for a new layout\" ([d7ab450](https://github.com/lotta-schule/web/commit/d7ab45032ba5da27e19873fb4645815fe59ce185))\n* Revert \"bg-color widget navigation\" ([4270261](https://github.com/lotta-schule/web/commit/42702618e39b9448021842da0e82da4a82f0d545))\n* Revert \"bg-color category navigation\" ([2920284](https://github.com/lotta-schule/web/commit/2920284568b09843fef1f21da9fc4bb61323dc93))\n* Revert \"Merge branch 'feature/run-gitlab-runner-on-own-infra' into 'develop'\" ([65bdf49](https://github.com/lotta-schule/web/commit/65bdf491b04f73d12e7aa0ac6ce65ce75ca65ec9))\n* Revert \"fix build args\" ([d3d1e8e](https://github.com/lotta-schule/web/commit/d3d1e8eb282376efcaa653fd855bbb57e2059d16))\n* Revert \"add variables\" ([6087826](https://github.com/lotta-schule/web/commit/6087826388847c2cd275c4a8814346f75399cffe))\n* Revert \"remove CI_COMMIT_SHA variables\" ([7d16512](https://github.com/lotta-schule/web/commit/7d16512a0a99af76a12fd14369fed3eae7815f7c))\n* Revert \"gitlab-ci\" ([1f60bde](https://github.com/lotta-schule/web/commit/1f60bde2f60d16adaca358193c1d1168d7177cee))\n* Revert \"margin images (gallery view) -> size\" ([61666d4](https://github.com/lotta-schule/web/commit/61666d4bb3f06840bb2778ea8fe88a7ef83bef05))\n\n\n\n"
+74 verbose root wrote /Users/arinaldoni/development/lotta/lotta/CHANGELOG.md
+75 verbose version Updating root package-lock.json
+76 error Error: Command failed with exit code 1: npm install --package-lock-only --ignore-scripts
+76 error npm ERR! code ETARGET
+76 error npm ERR! notarget No matching version found for @lotta-schule/storybook-addon-theme@4.0.0-alpha.0.
+76 error npm ERR! notarget In most cases you or one of your dependencies are requesting
+76 error npm ERR! notarget a package version that doesn't exist.
+76 error
+76 error npm ERR! A complete log of this run can be found in: /Users/arinaldoni/.npm/_logs/2023-09-02T14_29_42_546Z-debug-0.log
+76 error     at makeError (/Users/arinaldoni/development/lotta/lotta/node_modules/@lerna/child-process/node_modules/execa/lib/error.js:60:11)
+76 error     at handlePromise (/Users/arinaldoni/development/lotta/lotta/node_modules/@lerna/child-process/node_modules/execa/index.js:118:26)
+76 error     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

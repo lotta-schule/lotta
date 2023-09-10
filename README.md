@@ -1,112 +1,57 @@
-# Lotta Web Client
-
-Web Client for Lotta Project
-
-[![pipeline status](https://github.com/lotta-schule/web/actions/workflows/build.yaml/badge.svg)](https://github.com/lotta-schule/web/actions/)
-[![codecov](https://codecov.io/gh/lotta-schule/web/branch/main/graph/badge.svg?token=FAT99O6QKV)](https://codecov.io/gh/lotta-schule/web)
-
-## What is Lotta
+# Lotta
 
 Lotta is a simple-to use platform aimed at schools.
-Its comprehensible interface makes it easy for pupils and teachers
+Its comprehensible interface makes it easy for students and teachers
 to create a sophisticated webpage for their school,
 providing articles, files and media in access-controlled spaces.
 
 See [https://lotta.schule](lotta.schule) for more information.
 
-## What does this repository contain
+The latest git tag is the currently deployed version that also runs
+unmodified on our infrastructure.
 
-This repository contains the source code for the lotta web client.
+## Development
 
-The lotta web client is the web frontend which connects to a lotta
-api, mainly over graphql.
+For monorepo managing, we use [nx](https://nx.dev/).
 
-The latest tagged commit is deployed, as is.
+### Prerequisites
 
-We invite you to inspect the source code, but have not yet decided
-about the terms we want to apply, so please contact us if you have
-questions about licensing or contributing.
+- Have nodejs installed (See [.tool-versions](.tool-versions)) to see which one
+- Have a working [core instance](https://github.com/lotta-schule/core) running.
 
-We will probably change this situation soon.
+### Commands
 
-## Develop
+1. Run all available tests:
 
-The project is a [nextjs](https://nextjs.org/) project.
+``` sh
+npm test
+```
 
-### Configuration
 
-The configuration is done via environment variables.
-You can find the local configuration in `.env.development`.
+2. Run all available linters / typecheckers:
 
-If you have an instance of the api running locally on port
-4000 (default), the project should work without modification.
+``` sh
+npm run lint
+npm run typecheck
+```
 
-If you want to modify or add configuration, you can create an
-`.env` file containing your custom configuration.
+3. Start the Development environment:
 
-These are the available options:
 
-<table>
-<thead>
-<tr>
-<td>environment variable</td>
-<td>desciption</td>
-</tr>
-</thead>
+``` sh
+npm run dev
+```
 
-<tbody>
-<tr>
-<td>API_SOCKET_URL</td>
-<td>Endpoint for the socket connetion</td>
-</tr>
-<tr>
-<td>API_URL</td>
-<td>Endpoint for the API.</td>
-</tr>
-<tr>
-<td>APP_ENVIRONMENT</td>
-<td>Name of the environment</td>
-</tr>
-<tr>
-<td>CLOUDIMG_TOKEN</td>
-<td>API Token for the cloudimg CDN</td>
-</tr>
-<tr>
-<td>FORCE_BASE_URL</td>
-<td>Base URL for fetching ugc from a different API. This can be useful because during development, the local url for images is passed to the cloudimg service, but - as local url - cannot be resolved, so no images are displayed. By providing an alternative (publicly available) endpoint just for images, you can ensure the images can be displayed.</td>
-</tr>
-<tr>
-<td>FORCE_TENANT_SLUG</td>
-<td>Force a tenant slug. By default the slug is recognized via the URL. This can be useful when using http://localhost, for example.</td>
-</tr>
-<tr>
-<td>SKIP_HOST_HEADER_FORWARDING</td>
-<td>
-Skips reusing the "host" header when making (server-side) requests from the webapp to the api server.
-When reaching an API from an external network, it can be possible the request will be blocked by the
-webserver when the host header does not match the receiving webserver.
-As the host header is used to recognize the tenant, you may want to also set `FORCE_TENANT_SLUG` when
-using this option.
-</td>
-</tr>
-<tr>
-<td>BROWSERLESS_CHROME_ENDPONT</td>
-<td>
-For PDF generation, you will need a [browserless](https://browserless.io/) instance.
-You can either use the public instance by using the value `https://chrome.browserless.io` or you
-can provide an own instance at a given URL.
-If not provided, PDF generation will not be available.
-using this option.
-</td>
-</tr>
-</tbody>
-</table>
+This will start:
+- The *Hubert Storybook* on [localhost:6006](http://localhost:6006).
+  This project lists, shows and documents any components we have available
+  in our component library *Hubert*.
+- The *Lotta Webapp*. The main web frontend to a lotta project.
+  This is what is usually referred to by *lotta*.
 
-### Start the project
 
-Start with `npm start`.
-
-Test with `npm test`.
-
-There is a storybook project for the component library (which is still
-work in progress), start it with `npm run storybook`.
+The easiest is to start by creating a new lotta tenant, or copying over
+the data from some prod or test system. As lotta recognizes its tenants
+via the host url, we suggest you use <tenant-slug>.local.lotta.schule;
+It's pointed directly to your localhost, but with the extra of having
+a multitenant-capable hostname

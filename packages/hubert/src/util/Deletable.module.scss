@@ -1,0 +1,27 @@
+.root {
+  display: inline-block;
+  position: relative;
+  .button {
+    position: absolute;
+    top: calc(var(--deletable-button-offset, 8px) * -1);
+    right: calc(var(--deletable-button-offset, 8px) * -1);
+    transition: transform 0.2s ease-in-out;
+    width: 15px;
+    height: 15px;
+    overflow: hidden;
+    z-index: 1;
+    transform: scale(0);
+    opacity: 0;
+    svg {
+      width: 0.6em;
+      height: 0.6em;
+    }
+  }
+  &:hover {
+    .button {
+      transform: scale(1);
+      opacity: 1;
+      padding: 0;
+    }
+  }
+}

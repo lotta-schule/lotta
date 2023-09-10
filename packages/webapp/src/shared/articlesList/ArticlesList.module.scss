@@ -1,0 +1,77 @@
+@import 'breakpoints';
+
+.root {
+  @media screen and (max-width: $max-sm) {
+    thead {
+      display: none;
+    }
+    tr {
+      display: block;
+      margin-bottom: calc(2 * var(--lotta-spacing));
+    }
+    td {
+      display: block;
+      &:first-child,
+      &:nth-child(2) {
+        display: inline-block;
+      }
+      &:nth-child(2) {
+        float: right;
+      }
+      &:empty {
+        display: none;
+      }
+      &:not(:last-child) {
+        border: none;
+      }
+      &:last-child {
+        padding-bottom: calc(2 * var(--lotta-spacing));
+      }
+    }
+  }
+}
+.link {
+  display: inline-flex;
+  align-items: center;
+}
+
+.previewImage {
+  max-height: 40px;
+  object-fit: cover;
+  margin-right: var(--lotta-spacing);
+}
+
+.usersList {
+  li {
+    display: flex;
+  }
+}
+
+.userAvatar {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  box-shadow: none;
+  margin-right: var(--lotta-spacing);
+}
+.progressSection {
+  display: flex;
+  margin: auto;
+}
+.colorTag {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: var(--lotta-spacing);
+}
+.published {
+  background-color: #32e132;
+}
+.readyToPublish {
+  background-color: #e1db32;
+}
+.inProcess {
+  background-color: #e14932;
+}
