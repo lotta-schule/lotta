@@ -15,7 +15,7 @@ if config_env() == :prod do
 
   config :lotta, :base_uri,
     host: List.first(base_uris),
-    alias: Enum.slice(base_uris, 1),
+    alias: Enum.slice(base_uris, 1, Enum.count(base_uris) - 1),
     scheme: "https"
 
   config :opentelemetry, :resource,
