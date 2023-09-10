@@ -34,7 +34,8 @@ const createHeaders = (headers?: any) => {
   return Object.assign(
     {},
     {
-      'x-forwarded-host': headers.host,
+      'user-agent': [process.env.npm_package_name, process.env.npm_package_version].join(' - '),
+      'x-lotta-originary-host': headers.host,
     },
     Object.fromEntries(
       Object.entries(headers).filter(
@@ -104,7 +105,6 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
       data: body,
       withCredentials: true,
     };
-    console.log(config);
     const axiosResponse = await axios(config);
     return new Response(JSON.stringify(axiosResponse.data), {
       headers: Object.entries(axiosResponse.headers).map(([key, value]) => {

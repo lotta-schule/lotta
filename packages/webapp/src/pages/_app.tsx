@@ -80,13 +80,10 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
     headers.authorization = additionalAuthHeader;
   }
 
-  console.log('_app context headers: ', headers);
   const { data, error } = await getApolloClient().query({
     query: GetTenantQuery,
     context: {
-      headers: {
-        'x-forwarded-host': headers.host
-      }
+      headers
     },
   });
   const tenant = data?.tenant ?? null;
