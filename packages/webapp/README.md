@@ -67,21 +67,11 @@ These are the available options:
 </tr>
 <tr>
 <td>FORCE_BASE_URL</td>
-<td>Base URL for fetching ugc from a different API. This can be useful because during development, the local url for images is passed to the cloudimg service, but - as local url - cannot be resolved, so no images are displayed. By providing an alternative (publicly available) endpoint just for images, you can ensure the images can be displayed.</td>
+<td>Base URL for fetching ugc from a different Lotta Core Instance. This can be useful because during development, the local url for images is passed to the cloudimg service, but - as local url - cannot be resolved, so no images are displayed. By providing an alternative (publicly available) endpoint just for images, you can ensure the images can be displayed.</td>
 </tr>
 <tr>
 <td>FORCE_TENANT_SLUG</td>
 <td>Force a tenant slug. By default the slug is recognized via the URL. This can be useful when using http://localhost, for example.</td>
-</tr>
-<tr>
-<td>SKIP_HOST_HEADER_FORWARDING</td>
-<td>
-Skips reusing the "host" header when making (server-side) requests from the webapp to the api server.
-When reaching an API from an external network, it can be possible the request will be blocked by the
-webserver when the host header does not match the receiving webserver.
-As the host header is used to recognize the tenant, you may want to also set `FORCE_TENANT_SLUG` when
-using this option.
-</td>
 </tr>
 <tr>
 <td>BROWSERLESS_CHROME_ENDPONT</td>
