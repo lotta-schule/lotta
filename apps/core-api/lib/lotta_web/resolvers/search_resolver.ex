@@ -1,8 +1,6 @@
 defmodule LottaWeb.SearchResolver do
   @moduledoc false
 
-  import Ecto.Query
-
   alias LottaWeb.Context
   alias Lotta.Search
   alias Lotta.Content.Article

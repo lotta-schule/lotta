@@ -59,7 +59,7 @@ defmodule LottaWeb.TenantPlug do
   defp tenant_by_host_header(conn) do
     host =
       Enum.find_value(
-        ["x-forwarded-host", "host"],
+        ["x-lotta-originary-host", "x-forwarded-host", "host"],
         &List.first(get_req_header(conn, &1))
       )
 

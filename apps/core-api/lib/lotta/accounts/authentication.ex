@@ -7,7 +7,6 @@ defmodule Lotta.Accounts.Authentication do
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.Repo
-  alias Lotta.Accounts
   alias Lotta.Accounts.User
 
   @typedoc """
