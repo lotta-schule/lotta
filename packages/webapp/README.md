@@ -66,10 +66,6 @@ These are the available options:
 <td>Name of the environment</td>
 </tr>
 <tr>
-<td>CLOUDIMG_TOKEN</td>
-<td>API Token for the cloudimg CDN</td>
-</tr>
-<tr>
 <td>FORCE_BASE_URL</td>
 <td>Base URL for fetching ugc from a different API. This can be useful because during development, the local url for images is passed to the cloudimg service, but - as local url - cannot be resolved, so no images are displayed. By providing an alternative (publicly available) endpoint just for images, you can ensure the images can be displayed.</td>
 </tr>

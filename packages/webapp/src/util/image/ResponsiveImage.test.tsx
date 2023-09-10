@@ -1,9 +1,3 @@
-jest.mock('next/config', () => () => ({
-  publicRuntimeConfig: {
-    cloudimageToken: 'test',
-  },
-}));
-
 import { render } from 'test/util';
 import { ResponsiveImage } from './ResponsiveImage';
 

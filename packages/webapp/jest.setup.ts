@@ -60,8 +60,7 @@ jest.mock('next/config', () => ({
     publicRuntimeConfig: {
       appEnvironment: '',
       sentryDsn: '',
-      socketUrl: '',
-      cloudimageToken: '',
+      socketUrl: ''
     },
   }),
 }));
