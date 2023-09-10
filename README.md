@@ -49,3 +49,9 @@ This will start:
 - The *Lotta Webapp*. The main web frontend to a lotta project.
   This is what is usually referred to by *lotta*.
 
+
+The easiest is to start by creating a new lotta tenant, or copying over
+the data from some prod or test system. As lotta recognizes its tenants
+via the host url, we suggest you use <tenant-slug>.local.lotta.schule;
+It's pointed directly to your localhost, but with the extra of having
+a multitenant-capable hostname

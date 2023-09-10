@@ -34,7 +34,6 @@ const createHeaders = (headers?: any) => {
   return Object.assign(
     {},
     {
-      'user-agent': [process.env.npm_package_name, process.env.npm_package_version].join(' - '),
       'x-lotta-originary-host': headers.host,
     },
     Object.fromEntries(
@@ -45,7 +44,10 @@ const createHeaders = (headers?: any) => {
           ALLOWED_HEADERS.find((h) => h === key)
       )
     ),
-    tenantSlugOverwrite ? { tenant: `slug:${tenantSlugOverwrite}` } : {}
+    tenantSlugOverwrite ? { tenant: `slug:${tenantSlugOverwrite}` } : {},
+      isBrowser ? {} : {
+      'user-agent': [process.env.npm_package_name, process.env.npm_package_version].join(' - '),
+      }
   );
 };
 
