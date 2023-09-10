@@ -11,8 +11,11 @@ image_tag =
 config :lotta, :environment, env || config_env()
 
 if config_env() == :prod do
+  base_uris = String.split(System.get_env("BASE_URI_HOST", "lotta.schule"), ",")
+
   config :lotta, :base_uri,
-    host: System.get_env("BASE_URI_HOST", "lotta.schule"),
+    host: List.first(base_uris),
+    alias: Enum.slice(base_uris, 1),
     scheme: "https"
 
   config :opentelemetry, :resource,

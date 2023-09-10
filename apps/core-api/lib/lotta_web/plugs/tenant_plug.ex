@@ -20,10 +20,10 @@ defmodule LottaWeb.TenantPlug do
 
   @impl true
   def call(conn, _opts) do
-    OpenTelemetry.Tracer.start_span("TenantPlug", %{})
-    conn = put_tenant(conn)
+    OpenTelemetry.Tracer.with_span "TenantPlug" do
+      ^conn = put_tenant(conn)
+    end
 
-    OpenTelemetry.Tracer.end_span("TenantPlug")
     conn
   end
 
@@ -66,20 +66,33 @@ defmodule LottaWeb.TenantPlug do
 
   defp tenant_by_host(nil), do: nil
 
-  defp tenant_by_host(host) do
-    base_url =
-      Keyword.get(
-        Application.get_env(:lotta, :base_uri),
-        :host
-      )
+  defp tenant_by_host(host_to_check) do
+    base_uri = Application.fetch_env!(:lotta, :base_uri)
 
-    case Regex.run(Regex.compile!("(.*)\.#{Regex.escape(base_url)}"), host) do
-      [_string, slug] ->
-        Tenants.get_tenant_by_slug(slug)
+    Enum.reduce(
+      [
+        Keyword.get(base_uri, :host)
+        | Keyword.get(base_uri, :alias, [])
+      ],
+      nil,
+      fn
+        base_host, nil ->
+          case Regex.run(
+                 Regex.compile!("(.*)\.#{Regex.escape(base_host)}"),
+                 String.replace(host_to_check, ~r/:[0-9]{4,5}$/, "")
+               ) do
+            [_, slug] ->
+              Tenants.get_tenant_by_slug(slug)
 
-      _e ->
-        # Not a slug.<base-url> domain, so check if there is a CustomDomain
-        Tenants.get_by_custom_domain(host)
-    end
+            nil ->
+              nil
+          end
+
+        _, tenant ->
+          tenant
+      end
+    )
+    # Not a slug.<base-url> domain, so check if there is a CustomDomain
+    |> then(&(&1 || Tenants.get_by_custom_domain(host_to_check)))
   end
 end

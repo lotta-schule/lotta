@@ -1,7 +1,8 @@
 import Config
 
 config :lotta, :base_uri,
-  host: "lotta.lvh.me",
+  host: "lotta.local.schule",
+  alias: ["lotta.schule.lvh.me", "lotta.lvh.me"],
   scheme: "http",
   port: 3000
 

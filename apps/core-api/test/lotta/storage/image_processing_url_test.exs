@@ -3,8 +3,6 @@ defmodule Lotta.ImageProcessingUrlTest do
 
   use Lotta.DataCase, async: false
 
-  import Mock
-
   alias Lotta.Storage.ImageProcessingUrl
 
   describe "ImageProcessingUrl" do
