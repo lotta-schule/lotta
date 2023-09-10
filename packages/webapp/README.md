@@ -2,21 +2,11 @@
 
 Web Client for Lotta Project
 
-[![pipeline status](https://github.com/lotta-schule/web/actions/workflows/build.yaml/badge.svg)](https://github.com/lotta-schule/web/actions/)
 [![codecov](https://codecov.io/gh/lotta-schule/web/branch/main/graph/badge.svg?token=FAT99O6QKV)](https://codecov.io/gh/lotta-schule/web)
 
-## What is Lotta
+## What's the webapp?
 
-Lotta is a simple-to use platform aimed at schools.
-Its comprehensible interface makes it easy for students and teachers
-to create a sophisticated webpage for their school,
-providing articles, files and media in access-controlled spaces.
-
-See [https://lotta.schule](lotta.schule) for more information.
-
-## What does this repository contain
-
-This repository contains the source code for the lotta web client,
+This package contains the source code for the lotta web client,
 that is the entire nextjs web frontend that serves the user the
 server-prerendered react application, as well our component library
 [Hubert](packages/hubert/readme.md) which was specially tought for our needs.
@@ -24,9 +14,6 @@ server-prerendered react application, as well our component library
 The lotta web client does not treat any data, but acts as merely
 more than a proxy, prerendering the ui and sending over requests
 to the [lotta core API Server](https://github.com/lotta-schule/core).
-
-The latest git tag is the currently deployed version that also runs
-unmodified on our infrastructure.
 
 We invite you to inspect the source code, and maybe even participate.
 We are aware that the current state of the repo is not particularly
@@ -113,11 +100,3 @@ using this option.
 </tbody>
 </table>
 
-### Start the project
-
-Start with `npm start`.
-
-Test with `npm test`.
-
-There is a storybook project for the component library (which is still
-work in progress), start it with `npm run storybook`.

@@ -1,10 +1,10 @@
 # Hubert
 
 Hubert is a slim component library we use for the
-[lotta project](https://lotta.schule), a modern, easy-to use open source
+[lotta project](../webapp), a modern, easy-to use open source
 solution for the educational sector which wants to get privacy and security right.
 
-[See available components on our storybook](https://lotta-schule.github.io/hubert)
+[See available components on our storybook](https://lotta-schule.github.io/web)
 
 ## Install
 
@@ -41,4 +41,11 @@ export const App = () => {
     </HubertProvider>
   );
 }
+```
+
+Besides, you'll probably want to include the styles:
+
+``` ts
+// proably your layout.tsx, _app.tsx or similar
+import '@lotta-schule/hubert/dist/index.css';
 ```
