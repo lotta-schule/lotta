@@ -206,22 +206,18 @@ jobs:
         run: npm run nx run-many -- -t build
 
       - name: Create commit and tag alpha version
-        # TODO: Comment back when tested!
-        # TODO: This must also be set in the condition in
-        # The "Output new commit sha" task!!
-        # if: ${{ github.ref_name == 'main' }}
+        if: ${{ github.ref_name == 'main' }}
         run: |
           npx lerna version --conventional-prerelease \
-            --preid alpha --allow-branch=feature/monoorepo \
-            --no-changelog -y
+            --preid alpha --no-changelog -y
 
       - name: Create commit and tag version
         if: ${{ startsWith(github.ref_name, 'release/') }}
         run: |
-          npx lerna version -y
+          npx lerna version -y --conventional-commits --conventional-graduate
 
       - name: Output new commit sha
-        # if: ${{ startsWith(github.ref_name, 'release/') }}
+        if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
         id: updated-sha
         run: |
           sha=$(git rev-parse HEAD)
@@ -229,6 +225,7 @@ jobs:
           echo "Saved new commit SHA $sha to output"
 
   publish-npm-packages:
+    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
     needs:
       - update-package-versions
     uses: ./.github/workflows/__deploy_npm_packages.yaml
@@ -238,6 +235,7 @@ jobs:
       npm-token: ${{ secrets.NPM_TOKEN }}
 
   publish-docker-image:
+    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
     needs:
       - update-package-versions
       - publish-npm-packages
@@ -251,6 +249,7 @@ jobs:
       password: ${{ secrets.GITHUB_TOKEN }}
 
   publish-storybook-page:
+    if: ${{ github.ref_name == 'main' }}
     name: Publish Hubert Storybook as Github Page
     needs:
       - update-package-versions
