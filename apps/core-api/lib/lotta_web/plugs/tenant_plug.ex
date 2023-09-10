@@ -20,9 +20,11 @@ defmodule LottaWeb.TenantPlug do
 
   @impl true
   def call(conn, _opts) do
-    OpenTelemetry.Tracer.with_span "TenantPlug" do
-      ^conn = put_tenant(conn)
-    end
+    otel_ctx = OpenTelemetry.Tracer.start_span("TenantPlug")
+
+    conn = put_tenant(conn)
+
+    OpenTelemetry.Tracer.end_span(otel_ctx)
 
     conn
   end
