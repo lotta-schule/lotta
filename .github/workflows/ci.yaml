@@ -236,7 +236,7 @@ jobs:
       npm-token: ${{ secrets.NPM_TOKEN }}
 
   publish-docker-image:
-    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
+    # if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
     needs:
       - update-package-versions
       - publish-npm-packages

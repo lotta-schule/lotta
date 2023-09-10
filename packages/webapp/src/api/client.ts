@@ -104,6 +104,7 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
       data: body,
       withCredentials: true,
     };
+    console.log(config);
     const axiosResponse = await axios(config);
     return new Response(JSON.stringify(axiosResponse.data), {
       headers: Object.entries(axiosResponse.headers).map(([key, value]) => {
