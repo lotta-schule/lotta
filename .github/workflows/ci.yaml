@@ -209,7 +209,8 @@ jobs:
         if: ${{ github.ref_name == 'main' }}
         run: |
           npx lerna version --conventional-prerelease \
-            --preid alpha --no-changelog -y
+            --preid alpha --no-changelog -y \
+            --git-tag-command 'echo 0' # We do not want it to really tag
 
       - name: Create commit and tag version
         if: ${{ startsWith(github.ref_name, 'release/') }}
