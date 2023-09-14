@@ -14,6 +14,7 @@
 
   .headline {
     margin-bottom: calc(2 * var(--lotta-spacing));
+    margin-left: var(--lotta-spacing);
   }
 
   .gridContainer {
@@ -35,5 +36,24 @@
 
   .formControl {
     width: 100%;
+  }
+  .tableHead {
+    height: 3em;
+  }
+  .filter {
+    width: 30%;
+    display: inline-flex;
+    @media screen and (max-width: $max-sm) {
+      width: 50%;
+    }
+    @media screen and (max-width: $max-xs) {
+      width: 100%;
+    }
+  }
+  .selectfield {
+position: relative;
+  }
+  .respTable {
+    overflow-x: scroll;
   }
 }

@@ -9,9 +9,9 @@
 
   .listsWrapper {
     display: flex;
+    width: 50%;
     padding-bottom: var(--lotta-spacing);
     ul {
-      flex: 1;
       li {
         display: flex;
         align-items: center;
@@ -29,5 +29,17 @@
         }
       }
     }
+  }
+  .container {
+    display: flex;
+  }
+  .groupInfoSection {
+    width: 50%;
+    border-left: 1px solid rgb(var(--lotta-divider-color));
+    padding: var(--lotta-spacing);
+  }
+  .sorting {
+    display: inline-flex;
+    width: 35%;
   }
 }

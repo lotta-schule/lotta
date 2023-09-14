@@ -7,7 +7,7 @@ import { de } from 'date-fns/locale';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { GroupSelect } from 'shared/edit/GroupSelect';
-import { Divider, Input, LinearProgress, Table } from '@lotta-schule/hubert';
+import { ComboBox, LinearProgress, Select, Table } from '@lotta-schule/hubert';
 import { SearchUserField } from './SearchUserField';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import clsx from 'clsx';
@@ -75,6 +75,7 @@ export const UserList = React.memo(() => {
 
   return (
     <div className={styles.root}>
+      <h5 className={styles.headline}>Nutzersuche</h5>
       <SearchUserField
         className={clsx(styles.headline)}
         onSelectUser={setSelectedUser}
@@ -90,9 +91,6 @@ export const UserList = React.memo(() => {
 
       {!isLoading && (
         <>
-          <Divider className={styles.divider} />
-
-          <h5 className={styles.headline}>Registrierte Nutzer</h5>
           <GroupSelect
             row
             hidePublicGroupSelection
@@ -100,16 +98,13 @@ export const UserList = React.memo(() => {
             label={null}
             selectedGroups={selectedGroupsFilter}
             onSelectGroups={setSelectedGroupsFilter}
+            className={styles.filter}
           />
-
+          <div className={clsx(styles.filter, styles.selectfield)}>
+            <Select />
+          </div>
           <div className={styles.gridContainer}>
             <div className={styles.gridItem}>
-              <Input
-                value={filterText}
-                onChange={(e) => setFilterText(e.currentTarget.value)}
-                placeholder={'Tabelle nach Name filtern'}
-                aria-label={'Nach Name filtern'}
-              />
             </div>
             <div className={clsx(styles.gridItem, styles.resultsGridItem)}>
               {t('administration.results', {
@@ -117,34 +112,35 @@ export const UserList = React.memo(() => {
               })}
             </div>
           </div>
-
-          <Table>
-            <thead>
-              <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Gruppen</th>
-                <th>Zuletzt Online</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(({ user, avatarImage, name, groups, lastSeen }) => (
-                <tr
-                  key={user.id}
-                  onClick={() => {
-                    if (user.id !== currentUser?.id) {
-                      setSelectedUser(user);
-                    }
-                  }}
-                >
-                  <td>{avatarImage}</td>
-                  <td>{name}</td>
-                  <td>{groups}</td>
-                  <td>{lastSeen}</td>
+          <div className={clsx(styles.respTable)}>
+            <Table>
+              <thead>
+                <tr className={clsx(styles.tableHead)}>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Gruppen</th>
+                  <th>Zuletzt Online</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {rows.map(({ user, avatarImage, name, groups, lastSeen }) => (
+                  <tr
+                    key={user.id}
+                    onClick={() => {
+                      if (user.id !== currentUser?.id) {
+                        setSelectedUser(user);
+                      }
+                    }}
+                  >
+                    <td>{avatarImage}</td>
+                    <td>{name}</td>
+                    <td>{groups}</td>
+                    <td>{lastSeen}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
         </>
       )}
       {selectedUser && (

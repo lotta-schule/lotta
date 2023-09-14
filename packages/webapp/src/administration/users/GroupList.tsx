@@ -3,7 +3,7 @@ import chunk from 'lodash/chunk';
 import { Icon } from 'shared/Icon';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
-import { Button, DragHandle, ErrorMessage } from '@lotta-schule/hubert';
+import { Button, Checkbox, DragHandle, ErrorMessage, Input, Select } from '@lotta-schule/hubert';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
@@ -13,8 +13,9 @@ import { EditUserGroupDialog } from './EditUserGroupDialog';
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 
 import styles from './GroupList.module.scss';
+import { SearchUserField } from './SearchUserField';
 
-const COLUMN_COUNT = 4;
+const COLUMN_COUNT = 1;
 
 export const GroupList = () => {
   const groups = useUserGroups();
@@ -46,6 +47,8 @@ export const GroupList = () => {
   return (
     <div className={styles.root}>
       <div className={styles.toolBar}>
+        <div className={styles.sorting}><Select /> Sortierung </div>
+        <div className={styles.sorting}><Input />  Gruppe Suchen </div>
         <Button
           className={styles.createButton}
           icon={<Icon icon={faCirclePlus} />}
@@ -106,6 +109,7 @@ export const GroupList = () => {
         }}
       >
         <ErrorMessage error={error} />
+        <div className={styles.container}>
         <div className={styles.listsWrapper}>
           {chunkedGroups.map((groupsChunk, index) => (
             <Droppable
@@ -142,6 +146,14 @@ export const GroupList = () => {
               )}
             </Droppable>
           ))}
+        </div>
+        <div className={styles.groupInfoSection}>
+        <h5>Gruppe: 123</h5>
+        <p>Gruppenname bearbeiten</p>
+        <p>Checkbox Adminrechte</p>
+        <p> Anzahl Mitglieder: 123v</p>
+        <p>Einschreibeschlüssel</p>
+        </div>
         </div>
       </DragDropContext>
     </div>
