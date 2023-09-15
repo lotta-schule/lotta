@@ -228,14 +228,6 @@ defmodule Lotta.Content do
     article
     |> Article.changeset(attrs)
     |> Repo.update(prefix: Ecto.get_meta(article, :prefix))
-    |> case do
-      {:ok, article} ->
-        Elasticsearch.put_document(Lotta.Elasticsearch.Cluster, article, "articles")
-        {:ok, article}
-
-      result ->
-        result
-    end
   end
 
   @doc """
@@ -253,14 +245,7 @@ defmodule Lotta.Content do
   @doc since: "1.0.0"
   @spec delete_article(Article.t()) :: {:ok, Article.t()} | {:error, Ecto.Changeset.t()}
   def delete_article(%Article{} = article) do
-    case Repo.delete(article) do
-      {:ok, article} ->
-        Elasticsearch.delete_document(Lotta.Elasticsearch.Cluster, article, "articles")
-        {:ok, article}
-
-      result ->
-        result
-    end
+    Repo.delete(article)
   end
 
   @doc """

@@ -72,4 +72,18 @@ defmodule Lotta.Tenants.TenantSelector do
       options
     )
   end
+
+  @doc """
+  Rollback migrations for a given tenant
+  """
+  @doc since: "2.6.0"
+  @spec rollback_migrations(Keyword.t()) :: [integer()]
+  def rollback_migrations(options \\ []) do
+    Ecto.Migrator.run(
+      Repo,
+      Application.app_dir(:lotta, "priv/repo/tenant_migrations"),
+      :down,
+      options
+    )
+  end
 end

@@ -21,8 +21,6 @@ config :lotta, :redis_connection,
   password: "lotta",
   name: :redix
 
-config :lotta, Lotta.Elasticsearch.Cluster, []
-
 config :lotta, Lotta.Mailer, adapter: Bamboo.LocalAdapter
 
 config :ex_aws, :s3,

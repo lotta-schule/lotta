@@ -6,21 +6,15 @@ defmodule LottaWeb.SearchResolverTest do
   import Ecto.Query
 
   alias LottaWeb.Auth.AccessToken
-  alias Lotta.{Content, Repo, Tenants}
+  alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.User
   alias Lotta.Content.Article
-  alias Lotta.Elasticsearch.Cluster
   alias Lotta.Tenants.Category
 
   @prefix "tenant_test"
 
   setup do
     tenant = Tenants.get_tenant_by_prefix(@prefix)
-
-    Elasticsearch.delete(Cluster, "*")
-    :timer.sleep(500)
-    Elasticsearch.Index.hot_swap(Cluster, "articles")
-    :timer.sleep(500)
 
     admin =
       Repo.one!(
@@ -222,15 +216,14 @@ defmodule LottaWeb.SearchResolverTest do
              end)
     end
 
-    test "passing category_id: null to config should be valid" do
+    test "passing no category_id to config should be valid" do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> get("/api",
           query: @query,
           variables: %{
-            searchText: "Nipple Jesus",
-            options: %{category_id: nil}
+            searchText: "Nipple Jesus"
           }
         )
         |> json_response(200)
@@ -245,23 +238,6 @@ defmodule LottaWeb.SearchResolverTest do
                results,
                &(Map.get(&1, "title") == "„Nipple Jesus“- eine extreme Erfahrung")
              )
-    end
-
-    test "updated article should be indexed", %{tenant: t, article: article} do
-      Content.update_article(article, %{title: "Neuer Artikel nur für die Suche"})
-
-      {:ok, %{"_source" => %{"title" => title}}} =
-        Elasticsearch.get(Cluster, "/articles/_doc/#{t.id}--#{article.id}")
-
-      assert title == "Neuer Artikel nur für die Suche"
-    end
-
-    test "deleted article should be deleted from index", %{tenant: t, article: article} do
-      Content.delete_article(article)
-
-      {result, _} = Elasticsearch.get(Cluster, "/articles/_doc/#{t.id}--#{article.id}")
-
-      assert result == :error
     end
   end
 end

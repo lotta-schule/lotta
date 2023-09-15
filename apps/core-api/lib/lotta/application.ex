@@ -23,7 +23,6 @@ defmodule Lotta.Application do
           LottaWeb.Endpoint,
           {Absinthe.Subscription, LottaWeb.Endpoint},
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
-          Lotta.Elasticsearch.Cluster,
           Lotta.Queue.MediaConversionRequestPublisher,
           Lotta.Queue.MediaConversionConsumer,
           {ConCache,

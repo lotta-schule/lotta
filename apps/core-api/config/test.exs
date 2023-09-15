@@ -22,8 +22,6 @@ config :lotta, :redis_connection,
 
 config :lotta, Lotta.Mailer, adapter: Bamboo.TestAdapter
 
-config :lotta, Lotta.Elasticsearch.Cluster, url: "http://localhost:9200"
-
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,
   access_key_id: "AKIAIOSFODNN7EXAMPLE",

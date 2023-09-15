@@ -36,7 +36,6 @@ defmodule Lotta.Tenants.DefaultContent do
     |> Multi.insert(:first_step_2_article, &create_first_step_2_article_changeset/1, opts)
     |> Multi.insert(:welcome_article, &create_welcome_article_changeset/1, opts)
     |> Multi.run(:confirmation_mail, &send_ready_email/2)
-    |> Multi.run(:put_elasticsearch_docs, &put_elasticsearch_docs/2)
   end
 
   defp create_admin_user(_repo, %{stage2_locals: %{tenant: tenant, user_params: user_params}}) do
@@ -341,18 +340,6 @@ defmodule Lotta.Tenants.DefaultContent do
     user
     |> Email.lotta_ready_mail(tenant: tenant)
     |> Mailer.deliver_later()
-  end
-
-  defp put_elasticsearch_docs(_repo, %{
-         first_step_1_article: a1,
-         first_step_2_article: a2,
-         welcome_article: a3
-       }) do
-    Enum.each([a1, a2, a3], fn article ->
-      Elasticsearch.put_document(Lotta.Elasticsearch.Cluster, article, "articles")
-    end)
-
-    {:ok, true}
   end
 
   defp available_assets() do

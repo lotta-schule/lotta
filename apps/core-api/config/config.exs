@@ -23,25 +23,6 @@ config :lotta, LottaWeb.Endpoint,
   pubsub_server: Lotta.PubSub,
   live_view: [signing_salt: "abcdefghijklmnopqrstuvwxyz1234567890"]
 
-config :lotta, Lotta.Elasticsearch.Cluster,
-  url: "http://localhost:9200",
-  api: Elasticsearch.API.HTTP,
-  json_library: Poison,
-  indexes: %{
-    articles: %{
-      settings: "priv/elasticsearch/articles.json",
-      store: Lotta.Elasticsearch.Store,
-      sources: [Lotta.Content.Article],
-      bulk_page_size: 1000,
-      bulk_wait_interval: 15_000
-    }
-  },
-  default_options: [
-    timeout: 10_000,
-    recv_timeout: 5_000,
-    hackney: [pool: :elasticsearch_pool]
-  ]
-
 config :sentry,
   included_environments: []
 

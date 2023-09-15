@@ -35,6 +35,7 @@ defmodule Lotta.Content.Article do
     field(:ready_to_publish, :boolean)
     field(:published, :boolean, default: false)
     field(:is_pinned_to_top, :boolean)
+    field(:rank, :float, virtual: true)
 
     belongs_to :category, Category, on_replace: :nilify
 
@@ -66,8 +67,9 @@ defmodule Lotta.Content.Article do
   Returns a query with all published articles a given user can see.
   If no user is given, return a query returning only public articles.
   """
-  @spec get_published_articles_query(User.t() | nil) :: Ecto.Queryable.t()
-  def get_published_articles_query(user \\ nil) do
+  @spec get_published_articles_query(User.t() | nil, [{:category_id, Category.id()}]) ::
+          Ecto.Queryable.t()
+  def get_published_articles_query(user \\ nil, opts \\ []) do
     groups = if user, do: user.all_groups, else: []
     is_admin = if user, do: user.is_admin?, else: false
 
@@ -82,6 +84,15 @@ defmodule Lotta.Content.Article do
              ^is_admin),
       distinct: true
     )
+    |> then(fn query ->
+      case opts[:category_id] do
+        category_id when is_binary(category_id) ->
+          where(query, [..., c], c.id == ^category_id)
+
+        _ ->
+          query
+      end
+    end)
   end
 
   @doc false
