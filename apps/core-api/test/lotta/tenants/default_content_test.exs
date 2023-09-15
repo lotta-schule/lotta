@@ -147,18 +147,5 @@ defmodule Lotta.Tenants.DefaultContentTest do
       refute is_nil(public_directory)
       assert Enum.count(public_directory.files) == 17
     end
-
-    test "default articles should be indexed in the search", %{tenant: t} do
-      articles = Repo.all(Article, prefix: t.prefix)
-
-      assert Enum.all?(articles, fn article ->
-               path = "/articles/_doc/#{t.id}--#{article.id}"
-
-               match?(
-                 {:ok, %{"_source" => %{"title" => title}}},
-                 Elasticsearch.get(Lotta.Elasticsearch.Cluster, path)
-               )
-             end)
-    end
   end
 end

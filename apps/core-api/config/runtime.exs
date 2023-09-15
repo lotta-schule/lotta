@@ -61,8 +61,6 @@ if config_env() == :prod do
 
   config :lotta, LottaWeb.Auth.AccessToken, secret_key: System.fetch_env!("SECRET_KEY_JWT")
 
-  config :lotta, Lotta.Elasticsearch.Cluster, url: System.get_env("ELASTICSEARCH_HOST")
-
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
   # want to use a different value for prod and you most likely don't want

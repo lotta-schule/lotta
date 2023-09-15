@@ -7,14 +7,9 @@ defmodule Lotta.Release do
 
   alias Lotta.Repo
   alias Lotta.Tenants.{Tenant, TenantSelector}
-  alias Lotta.Elasticsearch.Cluster
-  alias Elasticsearch.Index
   alias Ecto.Migrator
 
   @app :lotta
-
-  @elasticsearch_clusters [Cluster]
-  @elasticsearch_indexes [:articles]
 
   def migrate do
     for repo <- repos() do
@@ -60,30 +55,37 @@ defmodule Lotta.Release do
     end
   end
 
-  def rollback(repo, version) do
-    {:ok, _, _} =
-      Migrator.with_repo(
-        repo,
-        &Migrator.run(&1, :down, to: version)
-      )
-  end
+  # example:
+  # rollback
+  def rollback(opts) do
+    config =
+      Application.get_env(:lotta, Repo)
+      |> Keyword.put(:name, nil)
+      |> Keyword.put(:pool_size, 2)
+      |> Keyword.delete(:pool)
 
-  def build_elasticsearch_indexes do
-    load_app()
+    {:ok, pid} = Repo.start_link(config)
+    Repo.put_dynamic_repo(pid)
 
-    Logger.info("Building search indexes...")
+    customers = Repo.all(Tenant, prefix: "public")
+    Logger.notice("Migrating #{Enum.count(customers)} customer schemas ...")
 
-    Enum.each(@elasticsearch_clusters, fn cluster ->
-      Enum.each(
-        @elasticsearch_indexes,
-        &Index.hot_swap(cluster, &1)
-      )
-    end)
+    Enum.each(
+      customers,
+      fn tenant ->
+        Logger.notice(
+          "Customer #{tenant.title} with schema #{tenant.prefix} is being rolled back ..."
+        )
+
+        TenantSelector.rollback_migrations(
+          Keyword.merge([prefix: tenant.prefix, dynamic_repo: pid], opts)
+        )
+      end
+    )
+
+    Repo.stop(1000)
+    Repo.put_dynamic_repo(Repo)
   end
 
   defp repos, do: Application.fetch_env!(@app, :ecto_repos)
-
-  defp load_app do
-    Application.load(@app)
-  end
 end
