@@ -19,6 +19,7 @@ export const createConversation = (
         updatedAt: '2020-11-28T07:37:02',
         content: 'Hallo',
         user: from,
+        files: [],
       },
       {
         id: String(Math.floor(Math.random() * 10_000)),
@@ -26,6 +27,7 @@ export const createConversation = (
         updatedAt: '2020-11-28T07:32:14',
         content: 'Hallo',
         user: from,
+        files: [],
       },
       {
         id: String(Math.floor(Math.random() * 1000)),
@@ -33,6 +35,7 @@ export const createConversation = (
         updatedAt: '2020-11-28T07:29:31',
         content: 'Hallo',
         user: from,
+        files: [],
       },
       {
         id: String(Math.floor(Math.random() * 10_000)),
@@ -40,6 +43,7 @@ export const createConversation = (
         updatedAt: '2020-11-28T07:19:17',
         content: 'Hallo',
         user: from,
+        files: [],
       },
       {
         id: String(Math.floor(Math.random() * 10_000)),
@@ -47,6 +51,7 @@ export const createConversation = (
         updatedAt: '2020-11-28T07:00:09',
         content: 'Hallo Welt!',
         user: from,
+        files: [],
       },
     ],
   };

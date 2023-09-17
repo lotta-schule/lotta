@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ScheduleWidgetConfig } from 'model';
-import { Input, Label, Select } from '@lotta-schule/hubert';
+import { Input, Label, Option, Select } from '@lotta-schule/hubert';
 
 import styles from './WidgetConfiguration.module.scss';
 
@@ -14,23 +14,21 @@ export const ScheduleWidgetConfiguration =
     ({ configuration, setConfiguration }) => {
       return (
         <div data-testid={'ScheduleWidgetConfiguration'}>
-          <Label label={'Typ'}>
-            <Select
-              value={configuration.type}
-              onChange={(e) =>
-                setConfiguration({
-                  ...configuration,
-                  type: e.currentTarget.value as ScheduleWidgetConfig['type'],
-                })
-              }
-              id={'schedule-type'}
-            >
-              <option value={undefined}>Typ auswählen</option>
-              <option value={'IndiwareStudent'}>Indiware - Schüler</option>
-              <option value={'IndiwareTeacher'}>Indiware - Lehrer</option>
-            </Select>
-          </Label>
-          <small>Der Typ des Vertretungsplan</small>
+          <Select
+            fullWidth
+            title={'Typ'}
+            value={configuration.type}
+            onChange={(type) =>
+              setConfiguration({
+                ...configuration,
+                type: type as 'IndiwareStudent' | 'IndiwareTeacher',
+              })
+            }
+            id={'schedule-type'}
+          >
+            <Option value={'IndiwareStudent'}>Indiware - Schüler</Option>
+            <Option value={'IndiwareTeacher'}>Indiware - Lehrer</Option>
+          </Select>
 
           <Label label={'Schulnummer'}>
             <Input

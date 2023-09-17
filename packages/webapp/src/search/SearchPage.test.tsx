@@ -101,13 +101,14 @@ describe('pages/search', () => {
         await fireEvent.click(
           screen.getByRole('button', { name: /erweitert/i })
         );
-        const combobox = screen.getByRole('combobox', {
+        const categorySelect = await screen.findByRole('button', {
           name: /kategorie/i,
         });
+        await fireEvent.click(categorySelect);
         const faecherOption = await screen.findByRole('option', {
           name: /fächer/i,
         });
-        await fireEvent.selectOptions(combobox, faecherOption);
+        await fireEvent.click(faecherOption);
         await fireEvent.type(screen.getByLabelText('Suchbegriff'), 'Test');
         await waitFor(() => {
           expect(resultFn).toHaveBeenCalled();

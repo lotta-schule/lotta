@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useListBox, AriaListBoxOptions } from '@react-aria/listbox';
-import { ComboBoxState } from '@react-stately/combobox';
+import { useListBox, AriaListBoxOptions } from 'react-aria';
+import { ComboBoxState, SelectState } from 'react-stately';
 import { List } from '../list';
 import { ListBoxOption } from './ListBoxOption';
 import { ListItemPreliminaryItem } from '../list/ListItemFactory';
@@ -12,7 +12,9 @@ import styles from './Menu.module.scss';
 
 export type ListBoxProps = AriaListBoxOptions<ListItemPreliminaryItem> & {
   className?: string;
-  state: ComboBoxState<ListItemPreliminaryItem>;
+  state:
+    | ComboBoxState<ListItemPreliminaryItem>
+    | SelectState<ListItemPreliminaryItem>;
 };
 
 export const ListBox = React.forwardRef(

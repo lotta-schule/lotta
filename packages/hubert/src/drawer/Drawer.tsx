@@ -2,8 +2,7 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
-import { useModal, useOverlay, usePreventScroll } from '@react-aria/overlays';
-import { mergeProps } from '@react-aria/utils';
+import { mergeProps, useModal, useOverlay, usePreventScroll } from 'react-aria';
 import { ChevronRight } from '../icon';
 import { Button } from '../button';
 

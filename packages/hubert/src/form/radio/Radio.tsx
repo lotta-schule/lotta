@@ -16,7 +16,7 @@ export const Radio = React.forwardRef<any, RadioProps>(
         '--control-indicator-color': featureColor.join(', '),
       } as React.CSSProperties);
     return (
-      <label style={customStyle} className={styles.root}>
+      <label style={customStyle} className={styles.root} aria-label={label}>
         {label}
         {children}
         <input

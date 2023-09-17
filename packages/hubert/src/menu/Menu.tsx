@@ -1,10 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { useTreeState } from '@react-stately/tree';
 import { CollectionChildren } from '@react-types/shared';
-import { useMenu } from '@react-aria/menu';
-import { mergeProps } from '@react-aria/utils';
+import { useTreeState } from 'react-stately';
+import { mergeProps, useMenu } from 'react-aria';
 import { MenuItem } from './MenuItem';
 import { List, ListProps } from '../list';
 import clsx from 'clsx';

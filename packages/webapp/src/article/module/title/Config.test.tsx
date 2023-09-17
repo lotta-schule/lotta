@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { Klausurenplan } from 'test/fixtures';
 import { Config } from './Config';
@@ -17,7 +17,8 @@ describe('shared/article/module/title/Config', () => {
     );
   });
 
-  it('should render a select field with 3 size options', () => {
+  it('should render a select field with 3 size options', async () => {
+    const fireEvent = userEvent.setup();
     const screen = render(
       <Config
         contentModule={titleContentModule}
@@ -26,7 +27,9 @@ describe('shared/article/module/title/Config', () => {
       />
     );
 
-    expect(screen.getByRole('combobox')).toHaveValue('4');
+    await fireEvent.click(
+      screen.getByRole('button', { name: /Überschrifgrößen/ })
+    );
     expect(screen.queryAllByRole('option')).toHaveLength(3);
   });
 
@@ -34,7 +37,7 @@ describe('shared/article/module/title/Config', () => {
     const contentModule = {
       ...titleContentModule,
       configuration: {
-        level: 6,
+        level: '6',
       },
     };
     const screen = render(
@@ -45,9 +48,7 @@ describe('shared/article/module/title/Config', () => {
       />
     );
 
-    expect(
-      screen.getByRole('option', { name: /klein/i, selected: true })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /klein/i })).toBeVisible();
   });
 
   it('should change the size configuration', async () => {
@@ -63,10 +64,10 @@ describe('shared/article/module/title/Config', () => {
       />
     );
 
-    await fireEvent.selectOptions(
-      screen.getByRole('combobox'),
-      'Überschrift klein'
+    await fireEvent.click(
+      screen.getByRole('button', { name: /Überschrifgrößen/i })
     );
+    await fireEvent.click(screen.getByRole('option', { name: /klein/ }));
     await waitFor(() => {
       expect(callback).toHaveBeenCalled();
     });

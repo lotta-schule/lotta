@@ -45,9 +45,14 @@ const createHeaders = (headers?: any) => {
       )
     ),
     tenantSlugOverwrite ? { tenant: `slug:${tenantSlugOverwrite}` } : {},
-      isBrowser ? {} : {
-      'user-agent': [process.env.npm_package_name, process.env.npm_package_version].join(' - '),
-      }
+    isBrowser
+      ? {}
+      : {
+          'user-agent': [
+            process.env.npm_package_name,
+            process.env.npm_package_version,
+          ].join(' - '),
+        }
   );
 };
 

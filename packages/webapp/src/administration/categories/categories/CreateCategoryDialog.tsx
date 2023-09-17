@@ -33,8 +33,8 @@ export interface CreateCategoryDialogProps {
   onConfirm(category: CategoryModel): void;
 }
 
-export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
-  ({ isOpen, onAbort, onConfirm }) => {
+export const CreateCategoryDialog = React.memo(
+  ({ isOpen, onAbort, onConfirm }: CreateCategoryDialogProps) => {
     const [title, setTitle] = React.useState('');
     const [categoryPosition, setCategoryPosition] = React.useState(
       CategoryPosition.Main

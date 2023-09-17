@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { AriaProgressBarProps } from '@react-types/progress';
-import { useProgressBar } from '@react-aria/progress';
+import { useProgressBar } from 'react-aria';
 import clsx from 'clsx';
 
 import styles from './CircularProgress.module.scss';
@@ -17,8 +17,14 @@ export interface CircularProgressProps extends AriaProgressBarProps {
   className?: React.HTMLProps<HTMLProgressElement>['className'];
 }
 
-export const CircularProgress = React.memo<CircularProgressProps>(
-  ({ className, color, showValue, size = '5em', ...props }) => {
+export const CircularProgress = React.memo(
+  ({
+    className,
+    color,
+    showValue,
+    size = '5em',
+    ...props
+  }: CircularProgressProps) => {
     const { value, isIndeterminate } = props;
     const { progressBarProps } = useProgressBar(props);
     const style: React.CSSProperties = {

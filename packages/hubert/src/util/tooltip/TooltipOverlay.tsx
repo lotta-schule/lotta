@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useTooltip } from '@react-aria/tooltip';
-import { TooltipTriggerState } from '@react-stately/tooltip';
-import { mergeProps } from '@react-aria/utils';
+import { mergeProps, useTooltip } from 'react-aria';
+import { TooltipTriggerState } from 'react-stately';
 import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
 

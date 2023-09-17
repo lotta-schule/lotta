@@ -199,12 +199,14 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
         screen.getByRole('radio', { name: /subnavigation/i })
       );
       await new Promise((resolve) => setTimeout(resolve, 500));
-      await fireEvent.selectOptions(
-        screen.getByRole('combobox', {
-          name: /übergeordnete kategorie/i,
-        }),
-        screen.getByRole('option', { name: /fächer/i })
-      );
+      const select = await screen.getByRole('button', {
+        name: /übergeordnete kategorie/i,
+      });
+      await fireEvent.click(select);
+      const faecherOption = await screen.findByRole('option', {
+        name: /fächer/i,
+      });
+      await fireEvent.click(faecherOption);
       await fireEvent.click(screen.getByRole('button', { name: /erstellen/ }));
 
       await waitFor(() => {

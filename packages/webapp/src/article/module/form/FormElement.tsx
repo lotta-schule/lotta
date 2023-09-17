@@ -7,6 +7,7 @@ import {
   Label,
   Radio,
   RadioGroup,
+  Option,
   Select,
 } from '@lotta-schule/hubert';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
@@ -28,22 +29,25 @@ export const FormElement = React.memo<FormElementProps>(
   ({ element, isEditModeEnabled, value, onSetValue }) => {
     const currentUser = useCurrentUser();
     const formElement = (() => {
+      const label = element.label ?? element.name ?? 'Beschreibung';
       if (element.element === 'selection') {
         if (element.type === 'checkbox') {
           return (
-            <Label label={element.label ?? ''}>
+            <Label label={label}>
               <div>
                 {element.options?.map((option, i) => {
+                  const label = option.label ?? option.value;
+                  const optionValue = option.value ?? option.label ?? i;
                   return (
                     <Checkbox
                       key={i}
                       name={element.name}
-                      value={option.value}
+                      value={optionValue}
                       isDisabled={isEditModeEnabled}
-                      aria-label={option.label}
+                      aria-label={label}
                       isSelected={
                         value instanceof Array
-                          ? value.indexOf(option.value) > -1
+                          ? value.indexOf(optionValue) > -1
                           : false
                       }
                       onChange={(isSelected) => {
@@ -57,7 +61,7 @@ export const FormElement = React.memo<FormElementProps>(
                         }
                       }}
                     >
-                      {option.label}
+                      {label}
                     </Checkbox>
                   );
                 })}
@@ -66,7 +70,7 @@ export const FormElement = React.memo<FormElementProps>(
           );
         } else if (element.type === 'radio') {
           return (
-            <Label label={element.label ?? ''}>
+            <Label label={label}>
               <div>
                 <RadioGroup
                   name={element.name}
@@ -75,12 +79,14 @@ export const FormElement = React.memo<FormElementProps>(
                   required={element.required}
                 >
                   {element.options?.map((option, i) => {
+                    const label = option.label ?? option.value;
+                    const value = option.value ?? option.label ?? i;
                     return (
                       <Radio
                         key={i}
                         name={element.name}
-                        value={option.value}
-                        label={option.label ?? option.value}
+                        value={value}
+                        label={label}
                         disabled={isEditModeEnabled}
                       />
                     );
@@ -91,32 +97,34 @@ export const FormElement = React.memo<FormElementProps>(
           );
         } else if (element.type === 'select') {
           return (
-            <Label label={element.label ?? ''}>
-              <Select
-                value={
-                  value ?? element.options?.find((o) => o.selected)?.value ?? ''
-                }
-                onChange={({ currentTarget: { value } }) =>
-                  onSetValue(value as string)
-                }
-                required={element.required}
-                id={`form-select-${element.name!}`}
-              >
-                {element.options?.map((option, i) => {
-                  return (
-                    <option key={i} value={option.value}>
-                      {option.label}
-                    </option>
-                  );
-                })}
-              </Select>
-            </Label>
+            <Select
+              fullWidth
+              title={label}
+              value={
+                (value as string) ??
+                element.options?.find((o) => o.selected)?.value ??
+                ''
+              }
+              onChange={(value) => onSetValue(value)}
+              required={element.required}
+              id={`form-select-${element.name!}`}
+            >
+              {element.options?.map((option, i) => {
+                const label = option.label ?? option.value;
+                const value = option.value ?? option.label ?? i;
+                return (
+                  <Option key={i} value={value}>
+                    {label}
+                  </Option>
+                );
+              })}
+            </Select>
           );
         }
       }
       if (element.element === 'input') {
         return (
-          <Label label={element.label || ''}>
+          <Label label={label}>
             <Input
               disabled={isEditModeEnabled}
               name={element.name}

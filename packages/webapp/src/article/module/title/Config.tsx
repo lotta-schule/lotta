@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ContentModuleModel } from 'model';
-import { Label, Select } from '@lotta-schule/hubert';
-import get from 'lodash/get';
+import { Option, Select } from '@lotta-schule/hubert';
 
 const DEFAULT_LEVEL = 4;
 
@@ -13,34 +12,29 @@ interface ConfigProps {
 
 export const Config = React.memo<ConfigProps>(
   ({ contentModule, onUpdateModule, onRequestClose }) => {
-    const headingLevel = get<number>(
-      contentModule.configuration,
-      'level',
-      DEFAULT_LEVEL
-    );
+    const headingLevel = contentModule.configuration?.level ?? DEFAULT_LEVEL;
 
     return (
       <form data-testid="TitleContentModuleConfiguration">
-        <Label label={'Überschrifgrößen (1-3)'}>
-          <Select
-            value={headingLevel}
-            onChange={(event) => {
-              const newLevel = Number(event.currentTarget.value);
-              onUpdateModule({
-                ...contentModule,
-                configuration: {
-                  ...contentModule.configuration,
-                  level: isNaN(newLevel) ? DEFAULT_LEVEL : newLevel,
-                },
-              });
-              onRequestClose();
-            }}
-          >
-            <option value={4}>Überschrift groß</option>
-            <option value={5}>Überschrift mittel</option>
-            <option value={6}>Überschrift klein</option>
-          </Select>
-        </Label>
+        <Select
+          title={'Überschrifgrößen (1-3)'}
+          value={String(headingLevel)}
+          onChange={(newLevelString) => {
+            const newLevel = Number(newLevelString);
+            onUpdateModule({
+              ...contentModule,
+              configuration: {
+                ...contentModule.configuration,
+                level: isNaN(newLevel) ? DEFAULT_LEVEL : newLevel,
+              },
+            });
+            onRequestClose();
+          }}
+        >
+          <Option value={'4'}>Überschrift groß</Option>
+          <Option value={'5'}>Überschrift mittel</Option>
+          <Option value={'6'}>Überschrift klein</Option>
+        </Select>
       </form>
     );
   }

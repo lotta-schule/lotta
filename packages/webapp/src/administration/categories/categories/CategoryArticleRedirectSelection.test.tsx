@@ -19,15 +19,17 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
       {},
       {
         additionalMocks: [
-          {
-            request: {
-              query: SearchQuery,
-              variables: {
-                searchText: 'Test',
-              },
-            },
-            result: { data: { results: [ComputerExperten] } },
-          },
+          ...['Test']
+            .map((fullTerm) => {
+              return new Array(fullTerm.length)
+                .fill(null)
+                .map((_, i) => fullTerm.slice(0, i + 1));
+            })
+            .flat()
+            .map((searchText) => ({
+              request: { query: SearchQuery, variables: { searchText } },
+              result: { data: { results: [ComputerExperten] } },
+            })),
         ],
       }
     );
