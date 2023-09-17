@@ -8,7 +8,12 @@
     "plugin:react/recommended",
     "plugin:storybook/recommended"
   ],
-  "plugins": ["react", "@typescript-eslint", "prettier", "react-hooks"],
+  "plugins": [
+    "react",
+    "@typescript-eslint",
+    "prettier",
+    "react-hooks"
+  ],
   "ignorePatterns": [
     "**/*.d.ts",
     "**/*.test.ts",
@@ -19,14 +24,16 @@
   "rules": {
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "react/prop-types": "off",
-    "react/no-unescaped-entities": "off",
-    "no-unused-vars": [
+    "@typescript-eslint/no-unused-vars": [
       "error",
       {
-        "argsIgnorePattern": "^_"
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
       }
-    ]
+    ],
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
+    "no-unused-vars": "off"
   },
   "settings": {
     "react": {

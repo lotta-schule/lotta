@@ -1,7 +1,6 @@
 import * as React from 'react';
+import { Option, Select } from '@lotta-schule/hubert';
 import { ContentModuleModel, FileModel } from 'model';
-import { Label, Select } from '@lotta-schule/hubert';
-import get from 'lodash/get';
 
 import styles from '../Config.module.scss';
 
@@ -30,7 +29,7 @@ export const FileSorter =
     getConfiguration: (f: FileModel) => any
   ) =>
   (file1: FileModel, file2: FileModel) => {
-    const sorting = get(contendModule.configuration, 'sorting', Sorting.NONE);
+    const sorting = contendModule.configuration?.sorting ?? Sorting.NONE;
     switch (sorting) {
       case Sorting.FILENAME_ASC:
         return file1.filename.localeCompare(file2.filename);
@@ -53,73 +52,72 @@ export const FileSorter =
     }
   };
 
-export const Config = React.memo<ConfigProps>(
-  ({ contentModule, onUpdateModule, onRequestClose }) => {
-    const imageStyle: ImageStyle = get(
-      contentModule.configuration,
-      'imageStyle',
-      ImageStyle.GALLERY
-    );
-    const sorting: Sorting = get(
-      contentModule.configuration,
-      'sorting',
-      Sorting.NONE
-    );
+export const Config = React.memo(
+  ({ contentModule, onUpdateModule, onRequestClose }: ConfigProps) => {
+    const imageStyle: ImageStyle =
+      contentModule.configuration?.imageStyle ?? ImageStyle.GALLERY;
+
+    const sorting: Sorting =
+      contentModule.configuration?.sorting ?? Sorting.NONE;
 
     return (
       <form data-testid="ImageCollectionContentModuleConfiguration">
-        <Label className={styles.formControl} label={'Stil'}>
-          <Select
-            value={imageStyle}
-            onChange={(event) => {
-              onUpdateModule({
-                ...contentModule,
-                configuration: {
-                  ...contentModule.configuration,
-                  imageStyle: parseInt(event.currentTarget.value),
-                },
-              });
-              onRequestClose();
-            }}
-            name={'image-style'}
-            id={'image-style'}
-          >
-            <option value={ImageStyle.GALLERY}>Galerie</option>
-            <option value={ImageStyle.CAROUSEL}>Carousel</option>
-          </Select>
-        </Label>
+        <Select
+          fullWidth
+          className={styles.formControl}
+          title={'Stil'}
+          value={String(imageStyle)}
+          onChange={(imageStyleString) => {
+            const imageStyle = Number(imageStyleString);
+            onUpdateModule({
+              ...contentModule,
+              configuration: {
+                ...contentModule.configuration,
+                imageStyle,
+              },
+            });
+            onRequestClose();
+          }}
+          name={'image-style'}
+          id={'image-style'}
+        >
+          <Option value={String(ImageStyle.GALLERY)}>Galerie</Option>
+          <Option value={String(ImageStyle.CAROUSEL)}>Carousel</Option>
+        </Select>
 
-        <Label className={styles.formControl} label={'Sortierung'}>
-          <Select
-            value={sorting}
-            onChange={(event) => {
-              onUpdateModule({
-                ...contentModule,
-                configuration: {
-                  ...contentModule.configuration,
-                  sorting: parseInt(event.currentTarget.value),
-                },
-              });
-              onRequestClose();
-            }}
-            name={'sorting'}
-            id={'sorting'}
-          >
-            <option value={Sorting.NONE}>Eigene</option>
-            <option value={Sorting.FILENAME_ASC}>
-              Dateiname (aufsteigend)
-            </option>
-            <option value={Sorting.FILENAME_DESC}>
-              Dateiname (absteigend)
-            </option>
-            <option value={Sorting.FILE_UPLOAD_DATE_ASC}>
-              Hochlade-Datum (aufsteigend)
-            </option>
-            <option value={Sorting.FILE_UPLOAD_DATE_DESC}>
-              Hochlade-Datum (absteigend)
-            </option>
-          </Select>
-        </Label>
+        <Select
+          fullWidth
+          className={styles.formControl}
+          title={'Sortierung'}
+          value={String(sorting)}
+          onChange={(sortingString) => {
+            const sorting = Number(sortingString);
+            onUpdateModule({
+              ...contentModule,
+              configuration: {
+                ...contentModule.configuration,
+                sorting,
+              },
+            });
+            onRequestClose();
+          }}
+          name={'sorting'}
+          id={'sorting'}
+        >
+          <Option value={String(Sorting.NONE)}>Eigene</Option>
+          <Option value={String(Sorting.FILENAME_ASC)}>
+            Dateiname (aufsteigend)
+          </Option>
+          <Option value={String(Sorting.FILENAME_DESC)}>
+            Dateiname (absteigend)
+          </Option>
+          <Option value={String(Sorting.FILE_UPLOAD_DATE_ASC)}>
+            Hochlade-Datum (aufsteigend)
+          </Option>
+          <Option value={String(Sorting.FILE_UPLOAD_DATE_DESC)}>
+            Hochlade-Datum (absteigend)
+          </Option>
+        </Select>
       </form>
     );
   }

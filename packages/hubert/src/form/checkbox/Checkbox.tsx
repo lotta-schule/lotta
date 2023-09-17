@@ -2,10 +2,13 @@
 
 import * as React from 'react';
 import { ToggleProps } from '@react-types/checkbox';
-import { VisuallyHidden } from '@react-aria/visually-hidden';
-import { useFocusRing } from '@react-aria/focus';
-import { useToggleState } from '@react-stately/toggle';
-import { AriaCheckboxProps, useCheckbox } from '@react-aria/checkbox';
+import {
+  AriaCheckboxProps,
+  VisuallyHidden,
+  useCheckbox,
+  useFocusRing,
+} from 'react-aria';
+import { useToggleState } from 'react-stately';
 import clsx from 'clsx';
 
 import styles from './Checkbox.module.scss';

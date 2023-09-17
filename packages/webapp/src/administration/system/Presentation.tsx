@@ -1,13 +1,13 @@
 import * as React from 'react';
-import Head from 'next/head';
 import {
-  Button,
   Box,
+  Button,
   ErrorMessage,
+  Input,
   Label,
+  Option,
   Select,
   useTheme,
-  Input,
 } from '@lotta-schule/hubert';
 import { DefaultThemes } from '@lotta-schule/theme';
 import { useApolloClient, useMutation } from '@apollo/client';
@@ -33,7 +33,10 @@ export const Presentation = React.memo(() => {
   const { baseUrl } = useServerData();
   const tenant = useTenant();
   const client = useApolloClient();
-  const theme = useTheme();
+  const theme = {
+    ...defaultTheme,
+    ...tenant.configuration.customTheme,
+  };
 
   const [allThemes, setAllThemes] = React.useState<
     { title: string; theme: Partial<ReturnType<typeof useTheme>> }[]
@@ -48,12 +51,16 @@ export const Presentation = React.memo(() => {
             ...tenant,
             configuration: {
               ...tenant.configuration,
-              customTheme: { ...theme, ...customTheme },
+              customTheme: Object.assign(
+                {},
+                tenant.configuration.customTheme,
+                customTheme
+              ),
             },
           },
         },
       }),
-    [client, tenant, theme]
+    [client, tenant]
   );
 
   const [backgroundImage, setBackgroundImage] = React.useState(
@@ -78,7 +85,7 @@ export const Presentation = React.memo(() => {
         ...customThemes,
       ]);
     });
-  }, [theme]);
+  }, []);
 
   return (
     <div>
@@ -86,9 +93,9 @@ export const Presentation = React.memo(() => {
       <section className={styles.section}>
         <h3>Vorlagen</h3>
         <div className={styles.gridContainer}>
-          {allThemes.map(({ title, theme: partialTheme }, index) => {
+          {allThemes.map(({ title, theme: partialTheme }) => {
             return (
-              <div className={styles.gridItem} key={index}>
+              <div className={styles.gridItem} key={title}>
                 <SelectTemplateButton
                   title={title}
                   theme={partialTheme}
@@ -311,70 +318,59 @@ export const Presentation = React.memo(() => {
 
       <section className={styles.section}>
         <h3>Schriften</h3>
+        {headerFonts.concat(textFonts).map(({ url }) => (
+          <link rel={'stylesheet'} href={url} key={url} />
+        ))}
         <div className={styles.gridContainer}>
           <div className={styles.gridItem}>
-            <Label label={'Schriftart Überschriften'}>
-              <Select
-                value={theme.titleFontFamily}
-                style={{
-                  fontFamily: theme.titleFontFamily,
-                }}
-                onChange={(e) =>
-                  setCustomTheme({
-                    titleFontFamily: e.currentTarget.value,
-                  })
-                }
-              >
-                {headerFonts.concat(textFonts).map(({ url }) => (
-                  <Head key={url}>
-                    <link rel={'stylesheet'} href={url} />
-                  </Head>
-                ))}
-                <optgroup>
-                  {headerFonts.map(({ name }) => (
-                    <option
-                      value={name}
-                      style={{ fontFamily: name }}
-                      key={name}
-                    >
-                      {name}
-                    </option>
-                  ))}
-                </optgroup>
-                <optgroup>
-                  {textFonts.map(({ name }) => (
-                    <option
-                      value={name}
-                      style={{ fontFamily: name }}
-                      key={name}
-                    >
-                      {name}
-                    </option>
-                  ))}
-                </optgroup>
-              </Select>
-            </Label>
+            <Select
+              fullWidth
+              title={'Schriftart Überschriften'}
+              value={theme.titleFontFamily}
+              onChange={(titleFontFamily) => {
+                setCustomTheme({
+                  titleFontFamily,
+                });
+              }}
+            >
+              {headerFonts.concat(textFonts).map(({ name }) => (
+                <Option
+                  value={name}
+                  aria-label={name}
+                  key={name}
+                  style={{
+                    fontFamily: name,
+                  }}
+                >
+                  {name}
+                </Option>
+              ))}
+            </Select>
           </div>
           <div className={styles.gridItem}>
-            <Label label={'Schriftart Fließtext'}>
-              <Select
-                value={theme.textFontFamily}
-                style={{
-                  fontFamily: theme.textFontFamily,
-                }}
-                onChange={(e) =>
-                  setCustomTheme({
-                    textFontFamily: e.currentTarget.value,
-                  })
-                }
-              >
-                {textFonts.map(({ name }) => (
-                  <option style={{ fontFamily: name }} value={name} key={name}>
-                    {name}
-                  </option>
-                ))}
-              </Select>
-            </Label>
+            <Select
+              fullWidth
+              title={'Schriftart Fließtext'}
+              value={theme.textFontFamily}
+              onChange={(textFontFamily) =>
+                setCustomTheme({
+                  textFontFamily,
+                })
+              }
+            >
+              {textFonts.map(({ name }) => (
+                <Option
+                  value={name}
+                  aria-label={name}
+                  key={name}
+                  style={{
+                    fontFamily: name,
+                  }}
+                >
+                  {name}
+                </Option>
+              ))}
+            </Select>
           </div>
         </div>
       </section>

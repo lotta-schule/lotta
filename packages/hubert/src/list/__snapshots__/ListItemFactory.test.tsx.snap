@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`list/ListItemFactory create Item should render an item with complete information for a listItem 1`] = `"[{"type":"span","key":".0","ref":null,"props":{"children":{"type":{"compare":null},"key":null,"ref":null,"props":{},"_owner":null,"_store":{}}},"_owner":null,"_store":{}},{"type":"span","key":".1","ref":null,"props":{"children":"Test"},"_owner":null,"_store":{}},"Test description",{"type":{"compare":null},"key":".3","ref":null,"props":{},"_owner":null,"_store":{}}]"`;
+
+exports[`list/ListItemFactory create ListItem should render a listItem with complete information from an item 1`] = `
+<li
+  class="li"
+>
+  <div>
+    <span>
+      <svg
+        aria-hidden="true"
+        class="root"
+        focusable="false"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+        />
+      </svg>
+    </span>
+  </div>
+  <div
+    class="mainSection"
+  >
+    <div>
+      <span>
+        Test
+      </span>
+    </div>
+    <span>
+      Test description
+    </span>
+  </div>
+  <div>
+    <svg
+      aria-hidden="true"
+      class="root"
+      focusable="false"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"
+      />
+    </svg>
+  </div>
+</li>
+`;
+
+exports[`list/ListItemFactory create ListItem should render a listItem with complete information from an item 2`] = `
+<li
+  class="li"
+>
+  <div>
+    <span />
+  </div>
+  <div
+    class="mainSection"
+  >
+    <div>
+      <span>
+        Test
+      </span>
+    </div>
+  </div>
+</li>
+`;

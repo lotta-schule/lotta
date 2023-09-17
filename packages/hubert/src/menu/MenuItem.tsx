@@ -1,12 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { useFocus } from '@react-aria/interactions';
-import { Item as AriaItem } from '@react-stately/collections';
-import { useMenuItem } from '@react-aria/menu';
+import { mergeProps, useFocus, useMenuItem } from 'react-aria';
+import { TreeState, Item as AriaItem } from 'react-stately';
 import { Node } from '@react-types/shared';
-import { mergeProps } from '@react-aria/utils';
-import { TreeState } from '@react-stately/tree';
 import { ListItem } from '../list';
 
 import styles from './Menu.module.scss';

@@ -1,19 +1,25 @@
 import * as React from 'react';
-
-import { Button, Checkbox, Input, Label, Select } from '@lotta-schule/hubert';
+import {
+  Button,
+  Checkbox,
+  Input,
+  Label,
+  Option,
+  Select,
+} from '@lotta-schule/hubert';
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 import { FormElement, FormElementOption } from './Form';
 
 import styles from './FormElementConfiguration.module.scss';
-import { Icon } from 'shared/Icon';
-import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 
 export interface FormElementConfigurationProps {
   element: FormElement;
   updateElement(elm: Partial<FormElement>): void;
 }
 
-export const FormElementConfiguration =
-  React.memo<FormElementConfigurationProps>(({ element, updateElement }) => {
+export const FormElementConfiguration = React.memo(
+  ({ element, updateElement }: FormElementConfigurationProps) => {
     const updateOption = (index: number, option: Partial<FormElementOption>) =>
       updateElement({
         options: element.options?.map((o, i) => {
@@ -25,84 +31,75 @@ export const FormElementConfiguration =
       });
     return (
       <div>
-        <Label
-          label={'Art der Eingabe'}
+        <Select
+          fullWidth
+          title={'Art der Eingabe'}
           className={styles.configurationProperty}
+          value={element.element}
+          onChange={(element) =>
+            updateElement({
+              element: element as 'input' | 'file' | 'selection',
+              type:
+                element === 'input'
+                  ? 'text'
+                  : element === 'file'
+                  ? ''
+                  : 'checkbox',
+              options:
+                element === 'selection'
+                  ? [
+                      {
+                        selected: false,
+                        label: 'Auswahl Nummer 1',
+                        value: 'a1',
+                      },
+                    ]
+                  : [],
+            })
+          }
         >
+          <Option value={'input'}>Texteingabefeld</Option>
+          <Option value={'selection'}>Auswahlbereich</Option>
+          <Option value={'file'}>Datei-Anhang</Option>
+        </Select>
+        {element.element === 'input' && !element.multiline && (
           <Select
-            value={element.element}
-            onChange={(e) =>
+            fullWidth
+            title={'Texteingabevariation'}
+            className={styles.configurationProperty}
+            value={element.type}
+            onChange={(type) =>
               updateElement({
-                element: e.currentTarget.value as
-                  | 'input'
-                  | 'selection'
-                  | 'file',
-                type:
-                  e.currentTarget.value === 'input'
-                    ? 'text'
-                    : e.currentTarget.value === 'file'
-                    ? ''
-                    : 'checkbox',
-                options:
-                  e.currentTarget.value === 'selection'
-                    ? [
-                        {
-                          selected: false,
-                          label: 'Auswahl Nummer 1',
-                          value: 'a1',
-                        },
-                      ]
-                    : [],
+                type,
               })
             }
           >
-            <option value={'input'}>Texteingabefeld</option>
-            <option value={'selection'}>Auswahlbereich</option>
-            <option value={'file'}>Datei-Anhang</option>
+            <Option value={'text'}>Text</Option>
+            <Option value={'email'}>Email</Option>
+            <Option value={'url'}>Web-Adresse</Option>
+            <Option value={'tel'}>Telefonnummer</Option>
+            <Option value={'time'}>Zeit</Option>
+            <Option value={'color'}>Farbe</Option>
+            <Option value={'number'}>Zahl</Option>
+            <Option value={'password'}>Passwort</Option>
           </Select>
-        </Label>
-        {element.element === 'input' && !element.multiline && (
-          <Label
-            label={'Texteingabevariation'}
-            className={styles.configurationProperty}
-          >
-            <Select
-              value={element.type}
-              onChange={(e) =>
-                updateElement({
-                  type: e.currentTarget.value as string,
-                })
-              }
-            >
-              <option value={'text'}>Text</option>
-              <option value={'email'}>Email</option>
-              <option value={'url'}>Web-Adresse</option>
-              <option value={'tel'}>Telefonnummer</option>
-              <option value={'time'}>Zeit</option>
-              <option value={'color'}>Farbe</option>
-              <option value={'number'}>Zahl</option>
-              <option value={'password'}>Passwort</option>
-            </Select>
-          </Label>
         )}
         {element.element === 'selection' && (
-          <Label
-            label={'Auswahlfeldvariation'}
+          <Select
+            fullWidth
+            title={'Auswahlfeldvariation'}
             className={styles.configurationProperty}
+            value={element.type}
+            onChange={(type) =>
+              updateElement({
+                type,
+              })
+            }
           >
-            <Select
-              value={element.type}
-              onChange={(e) =>
-                updateElement({
-                  type: e.currentTarget.value as string,
-                })
-              }
-            >
-              <option value={'checkbox'}>Checkbox</option>
-              <option value={'radio'}>Radio-Buttons</option>
-              <option value={'select'}>Select-Feld</option>
-            </Select>
-          </Label>
+            <Option value={'checkbox'}>Checkbox</Option>
+            <Option value={'radio'}>Radio-Buttons</Option>
+            <Option value={'select'}>Select-Feld</Option>
+          </Select>
         )}
         <Label label={'Name'} className={styles.configurationProperty}>
           <Input
@@ -234,5 +231,6 @@ export const FormElementConfiguration =
         )}
       </div>
     );
-  });
+  }
+);
 FormElementConfiguration.displayName = 'FormElementConfiguration';

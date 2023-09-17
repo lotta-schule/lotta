@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { omit } from 'lodash';
+import { User } from 'util/model';
 import { render, waitFor } from 'test/util';
 import { KeinErSieEsUser, SomeUser, SomeUserin } from 'test/fixtures';
 import { SearchUserField } from './SearchUserField';
-import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 import userEvent from '@testing-library/user-event';
+
+import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 
 describe('shared/layouts/userManagment/SearchUserField', () => {
   it('should render without crashing', () => {
@@ -24,25 +26,32 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
 
   describe('searching users', () => {
     const additionalMocks = [
-      {
-        request: {
-          query: SearchUsersQuery,
-          variables: { searchtext: 'Michel' },
-        },
-        result: { data: { users: [KeinErSieEsUser, SomeUserin] } },
-      },
+      ...['Michel']
+        .map((fullTerm) => {
+          return new Array(fullTerm.length)
+            .fill(null)
+            .map((_, i) => fullTerm.slice(0, i + 1));
+        })
+        .flat()
+        .concat([User.getName(KeinErSieEsUser)])
+        .map((searchtext) => ({
+          request: { query: SearchUsersQuery, variables: { searchtext } },
+          result: {
+            data: {
+              users: [KeinErSieEsUser],
+            },
+          },
+        })),
     ];
 
     it('should show the correct search results for a search term', async () => {
       const fireEvent = userEvent.setup();
-      const [{ request, result }] = additionalMocks;
-      const networkFn = jest.fn(() => ({ ...result }));
       const screen = render(
         <SearchUserField onSelectUser={() => {}} />,
         {},
         {
           currentUser: SomeUser,
-          additionalMocks: [{ request, result: networkFn }],
+          additionalMocks,
         }
       );
       await fireEvent.type(
@@ -50,9 +59,8 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
         'Michel'
       );
       await waitFor(() => {
-        expect(networkFn).toHaveBeenCalled();
+        expect(screen.queryAllByRole('option')).toHaveLength(1);
       });
-      expect(screen.queryAllByRole('option')).toHaveLength(2);
     });
 
     it('should call "onSelectUser" with the correct userAvatar when selected', async () => {

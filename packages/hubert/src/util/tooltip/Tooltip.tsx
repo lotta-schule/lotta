@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useTooltipTrigger } from '@react-aria/tooltip';
-import { useTooltipTriggerState } from '@react-stately/tooltip';
-import { mergeProps } from '@react-aria/utils';
+import { mergeProps, useTooltipTrigger } from 'react-aria';
+import { useTooltipTriggerState } from 'react-stately';
 import { TooltipOverlay } from './TooltipOverlay';
 
 import styles from './Tooltip.module.scss';

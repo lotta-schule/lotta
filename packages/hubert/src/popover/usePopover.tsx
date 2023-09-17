@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { useButton } from '@react-aria/button';
-import { useOverlayTrigger } from '@react-aria/overlays';
+import { mergeProps, useButton, useOverlayTrigger } from 'react-aria';
 import { usePopper } from 'react-popper';
-import { useOverlayTriggerState } from '@react-stately/overlays';
+import { useOverlayTriggerState } from 'react-stately';
 import { PopoverOverlay } from './PopoverOverlay';
-import { mergeProps } from '@react-aria/utils';
 
 export const usePopover = (
   triggerRef: React.RefObject<HTMLElement>,

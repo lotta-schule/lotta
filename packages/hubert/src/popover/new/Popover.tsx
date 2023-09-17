@@ -1,9 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { DismissButton, useOverlay } from '@react-aria/overlays';
-import { FocusScope } from '@react-aria/focus';
-import { mergeProps } from '@react-aria/utils';
+import { mergeProps, DismissButton, FocusScope, useOverlay } from 'react-aria';
 import { PopperProps, usePopper } from 'react-popper';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CollectionChildren } from '@react-types/shared';

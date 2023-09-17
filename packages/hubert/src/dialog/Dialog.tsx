@@ -2,14 +2,18 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Close } from '../icon';
+import {
+  FocusScope,
+  mergeProps,
+  useDialog,
+  useModal,
+  useOverlay,
+  usePreventScroll,
+} from 'react-aria';
 import { motion } from 'framer-motion';
 import { Button } from '../button/Button';
 import { Divider } from '../divider/Divider';
-import { FocusScope } from '@react-aria/focus';
-import { useModal, useOverlay, usePreventScroll } from '@react-aria/overlays';
-import { useDialog } from '@react-aria/dialog';
-import { mergeProps } from '@react-aria/utils';
+import { Close } from '../icon';
 import clsx from 'clsx';
 
 import styles from './dialog.module.scss';

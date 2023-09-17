@@ -14,6 +14,7 @@ import userEvent from '@testing-library/user-event';
 import styles from './ConversationPreview.module.scss';
 
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
+import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
 
@@ -27,6 +28,37 @@ describe('src/messaging/MessagingView', () => {
       request: { query: GetConversationsQuery },
       result: { data: { conversations } },
     },
+    {
+      request: {
+        query: GetConversationQuery,
+        variables: { id: conversations[0].id },
+      },
+      result: { data: { conversation: conversations[0] } },
+    },
+    {
+      request: {
+        query: GetConversationQuery,
+        variables: { id: conversations[1].id },
+      },
+      result: { data: { conversation: conversations[1] } },
+    },
+    ...['Lui', 'Michel']
+      .map((fullTerm) => {
+        return new Array(fullTerm.length)
+          .fill(null)
+          .map((_, i) => fullTerm.slice(0, i + 1));
+      })
+      .flat()
+      .map((searchtext) => ({
+        request: { query: SearchUsersQuery, variables: { searchtext } },
+        result: {
+          data: {
+            users: searchtext.startsWith('L')
+              ? [SomeUserin]
+              : [KeinErSieEsUser],
+          },
+        },
+      })),
   ];
   it('should list all your conversations', async () => {
     const screen = render(
@@ -75,22 +107,13 @@ describe('src/messaging/MessagingView', () => {
   describe('create new message', () => {
     it('should select an available conversation when chosing the user', async () => {
       const fireEvent = userEvent.setup();
-      const searchUsersMock = [
-        {
-          request: {
-            query: SearchUsersQuery,
-            variables: { searchtext: 'Lui' },
-          },
-          result: { data: { users: [SomeUserin] } },
-        },
-      ];
 
       const screen = render(
         <MessagingView />,
         {},
         {
           currentUser: SomeUser,
-          additionalMocks: [...additionalMocks, ...searchUsersMock],
+          additionalMocks,
         }
       );
 
@@ -126,15 +149,6 @@ describe('src/messaging/MessagingView', () => {
 
     it('should show the new message view when selecting a new user', async () => {
       const fireEvent = userEvent.setup();
-      const searchUsersMock = [
-        {
-          request: {
-            query: SearchUsersQuery,
-            variables: { searchtext: 'Michel' },
-          },
-          result: { data: { users: [KeinErSieEsUser] } },
-        },
-      ];
       const createMsgMock = [
         {
           request: {
@@ -177,11 +191,7 @@ describe('src/messaging/MessagingView', () => {
         {},
         {
           currentUser: SomeUser,
-          additionalMocks: [
-            ...additionalMocks,
-            ...searchUsersMock,
-            ...createMsgMock,
-          ],
+          additionalMocks: [...additionalMocks, ...createMsgMock],
         }
       );
 
@@ -193,6 +203,9 @@ describe('src/messaging/MessagingView', () => {
         screen.getByRole('combobox', { name: /nutzer suchen/i }),
         'Michel'
       );
+      await waitFor(() => {
+        screen.getByRole('option', { name: /Michel/i });
+      });
       await fireEvent.click(
         await screen.findByRole('option', { name: /Michel/i })
       );

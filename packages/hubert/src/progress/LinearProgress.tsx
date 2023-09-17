@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { AriaProgressBarProps } from '@react-types/progress';
-import { useProgressBar } from '@react-aria/progress';
+import { useProgressBar } from 'react-aria';
 import clsx from 'clsx';
 
 import styles from './LinearProgress.module.scss';

@@ -1,10 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { FocusScope } from '@react-aria/focus';
-import { DismissButton, useOverlay } from '@react-aria/overlays';
-import { Box } from '../layout';
 import { motion } from 'framer-motion';
+import { DismissButton, FocusScope, useOverlay } from 'react-aria';
+import { Box } from '../layout';
 import clsx from 'clsx';
 
 import styles from './PopoverOverlay.module.scss';

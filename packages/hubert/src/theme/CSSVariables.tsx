@@ -16,6 +16,11 @@ export const CSSVariables = React.memo(({ theme }: CSSVariablesProps) => {
 
   const cssContent = ':root {\n' + cssVarsInit + '\n}';
 
-  return <style dangerouslySetInnerHTML={{ __html: cssContent }} />;
+  return (
+    <style
+      data-hubert-css-variables-def
+      dangerouslySetInnerHTML={{ __html: cssContent }}
+    />
+  );
 });
 CSSVariables.displayName = 'CSSVariables';

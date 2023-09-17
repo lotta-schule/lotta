@@ -83,7 +83,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
   const { data, error } = await getApolloClient().query({
     query: GetTenantQuery,
     context: {
-      headers
+      headers,
     },
   });
   const tenant = data?.tenant ?? null;

@@ -1,11 +1,11 @@
 'use client';
+
 import * as React from 'react';
-import { useOverlayTrigger } from '@react-aria/overlays';
-import { useOverlayTriggerState } from '@react-stately/overlays';
-import { useButton } from '@react-aria/button';
+import { useButton, useOverlayTrigger } from 'react-aria';
+import { useOverlayTriggerState } from 'react-stately';
+import { usePopper } from 'react-popper';
 import { Button, ButtonProps } from '../button';
 import { PopoverOverlay } from './PopoverOverlay';
-import { usePopper } from 'react-popper';
 
 export interface PopoverProps extends React.HTMLAttributes<HTMLDivElement> {
   buttonProps?: ButtonProps;
@@ -31,11 +31,10 @@ export const Popover = ({
     { placement: 'auto', strategy: 'fixed' }
   );
 
-  const { triggerProps, overlayProps } = useOverlayTrigger(
-    { type: 'dialog' },
-    state,
-    triggerRef
-  );
+  const {
+    triggerProps: { onPress: _onOverlayPress, ...triggerProps },
+    overlayProps,
+  } = useOverlayTrigger({ type: 'dialog' }, state, triggerRef);
 
   const { buttonProps: buttonAttributes } = useButton(
     {

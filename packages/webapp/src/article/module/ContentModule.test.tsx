@@ -10,6 +10,8 @@ import {
 import { ContentModule } from './ContentModule';
 import userEvent from '@testing-library/user-event';
 
+import GetContentModuleResults from '../../api/query/GetContentModuleResults.graphql';
+
 describe('shared/article/module/ContentModule', () => {
   describe('in EditMode', () => {
     const fireEvent = userEvent.setup();
@@ -579,7 +581,18 @@ describe('shared/article/module/ContentModule', () => {
           onRemoveContentModule={() => {}}
         />,
         {},
-        { currentUser: SomeUser }
+        {
+          currentUser: SomeUser,
+          additionalMocks: [
+            {
+              request: {
+                query: GetContentModuleResults,
+                variables: { contentModuleId: formContentModule.id },
+              },
+              result: { data: { contentModuleResults: [] } },
+            },
+          ],
+        }
       );
       expect(
         screen.getByRole('button', { name: /einsendungen sehen/i })

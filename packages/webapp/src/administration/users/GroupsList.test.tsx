@@ -1,7 +1,9 @@
-import { userGroups } from 'test/fixtures';
+import { adminGroup, userGroups } from 'test/fixtures';
 import { render, waitFor } from 'test/util';
 import { GroupList } from './GroupList';
 import userEvent from '@testing-library/user-event';
+
+import GetGroupQuery from '../../api/query/GetGroupQuery.graphql';
 
 const extendedUserGroups = [
   ...userGroups,
@@ -59,6 +61,15 @@ describe('administration/users/GroupList', () => {
       {},
       {
         userGroups: extendedUserGroups,
+        additionalMocks: [
+          {
+            request: {
+              query: GetGroupQuery,
+              variables: { id: adminGroup.id },
+            },
+            result: { data: { group: adminGroup } },
+          },
+        ],
       }
     );
     const groupLI = screen.getByRole('listitem', { name: 'Administrator' });

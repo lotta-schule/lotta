@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { WidgetIconModel } from 'model';
 import { iconNameMapping, WidgetIcon } from 'category/widgets/WidgetIcon';
-import { Button, Input, Label, Select } from '@lotta-schule/hubert';
+import { Button, Input, Label, Option, Select } from '@lotta-schule/hubert';
+import { Icon } from 'shared/Icon';
 
 import styles from './WidgetIconSelection.module.scss';
-import { Icon } from 'shared/Icon';
 
 export interface WidgetIconSelectionProps {
   icon: WidgetIconModel;
   onSelectIcon(icon: WidgetIconModel): void;
 }
 
-export const WidgetIconSelection = React.memo<WidgetIconSelectionProps>(
-  ({ icon, onSelectIcon }) => {
+export const WidgetIconSelection = React.memo(
+  ({ icon, onSelectIcon }: WidgetIconSelectionProps) => {
     return (
       <div className={styles.root}>
         <section>
@@ -48,21 +48,22 @@ export const WidgetIconSelection = React.memo<WidgetIconSelectionProps>(
                 </Label>
               </div>
               <div>
-                <Label className={styles.label} label={'Textfarbe'}>
-                  <Select
-                    onChange={(e) =>
-                      onSelectIcon({
-                        ...icon,
-                        overlayTextColor: e.currentTarget.value,
-                      })
-                    }
-                    value={icon.overlayTextColor ?? ''}
-                  >
-                    <option value={''}>weiß</option>
-                    <option value={'primary'}>primär</option>
-                    <option value={'secondary'}>sekundär</option>
-                  </Select>
-                </Label>
+                <Select
+                  fullWidth
+                  className={styles.label}
+                  title={'Textfarbe'}
+                  onChange={(overlayTextColor) =>
+                    onSelectIcon({
+                      ...icon,
+                      overlayTextColor,
+                    })
+                  }
+                  value={icon.overlayTextColor || 'default'}
+                >
+                  <Option value={'default'}>weiß</Option>
+                  <Option value={'primary'}>primär</Option>
+                  <Option value={'secondary'}>sekundär</Option>
+                </Select>
               </div>
             </div>
           </div>

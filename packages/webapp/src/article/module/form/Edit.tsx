@@ -23,8 +23,8 @@ export interface EditProps {
   onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const Edit = React.memo<EditProps>(
-  ({ contentModule, onUpdateModule }) => {
+export const Edit = React.memo(
+  ({ contentModule, onUpdateModule }: EditProps) => {
     const configuration: FormConfiguration = {
       destination: '',
       elements: [],

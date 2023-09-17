@@ -9,6 +9,7 @@ export type ListItemPreliminaryItem = {
   leftSection?: React.ReactNode;
   description?: string | React.ReactNode;
   rightSection?: React.ReactNode;
+  style?: React.CSSProperties;
 } & (
   | {
       label: string;
@@ -45,7 +46,7 @@ export const ListItemFactory = {
     return (
       <Item key={key} textValue={textValue ?? (label as string)}>
         <span>{leftSection}</span>
-        {label}
+        <span style={other.style}>{label}</span>
         {description ?? null}
         {rightSection}
       </Item>
