@@ -12,7 +12,6 @@ The project depends on:
 
 - postgres
 - redis
-- elasticsearch
 - An S3-compatible Object storage
 
 In order to faciliate the setup during development, a docker-compose file

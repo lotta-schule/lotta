@@ -1,6 +1,6 @@
 defmodule Lotta.Search do
   @moduledoc """
-    Module for executing an elastic search request.
+    Module for executing a search request.
   """
   require Logger
 

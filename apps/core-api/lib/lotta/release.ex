@@ -57,7 +57,7 @@ defmodule Lotta.Release do
 
   # example:
   # rollback
-  def rollback(opts) do
+  def rollback(opts \\ [step: 1]) do
     config =
       Application.get_env(:lotta, Repo)
       |> Keyword.put(:name, nil)
