@@ -28,20 +28,13 @@ describe('src/messaging/MessagingView', () => {
       request: { query: GetConversationsQuery },
       result: { data: { conversations } },
     },
-    {
+    ...conversations.map((conversation) => ({
       request: {
         query: GetConversationQuery,
-        variables: { id: conversations[0].id },
+        variables: { id: conversation.id },
       },
-      result: { data: { conversation: conversations[0] } },
-    },
-    {
-      request: {
-        query: GetConversationQuery,
-        variables: { id: conversations[1].id },
-      },
-      result: { data: { conversation: conversations[1] } },
-    },
+      result: { data: { conversation } },
+    })),
     ...['Lui', 'Michel']
       .map((fullTerm) => {
         return new Array(fullTerm.length)
