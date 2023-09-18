@@ -9,8 +9,20 @@ defmodule Lotta.Repo.Migrations.AddSearchToArticlesAndContentmodules do
       ADD COLUMN search tsvector
       GENERATED ALWAYS AS
         (
-          setweight(to_tsvector('german', title), 'A') || ' ' ||
-          setweight(to_tsvector('german', preview), 'B')
+          setweight(
+            to_tsvector(
+              'german',
+              coalesce(title, '')
+            ),
+            'A'
+          ) || ' ' ||
+          setweight(
+            to_tsvector(
+              'german',
+              coalesce(preview, '')
+            ),
+            'B'
+          )
         )
       STORED
     """)
@@ -19,8 +31,20 @@ defmodule Lotta.Repo.Migrations.AddSearchToArticlesAndContentmodules do
       ADD COLUMN search tsvector
       GENERATED ALWAYS AS
         (
-          setweight(to_tsvector('german', text), 'B') || ' ' ||
-          setweight(to_tsvector('german', content), 'B')
+          setweight(
+            to_tsvector(
+              'german',
+              coalesce(text, '')
+            ),
+            'C'
+          ) || ' ' ||
+          setweight(
+            to_tsvector(
+              'german',
+              coalesce(content, '{}')
+            ),
+            'C'
+          )
         )
       STORED
     """)
@@ -30,8 +54,8 @@ defmodule Lotta.Repo.Migrations.AddSearchToArticlesAndContentmodules do
   end
 
   def down do
-    drop index(:articles, :search)
-    drop index(:content_modules, :search)
+    drop_if_exists index(:articles, :search)
+    drop_if_exists index(:content_modules, :search)
 
     alter table :articles do
       remove :search

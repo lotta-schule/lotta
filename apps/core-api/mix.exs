@@ -88,6 +88,7 @@ defmodule Lotta.MixProject do
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.1"},
       {:hackney, "~> 1.15"},
+      {:httpoison, "~> 2.1"},
       {:tesla, "~> 1.5"},
       {:sweet_xml, "~> 0.7"},
       {:poison, "~> 5.0"},
@@ -100,7 +101,6 @@ defmodule Lotta.MixProject do
       {:sentry, "~> 8.1"},
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},
-      {:elasticsearch, "~> 1.0"},
       # Test
       {:mock, "~> 0.3", only: :test},
       {:excoveralls, "~> 0.14", only: :test},
