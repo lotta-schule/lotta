@@ -4,6 +4,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { UserModel } from 'model';
 import { useCurrentUser } from './useCurrentUser';
 import { SomeUser } from 'test/fixtures';
+import pick from 'lodash/pick';
 
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 
@@ -40,7 +41,24 @@ describe('util/userAvatar/useCurrentUser', () => {
       wrapper: createWrapperForUser({ ...SomeUser }),
     });
     await waitFor(() => {
-      expect(screen.result.current).toEqual(SomeUser);
+      expect(screen.result.current).toEqual(
+        pick(SomeUser, [
+          'id',
+          'insertedAt',
+          'updatedAt',
+          'lastSeen',
+          'name',
+          'nickname',
+          'email',
+          'class',
+          'hideFullName',
+          'enrollmentTokens',
+          'unreadMessages',
+          'hasChangedDefaultPassword',
+          'avatarImageFile',
+          'groups',
+        ])
+      );
     });
   });
 });

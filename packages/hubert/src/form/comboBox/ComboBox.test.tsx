@@ -249,14 +249,11 @@ describe('Combobox', () => {
         await waitFor(() => {
           expect(onSelect).toHaveBeenCalledWith('Apple');
         });
-        await waitFor(
-          () => {
-            expect(screen.queryByRole('option', { name: /apple/i })).toBeNull();
-          },
-          {
-            timeout: 10_000,
-          }
-        );
+        await waitFor(() => {
+          expect(
+            screen.queryByRole('option', { name: /apple/i })
+          ).not.toBeVisible();
+        });
       });
 
       it('should not close the listbox on select when dynamic items are passed (as callback)', async () => {

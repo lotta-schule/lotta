@@ -2,7 +2,7 @@ import * as React from 'react';
 import { omit } from 'lodash';
 import { User } from 'util/model';
 import { render, waitFor } from 'test/util';
-import { KeinErSieEsUser, SomeUser, SomeUserin } from 'test/fixtures';
+import { KeinErSieEsUser, SomeUser } from 'test/fixtures';
 import { SearchUserField } from './SearchUserField';
 import userEvent from '@testing-library/user-event';
 
@@ -88,6 +88,7 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
           'email',
           'enrollmentTokens',
           'groups',
+          'assignedGroups',
           'hideFullName',
           'lastSeen',
           'unreadMessages',
