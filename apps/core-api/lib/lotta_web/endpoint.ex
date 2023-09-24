@@ -11,6 +11,10 @@ defmodule LottaWeb.Endpoint do
     websocket: [check_origin: false],
     longpoll: [check_origin: false]
 
+  socket "/api/graphql-socket", LottaWeb.GraphQLSocket,
+    websocket: [check_origin: false],
+    longpoll: [check_origin: false]
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest

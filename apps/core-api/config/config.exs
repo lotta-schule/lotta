@@ -38,6 +38,8 @@ config :lotta, :default_user, %{
   hide_full_name: false
 }
 
+config :absinthe_graphql_ws, :json_library, Jason
+
 config :argon2_elixir,
   argon2_type: 1
 
