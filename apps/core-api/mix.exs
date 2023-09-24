@@ -75,6 +75,7 @@ defmodule Lotta.MixProject do
       {:absinthe, "~> 1.7.5"},
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_phoenix, "~> 2.0"},
+      {:absinthe_graphql_ws, github: "geometerio/absinthe_graphql_ws"},
       {:dataloader, "~> 2.0"},
       {:corsica, "~> 2.1.2"},
       {:postgrex, ">= 0.0.0"},

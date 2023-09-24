@@ -44,6 +44,17 @@ defmodule LottaWeb.Schema.Messages do
     field :receive_message, :message do
       config(fn
         _args,
+        %{
+          context: %{
+            context: %{current_user: %{id: user_id, all_groups: groups}, tenant: %{id: tid}}
+          }
+        } ->
+          {:ok,
+           topic: [
+             "#{tid}:messages:user:#{user_id}"
+             | Enum.map(groups, &"#{tid}:messages:group:#{&1.id}")
+           ]}
+        _args,
         %{context: %{current_user: %{id: user_id, all_groups: groups}, tenant: %{id: tid}}} ->
           {:ok,
            topic: [
