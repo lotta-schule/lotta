@@ -156,15 +156,15 @@ describe('shared/article/module/form/FormElement', () => {
         />
       );
 
-      expect(screen.getByRole('combobox', { name: /blabla1/i })).toHaveValue(
-        'B'
-      );
+      expect(
+        screen.getByRole('button', { name: /zweiter buchstabe/i })
+      ).toBeVisible();
 
-      expect(screen.getAllByRole('option')).toHaveLength(3);
-      await fireEvent.selectOptions(
-        screen.getByRole('combobox', { name: /blabla1/i }),
-        screen.getByRole('option', { name: /erster/i })
+      await fireEvent.click(
+        screen.getByRole('button', { name: /zweiter buchstabe/i })
       );
+      expect(screen.getAllByRole('option')).toHaveLength(3);
+      await fireEvent.click(screen.getByRole('option', { name: /erster/i }));
       expect(setValueFn).toHaveBeenCalledWith('A');
     });
   });

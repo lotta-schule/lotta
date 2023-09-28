@@ -1,16 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { DismissButton, useOverlay } from '@react-aria/overlays';
-import { FocusScope } from '@react-aria/focus';
-import { mergeProps } from '@react-aria/utils';
+import { mergeProps, DismissButton, FocusScope, useOverlay } from 'react-aria';
 import { PopperProps, usePopper } from 'react-popper';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CollectionChildren } from '@react-types/shared';
-import { ListItemPreliminaryItem } from '../../list/ListItemFactory';
 
 export type PopoverProps = {
-  children: CollectionChildren<ListItemPreliminaryItem>;
+  children: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
   placement?: PopperProps<unknown>['placement'];
@@ -22,6 +18,10 @@ export const Popover = React.forwardRef(
     { children, isOpen, onClose, placement, triggerRef }: PopoverProps,
     forwardedRef: React.Ref<HTMLDivElement | null>
   ) => {
+    const [triggerElement, setTriggerElement] =
+      React.useState<HTMLElement | null>(null);
+    const [popoverElement, setPopoverElement] =
+      React.useState<HTMLElement | null>(null);
     const ref = React.useRef<HTMLDivElement>(null);
     React.useImperativeHandle(forwardedRef, () => ref.current);
 
@@ -35,13 +35,18 @@ export const Popover = React.forwardRef(
     );
 
     const { styles: popperStyle, attributes: popperProps } = usePopper(
-      triggerRef.current,
-      ref.current,
+      triggerElement,
+      popoverElement,
       {
         placement,
         strategy: 'fixed',
       }
     );
+
+    React.useLayoutEffect(() => {
+      setTriggerElement(triggerRef.current);
+      setPopoverElement(ref.current);
+    });
 
     return (
       <AnimatePresence>
@@ -49,19 +54,25 @@ export const Popover = React.forwardRef(
           <motion.div
             key={'Popover'}
             initial={{
+              height: 0,
               opacity: 0,
             }}
             animate={{
+              height: 'auto',
               opacity: 1,
             }}
-            exit={{ opacity: 0 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{
+              duration: 0.5,
+              height: { type: 'spring', stiffness: 300, damping: 30 },
+            }}
             {...(mergeProps(overlayProps, popperProps.popper ?? {}) as any)}
-            style={{ ...popperStyle.popper, zIndex: 10 }}
+            style={{ ...popperStyle.popper, overflow: 'hidden', zIndex: 10 }}
             ref={ref}
           >
             <FocusScope restoreFocus>
               <DismissButton onDismiss={onClose} />
-              {children as any}
+              {children}
             </FocusScope>
           </motion.div>
         )}

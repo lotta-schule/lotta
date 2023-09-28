@@ -1,29 +1,29 @@
 import * as React from 'react';
 import { StoryFn, Meta } from '@storybook/react';
-import { Select, SelectProps } from '@lotta-schule/hubert';
+import { action } from '@storybook/addon-actions';
+import { Option, Select, SelectProps } from '@lotta-schule/hubert';
 
 export default {
   title: 'Form/Select',
   component: Select,
-  argTypes: {},
+  argTypes: {
+  },
 } as Meta;
 
 const Template: StoryFn<Omit<SelectProps, 'ref'>> = (args) => (
   <Select {...args}>
-    <optgroup label={'Gruppe 1'}>
-      <option>Option 1</option>
-      <option>Option 2</option>
-      <option>Option 3</option>
-      <option>Option 4</option>
-    </optgroup>
-    <optgroup label={'Gruppe 2'}>
-      <option>Option 1</option>
-      <option>Option 2</option>
-    </optgroup>
+    <Option key={'option1'} value={'1'}>Option 1</Option>
+    <Option key={'option2'} value={'2'}>Option 2</Option>
+    <Option key={'option3'} value={'3'}>Option 3</Option>
+    <Option key={'option4'} value={'4'}>Option 4</Option>
   </Select>
 );
 
 export const Default = {
   render: Template,
-  args: {},
+  args: {
+    title: 'Example Select',
+    onChange: action('onChange'),
+    value: '1'
+  },
 };

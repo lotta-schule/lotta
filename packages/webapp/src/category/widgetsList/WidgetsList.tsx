@@ -18,8 +18,8 @@ export interface WidgetsListProps {
   children?: JSX.Element;
 }
 
-export const WidgetsList = React.memo<WidgetsListProps>(
-  ({ widgets, children }) => {
+export const WidgetsList = React.memo(
+  ({ widgets, children }: WidgetsListProps) => {
     const isMobile =
       typeof window !== 'undefined' &&
       window.matchMedia('(max-width: 959px)').matches;
@@ -101,7 +101,7 @@ export const WidgetsList = React.memo<WidgetsListProps>(
         data-testid={'WidgetsList'}
         ref={wrapperRef}
       >
-        {shownWidgets && shownWidgets.length > 1 && (
+        {shownWidgets.length > 1 && (
           <>
             <Tabbar
               className={styles.WidgetTabbar}
@@ -144,7 +144,9 @@ export const WidgetsList = React.memo<WidgetsListProps>(
             </SwipeableViews>
           </>
         )}
-        {shownWidgets && shownWidgets.length === 1}
+        {shownWidgets.length === 1 && (
+          <Widget key={shownWidgets[0].id} widget={shownWidgets[0]} />
+        )}
         {children}
       </div>
     );

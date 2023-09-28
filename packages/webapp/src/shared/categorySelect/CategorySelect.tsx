@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCategories } from 'util/categories/useCategories';
 import { CategoryModel } from 'model';
-import { Label, Select } from '@lotta-schule/hubert';
+import { Option, Select } from '@lotta-schule/hubert';
 
 export interface CategorySelectProps {
   disabled?: boolean;
@@ -13,7 +13,7 @@ export interface CategorySelectProps {
   onSelectCategory(category: CategoryModel | null): void;
 }
 
-export const CategorySelect = React.memo<CategorySelectProps>(
+export const CategorySelect = React.memo(
   ({
     disabled,
     label,
@@ -22,7 +22,7 @@ export const CategorySelect = React.memo<CategorySelectProps>(
     selectedCategory,
     onSelectCategory,
     className,
-  }) => {
+  }: CategorySelectProps) => {
     const [categories] = useCategories();
 
     const mainCategories = categories.filter(
@@ -36,9 +36,9 @@ export const CategorySelect = React.memo<CategorySelectProps>(
             ? category.title
             : `${category.category ? '\xa0 \xa0 \xa0' : ''}${category.title}`;
         return (
-          <option key={category.id} value={category.id}>
+          <Option key={category.id} value={category.id}>
             {label}
-          </option>
+          </Option>
         );
       },
       [hideSubCategories]
@@ -56,31 +56,25 @@ export const CategorySelect = React.memo<CategorySelectProps>(
       .map(getMenuItemForCategory);
 
     return (
-      <Label
-        label={label ?? 'Kategorie wählen:'}
+      <Select
         data-testid="CategorySelect"
         className={className}
+        title={label ?? 'Kategorie wählen'}
+        disabled={disabled}
+        value={selectedCategory?.id ?? 'null'}
+        onChange={(categoryId) =>
+          onSelectCategory(
+            categories.find(
+              (cat) => categoryId !== 'null' && cat.id === categoryId
+            ) || null
+          )
+        }
       >
-        <Select
-          title="Kategorie wählen"
-          disabled={disabled}
-          value={selectedCategory?.id ?? 'null'}
-          onChange={(e) =>
-            onSelectCategory(
-              categories.find(
-                (cat) =>
-                  e.currentTarget.value !== 'null' &&
-                  cat.id === e.currentTarget.value
-              ) || null
-            )
-          }
-        >
-          <option key={'null'} value={'null'}>
-            Kategorie wählen
-          </option>
-          {menuItems}
-        </Select>
-      </Label>
+        <Option key={'null'} value={'null'}>
+          Kategorie wählen
+        </Option>
+        {menuItems}
+      </Select>
     );
   }
 );

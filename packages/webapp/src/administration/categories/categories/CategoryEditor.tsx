@@ -11,6 +11,7 @@ import {
   Label,
   Radio,
   RadioGroup,
+  Option,
   Select,
 } from '@lotta-schule/hubert';
 import { motion } from 'framer-motion';
@@ -184,25 +185,22 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
           </Checkbox>
         )}
 
-        <Label
+        <Select
           className={styles.input}
-          label={'Layout für die Kategorie wählen'}
+          title={'Layout für die Kategorie wählen'}
+          value={category.layoutName ?? 'standard'}
+          onChange={(layoutName) =>
+            setCategory({
+              ...category,
+              layoutName: layoutName as 'standard' | 'densed' | '2-columns',
+            })
+          }
+          id={'category-layout'}
         >
-          <Select
-            value={category.layoutName ?? 'standard'}
-            onChange={({ currentTarget }) =>
-              setCategory({
-                ...category,
-                layoutName: currentTarget.value as any,
-              })
-            }
-            id={'category-layout'}
-          >
-            <option value={'standard'}>Standardlayout</option>
-            <option value={'densed'}>Kompaktlayout</option>
-            <option value={'2-columns'}>Zweispaltenlayout</option>
-          </Select>
-        </Label>
+          <Option value={'standard'}>Standardlayout</Option>
+          <Option value={'densed'}>Kompaktlayout</Option>
+          <Option value={'2-columns'}>Zweispaltenlayout</Option>
+        </Select>
 
         {!category.isHomepage && (
           <>
@@ -267,28 +265,26 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                   closed: { opacity: 0, height: 0 },
                 }}
               >
-                <Label label={'Zu einer anderen Kategorie weiterleiten ...'}>
-                  <Select
-                    value={category.redirect || 'null'}
-                    onChange={({ currentTarget }) =>
-                      setCategory({
-                        ...category,
-                        redirect: currentTarget.value,
-                      })
-                    }
-                    id={'category-redirect'}
-                  >
-                    <option key={0} />
-                    {categories.map((category) => (
-                      <option
-                        key={category.id}
-                        value={Category.getPath(category)}
-                      >
-                        {category.title}
-                      </option>
-                    ))}
-                  </Select>
-                </Label>
+                <Select
+                  title={'Zu einer anderen Kategorie weiterleiten ...'}
+                  value={category.redirect || 'null'}
+                  onChange={(redirect) =>
+                    setCategory({
+                      ...category,
+                      redirect,
+                    })
+                  }
+                  id={'category-redirect'}
+                >
+                  {categories.map((category) => (
+                    <Option
+                      key={category.id}
+                      value={Category.getPath(category)}
+                    >
+                      {category.title}
+                    </Option>
+                  ))}
+                </Select>
               </motion.div>
 
               <Radio

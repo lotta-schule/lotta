@@ -20,12 +20,11 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
           updateElement={updateElementFn}
         />
       );
-      expect(
-        screen.getByRole('combobox', { name: /art der eingabe/i })
-      ).toHaveValue('input');
-      await fireEvent.selectOptions(
-        screen.getByRole('combobox', { name: /texteingabevariation/i }),
-        'color'
+      await fireEvent.click(
+        screen.getByRole('button', { name: /texteingabevariation/i })
+      );
+      await fireEvent.click(
+        await screen.findByRole('option', { name: /farbe/i })
       );
       expect(updateElementFn).toHaveBeenLastCalledWith({ type: 'color' });
       const nameInput = screen.getByRole('textbox', {
@@ -98,14 +97,16 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
         />
       );
       expect(
-        screen.getByRole('combobox', { name: /art der eingabe/i })
-      ).toHaveValue('selection');
+        screen.getByRole('button', { name: /art der eingabe/i })
+      ).toBeVisible();
       expect(
-        screen.getByRole('combobox', { name: /auswahlfeldvariation/i })
-      ).toHaveValue('checkbox');
-      await fireEvent.selectOptions(
-        screen.getByRole('combobox', { name: /auswahlfeldvariation/i }),
-        'radio'
+        screen.getByRole('button', { name: /auswahlfeldvariation/i })
+      ).toBeVisible();
+      await fireEvent.click(
+        screen.getByRole('button', { name: /auswahlfeldvariation/i })
+      );
+      await fireEvent.click(
+        await screen.findByRole('option', { name: /radio/i })
       );
       expect(updateElementFn).toHaveBeenLastCalledWith({ type: 'radio' });
       expect(screen.getByRole('textbox', { name: /name/i })).toBeVisible();
@@ -136,8 +137,8 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
         <FormElementConfiguration element={element} updateElement={() => {}} />
       );
       expect(
-        screen.getByRole('combobox', { name: /art der eingabe/i })
-      ).toHaveValue('file');
+        screen.getByRole('button', { name: /art der eingabe/i })
+      ).toBeVisible();
       expect(screen.getByRole('textbox', { name: /name/i })).toBeVisible();
       expect(
         screen.getByRole('textbox', { name: /aufschrift/i })

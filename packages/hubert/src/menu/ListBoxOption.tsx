@@ -2,10 +2,8 @@
 
 import * as React from 'react';
 import { Node } from '@react-types/shared';
-import { ListState } from '@react-stately/list';
-import { useOption } from '@react-aria/listbox';
-import { useFocusRing } from '@react-aria/focus';
-import { mergeProps } from '@react-aria/utils';
+import { ListState } from 'react-stately';
+import { mergeProps, useFocusRing, useOption } from 'react-aria';
 import {
   ListItemFactory,
   ListItemPreliminaryItem,

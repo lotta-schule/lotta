@@ -301,7 +301,7 @@ describe('shared/editor/GroupSelect', () => {
         expect(screen.getByRole('combobox')).toHaveValue('');
       });
       await waitFor(() => {
-        expect(screen.queryByRole('listbox')).toBeNull();
+        expect(screen.queryByRole('listbox')).not.toBeVisible();
       });
     });
 

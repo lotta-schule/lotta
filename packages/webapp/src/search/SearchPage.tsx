@@ -46,6 +46,7 @@ export const SearchPage = () => {
               id={'searchfield'}
               type={'search'}
               value={searchText}
+              placeholder={'Suchbegriff'}
               onChange={(e) => setSearchText(e.currentTarget.value)}
             />
           </Label>

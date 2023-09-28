@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { MockedResponse } from '@apollo/client/testing';
 import {
   FaecherCategory,
   StartseiteCategory,
@@ -11,6 +12,51 @@ import userEvent from '@testing-library/user-event';
 
 import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
+import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
+import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graphql';
+
+const allWidgetsMock: MockedResponse = {
+  request: {
+    query: GetWidgetsQuery,
+    variables: {},
+  },
+  result: { data: { widgets: [] } },
+};
+const getCategoryWidgetsMock = (
+  categoryId: string,
+  responseWidgets: any[] = []
+): MockedResponse => ({
+  request: {
+    query: GetCategoryWidgetsQuery,
+    variables: { categoryId },
+  },
+  result: { data: { widgets: responseWidgets } },
+});
+const getArticlesMock = (
+  categoryId: string,
+  responseArticles: any[] = []
+): MockedResponse => ({
+  request: {
+    query: GetArticlesQuery,
+    variables: { categoryId },
+  },
+  result: { data: { articles: responseArticles } },
+});
+const getArticleForPreview = (
+  articleId: string,
+  responseArticle: any = null
+): MockedResponse => ({
+  request: {
+    query: GetArticleForPreviewQuery,
+    variables: { id: articleId },
+  },
+  result: {
+    data: {
+      article: responseArticle,
+    },
+  },
+});
 
 describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
   it('should render CategoryEditor', () => {
@@ -18,7 +64,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       <CategoryEditor
         selectedCategory={FaecherCategory}
         onSelectCategory={() => {}}
-      />
+      />,
+      {},
+      {
+        additionalMocks: [
+          allWidgetsMock,
+          getCategoryWidgetsMock(FaecherCategory.id),
+          getArticlesMock(FaecherCategory.id),
+        ],
+      }
     );
   });
 
@@ -27,7 +81,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       <CategoryEditor
         selectedCategory={FaecherCategory}
         onSelectCategory={() => {}}
-      />
+      />,
+      {},
+      {
+        additionalMocks: [
+          allWidgetsMock,
+          getCategoryWidgetsMock(FaecherCategory.id),
+          getArticlesMock(FaecherCategory.id),
+        ],
+      }
     );
 
     expect(screen.getByRole('heading', { name: /fächer/i })).toBeVisible();
@@ -39,7 +101,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         <CategoryEditor
           selectedCategory={FaecherCategory}
           onSelectCategory={() => {}}
-        />
+        />,
+        {},
+        {
+          additionalMocks: [
+            allWidgetsMock,
+            getCategoryWidgetsMock(FaecherCategory.id),
+            getArticlesMock(FaecherCategory.id),
+          ],
+        }
       );
 
       expect(screen.getByTestId('GroupSelect')).toBeVisible();
@@ -50,7 +120,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         <CategoryEditor
           selectedCategory={StartseiteCategory}
           onSelectCategory={() => {}}
-        />
+        />,
+        {},
+        {
+          additionalMocks: [
+            allWidgetsMock,
+            getCategoryWidgetsMock(StartseiteCategory.id),
+            getArticlesMock(FaecherCategory.id),
+          ],
+        }
       );
 
       expect(screen.queryByTestId('GroupSelect')).toBeNull();
@@ -63,7 +141,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         <CategoryEditor
           selectedCategory={FaecherCategory}
           onSelectCategory={() => {}}
-        />
+        />,
+        {},
+        {
+          additionalMocks: [
+            allWidgetsMock,
+            getCategoryWidgetsMock(FaecherCategory.id),
+            getArticlesMock(FaecherCategory.id),
+          ],
+        }
       );
 
       expect(
@@ -78,7 +164,14 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         <CategoryEditor
           selectedCategory={StartseiteCategory}
           onSelectCategory={() => {}}
-        />
+        />,
+        {},
+        {
+          additionalMocks: [
+            allWidgetsMock,
+            getCategoryWidgetsMock(StartseiteCategory.id),
+          ],
+        }
       );
 
       expect(
@@ -94,11 +187,19 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       <CategoryEditor
         selectedCategory={FaecherCategory}
         onSelectCategory={() => {}}
-      />
+      />,
+      {},
+      {
+        additionalMocks: [
+          allWidgetsMock,
+          getCategoryWidgetsMock(FaecherCategory.id),
+          getArticlesMock(FaecherCategory.id),
+        ],
+      }
     );
 
     expect(
-      screen.getByRole('combobox', {
+      screen.getByRole('button', {
         name: /layout/i,
       })
     ).toBeVisible();
@@ -111,7 +212,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           <CategoryEditor
             selectedCategory={FaecherCategory}
             onSelectCategory={() => {}}
-          />
+          />,
+          {},
+          {
+            additionalMocks: [
+              allWidgetsMock,
+              getCategoryWidgetsMock(FaecherCategory.id),
+              getArticlesMock(FaecherCategory.id),
+            ],
+          }
         );
 
         expect(
@@ -130,7 +239,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
               redirect: 'https://lotta.schule',
             }}
             onSelectCategory={() => {}}
-          />
+          />,
+          {},
+          {
+            additionalMocks: [
+              allWidgetsMock,
+              getCategoryWidgetsMock(FaecherCategory.id),
+              getArticlesMock(FaecherCategory.id),
+            ],
+          }
         );
 
         await fireEvent.click(
@@ -158,7 +275,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           <CategoryEditor
             selectedCategory={internalFaecherCategoy}
             onSelectCategory={() => {}}
-          />
+          />,
+          {},
+          {
+            additionalMocks: [
+              allWidgetsMock,
+              getCategoryWidgetsMock(internalFaecherCategoy.id),
+              getArticlesMock(internalFaecherCategoy.id),
+            ],
+          }
         );
 
         expect(
@@ -180,7 +305,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           <CategoryEditor
             selectedCategory={internalFaecherCategoy}
             onSelectCategory={() => {}}
-          />
+          />,
+          {},
+          {
+            additionalMocks: [
+              allWidgetsMock,
+              getCategoryWidgetsMock(internalFaecherCategoy.id),
+              getArticlesMock(internalFaecherCategoy.id),
+            ],
+          }
         );
 
         await fireEvent.click(
@@ -212,7 +345,16 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           <CategoryEditor
             selectedCategory={internalFaecherCategoy}
             onSelectCategory={() => {}}
-          />
+          />,
+          {},
+          {
+            additionalMocks: [
+              allWidgetsMock,
+              getCategoryWidgetsMock(internalFaecherCategoy.id),
+              getArticlesMock(internalFaecherCategoy.id),
+              getArticleForPreview(ComputerExperten.id),
+            ],
+          }
         );
 
         expect(
@@ -234,7 +376,16 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           <CategoryEditor
             selectedCategory={internalFaecherCategoy}
             onSelectCategory={() => {}}
-          />
+          />,
+          {},
+          {
+            additionalMocks: [
+              allWidgetsMock,
+              getCategoryWidgetsMock(internalFaecherCategoy.id),
+              getArticlesMock(internalFaecherCategoy.id),
+              getArticleForPreview(ComputerExperten.id),
+            ],
+          }
         );
 
         await fireEvent.click(
@@ -267,7 +418,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           <CategoryEditor
             selectedCategory={externalFaecherCategoy}
             onSelectCategory={() => {}}
-          />
+          />,
+          {},
+          {
+            additionalMocks: [
+              allWidgetsMock,
+              getCategoryWidgetsMock(externalFaecherCategoy.id),
+              getArticlesMock(externalFaecherCategoy.id),
+            ],
+          }
         );
 
         expect(
@@ -283,7 +442,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           <CategoryEditor
             selectedCategory={externalFaecherCategoy}
             onSelectCategory={() => {}}
-          />
+          />,
+          {},
+          {
+            additionalMocks: [
+              allWidgetsMock,
+              getCategoryWidgetsMock(externalFaecherCategoy.id),
+              getArticlesMock(externalFaecherCategoy.id),
+            ],
+          }
         );
 
         await fireEvent.click(
@@ -323,20 +490,10 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         {},
         {
           additionalMocks: [
-            {
-              request: {
-                query: GetCategoryWidgetsQuery,
-                variables: { categoryId: FaecherCategory.id },
-              },
-              result: { data: { widgets: [] } },
-            },
-            {
-              request: {
-                query: GetCategoryWidgetsQuery,
-                variables: { categoryId: FaecherCategory.id },
-              },
-              result: { data: { widgets: [] } },
-            },
+            allWidgetsMock,
+            getCategoryWidgetsMock(FaecherCategory.id),
+            getCategoryWidgetsMock(FaecherCategory.id),
+            getArticlesMock(FaecherCategory.id),
             {
               request: {
                 query: UpdateCategoryMutation,
@@ -384,7 +541,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         <CategoryEditor
           selectedCategory={StartseiteCategory}
           onSelectCategory={() => {}}
-        />
+        />,
+        {},
+        {
+          additionalMocks: [
+            allWidgetsMock,
+            getCategoryWidgetsMock(StartseiteCategory.id),
+            getArticlesMock(StartseiteCategory.id),
+          ],
+        }
       );
 
       expect(screen.queryByRole('button', { name: /löschen/i })).toBeNull();
@@ -396,7 +561,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         <CategoryEditor
           selectedCategory={FaecherCategory}
           onSelectCategory={() => {}}
-        />
+        />,
+        {},
+        {
+          additionalMocks: [
+            allWidgetsMock,
+            getCategoryWidgetsMock(FaecherCategory.id),
+            getArticlesMock(FaecherCategory.id),
+          ],
+        }
       );
 
       await fireEvent.click(screen.getByRole('button', { name: /löschen/i }));

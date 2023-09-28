@@ -35,9 +35,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
       () =>
         categories.filter(
           (category) =>
-            !category.category &&
-            !category.isSidenav &&
-            !category.isHomepage
+            !category.category && !category.isSidenav && !category.isHomepage
         ),
       [categories]
     );

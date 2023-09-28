@@ -11,13 +11,37 @@ import { UserList } from 'administration/users/UserList';
 import userEvent from '@testing-library/user-event';
 
 import GetUsersQuery from 'api/query/GetUsersQuery.graphql';
+import GetUserQuery from 'api/query/GetUserQuery.graphql';
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 
+const additionalMocks = [
+  ...[KeinErSieEsUser, SomeUserin].map((user) => ({
+    request: { query: GetUserQuery, variables: { id: user.id } },
+    result: { data: { user } },
+  })),
+  ...['Michel']
+    .map((fullTerm) => {
+      return new Array(fullTerm.length)
+        .fill(null)
+        .map((_, i) => fullTerm.slice(0, i + 1));
+    })
+    .flat()
+    .map((searchtext) => ({
+      request: { query: SearchUsersQuery, variables: { searchtext } },
+      result: {
+        data: {
+          users: [KeinErSieEsUser],
+        },
+      },
+    })),
+];
+
 describe('pages/admin/users/list', () => {
   let didCall = false;
   const mocks = [
+    ...additionalMocks,
     {
       request: { query: GetUsersQuery },
       result: () => {

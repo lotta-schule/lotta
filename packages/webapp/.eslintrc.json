@@ -1,17 +1,32 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/eslintrc.json",
   "root": true,
-  "extends": ["next/core-web-vitals", "prettier"],
-  "plugins": ["prettier", "@typescript-eslint"],
-  "ignorePatterns": ["**/*.test.ts", "**/*.test.tsx", "src/test/util.tsx"],
+  "extends": [
+    "next/core-web-vitals",
+    "prettier"
+  ],
+  "plugins": [
+    "prettier",
+    "@typescript-eslint"
+  ],
+  "ignorePatterns": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "src/test/util.tsx"
+  ],
   "rules": {
     "react/no-unescaped-entities": "off",
     "@next/next/no-img-element": "off"
   },
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@typescript-eslint/recommended"],
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "extends": [
+        "plugin:@typescript-eslint/recommended"
+      ],
       "rules": {
         "react/no-unescaped-entities": "off",
         "@next/next/no-img-element": "off",
@@ -30,8 +45,13 @@
       }
     },
     {
-      "files": ["*.js", "*.jsx"],
-      "extends": ["eslint:recommended"],
+      "files": [
+        "*.js",
+        "*.jsx"
+      ],
+      "extends": [
+        "eslint:recommended"
+      ],
       "rules": {}
     }
   ]

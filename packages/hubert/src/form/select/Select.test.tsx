@@ -1,18 +1,72 @@
 import * as React from 'react';
 import { render } from '../../test-utils';
-import { Select } from './Select';
+import { Option, Select } from './Select';
+import userEvent from '@testing-library/user-event';
 
 describe('shared/general/form/select', () => {
-  it('should render', () => {
+  it('should render and show options', async () => {
+    const fireEvent = userEvent.setup();
     const screen = render(
-      <Select>
-        <option>0</option>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
+      <Select title={'Select'}>
+        <Option value={'0'}>Option 0</Option>
+        <Option value={'1'}>Option 1</Option>
+        <Option value={'2'}>Option 2</Option>
+        <Option value={'3'}>Option 3</Option>
       </Select>
     );
-    expect(screen.getByRole('combobox')).toBeVisible();
+    expect(screen.getByRole('button', { name: /Select/ })).toEqual(
+      screen.getByRole('button', { name: /Bitte wählen.../ })
+    );
+    await fireEvent.click(screen.getByRole('button', { name: /Select/ }));
     expect(screen.getAllByRole('option')).toHaveLength(4);
+  });
+
+  it('should have the correct option preset', () => {
+    const screen = render(
+      <Select title={'Select'} value={'2'}>
+        <Option value={'0'}>Option 0</Option>
+        <Option value={'1'}>Option 1</Option>
+        <Option value={'2'}>Option 2</Option>
+        <Option value={'3'}>Option 3</Option>
+      </Select>
+    );
+    expect(screen.getByRole('button', { name: /Select/ })).toEqual(
+      screen.getByRole('button', { name: /Option 2/ })
+    );
+  });
+
+  it('should have the correct option selected in the listbox', async () => {
+    const fireEvent = userEvent.setup();
+    const screen = render(
+      <Select title={'Select'} value={'2'}>
+        <Option value={'0'}>Option 0</Option>
+        <Option value={'1'}>Option 1</Option>
+        <Option value={'2'}>Option 2</Option>
+        <Option value={'3'}>Option 3</Option>
+      </Select>
+    );
+    await fireEvent.click(screen.getByRole('button', { name: /Select/ }));
+    expect(await screen.findByRole('listbox')).toBeVisible();
+    expect(
+      await screen.findByRole('option', { name: /Option 2/, selected: true })
+    ).toBeVisible();
+  });
+
+  it('should call onChange callback with the new value', async () => {
+    const fireEvent = userEvent.setup();
+    const onChange = jest.fn();
+    const screen = render(
+      <Select title={'Select'} value={'2'} onChange={onChange}>
+        <Option value={'0'}>Option 0</Option>
+        <Option value={'1'}>Option 1</Option>
+        <Option value={'2'}>Option 2</Option>
+        <Option value={'3'}>Option 3</Option>
+      </Select>
+    );
+    await fireEvent.click(screen.getByRole('button', { name: /Select/ }));
+    await fireEvent.click(
+      await screen.findByRole('option', { name: /Option 3/ })
+    );
+    expect(onChange).toHaveBeenCalledWith('3');
   });
 });
