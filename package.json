@@ -7,7 +7,7 @@
   ],
   "homepage": "https://lotta.schule",
   "scripts": {
-    "dev": "nx run-many --target=dev --parallel",
+    "dev": "./scripts/web-dev.sh",
     "test": "nx run-many --target=test --parallel",
     "lint": "nx run-many --target=lint --parallel",
     "typecheck": "nx run-many --target=typecheck --parallel",
