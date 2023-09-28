@@ -1,9 +1,37 @@
+@import 'breakpoints';
 .root {
   .toolBar {
     overflow: auto;
     margin-bottom: calc(3 * var(--lotta-spacing));
-    button {
+    display: flex;
+    align-items: flex-start;
+    @media screen and (max-width: $max-xs) {
+      display: grid;
+    }
+    .createButton {
       float: right;
+      align-self: flex-end;
+      padding-bottom: var(--lotta-spacing);
+      margin-right: calc(var(--lotta-spacing) * 2);
+    }
+    .sorting {
+      display: inline-flex;
+      width: 35%;
+      align-self: flex-end;
+      @media screen and (max-width: $max-xs) {
+        width: 100%;
+      }
+    }
+    .groupSearch {
+      display: inline-flex;
+      width: 35%;
+      align-self: flex-end;
+      padding-bottom: var(--lotta-spacing);
+      margin-right: calc(var(--lotta-spacing) * 6);
+      @media screen and (max-width: $max-xs) {
+        width: 100%;
+        margin-right: 0px;
+      }
     }
   }
 
@@ -37,9 +65,25 @@
     width: 50%;
     border-left: 1px solid rgb(var(--lotta-divider-color));
     padding: var(--lotta-spacing);
+    @media screen and (max-width: $max-xs) {
+      display: none;
+    }
   }
-  .sorting {
-    display: inline-flex;
-    width: 35%;
+  .infoText {
+    font-size: 10pt;
+    color: rgba(var(--lotta-label-text-color), 0.9);
+  }
+
+  .deleteButton {
+    align-self: flex-start;
+    background-color: rgba(var(--lotta-error-color), 1);
+    color: rgba(var(--lotta-contrast-text), 1);
+  }
+  .tag {
+    width: 100%;
+    overflow: hidden;
+    justify-content: space-between;
+    border-radius: var(--lotta-border-radius);
+    margin-bottom: var(--lotta-spacing);
   }
 }

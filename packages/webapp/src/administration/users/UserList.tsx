@@ -101,11 +101,10 @@ export const UserList = React.memo(() => {
             className={styles.filter}
           />
           <div className={clsx(styles.filter, styles.selectfield)}>
-            <Select />
+            <Select title={'zuletzt angemeldet'} />
           </div>
           <div className={styles.gridContainer}>
-            <div className={styles.gridItem}>
-            </div>
+            <div className={styles.gridItem}></div>
             <div className={clsx(styles.gridItem, styles.resultsGridItem)}>
               {t('administration.results', {
                 count: rows.length,

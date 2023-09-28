@@ -3,7 +3,16 @@ import chunk from 'lodash/chunk';
 import { Icon } from 'shared/Icon';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
-import { Button, Checkbox, DragHandle, ErrorMessage, Input, Select } from '@lotta-schule/hubert';
+import {
+  Button,
+  Checkbox,
+  Divider,
+  DragHandle,
+  ErrorMessage,
+  Input,
+  Label,
+  Select,
+} from '@lotta-schule/hubert';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
@@ -14,6 +23,7 @@ import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphq
 
 import styles from './GroupList.module.scss';
 import { SearchUserField } from './SearchUserField';
+import { AnimatePresence } from 'framer-motion';
 
 const COLUMN_COUNT = 1;
 
@@ -47,15 +57,20 @@ export const GroupList = () => {
   return (
     <div className={styles.root}>
       <div className={styles.toolBar}>
-        <div className={styles.sorting}><Select /> Sortierung </div>
-        <div className={styles.sorting}><Input />  Gruppe Suchen </div>
-        <Button
-          className={styles.createButton}
-          icon={<Icon icon={faCirclePlus} />}
-          onClick={() => setIsCreateUserGroupDialogOpen(true)}
-        >
-          Gruppe erstellen
-        </Button>
+        <div className={styles.groupSearch}>
+          <Input placeholder={'Gruppe suchen'} />{' '}
+        </div>
+        <div className={styles.createButton}>
+          <Button
+            icon={<Icon icon={faCirclePlus} />}
+            onClick={() => setIsCreateUserGroupDialogOpen(true)}
+          >
+            Gruppe erstellen
+          </Button>
+        </div>
+        <div className={styles.sorting}>
+          <Select title={'Sortierung'} />{' '}
+        </div>
       </div>
       <CreateUserGroupDialog
         isOpen={isCreateUserGroupDialogOpen}
@@ -110,50 +125,88 @@ export const GroupList = () => {
       >
         <ErrorMessage error={error} />
         <div className={styles.container}>
-        <div className={styles.listsWrapper}>
-          {chunkedGroups.map((groupsChunk, index) => (
-            <Droppable
-              key={index}
-              droppableId={`groups-column-${index}`}
-              type={'root-groups'}
-            >
-              {({ droppableProps, innerRef, placeholder }) => (
-                <ul {...droppableProps} ref={innerRef}>
-                  {groupsChunk.map((group, index) => (
-                    <Draggable
-                      key={group.id}
-                      draggableId={String(group.id)}
-                      index={index}
-                    >
-                      {({ innerRef, dragHandleProps, draggableProps }) => (
-                        <li
-                          title={group.name}
-                          onClick={() => setSelectedGroup(group)}
-                          key={group.id}
-                          ref={innerRef}
-                          {...draggableProps}
-                        >
-                          <span {...dragHandleProps}>
-                            <DragHandle className={styles.draghandleIcon} />
-                          </span>
-                          {group.name} ({group.sortKey})
-                        </li>
-                      )}
-                    </Draggable>
-                  ))}
-                  {placeholder}
-                </ul>
-              )}
-            </Droppable>
-          ))}
-        </div>
-        <div className={styles.groupInfoSection}>
-        <h5>Gruppe: 123</h5>
-        <p>Gruppenname bearbeiten</p>
-        <p>Checkbox Adminrechte</p>
-        <p> Anzahl Mitglieder: 123v</p>
-        <p>Einschreibeschlüssel</p>
-        </div>
+          <div className={styles.listsWrapper}>
+            {chunkedGroups.map((groupsChunk, index) => (
+              <Droppable
+                key={index}
+                droppableId={`groups-column-${index}`}
+                type={'root-groups'}
+              >
+                {({ droppableProps, innerRef, placeholder }) => (
+                  <ul {...droppableProps} ref={innerRef}>
+                    {groupsChunk.map((group, index) => (
+                      <Draggable
+                        key={group.id}
+                        draggableId={String(group.id)}
+                        index={index}
+                      >
+                        {({ innerRef, dragHandleProps, draggableProps }) => (
+                          <li
+                            title={group.name}
+                            onClick={() => setSelectedGroup(group)}
+                            key={group.id}
+                            ref={innerRef}
+                            {...draggableProps}
+                          >
+                            <span {...dragHandleProps}>
+                              <DragHandle className={styles.draghandleIcon} />
+                            </span>
+                            {group.name} ({group.sortKey})
+                          </li>
+                        )}
+                      </Draggable>
+                    ))}
+                    {placeholder}
+                  </ul>
+                )}
+              </Droppable>
+            ))}
+          </div>
+          <div className={styles.groupInfoSection}>
+            <h3>Gruppeninformationen</h3>
+            <p>
+              <b>Gruppe: 123</b>
+            </p>
+            <Divider />
+            <Label label={'Gruppenname'}>
+              <Input placeholder={'Gruppennamen bearbeiten'} />
+            </Label>
+            <Divider />
+            <p>
+              {' '}
+              <b>Anzahl Mitglieder:</b> 123v
+            </p>
+            <Divider />
+            <p>
+              {' '}
+              <b>Einschreibeschlüssel</b>
+              <div className={styles.infoText}>
+                <p>
+                  Nutzer, die bei der Registrierung einen
+                  Einschreibeschlüsselverwenden, werden automatisch dieser
+                  Gruppe zugeordnet.
+                </p>
+                <p>Mehrere Schlüssel durch Komma trennen.</p>
+              </div>
+            </p>
+            <Label label={'Einschreibeschlüssel '}>
+              <Input
+                placeholder={'Neue Einschreibeschlüssel hier eintragen.'}
+              />
+            </Label>
+            <ul>
+              <AnimatePresence>
+                <div className={styles.tag} role={'listitem'}></div>
+              </AnimatePresence>
+            </ul>
+            <Divider />
+            <Checkbox>
+              Diese Gruppe hat universelle Administratorrechte
+            </Checkbox>
+            <Divider />
+            <Button style={{ float: 'right' }}>speichern</Button>
+            <Button className={styles.deleteButton}>Gruppe löschen</Button>
+          </div>
         </div>
       </DragDropContext>
     </div>

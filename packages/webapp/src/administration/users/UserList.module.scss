@@ -41,7 +41,6 @@
     height: 3em;
   }
   .filter {
-    width: 30%;
     display: inline-flex;
     @media screen and (max-width: $max-sm) {
       width: 50%;
@@ -51,7 +50,7 @@
     }
   }
   .selectfield {
-position: relative;
+    position: relative;
   }
   .respTable {
     overflow-x: scroll;
