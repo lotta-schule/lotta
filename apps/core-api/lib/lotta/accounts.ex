@@ -8,8 +8,8 @@ defmodule Lotta.Accounts do
   import Ecto.Query
 
   alias Ecto.Changeset
-  alias Lotta.{Email, Mailer, Repo, Storage}
-  alias Lotta.Accounts.{User, UserGroup}
+  alias Lotta.{Email, Mailer, Repo, Storage, Tenants}
+  alias Lotta.Accounts.{User, UserDevice, UserGroup}
   alias Lotta.Storage.File
 
   def data() do
@@ -491,10 +491,98 @@ defmodule Lotta.Accounts do
   """
   @spec see_user(User.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def see_user(%User{} = user) do
-    Repo.update(
-      Changeset.change(user, %{
-        last_seen: DateTime.truncate(DateTime.utc_now(), :second)
-      })
-    )
+    user
+    |> Changeset.change(%{
+      last_seen: DateTime.truncate(DateTime.utc_now(), :second)
+    })
+    |> Repo.update()
+  end
+
+  @doc """
+  Gets all devices for a specific user
+  """
+  @doc since: "4.1.0"
+  @spec list_devices(User.t()) :: [UserDevice.t()]
+  def list_devices(user) do
+    user
+    |> Repo.preload(:devices)
+    |> Map.get(:devices)
+  end
+
+  @doc """
+  Gets specific device for a specific user
+  """
+  @doc since: "4.1.0"
+  @spec get_device(UserDevice.id()) ::
+          UserDevice.t() | nil
+  def get_device(id) do
+    Repo.get(UserDevice, id)
+  end
+
+  @doc """
+  Creates a Device for a given user.
+  """
+  @doc since: "4.1.0"
+  @spec register_device(User.t(), map(), keyword()) ::
+          {:ok, UserDevice.t()} | {:error, Changeset.t()}
+  def register_device(user, attrs, opts \\ []) do
+    user
+    |> Repo.build_prefixed_assoc(:devices)
+    |> UserDevice.changeset(attrs)
+    |> Repo.insert(opts)
+    |> tap(fn
+      {:ok, device} ->
+        ensure_pushtoken_is_globally_unique(device)
+        {:ok, device}
+
+      result ->
+        result
+    end)
+  end
+
+  @doc """
+  Updates a Device.
+  """
+  @doc since: "4.1.0"
+  @spec update_device(UserDevice.t(), map()) ::
+          {:ok, UserDevice.t()} | {:error, Changeset.t()}
+  def update_device(device, attrs) do
+    device
+    |> UserDevice.update_changeset(attrs)
+    |> Repo.update()
+    |> tap(fn
+      {:ok, device} ->
+        ensure_pushtoken_is_globally_unique(device)
+        {:ok, device}
+
+      result ->
+        result
+    end)
+  end
+
+  @doc """
+  Make sure push_token is globally unique.
+  """
+  @doc since: "4.1.0"
+  @spec ensure_pushtoken_is_globally_unique(UserDevice.t()) ::
+          UserDevice.t()
+  def ensure_pushtoken_is_globally_unique(device) when device.push_token != nil do
+    Tenants.list_tenants()
+    |> Enum.filter(&(&1.prefix != Ecto.get_meta(device, :prefix)))
+    |> Enum.map(fn tenant ->
+      Repo.update_all(
+        from(
+          u in UserDevice,
+          where:
+            u.push_token == ^device.push_token and u.push_token_type == ^device.push_token_type
+        ),
+        [set: [push_token: nil, push_token_type: nil]],
+        prefix: tenant.prefix
+      )
+    end)
+  end
+
+  def ensure_pushtoken_is_globally_unique(_) do
+    :ok
   end
 end

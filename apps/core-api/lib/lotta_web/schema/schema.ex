@@ -10,7 +10,7 @@ defmodule LottaWeb.Schema do
   import_types(__MODULE__.Tenants)
   import_types(__MODULE__.Tenants.{Category, Usage, Tenant, Widget})
   import_types(__MODULE__.Accounts)
-  import_types(__MODULE__.Accounts.{File, User})
+  import_types(__MODULE__.Accounts.{File, User, UserDevice})
   import_types(__MODULE__.Contents)
   import_types(__MODULE__.Contents.Article)
   import_types(__MODULE__.Messages)

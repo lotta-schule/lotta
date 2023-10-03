@@ -9,7 +9,7 @@ defmodule Lotta.Accounts.User do
 
   alias Lotta.Repo
   alias Ecto.Changeset
-  alias Lotta.Accounts.UserGroup
+  alias Lotta.Accounts.{UserGroup, UserDevice}
   alias Lotta.Storage.{Directory, File}
   alias Lotta.Content.Article
 
@@ -39,6 +39,7 @@ defmodule Lotta.Accounts.User do
 
     has_many :files, File
     has_many :directories, Directory
+    has_many :devices, UserDevice
     has_many :sent_messages, Lotta.Messages.Message
 
     many_to_many :groups,

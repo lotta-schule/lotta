@@ -8,6 +8,11 @@ defmodule LottaWeb.Schema.Accounts do
       resolve(&LottaWeb.UserResolver.get_current/2)
     end
 
+    field :devices, list_of(:device) do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+      resolve(&LottaWeb.UserDeviceResolver.get_devices/2)
+    end
+
     field :users, list_of(:user) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
@@ -133,6 +138,23 @@ defmodule LottaWeb.Schema.Accounts do
       arg(:new_email, non_null(:string))
 
       resolve(&LottaWeb.UserResolver.update_email/2)
+    end
+
+    field :register_device, type: :device do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      arg(:device, non_null(:register_device_input))
+
+      resolve(&LottaWeb.UserDeviceResolver.register_device/2)
+    end
+
+    field :update_device, type: :device do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      arg(:id, non_null(:id))
+      arg(:device, non_null(:update_device_input))
+
+      resolve(&LottaWeb.UserDeviceResolver.update_device/2)
     end
 
     field :destroy_account, type: :user do

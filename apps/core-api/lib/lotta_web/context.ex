@@ -28,20 +28,18 @@ defmodule LottaWeb.Context do
   def call(conn, _blueprint) do
     context =
       %__MODULE__{}
-      |> maybe_put_user(conn)
       |> maybe_put_tenant(conn)
+      |> maybe_put_user(conn)
 
-    conn
-    |> Absinthe.Plug.put_options(context: context)
+    Absinthe.Plug.put_options(conn, context: context)
   end
 
   @impl true
   def fetch(%__MODULE__{} = context, key), do: Map.fetch(context, key)
 
   @impl true
-  def get_and_update(%__MODULE__{} = context, key, func) do
-    Map.get_and_update(context, key, func)
-  end
+  def get_and_update(%__MODULE__{} = context, key, func),
+    do: Map.get_and_update(context, key, func)
 
   @doc """
   Set the virtual user_fields for a given user
@@ -74,47 +72,47 @@ defmodule LottaWeb.Context do
     Map.pop(data, key)
   end
 
-  defp maybe_put_user(%__MODULE__{} = context, conn) do
-    access_level =
-      conn
-      |> LottaWeb.Auth.AccessToken.Plug.current_claims()
-      |> case do
-        %{"typ" => token_type} ->
-          token_type
+  defp maybe_put_user(%__MODULE__{tenant: %{id: tid} = tenant} = context, conn) do
+    claims = LottaWeb.Auth.AccessToken.Plug.current_claims(conn)
 
-        _ ->
-          nil
-      end
+    if to_string(claims["tid"]) == to_string(tid) do
+      access_level =
+        case claims do
+          %{"typ" => token_type} ->
+            token_type
 
-    user =
-      conn
-      |> LottaWeb.Auth.AccessToken.Plug.current_resource()
+          _ ->
+            nil
+        end
 
-    user =
-      unless is_nil(user) do
-        user
-        |> set_virtual_user_fields()
-        |> Map.put(:access_level, access_level)
-      end
+      user =
+        conn
+        |> LottaWeb.Auth.AccessToken.Plug.current_resource()
 
-    context
-    |> Map.put(:current_user, user)
+      user =
+        unless is_nil(user) do
+          user
+          |> set_virtual_user_fields()
+          |> Map.put(:access_level, access_level)
+        end
+
+      context
+      |> Map.put(:current_user, user)
+    else
+      context
+    end
   end
 
-  defp maybe_put_tenant(context, %{private: %{lotta_tenant: tenant}}) do
-    Map.put(context, :tenant, tenant)
-  end
+  defp maybe_put_user(context, _conn), do: context
 
-  defp maybe_put_tenant(context, _conn) do
-    context
-  end
+  defp maybe_put_tenant(context, %{private: %{lotta_tenant: tenant}}),
+    do: Map.put(context, :tenant, tenant)
 
-  defp get_dynamic_groups(%User{enrollment_tokens: enrollment_tokens}) do
-    enrollment_tokens
-    |> Accounts.list_groups_for_enrollment_tokens()
-  end
+  defp maybe_put_tenant(context, _conn), do: context
 
-  defp all_user_groups(%User{groups: assigned_groups} = user) do
-    assigned_groups ++ get_dynamic_groups(user)
-  end
+  defp get_dynamic_groups(%User{enrollment_tokens: enrollment_tokens}),
+    do: Accounts.list_groups_for_enrollment_tokens(enrollment_tokens)
+
+  defp all_user_groups(%User{groups: assigned_groups} = user),
+    do: assigned_groups ++ get_dynamic_groups(user)
 end

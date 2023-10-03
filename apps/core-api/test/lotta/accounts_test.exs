@@ -5,7 +5,7 @@ defmodule Lotta.AccountsTest do
   use Bamboo.Test
 
   alias Lotta.{Accounts, Email, Fixtures, Tenants, Repo}
-  alias Lotta.Accounts.User
+  alias Lotta.Accounts.{User, UserDevice}
 
   @all_users [
     "alexis.rinaldoni@einsa.net",
@@ -107,6 +107,108 @@ defmodule Lotta.AccountsTest do
       assert Argon2.verify_pass("newpass", user.password_hash)
 
       assert_delivered_email(Email.password_changed_mail(user))
+    end
+  end
+
+  describe "user_tokens" do
+    test "it should add a device for a user" do
+      email = List.first(@all_users)
+      user = Accounts.get_user_by_email(email)
+
+      res =
+        Accounts.register_device(user, %{
+          custom_name: "Test",
+          platform: "ios",
+          device_type: "phone",
+          model_name: "iphone16,1",
+          push_token: "abcdefgh",
+          push_token_type: "apns"
+        })
+
+      assert {:ok, %UserDevice{platform: "ios"}} = res
+    end
+
+    test "it should get an error adding a device with push_token, without push_token_type" do
+      email = List.first(@all_users)
+      user = Accounts.get_user_by_email(email)
+
+      res =
+        Accounts.register_device(user, %{
+          custom_name: "Test",
+          platform: "ios",
+          device_type: "phone",
+          model_name: "iphone16,1",
+          push_token: "abcdefgh"
+        })
+
+      assert {:error, %Ecto.Changeset{}} = res
+    end
+
+    test "it should delete any push_token of any UserDevice in other tenants" do
+      email = List.first(@all_users)
+
+      tenants = [
+        Tenants.get_tenant_by_prefix(@prefix),
+        Tenants.get_tenant_by_prefix("#{@prefix}2")
+      ]
+
+      [result1, result2] =
+        tenants
+        |> Enum.map(fn %{prefix: prefix} ->
+          user = Repo.get_by!(User, [email: email], prefix: prefix)
+
+          {:ok, %{id: id}} =
+            Accounts.register_device(
+              user,
+              %{
+                custom_name: "Test",
+                platform: "ios",
+                device_type: "phone",
+                model_name: "iphone16,1",
+                push_token: "abcdefghijklmnoprqst",
+                push_token_type: "apns"
+              },
+              prefix: prefix
+            )
+
+          {prefix, id}
+        end)
+
+      # Second Userdevice should be set ok
+      assert %UserDevice{push_token: "abcdefghijklmnoprqst"} =
+               Repo.get!(UserDevice, elem(result2, 1), prefix: elem(result2, 0))
+
+      assert %UserDevice{push_token: nil} =
+               Repo.get!(UserDevice, elem(result1, 1), prefix: elem(result1, 0))
+    end
+
+    test "it should update a UserDevice, resetting push_token_type when push_token is set to nil" do
+      email = List.first(@all_users)
+      user = Accounts.get_user_by_email(email)
+
+      assert {:ok, device} =
+               Accounts.register_device(user, %{
+                 custom_name: "Test",
+                 platform: "ios",
+                 device_type: "phone",
+                 model_name: "iphone16,1",
+                 push_token: "abcdefgh",
+                 push_token_type: "apns"
+               })
+
+      assert {:ok,
+              %UserDevice{
+                custom_name: "My Device",
+                platform: "ios",
+                device_type: "desktop",
+                push_token: nil,
+                push_token_type: nil
+              }} =
+               Accounts.update_device(device, %{
+                 custom_name: "My Device",
+                 device_type: "desktop",
+                 push_token: nil
+               })
     end
   end
 end
