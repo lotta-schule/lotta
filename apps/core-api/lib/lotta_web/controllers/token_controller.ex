@@ -1,7 +1,7 @@
 defmodule LottaWeb.TokenController do
   require Logger
 
-  use Phoenix.Controller
+  use LottaWeb, :controller
 
   import Plug.Conn
 

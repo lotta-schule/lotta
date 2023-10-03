@@ -21,7 +21,17 @@ defmodule Lotta.Repo.Seeder do
         prefix: "tenant_test"
       })
 
-    TenantSelector.create_tenant_database_schema(tenant)
+    tenant_2 =
+      Repo.insert!(%Tenant{
+        title: "Test Lotta 2",
+        slug: "test2",
+        prefix: "tenant_test2"
+      })
+
+    all_tenants = [tenant, tenant_2]
+
+    all_tenants
+    |> Enum.each(&TenantSelector.create_tenant_database_schema(&1))
 
     Tenants.update_configuration(tenant, %{
       custom_theme: %{
@@ -33,14 +43,18 @@ defmodule Lotta.Repo.Seeder do
     })
 
     admin_group =
-      Repo.insert!(
-        %UserGroup{
-          name: "Administration",
-          is_admin_group: true,
-          sort_key: 1000
-        },
-        prefix: tenant.prefix
-      )
+      all_tenants
+      |> Enum.map(&(
+        Repo.insert!(
+          %UserGroup{
+            name: "Administration",
+            is_admin_group: true,
+            sort_key: 1000
+          },
+          prefix: &1.prefix
+        )
+      ))
+      |> List.first()
 
     verwaltung_group =
       Repo.insert!(%UserGroup{name: "Verwaltung", sort_key: 800}, prefix: tenant.prefix)
@@ -57,27 +71,32 @@ defmodule Lotta.Repo.Seeder do
         prefix: tenant.prefix
       )
 
-    {:ok, lotta_admin, _pw} =
-      Accounts.register_user(tenant, %{
-        name: "Alexis Rinaldoni",
-        email: "alexis.rinaldoni@einsa.net",
-        password: "test123"
-      })
+    alexis =
+    all_tenants
+    |> Enum.map(fn tenant ->
+      {:ok, lotta_admin, _pw} =
+        Accounts.register_user(tenant, %{
+          name: "Alexis Rinaldoni",
+          email: "alexis.rinaldoni@einsa.net",
+          password: "test123"
+        })
 
-    lotta_admin
-    |> User.update_password_changeset("test123")
-    |> Repo.update!()
+      lotta_admin
+      |> User.update_password_changeset("test123")
+      |> Repo.update!()
 
-    {:ok, alexis, _pw} =
-      Accounts.register_user(tenant, %{
-        name: "Alexis Rinaldoni",
-        nickname: "Der Meister",
-        email: "alexis.rinaldoni@lotta.schule"
-      })
+      {:ok, alexis, _pw} =
+        Accounts.register_user(tenant, %{
+          name: "Alexis Rinaldoni",
+          nickname: "Der Meister",
+          email: "alexis.rinaldoni@lotta.schule"
+        })
 
-    alexis
-    |> User.update_password_changeset("test123")
-    |> Repo.update!()
+      alexis
+      |> User.update_password_changeset("test123")
+      |> Repo.update!()
+    end)
+    |> List.first()
 
     {:ok, billy, _pw} =
       Accounts.register_user(tenant, %{

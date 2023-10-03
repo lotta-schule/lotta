@@ -1,4 +1,6 @@
 defmodule LottaWeb.GraphQLSocket do
+  require Logger
+
   alias Lotta.{Repo, Tenants}
   alias LottaWeb.Context
   alias LottaWeb.Auth.AccessToken
@@ -16,7 +18,6 @@ defmodule LottaWeb.GraphQLSocket do
 
       case AccessToken.resource_from_token(token) do
         {:ok, user, _claims} ->
-
           socket =
             socket
             |> Absinthe.GraphqlWS.Util.assign_context(

@@ -14,7 +14,7 @@ defmodule LottaWeb.Router do
     plug(LottaWeb.Auth.Pipeline)
   end
 
-  pipeline :absinthe do
+  pipeline :context do
     plug(LottaWeb.Context)
   end
 
@@ -41,12 +41,20 @@ defmodule LottaWeb.Router do
   end
 
   scope "/api" do
-    pipe_through([:tenant, :auth, :absinthe])
+    scope "/public" do
+      pipe_through([:json_api])
 
-    forward("/", Absinthe.Plug,
-      schema: LottaWeb.Schema,
-      before_send: {__MODULE__, :absinthe_before_send}
-    )
+      get("/user-tenants", LottaWeb.TenantController, :list_user_tenants)
+    end
+
+    scope "/" do
+      pipe_through([:tenant, :auth, :context])
+
+      forward("/", Absinthe.Plug,
+        schema: LottaWeb.Schema,
+        before_send: {__MODULE__, :absinthe_before_send}
+      )
+    end
   end
 
   scope "/admin-api" do
