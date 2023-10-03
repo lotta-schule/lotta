@@ -529,7 +529,16 @@ defmodule Lotta.Accounts do
     user
     |> Repo.build_prefixed_assoc(:devices)
     |> UserDevice.changeset(attrs)
-    |> Repo.insert(opts)
+    |> Repo.insert(
+      Keyword.merge(
+        [
+          on_conflict: [set: [last_used: DateTime.utc_now(), user_id: user.id]],
+          conflict_target: :push_token,
+          returning: true
+        ],
+        opts
+      )
+    )
     |> tap(fn
       {:ok, device} ->
         ensure_pushtoken_is_globally_unique(device)
@@ -574,9 +583,9 @@ defmodule Lotta.Accounts do
         from(
           u in UserDevice,
           where:
-            u.push_token == ^device.push_token and u.push_token_type == ^device.push_token_type
+            u.push_token == ^device.push_token
         ),
-        [set: [push_token: nil, push_token_type: nil]],
+        [set: [push_token: nil]],
         prefix: tenant.prefix
       )
     end)

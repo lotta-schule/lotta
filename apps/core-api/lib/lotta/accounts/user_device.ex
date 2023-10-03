@@ -21,12 +21,12 @@ defmodule Lotta.Accounts.UserDevice do
   @type t :: %__MODULE__{
           id: id,
           custom_name: String.t() | nil,
-          platform: String.t(),
+          platform_id: String.t(),
           device_type: String.t(),
+          operating_system: String.t() | nil,
           model_name: String.t(),
           last_used: DateTime.t(),
           push_token: String.t() | nil,
-          push_token_type: String.t() | nil,
           active: boolean(),
           inserted_at: DateTime.t(),
           updated_at: DateTime.t()
@@ -34,12 +34,12 @@ defmodule Lotta.Accounts.UserDevice do
 
   schema "user_devices" do
     field :custom_name, :string
-    field :platform, :string
-    field :device_type, :string
+    field :platform_id, :string
     field :model_name, :string
+    field :device_type, :string
+    field :operating_system, :string
     field :last_used, :utc_datetime_usec
     field :push_token, :string
-    field :push_token_type, :string
     field :active, :boolean, default: true
 
     belongs_to :user, User, foreign_key: :user_id
@@ -53,15 +53,14 @@ defmodule Lotta.Accounts.UserDevice do
     device
     |> cast(attrs, [
       :custom_name,
-      :platform,
+      :platform_id,
       :device_type,
+      :operating_system,
       :model_name,
       :push_token,
-      :push_token_type,
       :active
     ])
-    |> validate_required([:platform, :device_type, :model_name])
-    |> validate_push_token_type()
+    |> validate_changeset()
   end
 
   @doc false
@@ -72,23 +71,16 @@ defmodule Lotta.Accounts.UserDevice do
       :custom_name,
       :device_type,
       :push_token,
-      :active
+      :active,
     ])
-    |> validate_required([:platform, :device_type, :model_name])
-    |> validate_push_token_type()
+    |> validate_changeset()
   end
 
-  @doc """
-  Validates that the push token type is set correctly.
-  If the push token is set to nil, the push token type is also set to nil.
-  If the push token is set, the push token type must be set.
-  """
-  @spec validate_push_token_type(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  def validate_push_token_type(%Ecto.Changeset{} = changeset) do
-    if get_field(changeset, :push_token) != nil do
-      validate_required(changeset, :push_token_type)
-    else
-      put_change(changeset, :push_token_type, nil)
-    end
+  defp validate_changeset(changeset) do
+    changeset
+    |> validate_required([:platform_id])
+    |> unique_constraint(:push_token)
+    |> unique_constraint(:platform_id)
   end
+
 end

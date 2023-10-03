@@ -30,21 +30,18 @@ defmodule LottaWeb.UserDeviceResolverTest do
 
     {:ok, device1} =
       Accounts.register_device(user, %{
-        platform: "ios",
+        platform_id: "ios/123-123-123",
         device_type: "phone",
         model_name: "iphone16,1",
-        push: %{
-          token: "abcdefg",
-          token_type: "apns"
-        }
+        push_token: "apns/abcdefg"
       })
 
     {:ok, device2} =
       Accounts.register_device(user, %{
-        platform: "chrome",
+        platform_id: "chrome/123-123-123",
         device_type: "desktop",
         model_name: "chrome-os 104.01",
-        push: nil
+        push_token: nil
       })
 
     {:ok,
@@ -60,7 +57,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
     {
       devices {
         customName
-        platform
+        platformId
         deviceType
         modelName
       }
@@ -84,13 +81,13 @@ defmodule LottaWeb.UserDeviceResolverTest do
                  "devices" => [
                    %{
                      "customName" => nil,
-                     "platform" => "ios",
+                     "platformId" => "ios/123-123-123",
                      "deviceType" => "phone",
                      "modelName" => "iphone16,1"
                    },
                    %{
                      "customName" => nil,
-                     "platform" => "chrome",
+                     "platformId" => "chrome/123-123-123",
                      "deviceType" => "desktop",
                      "modelName" => "chrome-os 104.01"
                    }
@@ -128,7 +125,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
     mutation RegisterDevice($device: RegisterDeviceInput!) {
       registerDevice(device: $device) {
         customName
-        platform
+        platformId
         deviceType
         modelName
       }
@@ -148,13 +145,10 @@ defmodule LottaWeb.UserDeviceResolverTest do
           query: @query,
           variables: %{
             device: %{
-              platform: "safari",
+              platform_id: "safari/123-123-123",
               deviceType: "notebook",
               modelName: "Macbook",
-              push: %{
-                token: "abcdefghijklmnopqrs",
-                token_type: "apns"
-              }
+              push_token:  "apns/abcdefghijklmnopqrs"
             }
           }
         )
@@ -164,7 +158,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
                "data" => %{
                  "registerDevice" => %{
                    "customName" => nil,
-                   "platform" => "safari",
+                   "platformId" => "safari/123-123-123",
                    "deviceType" => "notebook",
                    "modelName" => "Macbook"
                  }
@@ -185,13 +179,10 @@ defmodule LottaWeb.UserDeviceResolverTest do
           query: @query,
           variables: %{
             device: %{
-              platform: "safari",
+              platformId: "safari/123-123-123",
               deviceType: "notebook",
               modelName: "Macbook",
-              push: %{
-                token: "abcdefghijklmnopqrs",
-                token_type: "apns"
-              }
+              push_token:  "apns/abcdefghijklmnopqrs"
             }
           }
         )
@@ -214,7 +205,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
     mutation UpdateDevice($id: ID!, $device: UpdateDeviceInput!) {
       updateDevice(id: $id, device: $device) {
         customName
-        platform
+        platformId
         deviceType
       }
     }
@@ -236,7 +227,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
             device: %{
               customName: "My Thing",
               device_type: "tablet",
-              push: nil
+              push_token: nil
             }
           }
         )
@@ -246,7 +237,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
                "data" => %{
                  "updateDevice" => %{
                    "customName" => "My Thing",
-                   "platform" => "ios",
+                   "platformId" => "ios/123-123-123",
                    "deviceType" => "tablet"
                  }
                }
@@ -269,7 +260,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
             device: %{
               customName: "My Thing",
               device_type: "tablet",
-              push: nil
+              push_token: nil
             }
           }
         )
@@ -303,7 +294,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
             device: %{
               customName: "My Thing",
               device_type: "tablet",
-              push: nil
+              push_token: nil
             }
           }
         )

@@ -111,6 +111,7 @@ defmodule Lotta.AccountsTest do
   end
 
   describe "user_tokens" do
+
     test "it should add a device for a user" do
       email = List.first(@all_users)
       user = Accounts.get_user_by_email(email)
@@ -118,30 +119,51 @@ defmodule Lotta.AccountsTest do
       res =
         Accounts.register_device(user, %{
           custom_name: "Test",
-          platform: "ios",
+          platform_id: "ios/123-123-123",
           device_type: "phone",
           model_name: "iphone16,1",
-          push_token: "abcdefgh",
-          push_token_type: "apns"
+          push_token: "apns/abcdefgh",
         })
 
-      assert {:ok, %UserDevice{platform: "ios"}} = res
+      assert {:ok, %UserDevice{platform_id: "ios/123-123-123"}} = res
     end
 
-    test "it should get an error adding a device with push_token, without push_token_type" do
+    test "it should perform an upsert when inserting a device that already exists" do
       email = List.first(@all_users)
       user = Accounts.get_user_by_email(email)
 
-      res =
-        Accounts.register_device(user, %{
-          custom_name: "Test",
-          platform: "ios",
-          device_type: "phone",
-          model_name: "iphone16,1",
-          push_token: "abcdefgh"
-        })
+      # First insert should work no problem
+      assert {:ok,
+              %UserDevice{
+                id: id,
+                platform_id: "ios/123-456-789",
+                push_token: "apns/dadada"
+              }} =
+        Accounts.register_device(
+          user,
+          %{
+            custom_name: "Test",
+            platform_id: "ios/123-456-789",
+            device_type: "phone",
+            model_name: "iphone16,1",
+            push_token: "apns/dadada"
+          }
+        )
 
-      assert {:error, %Ecto.Changeset{}} = res
+      assert {:ok,
+              %UserDevice{
+                id: ^id,
+                platform_id: "ios/123-456-789",
+              }} =
+        Accounts.register_device(
+          user,
+          %{
+            platform_id: "ios/123-456-789",
+            device_type: "phone",
+            model_name: "iphone16,1",
+            push_token: "apns/dadada",
+          }
+        )
     end
 
     test "it should delete any push_token of any UserDevice in other tenants" do
@@ -162,11 +184,10 @@ defmodule Lotta.AccountsTest do
               user,
               %{
                 custom_name: "Test",
-                platform: "ios",
+                platform_id: "ios/123-123-123",
                 device_type: "phone",
                 model_name: "iphone16,1",
-                push_token: "abcdefghijklmnoprqst",
-                push_token_type: "apns"
+                push_token: "apns/abcdefghijklmnoprqst",
               },
               prefix: prefix
             )
@@ -175,34 +196,32 @@ defmodule Lotta.AccountsTest do
         end)
 
       # Second Userdevice should be set ok
-      assert %UserDevice{push_token: "abcdefghijklmnoprqst"} =
+      assert %UserDevice{push_token: "apns/abcdefghijklmnoprqst"} =
                Repo.get!(UserDevice, elem(result2, 1), prefix: elem(result2, 0))
 
       assert %UserDevice{push_token: nil} =
                Repo.get!(UserDevice, elem(result1, 1), prefix: elem(result1, 0))
     end
 
-    test "it should update a UserDevice, resetting push_token_type when push_token is set to nil" do
+    test "it should update a UserDevice" do
       email = List.first(@all_users)
       user = Accounts.get_user_by_email(email)
 
       assert {:ok, device} =
                Accounts.register_device(user, %{
                  custom_name: "Test",
-                 platform: "ios",
+                 platform_id: "ios/123-123-123",
                  device_type: "phone",
                  model_name: "iphone16,1",
-                 push_token: "abcdefgh",
-                 push_token_type: "apns"
+                 push_token: "apns/abcdefgh",
                })
 
       assert {:ok,
               %UserDevice{
                 custom_name: "My Device",
-                platform: "ios",
+                platform_id: "ios/123-123-123",
                 device_type: "desktop",
                 push_token: nil,
-                push_token_type: nil
               }} =
                Accounts.update_device(device, %{
                  custom_name: "My Device",
