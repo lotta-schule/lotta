@@ -111,7 +111,6 @@ defmodule Lotta.AccountsTest do
   end
 
   describe "user_tokens" do
-
     test "it should add a device for a user" do
       email = List.first(@all_users)
       user = Accounts.get_user_by_email(email)
@@ -122,7 +121,7 @@ defmodule Lotta.AccountsTest do
           platform_id: "ios/123-123-123",
           device_type: "phone",
           model_name: "iphone16,1",
-          push_token: "apns/abcdefgh",
+          push_token: "apns/abcdefgh"
         })
 
       assert {:ok, %UserDevice{platform_id: "ios/123-123-123"}} = res
@@ -139,31 +138,31 @@ defmodule Lotta.AccountsTest do
                 platform_id: "ios/123-456-789",
                 push_token: "apns/dadada"
               }} =
-        Accounts.register_device(
-          user,
-          %{
-            custom_name: "Test",
-            platform_id: "ios/123-456-789",
-            device_type: "phone",
-            model_name: "iphone16,1",
-            push_token: "apns/dadada"
-          }
-        )
+               Accounts.register_device(
+                 user,
+                 %{
+                   custom_name: "Test",
+                   platform_id: "ios/123-456-789",
+                   device_type: "phone",
+                   model_name: "iphone16,1",
+                   push_token: "apns/dadada"
+                 }
+               )
 
       assert {:ok,
               %UserDevice{
                 id: ^id,
-                platform_id: "ios/123-456-789",
+                platform_id: "ios/123-456-789"
               }} =
-        Accounts.register_device(
-          user,
-          %{
-            platform_id: "ios/123-456-789",
-            device_type: "phone",
-            model_name: "iphone16,1",
-            push_token: "apns/dadada",
-          }
-        )
+               Accounts.register_device(
+                 user,
+                 %{
+                   platform_id: "ios/123-456-789",
+                   device_type: "phone",
+                   model_name: "iphone16,1",
+                   push_token: "apns/dadada"
+                 }
+               )
     end
 
     test "it should delete any push_token of any UserDevice in other tenants" do
@@ -187,7 +186,7 @@ defmodule Lotta.AccountsTest do
                 platform_id: "ios/123-123-123",
                 device_type: "phone",
                 model_name: "iphone16,1",
-                push_token: "apns/abcdefghijklmnoprqst",
+                push_token: "apns/abcdefghijklmnoprqst"
               },
               prefix: prefix
             )
@@ -213,7 +212,7 @@ defmodule Lotta.AccountsTest do
                  platform_id: "ios/123-123-123",
                  device_type: "phone",
                  model_name: "iphone16,1",
-                 push_token: "apns/abcdefgh",
+                 push_token: "apns/abcdefgh"
                })
 
       assert {:ok,
@@ -221,7 +220,7 @@ defmodule Lotta.AccountsTest do
                 custom_name: "My Device",
                 platform_id: "ios/123-123-123",
                 device_type: "desktop",
-                push_token: nil,
+                push_token: nil
               }} =
                Accounts.update_device(device, %{
                  custom_name: "My Device",

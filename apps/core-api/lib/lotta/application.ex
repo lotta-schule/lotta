@@ -16,18 +16,18 @@ defmodule Lotta.Application do
 
     # List all child processes to be supervised
     children =
-      prepanded_apps(environment) ++
-        [
-          {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
-          Lotta.Repo,
-          LottaWeb.Endpoint,
-          {Absinthe.Subscription, LottaWeb.Endpoint},
-          {Redix, Application.fetch_env!(:lotta, :redis_connection)},
-          Lotta.Queue.MediaConversionRequestPublisher,
-          Lotta.Queue.MediaConversionConsumer,
-          {ConCache,
-           name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
-        ]
+      (prepanded_apps(environment) ++
+         [
+           {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
+           Lotta.Repo,
+           LottaWeb.Endpoint,
+           {Absinthe.Subscription, LottaWeb.Endpoint},
+           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
+           Lotta.Queue.MediaConversionRequestPublisher,
+           Lotta.Queue.MediaConversionConsumer,
+           {ConCache,
+            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
+         ]) ++ appended_apps(environment)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -51,6 +51,12 @@ defmodule Lotta.Application do
   end
 
   defp prepanded_apps(_), do: []
+
+  defp appended_apps(:test), do: []
+
+  defp appended_apps(_) do
+    [Lotta.Notification.Provider.APNS]
+  end
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.

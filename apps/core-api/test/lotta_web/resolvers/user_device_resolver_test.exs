@@ -148,7 +148,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
               platform_id: "safari/123-123-123",
               deviceType: "notebook",
               modelName: "Macbook",
-              push_token:  "apns/abcdefghijklmnopqrs"
+              push_token: "apns/abcdefghijklmnopqrs"
             }
           }
         )
@@ -182,7 +182,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
               platformId: "safari/123-123-123",
               deviceType: "notebook",
               modelName: "Macbook",
-              push_token:  "apns/abcdefghijklmnopqrs"
+              push_token: "apns/abcdefghijklmnopqrs"
             }
           }
         )

@@ -21,13 +21,7 @@ defmodule Lotta.Accounts do
   end
 
   @doc """
-  Returns the list of users.
-
-  ## Examples
-
-      iex> list_users()
-      [%User{}, ...]
-
+  Returnsa list of users.
   """
   @spec list_users() :: [User.t()]
   def list_users() do
@@ -38,11 +32,42 @@ defmodule Lotta.Accounts do
   end
 
   @doc """
-  Returns list of all users that are member of at least one administrator group.
+  Returns a list of all users either assigned or enrolled into a given group
+  """
+  @spec list_users_for_group(UserGroup.t(), keyword()) :: [User.t()]
+  def list_users_for_group(group, opts \\ []), do: list_users_for_groups([group], opts)
 
-  ## Examples
-    iex> list_admin_users()
-    [%User{}, ...]
+  @doc """
+  Returns a list of all users either assigned or enrolled into a given selection
+  of multiple groups.
+  """
+  @spec list_users_for_groups([UserGroup.t()], keyword()) :: [User.t()]
+  def list_users_for_groups(groups, opts \\ []) do
+    {assigned_users, group_ids} =
+      groups
+      |> Enum.reduce({[], []}, fn group, {users, group_ids} ->
+        {
+          users ++ Repo.preload(group, :users).users,
+          [group.id | group_ids]
+        }
+      end)
+
+    enrolled_users =
+      from(u in User,
+        join: ug in UserGroup,
+        on: fragment("? && ?", ug.enrollment_tokens, u.enrollment_tokens),
+        where: ug.id in ^group_ids,
+        preload: [:devices]
+      )
+      |> Repo.all(opts)
+
+    assigned_users
+    |> Enum.concat(enrolled_users)
+    |> Enum.uniq_by(& &1.id)
+  end
+
+  @doc """
+  Returns list of all users that are member of at least one administrator group.
   """
   @spec list_admin_users() :: [User.t()]
   def list_admin_users() do
@@ -60,14 +85,6 @@ defmodule Lotta.Accounts do
 
   Returns nil if the User does not exist.
 
-  ## Examples
-
-      iex> get_user(123)
-      %User{}
-
-      iex> get_user(456)
-      nil
-
   """
   @spec get_user(User.id()) :: User.t() | nil
   def get_user(id) do
@@ -78,15 +95,6 @@ defmodule Lotta.Accounts do
   Gets a single user by email.
 
   returns nil if the User does not exist.
-
-  ## Examples
-
-      iex> get_user_by_email("test@test.de")
-      %User{}
-
-      iex> get_user_by_email("test@no.de")
-      nil
-
   """
   @spec get_user_by_email(User.email()) :: User.t() | nil
   def get_user_by_email(email) do
@@ -95,11 +103,6 @@ defmodule Lotta.Accounts do
 
   @doc """
   Searches users by text. The user is searched by *exact match* of email, or by name or nickname
-
-  ## Examples
-
-      iex> search_user("vader")
-      [%User{}]
   """
   @spec search_user(String.t()) :: [User.t()]
   def search_user(searchtext) do
@@ -120,15 +123,6 @@ defmodule Lotta.Accounts do
   This is to assign groups.
   See `Lotta.Accounts.update_profile/2` if you want to change your own user's data.
   See `Lotta.Accounts.User.update_changeset/2` to see the changeset in use.
-
-  ## Examples
-
-      iex> update_user(user, %{field: new_value})
-      {:ok, %User{}}
-
-      iex> update_user(user, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
   @spec update_user(User.t(), map()) :: {:ok, User.t()} | {:error, Changeset.t()}
   def update_user(%User{} = user, attrs) do
@@ -141,15 +135,6 @@ defmodule Lotta.Accounts do
   Update a user's profile.
   This is for profile data like image, name, ...
   See `Lotta.Accounts.User.update_profile_changeset/2` to see the changeset in use.
-
-  ## Examples
-
-      iex> update_profile(user, %{field: new_value})
-      {:ok, %User{}}
-
-      iex> update_profile(user, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
   @spec update_profile(User.t(), map()) :: {:ok, User.t()} | {:error, Changeset.t()}
   def update_profile(%User{} = user, attrs) do
@@ -160,10 +145,6 @@ defmodule Lotta.Accounts do
 
   @doc """
   List all available user groups
-
-  ## Examples
-    iex> list_user_groups()
-    [%UserGroup{}, ...]
   """
   @spec list_user_groups() :: [UserGroup.t()]
   def list_user_groups() do
@@ -172,10 +153,6 @@ defmodule Lotta.Accounts do
 
   @doc """
   Get groups which have a given enrollment token
-
-  ## Examples
-    iex> list_groups_for_enrollment_token("token")
-    [%UserGroup{}, ...]
   """
   @spec list_groups_for_enrollment_token(String.t()) :: [UserGroup.t()]
   def list_groups_for_enrollment_token(token) when is_binary(token) do
@@ -189,10 +166,6 @@ defmodule Lotta.Accounts do
   Get groups which have given enrollment tokens.
   If no tenant is passed to the function, the current
   process' tenant will be taken.
-
-  ## Examples
-    iex> list_groups_for_enrollment_tokens(["token", "other-token"])
-    [%UserGroup{}, ...]
   """
   @spec list_groups_for_enrollment_tokens([String.t()], Tenant.t() | nil) :: [
           UserGroup.t()
@@ -209,14 +182,6 @@ defmodule Lotta.Accounts do
   @doc """
   Registers a user, generating a first-time password.
   If successfull, returns a user and a password.
-
-  ## Examples
-
-      iex> register_user(tenant, %{field: new_value})
-      {:ok, %User{}, password}
-
-      iex> register_user(tenant, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
 
   """
   @spec register_user(Tenant.t(), map()) :: {:ok, User.t(), String.t()} | {:error, Changeset.t()}
@@ -248,15 +213,6 @@ defmodule Lotta.Accounts do
 
   @doc """
   Deletes a User.
-
-  ## Examples
-
-      iex> delete_user(user)
-      {:ok, %User{}}
-
-      iex> delete_user(user)
-      {:error, %Ecto.Changeset{}}
-
   """
   @spec delete_user(User.t()) :: {:ok, User.t()} | {:error, Changeset.t()}
   def delete_user(%User{} = user) do
@@ -282,12 +238,6 @@ defmodule Lotta.Accounts do
   If a user does not exist, {:error, :nouser} is returned.
   If a user exists, {:ok, User} is returned.
   Any error from redis is related.
-
-  # Examples
-  iex> request_password_reset("valid@email.com")
-  {:ok, %User{}}
-  iex> request_password_reset("invalid@email.com")
-  {:error, :nouser}
   """
   @spec request_password_reset(User.email()) :: {:ok, User.t()} | {:error, term()}
   def request_password_reset(email) do
@@ -401,15 +351,6 @@ defmodule Lotta.Accounts do
   Gets a single user group.
 
   Raises `Ecto.NoResultsError` if the UserGroup does not exist.
-
-  ## Examples
-
-      iex> get_user_group(123)
-      %UserGroup{}
-
-      iex> get_user_group(456)
-      ** (Ecto.NoResultsError)
-
   """
   @spec get_user_group(pos_integer()) :: UserGroup.t() | nil
   def get_user_group(id) do
@@ -418,15 +359,6 @@ defmodule Lotta.Accounts do
 
   @doc """
   Creates a group.
-
-  ## Examples
-
-      iex> create_user_group(user_group)
-      {:ok, %UserGroup{}}
-
-      iex> create_user_group(user_group)
-      {:error, %Ecto.Changeset{}}
-
   """
   @spec create_user_group(map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def create_user_group(attrs) do
@@ -446,15 +378,6 @@ defmodule Lotta.Accounts do
 
   @doc """
   Updates a group.
-
-  ## Examples
-
-      iex> update_user_group(user_group, %{field: new_value})
-      {:ok, %User{}}
-
-      iex> update_user_group(user_group, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
   @spec update_user_group(UserGroup.t(), map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def update_user_group(%UserGroup{} = group, attrs) do
@@ -465,15 +388,6 @@ defmodule Lotta.Accounts do
 
   @doc """
   Deletes a Group.
-
-  ## Examples
-
-      iex> delete_user_group(user_group)
-      {:ok, %UserGroup{}}
-
-      iex> delete_user_group(user_group)
-      {:error, %Ecto.Changeset{}}
-
   """
   @spec delete_user_group(UserGroup.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def delete_user_group(%UserGroup{} = group) do
@@ -482,12 +396,6 @@ defmodule Lotta.Accounts do
 
   @doc """
   Sets the 'last seen' property on a user
-
-  ## Examples
-
-      iex> see_user(user)
-      %User{}
-
   """
   @spec see_user(User.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def see_user(%User{} = user) do
@@ -582,8 +490,7 @@ defmodule Lotta.Accounts do
       Repo.update_all(
         from(
           u in UserDevice,
-          where:
-            u.push_token == ^device.push_token
+          where: u.push_token == ^device.push_token
         ),
         [set: [push_token: nil]],
         prefix: tenant.prefix

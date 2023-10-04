@@ -69,6 +69,12 @@ defmodule LottaWeb.Schema.Messages do
           message = Repo.preload(message, [:conversation, :user, :files])
           conversation = Repo.preload(message.conversation, [:users, :groups])
 
+          Lotta.Notification.PushNotification.handle_message_sent_notification(
+            message,
+            conversation,
+            tenant
+          )
+
           if tenant do
             tid = tenant.id
 
@@ -83,12 +89,12 @@ defmodule LottaWeb.Schema.Messages do
         end
       )
 
-      resolve(fn comment, _, _ ->
+      resolve(fn message, _, _ ->
         # this function is often not actually necessary, as the default resolver
         # for subscription functions will just do what we're doing here.
         # The point is, subscription resolvers receive whatever value triggers
         # the subscription, in our case a comment.
-        {:ok, comment}
+        {:ok, message}
       end)
     end
   end

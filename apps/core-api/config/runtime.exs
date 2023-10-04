@@ -140,3 +140,11 @@ if config_env() == :prod do
     root_source_code_paths: [File.cwd!()],
     filter: Lotta.SentryFilter
 end
+
+config :lotta, Lotta.Notification.Provider.APNS,
+  adapter: Pigeon.APNS,
+  key: System.get_env("APNS_KEY"),
+  key_identifier: System.get_env("APNS_KEY_ID"),
+  team_id: System.get_env("APNS_TEAM_ID"),
+  topic: System.get_env("APNS_TOPIC", "net.einsa.lotta"),
+  mode: if(env == "production", do: :prod, else: :dev)

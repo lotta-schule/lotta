@@ -71,7 +71,7 @@ defmodule Lotta.Accounts.UserDevice do
       :custom_name,
       :device_type,
       :push_token,
-      :active,
+      :active
     ])
     |> validate_changeset()
   end
@@ -82,5 +82,4 @@ defmodule Lotta.Accounts.UserDevice do
     |> unique_constraint(:push_token)
     |> unique_constraint(:platform_id)
   end
-
 end
