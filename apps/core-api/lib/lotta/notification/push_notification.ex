@@ -6,8 +6,10 @@ defmodule Lotta.Notification.PushNotification do
   corresponding users' devices.
   """
 
+  require Logger
+
   alias Lotta.{Accounts, Messages, Repo}
-  alias Lotta.Messages.Conversation
+  alias Lotta.Messages.{Conversation, Message}
   alias Pigeon.APNS.Notification
 
   def handle_message_sent_notification(message, conversation, tenant) do
@@ -28,7 +30,7 @@ defmodule Lotta.Notification.PushNotification do
         [_, token] = String.split(device.push_token, "/")
 
         notification =
-          Notification.new(message.user.name, token, get_topic())
+          Notification.new("", token, get_topic())
           |> Notification.put_content_available()
           |> Notification.put_badge(
             Messages.count_unread_messages(
@@ -53,22 +55,25 @@ defmodule Lotta.Notification.PushNotification do
   end
 
   defp put_alert(notification, conversation, message) do
-    conf =
-      %{}
-      |> then(fn map ->
-        if group = List.first(conversation.groups),
-          do: Map.put(map, :subtitle, "in #{group.name}"),
-          else: map
-      end)
-      |> then(fn map ->
-        if message.content && String.length(message.content) > 0,
-          do: Map.put(map, :body, message.content),
-          else: map
-      end)
-
-    notification
-    |> Notification.put_alert(conf)
+    Map.new()
+    |> put_alert_title(conversation, message)
+    |> put_alert_subtitle(conversation, message)
+    |> put_alert_body(conversation, message)
+    |> then(&Notification.put_alert(notification, &1))
   end
+
+  defp put_alert_title(alert, conversation, message),
+    do: Map.put(alert, :title, message.user.name)
+
+  defp put_alert_subtitle(alert, %Conversation{groups: [group]}, message),
+    do: Map.put(alert, :subtitle, "in #{group.name}")
+
+  defp put_alert_subtitle(alert, _, _), do: alert
+
+  defp put_alert_body(alert, conversation, %Message{content: content}),
+    do: Map.put(alert, :body, String.slice(content, 0, 100))
+
+  defp put_alert_body(alert, _, _), do: alert
 
   defp get_topic() do
     Application.get_env(:lotta, Lotta.Notification.Provider.APNS)
