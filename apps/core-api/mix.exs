@@ -98,6 +98,7 @@ defmodule Lotta.MixProject do
       {:bamboo_phoenix, "~> 1.0"},
       {:gen_rmq, "~> 4.0"},
       {:ex_ical, "~> 0.2.0"},
+      {:pigeon, github: "codedge-llc/pigeon"},
       {:timex, "~> 3.7"},
       {:sentry, "~> 8.1"},
       {:redix, "~> 1.0"},
