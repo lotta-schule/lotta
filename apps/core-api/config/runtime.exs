@@ -147,4 +147,4 @@ config :lotta, Lotta.Notification.Provider.APNS,
   key_identifier: System.get_env("APNS_KEY_ID"),
   team_id: System.get_env("APNS_TEAM_ID"),
   topic: System.get_env("APNS_TOPIC", "net.einsa.lotta"),
-  mode: if(env == "production", do: :prod, else: :dev)
+  mode: if(config_env() == :prod, do: :prod, else: :dev)
