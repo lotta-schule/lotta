@@ -1,3 +1,5 @@
+@import 'breakpoints';
+
 .root {
   h3 {
     text-transform: uppercase;
@@ -16,18 +18,25 @@
   .button {
     font-weight: bolder;
     flex-direction: column;
-    width: 17.5em;
+    width: 14em;
     margin-right: calc(2 * var(--lotta-spacing));
     text-align: center;
+    @media screen and (max-width: $max-xs) {
+      width: auto;
+      font-size: 0.65rem;
+    }
     span:first-child {
       margin: calc(2 * var(--lotta-spacing));
     }
     svg {
-      font-size: 75px;
+      font-size: 50px;
       transition: transform ease-out 0.2s;
+      @media screen and (max-width: $max-xs) {
+        font-size: 35px;
+      }
     }
     &:hover svg {
-      transform: scale(1.33);
+      transform: scale(1.12);
     }
   }
 }
