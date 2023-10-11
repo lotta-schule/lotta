@@ -2,7 +2,7 @@
 
 .root {
   display: none;
-  padding: 0 0.5em;
+  padding: 0 0 1em 4em;
   font-size: 0.8rem;
   @media screen and (max-width: $max-sm) {
     display: block;
@@ -11,6 +11,15 @@
     bottom: 0;
     width: 100%;
     text-align: center;
+    .link {
+      white-space: nowrap;
+      display: inline-block;
+      line-height: 1.6rem;
+      padding: 0 var(--lotta-spacing);
+    }
+    .privacy {
+      padding-left: var(--lotta-spacing);
+    }
   }
   @media screen and (min-width: $min-md) {
     display: block;
