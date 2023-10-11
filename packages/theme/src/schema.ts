@@ -41,9 +41,13 @@ export const schema: Record<
     type: 'color',
     description: 'Label text color',
   },
-  contrastTextColor: {
+  navigationContrastTextColor: {
     type: 'color',
-    description: 'Contrast text color',
+    description: 'Contrast text color for the navigationBackgroundColor',
+  },
+  primaryContrastTextColor: {
+    type: 'color',
+    description: 'Contrast text color for the primaryBackgroundColor',
   },
   boxBackgroundColor: {
     type: 'color',
