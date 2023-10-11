@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { faCirclePlus, faCircleUser } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCirclePlus,
+  faCircleUser,
+  faCommentDots,
+} from '@fortawesome/free-solid-svg-icons';
 import {
   faComments,
   faFolder,
@@ -147,6 +151,10 @@ export const UserNavigation = React.memo(() => {
               <Item key={'own-articles'} textValue={'Meine Beiträge'}>
                 <Icon icon={faClipboardList} color="secondary" />
                 Meine Beiträge
+              </Item>,
+              <Item key={'feedback'} textValue={'Feedback'}>
+                <Icon icon={faCommentDots} color="secondary" />
+                Feedback
               </Item>,
               ...(User.isAdmin(currentUser)
                 ? [

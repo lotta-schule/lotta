@@ -9,6 +9,7 @@ import {
   faSliders,
   faShapes,
   faSquareCaretRight,
+  faCommentDots,
 } from '@fortawesome/free-solid-svg-icons';
 import { BaseButton } from '@lotta-schule/hubert';
 import Link from 'next/link';
@@ -43,6 +44,15 @@ export const Navigation = React.memo(() => {
               <Icon icon={faChartBar} />
             </span>
             <span>Nutzung</span>
+          </BaseButton>
+        </Link>
+
+        <Link href={'/admin/system/feedback'} passHref legacyBehavior>
+          <BaseButton variant={'borderless'} className={styles.button}>
+            <span>
+              <Icon icon={faCommentDots} />
+            </span>
+            <span>Feedback</span>
           </BaseButton>
         </Link>
       </section>
