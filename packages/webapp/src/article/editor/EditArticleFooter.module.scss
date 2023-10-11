@@ -42,7 +42,7 @@ div.root {
   }
 
   .deleteButton {
-    color: rgba(var(--lotta-contrast-text-color), 1);
+    color: rgb(var(--lotta-primary-contrast-text-color));
     border-color: rgba(var(--lotta-error-color), 1);
     background-color: rgba(var(--lotta-error-color), 1);
     margin-top: calc(2 * var(--lotta-spacing));

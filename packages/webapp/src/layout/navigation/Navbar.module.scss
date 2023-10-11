@@ -71,7 +71,7 @@
   }
 
   .iconButton {
-    color: rgba(var(--lotta-contrast-text-color), 1);
+    color: rgb(var(--lotta-navigation-contrast-text-color));
     background-color: inherit;
   }
 
@@ -89,6 +89,6 @@
   }
 
   .menu {
-    color: rgba(var(--lotta-contrast-text-color), 1);
+    color: rgb(var(--lotta-navigation-contrast-text-color));
   }
 }

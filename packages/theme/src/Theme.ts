@@ -7,7 +7,8 @@ export type Theme = {
   disabledColor: string;
   textColor: string;
   labelTextColor: string;
-  contrastTextColor: string;
+  navigationContrastTextColor: string;
+  primaryContrastTextColor: string;
   boxBackgroundColor: string;
   pageBackgroundColor: string;
   dividerColor: string;
