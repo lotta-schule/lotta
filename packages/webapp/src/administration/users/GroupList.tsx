@@ -22,7 +22,6 @@ import { EditUserGroupDialog } from './EditUserGroupDialog';
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 
 import styles from './GroupList.module.scss';
-import { SearchUserField } from './SearchUserField';
 import { AnimatePresence } from 'framer-motion';
 
 const COLUMN_COUNT = 1;
