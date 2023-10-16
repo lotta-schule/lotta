@@ -5,14 +5,12 @@ import {
   SomeUserin,
   KeinErSieEsUser,
   adminGroup,
-  lehrerGroup,
 } from 'test/fixtures';
 import { UserList } from 'administration/users/UserList';
 import userEvent from '@testing-library/user-event';
 
-import GetUsersQuery from 'api/query/GetUsersQuery.graphql';
 import GetUserQuery from 'api/query/GetUserQuery.graphql';
-import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
+import SearchUsersQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
 
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 
@@ -29,7 +27,10 @@ const additionalMocks = [
     })
     .flat()
     .map((searchtext) => ({
-      request: { query: SearchUsersQuery, variables: { searchtext } },
+      request: {
+        query: SearchUsersQuery,
+        variables: { searchtext, groups: null, lastSeen: null },
+      },
       result: {
         data: {
           users: [KeinErSieEsUser],
@@ -39,24 +40,8 @@ const additionalMocks = [
 ];
 
 describe('pages/admin/users/list', () => {
-  let didCall = false;
   const mocks = [
     ...additionalMocks,
-    {
-      request: { query: GetUsersQuery },
-      result: () => {
-        didCall = true;
-        return {
-          data: {
-            users: [
-              { ...SomeUser, groups: [adminGroup] },
-              { ...SomeUserin, groups: [lehrerGroup] },
-              KeinErSieEsUser,
-            ],
-          },
-        };
-      },
-    },
     {
       request: {
         query: SearchUsersQuery,
@@ -67,9 +52,6 @@ describe('pages/admin/users/list', () => {
       },
     },
   ];
-  beforeEach(() => {
-    didCall = false;
-  });
 
   it('should render a List without error', () => {
     render(
@@ -79,125 +61,28 @@ describe('pages/admin/users/list', () => {
     );
   });
 
-  describe('fetch and show userAvatar data', () => {
-    it('Show all users when no settings are given', async () => {
-      const screen = render(
-        <UserList />,
-        {},
-        {
-          currentUser: adminUser,
-          additionalMocks: mocks,
-        }
-      );
-      await waitFor(() => {
-        expect(didCall).toEqual(true);
-      });
-      expect(
-        await screen.findByRole('heading', {
-          name: /registrierte nutzer/i,
-        })
-      ).toBeVisible();
-      expect(screen.getByRole('cell', { name: /ernesto guevara/i }));
-      expect(screen.getByRole('cell', { name: /luisa drinalda/i }));
-      expect(screen.getByRole('cell', { name: /michel dupond/i }));
-    });
+  it('should search users and show results, open popup when clicking on result', async () => {
+    const fireEvent = userEvent.setup();
+    const screen = render(
+      <UserList />,
+      {},
+      {
+        currentUser: adminUser,
+        additionalMocks: mocks,
+      }
+    );
 
-    it('Can filter the users by name', async () => {
-      const fireEvent = userEvent.setup();
-      const screen = render(
-        <UserList />,
-        {},
-        {
-          currentUser: adminUser,
-          additionalMocks: mocks,
-        }
-      );
-      await waitFor(() => {
-        expect(didCall).toEqual(true);
-      });
-      await fireEvent.type(
-        screen.getByRole('textbox', { name: /name filtern/i }),
-        'Ernesto'
-      );
-      expect(screen.getAllByRole('row')).toHaveLength(2);
-      expect(screen.getByRole('cell', { name: /ernesto guevara/i }));
-    });
+    await fireEvent.type(
+      screen.getByRole('textbox', { name: /name suchen/i }),
+      'Michel'
+    );
 
-    it('Can filter the users by group', async () => {
-      const fireEvent = userEvent.setup();
-      const screen = render(
-        <UserList />,
-        {},
-        {
-          currentUser: adminUser,
-          additionalMocks: mocks,
-        }
-      );
-      await waitFor(() => {
-        expect(didCall).toEqual(true);
-      });
-      await fireEvent.click(
-        screen.getByRole('button', { name: /vorschläge/i })
-      );
-      await waitFor(() => {
-        expect(screen.getByRole('option', { name: /lehrer/i })).toBeVisible();
-      });
-      await fireEvent.click(screen.getByRole('option', { name: /lehrer/i }));
-
-      expect(await screen.findAllByRole('row')).toHaveLength(2);
-      expect(screen.getByRole('cell', { name: /luisa drinalda/i }));
-    });
-  });
-
-  describe('select a userAvatar', () => {
-    it('should open a popup when clicking a row', async () => {
-      const fireEvent = userEvent.setup();
-      const screen = render(
-        <UserList />,
-        {},
-        {
-          currentUser: adminUser,
-          additionalMocks: mocks,
-        }
-      );
-      await waitFor(() => {
-        expect(didCall).toEqual(true);
-      });
-      const userRow = screen.getAllByRole('row')[2];
-      expect(userRow).toBeDefined();
-      await fireEvent.click(userRow);
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeVisible();
-      });
-    });
-
-    it('should open a popup when selecting a userAvatar from the search', async () => {
-      const fireEvent = userEvent.setup();
-      const screen = render(
-        <UserList />,
-        {},
-        {
-          currentUser: adminUser,
-          additionalMocks: mocks,
-        }
-      );
-      expect(
-        screen.getByRole('combobox', { name: /nutzer suchen/i })
-      ).toBeVisible();
-      await fireEvent.type(
-        screen.getByRole('combobox', { name: /nutzer suchen/i }),
-        'Michel'
-      );
-      expect(
-        screen.getByRole('combobox', { name: /nutzer suchen/i })
-      ).toHaveFocus();
-      await waitFor(() => {
-        expect(screen.queryAllByRole('option')).toHaveLength(1);
-      });
-      await fireEvent.click(screen.getByRole('option', { name: /michel/i }));
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeVisible();
-      });
+    expect(await screen.findByText('1 Ergebnis')).toBeVisible();
+    const userRow = await screen.findByRole('row', { name: /michel dupond/i });
+    expect(userRow).toBeVisible();
+    await fireEvent.click(userRow);
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeVisible();
     });
   });
 });
