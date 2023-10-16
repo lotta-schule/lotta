@@ -104,18 +104,48 @@ defmodule Lotta.Accounts do
   @doc """
   Searches users by text. The user is searched by *exact match* of email, or by name or nickname
   """
-  @spec search_user(String.t()) :: [User.t()]
-  def search_user(searchtext) do
-    matching_searchtext = "%#{searchtext}%"
+  @spec search_user(String.t(), [String.t()] | nil, DateTime.t() | nil) :: [User.t()]
+  def search_user(searchtext, group_ids, last_seen) do
+    from(u in User)
+    |> then(fn query ->
+      if !is_nil(searchtext) do
+        matching_searchtext = "%#{searchtext}%"
 
-    query =
-      from(u in User,
-        where:
-          u.email == ^searchtext or
-            (ilike(u.name, ^matching_searchtext) or ilike(u.nickname, ^matching_searchtext))
-      )
+        from(u in query,
+          where:
+            u.email == ^searchtext or
+              ilike(u.name, ^matching_searchtext) or
+              ilike(u.nickname, ^matching_searchtext)
+        )
+      else
+        query
+      end
+    end)
+    |> then(fn query ->
+      if group_ids != nil do
+        user_ids =
+          from(g in UserGroup,
+            where: g.id in ^group_ids,
+            preload: :users
+          )
+          |> Repo.all()
+          |> list_users_for_groups()
+          |> Enum.map(& &1.id)
 
-    Repo.all(query)
+        from(
+          u in query,
+          where: u.id in ^user_ids
+        )
+      else
+        query
+      end
+    end)
+    |> then(fn query ->
+      if last_seen != nil,
+        do: from(u in query, where: u.last_seen < ^last_seen),
+        else: query
+    end)
+    |> Repo.all()
   end
 
   @doc """
