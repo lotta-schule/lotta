@@ -14,7 +14,6 @@ import Link from 'next/link';
 
 import GetArticlesWithUserFiles from 'api/query/GetArticlesWithUserFiles.graphql';
 import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
-import GetUsersQuery from 'api/query/GetUsersQuery.graphql';
 
 enum DeleteUserDialogSteps {
   Start,
@@ -44,14 +43,6 @@ export const DeleteUserDialog = React.memo<DeleteUserDialogProps>(
     const [destroyAccount] = useMutation(DestroyAccountMutation, {
       variables: { userId: user.id, transferFileIds: [] },
       onCompleted: () => onConfirm?.(),
-      update: (cache) => {
-        cache.updateQuery<{ users: UserModel[] }>(
-          { query: GetUsersQuery },
-          (data) => ({
-            users: data?.users.filter((u) => u.id !== user.id) ?? [],
-          })
-        );
-      },
     });
 
     return (

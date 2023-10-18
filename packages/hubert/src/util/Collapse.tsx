@@ -3,17 +3,20 @@ import { motion } from 'framer-motion';
 
 export interface CollapseProps {
   visible: boolean;
+  axis?: 'x' | 'y';
   children: React.ReactNode;
 }
 
-export const Collapse = ({ visible, children }: CollapseProps) => {
+export const Collapse = ({ visible, axis = 'y', children }: CollapseProps) => {
   const variants = {
     visible: {
       height: 'auto',
+      width: 'auto',
       opacity: 1,
     },
     hidden: {
-      height: 0,
+      height: axis !== 'x' ? 0 : 'auto',
+      width: axis === 'x' ? 0 : 'auto',
       opacity: 0,
     },
   };
@@ -21,7 +24,7 @@ export const Collapse = ({ visible, children }: CollapseProps) => {
   return (
     <motion.div
       aria-hidden={!visible}
-      style={{ overflow: 'hidden' }}
+      style={{ overflow: visible ? 'auto' : 'hidden' }}
       initial={state}
       animate={state}
       variants={variants}

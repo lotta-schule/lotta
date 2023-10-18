@@ -1,6 +1,12 @@
 @import 'breakpoints';
 
 .root {
+  .toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: bottom;
+  }
+
   .avatar {
     height: 1em;
     width: 1em;
@@ -14,26 +20,28 @@
 
   .headline {
     margin-bottom: calc(2 * var(--lotta-spacing));
-  }
-
-  .gridContainer {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .gridItem {
-    width: 50%;
-    @media screen and (max-width: $max-md) {
-      width: 100%;
-    }
-  }
-
-  .resultsGridItem {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    margin-left: var(--lotta-spacing);
   }
 
   .formControl {
     width: 100%;
+  }
+  .tableHead {
+    height: 3em;
+  }
+  .filter {
+    display: inline-flex;
+    @media screen and (max-width: $max-sm) {
+      width: 50%;
+    }
+    @media screen and (max-width: $max-xs) {
+      width: 100%;
+    }
+  }
+  .selectfield {
+    position: relative;
+  }
+  .respTable {
+    overflow-x: scroll;
   }
 }
