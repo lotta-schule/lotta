@@ -1,31 +1,30 @@
 import * as React from 'react';
-import chunk from 'lodash/chunk';
 import { Icon } from 'shared/Icon';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
 import {
   Button,
-  Checkbox,
-  Divider,
   DragHandle,
   ErrorMessage,
   Input,
   Label,
+  List,
+  ListItem,
+  Option,
   Select,
 } from '@lotta-schule/hubert';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { CreateUserGroupDialog } from './CreateUserGroupDialog';
-import { EditUserGroupDialog } from './EditUserGroupDialog';
+import { EditUserGroup } from './EditUserGroup';
 
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 
 import styles from './GroupList.module.scss';
-import { SearchUserField } from './SearchUserField';
-import { AnimatePresence } from 'framer-motion';
+import clsx from 'clsx';
 
-const COLUMN_COUNT = 1;
+type Sorting = 'custom' | 'name';
 
 export const GroupList = () => {
   const groups = useUserGroups();
@@ -33,6 +32,20 @@ export const GroupList = () => {
     React.useState<UserGroupModel | null>(null);
   const [isCreateUserGroupDialogOpen, setIsCreateUserGroupDialogOpen] =
     React.useState(false);
+  const [sorting, setSorting] = React.useState<Sorting>('custom');
+  const [searchText, setSearchText] = React.useState('');
+
+  const highlightedGroups = searchText
+    ? groups.filter((group) =>
+        group.name.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : [];
+
+  const sortedGroups = React.useMemo(() => {
+    return sorting === 'custom'
+      ? groups
+      : [...groups].sort((g1, g2) => g1.name.localeCompare(g2.name));
+  }, [groups, sorting]);
 
   const [updateGroup, { error }] = useMutation<
     { group: UserGroupModel },
@@ -50,28 +63,17 @@ export const GroupList = () => {
     },
   });
 
-  const entriesPerList = Math.ceil(groups.length / COLUMN_COUNT);
-
-  const chunkedGroups = chunk(groups, entriesPerList);
+  React.useLayoutEffect(() => {
+    if (highlightedGroups.length > 0) {
+      document
+        .querySelector(`[data-groupid="${highlightedGroups[0].id}"]`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setSelectedGroup(highlightedGroups[0]);
+    }
+  }, [highlightedGroups]);
 
   return (
     <div className={styles.root}>
-      <div className={styles.toolBar}>
-        <div className={styles.groupSearch}>
-          <Input placeholder={'Gruppe suchen'} />{' '}
-        </div>
-        <div className={styles.createButton}>
-          <Button
-            icon={<Icon icon={faCirclePlus} />}
-            onClick={() => setIsCreateUserGroupDialogOpen(true)}
-          >
-            Gruppe erstellen
-          </Button>
-        </div>
-        <div className={styles.sorting}>
-          <Select title={'Sortierung'} />{' '}
-        </div>
-      </div>
       <CreateUserGroupDialog
         isOpen={isCreateUserGroupDialogOpen}
         onAbort={() => setIsCreateUserGroupDialogOpen(false)}
@@ -80,135 +82,120 @@ export const GroupList = () => {
           setSelectedGroup(group);
         }}
       />
-      <EditUserGroupDialog
-        group={selectedGroup}
-        onRequestClose={() => setSelectedGroup(null)}
-      />
-      <DragDropContext
-        onDragEnd={({ destination, source }) => {
-          if (!destination) {
-            return;
-          }
-          if (
-            destination.droppableId === source.droppableId &&
-            destination.index === source.index
-          ) {
-            return;
-          }
-
-          const fromColumn = Number(source.droppableId.replace(/[^\d/]/g, ''));
-          const toColumn = Number(
-            destination.droppableId.replace(/[^\d/]/g, '')
-          );
-
-          const fromIndex = fromColumn * entriesPerList + source.index;
-          const toIndex = toColumn * entriesPerList + destination.index;
-          const newGroupsArray = Array.from(groups);
-          newGroupsArray.splice(fromIndex, 1);
-          newGroupsArray.splice(toIndex, 0, groups[fromIndex]);
-          const from = fromIndex < toIndex ? fromIndex : toIndex;
-          const to = toIndex > fromIndex ? toIndex + 1 : fromIndex + 1;
-          newGroupsArray.slice(from, to).forEach((group, index) => {
-            if (group) {
-              updateGroup({
-                variables: {
-                  id: group.id,
-                  group: {
-                    name: group.name,
-                    sortKey: (from + index) * 10 + 10,
-                  },
-                },
-              });
-            }
-          });
-        }}
-      >
-        <ErrorMessage error={error} />
-        <div className={styles.container}>
-          <div className={styles.listsWrapper}>
-            {chunkedGroups.map((groupsChunk, index) => (
-              <Droppable
-                key={index}
-                droppableId={`groups-column-${index}`}
-                type={'root-groups'}
-              >
-                {({ droppableProps, innerRef, placeholder }) => (
-                  <ul {...droppableProps} ref={innerRef}>
-                    {groupsChunk.map((group, index) => (
-                      <Draggable
-                        key={group.id}
-                        draggableId={String(group.id)}
-                        index={index}
-                      >
-                        {({ innerRef, dragHandleProps, draggableProps }) => (
-                          <li
-                            title={group.name}
-                            onClick={() => setSelectedGroup(group)}
-                            key={group.id}
-                            ref={innerRef}
-                            {...draggableProps}
-                          >
-                            <span {...dragHandleProps}>
-                              <DragHandle className={styles.draghandleIcon} />
-                            </span>
-                            {group.name} ({group.sortKey})
-                          </li>
-                        )}
-                      </Draggable>
-                    ))}
-                    {placeholder}
-                  </ul>
-                )}
-              </Droppable>
-            ))}
-          </div>
-          <div className={styles.groupInfoSection}>
-            <h3>Gruppeninformationen</h3>
-            <p>
-              <b>Gruppe: 123</b>
-            </p>
-            <Divider />
-            <Label label={'Gruppenname'}>
-              <Input placeholder={'Gruppennamen bearbeiten'} />
-            </Label>
-            <Divider />
-            <p>
-              {' '}
-              <b>Anzahl Mitglieder:</b> 123v
-            </p>
-            <Divider />
-            <p>
-              {' '}
-              <b>Einschreibeschlüssel</b>
-              <div className={styles.infoText}>
-                <p>
-                  Nutzer, die bei der Registrierung einen
-                  Einschreibeschlüsselverwenden, werden automatisch dieser
-                  Gruppe zugeordnet.
-                </p>
-                <p>Mehrere Schlüssel durch Komma trennen.</p>
-              </div>
-            </p>
-            <Label label={'Einschreibeschlüssel '}>
+      <ErrorMessage error={error} />
+      <div className={styles.twoColumnLayout}>
+        <section className={styles.groupList}>
+          <div className={styles.groupListToolbar}>
+            <Label label={'Suche'} className={styles.groupSearch}>
               <Input
-                placeholder={'Neue Einschreibeschlüssel hier eintragen.'}
+                placeholder={'Gruppenname'}
+                value={searchText}
+                onChange={(e) => setSearchText(e.currentTarget.value)}
               />
             </Label>
-            <ul>
-              <AnimatePresence>
-                <div className={styles.tag} role={'listitem'}></div>
-              </AnimatePresence>
-            </ul>
-            <Divider />
-            <Checkbox>
-              Diese Gruppe hat universelle Administratorrechte
-            </Checkbox>
-            <Divider />
-            <Button style={{ float: 'right' }}>speichern</Button>
-            <Button className={styles.deleteButton}>Gruppe löschen</Button>
+            <Select
+              className={styles.sorting}
+              title={'Sortierung'}
+              value={sorting}
+              onChange={(v) => setSorting(v as Sorting)}
+            >
+              <Option value={'custom'}>Eigene</Option>
+              <Option value={'name'}>Name</Option>
+            </Select>
           </div>
+
+          <DragDropContext
+            onDragEnd={({ destination, source }) => {
+              if (!destination) {
+                return;
+              }
+              if (
+                destination.droppableId === source.droppableId &&
+                destination.index === source.index
+              ) {
+                return;
+              }
+
+              const newGroupsArray = Array.from(groups);
+              newGroupsArray.splice(source.index, 1);
+              newGroupsArray.splice(destination.index, 0, groups[source.index]);
+              const from = Math.min(source.index, destination.index);
+              const to = Math.max(source.index, destination.index) + 1;
+              newGroupsArray.slice(from, to).forEach((group, index) => {
+                if (group) {
+                  updateGroup({
+                    variables: {
+                      id: group.id,
+                      group: {
+                        name: group.name,
+                        sortKey: (from + index) * 10 + 10,
+                      },
+                    },
+                  });
+                }
+              });
+            }}
+          >
+            <Droppable
+              isDropDisabled={sorting !== 'custom'}
+              droppableId={'groups'}
+              type={'root-groups'}
+            >
+              {({ droppableProps, innerRef, placeholder }) => (
+                <List {...droppableProps} ref={innerRef}>
+                  {sortedGroups.map((group, index) => (
+                    <Draggable
+                      key={group.id}
+                      draggableId={String(group.id)}
+                      index={index}
+                      isDragDisabled={sorting !== 'custom'}
+                    >
+                      {({ innerRef, dragHandleProps, draggableProps }) => (
+                        <ListItem
+                          className={clsx(
+                            highlightedGroups.includes(group) &&
+                              styles.highlighted,
+                            selectedGroup === group && styles.selected
+                          )}
+                          title={group.name}
+                          onClick={() => setSelectedGroup(group)}
+                          data-groupid={group.id}
+                          key={group.id}
+                          ref={innerRef}
+                          rightSection={
+                            sorting === 'custom' ? (
+                              <span {...dragHandleProps}>
+                                <DragHandle className={styles.draghandleIcon} />
+                              </span>
+                            ) : undefined
+                          }
+                          {...draggableProps}
+                        >
+                          {group.name}
+                        </ListItem>
+                      )}
+                    </Draggable>
+                  ))}
+                  {placeholder}
+                </List>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </section>
+        <div>
+          <Button
+            className={styles.createGroupButton}
+            icon={<Icon icon={faCirclePlus} />}
+            onClick={() => setIsCreateUserGroupDialogOpen(true)}
+          >
+            Gruppe erstellen
+          </Button>
+          <EditUserGroup
+            group={selectedGroup}
+            onDelete={() => setSelectedGroup(null)}
+          />
         </div>
-      </DragDropContext>
+      </div>
     </div>
   );
 };
