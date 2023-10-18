@@ -35,7 +35,7 @@ describe('administration/users/GroupList', () => {
     expect(screen.getAllByRole('listitem').length).toEqual(29);
   });
 
-  it('should find a group by name', async () => {
+  it('should highlight a group by name', async () => {
     let scrolledElement: HTMLElement | null = null;
     const scrollIntoViewMock = jest.fn(function () {
       scrolledElement = this;
@@ -94,6 +94,32 @@ describe('administration/users/GroupList', () => {
           name: 'Gruppe "Administrator" bearbeiten',
         })
       ).toBeVisible();
+    });
+  });
+
+  it('should change sorting via the select', async () => {
+    const fireEvent = userEvent.setup();
+    const screen = render(
+      <GroupList />,
+      {},
+      {
+        userGroups: extendedUserGroups,
+        additionalMocks,
+      }
+    );
+    expect(screen.getAllByRole('listitem')[0]).toHaveTextContent(
+      /new group 0/i
+    );
+
+    await fireEvent.click(screen.getByRole('button', { name: /sortierung/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('listbox')).toBeVisible();
+    });
+    await fireEvent.click(screen.getByRole('option', { name: /name/i }));
+    await waitFor(() => {
+      expect(screen.getAllByRole('listitem')[0]).toHaveTextContent(
+        'Administrator'
+      );
     });
   });
 });

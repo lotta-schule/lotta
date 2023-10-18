@@ -37,6 +37,28 @@ const additionalMocks = [
         },
       },
     })),
+  {
+    request: {
+      query: SearchUsersQuery,
+      variables: { searchtext: null, groups: [{ id: '1' }], lastSeen: null },
+    },
+    result: {
+      data: {
+        users: [],
+      },
+    },
+  },
+  {
+    request: {
+      query: SearchUsersQuery,
+      variables: { searchtext: null, groups: [{ id: '1' }], lastSeen: 30 },
+    },
+    result: {
+      data: {
+        users: [],
+      },
+    },
+  },
 ];
 
 describe('pages/admin/users/list', () => {
@@ -83,6 +105,39 @@ describe('pages/admin/users/list', () => {
     await fireEvent.click(userRow);
     await waitFor(() => {
       expect(screen.getByRole('dialog')).toBeVisible();
+    });
+  });
+
+  it('should search with groups and lastSeen, showing a message when no results were found', async () => {
+    const fireEvent = userEvent.setup();
+    const screen = render(
+      <UserList />,
+      {},
+      {
+        currentUser: adminUser,
+        additionalMocks: mocks,
+      }
+    );
+
+    await fireEvent.click(
+      screen.getByRole('button', { name: /gruppe filtern/i })
+    );
+    await waitFor(() => {
+      expect(screen.getByRole('listbox')).toBeVisible();
+    });
+    await fireEvent.click(screen.getAllByRole('option')[0]);
+
+    await fireEvent.click(
+      screen.getByRole('button', { name: /zuletzt angemeldet/i })
+    );
+    await waitFor(() => {
+      expect(
+        screen.getByRole('listbox', { name: /angemeldet/i })
+      ).toBeVisible();
+    });
+    await fireEvent.click(screen.getAllByRole('option')[0]);
+    await waitFor(() => {
+      expect(screen.getByText('Keine Nutzer gefunden.')).toBeVisible();
     });
   });
 });
