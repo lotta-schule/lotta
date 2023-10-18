@@ -16,6 +16,7 @@ export const Footer = React.memo(() => {
           <React.Fragment key={category.id}>
             <Link
               href={category.redirect || Category.getPath(category)}
+              className={styles.link}
               passHref
               data-testid="SidenavLink"
             >
@@ -25,7 +26,12 @@ export const Footer = React.memo(() => {
           </React.Fragment>
         );
       })}
-      <Link href={`/privacy`} passHref data-testid="SidenavLink">
+      <Link
+        href={`/privacy`}
+        passHref
+        data-testid="SidenavLink"
+        className={styles.privacy}
+      >
         Datenschutz
       </Link>
     </div>
