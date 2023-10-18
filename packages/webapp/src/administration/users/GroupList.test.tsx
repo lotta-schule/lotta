@@ -18,6 +18,10 @@ const extendedUserGroups = [
   })),
 ];
 
+const additionalMocks = extendedUserGroups.map((group) => ({
+  request: { query: GetGroupQuery, variables: { id: group.id } },
+  result: { data: { group } },
+}));
 describe('administration/users/GroupList', () => {
   it('should list all groups', () => {
     const screen = render(
@@ -25,20 +29,38 @@ describe('administration/users/GroupList', () => {
       {},
       {
         userGroups: extendedUserGroups,
+        additionalMocks,
       }
     );
     expect(screen.getAllByRole('listitem').length).toEqual(29);
   });
 
-  it('should split up groups into 4 columns', () => {
+  it('should find a group by name', async () => {
+    let scrolledElement: HTMLElement | null = null;
+    const scrollIntoViewMock = jest.fn(function () {
+      scrolledElement = this;
+    });
+    HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
+    const fireEvent = userEvent.setup();
     const screen = render(
       <GroupList />,
       {},
       {
         userGroups: extendedUserGroups,
+        additionalMocks,
       }
     );
-    expect(screen.getAllByRole('list').length).toEqual(4);
+    expect(screen.getByRole('textbox', { name: /suche/i })).toBeVisible();
+    await fireEvent.type(
+      screen.getByRole('textbox', { name: /suche/i }),
+      'New Group 1'
+    );
+    await waitFor(() => {
+      expect(scrollIntoViewMock).toHaveBeenCalled();
+      expect(scrolledElement).toBe(
+        screen.getByRole('listitem', { name: 'New group 1' })
+      );
+    });
   });
 
   it('should show the group name', () => {
@@ -54,22 +76,14 @@ describe('administration/users/GroupList', () => {
     ).toEqual(1);
   });
 
-  it('should open the EditGroupDialog when clicking on the group name', async () => {
+  it('should open the EditGroup when clicking on the group name', async () => {
     const fireEvent = userEvent.setup();
     const screen = render(
       <GroupList />,
       {},
       {
         userGroups: extendedUserGroups,
-        additionalMocks: [
-          {
-            request: {
-              query: GetGroupQuery,
-              variables: { id: adminGroup.id },
-            },
-            result: { data: { group: adminGroup } },
-          },
-        ],
+        additionalMocks,
       }
     );
     const groupLI = screen.getByRole('listitem', { name: 'Administrator' });
