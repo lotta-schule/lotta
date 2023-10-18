@@ -7,12 +7,19 @@ import { de } from 'date-fns/locale';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { GroupSelect } from 'shared/edit/GroupSelect';
-import { ComboBox, LinearProgress, Select, Table } from '@lotta-schule/hubert';
-import { SearchUserField } from './SearchUserField';
+import {
+  Input,
+  Label,
+  LinearProgress,
+  Select,
+  Option,
+  Table,
+} from '@lotta-schule/hubert';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
+import { useDebounce } from 'util/useDebounce';
 import clsx from 'clsx';
 
-import GetUsersQuery from 'api/query/GetUsersQuery.graphql';
+import SearchUsersAsAdminQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
 
 import styles from './UserList.module.scss';
 
@@ -20,66 +27,118 @@ export const UserList = React.memo(() => {
   const { t } = useTranslation();
   const currentUser = useCurrentUser();
 
+  const [searchText, setSearchText] = React.useState('');
+  const debouncedSearchtext = useDebounce(searchText, 500);
   const [selectedUser, setSelectedUser] = React.useState<UserModel | null>(
     null
   );
-  const [selectedGroupsFilter, setSelectedGroupsFilter] = React.useState<
-    UserGroupModel[]
-  >([]);
-  const [filterText, setFilterText] = React.useState('');
+
+  const [searchFilter, setSearchFilter] = React.useState<{
+    name: string;
+    groups: UserGroupModel[];
+    lastSeen: number | null;
+  }>({
+    name: '',
+    groups: [],
+    lastSeen: null,
+  });
+
+  React.useEffect(
+    () => setSearchFilter((f) => ({ ...f, name: debouncedSearchtext })),
+    [debouncedSearchtext]
+  );
+
+  const searchIsValid =
+    searchFilter.name.length > 2 ||
+    searchFilter.groups.length ||
+    searchFilter.lastSeen;
+
   const { data, loading: isLoading } = useQuery<{ users: UserModel[] }>(
-    GetUsersQuery
+    SearchUsersAsAdminQuery,
+    {
+      variables: {
+        searchtext: searchFilter.name || null,
+        groups: searchFilter.groups.length
+          ? searchFilter.groups.map(({ id }) => ({ id }))
+          : null,
+        lastSeen: searchFilter.lastSeen,
+      },
+      skip: !searchIsValid,
+    }
   );
 
   const rows = React.useMemo(() => {
     return (
-      data?.users
-        ?.filter((user) =>
-          selectedGroupsFilter.length
-            ? user.groups.find((group) =>
-                selectedGroupsFilter.find((g) => g.id === group.id)
-              )
-            : true
-        )
-        ?.filter((user) =>
-          filterText
-            ? new RegExp(
-                filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'),
-                'igu'
-              ).test(user.name!)
-            : true
-        )
-        ?.map((user) => ({
-          avatarImage: (
-            <UserAvatar className={styles.avatar} user={user} size={25} />
-          ),
-          name: (
-            <>
-              {user.name}
-              {user.nickname && (
-                <>
-                  {' '}
-                  &nbsp; (<strong>{user.nickname}</strong>)
-                </>
-              )}
-            </>
-          ),
-          groups: user.groups.map((g) => g.name).join(', '),
-          lastSeen: user.lastSeen
-            ? format(new Date(user.lastSeen), 'PPP', { locale: de })
-            : '',
-          user,
-        })) ?? []
+      data?.users?.map((user) => ({
+        avatarImage: (
+          <UserAvatar className={styles.avatar} user={user} size={25} />
+        ),
+        name: (
+          <>
+            {user.name}
+            {user.nickname && (
+              <>
+                {' '}
+                &nbsp; (<strong>{user.nickname}</strong>)
+              </>
+            )}
+          </>
+        ),
+        groups: user.groups.map((g) => g.name).join(', '),
+        lastSeen: user.lastSeen
+          ? format(new Date(user.lastSeen), 'PPP', { locale: de })
+          : '',
+        user,
+      })) ?? []
     );
-  }, [data, filterText, selectedGroupsFilter]);
+  }, [data]);
 
   return (
-    <div className={styles.root}>
+    <section className={styles.root}>
       <h5 className={styles.headline}>Nutzersuche</h5>
-      <SearchUserField
-        className={clsx(styles.headline)}
-        onSelectUser={setSelectedUser}
-      />
+
+      <div className={styles.toolbar}>
+        <Label label={'Name suchen:'}>
+          <Input
+            className={clsx(styles.headline)}
+            value={searchText}
+            onChange={(e) =>
+              setSearchText((e.target as HTMLInputElement).value)
+            }
+            placeholder={'Napoleon Bonaparte'}
+          />
+        </Label>
+
+        <GroupSelect
+          row
+          hidePublicGroupSelection
+          disableAdminGroupsExclusivity
+          label={'Nach Gruppe filtern:'}
+          selectedGroups={searchFilter.groups ?? []}
+          onSelectGroups={(groups) =>
+            setSearchFilter({ ...searchFilter, groups })
+          }
+          className={styles.filter}
+        />
+
+        <div className={clsx(styles.filter, styles.selectfield)}>
+          <Select
+            title={'zuletzt angemeldet'}
+            onChange={(lastSeen) =>
+              setSearchFilter({
+                ...searchFilter,
+                lastSeen: lastSeen === 'null' ? null : Number(lastSeen),
+              })
+            }
+          >
+            <Option value={'30'}>vor 30 Tagen oder mehr</Option>
+            <Option value={'90'}>vor 90 Tage oder mehr</Option>
+            <Option value={'180'}>vor 6 Monate oder mehr</Option>
+            <Option value={'365'}>vor einem Jahr oder mehr</Option>
+            <Option value={'null'}>zurücksetzen</Option>
+          </Select>
+        </div>
+      </div>
 
       {isLoading && (
         <LinearProgress
@@ -89,28 +148,20 @@ export const UserList = React.memo(() => {
         />
       )}
 
-      {!isLoading && (
+      {!searchIsValid && <div>Suchkritierien wählen um Nutzer zu finden.</div>}
+
+      {rows.length === 0 && searchIsValid && !isLoading && (
+        <div>Keine Nutzer gefunden.</div>
+      )}
+
+      {rows.length > 0 && searchIsValid && !isLoading && (
         <>
-          <GroupSelect
-            row
-            hidePublicGroupSelection
-            disableAdminGroupsExclusivity
-            label={null}
-            selectedGroups={selectedGroupsFilter}
-            onSelectGroups={setSelectedGroupsFilter}
-            className={styles.filter}
-          />
-          <div className={clsx(styles.filter, styles.selectfield)}>
-            <Select title={'zuletzt angemeldet'} />
+          <div>
+            {t('administration.results', {
+              count: rows.length,
+            })}
           </div>
-          <div className={styles.gridContainer}>
-            <div className={styles.gridItem}></div>
-            <div className={clsx(styles.gridItem, styles.resultsGridItem)}>
-              {t('administration.results', {
-                count: rows.length,
-              })}
-            </div>
-          </div>
+
           <div className={clsx(styles.respTable)}>
             <Table>
               <thead>
@@ -140,15 +191,16 @@ export const UserList = React.memo(() => {
               </tbody>
             </Table>
           </div>
+
+          {selectedUser && (
+            <EditUserPermissionsDialog
+              onRequestClose={() => setSelectedUser(null)}
+              user={selectedUser}
+            />
+          )}
         </>
       )}
-      {selectedUser && (
-        <EditUserPermissionsDialog
-          onRequestClose={() => setSelectedUser(null)}
-          user={selectedUser}
-        />
-      )}
-    </div>
+    </section>
   );
 });
 UserList.displayName = 'AdminUserList';

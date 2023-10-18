@@ -36,39 +36,41 @@ export const AdminPage: React.FC<AdminPageProps> = ({
         <Header bannerImageUrl={'/bannerAdmin.png'}>
           <h2 data-testid={'title'}>Administration</h2>
         </Header>
-        {isAllowed && (
-          <>
-            <div className={styles.titleBar}>
-              {hasHomeLink && (
-                <Link
-                  href={'/admin'}
-                  passHref
-                  title={'Zurück zum Administrations-Hauptmenü'}
-                >
-                  <FontAwesomeIcon icon={faCubes} />
-                  Hauptmenü
-                </Link>
-              )}
-              {!hasHomeLink && <FontAwesomeIcon icon={faCubes} />}
-              <h2>{title}</h2>
-            </div>
-            <section className={styles.contentSection}>
-              <Component />
-            </section>
-          </>
-        )}
-        {!isAllowed && (
-          <Box>
-            <div className={styles.noAccessMessageContainer}>
-              <div>
-                <FontAwesomeIcon icon={faCircleExclamation} />
-                <span>
-                  Du hast nicht die notwendigen Rechte, diese Seite zu sehen.
-                </span>
+        <section>
+          {isAllowed && (
+            <>
+              <div className={styles.titleBar}>
+                {hasHomeLink && (
+                  <Link
+                    href={'/admin'}
+                    passHref
+                    title={'Zurück zum Administrations-Hauptmenü'}
+                  >
+                    <FontAwesomeIcon icon={faCubes} />
+                    Hauptmenü
+                  </Link>
+                )}
+                {!hasHomeLink && <FontAwesomeIcon icon={faCubes} />}
+                <h2>{title}</h2>
               </div>
-            </div>
-          </Box>
-        )}
+              <section className={styles.contentSection}>
+                <Component />
+              </section>
+            </>
+          )}
+          {!isAllowed && (
+            <Box>
+              <div className={styles.noAccessMessageContainer}>
+                <div>
+                  <FontAwesomeIcon icon={faCircleExclamation} />
+                  <span>
+                    Du hast nicht die notwendigen Rechte, diese Seite zu sehen.
+                  </span>
+                </div>
+              </div>
+            </Box>
+          )}
+        </section>
       </Main>
       <Sidebar isEmpty />
     </>

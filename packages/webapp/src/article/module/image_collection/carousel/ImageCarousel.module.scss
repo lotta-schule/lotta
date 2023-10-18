@@ -25,7 +25,7 @@
   position: absolute;
   width: auto;
   z-index: 1;
-  background: rgba(var(--lotta-contrast-text-color), 1);
+  background: rgb(var(--lotta-primary-contrast-text-color));
   bottom: 0;
   padding: 0 calc(0.5 * var(--lotta-spacing));
 }

@@ -160,6 +160,18 @@ be converted to UTC if there is an offset.
 """
 scalar DateTime
 
+type Device {
+  customName: String
+  deviceType: String
+  id: ID
+  insertedAt: DateTime
+  lastUsed: DateTime
+  modelName: String
+  operatingSystem: String
+  platformId: String
+  updatedAt: DateTime
+}
+
 type Directory {
   id: ID
   insertedAt: DateTime
@@ -259,6 +271,15 @@ input MessageInput {
   recipientUser: SelectUserInput
 }
 
+input RegisterDeviceInput {
+  customName: String
+  deviceType: String
+  modelName: String
+  operatingSystem: String
+  platformId: String!
+  pushToken: String
+}
+
 input RegisterUserParams {
   email: String
   hideFullName: Boolean
@@ -284,6 +305,7 @@ type RootMutationType {
   login(password: String, username: String): Authresult
   logout: Authresult
   register(groupKey: String, user: RegisterUserParams!): Boolean
+  registerDevice(device: RegisterDeviceInput!): Device
   requestHisecToken(password: String): String
   requestPasswordReset(email: String!): Boolean
   resetPassword(email: String!, password: String!, token: String!): Authresult
@@ -291,6 +313,7 @@ type RootMutationType {
   toggleArticlePin(id: ID!): Article
   updateArticle(article: ArticleInput!, id: ID!): Article
   updateCategory(category: UpdateCategoryInput!, id: ID!): Category
+  updateDevice(device: UpdateDeviceInput!, id: ID!): Device
   updateDirectory(id: ID!, name: String, parentDirectoryId: ID): Directory
   updateEmail(newEmail: String!): User
   updateFile(filename: String, id: ID!, parentDirectoryId: ID): File
@@ -313,6 +336,7 @@ type RootQueryType {
   conversation(id: ID!): Conversation
   conversations: [Conversation]
   currentUser: User
+  devices: [Device]
   directories(parentDirectoryId: ID): [Directory]
   directory(id: ID): Directory
   file(id: ID): File
@@ -408,6 +432,12 @@ input UpdateCategoryInput {
   sortKey: Int
   title: String
   widgets: [SelectWidgetInput] = []
+}
+
+input UpdateDeviceInput {
+  customName: String
+  deviceType: String
+  pushToken: String
 }
 
 input UpdateUserParams {

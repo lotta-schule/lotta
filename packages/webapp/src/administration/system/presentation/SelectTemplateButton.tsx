@@ -9,8 +9,8 @@ export interface SelectTemplateButtonProps {
   onClick?(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void;
 }
 
-export const SelectTemplateButton = React.memo<SelectTemplateButtonProps>(
-  ({ title, theme, onClick }) => {
+export const SelectTemplateButton = React.memo(
+  ({ title, theme, onClick }: SelectTemplateButtonProps) => {
     const getBackground = (): React.CSSProperties['background'] => {
       return `linear-gradient(${[
         `${theme.primaryColor} 33%`,
@@ -28,7 +28,7 @@ export const SelectTemplateButton = React.memo<SelectTemplateButtonProps>(
       >
         <span className={styles.imageButton}>
           <span
-            style={{ color: theme.contrastTextColor }}
+            style={{ color: theme.primaryContrastTextColor }}
             className={styles.imageTitle}
           >
             {title}

@@ -49,7 +49,7 @@
       */
   &[data-variant='fill'] {
     background-color: rgba(var(--lotta-primary-color), 1);
-    color: rgba(var(--lotta-contrast-text-color), 1);
+    color: rgba(var(--lotta-primary-contrast-text-color), 1);
     border: none;
     &:hover {
       transition: linear;
@@ -68,7 +68,7 @@
   }
   &[data-variant='error'] {
     background-color: rgba(var(--lotta-error-color), 1);
-    color: #fff;
+    color: rgba(var(--lotta-primary-contrast-text-color), 1);
     border: none;
     &:hover {
       transition: linear;

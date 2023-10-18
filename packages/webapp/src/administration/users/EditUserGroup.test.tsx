@@ -6,7 +6,7 @@ import {
   schuelerGroup,
 } from 'test/fixtures';
 import { render, waitFor, within } from 'test/util';
-import { EditUserGroupDialog } from './EditUserGroupDialog';
+import { EditUserGroup } from './EditUserGroup';
 import userEvent from '@testing-library/user-event';
 
 import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
@@ -24,30 +24,30 @@ const additionalMocks = [
   },
 ];
 
-describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => {
-  describe('dialog', () => {
-    it('should not show the dialog when no group is passed', () => {
+describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
+  describe('form', () => {
+    it('should not show the form when no group is passed', () => {
       const screen = render(
-        <EditUserGroupDialog group={null} onRequestClose={jest.fn()} />,
+        <EditUserGroup group={null} onDelete={jest.fn()} />,
         {},
         { additionalMocks }
       );
       expect(
-        screen.queryByRole('dialog', {
+        screen.queryByRole('form', {
           name: /bearbeiten/i,
         })
       ).toBeNull();
     });
 
-    it('should show the dialog when a group is passed', async () => {
+    it('should show the form when a group is passed', async () => {
       const screen = render(
-        <EditUserGroupDialog group={lehrerGroup} onRequestClose={jest.fn()} />,
+        <EditUserGroup group={lehrerGroup} onDelete={jest.fn()} />,
         {},
         { additionalMocks }
       );
       await waitFor(() => {
         expect(
-          screen.getByRole('dialog', {
+          screen.getByRole('form', {
             name: 'Gruppe "Lehrer" bearbeiten',
           })
         ).toBeVisible();
@@ -59,10 +59,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
     describe('Group Title', () => {
       it('should be showing the title in a textbox', async () => {
         const screen = render(
-          <EditUserGroupDialog
-            group={lehrerGroup}
-            onRequestClose={jest.fn()}
-          />,
+          <EditUserGroup group={lehrerGroup} onDelete={jest.fn()} />,
           {},
           { additionalMocks }
         );
@@ -91,10 +88,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
           result: saveCallback,
         };
         const screen = render(
-          <EditUserGroupDialog
-            group={lehrerGroup}
-            onRequestClose={jest.fn()}
-          />,
+          <EditUserGroup group={lehrerGroup} onDelete={jest.fn()} />,
           {},
           { additionalMocks: [...additionalMocks, saveMock] }
         );
@@ -131,10 +125,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
           result: saveCallback,
         };
         const screen = render(
-          <EditUserGroupDialog
-            group={lehrerGroup}
-            onRequestClose={jest.fn()}
-          />,
+          <EditUserGroup group={lehrerGroup} onDelete={jest.fn()} />,
           {},
           { additionalMocks: [...additionalMocks, saveMock] }
         );
@@ -162,7 +153,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
       const groupsWithSecondAdmin = [...groups, otherAdminGroup];
       it('should have the admin checkbox checked for a admin group', async () => {
         const screen = render(
-          <EditUserGroupDialog group={adminGroup} onRequestClose={jest.fn()} />,
+          <EditUserGroup group={adminGroup} onDelete={jest.fn()} />,
           {},
           { additionalMocks, userGroups: groupsWithSecondAdmin }
         );
@@ -193,7 +184,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
           result: saveCallback,
         };
         const screen = render(
-          <EditUserGroupDialog group={adminGroup} onRequestClose={jest.fn()} />,
+          <EditUserGroup group={adminGroup} onDelete={jest.fn()} />,
           {},
           {
             additionalMocks: [...additionalMocks, saveMock],
@@ -212,7 +203,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
 
       it('should disable the admin checkbox if there is only one admin available', async () => {
         const screen = render(
-          <EditUserGroupDialog group={adminGroup} onRequestClose={jest.fn()} />,
+          <EditUserGroup group={adminGroup} onDelete={jest.fn()} />,
           {},
           { additionalMocks }
         );
@@ -251,10 +242,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
           result: saveCallback,
         };
         const screen = render(
-          <EditUserGroupDialog
-            group={lehrerGroup}
-            onRequestClose={jest.fn()}
-          />,
+          <EditUserGroup group={lehrerGroup} onDelete={jest.fn()} />,
           {},
           { additionalMocks: [...additionalMocks, saveMock] }
         );
@@ -271,12 +259,9 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
     describe('delete group', () => {
       it('should show a delete button for a group and show dialog', async () => {
         const fireEvent = userEvent.setup();
-        const onRequestClose = jest.fn();
+        const onDelete = jest.fn();
         const screen = render(
-          <EditUserGroupDialog
-            group={lehrerGroup}
-            onRequestClose={onRequestClose}
-          />,
+          <EditUserGroup group={lehrerGroup} onDelete={onDelete} />,
           {},
           {
             additionalMocks: [
@@ -316,13 +301,13 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
         await fireEvent.click(deleteButton);
 
         await waitFor(() => {
-          expect(onRequestClose).toHaveBeenCalled();
+          expect(onDelete).toHaveBeenCalled();
         });
       });
 
       it('delete button should be disabled when group is sole admin group', async () => {
         const screen = render(
-          <EditUserGroupDialog group={adminGroup} onRequestClose={jest.fn()} />,
+          <EditUserGroup group={adminGroup} onDelete={jest.fn()} />,
           {},
           { additionalMocks }
         );

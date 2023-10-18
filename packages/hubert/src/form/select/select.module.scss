@@ -16,6 +16,7 @@
       border-bottom: 0;
       border-right: none;
       border: 1px solid rgb(var(--lotta-primary-color));
+      border-right: 0;
       padding: var(--lotta-spacing);
       background-color: rgb(var(--lotta-box-background-color));
       font-size: 13.3px;
@@ -28,6 +29,8 @@
     .triggerButton {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
+      border-top-right-radius: var(--lotta-border-radius);
+      border-bottom-right-radius: var(--lotta-border-radius);
       border-left: none;
     }
   }
