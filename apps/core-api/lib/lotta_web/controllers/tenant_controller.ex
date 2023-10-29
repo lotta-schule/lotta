@@ -53,8 +53,8 @@ defmodule LottaWeb.TenantController do
     end)
     |> Enum.map(fn tenant ->
       configuration = Tenants.get_configuration(tenant)
-      logoImageFile = Map.get(configuration, :logo_image_file)
-      backgroundImageFile = Map.get(configuration, :background_image_file)
+      logo_image_file = Map.get(configuration, :logo_image_file)
+      background_image_file = Map.get(configuration, :background_image_file)
 
       %{
         id: tenant.id,
