@@ -613,8 +613,8 @@ defmodule LottaWeb.UserResolverTest do
 
   describe "searchUsers query" do
     @query """
-    query searchUsers($searchtext: String!) {
-      searchUsers(searchtext: $searchtext) {
+    query searchUsers($searchtext: String, $groups: [SelectUserGroupInput!], $lastSeen: Int) {
+      searchUsers(searchtext: $searchtext, groups: $groups, lastSeen: $lastSeen) {
         email
         name
         nickname
@@ -622,7 +622,7 @@ defmodule LottaWeb.UserResolverTest do
     }
     """
 
-    test "should find users by name is user is admin", %{admin_jwt: admin_jwt} do
+    test "should find users by name if user is admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -649,7 +649,7 @@ defmodule LottaWeb.UserResolverTest do
              end)
     end
 
-    test "should find users by nickname is user is admin", %{admin_jwt: admin_jwt} do
+    test "should find users by nickname", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -670,7 +670,7 @@ defmodule LottaWeb.UserResolverTest do
              }
     end
 
-    test "should find users by exact email is user is admin", %{
+    test "should find users by exact email", %{
       admin_jwt: admin_jwt
     } do
       res =
@@ -689,6 +689,75 @@ defmodule LottaWeb.UserResolverTest do
                      "nickname" => "Polonium"
                    }
                  ]
+               }
+             }
+    end
+
+    test "should find users by only group", %{admin_jwt: admin_jwt, lehrer_group: lehrer_group} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> get("/api",
+          query: @query,
+          variables: %{groups: %{id: lehrer_group.id}}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "searchUsers" => [
+                   %{
+                     "email" => "eike.wiewiorra@lotta.schule",
+                     "name" => "Eike Wiewiorra",
+                     "nickname" => "Chef"
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "should find users by searchtext and group", %{
+      admin_jwt: admin_jwt,
+      lehrer_group: lehrer_group
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> get("/api",
+          query: @query,
+          variables: %{searchtext: "Eike", groups: %{id: lehrer_group.id}}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "searchUsers" => [
+                   %{
+                     "email" => "eike.wiewiorra@lotta.schule",
+                     "name" => "Eike Wiewiorra",
+                     "nickname" => "Chef"
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "should return an empty array when no search params are given", %{admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> get("/api",
+          query: @query,
+          variables: %{}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "searchUsers" => []
                }
              }
     end
@@ -726,6 +795,33 @@ defmodule LottaWeb.UserResolverTest do
                  "searchUsers" => []
                }
              }
+    end
+
+    test "should throw an error when searching for group_ids when not an admin", %{
+      user_jwt: user_jwt,
+      lehrer_group: lehrer_group
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api",
+          query: @query,
+          variables: %{groups: [%{id: lehrer_group.id}]}
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "searchUsers" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Du darfst das nicht tun.",
+                   "path" => ["searchUsers"]
+                 }
+               ]
+             } = res
     end
 
     test "should throw an error if user is not logged in" do

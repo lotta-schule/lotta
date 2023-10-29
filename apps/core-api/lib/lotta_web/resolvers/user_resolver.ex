@@ -106,11 +106,58 @@ defmodule LottaWeb.UserResolver do
     {:ok, Accounts.list_users()}
   end
 
-  def search(%{searchtext: searchtext}, _info) when bit_size(searchtext) >= 16 do
-    {:ok, Accounts.search_user(searchtext)}
+  def search(args, %{
+        context: %{current_user: current_user}
+      }) do
+    args
+    |> create_search_params()
+    |> execute_search(current_user)
   end
 
-  def search(_args, _info), do: {:ok, []}
+  def search(_args, _info), do: {:error, "Du darfst das nicht tun."}
+
+  defp create_search_params(args),
+    do: %{
+      searchtext: Map.get(args, :searchtext),
+      group_ids:
+        case Map.get(args, :groups) do
+          groups when is_list(groups) ->
+            Enum.map(groups, & &1.id)
+
+          _ ->
+            nil
+        end,
+      last_seen:
+        case Map.get(args, :last_seen) do
+          days when is_number(days) ->
+            DateTime.add(
+              DateTime.utc_now(),
+              days * -1,
+              :day
+            )
+
+          _ ->
+            nil
+        end
+    }
+
+  defp execute_search(search_params, current_user) do
+    if (search_params.group_ids != nil || search_params.last_seen != nil) &&
+         !current_user.is_admin? do
+      {:error, "Du darfst das nicht tun."}
+    else
+      case search_params do
+        %{searchtext: nil, group_ids: nil, last_seen: nil} ->
+          {:ok, []}
+
+        %{searchtext: searchtext} when is_binary(searchtext) and byte_size(searchtext) < 3 ->
+          {:ok, []}
+
+        %{searchtext: searchtext, group_ids: group_ids, last_seen: last_seen} ->
+          {:ok, Accounts.search_user(searchtext, group_ids, last_seen)}
+      end
+    end
+  end
 
   def get(%{id: id}, _info) do
     {:ok, Accounts.get_user(String.to_integer(id))}
