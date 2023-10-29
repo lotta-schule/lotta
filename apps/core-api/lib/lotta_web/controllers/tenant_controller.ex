@@ -52,10 +52,25 @@ defmodule LottaWeb.TenantController do
       |> Repo.exists?(prefix: prefix)
     end)
     |> Enum.map(fn tenant ->
+      configuration = Tenants.get_configuration(tenant)
+      logoImageFile = Map.get(configuration, :logo_image_file)
+      backgroundImageFile = Map.get(configuration, :background_image_file)
+
       %{
         id: tenant.id,
         title: tenant.title,
-        slug: tenant.slug
+        slug: tenant.slug,
+        slug: tenant.slug,
+        logoImageFileId:
+          if(logoImageFile != nil,
+            do: Map.get(logoImageFile, :id),
+            else: nil
+          ),
+        backgroundImageFileId:
+          if(backgroundImageFile != nil,
+            do: Map.get(backgroundImageFile, :id),
+            else: nil
+          )
       }
     end)
     |> then(fn tenants ->

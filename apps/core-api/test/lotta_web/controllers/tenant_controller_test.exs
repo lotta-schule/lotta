@@ -33,7 +33,9 @@ defmodule LottaWeb.TenantControllerTest do
                  &%{
                    "id" => &1.id,
                    "title" => &1.title,
-                   "slug" => &1.slug
+                   "slug" => &1.slug,
+                   "logoImageFileId" => nil,
+                   "backgroundImageFileId" => nil
                  }
                )
     end
