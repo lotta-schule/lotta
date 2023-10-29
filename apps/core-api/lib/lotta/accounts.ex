@@ -107,46 +107,47 @@ defmodule Lotta.Accounts do
   @spec search_user(String.t(), [String.t()] | nil, DateTime.t() | nil) :: [User.t()]
   def search_user(searchtext, group_ids, last_seen) do
     from(u in User)
-    |> then(fn query ->
-      if !is_nil(searchtext) do
-        matching_searchtext = "%#{searchtext}%"
-
-        from(u in query,
-          where:
-            u.email == ^searchtext or
-              ilike(u.name, ^matching_searchtext) or
-              ilike(u.nickname, ^matching_searchtext)
-        )
-      else
-        query
-      end
-    end)
-    |> then(fn query ->
-      if group_ids != nil do
-        user_ids =
-          from(g in UserGroup,
-            where: g.id in ^group_ids,
-            preload: :users
-          )
-          |> Repo.all()
-          |> list_users_for_groups()
-          |> Enum.map(& &1.id)
-
-        from(
-          u in query,
-          where: u.id in ^user_ids
-        )
-      else
-        query
-      end
-    end)
-    |> then(fn query ->
-      if last_seen != nil,
-        do: from(u in query, where: u.last_seen < ^last_seen),
-        else: query
-    end)
+    |> search_user_apply_searchtext_filter(searchtext)
+    |> search_user_apply_group_ids_filter(group_ids)
+    |> search_user_apply_last_seen_filter(last_seen)
     |> Repo.all()
   end
+
+  defp search_user_apply_searchtext_filter(query, searchtext) when is_nil(searchtext), do: query
+
+  defp search_user_apply_searchtext_filter(query, searchtext) do
+    matching_searchtext = "%#{searchtext}%"
+
+    from(u in query,
+      where:
+        u.email == ^searchtext or
+          ilike(u.name, ^matching_searchtext) or
+          ilike(u.nickname, ^matching_searchtext)
+    )
+  end
+
+  defp search_user_apply_group_ids_filter(query, group_ids) when is_nil(group_ids), do: query
+
+  defp search_user_apply_group_ids_filter(query, group_ids) do
+    user_ids =
+      from(g in UserGroup,
+        where: g.id in ^group_ids,
+        preload: :users
+      )
+      |> Repo.all()
+      |> list_users_for_groups()
+      |> Enum.map(& &1.id)
+
+    from(
+      u in query,
+      where: u.id in ^user_ids
+    )
+  end
+
+  defp search_user_apply_last_seen_filter(query, last_seen) when is_nil(last_seen), do: query
+
+  defp search_user_apply_last_seen_filter(query, last_seen),
+    do: from(u in query, where: u.last_seen < ^last_seen)
 
   @doc """
   Updates a user by an admin.

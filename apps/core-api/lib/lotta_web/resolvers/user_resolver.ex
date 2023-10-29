@@ -109,7 +109,15 @@ defmodule LottaWeb.UserResolver do
   def search(args, %{
         context: %{current_user: current_user}
       }) do
-    search_params = %{
+    args
+    |> create_search_params()
+    |> execute_search(current_user)
+  end
+
+  def search(_args, _info), do: {:error, "Du darfst das nicht tun."}
+
+  defp create_search_params(args),
+    do: %{
       searchtext: Map.get(args, :searchtext),
       group_ids:
         case Map.get(args, :groups) do
@@ -119,9 +127,21 @@ defmodule LottaWeb.UserResolver do
           _ ->
             nil
         end,
-      last_seen: Map.get(args, :last_seen)
+      last_seen:
+        case Map.get(args, :last_seen) do
+          days when is_number(days) ->
+            DateTime.add(
+              DateTime.utc_now(),
+              days * -1,
+              :day
+            )
+
+          _ ->
+            nil
+        end
     }
 
+  defp execute_search(search_params, current_user) do
     if (search_params.group_ids != nil || search_params.last_seen != nil) &&
          !current_user.is_admin? do
       {:error, "Du darfst das nicht tun."}
@@ -134,25 +154,10 @@ defmodule LottaWeb.UserResolver do
           {:ok, []}
 
         %{searchtext: searchtext, group_ids: group_ids, last_seen: last_seen} ->
-          last_seen =
-            case last_seen do
-              days when is_number(days) ->
-                DateTime.add(
-                  DateTime.utc_now(),
-                  days * -1,
-                  :day
-                )
-
-              _ ->
-                nil
-            end
-
           {:ok, Accounts.search_user(searchtext, group_ids, last_seen)}
       end
     end
   end
-
-  def search(_args, _info), do: {:error, "Du darfst das nicht tun."}
 
   def get(%{id: id}, _info) do
     {:ok, Accounts.get_user(String.to_integer(id))}
