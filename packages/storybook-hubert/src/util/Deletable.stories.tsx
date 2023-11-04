@@ -15,7 +15,7 @@ export const Default: StoryObj<typeof Deletable> = {
   render: (args) => (
     <Deletable {...args}>
       <Avatar
-        src="https://avatars.dicebear.com/api/avataaars/rosa-luxemburg.svg"
+        src="https://api.dicebear.com/7.x/avataaars/svg?seed=rosa-luxemburg"
         title="Rosa Luxemburg"
       />
     </Deletable>

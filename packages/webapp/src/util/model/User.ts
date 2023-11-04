@@ -24,9 +24,9 @@ export const User = {
   },
 
   getDefaultAvatarUrl(user?: UserModel | null) {
-    return `https://avatars.dicebear.com/api/avataaars/${encodeURIComponent(
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
       User.getNickname(user) ?? ''
-    )}.svg`;
+    )}`;
   },
 
   isAdmin(user?: UserModel | null) {

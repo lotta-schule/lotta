@@ -24,38 +24,38 @@ export const Default: StoryObj<typeof AvatarGroup> = {
 const avatars: AvatarProps[] = [
   {
     title: 'Rosa Luxemburg',
-    src: 'https://avatars.dicebear.com/api/avataaars/rosa-luxemburg.svg',
+    src: 'https://api.dicebear.com/7.x/avataaars/svg?seed=rosa-luxemburg',
   },
   {
     title: 'Karl Liebknecht',
-    src: 'https://avatars.dicebear.com/api/avataaars/karl-liebknecht.svg',
+    src: 'https://api.dicebear.com/7.x/avataaars/svg?seed=karl-liebknecht',
   },
   {
     title: 'Clara Zetkin',
-    src: 'https://avatars.dicebear.com/api/avataaars/clara-zetkin.svg',
+    src: 'https://api.dicebear.com/7.x/avataaars/svg?seed=clara-zetkin',
   },
   {
     title: 'Kurt Eisner',
-    src: 'https://avatars.dicebear.com/api/avataaars/kurt-eisner.svg',
+    src: 'https://api.dicebear.com/7.x/avataaars/svg?seed=kurt-eisner',
   },
   {
     title: 'Karl Kautsky',
-    src: 'https://avatars.dicebear.com/api/avataaars/karl-kautsky.svg',
+    src: 'https://api.dicebear.com/7.x/avataaars/svg?seed=karl-kautsky',
   },
   {
     title: 'August Bebel',
-    src: 'https://avatars.dicebear.com/api/avataaars/august-bebel.svg',
+    src: 'https://api.dicebear.com/7.x/avataaars/svg?seed=august-bebel',
   },
   {
     title: 'Nadezhda Krupskaya',
-    src: 'https://avatars.dicebear.com/api/avataaars/nadezhda-krupskaya.svg',
+    src: 'https://api.dicebear.com/7.x/avataaars/svg?seed=nadezhda-krupskaya',
   },
   {
     title: 'Noam Chomsky',
-    src: 'https://avatars.dicebear.com/api/avataaars/noam-chomsky.svg',
+    src: 'https://api.dicebear.com/7.x/avataaars/svg?seed=noam-chomsky',
   },
   {
     title: 'George Orwell',
-    src: 'https://avatars.dicebear.com/api/avataaars/george-orwell.svg',
+    src: 'https://api.dicebear.com/7.x/avataaars/svg?seed=george-orwell',
   },
 ];
