@@ -62,13 +62,13 @@ defmodule LottaWeb.TenantController do
         slug: tenant.slug,
         slug: tenant.slug,
         logoImageFileId:
-          if(logoImageFile != nil,
-            do: Map.get(logoImageFile, :id),
+          if(logo_image_file != nil,
+            do: Map.get(logo_image_file, :id),
             else: nil
           ),
         backgroundImageFileId:
-          if(backgroundImageFile != nil,
-            do: Map.get(backgroundImageFile, :id),
+          if(background_image_file != nil,
+            do: Map.get(background_image_file, :id),
             else: nil
           )
       }
