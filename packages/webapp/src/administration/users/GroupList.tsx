@@ -35,11 +35,15 @@ export const GroupList = () => {
   const [sorting, setSorting] = React.useState<Sorting>('custom');
   const [searchText, setSearchText] = React.useState('');
 
-  const highlightedGroups = searchText
-    ? groups.filter((group) =>
-        group.name.toLowerCase().includes(searchText.toLowerCase())
-      )
-    : [];
+  const highlightedGroups = React.useMemo(
+    () =>
+      searchText
+        ? groups.filter((group) =>
+            group.name.toLowerCase().includes(searchText.toLowerCase())
+          )
+        : [],
+    [searchText, groups]
+  );
 
   const sortedGroups = React.useMemo(() => {
     return sorting === 'custom'

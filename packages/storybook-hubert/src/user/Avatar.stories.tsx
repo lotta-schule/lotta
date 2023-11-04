@@ -9,7 +9,7 @@ export default {
 
 export const Default: StoryObj<typeof Avatar> = {
   args: {
-    src: 'https://avatars.dicebear.com/api/avataaars/rosa-luxemburg.svg',
+    src: 'https://api.dicebear.com/7.x/avataaars/svg?seed=rosa-luxemburg',
     title: 'Rosa Luxemburg',
   },
 };
