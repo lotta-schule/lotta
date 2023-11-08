@@ -38,3 +38,17 @@
     flex: 0 1 16%;
   }
 }
+
+.rootFeedback {
+  display: flex;
+  .userFeedback {
+    min-width: 55%;
+    margin: var(--lotta-spacing);
+    border-right: 1px solid rgba(var(--lotta-divider-color), 1);
+  }
+
+  .adminFeedback {
+    width: -moz-available;
+    margin: var(--lotta-spacing);
+  }
+}
