@@ -34,6 +34,11 @@ const nextConfig = {
         source: '/auth/:path*',
         destination: '/api/auth/:path*',
       },
+      // web manifest
+      {
+        source: '/manifest.json',
+        destination: '/api/manifest',
+      },
       // Plausible Analytics
       {
         source: '/js/script.js',
