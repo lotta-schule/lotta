@@ -49,6 +49,7 @@ const LottaWebApp = ({
       currentUser={currentUser}
       requestBaseUrl={requestBaseUrl}
     >
+      <script defer data-domain={tenant.host} src="/js/script.js"></script>
       <TopProgressBar />
       <Component {...componentProps} />
     </AppContextProviders>
