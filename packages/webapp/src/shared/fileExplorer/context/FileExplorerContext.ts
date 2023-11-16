@@ -23,6 +23,7 @@ export const defaultState = {
   showMoveFiles: false,
   showMoveDirectory: false,
   showDeleteFiles: false,
+  showDeleteDirectory: false,
   detailSidebarEnabled: false,
 };
 

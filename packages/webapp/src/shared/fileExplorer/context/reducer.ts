@@ -24,6 +24,8 @@ export type Action =
   | { type: 'showMoveDirectory' }
   | { type: 'hideMoveDirectory' }
   | { type: 'showDeleteFiles' }
+  | { type: 'showDeleteDirectory' }
+  | { type: 'hideDeleteDirectory' }
   | { type: 'hideDeleteFiles' }
   | { type: 'toggleDetailSidebarEnabled' };
 
@@ -120,6 +122,11 @@ export const reducer = (
         ...state,
         showDeleteFiles: true,
       };
+    case 'showDeleteDirectory':
+      return {
+        ...state,
+        showDeleteDirectory: true,
+      };
     case 'hideActiveUploads':
       return {
         ...state,
@@ -144,6 +151,11 @@ export const reducer = (
       return {
         ...state,
         showMoveDirectory: false,
+      };
+    case 'hideDeleteDirectory':
+      return {
+        ...state,
+        showDeleteDirectory: false,
       };
     case 'hideDeleteFiles':
       return {
