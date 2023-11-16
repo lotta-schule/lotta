@@ -8,13 +8,14 @@ import { DeleteFilesDialog } from './DeleteFilesDialog';
 import { FilesView } from './FilesView';
 import { FileToolbar } from './FileToolbar';
 import { MoveFilesDialog } from './MoveFilesDialog';
+import { MoveDirectoryDialog } from './MoveDirectoryDialog';
+import { DeleteDirectoryDialog } from './DeleteDirectoryDialog';
 import {
   Provider,
   defaultState,
   FileExplorerMode,
 } from './context/FileExplorerContext';
 import { Action, reducer } from './context/reducer';
-import { MoveDirectoryDialog } from './MoveDirectoryDialog';
 import { Button, Box, Toolbar } from '@lotta-schule/hubert';
 import clsx from 'clsx';
 
@@ -55,6 +56,7 @@ export const FileExplorer = React.memo<FileExplorerProps>(
           />
           {state.markedFiles.length > 0 && <MoveFilesDialog />}
           <MoveDirectoryDialog />
+          <DeleteDirectoryDialog />
           <DeleteFilesDialog />
 
           <FileToolbar />

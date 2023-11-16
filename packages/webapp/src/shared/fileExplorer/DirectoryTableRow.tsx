@@ -1,10 +1,10 @@
 import * as React from 'react';
-
 import { Icon } from 'shared/Icon';
 import {
   faCopy,
   faEllipsisVertical,
   faPen,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton, Item } from '@lotta-schule/hubert';
 import { DirectoryModel } from 'model';
@@ -97,6 +97,15 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                           directories: [directory],
                         });
                         break;
+                      case 'delete':
+                        dispatch({
+                          type: 'showDeleteDirectory',
+                        });
+                        dispatch({
+                          type: 'setMarkedDirectories',
+                          directories: [directory],
+                        });
+                        break;
                     }
                   }}
                 >
@@ -105,8 +114,12 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                     Umbenennen
                   </Item>
                   <Item key={'move'} textValue={'Verschieben'}>
-                    <Icon icon={faCopy} size={'lg'} />
+                    <Icon icon={faCopy} size={'lg'} color={'secondary'} />
                     Verschieben
+                  </Item>
+                  <Item key={'delete'} textValue={'Löschen'}>
+                    <Icon icon={faTrash} size={'lg'} color={'secondary'} />
+                    Löschen
                   </Item>
                 </MenuButton>
               </>
