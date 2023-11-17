@@ -165,43 +165,6 @@ defmodule Lotta.AccountsTest do
                )
     end
 
-    test "it should delete any push_token of any UserDevice in other tenants" do
-      email = List.first(@all_users)
-
-      tenants = [
-        Tenants.get_tenant_by_prefix(@prefix),
-        Tenants.get_tenant_by_prefix("#{@prefix}2")
-      ]
-
-      [result1, result2] =
-        tenants
-        |> Enum.map(fn %{prefix: prefix} ->
-          user = Repo.get_by!(User, [email: email], prefix: prefix)
-
-          {:ok, %{id: id}} =
-            Accounts.register_device(
-              user,
-              %{
-                custom_name: "Test",
-                platform_id: "ios/123-123-123",
-                device_type: "phone",
-                model_name: "iphone16,1",
-                push_token: "apns/abcdefghijklmnoprqst"
-              },
-              prefix: prefix
-            )
-
-          {prefix, id}
-        end)
-
-      # Second Userdevice should be set ok
-      assert %UserDevice{push_token: "apns/abcdefghijklmnoprqst"} =
-               Repo.get!(UserDevice, elem(result2, 1), prefix: elem(result2, 0))
-
-      assert %UserDevice{push_token: nil} =
-               Repo.get!(UserDevice, elem(result1, 1), prefix: elem(result1, 0))
-    end
-
     test "it should update a UserDevice" do
       email = List.first(@all_users)
       user = Accounts.get_user_by_email(email)

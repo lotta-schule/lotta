@@ -8,7 +8,7 @@ defmodule Lotta.Accounts do
   import Ecto.Query
 
   alias Ecto.Changeset
-  alias Lotta.{Email, Mailer, Repo, Storage, Tenants}
+  alias Lotta.{Email, Mailer, Repo, Storage}
   alias Lotta.Accounts.{User, UserDevice, UserGroup}
   alias Lotta.Storage.File
 
@@ -478,14 +478,6 @@ defmodule Lotta.Accounts do
         opts
       )
     )
-    |> tap(fn
-      {:ok, device} ->
-        ensure_pushtoken_is_globally_unique(device)
-        {:ok, device}
-
-      result ->
-        result
-    end)
   end
 
   @doc """
@@ -498,38 +490,5 @@ defmodule Lotta.Accounts do
     device
     |> UserDevice.update_changeset(attrs)
     |> Repo.update()
-    |> tap(fn
-      {:ok, device} ->
-        ensure_pushtoken_is_globally_unique(device)
-        {:ok, device}
-
-      result ->
-        result
-    end)
-  end
-
-  @doc """
-  Make sure push_token is globally unique.
-  """
-  @doc since: "4.1.0"
-  @spec ensure_pushtoken_is_globally_unique(UserDevice.t()) ::
-          UserDevice.t()
-  def ensure_pushtoken_is_globally_unique(device) when device.push_token != nil do
-    Tenants.list_tenants()
-    |> Enum.filter(&(&1.prefix != Ecto.get_meta(device, :prefix)))
-    |> Enum.map(fn tenant ->
-      Repo.update_all(
-        from(
-          u in UserDevice,
-          where: u.push_token == ^device.push_token
-        ),
-        [set: [push_token: nil]],
-        prefix: tenant.prefix
-      )
-    end)
-  end
-
-  def ensure_pushtoken_is_globally_unique(_) do
-    :ok
   end
 end
