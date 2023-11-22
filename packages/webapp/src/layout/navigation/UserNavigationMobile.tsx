@@ -14,6 +14,7 @@ import {
   faClipboardList,
   faArrowRightFromBracket,
   faCirclePlus,
+  faCommentDots,
 } from '@fortawesome/free-solid-svg-icons';
 import { ArticleModel } from 'model';
 import { User, Article } from 'util/model';
@@ -22,6 +23,7 @@ import { isMobileDrawerOpenVar } from 'api/cache';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
+import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -46,14 +48,25 @@ export const UserNavigationMobile = React.memo(() => {
 
   const [loginModalIsOpen, setLoginModalIsOpen] = React.useState(false);
   const [registerModalIsOpen, setRegisterModalIsOpen] = React.useState(false);
+  const [feedbackModalIsOpen, setFeedbackModalIsOpen] = React.useState(false);
   const [createArticleModalIsOpen, setCreateArticleModalIsOpen] =
     React.useState(false);
 
   React.useEffect(() => {
-    if (loginModalIsOpen || registerModalIsOpen || createArticleModalIsOpen) {
+    if (
+      loginModalIsOpen ||
+      registerModalIsOpen ||
+      createArticleModalIsOpen ||
+      feedbackModalIsOpen
+    ) {
       isMobileDrawerOpenVar(false);
     }
-  }, [createArticleModalIsOpen, loginModalIsOpen, registerModalIsOpen]);
+  }, [
+    createArticleModalIsOpen,
+    loginModalIsOpen,
+    registerModalIsOpen,
+    feedbackModalIsOpen,
+  ]);
 
   if (currentUser) {
     return (
@@ -121,6 +134,15 @@ export const UserNavigationMobile = React.memo(() => {
               <span className={styles.label}>Meine Beiträge</span>
             </BaseButton>
           </Link>
+          <BaseButton
+            variant={'borderless'}
+            className={styles.button}
+            data-testid="Feedback"
+            onClick={() => setFeedbackModalIsOpen(true)}
+          >
+            <Icon icon={faCommentDots} size="xl" />
+            <span className={styles.label}>Feedback</span>
+          </BaseButton>
           <Link href={'/messaging'} passHref legacyBehavior>
             <BaseButton
               variant={'borderless'}
@@ -177,6 +199,12 @@ export const UserNavigationMobile = React.memo(() => {
           onAbort={() => setCreateArticleModalIsOpen(false)}
           onConfirm={(article) => {
             router.push(Article.getPath(article, { edit: true }));
+          }}
+        />
+        <FeedbackDialog
+          isOpen={feedbackModalIsOpen}
+          onRequestClose={() => {
+            setFeedbackModalIsOpen(false);
           }}
         />
       </>
