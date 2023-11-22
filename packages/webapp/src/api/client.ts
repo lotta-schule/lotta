@@ -41,7 +41,7 @@ const createHeaders = (headers?: any) => {
         ([key]) =>
           key.startsWith('x-forwarded-') ||
           key.startsWith('x-real') ||
-          ALLOWED_HEADERS.find((h) => h === key)
+          ALLOWED_HEADERS.find((h) => h === key.toLowerCase())
       )
     ),
     tenantSlugOverwrite ? { tenant: `slug:${tenantSlugOverwrite}` } : {},
@@ -189,7 +189,7 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
       operation.getContext().authToken ??
       (isBrowser && localStorage.getItem('id'));
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers['authorization'] = `Bearer ${token}`;
     }
     operation.setContext(({ headers: currentHeaders = {} }) => ({
       headers: {
