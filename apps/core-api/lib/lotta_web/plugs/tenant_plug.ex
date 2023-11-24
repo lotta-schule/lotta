@@ -30,7 +30,7 @@ defmodule LottaWeb.TenantPlug do
   end
 
   defp put_tenant(conn) do
-    tenant = tenant_by_slug_header(conn) || tenant_by_host_header(conn)
+    tenant = tenant_by_tenant_header(conn) || tenant_by_host_header(conn)
 
     if tenant do
       OpenTelemetry.Tracer.set_attributes(%{
@@ -46,10 +46,19 @@ defmodule LottaWeb.TenantPlug do
     end
   end
 
-  defp tenant_by_slug_header(conn) do
+  defp tenant_by_tenant_header(conn) do
     case get_req_header(conn, "tenant") do
       ["slug:" <> slug] ->
         Tenants.get_tenant_by_slug(slug)
+
+      ["id:" <> id] ->
+        case Integer.parse(id) do
+          {tenant_id, ""} ->
+            Tenants.get_tenant(tenant_id)
+
+          _ ->
+            nil
+        end
 
       _ ->
         nil

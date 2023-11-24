@@ -14,8 +14,15 @@ defmodule LottaWeb.TenantPlugTest do
   end
 
   describe "TenantPlug" do
-    test "setting tenant via 'tenant' header", %{conn: conn, tenant: tenant} do
+    test "setting tenant via 'tenant' header with a slug value", %{conn: conn, tenant: tenant} do
       conn = put_req_header(conn, "tenant", "slug:test")
+      conn = TenantPlug.call(conn, %{})
+
+      assert conn.private[:lotta_tenant].id == tenant.id
+    end
+
+    test "setting tenant via 'tenant' header with an id value", %{conn: conn, tenant: tenant} do
+      conn = put_req_header(conn, "tenant", "id:#{tenant.id}")
       conn = TenantPlug.call(conn, %{})
 
       assert conn.private[:lotta_tenant].id == tenant.id
