@@ -9,7 +9,7 @@ defmodule LottaWeb.MessagesResolver do
   alias Lotta.Messages.Conversation
 
   def resolve_conversation_unread_messages(_args, %{
-        context: %Context{current_user: user},
+        context: %{current_user: user},
         source: %Conversation{} = conversation
       }) do
     {:ok, Messages.count_unread_messages(user, conversation)}

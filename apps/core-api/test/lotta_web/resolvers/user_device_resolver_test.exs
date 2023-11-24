@@ -1,6 +1,4 @@
 defmodule LottaWeb.UserDeviceResolverTest do
-  @moduledoc false
-
   use LottaWeb.ConnCase
 
   import Ecto.Query
@@ -306,6 +304,98 @@ defmodule LottaWeb.UserDeviceResolverTest do
                  %{
                    "message" => "Du hast nicht die nötigen Rechte, um das zu tun.",
                    "path" => ["updateDevice"]
+                 }
+               ]
+             } = res
+    end
+  end
+
+  describe "delete user device mutation" do
+    @query """
+    mutation DeleteDevice($id: ID!) {
+      deleteDevice(id: $id) {
+        id
+      }
+    }
+    """
+    test "deletes device", %{
+      user_jwt: user_jwt,
+      devices: devices
+    } do
+      device = List.first(devices)
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{
+            id: device.id
+          }
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "deleteDevice" => %{
+                   "id" => device.id
+                 }
+               }
+             }
+    end
+
+    test "returns error when user is not logged in", %{
+      devices: devices
+    } do
+      device = List.first(devices)
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> post("/api",
+          query: @query,
+          variables: %{
+            id: device.id
+          }
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"deleteDevice" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du musst angemeldet sein um das zu tun.",
+                   "path" => ["deleteDevice"]
+                 }
+               ]
+             } = res
+    end
+
+    test "returns error when user tries to delete other user's device", %{
+      user2_jwt: user2_jwt,
+      devices: devices
+    } do
+      device = List.first(devices)
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user2_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{
+            id: device.id
+          }
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"deleteDevice" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du hast nicht die nötigen Rechte, um das zu tun.",
+                   "path" => ["deleteDevice"]
                  }
                ]
              } = res
