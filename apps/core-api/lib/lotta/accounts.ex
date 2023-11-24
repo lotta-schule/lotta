@@ -491,4 +491,14 @@ defmodule Lotta.Accounts do
     |> UserDevice.update_changeset(attrs)
     |> Repo.update()
   end
+
+  @doc """
+  Deletes a Device.
+  """
+  @doc since: "4.1.0"
+  @spec delete_device(UserDevice.t()) ::
+          {:ok, UserDevice.t()} | {:error, Changeset.t()}
+  def delete_device(device) do
+    Repo.delete(device)
+  end
 end

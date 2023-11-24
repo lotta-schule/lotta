@@ -29,28 +29,30 @@ defmodule Lotta.Notification.PushNotification do
       |> Enum.each(fn device ->
         [_, token] = String.split(device.push_token, "/")
 
-        notification =
-          Notification.new("", token, get_topic())
-          |> Notification.put_content_available()
-          |> Notification.put_badge(
-            Messages.count_unread_messages(
-              user
-              |> Map.put(
-                :all_groups,
-                Repo.preload(user, :groups).groups ++
-                  (user.enrollment_tokens
-                   |> Accounts.list_groups_for_enrollment_tokens(tenant))
-              )
+        Notification.new("", token, get_topic())
+        |> Notification.put_content_available()
+        |> Notification.put_badge(
+          Messages.count_unread_messages(
+            user
+            |> Map.put(
+              :all_groups,
+              Repo.preload(user, :groups).groups ++
+                (user.enrollment_tokens
+                 |> Accounts.list_groups_for_enrollment_tokens(tenant))
             )
           )
-          |> put_alert(conversation, message)
-          |> Notification.put_sound("default")
-          |> Notification.put_thread_id("#{tenant.slug}/#{conversation.id}")
-          |> Notification.put_category("receive_message")
-          |> Notification.put_custom(%{conversation_id: conversation.id, message_id: message.id})
-          |> Lotta.Notification.Provider.APNS.push()
-
-        Logger.info("Sent notification: #{inspect(notification)}")
+        )
+        |> put_alert(conversation, message)
+        |> Notification.put_sound("default")
+        |> Notification.put_thread_id("#{tenant.slug}/#{conversation.id}")
+        |> Notification.put_category("receive_message")
+        |> Notification.put_custom(%{
+          tenant_id: tenant.id,
+          conversation_id: conversation.id,
+          message_id: message.id
+        })
+        |> Lotta.Notification.Provider.APNS.push()
+        |> tap(&log_notification(&1))
       end)
     end)
   end
@@ -75,6 +77,9 @@ defmodule Lotta.Notification.PushNotification do
     do: Map.put(alert, :body, String.slice(content, 0, 100))
 
   defp put_alert_body(alert, _, _), do: alert
+
+  defp log_notification(notification),
+    do: Logger.info("Sent notification: #{inspect(notification)}")
 
   defp get_topic() do
     Application.get_env(:lotta, Lotta.Notification.Provider.APNS)

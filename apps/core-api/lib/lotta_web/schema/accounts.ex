@@ -159,6 +159,14 @@ defmodule LottaWeb.Schema.Accounts do
       resolve(&LottaWeb.UserDeviceResolver.update_device/2)
     end
 
+    field :delete_device, type: :device do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      arg(:id, non_null(:id))
+
+      resolve(&LottaWeb.UserDeviceResolver.delete_device/2)
+    end
+
     field :destroy_account, type: :user do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
