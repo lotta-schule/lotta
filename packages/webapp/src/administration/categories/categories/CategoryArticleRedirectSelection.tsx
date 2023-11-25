@@ -64,8 +64,9 @@ export const CategoryArticleRedirectSelection = React.memo(
                       article.previewImageFile
                     )}
                     alt={`Vorschaubild zum Beitrag "${article.title}"`}
-                    width={80}
                     aspectRatio={'3:2'}
+                    width={80}
+                    style={{ width: '80px' }}
                   />
                 ),
                 description: (
@@ -87,8 +88,7 @@ export const CategoryArticleRedirectSelection = React.memo(
           {redirectPath && redirectPath !== '/a/' && (
             <div>
               <strong>
-                Kategorie wird zu {redirectPath}
-                weitergeleitet
+                Kategorie wird zu <em> {redirectPath} </em> weitergeleitet
               </strong>
             </div>
           )}
