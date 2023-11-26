@@ -19,7 +19,7 @@ defmodule LottaWeb.MessagesResolver do
     {:ok, Messages.list_active_conversations(current_user)}
   end
 
-  def get_conversation(%{id: id}, %{context: %Context{current_user: current_user}}) do
+  def get_conversation(%{id: id} = args, %{context: %Context{current_user: current_user}}) do
     conversation = Messages.get_conversation(id)
 
     cond do
@@ -30,7 +30,9 @@ defmodule LottaWeb.MessagesResolver do
         {:error, "Du hast nicht die Rechte, diese Unterhaltung anzusehen."}
 
       true ->
-        Messages.set_user_has_last_seen_conversation(current_user, conversation)
+        if args[:mark_as_read] != false do
+          Messages.set_user_has_last_seen_conversation(current_user, conversation)
+        end
         {:ok, conversation}
     end
   end

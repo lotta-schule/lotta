@@ -17,6 +17,7 @@ defmodule LottaWeb.Schema.Messages do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:id, non_null(:id))
+      arg(:mark_as_read, :boolean)
 
       resolve(&LottaWeb.MessagesResolver.get_conversation/2)
     end
