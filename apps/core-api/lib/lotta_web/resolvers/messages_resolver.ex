@@ -7,6 +7,7 @@ defmodule LottaWeb.MessagesResolver do
   alias LottaWeb.Context
   alias Lotta.{Accounts, Messages}
   alias Lotta.Messages.Conversation
+  alias Lotta.Notification.PushNotification
 
   def resolve_conversation_unread_messages(_args, %{
         context: %{current_user: user},
@@ -19,7 +20,9 @@ defmodule LottaWeb.MessagesResolver do
     {:ok, Messages.list_active_conversations(current_user)}
   end
 
-  def get_conversation(%{id: id} = args, %{context: %Context{current_user: current_user}}) do
+  def get_conversation(%{id: id} = args, %{
+        context: %Context{tenant: tenant, current_user: current_user}
+      }) do
     conversation = Messages.get_conversation(id)
 
     cond do
@@ -32,7 +35,14 @@ defmodule LottaWeb.MessagesResolver do
       true ->
         if args[:mark_as_read] != false do
           Messages.set_user_has_last_seen_conversation(current_user, conversation)
+
+          PushNotification.handle_read_conversation_notification(
+            current_user,
+            conversation,
+            tenant
+          )
         end
+
         {:ok, conversation}
     end
   end

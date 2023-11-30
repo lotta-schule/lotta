@@ -8,10 +8,12 @@ defmodule Lotta.Notification.PushNotification do
 
   require Logger
 
-  alias Lotta.{Accounts, Messages, Repo}
+  alias Lotta.{Accounts, Repo}
+  alias Lotta.Accounts.User
   alias Lotta.Messages.{Conversation, Message}
   alias Pigeon.APNS.Notification
 
+  @spec handle_message_sent_notification(Message.t(), Conversation.t(), Tenant.t()) :: :ok
   def handle_message_sent_notification(message, conversation, tenant) do
     case conversation do
       %Conversation{groups: [], users: users} ->
@@ -30,31 +32,45 @@ defmodule Lotta.Notification.PushNotification do
         [_, token] = String.split(device.push_token, "/")
 
         Notification.new("", token, get_topic())
-        |> Notification.put_content_available()
-        |> Notification.put_badge(
-          Messages.count_unread_messages(
-            user
-            |> Map.put(
-              :all_groups,
-              Repo.preload(user, :groups).groups ++
-                (user.enrollment_tokens
-                 |> Accounts.list_groups_for_enrollment_tokens(tenant))
-            )
-          )
-        )
         |> put_alert(conversation, message)
+        |> Notification.put_content_available()
         |> Notification.put_sound("default")
         |> Notification.put_thread_id("#{tenant.slug}/#{conversation.id}")
         |> Notification.put_category("receive_message")
         |> Notification.put_custom(%{
-          tenant_id: tenant.id,
-          conversation_id: conversation.id,
-          message_id: message.id
+          "user_id" => user.id,
+          "tenant_id" => tenant.id,
+          "conversation_id" => conversation.id,
+          "message_id" => message.id
         })
         |> Lotta.Notification.Provider.APNS.push()
         |> tap(&log_notification(&1))
       end)
     end)
+
+    :ok
+  end
+
+  @spec handle_read_conversation_notification(User.t(), Conversation.t(), Tenant.t()) :: :ok
+  def handle_read_conversation_notification(user, conversation, tenant) do
+    user
+    |> Repo.preload(:devices)
+    |> Map.get(:devices)
+    |> Enum.filter(& &1.push_token)
+    |> Enum.each(fn device ->
+      [_, token] = String.split(device.push_token, "/")
+
+      %Notification{device_token: token, topic: get_topic}
+      |> Notification.put_custom(%{
+        "user_id" => user.id,
+        "tenant_id" => tenant.id,
+        "conversation_id" => conversation.id
+      })
+      |> Lotta.Notification.Provider.APNS.push()
+      |> tap(&log_notification(&1))
+    end)
+
+    :ok
   end
 
   defp put_alert(notification, conversation, message) do

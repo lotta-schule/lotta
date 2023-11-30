@@ -55,7 +55,12 @@ defmodule Lotta.Application do
   defp appended_apps(:test), do: []
 
   defp appended_apps(_) do
-    [Lotta.Notification.Provider.APNS]
+    []
+    |> then(fn apps ->
+      if Keyword.get(Application.get_env(:lotta, Lotta.Notification.Provider.APNS), :key),
+        do: apps ++ [Lotta.Notification.Provider.APNS],
+        else: apps
+    end)
   end
 
   # Tell Phoenix to update the endpoint configuration
