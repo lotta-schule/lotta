@@ -22,8 +22,8 @@ export interface RegisterDialogProps {
   onRequestClose(): void;
 }
 
-export const RegisterDialog = React.memo<RegisterDialogProps>(
-  ({ isOpen, onRequestClose }) => {
+export const RegisterDialog = React.memo(
+  ({ isOpen, onRequestClose }: RegisterDialogProps) => {
     const [register, { error, loading: isLoading, data }] = useMutation<{
       register: boolean;
     }>(RegisterMutation);

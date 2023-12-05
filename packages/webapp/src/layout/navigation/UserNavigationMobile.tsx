@@ -137,7 +137,7 @@ export const UserNavigationMobile = React.memo(() => {
           <BaseButton
             variant={'borderless'}
             className={styles.button}
-            data-testid="Feedback"
+            data-testid="FeedbackButton"
             onClick={() => setFeedbackModalIsOpen(true)}
           >
             <Icon icon={faCommentDots} size="xl" />

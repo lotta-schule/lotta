@@ -1,0 +1,6 @@
+mutation SendFeedbackToLotta($id: ID!, $message: String) {
+  feedback: sendFeedbackToLotta(id: $id, message: $message) {
+    id
+    isForwarded
+  }
+}

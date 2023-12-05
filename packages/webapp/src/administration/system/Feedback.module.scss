@@ -1,0 +1,42 @@
+.root {
+  display: flex;
+  .userFeedback {
+    flex: 1 1;
+    margin: var(--lotta-spacing);
+    border-right: 1px solid rgba(var(--lotta-divider-color), 1);
+  }
+
+
+  th {
+    text-align: left;
+    padding-left: var(--lotta-spacing);
+  }
+  table {
+    margin-top: calc(4 * var(--lotta-spacing));
+  }
+
+  .active {
+    background-color: rgba(var(--lotta-divider-color), 0.1);
+  }
+  .title {
+    cursor: pointer;
+
+    &.active {
+      border-bottom: 0px;
+    }
+  }
+  .info {
+    .message {
+      margin-bottom: var(--lotta-spacing);
+      margin-top: var(--lotta-spacing);
+    }
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: var(--lotta-spacing);
+    }
+    .answerButton {
+      margin-left: var(--lotta-spacing);
+    }
+  }
+}

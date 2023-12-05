@@ -263,7 +263,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
           ) : (
             <div style={{ width: 48 }} />
           )}
-          <span>{currentScheduleData.schedule.head.date}</span>
+          <span>{currentScheduleData.schedule.head?.date}</span>
           {nextScheduleData?.schedule ? (
             <Tooltip label={nextScheduleData.schedule.head.date}>
               <Button
@@ -318,7 +318,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
             />
           </>
         )}
-        {currentScheduleData.schedule.footer.supervisions && (
+        {currentScheduleData.schedule.footer?.supervisions && (
           <ul>
             {currentScheduleData.schedule.footer.supervisions
               .filter(Boolean)
@@ -329,7 +329,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
               ))}
           </ul>
         )}
-        {currentScheduleData.schedule.footer.comments && (
+        {currentScheduleData.schedule.footer?.comments && (
           <ul style={{ margin: '0.5em 0.5em 0 0.5em' }}>
             {currentScheduleData.schedule.footer.comments.map((comment, i) => (
               <li key={i} className={styles.notes}>

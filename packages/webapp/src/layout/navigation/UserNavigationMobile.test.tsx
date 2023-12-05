@@ -13,8 +13,8 @@ describe('shared/layouts/UserNavigationMobile', () => {
       expect(screen.queryByTestId('RegisterButton')).not.toBeNull();
       expect(screen.queryByTestId('SearchButton')).not.toBeNull();
 
-      // admin and profile and messages button should not be visible
       expect(screen.queryByTestId('ProfileButton')).toBeNull();
+      expect(screen.queryByTestId('FeedbackButton')).toBeNull();
       expect(screen.queryByTestId('AdminButton')).toBeNull();
       expect(screen.queryByTestId('MessagingButton')).toBeNull();
     });
@@ -27,13 +27,14 @@ describe('shared/layouts/UserNavigationMobile', () => {
         {},
         { currentUser: SomeUser }
       );
-      expect(screen.queryAllByRole('button')).toHaveLength(7);
+      expect(screen.queryAllByRole('button')).toHaveLength(8);
       expect(screen.queryByTestId('LoginButton')).toBeNull();
       expect(screen.queryByTestId('RegisterButton')).toBeNull();
 
       expect(screen.queryByTestId('SearchButton')).toBeVisible();
       expect(screen.queryByTestId('CreateArticleButton')).toBeVisible();
       expect(screen.queryByTestId('OwnArticlesButton')).toBeVisible();
+      expect(screen.queryByTestId('FeedbackButton')).toBeVisible();
       expect(screen.queryByTestId('ProfileButton')).toBeVisible();
       expect(screen.queryByTestId('ProfileFilesButton')).toBeVisible();
       expect(screen.queryByTestId('MessagingButton')).toBeVisible();
@@ -58,13 +59,14 @@ describe('shared/layouts/UserNavigationMobile', () => {
           ],
         }
       );
-      expect(screen.queryAllByRole('button')).toHaveLength(9);
+      expect(screen.queryAllByRole('button')).toHaveLength(10);
       expect(screen.queryByTestId('LoginButton')).toBeNull();
       expect(screen.queryByTestId('RegisterButton')).toBeNull();
 
       expect(screen.queryByTestId('SearchButton')).toBeVisible();
       expect(screen.queryByTestId('CreateArticleButton')).toBeVisible();
       expect(screen.queryByTestId('OwnArticlesButton')).toBeVisible();
+      expect(screen.queryByTestId('FeedbackButton')).toBeVisible();
       expect(screen.queryByTestId('ProfileButton')).toBeVisible();
       expect(screen.queryByTestId('ProfileFilesButton')).toBeVisible();
       expect(screen.queryByTestId('MessagingButton')).toBeVisible();

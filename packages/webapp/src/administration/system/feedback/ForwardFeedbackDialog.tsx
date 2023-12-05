@@ -4,22 +4,29 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  ErrorMessage,
   Input,
   Label,
-  LoadingButton,
 } from '@lotta-schule/hubert';
-import { Icon } from 'shared/Icon';
+import { useMutation } from '@apollo/client';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { FeedbackModel } from 'model';
+import { Icon } from 'shared/Icon';
 
-// import styles from './ForwardFeedbackDialog.module.scss';
+import SendFeedbackToLottaMutation from 'api/mutation/SendFeedbackToLottaMutation.graphql';
 
 export interface ForwardFeedbackDialogProps {
   isOpen: boolean;
+  feedback: FeedbackModel;
   onRequestClose(): void;
 }
 
-export const ForwardFeedbackDialog = React.memo<ForwardFeedbackDialogProps>(
-  ({ isOpen, onRequestClose }) => {
+export const ForwardFeedbackDialog = React.memo(
+  ({ feedback, isOpen, onRequestClose }: ForwardFeedbackDialogProps) => {
+    const [forwardFeedback, { error, loading: isLoading }] = useMutation<{
+      feedback: FeedbackModel;
+    }>(SendFeedbackToLottaMutation);
+
     return (
       <Dialog
         onRequestClose={onRequestClose}
@@ -29,36 +36,45 @@ export const ForwardFeedbackDialog = React.memo<ForwardFeedbackDialogProps>(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            alert('test');
+            const formData = new FormData(e.currentTarget);
+            forwardFeedback({
+              variables: {
+                id: feedback.id,
+                message: formData.get('message') || undefined,
+              },
+            }).then(() => {
+              onRequestClose();
+            });
           }}
         >
           <DialogContent>
-            <Label label={'E-Mail (vom System voreingestellt)'}>
+            {error && <ErrorMessage error={error} />}
+            <p>
+              Leite die E-Mail mit dem Feedback an die Lotta Entwickler weiter.
+              Die Nachricht wird komplett weitergeleitet.
+            </p>
+            <p>Optional kann dem Feedback eine Nachricht beigefügt werden.</p>
+            <p>
+              Deine Nutzerdaten werden auch übermittelt, damit wir dich
+              kontaktieren können.
+            </p>
+            <Label label={'Beigefügte Nachricht vom Administrator'}>
               <Input
                 autoFocus
-                required
-                id="email"
-                placeholder="admin@beispielschule.org"
-                type="email"
-                maxLength={100}
-              />
-            </Label>
-            <Label label={'Betreff'}>
-              <Input
-                autoFocus
-                required
-                id="topic"
-                placeholder="Weiterleitung des Feedbacks zum Thema 'XYZ' "
-                maxLength={200}
+                multiline
+                id="message"
+                name="message"
+                placeholder="Hallo Lotta Entwickler, ich habe folgendes Feedback erhalten: ..."
               />
             </Label>
             <Label label={'Weiterzuleitende Nachricht'}>
               <Input
-                autoFocus
                 required
                 multiline
-                id="content"
+                readOnly
+                id="feedback"
                 placeholder="Nutzerfeedback"
+                value={feedback?.content}
               />
             </Label>
             <p>
@@ -69,8 +85,9 @@ export const ForwardFeedbackDialog = React.memo<ForwardFeedbackDialogProps>(
           <DialogActions>
             <Button
               type={'submit'}
-              variant="fill"
+              variant={isLoading ? undefined : 'fill'}
               icon={<Icon icon={faPaperPlane} size="xl" />}
+              disabled={isLoading}
             >
               an Lotta Entwickler weiterleiten
             </Button>

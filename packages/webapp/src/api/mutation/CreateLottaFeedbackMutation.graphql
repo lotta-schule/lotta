@@ -1,0 +1,3 @@
+mutation SendFeedbackToLotta($subject: String, $message: String!) {
+  success: createLottaFeedback(subject: $subject, message: $message)
+}

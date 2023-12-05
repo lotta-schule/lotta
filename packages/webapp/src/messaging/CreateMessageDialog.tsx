@@ -48,9 +48,9 @@ export const CreateMessageDialog = React.memo<CreateMessageDialogProps>(
         <DialogContent>
           {!messageDestination && (
             <motion.div
-              initial={{ opacity: 0, y: -50 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
+              exit={{ opacity: 0, y: -10 }}
             >
               <Tabbar
                 value={newMessageType}
