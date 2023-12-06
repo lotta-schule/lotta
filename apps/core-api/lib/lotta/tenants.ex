@@ -7,9 +7,7 @@ defmodule Lotta.Tenants do
   import Ecto.Query
 
   alias Ecto.Multi
-  alias Lotta.Repo
-  alias Lotta.Storage
-  alias Lotta.TenantSelector
+  alias Lotta.{Email, Mailer, Repo, Storage, TenantSelector}
   alias Lotta.Accounts.User
   alias Lotta.Storage.File
 
@@ -18,6 +16,7 @@ defmodule Lotta.Tenants do
     CustomDomain,
     Configuration,
     DefaultContent,
+    Feedback,
     Tenant,
     TenantSelector,
     Usage,
@@ -563,6 +562,105 @@ defmodule Lotta.Tenants do
   @spec delete_widget(Widget.t()) :: {:ok, Widget.t()} | {:error, Ecto.Changeset.t()}
   def delete_widget(widget) do
     Repo.delete(widget)
+  end
+
+  @doc """
+  Get a feedback by its id
+  """
+  @doc since: "4.1.0"
+  @spec get_feedback(Feedback.id()) :: Feedback.t() | nil
+  def get_feedback(id), do: Repo.get(Feedback, id)
+
+  @doc """
+  List all feedbacks for the current tenant.
+  """
+  @doc since: "4.1.0"
+  @spec list_feedbacks() :: [Feedback.t()]
+  def list_feedbacks() do
+    from(f in Feedback,
+      order_by: [desc: :inserted_at]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+    Creates a Feedback, from a given user and attributes,
+    for the admins of the current tenant to see.
+    Returns the created Feedback or a the errored changeset.
+  """
+  @doc since: "4.1.0"
+  @spec create_feedback(User.t(), map()) :: {:ok, Feedback.t()} | {:error, Ecto.Changeset.t()}
+  def create_feedback(user, attrs \\ %{}) do
+    %Feedback{}
+    |> Feedback.create_changeset(user, attrs)
+    |> Repo.insert(prefix: Repo.get_prefix())
+  end
+
+  @doc """
+  Sends a feedback to the lotta team and sets the
+  'is_forwarded' property to true.
+  """
+  @doc since: "4.1.0"
+  @spec send_feedback_to_lotta(Feedback.t(), binary() | nil) ::
+          {:ok, Feedback.t()} | {:error, Ecto.Changeset.t()}
+  def send_feedback_to_lotta(feedback, user, message \\ nil) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:feedback, Ecto.Changeset.change(feedback, is_forwarded: true))
+    |> Ecto.Multi.run(:send_feedback, fn _repo, %{feedback: feedback} ->
+      feedback
+      |> Email.send_feedback_to_lotta_mail(user, message)
+      |> Mailer.deliver_now()
+    end)
+    |> Repo.transaction()
+    |> then(fn
+      {:ok, %{feedback: feedback}} ->
+        {:ok, feedback}
+
+      error ->
+        error
+    end)
+  end
+
+  @doc """
+  Sends a message to the lotta team
+  """
+  @doc since: "4.1.0"
+  @spec create_feedback_for_lotta(binary(), binary() | nil, User.t()) ::
+          :ok | :error
+  def create_feedback_for_lotta(subject, message, user) do
+    Email.create_feedback_for_lotta(subject, message, user)
+    |> Mailer.deliver_now()
+    |> case do
+      {:ok, _} ->
+        :ok
+
+      {:error, error} ->
+        error
+    end
+  end
+
+  @doc """
+  Responds to a feedback via mail and sets the 'is_responded' property to true.
+  """
+  @doc since: "4.1.0"
+  @spec respond_to_feedback(Feedback.t(), User.t(), binary() | nil, binary()) ::
+          {:ok, Feedback.t()} | {:error, Ecto.Changeset.t()}
+  def respond_to_feedback(feedback, user, subject, message) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:feedback, Ecto.Changeset.change(feedback, is_responded: true))
+    |> Ecto.Multi.run(:send_response, fn _repo, %{feedback: feedback} ->
+      feedback
+      |> Email.send_feedback_response_mail(user, subject, message)
+      |> Mailer.deliver_now()
+    end)
+    |> Repo.transaction()
+    |> then(fn
+      {:ok, %{feedback: feedback}} ->
+        {:ok, feedback}
+
+      error ->
+        error
+    end)
   end
 
   def data() do

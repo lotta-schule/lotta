@@ -7,7 +7,7 @@ defmodule Lotta.Repo.Seeder do
   alias Lotta.Storage.{Directory, File}
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Messages.{Conversation, Message}
-  alias Lotta.Tenants.{Category, Tenant, TenantSelector, Widget}
+  alias Lotta.Tenants.{Category, Feedback, Tenant, TenantSelector, Widget}
 
   def seed do
     clean_minio()
@@ -72,31 +72,33 @@ defmodule Lotta.Repo.Seeder do
       )
 
     alexis =
-    all_tenants
-    |> Enum.map(fn tenant ->
-      {:ok, lotta_admin, _pw} =
-        Accounts.register_user(tenant, %{
-          name: "Alexis Rinaldoni",
-          email: "alexis.rinaldoni@einsa.net",
-          password: "test123"
-        })
+      all_tenants
+      |> Enum.map(fn tenant ->
+        {:ok, lotta_admin, _pw} =
+          Accounts.register_user(tenant, %{
+            name: "Alexis Rinaldoni",
+            email: "alexis.rinaldoni@einsa.net",
+            password: "test123"
+          })
 
-      lotta_admin
-      |> User.update_password_changeset("test123")
-      |> Repo.update!()
+        lotta_admin
+        |> User.update_password_changeset("test123")
+        |> Repo.update!()
 
-      {:ok, alexis, _pw} =
-        Accounts.register_user(tenant, %{
-          name: "Alexis Rinaldoni",
-          nickname: "Der Meister",
-          email: "alexis.rinaldoni@lotta.schule"
-        })
+        {:ok, alexis, _pw} =
+          Accounts.register_user(tenant, %{
+            name: "Alexis Rinaldoni",
+            nickname: "Der Meister",
+            email: "alexis.rinaldoni@lotta.schule"
+          })
 
-      alexis
-      |> User.update_password_changeset("test123")
-      |> Repo.update!()
-    end)
-    |> List.first()
+        alexis
+        |> User.update_password_changeset("test123")
+        |> Repo.update!()
+      end)
+      |> List.first()
+
+    Repo.put_prefix(tenant.prefix)
 
     {:ok, billy, _pw} =
       Accounts.register_user(tenant, %{
@@ -153,6 +155,24 @@ defmodule Lotta.Repo.Seeder do
       email: "mcurie@lotta.schule",
       hide_full_name: true,
       password: "test456"
+    })
+
+    Tenants.create_feedback(eike, %{
+      topic: "Test",
+      content: "Hallo, ich bin ein Test",
+      metadata: "Test"
+    })
+
+    Tenants.create_feedback(eike, %{
+      topic: "Test",
+      content: "Hallo, ich bin ein zweiter Test",
+      metadata: "Test"
+    })
+
+    Tenants.create_feedback(dr_evil, %{
+      topic: "Anfrage",
+      content: "Weil ich böse bin, will ich auch einen Account mit Admin-Rechten",
+      metadata: "Test"
     })
 
     Accounts.update_user(alexis, %{groups: [admin_group]})
