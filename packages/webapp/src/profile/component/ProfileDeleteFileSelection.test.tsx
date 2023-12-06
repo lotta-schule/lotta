@@ -41,7 +41,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
       />
     );
     const checkboxes = screen.queryAllByRole('checkbox');
-    expect(checkboxes).toHaveLength(8);
+    expect(checkboxes).toHaveLength(9);
     expect(
       screen.getByRole('checkbox', { name: /alle Dateien/i })
     ).toBeInTheDocument();
@@ -77,7 +77,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
           onSelectFiles={() => {}}
         />
       );
-      expect(screen.getAllByRole('checkbox')).toHaveLength(8);
+      expect(screen.getAllByRole('checkbox')).toHaveLength(9);
       expect(
         screen.getByRole('checkbox', { name: 'Dateiname.jpg' })
       ).toBeChecked();
@@ -157,7 +157,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
           onSelectFiles={callback}
         />
       );
-      expect(screen.getAllByRole('checkbox')).toHaveLength(8);
+      expect(screen.getAllByRole('checkbox')).toHaveLength(9);
       expect(
         screen.getByRole('checkbox', { name: 'Dateiname.jpg' })
       ).toBeChecked();
@@ -204,7 +204,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
           onSelectFiles={callback}
         />
       );
-      expect(screen.getAllByRole('checkbox')).toHaveLength(8);
+      expect(screen.getAllByRole('checkbox')).toHaveLength(9);
       expect(
         screen.getByRole('checkbox', { name: 'Dateiname.jpg' })
       ).toBeChecked();
@@ -239,7 +239,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
     it('should call change function requesting all files when "select all" checkbox is click in off state', async () => {
       const fireEvent = userEvent.setup();
       const callback = jest.fn((newSelection: FileModel[]) => {
-        expect(newSelection).toHaveLength(7);
+        expect(newSelection).toHaveLength(8);
         expect(newSelection.map((f) => f.filename).sort()).toEqual([
           'Amelie.mp4',
           'Animiert.gif',
@@ -247,6 +247,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
           'Dateiname.jpg',
           'Kaenguru.wav',
           'Manifest.pdf',
+          'Podcast.txt',
           'praesi.ppt',
         ]);
       });
@@ -290,7 +291,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
     it('should call change function requesting all files when "select all" checkbox is click in mixed state', async () => {
       const fireEvent = userEvent.setup();
       const callback = jest.fn((newSelection: FileModel[]) => {
-        expect(newSelection).toHaveLength(7);
+        expect(newSelection).toHaveLength(8);
         expect(newSelection.map((f) => f.filename).sort()).toEqual([
           'Amelie.mp4',
           'Animiert.gif',
@@ -298,6 +299,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
           'Dateiname.jpg',
           'Kaenguru.wav',
           'Manifest.pdf',
+          'Podcast.txt',
           'praesi.ppt',
         ]);
       });

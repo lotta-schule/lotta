@@ -13,7 +13,7 @@ const Template: StoryFn<{
   content: React.ReactElement;
 }> = ({ args }) => {
   const getRandomAvatarUrl = (step: number) =>
-    `https://avatars.dicebear.com/api/avataaars/${step}.svg`;
+    `https://api.dicebear.com/7.x/avataaars/svg?seed=${step}`;
   const [step, setStep] = React.useState(2);
   return (
     <div>

@@ -1,0 +1,28 @@
+query SearchUsersAsAdmin(
+  $searchtext: String
+  $groups: [SelectUserGroupInput!]
+  $lastSeen: Int
+) {
+  users: searchUsers(
+    searchtext: $searchtext
+    groups: $groups
+    lastSeen: $lastSeen
+  ) {
+    id
+    insertedAt
+    updatedAt
+    name
+    nickname
+    email
+    class
+    lastSeen
+    groups {
+      id
+      name
+      isAdminGroup
+    }
+    avatarImageFile {
+      id
+    }
+  }
+}

@@ -4,7 +4,6 @@ import { UserGroupModel, ID, UserGroupInputModel } from 'model';
 import {
   Button,
   Checkbox,
-  Dialog,
   ErrorMessage,
   Input,
   Label,
@@ -17,15 +16,15 @@ import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
 
-import styles from './EditUserGroupDialog.module.scss';
+import styles from './EditUserGroup.module.scss';
 
-export interface EditUserGroupDialogProps {
+export interface EditUserGroupProps {
   group: UserGroupModel | null;
-  onRequestClose: () => void;
+  onDelete: () => void;
 }
 
-export const EditUserGroupDialog = React.memo<EditUserGroupDialogProps>(
-  ({ group, onRequestClose }) => {
+export const EditUserGroup = React.memo<EditUserGroupProps>(
+  ({ group, onDelete }) => {
     const groups = useUserGroups();
 
     const [name, setName] = React.useState(group?.name ?? '');
@@ -61,11 +60,7 @@ export const EditUserGroupDialog = React.memo<EditUserGroupDialogProps>(
     const enrollmentTokens = data?.group.enrollmentTokens ?? [];
 
     return (
-      <Dialog
-        open={!!group}
-        onRequestClose={onRequestClose}
-        title={`Gruppe "${group?.name}" bearbeiten`}
-      >
+      <div>
         {isLoading && (
           <LinearProgress
             aria-label={'Gruppeninformationen werden geladen'}
@@ -74,6 +69,7 @@ export const EditUserGroupDialog = React.memo<EditUserGroupDialogProps>(
         )}
         {group && (
           <form
+            aria-label={`Gruppe "${group.name}" bearbeiten`}
             className={styles.root}
             onSubmit={(e) => {
               e.preventDefault();
@@ -174,15 +170,15 @@ export const EditUserGroupDialog = React.memo<EditUserGroupDialogProps>(
                   onRequestClose={() => setIsDeleteUserGroupDialogOpen(false)}
                   onConfirm={() => {
                     setIsDeleteUserGroupDialogOpen(false);
-                    onRequestClose();
+                    onDelete();
                   }}
                 />
               </>
             )}
           </form>
         )}
-      </Dialog>
+      </div>
     );
   }
 );
-EditUserGroupDialog.displayName = 'AdministrationEditUserGroupDialog';
+EditUserGroup.displayName = 'AdministrationEditUserGroupDialog';

@@ -3,7 +3,7 @@
   border: 1px solid rgba(var(--lotta-primary-color), 1);
   color: rgba(var(--lotta-primary-color), 1);
   background: rgba(var(--lotta-box-background-color), 1);
-  border-radius: 0.5em;
+  border-radius: var(--lotta-border-radius);
   padding: 0.7em;
   display: flex;
   text-transform: uppercase;
@@ -47,7 +47,7 @@
   /**
       * Custom styles for different variants
       */
-  &[data-variant='fill'] {
+  &[data-variant='fill']:not([disabled]) {
     background-color: rgba(var(--lotta-primary-color), 1);
     color: rgba(var(--lotta-primary-contrast-text-color), 1);
     border: none;

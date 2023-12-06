@@ -7,15 +7,13 @@
   .button {
     display: flex;
     flex-direction: column;
-    font-size: 10px;
-    margin: calc(0.5 * var(--lotta-spacing));
     text-align: center;
     & > :first-child {
       margin: auto auto 1em auto;
     }
     & > :last-child {
       font-size: 0.75rem;
-      font-size: clamp(0.2rem, 2.5vw, 1.2rem);
+      font-size: clamp(0.6rem, 2.5vw, 0.8rem);
     }
   }
 
@@ -25,8 +23,7 @@
   }
 
   .label {
-    margin: auto auto 0 auto;
-    height: 3em;
+    margin: calc(2 * var(--lotta-spacing)) auto 0 auto;
     font-size: 1.2em;
   }
 }

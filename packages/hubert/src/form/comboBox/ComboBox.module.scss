@@ -10,8 +10,9 @@
     position: relative;
     display: flex;
     input {
-      border-top-left-radius: 0.5em;
-      border-bottom-left-radius: 0.5em;
+      border-top-left-radius: var(--lotta-border-radius);
+      border-bottom-left-radius: var(--lotta-border-radius);
+      border-top-right-radius: 0;
       border-bottom: 0;
       border-right: none;
       border: 1px solid rgb(var(--lotta-primary-color));
@@ -27,8 +28,8 @@
       input {
         border: none;
         border-bottom: 1px solid rgb(var(--lotta-text-color));
-        border-top-left-radius: 0.5em;
-        border-top-right-radius: 0.5em;
+        border-top-left-radius: var(--lotta-border-radius);
+        border-top-right-radius: var(--lotta-border-radius);
         border-bottom-left-radius: 0%;
         &:focus {
           border-bottom: 1px solid rgb(var(--lotta-primary-color));

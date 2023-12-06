@@ -5,7 +5,18 @@ import { Collapse, CollapseProps } from '@lotta-schule/hubert';
 export default {
   title: 'util/Collapse',
   component: Collapse,
-  argTypes: {},
+  argTypes: {
+    axis: {
+      control: {
+        type: 'select',
+        options: ['x', 'y'],
+      },
+    },
+  },
+  args: {
+    visible: true,
+    axis: 'x',
+  },
 } as Meta;
 
 const Template: StoryFn<CollapseProps> = (args) => (
@@ -39,8 +50,4 @@ const Template: StoryFn<CollapseProps> = (args) => (
 
 export const Default = {
   render: Template,
-
-  args: {
-    visible: true,
-  },
 };

@@ -19,7 +19,7 @@ export default {
 } as Meta;
 
 const getAvatarUrl = (i: string | number) =>
-  `https://avatars.dicebear.com/api/avataaars/${i}.svg`;
+  `https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`;
 
 export const Default = {
   render: (args: ListProps) => (

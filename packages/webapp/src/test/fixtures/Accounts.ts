@@ -74,8 +74,24 @@ export const podcastsDirectory: DirectoryModel = {
   id: '8745',
   insertedAt: '2010-01-01 10:00',
   updatedAt: '2010-01-01 10:00',
-  name: 'Profil',
+  name: 'Podcasts',
   parentDirectory: null,
+};
+
+export const videoPodcastsDirectory: DirectoryModel = {
+  id: '8790',
+  insertedAt: '2010-01-01 10:00',
+  updatedAt: '2010-01-01 10:00',
+  name: 'Video-Podcasts',
+  parentDirectory: podcastsDirectory,
+};
+
+export const audioPodcastsDirectory: DirectoryModel = {
+  id: '8791',
+  insertedAt: '2010-01-01 10:00',
+  updatedAt: '2010-01-01 10:00',
+  name: 'Audio-Podcasts',
+  parentDirectory: podcastsDirectory,
 };
 
 export const schulweitDirectory: DirectoryModel = {
@@ -164,6 +180,18 @@ export const convertedDocumentFile = {
       mimeType: 'plain/text',
     },
   ],
+} as Partial<FileModel> as FileModel;
+
+export const podcastTextFile = {
+  id: '5546',
+  filename: 'Podcast.txt',
+  filesize: 2123123,
+  fileType: FileModelType.Misc,
+  mimeType: 'text/plain',
+  insertedAt: '2001-01-21 00:00',
+  updatedAt: '2001-01-21 00:00',
+  usage: [],
+  fileConversions: [],
 } as Partial<FileModel> as FileModel;
 
 export const movieFile = {
@@ -350,9 +378,13 @@ export const KeinErSieEsUser = {
 };
 
 export const getPrivateAndPublicFiles = (user: UserModel) => {
-  const directories = [logosDirectory, profilDirectory, podcastsDirectory].map(
-    (directory) => ({ ...directory, user })
-  );
+  const directories = [
+    logosDirectory,
+    profilDirectory,
+    podcastsDirectory,
+    videoPodcastsDirectory,
+    audioPodcastsDirectory,
+  ].map((directory) => ({ ...directory, user }));
 
   return [
     schulweitDirectory,
@@ -362,8 +394,9 @@ export const getPrivateAndPublicFiles = (user: UserModel) => {
       { ...otherImageFile, parentDirectory: directories[0] },
       { ...documentFile, parentDirectory: directories[1] },
       { ...convertedDocumentFile, parentDirectory: directories[1] },
-      { ...movieFile, parentDirectory: directories[2] },
-      { ...audioFile, parentDirectory: directories[2] },
+      { ...podcastTextFile, parentDirectory: directories[2] },
+      { ...movieFile, parentDirectory: directories[3] },
+      { ...audioFile, parentDirectory: directories[4] },
       { ...powerpointFile, parentDirectory: directories[1] },
     ].map((fileOrDirectory) => ({ ...fileOrDirectory, userId: user.id })),
   ];
