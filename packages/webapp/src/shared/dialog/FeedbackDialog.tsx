@@ -95,7 +95,6 @@ export const FeedbackDialog = React.memo(
               }
             >
               <Input
-                required
                 multiline
                 id="metadata"
                 name="metadata"
