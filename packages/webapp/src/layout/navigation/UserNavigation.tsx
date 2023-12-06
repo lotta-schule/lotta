@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { faCirclePlus, faCircleUser } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCirclePlus,
+  faCircleUser,
+  faCommentDots,
+} from '@fortawesome/free-solid-svg-icons';
 import {
   faComments,
   faFolder,
@@ -25,6 +29,7 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, User } from 'util/model';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
+import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
@@ -49,6 +54,7 @@ export const UserNavigation = React.memo(() => {
   const onLogout = useOnLogout();
 
   const [loginModalIsOpen, setLoginModalIsOpen] = React.useState(false);
+  const [feedbackModalIsOpen, setFeedbackModalIsOpen] = React.useState(false);
   const [registerModalIsOpen, setRegisterModalIsOpen] = React.useState(false);
   const [createArticleModalIsOpen, setCreateArticleModalIsOpen] =
     React.useState(false);
@@ -126,6 +132,8 @@ export const UserNavigation = React.memo(() => {
                   return router.push('/profile/files');
                 case 'own-articles':
                   return router.push('/profile/articles');
+                case 'feedback':
+                  return setFeedbackModalIsOpen(true);
                 case 'administration':
                   return router.push('/admin');
                 case 'unpublished':
@@ -147,6 +155,10 @@ export const UserNavigation = React.memo(() => {
               <Item key={'own-articles'} textValue={'Meine Beiträge'}>
                 <Icon icon={faClipboardList} color="secondary" />
                 Meine Beiträge
+              </Item>,
+              <Item key={'feedback'} textValue={'Feedback'}>
+                <Icon icon={faCommentDots} color="secondary" />
+                Feedback
               </Item>,
               ...(User.isAdmin(currentUser)
                 ? [
@@ -221,6 +233,12 @@ export const UserNavigation = React.memo(() => {
         isOpen={loginModalIsOpen}
         onRequestClose={() => {
           setLoginModalIsOpen(false);
+        }}
+      />
+      <FeedbackDialog
+        isOpen={feedbackModalIsOpen}
+        onRequestClose={() => {
+          setFeedbackModalIsOpen(false);
         }}
       />
     </div>

@@ -1,0 +1,6 @@
+mutation RespondToFeedback($id: ID!, $subject: String, $message: String!) {
+  feedback: respondToFeedback(id: $id, subject: $subject, message: $message) {
+    id
+    isResponded
+  }
+}

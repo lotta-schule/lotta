@@ -1,0 +1,14 @@
+.root {
+  width: 30%;
+  margin: var(--lotta-spacing);
+
+  p {
+    font-size: smaller;
+    color: rgba(var(--lotta-label-text-color), 0.9);
+  }
+
+  .submitButton {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

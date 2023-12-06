@@ -1,0 +1,22 @@
+query GetFeedbackQuery {
+  feedbacks {
+    id
+    topic
+    content
+    metadata
+    isNew
+    isForwarded
+    isResponded
+    user {
+      id
+      name
+      nickname
+      email
+      avatarImageFile {
+        id
+      }
+    }
+    insertedAt
+    updatedAt
+  }
+}
