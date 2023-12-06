@@ -1,0 +1,12 @@
+Ein Admin hat eben Feedback für <%= @tenant.title %> erstellt.
+
+<ul>
+  <li><strong>Nutzername</strong>: <%= @user.name %></li>
+  <li><strong>Email</strong>: <%= @user.email %></li>
+  <li><strong>Kunde</strong>: <%= @tenant.title %></li>
+</ul>
+
+<p style="border: 1px; font-style: italic">
+  <strong><%= @subject %></strong><br />
+  <%= @message %>
+</p>

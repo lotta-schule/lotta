@@ -11,7 +11,7 @@ defmodule Lotta.Email do
   alias Lotta.{Repo, Tenants}
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Accounts.User
-  alias Lotta.Tenants.Tenant
+  alias Lotta.Tenants.{Feedback, Tenant}
   alias LottaWeb.Urls
 
   @type email_opts :: [tenant: Tenant.t()] | nil
@@ -138,6 +138,60 @@ defmodule Lotta.Email do
       |> subject("Dein Benutzerkonto bei #{tenant.title} wurde gelöscht.")
 
     render(mail, :account_closed, user: user)
+  end
+
+  @doc """
+  Forwards a tenant-internal feedback to lotta.
+  """
+  @doc since: "4.1.0"
+
+  @spec send_feedback_to_lotta_mail(Feedback.t(), User.t(), binary() | nil) ::
+          Bamboo.Email.t()
+  def send_feedback_to_lotta_mail(%Feedback{} = feedback, %User{} = user, message \\ nil) do
+    tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(user, :prefix))
+
+    base_mail(tenant: tenant)
+    |> to(mailer_config!(:default_sender))
+    |> subject("Es wurde ein Feedback von #{tenant.title} weitergeleitet.")
+    |> render(:forward_feedback, user: user, feedback: feedback, message: message)
+  end
+
+  @doc """
+  Sends a message to lotta
+  """
+  @doc since: "4.1.0"
+
+  @spec create_feedback_for_lotta(binary() | nil, binary(), User.t()) ::
+          Bamboo.Email.t()
+  def create_feedback_for_lotta(subject, message, %User{} = user) do
+    tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(user, :prefix))
+
+    base_mail(tenant: tenant)
+    |> to(mailer_config!(:default_sender))
+    |> subject("Es wurde Admin-Feedback für #{tenant.title} weitergeleitet.")
+    |> render(:admin_feedback, user: user, subject: subject, message: message)
+  end
+
+  @doc """
+  Responds to a tenant-internal feedback.
+  """
+  @doc since: "4.1.0"
+
+  @spec send_feedback_response_mail(Feedback.t(), User.t(), binary() | nil, binary()) ::
+          Bamboo.Email.t()
+  def send_feedback_response_mail(%Feedback{} = feedback, %User{} = user, subject, message) do
+    tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(user, :prefix))
+
+    base_mail(tenant: tenant)
+    |> to(mailer_config!(:default_sender))
+    |> subject("Dein Feedback für #{tenant.title} wurde beantwortet.")
+    |> render(
+      :respond_to_feedback,
+      user: user,
+      feedback: feedback,
+      subject: subject,
+      message: message
+    )
   end
 
   @doc """

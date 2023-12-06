@@ -1,0 +1,19 @@
+<p>
+  Hallo <%= @feedback.user.name %>,
+  Du hast folgendes Feedback für <%= @tenant.title %> hinterlassen:
+</p>
+<p>
+  <strong><%= @feedback.topic %></strong><br />
+  <%= @feedback.content %>
+</p>
+
+<p>
+  Der Administrator <em><%= @user.name %></em> hat dein Feedback beantwortet.
+</p>
+
+<p>
+  <%= if @subject do %>
+    <strong><%= @subject %></strong><br />
+  <%= end %>
+  <%= @message %>
+</p>

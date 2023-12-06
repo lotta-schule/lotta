@@ -8,7 +8,7 @@ defmodule LottaWeb.Schema do
   import_types(__MODULE__.CustomTypes.Json)
 
   import_types(__MODULE__.Tenants)
-  import_types(__MODULE__.Tenants.{Category, Usage, Tenant, Widget})
+  import_types(__MODULE__.Tenants.{Category, Feedback, Usage, Tenant, Widget})
   import_types(__MODULE__.Accounts)
   import_types(__MODULE__.Accounts.{File, User, UserDevice})
   import_types(__MODULE__.Contents)
