@@ -51,7 +51,7 @@ export const CreateLottaFeedback = React.memo(() => {
         </p>
         <div className={styles.submitButton}>
           <Button
-            variant={isLoading ? undefined : 'fill'}
+            variant={'fill'}
             disabled={isLoading}
             icon={<Icon icon={faPaperPlane} size="xl" />}
             type="submit"

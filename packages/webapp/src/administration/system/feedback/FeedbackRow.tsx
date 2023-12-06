@@ -56,7 +56,7 @@ export const FeedbackRow = React.memo(
                 <p className={styles.message}>{feedback.content}</p>
                 <div className={styles.buttons}>
                   <Button
-                    variant={feedback.isForwarded ? undefined : 'fill'}
+                    variant={'fill'}
                     aria-label="Feedback weiterleiten"
                     icon={<Icon icon={faShare} size="xl" />}
                     disabled={feedback.isForwarded}

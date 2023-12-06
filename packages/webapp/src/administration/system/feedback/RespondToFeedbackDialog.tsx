@@ -82,7 +82,7 @@ export const RespondToFeedbackDialog = React.memo(
           <DialogActions>
             <Button
               type={'submit'}
-              variant={isLoading ? undefined : 'fill'}
+              variant={'fill'}
               disabled={isLoading}
               icon={<Icon icon={faPaperPlane} size="xl" />}
             >

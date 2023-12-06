@@ -85,7 +85,7 @@ export const ForwardFeedbackDialog = React.memo(
           <DialogActions>
             <Button
               type={'submit'}
-              variant={isLoading ? undefined : 'fill'}
+              variant={'fill'}
               icon={<Icon icon={faPaperPlane} size="xl" />}
               disabled={isLoading}
             >
