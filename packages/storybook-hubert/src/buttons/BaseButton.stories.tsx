@@ -23,6 +23,15 @@ export const Disabled = {
   } as any,
 };
 
+export const DisabledFilled = {
+  args: {
+    children: 'Der Button darf nichts',
+    as: 'button',
+    variant: 'fill',
+    disabled: true,
+  } as any,
+};
+
 export const FillVariant = {
   args: {
     variant: 'fill',

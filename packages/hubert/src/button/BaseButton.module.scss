@@ -47,7 +47,7 @@
   /**
       * Custom styles for different variants
       */
-  &[data-variant='fill'] {
+  &[data-variant='fill']:not([disabled]) {
     background-color: rgba(var(--lotta-primary-color), 1);
     color: rgba(var(--lotta-primary-contrast-text-color), 1);
     border: none;
