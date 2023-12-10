@@ -49,15 +49,6 @@
     cursor: pointer;
   }
 }
-.groupSelectionTag {
-  display: block ruby;
-  position: absolute;
-  margin-top: 4.5em;
-  @media screen and (max-width: $max-xs) {
-    display: grid;
-    position: relative;
-  }
-}
 
 .listBox {
   margin: var(--lotta-spacing) 0 0;
