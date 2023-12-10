@@ -1,16 +1,21 @@
 {
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-  "version": "4.1.0-alpha.64",
-  "packages": ["packages/*"],
+  "version": "4.1.0-alpha.65",
+  "packages": [
+    "packages/*"
+  ],
   "npmClient": "npm",
   "exact": true,
   "conventionalCommits": true,
   "changelogPreset": "angular",
-  "allowBranch": ["main", "release/*"],
+  "allowBranch": [
+    "main",
+    "release/*"
+  ],
   "forcePublish": true,
   "command": {
     "version": {
-      "gitTagCommand": "git gh-tag %s -m %s",
+      "gitTagCommand": "git tag %s -m %s",
       "message": "chore(release): publish %s"
     }
   }
