@@ -60,7 +60,7 @@ defmodule Lotta.Notification.PushNotification do
     |> Enum.each(fn device ->
       [_, token] = String.split(device.push_token, "/")
 
-      %Notification{device_token: token, topic: get_topic}
+      %Notification{device_token: token, topic: get_topic()}
       |> Notification.put_custom(%{
         "user_id" => user.id,
         "tenant_id" => tenant.id,

@@ -7,7 +7,7 @@ defmodule Lotta.Repo.Seeder do
   alias Lotta.Storage.{Directory, File}
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Messages.{Conversation, Message}
-  alias Lotta.Tenants.{Category, Feedback, Tenant, TenantSelector, Widget}
+  alias Lotta.Tenants.{Category, Tenant, TenantSelector, Widget}
 
   def seed do
     clean_minio()
