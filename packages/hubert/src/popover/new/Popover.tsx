@@ -63,11 +63,11 @@ export const Popover = React.forwardRef(
             }}
             exit={{ height: 0, opacity: 0 }}
             transition={{
-              duration: 0.5,
-              height: { type: 'spring', stiffness: 300, damping: 30 },
+              duration: 0.3,
+              opacity: { type: 'ease-in-out', duration: 0.2 },
             }}
             {...(mergeProps(overlayProps, popperProps.popper ?? {}) as any)}
-            style={{ ...popperStyle.popper, overflow: 'hidden', zIndex: 10 }}
+            style={{ ...popperStyle.popper, zIndex: 10 }}
             ref={ref}
           >
             <FocusScope restoreFocus>
