@@ -97,10 +97,7 @@ export const GroupSelect = React.memo(
               }
             }}
           />
-          <div
-            data-testid="GroupSelectSelection"
-            className={styles.groupSelectionTag}
-          >
+          <div data-testid="GroupSelectSelection">
             {hidePublicGroupSelection !== true && (
               <Checkbox
                 isDisabled={disabled || !groups.length}
