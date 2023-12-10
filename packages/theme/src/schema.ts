@@ -17,6 +17,10 @@ export const schema: Record<
     type: 'color',
     description: 'Navigation background color',
   },
+  navigationColor: {
+    type: 'color',
+    description: 'Navigation color',
+  },
   errorColor: {
     type: 'color',
     description: 'Error color',
@@ -24,10 +28,6 @@ export const schema: Record<
   successColor: {
     type: 'color',
     description: 'Success color',
-  },
-  navigationColor: {
-    type: 'color',
-    description: 'Navigation color',
   },
   disabledColor: {
     type: 'color',
@@ -40,10 +40,6 @@ export const schema: Record<
   labelTextColor: {
     type: 'color',
     description: 'Label text color',
-  },
-  navigationContrastTextColor: {
-    type: 'color',
-    description: 'Contrast text color for the navigationBackgroundColor',
   },
   primaryContrastTextColor: {
     type: 'color',

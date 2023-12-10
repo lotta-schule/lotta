@@ -3,6 +3,6 @@
   "primaryColor": "#1d4eab",
   "navigationBackgroundColor": "#f1aa00",
   "textColor": "rgb(5, 13, 36)",
-  "navigationContrastTextColor": "#777e92",
+  "navigationColor": "#777e92",
   "primaryContrastTextColor": "#777e92"
 }
