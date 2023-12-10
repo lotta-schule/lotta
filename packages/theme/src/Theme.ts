@@ -1,13 +1,12 @@
 export type Theme = {
   primaryColor: string;
   navigationBackgroundColor: string;
+  navigationColor: string;
   errorColor: string;
   successColor: string;
-  navigationColor: string;
   disabledColor: string;
   textColor: string;
   labelTextColor: string;
-  navigationContrastTextColor: string;
   primaryContrastTextColor: string;
   boxBackgroundColor: string;
   pageBackgroundColor: string;

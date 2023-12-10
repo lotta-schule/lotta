@@ -191,18 +191,6 @@ export const Presentation = React.memo(() => {
               }
             />
             <ColorSettingRow
-              label={'Text-Invert (Navigation)'}
-              hint={
-                'Alternative Textfarbe für mit der Navigationsfarbe gefüllte Elemente'
-              }
-              value={theme.navigationContrastTextColor}
-              onChange={(navigationContrastTextColor) =>
-                setCustomTheme({
-                  navigationContrastTextColor,
-                })
-              }
-            />
-            <ColorSettingRow
               label={'Text-Invert (Primär)'}
               hint={
                 'Alternative Textfarbe für mit der Primärfarbe gefüllte Elemente'
