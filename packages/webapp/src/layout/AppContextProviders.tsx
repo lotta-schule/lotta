@@ -13,18 +13,12 @@ import { useTenant } from 'util/tenant/useTenant';
 import { getApolloClient } from 'api/client';
 import { BaseLayout } from './BaseLayout';
 import { i18n } from '../i18n';
-import PlausibleProvider from 'next-plausible';
-import getConfig from 'next/config';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 const defaultTheme = DefaultThemes.standard;
-
-const {
-  publicRuntimeConfig: { plausibleEndpoint },
-} = getConfig();
 
 export interface AppContextProvidersProps {
   categories: CategoryModel[] | null;
@@ -104,19 +98,12 @@ export const AppContextProviders = ({
       : requestBaseUrl ?? window.location.origin;
 
   return (
-    <PlausibleProvider
-      selfHosted
-      enabled={!!plausibleEndpoint}
-      domain={tenant.host}
-      customDomain={plausibleEndpoint}
-    >
-      <ServerDataContextProvider value={{ baseUrl }}>
-        <ApolloProvider client={client}>
-          <I18nextProvider i18n={i18n}>
-            <TenantContextProviders>{children}</TenantContextProviders>
-          </I18nextProvider>
-        </ApolloProvider>
-      </ServerDataContextProvider>
-    </PlausibleProvider>
+    <ServerDataContextProvider value={{ baseUrl }}>
+      <ApolloProvider client={client}>
+        <I18nextProvider i18n={i18n}>
+          <TenantContextProviders>{children}</TenantContextProviders>
+        </I18nextProvider>
+      </ApolloProvider>
+    </ServerDataContextProvider>
   );
 };
