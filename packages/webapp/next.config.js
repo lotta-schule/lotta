@@ -41,11 +41,11 @@ const nextConfig = {
       },
       // Plausible Analytics
       {
-        source: '/js/script.js',
+        source: '/p/script.js',
         destination: 'https://plausible.io/js/script.js',
       },
       {
-        source: '/api/event', // Or '/api/event/' if you have `trailingSlash: true` in this config
+        source: '/p/e',
         destination: 'https://plausible.io/api/event',
       },
     ];
@@ -90,7 +90,6 @@ const nextConfig = {
     sentryDsn: process.env.SENTRY_DSN,
     socketUrl: process.env.API_SOCKET_URL,
     tenantSlugOverwrite: process.env.FORCE_TENANT_SLUG,
-    plausibleEndpoint: process.env.PLAUSIBLE_ENDPOINT,
   },
 };
 
