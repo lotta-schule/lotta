@@ -22,7 +22,7 @@ on:
         value: ${{ jobs.push-packages.outputs.tag-name }}
 
 env:
-  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.nx-token }}
 
 jobs:
   push-packages:
