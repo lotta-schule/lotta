@@ -44,6 +44,9 @@ const jestConfig = {
   setupFilesAfterEnv: ['./jest.setup.ts'],
 
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {
+    customExportConditions: [], // don't load "browser" field
+  },
 
   testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[tj]s?(x)'],
 
@@ -52,16 +55,19 @@ const jestConfig = {
       'babel-jest',
       {
         presets: [
-          ['@babel/preset-react', { runtime: 'automatic' }],
+          [
+            '@babel/preset-env',
+            { targets: { node: 'current' }, modules: 'commonjs', loose: true },
+          ],
           '@babel/preset-typescript',
-          ['@babel/preset-env', { targets: { node: 'current' } }],
+          ['@babel/preset-react', { runtime: 'automatic' }],
         ],
       },
     ],
   },
 
   transformIgnorePatterns: [
-    '/node_modules/',
+    '/node_modules/(?!@lotta-schule)',
     '\\.pnp\\.[^\\/]+$',
     '^.+\\.module\\.(css|sass|scss)$',
   ],
