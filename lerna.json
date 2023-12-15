@@ -8,10 +8,7 @@
   "exact": true,
   "conventionalCommits": true,
   "changelogPreset": "angular",
-  "allowBranch": [
-    "main",
-    "release/*"
-  ],
+  "allowBranch": ["main", "release/*"],
   "forcePublish": true,
   "command": {
     "version": {

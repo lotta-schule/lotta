@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --include=dev
       - name: run npm lint task
         run: |
           if [ -z "${{ inputs.package-name }}" ]; then
@@ -44,7 +44,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --include=dev
       - run: npm -w @lotta-schule/theme run build
         if: ${{ !inputs.package-name || inputs.package-name != 'theme' }}
       - run: npm -w @lotta-schule/storybook-addon-theme run build
@@ -68,7 +68,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --include=dev
       - run: npm -w @lotta-schule/theme run build
         if: ${{ !inputs.package-name || inputs.package-name != 'theme' }}
       - name: 'Run npm test task'
@@ -97,7 +97,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --include=dev
       - run: npm -w @lotta-schule/theme run build
       - run: npm -w @lotta-schule/storybook-addon-theme run build
       - name: build test version
