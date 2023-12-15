@@ -11,6 +11,8 @@ on:
     secrets:
       npm-token:
         required: true
+      nx-token:
+        required: true
     outputs:
       version-name:
         description: 'The version of the package, as read from lerna.json'
@@ -18,6 +20,9 @@ on:
       tag-name:
         description: 'The tag, can be latest or alpha'
         value: ${{ jobs.push-packages.outputs.tag-name }}
+
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
 jobs:
   push-packages:
