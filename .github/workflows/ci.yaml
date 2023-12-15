@@ -234,6 +234,7 @@ jobs:
       checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
     secrets:
       npm-token: ${{ secrets.NPM_TOKEN }}
+      nx-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
   publish-docker-image:
     if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
