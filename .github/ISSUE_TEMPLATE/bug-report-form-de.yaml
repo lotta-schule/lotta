@@ -5,6 +5,8 @@ description: |
 title: "[Bug]: "
 assignees:
   - BillyTheKing
+labels:
+  - "Triage"
 body:
   - type: markdown
     attributes:

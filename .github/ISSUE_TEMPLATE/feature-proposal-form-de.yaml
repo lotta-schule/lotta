@@ -1,0 +1,73 @@
+name: Feature-Vorschlag
+description: |
+  Vorschläge für kleine und große Veränderungen, die die Nutzung von Lotta vereinfachen oder verbessern sollen.
+title: "[Feature]: "
+assignees:
+  - BillyTheKing
+labels:
+  - "proposal"
+  - "Triage"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Danke für das Einreichen eines Verbesserungsvorschlags.
+        Damit wir möglichst schnell und gezielt auf den Vorschlag
+        reagieren können, brauchen wir deine Zusammenarbeit!
+        Versuche dich kurz und präzise auszudrücken.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Bereich
+      description: |
+        Bitte gib an, in welchem Bereich dein Verbesserungsvorschlag
+        angesiedelt ist
+      options:
+        - Kategorie-Seite (inkl. Startseite)
+        - Beitragsseite
+        - Marginalen
+        - Nutzerprofil
+        - Datei- und Medienverwaltung
+        - Nachrichten (inkl. "Meine Beiträge")
+        - Suche
+        - Administrationsbereich (inkl. "Feedback")
+        - Emails
+        - Organisatorisches rund um Lotta
+        - Etwas ganz anderes
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: behaviour
+    attributes:
+      label: Verhalten
+      description: |
+        Bitte gib an, ob es bei dem Vorschlag darum geht,
+        das Verhalten oder das Aussehen zu verändern
+      options:
+        - Verhalten
+        - Aussehen / Design
+        - Trifft nicht zu
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: |
+        Bitte beschreibe kurz, aber ausführlich, welches Problem dein
+        Vorschlag lösen soll.
+      placeholder: Kurze präzise Problembeschreibung
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Beschreibung
+      description: |
+        Bitte beschreibe so kurz wie möglich aber so ausführlich wie
+        nötig deinen Vorschlag, das Problem zu lösen, aussieht.
+      placeholder: Kurze präzise Lösungsbeschreibung
+    validations:
+      required: false
