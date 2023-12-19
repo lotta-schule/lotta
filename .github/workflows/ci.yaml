@@ -66,7 +66,9 @@ jobs:
         run: npm run nx affected -- -t test --ci --collectCoverage --configuration=ci
 
       - name: Run end-to-end tests
-        run: npm run nx affected -- -t e2e --configuration=ci
+        run: |
+          npx playwright install --with-deps chromium
+          npm run nx affected -- -t e2e --configuration=ci
 
       - name: Upload Tests for storybook-addon-theme
         uses: codecov/codecov-action@v2

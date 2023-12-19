@@ -14,8 +14,7 @@
     "nx": "nx"
   },
   "devDependencies": {
-    "@nx/eslint-plugin": "^16.7.2",
-    "@nx/workspace": "^16.7.1",
+    "@nx/workspace": "^17.2.6",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "concurrently": "^8.2.2",
     "eslint-config-prettier": "^8.10.0",

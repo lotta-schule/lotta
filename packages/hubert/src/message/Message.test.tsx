@@ -14,8 +14,6 @@ describe('util/Message', () => {
   it('should not show if an empty message is provided', async () => {
     const screen = render(<Message message={''} color={'#ccc'} />);
 
-    await waitFor(() => {
-      expect(screen.getByRole('alert')).not.toBeVisible();
-    });
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 });

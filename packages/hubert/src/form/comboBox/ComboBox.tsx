@@ -139,7 +139,7 @@ export const ComboBox = React.memo(
           } else {
             const item = findItem(value);
             if (item) {
-              state.selectionManager.setFocusedKey(item.key);
+              state.selectionManager.setFocusedKey(item.key as string | number);
             }
           }
         }
@@ -218,7 +218,7 @@ export const ComboBox = React.memo(
               matchExact: true,
             });
 
-            if (item && state.collection.getItem(item.key)) {
+            if (item && state.collection.getItem(item.key as string | number)) {
               select(item);
               return;
             } else if (!item && allowsCustomValue) {

@@ -2,7 +2,6 @@
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/eslintrc.json",
   "root": true,
   "plugins": [
-    "@nx",
     "promise",
     "prettier"
   ],
@@ -18,23 +17,7 @@
         "*.js",
         "*.jsx"
       ],
-      "rules": {
-        "@nx/enforce-module-boundaries": [
-          "off",
-          {
-            "enforceBuildableLibDependency": true,
-            "allow": [],
-            "depConstraints": [
-              {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": [
-                  "*"
-                ]
-              }
-            ]
-          }
-        ]
-      }
+      "rules": {}
     },
     {
       "files": [
@@ -42,7 +25,6 @@
         "*.tsx"
       ],
       "extends": [
-        "plugin:@nx/typescript",
         "plugin:@typescript-eslint/recommended"
       ],
       "rules": {
@@ -54,9 +36,6 @@
       "files": [
         "*.js",
         "*.jsx"
-      ],
-      "extends": [
-        "plugin:@nx/javascript"
       ],
       "rules": {}
     }
