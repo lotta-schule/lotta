@@ -29,6 +29,7 @@ export const Message = React.memo<MessageProps>(
           visible: { opacity: 1, height: 'auto' },
           hidden: { opacity: 0, height: 0 },
         }}
+        aria-hidden={message ? undefined : true}
         animate={message ? 'visible' : 'hidden'}
         {...(otherProps as any)}
       >

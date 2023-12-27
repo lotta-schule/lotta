@@ -17,7 +17,7 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@headlessui/react": "^1.7.16",
-    "@lotta-schule/theme": "4.1.2",
+    "@lotta-schule/theme": "4.1.5",
     "@popperjs/core": "^2.11.8",
     "clsx": "^2.0.0",
     "colorjs.io": "^0.4.5",
