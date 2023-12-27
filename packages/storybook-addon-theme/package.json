@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "@lotta-schule/storybook-addon-theme",
-  "version": "4.2.0-alpha.1",
+  "version": "4.2.0-alpha.2",
   "description": "Addon for storybook which allows managing the Hubert theme from within the documentation",
   "author": "Alexis Rinaldoni <alexis@rinaldoni.net>",
   "license": "GPL-3.0-or-later",
@@ -24,7 +24,7 @@
     }
   },
   "devDependencies": {
-    "@lotta-schule/theme": "4.2.0-alpha.1",
+    "@lotta-schule/theme": "4.2.0-alpha.2",
     "@storybook/blocks": "^7.0.26",
     "@testing-library/jest-dom": "^5.16.5",
     "babel-jest": "^29.6.1",
