@@ -186,7 +186,7 @@ export const GroupList = () => {
             </Droppable>
           </DragDropContext>
         </section>
-        <div>
+        <section className={styles.groupSettingSection}>
           <Button
             className={styles.createGroupButton}
             icon={<Icon icon={faCirclePlus} />}
@@ -198,7 +198,7 @@ export const GroupList = () => {
             group={selectedGroup}
             onDelete={() => setSelectedGroup(null)}
           />
-        </div>
+        </section>
       </div>
     </div>
   );
