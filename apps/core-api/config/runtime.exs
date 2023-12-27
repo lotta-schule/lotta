@@ -115,6 +115,7 @@ if config_env() == :prod do
     api_key: System.get_env("MAILGUN_API_KEY"),
     domain: System.get_env("MAILGUN_DOMAIN"),
     default_sender: System.get_env("MAILER_DEFAULT_SENDER"),
+    feedback_sender: System.get_env("MAILER_FEEDBACK_SENDER"),
     base_uri: "https://api.eu.mailgun.net/v3"
 
   config :lotta, LottaWeb.Endpoint, server: true

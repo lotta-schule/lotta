@@ -151,6 +151,7 @@ defmodule Lotta.Email do
     tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(user, :prefix))
 
     base_mail(tenant: tenant)
+    |> from(mailer_config!(:feedback_sender, :default_sender))
     |> to(mailer_config!(:default_sender))
     |> subject("Es wurde ein Feedback von #{tenant.title} weitergeleitet.")
     |> render(:forward_feedback, user: user, feedback: feedback, message: message)
@@ -167,6 +168,7 @@ defmodule Lotta.Email do
     tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(user, :prefix))
 
     base_mail(tenant: tenant)
+    |> from(mailer_config!(:feedback_sender, :default_sender))
     |> to(mailer_config!(:default_sender))
     |> subject("Es wurde Admin-Feedback für #{tenant.title} weitergeleitet.")
     |> render(:admin_feedback, user: user, subject: subject, message: message)
@@ -220,13 +222,21 @@ defmodule Lotta.Email do
   defp base_mail(opts) do
     new_email()
     |> from(mailer_config!(:default_sender))
+    |> put_header("Reply-To", mailer_config!(:default_sender))
     |> assign(:tenant, unless(opts[:skip_tenant], do: opts[:tenant] || Tenants.current()))
     |> put_layout({LottaWeb.EmailView, :email})
   end
 
-  defp mailer_config!(key) do
+  defp mailer_config!() do
     :lotta
     |> Application.fetch_env!(Lotta.Mailer)
-    |> Keyword.fetch!(key)
   end
+
+  @spec mailer_config!(atom(), atom() | nil) :: any()
+  defp mailer_config!(key, fallback_key \\ nil)
+
+  defp mailer_config!(key, nil), do: Keyword.fetch!(mailer_config!(), key)
+
+  defp mailer_config!(key, fallback_key),
+    do: Keyword.get(mailer_config!(), key, Keyword.fetch!(mailer_config!(), fallback_key))
 end
