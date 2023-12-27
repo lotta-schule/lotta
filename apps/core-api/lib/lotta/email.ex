@@ -185,7 +185,8 @@ defmodule Lotta.Email do
     tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(user, :prefix))
 
     base_mail(tenant: tenant)
-    |> to(mailer_config!(:default_sender))
+    |> from(mailer_config!(:feedback_sender, :default_sender))
+    |> to(user.email)
     |> subject("Dein Feedback für #{tenant.title} wurde beantwortet.")
     |> render(
       :respond_to_feedback,
