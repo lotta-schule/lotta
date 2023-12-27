@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.7](https://github.com/lotta-schule/web/compare/v4.1.6...v4.1.7) (2023-12-27)
+
+**Note:** Version bump only for package @lotta-schule/lotta
+
 ## [4.1.6](https://github.com/lotta-schule/web/compare/v4.1.4...v4.1.6) (2023-12-27)
 
 **Note:** Version bump only for package @lotta-schule/lotta
