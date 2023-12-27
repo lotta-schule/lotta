@@ -34,6 +34,12 @@ const LottaWebApp = ({
     ...componentProps
   },
 }: AppProps) => {
+  const origin =
+    requestBaseUrl ??
+    (typeof globalThis.location !== 'undefined'
+      ? globalThis.location.origin
+      : `https://${tenant.host}`);
+
   if (error) {
     return <ServerDownError error={error} />;
   }
@@ -47,11 +53,11 @@ const LottaWebApp = ({
       tenant={tenant}
       categories={categories}
       currentUser={currentUser}
-      requestBaseUrl={requestBaseUrl}
+      requestBaseUrl={origin}
     >
       <script
         defer
-        data-domain={requestBaseUrl.replace(/^https?:\/\//, '')}
+        data-domain={origin}
         data-api="/p/e"
         src="/p/script.js"
       ></script>
