@@ -86,7 +86,6 @@
       }
     }
   }
-
   .createGroupButton {
     margin-left: auto;
     margin-right: calc(var(--lotta-spacing) * 2);
@@ -95,5 +94,9 @@
     @media screen and (max-width: $max-xs) {
       margin-top: var(--lotta-spacing);
     }
+  }
+  .groupSettingSection {
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
