@@ -36,7 +36,7 @@ config :lotta, Lotta.Storage.RemoteStorage,
     "minio" => %{
       type: Lotta.Storage.RemoteStorage.Strategy.S3,
       config: %{
-        endpoint: "http://localhost:9000",
+        endpoint: "http://localhost:9000/lotta-dev-ugc",
         bucket: "lotta-dev-ugc"
       }
     }

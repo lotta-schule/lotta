@@ -10,7 +10,6 @@ defmodule Lotta.Repo.Seeder do
   alias Lotta.Tenants.{Category, Tenant, TenantSelector, Widget}
 
   def seed do
-    clean_minio()
 
     # Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
 
@@ -1281,48 +1280,4 @@ defmodule Lotta.Repo.Seeder do
     |> Repo.update!()
   end
 
-  defp clean_minio do
-    bucket = "lotta-dev-ugc"
-
-    bucket
-    |> ExAws.S3.head_bucket()
-    |> ExAws.request()
-    |> case do
-      {:ok, _} ->
-        %{body: %{contents: objects}} =
-          bucket
-          |> ExAws.S3.list_objects(prefix: "tenant_test")
-          |> ExAws.request!()
-
-        objects =
-          objects
-          |> Enum.map(& &1.key)
-
-        ExAws.S3.delete_all_objects(bucket, objects)
-        |> ExAws.request!()
-
-      {:error, _res} ->
-        bucket
-        |> ExAws.S3.put_bucket("")
-        |> ExAws.request!()
-    end
-
-    bucket
-    |> ExAws.S3.put_bucket_policy(
-      Jason.encode!(%{
-        "Statement" => [
-          %{
-            "Action" => ["s3:GetObject"],
-            "Effect" => "Allow",
-            "Principal" => %{
-              "AWS" => ["*"]
-            },
-            "Resource" => ["arn:aws:s3:::#{bucket}/*"]
-          }
-        ],
-        Version: "2012-10-17"
-      })
-    )
-    |> ExAws.request!()
-  end
 end

@@ -88,7 +88,7 @@ defmodule Lotta.StorageTest do
         |> Timex.parse!("{RFC1123}")
 
       # wait 2 seconds in order to enforce new DateTime
-      :timer.sleep(2000)
+      :timer.sleep(1000)
 
       {:ok, user_file} =
         user_file
@@ -121,12 +121,12 @@ defmodule Lotta.StorageTest do
 
     test "should call get_http_url", %{user_file: user_file} do
       assert Storage.get_http_url(user_file) =~
-               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/tenant_test\//
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\//
     end
 
     test "should call get_http_url with download path", %{user_file: user_file} do
       assert Storage.get_http_url(user_file, download: true) =~
-               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/tenant_test\/.*\?response-content-disposition=attachment/
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\/.*\?response-content-disposition=attachment/
     end
   end
 end

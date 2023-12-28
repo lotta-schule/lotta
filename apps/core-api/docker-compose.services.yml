@@ -44,9 +44,19 @@ services:
       - 9000:9000
 
   minio-console:
-    image: minio/console
-    command: server
+    image: minio/mc
+    depends_on:
+      - minio
     environment:
       - CONSOLE_MINIO_SERVER=http://minio:9000
     ports:
       - 9090:9090
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add minio http://minio:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY;
+      /usr/bin/mc rm -rf minio/lotta-dev-ugc;
+      /usr/bin/mc mb minio/lotta-dev-ugc;
+      /usr/bin/mc policy set download minio/lotta-dev-ugc;
+      exit 0;
+      "
+      

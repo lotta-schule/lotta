@@ -91,6 +91,7 @@ defmodule Lotta.Storage do
       |> Repo.preload(:remote_storage_entity)
 
     filepath = Path.join(System.tmp_dir(), file.id)
+
     # first fetch the file data
     file_url =
       file.remote_storage_entity
