@@ -14,8 +14,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
       config[:config][:bucket],
       path,
       grant_read: [
-        uri: "http://acs.amazonaws.com/groups/global/AllUsers",
-        uri: "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
+        uri: "http://acs.amazonaws.com/groups/global/AllUsers"
       ],
       content_type: content_type
     )
