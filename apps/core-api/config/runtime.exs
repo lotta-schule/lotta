@@ -123,7 +123,8 @@ if config_env() == :prod do
   config :ex_aws, :s3,
     http_client: ExAws.Request.Hackney,
     host: %{
-      System.fetch_env!("UGC_S3_COMPAT_REGION") => System.fetch_env!("UGC_S3_COMPAT_ENDPOINT")
+      System.fetch_env!("UGC_S3_COMPAT_REGION") =>
+        String.replace_prefix(System.fetch_env!("UGC_S3_COMPAT_ENDPOINT"), "https://", "")
     },
     region: System.fetch_env!("UGC_S3_COMPAT_REGION"),
     scheme: "https://"
