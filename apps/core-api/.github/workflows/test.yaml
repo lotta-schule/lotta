@@ -39,16 +39,19 @@ jobs:
           -e MINIO_ROOT_USER="AKIAIOSFODNN7EXAMPLE"
           -e MINIO_ROOT_PASSWORD="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
           -e MINIO_DEFAULT_BUCKETS="lotta-dev-ugc"
-      elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
-        ports:
-          - 9200:9200
-        options: >-
-          -e discovery.type=single-node
-          -e xpack.security.enabled=false
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup minio
+        run: >
+          docker run --network host --name minio_setup /bin/sh -c "
+          /usr/bin/mc config host add minio http://localhost:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY;
+          /usr/bin/mc rm -rf minio/lotta-dev-ugc;
+          /usr/bin/mc mb minio/lotta-dev-ugc;
+          /usr/bin/mc policy set download minio/lotta-dev-ugc;
+          exit 0;
+          "
 
       - uses: erlef/setup-beam@v1
         with:
