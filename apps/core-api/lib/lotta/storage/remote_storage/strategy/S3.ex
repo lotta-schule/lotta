@@ -13,9 +13,6 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
     |> S3.upload(
       config[:config][:bucket],
       path,
-      grant_read: [
-        uri: "http://acs.amazonaws.com/groups/global/AllUsers"
-      ],
       content_type: content_type
     )
     |> ExAws.request()
