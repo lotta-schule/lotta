@@ -43,7 +43,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
 
   def get_http_url(%RemoteStorageEntity{path: path}, options, config) do
     request_download = Keyword.get(options, :download) == true
-    base_url = "#{config[:config][:endpoint]}/#{config[:config][:bucket]}/#{path}"
+    base_url = "#{config[:config][:endpoint]}/#{path}"
 
     if request_download do
       "#{base_url}?response-content-disposition=attachment"
