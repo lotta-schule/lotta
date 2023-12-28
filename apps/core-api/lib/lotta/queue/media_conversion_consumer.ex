@@ -74,7 +74,7 @@ defmodule Lotta.Queue.MediaConversionConsumer do
         |> add_metadata(output)
         |> Changeset.put_assoc(:remote_storage_entity, %{
           store_name: RemoteStorage.default_store(),
-          path: output["remoteStorage"]["path"]
+          path: output["path"]
         })
         |> Repo.insert(prefix: prefix)
         |> case do
