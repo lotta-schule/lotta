@@ -57,7 +57,7 @@ const LottaWebApp = ({
     >
       <script
         defer
-        data-domain={origin}
+        data-domain={origin.replace(/^https?:\/\/(www\.)?/, '')}
         data-api="/p/e"
         src="/p/script.js"
       ></script>
