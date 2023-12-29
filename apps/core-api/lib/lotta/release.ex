@@ -88,8 +88,8 @@ defmodule Lotta.Release do
       all_entities = Repo.all(RemoteStorageEntity, prefix: tenant.prefix)
 
       invalid_entities =
-        Enum.reject(all_entities, fn entity ->
-          RemoteStorage.exists?(entity) != false
+        Enum.filter(all_entities, fn entity ->
+          RemoteStorage.exists?(entity) === false
         end)
 
       Logger.notice(
