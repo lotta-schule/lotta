@@ -69,14 +69,14 @@ defmodule Lotta.Release do
         for entity <- unused do
           RemoteStorage.delete(entity)
 
-          count =
-            Repo.delete!(entity)
-            |> Enum.count()
-
-          Logger.notice("Deleted #{count} unused remote storage entities.")
-
-          count
+          Repo.delete!(entity)
         end
+
+        count = Enum.count(unused)
+
+        Logger.notice("Deleted #{count} unused remote storage entities.")
+
+        count
       end
 
       Logger.notice(
