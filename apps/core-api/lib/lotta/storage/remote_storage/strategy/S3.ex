@@ -3,6 +3,8 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
   S3 adapter for `Lotta.Storage.RemoteStorage`.
   Reading and writing to S3-compatible storage.
   """
+  require Logger
+
   alias Lotta.Storage.RemoteStorageEntity
   alias Plug.Upload
   alias ExAws.S3
@@ -38,6 +40,24 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
 
       {:ok, _result} ->
         entity
+    end
+  end
+
+  def exists?(%RemoteStorageEntity{path: path}, config) do
+    S3.head_object(config[:config][:bucket], path)
+    |> ExAws.request()
+    |> case do
+      {:error, {error, status_code, _binary}} ->
+        if status_code == 404 do
+          false
+        else
+          Logger.error("S3.head_object failed with unexpected error #{inspect(error)}")
+
+          :unknown
+        end
+
+      {:ok, _result} ->
+        true
     end
   end
 

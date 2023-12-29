@@ -1,8 +1,13 @@
 defmodule Lotta.Repo.TenantMigrations.ChangeUserEmailsToHaveLowercaseIndex do
   use Ecto.Migration
+
   import Ecto.Query
+
+  require Logger
+
   alias Lotta.Repo
   alias Lotta.Accounts.User
+
 
   def up do
     # Bevor we can add the index, we have to merge all the users
@@ -31,9 +36,9 @@ defmodule Lotta.Repo.TenantMigrations.ChangeUserEmailsToHaveLowercaseIndex do
         end)
         |> Enum.reverse()
 
-      IO.inspect("Accounts von #{keep_user.email} werden zusammengeführt ...")
+      Logger.notice("Accounts von #{keep_user.email} werden zusammengeführt ...")
 
-      IO.inspect(
+      Logger.notice(
         "Es werden dafür die Accounts #{Enum.join(Enum.map(del_users, & &1.email), ", ")} entfernt," <>
           "aber ihre Formulareingaben, Beiträge, Dateien und Ordner, Gruppenzugehörigkeiten und Einschreibeschlüssel zusammengeführt."
       )
@@ -48,7 +53,7 @@ defmodule Lotta.Repo.TenantMigrations.ChangeUserEmailsToHaveLowercaseIndex do
           set: [user_id: keep_user.id]
         )
 
-      IO.puts("removed #{n} content_module_results")
+      Logger.notice("removed #{n} content_module_results")
 
       {n, _} =
         Repo.update_all(
@@ -58,7 +63,7 @@ defmodule Lotta.Repo.TenantMigrations.ChangeUserEmailsToHaveLowercaseIndex do
           set: [user_id: keep_user.id]
         )
 
-      IO.puts("removed #{n} blocked_tenants")
+      Logger.notice("removed #{n} blocked_tenants")
 
       # Must take care not to add a same user twice to an article, so first getting the valid user's articles
       keepers_article_ids =
@@ -77,7 +82,7 @@ defmodule Lotta.Repo.TenantMigrations.ChangeUserEmailsToHaveLowercaseIndex do
           set: [user_id: keep_user.id]
         )
 
-      IO.puts("removed #{n} article_users")
+      Logger.notice("removed #{n} article_users")
 
       {files_count, _} =
         Repo.update_all(
@@ -87,7 +92,7 @@ defmodule Lotta.Repo.TenantMigrations.ChangeUserEmailsToHaveLowercaseIndex do
           set: [user_id: keep_user.id]
         )
 
-      IO.puts("removed #{files_count} files")
+      Logger.notice("removed #{files_count} files")
 
       if files_count > 0 do
         {n, _} =
@@ -98,7 +103,7 @@ defmodule Lotta.Repo.TenantMigrations.ChangeUserEmailsToHaveLowercaseIndex do
             set: [user_id: keep_user.id]
           )
 
-        IO.puts("removed #{n} directories")
+        Logger.notice("removed #{n} directories")
       end
 
       # Same as with articles, make sure not to add someone twice
@@ -118,7 +123,7 @@ defmodule Lotta.Repo.TenantMigrations.ChangeUserEmailsToHaveLowercaseIndex do
           set: [user_id: keep_user.id]
         )
 
-      IO.puts("removed #{n} user_user_group")
+      Logger.notice("removed #{n} user_user_group")
 
       # Same as with articles, make sure not to add someone twice
       keepers_user_enrollment_tokens =
@@ -139,17 +144,17 @@ defmodule Lotta.Repo.TenantMigrations.ChangeUserEmailsToHaveLowercaseIndex do
           set: [user_id: keep_user.id]
         )
 
-      IO.puts("removed #{n} users_enrollment_tokens")
+      Logger.notice("removed #{n} users_enrollment_tokens")
 
       # now remove every instance of one of the three model that COULD have been left over
       Repo.delete_all(from(repo in "article_users", where: repo.user_id in ^del_users))
       Repo.delete_all(from(repo in "user_user_group", where: repo.user_id in ^del_users))
       Repo.delete_all(from(repo in "users_enrollment_tokens", where: repo.user_id in ^del_users))
 
-      IO.inspect("Now delete the users")
+      Logger.notice("Now delete the users")
       Repo.delete_all(from(repo in "directories", where: repo.user_id in ^del_users))
       Repo.delete_all(from(u in User, where: u.id in ^del_users))
-      IO.inspect("done.")
+      Logger.notice("done.")
     end)
 
     flush()

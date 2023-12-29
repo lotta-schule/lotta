@@ -30,4 +30,22 @@ defmodule Lotta.Repo do
   def get_prefix() do
     Process.get(:current_tenant_prefix)
   end
+
+  def with_new_dynamic_repo(fun) do
+    config =
+      Application.get_env(:lotta, __MODULE__)
+      |> Keyword.put(:name, nil)
+      |> Keyword.put(:pool_size, 2)
+      |> Keyword.delete(:pool)
+
+    {:ok, pid} = start_link(config)
+
+    try do
+      put_dynamic_repo(pid)
+      fun.(pid)
+    after
+      stop(1000)
+      put_dynamic_repo(Repo)
+    end
+  end
 end

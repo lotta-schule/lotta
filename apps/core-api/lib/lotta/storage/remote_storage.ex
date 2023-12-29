@@ -74,6 +74,10 @@ defmodule Lotta.Storage.RemoteStorage do
   @doc """
   Create a file on the remote storage given an elixir Upload struct.
   Returns an (unsaved[!]) RemoteStorageEntity in a result tuple.
+
+  !!! WARNING !!!
+  This does not create an entry in the database.
+  Call Repo.save! on the returned RemoteStorageEntity to persist it.
   """
   @spec create(Upload.t(), path :: String.t()) ::
           {:ok, RemoteStorageEntity.t()} | {:error, term()}
@@ -89,6 +93,9 @@ defmodule Lotta.Storage.RemoteStorage do
 
   @doc """
   Delete a file on the storage for the given entity
+
+  !!! WARNING !!!
+  This does not delete the database object, only the file on the storage.
   """
   @spec delete(RemoteStorageEntity.t()) :: {:ok, RemoteStorageEntity.t()} | {:error, term()}
   def delete(%RemoteStorageEntity{store_name: store} = entity) do
@@ -98,6 +105,21 @@ defmodule Lotta.Storage.RemoteStorage do
     else
       error ->
         error
+    end
+  end
+
+  @doc """
+  Check if a file exists on the storage for the given entity
+  """
+  @doc since: "4.1.3"
+  @spec exists?(RemoteStorageEntity.t()) :: boolean() | :unknown
+  def exists?(%RemoteStorageEntity{store_name: store} = entity) do
+    with {:ok, strategy} <- get_strategy(store),
+         {:ok, config} <- config_for_store(store) do
+      strategy.exists?(entity, config)
+    else
+      _ ->
+        :unknown
     end
   end
 

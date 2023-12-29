@@ -1,6 +1,7 @@
 defmodule Lotta.StorageTest do
   @moduledoc false
 
+  alias Lotta.Storage.RemoteStorageEntity
   use Lotta.DataCase, async: true
 
   import Ecto.Query
@@ -8,7 +9,7 @@ defmodule Lotta.StorageTest do
   alias ExAws.S3
   alias Lotta.Accounts.User
   alias Lotta.{Fixtures, Repo, Storage}
-  alias Lotta.Storage.{Directory, File}
+  alias Lotta.Storage.{Directory, File, RemoteStorage, RemoteStorageEntity}
 
   @prefix "tenant_test"
 
@@ -75,7 +76,9 @@ defmodule Lotta.StorageTest do
       assert Enum.any?(contents, &(&1.key == "tenant_test/#{uploaded_file.id}"))
     end
 
-    test "set_remote_storage/2 should reupload a file to new location", %{user_file: user_file} do
+    test "copy_to_remote_storage/2 should reupload a file to new location", %{
+      user_file: user_file
+    } do
       user_file = Repo.preload(user_file, :remote_storage_entity)
 
       current_file_datetime =
@@ -92,7 +95,7 @@ defmodule Lotta.StorageTest do
 
       {:ok, user_file} =
         user_file
-        |> Storage.set_remote_storage("minio")
+        |> Storage.copy_to_remote_storage("minio")
 
       assert %File{} = user_file
 
@@ -117,6 +120,26 @@ defmodule Lotta.StorageTest do
       assert_raise Ecto.NoResultsError, fn ->
         Repo.get!(File, file.id, prefix: @prefix)
       end
+    end
+
+    test "should list an unused RemoteStorageEntity in list_unused_remote_storage_entities/0" do
+      tmp_path = Path.join(System.tmp_dir!(), "test.txt")
+      Elixir.File.write!(tmp_path, "test")
+
+      %RemoteStorageEntity{id: id} =
+        RemoteStorage.create(
+          %Plug.Upload{
+            filename: "test.txt",
+            content_type: "text/plain",
+            path: tmp_path
+          },
+          "unused/minio"
+        )
+        |> elem(1)
+        |> Repo.insert!(prefix: @prefix)
+
+      assert [%RemoteStorageEntity{id: ^id}] =
+               Storage.list_unused_remote_storage_entities(@prefix)
     end
 
     test "should call get_http_url", %{user_file: user_file} do

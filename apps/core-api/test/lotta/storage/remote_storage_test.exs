@@ -77,6 +77,25 @@ defmodule Lotta.RemoteStorageTest do
                })
     end
 
+    test "exists?/1 should call correct strategy for the identifier" do
+      with_mock RemoteStorage.Strategy.S3,
+        exists?: fn entity, _ ->
+          true
+        end do
+        entity = %RemoteStorageEntity{store_name: "minio", path: "/some"}
+        RemoteStorage.exists?(entity)
+        assert called(RemoteStorage.Strategy.S3.exists?(:_, :_))
+      end
+    end
+
+    test "exists?/1 should return :unknown if it's from another store" do
+      assert :unknown =
+               RemoteStorage.exists?(%RemoteStorageEntity{
+                 store_name: "ATOM",
+                 path: "/some"
+               })
+    end
+
     test "get_http_url/1 should call correct strategy's get_http_url" do
       with_mock RemoteStorage.Strategy.S3,
         get_http_url: fn entity, _options, _config ->

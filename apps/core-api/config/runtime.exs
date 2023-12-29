@@ -1,6 +1,11 @@
 import Config
 
-env = System.get_env("APP_ENVIRONMENT")
+app_environment =
+  case System.get_env("APP_ENVIRONMENT") do
+    "PRODUCTION" -> :production
+    "STAGING" -> :staging
+    _ -> Mix.env()
+  end
 
 image_tag =
   case String.split(System.get_env("IMAGE_NAME", ""), ":") do
@@ -8,7 +13,7 @@ image_tag =
     _ -> nil
   end
 
-config :lotta, :environment, env || config_env()
+config :lotta, :environment, app_environment || config_env()
 
 if config_env() == :prod do
   base_uris = String.split(System.get_env("BASE_URI_HOST", "lotta.schule"), ",")
@@ -135,7 +140,7 @@ if config_env() == :prod do
 
   config :sentry,
     dsn: System.get_env("SENTRY_DSN"),
-    environment_name: String.downcase(env || "development"),
+    environment_name: to_string(app_environment),
     included_environments: ~w(production staging),
     release: image_tag,
     enable_source_code_context: true,

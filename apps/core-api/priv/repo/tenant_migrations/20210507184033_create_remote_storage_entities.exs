@@ -1,6 +1,8 @@
 defmodule Lotta.Repo.TenantMigrations.CreateRemoteStorageEntities do
   use Ecto.Migration
 
+  require Logger
+
   import Ecto.Query
 
   alias Lotta.Repo
@@ -48,7 +50,7 @@ defmodule Lotta.Repo.TenantMigrations.CreateRemoteStorageEntities do
               %{store_name: "digitalocean-prod", path: path}
 
             nil ->
-              IO.inspect("file conversion #{file.id} has no valid remote_location")
+              Logger.notice("file conversion #{file.id} has no valid remote_location")
               nil
           end
 
@@ -71,7 +73,7 @@ defmodule Lotta.Repo.TenantMigrations.CreateRemoteStorageEntities do
             %{store_name: "digitalocean-prod", path: path}
 
           nil ->
-            IO.inspect("file conversion #{file.id} has no valid remote_location")
+            Logger.notice("file conversion #{file.id} has no valid remote_location")
             nil
         end
 

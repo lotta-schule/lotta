@@ -12,8 +12,15 @@ defprotocol Lotta.Storage.RemoteStorage.Strategy do
   @doc """
   Delete a file on the storage for the given entity
   """
-  @spec delete(RemoteStorageEntity, RemoteStorage.config()) :: :ok | {:delete, term()}
+  @spec delete(RemoteStorageEntity, RemoteStorage.config()) :: :ok | {:error, term()}
   def delete(remote_storage_entity, config)
+
+  @doc """
+  Delete a file on the storage for the given entity
+  """
+  @doc since: "4.1.3"
+  @spec exists?(RemoteStorageEntity, RemoteStorage.config()) :: boolean()
+  def exists?(remote_storage_entity, config)
 
   @doc """
   Get the http URL for a given entity

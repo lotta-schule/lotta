@@ -12,7 +12,7 @@ defmodule Lotta.Storage do
   alias Lotta.Repo
   alias Lotta.Accounts.User
   alias Lotta.Queue.MediaConversionRequestPublisher
-  alias Lotta.Storage.{Directory, ImageProcessingUrl, RemoteStorage}
+  alias Lotta.Storage.{Directory, ImageProcessingUrl, RemoteStorage, RemoteStorageEntity}
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -80,21 +80,21 @@ defmodule Lotta.Storage do
   end
 
   @doc """
-  Change the Remote storage of the file, that means, move file data to another location.
+  Change the Remote storage of the file, that means, move file data to another location,
+  and create a new RemoteStorage entity for the file.
+  The old RemoteStorage entity will be kept, as the file itself is not changed.
   """
   @doc since: "2.5.0"
-  @spec set_remote_storage(Api.Storage.File.t() | Api.Storage.FileConversion.t(), String.t()) ::
+  @spec copy_to_remote_storage(Api.Storage.File.t() | Api.Storage.FileConversion.t(), String.t()) ::
           {:ok, Api.Storage.File.t()} | {:error, Changeset.t()} | {:error, atom()}
-  def set_remote_storage(file, store_name) when is_binary(store_name) do
-    file =
-      file
-      |> Repo.preload(:remote_storage_entity)
+  def copy_to_remote_storage(file, store_name) when is_binary(store_name) do
+    file_or_file_conversion = Repo.preload(file, :remote_storage_entity)
 
     filepath = Path.join(System.tmp_dir(), file.id)
 
     # first fetch the file data
     file_url =
-      file.remote_storage_entity
+      file_or_file_conversion.remote_storage_entity
       |> RemoteStorage.get_http_url()
       |> String.to_charlist()
 
@@ -104,7 +104,7 @@ defmodule Lotta.Storage do
            RemoteStorage.create(
              %Upload{
                filename:
-                 case file do
+                 case file_or_file_conversion do
                    %{filename: filename} ->
                      filename
 
@@ -114,12 +114,12 @@ defmodule Lotta.Storage do
                content_type: file.mime_type,
                path: filepath
              },
-             case file do
+             case file_or_file_conversion do
                %{file_id: fileid, id: id} ->
-                 Path.join(fileid, id)
+                 Path.join(fileid <> "conversion", id)
 
-               file ->
-                 file.id
+               %{id: id} ->
+                 id
              end
            ) do
       file
@@ -144,6 +144,30 @@ defmodule Lotta.Storage do
       error ->
         error
     end
+  end
+
+  @doc """
+  List all RemoteStorageEntity records that are not referenced by any File or FileConversion
+  """
+  @doc since: "4.1.2"
+  @spec list_unused_remote_storage_entities(prefix :: String.t() | nil) :: [RemoteStorage.t()]
+  def list_unused_remote_storage_entities(prefix \\ nil) do
+    from(rse in RemoteStorageEntity,
+      as: :remote_storage_entity,
+      where:
+        not exists(
+          from(f in Lotta.Storage.File,
+            where: parent_as(:remote_storage_entity).id == f.remote_storage_entity_id
+          )
+        ) and
+          not exists(
+            from(fc in Lotta.Storage.FileConversion,
+              where: parent_as(:remote_storage_entity).id == fc.remote_storage_entity_id
+            )
+          ),
+      order_by: [:id]
+    )
+    |> Repo.all(prefix: prefix)
   end
 
   @doc """
