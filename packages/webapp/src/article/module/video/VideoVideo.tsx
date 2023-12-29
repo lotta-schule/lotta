@@ -3,7 +3,6 @@ import { File } from 'util/model';
 import { ContentModuleModel } from 'model';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import { useServerData } from 'shared/ServerDataContext';
-import find from 'lodash/find';
 
 interface VideoVideoProps {
   contentModule: ContentModuleModel;
@@ -21,14 +20,14 @@ export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
     contentModule.files[0].fileConversions.filter((f) =>
       /^video/.test(f.mimeType)
     );
-  const posterFile =
-    contentModule.files &&
-    contentModule.files.length > 0 &&
-    contentModule.files[0].fileConversions &&
-    contentModule.files[0].fileConversions.length > 0 &&
-    find(contentModule.files[0].fileConversions, (fc) =>
-      /^storyboard/.test(fc.format)
-    );
+  const posterFile = contentModule.files?.[0]?.fileConversions
+    ?.filter((fc) => /^image/.test(fc.mimeType))
+    .sort(
+      (a, b) =>
+        Number(!b.mimeType.includes('gif')) -
+        Number(!a.mimeType?.includes('gif'))
+    )[0];
+
   const posterFileLocation =
     posterFile && File.getFileConversionRemoteLocation(baseUrl, posterFile);
   if (!file) {
