@@ -50,7 +50,7 @@ services:
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add minio http://minio:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY;
-      /usr/bin/mc rm -rf minio/lotta-dev-ugc;
+      /usr/bin/mc rm -r --force minio/lotta-dev-ugc;
       /usr/bin/mc mb minio/lotta-dev-ugc;
       /usr/bin/mc policy set download minio/lotta-dev-ugc;
       exit 0;

@@ -135,7 +135,7 @@ defmodule Lotta.Release do
             file
 
           {:error, error} ->
-            Logger.error("Error deleting file #{inspect(file)}: #{inspect(error)}")
+            Logger.error("Error deleting file: #{inspect(error)}")
 
             nil
         end)
