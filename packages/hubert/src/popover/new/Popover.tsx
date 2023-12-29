@@ -67,7 +67,7 @@ export const Popover = React.forwardRef(
               opacity: { type: 'ease-in-out', duration: 0.2 },
             }}
             {...(mergeProps(overlayProps, popperProps.popper ?? {}) as any)}
-            style={{ ...popperStyle.popper, zIndex: 10 }}
+            style={{ ...popperStyle.popper, zIndex: 10_000 }}
             ref={ref}
           >
             <FocusScope restoreFocus>
