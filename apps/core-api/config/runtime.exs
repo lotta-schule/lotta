@@ -2,8 +2,8 @@ import Config
 
 app_environment =
   case System.get_env("APP_ENVIRONMENT") do
-    "PRODUCTION" -> :production
-    "STAGING" -> :staging
+    "production" -> :production
+    "staging" -> :staging
     _ -> Mix.env()
   end
 
