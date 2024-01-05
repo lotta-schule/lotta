@@ -43,9 +43,8 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
     end
   end
 
-  def exists?(%RemoteStorageEntity{path: path}, config) do
-    S3.head_object(config[:config][:bucket], path)
-    |> ExAws.request()
+  def exists?(%RemoteStorageEntity{} = entity, config) do
+    :httpc.request(:head, {get_http_url(entity, [], config), []}, [], [])
     |> case do
       {:error, {error, status_code, _binary}} ->
         if status_code == 404 do
