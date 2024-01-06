@@ -59,101 +59,25 @@ defmodule Lotta.Release do
         "Customer #{tenant.title} with schema #{tenant.prefix} is being cleaned up ..."
       )
 
-      unused = Lotta.Storage.list_unused_remote_storage_entities(tenant.prefix)
+      unused = remove_unused_storage_entities(tenant)
 
-      if Enum.empty?(unused) do
-        Logger.notice("No unused remote storage entities found.")
-      else
-        Logger.notice("Unused remote storage entities found: #{Enum.count(unused)}")
+      Logger.notice("Unused remote storage entities deleted: #{Enum.count(unused)}")
 
-        for entity <- unused do
-          RemoteStorage.delete(entity)
+      # {all_entities, invalid_entities, deleted_entities} = remove_invalid_files(tenant)
+      # cleaned_entities = unused ++ deleted_entities
+      # Logger.notice("Files deleted: #{Enum.count(deleted_files)} / #{Enum.count(invalid_files)}")
 
-          Repo.delete!(entity)
-        end
+      # {deleted_file_conversion_count, _} =
+      #   from(
+      #     f in Storage.FileConversion,
+      #     where: is_nil(f.remote_storage_entity_id)
+      #   )
+      #   |> Repo.delete_all(prefix: tenant.prefix)
 
-        count = Enum.count(unused)
+      # Logger.notice("#{deleted_file_conversion_count} invalid file conversions removed from db.")
 
-        Logger.notice("Deleted #{count} unused remote storage entities.")
-
-        count
-      end
-
-      Logger.notice(
-        "Customer #{tenant.title} with schema #{tenant.prefix} has been cleaned up of unused RemoteStorageEntities."
-      )
-
-      :timer.sleep(2500)
-
-      all_entities = Repo.all(RemoteStorageEntity, prefix: tenant.prefix)
-
-      invalid_entities =
-        Enum.filter(all_entities, fn entity ->
-          RemoteStorage.exists?(entity) === false
-        end)
-
-      Logger.notice(
-        "Invalid remote storage entities found: #{Enum.count(invalid_entities)} / #{Enum.count(all_entities)}"
-      )
-
-      deleted_entities =
-        invalid_entities
-        |> Enum.filter(fn entity ->
-          Application.get_env(:lotta, :environment) == :production or
-            entity.store_name == RemoteStorage.default_store()
-        end)
-        |> tap(fn entities ->
-          Logger.notice(
-            "Found #{Enum.count(entities)} invalid remote storage entities to delete ..."
-          )
-        end)
-        |> Enum.map(fn entity ->
-          Logger.notice("Deleting invalid remote storage entity #{inspect(entity)} ...")
-          Repo.delete!(entity)
-        end)
-
-      Logger.notice(
-        "#{Enum.count(deleted_entities)} invalid remote storage entities deleted in relevant storages."
-      )
-
-      cleaned_entities = unused ++ deleted_entities
-
-      invalid_files =
-        from(
-          f in Storage.File,
-          where: is_nil(f.remote_storage_entity_id)
-        )
-        |> Repo.all(prefix: tenant.prefix)
-
-      deleted_files =
-        invalid_files
-        |> Enum.map(fn file ->
-          Storage.delete_file(file)
-        end)
-        |> Enum.map(fn
-          {:ok, file} ->
-            file
-
-          {:error, error} ->
-            Logger.error("Error deleting file: #{inspect(error)}")
-
-            nil
-        end)
-        |> Enum.reject(&is_nil/1)
-
-      Logger.notice("Files deleted: #{Enum.count(deleted_files)} / #{Enum.count(invalid_files)}")
-
-      {deleted_file_conversion_count, _} =
-        from(
-          f in Storage.FileConversion,
-          where: is_nil(f.remote_storage_entity_id)
-        )
-        |> Repo.delete_all(prefix: tenant.prefix)
-
-      Logger.notice("#{deleted_file_conversion_count} invalid file conversions removed from db.")
-
-      {String.to_atom(tenant.prefix), Enum.count(cleaned_entities), Enum.count(deleted_files),
-       deleted_file_conversion_count}
+      # {String.to_atom(tenant.prefix), Enum.count(cleaned_entities), Enum.count(deleted_files),
+      #  deleted_file_conversion_count}
     end)
   end
 
@@ -212,6 +136,69 @@ defmodule Lotta.Release do
        Enum.count(files_with_non_default_entities) +
          Enum.count(file_conversions_with_non_default_entities)}
     end)
+  end
+
+  defp remove_unused_storage_entities(tenant) do
+    unused = Lotta.Storage.list_unused_remote_storage_entities(tenant.prefix)
+
+    if Enum.empty?(unused) do
+      Logger.notice("No unused remote storage entities found.")
+    else
+      Logger.notice("Unused remote storage entities found: #{Enum.count(unused)}")
+
+      for entity <- unused do
+        RemoteStorage.delete(entity)
+
+        Repo.delete!(entity)
+      end
+
+      count = Enum.count(unused)
+
+      Logger.notice("Deleted #{count} unused remote storage entities.")
+
+      count
+    end
+
+    Logger.notice(
+      "Customer #{tenant.title} with schema #{tenant.prefix} has been cleaned up of unused RemoteStorageEntities."
+    )
+
+    unused
+  end
+
+  defp remove_invalid_files(tenant) do
+    all_entities = Repo.all(RemoteStorageEntity, prefix: tenant.prefix)
+
+    invalid_entities =
+      Enum.filter(all_entities, fn entity ->
+        RemoteStorage.exists?(entity) === false
+      end)
+
+    Logger.notice(
+      "Invalid remote storage entities found: #{Enum.count(invalid_entities)} / #{Enum.count(all_entities)}"
+    )
+
+    deleted_entities =
+      invalid_entities
+      |> Enum.filter(fn entity ->
+        Application.get_env(:lotta, :environment) == :production or
+          entity.store_name == RemoteStorage.default_store()
+      end)
+      |> tap(fn entities ->
+        Logger.notice(
+          "Found #{Enum.count(entities)} invalid remote storage entities to delete ..."
+        )
+      end)
+      |> Enum.map(fn entity ->
+        Logger.notice("Deleting invalid remote storage entity #{inspect(entity)} ...")
+        Repo.delete!(entity)
+      end)
+
+    Logger.notice(
+      "#{Enum.count(deleted_entities)} invalid remote storage entities deleted in relevant storages."
+    )
+
+    {all_entities, invalid_entities, deleted_entities}
   end
 
   defp on_each_tenant_repo(fun) do
