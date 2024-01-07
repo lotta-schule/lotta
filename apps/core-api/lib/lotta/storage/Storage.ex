@@ -114,13 +114,14 @@ defmodule Lotta.Storage do
                content_type: file.mime_type,
                path: filepath
              },
-             case file_or_file_conversion do
-               %{file_id: fileid, id: id} ->
-                 Path.join(fileid <> "conversion", id)
+             "#{Ecto.get_meta(file, :prefix)}/" <>
+               case file_or_file_conversion do
+                 %{file_id: fileid, id: id} ->
+                   Path.join(fileid <> "-conversion", id)
 
-               %{id: id} ->
-                 id
-             end
+                 %{id: id} ->
+                   id
+               end
            ) do
       file
       |> Repo.build_prefixed_assoc(:remote_storage_entity, entity)

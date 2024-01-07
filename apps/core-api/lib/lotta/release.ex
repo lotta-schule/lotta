@@ -136,7 +136,7 @@ defmodule Lotta.Release do
        Enum.count(file_conversions_with_non_default_entities)}
   end
 
-  defp remove_unused_storage_entities(tenant) do
+  def remove_unused_storage_entities(tenant) do
     unused = Lotta.Storage.list_unused_remote_storage_entities(tenant.prefix)
 
     if Enum.empty?(unused) do
