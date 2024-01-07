@@ -86,56 +86,54 @@ defmodule Lotta.Release do
       raise "This task is only allowed in production"
     end
 
-    if !RemoteStorage.default_store() do
-      raise "Default store is not set"
-    end
+    on_each_tenant_repo(&migrate_to_default_store(&1))
+  end
 
+  def migrate_to_default_store(tenant) do
     default_store = RemoteStorage.default_store()
 
-    on_each_tenant_repo(fn tenant, _ ->
-      Logger.notice(
-        "Customer #{tenant.title} with schema #{tenant.prefix} is being migrated to default store ..."
+    Logger.notice(
+      "Customer #{tenant.title} with schema #{tenant.prefix} is being migrated to default store ..."
+    )
+
+    files_with_non_default_entities =
+      from(
+        f in Storage.File,
+        join: e in assoc(f, :remote_storage_entity),
+        where: e.store_name != ^default_store,
+        preload: [:remote_storage_entity]
       )
+      |> Repo.all(prefix: tenant.prefix)
 
-      files_with_non_default_entities =
-        from(
-          f in Storage.File,
-          join: e in assoc(f, :remote_storage_entity),
-          where: e.store_name != ^default_store,
-          preload: [:remote_storage_entity]
-        )
-        |> Repo.all(prefix: tenant.prefix)
+    Logger.notice("Found #{Enum.count(files_with_non_default_entities)} files to migrate")
 
-      Logger.notice("Found #{Enum.count(files_with_non_default_entities)} files to migrate")
+    Enum.each(files_with_non_default_entities, fn file ->
+      Logger.notice("Migrating file #{inspect(file)}")
 
-      Enum.each(files_with_non_default_entities, fn file ->
-        Logger.notice("Migrating file #{inspect(file)}")
-
-        Storage.copy_to_remote_storage(file, default_store)
-      end)
-
-      file_conversions_with_non_default_entities =
-        from(
-          f in Storage.FileConversion,
-          join: e in assoc(f, :remote_storage_entity),
-          where: e.store_name != ^RemoteStorage.default_store()
-        )
-        |> Repo.all(prefix: tenant.prefix)
-
-      Enum.each(file_conversions_with_non_default_entities, fn file ->
-        Logger.notice("Migrating file #{inspect(file)}")
-
-        Storage.copy_to_remote_storage(file, default_store)
-      end)
-
-      Logger.notice(
-        "Customer #{tenant.title} with schema #{tenant.prefix} has been migrated to default store."
-      )
-
-      {String.to_atom(tenant.prefix),
-       Enum.count(files_with_non_default_entities) +
-         Enum.count(file_conversions_with_non_default_entities)}
+      Storage.copy_to_remote_storage(file, default_store)
     end)
+
+    file_conversions_with_non_default_entities =
+      from(
+        f in Storage.FileConversion,
+        join: e in assoc(f, :remote_storage_entity),
+        where: e.store_name != ^RemoteStorage.default_store()
+      )
+      |> Repo.all(prefix: tenant.prefix)
+
+    Enum.each(file_conversions_with_non_default_entities, fn file ->
+      Logger.notice("Migrating file #{inspect(file)}")
+
+      Storage.copy_to_remote_storage(file, default_store)
+    end)
+
+    Logger.notice(
+      "Customer #{tenant.title} with schema #{tenant.prefix} has been migrated to default store."
+    )
+
+    {String.to_atom(tenant.prefix),
+     Enum.count(files_with_non_default_entities) +
+       Enum.count(file_conversions_with_non_default_entities)}
   end
 
   defp remove_unused_storage_entities(tenant) do
