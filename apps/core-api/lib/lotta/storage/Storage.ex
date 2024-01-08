@@ -123,9 +123,7 @@ defmodule Lotta.Storage do
                    id
                end
            ) do
-      # file
-      # |> Repo.build_prefixed_assoc(:remote_storage_entity, entity)
-      # |> Repo.insert()
+      File.rm(filepath)
 
       file
       |> Repo.preload(:remote_storage_entity)
