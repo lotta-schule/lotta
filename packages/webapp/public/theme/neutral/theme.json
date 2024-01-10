@@ -1,0 +1,10 @@
+{
+  "pageBackgroundColor": "#e1ddd8",
+  "primaryColor": "#8f9ba4",
+  "navigationBackgroundColor": "#eef5f7",
+  "textColor": "rgb(5, 13, 36)",
+  "navigationContrastTextColor": "#53555f",
+  "primaryContrastTextColor": "#ffffff",
+  "errorColor": "#dc4c6a",
+  "successTextColor": "#2f8c5b"
+}

@@ -22,13 +22,15 @@ export const SelectTemplateButton = React.memo(
 
     return (
       <BaseButton
-        style={{ background: getBackground() }}
+        style={{
+          background: getBackground(),
+        }}
         className={styles.root}
         onClick={onClick}
       >
         <span className={styles.imageButton}>
           <span
-            style={{ color: theme.primaryContrastTextColor }}
+            style={{ color: theme.navigationContrastTextColor }}
             className={styles.imageTitle}
           >
             {title}

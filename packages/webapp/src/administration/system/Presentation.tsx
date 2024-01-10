@@ -72,8 +72,8 @@ export const Presentation = React.memo(() => {
 
   React.useEffect(() => {
     Promise.all(
-      ['Königsblau', 'Leipzig'].map(async (title) => {
-        const pureName = title.toLowerCase().replace(/ö/g, 'oe');
+      ['Purple Pastel', 'Neutral', 'Retro Contrast'].map(async (title) => {
+        const pureName = title.toLowerCase().replace(/\s/g, '_');
         const partialTheme = await fetch(`/theme/${pureName}/theme.json`).then(
           (res) => res.json()
         );
@@ -149,12 +149,12 @@ export const Presentation = React.memo(() => {
               }
             />
             <ColorSettingRow
-              label={'Navigation'}
-              hint={'Farbe für die Buttons in der Navigationsleiste'}
-              value={theme.navigationColor}
-              onChange={(navigationColor) =>
+              label={'Text Hauptnavigation'}
+              hint={'Textfarbe für die Buttons in der Hauptnavigationsleiste'}
+              value={theme.navigationContrastTextColor}
+              onChange={(navigationContrastTextColor) =>
                 setCustomTheme({
-                  navigationColor,
+                  navigationContrastTextColor,
                 })
               }
             />
