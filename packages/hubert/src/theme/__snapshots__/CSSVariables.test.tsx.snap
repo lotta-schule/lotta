@@ -7,7 +7,7 @@ exports[`CSSVariables should output the correct css variable definitions for the
   :root {
     --lotta-primary-color: 255, 87, 34;
     --lotta-navigation-background-color: 51, 51, 51;
-    --lotta-navigation-color: 234, 234, 234;
+    --lotta-navigation-contrast-text-color: 234, 234, 234;
     --lotta-error-color: 255, 0, 0;
     --lotta-success-color: 10, 82, 37;
     --lotta-disabled-color: 97, 97, 97;

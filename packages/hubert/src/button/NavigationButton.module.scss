@@ -9,7 +9,7 @@
     min-height: 0;
     border: 1px solid transparent;
     background-color: transparent;
-    color: rgba(var(--lotta-contrast-text-color), 1);
+    color: rgb(var(--lotta-navigation-contrast-text-color));
   }
 
   &.selected {
@@ -23,9 +23,9 @@
   }
 
   &.secondary {
-    color: rgba(var(--lotta-navigation-color), 1);
+    color: rgba(var(--lotta-text-color), 1);
     &:hover {
-      background-color: rgba(var(--lotta-navigation-color), 0.1);
+      background-color: rgba(var(--lotta-primary-color), 0.1);
     }
 
     &.selected {

@@ -3,7 +3,7 @@ import { Theme } from '../Theme';
 export const standardTheme: Theme = {
   primaryColor: '#ff5722',
   navigationBackgroundColor: '#333333',
-  navigationColor: '#eaeaea',
+  navigationContrastTextColor: '#eaeaea',
   errorColor: '#ff0000',
   successColor: '#0a5225',
   disabledColor: '#616161',
