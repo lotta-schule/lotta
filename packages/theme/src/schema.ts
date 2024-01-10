@@ -17,9 +17,9 @@ export const schema: Record<
     type: 'color',
     description: 'Navigation background color',
   },
-  navigationColor: {
+  navigationContrastTextColor: {
     type: 'color',
-    description: 'Navigation color',
+    description: 'Color of the text on buttons in the main navigation',
   },
   errorColor: {
     type: 'color',
