@@ -155,3 +155,8 @@ config :lotta, Lotta.Notification.Provider.APNS,
   team_id: System.get_env("APNS_TEAM_ID"),
   topic: System.get_env("APNS_TOPIC", "net.einsa.lotta"),
   mode: if(config_env() == :prod, do: :prod, else: :dev)
+
+config :lotta, Lotta.Notification.Provider.FCM,
+  adapter: Pigeon.FCM,
+  project_id: System.get_env("FCM_PROJECT_ID"),
+  service_account_json: System.get_env("FCM_SERVICE_ACCOUNT_JSON")

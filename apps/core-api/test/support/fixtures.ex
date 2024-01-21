@@ -50,7 +50,7 @@ defmodule Lotta.Fixtures do
   def fixture(:user_group, _) do
     %UserGroup{}
     |> Map.merge(fixture(:valid_user_group_attrs, is_admin_group: false))
-    |> Repo.insert!()
+    |> Repo.insert!(prefix: "tenant_test")
   end
 
   def fixture(:valid_user_attrs, _) do
@@ -199,6 +199,23 @@ defmodule Lotta.Fixtures do
       Enum.map(
         users,
         &%{conversation_id: UUID.string_to_binary!(conversation.id), user_id: &1.id}
+      ),
+      prefix: "tenant_test"
+    )
+
+    Repo.reload!(conversation)
+  end
+
+  def fixture(:create_conversation_groups, groups) do
+    conversation =
+      %Conversation{}
+      |> Repo.insert!(prefix: "tenant_test")
+
+    Repo.insert_all(
+      "conversation_group",
+      Enum.map(
+        groups,
+        &%{conversation_id: UUID.string_to_binary!(conversation.id), user_group_id: &1.id}
       ),
       prefix: "tenant_test"
     )

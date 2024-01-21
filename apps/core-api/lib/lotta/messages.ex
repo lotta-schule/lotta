@@ -7,7 +7,7 @@ defmodule Lotta.Messages do
 
   require Logger
 
-  alias Lotta.Repo
+  alias Lotta.{Accounts, Repo}
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Storage.File
@@ -82,6 +82,21 @@ defmodule Lotta.Messages do
   end
 
   @doc """
+  Lists all users that are currently participating in a given conversation.
+  """
+  @doc since: "4.1.3"
+  @spec list_conversation_users(Conversation.t()) :: [User.t()]
+  def list_conversation_users(conversation) do
+    case Repo.preload(conversation, [:users, :groups]) do
+      %Conversation{groups: [], users: users} ->
+        users
+
+      %Conversation{groups: groups, users: []} ->
+        Accounts.list_users_for_groups(groups, prefix: Ecto.get_meta(conversation, :prefix))
+    end
+  end
+
+  @doc """
   Get a conversation by id
   """
   @spec get_conversation(String.t()) :: Conversation.t() | nil
@@ -93,6 +108,7 @@ defmodule Lotta.Messages do
   Returns the date when a given user fetched messages for a given conversation.
   If the user never fetched the messages for a given conversation before, nil is returned.
   """
+  @deprecated "Seems not to be used. To we need this?"
   @spec get_user_has_last_seen_conversation(User.t(), Conversation.t()) :: DateTime.t() | nil
   def get_user_has_last_seen_conversation(
         %User{id: user_id} = user,
@@ -206,9 +222,6 @@ defmodule Lotta.Messages do
       )
 
       {:ok, message}
-    else
-      error ->
-        error
     end
   end
 
