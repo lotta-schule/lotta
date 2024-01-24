@@ -18,9 +18,15 @@
     margin-bottom: var(--lotta-spacing);
   }
 
-  .headline {
+  .nameSearch {
     margin-bottom: calc(2 * var(--lotta-spacing));
     margin-left: var(--lotta-spacing);
+    @media screen and (max-width: $max-xs) {
+      width: 100%;
+      &:not(:first-child) {
+        margin-left: 0px;
+      }
+    }
   }
 
   .formControl {
@@ -31,11 +37,20 @@
   }
   .filter {
     display: inline-flex;
+    width: 30%;
+    flex-direction: column;
+    flex-grow: 0;
     @media screen and (max-width: $max-sm) {
       width: 50%;
+      &:not(:first-child) {
+        margin-left: 0px;
+      }
     }
     @media screen and (max-width: $max-xs) {
       width: 100%;
+      &:not(:first-child) {
+        margin-left: 0px;
+      }
     }
   }
   .selectfield {

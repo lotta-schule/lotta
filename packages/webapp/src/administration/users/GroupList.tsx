@@ -12,6 +12,7 @@ import {
   ListItem,
   Option,
   Select,
+  Toolbar,
 } from '@lotta-schule/hubert';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';
@@ -87,27 +88,33 @@ export const GroupList = () => {
         }}
       />
       <ErrorMessage error={error} />
+      <Toolbar>
+        <Label label={'Suche'} className={styles.groupSearch}>
+          <Input
+            placeholder={'Gruppenname'}
+            value={searchText}
+            onChange={(e) => setSearchText(e.currentTarget.value)}
+          />
+        </Label>
+        <Select
+          className={styles.sorting}
+          title={'Sortierung'}
+          value={sorting}
+          onChange={(v) => setSorting(v as Sorting)}
+        >
+          <Option value={'custom'}>Eigene</Option>
+          <Option value={'name'}>Name</Option>
+        </Select>
+        <Button
+          className={styles.createGroupButton}
+          icon={<Icon icon={faCirclePlus} />}
+          onClick={() => setIsCreateUserGroupDialogOpen(true)}
+        >
+          Gruppe erstellen
+        </Button>
+      </Toolbar>
       <div className={styles.twoColumnLayout}>
         <section className={styles.groupList}>
-          <div className={styles.groupListToolbar}>
-            <Label label={'Suche'} className={styles.groupSearch}>
-              <Input
-                placeholder={'Gruppenname'}
-                value={searchText}
-                onChange={(e) => setSearchText(e.currentTarget.value)}
-              />
-            </Label>
-            <Select
-              className={styles.sorting}
-              title={'Sortierung'}
-              value={sorting}
-              onChange={(v) => setSorting(v as Sorting)}
-            >
-              <Option value={'custom'}>Eigene</Option>
-              <Option value={'name'}>Name</Option>
-            </Select>
-          </div>
-
           <DragDropContext
             onDragEnd={({ destination, source }) => {
               if (!destination) {
@@ -187,13 +194,6 @@ export const GroupList = () => {
           </DragDropContext>
         </section>
         <section className={styles.groupSettingSection}>
-          <Button
-            className={styles.createGroupButton}
-            icon={<Icon icon={faCirclePlus} />}
-            onClick={() => setIsCreateUserGroupDialogOpen(true)}
-          >
-            Gruppe erstellen
-          </Button>
           <EditUserGroup
             group={selectedGroup}
             onDelete={() => setSelectedGroup(null)}
