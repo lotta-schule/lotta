@@ -208,9 +208,9 @@ export const DeletePage = React.memo(() => {
               <li>welche Daten Lotta über dich gespeichert hat,</li>
               <li>welche gelöscht werden können und</li>
               <li>
-                welche Daten Du an <em>{tenant.title}</em> übergeben kannst,
+                welche Daten du an <em>{tenant.title}</em> übergeben kannst,
                 sodass nachfolgende Generationen auf der Homepage von{' '}
-                <em>{tenant.title}</em> von Dir lesen können.
+                <em>{tenant.title}</em> von dir lesen können.
               </li>
             </ul>
             {boxActions}
