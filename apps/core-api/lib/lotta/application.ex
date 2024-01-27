@@ -41,7 +41,7 @@ defmodule Lotta.Application do
       k8s: [
         strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
         config: [
-          service: System.get_env("SERVICE_NAME"),
+          service: System.get_env("HEADLESS_SERVICE_NAME"),
           application_name: System.get_env("APP_NAME"),
           polling_interval: 5000
         ]
