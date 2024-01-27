@@ -108,7 +108,7 @@ defmodule Lotta.MixProject do
       {:excoveralls, "~> 0.14", only: :test},
       {:junit_formatter, "~> 3.2", only: :test},
       # Prod
-      {:libcluster, "~> 3.2", only: :prod},
+      {:libcluster, "~> 3.2"},
       # Development
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},

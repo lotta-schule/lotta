@@ -23,6 +23,18 @@ if config_env() == :prod do
     alias: Enum.slice(base_uris, 1, Enum.count(base_uris) - 1),
     scheme: "https"
 
+  config :libcluster,
+    topologies: [
+      k8s: [
+        strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
+        config: [
+          service: System.get_env("HEADLESS_SERVICE_NAME"),
+          application_name: System.get_env("RELEASE_NAME") || "lotta",
+          polling_interval: 5000
+        ]
+      ]
+    ]
+
   config :opentelemetry, :resource,
     service: %{
       name: System.get_env("SERVICE_NAME", "core"),

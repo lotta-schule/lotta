@@ -7,6 +7,7 @@ defmodule Lotta.Application do
 
   def start(_type, _args) do
     environment = Application.fetch_env!(:lotta, :environment)
+    cluster_topologies = Application.get_env(:libcluster, :topologies, [])
 
     :opentelemetry_cowboy.setup()
     OpentelemetryPhoenix.setup(adapter: :cowboy2)
@@ -16,42 +17,24 @@ defmodule Lotta.Application do
 
     # List all child processes to be supervised
     children =
-      (prepended_apps(environment) ++
-         [
-           {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
-           Lotta.Repo,
-           LottaWeb.Endpoint,
-           {Absinthe.Subscription, LottaWeb.Endpoint},
-           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
-           Lotta.Queue.MediaConversionRequestPublisher,
-           Lotta.Queue.MediaConversionConsumer,
-           Lotta.Notification.PushNotification,
-           {ConCache,
-            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
-         ]) ++ appended_apps(environment)
+      [
+        {Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]},
+        {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
+        Lotta.Repo,
+        LottaWeb.Endpoint,
+        {Absinthe.Subscription, LottaWeb.Endpoint},
+        {Redix, Application.fetch_env!(:lotta, :redis_connection)},
+        Lotta.Queue.MediaConversionRequestPublisher,
+        Lotta.Queue.MediaConversionConsumer,
+        Lotta.Notification.PushNotification,
+        {ConCache,
+         name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
+      ] ++ appended_apps(environment)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     Supervisor.start_link(children, strategy: :one_for_one, name: Lotta.Supervisor)
   end
-
-  defp prepended_apps(:production) do
-    # libcluster setting
-    topologies = [
-      k8s: [
-        strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
-        config: [
-          service: System.get_env("HEADLESS_SERVICE_NAME"),
-          application_name: System.get_env("RELEASE_NAME") || "lotta",
-          polling_interval: 5000
-        ]
-      ]
-    ]
-
-    [{Cluster.Supervisor, [topologies, [name: Lotta.ClusterSupervisor]]}]
-  end
-
-  defp prepended_apps(_), do: []
 
   defp appended_apps(:test), do: []
 
