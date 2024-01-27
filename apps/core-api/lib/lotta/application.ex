@@ -42,7 +42,7 @@ defmodule Lotta.Application do
         strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
         config: [
           service: System.get_env("HEADLESS_SERVICE_NAME"),
-          application_name: System.get_env("APP_NAME"),
+          application_name: System.get_env("RELEASE_NAME") || "lotta",
           polling_interval: 5000
         ]
       ]
