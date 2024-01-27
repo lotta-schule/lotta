@@ -192,10 +192,6 @@ export const DeletePage = React.memo(() => {
               Deine Zeit bei <em>{tenant.title}</em> ist vorbei und du möchtest
               dein Benutzerkonto mit deinen persönlichen Dateien und Daten
               löschen?
-              <br />
-              Deine Zeit bei <em>{tenant.title}</em> ist vorbei und du möchtest
-              dein Benutzerkonto mit deinen persönlichen Dateien und Daten
-              löschen?
             </p>
             <div className={styles.paragraph}>
               <p>
