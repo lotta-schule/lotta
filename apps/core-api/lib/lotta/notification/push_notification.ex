@@ -72,7 +72,7 @@ defmodule Lotta.Notification.PushNotification do
 
   defp process_notification({:conversation_read, tenant, user, conversation}) do
     PushNotificationRequest.new(tenant)
-    |> PushNotificationRequest.put_category("receive_message")
+    |> PushNotificationRequest.put_category("read_conversation")
     |> PushNotificationRequest.put_data(%{
       "user_id" => user.id,
       "tenant_id" => tenant.id,

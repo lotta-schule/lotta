@@ -59,7 +59,7 @@ defmodule Lotta.Notification.PushNotificationRequest do
 
   @doc """
   Sets the category of the push notification.
-  Only supported by the APNS provider.
+  Only supported by the APNS provider. Other providers will add this to the data.
   """
   @doc since: "4.1.3"
   @spec put_category(PushNotificationRequest.t(), String.t() | nil) :: PushNotificationRequest.t()
@@ -67,7 +67,7 @@ defmodule Lotta.Notification.PushNotificationRequest do
 
   @doc """
   Sets the thread_id of the push notification.
-  Only supported by the APNS provider.
+  Only supported by the APNS provider. Other providers will add this to the data.
   """
   @doc since: "4.1.3"
   @spec put_thread_id(PushNotificationRequest.t(), String.t() | nil) ::
@@ -137,9 +137,19 @@ defmodule Lotta.Notification.PushNotificationRequest do
         }
       end
 
-    data =
-      if map_size(notification.data) > 0 do
+    merged_data =
+      Map.merge(
+        %{
+          "category" => notification.category,
+          "thread-id" => notification.thread_id
+        },
         notification.data
+      )
+      |> remove_nil_values()
+
+    data =
+      if map_size(merged_data) > 0 do
+        merged_data
         |> Enum.map(fn {key, value} -> {key, to_string(value)} end)
         |> Enum.into(%{})
       end
