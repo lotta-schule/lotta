@@ -38,7 +38,7 @@ if config_env() == :prod do
   config :opentelemetry, :resource,
     service: %{
       name: System.get_env("SERVICE_NAME", "core"),
-      namespace: System.get_env("SERVICE_NAMESPACE")
+      namespace: System.get_env("NAMESPACE")
     }
 
   config :opentelemetry, :processors,
