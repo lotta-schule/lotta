@@ -5,100 +5,121 @@ defmodule Lotta.Notification.PushNotification do
   takes care of dispatching them to the correct provider for the
   corresponding users' devices.
   """
+  use GenServer
 
   require Logger
 
-  alias Lotta.{Accounts, Repo}
-  alias Lotta.Accounts.User
-  alias Lotta.Messages.{Conversation, Message}
-  alias Pigeon.APNS.Notification
+  alias Lotta.{Messages, Repo}
+  alias Lotta.Notification.PushNotificationRequest
 
-  @spec handle_message_sent_notification(Message.t(), Conversation.t(), Tenant.t()) :: :ok
-  def handle_message_sent_notification(message, conversation, tenant) do
-    case conversation do
-      %Conversation{groups: [], users: users} ->
-        users
-
-      %Conversation{groups: groups, users: []} ->
-        Accounts.list_users_for_groups(groups, prefix: Ecto.get_meta(message, :prefix))
-    end
-    |> Enum.filter(&(&1.id != message.user_id))
-    |> Enum.each(fn user ->
-      user
-      |> Repo.preload(:devices)
-      |> Map.get(:devices)
-      |> Enum.filter(& &1.push_token)
-      |> Enum.each(fn device ->
-        [_, token] = String.split(device.push_token, "/")
-
-        Notification.new("", token, get_topic())
-        |> put_alert(conversation, message)
-        |> Notification.put_content_available()
-        |> Notification.put_sound("default")
-        |> Notification.put_thread_id("#{tenant.slug}/#{conversation.id}")
-        |> Notification.put_category("receive_message")
-        |> Notification.put_custom(%{
-          "user_id" => user.id,
-          "tenant_id" => tenant.id,
-          "conversation_id" => conversation.id,
-          "message_id" => message.id
-        })
-        |> Lotta.Notification.Provider.APNS.push()
-        |> tap(&log_notification(&1))
-      end)
-    end)
-
-    :ok
+  def create_new_message_notifications(tenant, message, conversation) do
+    GenServer.call(__MODULE__, {:schedule, {:message_sent, tenant, message, conversation}})
   end
 
-  @spec handle_read_conversation_notification(User.t(), Conversation.t(), Tenant.t()) :: :ok
-  def handle_read_conversation_notification(user, conversation, tenant) do
+  def create_conversation_read_notification(tenant, user, conversation) do
+    GenServer.call(__MODULE__, {:schedule, {:conversation_read, tenant, user, conversation}})
+  end
+
+  def start_link(args) do
+    Logger.info("Starting PushNotification Queue")
+    GenServer.start_link(__MODULE__, args, name: __MODULE__)
+  end
+
+  @impl true
+  def init([]) do
+    {:ok, :queue.new(), {:continue, :process}}
+  end
+
+  @impl true
+  def handle_call({:schedule, notification}, _from, state) do
+    {:reply, :ok, :queue.in(notification, state), {:continue, :process}}
+  end
+
+  @impl true
+  def handle_continue(:process, state) do
+    case :queue.out(state) do
+      {:empty, _} ->
+        {:noreply, state}
+
+      {{:value, notification}, state} ->
+        Logger.info("Process notification: #{inspect(notification)}")
+        process_notification(notification)
+        {:noreply, state, {:continue, :process}}
+    end
+  end
+
+  defp process_notification({:message_sent, tenant, message, conversation}) do
+    message
+    |> list_recipients_for_message(conversation)
+    |> Enum.each(fn user ->
+      PushNotificationRequest.new(tenant)
+      |> PushNotificationRequest.put_title(message.user.name)
+      |> PushNotificationRequest.put_subtitle(
+        if Enum.count(conversation.groups) == 1, do: "in #{List.first(conversation.groups).name}"
+      )
+      |> PushNotificationRequest.put_body(message.content)
+      |> PushNotificationRequest.put_thread_id("#{tenant.slug}/#{conversation.id}")
+      |> PushNotificationRequest.put_category("receive_message")
+      |> PushNotificationRequest.put_data(%{
+        "user_id" => user.id,
+        "tenant_id" => tenant.id,
+        "conversation_id" => conversation.id,
+        "message_id" => message.id
+      })
+      |> push_to_user(user)
+    end)
+  end
+
+  defp process_notification({:conversation_read, tenant, user, conversation}) do
+    PushNotificationRequest.new(tenant)
+    |> PushNotificationRequest.put_category("read_conversation")
+    |> PushNotificationRequest.put_data(%{
+      "user_id" => user.id,
+      "tenant_id" => tenant.id,
+      "conversation_id" => conversation.id
+    })
+    |> push_to_user(user)
+  end
+
+  defp process_notification(notification) do
+    Logger.error("Unknown notification type: #{inspect(notification)}")
+  end
+
+  defp push_to_user(notification, user) do
     user
     |> Repo.preload(:devices)
     |> Map.get(:devices)
     |> Enum.filter(& &1.push_token)
-    |> Enum.each(fn device ->
-      [_, token] = String.split(device.push_token, "/")
-
-      %Notification{device_token: token, topic: get_topic()}
-      |> Notification.put_custom(%{
-        "user_id" => user.id,
-        "tenant_id" => tenant.id,
-        "conversation_id" => conversation.id
-      })
-      |> Lotta.Notification.Provider.APNS.push()
-      |> tap(&log_notification(&1))
-    end)
-
-    :ok
+    |> Enum.each(&push_to_device(notification, &1))
   end
 
-  defp put_alert(notification, conversation, message) do
-    Map.new()
-    |> put_alert_title(conversation, message)
-    |> put_alert_subtitle(conversation, message)
-    |> put_alert_body(conversation, message)
-    |> then(&Notification.put_alert(notification, &1))
+  defp push_to_device(notification, device) do
+    with [type, token] <- String.split(device.push_token, "/") do
+      case type do
+        "apns" ->
+          notification
+          |> PushNotificationRequest.create_apns_notification(token)
+          |> Lotta.Notification.Provider.APNS.push()
+          |> tap(&log_notification/1)
+
+        "fcm" ->
+          notification
+          |> PushNotificationRequest.create_fcm_notification({:token, token})
+          |> Lotta.Notification.Provider.FCM.push()
+          |> tap(&log_notification/1)
+
+        _ ->
+          Logger.error("Error sending notification: Unknown token type #{type}")
+      end
+    end
   end
 
-  defp put_alert_title(alert, _, message),
-    do: Map.put(alert, :title, message.user.name)
-
-  defp put_alert_subtitle(alert, %Conversation{groups: [group]}, _),
-    do: Map.put(alert, :subtitle, "in #{group.name}")
-
-  defp put_alert_subtitle(alert, _, _), do: alert
-
-  defp put_alert_body(alert, _, %Message{content: content}),
-    do: Map.put(alert, :body, String.slice(content, 0, 100))
-
-  defp put_alert_body(alert, _, _), do: alert
+  defp list_recipients_for_message(message, conversation) do
+    conversation
+    |> Messages.list_conversation_users()
+    |> Enum.filter(&(&1.id != message.user_id))
+  end
 
   defp log_notification(notification),
     do: Logger.info("Sent notification: #{inspect(notification)}")
-
-  defp get_topic() do
-    Application.get_env(:lotta, Lotta.Notification.Provider.APNS)
-    |> Keyword.get(:topic, "net.einsa.lotta")
-  end
 end

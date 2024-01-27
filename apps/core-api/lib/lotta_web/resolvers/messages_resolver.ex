@@ -36,10 +36,10 @@ defmodule LottaWeb.MessagesResolver do
         if args[:mark_as_read] != false do
           Messages.set_user_has_last_seen_conversation(current_user, conversation)
 
-          PushNotification.handle_read_conversation_notification(
+          PushNotification.create_conversation_read_notification(
+            tenant,
             current_user,
-            conversation,
-            tenant
+            conversation
           )
         end
 

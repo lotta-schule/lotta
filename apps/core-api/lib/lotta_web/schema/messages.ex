@@ -70,10 +70,10 @@ defmodule LottaWeb.Schema.Messages do
           message = Repo.preload(message, [:conversation, :user, :files])
           conversation = Repo.preload(message.conversation, [:users, :groups])
 
-          Lotta.Notification.PushNotification.handle_message_sent_notification(
+          Lotta.Notification.PushNotification.create_new_message_notifications(
+            tenant,
             message,
-            conversation,
-            tenant
+            conversation
           )
 
           if tenant do

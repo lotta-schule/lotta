@@ -71,6 +71,42 @@ defmodule Lotta.MessagesTest do
       )
     end
 
+    test "list_conversation_users returns correct users for a user conversation" do
+      user1 = Fixtures.fixture(:registered_user)
+      user2 = Fixtures.fixture(:registered_user, %{email: "new@mymail.com"})
+      conversation = Fixtures.fixture(:create_conversation_users, [user1, user2])
+
+      users = Messages.list_conversation_users(conversation)
+
+      assert Enum.count(users) == 2
+
+      assert Enum.all?(users, fn user ->
+               user == user1 || user == user2
+             end)
+    end
+
+    test "list_conversation_users returns correct users for a group conversation" do
+      user1 = Fixtures.fixture(:registered_user)
+      user2 = Fixtures.fixture(:registered_user, %{email: "new@mymail.com"})
+      user3 = Fixtures.fixture(:registered_user, %{email: "blabli@mymail.com"})
+
+      group =
+        Fixtures.fixture(:user_group)
+        |> Repo.preload(:users)
+        |> Ecto.Changeset.change(users: [user1, user2, user3])
+        |> Repo.update!()
+
+      conversation = Fixtures.fixture(:create_conversation_groups, [group])
+
+      users = Messages.list_conversation_users(conversation)
+
+      assert Enum.count(users) == 3
+
+      assert Enum.all?(users, fn user ->
+               user == user1 || user == user2 || user == user3
+             end)
+    end
+
     test "count unread messages" do
       user1 = Fixtures.fixture(:registered_user)
       user2 = Fixtures.fixture(:registered_user, %{email: "new@mymail.com"})

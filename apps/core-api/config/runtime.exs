@@ -148,10 +148,21 @@ if config_env() == :prod do
     filter: Lotta.SentryFilter
 end
 
-config :lotta, Lotta.Notification.Provider.APNS,
-  adapter: Pigeon.APNS,
-  key: System.get_env("APNS_KEY"),
-  key_identifier: System.get_env("APNS_KEY_ID"),
-  team_id: System.get_env("APNS_TEAM_ID"),
-  topic: System.get_env("APNS_TOPIC", "net.einsa.lotta"),
-  mode: if(config_env() == :prod, do: :prod, else: :dev)
+if config_env() != :test do
+  config :lotta, Lotta.Notification.Provider.APNS,
+    adapter: Pigeon.APNS,
+    key: System.get_env("APNS_KEY"),
+    key_identifier: System.get_env("APNS_KEY_ID"),
+    team_id: System.get_env("APNS_TEAM_ID"),
+    topic: System.get_env("APNS_TOPIC", "net.einsa.lotta"),
+    mode: if(config_env() == :prod, do: :prod, else: :dev)
+
+  config :lotta, Lotta.Notification.Provider.FCM,
+    adapter: Pigeon.FCM,
+    project_id: System.get_env("FCM_PROJECT_ID"),
+    service_account_json: System.get_env("FCM_SERVICE_ACCOUNT_JSON")
+else
+  config :lotta, Lotta.Notification.Provider.APNS, adapter: Pigeon.Sandbox
+
+  config :lotta, Lotta.Notification.Provider.FCM, adapter: Pigeon.Sandbox
+end
