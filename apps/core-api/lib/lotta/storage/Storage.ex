@@ -391,12 +391,17 @@ defmodule Lotta.Storage do
   @doc """
   Get the http URL for a given file
 
+  ### TODO
+  The download option of `RemoteStorage.get_http_url_options()` does nothing
+  as of 3.1.9. It used to add a ?response-content-disposition=attachment query
+  parameter, which standard-complient s3 servers would respond with a 400 error.
+  See https://github.com/lotta-schule/core/issues/14 for further details.
+  I keep it here for now to nudge the memory of the reader, we should bring the
+  download functionality back in some way.
+
   ## Examples
   iex> get_http_url(Repo.get(123))
   "https://somebucket/file.jpg"
-
-  iex> get_http_url(Repo.get(123), download: true)
-  "https://somebucket/file.jpg?response-content-disposition=attachment"
   """
   @doc since: "2.5.0"
   @spec get_http_url(

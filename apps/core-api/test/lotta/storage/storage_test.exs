@@ -147,9 +147,11 @@ defmodule Lotta.StorageTest do
                ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\//
     end
 
-    test "should call get_http_url with download path", %{user_file: user_file} do
-      assert Storage.get_http_url(user_file, download: true) =~
-               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\/.*\?response-content-disposition=attachment/
+    test "should call get_http_url with download path, but do nothing of it", %{
+      user_file: user_file
+    } do
+      assert Storage.get_http_url(user_file) =~
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\/.*/
     end
   end
 end
