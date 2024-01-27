@@ -60,14 +60,10 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
     end
   end
 
-  def get_http_url(%RemoteStorageEntity{path: path}, options, config) do
-    request_download = Keyword.get(options, :download) == true
+  def get_http_url(%RemoteStorageEntity{path: path}, _options, config) do
+    # This once could make files download. `Git blame` me to see how it was done.
     base_url = "#{config[:config][:endpoint]}/#{path}"
 
-    if request_download do
-      "#{base_url}?response-content-disposition=attachment"
-    else
-      base_url
-    end
+    base_url
   end
 end
