@@ -111,12 +111,22 @@ defmodule Lotta.Notification.PushNotificationRequest do
       end
     end)
     |> then(fn apns_notification ->
+      default_data = %{
+        title: notification.title
+      }
+
       if map_size(Map.get(notification, :data)) > 0 do
         apns_notification
         |> Pigeon.APNS.Notification.put_content_available()
-        |> Pigeon.APNS.Notification.put_custom(notification.data)
+        |> Pigeon.APNS.Notification.put_custom(
+          Map.merge(
+            default_data,
+            notification.data
+          )
+        )
       else
         apns_notification
+        |> Pigeon.APNS.Notification.put_custom(default_data)
       end
     end)
     |> Pigeon.APNS.Notification.put_category(notification.category)
@@ -140,6 +150,7 @@ defmodule Lotta.Notification.PushNotificationRequest do
     merged_data =
       Map.merge(
         %{
+          "title" => notification.title,
           "category" => notification.category,
           "thread-id" => notification.thread_id
         },

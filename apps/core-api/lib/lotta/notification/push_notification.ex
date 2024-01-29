@@ -12,17 +12,19 @@ defmodule Lotta.Notification.PushNotification do
   alias Lotta.{Messages, Repo}
   alias Lotta.Notification.PushNotificationRequest
 
+  @name {:global, __MODULE__}
+
   def create_new_message_notifications(tenant, message, conversation) do
-    GenServer.call(__MODULE__, {:schedule, {:message_sent, tenant, message, conversation}})
+    GenServer.call(@name, {:schedule, {:message_sent, tenant, message, conversation}})
   end
 
   def create_conversation_read_notification(tenant, user, conversation) do
-    GenServer.call(__MODULE__, {:schedule, {:conversation_read, tenant, user, conversation}})
+    GenServer.call(@name, {:schedule, {:conversation_read, tenant, user, conversation}})
   end
 
   def start_link(args) do
     Logger.info("Starting PushNotification Queue")
-    GenServer.start_link(__MODULE__, args, name: __MODULE__)
+    GenServer.start_link(__MODULE__, args, name: @name)
   end
 
   @impl true
