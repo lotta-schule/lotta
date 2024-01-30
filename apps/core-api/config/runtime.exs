@@ -26,7 +26,7 @@ if config_env() == :prod do
   config :libcluster,
     topologies: [
       k8s: [
-        strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
+        strategy: Cluster.Strategy.Kubernetes.DNS,
         config: [
           service: System.get_env("HEADLESS_SERVICE_NAME"),
           application_name: System.get_env("RELEASE_NAME") || "lotta",
@@ -173,7 +173,9 @@ if config_env() != :test do
     adapter: Pigeon.FCM,
     project_id: System.get_env("FCM_PROJECT_ID"),
     service_account_json: System.get_env("FCM_SERVICE_ACCOUNT_JSON")
-else
+end
+
+if config_env() == :test do
   config :lotta, Lotta.Notification.Provider.APNS, adapter: Pigeon.Sandbox
 
   config :lotta, Lotta.Notification.Provider.FCM, adapter: Pigeon.Sandbox

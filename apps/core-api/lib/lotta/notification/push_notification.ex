@@ -22,9 +22,26 @@ defmodule Lotta.Notification.PushNotification do
     GenServer.call(@name, {:schedule, {:conversation_read, tenant, user, conversation}})
   end
 
-  def start_link(args) do
-    Logger.info("Starting PushNotification Queue")
-    GenServer.start_link(__MODULE__, args, name: @name)
+  def start_link(args, _opts \\ []) do
+    :global.trans(
+      {__MODULE__, __MODULE__},
+      fn ->
+        case GenServer.start_link(__MODULE__, args, name: @name) do
+          {:ok, pid} ->
+            {:ok, pid}
+
+          {:error, {:already_started, pid}} ->
+            Process.link(pid)
+            {:ok, pid}
+
+          error ->
+            Logger.error("Failed to start producer!", inspect(error))
+            error
+        end
+      end,
+      Node.list(:connected),
+      5
+    )
   end
 
   @impl true
