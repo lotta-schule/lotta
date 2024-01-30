@@ -34,12 +34,6 @@ const LottaWebApp = ({
     ...componentProps
   },
 }: AppProps) => {
-  const origin =
-    requestBaseUrl ??
-    (typeof globalThis.location !== 'undefined'
-      ? globalThis.location.origin
-      : `https://${tenant.host}`);
-
   if (error) {
     return <ServerDownError error={error} />;
   }
@@ -47,6 +41,12 @@ const LottaWebApp = ({
   if (!tenant) {
     return <TenantNotFoundError />;
   }
+
+  const origin =
+    requestBaseUrl ??
+    (typeof globalThis.location !== 'undefined'
+      ? globalThis.location.origin
+      : `https://${tenant.host}`);
 
   return (
     <AppContextProviders
