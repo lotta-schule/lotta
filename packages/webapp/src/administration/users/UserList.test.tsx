@@ -95,7 +95,7 @@ describe('pages/admin/users/list', () => {
     );
 
     await fireEvent.type(
-      screen.getByRole('textbox', { name: /name suchen/i }),
+      screen.getByRole('textbox', { name: /namen suchen/i }),
       'Michel'
     );
 

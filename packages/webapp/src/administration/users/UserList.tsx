@@ -14,6 +14,7 @@ import {
   Select,
   Option,
   Table,
+  Toolbar,
 } from '@lotta-schule/hubert';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import { useDebounce } from 'util/useDebounce';
@@ -97,18 +98,7 @@ export const UserList = React.memo(() => {
     <section className={styles.root}>
       <h5 className={styles.headline}>Nutzersuche</h5>
 
-      <div className={styles.toolbar}>
-        <Label label={'Name suchen:'}>
-          <Input
-            className={clsx(styles.headline)}
-            value={searchText}
-            onChange={(e) =>
-              setSearchText((e.target as HTMLInputElement).value)
-            }
-            placeholder={'Napoleon Bonaparte'}
-          />
-        </Label>
-
+      <Toolbar>
         <GroupSelect
           row
           hidePublicGroupSelection
@@ -120,6 +110,15 @@ export const UserList = React.memo(() => {
           }
           className={styles.filter}
         />
+        <Label label={'Namen suchen:'} className={clsx(styles.nameSearch)}>
+          <Input
+            value={searchText}
+            onChange={(e) =>
+              setSearchText((e.target as HTMLInputElement).value)
+            }
+            placeholder={'Napoleon Bonaparte'}
+          />
+        </Label>
 
         <div className={clsx(styles.filter, styles.selectfield)}>
           <Select
@@ -138,7 +137,7 @@ export const UserList = React.memo(() => {
             <Option value={'null'}>zurücksetzen</Option>
           </Select>
         </div>
-      </div>
+      </Toolbar>
 
       {isLoading && (
         <LinearProgress
