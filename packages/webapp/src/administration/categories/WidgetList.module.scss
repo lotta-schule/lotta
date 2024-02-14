@@ -31,20 +31,10 @@
   }
 
   aside ~ div {
-    flex: 1;
+    width: 69%;
   }
 
   .clearer {
     clear: both;
-  }
-
-  @media screen and (max-width: $max-sm) {
-    .wrapper {
-      display: block;
-    }
-
-    aside {
-      width: 100%;
-    }
   }
 }

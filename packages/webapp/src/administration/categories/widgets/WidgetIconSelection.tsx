@@ -68,11 +68,11 @@ export const WidgetIconSelection = React.memo(
             </div>
           </div>
           <div className={styles.preview}>
-            <span>Vorschau:</span>
+            <div>Vorschau:</div>
             <WidgetIcon
               className={styles.iconPreview}
               icon={icon}
-              size={'5em'}
+              size={'2.5em'}
             />
           </div>
         </section>
