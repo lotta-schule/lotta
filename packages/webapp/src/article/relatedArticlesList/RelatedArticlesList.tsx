@@ -11,10 +11,11 @@ import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
 
 export interface RelatedArticlesListProps {
   tag: string;
+  hideTitle?: boolean;
 }
 
 export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
-  ({ tag }) => {
+  ({ tag, hideTitle }) => {
     const { data, loading: isLoading } = useQuery<
       { articles: ArticleModel[] },
       { tag: string }
@@ -64,12 +65,19 @@ export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
         animate={'visible'}
         variants={containerVariants}
       >
-        <h6 className={styles.root}>
-          Weitere Beiträge zum Thema <strong>{tag}</strong>
-        </h6>
+        {!hideTitle && (
+          <h6 className={styles.root}>
+            Weitere Beiträge zum Thema <strong>{tag}</strong>
+          </h6>
+        )}
         {relatedArticles.map((article, i) => (
           <motion.div key={article.id} variants={itemVariants} custom={i}>
-            <ArticlePreview layout="densed" article={article} limitedHeight />
+            <ArticlePreview
+              layout="densed"
+              article={article}
+              limitedHeight
+              disableEdit
+            />
           </motion.div>
         ))}
       </motion.section>
