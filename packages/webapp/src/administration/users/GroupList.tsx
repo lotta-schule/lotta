@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
-import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleLeft,
+  faAngleRight,
+  faCirclePlus,
+} from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
 import {
   Button,
@@ -12,17 +16,22 @@ import {
   ListItem,
   Option,
   Select,
+  SplitView,
+  SplitViewButton,
+  SplitViewContent,
+  SplitViewNavigation,
+  Toolbar,
 } from '@lotta-schule/hubert';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { CreateUserGroupDialog } from './CreateUserGroupDialog';
 import { EditUserGroup } from './EditUserGroup';
-
-import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
+import clsx from 'clsx';
 
 import styles from './GroupList.module.scss';
-import clsx from 'clsx';
+
+import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 
 type Sorting = 'custom' | 'name';
 
@@ -87,119 +96,147 @@ export const GroupList = () => {
         }}
       />
       <ErrorMessage error={error} />
-      <div className={styles.twoColumnLayout}>
-        <section className={styles.groupList}>
-          <div className={styles.groupListToolbar}>
-            <Label label={'Suche'} className={styles.groupSearch}>
-              <Input
-                placeholder={'Gruppenname'}
-                value={searchText}
-                onChange={(e) => setSearchText(e.currentTarget.value)}
-              />
-            </Label>
-            <Select
-              className={styles.sorting}
-              title={'Sortierung'}
-              value={sorting}
-              onChange={(v) => setSorting(v as Sorting)}
-            >
-              <Option value={'custom'}>Eigene</Option>
-              <Option value={'name'}>Name</Option>
-            </Select>
-          </div>
+      <SplitView>
+        {({ close: closeSidebar }) => (
+          <>
+            <SplitViewNavigation>
+              <Toolbar>
+                <Label label={'Suche'} className={styles.groupSearch}>
+                  <Input
+                    placeholder={'Gruppenname'}
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.currentTarget.value)}
+                  />
+                </Label>
+                <Select
+                  className={styles.sorting}
+                  title={'Sortierung'}
+                  value={sorting}
+                  onChange={(v) => setSorting(v as Sorting)}
+                >
+                  <Option value={'custom'}>Eigene</Option>
+                  <Option value={'name'}>Name</Option>
+                </Select>
+                <SplitViewButton
+                  action={'close'}
+                  style={{
+                    height: 40,
+                    alignSelf: 'center',
+                    marginLeft: 'auto',
+                  }}
+                  icon={<Icon icon={faAngleLeft} />}
+                />
+              </Toolbar>
 
-          <DragDropContext
-            onDragEnd={({ destination, source }) => {
-              if (!destination) {
-                return;
-              }
-              if (
-                destination.droppableId === source.droppableId &&
-                destination.index === source.index
-              ) {
-                return;
-              }
+              <DragDropContext
+                onDragEnd={({ destination, source }) => {
+                  if (!destination) {
+                    return;
+                  }
+                  if (
+                    destination.droppableId === source.droppableId &&
+                    destination.index === source.index
+                  ) {
+                    return;
+                  }
 
-              const newGroupsArray = Array.from(groups);
-              newGroupsArray.splice(source.index, 1);
-              newGroupsArray.splice(destination.index, 0, groups[source.index]);
-              const from = Math.min(source.index, destination.index);
-              const to = Math.max(source.index, destination.index) + 1;
-              newGroupsArray.slice(from, to).forEach((group, index) => {
-                if (group) {
-                  updateGroup({
-                    variables: {
-                      id: group.id,
-                      group: {
-                        name: group.name,
-                        sortKey: (from + index) * 10 + 10,
-                      },
-                    },
+                  const newGroupsArray = Array.from(groups);
+                  newGroupsArray.splice(source.index, 1);
+                  newGroupsArray.splice(
+                    destination.index,
+                    0,
+                    groups[source.index]
+                  );
+                  const from = Math.min(source.index, destination.index);
+                  const to = Math.max(source.index, destination.index) + 1;
+                  newGroupsArray.slice(from, to).forEach((group, index) => {
+                    if (group) {
+                      updateGroup({
+                        variables: {
+                          id: group.id,
+                          group: {
+                            name: group.name,
+                            sortKey: (from + index) * 10 + 10,
+                          },
+                        },
+                      });
+                    }
                   });
-                }
-              });
-            }}
-          >
-            <Droppable
-              isDropDisabled={sorting !== 'custom'}
-              droppableId={'groups'}
-              type={'root-groups'}
-            >
-              {({ droppableProps, innerRef, placeholder }) => (
-                <List {...droppableProps} ref={innerRef}>
-                  {sortedGroups.map((group, index) => (
-                    <Draggable
-                      key={group.id}
-                      draggableId={String(group.id)}
-                      index={index}
-                      isDragDisabled={sorting !== 'custom'}
-                    >
-                      {({ innerRef, dragHandleProps, draggableProps }) => (
-                        <ListItem
-                          className={clsx(
-                            highlightedGroups.includes(group) &&
-                              styles.highlighted,
-                            selectedGroup === group && styles.selected
-                          )}
-                          title={group.name}
-                          onClick={() => setSelectedGroup(group)}
-                          data-groupid={group.id}
+                }}
+              >
+                <Droppable
+                  isDropDisabled={sorting !== 'custom'}
+                  droppableId={'groups'}
+                  type={'root-groups'}
+                >
+                  {({ droppableProps, innerRef, placeholder }) => (
+                    <List {...droppableProps} ref={innerRef}>
+                      {sortedGroups.map((group, index) => (
+                        <Draggable
                           key={group.id}
-                          ref={innerRef}
-                          rightSection={
-                            sorting === 'custom' ? (
-                              <span {...dragHandleProps}>
-                                <DragHandle className={styles.draghandleIcon} />
-                              </span>
-                            ) : undefined
-                          }
-                          {...draggableProps}
+                          draggableId={String(group.id)}
+                          index={index}
+                          isDragDisabled={sorting !== 'custom'}
                         >
-                          {group.name}
-                        </ListItem>
-                      )}
-                    </Draggable>
-                  ))}
-                  {placeholder}
-                </List>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </section>
-        <section className={styles.groupSettingSection}>
-          <Button
-            className={styles.createGroupButton}
-            icon={<Icon icon={faCirclePlus} />}
-            onClick={() => setIsCreateUserGroupDialogOpen(true)}
-          >
-            Gruppe erstellen
-          </Button>
-          <EditUserGroup
-            group={selectedGroup}
-            onDelete={() => setSelectedGroup(null)}
-          />
-        </section>
-      </div>
+                          {({ innerRef, dragHandleProps, draggableProps }) => (
+                            <ListItem
+                              className={clsx(
+                                highlightedGroups.includes(group) &&
+                                  styles.highlighted,
+                                selectedGroup === group && styles.selected
+                              )}
+                              title={group.name}
+                              onClick={() => {
+                                setSelectedGroup(group);
+                                closeSidebar();
+                              }}
+                              data-groupid={group.id}
+                              key={group.id}
+                              ref={innerRef}
+                              rightSection={
+                                sorting === 'custom' ? (
+                                  <span {...dragHandleProps}>
+                                    <DragHandle
+                                      className={styles.draghandleIcon}
+                                    />
+                                  </span>
+                                ) : undefined
+                              }
+                              {...draggableProps}
+                            >
+                              {group.name}
+                            </ListItem>
+                          )}
+                        </Draggable>
+                      ))}
+                      {placeholder}
+                    </List>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </SplitViewNavigation>
+            <SplitViewContent>
+              <Toolbar>
+                <SplitViewButton
+                  action={'open'}
+                  icon={<Icon icon={faAngleRight} />}
+                />
+                <Button
+                  className={styles.createGroupButton}
+                  icon={<Icon icon={faCirclePlus} />}
+                  onClick={() => setIsCreateUserGroupDialogOpen(true)}
+                >
+                  Gruppe erstellen
+                </Button>
+              </Toolbar>
+              <EditUserGroup
+                group={selectedGroup}
+                onDelete={() => setSelectedGroup(null)}
+              />
+            </SplitViewContent>
+          </>
+        )}
+      </SplitView>
     </div>
   );
 };

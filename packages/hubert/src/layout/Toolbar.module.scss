@@ -1,14 +1,17 @@
 .root {
-    min-height: 48px;
-    padding: var(--lotta-spacing);
-    background-color: rgba(var(--lotta-box-background-color), 1);
-    display: flex;
-    overflow: auto;
-    & > div,
-    & > button,
-    & > span {
-        &:not(:first-child) {
-            margin-left: var(--lotta-spacing);
-        }
+  min-height: 48px;
+  padding: var(--lotta-spacing);
+  background-color: rgba(var(--lotta-box-background-color), 1);
+  display: flex;
+  position: sticky;
+  top: 0;
+  overflow: auto;
+
+  &>div,
+  &>button,
+  &>span {
+    &:not(:first-child) {
+      margin-left: var(--lotta-spacing);
     }
+  }
 }

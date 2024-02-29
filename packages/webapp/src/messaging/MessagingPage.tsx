@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { useIsMobile } from 'util/useIsMobile';
+import { useIsMobile } from '@lotta-schule/hubert';
+import { useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { Header, Main, Sidebar } from 'layout';
 import { MessagingView } from './MessagingView';
 import { ConversationModel } from 'model';
-import { useApolloClient } from '@apollo/client';
 
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 

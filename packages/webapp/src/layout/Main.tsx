@@ -9,10 +9,10 @@ export interface MainProps {
   children?: React.ReactNode | React.ReactNode[];
 }
 
-export const Main: React.FC<MainProps> = ({ className, children, style }) => {
+export const Main = ({ className, children, style }: MainProps) => {
   return (
     <div className={clsx(styles.root, className)}>
-      <div style={{ ...style, width: '100%', height: '100%' }}>{children}</div>
+      <div style={{ ...style, width: '100%' }}>{children}</div>
     </div>
   );
 };
