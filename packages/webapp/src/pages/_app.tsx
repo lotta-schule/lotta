@@ -11,7 +11,7 @@ import { AppContextProviders } from 'layout/AppContextProviders';
 import opentelemetry, { SpanStatusCode } from '@opentelemetry/api';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import JwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
@@ -147,7 +147,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
 
     const jwt = request.headers.authorization?.replace(/^Bearer /, '');
     if (jwt) {
-      const decoded = JwtDecode(jwt, { header: false });
+      const decoded = jwtDecode(jwt, { header: false });
       const expires = new Date((decoded as any).exp * 1000);
       if (expires.getTime() > new Date().getTime() + 30_000) {
         // If token seems legit and does not expire in next 30 seconds,
@@ -172,7 +172,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
       return;
     }
 
-    const decoded = JwtDecode(refreshToken, { header: false });
+    const decoded = jwtDecode(refreshToken, { header: false });
     const expires = new Date((decoded as any).exp * 1000);
     if (expires.getTime() < new Date().getTime() + 10_000) {
       // token has/will expire in next 10 seconds, so don't
