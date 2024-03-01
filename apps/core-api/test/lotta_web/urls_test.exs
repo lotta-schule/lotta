@@ -61,17 +61,23 @@ defmodule LottaWeb.UrlsTest do
       assert %URI{
                host: "test.lotta.schule",
                path: "/password/reset",
-               query: "e=bWF4aUBsb3R0YS5zY2h1bGU%3D&t=abcdef"
+               query: query
              } = Urls.get_password_reset_uri(u, token)
+
+      assert %{"e" => "bWF4aUBsb3R0YS5zY2h1bGU=", "t" => "abcdef"} = URI.decode_query(query)
     end
 
     test "should return the correct password reset url", %{user: u} do
       token = "abcdef"
 
-      assert URI.parse(Urls.get_password_reset_url(u, token)) ==
-               URI.parse(
-                 "https://test.lotta.schule/password/reset?e=bWF4aUBsb3R0YS5zY2h1bGU%3D&t=abcdef"
-               )
+      assert %{
+               scheme: "https",
+               host: "test.lotta.schule",
+               path: "/password/reset",
+               query: query
+             } = URI.parse(Urls.get_password_reset_url(u, token))
+
+      assert %{"e" => "bWF4aUBsb3R0YS5zY2h1bGU=", "t" => "abcdef"} = URI.decode_query(query)
     end
 
     test "should return the correct hostname", %{tenant: t} do
