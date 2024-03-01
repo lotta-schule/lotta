@@ -23,6 +23,9 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
       await fireEvent.click(
         screen.getByRole('button', { name: /texteingabevariation/i })
       );
+
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation
+
       await fireEvent.click(
         await screen.findByRole('option', { name: /farbe/i })
       );
@@ -105,6 +108,9 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
       await fireEvent.click(
         screen.getByRole('button', { name: /auswahlfeldvariation/i })
       );
+
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation
+
       await fireEvent.click(
         await screen.findByRole('option', { name: /radio/i })
       );

@@ -81,7 +81,7 @@ export const checkExpiredToken = async () => {
       const jwt = JWT.parse(accessToken);
       const now = new Date();
 
-      if (isAfter(now, sub(new Date(jwt.body.expires), { minutes: 5 }))) {
+      if (isAfter(now, sub(new Date(jwt.body.expires), { minutes: 1 }))) {
         await sendRefreshRequest();
       }
     } catch (e) {

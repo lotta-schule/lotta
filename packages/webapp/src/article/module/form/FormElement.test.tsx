@@ -164,6 +164,9 @@ describe('shared/article/module/form/FormElement', () => {
         screen.getByRole('button', { name: /zweiter buchstabe/i })
       );
       expect(screen.getAllByRole('option')).toHaveLength(3);
+
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
+
       await fireEvent.click(screen.getByRole('option', { name: /erster/i }));
       expect(setValueFn).toHaveBeenCalledWith('A');
     });

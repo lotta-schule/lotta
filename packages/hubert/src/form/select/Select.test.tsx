@@ -64,6 +64,8 @@ describe('shared/general/form/select', () => {
       </Select>
     );
     await fireEvent.click(screen.getByRole('button', { name: /Select/ }));
+    await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
+
     await fireEvent.click(
       await screen.findByRole('option', { name: /Option 3/ })
     );

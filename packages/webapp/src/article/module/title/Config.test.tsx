@@ -67,6 +67,7 @@ describe('shared/article/module/title/Config', () => {
     await fireEvent.click(
       screen.getByRole('button', { name: /Überschrifgrößen/i })
     );
+    await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation
     await fireEvent.click(screen.getByRole('option', { name: /klein/ }));
     await waitFor(() => {
       expect(callback).toHaveBeenCalled();
