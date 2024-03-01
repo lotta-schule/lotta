@@ -15,7 +15,7 @@ import { FileSize } from 'util/FileSize';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { Icon } from 'shared/Icon';
 import { useServerData } from 'shared/ServerDataContext';
-import de from 'date-fns/locale/de';
+import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 
 import GetConversationQuery from 'api/query/GetConversationQuery.graphql';

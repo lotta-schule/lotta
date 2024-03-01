@@ -9,7 +9,7 @@ import { Icon } from 'shared/Icon';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { ForwardFeedbackDialog } from './ForwardFeedbackDialog';
 import { RespondToFeedbackDialog } from './RespondToFeedbackDialog';
-import de from 'date-fns/locale/de';
+import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 
 import styles from '../Feedback.module.scss';
