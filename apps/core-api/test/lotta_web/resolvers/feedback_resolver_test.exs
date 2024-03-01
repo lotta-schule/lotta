@@ -233,7 +233,6 @@ defmodule LottaWeb.FeedbackResolverTest do
     }
     """
     test "Sends a feedback to lotta when id and subject + message are set", %{
-      admin: admin,
       admin_jwt: admin_jwt,
       feedbacks: [feedback | _]
     } do
@@ -254,7 +253,7 @@ defmodule LottaWeb.FeedbackResolverTest do
       assert %{
                "data" => %{
                  "feedback" => %{
-                   "id" => id,
+                   "id" => _id,
                    "isResponded" => true
                  }
                }
