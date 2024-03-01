@@ -58,8 +58,8 @@ const LottaWebApp = ({
       <script
         defer
         data-domain={origin.replace(/^https?:\/\/(www\.)?/, '')}
-        data-api="/p/e"
-        src="/p/script.js"
+        src="https://pl.lotta.schule/js/script.js"
+        data-api="https://pl.lotta.schule/api/event"
       ></script>
       <TopProgressBar />
       <Component {...componentProps} />

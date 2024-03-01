@@ -39,15 +39,6 @@ const nextConfig = {
         source: '/manifest.json',
         destination: '/api/manifest',
       },
-      // Plausible Analytics
-      {
-        source: '/p/script.js',
-        destination: 'https://plausible.intern.lotta.schule/js/script.js',
-      },
-      {
-        source: '/p/e',
-        destination: 'https://plausible.intern.lotta.schule/api/event',
-      },
     ];
   },
   async redirects() {
