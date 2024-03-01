@@ -1,26 +1,20 @@
 @import 'breakpoints';
 
 .root {
-  .toolBar {
-    overflow: auto;
-    margin-bottom: calc(3 * var(--lotta-spacing));
-    display: flex;
-    align-items: flex-start;
+  .sorting {
+    flex: 0 0 auto;
+    width: 20%;
     @media screen and (max-width: $max-xs) {
-      flex-direction: column;
-    }
-
-    .sorting {
-      flex: 0 0 auto;
-      @media screen and (max-width: $max-xs) {
-        width: 100%;
+      width: 100%;
+      &:not(:first-child) {
+        margin-left: 0;
       }
     }
-    .groupSearch {
-      width: 35%;
-      @media screen and (max-width: $max-xs) {
-        width: 100%;
-      }
+  }
+  .groupSearch {
+    width: 30%;
+    @media screen and (max-width: $max-xs) {
+      width: 100%;
     }
   }
 
@@ -35,28 +29,11 @@
       overflow: hidden;
       margin-right: var(--lotta-spacing);
       padding-right: var(--lotta-spacing);
-
       width: 40%;
       max-width: 325px;
-
-      .groupListToolbar {
-        display: flex;
-        flex-direction: row;
-        & > * {
-          flex: 1 1 50%;
-        }
-      }
-
-      @media screen and (max-width: $max-sm) {
-        .groupListToolbar {
-          flex-direction: column;
-          & > * {
-            flex: 1 1 100%;
-          }
-        }
-      }
       @media screen and (max-width: $max-xs) {
-        min-width: 200px;
+        width: 100%;
+        max-width: 100%;
       }
 
       ul {
@@ -87,16 +64,14 @@
     }
   }
   .createGroupButton {
-    margin-left: auto;
-    margin-right: calc(var(--lotta-spacing) * 2);
-    margin-top: calc(var(--lotta-spacing) * 2 + 1em);
-    margin-left: auto;
-    @media screen and (max-width: $max-xs) {
-      margin-top: var(--lotta-spacing);
-    }
+    margin-bottom: var(--lotta-spacing);
   }
   .groupSettingSection {
     overflow-y: auto;
     overflow-x: hidden;
+    width: 60%;
+    @media screen and (max-width: $max-xs) {
+      width: 0%;
+    }
   }
 }

@@ -19,7 +19,7 @@ export const ArticleTitle = React.memo<ArticleTitleProps>(
       !onUpdate &&
       (User.canEditArticle(currentUser, article) || User.isAdmin(currentUser));
     return (
-      <Box>
+      <Box style={{ borderRadius: 0 }}>
         <Header>
           <ArticlePreview
             article={article}

@@ -14,4 +14,8 @@
       margin-left: var(--lotta-spacing);
     }
   }
+  Button {
+    height: fit-content;
+    vertical-align: bottom;
+  }
 }
