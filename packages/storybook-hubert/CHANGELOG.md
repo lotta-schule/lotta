@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.14](https://github.com/lotta-schule/web/compare/v4.1.13...v4.1.14) (2024-03-01)
+
+**Note:** Version bump only for package @lotta-schule/storybook-hubert
+
 ## [4.1.12](https://github.com/lotta-schule/web/compare/v4.1.10...v4.1.12) (2023-12-29)
 
 **Note:** Version bump only for package @lotta-schule/storybook-hubert
