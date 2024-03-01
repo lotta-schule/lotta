@@ -124,6 +124,9 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
       await waitFor(() => {
         expect(screen.queryByRole('listbox')).toBeVisible();
       });
+
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
+
       await fireEvent.click(
         await screen.findByRole('option', { name: 'Eltern' })
       );
@@ -178,6 +181,9 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
       await waitFor(() => {
         expect(screen.queryByRole('listbox')).toBeVisible();
       });
+
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
+
       await fireEvent.click(
         await screen.findByRole('option', { name: 'Eltern' })
       );

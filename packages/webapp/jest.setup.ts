@@ -2,10 +2,14 @@ import '@jest/globals';
 import '@testing-library/jest-dom';
 import 'whatwg-fetch';
 import { TextEncoder, TextDecoder } from 'util';
+import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
 
 self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ } as any;
 
 jest.retryTimes(3);
+
+loadDevMessages();
+loadErrorMessages();
 
 // create setup document
 const dialogContainer = document.createElement('div');
@@ -60,7 +64,7 @@ jest.mock('next/config', () => ({
     publicRuntimeConfig: {
       appEnvironment: '',
       sentryDsn: '',
-      socketUrl: ''
+      socketUrl: '',
     },
   }),
 }));

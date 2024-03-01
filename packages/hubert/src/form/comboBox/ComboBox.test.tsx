@@ -170,6 +170,7 @@ describe('Combobox', () => {
       await waitFor(() => {
         expect(screen.getByRole('option', { name: /apple/i })).toBeVisible();
       });
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
       await user.click(screen.getByRole('option', { name: /apple/i }));
       expect(onSelect).toHaveBeenCalledWith('Apple');
     });
@@ -244,6 +245,8 @@ describe('Combobox', () => {
         await waitFor(() => {
           expect(screen.getByRole('option', { name: /apple/i })).toBeVisible();
         });
+
+        await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
 
         await user.click(screen.getByRole('option', { name: /apple/i }));
         await waitFor(() => {

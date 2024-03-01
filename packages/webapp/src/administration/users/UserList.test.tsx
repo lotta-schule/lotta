@@ -125,16 +125,20 @@ describe('pages/admin/users/list', () => {
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });
+    await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
     await fireEvent.click(screen.getAllByRole('option')[0]);
 
     await fireEvent.click(
       screen.getByRole('button', { name: /zuletzt angemeldet/i })
     );
+
     await waitFor(() => {
       expect(
         screen.getByRole('listbox', { name: /angemeldet/i })
       ).toBeVisible();
     });
+    await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+
     await fireEvent.click(screen.getAllByRole('option')[0]);
     await waitFor(() => {
       expect(screen.getByText('Keine Nutzer gefunden.')).toBeVisible();
