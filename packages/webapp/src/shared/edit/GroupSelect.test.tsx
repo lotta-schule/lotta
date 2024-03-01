@@ -365,7 +365,7 @@ describe('shared/editor/GroupSelect', () => {
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
         });
-        await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+        await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
 
         const selectedOption = screen.getByRole('option', {
           name: 'Schüler',
@@ -403,7 +403,7 @@ describe('shared/editor/GroupSelect', () => {
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
         });
-        await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+        await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
 
         const selectedOption = screen.getByRole('option', {
           name: 'Administrator',
@@ -440,7 +440,7 @@ describe('shared/editor/GroupSelect', () => {
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
         });
-        await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+        await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
 
         const selectedOption = screen.getByRole('option', {
           name: 'Lehrer',
@@ -475,7 +475,7 @@ describe('shared/editor/GroupSelect', () => {
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
         });
-        await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+        await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
 
         const selectedOption = screen.getByRole('option', {
           name: 'Administrator',
@@ -515,7 +515,7 @@ describe('shared/editor/GroupSelect', () => {
           await waitFor(() => {
             expect(screen.getByRole('listbox')).toBeVisible();
           });
-          await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+          await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
 
           const selectedOption = screen.getByRole('option', {
             name: 'Schüler',
@@ -552,7 +552,7 @@ describe('shared/editor/GroupSelect', () => {
           await waitFor(() => {
             expect(screen.getByRole('listbox')).toBeVisible();
           });
-          await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+          await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
 
           const selectedOption = screen.getByRole('option', {
             name: 'Administrator',
