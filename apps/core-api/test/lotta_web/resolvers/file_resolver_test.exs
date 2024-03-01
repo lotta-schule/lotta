@@ -1127,7 +1127,10 @@ defmodule LottaWeb.FileResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @mutation, variables: %{id: "00000000-0000-0000-0000-000000000000"})
+        |> post("/api",
+          query: @mutation,
+          variables: %{id: "00000000-0000-0000-0000-000000000000"}
+        )
         |> json_response(200)
 
       assert %{
