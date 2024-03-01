@@ -104,7 +104,7 @@ defmodule LottaWeb.MessagesResolver do
       is_nil(message) ->
         {:error, "Nachricht nicht gefunden."}
 
-      not is_author?(current_user, message) ->
+      not author?(current_user, message) ->
         {:error, "Du darfst diese Nachricht nicht löschen."}
 
       true ->

@@ -16,28 +16,28 @@ defmodule Lotta.Accounts.Permissions do
   """
   @doc since: "2.0.0"
 
-  @spec is_author?(User.t(), Article.t() | Directory.t() | File.t() | Message.t()) :: boolean
+  @spec author?(User.t(), Article.t() | Directory.t() | File.t() | Message.t()) :: boolean
 
-  def is_author?(%User{} = user, %Article{} = article) do
+  def author?(%User{} = user, %Article{} = article) do
     article
     |> Repo.preload(:users)
     |> Map.get(:users)
     |> Enum.any?(fn u -> u.id == user.id end)
   end
 
-  def is_author?(%User{id: user_id}, %Directory{} = directory) do
+  def author?(%User{id: user_id}, %Directory{} = directory) do
     user_id == directory.user_id
   end
 
-  def is_author?(%User{id: user_id}, %File{} = file) do
+  def author?(%User{id: user_id}, %File{} = file) do
     user_id == file.user_id
   end
 
-  def is_author?(%User{id: user_id}, %Message{} = message) do
+  def author?(%User{id: user_id}, %Message{} = message) do
     user_id == message.user_id
   end
 
-  def is_author?(nil, _), do: false
+  def author?(nil, _), do: false
 
   @doc """
   Wether a given user has read-access to a given object.
@@ -59,7 +59,7 @@ defmodule Lotta.Accounts.Permissions do
   end
 
   def can_read?(user, %Directory{} = directory) do
-    is_author?(user, directory) || is_nil(directory.user_id)
+    author?(user, directory) || is_nil(directory.user_id)
   end
 
   def can_read?(user, %File{} = file) do
@@ -67,7 +67,7 @@ defmodule Lotta.Accounts.Permissions do
       file
       |> Repo.preload(:parent_directory)
 
-    is_author?(user, file) || can_read?(user, file.parent_directory)
+    author?(user, file) || can_read?(user, file.parent_directory)
   end
 
   def can_read?(user, %Conversation{} = conversation) do
@@ -85,10 +85,10 @@ defmodule Lotta.Accounts.Permissions do
   def can_write?(user, object)
 
   def can_write?(%User{is_admin?: true}, %Article{}), do: true
-  def can_write?(%User{} = user, %Article{} = article), do: is_author?(user, article)
+  def can_write?(%User{} = user, %Article{} = article), do: author?(user, article)
 
   def can_write?(%User{} = user, %Directory{} = directory) do
-    is_author?(user, directory) || (user.is_admin? && is_nil(directory.user_id))
+    author?(user, directory) || (user.is_admin? && is_nil(directory.user_id))
   end
 
   def can_write?(user, %File{} = file) do
@@ -96,7 +96,7 @@ defmodule Lotta.Accounts.Permissions do
       file
       |> Repo.preload(:parent_directory)
 
-    is_author?(user, file) || can_write?(user, file.parent_directory)
+    author?(user, file) || can_write?(user, file.parent_directory)
   end
 
   def can_write?(nil, _target), do: false
