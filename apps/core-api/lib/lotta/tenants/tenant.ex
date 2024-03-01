@@ -10,13 +10,18 @@ defmodule Lotta.Tenants.Tenant do
 
   @type id() :: pos_integer()
 
-  @type t() :: %__MODULE__{}
-
   @type configuration() :: %{
-          custom_theme: map(),
-          logo_image_file: File.t(),
-          background_image_file: File.t(),
-          user_max_storage_config: String.t()
+          custom_theme: map() | nil,
+          logo_image_file: File.t() | nil,
+          background_image_file: File.t() | nil,
+          user_max_storage_config: String.t() | nil
+        }
+
+  @type t() :: %__MODULE__{
+          id: id(),
+          slug: String.t(),
+          prefix: String.t(),
+          configuration: configuration()
         }
 
   schema "tenants" do

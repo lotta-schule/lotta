@@ -62,10 +62,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
     }
     """
     test "returns user devices", %{
-      tenant: tenant,
-      user: user,
-      user_jwt: user_jwt,
-      devices: devices
+      user_jwt: user_jwt
     } do
       res =
         build_conn()
@@ -94,12 +91,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
              }
     end
 
-    test "returns error when user is not logged in", %{
-      tenant: tenant,
-      user: user,
-      user_jwt: user_jwt,
-      devices: devices
-    } do
+    test "returns error when user is not logged in" do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -130,10 +122,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
     }
     """
     test "registers user device", %{
-      tenant: tenant,
-      user: user,
-      user_jwt: user_jwt,
-      devices: devices
+      user_jwt: user_jwt
     } do
       res =
         build_conn()
@@ -164,12 +153,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
              }
     end
 
-    test "returns error when user is not logged in", %{
-      tenant: tenant,
-      user: user,
-      user_jwt: user_jwt,
-      devices: devices
-    } do
+    test "returns error when user is not logged in" do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -209,8 +193,6 @@ defmodule LottaWeb.UserDeviceResolverTest do
     }
     """
     test "updates device", %{
-      tenant: tenant,
-      user: user,
       user_jwt: user_jwt,
       devices: devices
     } do
@@ -243,9 +225,6 @@ defmodule LottaWeb.UserDeviceResolverTest do
     end
 
     test "returns error when user is not logged in", %{
-      tenant: tenant,
-      user: user,
-      user_jwt: user_jwt,
       devices: devices
     } do
       res =
@@ -276,8 +255,6 @@ defmodule LottaWeb.UserDeviceResolverTest do
     end
 
     test "returns error when user tries to edit other user's device", %{
-      tenant: tenant,
-      user: user,
       user2_jwt: user2_jwt,
       devices: devices
     } do

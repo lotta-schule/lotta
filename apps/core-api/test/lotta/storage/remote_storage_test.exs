@@ -79,7 +79,7 @@ defmodule Lotta.RemoteStorageTest do
 
     test "exists?/1 should call correct strategy for the identifier" do
       with_mock RemoteStorage.Strategy.S3,
-        exists?: fn entity, _ ->
+        exists?: fn _, _ ->
           true
         end do
         entity = %RemoteStorageEntity{store_name: "minio", path: "/some"}

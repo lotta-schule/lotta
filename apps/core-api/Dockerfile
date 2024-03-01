@@ -1,7 +1,7 @@
 # The version of Alpine to use for the final image
-ARG ALPINE_VERSION=3.18
+ARG ALPINE_VERSION=3.19
 
-FROM elixir:1.15-alpine AS builder
+FROM elixir:1.16-alpine AS builder
 
 ENV MIX_ENV=prod
 
@@ -27,7 +27,9 @@ COPY mix.exs mix.lock ./
 COPY config config
 RUN mix deps.get --only prod
 RUN mix deps.compile
-RUN mix deps.compile sentry --force
+
+# Compress source code for sentry
+RUN mix sentry.package_source_code
 
 # build project
 COPY priv priv

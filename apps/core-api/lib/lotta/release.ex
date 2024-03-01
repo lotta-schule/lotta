@@ -9,7 +9,7 @@ defmodule Lotta.Release do
 
   alias Lotta.Storage
   alias Lotta.Repo
-  alias Lotta.Storage.{RemoteStorage, RemoteStorageEntity}
+  alias Lotta.Storage.RemoteStorage
   alias Lotta.Tenants.{Tenant, TenantSelector}
   alias Ecto.Migrator
 
@@ -39,8 +39,6 @@ defmodule Lotta.Release do
     end
   end
 
-  # example:
-  # rollback
   def rollback(opts \\ [step: 1]) do
     on_each_tenant_repo(fn tenant, pid ->
       Logger.notice(
@@ -62,22 +60,6 @@ defmodule Lotta.Release do
       unused = remove_unused_storage_entities(tenant)
 
       Logger.notice("Unused remote storage entities deleted: #{Enum.count(unused)}")
-
-      # {all_entities, invalid_entities, deleted_entities} = remove_invalid_files(tenant)
-      # cleaned_entities = unused ++ deleted_entities
-      # Logger.notice("Files deleted: #{Enum.count(deleted_files)} / #{Enum.count(invalid_files)}")
-
-      # {deleted_file_conversion_count, _} =
-      #   from(
-      #     f in Storage.FileConversion,
-      #     where: is_nil(f.remote_storage_entity_id)
-      #   )
-      #   |> Repo.delete_all(prefix: tenant.prefix)
-
-      # Logger.notice("#{deleted_file_conversion_count} invalid file conversions removed from db.")
-
-      # {String.to_atom(tenant.prefix), Enum.count(cleaned_entities), Enum.count(deleted_files),
-      #  deleted_file_conversion_count}
     end)
   end
 
@@ -162,41 +144,6 @@ defmodule Lotta.Release do
     )
 
     unused
-  end
-
-  defp remove_invalid_files(tenant) do
-    all_entities = Repo.all(RemoteStorageEntity, prefix: tenant.prefix)
-
-    invalid_entities =
-      Enum.filter(all_entities, fn entity ->
-        RemoteStorage.exists?(entity) === false
-      end)
-
-    Logger.notice(
-      "Invalid remote storage entities found: #{Enum.count(invalid_entities)} / #{Enum.count(all_entities)}"
-    )
-
-    deleted_entities =
-      invalid_entities
-      |> Enum.filter(fn entity ->
-        Application.get_env(:lotta, :environment) == :production or
-          entity.store_name == RemoteStorage.default_store()
-      end)
-      |> tap(fn entities ->
-        Logger.notice(
-          "Found #{Enum.count(entities)} invalid remote storage entities to delete ..."
-        )
-      end)
-      |> Enum.map(fn entity ->
-        Logger.notice("Deleting invalid remote storage entity #{inspect(entity)} ...")
-        Repo.delete!(entity)
-      end)
-
-    Logger.notice(
-      "#{Enum.count(deleted_entities)} invalid remote storage entities deleted in relevant storages."
-    )
-
-    {all_entities, invalid_entities, deleted_entities}
   end
 
   defp on_each_tenant_repo(fun) do

@@ -176,7 +176,7 @@ defmodule LottaWeb.FeedbackResolverTest do
       assert %{
                "data" => %{
                  "feedback" => %{
-                   "id" => id,
+                   "id" => _id,
                    "isForwarded" => true
                  }
                }

@@ -72,7 +72,7 @@ defmodule LottaWeb.Context do
     Map.pop(data, key)
   end
 
-  defp maybe_put_user(%__MODULE__{tenant: %{id: tid} = tenant} = context, conn) do
+  defp maybe_put_user(%__MODULE__{tenant: %{id: tid}} = context, conn) do
     claims = LottaWeb.Auth.AccessToken.Plug.current_claims(conn)
 
     if to_string(claims["tid"]) == to_string(tid) do

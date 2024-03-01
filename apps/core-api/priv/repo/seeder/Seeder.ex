@@ -1262,7 +1262,7 @@ defmodule Lotta.Repo.Seeder do
     |> Repo.update!(prefix: Ecto.get_meta(model, :prefix))
   end
 
-  defp upload_test_file!(%File{} = file) do
+  defp upload_test_file!(file) do
     remote_path = "tenant_test/#{file.id}"
 
     "test/support/fixtures/#{file.filename}"

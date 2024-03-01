@@ -1,4 +1,4 @@
-defmodule LottaWeb.SitemapTest do
+defmodule LottaWeb.HealthTest do
   @moduledoc false
 
   use LottaWeb.ConnCase

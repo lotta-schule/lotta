@@ -2941,15 +2941,7 @@ defmodule LottaWeb.ArticleResolverTest do
     """
 
     test "updates an article if user is admin", %{admin_jwt: admin_jwt, draft: draft, tenant: t} do
-      file1 =
-        Repo.one!(
-          from(f in File,
-            where: f.filename == ^"ich_schoen.jpg"
-          ),
-          prefix: t.prefix
-        )
-
-      file2 =
+      file =
         Repo.one!(
           from(f in File,
             where: f.filename == ^"ich_haesslich.jpg"
@@ -2973,7 +2965,7 @@ defmodule LottaWeb.ArticleResolverTest do
                   content: "{\"text\": \"bla\"}",
                   sort_key: 0,
                   configuration: "{}",
-                  files: [%{id: file2.id}]
+                  files: [%{id: file.id}]
                 }
               ]
             }
