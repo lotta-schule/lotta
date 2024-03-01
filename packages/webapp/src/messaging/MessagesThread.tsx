@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { useApolloClient, useQuery } from '@apollo/client';
-import { ErrorMessage } from '@lotta-schule/hubert';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { ErrorMessage, SplitViewButton, Toolbar } from '@lotta-schule/hubert';
 import { ConversationModel } from 'model';
-import { MessageBubble } from './MessageBubble';
+import { Icon } from 'shared/Icon';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { MessageBubble } from './MessageBubble';
 
 import styles from './MessagesThread.module.scss';
 
@@ -89,6 +91,13 @@ export const MessagesThread = React.memo(
         className={styles.root}
         data-testid={'MessagesThread'}
       >
+        <Toolbar>
+          <SplitViewButton
+            action={'open'}
+            style={{ width: 40 }}
+            icon={<Icon icon={faAngleLeft} />}
+          />
+        </Toolbar>
         <ErrorMessage error={error} />
         {messages.map((message) => (
           <MessageBubble

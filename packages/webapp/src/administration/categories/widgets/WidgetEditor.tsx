@@ -153,31 +153,34 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
           />
         )}
 
-        <Button
-          style={{ float: 'right' }}
-          disabled={isLoading}
-          className={styles.button}
-          onClick={() => updateWidget()}
-        >
-          Marginale speichern
-        </Button>
         <Divider className={styles.divider} />
-        <Button
-          variant={'error'}
-          className={styles.button}
-          onClick={() => setIsDeleteWidgetDialogOpen(true)}
-        >
-          Marginale löschen
-        </Button>
-        <DeleteWidgetDialog
-          isOpen={isDeleteWidgetDialogOpen}
-          widget={widget}
-          onRequestClose={() => setIsDeleteWidgetDialogOpen(false)}
-          onConfirm={() => {
-            setIsDeleteWidgetDialogOpen(false);
-            onSelectWidget(null);
-          }}
-        />
+        <div className={styles.widgetEditorFooter}>
+          <Button
+            variant={'error'}
+            className={styles.button}
+            onClick={() => setIsDeleteWidgetDialogOpen(true)}
+          >
+            Marginale löschen
+          </Button>
+          <Button
+            style={{ float: 'right' }}
+            disabled={isLoading}
+            className={styles.button}
+            onClick={() => updateWidget()}
+          >
+            Marginale speichern
+          </Button>
+
+          <DeleteWidgetDialog
+            isOpen={isDeleteWidgetDialogOpen}
+            widget={widget}
+            onRequestClose={() => setIsDeleteWidgetDialogOpen(false)}
+            onConfirm={() => {
+              setIsDeleteWidgetDialogOpen(false);
+              onSelectWidget(null);
+            }}
+          />
+        </div>
       </>
     );
   }

@@ -1,8 +1,11 @@
-.button {
-  margin: calc(2 * var(--lotta-spacing)) calc(2 * var(--lotta-spacing));
-}
+.widgetEditorFooter {
+  display: flex;
+  .button {
+    margin-right: var(--lotta-spacing);
+  }
 
-.divider {
-  clear: both;
-  margin: calc(2 * var(--lotta-spacing)) calc(2 * var(--lotta-spacing));
+  .divider {
+    clear: both;
+    margin-top: calc(2 * var(--lotta-spacing));
+  }
 }

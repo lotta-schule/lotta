@@ -14,11 +14,11 @@ import {
   Tooltip,
   Toolbar,
   Collapse,
+  useIsMobile,
 } from '@lotta-schule/hubert';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
 import { DirectoryModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { useIsMobile } from 'util/useIsMobile';
 import { File } from 'util/model';
 import { PathViewer } from './PathViewer';
 import fileExplorerContext, {

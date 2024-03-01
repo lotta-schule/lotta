@@ -45,7 +45,7 @@ export const CalendarWidgetConfiguration = React.memo(
             <small>Link zu einer *.ics-Datei</small>
 
             <Select
-              fullWidth
+              className={styles.calendarDays}
               title={'Zeit, für die Termine abgerufen werden'}
               value={String(calendar.days ?? 90)}
               onChange={(daysString) => {

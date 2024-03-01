@@ -1,4 +1,4 @@
-import { adminGroup, userGroups } from 'test/fixtures';
+import { userGroups } from 'test/fixtures';
 import { render, waitFor } from 'test/util';
 import { GroupList } from './GroupList';
 import userEvent from '@testing-library/user-event';

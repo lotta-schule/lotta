@@ -24,7 +24,8 @@
     "lodash": "^4.17.21",
     "react-aria": "^3.28.0",
     "react-popper": "^2.3.0",
-    "react-stately": "^3.26.0"
+    "react-stately": "^3.26.0",
+    "react-use": "^17.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.22.10",

@@ -3,11 +3,13 @@
   padding: var(--lotta-spacing);
   background-color: rgba(var(--lotta-box-background-color), 1);
   display: flex;
-  flex-wrap: wrap-reverse;
+  position: sticky;
+  top: 0;
   overflow: auto;
-  & > div,
-  & > button,
-  & > span {
+
+  &>div,
+  &>button,
+  &>span {
     &:not(:first-child) {
       margin-left: var(--lotta-spacing);
     }
