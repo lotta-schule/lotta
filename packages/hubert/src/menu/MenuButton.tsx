@@ -37,7 +37,6 @@ export const MenuButton = React.forwardRef(
 
     const state = useMenuTriggerState({
       onOpenChange: (isOpen) => {
-        console.log({ isOpen });
         onOpenChangeRef.current?.(isOpen);
       },
     });

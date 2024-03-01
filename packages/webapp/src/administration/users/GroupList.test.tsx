@@ -115,7 +115,10 @@ describe('administration/users/GroupList', () => {
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });
+    await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+
     await fireEvent.click(screen.getByRole('option', { name: /name/i }));
+
     await waitFor(() => {
       expect(screen.getAllByRole('listitem')[0]).toHaveTextContent(
         'Administrator'

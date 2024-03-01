@@ -80,9 +80,12 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
           screen.getByRole('option', { name: /michel dupond/i })
         ).toHaveTextContent('Michel Dupond');
       });
+      await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+
       await fireEvent.click(
         screen.getByRole('option', { name: /michel dupond/i })
       );
+
       expect(selectUserFn).toHaveBeenCalledWith(
         omit(KeinErSieEsUser, [
           'email',
