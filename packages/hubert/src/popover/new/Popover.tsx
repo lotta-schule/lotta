@@ -56,15 +56,18 @@ export const Popover = React.forwardRef(
             initial={{
               height: 0,
               opacity: 0,
+              pointerEvents: 'none',
             }}
             animate={{
               height: 'auto',
               opacity: 1,
+              pointerEvents: 'auto',
             }}
-            exit={{ height: 0, opacity: 0 }}
+            exit={{ height: 0, opacity: 0, pointerEvents: 'none' }}
             transition={{
               duration: 0.3,
               opacity: { type: 'ease-in-out', duration: 0.2 },
+              pointerEvents: { delay: 0.3 },
             }}
             {...(mergeProps(overlayProps, popperProps.popper ?? {}) as any)}
             style={{ ...popperStyle.popper, zIndex: 10_000 }}

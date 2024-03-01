@@ -35,33 +35,17 @@ export const MenuButton = React.forwardRef(
 
     React.useImperativeHandle(forwardedRef, () => ref.current);
 
-    const state = useMenuTriggerState({});
-    const {
-      menuTriggerProps: {
-        onPressStart: menuTriggerPropsPressStart,
-        ...otherMenuTriggerProps
+    const state = useMenuTriggerState({
+      onOpenChange: (isOpen) => {
+        console.log({ isOpen });
+        onOpenChangeRef.current?.(isOpen);
       },
-      menuProps,
-    } = useMenuTrigger(
+    });
+    const { menuTriggerProps, menuProps } = useMenuTrigger(
       { type: 'menu', isDisabled: buttonProps.disabled },
       state,
       ref
     );
-
-    // useMenuTrigger does react on onPressStart (for non-touch devices only),
-    // https://github.com/adobe/react-spectrum/blob/5e49ce79094a90839cec20fc5ce788a34bf4b085/packages/%40react-aria/menu/src/useMenuTrigger.ts#L113
-    // Problem is, when the user clicks on the button, the menu slides up with an animation,
-    // and when the user releases the mouse button in less then about 300ms (which is often),
-    // the menu closes again because the mouseup triggers the click event in the menu
-    // To prevent this, we replace onPressStart with a simple good 'ol "onClick"
-    const menuTriggerProps = {
-      onClick: menuTriggerPropsPressStart,
-      ...otherMenuTriggerProps,
-    };
-
-    React.useEffect(() => {
-      onOpenChangeRef.current?.(state.isOpen);
-    }, [state.isOpen]);
 
     const element = React.useRef<HTMLDivElement | null>(null);
     const { buttonProps: ariaButtonProps } = useButton(menuTriggerProps, ref);
