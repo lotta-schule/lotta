@@ -118,6 +118,8 @@ describe('src/messaging/MessagingView', () => {
         screen.getByRole('combobox', { name: /nutzer suchen/i }),
         'Lui'
       );
+      await new Promise((resolve) => setTimeout(resolve, 700)); // wait for animation to finish
+
       await fireEvent.click(
         await screen.findByRole('option', { name: /Lui/i })
       );
@@ -125,6 +127,8 @@ describe('src/messaging/MessagingView', () => {
       await waitFor(() => {
         expect(screen.getByTestId('message-destination')).toBeVisible();
       });
+      await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+
       await fireEvent.click(
         screen.getByRole('button', { name: 'Nachricht verfassen' })
       );
@@ -199,6 +203,8 @@ describe('src/messaging/MessagingView', () => {
       await waitFor(() => {
         screen.getByRole('option', { name: /Michel/i });
       });
+      await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+
       await fireEvent.click(
         await screen.findByRole('option', { name: /Michel/i })
       );
@@ -206,6 +212,8 @@ describe('src/messaging/MessagingView', () => {
       await waitFor(() => {
         expect(screen.getByTestId('message-destination')).toBeVisible();
       });
+      await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+
       await fireEvent.click(
         screen.getByRole('button', { name: 'Nachricht verfassen' })
       );

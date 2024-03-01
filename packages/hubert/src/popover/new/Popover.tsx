@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { mergeProps, DismissButton, FocusScope, useOverlay } from 'react-aria';
 import { PopperProps, usePopper } from 'react-popper';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 export type PopoverProps = {
   children: React.ReactNode;
@@ -22,8 +22,11 @@ export const Popover = React.forwardRef(
       React.useState<HTMLElement | null>(null);
     const [popoverElement, setPopoverElement] =
       React.useState<HTMLElement | null>(null);
+
     const ref = React.useRef<HTMLDivElement>(null);
     React.useImperativeHandle(forwardedRef, () => ref.current);
+
+    const shouldReduceMotion = useReducedMotion();
 
     const { overlayProps } = useOverlay(
       {
@@ -56,19 +59,23 @@ export const Popover = React.forwardRef(
             initial={{
               height: 0,
               opacity: 0,
-              pointerEvents: 'none',
+              pointerEvents: shouldReduceMotion ? 'auto' : 'none',
             }}
             animate={{
               height: 'auto',
               opacity: 1,
               pointerEvents: 'auto',
             }}
-            exit={{ height: 0, opacity: 0, pointerEvents: 'none' }}
-            transition={{
-              duration: 0.3,
-              opacity: { type: 'ease-in-out', duration: 0.2 },
-              pointerEvents: { delay: 0.3 },
-            }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={
+              shouldReduceMotion
+                ? { duration: 0 }
+                : {
+                    duration: 0.3,
+                    opacity: { type: 'ease-in-out', duration: 0.2 },
+                    pointerEvents: { delay: 0.2 },
+                  }
+            }
             {...(mergeProps(overlayProps, popperProps.popper ?? {}) as any)}
             style={{ ...popperStyle.popper, zIndex: 10_000 }}
             ref={ref}
