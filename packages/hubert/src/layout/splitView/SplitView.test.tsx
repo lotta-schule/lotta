@@ -163,6 +163,7 @@ describe('SplitView', () => {
             <div>Navigation</div>
           </SplitViewNavigation>
           <SplitViewContent>
+            <SplitViewButton action={'open'}>Open</SplitViewButton>
             <div>Content</div>
           </SplitViewContent>
         </SplitView>
@@ -177,6 +178,14 @@ describe('SplitView', () => {
       await userEvent.click(screen.getByText('Close'));
       await waitFor(() => {
         expect(screen.queryByText('Navigation')?.parentElement).toHaveAttribute(
+          'aria-hidden',
+          'true'
+        );
+      });
+
+      await userEvent.click(screen.getByText('Open'));
+      await waitFor(() => {
+        expect(screen.getByRole('complementary')).not.toHaveAttribute(
           'aria-hidden',
           'true'
         );
