@@ -22,8 +22,8 @@ export type SlateImageProps = Omit<RenderElementProps, 'children'> & {
   children: any;
 };
 
-export const SlateImage = React.memo<SlateImageProps>(
-  ({ element, attributes, children }) => {
+export const SlateImage = React.memo(
+  ({ element, attributes, children }: SlateImageProps) => {
     const imageElement = element as Image;
     const isEditing = !useReadOnly();
     const editor = useSlateStatic();
@@ -93,7 +93,7 @@ export const SlateImage = React.memo<SlateImageProps>(
             />
           )}
         </span>
-        {isSelected && (
+        {isSelected && isEditing && (
           <div
             style={{
               position: 'absolute',
