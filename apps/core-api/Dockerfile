@@ -52,7 +52,7 @@ RUN apk update && \
     bash \
     curl \
     openssl-dev \
-    libssl3.2 \
+    libssl3 \
     libstdc++
 
 RUN mkdir -p /app
