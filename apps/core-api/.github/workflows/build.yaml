@@ -9,7 +9,7 @@ on:
       - completed
     branches:
       - main
-      - hotfix/*
+      - hotfix/**
 
 jobs:
   setup:
