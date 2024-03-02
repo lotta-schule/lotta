@@ -40,4 +40,8 @@ defmodule LottaWeb.TenantResolver do
   def host(_, %{context: %{tenant: tenant}}) do
     {:ok, Urls.get_tenant_host(tenant)}
   end
+
+  def get_stats(_, %{context: %{tenant: tenant}}) do
+    {:ok, Tenants.get_stats(tenant)}
+  end
 end

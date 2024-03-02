@@ -95,6 +95,83 @@ defmodule LottaWeb.TenantResolverTest do
     end
   end
 
+  describe "get tenant stats" do
+    @query """
+    {
+      tenant {
+        stats {
+          userCount
+          articleCount
+          categoryCount
+          fileCount
+        }
+      }
+    }
+    """
+    test "returns error if user is not admin", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "tenant" => %{"stats" => nil}
+               },
+               "errors" => [
+                 %{
+                   "message" => "Du musst Administrator sein um das zu tun.",
+                   "path" => ["tenant", "stats"]
+                 }
+               ]
+             } = res
+    end
+
+    test "returns error if user is not logged in" do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> post("/api", query: @query)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "tenant" => %{"stats" => nil}
+               },
+               "errors" => [
+                 %{
+                   "message" => "Du musst Administrator sein um das zu tun.",
+                   "path" => ["tenant", "stats"]
+                 }
+               ]
+             } = res
+    end
+
+    test "returns stats", %{admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "tenant" => %{
+                   "stats" => %{
+                     "userCount" => 8,
+                     "articleCount" => 65,
+                     "categoryCount" => 16,
+                     "fileCount" => 25
+                   }
+                 }
+               }
+             } = res
+    end
+  end
+
   describe "get usage information" do
     @query """
     query getTenantUsage {

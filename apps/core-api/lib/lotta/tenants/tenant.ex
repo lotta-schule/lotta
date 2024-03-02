@@ -10,6 +10,13 @@ defmodule Lotta.Tenants.Tenant do
 
   @type id() :: pos_integer()
 
+  @type stats() :: %{
+          user_count: pos_integer(),
+          article_count: pos_integer(),
+          category_count: pos_integer(),
+          file_count: pos_integer()
+        }
+
   @type configuration() :: %{
           custom_theme: map() | nil,
           logo_image_file: File.t() | nil,

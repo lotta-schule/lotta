@@ -6,9 +6,11 @@ defmodule Lotta.Tenants do
 
   import Ecto.Query
 
+  alias LottaWeb.Schema.Tenants.Tenant
   alias Ecto.Multi
   alias Lotta.{Email, Mailer, Repo, Storage, TenantSelector}
   alias Lotta.Accounts.User
+  alias Lotta.Content.Article
   alias Lotta.Storage.File
 
   alias Lotta.Tenants.{
@@ -176,6 +178,31 @@ defmodule Lotta.Tenants do
     tenant
     |> Tenant.update_changeset(args)
     |> Repo.update()
+  end
+
+  @doc """
+  Get a few interesting stats for a given tenant.
+  These are:
+  - user count
+  - article count
+  - category count
+  - file count
+
+  ## Examples
+
+    iex> get_stats(tenant)
+    %{user_count: 123, article_count: 456, category_count: 789, file_count: 1011}
+
+  """
+  @doc since: "4.2.0"
+  @spec get_stats(Tenant.t()) :: Tenant.stats()
+  def get_stats(%Tenant{prefix: prefix}) do
+    %{
+      user_count: Repo.aggregate(User, :count, prefix: prefix),
+      article_count: Repo.aggregate(Article, :count, prefix: prefix),
+      category_count: Repo.aggregate(Category, :count, prefix: prefix),
+      file_count: Repo.aggregate(File, :count, prefix: prefix)
+    }
   end
 
   @doc """

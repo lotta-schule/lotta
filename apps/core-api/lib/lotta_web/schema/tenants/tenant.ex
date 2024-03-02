@@ -13,6 +13,12 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
     field :inserted_at, :datetime
     field :host, :string, resolve: &TenantResolver.host/2
 
+    field :stats, :tenant_stats do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
+      resolve(&TenantResolver.get_stats/2)
+    end
+
     field :custom_domains, list_of(:custom_domain), resolve: &TenantResolver.custom_domains/2
   end
 
@@ -29,6 +35,13 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
     field :logo_image_file, :file
     field :custom_theme, :json
     field :user_max_storage_config, :string
+  end
+
+  object :tenant_stats do
+    field :user_count, :integer
+    field :article_count, :integer
+    field :category_count, :integer
+    field :file_count, :integer
   end
 
   input_object :tenant_input do
