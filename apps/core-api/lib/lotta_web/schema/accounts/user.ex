@@ -23,17 +23,6 @@ defmodule LottaWeb.Schema.Accounts.User do
     field :id, :id
   end
 
-  input_object :select_user_group_input do
-    field :id, :id
-  end
-
-  input_object :user_group_input do
-    field :name, :string
-    field :sort_key, :integer
-    field :enrollment_tokens, list_of(:string)
-    field :is_admin_group, :boolean
-  end
-
   object :authresult do
     field :access_token, :string
     field :refresh_token, :string
@@ -66,17 +55,5 @@ defmodule LottaWeb.Schema.Accounts.User do
 
     field :enrollment_tokens, list_of(:string),
       resolve: &LottaWeb.UserResolver.resolve_enrollment_tokens/3
-  end
-
-  object :user_group do
-    field :id, :id
-    field :inserted_at, :datetime
-    field :updated_at, :datetime
-    field :name, :string
-    field :sort_key, :integer
-    field :is_admin_group, :boolean
-
-    field :enrollment_tokens, list_of(:string),
-      resolve: &LottaWeb.UserGroupResolver.resolve_enrollment_tokens/3
   end
 end

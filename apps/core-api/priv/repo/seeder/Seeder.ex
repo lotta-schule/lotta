@@ -60,7 +60,7 @@ defmodule Lotta.Repo.Seeder do
 
     lehrer_group =
       Repo.insert!(
-        %UserGroup{name: "Lehrer", sort_key: 600, enrollment_tokens: ["LEb0815Hp!1969"]},
+        %UserGroup{name: "Lehrer", sort_key: 600, can_read_full_name: true, enrollment_tokens: ["LEb0815Hp!1969"]},
         prefix: tenant.prefix
       )
 
@@ -174,8 +174,8 @@ defmodule Lotta.Repo.Seeder do
       metadata: "Test"
     })
 
-    Accounts.update_user(alexis, %{groups: [admin_group]})
-    Accounts.update_user(eike, %{groups: [lehrer_group]})
+    {:ok, alexis} = Accounts.update_user(alexis, %{groups: [admin_group]})
+    {:ok, eike} = Accounts.update_user(eike, %{groups: [lehrer_group]})
 
     # public files
     public_logos = %Directory{name: "logos"} |> Repo.insert!(prefix: tenant.prefix)

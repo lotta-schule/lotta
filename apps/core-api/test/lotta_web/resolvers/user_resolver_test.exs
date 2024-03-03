@@ -53,6 +53,8 @@ defmodule LottaWeb.UserResolverTest do
 
     {:ok, user_hisec_jwt, _} = AccessToken.encode_and_sign(user, %{}, token_type: "hisec")
 
+    {:ok, evil_jwt, _} = AccessToken.encode_and_sign(evil_user)
+
     schueler_group =
       Repo.one!(
         from(ug in UserGroup, where: ug.name == ^"Schüler"),
@@ -74,6 +76,7 @@ defmodule LottaWeb.UserResolverTest do
        evil_user: evil_user,
        user_jwt: user_jwt,
        user_hisec_jwt: user_hisec_jwt,
+       evil_jwt: evil_jwt,
        schueler_group: schueler_group,
        lehrer_group: lehrer_group,
        user_relevant_file: user_relevant_file,
@@ -123,14 +126,10 @@ defmodule LottaWeb.UserResolverTest do
              }
     end
 
-    test "returns the user name for others if user does not hide full name", %{
+    test "returns the user name for member of group whith can_read_full_name", %{
       user2: user2,
       user_jwt: user_jwt
     } do
-      user2
-      |> Ecto.Changeset.change(%{hide_full_name: false})
-      |> Repo.update!()
-
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -147,14 +146,38 @@ defmodule LottaWeb.UserResolverTest do
              }
     end
 
+    test "returns the user name for others if user does not hide full name", %{
+      user2: user2,
+      evil_jwt: evil_jwt
+    } do
+      user2
+      |> Ecto.Changeset.change(%{hide_full_name: false})
+      |> Repo.update!()
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{evil_jwt}")
+        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "name" => "Marie Curie"
+                 }
+               }
+             }
+    end
+
     test "returns nil for others if user does hide full name", %{
       user2: user2,
-      user_jwt: user_jwt
+      evil_jwt: evil_jwt
     } do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
-        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> put_req_header("authorization", "Bearer #{evil_jwt}")
         |> get("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
 

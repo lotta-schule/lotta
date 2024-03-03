@@ -217,6 +217,7 @@ defmodule LottaWeb.UserGroupResolverTest do
       UpdateUserGroup(id: $id, group: $group) {
         name
         enrollmentTokens
+        canReadFullName
       }
     }
     """
@@ -230,7 +231,11 @@ defmodule LottaWeb.UserGroupResolverTest do
           query: @query,
           variables: %{
             id: lehrer_group.id,
-            group: %{"name" => "Die Lehrer", "enrollmentTokens" => ["L1", "L2"]}
+            group: %{
+              "name" => "Die Lehrer",
+              "canReadFullName" => true,
+              "enrollmentTokens" => ["L1", "L2"]
+            }
           }
         )
         |> json_response(200)
@@ -239,6 +244,7 @@ defmodule LottaWeb.UserGroupResolverTest do
                "data" => %{
                  "UpdateUserGroup" => %{
                    "name" => "Die Lehrer",
+                   "canReadFullName" => true,
                    "enrollmentTokens" => ["L1", "L2"]
                  }
                }
@@ -256,7 +262,11 @@ defmodule LottaWeb.UserGroupResolverTest do
           query: @query,
           variables: %{
             id: 0,
-            group: %{"name" => "Die Lehrer", "enrollmentTokens" => ["L1", "L2"]}
+            group: %{
+              "name" => "Die Lehrer",
+              "canReadFullName" => true,
+              "enrollmentTokens" => ["L1", "L2"]
+            }
           }
         )
         |> json_response(200)
@@ -286,7 +296,11 @@ defmodule LottaWeb.UserGroupResolverTest do
           query: @query,
           variables: %{
             id: lehrer_group.id,
-            group: %{"name" => "Die Lehrer", "enrollmentTokens" => ["L1", "L2"]}
+            group: %{
+              "name" => "Die Lehrer",
+              "canReadFullName" => true,
+              "enrollmentTokens" => ["L1", "L2"]
+            }
           }
         )
         |> json_response(200)
@@ -312,7 +326,11 @@ defmodule LottaWeb.UserGroupResolverTest do
           query: @query,
           variables: %{
             id: 0,
-            group: %{"name" => "Die Lehrer", "enrollmentTokens" => ["L1", "L2"]}
+            group: %{
+              "name" => "Die Lehrer",
+              "canReadFullName" => true,
+              "enrollmentTokens" => ["L1", "L2"]
+            }
           }
         )
         |> json_response(200)
@@ -431,6 +449,7 @@ defmodule LottaWeb.UserGroupResolverTest do
     mutation createUserGroup($group: UserGroupInput!) {
       createUserGroup(group: $group) {
         name
+        canReadFullName
         enrollmentTokens
       }
     }
@@ -445,7 +464,11 @@ defmodule LottaWeb.UserGroupResolverTest do
           query: @query,
           variables: %{
             id: lehrer_group.id,
-            group: %{"name" => "Die Lehrer", "enrollmentTokens" => ["L1", "L2"]}
+            group: %{
+              "name" => "Die Lehrer",
+              "canReadFullName" => true,
+              "enrollmentTokens" => ["L1", "L2"]
+            }
           }
         )
         |> json_response(200)
@@ -454,6 +477,7 @@ defmodule LottaWeb.UserGroupResolverTest do
                "data" => %{
                  "createUserGroup" => %{
                    "name" => "Die Lehrer",
+                   "canReadFullName" => true,
                    "enrollmentTokens" => ["L1", "L2"]
                  }
                }
@@ -472,7 +496,11 @@ defmodule LottaWeb.UserGroupResolverTest do
           query: @query,
           variables: %{
             id: lehrer_group.id,
-            group: %{"name" => "Die Lehrer", "enrollmentTokens" => ["L1", "L2"]}
+            group: %{
+              "name" => "Die Lehrer",
+              "canReadFullName" => true,
+              "enrollmentTokens" => ["L1", "L2"]
+            }
           }
         )
         |> json_response(200)
@@ -498,7 +526,11 @@ defmodule LottaWeb.UserGroupResolverTest do
           query: @query,
           variables: %{
             id: 0,
-            group: %{"name" => "Die Lehrer", "enrollmentTokens" => ["L1", "L2"]}
+            group: %{
+              "name" => "Die Lehrer",
+              "canReadFullName" => true,
+              "enrollmentTokens" => ["L1", "L2"]
+            }
           }
         )
         |> json_response(200)

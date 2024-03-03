@@ -11,7 +11,9 @@ defmodule LottaWeb.UserResolver do
   alias Lotta.Accounts.User
   alias Lotta.{Accounts, Repo, Mailer, Messages, Storage}
 
-  def resolve_name(%User{} = user, _args, %{context: %Context{current_user: current_user}})
+  def resolve_name(%User{} = user, _args, %{
+        context: %Context{current_user: current_user}
+      })
       when not is_nil(current_user) do
     cond do
       current_user.id == user.id ->
@@ -21,6 +23,9 @@ defmodule LottaWeb.UserResolver do
         {:ok, user.name}
 
       !user.hide_full_name ->
+        {:ok, user.name}
+
+      Enum.any?(current_user.all_groups, & &1.can_read_full_name) ->
         {:ok, user.name}
 
       true ->

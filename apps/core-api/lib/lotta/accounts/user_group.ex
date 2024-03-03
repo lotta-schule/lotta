@@ -25,6 +25,7 @@ defmodule Lotta.Accounts.UserGroup do
     field :name, :string
     field :sort_key, :integer
     field :is_admin_group, :boolean
+    field :can_read_full_name, :boolean
 
     field :enrollment_tokens, {:array, :string}, default: []
 
@@ -39,7 +40,7 @@ defmodule Lotta.Accounts.UserGroup do
   @doc false
   def changeset(%UserGroup{} = user_group, attrs) do
     user_group
-    |> cast(attrs, [:name, :sort_key, :is_admin_group, :enrollment_tokens])
+    |> cast(attrs, [:name, :sort_key, :is_admin_group, :can_read_full_name, :enrollment_tokens])
     |> validate_required([:name, :sort_key])
   end
 
