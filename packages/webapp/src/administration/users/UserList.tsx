@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
-import { UserModel, UserGroupModel } from 'model';
+import { UserModel, UserGroupModel, TenantModel } from 'model';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -21,6 +21,7 @@ import { useDebounce } from 'util/useDebounce';
 import clsx from 'clsx';
 
 import SearchUsersAsAdminQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
+import GetTenantWithStatsQuery from 'api/query/GetTenantWithStatsQuery.graphql';
 
 import styles from './UserList.module.scss';
 
@@ -67,6 +68,12 @@ export const UserList = React.memo(() => {
       skip: !searchIsValid,
     }
   );
+
+  const { data: detailedTenantData } = useQuery<{ tenant: TenantModel }>(
+    GetTenantWithStatsQuery
+  );
+
+  const totalUsers = detailedTenantData?.tenant?.stats?.userCount;
 
   const rows = React.useMemo(() => {
     return (
@@ -148,6 +155,11 @@ export const UserList = React.memo(() => {
       )}
 
       {!searchIsValid && <div>Suchkritierien wählen um Nutzer zu finden.</div>}
+      {!searchIsValid && totalUsers !== undefined && (
+        <div data-testid="total-users-count">
+          Es sind <strong>{totalUsers}</strong> Nutzer registriert.
+        </div>
+      )}
 
       {rows.length === 0 && searchIsValid && !isLoading && (
         <div>Keine Nutzer gefunden.</div>
@@ -158,6 +170,7 @@ export const UserList = React.memo(() => {
           <div>
             {t('administration.results', {
               count: rows.length,
+              total: totalUsers ?? '?',
             })}
           </div>
 

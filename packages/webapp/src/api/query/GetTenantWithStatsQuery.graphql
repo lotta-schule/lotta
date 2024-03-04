@@ -1,0 +1,22 @@
+query GetTenantWithStats {
+  tenant {
+    id
+    title
+    slug
+    host
+    configuration {
+      backgroundImageFile {
+        id
+      }
+      logoImageFile {
+        id
+      }
+      customTheme
+      userMaxStorageConfig
+    }
+    stats {
+      userCount
+      articleCount
+    }
+  }
+}

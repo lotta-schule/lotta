@@ -138,6 +138,12 @@ input CreateCategoryInput {
   title: String!
 }
 
+input CreateFeedbackInput {
+  content: String!
+  metadata: String
+  topic: String!
+}
+
 type CustomDomain {
   host: String
   id: ID
@@ -177,6 +183,19 @@ type Directory {
   insertedAt: DateTime
   name: String
   parentDirectory: Directory
+  updatedAt: DateTime
+  user: User
+}
+
+type Feedback {
+  content: String
+  id: ID
+  insertedAt: DateTime
+  isForwarded: Boolean
+  isNew: Boolean
+  isResponded: Boolean
+  metadata: String
+  topic: String
   updatedAt: DateTime
   user: User
 }
@@ -291,11 +310,14 @@ type RootMutationType {
   createArticle(article: ArticleInput!): Article
   createCategory(category: CreateCategoryInput!): Category
   createDirectory(isPublic: Boolean, name: String!, parentDirectoryId: ID): Directory
+  createFeedback(feedback: CreateFeedbackInput!): Feedback
+  createLottaFeedback(message: String!, subject: String): Boolean
   createMessage(message: MessageInput!): Message
   createUserGroup(group: UserGroupInput!): UserGroup
   createWidget(title: String!, type: WidgetType!): Widget
   deleteArticle(id: ID!): Article
   deleteCategory(id: ID!): Category
+  deleteDevice(id: ID!): Device
   deleteDirectory(id: ID!): Directory
   deleteFile(id: ID!): File
   deleteMessage(id: ID!): Message
@@ -309,6 +331,8 @@ type RootMutationType {
   requestHisecToken(password: String): String
   requestPasswordReset(email: String!): Boolean
   resetPassword(email: String!, password: String!, token: String!): Authresult
+  respondToFeedback(id: ID!, message: String!, subject: String): Feedback
+  sendFeedbackToLotta(id: ID!, message: String): Feedback
   sendFormResponse(contentModuleId: ID!, response: Json!): Boolean
   toggleArticlePin(id: ID!): Article
   updateArticle(article: ArticleInput!, id: ID!): Article
@@ -333,12 +357,13 @@ type RootQueryType {
   calendar(days: Int, url: String!): [CalendarEvent]
   categories: [Category]
   contentModuleResults(contentModuleId: ID!): [ContentModuleResult]
-  conversation(id: ID!): Conversation
+  conversation(id: ID!, markAsRead: Boolean): Conversation
   conversations: [Conversation]
   currentUser: User
   devices: [Device]
   directories(parentDirectoryId: ID): [Directory]
   directory(id: ID): Directory
+  feedbacks: [Feedback]
   file(id: ID): File
   files(parentDirectoryId: ID): [File]
   group(id: ID!): UserGroup
@@ -346,7 +371,7 @@ type RootQueryType {
   relevantFilesInUsage: [File]
   schedule(date: Date, widgetId: ID!): Json
   search(options: SearchOptions, searchText: String!): [Article]
-  searchUsers(searchtext: String!): [User]
+  searchUsers(groups: [SelectUserGroupInput!], lastSeen: Int, searchtext: String): [User]
   tag(tag: String!): [Article]
   tags: [String!]
   tenant(slug: String): Tenant
@@ -399,6 +424,7 @@ type Tenant {
   id: ID
   insertedAt: DateTime
   slug: String
+  stats: TenantStats
   title: String
 }
 
@@ -419,6 +445,13 @@ input TenantConfigurationInput {
 input TenantInput {
   configuration: TenantConfigurationInput
   title: String
+}
+
+type TenantStats {
+  articleCount: Int
+  categoryCount: Int
+  fileCount: Int
+  userCount: Int
 }
 
 input UpdateCategoryInput {
@@ -479,6 +512,7 @@ type User {
 }
 
 type UserGroup {
+  canReadFullName: Boolean
   enrollmentTokens: [String]
   id: ID
   insertedAt: DateTime
@@ -489,6 +523,7 @@ type UserGroup {
 }
 
 input UserGroupInput {
+  canReadFullName: Boolean
   enrollmentTokens: [String]
   isAdminGroup: Boolean
   name: String

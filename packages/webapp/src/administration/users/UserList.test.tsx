@@ -5,12 +5,14 @@ import {
   SomeUserin,
   KeinErSieEsUser,
   adminGroup,
+  tenant,
 } from 'test/fixtures';
 import { UserList } from 'administration/users/UserList';
 import userEvent from '@testing-library/user-event';
 
 import GetUserQuery from 'api/query/GetUserQuery.graphql';
 import SearchUsersQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
+import GetTenantWithStatsQuery from 'api/query/GetTenantWithStatsQuery.graphql';
 
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 
@@ -59,6 +61,22 @@ const additionalMocks = [
       },
     },
   },
+  {
+    request: {
+      query: GetTenantWithStatsQuery,
+    },
+    result: {
+      data: {
+        tenant: {
+          ...tenant,
+          stats: {
+            userCount: 2,
+            articleCount: 5,
+          },
+        },
+      },
+    },
+  },
 ];
 
 describe('pages/admin/users/list', () => {
@@ -83,6 +101,20 @@ describe('pages/admin/users/list', () => {
     );
   });
 
+  it('should show the total count of users when no search is entered', async () => {
+    const screen = render(
+      <UserList />,
+      {},
+      { currentUser: adminUser, additionalMocks: mocks }
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('total-users-count')).toHaveTextContent(
+        '2 Nutzer registriert'
+      );
+    });
+  });
+
   it('should search users and show results, open popup when clicking on result', async () => {
     const fireEvent = userEvent.setup();
     const screen = render(
@@ -99,7 +131,7 @@ describe('pages/admin/users/list', () => {
       'Michel'
     );
 
-    expect(await screen.findByText('1 Ergebnis')).toBeVisible();
+    expect(await screen.findByText(/1 Ergebnis/)).toBeVisible();
     const userRow = await screen.findByRole('row', { name: /michel dupond/i });
     expect(userRow).toBeVisible();
     await fireEvent.click(userRow);

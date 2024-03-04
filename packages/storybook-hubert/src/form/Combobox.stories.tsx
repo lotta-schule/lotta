@@ -109,6 +109,8 @@ export const WithRequestedItems: StoryObj<typeof ComboBox> = {
       { timeout: 15000 }
     );
 
+    await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+
     await fireEvent.click(canvas.queryAllByRole('option')?.[0]);
   },
 };
