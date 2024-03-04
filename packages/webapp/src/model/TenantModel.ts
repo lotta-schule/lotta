@@ -1,5 +1,12 @@
 import { FileModel } from './FileModel';
 
+export interface TenantStatsModel {
+  articleCount?: number;
+  categoryCount?: number;
+  fileCount?: number;
+  userCount?: number;
+}
+
 export interface TenantModel {
   id: string;
   insertedAt: string;
@@ -13,4 +20,5 @@ export interface TenantModel {
     logoImageFile?: FileModel | null;
     backgroundImageFile?: FileModel | null;
   };
+  stats?: TenantStatsModel;
 }
