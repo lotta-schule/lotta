@@ -335,6 +335,7 @@ describe('shared/editor/GroupSelect', () => {
         updatedAt: '2020-09-11 00:00',
         name: 'Administrator2',
         sortKey: 1500,
+        canReadFullName: false,
         isAdminGroup: true,
         enrollmentTokens: [],
       };

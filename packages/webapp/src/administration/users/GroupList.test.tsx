@@ -12,6 +12,7 @@ const extendedUserGroups = [
     name: `New group ${i}`,
     sortKey: 100 + i * 10,
     isAdminGroup: false,
+    canReadFullName: false,
     insertedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     enrollmentTokens: [],

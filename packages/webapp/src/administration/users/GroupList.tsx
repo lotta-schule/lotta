@@ -37,8 +37,9 @@ type Sorting = 'custom' | 'name';
 
 export const GroupList = () => {
   const groups = useUserGroups();
-  const [selectedGroup, setSelectedGroup] =
-    React.useState<UserGroupModel | null>(null);
+  const [selectedGroupId, setSelectedGroupId] = React.useState<
+    UserGroupModel['id'] | null
+  >(null);
   const [isCreateUserGroupDialogOpen, setIsCreateUserGroupDialogOpen] =
     React.useState(false);
   const [sorting, setSorting] = React.useState<Sorting>('custom');
@@ -81,7 +82,7 @@ export const GroupList = () => {
       document
         .querySelector(`[data-groupid="${highlightedGroups[0].id}"]`)
         ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setSelectedGroup(highlightedGroups[0]);
+      setSelectedGroupId(highlightedGroups[0].id);
     }
   }, [highlightedGroups]);
 
@@ -92,7 +93,7 @@ export const GroupList = () => {
         onAbort={() => setIsCreateUserGroupDialogOpen(false)}
         onConfirm={(group) => {
           setIsCreateUserGroupDialogOpen(false);
-          setSelectedGroup(group);
+          setSelectedGroupId(group.id);
         }}
       />
       <ErrorMessage error={error} />
@@ -183,11 +184,11 @@ export const GroupList = () => {
                               className={clsx(
                                 highlightedGroups.includes(group) &&
                                   styles.highlighted,
-                                selectedGroup === group && styles.selected
+                                selectedGroupId === group.id && styles.selected
                               )}
                               title={group.name}
                               onClick={() => {
-                                setSelectedGroup(group);
+                                setSelectedGroupId(group.id);
                                 closeSidebar();
                               }}
                               data-groupid={group.id}
@@ -230,8 +231,8 @@ export const GroupList = () => {
                 </Button>
               </Toolbar>
               <EditUserGroup
-                group={selectedGroup}
-                onDelete={() => setSelectedGroup(null)}
+                groupId={selectedGroupId}
+                onDelete={() => setSelectedGroupId(null)}
               />
             </SplitViewContent>
           </>
