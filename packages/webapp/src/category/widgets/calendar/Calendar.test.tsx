@@ -17,7 +17,11 @@ describe('shared/widgets/Calendar', () => {
   ];
 
   it('should render the schedule without error', () => {
-    render(<Calendar widget={CalendarKlassenarbeiten} />);
+    render(
+      <Calendar widget={CalendarKlassenarbeiten} />,
+      {},
+      { additionalMocks: mocks }
+    );
   });
 
   describe('single calendar', () => {

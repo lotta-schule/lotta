@@ -8,6 +8,7 @@ import {
   ResponderProvided,
 } from 'react-beautiful-dnd';
 import { motion } from 'framer-motion';
+import { useSplitView } from '@lotta-schule/hubert';
 import { ID, CategoryModel } from 'model';
 import { useCategories } from 'util/categories/useCategories';
 import { CategoryNavigationItem } from './CategoryNavigationItem';
@@ -21,9 +22,10 @@ export interface CategoryNavigationProps {
   onSelectCategory(categoryModel: CategoryModel): void;
 }
 
-export const CategoryNavigation = React.memo<CategoryNavigationProps>(
-  ({ selectedCategory, onSelectCategory }) => {
+export const CategoryNavigation = React.memo(
+  ({ selectedCategory, onSelectCategory }: CategoryNavigationProps) => {
     const [categories] = useCategories();
+    const { close: closeSidebar } = useSplitView();
 
     const [expandedMainCategoryId, setExpandedMainCategoryId] =
       React.useState<ID | null>(null);
@@ -135,7 +137,10 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
             data-testid={'main-category-item'}
             title={homepageCategory.title}
             className={styles.before}
-            onClick={() => onSelectCategory(homepageCategory)}
+            onClick={() => {
+              onSelectCategory(homepageCategory);
+              closeSidebar();
+            }}
           />
         )}
 
@@ -157,6 +162,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                           data-testid={'main-category-item'}
                           onClick={(_e) => {
                             onSelectCategory(category);
+                            closeSidebar();
                             setExpandedMainCategoryId((categoryId) =>
                               categoryId === category.id ? null : categoryId
                             );
@@ -199,6 +205,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                         ref={innerRef}
                                         {...draggableProps}
                                         onClick={(_e) => {
+                                          closeSidebar();
                                           onSelectCategory(subcategory);
                                         }}
                                         dragHandleProps={
@@ -231,7 +238,10 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
             key={category.id}
             title={category.title}
             className={styles.before}
-            onClick={() => onSelectCategory(category)}
+            onClick={() => {
+              onSelectCategory(category);
+              closeSidebar();
+            }}
           />
         ))}
       </div>

@@ -4,7 +4,8 @@
   .iconStyle {
     .gridContainer {
       display: flex;
-      & > div {
+
+      &>div {
         flex: 1;
         width: auto;
       }
@@ -13,7 +14,6 @@
 
   .iconScrollbar {
     overflow-x: scroll;
-    width: 64vw;
     margin-bottom: calc(2 * var(--lotta-spacing));
     display: flex;
   }

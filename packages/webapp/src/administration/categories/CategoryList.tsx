@@ -1,8 +1,16 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
-import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { CategoryModel } from 'model';
-import { Button, NoSsr } from '@lotta-schule/hubert';
+import {
+  Button,
+  NoSsr,
+  SplitView,
+  SplitViewButton,
+  SplitViewContent,
+  SplitViewNavigation,
+  Toolbar,
+} from '@lotta-schule/hubert';
 import { CategoryNavigation } from './categories/CategoryNavigation';
 import { CategoryEditor } from './categories/CategoryEditor';
 import { CreateCategoryDialog } from './categories/CreateCategoryDialog';
@@ -17,35 +25,39 @@ export const CategoryList = React.memo(() => {
 
   return (
     <div className={styles.root}>
-      <h3 className={styles.headlines}>
-        Kategorien
-        <Button
-          className={styles.button}
-          onClick={() => setIsCreateCategoryDialogOpen(true)}
-          icon={<Icon icon={faCirclePlus} />}
-        >
-          Kategorie erstellen
-        </Button>
-      </h3>
-
-      <section>
-        <div>
+      <SplitView closeCondition={() => !!selectedCategory}>
+        <SplitViewNavigation>
+          <Toolbar hasScrollableParent>
+            <Button
+              className={styles.button}
+              onClick={() => setIsCreateCategoryDialogOpen(true)}
+              icon={<Icon icon={faCirclePlus} />}
+            >
+              Kategorie erstellen
+            </Button>
+            <SplitViewButton
+              action={'close'}
+              style={{ marginLeft: 'auto' }}
+              aria-label={'Seitenleiste einklappen'}
+              icon={<Icon icon={faAngleRight} size={'lg'} />}
+            />
+          </Toolbar>
           <NoSsr>
             <CategoryNavigation
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
             />
           </NoSsr>
-        </div>
-        <div>
+        </SplitViewNavigation>
+        <SplitViewContent>
           {selectedCategory && (
             <CategoryEditor
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
             />
           )}
-        </div>
-      </section>
+        </SplitViewContent>
+      </SplitView>
 
       <CreateCategoryDialog
         isOpen={isCreateCategoryDialogOpen}

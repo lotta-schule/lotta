@@ -1,12 +1,28 @@
+@import '../theme/breakpoints';
+
 .root {
   min-height: 48px;
   padding: var(--lotta-spacing);
-  background-color: rgba(var(--lotta-box-background-color), 1);
+  background-color: rgb(var(--lotta-box-background-color));
   display: flex;
   position: sticky;
   top: 0;
   overflow: auto;
   z-index: 1;
+
+  &:not(.hasScrollableParent) {
+    @media screen and (max-width: $max-xs) {
+      top: 48px;
+    }
+  }
+
+  &.stackOnMobile {
+    display: flex;
+
+    @media screen and (max-width: $max-xs) {
+      flex-direction: column;
+    }
+  }
 
   &>div,
   &>button,

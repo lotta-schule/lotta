@@ -10,6 +10,8 @@
     align-items: center;
     padding: var(--lotta-spacing);
 
+    transition: background-color 0.2s ease-in-out;
+
     .mainSection {
       flex: 1;
       display: flex;
@@ -28,27 +30,43 @@
     &.isFocused:not(.isSelected) {
       background-color: rgba(var(--lotta-primary-color), 0.075);
     }
-    &.isSelected {
-      background-color: rgba(var(--lotta-primary-color), 0.3);
+
+    &:not([role='menuitem']).isSelected .mainSection {
+      font-weight: bolder;
+
+      .listItemSecondaryText {
+        font-weight: normal;
+      }
     }
 
     &.isDisabled {
       color: rgba(var(--lotta-disabled-color), 0.5);
     }
-  }
 
-  .li.isDivider {
-    padding: calc(var(--lotta-spacing) / 2) 0;
-    hr {
-      margin: 1px;
-      width: 100%;
+    &.isClickable {
+      cursor: pointer;
+
+      &:not(.isSelected):hover {
+        background-color: rgba(var(--lotta-primary-color), 0.1);
+      }
+
+
+      &[role='menuitem'] {
+        &:not([disabled]).isSelected {
+          background-color: rgba(var(--lotta-primary-color), 0.1);
+        }
+      }
+
+    }
+
+    .isDivider {
+      padding: calc(var(--lotta-spacing) / 2) 0;
+
+      hr {
+        margin: 1px;
+        width: 100%;
+      }
     }
   }
 
-  .li[role='menuitem']:not([disabled]) {
-    cursor: pointer;
-    &:hover {
-      background-color: rgba(var(--lotta-primary-color), 0.25);
-    }
-  }
 }

@@ -105,7 +105,7 @@ export const UserList = React.memo(() => {
     <section className={styles.root}>
       <h5 className={styles.headline}>Nutzersuche</h5>
 
-      <Toolbar>
+      <Toolbar stackOnMobile>
         <GroupSelect
           row
           hidePublicGroupSelection

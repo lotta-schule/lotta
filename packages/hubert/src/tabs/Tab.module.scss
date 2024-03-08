@@ -21,6 +21,7 @@
       border-bottom: 2px solid rgba(var(--lotta-primary-color), 1);
       background-color: rgba(var(--lotta-box-background-color), 1);
       filter: none;
+
       @media (max-width: $max-xs) {
         color: rgba(var(--lotta-primary-color), 1);
         font-weight: 400;

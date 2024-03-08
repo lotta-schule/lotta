@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 import { ID, WidgetModel, WidgetModelType } from 'model';
 import {
   Button,
@@ -7,8 +8,13 @@ import {
   ErrorMessage,
   Input,
   Label,
+  SplitViewButton,
+  Toolbar,
 } from '@lotta-schule/hubert';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 import { GroupSelect } from 'shared/edit/GroupSelect';
+import { IFrameWidgetConfiguration } from './configuration/IFrameWidgetConfiguration';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
@@ -17,7 +23,6 @@ import { WidgetIconSelection } from './WidgetIconSelection';
 import UpdateWidgetMutation from 'api/mutation/UpdateWidgetMutation.graphql';
 
 import styles from './WidgetEditor.module.scss';
-import { IFrameWidgetConfiguration } from './configuration/IFrameWidgetConfiguration';
 
 export interface WidgetEditorProps {
   selectedWidget: WidgetModel | null;
@@ -26,6 +31,7 @@ export interface WidgetEditorProps {
 
 export const WidgetEditor = React.memo<WidgetEditorProps>(
   ({ selectedWidget, onSelectWidget }) => {
+    const { t } = useTranslation();
     const [widget, setWidget] = React.useState<WidgetModel | null>(null);
     const [isDeleteWidgetDialogOpen, setIsDeleteWidgetDialogOpen] =
       React.useState(false);
@@ -69,9 +75,17 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
     }
 
     return (
-      <>
-        <h5>{selectedWidget ? selectedWidget.title : widget.title}</h5>
-        <div>{widget.type}</div>
+      <div data-testid="WidgetEditor" className={styles.root}>
+        <Toolbar hasScrollableParent className={styles.toolbar}>
+          <SplitViewButton
+            action={'open'}
+            icon={<Icon icon={faAngleRight} />}
+          />
+          <h5>{selectedWidget ? selectedWidget.title : widget.title}</h5>
+          <span className={styles.widgetType}>
+            {t(`widgets.widgetTypes.${widget.type}`)}
+          </span>
+        </Toolbar>
         <ErrorMessage error={error} />
         <Label label="Name des Widget">
           <Input
@@ -85,7 +99,7 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
           />
         </Label>
 
-        <Divider className={styles.divider} />
+        <Divider />
 
         <WidgetIconSelection
           icon={widget.configuration?.icon ?? {}}
@@ -100,7 +114,7 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
           }
         />
 
-        <Divider className={styles.divider} />
+        <Divider />
 
         <GroupSelect
           selectedGroups={widget.groups || []}
@@ -153,8 +167,8 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
           />
         )}
 
-        <Divider className={styles.divider} />
-        <div className={styles.widgetEditorFooter}>
+        <Divider />
+        <div className={styles.footer}>
           <Button
             variant={'error'}
             className={styles.button}
@@ -181,7 +195,7 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
             }}
           />
         </div>
-      </>
+      </div>
     );
   }
 );

@@ -1,13 +1,30 @@
 import * as React from 'react';
-import { MockRouter, render, waitFor } from 'test/util';
+import MockDate from 'mockdate';
+import { render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
 import { EditArticlePage } from './EditArticlePage';
 import { ArticleModel, ContentModuleModel, ContentModuleType } from 'model';
-import MockDate from 'mockdate';
 import userEvent from '@testing-library/user-event';
 
 import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';
 import UpdateArticleMutation from 'api/mutation/UpdateArticleMutation.graphql';
+import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
+
+const additionalMocks = [
+  {
+    request: {
+      query: ArticleIsUpdatedSubscription,
+      variables: { id: Weihnachtsmarkt.id },
+    },
+  },
+  {
+    request: {
+      query: GetArticleQuery,
+      variables: { id: Weihnachtsmarkt.id },
+    },
+    result: { data: { article: Weihnachtsmarkt } },
+  },
+];
 
 describe('article/EditArticlePage', () => {
   const createOnSave = (
@@ -34,14 +51,7 @@ describe('article/EditArticlePage', () => {
       {},
       {
         currentUser: SomeUser,
-        additionalMocks: [
-          {
-            request: {
-              query: ArticleIsUpdatedSubscription,
-              variables: { id: Weihnachtsmarkt.id },
-            },
-          },
-        ],
+        additionalMocks,
       }
     );
   });
@@ -52,14 +62,7 @@ describe('article/EditArticlePage', () => {
       {},
       {
         currentUser: SomeUser,
-        additionalMocks: [
-          {
-            request: {
-              query: ArticleIsUpdatedSubscription,
-              variables: { id: Weihnachtsmarkt.id },
-            },
-          },
-        ],
+        additionalMocks,
       }
     );
     expect(screen.getByTestId('ArticleEditable')).toBeVisible();
@@ -71,14 +74,7 @@ describe('article/EditArticlePage', () => {
       {},
       {
         currentUser: SomeUser,
-        additionalMocks: [
-          {
-            request: {
-              query: ArticleIsUpdatedSubscription,
-              variables: { id: Weihnachtsmarkt.id },
-            },
-          },
-        ],
+        additionalMocks,
       }
     );
     expect(screen.getByTestId('EditArticleFooter')).toBeVisible();
@@ -91,14 +87,7 @@ describe('article/EditArticlePage', () => {
         {},
         {
           currentUser: SomeUser,
-          additionalMocks: [
-            {
-              request: {
-                query: ArticleIsUpdatedSubscription,
-                variables: { id: Weihnachtsmarkt.id },
-              },
-            },
-          ],
+          additionalMocks,
         }
       );
       expect(screen.getByTestId('AddModuleBar')).toBeVisible();
@@ -111,14 +100,7 @@ describe('article/EditArticlePage', () => {
         {},
         {
           currentUser: SomeUser,
-          additionalMocks: [
-            {
-              request: {
-                query: ArticleIsUpdatedSubscription,
-                variables: { id: Weihnachtsmarkt.id },
-              },
-            },
-          ],
+          additionalMocks,
         }
       );
       expect(screen.queryAllByTestId('ContentModule')).toHaveLength(3);
@@ -182,18 +164,13 @@ describe('article/EditArticlePage', () => {
         {
           currentUser: SomeUser,
           additionalMocks: [
+            ...additionalMocks,
             {
               request: {
                 query: UpdateArticleMutation,
                 variables: variables,
               },
               result: onSave,
-            },
-            {
-              request: {
-                query: ArticleIsUpdatedSubscription,
-                variables: { id: Weihnachtsmarkt.id },
-              },
             },
           ],
         }
@@ -257,18 +234,13 @@ describe('article/EditArticlePage', () => {
         {
           currentUser: SomeUser,
           additionalMocks: [
+            ...additionalMocks,
             {
               request: {
                 query: UpdateArticleMutation,
                 variables: variables,
               },
               result: onSave,
-            },
-            {
-              request: {
-                query: ArticleIsUpdatedSubscription,
-                variables: { id: Weihnachtsmarkt.id },
-              },
             },
           ],
         }
@@ -292,6 +264,13 @@ describe('article/EditArticlePage', () => {
         {
           currentUser: SomeUser,
           additionalMocks: [
+            {
+              request: {
+                query: GetArticleQuery,
+                variables: { id: Weihnachtsmarkt.id },
+              },
+              result: { data: { article: Weihnachtsmarkt } },
+            },
             {
               request: {
                 query: ArticleIsUpdatedSubscription,
@@ -332,6 +311,13 @@ describe('article/EditArticlePage', () => {
         {
           currentUser: SomeUser,
           additionalMocks: [
+            {
+              request: {
+                query: GetArticleQuery,
+                variables: { id: Weihnachtsmarkt.id },
+              },
+              result: { data: { article: Weihnachtsmarkt } },
+            },
             {
               request: {
                 query: ArticleIsUpdatedSubscription,
@@ -376,6 +362,13 @@ describe('article/EditArticlePage', () => {
         {
           currentUser: SomeUser,
           additionalMocks: [
+            {
+              request: {
+                query: GetArticleQuery,
+                variables: { id: Weihnachtsmarkt.id },
+              },
+              result: { data: { article: Weihnachtsmarkt } },
+            },
             {
               request: {
                 query: ArticleIsUpdatedSubscription,
@@ -443,14 +436,7 @@ describe('article/EditArticlePage', () => {
         {},
         {
           currentUser: SomeUser,
-          additionalMocks: [
-            {
-              request: {
-                query: ArticleIsUpdatedSubscription,
-                variables: { id: Weihnachtsmarkt.id },
-              },
-            },
-          ],
+          additionalMocks,
         }
       );
       await fireEvent.type(
@@ -471,14 +457,7 @@ describe('article/EditArticlePage', () => {
         {},
         {
           currentUser: SomeUser,
-          additionalMocks: [
-            {
-              request: {
-                query: ArticleIsUpdatedSubscription,
-                variables: { id: Weihnachtsmarkt.id },
-              },
-            },
-          ],
+          additionalMocks,
         }
       );
       jest
