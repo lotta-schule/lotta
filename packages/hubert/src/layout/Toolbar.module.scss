@@ -6,6 +6,7 @@
   position: sticky;
   top: 0;
   overflow: auto;
+  z-index: 1;
 
   &>div,
   &>button,
@@ -14,6 +15,7 @@
       margin-left: var(--lotta-spacing);
     }
   }
+
   Button {
     height: fit-content;
     vertical-align: bottom;

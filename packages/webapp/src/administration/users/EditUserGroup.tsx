@@ -19,13 +19,15 @@ import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
 import styles from './EditUserGroup.module.scss';
 
 export interface EditUserGroupProps {
-  group: UserGroupModel | null;
+  groupId: UserGroupModel['id'] | null;
   onDelete: () => void;
 }
 
 export const EditUserGroup = React.memo<EditUserGroupProps>(
-  ({ group, onDelete }) => {
+  ({ groupId, onDelete }) => {
     const groups = useUserGroups();
+
+    const group = groups.find((g) => g.id === groupId);
 
     const [name, setName] = React.useState(group?.name ?? '');
 
@@ -76,7 +78,9 @@ export const EditUserGroup = React.memo<EditUserGroupProps>(
             }}
           >
             <ErrorMessage error={loadDetailsError || updateError} />
-            <div>
+
+            <section>
+              <h4>Allgemein</h4>
               <Label label={'Gruppenname'}>
                 <Input
                   id="group-name"
@@ -90,6 +94,7 @@ export const EditUserGroup = React.memo<EditUserGroupProps>(
                         id: group.id,
                         group: {
                           isAdminGroup: group.isAdminGroup,
+                          canReadFullName: !!group.canReadFullName,
                           enrollmentTokens,
                           name,
                         },
@@ -103,6 +108,7 @@ export const EditUserGroup = React.memo<EditUserGroupProps>(
                           id: group.id,
                           group: {
                             isAdminGroup: group.isAdminGroup,
+                            canReadFullName: !!group.canReadFullName,
                             enrollmentTokens,
                             name,
                           },
@@ -115,66 +121,89 @@ export const EditUserGroup = React.memo<EditUserGroupProps>(
               <small id="group-name-help-text">
                 Gib der Gruppe einen verständlichen Namen
               </small>
-            </div>
-            <Checkbox
-              isDisabled={isLoadingUpdateGroup || isSoleAdminGroup}
-              isSelected={!!group.isAdminGroup}
-              onChange={(isSelected) => {
-                updateGroup({
-                  variables: {
-                    id: group.id,
-                    group: {
-                      name,
-                      enrollmentTokens,
-                      isAdminGroup: isSelected,
-                    },
-                  },
-                });
-              }}
-            >
-              Diese Gruppe hat universelle Administratorrechte
-            </Checkbox>
-            <p>Einschreibeschlüssel</p>
-            <p>
-              Nutzer, die bei der Registrierung einen
-              Einschreibeschlüsselverwenden, werden automatisch dieser Gruppe
-              zugeordnet.
-            </p>
-            <EnrollmentTokensEditor
-              disabled={isLoadingUpdateGroup}
-              tokens={enrollmentTokens}
-              setTokens={(enrollmentTokens) => {
-                updateGroup({
-                  variables: {
-                    id: group.id,
-                    group: {
-                      isAdminGroup: group.isAdminGroup,
-                      enrollmentTokens,
-                      name,
-                    },
-                  },
-                });
-              }}
-            />
-            {!isSoleAdminGroup && (
-              <>
-                <Button
-                  className={styles.deleteButton}
-                  onClick={() => setIsDeleteUserGroupDialogOpen(true)}
+            </section>
+
+            <section>
+              <h4>Berechtigungen</h4>
+              {isSoleAdminGroup && (
+                <Checkbox
+                  isDisabled={isLoadingUpdateGroup || isSoleAdminGroup}
+                  isSelected={!!group.isAdminGroup}
                 >
-                  Gruppe "{group.name}" löschen
-                </Button>
-                <DeleteUserGroupDialog
-                  isOpen={isDeleteUserGroupDialogOpen}
-                  group={group}
-                  onRequestClose={() => setIsDeleteUserGroupDialogOpen(false)}
-                  onConfirm={() => {
-                    setIsDeleteUserGroupDialogOpen(false);
-                    onDelete();
-                  }}
-                />
-              </>
-            )}
+                  Diese Gruppe hat universelle Administratorrechte
+                </Checkbox>
+              )}
+
+              <Checkbox
+                isDisabled={isLoadingUpdateGroup || group.isAdminGroup}
+                isSelected={
+                  (group.canReadFullName || group.isAdminGroup) ?? false
+                }
+                onChange={(isSelected) => {
+                  console.log({ isSelected });
+                  updateGroup({
+                    variables: {
+                      id: group.id,
+                      group: {
+                        name,
+                        canReadFullName: isSelected,
+                        enrollmentTokens,
+                        isAdminGroup: group.isAdminGroup,
+                      },
+                    },
+                  });
+                }}
+              >
+                Diese Gruppe kann die vollständigen Namen von Nutzern sehen,
+                auch wenn diese sie nicht freigegeben haben
+              </Checkbox>
+            </section>
+
+            <section>
+              <h4>Einschreibeschlüssel</h4>
+              <p>
+                Nutzer, die bei der Registrierung einen
+                Einschreibeschlüsselverwenden, werden automatisch dieser Gruppe
+                zugeordnet.
+              </p>
+
+              <EnrollmentTokensEditor
+                disabled={isLoadingUpdateGroup}
+                tokens={enrollmentTokens}
+                setTokens={(enrollmentTokens) => {
+                  updateGroup({
+                    variables: {
+                      id: group.id,
+                      group: {
+                        isAdminGroup: group.isAdminGroup,
+                        canReadFullName: group.canReadFullName,
+                        enrollmentTokens,
+                        name,
+                      },
+                    },
+                  });
+                }}
+              />
+              {!isSoleAdminGroup && (
+                <>
+                  <Button
+                    className={styles.deleteButton}
+                    onClick={() => setIsDeleteUserGroupDialogOpen(true)}
+                  >
+                    Gruppe "{group.name}" löschen
+                  </Button>
+                  <DeleteUserGroupDialog
+                    isOpen={isDeleteUserGroupDialogOpen}
+                    group={group}
+                    onRequestClose={() => setIsDeleteUserGroupDialogOpen(false)}
+                    onConfirm={() => {
+                      setIsDeleteUserGroupDialogOpen(false);
+                      onDelete();
+                    }}
+                  />
+                </>
+              )}
+            </section>
           </form>
         )}
       </div>

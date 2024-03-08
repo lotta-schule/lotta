@@ -7,6 +7,7 @@ export interface UserGroupModel {
   name: string;
   isAdminGroup: boolean;
   sortKey: number;
+  canReadFullName: boolean | null;
   enrollmentTokens: string[];
 }
 
@@ -14,5 +15,6 @@ export interface UserGroupInputModel {
   name: string;
   isAdminGroup?: boolean;
   sortKey?: number;
+  canReadFullName?: boolean | null;
   enrollmentTokens?: string[];
 }
