@@ -1,6 +1,13 @@
+@import '../../../styles/util/breakpoints';
+
 .root {
   width: 30%;
   margin: var(--lotta-spacing);
+
+  @media screen and (max-width: $max-xs) {
+    width: 100%;
+    margin-inline: 0;
+  }
 
   p {
     font-size: smaller;
