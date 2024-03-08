@@ -7,8 +7,13 @@ import {
   ErrorMessage,
   Input,
   Label,
+  SplitViewButton,
+  Toolbar,
 } from '@lotta-schule/hubert';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 import { GroupSelect } from 'shared/edit/GroupSelect';
+import { IFrameWidgetConfiguration } from './configuration/IFrameWidgetConfiguration';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
@@ -17,7 +22,6 @@ import { WidgetIconSelection } from './WidgetIconSelection';
 import UpdateWidgetMutation from 'api/mutation/UpdateWidgetMutation.graphql';
 
 import styles from './WidgetEditor.module.scss';
-import { IFrameWidgetConfiguration } from './configuration/IFrameWidgetConfiguration';
 
 export interface WidgetEditorProps {
   selectedWidget: WidgetModel | null;
@@ -69,8 +73,14 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
     }
 
     return (
-      <>
-        <h5>{selectedWidget ? selectedWidget.title : widget.title}</h5>
+      <div>
+        <Toolbar hasScrollableParent style={{ alignItems: 'baseline' }}>
+          <SplitViewButton
+            action={'open'}
+            icon={<Icon icon={faAngleRight} />}
+          />
+          <h5>{selectedWidget ? selectedWidget.title : widget.title}</h5>
+        </Toolbar>
         <div>{widget.type}</div>
         <ErrorMessage error={error} />
         <Label label="Name des Widget">
@@ -181,7 +191,7 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
             }}
           />
         </div>
-      </>
+      </div>
     );
   }
 );

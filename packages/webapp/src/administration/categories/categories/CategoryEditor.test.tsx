@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { MockedResponse } from '@apollo/client/testing';
+import { SplitViewProvider } from '@lotta-schule/hubert';
 import {
   FaecherCategory,
   StartseiteCategory,
@@ -15,6 +16,10 @@ import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graphql';
+
+const renderWithContext: typeof render = (children, ...other) => {
+  return render(<SplitViewProvider>{children}</SplitViewProvider>, ...other);
+};
 
 const allWidgetsMock: MockedResponse = {
   request: {
@@ -60,7 +65,7 @@ const getArticleForPreview = (
 
 describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
   it('should render CategoryEditor', () => {
-    render(
+    renderWithContext(
       <CategoryEditor
         selectedCategory={FaecherCategory}
         onSelectCategory={() => {}}
@@ -77,7 +82,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
   });
 
   it('should show correct category title', () => {
-    const screen = render(
+    const screen = renderWithContext(
       <CategoryEditor
         selectedCategory={FaecherCategory}
         onSelectCategory={() => {}}
@@ -97,7 +102,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
   describe('show/hide group selection', () => {
     it('show the GroupSelect for any non-homepage', () => {
-      const screen = render(
+      const screen = renderWithContext(
         <CategoryEditor
           selectedCategory={FaecherCategory}
           onSelectCategory={() => {}}
@@ -116,7 +121,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
     });
 
     it('NOT show the GroupSelect for the homepage', () => {
-      const screen = render(
+      const screen = renderWithContext(
         <CategoryEditor
           selectedCategory={StartseiteCategory}
           onSelectCategory={() => {}}
@@ -137,7 +142,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
   describe('show/hide "hide articles from homepage" selection', () => {
     it('show the "hide articles from homepage" for any non-homepage', () => {
-      const screen = render(
+      const screen = renderWithContext(
         <CategoryEditor
           selectedCategory={FaecherCategory}
           onSelectCategory={() => {}}
@@ -160,7 +165,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
     });
 
     it('NOT show the "hide articles from homepage" for the homepage', () => {
-      const screen = render(
+      const screen = renderWithContext(
         <CategoryEditor
           selectedCategory={StartseiteCategory}
           onSelectCategory={() => {}}
@@ -183,7 +188,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
   });
 
   it('should show the layout selection', () => {
-    const screen = render(
+    const screen = renderWithContext(
       <CategoryEditor
         selectedCategory={FaecherCategory}
         onSelectCategory={() => {}}
@@ -208,7 +213,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
   describe('Category redirect', () => {
     describe('"None" Value', () => {
       it('should have "NONE" selected if no redirect is set', () => {
-        const screen = render(
+        const screen = renderWithContext(
           <CategoryEditor
             selectedCategory={FaecherCategory}
             onSelectCategory={() => {}}
@@ -232,7 +237,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
       it('should reset the value when None is selected', async () => {
         const fireEvent = userEvent.setup();
-        const screen = render(
+        const screen = renderWithContext(
           <CategoryEditor
             selectedCategory={{
               ...FaecherCategory,
@@ -271,7 +276,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         redirect: `/c/${KunstCategory.id}`,
       };
       it('should have "Internal Category" selected if a local path is set', async () => {
-        const screen = render(
+        const screen = renderWithContext(
           <CategoryEditor
             selectedCategory={internalFaecherCategoy}
             onSelectCategory={() => {}}
@@ -301,7 +306,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
       it('should show the category select when internal category link is selected', async () => {
         const fireEvent = userEvent.setup();
-        const screen = render(
+        const screen = renderWithContext(
           <CategoryEditor
             selectedCategory={internalFaecherCategoy}
             onSelectCategory={() => {}}
@@ -341,7 +346,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         redirect: `/a/${ComputerExperten.id}`,
       };
       it('should have "Internal Article" selected if a local path is set', async () => {
-        const screen = render(
+        const screen = renderWithContext(
           <CategoryEditor
             selectedCategory={internalFaecherCategoy}
             onSelectCategory={() => {}}
@@ -372,7 +377,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
       it('should show the article search when internal article link is selected', async () => {
         const fireEvent = userEvent.setup();
-        const screen = render(
+        const screen = renderWithContext(
           <CategoryEditor
             selectedCategory={internalFaecherCategoy}
             onSelectCategory={() => {}}
@@ -414,7 +419,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       };
 
       it('should have "External" selected if a local path is set', async () => {
-        const screen = render(
+        const screen = renderWithContext(
           <CategoryEditor
             selectedCategory={externalFaecherCategoy}
             onSelectCategory={() => {}}
@@ -438,7 +443,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
       it('should show the textinput with a default URL when external link is selected', async () => {
         const fireEvent = userEvent.setup();
-        const screen = render(
+        const screen = renderWithContext(
           <CategoryEditor
             selectedCategory={externalFaecherCategoy}
             onSelectCategory={() => {}}
@@ -482,7 +487,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       const onSave = jest.fn(() => ({
         data: { category: { ...FaecherCategory, widgets: [] } },
       }));
-      const screen = render(
+      const screen = renderWithContext(
         <CategoryEditor
           selectedCategory={FaecherCategory}
           onSelectCategory={() => {}}
@@ -537,7 +542,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
   describe('delete categories', () => {
     it('should NOT show delete button on homepage', () => {
-      const screen = render(
+      const screen = renderWithContext(
         <CategoryEditor
           selectedCategory={StartseiteCategory}
           onSelectCategory={() => {}}
@@ -557,7 +562,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
     it('should show delete dialog on click', async () => {
       const fireEvent = userEvent.setup();
-      const screen = render(
+      const screen = renderWithContext(
         <CategoryEditor
           selectedCategory={FaecherCategory}
           onSelectCategory={() => {}}

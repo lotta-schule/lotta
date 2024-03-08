@@ -1,6 +1,8 @@
 @import 'breakpoints';
 
 .root {
+  margin-top: calc(-1 * var(--lotta-spacing));
+
   .noMessagesWrapper {
     display: flex;
     flex: 1 1;

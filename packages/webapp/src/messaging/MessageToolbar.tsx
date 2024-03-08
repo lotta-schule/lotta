@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, SplitViewButton } from '@lotta-schule/hubert';
+import { Button, SplitViewButton, Toolbar } from '@lotta-schule/hubert';
 import { faAdd, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { NewMessageDestination } from 'model';
 import { Icon } from 'shared/Icon';
@@ -17,7 +17,7 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
       React.useState(false);
 
     return (
-      <div className={styles.root}>
+      <Toolbar className={styles.root} hasScrollableParent>
         <Button
           className={styles.plusButton}
           icon={<Icon icon={faAdd} size={'lg'} />}
@@ -40,7 +40,7 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
           }}
           onAbort={() => setIsCreateMessageDialogOpen(false)}
         />
-      </div>
+      </Toolbar>
     );
   }
 );

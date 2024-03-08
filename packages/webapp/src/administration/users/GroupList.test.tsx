@@ -1,9 +1,14 @@
+import { SplitViewProvider } from '@lotta-schule/hubert';
 import { userGroups } from 'test/fixtures';
 import { render, waitFor } from 'test/util';
 import { GroupList } from './GroupList';
 import userEvent from '@testing-library/user-event';
 
 import GetGroupQuery from '../../api/query/GetGroupQuery.graphql';
+
+const renderWithContext: typeof render = (children, ...other) => {
+  return render(<SplitViewProvider>{children}</SplitViewProvider>, ...other);
+};
 
 const extendedUserGroups = [
   ...userGroups,
@@ -25,7 +30,7 @@ const additionalMocks = extendedUserGroups.map((group) => ({
 }));
 describe('administration/users/GroupList', () => {
   it('should list all groups', () => {
-    const screen = render(
+    const screen = renderWithContext(
       <GroupList />,
       {},
       {
@@ -43,7 +48,7 @@ describe('administration/users/GroupList', () => {
     });
     HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
     const fireEvent = userEvent.setup();
-    const screen = render(
+    const screen = renderWithContext(
       <GroupList />,
       {},
       {
@@ -65,7 +70,7 @@ describe('administration/users/GroupList', () => {
   });
 
   it('should show the group name', () => {
-    const screen = render(
+    const screen = renderWithContext(
       <GroupList />,
       {},
       {
@@ -79,7 +84,7 @@ describe('administration/users/GroupList', () => {
 
   it('should open the EditGroup when clicking on the group name', async () => {
     const fireEvent = userEvent.setup();
-    const screen = render(
+    const screen = renderWithContext(
       <GroupList />,
       {},
       {
@@ -100,7 +105,7 @@ describe('administration/users/GroupList', () => {
 
   it('should change sorting via the select', async () => {
     const fireEvent = userEvent.setup();
-    const screen = render(
+    const screen = renderWithContext(
       <GroupList />,
       {},
       {

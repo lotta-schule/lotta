@@ -101,7 +101,7 @@ export const GroupList = () => {
         {({ close: closeSidebar }) => (
           <>
             <SplitViewNavigation>
-              <Toolbar>
+              <Toolbar hasScrollableParent stackOnMobile>
                 <Label label={'Suche'} className={styles.groupSearch}>
                   <Input
                     placeholder={'Gruppenname'}

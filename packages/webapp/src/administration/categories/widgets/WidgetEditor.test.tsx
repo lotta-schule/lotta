@@ -1,4 +1,5 @@
 import { MockedResponse } from '@apollo/client/testing';
+import { SplitViewProvider } from '@lotta-schule/hubert';
 import {
   CalendarKlassenarbeiten,
   GangamStyleWidget,
@@ -11,9 +12,13 @@ import userEvent from '@testing-library/user-event';
 
 import UpdateWidgetMutation from 'api/mutation/UpdateWidgetMutation.graphql';
 
+const renderWithContext: typeof render = (children, ...other) => {
+  return render(<SplitViewProvider>{children}</SplitViewProvider>, ...other);
+};
+
 describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
   it("should show the widget's title", () => {
-    const screen = render(
+    const screen = renderWithContext(
       <WidgetEditor
         selectedWidget={VPSchuelerWidget}
         onSelectWidget={jest.fn()}
@@ -24,7 +29,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
   });
 
   it("should show the next widget's title when changing 'onSelectedWidget' prop", () => {
-    const screen = render(
+    const screen = renderWithContext(
       <WidgetEditor
         selectedWidget={VPSchuelerWidget}
         onSelectWidget={jest.fn()}
@@ -32,17 +37,19 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
     );
 
     screen.rerender(
-      <WidgetEditor
-        selectedWidget={VPLehrerWidget}
-        onSelectWidget={jest.fn()}
-      />
+      <SplitViewProvider>
+        <WidgetEditor
+          selectedWidget={VPLehrerWidget}
+          onSelectWidget={jest.fn()}
+        />
+      </SplitViewProvider>
     );
 
     expect(screen.getByRole('heading', { name: 'VP Lehrer' })).toBeVisible();
   });
 
   it('should not show any title when no widget is given', () => {
-    const screen = render(
+    const screen = renderWithContext(
       <WidgetEditor selectedWidget={null} onSelectWidget={jest.fn()} />
     );
     expect(screen.queryByRole('heading')).toBeNull();
@@ -50,7 +57,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
 
   describe('correct configuration section', () => {
     it('schould show correct Schedule configuration', () => {
-      const screen = render(
+      const screen = renderWithContext(
         <WidgetEditor
           selectedWidget={VPSchuelerWidget}
           onSelectWidget={jest.fn()}
@@ -59,7 +66,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
       expect(screen.getByTestId('ScheduleWidgetConfiguration')).toBeVisible();
     });
     it('should show correct Calendar configuration', () => {
-      const screen = render(
+      const screen = renderWithContext(
         <WidgetEditor
           selectedWidget={CalendarKlassenarbeiten}
           onSelectWidget={jest.fn()}
@@ -68,7 +75,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
       expect(screen.getByTestId('CalendarWidgetConfiguration')).toBeVisible();
     });
     it('should show correct IFrame configuration', () => {
-      const screen = render(
+      const screen = renderWithContext(
         <WidgetEditor
           selectedWidget={GangamStyleWidget}
           onSelectWidget={jest.fn()}
@@ -110,7 +117,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
     };
     it("should update the widget's properties", async () => {
       const fireEvent = userEvent.setup();
-      const screen = render(
+      const screen = renderWithContext(
         <WidgetEditor
           selectedWidget={VPSchuelerWidget}
           onSelectWidget={jest.fn()}
@@ -138,7 +145,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
 
   it('should open a confirm dialog when "delete" button is clicked', async () => {
     const fireEvent = userEvent.setup();
-    const screen = render(
+    const screen = renderWithContext(
       <WidgetEditor
         selectedWidget={VPSchuelerWidget}
         onSelectWidget={jest.fn()}

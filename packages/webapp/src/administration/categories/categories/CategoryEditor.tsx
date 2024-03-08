@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation, useQuery } from '@apollo/client';
 import {
   Button,
@@ -13,6 +13,8 @@ import {
   RadioGroup,
   Option,
   Select,
+  SplitViewButton,
+  Toolbar,
 } from '@lotta-schule/hubert';
 import { motion } from 'framer-motion';
 import { CategoryModel, WidgetModel, ID } from 'model';
@@ -114,11 +116,17 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
 
     return (
       <div className={styles.root}>
-        <h3 className={styles.title}>
-          {selectedCategory
-            ? selectedCategory.title
-            : category && category.title}
-        </h3>
+        <Toolbar hasScrollableParent>
+          <SplitViewButton
+            action="open"
+            icon={<Icon icon={faAngleLeft} size={'lg'} />}
+          />
+          <h3 className={styles.title}>
+            {selectedCategory
+              ? selectedCategory.title
+              : category && category.title}
+          </h3>
+        </Toolbar>
         <ErrorMessage error={error || currentWidgetsError} />
         <Label label={'Name der Kategorie'}>
           <Input
@@ -138,7 +146,9 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
           <GroupSelect
             className={styles.input}
             selectedGroups={category.groups || []}
-            onSelectGroups={(groups) => setCategory({ ...category, groups })}
+            onSelectGroups={(groups) => {
+              setCategory({ ...category, groups });
+            }}
           />
         )}
 
@@ -387,6 +397,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
               onConfirm={() => {
                 setIsDeleteCategoryDialogOpen(false);
                 onSelectCategory(null);
+                openSidebar();
               }}
             />
           </>

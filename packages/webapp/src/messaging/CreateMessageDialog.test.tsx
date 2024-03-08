@@ -1,10 +1,22 @@
 import * as React from 'react';
+import { UserModel } from 'model';
 import { render, waitFor } from 'test/util';
 import { SomeUser, SomeUserin, schuelerGroup } from 'test/fixtures';
 import { CreateMessageDialog } from './CreateMessageDialog';
 import userEvent from '@testing-library/user-event';
 
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
+
+const searchUsersMock = (searchTerm: string, results: UserModel[]) =>
+  new Array(searchTerm.length).fill('').map((_, i) => ({
+    request: {
+      query: SearchUsersQuery,
+      variables: { searchtext: searchTerm.slice(0, i + 1) },
+    },
+    result: {
+      data: { users: i >= 2 ? results : [] },
+    },
+  }));
 
 describe('CreateMessageDialog', () => {
   describe('select detination popup', () => {
@@ -32,17 +44,7 @@ describe('CreateMessageDialog', () => {
 
     it('should select a userAvatar and create the corresponding thread object', async () => {
       const fireEvent = userEvent.setup();
-      const additionalMocks = [
-        {
-          request: {
-            query: SearchUsersQuery,
-            variables: { searchtext: 'Drinalda' },
-          },
-          result: {
-            data: { users: [SomeUserWithGroups, SomeUserin] },
-          },
-        },
-      ];
+      const searchTerm = 'Drinalda';
       const onConfirm = jest.fn((destination) => {
         expect(destination.user.name).toEqual('Luisa Drinalda');
         expect(destination.group).not.toBeDefined();
@@ -50,7 +52,13 @@ describe('CreateMessageDialog', () => {
       const screen = render(
         <CreateMessageDialog isOpen onAbort={() => {}} onConfirm={onConfirm} />,
         {},
-        { currentUser: SomeUserin, additionalMocks }
+        {
+          currentUser: SomeUserin,
+          additionalMocks: searchUsersMock(searchTerm, [
+            SomeUserWithGroups,
+            SomeUserin,
+          ]),
+        }
       );
 
       await fireEvent.click(
@@ -127,6 +135,8 @@ describe('CreateMessageDialog', () => {
         screen.getByRole('button', { name: /vorschläge/i })
       );
       expect(screen.getAllByRole('option')).toHaveLength(1);
+
+      await new Promise((resolve) => setTimeout(resolve, 400)); // wait for animation to finish
       await fireEvent.click(screen.getByRole('option', { name: 'Schüler' }));
 
       await waitFor(() => {

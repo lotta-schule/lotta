@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
+import { SplitViewProvider } from '@lotta-schule/hubert';
 import {
   allCategories,
   FaecherCategory,
@@ -9,11 +10,15 @@ import {
 import { CategoryNavigation } from './CategoryNavigation';
 import userEvent from '@testing-library/user-event';
 
+const renderWithContext: typeof render = (children, ...other) => {
+  return render(<SplitViewProvider>{children}</SplitViewProvider>, ...other);
+};
+
 describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNavigation', () => {
   const topLevelCategories = allCategories.filter((c) => !c.category);
 
   it('should render an CategoryNavigation without error', () => {
-    render(
+    renderWithContext(
       <CategoryNavigation
         selectedCategory={null}
         onSelectCategory={() => {}}
@@ -23,7 +28,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
   });
 
   it('should render all top-level-categories', async () => {
-    const screen = render(
+    const screen = renderWithContext(
       <CategoryNavigation
         selectedCategory={null}
         onSelectCategory={() => {}}
@@ -49,7 +54,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       const onSelectCategory = jest.fn(
         (category) => (selectedCategory = category)
       );
-      const screen = render(
+      const screen = renderWithContext(
         <CategoryNavigation
           selectedCategory={null}
           onSelectCategory={onSelectCategory}
@@ -67,7 +72,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
     });
 
     it('should show subtree when parent-tree is selected', async () => {
-      const screen = render(
+      const screen = renderWithContext(
         <CategoryNavigation
           selectedCategory={FaecherCategory}
           onSelectCategory={() => {}}
@@ -84,7 +89,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
     });
 
     it('should show expanded tree if selected category is in it', async () => {
-      const screen = render(
+      const screen = renderWithContext(
         <CategoryNavigation
           selectedCategory={MatheCategory}
           onSelectCategory={() => {}}
