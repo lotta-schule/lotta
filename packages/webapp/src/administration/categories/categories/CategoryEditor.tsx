@@ -15,6 +15,7 @@ import {
   Select,
   SplitViewButton,
   Toolbar,
+  useSplitView,
 } from '@lotta-schule/hubert';
 import { motion } from 'framer-motion';
 import { CategoryModel, WidgetModel, ID } from 'model';
@@ -43,6 +44,7 @@ export interface CategoryEditorProps {
 export const CategoryEditor = React.memo<CategoryEditorProps>(
   ({ selectedCategory, onSelectCategory }) => {
     const { baseUrl } = useServerData();
+    const { open: openSidebar } = useSplitView();
 
     const [categories] = useCategories();
 
