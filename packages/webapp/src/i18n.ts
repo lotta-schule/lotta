@@ -43,6 +43,11 @@ const resources = {
       widgets: {
         widget: 'Marginale',
         widgets: '{{count}} Marginale',
+        widgetTypes: {
+          CALENDAR: 'Kalender',
+          SCHEDULE: 'Stundenplan',
+          IFRAME: 'Webseite',
+        },
       },
       administration: {
         result: '1 Ergebnis',

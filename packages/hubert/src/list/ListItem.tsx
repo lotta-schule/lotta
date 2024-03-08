@@ -43,6 +43,7 @@ export const ListItem = React.forwardRef(
     return (
       <li
         className={clsx(styles.li, className, {
+          [styles.isClickable]: props.onClick !== undefined,
           [styles.isDisabled]: isDisabled,
           [styles.isFocused]: isFocused,
           [styles.isSelected]: isSelected,

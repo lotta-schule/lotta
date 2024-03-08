@@ -93,7 +93,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
           id: VPSchuelerWidget.id,
           widget: {
             title: 'Neuer Name',
-            iconImageFile: undefined,
+            iconImageFile: null,
             configuration: JSON.stringify(VPSchuelerWidget.configuration),
             groups: [{ id: '1' }, { id: '4' }, { id: '5' }, { id: '10' }],
           },

@@ -3,6 +3,7 @@ import { render, waitFor } from 'test/util';
 import { SplitViewProvider } from '@lotta-schule/hubert';
 import {
   allCategories,
+  DatenschutzCategory,
   FaecherCategory,
   MatheCategory,
   StartseiteCategory,
@@ -48,27 +49,101 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
   });
 
   describe('selected category', () => {
-    it('should select a category on click', async () => {
-      const fireEvent = userEvent.setup();
-      let selectedCategory = null;
-      const onSelectCategory = jest.fn(
-        (category) => (selectedCategory = category)
-      );
-      const screen = renderWithContext(
-        <CategoryNavigation
-          selectedCategory={null}
-          onSelectCategory={onSelectCategory}
-        />,
-        {}
-      );
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /start/i })).toBeVisible();
+    describe('select category', () => {
+      it('should select a start category on click', async () => {
+        const fireEvent = userEvent.setup();
+        let selectedCategory = null;
+        const onSelectCategory = jest.fn(
+          (category) => (selectedCategory = category)
+        );
+        const screen = renderWithContext(
+          <CategoryNavigation
+            selectedCategory={null}
+            onSelectCategory={onSelectCategory}
+          />,
+          {}
+        );
+        await waitFor(() => {
+          expect(screen.getByRole('button', { name: /start/i })).toBeVisible();
+        });
+        await fireEvent.click(screen.getByRole('button', { name: /start/i }));
+        await waitFor(() => {
+          expect(onSelectCategory).toHaveBeenCalled();
+        });
+        expect(selectedCategory).toHaveProperty('id', StartseiteCategory.id);
       });
-      await fireEvent.click(screen.getByRole('button', { name: /start/i }));
-      await waitFor(() => {
-        expect(onSelectCategory).toHaveBeenCalled();
+
+      it('should select a common category on click', async () => {
+        const fireEvent = userEvent.setup();
+        let selectedCategory = null;
+        const onSelectCategory = jest.fn(
+          (category) => (selectedCategory = category)
+        );
+        const screen = renderWithContext(
+          <CategoryNavigation
+            selectedCategory={null}
+            onSelectCategory={onSelectCategory}
+          />,
+          {}
+        );
+        await waitFor(() => {
+          expect(screen.getByRole('button', { name: /fächer/i })).toBeVisible();
+        });
+        await fireEvent.click(screen.getByRole('button', { name: /fächer/i }));
+        await waitFor(() => {
+          expect(onSelectCategory).toHaveBeenCalled();
+        });
+        expect(selectedCategory).toHaveProperty('id', FaecherCategory.id);
       });
-      expect(selectedCategory).toHaveProperty('id', StartseiteCategory.id);
+      it('should select a subcategory on click', async () => {
+        const fireEvent = userEvent.setup();
+        let selectedCategory = FaecherCategory;
+        const onSelectCategory = jest.fn(
+          (category) => (selectedCategory = category)
+        );
+        const screen = renderWithContext(
+          <CategoryNavigation
+            selectedCategory={selectedCategory}
+            onSelectCategory={onSelectCategory}
+          />,
+          {}
+        );
+        await waitFor(() => {
+          expect(screen.getByRole('button', { name: /mathe/i })).toBeVisible();
+        });
+        await fireEvent.click(screen.getByRole('button', { name: /mathe/i }));
+        await waitFor(() => {
+          expect(onSelectCategory).toHaveBeenCalled();
+        });
+        expect(selectedCategory).toHaveProperty('id', MatheCategory.id);
+      });
+
+      it('should select a sidenav-category on click', async () => {
+        const fireEvent = userEvent.setup();
+        let selectedCategory = null;
+        const onSelectCategory = jest.fn(
+          (category) => (selectedCategory = category)
+        );
+        const screen = renderWithContext(
+          <CategoryNavigation
+            selectedCategory={selectedCategory}
+            onSelectCategory={onSelectCategory}
+          />,
+          {}
+        );
+        await waitFor(() => {
+          expect(
+            screen.getByRole('button', { name: /datenschutz/i })
+          ).toBeVisible();
+        });
+        await fireEvent.click(
+          screen.getByRole('button', { name: /datenschutz/i })
+        );
+        await waitFor(() => {
+          expect(onSelectCategory).toHaveBeenCalled();
+        });
+        expect(selectedCategory).toHaveProperty('id', DatenschutzCategory.id);
+      });
     });
 
     it('should show subtree when parent-tree is selected', async () => {
