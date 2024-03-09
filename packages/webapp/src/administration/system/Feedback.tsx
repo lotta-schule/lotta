@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-  ErrorMessage,
-  Table,
-} from '@lotta-schule/hubert';
+import { ErrorMessage, Table } from '@lotta-schule/hubert';
 import { useQuery } from '@apollo/client';
 import { FeedbackModel } from 'model';
 import { FeedbackRow } from './feedback/FeedbackRow';
@@ -36,6 +33,7 @@ export const Feedback = React.memo(() => {
               <th>Name</th>
               <th>Thema</th>
               <th>gesendet am</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -47,6 +45,7 @@ export const Feedback = React.memo(() => {
                 onClick={() =>
                   setActiveFeedbackId(isActive(feedback) ? null : feedback.id)
                 }
+                onDelete={() => setActiveFeedbackId(null)}
               />
             ))}
           </tbody>

@@ -21,7 +21,7 @@
   }
 
 
-  th {
+  th:not(:last-child) {
     text-align: left;
     padding-left: var(--lotta-spacing);
   }

@@ -4,6 +4,8 @@ import { FeedbackRow } from './FeedbackRow';
 import { SomeUser } from 'test/fixtures';
 import userEvent from '@testing-library/user-event';
 
+import DeleteFeedbackMutation from 'api/mutation/DeleteFeedbackMutation.graphql';
+
 const feedback: FeedbackModel = {
   id: '6543-feed-back-1234',
   topic: 'Test-Thema',
@@ -26,6 +28,7 @@ describe('FeedbackRow', () => {
             feedback={feedback}
             isActive={false}
             onClick={() => {}}
+            onDelete={() => {}}
           />
         </tbody>
       </table>
@@ -42,7 +45,12 @@ describe('FeedbackRow', () => {
     const screen = render(
       <table>
         <tbody>
-          <FeedbackRow feedback={feedback} isActive={true} onClick={() => {}} />
+          <FeedbackRow
+            feedback={feedback}
+            isActive={true}
+            onClick={() => {}}
+            onDelete={() => {}}
+          />
         </tbody>
       </table>
     );
@@ -52,7 +60,9 @@ describe('FeedbackRow', () => {
 
     await waitFor(() => {
       expect(screen.queryByText('Test-Nachricht')).toBeVisible();
-      expect(screen.getAllByRole('button')).toHaveLength(2);
+      expect(
+        screen.getAllByRole('button', { name: /beantworten|weiterleiten/i })
+      ).toHaveLength(2);
     });
   });
 
@@ -66,6 +76,7 @@ describe('FeedbackRow', () => {
               feedback={feedback}
               isActive={true}
               onClick={() => {}}
+              onDelete={() => {}}
             />
           </tbody>
         </table>
@@ -91,6 +102,7 @@ describe('FeedbackRow', () => {
               feedback={feedback}
               isActive={true}
               onClick={() => {}}
+              onDelete={() => {}}
             />
           </tbody>
         </table>
@@ -117,6 +129,7 @@ describe('FeedbackRow', () => {
               feedback={feedback}
               isActive={true}
               onClick={onChange}
+              onDelete={() => {}}
             />
           </tbody>
         </table>
@@ -125,6 +138,56 @@ describe('FeedbackRow', () => {
       await fireEvent.click(screen.getAllByRole('row')[0]);
 
       expect(onChange).toHaveBeenCalled();
+    });
+
+    it('should show the delete feedback dialog when the delete button is clicked', async () => {
+      const onDelete = jest.fn();
+      const fireEvent = userEvent.setup();
+      const screen = render(
+        <table>
+          <tbody>
+            <FeedbackRow
+              feedback={feedback}
+              isActive={true}
+              onClick={() => {}}
+              onDelete={onDelete}
+            />
+          </tbody>
+        </table>,
+        {},
+        {
+          additionalMocks: [
+            {
+              request: {
+                query: DeleteFeedbackMutation,
+                variables: {
+                  id: feedback.id,
+                },
+              },
+              result: { data: { feedback: { id: feedback.id } } },
+            },
+          ],
+        }
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /löschen/i })).toBeVisible();
+      });
+      await fireEvent.click(screen.getByRole('button', { name: /löschen/ }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('dialog', { name: /feedback löschen/i })
+        ).toBeVisible();
+      });
+
+      await fireEvent.click(
+        screen.getByRole('button', { name: /endgültig löschen/ })
+      );
+
+      await waitFor(() => {
+        expect(onDelete).toHaveBeenCalled();
+      });
     });
   });
 });
