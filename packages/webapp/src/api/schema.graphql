@@ -319,6 +319,7 @@ type RootMutationType {
   deleteCategory(id: ID!): Category
   deleteDevice(id: ID!): Device
   deleteDirectory(id: ID!): Directory
+  deleteFeedback(id: ID!): Feedback
   deleteFile(id: ID!): File
   deleteMessage(id: ID!): Message
   deleteUserGroup(id: ID!): UserGroup
