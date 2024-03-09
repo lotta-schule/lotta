@@ -30,7 +30,8 @@ import { Article, User } from 'util/model';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
-import { useOnLogout } from 'util/user/useOnLogout';
+import { useOnLogout } from 'util/user';
+import { useNewFeedbackCount } from 'util/feedback';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useRouter } from 'next/router';
@@ -48,9 +49,12 @@ export const UserNavigation = React.memo(() => {
   const { data: unpublishedArticlesData } = useQuery<{
     articles: ArticleModel[];
   }>(GetUnpublishedArticlesQuery, {
-    skip: !currentUser || !User.isAdmin(currentUser),
+    skip: !User.isAdmin(currentUser),
   });
   const newMessagesBadgeNumber = currentUser?.unreadMessages ?? 0;
+
+  const newFeedbackBadgeNumber = useNewFeedbackCount();
+
   const onLogout = useOnLogout();
 
   const [loginModalIsOpen, setLoginModalIsOpen] = React.useState(false);
@@ -167,7 +171,13 @@ export const UserNavigation = React.memo(() => {
                       textValue={'Seite administration'}
                     >
                       <Icon icon={faShieldHalved} color="secondary" />
-                      Seite administrieren
+                      <span>
+                        Seite administrieren
+                        <Badge
+                          value={newFeedbackBadgeNumber}
+                          data-testid="FeedbackBadge"
+                        />
+                      </span>
                     </Item>,
                     <Item key={'unpublished'} textValue={'Beiträge freigeben'}>
                       <Icon icon={faClipboardList} color="secondary" />

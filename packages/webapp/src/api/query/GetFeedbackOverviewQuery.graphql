@@ -1,0 +1,10 @@
+query GetFeedbackOverviewQuery {
+  feedbacks {
+    id
+    isNew
+    isForwarded
+    isResponded
+    insertedAt
+    updatedAt
+  }
+}

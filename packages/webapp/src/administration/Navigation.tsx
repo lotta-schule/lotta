@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
 import {
   faCircleUser,
   faUserGroup,
@@ -11,11 +10,16 @@ import {
   faSquareCaretRight,
   faCommentDots,
 } from '@fortawesome/free-solid-svg-icons';
-import { BaseButton } from '@lotta-schule/hubert';
+import { Badge, BaseButton } from '@lotta-schule/hubert';
+import { useNewFeedbackCount } from 'util/feedback';
+import { Icon } from 'shared/Icon';
 import Link from 'next/link';
+
 import styles from './Navigation.module.scss';
 
 export const Navigation = React.memo(() => {
+  const newFeedbackBadgeNumber = useNewFeedbackCount();
+
   return (
     <div className={styles.root}>
       <h3>Mein lotta</h3>
@@ -52,7 +56,10 @@ export const Navigation = React.memo(() => {
             <span>
               <Icon icon={faCommentDots} />
             </span>
-            <span>Feedback</span>
+            <span>
+              Feedback
+              <Badge value={newFeedbackBadgeNumber} />
+            </span>
           </BaseButton>
         </Link>
       </section>

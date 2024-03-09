@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { render } from 'test/util';
+import { MockedResponse } from '@apollo/client/testing';
+import { render, waitFor } from 'test/util';
 import { UserNavigationMobile } from './UserNavigationMobile';
 import { SomeUser, adminGroup } from 'test/fixtures';
+
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
 
 describe('shared/layouts/UserNavigationMobile', () => {
-  describe('logged out userAvatar', () => {
+  describe('logged out user', () => {
     it('should render a login and logout button', () => {
       const screen = render(<UserNavigationMobile />);
       expect(screen.queryAllByRole('button')).toHaveLength(3);
@@ -20,7 +23,7 @@ describe('shared/layouts/UserNavigationMobile', () => {
     });
   });
 
-  describe('non-admin userAvatar', () => {
+  describe('non-admin user', () => {
     it('should render profile and createArticle buttons, but not admin buttons', () => {
       const screen = render(
         <UserNavigationMobile />,
@@ -44,19 +47,37 @@ describe('shared/layouts/UserNavigationMobile', () => {
     });
   });
 
-  describe('admin userAvatar', () => {
+  describe('admin user', () => {
+    const additionalMocks: MockedResponse[] = [
+      {
+        request: { query: GetUnpublishedArticlesQuery },
+        result: { data: { articles: [] } },
+      },
+      {
+        request: { query: GetFeedbackOverviewQuery },
+        result: {
+          data: {
+            feedbacks: [
+              {
+                id: '6543-feed-back-1234',
+                insertedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                isForwarded: false,
+                isResponded: false,
+                isNew: false,
+              },
+            ],
+          },
+        },
+      },
+    ];
     it('should render profile and createArticle buttons, and also admin buttons', () => {
       const screen = render(
         <UserNavigationMobile />,
         {},
         {
           currentUser: { ...SomeUser, groups: [adminGroup] },
-          additionalMocks: [
-            {
-              request: { query: GetUnpublishedArticlesQuery },
-              result: { data: { articles: [] } },
-            },
-          ],
+          additionalMocks,
         }
       );
       expect(screen.queryAllByRole('button')).toHaveLength(10);
@@ -73,6 +94,22 @@ describe('shared/layouts/UserNavigationMobile', () => {
 
       expect(screen.queryByTestId('ProfileButton')).toBeVisible();
       expect(screen.queryByTestId('AdminButton')).toBeVisible();
+    });
+
+    it('should show a badge when new feedback is available', async () => {
+      const screen = render(
+        <UserNavigationMobile />,
+        {},
+        {
+          currentUser: { ...SomeUser, groups: [adminGroup] },
+          additionalMocks,
+        }
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('FeedbackBadge')).toBeVisible();
+      });
+      expect(screen.getByTestId('FeedbackBadge')).toHaveTextContent('1');
     });
   });
 });

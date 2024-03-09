@@ -2,6 +2,9 @@ import { adminGroup, SomeUser } from 'test/fixtures';
 import { render } from 'test/util';
 import { AdminPage } from './AdminPage';
 
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
+
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 
 describe('shared/layouts/adminLayout/AdminPage', () => {
@@ -9,7 +12,23 @@ describe('shared/layouts/adminLayout/AdminPage', () => {
     const screen = render(
       <AdminPage title={'Start'} component={() => <span>Secret</span>} />,
       {},
-      { currentUser: adminUser }
+      {
+        currentUser: adminUser,
+        additionalMocks: [
+          {
+            request: { query: GetUnpublishedArticlesQuery },
+            result: { data: { articles: [] } },
+          },
+          {
+            request: { query: GetFeedbackOverviewQuery },
+            result: {
+              data: {
+                feedbacks: [],
+              },
+            },
+          },
+        ],
+      }
     );
 
     expect(screen.getByText('Secret')).toBeVisible();

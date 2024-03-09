@@ -1,7 +1,14 @@
 import * as React from 'react';
 import { pick } from 'lodash';
 import { HubertProvider } from '@lotta-schule/hubert';
-import { render, RenderOptions } from '@testing-library/react';
+import {
+  render,
+  RenderOptions,
+  renderHook,
+  Queries,
+  queries,
+  RenderHookOptions,
+} from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
@@ -62,6 +69,25 @@ const customRender = (
     ...renderOptions,
   });
 
+const customRenderHook = <
+  Result,
+  Props,
+  Q extends Queries = typeof queries,
+  Container extends Element | DocumentFragment = HTMLElement,
+  BaseElement extends Element | DocumentFragment = Container,
+>(
+  render: (initialProps: Props) => Result,
+  options?: Omit<
+    RenderHookOptions<Props, Q, Container, BaseElement>,
+    'wrapper'
+  >,
+  testSetupOptions: TestSetupOptions = {}
+) =>
+  renderHook(render, {
+    wrapper: ProviderFactory(testSetupOptions),
+    ...options,
+  });
+
 // re-export everything
 export * from '@testing-library/react';
 
@@ -106,6 +132,7 @@ export const TestFileExplorerContextProvider: React.FC<
 
 // override render method
 export { customRender as render };
+export { customRenderHook as renderHook };
 
 export class MockRouter {
   private _pathname = '/';
