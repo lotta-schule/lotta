@@ -6,6 +6,8 @@ import userEvent from '@testing-library/user-event';
 
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
 
 describe('shared/layouts/profileLayout/ProfileData', () => {
   describe('show userAvatar data', () => {
@@ -128,6 +130,20 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
             groups: [adminGroup, lehrerGroup, elternGroup],
             assignedGroups: [adminGroup, lehrerGroup],
           },
+          additionalMocks: [
+            {
+              request: { query: GetUnpublishedArticlesQuery },
+              result: { data: { articles: [] } },
+            },
+            {
+              request: { query: GetFeedbackOverviewQuery },
+              result: {
+                data: {
+                  feedbacks: [],
+                },
+              },
+            },
+          ],
         }
       );
       const groupsList = await screen.findByTestId('ProfileData-GroupsList');

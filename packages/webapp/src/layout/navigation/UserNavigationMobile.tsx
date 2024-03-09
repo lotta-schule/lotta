@@ -30,11 +30,13 @@ import Link from 'next/link';
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
 
 import styles from './UserNavigationMobile.module.scss';
+import { useNewFeedbackCount } from 'util/feedback';
 
 export const UserNavigationMobile = React.memo(() => {
   const router = useRouter();
   const currentUser = useCurrentUser();
   const newMessagesBadgeNumber = currentUser?.unreadMessages ?? 0;
+  const newFeedbackBadgeNumber = useNewFeedbackCount();
   const onLogout = useOnLogout();
 
   const { data: unpublishedArticlesData } = useQuery<{
@@ -168,7 +170,13 @@ export const UserNavigationMobile = React.memo(() => {
                   data-testid="AdminButton"
                 >
                   <Icon icon={faShieldHalved} size="xl" />
-                  <span className={styles.label}>Admin</span>
+                  <span className={styles.label}>
+                    Admin
+                    <Badge
+                      value={newFeedbackBadgeNumber}
+                      data-testid="FeedbackBadge"
+                    />
+                  </span>
                 </BaseButton>
               </Link>
               <Link href={'/admin/unpublished'} passHref legacyBehavior>

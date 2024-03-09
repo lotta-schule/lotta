@@ -3,14 +3,14 @@ import clsx from 'clsx';
 
 import styles from './Badge.module.scss';
 
-export type BadgeProps = {
+export type BadgeProps = React.HTMLProps<HTMLDivElement> & {
   className?: string;
 
   value?: number | string | null;
 };
 
-export const Badge = React.memo<BadgeProps>(
-  ({ className, value, ...props }) => {
+export const Badge = React.memo(
+  ({ className, value, ...props }: BadgeProps) => {
     if (!value) {
       return null;
     }
