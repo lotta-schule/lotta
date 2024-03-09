@@ -10,8 +10,13 @@
   margin-bottom: calc(3 * var(--lotta-spacing));
 }
 
+.scrollHorizontally {
+  overflow-x: auto;
+}
+
 .saveButtonContainer {
   justify-content: flex-end;
+
   button {
     width: 20%;
     max-width: 20em;
@@ -30,11 +35,13 @@
 
 .usageTable {
   justify-content: stretch;
-  & > div {
+
+  &>div {
     flex: 1;
     text-align: center;
   }
-  & > :first-child {
+
+  &> :first-child {
     flex: 0 1 16%;
   }
 }

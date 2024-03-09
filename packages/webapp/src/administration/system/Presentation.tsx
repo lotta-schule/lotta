@@ -92,7 +92,7 @@ export const Presentation = React.memo(() => {
       <ErrorMessage error={error} />
       <section className={styles.section}>
         <h3>Vorlagen</h3>
-        <div className={styles.gridContainer}>
+        <div className={clsx(styles.gridContainer, styles.scrollHorizontally)}>
           {allThemes.map(({ title, theme: partialTheme }) => {
             return (
               <div className={styles.gridItem} key={title}>
