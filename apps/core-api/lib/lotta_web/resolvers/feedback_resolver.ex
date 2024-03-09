@@ -48,4 +48,14 @@ defmodule LottaWeb.FeedbackResolver do
         |> Tenants.respond_to_feedback(current_user, subject, message)
     end
   end
+
+  def delete(%{id: id}, _context) do
+    case Tenants.get_feedback(id) do
+      nil ->
+        {:error, "Feedback mit der id #{id} nicht gefunden."}
+
+      feedback ->
+        Tenants.delete_feedback(feedback)
+    end
+  end
 end

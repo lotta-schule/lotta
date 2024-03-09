@@ -596,7 +596,13 @@ defmodule Lotta.Tenants do
   """
   @doc since: "4.1.0"
   @spec get_feedback(Feedback.id()) :: Feedback.t() | nil
-  def get_feedback(id), do: Repo.get(Feedback, id)
+  def get_feedback(id) do
+    Repo.get(Feedback, id)
+  rescue
+    e in Ecto.Query.CastError ->
+      Logger.error("error casting id : #{inspect(e)}")
+      nil
+  end
 
   @doc """
   List all feedbacks for the current tenant.
@@ -662,7 +668,8 @@ defmodule Lotta.Tenants do
         :ok
 
       {:error, error} ->
-        error
+        Sentry.capture_message("Error sending feedback to lotta team: #{inspect(error)}")
+        :error
     end
   end
 
@@ -688,6 +695,16 @@ defmodule Lotta.Tenants do
       error ->
         error
     end)
+  end
+
+  @doc """
+  Deletes a feedback permanently.
+  """
+  @doc since: "4.2.0"
+  @spec delete_feedback(Feedback.t()) ::
+          {:ok, Feedback.t()} | {:error, Ecto.Changeset.t()}
+  def delete_feedback(feedback) do
+    Repo.delete(feedback)
   end
 
   def data() do

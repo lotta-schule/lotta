@@ -326,4 +326,113 @@ defmodule LottaWeb.FeedbackResolverTest do
       )
     end
   end
+
+  describe "Delete feedback" do
+    @query """
+    mutation DeleteFeedback($id: ID!) {
+      feedback: deleteFeedback(id: $id) {
+        id
+      }
+    }
+    """
+    test "deletes the feedback", %{
+      admin_jwt: admin_jwt,
+      feedbacks: [feedback | _]
+    } do
+      feedback_id = feedback.id
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{
+            "id" => feedback.id
+          }
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"feedback" => %{"id" => ^feedback_id}}
+             } = res
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(Feedback, feedback.id, prefix: @prefix)
+      end
+    end
+
+    test "returns error if feedback does not exist", %{admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query, variables: %{id: "0"})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "feedback" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Feedback mit der id 0 nicht gefunden.",
+                   "path" => ["feedback"]
+                 }
+               ]
+             } = res
+    end
+
+    test "returns error if user is not admin", %{
+      user_jwt: user_jwt,
+      feedbacks: [feedback | _]
+    } do
+      feedback_id = feedback.id
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query, variables: %{id: feedback.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "feedback" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Du musst Administrator sein um das zu tun.",
+                   "path" => ["feedback"]
+                 }
+               ]
+             } = res
+
+      assert %{id: ^feedback_id} = Repo.get!(Feedback, feedback_id, prefix: @prefix)
+    end
+
+    test "returns error if user is not logged in", %{feedbacks: [feedback | _]} do
+      feedback_id = feedback.id
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> post("/api", query: @query, variables: %{id: feedback.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "feedback" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Du musst Administrator sein um das zu tun.",
+                   "path" => ["feedback"]
+                 }
+               ]
+             } = res
+
+      assert %{id: ^feedback_id} = Repo.get!(Feedback, feedback_id, prefix: @prefix)
+    end
+  end
 end

@@ -127,5 +127,13 @@ defmodule LottaWeb.Schema.Tenants do
 
       resolve(&LottaWeb.FeedbackResolver.respond/2)
     end
+
+    field :delete_feedback, type: :feedback do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
+      arg(:id, non_null(:id))
+
+      resolve(&LottaWeb.FeedbackResolver.delete/2)
+    end
   end
 end
