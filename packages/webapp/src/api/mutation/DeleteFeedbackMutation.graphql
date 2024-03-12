@@ -1,0 +1,5 @@
+mutation DeleteFeedback($id: ID!) {
+  feedback: deleteFeedback(id: $id) {
+    id
+  }
+}

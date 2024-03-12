@@ -5,5 +5,6 @@ query GetGroup($id: ID!) {
     isAdminGroup
     sortKey
     enrollmentTokens
+    canReadFullName
   }
 }

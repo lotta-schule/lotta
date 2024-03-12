@@ -35,6 +35,9 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });
+
+    await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation
+
     expect(screen.queryAllByRole('option').map((o) => o.textContent)).toEqual([
       'tag',
       'noch ein tag',
@@ -56,6 +59,9 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });
+
+    await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation
+
     await fireEvent.click(
       screen.getByRole('option', { name: /noch ein tag/i })
     );
@@ -77,6 +83,9 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });
+
+    await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation
+
     await fireEvent.click(
       screen.getByRole('option', { name: /noch ein tag/i })
     );

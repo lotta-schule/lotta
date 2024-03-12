@@ -269,6 +269,7 @@ export const VPSchuelerWidget: WidgetModel<WidgetModelType.Schedule> = {
     username: 'l3hr3r',
     password: 'p@ssw0rd',
   },
+  iconImageFile: null,
 };
 
 export const VPLehrerWidget: WidgetModel<WidgetModelType.Schedule> = {
@@ -282,6 +283,7 @@ export const VPLehrerWidget: WidgetModel<WidgetModelType.Schedule> = {
     username: 'l3hr3r',
     password: 'p@ssw0rd',
   },
+  iconImageFile: null,
 };
 
 export const CalendarKlassenarbeiten: WidgetModel<WidgetModelType.Calendar> = {
@@ -299,6 +301,7 @@ export const CalendarKlassenarbeiten: WidgetModel<WidgetModelType.Calendar> = {
       },
     ],
   },
+  iconImageFile: null,
 };
 
 export const GangamStyleWidget: WidgetModel<WidgetModelType.IFrame> = {
@@ -309,6 +312,7 @@ export const GangamStyleWidget: WidgetModel<WidgetModelType.IFrame> = {
   configuration: {
     url: 'https://www.youtube-nocookie.com/embed/9bZkp7q19f0?controls=0',
   },
+  iconImageFile: null,
 };
 
 export const ScheduleResponse = {

@@ -62,6 +62,8 @@ export const WithPredefinedItems: StoryObj<typeof ComboBox> = {
       expect(canvas.getByRole('listbox')).toBeVisible();
     });
 
+    await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
+
     await fireEvent.click(canvas.getByRole('option', { name: 'Balance' }));
   },
 };
@@ -70,25 +72,12 @@ export const WithRequestedItems: StoryObj<typeof ComboBox> = {
   args: {
     title: 'Search for a Star Wars character or species',
     items: async (value: string) => {
-      return Promise.all([
-        searchSWApi('people', value),
-        searchSWApi('species', value),
-      ]).then((results: { results: { name: string }[] }[]) => {
-        return results
-          .reduce(
-            (acc, result) => {
-              return acc.concat(result.results);
-            },
-            [] as { name: string }[]
-          )
-          .sort((a, b) => {
-            return a.name.localeCompare(b.name);
-          })
-          .map((result) => ({
-            key: result.name,
-            label: result.name,
-            leftSection: <Close />,
-          }));
+      return getResults(value).then((results) => {
+        return results.sort().map((result) => ({
+          key: result,
+          label: result,
+          leftSection: <Close />,
+        }));
       });
     },
   },
@@ -102,27 +91,106 @@ export const WithRequestedItems: StoryObj<typeof ComboBox> = {
     await fireEvent.click(canvas.getByRole('combobox'));
     await fireEvent.keyboard('yoda');
 
-    await waitFor(
-      () => {
-        expect(canvas.getByRole('listbox')).toBeVisible();
-      },
-      { timeout: 15000 }
-    );
+    await waitFor(() => {
+      expect(canvas.getByRole('listbox')).toBeVisible();
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
 
     await fireEvent.click(canvas.queryAllByRole('option')?.[0]);
   },
 };
 
-const searchSWApi = (
-  type: 'people' | 'starships' | 'vehicles' | 'species' | 'planets',
-  value: string
-) => {
-  return fetch(
-    'https://swapi.dev/api/' + type + '/?search=' + encodeURIComponent(value),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  ).then((response) => response.json());
+const getResults = (value: string) => {
+  const people = [
+    'Luke Skywalker',
+    'C-3PO',
+    'R2-D2',
+    'Darth Vader',
+    'Leia Organa',
+    'Owen Lars',
+    'Beru Whitesun lars',
+    'R5-D4',
+    'Biggs Darklighter',
+    'Obi-Wan Kenobi',
+    'Anakin Skywalker',
+    'Wilhuff Tarkin',
+    'Chewbacca',
+    'Han Solo',
+    'Greedo',
+    'Jabba Desilijic Tiure',
+    'Wedge Antilles',
+    'Jek Tono Porkins',
+    'Yoda',
+    'Palpatine',
+    'Boba Fett',
+    'IG-88',
+    'Bossk',
+    'Lando Calrissian',
+    'Lobot',
+    'Ackbar',
+    'Mon Mothma',
+    'Arvel Crynyd',
+    'Wicket Systri Warrick',
+    'Nien Nunb',
+    'Qui-Gon Jinn',
+    'Nute Gunray',
+    'Finis Valorum',
+    'Padmé Amidala',
+    'Jar Jar Binks',
+    'Roos Tarpals',
+    'Rugor Nass',
+    'Ric Olié',
+    'Watto',
+    'Sebulba',
+    'Quarsh Panaka',
+    'Shmi Skywalker',
+    'Darth Maul',
+    'Bib Fortuna',
+    'Ayla Secura',
+    'Ratts Tyerel',
+    'Dud Bolt',
+    'Gasgano',
+    'Ben Quadinaros',
+    'Mace Windu',
+    'Ki-Adi-Mundi',
+    'Kit Fisto',
+    'Eeth Koth',
+    'Adi Gallia',
+    'Saesee Tiin',
+    'Yarael Poof',
+    'Plo Koon',
+    'Mas Amedda',
+    'Gregar Typho',
+    'Cordé',
+    'Cliegg Lars',
+    'Poggle the Lesser',
+    'Luminara Unduli',
+    'Barriss Offee',
+    'Dormé',
+    'Dooku',
+    'Bail Prestor Organa',
+    'Jango Fett',
+    'Zam Wesell',
+    'Dexter Jettster',
+    'Lama Su',
+    'Taun We',
+    'Jocasta Nu',
+    'R4-P17',
+    'Wat Tambor',
+    'San Hill',
+    'Shaak Ti',
+    'Grievous',
+    'Tarfful',
+    'Raymus Antilles',
+    'Sly Moore',
+    'Tion Medon',
+  ];
+  return new Promise<string[]>((resolve) => {
+    setTimeout(() => {
+      resolve(
+        people.filter((p) => p.toLowerCase().includes(value.toLowerCase()))
+      );
+    }, 250);
+  });
 };

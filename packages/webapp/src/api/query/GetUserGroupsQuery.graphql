@@ -4,5 +4,6 @@ query GetUserGroups {
     name
     isAdminGroup
     sortKey
+    canReadFullName
   }
 }

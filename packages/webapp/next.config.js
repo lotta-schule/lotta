@@ -42,11 +42,11 @@ const nextConfig = {
       // Plausible Analytics
       {
         source: '/p/script.js',
-        destination: 'https://plausible.io/js/script.js',
+        destination: 'https://plausible.intern.lotta.schule/js/script.js',
       },
       {
         source: '/p/e',
-        destination: 'https://plausible.io/api/event',
+        destination: 'https://plausible.intern.lotta.schule/api/event',
       },
     ];
   },

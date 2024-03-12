@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Box } from '@lotta-schule/hubert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleExclamation,
   faCubes,
 } from '@fortawesome/free-solid-svg-icons';
+import { Box } from '@lotta-schule/hubert';
 import { Header, Main, Sidebar } from 'layout';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
@@ -27,7 +27,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   title,
 }) => {
   const user = useCurrentUser();
-
   const isAllowed = User.isAdmin(user);
 
   return (

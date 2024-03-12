@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { faCommentDots } from '@fortawesome/free-regular-svg-icons';
-import { faShare } from '@fortawesome/free-solid-svg-icons';
+import { faShare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@lotta-schule/hubert';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { FeedbackModel } from 'model';
 import { Icon } from 'shared/Icon';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
+import { DeleteFeedbackDialog } from './DeleteFeedbackDialog';
 import { ForwardFeedbackDialog } from './ForwardFeedbackDialog';
 import { RespondToFeedbackDialog } from './RespondToFeedbackDialog';
-import de from 'date-fns/locale/de';
+import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 
 import styles from '../Feedback.module.scss';
@@ -17,14 +18,17 @@ import styles from '../Feedback.module.scss';
 export type FeedbackRowProps = {
   feedback: FeedbackModel;
   isActive: boolean;
-  onClick(): void;
+  onClick: () => void;
+  onDelete: () => void;
 };
 
 export const FeedbackRow = React.memo(
-  ({ feedback, isActive, onClick }: FeedbackRowProps) => {
+  ({ feedback, isActive, onClick, onDelete }: FeedbackRowProps) => {
     const [isForwardFeedbackDialogOpen, setIsForwardFeedbackDialogOpen] =
       React.useState(false);
     const [isRespondToFeedbackDialogOpen, setIsRespondToFeedbackDialogOpen] =
+      React.useState(false);
+    const [isDeleteFeedbackDialogOpen, setIsDeleteFeedbackDialogOpen] =
       React.useState(false);
     return (
       <React.Fragment key={feedback.id}>
@@ -41,6 +45,17 @@ export const FeedbackRow = React.memo(
             {format(new Date(feedback.insertedAt), 'Pp', {
               locale: de,
             })}
+          </td>
+          <td>
+            <Button
+              small
+              icon={<Icon icon={faTrash} />}
+              title={'Feedback löschen'}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsDeleteFeedbackDialogOpen(true);
+              }}
+            />
           </td>
         </tr>
         {isActive && (
@@ -87,6 +102,15 @@ export const FeedbackRow = React.memo(
           feedback={feedback}
           isOpen={isRespondToFeedbackDialogOpen}
           onRequestClose={() => setIsRespondToFeedbackDialogOpen(false)}
+        />
+        <DeleteFeedbackDialog
+          feedback={feedback}
+          isOpen={isDeleteFeedbackDialogOpen}
+          onRequestClose={() => setIsDeleteFeedbackDialogOpen(false)}
+          onConfirm={() => {
+            setIsDeleteFeedbackDialogOpen(false);
+            onDelete();
+          }}
         />
       </React.Fragment>
     );

@@ -1,8 +1,18 @@
-.button {
-  margin: calc(2 * var(--lotta-spacing)) calc(2 * var(--lotta-spacing));
-}
+.root {
+  .toolbar {
+    align-items: baseline;
 
-.divider {
-  clear: both;
-  margin: calc(2 * var(--lotta-spacing)) calc(2 * var(--lotta-spacing));
+    .widgetType {
+      color: rgb(var(--lotta-disabled-color));
+    }
+  }
+
+  .footer {
+    display: flex;
+
+    .button {
+      margin-right: var(--lotta-spacing);
+    }
+
+  }
 }

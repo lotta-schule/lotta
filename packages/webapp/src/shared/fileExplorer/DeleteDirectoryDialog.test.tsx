@@ -79,7 +79,6 @@ describe('shared/dialog/DeleteDirectoryDialog', () => {
     await waitFor(() => {
       expect(screen.getByRole('list')).toBeVisible();
     });
-    screen.debug(screen.getByRole('list'));
     await waitFor(() => {
       expect(screen.getAllByRole('listitem')).toHaveLength(3);
     });

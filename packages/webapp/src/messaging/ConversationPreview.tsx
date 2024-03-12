@@ -6,7 +6,7 @@ import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { User } from 'util/model';
 import { format } from 'date-fns';
 import { Message } from 'util/model/Message';
-import de from 'date-fns/locale/de';
+import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 
 import styles from './ConversationPreview.module.scss';

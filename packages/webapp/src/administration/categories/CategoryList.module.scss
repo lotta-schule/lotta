@@ -1,3 +1,5 @@
+@import '../../styles/util/breakpoints';
+
 .root {
   .container {
     padding-top: calc(3 * var(--lotta-spacing));
@@ -8,6 +10,10 @@
 
   .headlines {
     margin-bottom: calc(4 * var(--lotta-spacing));
+
+    @media screen and (max-width: $max-xs) {
+      margin-bottom: var(--lotta-spacing);
+    }
   }
 
   .button {
@@ -19,10 +25,12 @@
   section {
     margin-bottom: calc(2 * var(--lotta-spacing));
     display: flex;
-    & > div:first-child {
+
+    &>div:first-child {
       padding-right: calc(4 * var(--lotta-spacing));
     }
-    & > div:not(:first-child) {
+
+    &>div:not(:first-child) {
       flex: 1;
     }
   }
