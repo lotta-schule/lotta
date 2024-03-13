@@ -37,7 +37,7 @@ describe('shared/article/ArticleLayout', () => {
       { additionalMocks }
     );
     await waitFor(() => {
-      expect(screen.getByTestId('RelatedArticlesList')).toBeVisible();
+      expect(screen.getByTestId('ArticlesByTag')).toBeVisible();
     });
   });
 });

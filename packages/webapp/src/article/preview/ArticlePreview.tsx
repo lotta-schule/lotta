@@ -7,7 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { ArticleModel, ID } from 'model';
+import { ArticleModel, ID, UserModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, File, User } from 'util/model';
 import { useMutation } from '@apollo/client';
@@ -27,6 +27,8 @@ import { useServerData } from 'shared/ServerDataContext';
 import { TagsSelect } from '../editor/TagsSelect';
 import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
+import { TagDetailsDialog } from 'article/tagDetailsDialog';
+import { UserArticlesDialog } from 'profile/userArticlesDialog';
 import Link from 'next/link';
 import clsx from 'clsx';
 
@@ -58,6 +60,11 @@ export const ArticlePreview = React.memo(
     const { baseUrl } = useServerData();
 
     const currentUser = useCurrentUser();
+
+    const [selectedTag, setSelectedTag] = React.useState<string | null>(null);
+    const [selectedUser, setSelectedUser] = React.useState<UserModel | null>(
+      null
+    );
 
     const showEditSection =
       User.canEditArticle(currentUser, article) || User.isAdmin(currentUser);
@@ -225,7 +232,11 @@ export const ArticlePreview = React.memo(
               />
             )}
             {!onUpdateArticle &&
-              article.tags?.map((tag) => <Tag key={tag}>{tag}</Tag>)}
+              article.tags?.map((tag) => (
+                <Tag key={tag} onClick={() => setSelectedTag(tag)}>
+                  {tag}
+                </Tag>
+              ))}
           </div>
           <div className={styles.dateGridItem}>
             <time
@@ -260,6 +271,7 @@ export const ArticlePreview = React.memo(
                     }
                   : undefined
               }
+              onClick={setSelectedUser}
             />
             <Dialog
               open={isSelfRemovalDialogOpen}
@@ -329,6 +341,18 @@ export const ArticlePreview = React.memo(
             )}
           </div>
         </div>
+        {TagDetailsDialog && (
+          <TagDetailsDialog
+            tag={selectedTag}
+            onRequestClose={() => setSelectedTag(null)}
+          />
+        )}
+        {UserArticlesDialog && (
+          <UserArticlesDialog
+            user={selectedUser}
+            onRequestClose={() => setSelectedUser(null)}
+          />
+        )}
       </Box>
     );
   }

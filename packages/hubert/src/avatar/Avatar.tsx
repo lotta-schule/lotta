@@ -3,7 +3,8 @@ import clsx from 'clsx';
 
 import styles from './Avatar.module.scss';
 
-export interface AvatarProps {
+export interface AvatarProps
+  extends Omit<React.HTMLProps<HTMLDivElement>, 'ref'> {
   /**
    * The avatar image source
    */
@@ -22,11 +23,12 @@ export interface AvatarProps {
 export const Avatar = React.memo(
   React.forwardRef(
     (
-      { src, title, className, style }: AvatarProps,
+      { src, title, className, style, ...htmlProps }: AvatarProps,
       ref: React.ForwardedRef<HTMLDivElement>
     ) => {
       return (
         <div
+          {...htmlProps}
           role={'img'}
           title={title}
           ref={ref}

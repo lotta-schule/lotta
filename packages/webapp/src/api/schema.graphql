@@ -354,6 +354,8 @@ type RootMutationType {
 type RootQueryType {
   article(id: ID!): Article
   articles(categoryId: ID, filter: ArticleFilter): [Article]
+  articlesByTag(tag: String!): [Article!]
+  articlesByUser(id: ID!): [Article!]
   articlesWithUserFiles(userId: ID!): [Article]
   calendar(days: Int, url: String!): [CalendarEvent]
   categories: [Category]
@@ -373,7 +375,6 @@ type RootQueryType {
   schedule(date: Date, widgetId: ID!): Json
   search(options: SearchOptions, searchText: String!): [Article]
   searchUsers(groups: [SelectUserGroupInput!], lastSeen: Int, searchtext: String): [User]
-  tag(tag: String!): [Article]
   tags: [String!]
   tenant(slug: String): Tenant
   unpublishedArticles: [Article]

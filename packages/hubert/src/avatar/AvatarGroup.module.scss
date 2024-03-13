@@ -4,6 +4,7 @@
   display: inline-flex;
   .avatar {
     margin-right: calc(var(--deletable-button-offset) * -1);
+    cursor: pointer;
     &:last-of-type {
       margin-right: var(--deletable-button-offset);
     }

@@ -12,11 +12,12 @@ export interface AuthorAvatarsListProps {
   users: UserModel[];
   className?: string;
   max?: number;
+  onClick?: (user: UserModel) => void;
   onUpdate?: (users: UserModel[]) => void;
 }
 
-export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
-  ({ users, className, max, onUpdate }) => {
+export const AuthorAvatarsList = React.memo(
+  ({ users, className, max, onClick, onUpdate }: AuthorAvatarsListProps) => {
     const getAvatar = React.useCallback(
       (user: UserModel) => {
         return (
@@ -38,13 +39,14 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
                   borderRadius: '50%',
                 }}
                 title={`Profilbild von ${User.getNickname(user)}`}
+                onClick={() => onClick?.(user)}
                 size={25}
               />
             </Tooltip>
           </Deletable>
         );
       },
-      [onUpdate, users]
+      [onUpdate, users, onClick]
     );
 
     return (
