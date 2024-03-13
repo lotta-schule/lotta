@@ -2777,8 +2777,8 @@ defmodule LottaWeb.ArticleResolverTest do
 
   describe "tags query" do
     @query """
-    query tag($tag: String!) {
-      tag(tag: $tag) {
+    query articlesByTag($tag: String!) {
+      articles: articlesByTag(tag: $tag) {
         title
         preview
         tags
@@ -2798,7 +2798,7 @@ defmodule LottaWeb.ArticleResolverTest do
 
       assert res == %{
                "data" => %{
-                 "tag" => [
+                 "articles" => [
                    %{
                      "isPinnedToTop" => false,
                      "preview" =>
@@ -2830,7 +2830,7 @@ defmodule LottaWeb.ArticleResolverTest do
 
       assert res == %{
                "data" => %{
-                 "tag" => [
+                 "articles" => [
                    %{
                      "isPinnedToTop" => false,
                      "preview" =>
@@ -2854,7 +2854,98 @@ defmodule LottaWeb.ArticleResolverTest do
 
       assert res == %{
                "data" => %{
-                 "tag" => []
+                 "articles" => []
+               }
+             }
+    end
+  end
+
+  describe "articlesByUser query" do
+    @query """
+    query articlesByUser($id: ID!) {
+      articles: articlesByUser(id: $id) {
+        title
+        preview
+        tags
+        readyToPublish
+        isPinnedToTop
+      }
+    }
+    """
+    test "returns all articles of lehrer if user is lehrer", %{
+      lehrer: lehrer,
+      lehrer_jwt: lehrer_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
+        |> get("/api", query: @query, variables: %{id: lehrer.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "articles" => [
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Hallo hallo hallo",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "And the oskar goes to ..."
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "returns all articles of lehrer if user is user", %{
+      lehrer: lehrer,
+      schueler_jwt: schueler_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{schueler_jwt}")
+        |> get("/api", query: @query, variables: %{id: lehrer.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "articles" => [
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Hallo hallo hallo",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "And the oskar goes to ..."
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "returns all articles for lehrer if user is not logged in", %{
+      lehrer: lehrer,
+      user_jwt: user_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: lehrer.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "articles" => [
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Hallo hallo hallo",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "And the oskar goes to ..."
+                   }
+                 ]
                }
              }
     end

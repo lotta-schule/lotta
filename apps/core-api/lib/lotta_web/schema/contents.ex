@@ -43,9 +43,7 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleResolver.get_all_tags/2)
     end
 
-    field :tag, list_of(:article) do
-      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
-
+    field :articles_by_tag, list_of(non_null(:article)) do
       arg(:tag, non_null(:string))
 
       resolve(&LottaWeb.ArticleResolver.by_tag/2)
