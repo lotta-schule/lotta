@@ -5,7 +5,7 @@
   align-items: center;
 
   &:not(.small) {
-    min-height: 2.8em;
+    min-height: 2.5em;
   }
 
   .icon {
@@ -21,7 +21,8 @@
     &:not(.grouped) {
       border-radius: 50%;
       border-color: transparent;
-      padding: 0.4em;
+      height: 2.5em;
+      width: 2.5em;
 
       &:not([data-varaint='fill']) {
         &:hover {
