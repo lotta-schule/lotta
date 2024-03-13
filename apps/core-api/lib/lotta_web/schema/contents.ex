@@ -51,6 +51,12 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleResolver.by_tag/2)
     end
 
+    field :articles_by_user, list_of(non_null(:article)) do
+      arg(:id, non_null(:id))
+
+      resolve(&LottaWeb.ArticleResolver.by_user/2)
+    end
+
     field :content_module_results, list_of(:content_module_result) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 

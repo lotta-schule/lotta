@@ -69,6 +69,16 @@ defmodule LottaWeb.ArticleResolver do
     {:ok, Content.list_articles_by_tag(current_user, tag)}
   end
 
+  def by_user(%{id: user_id}, %{context: context}) do
+    user = Accounts.get_user(String.to_integer(user_id))
+
+    if is_nil(user) do
+      {:error, "Nutzer mit der ID #{user_id} nicht gefunden."}
+    else
+      {:ok, Content.list_articles_by_user(context.current_user, user)}
+    end
+  end
+
   def create(%{article: article_params}, %{context: %Context{current_user: user}}) do
     article_params
     |> Content.create_article(user)

@@ -76,7 +76,7 @@ defmodule Lotta.Content do
 
   ## Examples
 
-      iex> list_articles(tag)
+      iex> list_articles_by_tag(tag)
       [%Article{}, ...]
 
   """
@@ -89,6 +89,28 @@ defmodule Lotta.Content do
 
     from(a in query,
       where: ^tag in a.tags,
+      order_by: [desc: :updated_at]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the list of articles being authored by a given user
+
+  ## Examples
+
+      iex> list_articles_by_user(Repo.get(User, 1))
+      [%Article{}, ...]
+
+  """
+  @doc since: "4.2.0"
+  @spec list_articles_by_user(User.t() | nil, User.id()) :: list(Article.t())
+  def list_articles_by_user(current_user, user) do
+    query = Article.get_published_articles_query(user)
+
+    from(a in query,
+      left_join: au in "article_users",
+      where: au.user_id == ^user.id and au.article_id == a.id,
       order_by: [desc: :updated_at]
     )
     |> Repo.all()

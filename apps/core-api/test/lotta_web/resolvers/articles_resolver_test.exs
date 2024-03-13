@@ -2860,6 +2860,97 @@ defmodule LottaWeb.ArticleResolverTest do
     end
   end
 
+  describe "articlesByUser query" do
+    @query """
+    query articlesByUser($id: ID!) {
+      articles: articlesByUser(id: $id) {
+        title
+        preview
+        tags
+        readyToPublish
+        isPinnedToTop
+      }
+    }
+    """
+    test "returns all articles of lehrer if user is lehrer", %{
+      lehrer: lehrer,
+      lehrer_jwt: lehrer_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
+        |> get("/api", query: @query, variables: %{id: lehrer.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "articles" => [
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Hallo hallo hallo",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "And the oskar goes to ..."
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "returns all articles of lehrer if user is user", %{
+      lehrer: lehrer,
+      schueler_jwt: schueler_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{schueler_jwt}")
+        |> get("/api", query: @query, variables: %{id: lehrer.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "articles" => [
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Hallo hallo hallo",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "And the oskar goes to ..."
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "returns all articles for lehrer if user is not logged in", %{
+      lehrer: lehrer,
+      user_jwt: user_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: lehrer.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "articles" => [
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Hallo hallo hallo",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "And the oskar goes to ..."
+                   }
+                 ]
+               }
+             }
+    end
+  end
+
   describe "createArticle mutation" do
     @mutation """
     mutation createArticle($article: ArticleInput!) {
