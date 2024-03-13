@@ -5,17 +5,17 @@ import { motion } from 'framer-motion';
 import { ArticlePreview } from 'article/preview';
 import { ArticleModel } from 'model';
 
-import styles from './RelatedArticlesList.module.scss';
-
 import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
 
-export interface RelatedArticlesListProps {
+import styles from './ArticlesByTag.module.scss';
+
+export interface ArticlesByTagProps {
   tag: string;
   hideTitle?: boolean;
 }
 
-export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
-  ({ tag, hideTitle }) => {
+export const ArticlesByTag = React.memo(
+  ({ tag, hideTitle }: ArticlesByTagProps) => {
     const { data, loading: isLoading } = useQuery<
       { articles: ArticleModel[] },
       { tag: string }
@@ -53,35 +53,38 @@ export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
       visible: (i: number) => ({
         opacity: 1,
         y: 0,
-        transition: { delay: i * 0.3 },
+        transition: { delay: Math.min(i * 0.15, 1.5) },
       }),
       hidden: { opacity: 0, y: -100 },
     };
 
     return (
       <motion.section
-        data-testid={'RelatedArticlesList'}
+        data-testid={'ArticlesByTag'}
         initial={'hidden'}
         animate={'visible'}
         variants={containerVariants}
+        className={styles.root}
       >
         {!hideTitle && (
-          <h6 className={styles.root}>
+          <h6 className={styles.header}>
             Weitere Beiträge zum Thema <strong>{tag}</strong>
           </h6>
         )}
         {relatedArticles.map((article, i) => (
           <motion.div key={article.id} variants={itemVariants} custom={i}>
-            <ArticlePreview
-              layout="densed"
-              article={article}
-              limitedHeight
-              disableEdit
-            />
+            {ArticlePreview && (
+              <ArticlePreview
+                layout="densed"
+                article={article}
+                limitedHeight
+                disableEdit
+              />
+            )}
           </motion.div>
         ))}
       </motion.section>
     );
   }
 );
-RelatedArticlesList.displayName = 'RelatedArticlesList';
+ArticlesByTag.displayName = 'ArticlesByTag';

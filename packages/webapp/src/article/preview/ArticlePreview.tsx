@@ -28,13 +28,13 @@ import { TagsSelect } from '../editor/TagsSelect';
 import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { TagDetailsDialog } from 'article/tagDetailsDialog';
+import { UserArticlesDialog } from 'profile/userArticlesDialog';
 import Link from 'next/link';
 import clsx from 'clsx';
 
 import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
 
 import styles from './ArticlePreview.module.scss';
-import { UserArticlesDialog } from 'profile/userArticlesDialog';
 
 interface ArticlePreviewProps {
   article: ArticleModel;
@@ -271,10 +271,7 @@ export const ArticlePreview = React.memo(
                     }
                   : undefined
               }
-              onClick={(user) => {
-                alert(' click');
-                setSelectedUser(user);
-              }}
+              onClick={setSelectedUser}
             />
             <Dialog
               open={isSelfRemovalDialogOpen}
@@ -344,14 +341,18 @@ export const ArticlePreview = React.memo(
             )}
           </div>
         </div>
-        <TagDetailsDialog
-          tag={selectedTag}
-          onRequestClose={() => setSelectedTag(null)}
-        />
-        <UserArticlesDialog
-          user={selectedUser}
-          onRequestClose={() => setSelectedUser(null)}
-        />
+        {TagDetailsDialog && (
+          <TagDetailsDialog
+            tag={selectedTag}
+            onRequestClose={() => setSelectedTag(null)}
+          />
+        )}
+        {UserArticlesDialog && (
+          <UserArticlesDialog
+            user={selectedUser}
+            onRequestClose={() => setSelectedUser(null)}
+          />
+        )}
       </Box>
     );
   }

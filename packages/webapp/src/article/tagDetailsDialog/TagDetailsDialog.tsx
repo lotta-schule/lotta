@@ -5,19 +5,19 @@ import {
   DialogActions,
   DialogContent,
 } from '@lotta-schule/hubert';
-import { RelatedArticlesList } from '../relatedArticlesList/RelatedArticlesList';
+import { ArticlesByTag } from '../relatedArticlesList';
 import styles from './TagDetailsDialog.module.scss';
 export interface TagDetailsDialogProps {
   tag: string | null;
   onRequestClose(): void;
 }
 
-export interface RelatedArticlesListProps {
+export interface ArticlesByTagProps {
   tag: string;
 }
 
-export const TagDetailsDialog = React.memo<TagDetailsDialogProps>(
-  ({ tag, onRequestClose }) => {
+export const TagDetailsDialog = React.memo(
+  ({ tag, onRequestClose }: TagDetailsDialogProps) => {
     return (
       <Dialog
         open={!!tag}
@@ -26,9 +26,7 @@ export const TagDetailsDialog = React.memo<TagDetailsDialogProps>(
         onRequestClose={onRequestClose}
       >
         <DialogContent>
-          {tag && (
-            <RelatedArticlesList tag={tag} hideTitle></RelatedArticlesList>
-          )}
+          {tag && <ArticlesByTag tag={tag} hideTitle></ArticlesByTag>}
         </DialogContent>
         <DialogActions>
           <Button

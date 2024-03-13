@@ -1,11 +1,3 @@
 .root {
   display: flex;
-  .avatarImage {
-    box-shadow: none;
-  }
-  .userInfo {
-    font-size: 14pt;
-    margin-top: 0.4em;
-    margin-left: var(--lotta-spacing);
-  }
 }

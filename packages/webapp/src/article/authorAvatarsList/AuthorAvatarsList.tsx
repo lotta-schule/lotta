@@ -16,8 +16,8 @@ export interface AuthorAvatarsListProps {
   onUpdate?: (users: UserModel[]) => void;
 }
 
-export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
-  ({ users, className, max, onClick, onUpdate }) => {
+export const AuthorAvatarsList = React.memo(
+  ({ users, className, max, onClick, onUpdate }: AuthorAvatarsListProps) => {
     const getAvatar = React.useCallback(
       (user: UserModel) => {
         return (
@@ -46,7 +46,7 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
           </Deletable>
         );
       },
-      [onUpdate, users]
+      [onUpdate, users, onClick]
     );
 
     return (

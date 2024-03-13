@@ -7,8 +7,7 @@ import {
 } from '@lotta-schule/hubert';
 import { UserModel } from 'model';
 import { User } from 'util/model';
-import { useServerData } from 'shared/ServerDataContext';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
+import { ArticlesByUser } from 'article/relatedArticlesList';
 
 import styles from './UserArticlesDialog.module.scss';
 
@@ -17,13 +16,8 @@ export interface UserArticlesDialogProps {
   onRequestClose(): void;
 }
 
-export interface RelatedArticlesListProps {
-  tag: string;
-}
-
-export const UserArticlesDialog = React.memo<UserArticlesDialogProps>(
-  ({ user, onRequestClose }) => {
-    const { baseUrl } = useServerData();
+export const UserArticlesDialog = React.memo(
+  ({ user, onRequestClose }: UserArticlesDialogProps) => {
     return (
       <Dialog
         open={!!user}
@@ -32,16 +26,7 @@ export const UserArticlesDialog = React.memo<UserArticlesDialogProps>(
         onRequestClose={onRequestClose}
       >
         <DialogContent>
-          {user && (
-            <>
-              <UserAvatar
-                className={styles.avatarImage}
-                size={40}
-                user={user}
-              />
-              <div className={styles.userInfo}>{User.getName(user)}</div>
-            </>
-          )}
+          {user && <ArticlesByUser key={user.id} user={user} />}
         </DialogContent>
         <DialogActions>
           <Button

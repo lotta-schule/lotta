@@ -5,12 +5,13 @@ import {
   ComputerExperten,
   VivaLaRevolucion,
 } from 'test/fixtures';
-import { RelatedArticlesList } from './RelatedArticlesList';
+import { ArticlesByTag } from './ArticlesByTag';
 import { FetchResult } from '@apollo/client';
 import { ArticleModel } from 'model';
+
 import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
 
-describe('shared/article/RelatedArticlesList', () => {
+describe('shared/article/ArticlesByTag', () => {
   const getAdditionalMocks = (
     result:
       | FetchResult<{ articles: ArticleModel[] }>
@@ -25,9 +26,9 @@ describe('shared/article/RelatedArticlesList', () => {
     },
   ];
 
-  it('should render a RelatedArticlesList without error', () => {
+  it('should render a ArticlesByTag without error', () => {
     render(
-      <RelatedArticlesList tag={'tag'} />,
+      <ArticlesByTag tag={'tag'} />,
       {},
       { additionalMocks: getAdditionalMocks({ data: { articles: [] } }) }
     );
@@ -36,7 +37,7 @@ describe('shared/article/RelatedArticlesList', () => {
   describe('tag header', () => {
     it('should be visible when results are found', async () => {
       const screen = render(
-        <RelatedArticlesList tag={'tag'} />,
+        <ArticlesByTag tag={'tag'} />,
         {},
         {
           additionalMocks: getAdditionalMocks({
@@ -52,7 +53,7 @@ describe('shared/article/RelatedArticlesList', () => {
     it('should not be shown when no results are found', async () => {
       const resFn = jest.fn(() => ({ data: { articles: [] } }));
       const screen = render(
-        <RelatedArticlesList tag={'tag'} />,
+        <ArticlesByTag tag={'tag'} />,
         {},
         {
           additionalMocks: getAdditionalMocks(resFn),
@@ -72,7 +73,7 @@ describe('shared/article/RelatedArticlesList', () => {
       },
     }));
     const screen = render(
-      <RelatedArticlesList tag={'tag'} />,
+      <ArticlesByTag tag={'tag'} />,
       {},
       {
         additionalMocks: getAdditionalMocks(resFn),
