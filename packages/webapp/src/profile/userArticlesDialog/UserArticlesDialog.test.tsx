@@ -1,5 +1,6 @@
 import { render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
+import { useRouter } from 'next/router';
 import { UserArticlesDialog } from './UserArticlesDialog';
 
 import GetArticlesByUserQuery from 'api/query/GetArticlesByUserQuery.graphql';
@@ -27,6 +28,27 @@ describe('UserArticlesDialog', () => {
     );
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('should close the dialog when the route changes', async () => {
+    const onRequestClose = jest.fn();
+    const screen = render(
+      <UserArticlesDialog user={SomeUser} onRequestClose={onRequestClose} />,
+      {},
+      {
+        additionalMocks,
+      }
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeVisible();
+    });
+
+    useRouter().push('/new-path');
+
+    await waitFor(() => {
+      expect(onRequestClose).toHaveBeenCalled();
+    });
   });
 
   it('should render the list of articles', async () => {

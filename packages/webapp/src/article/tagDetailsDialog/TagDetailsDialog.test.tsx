@@ -1,5 +1,6 @@
 import { render, waitFor } from 'test/util';
 import { Weihnachtsmarkt } from 'test/fixtures';
+import { useRouter } from 'next/router';
 import { TagDetailsDialog } from './TagDetailsDialog';
 
 import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
@@ -27,6 +28,27 @@ describe('TagDetailsDialog', () => {
     );
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('should close the dialog when the route changes', async () => {
+    const onRequestClose = jest.fn();
+    const screen = render(
+      <TagDetailsDialog tag="tag" onRequestClose={onRequestClose} />,
+      {},
+      {
+        additionalMocks,
+      }
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeVisible();
+    });
+
+    useRouter().push('/new-path');
+
+    await waitFor(() => {
+      expect(onRequestClose).toHaveBeenCalled();
+    });
   });
 
   it('should render the list of articles', async () => {

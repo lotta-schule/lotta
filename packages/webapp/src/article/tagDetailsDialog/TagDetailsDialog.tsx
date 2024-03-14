@@ -7,17 +7,25 @@ import {
 } from '@lotta-schule/hubert';
 import { ArticlesByTag } from '../relatedArticlesList';
 import styles from './TagDetailsDialog.module.scss';
+import { useRouter } from 'next/router';
+
 export interface TagDetailsDialogProps {
   tag: string | null;
   onRequestClose(): void;
 }
 
-export interface ArticlesByTagProps {
-  tag: string;
-}
-
 export const TagDetailsDialog = React.memo(
   ({ tag, onRequestClose }: TagDetailsDialogProps) => {
+    const router = useRouter();
+
+    React.useEffect(() => {
+      router.events.on('routeChangeStart', onRequestClose);
+
+      return () => {
+        router.events.off('routeChangeStart', onRequestClose);
+      };
+    }, [router, onRequestClose]);
+
     return (
       <Dialog
         open={!!tag}
