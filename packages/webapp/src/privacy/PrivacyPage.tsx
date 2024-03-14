@@ -140,7 +140,7 @@ export const PrivacyPage = () => {
             </ul>
           </p>
           <p>
-            <strong>Nationale Datenschutzregelungen in Deutschland:</strong>
+            <strong>Nationale Datenschutzregelungen in Deutschland:</strong> 
             Zusätzlich zu den Datenschutzregelungen der
             Datenschutz-Grundverordnung gelten nationale Regelungen zum
             Datenschutz in Deutschland. Hierzu gehört insbesondere das Gesetz
@@ -503,26 +503,21 @@ export const PrivacyPage = () => {
         <Box className={styles.box}>
           <h4>Änderung und Aktualisierung der Datenschutzerklärung</h4>
           <p>
-            Wir bitten dich, dich regelmäßig über den Inhalt unserer
-            Datenschutzerklärung zu informieren. Wir passen die
-            Datenschutzerklärung an, sobald die Änderungen der von uns
-            durchgeführten Datenverarbeitungen dies erforderlich machen. Wir
-            informieren dich, sobald durch die Änderungen eine
-            Mitwirkungshandlung deinerseits (z.B. Einwilligung) oder eine
-            sonstige individuelle Benachrichtigung erforderlich wird.
+            Wir bitten Sie, sich regelmäßig über den Inhalt unserer 
+            Datenschutzerklärung zu informieren. Wir passen die 
+            Datenschutzerklärung an, sobald Änderungen an den 
+            von uns durchgeführten Datenverarbeitungen dies erforderlich machen. 
+            Wir informieren Sie, sobald durch die Änderungen eine 
+            Mitwirkungshandlung Ihrerseits (z.B. Einwilligung) oder 
+            eine sonstige individuelle Benachrichtigung erforderlich wird.
           </p>
         </Box>
 
         <Box className={styles.box}>
           <h4>Rechte der betroffenen Personen</h4>
           <p>
-            Wir bitten dich, dich regelmäßig über den Inhalt unserer
-            Datenschutzerklärung zu informieren. Wir passen die
-            Datenschutzerklärung an, sobald die Änderungen der von uns
-            durchgeführten Datenverarbeitungen dies erforderlich machen. Wir
-            informieren dich, sobald durch die Änderungen eine
-            Mitwirkungshandlung deinerseits (z.B. Einwilligung) oder eine
-            sonstige individuelle Benachrichtigung erforderlich wird.
+            Ihnen wird freigestellt, 
+            ob Sie einen der folgenden Ansprüche gesetzlich geltend machen:
           </p>
           <div>
             <ul>
