@@ -27,13 +27,13 @@ export const PrivacyPage = () => {
             Social-Media-Profile (nachfolgend zusammenfassend bezeichnet als
             &quot;Onlineangebot&quot;).
           </p>
-          <p>Stand: 28. August 2019</p>
+          <p>Stand: 14. März 2024</p>
         </Box>
 
         <Box className={styles.box}>
           <h4>Verantwortlicher</h4>
           <p>
-            <strong>EinsA GbR</strong>
+            <strong>einsA GbR</strong>
             <br />
             Wilhelminenstraße 10
             <br />
@@ -219,16 +219,8 @@ export const PrivacyPage = () => {
             ).
           </p>
           <p>
-            Alle von Nutzern hochgeladenen Daten werden von uns bei den
+            Alle von Nutzern hochgeladenen Daten werden von uns bei dem
             Unternehmen
-            <a
-              href="https://www.ionos.de/terms-gtc/fileadmin/pdf/terms-gtc/DE/AVV/DE_AVV_TOM_v1.0.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              1&1 IONOS
-            </a>{' '}
-            und
             <a
               href="https://www.scaleway.com/en/privacy-policy/"
               target="_blank"
@@ -236,8 +228,8 @@ export const PrivacyPage = () => {
             >
               Scaleway
             </a>
-            auf Servern mit Standorten innerhalb der EU (Deutschland und
-            Frankreich) gespeichert.
+            auf Servern mit Standorten innerhalb der EU (Polen und Frankreich)
+            gespeichert.
           </p>
           <p>
             Zusätzlich werden die von Nutzern hochgeladenen Inhalte zum
@@ -249,8 +241,16 @@ export const PrivacyPage = () => {
               rel="noopener noreferrer"
             >
               keycdn
+            </a>{' '}
+            sowie dem französischen Unternehmen
+            <a
+              href="https://legal.scaleflex.com/privacy/global-privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Cloudimage
             </a>
-            bei Bedarf zwischengespeichert und ausgeliefert.
+            bei Bedarf zwischengespeichert, verarbeitet und ausgeliefert.
           </p>
           <p>
             Alle von Nutzern hochgeladenen Video und Audiodateien werden zum
@@ -262,8 +262,8 @@ export const PrivacyPage = () => {
             >
               Coconut
             </a>
-            zur Umwandlung hochgeladen. Sie werden aber bei ionos und scaleway
-            auf Servern innerhalb der EU gespeichert.
+            zur Umwandlung hochgeladen. Sie werden aber bei scaleway auf Servern
+            innerhalb der EU gespeichert.
           </p>
           <p>
             Zum Auffinden von Fehlern nutzen wir die Cloud-Software
@@ -466,12 +466,15 @@ export const PrivacyPage = () => {
                 https://www.scaleway.com/en/privacy-policy/;
               </li>
               <li>
-                <strong>1&1 IONOS:</strong> Cloud; Dienstanbieter: IONOS SE,
-                Elgendorfer Str. 57, 56410 Montabaur, Deutschland. Vorstand:
-                Hüseyin Dogan, Dr. Martin Endreß, Claudia Frese, Hans-Henning
-                Kettler, Arthur Mai, Britta Schmidt, Achim Weiß;
-                Handelsregister: Amtsgericht Montabaur / HRB 24498;
-                https://www.ionos.de/terms-gtc/AVV/
+                <strong>Cloudimage:</strong> CDN; Dienstanbieter: Scaleflex SAS,
+                Attn: Copyright Agent / Legal Team – Privacy; 53 Chemin de
+                Beauregard, 38330 Saint-Nazaire-Les-Eymes, France
+                https://legal.scaleflex.com/privacy/global-privacy-policy
+              </li>
+              <li>
+                <strong>KeyCDN:</strong> CDN; Dienstanbieter: proinity LLC,
+                Reichenauweg 11, 8272 Ermatingen, Schweiz; Datenschutzerklärung:
+                https://www.keycdn.com/privacy
               </li>
               <li>
                 <strong>Coconut:</strong> Medienumwandlung (Video+Audio);
