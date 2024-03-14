@@ -106,11 +106,12 @@ defmodule Lotta.Content do
   @doc since: "4.2.0"
   @spec list_articles_by_user(User.t() | nil, User.id()) :: list(Article.t())
   def list_articles_by_user(current_user, user) do
-    query = Article.get_published_articles_query(user)
+    query = Article.get_published_articles_query(current_user)
 
     from(a in query,
       left_join: au in "article_users",
-      where: au.user_id == ^user.id and au.article_id == a.id,
+      on: au.article_id == a.id,
+      where: au.user_id == ^user.id,
       order_by: [desc: :updated_at]
     )
     |> Repo.all()
