@@ -8,6 +8,7 @@ import {
 import { UserModel } from 'model';
 import { User } from 'util/model';
 import { ArticlesByUser } from 'article/relatedArticlesList';
+import { useRouter } from 'next/router';
 
 import styles from './UserArticlesDialog.module.scss';
 
@@ -18,6 +19,16 @@ export interface UserArticlesDialogProps {
 
 export const UserArticlesDialog = React.memo(
   ({ user, onRequestClose }: UserArticlesDialogProps) => {
+    const router = useRouter();
+
+    React.useEffect(() => {
+      router.events.on('routeChangeStart', onRequestClose);
+
+      return () => {
+        router.events.off('routeChangeStart', onRequestClose);
+      };
+    }, [router, onRequestClose]);
+
     return (
       <Dialog
         open={!!user}
