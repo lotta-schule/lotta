@@ -140,7 +140,7 @@ export const PrivacyPage = () => {
             </ul>
           </p>
           <p>
-            <strong>Nationale Datenschutzregelungen in Deutschland:</strong> 
+            <strong>Nationale Datenschutzregelungen in Deutschland:</strong>{' '} 
             Zusätzlich zu den Datenschutzregelungen der
             Datenschutz-Grundverordnung gelten nationale Regelungen zum
             Datenschutz in Deutschland. Hierzu gehört insbesondere das Gesetz
@@ -503,12 +503,12 @@ export const PrivacyPage = () => {
         <Box className={styles.box}>
           <h4>Änderung und Aktualisierung der Datenschutzerklärung</h4>
           <p>
-            Wir bitten Sie, sich regelmäßig über den Inhalt unserer 
-            Datenschutzerklärung zu informieren. Wir passen die 
-            Datenschutzerklärung an, sobald Änderungen an den 
-            von uns durchgeführten Datenverarbeitungen dies erforderlich machen. 
-            Wir informieren Sie, sobald durch die Änderungen eine 
-            Mitwirkungshandlung Ihrerseits (z.B. Einwilligung) oder 
+            Wir bitten Sie, sich regelmäßig über den Inhalt unserer
+            Datenschutzerklärung zu informieren. Wir passen die
+            Datenschutzerklärung an, sobald Änderungen an den
+            von uns durchgeführten Datenverarbeitungen dies erforderlich machen.
+            Wir informieren Sie, sobald durch die Änderungen eine
+            Mitwirkungshandlung Ihrerseits (z.B. Einwilligung) oder
             eine sonstige individuelle Benachrichtigung erforderlich wird.
           </p>
         </Box>
@@ -540,7 +540,7 @@ export const PrivacyPage = () => {
                 das Recht, erteilte Einwilligungen jederzeit zu widerrufen.
               </li>
               <li>
-                <strong>Auskunftsrecht:</strong> Sie haben das Recht, Sie haben
+                <strong>Auskunftsrecht:</strong> Sie haben
                 das Recht, eine Bestätigung darüber zu verlangen, ob betreffende
                 Daten verarbeitet werden und auf Auskunft über diese Daten sowie
                 auf weitere Informationen und Kopie der Daten entsprechend den
