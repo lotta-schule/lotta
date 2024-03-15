@@ -64,7 +64,7 @@ jobs:
 
       - name: Run tests
         run: |
-          mix test --exclude creates_tenant --cover
+          mix test --cover
         env:
           MIX_ENV: test
 

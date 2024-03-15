@@ -238,6 +238,7 @@ defmodule Lotta.Email do
 
   defp mailer_config!(key, nil), do: Keyword.fetch!(mailer_config!(), key)
 
-  defp mailer_config!(key, fallback_key),
-    do: Keyword.get(mailer_config!(), key, Keyword.fetch!(mailer_config!(), fallback_key))
+  defp mailer_config!(key, fallback_key) do
+    Keyword.get(mailer_config!(), key) || Keyword.fetch!(mailer_config!(), fallback_key)
+  end
 end
