@@ -49,7 +49,11 @@ export const WidgetList = React.memo(() => {
     },
   });
 
-  const onClickCreateWidget = (title: string, type: WidgetModelType) => {
+  const onClickCreateWidget = (
+    title: string,
+    type: WidgetModelType,
+    cb: () => void = () => {}
+  ) => {
     createWidget({
       variables: {
         title,
@@ -64,6 +68,7 @@ export const WidgetList = React.memo(() => {
           data: { widgets: widgets.concat([data!.widget]) },
         });
       },
+      onCompleted: cb,
     });
   };
 
@@ -77,82 +82,98 @@ export const WidgetList = React.memo(() => {
 
   return (
     <SplitView closeCondition={() => !!selectedWidget}>
-      <SplitViewNavigation>
-        <Toolbar hasScrollableParent>
-          <MenuButton
-            title={'Marginale erstellen'}
-            buttonProps={{
-              disabled: isLoadingCreateWidget,
-              icon: <Icon icon={faCirclePlus} />,
-              label: 'neue Marginale',
-            }}
-            onAction={(key) => {
-              switch (key) {
-                case 'calendar':
-                  return onClickCreateWidget(
-                    'Kalender',
-                    WidgetModelType.Calendar
-                  );
-                case 'schedule':
-                  return onClickCreateWidget('VPlan', WidgetModelType.Schedule);
-                case 'iframe':
-                  return onClickCreateWidget(
-                    'Webseite',
-                    WidgetModelType.IFrame
-                  );
-              }
-            }}
-          >
-            <Item key={'calendar'} textValue={'Kalender-Marginale erstellen'}>
-              {Widget.getIconForType(WidgetModelType.Calendar)}
-              <span>Kalender-Marginale erstellen</span>
-            </Item>
-            <Item
-              key={'schedule'}
-              textValue={'Vertretungsplan-Marginale erstellen'}
-            >
-              {Widget.getIconForType(WidgetModelType.Schedule)}
-              <span>Vertretungsplan-Marginale erstellen</span>
-            </Item>
-            <Item key={'iframe'} textValue={'Webseite-Marginale erstellen'}>
-              {Widget.getIconForType(WidgetModelType.IFrame)}
-              <span>Webseite-Marginale erstellen</span>
-            </Item>
-          </MenuButton>
-          <SplitViewButton
-            action={'close'}
-            style={{ marginLeft: 'auto' }}
-            icon={<Icon icon={faAngleLeft} />}
-          />
-        </Toolbar>
-        <List title={'Alle Marginalen'}>
-          {data?.widgets.map((widget) => (
-            <ListItem
-              key={widget.id}
-              leftSection={
-                <WidgetIcon icon={widget.configuration?.icon} size={36} />
-              }
-              title={widget.title}
-              isSelected={selectedWidget?.id === widget.id}
-              onClick={() => setSelectedWidget(widget)}
-            >
-              {widget.title}
-              <ListItemSecondaryText>
-                {t(`widgets.widgetTypes.${widget.type}`)}
-              </ListItemSecondaryText>
-            </ListItem>
-          )) ?? null}
-        </List>
-      </SplitViewNavigation>
-      <SplitViewContent>
-        <ErrorMessage error={errorCreateWidget} />
-        {selectedWidget && (
-          <WidgetEditor
-            selectedWidget={selectedWidget}
-            onSelectWidget={setSelectedWidget}
-          />
-        )}
-      </SplitViewContent>
+      {({ close: closeSidebar }) => (
+        <>
+          <SplitViewNavigation>
+            <Toolbar hasScrollableParent>
+              <MenuButton
+                title={'Marginale erstellen'}
+                buttonProps={{
+                  disabled: isLoadingCreateWidget,
+                  icon: <Icon icon={faCirclePlus} />,
+                  label: 'neue Marginale',
+                }}
+                onAction={(key) => {
+                  switch (key) {
+                    case 'calendar':
+                      return onClickCreateWidget(
+                        'Kalender',
+                        WidgetModelType.Calendar,
+                        closeSidebar
+                      );
+                    case 'schedule':
+                      return onClickCreateWidget(
+                        'VPlan',
+                        WidgetModelType.Schedule,
+                        closeSidebar
+                      );
+                    case 'iframe':
+                      return onClickCreateWidget(
+                        'Webseite',
+                        WidgetModelType.IFrame,
+                        closeSidebar
+                      );
+                  }
+                }}
+              >
+                <Item
+                  key={'calendar'}
+                  textValue={'Kalender-Marginale erstellen'}
+                >
+                  {Widget.getIconForType(WidgetModelType.Calendar)}
+                  <span>Kalender-Marginale erstellen</span>
+                </Item>
+                <Item
+                  key={'schedule'}
+                  textValue={'Vertretungsplan-Marginale erstellen'}
+                >
+                  {Widget.getIconForType(WidgetModelType.Schedule)}
+                  <span>Vertretungsplan-Marginale erstellen</span>
+                </Item>
+                <Item key={'iframe'} textValue={'Webseite-Marginale erstellen'}>
+                  {Widget.getIconForType(WidgetModelType.IFrame)}
+                  <span>Webseite-Marginale erstellen</span>
+                </Item>
+              </MenuButton>
+              <SplitViewButton
+                action={'close'}
+                style={{ marginLeft: 'auto' }}
+                icon={<Icon icon={faAngleLeft} />}
+              />
+            </Toolbar>
+            <List title={'Alle Marginalen'}>
+              {data?.widgets.map((widget) => (
+                <ListItem
+                  key={widget.id}
+                  leftSection={
+                    <WidgetIcon icon={widget.configuration?.icon} size={36} />
+                  }
+                  title={widget.title}
+                  isSelected={selectedWidget?.id === widget.id}
+                  onClick={() => {
+                    setSelectedWidget(widget);
+                    closeSidebar();
+                  }}
+                >
+                  {widget.title}
+                  <ListItemSecondaryText>
+                    {t(`widgets.widgetTypes.${widget.type}`)}
+                  </ListItemSecondaryText>
+                </ListItem>
+              )) ?? null}
+            </List>
+          </SplitViewNavigation>
+          <SplitViewContent>
+            <ErrorMessage error={errorCreateWidget} />
+            {selectedWidget && (
+              <WidgetEditor
+                selectedWidget={selectedWidget}
+                onSelectWidget={setSelectedWidget}
+              />
+            )}
+          </SplitViewContent>
+        </>
+      )}
     </SplitView>
   );
 });

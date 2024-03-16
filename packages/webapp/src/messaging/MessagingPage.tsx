@@ -13,8 +13,8 @@ export interface MessagingPageProps {
   conversations?: ConversationModel[];
 }
 
-export const MessagingPage = React.memo<MessagingPageProps>(
-  ({ conversations }) => {
+export const MessagingPage = React.memo(
+  ({ conversations }: MessagingPageProps) => {
     const didWriteCache = React.useRef(false);
     const apolloClient = useApolloClient();
     const currentUser = useCurrentUser();
