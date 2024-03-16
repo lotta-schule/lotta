@@ -54,6 +54,7 @@
     "phoenix": "^1.7.11",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
+    "react-charts": "^3.0.0-beta.57",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-i18next": "^14.0.5",

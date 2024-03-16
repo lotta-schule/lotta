@@ -1,0 +1,10 @@
+query GetTenantAggregateAnalytics($date: Date!) {
+  analytics: aggregateAnalytics(date: $date, period: "month") {
+    visits
+    visitors
+    pageviews
+    bounceRate
+    visitDuration
+    viewsPerVisit
+  }
+}
