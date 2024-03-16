@@ -7,7 +7,7 @@ defmodule Lotta.Messages do
 
   require Logger
 
-  alias Lotta.{Accounts, Repo}
+  alias Lotta.{Accounts, Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Storage.File
@@ -207,18 +207,23 @@ defmodule Lotta.Messages do
   @spec create_message(User.t(), User.t() | UserGroup.t(), String.t(), list(File.t())) ::
           {:ok, Message.t()} | {:error, Ecto.Changeset.t()}
   def create_message(from, to, content, files) do
-    add_message = fn conversation, user, content, files ->
-      conversation
-      |> Ecto.build_assoc(:messages)
-      |> Message.changeset(%{user_id: user.id, content: content, files: files})
-      |> Repo.insert(prefix: Repo.get_prefix())
-    end
-
     with {:ok, conversation} <- get_or_create_conversation(from, to),
-         {:ok, message} <- add_message.(conversation, from, content, files) do
+         {:ok, message} <-
+           Repo.insert(new_message_for_conversation_changeset(conversation, from, content, files),
+             prefix: Ecto.get_meta(conversation, :prefix)
+           ) do
       Repo.update(
         Ecto.Changeset.change(conversation),
         force: true
+      )
+
+      message = Repo.preload(message, [:user, :files])
+      conversation = Repo.preload(conversation, [:users, :groups])
+
+      Lotta.Notification.PushNotification.create_new_message_notifications(
+        Tenants.current(),
+        message,
+        conversation
       )
 
       {:ok, message}
@@ -240,5 +245,17 @@ defmodule Lotta.Messages do
   @spec delete_message(Message.t()) :: {:ok, Message.t()} | {:error, Ecto.Changeset.t()}
   def delete_message(%Message{} = msg) do
     Repo.delete(msg)
+  end
+
+  @spec new_message_for_conversation_changeset(
+          Conversation.t(),
+          User.t(),
+          String.t(),
+          list(File.t())
+        ) :: Ecto.Changeset.t()
+  defp new_message_for_conversation_changeset(conversation, from, content, files) do
+    conversation
+    |> Ecto.build_assoc(:messages)
+    |> Message.changeset(%{user_id: from.id, content: content, files: files})
   end
 end
