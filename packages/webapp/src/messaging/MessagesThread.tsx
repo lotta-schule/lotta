@@ -91,7 +91,7 @@ export const MessagesThread = React.memo(
         className={styles.root}
         data-testid={'MessagesThread'}
       >
-        <Toolbar>
+        <Toolbar hasScrollableParent>
           <SplitViewButton
             action={'open'}
             style={{ width: 40 }}

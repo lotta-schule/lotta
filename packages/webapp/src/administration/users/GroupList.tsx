@@ -217,7 +217,7 @@ export const GroupList = () => {
               </DragDropContext>
             </SplitViewNavigation>
             <SplitViewContent>
-              <Toolbar>
+              <Toolbar hasScrollableParent>
                 <SplitViewButton
                   action={'open'}
                   icon={<Icon icon={faAngleRight} />}
