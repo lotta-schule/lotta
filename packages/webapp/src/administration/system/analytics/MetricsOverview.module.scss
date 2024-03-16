@@ -1,0 +1,19 @@
+@import 'breakpoints';
+
+.root {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: var(--lotta-spacing);
+
+  @media screen and (max-width: $max-sm) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &>div {
+    display: flex;
+    margin-inline: auto;
+    width: 100%;
+    max-width: 15em;
+    justify-content: space-between;
+  }
+}

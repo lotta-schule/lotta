@@ -55,6 +55,14 @@ const resources = {
         results_other: '{{count}} aus {{total}} Ergebnisse',
         results_zero: 'keine aus {{total}} Ergebnisse',
       },
+      analytics: {
+        visits: 'Besuche',
+        visitors: 'Besucher',
+        pageviews: 'Seitenaufrufe',
+        bounceRate: 'Absprungrate',
+        visitDuration: 'Besuchsdauer',
+        viewsPerVisit: 'Seiten pro Besuch',
+      },
     },
   },
 };

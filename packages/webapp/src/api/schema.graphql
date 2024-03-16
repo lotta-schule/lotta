@@ -10,6 +10,27 @@ directive @specifiedBy(
   url: String!
 ) on SCALAR
 
+enum AnalyticsMetric {
+  BOUNCE_RATE
+  PAGEVIEWS
+  VIEWS_PER_VISIT
+  VISIT_DURATION
+  VISITORS
+  VISITS
+}
+
+type AnalyticsMetrics {
+  bounceRate: Int
+  pageviews: Int
+  viewsPerVisit: Float
+  visitDuration: Int
+  visitors: Int
+  visits: Int
+}
+
+"""The `AnalyticsPeriod` scalar type is a description of a period of time"""
+scalar AnalyticsPeriod
+
 type Article {
   category: Category
   contentModules: [ContentModule]
@@ -352,6 +373,7 @@ type RootMutationType {
 }
 
 type RootQueryType {
+  aggregateAnalytics(date: Date!, period: AnalyticsPeriod!): AnalyticsMetrics
   article(id: ID!): Article
   articles(categoryId: ID, filter: ArticleFilter): [Article]
   articlesByTag(tag: String!): [Article!]
@@ -371,12 +393,14 @@ type RootQueryType {
   files(parentDirectoryId: ID): [File]
   group(id: ID!): UserGroup
   ownArticles: [Article]
+  realtimeAnalytics: Int
   relevantFilesInUsage: [File]
   schedule(date: Date, widgetId: ID!): Json
   search(options: SearchOptions, searchText: String!): [Article]
   searchUsers(groups: [SelectUserGroupInput!], lastSeen: Int, searchtext: String): [User]
   tags: [String!]
   tenant(slug: String): Tenant
+  timeseriesAnalytics(date: Date!, metric: AnalyticsMetric!, period: AnalyticsPeriod!): [TimeseriesMetrics!]
   unpublishedArticles: [Article]
   usage: [Usage]
   user(id: ID!): User
@@ -454,6 +478,11 @@ type TenantStats {
   categoryCount: Int
   fileCount: Int
   userCount: Int
+}
+
+type TimeseriesMetrics {
+  date: String!
+  value: Float
 }
 
 input UpdateCategoryInput {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { queryByRole, render } from 'test/util';
+import { render } from 'test/util';
 import { CalendarEntry } from './CalendarEntry';
 
 describe('CalendarEntry', () => {

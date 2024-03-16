@@ -8,12 +8,12 @@ import clsx from 'clsx';
 
 import styles from '../shared.module.scss';
 
-export interface UserProps {
+export interface UsageProps {
   usage: any;
   error?: Error | null;
 }
 
-export const Usage = React.memo<UserProps>(({ usage, error }) => {
+export const Usage = React.memo(({ usage, error }: UsageProps) => {
   const tenant = useTenant();
 
   const getMediaConversionTimeFormatted = (usage: any) => {

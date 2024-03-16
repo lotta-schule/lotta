@@ -3,11 +3,11 @@ import { CalendarEventModel } from 'model/CalendarEventModel';
 import { Divider, ListItem } from '@lotta-schule/hubert';
 import { format, intervalToDuration, isSameMinute } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { Icon } from 'shared/Icon';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 
 import styles from './CalendarEntry.module.scss';
-import { Icon } from 'shared/Icon';
-import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 export type CalendarEntryProps = {
   event: CalendarEventModel;

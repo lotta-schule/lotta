@@ -1,0 +1,3 @@
+query GetTenantRealtimeAnalytics {
+  currentUserCount: realtimeAnalytics
+}

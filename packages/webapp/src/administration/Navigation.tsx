@@ -9,6 +9,7 @@ import {
   faShapes,
   faSquareCaretRight,
   faCommentDots,
+  faChartLine,
 } from '@fortawesome/free-solid-svg-icons';
 import { Badge, BaseButton } from '@lotta-schule/hubert';
 import { useNewFeedbackCount } from 'util/feedback';
@@ -48,6 +49,15 @@ export const Navigation = React.memo(() => {
               <Icon icon={faChartBar} />
             </span>
             <span>Nutzung</span>
+          </BaseButton>
+        </Link>
+
+        <Link href={'/admin/system/analytics'} passHref legacyBehavior>
+          <BaseButton variant={'borderless'} className={styles.button}>
+            <span>
+              <Icon icon={faChartLine} />
+            </span>
+            <span>Statistiken</span>
           </BaseButton>
         </Link>
 
