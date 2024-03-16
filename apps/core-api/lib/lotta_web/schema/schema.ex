@@ -5,10 +5,10 @@ defmodule LottaWeb.Schema do
 
   import_types(Absinthe.Plug.Types)
   import_types(Absinthe.Type.Custom)
-  import_types(__MODULE__.CustomTypes.Json)
+  import_types(__MODULE__.CustomTypes.{Analytics, Json})
 
   import_types(__MODULE__.Tenants)
-  import_types(__MODULE__.Tenants.{Category, Feedback, Usage, Tenant, Widget})
+  import_types(__MODULE__.Tenants.{Analytics, Category, Feedback, Usage, Tenant, Widget})
   import_types(__MODULE__.Accounts)
   import_types(__MODULE__.Accounts.{File, User, UserGroup, UserDevice})
   import_types(__MODULE__.Contents)

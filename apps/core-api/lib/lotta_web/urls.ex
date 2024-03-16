@@ -116,13 +116,21 @@ defmodule LottaWeb.Urls do
   end
 
   defp get_base_uri(tenant) do
-    base_uri_config = Application.get_env(:lotta, :base_uri, [])
+    tenant
+    |> Tenants.get_custom_domains()
+    |> Enum.filter(& &1.is_main_domain)
+    |> case do
+      [] ->
+        struct(URI, Application.get_env(:lotta, :base_uri, []))
+        |> Map.update(
+          :host,
+          nil,
+          &"#{tenant.slug}.#{&1}"
+        )
 
-    Map.update(
-      struct(URI, base_uri_config),
-      :host,
-      nil,
-      &"#{tenant.slug}.#{&1}"
-    )
+      [%{host: host} | []] ->
+        struct(URI, Application.get_env(:lotta, :base_uri, []))
+        |> Map.put(:host, host)
+    end
   end
 end

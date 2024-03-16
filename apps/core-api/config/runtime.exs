@@ -131,6 +131,13 @@ defmodule SystemConfig do
   defp default("SCHEDULE_PROVIDER_URL", env) when env in [:dev, :test],
     do: "http://localhost:3111"
 
+  defp default("ANALYTICS_ENDPOINT", _),
+    do: "https://plausible.io"
+
+  defp default("ANALYTICS_API_KEY", :test), do: "test"
+
+  defp default("ANALYTICS_API_KEY", _), do: nil
+
   defp default(key, env),
     do: raise("environment variable #{key} not set and no default for #{inspect(env)}")
 end
@@ -219,6 +226,10 @@ config :lotta, Lotta.Storage.RemoteStorage,
     end)
 
 config :lotta, :schedule_provider_url, SystemConfig.get("SCHEDULE_PROVIDER_URL")
+
+config :lotta, :analytics,
+  endpoint: SystemConfig.get("ANALYTICS_ENDPOINT"),
+  api_key: SystemConfig.get("ANALYTICS_API_KEY")
 
 config :lotta, LottaWeb.Auth.AccessToken,
   secret_key: SystemConfig.get("SECRET_KEY_JWT"),

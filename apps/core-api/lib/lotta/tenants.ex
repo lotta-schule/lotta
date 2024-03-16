@@ -164,6 +164,18 @@ defmodule Lotta.Tenants do
   end
 
   @doc """
+  Get all custom domains for a tenant
+  """
+  @doc since: "4.2.0"
+  @spec get_custom_domains(Tenant.t()) :: CustomDomain.t()
+  def get_custom_domains(tenant) do
+    tenant
+    |> Repo.preload(:custom_domains)
+    |> Map.get(:custom_domains)
+    |> Enum.sort_by(& &1.is_main_domain)
+  end
+
+  @doc """
   Update a tenant. Does *only* update the tenant data
   in the public schema. Does not update the configuration.
   This will effectively only change the title.

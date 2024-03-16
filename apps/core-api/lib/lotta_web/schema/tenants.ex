@@ -30,6 +30,31 @@ defmodule LottaWeb.Schema.Tenants do
 
       resolve(&LottaWeb.TenantResolver.usage/2)
     end
+
+    field :realtime_analytics, :integer do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
+      resolve(&LottaWeb.AnalyticsResolver.realtime/2)
+    end
+
+    field :aggregate_analytics, :analytics_metrics do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
+      arg(:date, non_null(:date))
+      arg(:period, non_null(:analytics_period))
+
+      resolve(&LottaWeb.AnalyticsResolver.aggregate/2)
+    end
+
+    field :timeseries_analytics, list_of(non_null(:timeseries_metrics)) do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
+      arg(:date, non_null(:date))
+      arg(:metric, non_null(:analytics_metric))
+      arg(:period, non_null(:analytics_period))
+
+      resolve(&LottaWeb.AnalyticsResolver.timeseries/2)
+    end
   end
 
   object :tenants_mutations do
