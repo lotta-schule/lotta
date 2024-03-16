@@ -15,11 +15,11 @@ defmodule Lotta.Notification.PushNotification do
   @name {:global, __MODULE__}
 
   def create_new_message_notifications(tenant, message, conversation) do
-    GenServer.call(@name, {:schedule, {:message_sent, tenant, message, conversation}})
+    GenServer.cast(@name, {:schedule, {:message_sent, tenant, message, conversation}})
   end
 
   def create_conversation_read_notification(tenant, user, conversation) do
-    GenServer.call(@name, {:schedule, {:conversation_read, tenant, user, conversation}})
+    GenServer.cast(@name, {:schedule, {:conversation_read, tenant, user, conversation}})
   end
 
   def start_link(args, _opts \\ []) do
@@ -50,8 +50,8 @@ defmodule Lotta.Notification.PushNotification do
   end
 
   @impl true
-  def handle_call({:schedule, notification}, _from, state) do
-    {:reply, :ok, :queue.in(notification, state), {:continue, :process}}
+  def handle_cast({:schedule, notification}, state) do
+    {:noreply, :queue.in(notification, state), {:continue, :process}}
   end
 
   @impl true
