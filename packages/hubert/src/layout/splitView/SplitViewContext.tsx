@@ -3,8 +3,8 @@ import { useIsMobile } from '../../util';
 
 export type SplitViewContextType = {
   isSidebarVisible: boolean;
-  open: () => void;
-  close: () => void;
+  open: (options?: { force?: boolean }) => void;
+  close: (options?: { force?: boolean }) => void;
   toggle: () => void;
   canOpenSidebar: boolean;
   canCloseSidebar: boolean;
@@ -36,13 +36,13 @@ export const SplitViewProvider = ({
   const canCloseSidebar = isMobile
     ? isSidebarActive && closeCondition()
     : false;
-  const open = () => {
-    if (canOpenSidebar) {
+  const open = ({ force }: { force?: boolean } = {}) => {
+    if (force === true || canOpenSidebar) {
       setIsSidebarActive(true);
     }
   };
-  const close = () => {
-    if (canCloseSidebar) {
+  const close = ({ force }: { force?: boolean } = {}) => {
+    if (force === true || canCloseSidebar) {
       setIsSidebarActive(false);
     }
   };

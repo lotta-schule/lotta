@@ -20,9 +20,27 @@ export const useElementFullWindowHeight = (
     }
   }, []);
 
+  React.useLayoutEffect(() => {
+    if (typeof window.IntersectionObserver === 'undefined') {
+      updateHeight();
+      return;
+    }
+    const observer = new IntersectionObserver(
+      () => {
+        updateHeight();
+      },
+      {
+        root: null,
+        threshold: 1,
+      }
+    );
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+  }, [updateHeight]);
+
   React.useEffect(() => {
     window.addEventListener('resize', updateHeight);
-    updateHeight();
     return () => {
       window.removeEventListener('resize', updateHeight);
     };
