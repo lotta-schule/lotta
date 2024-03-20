@@ -189,7 +189,7 @@ export const GroupList = () => {
                               title={group.name}
                               onClick={() => {
                                 setSelectedGroupId(group.id);
-                                closeSidebar();
+                                closeSidebar({ force: true });
                               }}
                               data-groupid={group.id}
                               key={group.id}

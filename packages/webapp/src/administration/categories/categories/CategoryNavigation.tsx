@@ -139,7 +139,7 @@ export const CategoryNavigation = React.memo(
             className={styles.before}
             onClick={() => {
               onSelectCategory(homepageCategory);
-              closeSidebar();
+              closeSidebar({ force: true });
             }}
           />
         )}
@@ -162,7 +162,7 @@ export const CategoryNavigation = React.memo(
                           data-testid={'main-category-item'}
                           onClick={(_e) => {
                             onSelectCategory(category);
-                            closeSidebar();
+                            closeSidebar({ force: true });
                             setExpandedMainCategoryId((categoryId) =>
                               categoryId === category.id ? null : categoryId
                             );
@@ -205,7 +205,7 @@ export const CategoryNavigation = React.memo(
                                         ref={innerRef}
                                         {...draggableProps}
                                         onClick={(_e) => {
-                                          closeSidebar();
+                                          closeSidebar({ force: true });
                                           onSelectCategory(subcategory);
                                         }}
                                         dragHandleProps={
@@ -240,7 +240,7 @@ export const CategoryNavigation = React.memo(
             className={styles.before}
             onClick={() => {
               onSelectCategory(category);
-              closeSidebar();
+              closeSidebar({ force: true });
             }}
           />
         ))}

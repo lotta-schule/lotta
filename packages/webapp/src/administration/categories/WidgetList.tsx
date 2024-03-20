@@ -99,19 +99,19 @@ export const WidgetList = React.memo(() => {
                       return onClickCreateWidget(
                         'Kalender',
                         WidgetModelType.Calendar,
-                        closeSidebar
+                        () => closeSidebar({ force: true })
                       );
                     case 'schedule':
                       return onClickCreateWidget(
                         'VPlan',
                         WidgetModelType.Schedule,
-                        closeSidebar
+                        () => closeSidebar({ force: true })
                       );
                     case 'iframe':
                       return onClickCreateWidget(
                         'Webseite',
                         WidgetModelType.IFrame,
-                        closeSidebar
+                        () => closeSidebar({ force: true })
                       );
                   }
                 }}
@@ -152,7 +152,7 @@ export const WidgetList = React.memo(() => {
                   isSelected={selectedWidget?.id === widget.id}
                   onClick={() => {
                     setSelectedWidget(widget);
-                    closeSidebar();
+                    closeSidebar({ force: true });
                   }}
                 >
                   {widget.title}

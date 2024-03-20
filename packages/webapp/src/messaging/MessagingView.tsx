@@ -122,7 +122,7 @@ export const MessagingView = React.memo(() => {
                 selected={selectedConversation?.id == conversation.id}
                 onClick={() => {
                   setSelectedConversation(conversation);
-                  closeSidebar();
+                  closeSidebar({ force: true });
                 }}
               />
             ))}
