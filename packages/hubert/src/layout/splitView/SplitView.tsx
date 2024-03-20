@@ -22,6 +22,8 @@ export type SplitViewProps = Omit<
       ) => React.ReactNode | Iterable<React.ReactNode>);
 } & Omit<SplitViewProviderProps, 'children'>;
 
+export const SPLITVIEW_CLASS = 'hubert-splitview-component';
+
 const SplitViewChildren = ({ children }: Pick<SplitViewProps, 'children'>) => {
   const props = useSplitView();
 
@@ -52,7 +54,7 @@ export const SplitView = ({
         {...props}
         ref={elementRef}
         style={{ height: height || undefined }}
-        className={clsx(className, styles.root)}
+        className={clsx(SPLITVIEW_CLASS, className, styles.root)}
       >
         <SplitViewChildren>{children}</SplitViewChildren>
       </div>
