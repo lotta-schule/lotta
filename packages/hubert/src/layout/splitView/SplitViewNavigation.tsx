@@ -8,6 +8,9 @@ export type SplitViewNavigationProps = React.HTMLProps<HTMLDivElement> & {
   children: React.ReactNode | Iterable<React.ReactNode>;
 };
 
+export const SPLITVIEW_NAVIGATION_CLASS =
+  'hubert-splitview-navigation-component';
+
 export const SplitViewNavigation = ({
   children,
   className,
@@ -18,9 +21,14 @@ export const SplitViewNavigation = ({
     <aside
       {...props}
       aria-hidden={!isSidebarVisible}
-      className={clsx(className, styles.sideView, {
-        [styles.active]: isSidebarVisible,
-      })}
+      className={clsx(
+        className,
+        styles.sideView,
+        {
+          [styles.active]: isSidebarVisible,
+        },
+        SPLITVIEW_NAVIGATION_CLASS
+      )}
     >
       {children}
     </aside>
