@@ -13,17 +13,15 @@ export const Footer = React.memo(() => {
     <div className={styles.root}>
       {categories.map((category) => {
         return (
-          <React.Fragment key={category.id}>
-            <Link
-              href={category.redirect || Category.getPath(category)}
-              className={styles.link}
-              passHref
-              data-testid="SidenavLink"
-            >
-              {category.title}
-            </Link>
-            &nbsp;|&nbsp;
-          </React.Fragment>
+          <Link
+            key={category.id}
+            href={category.redirect || Category.getPath(category)}
+            className={styles.link}
+            passHref
+            data-testid="SidenavLink"
+          >
+            {category.title}
+          </Link>
         );
       })}
       <Link

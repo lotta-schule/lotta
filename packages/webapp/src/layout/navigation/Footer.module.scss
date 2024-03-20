@@ -2,8 +2,23 @@
 
 .root {
   display: none;
-  padding: 0 0 1em 4em;
+  padding-bottom: calc(var(--lotta-spacing) / 2);
   font-size: 0.8rem;
+
+  &:has(:nth-child(4)) {
+    font-size: 0.7rem;
+  }
+
+  .link {
+    padding: 0;
+
+    &:after {
+      content: '|';
+      margin-inline: var(--lotta-spacing);
+    }
+
+  }
+
   @media screen and (max-width: $max-sm) {
     display: block;
     position: absolute;
@@ -11,16 +26,20 @@
     bottom: 0;
     width: 100%;
     text-align: center;
+
     .link {
       white-space: nowrap;
       display: inline-block;
       line-height: 1.6rem;
-      padding: 0 var(--lotta-spacing);
     }
-    .privacy {
-      padding-left: var(--lotta-spacing);
+
+    &:has(:nth-child(4)) {
+      .link:after {
+        margin-inline: calc(var(--lotta-spacing) / 2);
+      }
     }
   }
+
   @media screen and (min-width: $min-md) {
     display: block;
     top: -0.5em;
