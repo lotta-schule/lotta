@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
-import { mergeProps, useModal, useOverlay, usePreventScroll } from 'react-aria';
+import { mergeProps, useModal, useOverlay } from 'react-aria';
+import { usePreventScroll } from '../util';
 import { ChevronRight } from '../icon';
 import { Button } from '../button';
 

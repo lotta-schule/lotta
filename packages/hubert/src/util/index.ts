@@ -7,5 +7,6 @@ export * from './themeHelpers';
 export * from './tooltip';
 export * from './useIsMobile';
 export * from './useElementFullWindowHeight';
+export * from './usePreventScroll';
 export * from './useScrollEvent';
 export * from './useWindowSize';
