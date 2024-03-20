@@ -68,10 +68,10 @@ export const WidgetsList = React.memo(
 
     useScrollEvent(
       () => {
-        if (wrapperRef.current && isMobile && widgets.length > 0) {
-          wrapperRef.current.style.height = `calc(100vh - ${
-            wrapperRef.current.getBoundingClientRect().top
-          }px - var(--lotta-spacing))`;
+        const wrapper = wrapperRef.current;
+        const top = wrapper?.getBoundingClientRect().top;
+        if (wrapper && top && isMobile && widgets.length > 0) {
+          wrapper.style.height = `calc(100vh - ${top}px - var(--lotta-spacing))`;
         }
       },
       200,
