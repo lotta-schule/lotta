@@ -10,6 +10,8 @@ defmodule Lotta.Fixtures do
   alias Lotta.Content.{Article}
   alias Lotta.Messages.{Conversation, Message}
 
+  @prefix "tenant_test"
+
   def fixture(name, params \\ %{})
 
   def fixture(:valid_category_attrs, _) do
@@ -26,7 +28,7 @@ defmodule Lotta.Fixtures do
     {:ok, category} =
       Category
       |> struct(fixture(:valid_category_attrs))
-      |> Repo.insert(on_conflict: :nothing, prefix: "tenant_test")
+      |> Repo.insert(on_conflict: :nothing, prefix: @prefix)
 
     category
   end
@@ -44,13 +46,13 @@ defmodule Lotta.Fixtures do
   def fixture(:user_group, is_admin_group: true) do
     %UserGroup{}
     |> Map.merge(fixture(:valid_user_group_attrs, is_admin_group: true))
-    |> Repo.insert!(prefix: "tenant_test")
+    |> Repo.insert!(prefix: @prefix)
   end
 
   def fixture(:user_group, _) do
     %UserGroup{}
     |> Map.merge(fixture(:valid_user_group_attrs, is_admin_group: false))
-    |> Repo.insert!(prefix: "tenant_test")
+    |> Repo.insert!(prefix: @prefix)
   end
 
   def fixture(:valid_user_attrs, _) do
@@ -102,9 +104,9 @@ defmodule Lotta.Fixtures do
     ((email &&
         Repo.one(
           from(u in User, where: u.email == ^email),
-          prefix: "tenant_test"
+          prefix: @prefix
         )) ||
-       Repo.insert!(usr, returning: true, prefix: "tenant_test"))
+       Repo.insert!(usr, returning: true, prefix: @prefix))
     |> Map.replace(:password, nil)
   end
 
@@ -114,9 +116,9 @@ defmodule Lotta.Fixtures do
       |> struct(fixture(:valid_admin_attrs))
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_assoc(:groups, [fixture(:user_group, is_admin_group: true)])
-      |> Repo.insert(prefix: "tenant_test")
+      |> Repo.insert(prefix: @prefix)
 
-    Repo.get(User, user.id, prefix: "tenant_test")
+    Repo.get(User, user.id, prefix: @prefix)
   end
 
   def fixture(:valid_file_attrs, _) do
@@ -142,9 +144,9 @@ defmodule Lotta.Fixtures do
       |> struct(fixture(:valid_file_attrs))
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_assoc(:user, user)
-      |> Repo.insert(prefix: "tenant_test")
+      |> Repo.insert(prefix: @prefix)
 
-    Repo.get!(File, file.id, prefix: "tenant_test")
+    Repo.get!(File, file.id, prefix: @prefix)
   end
 
   # Content
@@ -165,7 +167,7 @@ defmodule Lotta.Fixtures do
     |> Map.merge(fixture(:valid_article_attrs))
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:users, [user])
-    |> Repo.insert!(prefix: "tenant_test")
+    |> Repo.insert!(prefix: @prefix)
   end
 
   def fixture(:unpublished_article, %User{} = user) do
@@ -174,7 +176,7 @@ defmodule Lotta.Fixtures do
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:users, [user])
     |> Ecto.Changeset.put_assoc(:category, nil)
-    |> Repo.insert!(on_conflict: :nothing, returning: true, prefix: "tenant_test")
+    |> Repo.insert!(on_conflict: :nothing, returning: true, prefix: @prefix)
   end
 
   # Messages
@@ -186,13 +188,13 @@ defmodule Lotta.Fixtures do
   def fixture(:message, params) do
     %Message{content: fixture(:message_content)}
     |> Map.merge(params)
-    |> Repo.insert!(prefix: "tenant_test")
+    |> Repo.insert!(prefix: @prefix)
   end
 
   def fixture(:create_conversation_users, users) do
     conversation =
       %Conversation{}
-      |> Repo.insert!(prefix: "tenant_test")
+      |> Repo.insert!(prefix: @prefix)
 
     Repo.insert_all(
       "conversation_user",
@@ -200,7 +202,7 @@ defmodule Lotta.Fixtures do
         users,
         &%{conversation_id: UUID.string_to_binary!(conversation.id), user_id: &1.id}
       ),
-      prefix: "tenant_test"
+      prefix: @prefix
     )
 
     Repo.reload!(conversation)
@@ -209,7 +211,7 @@ defmodule Lotta.Fixtures do
   def fixture(:create_conversation_groups, groups) do
     conversation =
       %Conversation{}
-      |> Repo.insert!(prefix: "tenant_test")
+      |> Repo.insert!(prefix: @prefix)
 
     Repo.insert_all(
       "conversation_group",
@@ -217,7 +219,7 @@ defmodule Lotta.Fixtures do
         groups,
         &%{conversation_id: UUID.string_to_binary!(conversation.id), user_group_id: &1.id}
       ),
-      prefix: "tenant_test"
+      prefix: @prefix
     )
 
     Repo.reload!(conversation)

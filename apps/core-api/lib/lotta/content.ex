@@ -5,8 +5,9 @@ defmodule Lotta.Content do
 
   import Ecto.Query
 
+  alias LottaWeb.Schema.Accounts.UserGroup
   alias Lotta.Repo
-  alias Lotta.Accounts.User
+  alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.File
   alias Lotta.Content.{Article, Category, ContentModule, ContentModuleResult}
 
@@ -104,17 +105,12 @@ defmodule Lotta.Content do
 
   """
   @doc since: "4.2.0"
-  @spec list_articles_by_user(User.t() | nil, User.id()) :: list(Article.t())
+  @spec list_articles_by_user(User.t() | nil, User.id()) :: [Article.t()]
   def list_articles_by_user(current_user, user) do
-    query = Article.get_published_articles_query(current_user)
+    base_query =
+      Article.get_published_articles_query(current_user)
 
-    from(a in query,
-      left_join: au in "article_users",
-      on: au.article_id == a.id,
-      where: au.user_id == ^user.id,
-      order_by: [desc: :updated_at]
-    )
-    |> Repo.all()
+    list_user_articles(user, base_query: base_query)
   end
 
   @doc """
@@ -143,15 +139,20 @@ defmodule Lotta.Content do
       iex> list_user_articles(user)
       [%Article{}, ...]
 
+  You can also use this  function to get all of the published articles from a given user
+
   """
   @doc since: "1.0.0"
-  @spec list_user_articles(User.t()) :: [Article.t()]
-  def list_user_articles(user) do
-    from(a in Article,
+  @spec list_user_articles(User.t()) :: list(Article.t())
+  @spec list_user_articles(User.t(), [{:base_query, Ecto.Query.t()}]) :: list(Article.t())
+  def list_user_articles(user, opts \\ []) do
+    base_query = Keyword.get(opts, :base_query, Article)
+
+    from(a in base_query,
       join: au in "article_users",
       on: au.article_id == a.id,
       where: au.user_id == ^user.id,
-      order_by: :id
+      order_by: [desc: :updated_at, desc: :id]
     )
     |> Repo.all()
   end
@@ -254,7 +255,53 @@ defmodule Lotta.Content do
   end
 
   @doc """
-  Deletes a Article.
+  This function unpublishes all articles of a single given group.
+  """
+  @doc since: "4.2.0"
+  @spec unpublish_articles_of_single_group(UserGroup.t()) ::
+          {:ok, [Article.t()]} | {:error, Ecto.Changeset.t()}
+  def unpublish_articles_of_single_group(%UserGroup{id: group_id}) do
+    article_ids_with_only_one_group =
+      from(aug in "articles_user_groups",
+        select: aug.article_id,
+        group_by: aug.article_id,
+        having: count(aug.article_id) == 1
+      )
+
+    articles_to_unpublish =
+      from(a in Article,
+        left_join: aug in "articles_user_groups",
+        on: aug.article_id == a.id,
+        right_join: aug2 in subquery(article_ids_with_only_one_group),
+        on: aug2.article_id == a.id,
+        where:
+          a.published == true and
+            aug.group_id == ^group_id,
+        order_by: [desc: a.updated_at, desc: a.inserted_at, desc: a.id]
+      )
+      |> Repo.all()
+
+    updated_at = DateTime.utc_now()
+
+    Repo.update_all(
+      from(a in Article,
+        where: a.id in ^Enum.map(articles_to_unpublish, & &1.id)
+      ),
+      set: [published: false, ready_to_publish: true, updated_at: updated_at]
+    )
+
+    {:ok,
+     articles_to_unpublish
+     |> Enum.map(fn article ->
+       article
+       |> Map.put(:published, false)
+       |> Map.put(:ready_to_publish, true)
+       |> Map.put(:updated_at, updated_at)
+     end)}
+  end
+
+  @doc """
+  Deletes an Article.
 
   ## Examples
 

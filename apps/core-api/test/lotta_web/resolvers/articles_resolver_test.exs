@@ -2686,9 +2686,16 @@ defmodule LottaWeb.ArticleResolverTest do
                  "ownArticles" => [
                    %{
                      "isPinnedToTop" => false,
-                     "preview" => "Entwurf Artikel zu I",
+                     "preview" => "Hallo hallo hallo",
                      "readyToPublish" => false,
-                     "title" => "Draft1",
+                     "tags" => nil,
+                     "title" => "And the oskar goes to ..."
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Entwurf Artikel zu XYZ",
+                     "readyToPublish" => true,
+                     "title" => "Fertiger Artikel zum Konzert",
                      "tags" => nil
                    },
                    %{
@@ -2700,17 +2707,10 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "isPinnedToTop" => false,
-                     "preview" => "Entwurf Artikel zu XYZ",
-                     "readyToPublish" => true,
-                     "title" => "Fertiger Artikel zum Konzert",
-                     "tags" => nil
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "preview" => "Hallo hallo hallo",
+                     "preview" => "Entwurf Artikel zu I",
                      "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "And the oskar goes to ..."
+                     "title" => "Draft1",
+                     "tags" => nil
                    }
                  ]
                }

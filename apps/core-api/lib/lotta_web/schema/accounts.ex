@@ -193,7 +193,7 @@ defmodule LottaWeb.Schema.Accounts do
       resolve(&LottaWeb.UserGroupResolver.update/2)
     end
 
-    field :delete_user_group, type: :user_group do
+    field :delete_user_group, type: :delete_user_group_result do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:id, non_null(:id))

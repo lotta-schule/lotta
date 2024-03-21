@@ -7,8 +7,8 @@ defmodule Lotta.Accounts do
 
   import Ecto.Query
 
-  alias Ecto.Changeset
-  alias Lotta.{Email, Mailer, Repo, Storage}
+  alias Ecto.{Changeset, Multi}
+  alias Lotta.{Content, Email, Mailer, Repo, Storage}
   alias Lotta.Accounts.{User, UserDevice, UserGroup}
   alias Lotta.Storage.File
 
@@ -419,10 +419,21 @@ defmodule Lotta.Accounts do
 
   @doc """
   Deletes a Group.
+
+  This will also make all articles which had only this group assigned to be set back to the "draft" state,
+  as they would otherwise be without any group assigned, which would lead them to be visible to everyone.
   """
   @spec delete_user_group(UserGroup.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def delete_user_group(%UserGroup{} = group) do
-    Repo.delete(group)
+    Multi.new()
+    |> Multi.run(
+      :unpublished_articles,
+      fn _, _ ->
+        Content.unpublish_articles_of_single_group(group)
+      end
+    )
+    |> Multi.delete(:user_group, group)
+    |> Repo.transaction()
   end
 
   @doc """

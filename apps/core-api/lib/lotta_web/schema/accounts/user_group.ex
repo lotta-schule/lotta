@@ -27,4 +27,9 @@ defmodule LottaWeb.Schema.Accounts.UserGroup do
     field :enrollment_tokens, list_of(:string),
       resolve: &LottaWeb.UserGroupResolver.resolve_enrollment_tokens/3
   end
+
+  object :delete_user_group_result do
+    field :user_group, :user_group
+    field :unpublished_articles, list_of(:article)
+  end
 end

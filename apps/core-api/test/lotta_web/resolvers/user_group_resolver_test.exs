@@ -8,6 +8,8 @@ defmodule LottaWeb.UserGroupResolverTest do
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Accounts, Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
+  alias Lotta.Content.Article
+  alias Ecto.Changeset
 
   @prefix "tenant_test"
 
@@ -353,12 +355,42 @@ defmodule LottaWeb.UserGroupResolverTest do
     @query """
     mutation deleteUserGroup($id: ID!) {
       deleteUserGroup(id: $id) {
-        name
+        userGroup {
+          name
+        }
+        unpublishedArticles {
+          title
+        }
       }
     }
     """
 
-    test "should delete group", %{admin_jwt: admin_jwt, lehrer_group: lehrer_group} do
+    test "should delete group and also unpublish related articles", %{
+      admin_jwt: admin_jwt,
+      lehrer_group: lehrer_group,
+      schueler_group: schueler_group
+    } do
+      oskar_goes_to =
+        from(a in Article,
+          where: a.title == ^"And the oskar goes to ..."
+        )
+        |> Repo.one!(prefix: @prefix)
+        |> assign_groups([lehrer_group])
+
+      kleinkunst_wb2 =
+        from(a in Article,
+          where: a.title == ^"Der Podcast zum WB 2"
+        )
+        |> Repo.one!(prefix: @prefix)
+        |> assign_groups([lehrer_group])
+
+      vorausscheid =
+        from(a in Article,
+          where: a.title == ^"Der Vorausscheid"
+        )
+        |> Repo.one!(prefix: @prefix)
+        |> assign_groups([lehrer_group, schueler_group])
+
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -368,9 +400,19 @@ defmodule LottaWeb.UserGroupResolverTest do
 
       assert res == %{
                "data" => %{
-                 "deleteUserGroup" => %{"name" => "Lehrer"}
+                 "deleteUserGroup" => %{
+                   "unpublishedArticles" => [
+                     %{"title" => "Der Podcast zum WB 2"},
+                     %{"title" => "And the oskar goes to ..."}
+                   ],
+                   "userGroup" => %{"name" => "Lehrer"}
+                 }
                }
              }
+
+      assert Repo.reload!(oskar_goes_to).published == false
+      assert Repo.reload!(kleinkunst_wb2).published == false
+      assert [%{name: "Schüler"}] = Repo.preload(Repo.reload!(vorausscheid), :groups).groups
 
       assert Accounts.get_user_group(lehrer_group.id) == nil
     end
@@ -547,5 +589,13 @@ defmodule LottaWeb.UserGroupResolverTest do
                ]
              } = res
     end
+  end
+
+  defp assign_groups(model, groups) do
+    model
+    |> Repo.preload(:groups)
+    |> Changeset.change()
+    |> Changeset.put_assoc(:groups, groups)
+    |> Repo.update!(prefix: Ecto.get_meta(model, :prefix))
   end
 end

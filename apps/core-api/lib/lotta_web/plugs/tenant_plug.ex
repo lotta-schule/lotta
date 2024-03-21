@@ -24,7 +24,7 @@ defmodule LottaWeb.TenantPlug do
 
     conn
     |> put_tenant()
-    |> tap(fn ->
+    |> tap(fn _ ->
       OpenTelemetry.Tracer.end_span(otel_ctx)
     end)
   end
