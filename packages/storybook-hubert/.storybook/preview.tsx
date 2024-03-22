@@ -2,9 +2,15 @@ import * as React from 'react';
 import { Preview } from '@storybook/react';
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
 import { DefaultThemes } from '@lotta-schule/theme';
+import { MotionGlobalConfig } from 'framer-motion';
 import { GlobalStyles, HubertProvider } from '@lotta-schule/hubert';
+import isChromatic from 'chromatic';
 
 import '@lotta-schule/hubert/dist/index.css';
+
+if (isChromatic()) {
+  MotionGlobalConfig.skipAnimations = true;
+}
 
 const preview: Preview = {
   decorators: [
