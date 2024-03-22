@@ -27,6 +27,18 @@ export interface LoginDialogProps {
 export const LoginDialog = React.memo<LoginDialogProps>(
   ({ isOpen, onRequestClose }) => {
     const apolloClient = useApolloClient();
+    const [isShowUpdatePasswordDialog, setIsShowUpdatePasswordDialog] =
+      React.useState(false);
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
+
+    React.useEffect(() => {
+      if (isOpen === false) {
+        setEmail('');
+        setPassword('');
+      }
+    }, [isOpen]);
+
     const [login, { error, loading: isLoading }] = useMutation(LoginMutation, {
       errorPolicy: 'all',
       onCompleted: async (data) => {
@@ -40,20 +52,13 @@ export const LoginDialog = React.memo<LoginDialogProps>(
           if (userData?.currentUser?.hasChangedDefaultPassword === false) {
             setIsShowUpdatePasswordDialog(true);
           } else {
-            onRequestClose();
+            setTimeout(() => {
+              onRequestClose();
+            }, 1000);
           }
         }
       },
     });
-
-    const [isShowUpdatePasswordDialog, setIsShowUpdatePasswordDialog] =
-      React.useState(false);
-    const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    const resetForm = () => {
-      setEmail('');
-      setPassword('');
-    };
 
     return (
       <>
@@ -63,12 +68,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
           title={'Auf der Website anmelden'}
           onRequestClose={onRequestClose}
         >
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              login({ variables: { username: email, password } });
-            }}
-          >
+          <form>
             <DialogContent>
               Melde dich hier mit deinen Zugangsdaten an.
               <ErrorMessage error={error} />
@@ -100,14 +100,22 @@ export const LoginDialog = React.memo<LoginDialogProps>(
             <DialogActions>
               <Button
                 onClick={() => {
-                  resetForm();
                   onRequestClose();
                 }}
                 disabled={isLoading}
               >
                 Abbrechen
               </Button>
-              <LoadingButton type={'submit'} loading={isLoading}>
+              <LoadingButton
+                type={'submit'}
+                onAction={async (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  await login({
+                    variables: { username: email, password },
+                  });
+                }}
+              >
                 Anmelden
               </LoadingButton>
             </DialogActions>

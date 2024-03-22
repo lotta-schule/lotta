@@ -99,7 +99,7 @@ export const DeleteFeedbackDialog = React.memo(
             <LoadingButton
               type={'submit'}
               variant={'error'}
-              loading={isLoading}
+              state={isLoading ? 'loading' : 'idle'}
             >
               endgültig löschen
             </LoadingButton>

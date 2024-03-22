@@ -4,7 +4,13 @@ import 'whatwg-fetch';
 import { TextEncoder, TextDecoder } from 'util';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
 
-self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ } as any;
+declare global {
+  interface Window {
+    __NEXT_DATA__: any;
+  }
+}
+
+self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ };
 
 jest.retryTimes(3);
 
@@ -73,18 +79,18 @@ jest.mock('next/router', () => {
   const mockRouter = new (class {
     private _pathname = '/';
     private _emitter = new (class {
-      _callbacks = new Map<string, Function[]>();
-      _on(event: string, callback: Function) {
+      _callbacks = new Map<string, (() => void)[]>();
+      _on(event: string, callback: () => void) {
         this._callbacks.set(event, [
           ...(this._callbacks.get(event) || []),
           callback,
         ]);
       }
-      _off(event: string, callback: Function) {
+      _off(event: string, callback: () => void) {
         if (this._callbacks.has(event)) {
           this._callbacks.set(
             event,
-            (this._callbacks.get(event) as Function[]).filter(
+            (this._callbacks.get(event) as (() => void)[]).filter(
               (cb) => cb !== callback
             )
           );
@@ -140,4 +146,15 @@ jest.mock('next/router', () => {
     mockRouter,
     useRouter: () => mockRouter,
   };
+});
+
+const originalError = console.error;
+jest.spyOn(console, 'error').mockImplementation((...args) => {
+  if (
+    typeof args[0] === 'string' &&
+    args[0].includes('inside a test was not wrapped in act')
+  ) {
+    return;
+  }
+  return originalError.call(console, args);
 });

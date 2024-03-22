@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { MockedResponse } from '@apollo/client/testing';
-import { TestFileExplorerContextProvider, render, waitFor } from 'test/util';
+import {
+  TestFileExplorerContextProvider,
+  render,
+  waitFor,
+  within,
+} from 'test/util';
 import { DeleteDirectoryDialog } from './DeleteDirectoryDialog';
 import { KeinErSieEsUser, getPrivateAndPublicFiles } from 'test/fixtures';
 import { DirectoryModel } from 'model';
@@ -85,6 +90,7 @@ describe('shared/dialog/DeleteDirectoryDialog', () => {
   });
 
   it('should delete the directory and all its files', async () => {
+    const fireEvent = userEvent.setup();
     const deleteMocks = filesAndDirectories.map((fod) => {
       if ('name' in fod) {
         // fod is directory
@@ -132,17 +138,20 @@ describe('shared/dialog/DeleteDirectoryDialog', () => {
         additionalMocks: [...additionalMocks, ...deleteMocks],
       }
     );
-    await userEvent.click(screen.getByRole('button', { name: /löschen/i }));
 
-    expect(screen.getByRole('progressbar')).toBeVisible();
+    const deleteButton = screen.getByRole('button', {
+      name: /löschen/i,
+    }) as HTMLButtonElement;
+    await fireEvent.click(deleteButton);
+
     await waitFor(() => {
-      expect(screen.queryByRole('progressbar')).toBeNull();
+      expect(within(deleteButton).getByRole('progressbar')).toBeVisible();
+    });
+    await waitFor(() => {
+      expect(within(deleteButton).getByTestId('SuccessIcon')).toBeVisible();
     });
     await waitFor(() => {
       expect(screen.queryAllByRole('listitem')).toHaveLength(0);
-    });
-    await waitFor(() => {
-      expect(screen.queryByRole('progressbar')).toBeNull();
     });
   });
 });

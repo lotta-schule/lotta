@@ -95,8 +95,10 @@ export const DeleteUserGroupDialog = React.memo(
             Abbrechen
           </Button>
           <LoadingButton
-            onClick={() => deleteUserGroup({ variables: { id: group.id } })}
-            loading={isLoading}
+            onAction={async () => {
+              await deleteUserGroup({ variables: { id: group.id } });
+            }}
+            variant="error"
           >
             Gruppe endgültig löschen
           </LoadingButton>

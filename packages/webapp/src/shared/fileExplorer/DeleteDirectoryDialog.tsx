@@ -74,10 +74,7 @@ export const DeleteDirectoryDialog = React.memo(() => {
     getDirectoriesAndFilesForDirectory,
   ]);
 
-  const [
-    deleteFile,
-    { error: errorDeletingFile, loading: isLoadingDeleteFile },
-  ] = useMutation<
+  const [deleteFile, { error: errorDeletingFile }] = useMutation<
     {
       file: FileModel;
     },
@@ -104,10 +101,7 @@ export const DeleteDirectoryDialog = React.memo(() => {
     },
   });
 
-  const [
-    deleteDirectory,
-    { error: errorDeletingDirectory, loading: isLoadingDeleteDirectory },
-  ] = useMutation<{
+  const [deleteDirectory, { error: errorDeletingDirectory }] = useMutation<{
     directory: DirectoryModel;
   }>(DeleteDirectoryMutation, {
     update: (client, { data }) => {
@@ -134,7 +128,6 @@ export const DeleteDirectoryDialog = React.memo(() => {
   });
 
   const error = errorDeletingFile ?? errorDeletingDirectory;
-  const isLoading = isLoadingDeleteFile ?? isLoadingDeleteDirectory;
 
   return (
     <Dialog
@@ -167,8 +160,7 @@ export const DeleteDirectoryDialog = React.memo(() => {
               Abbrechen
             </Button>
             <LoadingButton
-              loading={isLoading}
-              onClick={async () => {
+              onAction={async () => {
                 try {
                   for (const { file } of filesToDelete) {
                     await deleteFile({
@@ -192,7 +184,9 @@ export const DeleteDirectoryDialog = React.memo(() => {
                       );
                     });
                   }
-                  dispatch({ type: 'hideDeleteDirectory' });
+                  setTimeout(() => {
+                    dispatch({ type: 'hideDeleteDirectory' });
+                  }, 1000);
                 } catch (e) {
                   console.error(
                     `error deleting one or more files or directories: `,

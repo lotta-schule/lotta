@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { LoadingButton } from './LoadingButton';
-import { render } from '../test-utils';
+import { act, createPromise, render, waitFor } from '../test-utils';
+import { KeyboardArrowLeft } from '../icon';
+import userEvent from '@testing-library/user-event';
 
 describe('LoadingButton', () => {
   it('renders button label', () => {
@@ -15,18 +17,6 @@ describe('LoadingButton', () => {
     expect(button).toBeInTheDocument();
   });
 
-  it('disables the button when loading is true', () => {
-    const screen = render(<LoadingButton loading={true} label="Click Me" />);
-    const button = screen.getByRole('button', { name: /Click Me/i });
-    expect(button).toBeDisabled();
-  });
-
-  it('does not disable the button when disabled is false', () => {
-    const screen = render(<LoadingButton disabled={false} label="Click Me" />);
-    const button = screen.getByRole('button', { name: /Click Me/i });
-    expect(button).not.toBeDisabled();
-  });
-
   it('forwards ref to the underlying button element', () => {
     const ref = React.createRef<HTMLButtonElement>();
     const screen = render(<LoadingButton label="Click Me" ref={ref} />);
@@ -34,25 +24,226 @@ describe('LoadingButton', () => {
     expect(ref.current).toBe(button);
   });
 
-  describe('when loading', () => {
-    it('should disable the button', () => {
-      const screen = render(<LoadingButton disabled={true} label="Click Me" />);
-      const button = screen.getByRole('button', { name: /Click Me/i });
-      expect(button).toBeDisabled();
-    });
-
-    it('should show the loading indicator', () => {
-      const screen = render(<LoadingButton loading={true} label="Click Me" />);
-      const loadingIndicator = screen.getByRole('progressbar');
-      expect(loadingIndicator).toBeVisible();
-    });
+  it('should disable the button on loading, success, error', () => {
+    const screen = render(<LoadingButton state={'idle'} label="Click Me" />);
+    expect(
+      screen.getByRole('button', { name: /Click Me/i })
+    ).not.toBeDisabled();
+    screen.rerender(<LoadingButton state={'loading'} label="Click Me" />);
+    expect(screen.getByRole('button', { name: /Click Me/i })).toBeDisabled();
+    screen.rerender(<LoadingButton state={'success'} label="Click Me" />);
+    expect(screen.getByRole('button', { name: /Click Me/i })).toBeDisabled();
+    screen.rerender(<LoadingButton state={'error'} label="Click Me" />);
+    expect(screen.getByRole('button', { name: /Click Me/i })).toBeDisabled();
   });
 
-  describe('when not loading', () => {
-    it('should not not disable the button', () => {
-      const screen = render(<LoadingButton loading={false} label="Click Me" />);
-      const button = screen.getByRole('button', { name: /Click Me/i });
-      expect(button).not.toBeDisabled();
+  it('should be able to show an icon', async () => {
+    const screen = render(
+      <LoadingButton
+        icon={<KeyboardArrowLeft data-testid="TestIcon" />}
+        label="Click Me"
+      />
+    );
+    expect(screen.getByTestId('TestIcon')).toBeVisible();
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    screen.rerender(
+      <LoadingButton
+        state={'loading'}
+        icon={<KeyboardArrowLeft data-testid="TestIcon" />}
+        label="Click Me"
+      />
+    );
+    await waitFor(() => {
+      expect(screen.getByRole('progressbar')).toBeVisible();
+    });
+    expect(screen.queryByTestId('TestIcon')).toBeNull();
+  });
+
+  it('should show loading spinner on loading', () => {
+    const screen = render(<LoadingButton state={'loading'} label="Click Me" />);
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
+
+  it('should show the success icon on success', () => {
+    const screen = render(<LoadingButton state={'success'} label="Click Me" />);
+    expect(screen.getByTestId('SuccessIcon')).toBeInTheDocument();
+  });
+
+  it('should show the error icon on error', () => {
+    const screen = render(<LoadingButton state={'error'} label="Click Me" />);
+    expect(screen.getByTestId('ErrorIcon')).toBeInTheDocument();
+  });
+
+  describe('onAction', () => {
+    it('should call the handler and show the success state', async () => {
+      const fireEvent = userEvent.setup();
+      const { promise, resolve } = createPromise();
+      const onAction = jest.fn(() => promise);
+      const onComplete = jest.fn();
+      const onError = jest.fn();
+      const screen = render(
+        <LoadingButton
+          label="Click Me"
+          onAction={onAction}
+          onComplete={onComplete}
+          onError={onError}
+        />
+      );
+      await fireEvent.click(screen.getByRole('button', { name: /Click Me/i }));
+
+      expect(onAction).toHaveBeenCalled();
+
+      await waitFor(() => {
+        expect(screen.getByRole('progressbar')).toBeVisible();
+      });
+
+      resolve();
+
+      await waitFor(() => {
+        expect(onComplete).toHaveBeenCalled();
+      });
+      expect(onError).not.toHaveBeenCalled();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+      });
+    });
+
+    it('should call the handler and show the error state', async () => {
+      const fireEvent = userEvent.setup();
+      const { promise, reject } = createPromise();
+      const onAction = jest.fn(() => promise);
+      const onComplete = jest.fn();
+      const onError = jest.fn();
+      const screen = render(
+        <LoadingButton
+          label="Click Me"
+          onAction={onAction}
+          onComplete={onComplete}
+          onError={onError}
+        />
+      );
+      await fireEvent.click(screen.getByRole('button', { name: /Click Me/i }));
+
+      expect(onAction).toHaveBeenCalled();
+
+      await waitFor(() => {
+        expect(screen.getByRole('progressbar')).toBeVisible();
+      });
+
+      reject();
+
+      await waitFor(() => {
+        expect(onError).toHaveBeenCalled();
+      });
+      expect(onComplete).not.toHaveBeenCalled();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('ErrorIcon')).toBeVisible();
+      });
+    });
+
+    describe('embedded in a form', () => {
+      it("should not call onAction if the type is not set to 'submit'", async () => {
+        const fireEvent = userEvent.setup();
+        const onSubmit = jest.fn();
+        const onAction = jest.fn();
+        const screen = render(
+          <form onSubmit={onSubmit}>
+            <input type="text" />
+            <LoadingButton label="Click Me" onAction={onAction} />
+          </form>
+        );
+
+        await fireEvent.type(screen.getByRole('textbox'), 'Hello World{enter}');
+
+        await waitFor(() => {
+          expect(onSubmit).toHaveBeenCalled();
+        });
+
+        expect(onAction).not.toHaveBeenCalled();
+      });
+
+      it("should run the onAction handle when it's in a form that is being submitted", async () => {
+        const fireEvent = userEvent.setup();
+        const onAction = jest.fn(() => Promise.resolve());
+        const screen = render(
+          <form>
+            <input type="text" />
+            <LoadingButton
+              type="submit"
+              label="Send the form"
+              onAction={onAction}
+            />
+          </form>
+        );
+        await fireEvent.type(screen.getByRole('textbox'), 'Hello World{enter}');
+
+        expect(onAction).toHaveBeenCalled();
+
+        await waitFor(() => {
+          expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+        });
+      });
+    });
+
+    describe('return to idle state', () => {
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+
+      it('should return to the idle state after a waiting time', async () => {
+        jest.useFakeTimers({ advanceTimers: 200 });
+
+        const fireEvent = userEvent.setup();
+        const onAction = jest.fn(async () => void 0);
+        const screen = render(
+          <LoadingButton label="Click Me" onAction={onAction} />
+        );
+        fireEvent.click(screen.getByRole('button', { name: /Click Me/i }));
+
+        await waitFor(() => {
+          expect(onAction).toHaveBeenCalled();
+        });
+
+        await waitFor(() => {
+          expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+        });
+
+        await act(() => jest.advanceTimersByTimeAsync(5000));
+
+        expect(
+          screen.getByRole('button', { name: /Click Me/i })
+        ).not.toBeDisabled();
+        expect(screen.queryByTestId('SuccessIcon')).toBeNull();
+      });
+
+      it('should keep its state after the request if resetState=false', async () => {
+        jest.useFakeTimers({ advanceTimers: 200 });
+
+        const fireEvent = userEvent.setup();
+        const onAction = jest.fn(async () => void 0);
+        const screen = render(
+          <LoadingButton
+            label="Click Me"
+            onAction={onAction}
+            resetState={false}
+          />
+        );
+        fireEvent.click(screen.getByRole('button', { name: /Click Me/i }));
+
+        await waitFor(() => {
+          expect(onAction).toHaveBeenCalled();
+        });
+
+        await waitFor(() => {
+          expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+        });
+
+        await act(() => jest.advanceTimersByTimeAsync(5000));
+
+        expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+      });
     });
   });
 });

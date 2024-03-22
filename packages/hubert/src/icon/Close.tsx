@@ -3,8 +3,8 @@ import clsx from 'clsx';
 
 import styles from './SvgIcon.module.scss';
 
-export const Close = React.memo<React.SVGProps<SVGSVGElement>>(
-  ({ className, ...props }) => (
+export const Close = React.memo(
+  ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       focusable="false"

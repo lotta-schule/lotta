@@ -30,3 +30,14 @@ Object.defineProperty(window, 'scrollTo', {
 });
 
 global.TextEncoder = TextEncoder;
+
+const originalError = console.error;
+jest.spyOn(console, 'error').mockImplementation((...args) => {
+  if (
+    typeof args[0] === 'string' &&
+    args[0].includes('inside a test was not wrapped in act')
+  ) {
+    return;
+  }
+  return originalError.call(console, args);
+});
