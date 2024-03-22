@@ -32,6 +32,7 @@ import clsx from 'clsx';
 import styles from './GroupList.module.scss';
 
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
+import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 
 type Sorting = 'custom' | 'name';
 
@@ -42,6 +43,9 @@ export const GroupList = () => {
   >(null);
   const [isCreateUserGroupDialogOpen, setIsCreateUserGroupDialogOpen] =
     React.useState(false);
+  const [groupToDelete, setGroupToDelete] =
+    React.useState<UserGroupModel | null>(null);
+
   const [sorting, setSorting] = React.useState<Sorting>('custom');
   const [searchText, setSearchText] = React.useState('');
 
@@ -232,12 +236,22 @@ export const GroupList = () => {
               </Toolbar>
               <EditUserGroup
                 groupId={selectedGroupId}
-                onDelete={() => setSelectedGroupId(null)}
+                onRequestDeletion={(group) => {
+                  setGroupToDelete({ ...group });
+                }}
               />
             </SplitViewContent>
           </>
         )}
       </SplitView>
+      <DeleteUserGroupDialog
+        group={groupToDelete}
+        onRequestClose={() => setGroupToDelete(null)}
+        onConfirm={() => {
+          setGroupToDelete(null);
+          setSelectedGroupId(null);
+        }}
+      />
     </div>
   );
 };

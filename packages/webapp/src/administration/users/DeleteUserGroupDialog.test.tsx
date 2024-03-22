@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { MockedResponse } from '@apollo/client/testing';
 import { render, screen, waitFor } from 'test/util';
 import {
   Weihnachtsmarkt,
@@ -19,8 +20,7 @@ describe('administration: DeleteUserGroupDialog', () => {
 
     const screen = render(
       <DeleteUserGroupDialog
-        isOpen={false}
-        group={lehrerGroup}
+        group={null}
         onConfirm={() => {}}
         onRequestClose={onRequestClose}
       />
@@ -30,7 +30,6 @@ describe('administration: DeleteUserGroupDialog', () => {
 
     screen.rerender(
       <DeleteUserGroupDialog
-        isOpen={true}
         group={lehrerGroup}
         onConfirm={() => {}}
         onRequestClose={onRequestClose}
@@ -51,8 +50,7 @@ describe('administration: DeleteUserGroupDialog', () => {
 
     screen.rerender(
       <DeleteUserGroupDialog
-        isOpen={false}
-        group={lehrerGroup}
+        group={null}
         onConfirm={() => {}}
         onRequestClose={onRequestClose}
       />
@@ -66,7 +64,6 @@ describe('administration: DeleteUserGroupDialog', () => {
     const onRequestClose = jest.fn();
     render(
       <DeleteUserGroupDialog
-        isOpen
         group={lehrerGroup}
         onConfirm={() => {}}
         onRequestClose={onRequestClose}
@@ -81,7 +78,7 @@ describe('administration: DeleteUserGroupDialog', () => {
 
   describe('send delete request', () => {
     it('delete the group and show a list of unpublished articles', async () => {
-      const mocks = [
+      const mocks: MockedResponse[] = [
         {
           request: {
             query: DeleteUserGroupMutation,
@@ -89,7 +86,7 @@ describe('administration: DeleteUserGroupDialog', () => {
               id: lehrerGroup.id,
             },
           },
-          result: {
+          result: jest.fn(() => ({
             data: {
               deleteUserGroup: {
                 userGroup: lehrerGroup,
@@ -100,7 +97,7 @@ describe('administration: DeleteUserGroupDialog', () => {
                 ],
               },
             },
-          },
+          })),
         },
       ];
 
@@ -108,7 +105,6 @@ describe('administration: DeleteUserGroupDialog', () => {
       const onConfirm = jest.fn();
       const screen = render(
         <DeleteUserGroupDialog
-          isOpen
           group={lehrerGroup}
           onConfirm={onConfirm}
           onRequestClose={() => {}}
@@ -120,7 +116,76 @@ describe('administration: DeleteUserGroupDialog', () => {
         screen.getByRole('button', { name: /endgültig löschen/ })
       );
 
-      expect(onConfirm).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mocks[0].result).toHaveBeenCalled();
+      });
+
+      await waitFor(() => {
+        expect(screen.getByRole('list')).toBeVisible();
+      });
+
+      expect(screen.getAllByRole('listitem')).toHaveLength(3);
+      expect(screen.getByText(Weihnachtsmarkt.title)).toBeVisible();
+      expect(screen.getByText(ComputerExperten.title)).toBeVisible();
+      expect(screen.getByText(VivaLaRevolucion.title)).toBeVisible();
+
+      await fireEvent.click(
+        screen.getAllByRole('button', { name: /schließen/i })[1]
+      );
+
+      await waitFor(() => {
+        expect(onConfirm).toHaveBeenCalled();
+      });
+    });
+
+    it('should send onConfirm even when closing via dialogs "close" button', async () => {
+      const mocks: MockedResponse[] = [
+        {
+          request: {
+            query: DeleteUserGroupMutation,
+            variables: {
+              id: lehrerGroup.id,
+            },
+          },
+          result: {
+            data: {
+              deleteUserGroup: {
+                userGroup: lehrerGroup,
+                unpublishedArticles: [],
+              },
+            },
+          },
+        },
+      ];
+
+      const fireEvent = userEvent.setup();
+      const onConfirm = jest.fn();
+      const onRequestClose = jest.fn();
+      const screen = render(
+        <DeleteUserGroupDialog
+          group={lehrerGroup}
+          onConfirm={onConfirm}
+          onRequestClose={onRequestClose}
+        />,
+        {},
+        { additionalMocks: mocks }
+      );
+      await fireEvent.click(
+        screen.getByRole('button', { name: /endgültig löschen/ })
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getAllByRole('button', { name: /schließen/i })
+        ).toHaveLength(2);
+      });
+      await fireEvent.click(
+        screen.getAllByRole('button', { name: /schließen/i })[0]
+      );
+
+      await waitFor(() => {
+        expect(onConfirm).toHaveBeenCalled();
+      });
     });
   });
 });
