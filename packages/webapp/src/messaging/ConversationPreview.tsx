@@ -14,11 +14,17 @@ import styles from './ConversationPreview.module.scss';
 export interface ConversationPreviewProps {
   conversation: ConversationModel;
   selected?: boolean;
+  className?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export const ConversationPreview = React.memo<ConversationPreviewProps>(
-  ({ conversation, selected, onClick }) => {
+export const ConversationPreview = React.memo(
+  ({
+    conversation,
+    selected,
+    className,
+    onClick,
+  }: ConversationPreviewProps) => {
     const currentUser = useCurrentUser()!;
 
     const user =
@@ -28,7 +34,9 @@ export const ConversationPreview = React.memo<ConversationPreviewProps>(
     return (
       <Button
         onClick={onClick}
-        className={clsx(styles.root, { [styles.selected]: selected })}
+        className={clsx(styles.root, className, {
+          [styles.selected]: selected,
+        })}
         aria-label={`Unterhaltung mit ${Message.getDestinationName(
           Message.conversationAsDestination(conversation, currentUser)
         )}`}

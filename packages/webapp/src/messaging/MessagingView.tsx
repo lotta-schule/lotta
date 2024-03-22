@@ -88,7 +88,7 @@ export const MessagingView = React.memo(() => {
     >
       {({ close: closeSidebar }) => (
         <>
-          <SplitViewNavigation>
+          <SplitViewNavigation className={styles.splitViewNavigation}>
             <MessageToolbar
               onRequestNewMessage={(destination) => {
                 const conversation = conversations.find((c) => {
@@ -113,8 +113,10 @@ export const MessagingView = React.memo(() => {
                 }
               }}
             />
+
             {conversations.map((conversation) => (
               <ConversationPreview
+                className={styles.conversationPreview}
                 key={[...conversation.users, ...conversation.groups]
                   .map(({ id }) => id)
                   .join('-')}
