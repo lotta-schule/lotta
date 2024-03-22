@@ -189,7 +189,7 @@ export const RegisterDialog = React.memo(
           >
             Abbrechen
           </Button>
-          <LoadingButton type={'submit'} loading={isLoading}>
+          <LoadingButton type={'submit'} state={isLoading ? 'loading' : 'idle'}>
             Registrieren
           </LoadingButton>
         </DialogActions>

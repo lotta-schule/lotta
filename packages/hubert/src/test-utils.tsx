@@ -30,3 +30,13 @@ export * from '@testing-library/react';
 
 // override render method
 export { customRender as render };
+
+export const createPromise = <T = void,>() => {
+  let resolve: (value: T) => void;
+  let reject: (error?: any) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve: resolve!, reject: reject! };
+};

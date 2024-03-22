@@ -189,6 +189,7 @@ export const EditUserGroup = React.memo<EditUserGroupProps>(
                   <Button
                     className={styles.deleteButton}
                     onClick={() => setIsDeleteUserGroupDialogOpen(true)}
+                    variant="error"
                   >
                     Gruppe "{group.name}" löschen
                   </Button>

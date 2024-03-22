@@ -1,25 +1,52 @@
 .root {
   .circularProgress {
-    transition: all 0.35s ease-in;
+    animation: animate-fade 0.35s ease-in;
     position: absolute;
     top: var(--lotta-spacing);
     left: calc(var(--lotta-spacing) * 2);
-    opacity: 0;
+
+    @keyframes animate-fade {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
   }
+
+  .icon {
+    display: contents;
+  }
+
+  .iconContainer {
+    position: absolute;
+    height: 100%;
+    left: calc(2 * var(--lotta-spacing));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .successIcon {
+    color: rgb(var(--lotta-success-color));
+  }
+
+  .errorIcon {
+    color: rgb(var(--lotta-error-color));
+  }
+
   .label {
     transition: all 0.25s ease-in;
     opacity: 1;
-    margin: 0
-      calc(var(--lotta-spacing) + calc(calc(1em + var(--lotta-spacing)) / 2));
+    margin: 0 calc(var(--lotta-spacing) + calc(calc(1em + var(--lotta-spacing)) / 2));
   }
 
-  &.isLoading {
-    .circularProgress {
-      opacity: 1;
-    }
+  &.isLoading,
+  &:has(.iconContainer:not(:empty)) {
     .label {
-      margin: 0 0 0
-        calc(calc(2 * var(--lotta-spacing)) + calc(1em + var(--lotta-spacing)));
+      margin: 0 0 0 calc(calc(2 * var(--lotta-spacing)) + calc(1em + var(--lotta-spacing)));
     }
   }
 }

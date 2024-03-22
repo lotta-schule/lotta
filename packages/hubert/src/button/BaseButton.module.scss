@@ -4,7 +4,7 @@
   color: rgba(var(--lotta-primary-color), 1);
   background: rgba(var(--lotta-box-background-color), 1);
   border-radius: var(--lotta-border-radius);
-  padding: 0.7em;
+  padding: var(--lotta-spacing);
   display: flex;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -12,8 +12,10 @@
   font-size: 0.8rem;
   justify-content: space-evenly;
   font-family: var(--lotta-text-font-family);
+
   &:not([disabled]) {
     cursor: pointer;
+
     &:hover,
     &:active {
       transition: linear;
@@ -35,6 +37,7 @@
     &:hover {
       filter: brightness(90%);
     }
+
     &:active {
       filter: brightness(70%);
     }
@@ -51,31 +54,37 @@
     background-color: rgba(var(--lotta-primary-color), 1);
     color: rgba(var(--lotta-primary-contrast-text-color), 1);
     border: none;
+
     &:hover {
       transition: linear;
       transition-duration: 0.2s;
       background: rgba(var(--lotta-primary-color), 1);
       box-shadow: inset 0 0 20px #00000024;
     }
+
     &:active {
       background: rgba(var(--lotta-primary-color), 1);
       box-shadow: inset 0 0 20px #0000004f;
       filter: none;
     }
   }
+
   &[data-variant='borderless'] {
     border: none;
   }
+
   &[data-variant='error'] {
     background-color: rgba(var(--lotta-error-color), 1);
     color: rgba(var(--lotta-primary-contrast-text-color), 1);
     border: none;
+
     &:hover {
       transition: linear;
       transition-duration: 0.2s;
       background-color: rgba(var(--lotta-error-color), 1);
       box-shadow: inset 0 0 20px #00000024;
     }
+
     &:active {
       background-color: rgba(var(--lotta-primary-color), 1);
       box-shadow: inset 0 0 20px #0000004f;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Meta } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { Avatar, BaseButton } from '@lotta-schule/hubert';
 
 export default {
@@ -7,60 +7,58 @@ export default {
   component: BaseButton,
   argTypes: {},
   parameters: {},
-} as Meta;
+} as Meta<typeof BaseButton>;
 
-export const General = {
+export const General: StoryObj<typeof BaseButton> = {
   args: {
     children: 'Der Button ist sehr allgemein gehalten',
   },
 };
 
-export const Disabled = {
+export const Disabled: StoryObj<typeof BaseButton> = {
   args: {
     children: 'Der Button darf nichts',
-    as: 'button',
     disabled: true,
-  } as any,
+  },
 };
 
-export const DisabledFilled = {
+export const DisabledFilled: StoryObj<typeof BaseButton> = {
   args: {
     children: 'Der Button darf nichts',
-    as: 'button',
     variant: 'fill',
     disabled: true,
-  } as any,
+  },
 };
 
-export const FillVariant = {
+export const FillVariant: StoryObj<typeof BaseButton> = {
   args: {
     variant: 'fill',
     children: "Es gibt eine 'fill' Variante",
   },
 };
 
-export const ErrorVariant = {
+export const ErrorVariant: StoryObj<typeof BaseButton> = {
   args: {
     variant: 'error',
     children: "Es gibt eine 'error' Variante",
   },
 };
 
-export const FullWidth = {
+export const FullWidth: StoryObj<typeof BaseButton> = {
   args: {
     fullWidth: true,
     children: 'Volle Breite',
   },
 };
 
-export const Selected = {
+export const Selected: StoryObj<typeof BaseButton> = {
   args: {
     selected: true,
     children: 'Ausgewählt',
   },
 };
 
-export const Complex = {
+export const Complex: StoryObj<typeof BaseButton> = {
   args: {
     children: (
       <div style={{ display: 'flex' }}>

@@ -3,8 +3,8 @@ import clsx from 'clsx';
 
 import styles from './SvgIcon.module.scss';
 
-export const ExpandMore = React.memo<React.SVGProps<SVGSVGElement>>(
-  ({ className, ...props }) => (
+export const ExpandMore = React.memo(
+  ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       focusable="false"
