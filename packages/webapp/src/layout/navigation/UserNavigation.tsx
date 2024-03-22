@@ -38,7 +38,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import clsx from 'clsx';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 
 import styles from './UserNavigation.module.scss';
 

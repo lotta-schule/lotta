@@ -4,7 +4,7 @@ import { getApolloClient } from 'api/client';
 import { UnpublishedArticlesPage } from 'administration/UnpublishedArticlesPage';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 
 const UnpublishedRoute = ({
   articles,

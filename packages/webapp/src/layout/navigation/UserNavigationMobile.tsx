@@ -24,13 +24,13 @@ import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
+import { useNewFeedbackCount } from 'util/feedback';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 
 import styles from './UserNavigationMobile.module.scss';
-import { useNewFeedbackCount } from 'util/feedback';
 
 export const UserNavigationMobile = React.memo(() => {
   const router = useRouter();

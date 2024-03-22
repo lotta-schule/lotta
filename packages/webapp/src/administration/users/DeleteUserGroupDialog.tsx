@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { UserGroupModel, ID } from 'model';
+import { UserGroupModel, ID, ArticleModel } from 'model';
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   ErrorMessage,
+  LoadingButton,
 } from '@lotta-schule/hubert';
 
 import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
 
 export interface DeleteUserGroupDialogProps {
@@ -19,14 +21,24 @@ export interface DeleteUserGroupDialogProps {
   onConfirm(): void;
 }
 
-export const DeleteUserGroupDialog = React.memo<DeleteUserGroupDialogProps>(
-  ({ isOpen, group, onRequestClose, onConfirm }) => {
+export const DeleteUserGroupDialog = React.memo(
+  ({
+    isOpen,
+    group,
+    onRequestClose,
+    onConfirm,
+  }: DeleteUserGroupDialogProps) => {
     const [deleteUserGroup, { loading: isLoading, error }] = useMutation<
-      { group: UserGroupModel },
+      {
+        deleteUserGroup: {
+          userGroup: UserGroupModel;
+          unpublishedArticles: ArticleModel[];
+        };
+      },
       { id: ID }
     >(DeleteUserGroupMutation, {
       update: (cache, { data }) => {
-        if (data && data.group) {
+        if (data?.deleteUserGroup?.userGroup) {
           const readUserGroupsResult = cache.readQuery<{
             userGroups: UserGroupModel[];
           }>({ query: GetUserGroupsQuery });
@@ -34,8 +46,22 @@ export const DeleteUserGroupDialog = React.memo<DeleteUserGroupDialogProps>(
             query: GetUserGroupsQuery,
             data: {
               userGroups: (readUserGroupsResult?.userGroups ?? []).filter(
-                (g) => g.id !== data.group.id
+                (g) => g.id !== data.deleteUserGroup.userGroup.id
               ),
+            },
+          });
+        }
+        if (data?.deleteUserGroup?.userGroup) {
+          const unpublishedArticlesResult = cache.readQuery<{
+            articles: ArticleModel[];
+          }>({ query: GetUnpublishedArticlesQuery });
+          cache.writeQuery<{ articles: ArticleModel[] }>({
+            query: GetUnpublishedArticlesQuery,
+            data: {
+              articles: [
+                ...(unpublishedArticlesResult?.articles ?? []),
+                ...(data.deleteUserGroup.unpublishedArticles ?? []),
+              ],
             },
           });
         }
@@ -59,19 +85,21 @@ export const DeleteUserGroupDialog = React.memo<DeleteUserGroupDialogProps>(
           </p>
           <p>
             Beiträge und Kategorien, die <em>ausschließlich</em> für diese
-            Gruppe sichtbar waren, werden dann öffentlich sichtbar.
+            Gruppe sichtbar waren, werden wieder "zur Veröffentlichunge
+            freigegeben" gesetzt und müssen neu Gruppen zugewiesen werden um
+            sichtbar zu sein.
           </p>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => onRequestClose()} disabled={isLoading}>
             Abbrechen
           </Button>
-          <Button
+          <LoadingButton
             onClick={() => deleteUserGroup({ variables: { id: group.id } })}
-            disabled={isLoading}
+            loading={isLoading}
           >
             Gruppe endgültig löschen
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     );
