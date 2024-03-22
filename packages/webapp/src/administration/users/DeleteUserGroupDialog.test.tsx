@@ -12,13 +12,17 @@ import userEvent from '@testing-library/user-event';
 import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
 
 describe('administration: DeleteUserGroupDialog', () => {
-  it('should be hidden and open when "isOpen" is passed', async () => {
+  it('should be hidden and open when "isOpen" is passed and close when cancelled', async () => {
+    const fireEvent = userEvent.setup();
+
+    const onRequestClose = jest.fn();
+
     const screen = render(
       <DeleteUserGroupDialog
         isOpen={false}
         group={lehrerGroup}
         onConfirm={() => {}}
-        onRequestClose={() => {}}
+        onRequestClose={onRequestClose}
       />
     );
 
@@ -29,7 +33,7 @@ describe('administration: DeleteUserGroupDialog', () => {
         isOpen={true}
         group={lehrerGroup}
         onConfirm={() => {}}
-        onRequestClose={() => {}}
+        onRequestClose={onRequestClose}
       />
     );
 
@@ -38,6 +42,23 @@ describe('administration: DeleteUserGroupDialog', () => {
         screen.getByRole('dialog', { name: /gruppe löschen/i })
       ).toBeVisible();
     });
+
+    await fireEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
+
+    await waitFor(() => {
+      expect(onRequestClose).toHaveBeenCalled();
+    });
+
+    screen.rerender(
+      <DeleteUserGroupDialog
+        isOpen={false}
+        group={lehrerGroup}
+        onConfirm={() => {}}
+        onRequestClose={onRequestClose}
+      />
+    );
+
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('should call onRequestClose when clicking the "Abort" button', async () => {

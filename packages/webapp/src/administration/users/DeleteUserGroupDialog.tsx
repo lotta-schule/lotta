@@ -28,7 +28,7 @@ export const DeleteUserGroupDialog = React.memo(
     onRequestClose,
     onConfirm,
   }: DeleteUserGroupDialogProps) => {
-    const [deleteUserGroup, { loading: isLoading, error, data }] = useMutation<
+    const [deleteUserGroup, { loading: isLoading, error }] = useMutation<
       {
         deleteUserGroup: {
           userGroup: UserGroupModel;
@@ -91,19 +91,15 @@ export const DeleteUserGroupDialog = React.memo(
           </p>
         </DialogContent>
         <DialogActions>
-          {!data?.deleteUserGroup.userGroup && (
-            <>
-              <Button onClick={() => onRequestClose()} disabled={isLoading}>
-                Abbrechen
-              </Button>
-              <LoadingButton
-                onClick={() => deleteUserGroup({ variables: { id: group.id } })}
-                loading={isLoading}
-              >
-                Gruppe endgültig löschen
-              </LoadingButton>
-            </>
-          )}
+          <Button onClick={() => onRequestClose()} disabled={isLoading}>
+            Abbrechen
+          </Button>
+          <LoadingButton
+            onClick={() => deleteUserGroup({ variables: { id: group.id } })}
+            loading={isLoading}
+          >
+            Gruppe endgültig löschen
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     );
