@@ -34,6 +34,11 @@ const SplitViewChildren = ({ children }: Pick<SplitViewProps, 'children'>) => {
   return children;
 };
 
+/**
+ * A component that provides a split view layout.
+ * On small screens, the sidebar is hidden by default and can be toggled by the user.
+ * On larger screens, the sidebar is always visible.
+ **/
 export const SplitView = ({
   children,
   className,

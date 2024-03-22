@@ -36,16 +36,22 @@ export const SplitViewProvider = ({
   const canCloseSidebar = isMobile
     ? isSidebarActive && closeCondition()
     : false;
-  const open = ({ force }: { force?: boolean } = {}) => {
-    if (force === true || canOpenSidebar) {
-      setIsSidebarActive(true);
-    }
-  };
-  const close = ({ force }: { force?: boolean } = {}) => {
-    if (force === true || canCloseSidebar) {
-      setIsSidebarActive(false);
-    }
-  };
+  const open = React.useCallback<SplitViewContextType['open']>(
+    ({ force } = {}) => {
+      if (force === true || canOpenSidebar) {
+        setIsSidebarActive(true);
+      }
+    },
+    [canOpenSidebar]
+  );
+  const close = React.useCallback<SplitViewContextType['close']>(
+    ({ force } = {}) => {
+      if (force === true || canCloseSidebar) {
+        setIsSidebarActive(false);
+      }
+    },
+    [canCloseSidebar]
+  );
   const toggle = () => (isSidebarActive ? close() : open());
   return (
     <SplitViewContext.Provider
