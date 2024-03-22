@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -23,7 +23,7 @@ jobs:
         uses: nrwl/nx-set-shas@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -54,7 +54,7 @@ jobs:
         uses: nrwl/nx-set-shas@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
@@ -71,7 +71,7 @@ jobs:
           npm run nx affected -- -t e2e --configuration=ci
 
       - name: Upload Tests for storybook-addon-theme
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
         with:
           working-directory: packages/storybook-addon-theme/
           directory: coverage/
@@ -80,7 +80,7 @@ jobs:
           verbose: true
 
       - name: Upload Tests for hubert
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
         with:
           working-directory: packages/hubert/
           directory: coverage/
@@ -89,7 +89,7 @@ jobs:
           verbose: true
 
       - name: Upload Tests for hubert storybook
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
         with:
           working-directory: packages/storybook-hubert/
           directory: coverage/
@@ -98,7 +98,7 @@ jobs:
           verbose: true
 
       - name: Upload Tests for Webapp
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
         with:
           working-directory: packages/webapp/
           directory: coverage/
@@ -111,7 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -123,7 +123,7 @@ jobs:
         uses: nrwl/nx-set-shas@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
@@ -139,12 +139,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
@@ -177,7 +177,7 @@ jobs:
       updated-sha: ${{ steps.updated-sha.outputs.sha }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -194,7 +194,7 @@ jobs:
         uses: nrwl/nx-set-shas@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
@@ -260,13 +260,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ needs.update-package-versions.outputs.updated-sha }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
