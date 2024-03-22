@@ -162,7 +162,7 @@ describe('Analytics', () => {
       expect(screen.getByRole('option', { name: 'März 2024' })).toBeVisible();
       expect(screen.queryByRole('option', { name: 'Februar 2024' })).toBeNull();
 
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 400));
 
       await fireEvent.click(screen.getByRole('option', { name: 'April 2025' }));
 

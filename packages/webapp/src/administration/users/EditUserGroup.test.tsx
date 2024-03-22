@@ -372,8 +372,11 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
                 },
                 result: {
                   data: {
-                    group: {
-                      id: lehrerGroup.id,
+                    deleteUserGroup: {
+                      userGroup: {
+                        id: lehrerGroup.id,
+                      },
+                      unpublishedArticles: [],
                     },
                   },
                 },

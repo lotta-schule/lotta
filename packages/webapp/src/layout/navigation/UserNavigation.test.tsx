@@ -5,7 +5,7 @@ import { UserNavigation } from './UserNavigation';
 import { SomeUser, adminGroup } from 'test/fixtures';
 import userEvent from '@testing-library/user-event';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
 
 describe('shared/layouts/UserNavigation', () => {

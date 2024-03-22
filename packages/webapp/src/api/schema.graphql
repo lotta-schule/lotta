@@ -187,6 +187,11 @@ be converted to UTC if there is an offset.
 """
 scalar DateTime
 
+type DeleteUserGroupResult {
+  unpublishedArticles: [Article]
+  userGroup: UserGroup
+}
+
 type Device {
   customName: String
   deviceType: String
@@ -343,7 +348,7 @@ type RootMutationType {
   deleteFeedback(id: ID!): Feedback
   deleteFile(id: ID!): File
   deleteMessage(id: ID!): Message
-  deleteUserGroup(id: ID!): UserGroup
+  deleteUserGroup(id: ID!): DeleteUserGroupResult
   deleteWidget(id: ID!): Widget
   destroyAccount(transferFileIds: [ID!], userId: ID!): User
   login(password: String, username: String): Authresult

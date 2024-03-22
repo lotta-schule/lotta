@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
 
 describe('shared/layouts/profileLayout/ProfileData', () => {

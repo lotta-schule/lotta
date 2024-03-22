@@ -4,7 +4,7 @@ import { render, waitFor } from 'test/util';
 import { UserNavigationMobile } from './UserNavigationMobile';
 import { SomeUser, adminGroup } from 'test/fixtures';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
 
 describe('shared/layouts/UserNavigationMobile', () => {

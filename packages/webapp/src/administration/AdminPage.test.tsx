@@ -2,7 +2,7 @@ import { adminGroup, SomeUser } from 'test/fixtures';
 import { render } from 'test/util';
 import { AdminPage } from './AdminPage';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
 
 const adminUser = { ...SomeUser, groups: [adminGroup] };
