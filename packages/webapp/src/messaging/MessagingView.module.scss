@@ -1,7 +1,13 @@
 @import 'breakpoints';
 
 .root {
-  margin-top: calc(-1 * var(--lotta-spacing));
+  .splitViewNavigation {
+    padding-inline: 0;
+  }
+
+  .conversationPreview:last-child {
+    margin-bottom: 0;
+  }
 
   .noMessagesWrapper {
     display: flex;
