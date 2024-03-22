@@ -9,7 +9,9 @@
     "test": "jest",
     "lint": "eslint --ext js,jsx,ts,tsx src",
     "typecheck": "tsc --noEmit",
-    "build": "rollup -c && tsc --emitDeclarationOnly"
+    "build": "run-p build:*",
+    "build:js": "rollup -c",
+    "build:tsd": "tsc --emitDeclarationOnly"
   },
   "type": "module",
   "source": "src/index.ts",

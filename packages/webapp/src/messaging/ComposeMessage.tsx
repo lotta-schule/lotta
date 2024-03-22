@@ -26,8 +26,8 @@ export interface ComposeMessageProps {
   onSent?: (message: MessageModel) => void;
 }
 
-export const ComposeMessage = React.memo<ComposeMessageProps>(
-  ({ destination, onSent }) => {
+export const ComposeMessage = React.memo(
+  ({ destination, onSent }: ComposeMessageProps) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
     const [content, setContent] = React.useState('');
 

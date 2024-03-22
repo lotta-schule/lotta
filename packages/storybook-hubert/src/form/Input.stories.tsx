@@ -1,12 +1,26 @@
+import * as React from 'react';
 import { StoryObj, Meta } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { useArgs } from '@storybook/preview-api';
+import { userEvent, within, waitFor } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { Input } from '@lotta-schule/hubert';
 
 export default {
   title: 'Form/Input',
   component: Input,
+  render: (args) => {
+    const [, updateArgs] = useArgs();
+
+    const onChange: any = (e: React.FormEvent<HTMLInputElement>) => {
+      updateArgs({ value: e.currentTarget.value });
+    };
+
+    return <Input {...args} onChange={onChange} />;
+  },
   argTypes: {},
+  args: {
+    value: '',
+  },
 } as Meta<typeof Input>;
 
 export const Default: StoryObj<typeof Input> = {
@@ -45,8 +59,11 @@ export const Multiline: StoryObj<typeof Input> = {
     await fireEvent.click(canvas.getByRole('textbox'));
     await fireEvent.keyboard('sample text\nwith newline');
 
-    expect(canvas.getByRole('textbox')).toHaveValue(
-      'sample text\nwith newline'
-    );
+    const textarea = canvas.getByRole('textbox');
+    expect(textarea).toHaveValue('sample text\nwith newline');
+
+    await waitFor(() => {
+      expect(textarea.scrollHeight).toEqual(textarea.clientHeight);
+    });
   },
 };

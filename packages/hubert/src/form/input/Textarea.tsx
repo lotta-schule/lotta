@@ -11,22 +11,26 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const textareaRef = React.useRef<HTMLTextAreaElement>(
       null
     ) as React.MutableRefObject<HTMLTextAreaElement>;
-    const [text, setText] = React.useState('');
     const [textareaHeight, setTextareaHeight] = React.useState('auto');
     const [parentHeight, setParentHeight] = React.useState('auto');
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
+      if (props.value === '') {
+        setTextareaHeight('auto');
+        setParentHeight('auto');
+        return;
+      }
+
       const height = `min(${textareaRef.current?.scrollHeight ?? 0}px, ${
         typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight ?? '100vh'
       })`;
       setParentHeight(height);
       setTextareaHeight(`calc(calc(0.5 * var(--lotta-spacing)) + ${height})`);
-    }, [text, maxHeight]);
+    }, [props.value, maxHeight]);
 
     const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setTextareaHeight('auto');
       setParentHeight(`${textareaRef.current?.scrollHeight ?? 0}px`);
-      setText(e.currentTarget.value);
       props.onChange?.(e);
     };
 

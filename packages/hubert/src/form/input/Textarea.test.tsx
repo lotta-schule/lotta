@@ -20,4 +20,22 @@ describe('general/form/input/Textarea', () => {
       ).not.toEqual('auto');
     });
   });
+
+  it('should go back to being small when text is altered', async () => {
+    const screen = render(
+      <Textarea value={'this is one line\nThis is another'} />
+    );
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox').parentElement!.style.minHeight
+      ).not.toEqual('auto');
+    });
+    screen.rerender(<Textarea value={''} />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox').parentElement!.style.minHeight
+      ).toEqual('auto');
+    });
+  });
 });
