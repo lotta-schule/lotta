@@ -23,7 +23,7 @@ const config: StorybookConfig = {
     options: {},
   },
   docs: {
-    autodocs: 'tag',
+    autodocs: true,
   },
   webpackFinal: async (config) => {
     const rules = config.module?.rules || [];
