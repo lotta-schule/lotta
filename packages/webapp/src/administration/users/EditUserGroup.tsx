@@ -11,7 +11,6 @@ import {
 } from '@lotta-schule/hubert';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
-import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
@@ -20,19 +19,16 @@ import styles from './EditUserGroup.module.scss';
 
 export interface EditUserGroupProps {
   groupId: UserGroupModel['id'] | null;
-  onDelete: () => void;
+  onRequestDeletion: (group: UserGroupModel) => void;
 }
 
-export const EditUserGroup = React.memo<EditUserGroupProps>(
-  ({ groupId, onDelete }) => {
+export const EditUserGroup = React.memo(
+  ({ groupId, onRequestDeletion }: EditUserGroupProps) => {
     const groups = useUserGroups();
 
     const group = groups.find((g) => g.id === groupId);
 
     const [name, setName] = React.useState(group?.name ?? '');
-
-    const [isDeleteUserGroupDialogOpen, setIsDeleteUserGroupDialogOpen] =
-      React.useState(false);
 
     const {
       data,
@@ -59,6 +55,7 @@ export const EditUserGroup = React.memo<EditUserGroupProps>(
     const isSoleAdminGroup =
       data?.group.isAdminGroup &&
       groups.filter((g) => g.isAdminGroup).length < 2;
+
     const enrollmentTokens = data?.group.enrollmentTokens ?? [];
 
     return (
@@ -140,7 +137,6 @@ export const EditUserGroup = React.memo<EditUserGroupProps>(
                   (group.canReadFullName || group.isAdminGroup) ?? false
                 }
                 onChange={(isSelected) => {
-                  console.log({ isSelected });
                   updateGroup({
                     variables: {
                       id: group.id,
@@ -188,20 +184,11 @@ export const EditUserGroup = React.memo<EditUserGroupProps>(
                 <>
                   <Button
                     className={styles.deleteButton}
-                    onClick={() => setIsDeleteUserGroupDialogOpen(true)}
+                    onClick={() => onRequestDeletion(group)}
                     variant="error"
                   >
                     Gruppe "{group.name}" löschen
                   </Button>
-                  <DeleteUserGroupDialog
-                    isOpen={isDeleteUserGroupDialogOpen}
-                    group={group}
-                    onRequestClose={() => setIsDeleteUserGroupDialogOpen(false)}
-                    onConfirm={() => {
-                      setIsDeleteUserGroupDialogOpen(false);
-                      onDelete();
-                    }}
-                  />
                 </>
               )}
             </section>

@@ -1,10 +1,11 @@
 import { SplitViewProvider } from '@lotta-schule/hubert';
-import { userGroups } from 'test/fixtures';
-import { render, waitFor } from 'test/util';
+import { lehrerGroup, userGroups } from 'test/fixtures';
+import { render, waitFor, within } from 'test/util';
 import { GroupList } from './GroupList';
 import userEvent from '@testing-library/user-event';
 
 import GetGroupQuery from '../../api/query/GetGroupQuery.graphql';
+import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
 
 const renderWithContext: typeof render = (children, ...other) => {
   return render(<SplitViewProvider>{children}</SplitViewProvider>, ...other);
@@ -94,9 +95,9 @@ describe('administration/users/GroupList', () => {
     );
     const groupLI = screen.getByRole('listitem', { name: 'Administrator' });
     await fireEvent.click(groupLI);
-    waitFor(() => {
+    await waitFor(() => {
       expect(
-        screen.getByRole('dialog', {
+        screen.getByRole('form', {
           name: 'Gruppe "Administrator" bearbeiten',
         })
       ).toBeVisible();
@@ -129,6 +130,79 @@ describe('administration/users/GroupList', () => {
       expect(screen.getAllByRole('listitem')[0]).toHaveTextContent(
         'Administrator'
       );
+    });
+  });
+
+  describe('delete group', () => {
+    it('should show a delete dialog', async () => {
+      const fireEvent = userEvent.setup();
+      const screen = render(
+        <GroupList />,
+        {},
+        {
+          additionalMocks: [
+            ...additionalMocks,
+            {
+              request: {
+                query: DeleteUserGroupMutation,
+                variables: {
+                  id: lehrerGroup.id,
+                },
+              },
+              result: {
+                data: {
+                  deleteUserGroup: {
+                    userGroup: {
+                      id: lehrerGroup.id,
+                    },
+                    unpublishedArticles: [],
+                  },
+                },
+              },
+            },
+          ],
+        }
+      );
+
+      await fireEvent.click(screen.getByRole('listitem', { name: /lehrer/i }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('form', { name: /"Lehrer" bearbeiten/i })
+        ).toBeVisible();
+      });
+      await fireEvent.click(
+        await screen.findByRole('button', { name: /gruppe .* löschen/i })
+      );
+      const dialog = await screen.findByRole('dialog', {
+        name: /löschen/i,
+      });
+      await waitFor(() => {
+        expect(dialog).toBeVisible();
+      });
+
+      await fireEvent.click(
+        await within(dialog).findByRole('button', {
+          name: /löschen/i,
+        })
+      );
+
+      await waitFor(() => {
+        expect(
+          within(dialog).getAllByRole('button', {
+            name: /schließen/i,
+          })[1]
+        ).toBeVisible();
+      });
+      await fireEvent.click(
+        within(dialog).getAllByRole('button', {
+          name: /schließen/i,
+        })[1]
+      );
+
+      await waitFor(() => {
+        expect(dialog).not.toBeVisible();
+      });
     });
   });
 });
