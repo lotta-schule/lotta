@@ -88,15 +88,6 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
-      - name: Upload Tests for hubert storybook
-        uses: codecov/codecov-action@v4
-        with:
-          working-directory: packages/storybook-hubert/
-          directory: coverage/
-          flags: storybook-hubert
-          token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
-
       - name: Upload Tests for Webapp
         uses: codecov/codecov-action@v4
         with:

@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@lotta-schule/theme": "4.2.0-alpha.39",
-    "@storybook/blocks": "^7.6.17",
+    "@storybook/blocks": "^8.0.4",
     "@testing-library/jest-dom": "^6.4.2",
     "babel-jest": "^29.7.0",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -33,14 +33,13 @@
     "jest-environment-jsdom": "^29.7.0"
   },
   "peerDependencies": {
-    "@storybook/api": "^7.2.3",
-    "@storybook/blocks": "^7.0.0",
-    "@storybook/components": "^7.0.0",
-    "@storybook/core-events": "^7.0.0",
-    "@storybook/manager-api": "^7.0.0",
-    "@storybook/preview-api": "^7.0.0",
-    "@storybook/theming": "^7.0.0",
-    "@storybook/types": "^7.0.0",
+    "@storybook/blocks": "^8.0.0",
+    "@storybook/components": "^8.0.0",
+    "@storybook/core-events": "^8.0.0",
+    "@storybook/manager-api": "^8.0.0",
+    "@storybook/preview-api": "^8.0.0",
+    "@storybook/theming": "^8.0.0",
+    "@storybook/types": "^8.0.0",
     "react": ">= 16.8.0",
     "react-dom": ">= 16.8.0"
   },

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render } from '../../test-utils';
+import { render, waitFor } from '../../test-utils';
 import { Option, Select } from './Select';
 import userEvent from '@testing-library/user-event';
 
@@ -46,7 +46,9 @@ describe('shared/general/form/select', () => {
       </Select>
     );
     await fireEvent.click(screen.getByRole('button', { name: /Select/ }));
-    expect(await screen.findByRole('listbox')).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByRole('listbox')).toBeVisible();
+    });
     expect(
       await screen.findByRole('option', { name: /Option 2/, selected: true })
     ).toBeVisible();
