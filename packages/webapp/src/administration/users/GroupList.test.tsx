@@ -207,7 +207,7 @@ describe('administration/users/GroupList', () => {
 
     it('should hide a delete dialog when dialog is "canceled"', async () => {
       const fireEvent = userEvent.setup();
-      const screen = render(<GroupList />);
+      const screen = render(<GroupList />, {}, { additionalMocks });
 
       await fireEvent.click(screen.getByRole('listitem', { name: /lehrer/i }));
 
