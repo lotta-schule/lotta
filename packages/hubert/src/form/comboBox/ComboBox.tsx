@@ -81,6 +81,8 @@ export const ComboBox = React.memo(
     const [calculatedItems, setCalculatedItems] = React.useState<
       ListItemPreliminaryItem[]
     >([]);
+    const [ignoreNextInputChange, setIgnoreNextInputChange] =
+      React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
 
     const allItems = React.useMemo(() => {
@@ -124,6 +126,10 @@ export const ComboBox = React.memo(
     const onInputChange = React.useCallback(
       async (valueObj: string | { value: string; valueType: 'string' }) => {
         const value = typeof valueObj === 'string' ? valueObj : valueObj.value;
+        if (ignoreNextInputChange) {
+          setIgnoreNextInputChange(false);
+          return;
+        }
         if (value) {
           if (isItemListCalculated) {
             try {
@@ -167,8 +173,15 @@ export const ComboBox = React.memo(
         if (!noResetInputOnSelect) {
           state.setInputValue('');
         }
-        if (typeof items === 'function') {
+        debouncedOnInputChange.cancel();
+        if (value !== state.inputValue) {
+          setIgnoreNextInputChange(true);
+        }
+        if (typeof items !== 'function') {
           state.close();
+          if (document.activeElement instanceof HTMLInputElement) {
+            document.activeElement.blur();
+          }
         }
       },
       onInputChange: debouncedOnInputChange,

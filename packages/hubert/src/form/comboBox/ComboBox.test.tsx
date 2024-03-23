@@ -173,6 +173,8 @@ describe('Combobox', () => {
       await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
       await user.click(screen.getByRole('option', { name: /apple/i }));
       expect(onSelect).toHaveBeenCalledWith('Apple');
+
+      expect(screen.getByRole('combobox')).not.toHaveFocus();
     });
 
     it('should call onSelect with item key when the value of a proposed item is typed', async () => {

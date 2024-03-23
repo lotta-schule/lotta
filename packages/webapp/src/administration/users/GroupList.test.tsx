@@ -204,5 +204,41 @@ describe('administration/users/GroupList', () => {
         expect(dialog).not.toBeVisible();
       });
     });
+
+    it('should hide a delete dialog when dialog is "canceled"', async () => {
+      const fireEvent = userEvent.setup();
+      const screen = render(<GroupList />);
+
+      await fireEvent.click(screen.getByRole('listitem', { name: /lehrer/i }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('form', { name: /"Lehrer" bearbeiten/i })
+        ).toBeVisible();
+      });
+      await fireEvent.click(
+        await screen.findByRole('button', { name: /gruppe .* löschen/i })
+      );
+      const dialog = await screen.findByRole('dialog', {
+        name: /löschen/i,
+      });
+      await waitFor(() => {
+        expect(dialog).toBeVisible();
+      });
+
+      await fireEvent.click(
+        await within(dialog).findByRole('button', {
+          name: /abbrechen/i,
+        })
+      );
+
+      await waitFor(() => {
+        expect(dialog).not.toBeVisible();
+      });
+
+      expect(
+        screen.getByRole('form', { name: /"Lehrer" bearbeiten/i })
+      ).toBeVisible();
+    });
   });
 });
