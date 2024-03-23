@@ -95,7 +95,7 @@ export const DeleteUserGroupDialog = React.memo(
                 <p>
                   Beiträge, die <em>ausschließlich</em> für diese
                   Gruppe sichtbar waren, werden wieder in den Status "zur Kontrolle freigegeben"
-                  zurückversetzt und müssen neuen Gruppen zugewiesen werden.
+                  zurückversetzt und müssen neuen Gruppen zugewiesen werden,
                   um sichtbar zu sein.
                 </p>
               </>
