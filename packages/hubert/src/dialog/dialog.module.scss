@@ -27,7 +27,7 @@
     @media screen and (max-width: $max-xs) {
       width: 100vw;
       height: 100vh;
-      max-height: 100vh;
+      height: -webkit-fill-available;
       border-radius: 0;
       margin: auto;
     }
@@ -67,6 +67,7 @@
       flex-grow: 0;
       justify-content: flex-end;
       padding-top: var(--lotta-spacing);
+
       button:not(:first-child) {
         margin-left: var(--lotta-spacing);
       }
