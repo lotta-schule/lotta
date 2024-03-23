@@ -160,7 +160,7 @@ export const Presentation = React.memo(() => {
             />
             <ColorSettingRow
               label={'Deaktiviert'}
-              hint={'Farbe für den deaktivierte Elemente'}
+              hint={'Farbe für deaktivierte Elemente'}
               value={theme.disabledColor}
               onChange={(disabledColor) =>
                 setCustomTheme({
@@ -244,7 +244,7 @@ export const Presentation = React.memo(() => {
             />
             <ColorSettingRow
               label={'Bannerhintergrund'}
-              hint={'Farbe für den Hintergrund des Banner'}
+              hint={'Farbe für den Hintergrund des Banners'}
               value={theme.bannerBackgroundColor}
               onChange={(bannerBackgroundColor) =>
                 setCustomTheme({
