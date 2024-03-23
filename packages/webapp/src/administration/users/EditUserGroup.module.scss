@@ -4,7 +4,9 @@
   width: 100%;
 
   .saveButton {
-    align-self: flex-end;
+    margin-top: var(--lotta-spacing);
+    margin-left: auto;
+    margin-bottom: calc(4 * var(--lotta-spacing));
   }
 
   .deleteButton {

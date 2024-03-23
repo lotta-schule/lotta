@@ -8,6 +8,7 @@ import {
   Input,
   Label,
   LinearProgress,
+  LoadingButton,
 } from '@lotta-schule/hubert';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
@@ -26,19 +27,15 @@ export const EditUserGroup = React.memo(
   ({ groupId, onRequestDeletion }: EditUserGroupProps) => {
     const groups = useUserGroups();
 
-    const group = groups.find((g) => g.id === groupId);
-
-    const [name, setName] = React.useState(group?.name ?? '');
-
     const {
       data,
       loading: isLoading,
       error: loadDetailsError,
     } = useQuery<{ group: UserGroupModel }, { id: ID }>(GetGroupQuery, {
       variables: {
-        id: group?.id ?? '', // We know that group is not null here becuase of the skip
+        id: groupId!,
       },
-      skip: !group,
+      skip: !groupId,
     });
     const [updateGroup, { loading: isLoadingUpdateGroup, error: updateError }] =
       useMutation<
@@ -46,17 +43,40 @@ export const EditUserGroup = React.memo(
         { id: ID; group: UserGroupInputModel }
       >(UpdateUserGroupMutation);
 
+    const group = data?.group;
+
+    const [editedGroup, setEditedGroup] = React.useState<UserGroupModel | null>(
+      group ?? null
+    );
+
     React.useEffect(() => {
-      if (data?.group) {
-        setName(data.group.name);
+      if (group) {
+        setEditedGroup(group);
       }
-    }, [data]);
+    }, [group]);
+
+    const groupHasBeenChanged = React.useMemo(() => {
+      if (!group || !editedGroup) {
+        return false;
+      }
+      if (group.name !== editedGroup.name) {
+        return true;
+      }
+      if (!!group.canReadFullName !== !!editedGroup.canReadFullName) {
+        return true;
+      }
+      if (
+        (group.enrollmentTokens ?? []).sort().join() !==
+        (editedGroup.enrollmentTokens ?? []).sort().join()
+      ) {
+        return true;
+      }
+      return false;
+    }, [group, editedGroup]);
 
     const isSoleAdminGroup =
       data?.group.isAdminGroup &&
       groups.filter((g) => g.isAdminGroup).length < 2;
-
-    const enrollmentTokens = data?.group.enrollmentTokens ?? [];
 
     return (
       <div>
@@ -66,13 +86,10 @@ export const EditUserGroup = React.memo(
             isIndeterminate
           />
         )}
-        {group && (
+        {group && editedGroup && (
           <form
             aria-label={`Gruppe "${group.name}" bearbeiten`}
             className={styles.root}
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
           >
             <ErrorMessage error={loadDetailsError || updateError} />
 
@@ -83,36 +100,13 @@ export const EditUserGroup = React.memo(
                   id="group-name"
                   aria-describedby="group-name-help-text"
                   disabled={isLoadingUpdateGroup}
-                  value={name}
-                  onChange={(e) => setName(e.currentTarget.value)}
-                  onBlur={() => {
-                    updateGroup({
-                      variables: {
-                        id: group.id,
-                        group: {
-                          isAdminGroup: group.isAdminGroup,
-                          canReadFullName: !!group.canReadFullName,
-                          enrollmentTokens,
-                          name,
-                        },
-                      },
-                    });
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      updateGroup({
-                        variables: {
-                          id: group.id,
-                          group: {
-                            isAdminGroup: group.isAdminGroup,
-                            canReadFullName: !!group.canReadFullName,
-                            enrollmentTokens,
-                            name,
-                          },
-                        },
-                      });
-                    }
-                  }}
+                  value={editedGroup.name}
+                  onChange={(e) =>
+                    setEditedGroup({
+                      ...editedGroup,
+                      name: (e.target as HTMLInputElement).value,
+                    })
+                  }
                 />
               </Label>
               <small id="group-name-help-text">
@@ -125,7 +119,7 @@ export const EditUserGroup = React.memo(
               {isSoleAdminGroup && (
                 <Checkbox
                   isDisabled={isLoadingUpdateGroup || isSoleAdminGroup}
-                  isSelected={!!group.isAdminGroup}
+                  isSelected={!!editedGroup.isAdminGroup}
                 >
                   Diese Gruppe hat universelle Administratorrechte
                 </Checkbox>
@@ -134,19 +128,12 @@ export const EditUserGroup = React.memo(
               <Checkbox
                 isDisabled={isLoadingUpdateGroup || group.isAdminGroup}
                 isSelected={
-                  (group.canReadFullName || group.isAdminGroup) ?? false
+                  (editedGroup.canReadFullName || group.isAdminGroup) ?? false
                 }
                 onChange={(isSelected) => {
-                  updateGroup({
-                    variables: {
-                      id: group.id,
-                      group: {
-                        name,
-                        canReadFullName: isSelected,
-                        enrollmentTokens,
-                        isAdminGroup: group.isAdminGroup,
-                      },
-                    },
+                  setEditedGroup({
+                    ...editedGroup,
+                    canReadFullName: isSelected,
                   });
                 }}
               >
@@ -165,21 +152,35 @@ export const EditUserGroup = React.memo(
 
               <EnrollmentTokensEditor
                 disabled={isLoadingUpdateGroup}
-                tokens={enrollmentTokens}
+                tokens={editedGroup.enrollmentTokens}
                 setTokens={(enrollmentTokens) => {
-                  updateGroup({
+                  setEditedGroup({
+                    ...editedGroup,
+                    enrollmentTokens,
+                  });
+                }}
+              />
+
+              <LoadingButton
+                type="submit"
+                disabled={!groupHasBeenChanged}
+                className={styles.saveButton}
+                onAction={async () => {
+                  await updateGroup({
                     variables: {
                       id: group.id,
                       group: {
-                        isAdminGroup: group.isAdminGroup,
-                        canReadFullName: group.canReadFullName,
-                        enrollmentTokens,
-                        name,
+                        name: editedGroup.name,
+                        isAdminGroup: editedGroup.isAdminGroup,
+                        canReadFullName: editedGroup.canReadFullName,
+                        enrollmentTokens: editedGroup.enrollmentTokens,
                       },
                     },
                   });
                 }}
-              />
+              >
+                Gruppe Speichern
+              </LoadingButton>
               {!isSoleAdminGroup && (
                 <>
                   <Button
