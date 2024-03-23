@@ -1,9 +1,14 @@
 import * as React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useArgs } from '@storybook/preview-api';
 import { fireEvent, waitFor, within } from '@storybook/testing-library';
 import { action } from '@storybook/addon-actions';
 import { expect } from '@storybook/jest';
-import { Button, SwipeableViews } from '@lotta-schule/hubert';
+import {
+  Button,
+  SwipeableViews,
+  SwipeableViewsProps,
+} from '@lotta-schule/hubert';
 
 export default {
   title: 'util/SwipeableViews',
@@ -21,17 +26,8 @@ export default {
 } as Meta<typeof SwipeableViews>;
 
 export const Default: StoryObj<typeof SwipeableViews> = {
-  render: ({ selectedIndex, onChange }) => {
-    const [index, setIndex] = React.useState(selectedIndex);
-
-    React.useEffect(() => {
-      setIndex(selectedIndex);
-    }, [selectedIndex]);
-
-    const handleChange = (index: number) => {
-      setIndex(index);
-      onChange(index);
-    };
+  render: ({ selectedIndex }) => {
+    const [args, updateArgs] = useArgs<SwipeableViewsProps>();
 
     const images = [
       'https://picsum.photos/id/3/1000/600',
@@ -41,6 +37,7 @@ export const Default: StoryObj<typeof SwipeableViews> = {
       'https://picsum.photos/id/15/1000/600',
       'https://picsum.photos/id/18/1000/600',
     ];
+
     return (
       <div>
         <nav
@@ -52,19 +49,22 @@ export const Default: StoryObj<typeof SwipeableViews> = {
           }}
         >
           <Button
-            onClick={() => handleChange(index - 1)}
-            disabled={index === 0}
+            onClick={() => updateArgs({ selectedIndex: selectedIndex - 1 })}
+            disabled={selectedIndex <= 0}
           >
             previous
           </Button>
           <Button
-            onClick={() => handleChange(index + 1)}
-            disabled={index === images.length - 1}
+            onClick={() => updateArgs({ selectedIndex: selectedIndex + 1 })}
+            disabled={selectedIndex >= images.length}
           >
             next
           </Button>
         </nav>
-        <SwipeableViews selectedIndex={index} onChange={handleChange}>
+        <SwipeableViews
+          {...args}
+          onChange={(selectedIndex) => updateArgs({ selectedIndex })}
+        >
           {images.map((image, i) => (
             <img
               alt={'Have fun and swipe!'}

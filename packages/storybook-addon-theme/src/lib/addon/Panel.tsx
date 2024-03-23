@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useGlobals } from '@storybook/api';
+import { useGlobals } from '@storybook/manager-api';
 import { AddonPanel } from '@storybook/components';
 import { PureArgsTable } from '@storybook/blocks';
 import { styled } from '@storybook/theming';
