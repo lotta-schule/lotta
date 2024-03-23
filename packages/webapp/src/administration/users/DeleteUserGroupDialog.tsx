@@ -93,10 +93,10 @@ export const DeleteUserGroupDialog = React.memo(
                   Sie ist dann unwiederbringlich verloren.
                 </p>
                 <p>
-                  Beiträge und Kategorien, die <em>ausschließlich</em> für diese
-                  Gruppe sichtbar waren, werden wieder "zur Veröffentlichunge
-                  freigegeben" gesetzt und müssen neu Gruppen zugewiesen werden
-                  um sichtbar zu sein.
+                  Beiträge, die <em>ausschließlich</em> für diese Gruppe
+                  sichtbar waren, werden wieder in den Status "zur Kontrolle
+                  freigegeben" zurückversetzt und müssen neuen Gruppen
+                  zugewiesen werden, um sichtbar zu sein.
                 </p>
               </>
             )}
@@ -119,8 +119,8 @@ export const DeleteUserGroupDialog = React.memo(
                       Beiträge zurückgezogen.
                     </p>
                     <p>
-                      Sie sind nun "zur Veröffentlichung freigegeben" und können
-                      von einem Administrator wieder veröffentlicht werden.
+                      Sie sind nun "zur Kontrolle freigegeben" und können von
+                      einem Administrator wieder veröffentlicht werden.
                     </p>
                     <List>
                       {data.deleteUserGroup.unpublishedArticles.map(
