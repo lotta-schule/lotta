@@ -145,9 +145,8 @@ export const EditUserGroup = React.memo(
             <section>
               <h4>Einschreibeschlüssel</h4>
               <p>
-                Nutzer, die bei der Registrierung einen
-                Einschreibeschlüsselverwenden, werden automatisch dieser Gruppe
-                zugeordnet.
+                Nutzer, die bei der Registrierung einen Einschreibeschlüssel
+                verwenden, werden automatisch dieser Gruppe zugeordnet.
               </p>
 
               <EnrollmentTokensEditor
