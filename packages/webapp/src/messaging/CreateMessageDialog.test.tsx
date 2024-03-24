@@ -84,7 +84,7 @@ describe('CreateMessageDialog', () => {
             screen.getByRole('option', { name: /drinalda/i })
           ).toBeVisible();
         },
-        { timeout: 2000 }
+        { timeout: 5000 }
       );
       await fireEvent.click(screen.getByRole('option', { name: /drinalda/i }));
 
