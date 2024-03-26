@@ -7,8 +7,8 @@
   font-size: 0.7rem;
   padding: 2px 4px;
   margin-bottom: 10px;
-  margin-right: 4px;
-  border-radius: 4px;
+  margin-right: var(--lotta-spacing);
+  border-radius: var(--lotta-border-radius);
   max-width: 'max-content';
   font-family: var(--lotta-text-font-family);
   cursor: pointer;
