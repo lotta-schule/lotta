@@ -8,6 +8,7 @@
   position: relative;
   align-items: center;
   overflow: auto;
+  height: 3.5em;
 
   .tab {
     flex: 1 auto;
@@ -25,6 +26,7 @@
       @media (max-width: $max-xs) {
         color: rgba(var(--lotta-primary-color), 1);
         font-weight: 400;
+        height: 3.5em;
       }
     }
   }
