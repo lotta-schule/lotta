@@ -15,7 +15,7 @@
     position: relative;
     display: flex;
     font-size: 0.8rem;
-    background-color: white;
+    background-color: rgba(var(--lotta-box-background-color), 1);
     padding: var(--lotta-spacing);
     border-radius: var(--lotta-border-radius);
     flex-direction: column;
@@ -23,6 +23,7 @@
     max-width: 600px;
     max-height: calc(100vh - calc(8 * var(--lotta-spacing)));
     margin: calc(4 * var(--lotta-spacing)) auto;
+    color: rgb(var(--lotta-text-color));
 
     @media screen and (max-width: $max-xs) {
       width: 100vw;
