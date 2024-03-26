@@ -21,7 +21,6 @@
     flex-direction: column;
     width: calc(100vw - calc(4 * var(--lotta-spacing)));
     max-width: 600px;
-    max-height: calc(100vh - calc(8 * var(--lotta-spacing)));
     margin: calc(4 * var(--lotta-spacing)) auto;
 
     @media screen and (max-width: $max-xs) {

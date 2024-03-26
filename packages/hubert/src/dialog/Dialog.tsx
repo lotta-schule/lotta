@@ -8,11 +8,11 @@ import {
   useDialog,
   useModal,
   useOverlay,
-  usePreventScroll,
 } from 'react-aria';
 import { motion } from 'framer-motion';
 import { Button } from '../button/Button';
 import { Divider } from '../divider/Divider';
+import { usePreventScroll } from '../util';
 import { Close } from '../icon';
 import clsx from 'clsx';
 
@@ -76,14 +76,14 @@ export const Dialog: React.FC<DialogProps & { open?: boolean }> = ({
   );
 };
 
-export const DialogShell: React.FC<DialogProps> = ({
+export const DialogShell = ({
   children,
   className,
   style,
   title,
   onRequestClose,
   ...otherProps
-}) => {
+}: DialogProps) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
   usePreventScroll();
