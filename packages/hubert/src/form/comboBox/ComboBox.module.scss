@@ -16,6 +16,8 @@
       border-bottom: 0;
       border-right: none;
       border: 1px solid rgb(var(--lotta-primary-color));
+      display: flex;
+      align-items: center;
       &[disabled] {
         border-color: rgb(var(--lotta-disabled-color));
       }
