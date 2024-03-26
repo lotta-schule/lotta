@@ -5,7 +5,7 @@
   left: 0;
   position: fixed;
   height: 100vh;
-  height: -webkit-fill-available;
+  height: 100dvh;
   width: 100vw;
   z-index: 10000;
   backdrop-filter: blur(10px);
@@ -27,7 +27,7 @@
     @media screen and (max-width: $max-xs) {
       width: 100vw;
       height: 100vh;
-      height: -webkit-fill-available;
+      height: 100dvh;
       border-radius: 0;
       margin: auto;
     }
