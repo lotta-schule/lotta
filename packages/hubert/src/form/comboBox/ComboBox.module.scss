@@ -43,6 +43,7 @@
     border-image: initial;
     border: 1px solid rgb(var(--lotta-primary-color));
     border-left: none;
+    padding: var(--lotta-spacing);
     &[disabled] {
       border-color: rgb(var(--lotta-disabled-color));
     }
