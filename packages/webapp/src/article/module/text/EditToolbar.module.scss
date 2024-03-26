@@ -4,6 +4,7 @@
   .toolbar {
     background-color: rgba(var(--lotta-box-background-color), 1);
     padding: var(--lotta-spacing);
+    overflow: scroll;
   }
   .buttonGroup {
     margin-right: calc(0.5 * var(--lotta-spacing));
