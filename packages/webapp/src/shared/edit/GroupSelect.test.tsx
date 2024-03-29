@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UserGroupModel } from 'model';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, within } from 'test/util';
 import {
   adminGroup,
   lehrerGroup,
@@ -229,6 +229,64 @@ describe('shared/editor/GroupSelect', () => {
       const selection = await screen.findByTestId('GroupSelectSelection');
 
       expect(selection).toHaveTextContent(/AdministratorLehrerSchüler/i);
+    });
+
+    it('should show a placeholder if no group is selected and clear the input after the selection has been done', async () => {
+      const fireEvent = userEvent.setup();
+
+      const onSelectGroups = jest.fn();
+
+      const screen = render(
+        <GroupSelect selectedGroups={[]} onSelectGroups={onSelectGroups} />,
+        {}
+      );
+
+      const combobox = screen.queryByRole('combobox');
+
+      expect(combobox).toBeVisible();
+      expect(combobox).toHaveValue('');
+
+      await fireEvent.click(
+        screen.getByRole('button', { name: /vorschläge/i })
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('listbox')).toBeVisible();
+      });
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
+
+      expect(
+        await screen.findByRole('option', {
+          name: 'Administrator',
+        })
+      ).toBeVisible();
+
+      await fireEvent.click(
+        screen.getByRole('option', {
+          name: 'Administrator',
+        })
+      );
+
+      expect(onSelectGroups).toHaveBeenCalled();
+
+      screen.rerender(
+        <GroupSelect
+          selectedGroups={[adminGroup]}
+          onSelectGroups={onSelectGroups}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('GroupSelectSelection')).toHaveTextContent(
+          'Administrator'
+        );
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByRole('listbox')).not.toBeVisible();
+      });
+
+      expect(combobox).toHaveValue('');
     });
   });
 
@@ -565,6 +623,142 @@ describe('shared/editor/GroupSelect', () => {
             expect(callback).toHaveBeenCalled();
           });
         });
+      });
+    });
+  });
+
+  describe('allowNoneSelection', () => {
+    it('should add a "None" selection when allowNoneSelection prop is passed', async () => {
+      const fireEvent = userEvent.setup();
+      const onSelectGroups = jest.fn();
+      const screen = render(
+        <GroupSelect
+          allowNoneSelection
+          selectedGroups={[lehrerGroup]}
+          onSelectGroups={onSelectGroups}
+        />,
+        {},
+        { userGroups: [...userGroups] }
+      );
+
+      await fireEvent.click(
+        screen.getByRole('button', { name: /vorschläge/i })
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('listbox')).toBeVisible();
+      });
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
+
+      expect(
+        screen.getByRole('option', { name: 'Ohne zugewiesene Gruppe' })
+      ).toBeVisible();
+
+      await fireEvent.click(
+        screen.getByRole('option', { name: 'Ohne zugewiesene Gruppe' })
+      );
+
+      await waitFor(() => {
+        expect(onSelectGroups).toHaveBeenCalledWith([null, lehrerGroup]);
+      });
+
+      screen.rerender(
+        <GroupSelect
+          allowNoneSelection
+          selectedGroups={[null]}
+          onSelectGroups={onSelectGroups}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByRole('listbox')).not.toBeVisible();
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId('GroupSelectSelection')).toHaveTextContent(
+          'Ohne zugewiesene Gruppe'
+        );
+      });
+
+      const tagDeleteButton = within(
+        screen.getByTestId('GroupSelectSelection')
+      ).getByRole('button', { name: /Tag ohne zugewiesene gruppe/i });
+
+      await fireEvent.click(tagDeleteButton);
+
+      await waitFor(() => {
+        expect(onSelectGroups).toHaveBeenCalledWith([]);
+      });
+    });
+
+    it('should toggle the "None" option on and off when clicked two times', async () => {
+      const fireEvent = userEvent.setup();
+      const onSelectGroups = jest.fn();
+      const screen = render(
+        <GroupSelect
+          allowNoneSelection
+          hidePublicGroupSelection
+          selectedGroups={[lehrerGroup]}
+          onSelectGroups={onSelectGroups}
+        />,
+        {},
+        { userGroups: [...userGroups] }
+      );
+
+      await fireEvent.click(
+        screen.getByRole('button', { name: /vorschläge/i })
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('listbox')).toBeVisible();
+      });
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
+
+      await fireEvent.click(
+        await screen.findByRole('option', { name: 'Ohne zugewiesene Gruppe' })
+      );
+
+      await waitFor(() => {
+        expect(onSelectGroups).toHaveBeenCalledWith([null, lehrerGroup]);
+      });
+
+      screen.rerender(
+        <GroupSelect
+          allowNoneSelection
+          hidePublicGroupSelection
+          selectedGroups={[null, lehrerGroup]}
+          onSelectGroups={onSelectGroups}
+        />
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
+
+      await waitFor(() => {
+        expect(screen.queryByRole('listbox')).not.toBeVisible();
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId('GroupSelectSelection')).toHaveTextContent(
+          'Ohne zugewiesene Gruppe'
+        );
+      });
+
+      await fireEvent.click(
+        screen.getByRole('button', { name: /vorschläge/i })
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('option', { name: 'Ohne zugewiesene Gruppe' })
+        ).toBeVisible();
+      });
+
+      await fireEvent.click(
+        await screen.findByRole('option', { name: 'Ohne zugewiesene Gruppe' })
+      );
+
+      await waitFor(() => {
+        expect(onSelectGroups).toHaveBeenCalledWith([lehrerGroup]);
       });
     });
   });

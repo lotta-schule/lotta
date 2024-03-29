@@ -7,7 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
 import { CategorySelect } from '../../shared/categorySelect/CategorySelect';
-import { ArticleModel, ID } from 'model';
+import { ArticleModel, ID, UserGroupModel } from 'model';
 import { Category, User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ArticleStateEditor } from 'article/editor/ArticleStateEditor';
@@ -76,10 +76,12 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
             <h6>Sichtbarkeit</h6>
             <div>
               <GroupSelect
-                label={null}
+                label={undefined}
+                aria-label={'Gruppenauswahl'}
                 selectedGroups={article.groups}
-                variant={'outlined'}
-                onSelectGroups={(groups) => onUpdate({ ...article, groups })}
+                onSelectGroups={(groups: UserGroupModel[]) =>
+                  onUpdate({ ...article, groups })
+                }
               />
             </div>
             <div className={styles.buttonWrapper}>

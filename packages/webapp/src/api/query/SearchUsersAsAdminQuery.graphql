@@ -1,6 +1,6 @@
 query SearchUsersAsAdmin(
   $searchtext: String
-  $groups: [SelectUserGroupInput!]
+  $groups: [SelectUserGroupInput]
   $lastSeen: Int
 ) {
   users: searchUsers(

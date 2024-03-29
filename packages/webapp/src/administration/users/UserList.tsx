@@ -37,7 +37,7 @@ export const UserList = React.memo(() => {
 
   const [searchFilter, setSearchFilter] = React.useState<{
     name: string;
-    groups: UserGroupModel[];
+    groups: (UserGroupModel | null)[];
     lastSeen: number | null;
   }>({
     name: '',
@@ -61,7 +61,7 @@ export const UserList = React.memo(() => {
       variables: {
         searchtext: searchFilter.name || null,
         groups: searchFilter.groups.length
-          ? searchFilter.groups.map(({ id }) => ({ id }))
+          ? searchFilter.groups.map((g) => ({ id: g?.id }))
           : null,
         lastSeen: searchFilter.lastSeen,
       },
@@ -108,6 +108,7 @@ export const UserList = React.memo(() => {
       <Toolbar stackOnMobile>
         <GroupSelect
           row
+          allowNoneSelection
           hidePublicGroupSelection
           disableAdminGroupsExclusivity
           label={'Nach Gruppe filtern:'}

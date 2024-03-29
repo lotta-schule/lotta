@@ -9,7 +9,7 @@ import {
 } from '@lotta-schule/hubert';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
-import { NewMessageDestination } from 'model';
+import { NewMessageDestination, UserGroupModel } from 'model';
 import { SearchUserField } from 'administration/users/SearchUserField';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Icon } from 'shared/Icon';
@@ -78,7 +78,7 @@ export const CreateMessageDialog = React.memo<CreateMessageDialogProps>(
                     hidePublicGroupSelection
                     label={'Gruppe wählen'}
                     selectedGroups={[]}
-                    filterSelection={(group) =>
+                    suggestionFilter={(group: UserGroupModel) =>
                       !!currentUser!.groups.find((g) => g.id === group.id)
                     }
                     onSelectGroups={([group]) => {
