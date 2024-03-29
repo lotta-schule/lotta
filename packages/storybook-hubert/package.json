@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "@lotta-schule/storybook-hubert",
-  "version": "4.2.0-alpha.50",
+  "version": "4.2.0",
   "description": "Storybook Documentation for Hubert",
   "author": "Alexis Rinaldoni <alexis.rinaldoni@einsa.net>",
   "license": "GPL-3.0-or-later",
@@ -18,14 +18,14 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@lotta-schule/hubert": "4.2.0-alpha.50"
+    "@lotta-schule/hubert": "4.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.3",
     "@babel/preset-env": "^7.24.3",
     "@babel/preset-react": "^7.24.1",
     "@babel/preset-typescript": "^7.24.1",
-    "@lotta-schule/storybook-addon-theme": "4.2.0-alpha.50",
+    "@lotta-schule/storybook-addon-theme": "4.2.0",
     "@storybook/addon-a11y": "^8.0.4",
     "@storybook/addon-actions": "^8.0.4",
     "@storybook/addon-essentials": "^8.0.4",
