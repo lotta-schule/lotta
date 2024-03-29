@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     name: "Push semver-tagged image to registry and notify sentry of release"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Docker Login
-        uses: docker/login-action@v1.10.0
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

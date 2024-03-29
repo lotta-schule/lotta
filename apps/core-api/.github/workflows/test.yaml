@@ -42,7 +42,9 @@ jobs:
           -e MINIO_DEFAULT_BUCKETS="lotta-dev-ugc"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup minio
         run: >
@@ -68,11 +70,12 @@ jobs:
         env:
           MIX_ENV: test
 
-      - name: Codecov
-        uses: codecov/codecov-action@v3
+      - name: Upload test coverage report
+        uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
           directory: _build/test/lib/lotta
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
           # fail_ci_if_error: true
 
   compile:
@@ -80,7 +83,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: erlef/setup-beam@v1
         name: Setup Elixir
@@ -99,7 +104,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: erlef/setup-beam@v1
         name: Setup Elixir
