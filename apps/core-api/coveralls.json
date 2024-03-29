@@ -1,8 +1,10 @@
 {
   "skip_files": [
+    "lib/lotta/tenant_migrations",
     "priv/repo/seeder/Seeder.ex",
     "lib/lotta/application.ex",
     "lib/lotta_web/schema",
+    "config",
     "test"
   ]
 }

@@ -66,14 +66,15 @@ jobs:
 
       - name: Run tests
         run: |
-          mix test --cover
+          mix coveralls.json
         env:
           MIX_ENV: test
 
       - name: Upload test coverage report
         uses: codecov/codecov-action@v4
         with:
-          directory: _build/test/lib/lotta
+          directory: cover/
+          slug: lotta-schule/core
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
           # fail_ci_if_error: true
