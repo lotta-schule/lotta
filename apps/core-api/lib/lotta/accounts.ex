@@ -67,6 +67,27 @@ defmodule Lotta.Accounts do
   end
 
   @doc """
+  Returns a list of all users not in any group – neither assigned nor enrolled via token.
+  """
+  @doc since: "4.2.0"
+  @spec list_users_without_groups() :: [User.t()]
+  def list_users_without_groups() do
+    not_assigned_users_query =
+      from(u in User,
+        left_join: uug in "user_user_group",
+        on: u.id == uug.user_id,
+        where: is_nil(uug.user_group_id)
+      )
+
+    from(u in subquery(not_assigned_users_query),
+      left_join: ug in UserGroup,
+      on: fragment("? && ?", ug.enrollment_tokens, u.enrollment_tokens),
+      where: is_nil(ug.id)
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Returns list of all users that are member of at least one administrator group.
   """
   @spec list_admin_users() :: [User.t()]
@@ -129,14 +150,25 @@ defmodule Lotta.Accounts do
   defp search_user_apply_group_ids_filter(query, group_ids) when is_nil(group_ids), do: query
 
   defp search_user_apply_group_ids_filter(query, group_ids) do
+    has_nil_group = Enum.any?(group_ids, &is_nil/1)
+
+    group_ids_without_nil = Enum.reject(group_ids, &is_nil/1)
+
     user_ids =
       from(g in UserGroup,
-        where: g.id in ^group_ids,
+        where: g.id in ^group_ids_without_nil,
         preload: :users
       )
       |> Repo.all()
       |> list_users_for_groups()
       |> Enum.map(& &1.id)
+      |> then(fn user_ids ->
+        if has_nil_group do
+          user_ids ++ Enum.map(list_users_without_groups(), & &1.id)
+        else
+          user_ids
+        end
+      end)
 
     from(
       u in query,

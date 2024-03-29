@@ -51,8 +51,7 @@ defmodule LottaWeb.Context do
       |> Repo.preload([:groups])
 
     groups =
-      user
-      |> all_user_groups()
+      all_user_groups(user)
 
     user
     |> Map.put(:all_groups, groups)

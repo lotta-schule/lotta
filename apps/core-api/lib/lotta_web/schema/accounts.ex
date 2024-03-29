@@ -19,11 +19,11 @@ defmodule LottaWeb.Schema.Accounts do
       resolve(&LottaWeb.UserResolver.all/2)
     end
 
-    field :search_users, list_of(:user) do
+    field :search_users, non_null(list_of(non_null(:user))) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:searchtext, :string)
-      arg(:groups, list_of(non_null(:select_user_group_input)))
+      arg(:groups, list_of(:select_user_group_input))
       arg(:last_seen, :integer)
 
       resolve(&LottaWeb.UserResolver.search/2)

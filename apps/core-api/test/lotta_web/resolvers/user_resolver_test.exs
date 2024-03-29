@@ -97,7 +97,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert res == %{
@@ -114,7 +114,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert res == %{
@@ -134,7 +134,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> post("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
 
       assert res == %{
@@ -158,7 +158,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{evil_jwt}")
-        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> post("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
 
       assert res == %{
@@ -178,7 +178,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{evil_jwt}")
-        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> post("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
 
       assert res == %{
@@ -204,7 +204,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert res == %{
@@ -221,7 +221,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert res == %{
@@ -238,7 +238,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> post("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
 
       assert res == %{
@@ -279,7 +279,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert %{
@@ -311,7 +311,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert res == %{
@@ -332,7 +332,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> post("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
 
       assert res == %{
@@ -368,7 +368,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert %{
@@ -385,7 +385,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert %{
@@ -402,7 +402,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> post("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
 
       assert %{
@@ -435,7 +435,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert %{
@@ -459,7 +459,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert %{
@@ -483,7 +483,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> post("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
 
       assert %{
@@ -515,7 +515,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query)
+        |> post("/api", query: @query)
         |> json_response(200)
 
       assert res == %{
@@ -534,7 +534,7 @@ defmodule LottaWeb.UserResolverTest do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
-        |> get("/api", query: @query)
+        |> post("/api", query: @query)
         |> json_response(200)
 
       assert res == %{
@@ -561,7 +561,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query)
+        |> post("/api", query: @query)
         |> json_response(200)
 
       assert res == %{
@@ -617,7 +617,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query)
+        |> post("/api", query: @query)
         |> json_response(200)
 
       assert %{
@@ -636,7 +636,7 @@ defmodule LottaWeb.UserResolverTest do
 
   describe "searchUsers query" do
     @query """
-    query searchUsers($searchtext: String, $groups: [SelectUserGroupInput!], $lastSeen: Int) {
+    query searchUsers($searchtext: String, $groups: [SelectUserGroupInput], $lastSeen: Int) {
       searchUsers(searchtext: $searchtext, groups: $groups, lastSeen: $lastSeen) {
         email
         name
@@ -650,7 +650,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{searchtext: "alexis"})
+        |> post("/api", query: @query, variables: %{searchtext: "alexis"})
         |> json_response(200)
 
       assert res["data"]["searchUsers"]
@@ -677,7 +677,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{searchtext: "Meister"})
+        |> post("/api", query: @query, variables: %{searchtext: "Meister"})
         |> json_response(200)
 
       assert res == %{
@@ -700,7 +700,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{searchtext: "mcurie@lotta.schule"})
+        |> post("/api", query: @query, variables: %{searchtext: "mcurie@lotta.schule"})
         |> json_response(200)
 
       assert res == %{
@@ -721,9 +721,9 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api",
+        |> post("/api",
           query: @query,
-          variables: %{groups: %{id: lehrer_group.id}}
+          variables: %{groups: [%{id: lehrer_group.id}]}
         )
         |> json_response(200)
 
@@ -740,6 +740,137 @@ defmodule LottaWeb.UserResolverTest do
              }
     end
 
+    test "should find users at least one of two given groups", %{
+      admin_jwt: admin_jwt,
+      lehrer_group: lehrer_group,
+      schueler_group: schueler_group
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{groups: [%{id: lehrer_group.id}, %{id: schueler_group.id}]}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "searchUsers" => [
+                   %{
+                     "email" => "billy@lotta.schule",
+                     "name" => "Christopher Bill",
+                     "nickname" => "Billy"
+                   },
+                   %{
+                     "email" => "eike.wiewiorra@lotta.schule",
+                     "name" => "Eike Wiewiorra",
+                     "nickname" => "Chef"
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "should find users WITHOUT group by passing a nil entry", %{
+      admin_jwt: admin_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{groups: [nil]}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "searchUsers" => [
+                   %{
+                     "email" => "alexis.rinaldoni@einsa.net",
+                     "name" => "Alexis Rinaldoni",
+                     "nickname" => nil
+                   },
+                   %{
+                     "email" => "drevil@lotta.schule",
+                     "name" => "Dr Evil",
+                     "nickname" => "drEvil"
+                   },
+                   %{
+                     "email" => "maxi@lotta.schule",
+                     "name" => "Max Mustermann",
+                     "nickname" => "MaXi"
+                   },
+                   %{
+                     "email" => "doro@lotta.schule",
+                     "name" => "Dorothea Musterfrau",
+                     "nickname" => "Doro"
+                   },
+                   %{
+                     "email" => "mcurie@lotta.schule",
+                     "name" => "Marie Curie",
+                     "nickname" => "Polonium"
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "should find users combining users with no group with users with a given group", %{
+      admin_jwt: admin_jwt,
+      lehrer_group: lehrer_group
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{groups: [nil, %{id: lehrer_group.id}]}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "searchUsers" => [
+                   %{
+                     "email" => "alexis.rinaldoni@einsa.net",
+                     "name" => "Alexis Rinaldoni",
+                     "nickname" => nil
+                   },
+                   %{
+                     "email" => "eike.wiewiorra@lotta.schule",
+                     "name" => "Eike Wiewiorra",
+                     "nickname" => "Chef"
+                   },
+                   %{
+                     "email" => "drevil@lotta.schule",
+                     "name" => "Dr Evil",
+                     "nickname" => "drEvil"
+                   },
+                   %{
+                     "email" => "maxi@lotta.schule",
+                     "name" => "Max Mustermann",
+                     "nickname" => "MaXi"
+                   },
+                   %{
+                     "email" => "doro@lotta.schule",
+                     "name" => "Dorothea Musterfrau",
+                     "nickname" => "Doro"
+                   },
+                   %{
+                     "email" => "mcurie@lotta.schule",
+                     "name" => "Marie Curie",
+                     "nickname" => "Polonium"
+                   }
+                 ]
+               }
+             }
+    end
+
     test "should find users by searchtext and group", %{
       admin_jwt: admin_jwt,
       lehrer_group: lehrer_group
@@ -748,9 +879,9 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api",
+        |> post("/api",
           query: @query,
-          variables: %{searchtext: "Eike", groups: %{id: lehrer_group.id}}
+          variables: %{searchtext: "Eike", groups: [%{id: lehrer_group.id}]}
         )
         |> json_response(200)
 
@@ -772,7 +903,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api",
+        |> post("/api",
           query: @query,
           variables: %{}
         )
@@ -790,7 +921,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api",
+        |> post("/api",
           query: @query,
           variables: %{searchtext: "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"}
         )
@@ -810,7 +941,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{searchtext: "D"})
+        |> post("/api", query: @query, variables: %{searchtext: "D"})
         |> json_response(200)
 
       assert res == %{
@@ -828,16 +959,14 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api",
+        |> post("/api",
           query: @query,
           variables: %{groups: [%{id: lehrer_group.id}]}
         )
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "searchUsers" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du darfst das nicht tun.",
@@ -851,13 +980,11 @@ defmodule LottaWeb.UserResolverTest do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
-        |> get("/api", query: @query, variables: %{searchtext: "De"})
+        |> post("/api", query: @query, variables: %{searchtext: "De"})
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "searchUsers" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst angemeldet sein um das zu tun.",
@@ -885,7 +1012,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert res == %{
@@ -904,7 +1031,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> get("/api", query: @query, variables: %{id: 0})
+        |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
       assert res == %{
@@ -922,7 +1049,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: user.id})
+        |> post("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
       assert res == %{
@@ -938,7 +1065,7 @@ defmodule LottaWeb.UserResolverTest do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
-        |> get("/api", query: @query, variables: %{id: 0})
+        |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
       assert %{

@@ -119,15 +119,19 @@ defmodule LottaWeb.UserResolver do
     |> execute_search(current_user)
   end
 
-  def search(_args, _info), do: {:error, "Du darfst das nicht tun."}
-
-  defp create_search_params(args),
-    do: %{
+  defp create_search_params(args) do
+    %{
       searchtext: Map.get(args, :searchtext),
       group_ids:
         case Map.get(args, :groups) do
           groups when is_list(groups) ->
-            Enum.map(groups, & &1.id)
+            Enum.map(groups, fn
+              %{id: group_id} ->
+                group_id
+
+              _ ->
+                nil
+            end)
 
           _ ->
             nil
@@ -145,6 +149,7 @@ defmodule LottaWeb.UserResolver do
             nil
         end
     }
+  end
 
   defp execute_search(search_params, current_user) do
     if (search_params.group_ids != nil || search_params.last_seen != nil) &&
