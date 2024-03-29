@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { ID, UserModel } from 'model';
+import { ID, UserGroupModel, UserModel } from 'model';
 import {
   Button,
   CircularProgress,
@@ -117,7 +117,7 @@ export const EditUserPermissionsDialog =
                     disableAdminGroupsExclusivity
                     className={styles.groupSelect}
                     selectedGroups={data.user?.assignedGroups ?? []}
-                    onSelectGroups={(groups) =>
+                    onSelectGroups={(groups: UserGroupModel[]) =>
                       updateUser({
                         variables: {
                           id: user.id,

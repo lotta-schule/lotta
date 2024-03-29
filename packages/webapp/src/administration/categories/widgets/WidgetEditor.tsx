@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
-import { ID, WidgetModel, WidgetModelType } from 'model';
+import { ID, UserGroupModel, WidgetModel, WidgetModelType } from 'model';
 import {
   Button,
   Divider,
@@ -119,7 +119,7 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
         <GroupSelect
           selectedGroups={widget.groups || []}
           disableAdminGroupsExclusivity
-          onSelectGroups={(groups) => {
+          onSelectGroups={(groups: UserGroupModel[]) => {
             setWidget({ ...widget, groups });
           }}
         />

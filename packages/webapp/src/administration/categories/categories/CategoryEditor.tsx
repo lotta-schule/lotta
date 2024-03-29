@@ -18,7 +18,7 @@ import {
   useSplitView,
 } from '@lotta-schule/hubert';
 import { motion } from 'framer-motion';
-import { CategoryModel, WidgetModel, ID } from 'model';
+import { CategoryModel, WidgetModel, ID, UserGroupModel } from 'model';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { useCategories } from 'util/categories/useCategories';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
@@ -148,7 +148,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
           <GroupSelect
             className={styles.input}
             selectedGroups={category.groups || []}
-            onSelectGroups={(groups) => {
+            onSelectGroups={(groups: UserGroupModel[]) => {
               setCategory({ ...category, groups });
             }}
           />

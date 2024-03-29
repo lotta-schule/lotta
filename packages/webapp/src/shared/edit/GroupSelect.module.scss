@@ -13,11 +13,23 @@
 }
 
 .tag {
+
+  /* TODO:
+    Ganz schöne unaufgeräumt und unschön hier.
+    Lauter hartcodierte Werte, von denen keiner
+    mehr weiß, was sie bedeuten.
+    Warum packen wir hier so viele Styles rein die
+    das Tag überschreiben und lassen <Tag /> nicht
+    auch einfach (ähnlich wie <Button />) eine optionale
+    property 'small' entgegennehmen?
+    */
   display: flex;
+
   &.row {
     display: inline-flex;
     margin-left: var(--lotta-spacing);
   }
+
   justify-content: space-between;
   align-items: center;
   height: 24px;

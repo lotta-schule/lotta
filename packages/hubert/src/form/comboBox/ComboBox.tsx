@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useComboBoxState } from 'react-stately';
 import { useButton, useComboBox } from 'react-aria';
-import { debounce } from 'lodash';
+import { useDebounce } from 'react-use';
 import {
   ListItemFactory,
   ListItemPreliminaryItem,
@@ -39,12 +39,6 @@ export type ComboBoxProps = {
   title: string;
 
   /*
-   * If set, the input field text (containing the search text) will not be reset
-   * when a selection is made
-   */
-  noResetInputOnSelect?: boolean;
-
-  /*
    * If set, the input text field will not be wrapped inside a <Label> component
    */
   hideLabel?: boolean;
@@ -53,6 +47,12 @@ export type ComboBoxProps = {
    * Wether to allow values that are not part of the predefined or loaded item set
    */
   allowsCustomValue?: boolean;
+
+  /**
+   * If set, the input text field will be reset to an empty string after an item has been selected
+   * This is useful for search fields that should be cleared after a selection has been made
+   **/
+  resetOnSelect?: boolean;
 
   items?:
     | ListItemPreliminaryItem[]
@@ -70,27 +70,24 @@ export const ComboBox = React.memo(
     autoFocus,
     placeholder,
     hideLabel,
-    noResetInputOnSelect,
     items,
     title,
     allowsCustomValue,
+    resetOnSelect,
     onSelect,
   }: ComboBoxProps) => {
-    const isItemListCalculated = typeof items === 'function';
-
     const [calculatedItems, setCalculatedItems] = React.useState<
       ListItemPreliminaryItem[]
     >([]);
-    const [ignoreNextInputChange, setIgnoreNextInputChange] =
-      React.useState(false);
+    const [searchText, setSearchText] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
 
     const allItems = React.useMemo(() => {
-      if (isItemListCalculated) {
+      if (typeof items === 'function') {
         return calculatedItems ?? [];
       }
       return items ?? [];
-    }, [isItemListCalculated, calculatedItems, items]);
+    }, [calculatedItems, items]);
 
     const findItem = React.useCallback(
       (
@@ -115,50 +112,37 @@ export const ComboBox = React.memo(
           }
         });
 
-        if (!options?.matchOnlyIfExclusive || results.length === 1) {
-          return results[0];
+        if (results.length > 0) {
+          if (!options?.matchOnlyIfExclusive) {
+            return results[0];
+          }
         }
         return null;
       },
       [allItems]
     );
 
-    const onInputChange = React.useCallback(
-      async (valueObj: string | { value: string; valueType: 'string' }) => {
-        const value = typeof valueObj === 'string' ? valueObj : valueObj.value;
-        if (ignoreNextInputChange) {
-          setIgnoreNextInputChange(false);
-          return;
-        }
-        if (value) {
-          if (isItemListCalculated) {
-            try {
-              setIsLoading(true);
-              const newItems = await items(value);
-              setCalculatedItems(newItems);
-              if (newItems.length) {
-                state.setOpen(true);
-              }
-            } finally {
-              setIsLoading(false);
-            }
-          } else {
-            const item = findItem(value);
-            if (item) {
-              state.selectionManager.setFocusedKey(item.key as string | number);
-            }
-          }
-        }
-      },
-      // TODO: There is a potential problem here,
-      // This is to be seen by an Alexis more awake than I am at the moment
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [items, isItemListCalculated, findItem]
-    );
+    React.useEffect(() => {
+      if (searchText?.length < 1) {
+        return;
+      }
 
-    const debouncedOnInputChange = debounce(onInputChange, 500, {
-      trailing: true,
-    });
+      if (typeof items !== 'function') {
+        return;
+      }
+
+      setIsLoading(true);
+      items(searchText)
+        .then((newItems) => {
+          setCalculatedItems(newItems);
+          if (newItems.length) {
+            state.setOpen(true);
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }, [searchText]);
 
     const state = useComboBoxState({
       children: ListItemFactory.createItem,
@@ -166,27 +150,52 @@ export const ComboBox = React.memo(
       isDisabled: disabled,
       autoFocus,
       label: title,
+      onOpenChange: (isOpen) => {
+        if (!isOpen) {
+          setSearchText('');
+          cancelDebounce();
+        }
+      },
       onSelectionChange: (value) => {
         if (value) {
           onSelect?.(value);
         }
-        if (!noResetInputOnSelect) {
-          state.setInputValue('');
-        }
-        debouncedOnInputChange.cancel();
-        if (value !== state.inputValue) {
-          setIgnoreNextInputChange(true);
-        }
+        setSearchText('');
+        cancelDebounce();
+
         if (typeof items !== 'function') {
-          state.close();
-          if (document.activeElement instanceof HTMLInputElement) {
-            document.activeElement.blur();
-          }
+          state.selectionManager.clearSelection();
+
+          setTimeout(() => {
+            if (resetOnSelect) {
+              state.setInputValue('');
+              state.setFocused(false);
+            }
+            if (state.isOpen) {
+              state.close();
+            }
+          }, 50);
         }
       },
-      onInputChange: debouncedOnInputChange,
       allowsCustomValue,
     });
+
+    const [, cancelDebounce] = useDebounce(
+      () => {
+        if (state.isFocused) {
+          setSearchText(state.inputValue);
+        }
+      },
+      500,
+      [state.inputValue, state.isFocused]
+    );
+
+    React.useEffect(() => {
+      const item = findItem(state.inputValue);
+      if (item) {
+        state.selectionManager.setFocusedKey(item.key as string | number);
+      }
+    }, [state.inputValue]);
 
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -218,12 +227,10 @@ export const ComboBox = React.memo(
           ) {
             const select = (item: ListItemPreliminaryItem | string) => {
               const value = typeof item === 'string' ? item : item.key;
-              if (value) {
-                onSelect?.(value);
-              }
-              if (!noResetInputOnSelect) {
-                state.setInputValue('');
-              }
+
+              state.selectionManager.replaceSelection(value as string);
+
+              onSelect?.(value);
             };
 
             const item = findItem(state.inputValue, {

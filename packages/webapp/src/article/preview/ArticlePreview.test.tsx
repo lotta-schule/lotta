@@ -247,7 +247,7 @@ describe('shared/article/ArticlePreview', () => {
       );
       await fireEvent.type(
         screen.getByRole('combobox', { name: /tag hinzufügen/i }),
-        'Neu{enter}'
+        'Neu{Enter}'
       );
       await waitFor(() => {
         expect(fn).toHaveBeenCalledWith({
