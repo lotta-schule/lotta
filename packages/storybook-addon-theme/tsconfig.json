@@ -1,23 +1,19 @@
 {
-  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "dist",
-    "rootDir": "src",
-    "types": [],
+    "rootDir": "../..",
+    "types": ["vite/client"],
     "typeRoots": [
       "src/@types",
       "node_modules/@types",
       "../../node_modules/@types"
     ],
-    "declaration": true,
-    "composite": true
-  },
-  "references": [
-    {
-      "path": "../theme"
+    "paths": {
+      "@lotta-schule/theme": ["../../theme/src/index.ts"]
     }
-  ],
-  "include": ["src/**/*"]
+  },
+  "include": ["src/**/*", "../theme/src/**/*"]
 }

@@ -9,6 +9,8 @@ coverage/
 
 # caches
 .eslintcache
+.vite
+*.tsbuildinfo
 
 # build artifacts
 /build

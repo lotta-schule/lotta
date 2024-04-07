@@ -9,17 +9,13 @@
     "test": "jest",
     "lint": "eslint --ext js,jsx,ts,tsx src",
     "typecheck": "tsc --noEmit",
-    "build": "run-p build:*",
-    "build:js": "rollup -c",
-    "build:tsd": "tsc --emitDeclarationOnly"
+    "build": "vite build"
   },
   "type": "module",
   "source": "src/index.ts",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.js",
   "dependencies": {
     "@headlessui/react": "^1.7.18",
-    "@lotta-schule/theme": "4.2.1-alpha.0",
     "@popperjs/core": "^2.11.8",
     "clsx": "^2.1.0",
     "colorjs.io": "^0.5.0",
@@ -35,6 +31,9 @@
     "@babel/preset-react": "^7.24.1",
     "@babel/preset-typescript": "^7.24.1",
     "@jest/globals": "^29.7.0",
+    "@react-types/checkbox": "^3.7.1",
+    "@react-types/progress": "^3.5.2",
+    "@react-types/shared": "^3.22.1",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.2",
     "@testing-library/user-event": "^14.5.2",
@@ -53,12 +52,6 @@
     "jest-transform-graphql": "^2.1.0",
     "node-sass": "^9.0.0",
     "postcss": "^8.4.38",
-    "prettier": "^3.2.5",
-    "rollup": "^4.13.0",
-    "rollup-plugin-esbuild": "^6.1.1",
-    "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-preserve-directives": "^0.4.0",
-    "sass": "^1.72.0",
     "whatwg-fetch": "^3.6.20"
   },
   "peerDependencies": {

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
+  "$schema": "https://json.schemastore.org/package",
   "name": "@lotta-schule/theme",
   "version": "4.2.1-alpha.0",
   "description": "Theme definition for hubert, lotta's component library",
@@ -7,18 +7,9 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "lint": "eslint --ext js,jsx,ts,tsx src",
-    "typecheck": "tsc --noEmit",
-    "build": "run-p build:*",
-    "build:js": "rollup -c",
-    "build:tsd": "tsc --emitDeclarationOnly"
+    "typecheck": "tsc --noEmit"
   },
   "type": "module",
-  "source": "src/index.ts",
-  "main": "./dist/index.js",
-  "types": "dist/index.d.ts",
-  "devDependencies": {
-    "esbuild": "^0.20.2",
-    "rollup": "^4.13.0",
-    "rollup-plugin-esbuild": "^6.1.1"
-  }
+  "main": "./src/index.ts",
+  "types": "./src/index.ts"
 }

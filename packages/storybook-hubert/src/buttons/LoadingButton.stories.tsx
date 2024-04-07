@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { fireEvent, waitFor, within } from '@storybook/testing-library';
+import { expect, fireEvent, waitFor, within } from '@storybook/test';
 import { KeyboardArrowLeft, LoadingButton } from '@lotta-schule/hubert';
 
 export default {

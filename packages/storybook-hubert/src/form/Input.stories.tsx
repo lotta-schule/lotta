@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { StoryObj, Meta } from '@storybook/react';
 import { useArgs } from '@storybook/preview-api';
-import { userEvent, within, waitFor } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+import { expect, userEvent, within, waitFor } from '@storybook/test';
 import { Input } from '@lotta-schule/hubert';
 
 export default {
