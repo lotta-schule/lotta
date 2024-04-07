@@ -65,7 +65,7 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
 
     it('should call "onSelectUser" with the correct userAvatar when selected', async () => {
       const fireEvent = userEvent.setup();
-      const selectUserFn = jest.fn();
+      const selectUserFn = vi.fn();
       const screen = render(
         <SearchUserField onSelectUser={selectUserFn} />,
         {},

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
 import { ComputerExperten } from 'test/fixtures';
@@ -10,7 +11,7 @@ import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graph
 describe('administration/categories/categories/CategoryArticleRedirectSelection', () => {
   it('should show a search field and select an article', async () => {
     const fireEvent = userEvent.setup();
-    const selectRedirectPath = jest.fn();
+    const selectRedirectPath = vi.fn();
     const screen = render(
       <CategoryArticleRedirectSelection
         redirectPath={'/a/'}
@@ -60,7 +61,7 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
   });
 
   describe('show the currently selected article', () => {
-    const onFetchArticle = jest.fn(() => ({
+    const onFetchArticle = vi.fn(() => ({
       data: { article: ComputerExperten },
     }));
     const additionalMocks: MockedResponse[] = [
@@ -81,7 +82,7 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
       const screen = render(
         <CategoryArticleRedirectSelection
           redirectPath={'/a/1-Computerexperten'}
-          onSelectRedirectPath={jest.fn()}
+          onSelectRedirectPath={vi.fn()}
         />,
         {},
         { additionalMocks }
@@ -95,7 +96,7 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
       const screen = render(
         <CategoryArticleRedirectSelection
           redirectPath={'/a/'}
-          onSelectRedirectPath={jest.fn()}
+          onSelectRedirectPath={vi.fn()}
         />,
         {},
         { additionalMocks }
@@ -109,7 +110,7 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
       const screen = render(
         <CategoryArticleRedirectSelection
           redirectPath={'/a/1-Computerexperten'}
-          onSelectRedirectPath={jest.fn()}
+          onSelectRedirectPath={vi.fn()}
         />,
         {},
         { additionalMocks }

@@ -9,7 +9,8 @@ import SearchQuery from 'api/query/SearchQuery.graphql';
 describe('pages/search', () => {
   describe('Search', () => {
     it('should render the search page', async () => {
-      render(<SearchPage />);
+      const screen = render(<SearchPage />);
+      expect(screen.container).toBeVisible();
     });
 
     it('should have the correct title', () => {
@@ -75,7 +76,7 @@ describe('pages/search', () => {
 
       it('should add category to filteroptions', async () => {
         const fireEvent = userEvent.setup();
-        const resultFn = jest.fn(() => ({
+        const resultFn = vi.fn(() => ({
           data: { results: [ComputerExperten] },
         }));
         const screen = render(

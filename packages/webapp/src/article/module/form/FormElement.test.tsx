@@ -10,7 +10,7 @@ describe('shared/article/module/form/FormElement', () => {
   describe('input element', () => {
     it('should render a text field', async () => {
       const fireEvent = userEvent.setup();
-      const setValueFn = jest.fn();
+      const setValueFn = vi.fn();
       const screen = render(
         <FormElement
           element={{
@@ -33,7 +33,7 @@ describe('shared/article/module/form/FormElement', () => {
     });
 
     it('should render an email field', () => {
-      const setValueFn = jest.fn();
+      const setValueFn = vi.fn();
       const screen = render(
         <FormElement
           element={{
@@ -58,7 +58,7 @@ describe('shared/article/module/form/FormElement', () => {
   describe('selection element', () => {
     it('should render and select checkboxes', async () => {
       const fireEvent = userEvent.setup();
-      const setValueFn = jest.fn();
+      const setValueFn = vi.fn();
       const screen = render(
         <FormElement
           element={{
@@ -101,7 +101,7 @@ describe('shared/article/module/form/FormElement', () => {
 
     it('should render and select radioboxes', async () => {
       const fireEvent = userEvent.setup();
-      const setValueFn = jest.fn();
+      const setValueFn = vi.fn();
       const screen = render(
         <FormElement
           element={{
@@ -137,7 +137,7 @@ describe('shared/article/module/form/FormElement', () => {
 
     it('should render and select from a select field', async () => {
       const fireEvent = userEvent.setup();
-      const setValueFn = jest.fn();
+      const setValueFn = vi.fn();
       const screen = render(
         <FormElement
           element={{
@@ -215,8 +215,8 @@ describe('shared/article/module/form/FormElement', () => {
 
     it('should render a local file input and select a file as an anonymous userAvatar', async () => {
       const fireEvent = userEvent.setup();
-      global.URL.createObjectURL = jest.fn(() => 'http://localhost/0');
-      const setValueFn = jest.fn();
+      global.URL.createObjectURL = vi.fn(() => 'http://localhost/0');
+      const setValueFn = vi.fn();
       const screen = render(
         <FormElement
           element={{
@@ -242,7 +242,7 @@ describe('shared/article/module/form/FormElement', () => {
 
     it('should show a filename for a selected local file, file should be removable', async () => {
       const fireEvent = userEvent.setup();
-      const setValueFn = jest.fn();
+      const setValueFn = vi.fn();
       const screen = render(
         <FormElement
           element={{
@@ -267,7 +267,7 @@ describe('shared/article/module/form/FormElement', () => {
 
     it('should render a userfile select button and select a file as a userAvatar', async () => {
       const fireEvent = userEvent.setup();
-      const setValueFn = jest.fn();
+      const setValueFn = vi.fn();
       const screen = render(
         <FormElement
           element={{
@@ -317,7 +317,7 @@ describe('shared/article/module/form/FormElement', () => {
 
     it('should show a filename for a selected local file, file should be removable', async () => {
       const fireEvent = userEvent.setup();
-      const setValueFn = jest.fn();
+      const setValueFn = vi.fn();
       const screen = render(
         <FormElement
           element={{

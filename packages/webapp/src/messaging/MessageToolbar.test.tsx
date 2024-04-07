@@ -9,13 +9,15 @@ describe('src/messaging/MessageToolbar', () => {
   const SomeUserWithGroups = { ...SomeUser, groups: [schuelerGroup] };
 
   it('should render without error', () => {
-    render(
+    const screen = render(
       <SplitViewProvider>
         <MessageToolbar onRequestNewMessage={() => {}} />
       </SplitViewProvider>,
       {},
       { currentUser: SomeUserWithGroups }
     );
+
+    expect(screen.getByRole('toolbar')).toBeInTheDocument();
   });
 
   it('should open the create popup when clicking on the "add" button', async () => {

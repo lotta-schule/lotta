@@ -53,7 +53,7 @@ describe('shared/article/module/title/Config', () => {
 
   it('should change the size configuration', async () => {
     const fireEvent = userEvent.setup();
-    const callback = jest.fn((cm) => {
+    const callback = vi.fn((cm) => {
       expect(cm.configuration.level).toEqual(6);
     });
     const screen = render(

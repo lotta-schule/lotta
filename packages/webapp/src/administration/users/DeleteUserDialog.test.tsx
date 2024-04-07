@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { ComputerExperten, SomeUser } from 'test/fixtures';
 import { render, waitFor } from 'test/util';
 import { DeleteUserDialog } from './DeleteUserDialog';
@@ -18,7 +19,7 @@ describe('administration/users/DeleteUserDialog', () => {
 
   it('close request closing the dialog on first page', async () => {
     const fireEvent = userEvent.setup();
-    const onRequestClose = jest.fn();
+    const onRequestClose = vi.fn();
     const screen = render(
       <DeleteUserDialog onRequestClose={onRequestClose} user={SomeUser} />
     );
@@ -89,8 +90,8 @@ describe('administration/users/DeleteUserDialog', () => {
 
   it('should show a last warning and a delete button on the last step', async () => {
     const fireEvent = userEvent.setup();
-    const onConfirm = jest.fn();
-    const deleteMutationFn = jest.fn(() => ({ data: { user: SomeUser } }));
+    const onConfirm = vi.fn();
+    const deleteMutationFn = vi.fn(() => ({ data: { user: SomeUser } }));
     const screen = render(
       <DeleteUserDialog onConfirm={onConfirm} user={SomeUser} />,
       {},

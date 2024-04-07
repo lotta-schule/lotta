@@ -3,7 +3,9 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
-import getConfig from 'next/config';
+import nextConfig from 'next/config';
+
+const getConfig = nextConfig.default;
 
 const {
   publicRuntimeConfig: { appEnvironment, imageName, sentryDsn },

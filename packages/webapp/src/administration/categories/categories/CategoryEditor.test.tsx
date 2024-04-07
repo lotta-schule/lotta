@@ -484,7 +484,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
   describe('update the category', () => {
     it('should update the category with correct data', async () => {
       const fireEvent = userEvent.setup();
-      const onSave = jest.fn(() => ({
+      const onSave = vi.fn(() => ({
         data: { category: { ...FaecherCategory, widgets: [] } },
       }));
       const screen = renderWithContext(

@@ -101,7 +101,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
 
   it('should clear the form and call onAbort when clicking the "Reset" button', async () => {
     const fireEvent = userEvent.setup();
-    const onAbort = jest.fn();
+    const onAbort = vi.fn();
     render(
       <CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={onAbort} />
     );
@@ -127,7 +127,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
 
     it('should create a main article with the given title', async () => {
       const fireEvent = userEvent.setup();
-      const onConfirm = jest.fn((createdCategory) => {
+      const onConfirm = vi.fn((createdCategory) => {
         expect(createdCategory.id).toEqual(666);
         expect(createdCategory.title).toEqual('Test');
         expect(createdCategory.isSidenav).toEqual(false);
@@ -169,7 +169,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
 
     it('should create an article', async () => {
       const fireEvent = userEvent.setup();
-      const onConfirm = jest.fn((createdCategory) => {
+      const onConfirm = vi.fn((createdCategory) => {
         expect(createdCategory.title).toEqual('Test');
         expect(createdCategory.isSidenav).toEqual(false);
         expect(createdCategory.category).toHaveProperty(
@@ -218,7 +218,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
   describe('send for sidenav', () => {
     it('should create an article', async () => {
       const fireEvent = userEvent.setup();
-      const onConfirm = jest.fn((createdCategory) => {
+      const onConfirm = vi.fn((createdCategory) => {
         expect(createdCategory.id).toEqual(666);
         expect(createdCategory.title).toEqual('Test');
         expect(createdCategory.isSidenav).toEqual(true);

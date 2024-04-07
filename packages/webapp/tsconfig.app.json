@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+
+  "extends": "./tsconfig.json",
+
+  "compilerOptions": {
+    "outDir": ".next",
+    "types": ["node", "vite/client"],
+  },
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
+  "include": ["src/**/*.ts", ".next/types/**/*.ts"]
+}

@@ -35,7 +35,7 @@ describe('shared/EnrollmentTokensEditor', () => {
   describe('adding an enrollment token', () => {
     it('should add an entered token and add it on ENTER', async () => {
       const fireEvent = userEvent.setup();
-      const onUpdate = jest.fn();
+      const onUpdate = vi.fn();
       const screen = render(
         <EnrollmentTokensEditor
           tokens={['token1', 'token2', 'token3']}
@@ -63,7 +63,7 @@ describe('shared/EnrollmentTokensEditor', () => {
 
     it('should add an entered token and add it on ","', async () => {
       const fireEvent = userEvent.setup();
-      const onUpdate = jest.fn();
+      const onUpdate = vi.fn();
       const screen = render(
         <EnrollmentTokensEditor
           tokens={['token1', 'token2', 'token3']}
@@ -84,7 +84,7 @@ describe('shared/EnrollmentTokensEditor', () => {
 
     it('should add an entered token and add it on " "', async () => {
       const fireEvent = userEvent.setup();
-      const onUpdate = jest.fn();
+      const onUpdate = vi.fn();
       const screen = render(
         <EnrollmentTokensEditor
           tokens={['token1', 'token2', 'token3']}

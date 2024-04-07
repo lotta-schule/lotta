@@ -10,8 +10,8 @@ describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
       <ArticleDatesEditor
         isOpen
         article={Weihnachtsmarkt}
-        onUpdate={jest.fn()}
-        onAbort={jest.fn()}
+        onUpdate={vi.fn()}
+        onAbort={vi.fn()}
       />
     );
   });
@@ -21,8 +21,8 @@ describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
       <ArticleDatesEditor
         isOpen
         article={Weihnachtsmarkt}
-        onUpdate={jest.fn()}
-        onAbort={jest.fn()}
+        onUpdate={vi.fn()}
+        onAbort={vi.fn()}
       />
     );
     expect(
@@ -35,8 +35,8 @@ describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
       <ArticleDatesEditor
         isOpen
         article={Weihnachtsmarkt}
-        onUpdate={jest.fn()}
-        onAbort={jest.fn()}
+        onUpdate={vi.fn()}
+        onAbort={vi.fn()}
       />
     );
     expect(
@@ -46,12 +46,12 @@ describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
 
   it('should call onAbort when cancel button is clicked', async () => {
     const fireEvent = userEvent.setup();
-    const onAbort = jest.fn();
+    const onAbort = vi.fn();
     const screen = render(
       <ArticleDatesEditor
         isOpen
         article={Weihnachtsmarkt}
-        onUpdate={jest.fn()}
+        onUpdate={vi.fn()}
         onAbort={onAbort}
       />
     );
@@ -61,13 +61,13 @@ describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
 
   it('should call onUpdate when save button is clicked', async () => {
     const fireEvent = userEvent.setup();
-    const onUpdate = jest.fn();
+    const onUpdate = vi.fn();
     const screen = render(
       <ArticleDatesEditor
         isOpen
         article={Weihnachtsmarkt}
         onUpdate={onUpdate}
-        onAbort={jest.fn()}
+        onAbort={vi.fn()}
       />
     );
     const createdInput = screen.getByRole('textbox', {

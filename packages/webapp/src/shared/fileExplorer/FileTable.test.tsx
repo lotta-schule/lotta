@@ -89,7 +89,7 @@ describe('shared/fileExplorer/FileTable', () => {
           currentPath: [{ id: null }, parentDirectory],
           mode: FileExplorerMode.SelectMultiple,
         };
-        const onUpdate = jest.fn((_state) => (state = _state));
+        const onUpdate = vi.fn((_state) => (state = _state));
         const screen = render(
           <TestFileExplorerContextProvider
             defaultValue={state}
@@ -119,7 +119,7 @@ describe('shared/fileExplorer/FileTable', () => {
             ...defaultState,
             currentPath: [{ id: null }, parentDirectory],
           };
-          const onUpdate = jest.fn((_state) => (state = _state));
+          const onUpdate = vi.fn((_state) => (state = _state));
           const screen = render(
             <TestFileExplorerContextProvider
               defaultValue={state}
@@ -151,7 +151,7 @@ describe('shared/fileExplorer/FileTable', () => {
             ...defaultState,
             currentPath: [{ id: null }, parentDirectory],
           };
-          const onUpdate = jest.fn((_state) => (state = _state));
+          const onUpdate = vi.fn((_state) => (state = _state));
           const screen = render(
             <TestFileExplorerContextProvider
               defaultValue={state}
@@ -184,7 +184,7 @@ describe('shared/fileExplorer/FileTable', () => {
             ...defaultState,
             currentPath: [{ id: null }, parentDirectory],
           };
-          const onUpdate = jest.fn((_state) => (state = _state));
+          const onUpdate = vi.fn((_state) => (state = _state));
           const screen = render(
             <TestFileExplorerContextProvider
               defaultValue={state}
@@ -219,7 +219,7 @@ describe('shared/fileExplorer/FileTable', () => {
             currentPath: [{ id: null }, parentDirectory],
             markedFiles: files.filter((f) => f.filename === 'Dateiname.jpg'),
           };
-          const onUpdate = jest.fn((_state) => (state = _state));
+          const onUpdate = vi.fn((_state) => (state = _state));
           const screen = render(
             <TestFileExplorerContextProvider
               defaultValue={state}
@@ -253,7 +253,7 @@ describe('shared/fileExplorer/FileTable', () => {
             currentPath: [{ id: null }, parentDirectory],
             markedFiles: files.filter((f) => f.filename === 'Dateiname.jpg'),
           };
-          const onUpdate = jest.fn((_state) => (state = _state));
+          const onUpdate = vi.fn((_state) => (state = _state));
           const screen = render(
             <TestFileExplorerContextProvider
               defaultValue={state}
@@ -287,7 +287,7 @@ describe('shared/fileExplorer/FileTable', () => {
             ...defaultState,
             currentPath: [{ id: null }, parentDirectory],
           };
-          const onUpdate = jest.fn((_state) => (state = _state));
+          const onUpdate = vi.fn((_state) => (state = _state));
           const screen = render(
             <TestFileExplorerContextProvider
               defaultValue={state}
@@ -324,7 +324,7 @@ describe('shared/fileExplorer/FileTable', () => {
             ...defaultState,
             currentPath: [{ id: null }, parentDirectory],
           };
-          const onUpdate = jest.fn((_state) => (state = _state));
+          const onUpdate = vi.fn((_state) => (state = _state));
           const screen = render(
             <TestFileExplorerContextProvider
               defaultValue={state}

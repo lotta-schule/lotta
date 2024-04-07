@@ -66,7 +66,7 @@ describe('shared/article/modules/form/Edit', () => {
 
   it('should be able to disable the destination mail', async () => {
     const fireEvent = userEvent.setup();
-    const onUpdateModuleFn = jest.fn();
+    const onUpdateModuleFn = vi.fn();
     const screen = render(
       <Edit contentModule={contentModule} onUpdateModule={onUpdateModuleFn} />
     );
@@ -94,7 +94,7 @@ describe('shared/article/modules/form/Edit', () => {
 
   it('should be able to disable the internal database saving', async () => {
     const fireEvent = userEvent.setup();
-    const onUpdateModuleFn = jest.fn();
+    const onUpdateModuleFn = vi.fn();
     const screen = render(
       <Edit contentModule={contentModule} onUpdateModule={onUpdateModuleFn} />
     );
@@ -119,7 +119,7 @@ describe('shared/article/modules/form/Edit', () => {
 
   it('should add an input when clicking on the "add element button"', async () => {
     const fireEvent = userEvent.setup();
-    const onUpdateModuleFn = jest.fn();
+    const onUpdateModuleFn = vi.fn();
     const screen = render(
       <Edit contentModule={contentModule} onUpdateModule={onUpdateModuleFn} />
     );

@@ -90,7 +90,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {
 
     it('should create an article with the given title', async () => {
       const fireEvent = userEvent.setup();
-      const onConfirm = jest.fn((createdArticle) => {
+      const onConfirm = vi.fn((createdArticle) => {
         expect(createdArticle.id).toEqual(666);
         expect(createdArticle.title).toEqual('Test');
       });
@@ -109,7 +109,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {
 
     it('should clear the form and call onAbort when clicking the "Reset" button', async () => {
       const fireEvent = userEvent.setup();
-      const onAbort = jest.fn();
+      const onAbort = vi.fn();
       render(
         <CreateArticleDialog isOpen onConfirm={() => {}} onAbort={onAbort} />
       );

@@ -36,7 +36,7 @@ describe('shared/article/ArticlesByUser', () => {
   });
 
   it('should render the articles found for a given user', async () => {
-    const resFn = jest.fn(() => ({
+    const resFn = vi.fn(() => ({
       data: {
         articles: [Weihnachtsmarkt, ComputerExperten, VivaLaRevolucion],
       },

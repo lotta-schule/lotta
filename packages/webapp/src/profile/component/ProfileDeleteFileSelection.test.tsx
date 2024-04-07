@@ -144,7 +144,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
   describe('request selection change', () => {
     it('should call change function including new file requested upon click', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((newSelection: FileModel[]) => {
+      const callback = vi.fn((newSelection: FileModel[]) => {
         expect(newSelection).toHaveLength(4);
         expect(
           newSelection.find((f) => f.filename === 'Amelie.mp4')
@@ -191,7 +191,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
 
     it('should call change function without file unchecked upon click', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((newSelection: FileModel[]) => {
+      const callback = vi.fn((newSelection: FileModel[]) => {
         expect(newSelection).toHaveLength(2);
         expect(
           newSelection.find((f) => f.filename === 'Animiert.gif')
@@ -238,7 +238,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
 
     it('should call change function requesting all files when "select all" checkbox is click in off state', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((newSelection: FileModel[]) => {
+      const callback = vi.fn((newSelection: FileModel[]) => {
         expect(newSelection).toHaveLength(8);
         expect(newSelection.map((f) => f.filename).sort()).toEqual([
           'Amelie.mp4',
@@ -269,7 +269,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
 
     it('should call change function requesting no files when "select all" checkbox is clicked in on state', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((newSelection: FileModel[]) => {
+      const callback = vi.fn((newSelection: FileModel[]) => {
         expect(newSelection).toHaveLength(0);
       });
       const screen = render(
@@ -290,7 +290,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
 
     it('should call change function requesting all files when "select all" checkbox is click in mixed state', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((newSelection: FileModel[]) => {
+      const callback = vi.fn((newSelection: FileModel[]) => {
         expect(newSelection).toHaveLength(8);
         expect(newSelection.map((f) => f.filename).sort()).toEqual([
           'Amelie.mp4',

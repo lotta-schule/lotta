@@ -106,7 +106,7 @@ describe('pages/admin/users/constraints', () => {
     describe('update the value', () => {
       it('should work by request when changing via input field', async () => {
         const fireEvent = userEvent.setup();
-        const updateFn = jest.fn(() => ({
+        const updateFn = vi.fn(() => ({
           data: {
             tenant: {
               ...tenant,

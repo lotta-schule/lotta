@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+
+  "extends": "./tsconfig.json",
+
+  "compilerOptions": {
+    "types": ["node", "vite/client"],
+  },
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

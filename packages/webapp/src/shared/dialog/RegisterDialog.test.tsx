@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { RegisterDialog } from './RegisterDialog';
-import RegisterMutation from 'api/mutation/RegisterMutation.graphql';
 import userEvent from '@testing-library/user-event';
+
+import RegisterMutation from 'api/mutation/RegisterMutation.graphql';
 
 describe('shared/dialog/RegisterDialog', () => {
   it('should render login dialog without errors', () => {
@@ -11,7 +12,7 @@ describe('shared/dialog/RegisterDialog', () => {
 
   it('should close the dialog when clicking on cancel', async () => {
     const fireEvent = userEvent.setup();
-    const onRequestClose = jest.fn();
+    const onRequestClose = vi.fn();
     const screen = render(
       <RegisterDialog isOpen={true} onRequestClose={onRequestClose} />,
       {}
@@ -23,7 +24,7 @@ describe('shared/dialog/RegisterDialog', () => {
   describe('fields', () => {
     it('should send a complete registration, then show a confirm message', async () => {
       const fireEvent = userEvent.setup();
-      const onRequestClose = jest.fn();
+      const onRequestClose = vi.fn();
       const additionalMocks = [
         {
           request: {

@@ -7,11 +7,10 @@ import GetTenantRealtimeAnalyticsQuery from 'api/query/analytics/GetTenantRealti
 import GetTenantAggregateAnalyticsQuery from 'api/query/analytics/GetTenantAggregateAnalyticsQuery.graphql';
 import GetTenantTimeseriesAnalyticsQuery from 'api/query/analytics/GetTenantTimeseriesAnalyticsQuery.graphql';
 
-jest
-  .useFakeTimers({
-    advanceTimers: 1,
-  })
-  .setSystemTime(new Date('2025-08-16T12:00:00.000Z'));
+vi.useFakeTimers({
+  shouldAdvanceTime: true,
+  now: new Date('2025-08-16T12:00:00.000Z'),
+});
 
 const mocks = [
   {
@@ -29,7 +28,7 @@ const mocks = [
       query: GetTenantAggregateAnalyticsQuery,
       variables: { date: '2025-08-01' },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         analytics: {
           visits: 100,
@@ -50,7 +49,7 @@ const mocks = [
         metric: 'VISITS',
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         metrics: [
           { date: '2025-08-01', value: 100 },
@@ -65,7 +64,7 @@ const mocks = [
       query: GetTenantAggregateAnalyticsQuery,
       variables: { date: '2025-04-01' },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         analytics: {
           visits: 100,
@@ -86,7 +85,7 @@ const mocks = [
         metric: 'VISITS',
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         metrics: [
           { date: '2025-04-01', value: 100 },

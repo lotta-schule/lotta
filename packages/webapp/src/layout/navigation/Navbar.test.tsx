@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { FaecherCategory, FrancaisCategory } from 'test/fixtures/Tenant';
-import { render, waitFor } from 'test/util';
+import { FaecherCategory, FrancaisCategory } from 'test/fixtures';
+import { MockRouter, render, waitFor } from 'test/util';
 import { Navbar } from './Navbar';
 
 describe('shared/layouts/navigation/Navbar', () => {
@@ -24,9 +24,8 @@ describe('shared/layouts/navigation/Navbar', () => {
   });
 
   it('it should render the correct amount of subcategories categories', async () => {
-    jest
-      .requireMock('next/router')
-      .mockRouter.reset(`/c/${FaecherCategory.id}`);
+    const { mockRouter } = await vi.importMock<MockRouter>('next/router');
+    mockRouter.reset(`/c/${FaecherCategory.id}`);
 
     const screen = render(<Navbar />, {});
     await waitFor(async () => {
@@ -43,18 +42,15 @@ describe('shared/layouts/navigation/Navbar', () => {
 
   // Problems mocking scrollIntoView
   it('should scroll to active nav item', async () => {
-    jest
-      .requireMock('next/router')
-      .mockRouter.reset(`/c/${FaecherCategory.id}`);
+    const { mockRouter } = await vi.importMock<MockRouter>('next/router');
+    mockRouter.reset(`/c/${FaecherCategory.id}`);
     const screen = render(<Navbar />);
 
     await waitFor(() => {
       expect(screen.getByTestId('nav-level2')).toHaveProperty('scrollLeft', 0);
     });
 
-    jest
-      .requireMock('next/router')
-      .mockRouter.push(`/c/${FrancaisCategory.id}`);
+    mockRouter.push(`/c/${FrancaisCategory.id}`);
 
     await waitFor(() => {
       expect(Element.prototype.scroll).toHaveBeenCalled();

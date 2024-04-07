@@ -18,7 +18,7 @@ describe('shared/article/module/ContentModule', () => {
     const article = ComputerExperten;
     const textContentModule = ComputerExperten.contentModules[0];
     it('should show and call a "move up" button when onMoveUp prop is given', async () => {
-      const fn = jest.fn();
+      const fn = vi.fn();
       const screen = render(
         <ContentModule
           isEditModeEnabled
@@ -38,7 +38,7 @@ describe('shared/article/module/ContentModule', () => {
 
     it('should show and call a "move down" button when onMoveDown prop is given', async () => {
       const fireEvent = userEvent.setup();
-      const fn = jest.fn();
+      const fn = vi.fn();
       const screen = render(
         <ContentModule
           isEditModeEnabled
@@ -58,16 +58,16 @@ describe('shared/article/module/ContentModule', () => {
 
     it('should show delete button and call "onRemoveContentModule" on click', async () => {
       const fireEvent = userEvent.setup();
-      const onRemoveContentModule = jest.fn();
+      const onRemoveContentModule = vi.fn();
       const screen = render(
         <ContentModule
           isEditModeEnabled
           article={article}
           contentModule={textContentModule}
           index={0}
-          onUpdateModule={jest.fn}
+          onUpdateModule={vi.fn}
           onRemoveContentModule={onRemoveContentModule}
-          onMoveDown={jest.fn}
+          onMoveDown={vi.fn}
         />
       );
       await fireEvent.click(screen.getByRole('button', { name: /löschen/i }));
@@ -139,8 +139,8 @@ describe('shared/article/module/ContentModule', () => {
           article={article}
           contentModule={titleContentModule}
           index={0}
-          onUpdateModule={jest.fn}
-          onRemoveContentModule={jest.fn}
+          onUpdateModule={vi.fn}
+          onRemoveContentModule={vi.fn}
         />
       );
       expect(screen.getByTestId('TitleContentModule')).toBeVisible();

@@ -2,13 +2,23 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "src",
-    "outDir": "dist",
-    "rootDir": "../..",
-    "types": ["vitest/globals", "vitest/jsdom", "@testing-library/jest-dom"],
+    "baseUrl": "src/",
+    "outDir": "dist/lib/hubert",
+    "noEmit": true,
+
+    "isolatedModules": true,
+    "incremental": true,
+    "resolveJsonModule": true,
+
+    "module": "Preserve",
     "paths": {
-      "@lotta-schule/theme": ["../../theme/src/index.ts"]
-    }
+      "@lotta-schule/theme": ["../../theme/src/index.ts"],
+    },
   },
-  "include": ["src/**/*", "../theme/src/**/*"]
+  "references": [
+    { "path": "./tsconfig.test.json" },
+    { "path": "./tsconfig.lib.json" },
+  ],
+
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

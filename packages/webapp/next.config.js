@@ -1,10 +1,7 @@
 // @ts-check
 
-const { resolve } = require('path');
-const { withSentryConfig } = require('@sentry/nextjs');
-const withTranspileModules = require('next-transpile-modules')([
-  '@lotta-schule/hubert',
-]);
+import { resolve } from 'node:path';
+import { withSentryConfig } from '@sentry/nextjs';
 
 const SentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that
@@ -20,10 +17,19 @@ const SentryWebpackPluginOptions = {
   dryRun: !process.env.SENTRY_AUTH_TOKEN?.length,
 };
 
+const __dirname = new URL('.', import.meta.url).pathname;
+
 /**
  * @type {import('next').NextConfig}
  **/
 const nextConfig = {
+  experimental: {
+    externalDir: true,
+  },
+  transpileModules: [
+    '@lotta-schule/hubert',
+    resolve(__dirname, '../hubert/src/index.ts'),
+  ],
   async rewrites() {
     return [
       {
@@ -65,7 +71,10 @@ const nextConfig = {
     ];
   },
   sassOptions: {
-    includePaths: [resolve(__dirname, './src/styles/util')],
+    includePaths: [
+      resolve(__dirname, './src/styles/util'),
+      resolve(__dirname, '../hubert/src/theme'),
+    ],
   },
   eslint: {
     dirs: ['src'],
@@ -81,6 +90,13 @@ const nextConfig = {
       exclude: /node_modules/,
       loader: 'graphql-tag/loader',
     });
+
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@lotta-schule/hubert': resolve(__dirname, '../hubert/src/index.ts'),
+      '@lotta-schule/hubert/*': resolve(__dirname, '../hubert/src/*'),
+    };
+
     return config;
   },
   publicRuntimeConfig: {
@@ -93,6 +109,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withTranspileModules(
-  withSentryConfig(nextConfig, SentryWebpackPluginOptions)
-);
+export default withSentryConfig(nextConfig, SentryWebpackPluginOptions);

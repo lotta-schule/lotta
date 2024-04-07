@@ -16,7 +16,7 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
 
   it('should select the category', async () => {
     const fireEvent = userEvent.setup();
-    const onSelectCategory = jest.fn();
+    const onSelectCategory = vi.fn();
     const screen = render(
       <CategorySelect
         selectedCategory={null}

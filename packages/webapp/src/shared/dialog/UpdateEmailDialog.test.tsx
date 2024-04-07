@@ -66,7 +66,7 @@ describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
           result: { data: { token: 'abc' } },
         },
       ];
-      const onClose = jest.fn();
+      const onClose = vi.fn();
       render(
         <UpdateEmailDialog isOpen onRequestClose={onClose} />,
         {},

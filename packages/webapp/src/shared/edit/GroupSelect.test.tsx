@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { UserGroupModel } from 'model';
 import { render, waitFor, within } from 'test/util';
 import {
@@ -12,10 +13,6 @@ import { GroupSelect } from './GroupSelect';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/editor/GroupSelect', () => {
-  it('should render an GroupSelect without error', () => {
-    render(<GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />, {});
-  });
-
   describe('label prop', () => {
     it('should show a default label', () => {
       const screen = render(
@@ -136,7 +133,7 @@ describe('shared/editor/GroupSelect', () => {
 
     it('should add all groups when checkbox is unchecked', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((newGroups) => {
+      const callback = vi.fn((newGroups) => {
         expect(newGroups.map((g: UserGroupModel) => g.name)).toEqual([
           'Administrator',
           'Lehrer',
@@ -160,7 +157,7 @@ describe('shared/editor/GroupSelect', () => {
 
     it('should remove all groups when checkbox is checked', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((newGroups) => {
+      const callback = vi.fn((newGroups) => {
         expect(newGroups.map((g: UserGroupModel) => g.name)).toEqual([]);
       });
       const screen = render(
@@ -234,7 +231,7 @@ describe('shared/editor/GroupSelect', () => {
     it('should show a placeholder if no group is selected and clear the input after the selection has been done', async () => {
       const fireEvent = userEvent.setup();
 
-      const onSelectGroups = jest.fn();
+      const onSelectGroups = vi.fn();
 
       const screen = render(
         <GroupSelect selectedGroups={[]} onSelectGroups={onSelectGroups} />,
@@ -293,7 +290,7 @@ describe('shared/editor/GroupSelect', () => {
   describe('should manipulate selected groups', () => {
     it('should send deselection request when clicking on group\'s "X"', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((newGroups) => {
+      const callback = vi.fn((newGroups) => {
         expect(newGroups.map((g: UserGroupModel) => g.name).sort()).toEqual([
           'Administrator',
           'Lehrer',
@@ -400,7 +397,7 @@ describe('shared/editor/GroupSelect', () => {
 
       it('should select a group after having clicked on it', async () => {
         const fireEvent = userEvent.setup();
-        const callback = jest.fn((groups) => {
+        const callback = vi.fn((groups) => {
           expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
             'Administrator',
             'Lehrer',
@@ -439,7 +436,7 @@ describe('shared/editor/GroupSelect', () => {
 
       it('should select only all admin groups after having clicked on one', async () => {
         const fireEvent = userEvent.setup();
-        const callback = jest.fn((groups) => {
+        const callback = vi.fn((groups) => {
           expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
             'Administrator',
             'Administrator2',
@@ -477,7 +474,7 @@ describe('shared/editor/GroupSelect', () => {
 
       it('should deselect a selected non-admin group after having clicked on it', async () => {
         const fireEvent = userEvent.setup();
-        const callback = jest.fn((groups) => {
+        const callback = vi.fn((groups) => {
           expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
             'Administrator',
           ]);
@@ -514,7 +511,7 @@ describe('shared/editor/GroupSelect', () => {
 
       it('should deselect all selected groups after having clicked on a selected admin group', async () => {
         const fireEvent = userEvent.setup();
-        const callback = jest.fn((groups) => {
+        const callback = vi.fn((groups) => {
           expect(groups.map((g: UserGroupModel) => g.name)).toEqual([]);
         });
 
@@ -550,7 +547,7 @@ describe('shared/editor/GroupSelect', () => {
       describe('with disableGroupExclusivity enabled', () => {
         it('should select a group after having clicked on it', async () => {
           const fireEvent = userEvent.setup();
-          const callback = jest.fn((groups) => {
+          const callback = vi.fn((groups) => {
             expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
               'Administrator',
               'Lehrer',
@@ -589,7 +586,7 @@ describe('shared/editor/GroupSelect', () => {
 
         it('should deselect a selected group after having clicked on it', async () => {
           const fireEvent = userEvent.setup();
-          const callback = jest.fn((groups) => {
+          const callback = vi.fn((groups) => {
             expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
               'Lehrer',
             ]);
@@ -630,7 +627,7 @@ describe('shared/editor/GroupSelect', () => {
   describe('allowNoneSelection', () => {
     it('should add a "None" selection when allowNoneSelection prop is passed', async () => {
       const fireEvent = userEvent.setup();
-      const onSelectGroups = jest.fn();
+      const onSelectGroups = vi.fn();
       const screen = render(
         <GroupSelect
           allowNoneSelection
@@ -693,7 +690,7 @@ describe('shared/editor/GroupSelect', () => {
 
     it('should toggle the "None" option on and off when clicked two times', async () => {
       const fireEvent = userEvent.setup();
-      const onSelectGroups = jest.fn();
+      const onSelectGroups = vi.fn();
       const screen = render(
         <GroupSelect
           allowNoneSelection

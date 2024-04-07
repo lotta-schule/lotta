@@ -8,7 +8,21 @@ describe('shared/Button', () => {
     const screen = render(<Button>Click</Button>);
 
     expect(screen.getByRole('button')).toHaveTextContent('Click');
-    expect(screen.getByRole('button')).toMatchInlineSnapshot();
+    expect(screen.getByRole('button')).toMatchInlineSnapshot(`
+      <button
+        aria-current="false"
+        class="_root_0977c5 _root_3de4f3"
+        data-variant="default"
+        role="button"
+        type="button"
+      >
+        <span
+          class="_label_3de4f3"
+        >
+          Click
+        </span>
+      </button>
+    `);
   });
 
   it('should render Button with icon', () => {

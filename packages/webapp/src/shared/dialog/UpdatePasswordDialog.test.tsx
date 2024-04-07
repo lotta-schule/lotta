@@ -110,7 +110,7 @@ describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => 
           result: { data: { token: 'abc' } },
         },
       ];
-      const onClose = jest.fn();
+      const onClose = vi.fn();
       render(
         <UpdatePasswordDialog isOpen onRequestClose={onClose} />,
         {},
@@ -138,7 +138,7 @@ describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => 
 
     it('should clear the form and call onAbort when clicking the "Reset" button', async () => {
       const fireEvent = userEvent.setup();
-      const onRequestClose = jest.fn();
+      const onRequestClose = vi.fn();
       render(<UpdatePasswordDialog isOpen onRequestClose={onRequestClose} />);
       await fireEvent.click(
         await screen.findByRole('button', { name: /abbrechen/i })

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, screen, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 import userEvent from '@testing-library/user-event';
@@ -8,7 +8,7 @@ import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.gr
 
 describe('shared/dialog/RequestHisecToken', () => {
   it('should render the shared', () => {
-    render(
+    const screen = render(
       <RequestHisecTokenDialog isOpen onRequestClose={() => {}} />,
       {},
       { currentUser: SomeUser }
@@ -17,7 +17,7 @@ describe('shared/dialog/RequestHisecToken', () => {
 
   describe('show/hide', () => {
     it('should show the shared if isOpen is true', async () => {
-      render(
+      const screen = render(
         <RequestHisecTokenDialog isOpen onRequestClose={() => {}} />,
         {},
         { currentUser: SomeUser }
@@ -28,7 +28,7 @@ describe('shared/dialog/RequestHisecToken', () => {
     });
 
     it('should not show the shared if isOpen is false', () => {
-      render(
+      const screen = render(
         <RequestHisecTokenDialog isOpen={false} onRequestClose={() => {}} />,
         {},
         { currentUser: SomeUser }
@@ -57,7 +57,7 @@ describe('shared/dialog/RequestHisecToken', () => {
   });
 
   it('should have the focus on the input field and the submit button disabled when open', () => {
-    render(
+    const screen = render(
       <RequestHisecTokenDialog isOpen onRequestClose={() => {}} />,
       {},
       { currentUser: SomeUser }
@@ -67,7 +67,7 @@ describe('shared/dialog/RequestHisecToken', () => {
   });
 
   it('should have the autocomplete props on the inputs', () => {
-    render(
+    const screen = render(
       <RequestHisecTokenDialog isOpen onRequestClose={() => {}} />,
       {},
       { currentUser: SomeUser }
@@ -80,7 +80,7 @@ describe('shared/dialog/RequestHisecToken', () => {
 
   it('button should be enabled when a password is entered', async () => {
     const fireEvent = userEvent.setup();
-    render(
+    const screen = render(
       <RequestHisecTokenDialog isOpen onRequestClose={() => {}} />,
       {},
       { currentUser: SomeUser }
@@ -104,7 +104,7 @@ describe('shared/dialog/RequestHisecToken', () => {
           result: { data: { token: 'abc' } },
         },
       ];
-      const onClose = jest.fn();
+      const onClose = vi.fn();
       const screen = render(
         <RequestHisecTokenDialog isOpen onRequestClose={onClose} />,
         {},
@@ -130,8 +130,8 @@ describe('shared/dialog/RequestHisecToken', () => {
           result: { data: { token: 'abc' } },
         },
       ];
-      const onClose = jest.fn();
-      render(
+      const onClose = vi.fn();
+      const screen = render(
         <RequestHisecTokenDialog
           isOpen
           withCurrentPassword={'pw123'}
@@ -148,8 +148,8 @@ describe('shared/dialog/RequestHisecToken', () => {
 
     it('should clear the form and call onAbort when clicking the "Abort" button', async () => {
       const fireEvent = userEvent.setup();
-      const onClose = jest.fn();
-      render(
+      const onClose = vi.fn();
+      const screen = render(
         <RequestHisecTokenDialog isOpen onRequestClose={onClose} />,
         {},
         { currentUser: SomeUser }

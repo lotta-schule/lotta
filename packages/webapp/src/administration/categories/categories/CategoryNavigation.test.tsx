@@ -53,7 +53,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       it('should select a start category on click', async () => {
         const fireEvent = userEvent.setup();
         let selectedCategory = null;
-        const onSelectCategory = jest.fn(
+        const onSelectCategory = vi.fn(
           (category) => (selectedCategory = category)
         );
         const screen = renderWithContext(
@@ -76,7 +76,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       it('should select a common category on click', async () => {
         const fireEvent = userEvent.setup();
         let selectedCategory = null;
-        const onSelectCategory = jest.fn(
+        const onSelectCategory = vi.fn(
           (category) => (selectedCategory = category)
         );
         const screen = renderWithContext(
@@ -98,7 +98,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       it('should select a subcategory on click', async () => {
         const fireEvent = userEvent.setup();
         let selectedCategory = FaecherCategory;
-        const onSelectCategory = jest.fn(
+        const onSelectCategory = vi.fn(
           (category) => (selectedCategory = category)
         );
         const screen = renderWithContext(
@@ -121,7 +121,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       it('should select a sidenav-category on click', async () => {
         const fireEvent = userEvent.setup();
         let selectedCategory = null;
-        const onSelectCategory = jest.fn(
+        const onSelectCategory = vi.fn(
           (category) => (selectedCategory = category)
         );
         const screen = renderWithContext(
