@@ -5,12 +5,7 @@
     "baseUrl": "src",
     "outDir": "dist",
     "rootDir": "../..",
-    "types": [],
-    "typeRoots": [
-      "src/@types",
-      "node_modules/@types",
-      "../../node_modules/@types"
-    ],
+    "types": ["vitest/globals", "vitest/jsdom", "@testing-library/jest-dom"],
     "paths": {
       "@lotta-schule/theme": ["../../theme/src/index.ts"]
     }

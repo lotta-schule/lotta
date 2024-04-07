@@ -33,7 +33,7 @@ describe('shared/general/form/radio', () => {
 
   it('should call onChange with the newly selected value', async () => {
     const user = userEvent.setup();
-    const onChange = jest.fn((ev, val) => {
+    const onChange = vi.fn((ev, val) => {
       expect(ev.type).toEqual('change');
       expect(val).toEqual('3');
     });

@@ -47,4 +47,16 @@ export default defineConfig({
       formats: ['es'],
     },
   },
+
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['src/**/*.test.{ts,tsx}'],
+    reporters: ['default'],
+    setupFiles: ['./test.setup.ts'],
+    coverage: {
+      reportsDirectory: 'coverage',
+      provider: 'istanbul',
+    },
+  },
 });

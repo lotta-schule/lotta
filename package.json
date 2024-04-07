@@ -32,6 +32,8 @@
     "nx": "18.1.2",
     "nx-cloud": "18.0.0",
     "prettier": "^3.2.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^5.4.3",
     "vite": "^5.2.8",
     "vite-plugin-dts": "^3.8.1",

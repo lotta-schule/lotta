@@ -1,25 +1,24 @@
 {
-  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
+  "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "src",
-    "rootDirs": ["src"],
-    "types": [],
+    "baseUrl": "./src",
+    "rootDir": "../..",
+    "types": ["vite/client"],
     "typeRoots": [
       "src/@types",
       "node_modules/@types",
       "../../node_modules/@types"
     ],
-    "declaration": true,
-    "composite": true
-  },
-  "references": [
-    {
-      "path": "../storybook-addon-theme/tsconfig.json"
-    },
-    {
-      "path": "../hubert/tsconfig.json"
+    "paths": {
+      "@lotta-schule/theme": ["../../theme/src/index.ts"],
+      "@lotta-schule/hubert": ["../../hubert/src/index.ts"]
     }
-  ],
-  "include": ["src/**/*"]
+  },
+  "include": [
+    ".storybook/**/*",
+    "src/**/*",
+    "../theme/src/**/*",
+    "../hubert/src/**/*"
+  ]
 }

@@ -1,16 +1,16 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`tabs/Tab should render a Tab button 1`] = `
+exports[`tabs/Tab > should render a Tab button 1`] = `
 <button
   aria-selected="false"
-  class="root root root tab"
+  class="_root_0977c5 _root_3de4f3 _root_70a42a _tab_1efd66"
   data-variant="default"
   role="tab"
   type="button"
   value="4"
 >
   <span
-    class="label label"
+    class="_label_3de4f3 _label_70a42a"
   >
     Tab-Button
   </span>

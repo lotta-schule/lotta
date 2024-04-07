@@ -2,8 +2,10 @@ import * as React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { SwipeableViews } from './SwipeableViews';
 
+import styles from './SwipeableViews.module.scss';
+
 describe('SwipeableViews Component', () => {
-  const mockOnChange = jest.fn();
+  const mockOnChange = vi.fn();
 
   const mockChildren = [
     <div key="1">View 1</div>,
@@ -12,7 +14,7 @@ describe('SwipeableViews Component', () => {
   ];
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders correctly', () => {
@@ -22,7 +24,7 @@ describe('SwipeableViews Component', () => {
       </SwipeableViews>
     );
 
-    const views = screen.container.querySelectorAll('.viewElement');
+    const views = screen.container.getElementsByClassName(styles.viewElement);
     expect(views.length).toBe(mockChildren.length);
   });
 

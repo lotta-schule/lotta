@@ -2,7 +2,7 @@ import { getStoryContext } from '@storybook/test-runner';
 import { Page } from 'playwright';
 
 module.exports = {
-  async preRender(
+  async preVisit(
     page: Page,
     story: {
       id: string;

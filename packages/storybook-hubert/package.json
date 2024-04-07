@@ -7,24 +7,23 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "e2e": "concurrently -k -s 'first' 'npx http-server test-sb-static --port 6006 --silent' 'wait-on tcp:6006 && npx test-storybook --ci'",
-    "e2e:prepare": "NODE_ENV=test npm run build -- --output-dir=test-sb-static",
+    "e2e": "concurrently -k -s 'last' 'http-server test-sb-static --port 6006 --silent' -P 'wait-on tcp:6006 && test-storybook {@}'",
+    "e2e:prepare": "NODE_ENV=test nx build storybook-hubert --test --output-dir=test-sb-static",
     "lint": "eslint --ext js,jsx,ts,tsx src",
     "typecheck": "tsc --noEmit",
     "build": "storybook build"
   },
   "type": "module",
-  "dependencies": {
-    "@lotta-schule/hubert": "4.2.1-alpha.0"
-  },
   "devDependencies": {
     "@lotta-schule/storybook-addon-theme": "4.2.1-alpha.0",
     "@storybook/addon-a11y": "^8.0.6",
     "@storybook/addon-actions": "^8.0.6",
+    "@storybook/addon-coverage": "^1.0.1",
     "@storybook/addon-essentials": "^8.0.6",
     "@storybook/addon-interactions": "^8.0.6",
     "@storybook/addon-links": "^8.0.6",
     "@storybook/addon-mdx-gfm": "^8.0.6",
+    "@storybook/addon-storysource": "^8.0.6",
     "@storybook/addon-themes": "^8.0.6",
     "@storybook/addon-viewport": "^8.0.6",
     "@storybook/blocks": "^8.0.6",
@@ -32,7 +31,7 @@
     "@storybook/react": "^8.0.6",
     "@storybook/react-vite": "^8.0.6",
     "@storybook/test": "^8.0.6",
-    "@types/react": "^18.2.69",
+    "@storybook/test-runner": "^0.17.0",
     "chromatic": "^11.2.0",
     "concurrently": "^8.2.2",
     "css-loader": "^6.10.0",
@@ -75,7 +74,10 @@
         ]
       },
       "e2e": {
-        "outputs": [],
+        "outputs": [
+          "{projectRoot}/coverage"
+        ],
+
         "inputs": [
           "{projectRoot}/test-sb-static"
         ],
@@ -92,5 +94,5 @@
         ]
       }
     }
-  }
+}
 }

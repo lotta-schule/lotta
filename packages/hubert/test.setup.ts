@@ -1,7 +1,5 @@
 import { TextEncoder } from 'util';
-import '@jest/globals';
-import '@testing-library/jest-dom';
-import 'whatwg-fetch';
+import '@testing-library/jest-dom/vitest';
 
 // create setup document
 const dialogContainer = document.createElement('div');
@@ -11,28 +9,28 @@ document.body.appendChild(dialogContainer);
 // window.matchMedia mock
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation((query) => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // Deprecated
-    removeListener: jest.fn(), // Deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // Deprecated
+    removeListener: vi.fn(), // Deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   })),
 });
 
-Element.prototype.scroll = jest.fn();
+Element.prototype.scroll = vi.fn(() => void 0);
 Object.defineProperty(window, 'scrollTo', {
   writable: false,
-  value: jest.fn(),
+  value: vi.fn(),
 });
 
 global.TextEncoder = TextEncoder;
 
 const originalError = console.error;
-jest.spyOn(console, 'error').mockImplementation((...args) => {
+vi.spyOn(console, 'error').mockImplementation((...args) => {
   if (
     typeof args[0] === 'string' &&
     args[0].includes('inside a test was not wrapped in act')

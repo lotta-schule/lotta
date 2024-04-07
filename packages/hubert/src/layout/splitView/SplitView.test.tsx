@@ -49,7 +49,7 @@ describe('SplitView', () => {
     beforeEach(() => {
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
-        value: jest.fn().mockImplementation((query) => {
+        value: vi.fn().mockImplementation((query) => {
           const listeners: Function[] = [];
           return {
             matches: true,
@@ -71,7 +71,7 @@ describe('SplitView', () => {
     afterEach(() => {
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
-        value: jest.fn().mockImplementation((query) => {
+        value: vi.fn().mockImplementation((query) => {
           const listeners: Function[] = [];
           return {
             matches: false,
@@ -94,7 +94,7 @@ describe('SplitView', () => {
     it('should render only sidebar', async () => {
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
-        value: jest.fn().mockImplementation((query) => {
+        value: vi.fn().mockImplementation((query) => {
           const listeners: Function[] = [];
           return {
             matches: true,

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`CSSVariables should output the correct css variable definitions for the default theme 1`] = `
+exports[`CSSVariables > should output the correct css variable definitions for the default theme 1`] = `
 <style
   data-hubert-css-variables-def="true"
 >

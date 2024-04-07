@@ -9,8 +9,6 @@ import {
 } from '@lotta-schule/hubert';
 import isChromatic from 'chromatic';
 
-import '@lotta-schule/hubert/dist/style.css';
-
 if (isChromatic()) {
   MotionGlobalConfig.skipAnimations = true;
 }

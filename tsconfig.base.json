@@ -23,13 +23,5 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true
   },
-  "exclude": [
-    "node_modules",
-    "!node_modules/@lotta-schule",
-    "tmp",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.stories.ts",
-    "**/*.stories.tsx"
-  ]
+  "exclude": ["node_modules", "!node_modules/@lotta-schule", "tmp"]
 }

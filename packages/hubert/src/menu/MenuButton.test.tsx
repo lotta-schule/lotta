@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 describe('Menu', () => {
   it('should render a Menu button', async () => {
     const fireEvent = userEvent.setup();
-    const onOpenChange = jest.fn();
+    const onOpenChange = vi.fn();
     const screen = render(
       <MenuButton
         title={'Test Menu'}
