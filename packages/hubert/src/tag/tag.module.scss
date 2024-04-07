@@ -12,6 +12,7 @@
   max-width: 'max-content';
   font-family: var(--lotta-text-font-family);
   cursor: pointer;
+
   &:hover {
     background-color: rgba(var(--lotta-primary-color), 0.1);
     box-shadow: 1px 1px 10px rgba(var(--lotta-primary-color), 0.1);

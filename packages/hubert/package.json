@@ -7,7 +7,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "test": "vitest",
-    "lint": "eslint --ext js,jsx,ts,tsx src",
+    "lint": "eslint src/**/*.* --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit"
   },
   "type": "module",

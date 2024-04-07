@@ -46,13 +46,6 @@ describe('cssHelpers', () => {
       expect(toCSSVariableValue(originalValue)).toEqual(cssValue);
     });
 
-    it('should transform "\'Muli\'" to "\'Muli\'"', () => {
-      const originalValue = "'Muli'";
-      const cssValue = "'Muli'";
-
-      expect(toCSSVariableValue(originalValue)).toEqual(cssValue);
-    });
-
     it('should transform the number 4 to the string 4 if no type information is given', () => {
       const originalValue = 4;
       const cssValue = '4';

@@ -9,7 +9,7 @@
     "dev": "storybook dev -p 6006",
     "e2e": "concurrently -k -s 'last' 'http-server test-sb-static --port 6006 --silent' -P 'wait-on tcp:6006 && test-storybook {@}'",
     "e2e:prepare": "NODE_ENV=test nx build storybook-hubert --test --output-dir=test-sb-static",
-    "lint": "eslint --ext js,jsx,ts,tsx src",
+    "lint": "eslint src/**/*.* --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit",
     "build": "storybook build"
   },
@@ -33,18 +33,10 @@
     "@storybook/test": "^8.0.6",
     "@storybook/test-runner": "^0.17.0",
     "chromatic": "^11.2.0",
-    "concurrently": "^8.2.2",
-    "css-loader": "^6.10.0",
-    "eslint-plugin-react": "^7.34.1",
-    "eslint-plugin-storybook": "^0.8.0",
     "framer-motion": "^11.0.20",
     "http-server": "^14.1.1",
-    "identity-obj-proxy": "^3.0.0",
-    "prettier": "^3.2.5",
     "storybook": "^8.0.6",
-    "style-loader": "^3.3.4",
-    "wait-on": "^7.2.0",
-    "whatwg-fetch": "^3.6.20"
+    "wait-on": "^7.2.0"
   },
   "nx": {
     "$schema": "https://raw.githubusercontent.com/nrwl/nx/master/packages/nx/schemas/project-schema.json",
@@ -77,7 +69,6 @@
         "outputs": [
           "{projectRoot}/coverage"
         ],
-
         "inputs": [
           "{projectRoot}/test-sb-static"
         ],
@@ -94,5 +85,5 @@
         ]
       }
     }
-}
+  }
 }

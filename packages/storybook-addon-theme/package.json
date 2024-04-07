@@ -7,7 +7,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "test": "vitest",
-    "lint": "eslint src",
+    "lint": "eslint src/**/*.* --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit",
     "build": "vite build"
   },
@@ -24,8 +24,7 @@
   },
   "devDependencies": {
     "@storybook/blocks": "^8.0.4",
-    "@testing-library/jest-dom": "^6.4.2",
-    "eslint-plugin-react-hooks": "^4.6.0"
+    "@testing-library/jest-dom": "^6.4.2"
   },
   "peerDependencies": {
     "@storybook/blocks": "^8.0.0",

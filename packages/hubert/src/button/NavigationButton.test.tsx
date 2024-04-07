@@ -4,6 +4,9 @@ import { NavigationButton } from './NavigationButton';
 
 describe('shared/NavigationButton', () => {
   it('should render NavigationButton with label', () => {
-    render(<NavigationButton>Click</NavigationButton>);
+    const screen = render(<NavigationButton>Click</NavigationButton>);
+
+    expect(screen.getByRole('button')).toHaveTextContent('Click');
+    expect(screen.getByRole('button')).toMatchInlineSnapshot();
   });
 });
