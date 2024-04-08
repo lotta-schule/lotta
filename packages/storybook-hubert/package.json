@@ -25,7 +25,7 @@
     "@babel/preset-env": "^7.24.3",
     "@babel/preset-react": "^7.24.1",
     "@babel/preset-typescript": "^7.24.1",
-    "@lotta-schule/storybook-addon-theme": "4.2.0",
+    "@lotta-schule/storybook-addon-theme": "4.2.1",
     "@storybook/addon-a11y": "^8.0.4",
     "@storybook/addon-actions": "^8.0.4",
     "@storybook/addon-essentials": "^8.0.4",
