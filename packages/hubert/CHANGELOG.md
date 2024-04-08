@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.1](https://github.com/lotta-schule/web/compare/v4.2.0...v4.2.1) (2024-04-08)
+
+### Bug Fixes
+
+- **webapp:** SplitView is too broad on mobile devices so view can be outscrolled ([3e50853](https://github.com/lotta-schule/web/commit/3e5085300d0758f93c38fc02096b63c152c7dbf1))
+
 # [4.2.0](https://github.com/lotta-schule/web/compare/v4.1.4...v4.2.0) (2024-03-29)
 
 ### Bug Fixes
