@@ -30,7 +30,7 @@ describe('shared/article/ArticlesByUser', () => {
   it('should render a ArticlesByUser without articles', async () => {
     const resFn = vi.fn(() => ({
       data: {
-        articles: [Weihnachtsmarkt, ComputerExperten, VivaLaRevolucion],
+        articles: [],
       },
     }));
     const screen = render(

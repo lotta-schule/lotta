@@ -10,7 +10,8 @@
   },
   "exclude": [
     "**/*.test.ts",
-    "**/*.test.tsx"
+    "**/*.test.tsx",
+    "src/test-utils.tsx"
   ],
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

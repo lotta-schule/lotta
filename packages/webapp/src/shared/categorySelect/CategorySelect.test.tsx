@@ -5,7 +5,7 @@ import { CategorySelect } from './CategorySelect';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/editArticleLayout/CategorySelect', () => {
-  it('should render the thing', () => {
+  it('should render the thing', async () => {
     const screen = render(
       <CategorySelect
         selectedCategory={FaecherCategory}
@@ -13,7 +13,9 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
       />
     );
 
-    expect(screen.getByRole('button', { name: /fächer/i })).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /fächer/i })).toBeVisible();
+    });
   });
 
   it('should select the category', async () => {

@@ -1,4 +1,15 @@
 import '@testing-library/jest-dom/vitest';
+import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
+
+declare module 'vitest' {
+  interface Assertion<T = any>
+    extends TestingLibraryMatchers<
+      typeof expect.stringMatching | typeof expect.stringContaining,
+      T
+    > {}
+  interface AsymmetricMatchersContaining
+    extends TestingLibraryMatchers<unknown, unknown> {}
+}
 import { beforeAll, vi } from 'vitest';
 import { TextEncoder, TextDecoder } from 'util';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';

@@ -12,10 +12,7 @@ import {
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
-import {
-  ApolloMocksOptions,
-  getDefaultApolloMocks,
-} from 'test/mocks/defaultApolloMocks';
+import { ApolloMocksOptions, getDefaultApolloMocks } from 'test/mocks';
 import { i18n } from '../i18n';
 import {
   reducer as fileExplorerStateReducer,

@@ -9,7 +9,7 @@ describe('shared/EnrollmentTokensEditor', () => {
       <EnrollmentTokensEditor tokens={[]} setTokens={() => {}} />
     );
 
-    expect(screen.getAllByRole('listitem')).toHaveLength(0);
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
   });
 
   it('show a list of tokens', () => {

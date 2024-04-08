@@ -1,5 +1,17 @@
-import { TextEncoder } from 'util';
+import { TextEncoder } from 'node:util';
 import '@testing-library/jest-dom/vitest';
+
+import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
+
+declare module 'vitest' {
+  interface Assertion<T = any>
+    extends TestingLibraryMatchers<
+      typeof expect.stringMatching | typeof expect.stringContaining,
+      T
+    > {}
+  interface AsymmetricMatchersContaining
+    extends TestingLibraryMatchers<unknown, unknown> {}
+}
 
 // create setup document
 const dialogContainer = document.createElement('div');

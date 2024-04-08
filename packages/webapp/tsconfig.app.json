@@ -1,16 +1,25 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-
   "extends": "./tsconfig.json",
-
   "compilerOptions": {
     "composite": true,
-    "types": ["node", "vite/client"],
+    "types": [
+      "node",
+      "vite/client"
+    ],
     "outDir": "../../dist/app/web/app"
   },
+  "include": [
+    "**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.ts?",
+    ".next/types/**/*.ts",
+    "**/*.d.ts"
+  ],
   "exclude": [
     "**/*.test.ts",
-    "**/*.test.tsx"
+    "**/*.test.ts?",
+    "src/test/**/*.ts",
+    "src/test/**/*.ts?",
   ],
-  "include": ["./*.d.ts", "src/**/*.ts", ".next/types/**/*.ts"]
 }

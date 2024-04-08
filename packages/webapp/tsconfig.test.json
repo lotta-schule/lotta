@@ -12,12 +12,13 @@
     "vite.config.ts",
     "vitest.config.ts",
     "test.setup.ts",
+    "test.setup.tsx",
     "**/*.test.ts",
     "**/*.test.tsx",
     "src/**/*.d.ts",
-    "./*.d.ts"
-  ],
-  "exclude": [
-    "src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"
+    "src/test/**/*.ts",
+    "src/test/**/*.tsx",
+    "**/*.d.ts",
+    "**/*.graphql"
   ]
 }
