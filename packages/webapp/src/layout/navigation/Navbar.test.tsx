@@ -42,7 +42,7 @@ describe('Navbar', () => {
   });
 
   // Problems mocking scrollIntoView
-  it.only('should scroll to active nav item', async () => {
+  it('should scroll to active nav item', async () => {
     const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
       'next/router'
     );

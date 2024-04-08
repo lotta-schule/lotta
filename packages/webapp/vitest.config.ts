@@ -16,6 +16,7 @@ export default defineConfig({
 
     coverage: {
       clean: true,
+      reportsDirectory: 'coverage',
       provider: 'istanbul',
     },
   },

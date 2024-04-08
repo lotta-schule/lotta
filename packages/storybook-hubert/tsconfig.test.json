@@ -5,7 +5,7 @@
 
   "compilerOptions": {
     "composite": true,
-    "outDir": "dist/lib/storybook-hubert/out-tsc",
+    "outDir": "../../dist/lib/storybook-hubert/out-tsc",
     "types": ["vitest/globals", "vitest/importMeta", "vite/client", "vitest"],
   },
   "include": [
@@ -14,11 +14,6 @@
     "test.setup.ts",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "src/**/*.d.ts",
-    "./*.d.ts",
-    "../../*.d.ts"
-  ],
-  "exclude": [
-    "src/**/*.ts", "src/**/*.tsx"
+    "**/*.d.ts",
   ]
 }

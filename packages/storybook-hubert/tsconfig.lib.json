@@ -1,16 +1,22 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-
   "extends": "./tsconfig.json",
-
   "compilerOptions": {
     "composite": true,
     "outDir": "../../dist/lib/storybook-hubert",
-    "types": ["node", "vite/client"],
+    "types": [
+      "node",
+      "vite/client"
+    ],
   },
   "exclude": [
     "**/*.test.ts",
     "**/*.test.tsx"
   ],
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/.storybook/**/*.ts", "src/.storybook/**/*.tsx"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.ts?",
+    ".storybook/**/*.ts",
+    ".storybook/**/*.ts?"
+  ]
 }

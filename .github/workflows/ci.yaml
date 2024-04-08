@@ -22,20 +22,25 @@ jobs:
       - name: Setup NX
         uses: nrwl/nx-set-shas@v3
 
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: 'pnpm'
 
-      - name: Install npm dependencies
-        run: npm install --include=dev
+      - name: Install node dependencies
+        run: pnpm install
 
       - name: Lint
-        run: npm run nx affected -- -t lint
+        run: pnpm nx affected -t lint
 
       - name: Typecheck
-        run: npm run nx affected -- -t typecheck
+        run: pnpm nx affected -t typecheck
 
   test:
     name: Run tests
@@ -53,22 +58,27 @@ jobs:
       - name: Setup NX
         uses: nrwl/nx-set-shas@v3
 
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install npm dependencies
-        run: npm install --include=dev
+        run: pnpm install
 
       - name: Run Unit / Component tests
-        run: npm run nx affected -- -t test --ci --collectCoverage --configuration=ci
+        run: pnpm nx affected -t test --coverage --configuration=ci
 
       - name: Run end-to-end tests
         run: |
-          npx playwright install --with-deps chromium
-          npm run nx affected -- -t e2e --configuration=ci
+          pnpm exec playwright install --with-deps chromium
+          pnpm nx affected -t e2e --configuration=ci
 
       - name: Upload Tests for storybook-addon-theme
         uses: codecov/codecov-action@v4
@@ -113,17 +123,22 @@ jobs:
       - name: Setup NX
         uses: nrwl/nx-set-shas@v3
 
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install npm dependencies
-        run: npm install --include=dev
+        run: pnpm install
 
       - name: Run build task
-        run: npm run nx affected -- -t build
+        run: pnpm nx affected -t build
 
   storybook-chromatic:
     name: Storybook visual testing on Chromatic
@@ -134,17 +149,22 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install npm dependencies
-        run: npm install --include=dev
+        run: pnpm install
 
       - name: Build storybook
-        run: NODE_ENV=test npm run nx build storybook-hubert
+        run: NODE_ENV=test pnpm nx build storybook-hubert
 
       - name: Send to Chromatic
         uses: chromaui/action@v1
@@ -191,24 +211,24 @@ jobs:
           cache: 'npm'
 
       - name: Install npm dependencies
-        run: npm install --include=dev
+        run: pnpm install
 
       - name: Run build task
         # TODO: This should run build only on libraries
         # that are to be deployed as npm packages
-        run: npm run nx run-many -- -t build
+        run: pnpm nx run-many -t build
 
       - name: Create commit and tag alpha version
         if: ${{ github.ref_name == 'main' }}
         run: |
-          npx lerna version --conventional-prerelease \
+          pnpm exec lerna version --conventional-prerelease \
             --preid alpha --no-changelog -y \
             --git-tag-command 'echo 0' # We do not want it to really tag
 
       - name: Create commit and tag version
         if: ${{ startsWith(github.ref_name, 'release/') }}
         run: |
-          npx lerna version -y --conventional-commits --conventional-graduate
+          pnpm exec lerna version -y --conventional-commits --conventional-graduate
 
       - name: Output new commit sha
         if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
@@ -256,17 +276,22 @@ jobs:
           fetch-depth: 0
           ref: ${{ needs.update-package-versions.outputs.updated-sha }}
 
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install npm dependencies
-        run: npm install --include=dev
+        run: pnpm install
 
       - name: Build storybook
-        run: npm run nx build storybook-hubert
+        run: pnpm nx build storybook-hubert
 
       # Maybe think of deploying statically to S3 or so?
       - name: 'Deploy Storybook as github page'
