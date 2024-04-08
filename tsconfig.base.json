@@ -29,5 +29,6 @@
     "skipDefaultLibCheck": true
   },
 
-  "exclude": ["node_modules"]
+  "include": [],
+  "files":[],
 }

@@ -9,10 +9,6 @@ import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 
 describe('pages/admin/users/constraints', () => {
-  it('should render without error', () => {
-    render(<ConstraintList />, {}, { currentUser: adminUser });
-  });
-
   describe('should not impose limit', () => {
     it('should have "no limit" checkbox checked when limit is -1', async () => {
       const screen = render(

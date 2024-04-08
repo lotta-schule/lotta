@@ -3,16 +3,14 @@ import { TestFileExplorerContextProvider } from 'test/util';
 import { render, waitFor } from '../../test/util';
 import { getPrivateAndPublicFiles, KeinErSieEsUser } from '../../test/fixtures';
 import { MoveDirectoryDialog } from './MoveDirectoryDialog';
-import userEvent from '@testing-library/user-event';
 import { DirectoryModel } from '../../model';
 import { MockedResponse } from '@apollo/client/testing';
+import userEvent from '@testing-library/user-event';
+
 import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
 
 const currentUser = KeinErSieEsUser;
 const filesAndDirectories = getPrivateAndPublicFiles(currentUser);
-const podcastDirectory = filesAndDirectories.find(
-  (fileOrDir) => 'name' in fileOrDir && fileOrDir.name === 'Podcasts'
-) as DirectoryModel;
 
 const additionalMocks: MockedResponse[] = [
   {

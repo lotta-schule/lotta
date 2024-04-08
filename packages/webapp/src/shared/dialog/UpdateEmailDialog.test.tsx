@@ -1,17 +1,15 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { UpdateEmailDialog } from './UpdateEmailDialog';
 import { MockedResponse } from '@apollo/client/testing';
-import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
-import UpdateEmailMutation from 'api/mutation/UpdateEmailMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
-describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
-  it('should render the shared', () => {
-    render(<UpdateEmailDialog isOpen onRequestClose={() => {}} />);
-  });
+import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
+import UpdateEmailMutation from 'api/mutation/UpdateEmailMutation.graphql';
 
+describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
   it('should show the shared if isOpen is true', async () => {
     render(<UpdateEmailDialog isOpen onRequestClose={() => {}} />);
     await waitFor(() => {

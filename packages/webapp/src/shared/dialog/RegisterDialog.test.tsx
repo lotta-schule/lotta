@@ -6,10 +6,6 @@ import userEvent from '@testing-library/user-event';
 import RegisterMutation from 'api/mutation/RegisterMutation.graphql';
 
 describe('shared/dialog/RegisterDialog', () => {
-  it('should render login dialog without errors', () => {
-    render(<RegisterDialog isOpen={true} onRequestClose={() => {}} />, {});
-  });
-
   it('should close the dialog when clicking on cancel', async () => {
     const fireEvent = userEvent.setup();
     const onRequestClose = vi.fn();

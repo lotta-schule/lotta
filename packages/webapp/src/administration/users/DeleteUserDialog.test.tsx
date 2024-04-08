@@ -11,7 +11,7 @@ describe('administration/users/DeleteUserDialog', () => {
   it('should show a warning on the first page', async () => {
     const screen = render(<DeleteUserDialog user={SomeUser} />);
     await waitFor(() => {
-      expect(screen.getByText(/nicht rückgängig gemacht werden/));
+      expect(screen.getByText(/nicht rückgängig gemacht werden/)).toBeVisible();
       expect(screen.getByRole('button', { name: /weiter/i })).toBeVisible();
       expect(screen.queryByRole('button', { name: /zurück/i })).toBeNull();
     });

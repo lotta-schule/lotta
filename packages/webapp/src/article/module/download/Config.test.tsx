@@ -13,16 +13,6 @@ const downloadContentModule = {
 };
 
 describe('shared/article/module/Download/Config', () => {
-  it('should render without an error', () => {
-    render(
-      <Config
-        contentModule={downloadContentModule}
-        onUpdateModule={() => {}}
-        onRequestClose={() => {}}
-      />
-    );
-  });
-
   it('should render a unchecked checkbox field to toggle hidePreviews which can be checked', async () => {
     const callback = vi.fn((cm) => {
       expect(cm.configuration.hidePreviews).toEqual(true);

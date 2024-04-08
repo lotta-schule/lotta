@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { render, waitFor } from '../../test-utils';
 import { ComboBox } from './ComboBox';
 import userEvent from '@testing-library/user-event';
@@ -89,24 +90,6 @@ describe('Combobox', () => {
     });
   });
 
-  describe('onSelect', () => {
-    it('should be possible to add a custom value', async () => {
-      const user = userEvent.setup();
-      const onSelect = vi.fn();
-
-      const screen = render(
-        <ComboBox
-          title={'Chose something'}
-          allowsCustomValue
-          onSelect={onSelect}
-        />
-      );
-
-      await user.type(screen.getByRole('combobox'), 'Papaya{Enter}');
-      expect(onSelect).toHaveBeenCalledWith('Papaya');
-    });
-  });
-
   describe('reset input value on select', () => {
     it('should reset input value on select', async () => {
       const user = userEvent.setup();
@@ -128,6 +111,21 @@ describe('Combobox', () => {
   });
 
   describe('onSelect', () => {
+    it('should be possible to add a custom value', async () => {
+      const user = userEvent.setup();
+      const onSelect = vi.fn();
+
+      const screen = render(
+        <ComboBox
+          title={'Chose something'}
+          allowsCustomValue
+          onSelect={onSelect}
+        />
+      );
+
+      await user.type(screen.getByRole('combobox'), 'Papaya{Enter}');
+      expect(onSelect).toHaveBeenCalledWith('Papaya');
+    });
     it('should call onSelect with item key when a proposed option is selected', async () => {
       const user = userEvent.setup();
       const onSelect = vi.fn();
@@ -235,31 +233,6 @@ describe('Combobox', () => {
           ).not.toBeVisible();
         });
       });
-
-      // I DO not understand why we do not want to close the listbox when dynamic items are passed
-      // I wait for when I understand and come back to uncomment this test, and then I ADD A PROPER
-      // EXPLANATION!
-      //
-      // it('should not close the listbox on select when dynamic items are passed (as callback)', async () => {
-      //   const user = userEvent.setup();
-      //   const getItems = vi.fn(async () => defaultItems);
-
-      //   const screen = render(
-      //     <ComboBox
-      //       title={'Chose something'}
-      //       items={getItems}
-      //       onSelect={vi.fn()}
-      //     />
-      //   );
-
-      //   await user.type(screen.getByRole('combobox'), 'Apple{Enter}');
-      //   await waitFor(() => {
-      //     expect(getItems).toHaveBeenCalledWith('Apple');
-      //   }, 10_000);
-      //   await waitFor(() => {
-      //     expect(screen.getByRole('option', { name: /apple/i })).toBeVisible();
-      //   });
-      // });
     });
   });
 

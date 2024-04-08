@@ -106,7 +106,7 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
       ).toBeNull();
     });
 
-    it('it should show an ArticlePreview for the selected path', async () => {
+    it('should show an ArticlePreview for the selected path', async () => {
       const screen = render(
         <CategoryArticleRedirectSelection
           redirectPath={'/a/1-Computerexperten'}

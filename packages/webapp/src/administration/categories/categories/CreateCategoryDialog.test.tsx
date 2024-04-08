@@ -52,12 +52,6 @@ const createMocks = (props?: Partial<CategoryModel>) => [
 ];
 
 describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => {
-  it('should render the shared', () => {
-    render(
-      <CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />
-    );
-  });
-
   it('should have the focus on the input field on open', async () => {
     render(
       <CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />

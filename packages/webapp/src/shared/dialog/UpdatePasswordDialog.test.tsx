@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
@@ -8,10 +9,6 @@ import UpdatePasswordMutation from 'api/mutation/UpdatePasswordMutation.graphql'
 import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => {
-  it('should render the shared', () => {
-    render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
-  });
-
   it('should show the shared if isOpen is true', async () => {
     render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
     await waitFor(() => {

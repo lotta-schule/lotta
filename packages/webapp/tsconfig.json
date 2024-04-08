@@ -3,8 +3,6 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "src/",
-    "outDir": ".next",
-    "noEmit": true,
     "isolatedModules": true,
     "incremental": true,
     "resolveJsonModule": true,
@@ -26,8 +24,6 @@
       "path": "./tsconfig.app.json"
     }
   ],
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ]
+  "files": [],
+  "include": [ ]
 }

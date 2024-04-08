@@ -4,7 +4,8 @@
   "extends": "./tsconfig.json",
 
   "compilerOptions": {
-    "outDir": "dist/app/web/out-tsc",
+    "composite": true,
+    "outDir": "../../dist/app/web/test",
     "types": ["vitest/globals", "vitest/importMeta", "vite/client", "vitest"],
   },
   "include": [
@@ -17,6 +18,6 @@
     "./*.d.ts"
   ],
   "exclude": [
-    "next-env.d.ts", "src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"
+    "src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"
   ]
 }

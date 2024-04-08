@@ -4,8 +4,14 @@ import { TagsSelect } from './TagsSelect';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
-  it('should render a TagsSelect without error', async () => {
-    render(<TagsSelect value={[]} onChange={() => {}} />, {}, {});
+  it('should render an empty TagsSelect', async () => {
+    const screen = render(
+      <TagsSelect value={[]} onChange={() => {}} />,
+      {},
+      {}
+    );
+
+    expect(screen.queryAllByTestId('Tag')).toHaveLength(0);
   });
 
   it('should show a delete button for tags', async () => {

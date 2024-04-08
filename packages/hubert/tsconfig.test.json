@@ -4,7 +4,8 @@
   "extends": "./tsconfig.json",
 
   "compilerOptions": {
-    "outDir": "dist/lib/hubert/out-tsc",
+    "composite": true,
+    "outDir": "dist/lib/hubert/test",
     "types": ["vitest/globals", "vitest/importMeta", "vite/client", "vitest"],
   },
   "include": [

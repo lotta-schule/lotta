@@ -9,7 +9,7 @@ import {
 } from '@lotta-schule/hubert';
 import isChromatic from 'chromatic';
 
-if (isChromatic()) {
+if ((isChromatic as any)()) {
   MotionGlobalConfig.skipAnimations = true;
 }
 

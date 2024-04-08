@@ -4,12 +4,13 @@
   "extends": "./tsconfig.json",
 
   "compilerOptions": {
-    "outDir": ".next",
+    "composite": true,
     "types": ["node", "vite/client"],
+    "outDir": "../../dist/app/web/app"
   },
   "exclude": [
     "**/*.test.ts",
     "**/*.test.tsx"
   ],
-  "include": ["src/**/*.ts", ".next/types/**/*.ts"]
+  "include": ["./*.d.ts", "src/**/*.ts", ".next/types/**/*.ts"]
 }

@@ -59,10 +59,6 @@ describe('shared/fileExplorer/FileTable', () => {
     },
   ];
 
-  it('should render', () => {
-    render(<FileTable />);
-  });
-
   describe('with a parent directory', () => {
     describe('list all files', () => {
       it('should show the correct amount of rows', async () => {

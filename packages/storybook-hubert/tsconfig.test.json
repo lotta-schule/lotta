@@ -4,6 +4,7 @@
   "extends": "./tsconfig.json",
 
   "compilerOptions": {
+    "composite": true,
     "outDir": "dist/lib/storybook-hubert/out-tsc",
     "types": ["vitest/globals", "vitest/importMeta", "vite/client", "vitest"],
   },
@@ -14,7 +15,8 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "src/**/*.d.ts",
-    "./*.d.ts"
+    "./*.d.ts",
+    "../../*.d.ts"
   ],
   "exclude": [
     "src/**/*.ts", "src/**/*.tsx"

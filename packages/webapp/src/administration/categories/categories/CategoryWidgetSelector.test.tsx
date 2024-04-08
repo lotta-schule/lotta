@@ -58,17 +58,6 @@ describe('shared/layouts/SearchLayout', () => {
       },
     ];
     describe('show widgets state', () => {
-      it('should render the CategoryWidgetSelector', async () => {
-        render(
-          <CategoryWidgetSelector
-            selectedWidgets={[]}
-            setSelectedWidgets={() => {}}
-          />,
-          {},
-          { additionalMocks: mocks }
-        );
-      });
-
       it('should show all possible widgets in a list', async () => {
         render(
           <CategoryWidgetSelector

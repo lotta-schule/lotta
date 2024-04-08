@@ -26,14 +26,6 @@ describe('shared/article/ArticlesByTag', () => {
     },
   ];
 
-  it('should render a ArticlesByTag without error', () => {
-    render(
-      <ArticlesByTag tag={'tag'} />,
-      {},
-      { additionalMocks: getAdditionalMocks({ data: { articles: [] } }) }
-    );
-  });
-
   describe('tag header', () => {
     it('should be visible when results are found', async () => {
       const screen = render(

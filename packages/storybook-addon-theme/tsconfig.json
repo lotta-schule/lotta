@@ -18,5 +18,5 @@
     { "path": "./tsconfig.lib.json" },
   ],
 
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": []
 }

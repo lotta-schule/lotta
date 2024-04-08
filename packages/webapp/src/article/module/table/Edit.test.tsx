@@ -8,12 +8,6 @@ import userEvent from '@testing-library/user-event';
 const tableContentModule = LehrerListe.contentModules[0];
 
 describe('shared/article/module/table/Edit', () => {
-  it('should render without an error', () => {
-    render(
-      <Edit contentModule={tableContentModule} onUpdateModule={() => {}} />
-    );
-  });
-
   describe('render the table', () => {
     it('should render the table with correct content', () => {
       const screen = render(

@@ -12,14 +12,6 @@ import { ArticlePreview } from './ArticlePreview';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/article/ArticlePreview', () => {
-  it('should render an ArticlePreview without error', () => {
-    render(
-      <ArticlePreview article={Weihnachtsmarkt} />,
-      {},
-      { currentUser: SomeUser }
-    );
-  });
-
   describe('should render title', () => {
     it('as heading when disableLink prop is set', () => {
       const screen = render(

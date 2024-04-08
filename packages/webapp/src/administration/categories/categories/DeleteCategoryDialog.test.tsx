@@ -27,19 +27,6 @@ const mocks = [
 ];
 
 describe('shared/layouts/adminLayout/userManagment/DeleteCategoryDialog', () => {
-  it('should render the shared', () => {
-    render(
-      <DeleteCategoryDialog
-        isOpen
-        categoryToDelete={FaecherCategory}
-        onConfirm={() => {}}
-        onRequestClose={() => {}}
-      />,
-      {},
-      { additionalMocks: mocks }
-    );
-  });
-
   it('should show the number of articles which categories will be removed.', async () => {
     render(
       <DeleteCategoryDialog

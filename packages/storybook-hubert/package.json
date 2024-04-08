@@ -9,7 +9,7 @@
     "dev": "storybook dev -p 6006",
     "e2e": "concurrently -k -s 'last' 'http-server test-sb-static --port 6006 --silent' -P 'wait-on tcp:6006 && test-storybook {@}'",
     "e2e:prepare": "NODE_ENV=test nx build storybook-hubert --test --output-dir=test-sb-static",
-    "lint": "eslint src/**/*.* --no-warn-ignored --fix",
+    "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit",
     "build": "storybook build"
   },

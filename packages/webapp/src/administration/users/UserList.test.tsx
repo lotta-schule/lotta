@@ -93,14 +93,6 @@ describe('pages/admin/users/list', () => {
     },
   ];
 
-  it('should render a List without error', () => {
-    render(
-      <UserList />,
-      {},
-      { currentUser: adminUser, additionalMocks: mocks }
-    );
-  });
-
   it('should show the total count of users when no search is entered', async () => {
     const screen = render(
       <UserList />,

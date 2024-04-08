@@ -5,17 +5,6 @@ import { ArticleDatesEditor } from './ArticleDatesEditor';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
-  it('should render without error', () => {
-    render(
-      <ArticleDatesEditor
-        isOpen
-        article={Weihnachtsmarkt}
-        onUpdate={vi.fn()}
-        onAbort={vi.fn()}
-      />
-    );
-  });
-
   it('should show the the inserted at date input with correct value', () => {
     const screen = render(
       <ArticleDatesEditor

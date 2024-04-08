@@ -79,14 +79,6 @@ describe('shared/widgets/Schedule', () => {
     },
   ];
 
-  it('should render the schedule without error', () => {
-    render(
-      <Schedule widget={VPSchuelerWidget} />,
-      {},
-      { currentUser: pupil, additionalMocks: mocks }
-    );
-  });
-
   describe("Pupil's Schedule", () => {
     it('should show an information and a link to profile if userAvatar has no class', async () => {
       const screen = render(

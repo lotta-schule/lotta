@@ -6,12 +6,6 @@ import CreateArticleMutation from 'api/mutation/CreateArticleMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {
-  it('should render the shared', () => {
-    render(
-      <CreateArticleDialog isOpen onConfirm={() => {}} onAbort={() => {}} />
-    );
-  });
-
   it('should show the dialog if isOpen is true', async () => {
     render(
       <CreateArticleDialog isOpen onConfirm={() => {}} onAbort={() => {}} />

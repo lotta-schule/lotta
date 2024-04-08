@@ -7,14 +7,6 @@ import userEvent from '@testing-library/user-event';
 import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
 
 describe('shared/dialog/RequestHisecToken', () => {
-  it('should render the shared', () => {
-    const screen = render(
-      <RequestHisecTokenDialog isOpen onRequestClose={() => {}} />,
-      {},
-      { currentUser: SomeUser }
-    );
-  });
-
   describe('show/hide', () => {
     it('should show the shared if isOpen is true', async () => {
       const screen = render(
@@ -131,7 +123,7 @@ describe('shared/dialog/RequestHisecToken', () => {
         },
       ];
       const onClose = vi.fn();
-      const screen = render(
+      render(
         <RequestHisecTokenDialog
           isOpen
           withCurrentPassword={'pw123'}

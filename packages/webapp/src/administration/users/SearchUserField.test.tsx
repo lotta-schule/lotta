@@ -9,10 +9,6 @@ import userEvent from '@testing-library/user-event';
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 
 describe('shared/layouts/userManagment/SearchUserField', () => {
-  it('should render without crashing', () => {
-    render(<SearchUserField onSelectUser={() => {}} />);
-  });
-
   it('should disable the text input when prop "disabled" is passed', () => {
     const screen = render(
       <SearchUserField disabled onSelectUser={() => {}} />,

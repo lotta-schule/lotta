@@ -4,8 +4,8 @@
   "extends": "./tsconfig.json",
 
   "compilerOptions": {
-    "outDir": "dist/lib/storybook-hubert",
-    "noEmit": true,
+    "composite": true,
+    "outDir": "../../dist/lib/storybook-hubert",
     "types": ["node", "vite/client"],
   },
   "exclude": [

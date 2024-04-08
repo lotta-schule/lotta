@@ -4,7 +4,9 @@
   "extends": "./tsconfig.json",
 
   "compilerOptions": {
+    "composite": true,
     "types": ["node", "vite/client"],
+    "outDir": "../../dist/lib/hubert/lib"
   },
   "exclude": [
     "**/*.test.ts",

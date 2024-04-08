@@ -11,16 +11,6 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
   ) as unknown as FileModel[];
   // Dateiname.jpg, Animiert.gif, Manifest.pdf, Bilderbuch.pdf, Amelie.mp4, Kaenguru.wav, praesi.ppt
 
-  it('should render an ProfileDeleteFileSelection', async () => {
-    render(
-      <ProfileDeleteFileSelection
-        files={[]}
-        selectedFiles={[]}
-        onSelectFiles={() => {}}
-      />
-    );
-  });
-
   it('should not show any lines when no files are given', async () => {
     const screen = render(
       <ProfileDeleteFileSelection

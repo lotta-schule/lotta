@@ -5,13 +5,15 @@ import { CategorySelect } from './CategorySelect';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/editArticleLayout/CategorySelect', () => {
-  it('should render the shared', () => {
-    render(
+  it('should render the thing', () => {
+    const screen = render(
       <CategorySelect
         selectedCategory={FaecherCategory}
         onSelectCategory={() => {}}
       />
     );
+
+    expect(screen.getByRole('button', { name: /fächer/i })).toBeVisible();
   });
 
   it('should select the category', async () => {
@@ -45,17 +47,6 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
   });
 
   describe('option listing options', () => {
-    it('show all categories as options', async () => {
-      const fireEvent = userEvent.setup();
-      const screen = render(
-        <CategorySelect selectedCategory={null} onSelectCategory={() => {}} />
-      );
-      await fireEvent.click(screen.getByRole('button', { name: /wählen/i }));
-      await waitFor(() => {
-        expect(screen.getAllByRole('option')).toHaveLength(15);
-      });
-    });
-
     it('show all categories as options', async () => {
       const fireEvent = userEvent.setup();
       const screen = render(

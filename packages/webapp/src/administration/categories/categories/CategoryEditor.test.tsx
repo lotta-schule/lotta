@@ -64,23 +64,6 @@ const getArticleForPreview = (
 });
 
 describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
-  it('should render CategoryEditor', () => {
-    renderWithContext(
-      <CategoryEditor
-        selectedCategory={FaecherCategory}
-        onSelectCategory={() => {}}
-      />,
-      {},
-      {
-        additionalMocks: [
-          allWidgetsMock,
-          getCategoryWidgetsMock(FaecherCategory.id),
-          getArticlesMock(FaecherCategory.id),
-        ],
-      }
-    );
-  });
-
   it('should show correct category title', () => {
     const screen = renderWithContext(
       <CategoryEditor

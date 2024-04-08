@@ -323,7 +323,7 @@ describe('shared/article/module/ContentModule', () => {
     });
   });
 
-  describe('Image ContentModule', () => {
+  describe('Divider ContentModule', () => {
     const article = ComputerExperten;
     const dividerContentModule: ContentModuleModel = {
       id: '101100',

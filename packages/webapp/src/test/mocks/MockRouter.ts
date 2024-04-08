@@ -1,5 +1,12 @@
 export class MockRouter {
   public _pathname = '/';
+
+  public _as: string | undefined = undefined;
+
+  public get asPath() {
+    return this._as || this._pathname;
+  }
+
   public _emitter = new (class<
     T extends any[],
     Fn extends (...arg: T) => void,
@@ -33,6 +40,7 @@ export class MockRouter {
   public _push = vi.fn(
     async (_pathname: string, _as = _pathname, _options?: any) => {
       this._pathname = _pathname;
+      this._as = _as;
       this._history.add(_pathname);
       window.dispatchEvent(new Event('beforeunload'));
       this._emitter.emit('routeChangeStart', _pathname);
@@ -45,7 +53,7 @@ export class MockRouter {
   reset(pathname = '/') {
     this._emitter.clear();
     this._history.clear();
-    this._push.mockReset();
+    this._push.mockClear();
     this._pathname = pathname;
     this._history.add(pathname);
   }

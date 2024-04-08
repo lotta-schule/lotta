@@ -7,12 +7,6 @@ import userEvent from '@testing-library/user-event';
 const titleContentModule = Klausurenplan.contentModules[0];
 
 describe('shared/article/module/table/Edit', () => {
-  it('should render without an error', () => {
-    render(
-      <Edit contentModule={titleContentModule} onUpdateModule={() => {}} />
-    );
-  });
-
   it('should display the correct title', () => {
     const screen = render(
       <Edit contentModule={titleContentModule} onUpdateModule={() => {}} />

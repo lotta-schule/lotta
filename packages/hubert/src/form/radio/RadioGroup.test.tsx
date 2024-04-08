@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from '../../test-utils';
 import { Radio } from './Radio';
 import { RadioGroup } from './RadioGroup';
@@ -16,7 +17,7 @@ describe('shared/general/form/radio', () => {
     );
     const radios = screen.getAllByRole('radio') as HTMLInputElement[];
     expect(radios).toHaveLength(4);
-    expect(radios.every((r) => r.name === 'form-name'));
+    expect(radios.every((r) => r.name === 'form-name')).toBeTruthy();
   });
 
   it('should have the correct value selected when value prop is given', () => {

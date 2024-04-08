@@ -18,16 +18,6 @@ const renderWithContext: typeof render = (children, ...other) => {
 describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNavigation', () => {
   const topLevelCategories = allCategories.filter((c) => !c.category);
 
-  it('should render an CategoryNavigation without error', () => {
-    renderWithContext(
-      <CategoryNavigation
-        selectedCategory={null}
-        onSelectCategory={() => {}}
-      />,
-      {}
-    );
-  });
-
   it('should render all top-level-categories', async () => {
     const screen = renderWithContext(
       <CategoryNavigation

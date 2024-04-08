@@ -36,10 +36,6 @@ describe('shared/article/modules/form/Edit', () => {
     updatedAt: new Date().toISOString(),
   };
 
-  it('should render', () => {
-    render(<Edit contentModule={contentModule} onUpdateModule={() => {}} />);
-  });
-
   it('should render the correct init form elements', () => {
     const screen = render(
       <Edit contentModule={contentModule} onUpdateModule={() => {}} />

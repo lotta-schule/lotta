@@ -4,8 +4,12 @@ import { EnrollmentTokensEditor } from './EnrollmentTokensEditor';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/EnrollmentTokensEditor', () => {
-  it('should render without crashing', () => {
-    render(<EnrollmentTokensEditor tokens={[]} setTokens={() => {}} />);
+  it('should render an empty token list when no token were passed', () => {
+    const screen = render(
+      <EnrollmentTokensEditor tokens={[]} setTokens={() => {}} />
+    );
+
+    expect(screen.getAllByRole('listitem')).toHaveLength(0);
   });
 
   it('show a list of tokens', () => {

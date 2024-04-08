@@ -12,10 +12,6 @@ import userEvent from '@testing-library/user-event';
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 
 describe('shared/article/ArticleStateEditor', () => {
-  it('should render without errors', () => {
-    render(<ArticleStateEditor article={Weihnachtsmarkt} onUpdate={vi.fn()} />);
-  });
-
   describe('when in draft state', () => {
     const article = {
       ...Weihnachtsmarkt,

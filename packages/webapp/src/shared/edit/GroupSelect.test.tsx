@@ -746,12 +746,18 @@ describe('shared/editor/GroupSelect', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByRole('option', { name: 'Ohne zugewiesene Gruppe' })
+          screen.getByRole('option', {
+            name: 'Ohne zugewiesene Gruppe',
+            hidden: true,
+          })
         ).toBeVisible();
       });
 
       await fireEvent.click(
-        await screen.findByRole('option', { name: 'Ohne zugewiesene Gruppe' })
+        await screen.findByRole('option', {
+          name: 'Ohne zugewiesene Gruppe',
+          hidden: true,
+        })
       );
 
       await waitFor(() => {

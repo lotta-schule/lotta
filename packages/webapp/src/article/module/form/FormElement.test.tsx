@@ -315,7 +315,7 @@ describe('shared/article/module/form/FormElement', () => {
       );
     });
 
-    it('should show a filename for a selected local file, file should be removable', async () => {
+    it('should show a remote file if present, which should be removable', async () => {
       const fireEvent = userEvent.setup();
       const setValueFn = vi.fn();
       const screen = render(
