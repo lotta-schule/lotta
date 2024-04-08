@@ -28,5 +28,10 @@
     flex-grow: 0;
     flex-shrink: 0;
     align-self: center;
+
+    @media screen and (max-width: $max-xs) {
+      margin-left: var(--lotta-spacing);
+      padding: 0;
+    }
   }
 }
