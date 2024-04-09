@@ -41,3 +41,12 @@ test-report.html
 
 # Sentry
 .sentryclirc
+
+
+.nx/cache
+
+storybook-static
+
+# Next.js
+.next
+out
