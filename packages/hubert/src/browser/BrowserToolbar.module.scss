@@ -1,0 +1,31 @@
+.root {
+  background-color: rgba(var(--lotta-accent-grey-color));
+  height: 50px;
+  border-top-right-radius: var(--lotta-border-radius);
+  border-top-left-radius: var(--lotta-border-radius);
+  display: flex;
+  border: 1px solid rgba(var(--lotta-accent-grey-color));
+
+  div {
+    padding: var(--lotta-spacing);
+    line-height: 1.8;
+
+    &.leftContainer {
+      width: 34%;
+      margin: 0 auto;
+      text-align: left;
+    }
+    &.searchField {
+      width: 33%;
+      & Input {
+        border-radius: var(--lotta-border-radius);
+        border-bottom: 0px;
+      }
+    }
+    &.rightContainer {
+      width: 33%;
+      float: right;
+      text-align: end;
+    }
+  }
+}

@@ -1,0 +1,45 @@
+.root {
+  flex: 0 0 50%;
+  min-width: 200px;
+  height: 100%;
+  display: list-item;
+  border-right: 1px solid rgba(var(--lotta-accent-grey-color));
+  overflow: scroll;
+
+  &.narrow {
+    flex: 0 0 33.333%;
+  }
+
+  li {
+    display: flex;
+    width: 100%;
+    padding: calc(var(--lotta-spacing) * 0.5);
+    font-size: 10pt;
+
+    cursor: pointer;
+    .fileIcon {
+      width: 15%;
+      margin: auto;
+    }
+    .fileName {
+      width: 70%;
+      margin: auto;
+    }
+    .fileEdit {
+      color: rgba(var(--lotta-primary-color), 0);
+      width: 20%;
+      min-width: 4.5em;
+    }
+    &:hover {
+      background-color: rgba(var(--lotta-accent-grey-color), 0.3);
+      .fileEdit {
+        display: inline;
+        margin: auto;
+        color: rgba(var(--lotta-primary-color), 1);
+      }
+    }
+    &.selected {
+      background-color: rgba(var(--lotta-primary-color), 0.15);
+    }
+  }
+}
