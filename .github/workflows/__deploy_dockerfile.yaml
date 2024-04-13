@@ -27,6 +27,11 @@ on:
         required: false
         default: ghcr.io
       working-directory:
+        description: The directory that will be used as build context for the docker build
+        type: string
+        required: false
+        default: '.'
+      dockerfile:
         type: string
         required: false
     secrets:
@@ -54,10 +59,9 @@ jobs:
         run: |
           tag=$(echo "${{ fromJSON(inputs.tags)[0] }}")
           base_image=$IMAGE_NAME:$tag
-          docker build --build-arg IMAGE_NAME -t $base_image .
+          docker build --build-arg IMAGE_NAME -f ${{ inputs.dockerfile || 'Dockerfile' }} -t $base_image ${{ inputs.working-directory }}
           echo "base-image=$base_image" >> $GITHUB_OUTPUT
           echo "Base image $base_image written to github output"
-        working-directory: ${{ inputs.working-directory }}
 
       - name: docker login
         uses: docker/login-action@v1.10.0

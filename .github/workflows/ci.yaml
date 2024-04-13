@@ -183,6 +183,7 @@ jobs:
       - lint
       - test
       - check-build
+    if: ${{ startsWith(github.ref_name, 'release/') }}
     runs-on: ubuntu-latest
     outputs:
       updated-sha: ${{ steps.updated-sha.outputs.sha }}
@@ -218,13 +219,6 @@ jobs:
         # that are to be deployed as npm packages
         run: pnpm nx run-many -t build
 
-      - name: Create commit and tag alpha version
-        if: ${{ github.ref_name == 'main' }}
-        run: |
-          pnpm exec lerna version --conventional-prerelease \
-            --preid alpha --no-changelog -y \
-            --git-tag-command 'echo 0' # We do not want it to really tag
-
       - name: Create commit and tag version
         if: ${{ startsWith(github.ref_name, 'release/') }}
         run: |
@@ -239,7 +233,7 @@ jobs:
           echo "Saved new commit SHA $sha to output"
 
   publish-npm-packages:
-    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
+    if: ${{ startsWith(github.ref_name, 'release/') }}
     needs:
       - update-package-versions
     uses: ./.github/workflows/__deploy_npm_packages.yaml
@@ -250,16 +244,13 @@ jobs:
       nx-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
   publish-docker-image:
-    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
-    needs:
-      - update-package-versions
-      - publish-npm-packages
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: lotta-schule/web
-      tags: '["${{ needs.publish-npm-packages.outputs.version-name }}", "${{ needs.publish-npm-packages.outputs.tag-name }}", "develop"]'
-      checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
-      working-directory: packages/webapp
+      tags: '["${{ github.sha }}"]'
+      # checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
+      working-directory: .
+      dockerfile: packages/webapp/Dockerfile
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
 

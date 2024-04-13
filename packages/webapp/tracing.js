@@ -1,9 +1,12 @@
-const OpenTelemetryNode = require('@opentelemetry/sdk-node');
-const OpentelemetryExporterTraceHttp = require('@opentelemetry/exporter-trace-otlp-http');
-const OpenTelemetryResources = require('@opentelemetry/resources');
-const OpenTelemetrySemanticConventions = require('@opentelemetry/semantic-conventions');
-const OpenTelemetryInstrumentationHttp = require('@opentelemetry/instrumentation-http');
-const OpenTelemetryInstrumentationConnect = require('@opentelemetry/instrumentation-connect');
+// @ts-check
+
+/// <reference types="node" />
+import OpenTelemetryNode from '@opentelemetry/sdk-node';
+import OpentelemetryExporterTraceHttp from '@opentelemetry/exporter-trace-otlp-http';
+import OpenTelemetryResources from '@opentelemetry/resources';
+import OpenTelemetrySemanticConventions from '@opentelemetry/semantic-conventions';
+import OpenTelemetryInstrumentationHttp from '@opentelemetry/instrumentation-http';
+import OpenTelemetryInstrumentationConnect from '@opentelemetry/instrumentation-connect';
 
 const { SemanticResourceAttributes } = OpenTelemetrySemanticConventions;
 const { Resource } = OpenTelemetryResources;
@@ -27,16 +30,17 @@ const sdk = new NodeSDK({
     [SemanticResourceAttributes.CONTAINER_IMAGE_NAME]: (
       process.env.IMAGE_NAME ?? ''
     ).split(':')[0],
-    [SemanticResourceAttributes.CONTAINER_IMAGE_TAG]: (
-      process.env.IMAGE_NAME ?? ''
-    ).split(':')[1],
+    [SemanticResourceAttributes.CONTAINER_IMAGE_TAG]:
+      (process.env.IMAGE_NAME ?? '').split(':')[1] ?? '?',
   }),
   traceExporter,
   instrumentations: [
     new HttpInstrumentation({
       ignoreIncomingRequestHook: (req) => {
-        return req.url.match(
-          /\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map|json)$/i
+        return Boolean(
+          req.url?.match(
+            /\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map|json)$/i
+          )?.length
         );
       },
     }),

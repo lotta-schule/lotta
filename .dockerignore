@@ -1,0 +1,14 @@
+node_modules
+.nx
+*.md
+*.test.ts
+.git
+.github
+dist
+.dockerignore
+
+.env
+*.env
+.env.*
+
+.DS_Store

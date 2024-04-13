@@ -15,6 +15,11 @@ const SentryWebpackPluginOptions = {
   // https://github.com/getsentry/sentry-webpack-plugin#options.
 
   dryRun: !process.env.SENTRY_AUTH_TOKEN?.length,
+  dsn: process.env.SENTRY_DSN,
+  environment:
+    process.env.APP_ENVIRONMENT || process.env.NODE_ENV || 'development',
+  enabled: process.env.NODE_ENV === 'production',
+  release: process.env.IMAGE_NAME?.split(':')[1] ?? process.version ?? '?',
 };
 
 const __dirname = new URL('.', import.meta.url).pathname;
