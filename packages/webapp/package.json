@@ -24,7 +24,7 @@
     "@jest/globals": "^29.7.0",
     "@jumpn/utils-graphql": "^0.6.0",
     "@lotta-schule/hubert": "4.2.3",
-    "@lotta-schule/theme": "4.2.2",
+    "@lotta-schule/theme": "4.2.3",
     "@opentelemetry/api": "^1.8.0",
     "@opentelemetry/context-zone": "^1.22.0",
     "@opentelemetry/exporter-collector": "^0.25.0",
