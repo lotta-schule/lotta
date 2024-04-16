@@ -6,6 +6,9 @@ import { getApolloClient } from 'api/client';
 import { useQuery } from '@apollo/client';
 import { Main, Sidebar } from 'layout';
 import { EditArticlePage } from 'article/EditArticlePage';
+import { Article, User } from 'util/model';
+import { useCurrentUser } from 'util/user';
+import { useRouter } from 'next/router';
 
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
 
@@ -16,6 +19,8 @@ const EditArticleRoute = ({
   if (!article) {
     throw new Error('Article is not valid.');
   }
+  const router = useRouter();
+  const currentUser = useCurrentUser();
   const didWriteClient = React.useRef(false);
   if (!didWriteClient.current) {
     getApolloClient().writeQuery({
@@ -29,9 +34,21 @@ const EditArticleRoute = ({
   const { data } = useQuery(GetArticleQuery, {
     variables: { id: article.id },
   });
+  const canEditArticle =
+    User.canEditArticle(currentUser, article) || User.isAdmin(currentUser);
+
+  React.useEffect(() => {
+    if (!canEditArticle) {
+      router.push(Article.getPath(article));
+    }
+  }, [canEditArticle, router, article]);
 
   if (error) {
     return <ErrorMessage error={error} />;
+  }
+
+  if (!canEditArticle) {
+    return null;
   }
 
   return (
