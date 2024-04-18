@@ -2,14 +2,16 @@ import * as React from 'react';
 import { StoryObj, Meta } from '@storybook/react';
 import { Input, Label, Select } from '@lotta-schule/hubert';
 
-export default {
+const meta = {
   title: 'Form/Label',
   component: Label,
   argTypes: {},
   args: {
     label: 'I am a pretty label',
   },
-} as Meta<typeof Label>;
+} satisfies Meta<typeof Label>;
+
+export default meta;
 
 export const InputLabel: StoryObj<typeof Label> = {
   render: ({ ...args }) => (
@@ -24,7 +26,7 @@ export const InputLabel: StoryObj<typeof Label> = {
 export const SelectLabel: StoryObj<typeof Label> = {
   render: ({ ...args }) => (
     <Label {...args}>
-      <Select>
+      <Select title={'Wählen ist wichtig'}>
         <option>Bla</option>
         <option>Blu</option>
       </Select>

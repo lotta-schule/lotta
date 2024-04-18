@@ -38,7 +38,7 @@ describe('shared/article/ArticleEditable', () => {
       const screen = render(
         <ArticleEditable
           article={articleWithManyModules}
-          onUpdateArticle={jest.fn()}
+          onUpdateArticle={vi.fn()}
         />
       );
       const contentModules = screen.getAllByTestId('ContentModule');
@@ -51,7 +51,7 @@ describe('shared/article/ArticleEditable', () => {
       const screen = render(
         <ArticleEditable
           article={articleWithManyModules}
-          onUpdateArticle={jest.fn()}
+          onUpdateArticle={vi.fn()}
         />
       );
       const contentModules = screen.getAllByTestId('ContentModule');
@@ -63,7 +63,7 @@ describe('shared/article/ArticleEditable', () => {
 
     it('should move the contentModule up when the button is clicked', async () => {
       const fireEvent = userEvent.setup();
-      const onUpdate = jest.fn((newArticle: ArticleModel) => {
+      const onUpdate = vi.fn((newArticle: ArticleModel) => {
         expect(
           newArticle.contentModules.map(({ id, sortKey }) => [id, sortKey])
         ).toEqual([
@@ -90,7 +90,7 @@ describe('shared/article/ArticleEditable', () => {
     });
     it('should move the contentModule down when the button is clicked', async () => {
       const fireEvent = userEvent.setup();
-      const onUpdate = jest.fn((newArticle: ArticleModel) => {
+      const onUpdate = vi.fn((newArticle: ArticleModel) => {
         expect(
           newArticle.contentModules.map(({ id, sortKey }) => [id, sortKey])
         ).toEqual([

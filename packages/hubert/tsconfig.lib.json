@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+
+  "extends": "./tsconfig.json",
+
+  "compilerOptions": {
+    "composite": true,
+    "types": ["node", "vite/client"],
+    "outDir": "../../dist/lib/hubert/lib"
+  },
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "src/test-utils.tsx"
+  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

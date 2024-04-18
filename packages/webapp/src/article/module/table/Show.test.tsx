@@ -6,10 +6,6 @@ import { Show } from './Show';
 const tableContentModule = LehrerListe.contentModules[0];
 
 describe('shared/article/module/table/Show', () => {
-  it('should render without an error', () => {
-    render(<Show contentModule={tableContentModule} />);
-  });
-
   describe('render the table', () => {
     it('should render the table with correct content', () => {
       const screen = render(<Show contentModule={tableContentModule} />);

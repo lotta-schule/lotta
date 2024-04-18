@@ -9,10 +9,6 @@ import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 
 describe('pages/admin/users/constraints', () => {
-  it('should render without error', () => {
-    render(<ConstraintList />, {}, { currentUser: adminUser });
-  });
-
   describe('should not impose limit', () => {
     it('should have "no limit" checkbox checked when limit is -1', async () => {
       const screen = render(
@@ -106,7 +102,7 @@ describe('pages/admin/users/constraints', () => {
     describe('update the value', () => {
       it('should work by request when changing via input field', async () => {
         const fireEvent = userEvent.setup();
-        const updateFn = jest.fn(() => ({
+        const updateFn = vi.fn(() => ({
           data: {
             tenant: {
               ...tenant,

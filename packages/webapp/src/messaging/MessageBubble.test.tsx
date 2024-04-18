@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import {
   SomeUser,
@@ -19,7 +20,9 @@ const message = {
 
 describe('messaging/MessageBubble', () => {
   it('should render the shared', () => {
-    render(<MessageBubble message={message} />);
+    const screen = render(<MessageBubble message={message} />);
+
+    expect(screen.getByText('Hallo!')).toBeVisible();
   });
 
   it('should render show the message and sender name', () => {
@@ -70,7 +73,7 @@ describe('messaging/MessageBubble', () => {
 
   it('should send a message delete request', async () => {
     const fireEvent = userEvent.setup();
-    const resultFn = jest.fn(() => ({ data: { message: message } }));
+    const resultFn = vi.fn(() => ({ data: { message: message } }));
     const screen = render(
       <MessageBubble message={message} active />,
       {},

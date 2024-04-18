@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { GlobalStyles, HubertProvider } from '@lotta-schule/hubert';
-import { DefaultThemes } from '@lotta-schule/theme';
+import {
+  DefaultThemes,
+  GlobalStyles,
+  HubertProvider,
+} from '@lotta-schule/hubert';
 import { CategoryModel, TenantModel, UserModel } from 'model';
 import { AppHead } from './AppHead';
 import { ApolloProvider } from '@apollo/client';
@@ -93,7 +96,7 @@ export const AppContextProviders = ({
   }
 
   const baseUrl =
-    typeof window === undefined
+    typeof window === 'undefined'
       ? requestBaseUrl
       : requestBaseUrl ?? window.location.origin;
 

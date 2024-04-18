@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { render } from 'test/util';
 import { PathViewer } from './PathViewer';
 import userEvent from '@testing-library/user-event';
@@ -5,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 describe('fileExplorer/PathViewer', () => {
   it('should render correctly on home path', () => {
     const screen = render(
-      <PathViewer path={[{ id: null }]} onChange={jest.fn()} />
+      <PathViewer path={[{ id: null }]} onChange={vi.fn()} />
     );
     expect(screen.getAllByRole('link')).toHaveLength(1);
     expect(
@@ -21,7 +22,7 @@ describe('fileExplorer/PathViewer', () => {
           { id: '123', name: 'Test 1' },
           { id: '444', name: 'Test 2' },
         ]}
-        onChange={jest.fn()}
+        onChange={vi.fn()}
       />
     );
     const links = screen.getAllByRole('link');
@@ -31,7 +32,7 @@ describe('fileExplorer/PathViewer', () => {
 
   it('should select a path on click', async () => {
     const fireEvent = userEvent.setup();
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const screen = render(
       <PathViewer
         path={[

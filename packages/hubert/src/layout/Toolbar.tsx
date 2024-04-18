@@ -6,7 +6,7 @@ import styles from './Toolbar.module.scss';
 export type ToolbarProps = {
   stackOnMobile?: boolean;
   hasScrollableParent?: boolean;
-} & React.HTMLProps<HTMLDivElement>;
+} & React.HTMLAttributes<HTMLDivElement>;
 
 export const Toolbar = ({
   children,
@@ -17,6 +17,7 @@ export const Toolbar = ({
 }: ToolbarProps) => {
   return (
     <div
+      role="toolbar"
       className={clsx(styles.root, className, {
         [styles.stackOnMobile]: stackOnMobile,
         [styles.hasScrollableParent]: hasScrollableParent,

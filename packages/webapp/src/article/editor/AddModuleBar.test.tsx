@@ -8,7 +8,7 @@ describe('AddModuleBar', () => {
   const currentUser = SomeUser;
   it('should add a title module', async () => {
     const fireEvent = userEvent.setup();
-    const onAddModule = jest.fn(({ type }) => {
+    const onAddModule = vi.fn(({ type }) => {
       expect(type).toEqual(ContentModuleType.TITLE);
     });
     const screen = render(
@@ -22,7 +22,7 @@ describe('AddModuleBar', () => {
 
   it('should add a download module', async () => {
     const fireEvent = userEvent.setup();
-    const onAddModule = jest.fn(({ type }) => {
+    const onAddModule = vi.fn(({ type }) => {
       expect(type).toEqual(ContentModuleType.DOWNLOAD);
     });
     const screen = render(
@@ -36,7 +36,7 @@ describe('AddModuleBar', () => {
 
   it('should add a divider module', async () => {
     const fireEvent = userEvent.setup();
-    const onAddModule = jest.fn(({ type }) => {
+    const onAddModule = vi.fn(({ type }) => {
       expect(type).toEqual(ContentModuleType.DIVIDER);
     });
     const screen = render(
@@ -50,7 +50,7 @@ describe('AddModuleBar', () => {
 
   it('should add a form module', async () => {
     const fireEvent = userEvent.setup();
-    const onAddModule = jest.fn(({ type }) => {
+    const onAddModule = vi.fn(({ type }) => {
       expect(type).toEqual(ContentModuleType.FORM);
     });
     const screen = render(
@@ -64,7 +64,7 @@ describe('AddModuleBar', () => {
 
   it('should add a table module', async () => {
     const fireEvent = userEvent.setup();
-    const onAddModule = jest.fn(({ type }) => {
+    const onAddModule = vi.fn(({ type }) => {
       expect(type).toEqual(ContentModuleType.TABLE);
     });
     const screen = render(
@@ -78,7 +78,7 @@ describe('AddModuleBar', () => {
 
   it('should add an image module', async () => {
     const fireEvent = userEvent.setup();
-    const onAddModule = jest.fn(({ type }) => {
+    const onAddModule = vi.fn(({ type }) => {
       expect(type).toEqual(ContentModuleType.IMAGE);
     });
     const screen = render(
@@ -92,7 +92,7 @@ describe('AddModuleBar', () => {
 
   it('should add a gallery module', async () => {
     const fireEvent = userEvent.setup();
-    const onAddModule = jest.fn(({ type }) => {
+    const onAddModule = vi.fn(({ type }) => {
       expect(type).toEqual(ContentModuleType.IMAGE_COLLECTION);
     });
     const screen = render(
@@ -106,7 +106,7 @@ describe('AddModuleBar', () => {
 
   it('should add a video module', async () => {
     const fireEvent = userEvent.setup();
-    const onAddModule = jest.fn(({ type }) => {
+    const onAddModule = vi.fn(({ type }) => {
       expect(type).toEqual(ContentModuleType.VIDEO);
     });
     const screen = render(
@@ -120,7 +120,7 @@ describe('AddModuleBar', () => {
 
   it('should add an audio module', async () => {
     const fireEvent = userEvent.setup();
-    const onAddModule = jest.fn(({ type }) => {
+    const onAddModule = vi.fn(({ type }) => {
       expect(type).toEqual(ContentModuleType.AUDIO);
     });
     const screen = render(

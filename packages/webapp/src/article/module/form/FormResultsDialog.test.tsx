@@ -1,11 +1,10 @@
-/* eslint-disable import/first */
-jest.mock('file-saver');
 import * as React from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContentModuleModel, ContentModuleType } from 'model';
 import { render, waitFor } from 'test/util';
 import { MockedResponse } from '@apollo/client/testing';
 import { FormResultsDialog } from './FormResultsDialog';
-import { saveAs } from 'file-saver';
+import fileSaver, { saveAs } from 'file-saver';
 import userEvent from '@testing-library/user-event';
 
 import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
@@ -111,7 +110,7 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
 
   it('should generate and download a csv when the button is clicked', async () => {
     const fireEvent = userEvent.setup();
-    global.URL.createObjectURL = jest.fn(() => 'http://localhost/0');
+    global.URL.createObjectURL = vi.fn(() => 'http://localhost/0');
 
     const screen = render(
       <FormResultsDialog
@@ -131,26 +130,38 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
       screen.getByRole('button', { name: /csv herunterladen/i })
     ).toBeInTheDocument();
 
-    let data: Blob, filename: string;
-    (saveAs as any).mockImplementation((_data: Blob, _filename: string) => {
-      data = _data;
-      filename = _filename;
-    });
+    let data: Blob | undefined, filename: string | undefined;
+    vi.spyOn(fileSaver, 'saveAs').mockImplementation(
+      (_data: string | Blob, _filename?: string) => {
+        if (!_data || _data instanceof Blob === false) {
+          throw new Error('data is not a Blob. I did not want a non-blob!.');
+        }
+        data = _data;
+        filename = _filename;
+      }
+    );
     await fireEvent.click(
       screen.getByRole('button', { name: /csv herunterladen/i })
     );
     expect(saveAs).toHaveBeenCalled();
-    return waitFor(() => {
-      expect(data).not.toBeNull();
-    }).then(async () => {
-      expect(filename).toEqual('formulardaten.csv');
-      expect(data.type).toMatch(/text\/csv/);
-      expect(await new Response(data).text()).toEqual(
-        '"Datum","blub","bla","mail"\r\n' +
-          '"21.12.2020 07:24","Hallo","S,XL","ab@c.de"\r\n' +
-          '"21.12.2020 07:24","Test","","de@z.xy"\r\n' +
-          '"21.12.2020 07:24","Tschu tschu","XL","de@z.xy"'
-      );
+
+    await waitFor(() => {
+      expect(data).not.toBeUndefined();
     });
+
+    expect(data).toBeInstanceOf(Blob);
+    expect(filename).toEqual('formulardaten.csv');
+
+    expect(data?.type).toMatch(/text\/csv/);
+    const inputData = (data as any)?.inputData as string[];
+
+    const text = inputData.join('');
+
+    expect(text).toEqual(
+      '"Datum","blub","bla","mail"\r\n' +
+        '"21.12.2020 07:24","Hallo","S,XL","ab@c.de"\r\n' +
+        '"21.12.2020 07:24","Test","","de@z.xy"\r\n' +
+        '"21.12.2020 07:24","Tschu tschu","XL","de@z.xy"'
+    );
   });
 });

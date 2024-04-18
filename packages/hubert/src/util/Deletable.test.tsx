@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 describe('shared/general/util/Deletable', () => {
   it('should show a Delete button when onDelete is given', async () => {
     const fireEvent = userEvent.setup();
-    const onDelete = jest.fn();
+    const onDelete = vi.fn();
     const screen = render(
       <Deletable onDelete={onDelete}>
         <img width={300} height={300} alt={''} />

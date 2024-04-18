@@ -1,23 +1,13 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { render, waitFor } from 'test/util';
 import { adminGroup, SomeUser, Weihnachtsmarkt } from 'test/fixtures';
 import { EditArticleFooter } from './EditArticleFooter';
-import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
-describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
-  it('should render without error', () => {
-    render(
-      <EditArticleFooter
-        article={Weihnachtsmarkt}
-        onUpdate={() => {}}
-        onSave={() => {}}
-      />,
-      {},
-      { currentUser: SomeUser }
-    );
-  });
+import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
 
+describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
   describe('dates button', () => {
     it('should not show dates button when userAvatar is not admin', () => {
       const screen = render(
@@ -59,7 +49,7 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
   describe('save article', () => {
     it('call the save callback', async () => {
       const fireEvent = userEvent.setup();
-      const onSave = jest.fn();
+      const onSave = vi.fn();
       const screen = render(
         <EditArticleFooter
           article={{ ...Weihnachtsmarkt, readyToPublish: false }}
@@ -77,7 +67,7 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
   describe('delete article', () => {
     it('show the modal and delete the article on confirmation', async () => {
       const fireEvent = userEvent.setup();
-      const onDelete = jest.fn(() => ({
+      const onDelete = vi.fn(() => ({
         data: {
           article: { id: Weihnachtsmarkt.id },
         },

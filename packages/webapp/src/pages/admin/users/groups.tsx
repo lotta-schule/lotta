@@ -3,7 +3,6 @@ import { Icon } from 'shared/Icon';
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { AdminPage } from 'administration/AdminPage';
 import { GroupList } from 'administration/users/GroupList';
-import { GetServerSidePropsContext } from 'next';
 
 const GroupsRoute = () => {
   return (
@@ -17,12 +16,6 @@ const GroupsRoute = () => {
       hasHomeLink
     />
   );
-};
-
-export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-  return {
-    props: {},
-  };
 };
 
 export default GroupsRoute;

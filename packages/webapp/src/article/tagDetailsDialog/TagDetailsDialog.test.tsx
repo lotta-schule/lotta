@@ -20,7 +20,7 @@ describe('TagDetailsDialog', () => {
 
   it('should not show when tag is null', () => {
     const screen = render(
-      <TagDetailsDialog tag={null} onRequestClose={jest.fn()} />,
+      <TagDetailsDialog tag={null} onRequestClose={vi.fn()} />,
       {},
       {
         additionalMocks,
@@ -31,7 +31,7 @@ describe('TagDetailsDialog', () => {
   });
 
   it('should close the dialog when the route changes', async () => {
-    const onRequestClose = jest.fn();
+    const onRequestClose = vi.fn();
     const screen = render(
       <TagDetailsDialog tag="tag" onRequestClose={onRequestClose} />,
       {},
@@ -53,7 +53,7 @@ describe('TagDetailsDialog', () => {
 
   it('should render the list of articles', async () => {
     const screen = render(
-      <TagDetailsDialog tag="tag" onRequestClose={jest.fn()} />,
+      <TagDetailsDialog tag="tag" onRequestClose={vi.fn()} />,
       {},
       {
         additionalMocks,

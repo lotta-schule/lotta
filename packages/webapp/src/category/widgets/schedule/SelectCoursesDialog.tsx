@@ -30,7 +30,9 @@ export const SelectCoursesDialog = React.memo<SelectCoursesDialogProps>(
         if (persistedCourseList) {
           setSelectedCourses(JSON.parse(persistedCourseList));
         }
-      } catch {}
+      } catch {
+        console.error('Could not load selected courses from local storage');
+      }
     }, []);
 
     const isSelected = (courseName: string) =>

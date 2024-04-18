@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { Preview } from '@storybook/react';
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
-import { DefaultThemes } from '@lotta-schule/theme';
 import { MotionGlobalConfig } from 'framer-motion';
-import { GlobalStyles, HubertProvider } from '@lotta-schule/hubert';
+import {
+  DefaultThemes,
+  GlobalStyles,
+  HubertProvider,
+} from '@lotta-schule/hubert';
 import isChromatic from 'chromatic';
 
-import '@lotta-schule/hubert/dist/index.css';
-
-if (isChromatic()) {
+if ((isChromatic as any)()) {
   MotionGlobalConfig.skipAnimations = true;
 }
 
@@ -26,7 +27,7 @@ const preview: Preview = {
             supportedFonts={[
               {
                 name: 'Muli',
-                url: 'https://fonts.googleapis.com/css2?family=Muli&display=swap',
+                url: 'https://fonts.googleapis.com/css2?family=Muli&display=block',
               },
             ]}
           />
