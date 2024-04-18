@@ -140,7 +140,7 @@ export const PrivacyPage = () => {
             </ul>
           </p>
           <p>
-            <strong>Nationale Datenschutzregelungen in Deutschland:</strong>{' '} 
+            <strong>Nationale Datenschutzregelungen in Deutschland:</strong>{' '}
             Zusätzlich zu den Datenschutzregelungen der
             Datenschutz-Grundverordnung gelten nationale Regelungen zum
             Datenschutz in Deutschland. Hierzu gehört insbesondere das Gesetz
@@ -505,19 +505,19 @@ export const PrivacyPage = () => {
           <p>
             Wir bitten Sie, sich regelmäßig über den Inhalt unserer
             Datenschutzerklärung zu informieren. Wir passen die
-            Datenschutzerklärung an, sobald Änderungen an den
-            von uns durchgeführten Datenverarbeitungen dies erforderlich machen.
-            Wir informieren Sie, sobald durch die Änderungen eine
-            Mitwirkungshandlung Ihrerseits (z.B. Einwilligung) oder
-            eine sonstige individuelle Benachrichtigung erforderlich wird.
+            Datenschutzerklärung an, sobald Änderungen an den von uns
+            durchgeführten Datenverarbeitungen dies erforderlich machen. Wir
+            informieren Sie, sobald durch die Änderungen eine
+            Mitwirkungshandlung Ihrerseits (z.B. Einwilligung) oder eine
+            sonstige individuelle Benachrichtigung erforderlich wird.
           </p>
         </Box>
 
         <Box className={styles.box}>
           <h4>Rechte der betroffenen Personen</h4>
           <p>
-            Ihnen wird freigestellt, 
-            ob Sie einen der folgenden Ansprüche gesetzlich geltend machen:
+            Ihnen wird freigestellt, ob Sie einen der folgenden Ansprüche
+            gesetzlich geltend machen:
           </p>
           <div>
             <ul>
@@ -540,10 +540,10 @@ export const PrivacyPage = () => {
                 das Recht, erteilte Einwilligungen jederzeit zu widerrufen.
               </li>
               <li>
-                <strong>Auskunftsrecht:</strong> Sie haben
-                das Recht, eine Bestätigung darüber zu verlangen, ob betreffende
-                Daten verarbeitet werden und auf Auskunft über diese Daten sowie
-                auf weitere Informationen und Kopie der Daten entsprechend den
+                <strong>Auskunftsrecht:</strong> Sie haben das Recht, eine
+                Bestätigung darüber zu verlangen, ob betreffende Daten
+                verarbeitet werden und auf Auskunft über diese Daten sowie auf
+                weitere Informationen und Kopie der Daten entsprechend den
                 gesetzlichen Vorgaben.
               </li>
               <li>

@@ -1,4 +1,3 @@
-import { expect } from '@storybook/jest';
 import * as React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
@@ -14,7 +13,7 @@ import {
   Close,
   ExpandMore,
 } from '@lotta-schule/hubert';
-import { fireEvent, waitFor, within } from '@storybook/testing-library';
+import { expect, fireEvent, waitFor, within } from '@storybook/test';
 
 const meta: Meta<typeof SplitView> = {
   title: 'Layout/SplitView',

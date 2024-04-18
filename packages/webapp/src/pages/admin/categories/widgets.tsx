@@ -3,7 +3,6 @@ import { Icon } from 'shared/Icon';
 import { faSquareCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { AdminPage } from 'administration/AdminPage';
 import { WidgetList } from 'administration/categories/WidgetList';
-import { GetServerSidePropsContext } from 'next';
 
 const WidgetsRoute = () => {
   return (
@@ -17,12 +16,6 @@ const WidgetsRoute = () => {
       hasHomeLink
     />
   );
-};
-
-export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-  return {
-    props: {},
-  };
 };
 
 export default WidgetsRoute;

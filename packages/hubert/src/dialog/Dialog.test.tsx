@@ -50,7 +50,7 @@ describe('general/dialog', () => {
 
     it('should show the close button when "onRequestClose" prop is set', async () => {
       const user = userEvent.setup();
-      const onClose = jest.fn();
+      const onClose = vi.fn();
 
       const screen = render(
         <Dialog title={'Achtung!'} open onRequestClose={onClose}>
@@ -67,7 +67,7 @@ describe('general/dialog', () => {
 
     it('should call "onRequestClose" prop when ESC key is pressed.', async () => {
       const user = userEvent.setup();
-      const onClose = jest.fn();
+      const onClose = vi.fn();
 
       render(
         <Dialog title={'Achtung!'} open onRequestClose={onClose}>

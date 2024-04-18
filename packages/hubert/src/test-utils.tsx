@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DefaultThemes } from '@lotta-schule/theme';
-import { render, RenderOptions } from '@testing-library/react';
+import { render, type RenderOptions } from '@testing-library/react';
 import { MotionConfig } from 'framer-motion';
 import { HubertProvider } from './HubertProvider';
 import { GlobalStyles } from './theme';
@@ -17,9 +17,9 @@ const Wrapper = ({ children }: any) => (
 );
 
 const customRender = (
-  ui: React.ReactElement,
-  renderOptions: Omit<RenderOptions, 'wrapper'> = {}
-) =>
+  ui: React.ReactElement<any>,
+  renderOptions: RenderOptions = {}
+): ReturnType<typeof render> =>
   render(ui, {
     wrapper: Wrapper,
     ...renderOptions,

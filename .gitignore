@@ -9,6 +9,8 @@ coverage/
 
 # caches
 .eslintcache
+.vite
+*.tsbuildinfo
 
 # build artifacts
 /build
@@ -39,3 +41,12 @@ test-report.html
 
 # Sentry
 .sentryclirc
+
+
+.nx/cache
+
+storybook-static
+
+# Next.js
+.next
+out

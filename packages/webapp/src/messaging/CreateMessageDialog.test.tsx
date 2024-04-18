@@ -45,7 +45,7 @@ describe('CreateMessageDialog', () => {
     it('should select a userAvatar and create the corresponding thread object', async () => {
       const fireEvent = userEvent.setup();
       const searchTerm = 'Drinalda';
-      const onConfirm = jest.fn((destination) => {
+      const onConfirm = vi.fn((destination) => {
         expect(destination.user.name).toEqual('Luisa Drinalda');
         expect(destination.group).not.toBeDefined();
       });
@@ -105,7 +105,7 @@ describe('CreateMessageDialog', () => {
 
     it('should select a group and call the onConfirm with it', async () => {
       const fireEvent = userEvent.setup();
-      const onConfirm = jest.fn((destination) => {
+      const onConfirm = vi.fn((destination) => {
         expect(destination.user).not.toBeDefined();
         expect(destination.group.name).toEqual('Schüler');
       });

@@ -1,19 +1,52 @@
 import * as React from 'react';
-import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { fireEvent, waitFor, within } from '@storybook/testing-library';
+import { expect, fireEvent, spyOn, waitFor, within } from '@storybook/test';
 import { KeyboardArrowLeft, LoadingButton } from '@lotta-schule/hubert';
+import { action } from '@storybook/addon-actions';
 
-export default {
+const meta = {
   title: 'Buttons/LoadingButton',
   component: LoadingButton,
+  args: {
+    onAction: action('onAction') as () => Promise<void>,
+    onError: action('onError') as (_error: unknown) => void,
+    onComplete: action('onComplete') as () => void,
+  },
   argTypes: {},
-} as Meta<typeof LoadingButton>;
+  decorators: [
+    (Story, { args, parameters }) => {
+      if (args.onAction) {
+        spyOn(args, 'onAction').mockImplementationOnce(
+          () =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                if (parameters.fail) {
+                  const message =
+                    typeof parameters.fail === 'string' &&
+                    parameters.fail.length
+                      ? parameters.fail
+                      : 'I failed';
+                  reject(new Error(message));
+                } else {
+                  resolve();
+                }
+              }, 1500);
+            })
+        );
+      }
+
+      return <Story />;
+    },
+  ],
+} satisfies Meta<typeof LoadingButton>;
+
+export default meta;
 
 export const Default: StoryObj<typeof LoadingButton> = {
   args: {
     state: 'loading',
     label: 'save',
+    onAction: undefined,
   },
 };
 
@@ -28,23 +61,33 @@ export const SuccessAction: StoryObj<typeof LoadingButton> = {
   args: {
     label: 'let me succeed',
     icon: <KeyboardArrowLeft />,
-    onAction: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args: { onAction, onComplete } }) => {
     const screen = within(canvasElement);
 
-    fireEvent.click(
+    await fireEvent.click(
       await screen.findByRole('button', { name: /let me succeed/i })
     );
 
-    await waitFor(() => {
-      expect(screen.queryByRole('progressbar')).toBeVisible();
-    });
+    expect(onAction).toHaveBeenCalled();
 
     await waitFor(() => {
-      expect(screen.queryByRole('progressbar')).toBeNull();
+      expect(
+        screen.queryByRole('progressbar'),
+        'progressbar not visible'
+      ).toBeVisible();
+    });
+
+    await waitFor(
+      () => {
+        expect(screen.queryByRole('progressbar')).toBeNull();
+      },
+      { timeout: 2000 }
+    );
+
+    expect(onComplete).toHaveBeenCalled();
+
+    await waitFor(() => {
       expect(screen.getByTestId('SuccessIcon')).toBeVisible();
     });
   },
@@ -54,24 +97,34 @@ export const ErrorAction: StoryObj<typeof LoadingButton> = {
   args: {
     label: 'let me fail',
     icon: <KeyboardArrowLeft />,
-    onAction: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      throw new Error('I failed');
-    },
   },
-  play: async ({ canvasElement }) => {
+  parameters: { fail: 'I failed' },
+  play: async ({ canvasElement, args: { onAction, onError } }) => {
     const screen = within(canvasElement);
 
     fireEvent.click(
       await screen.findByRole('button', { name: /let me fail/i })
     );
 
-    await waitFor(() => {
-      expect(screen.queryByRole('progressbar')).toBeVisible();
-    });
+    expect(onAction).toHaveBeenCalled();
 
     await waitFor(() => {
-      expect(screen.queryByRole('progressbar')).toBeNull();
+      expect(
+        screen.queryByRole('progressbar'),
+        'progressbar should be visible'
+      ).toBeVisible();
+    });
+
+    await waitFor(
+      () => {
+        expect(screen.queryByRole('progressbar')).toBeNull();
+      },
+      { timeout: 2000 }
+    );
+
+    expect(onError).toHaveBeenCalled();
+
+    await waitFor(() => {
       expect(screen.getByTestId('ErrorIcon')).toBeVisible();
     });
   },

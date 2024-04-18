@@ -4,13 +4,19 @@ import { TagsSelect } from './TagsSelect';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
-  it('should render a TagsSelect without error', async () => {
-    render(<TagsSelect value={[]} onChange={() => {}} />, {}, {});
+  it('should render an empty TagsSelect', async () => {
+    const screen = render(
+      <TagsSelect value={[]} onChange={() => {}} />,
+      {},
+      {}
+    );
+
+    expect(screen.queryAllByTestId('Tag')).toHaveLength(0);
   });
 
   it('should show a delete button for tags', async () => {
     const fireEvent = userEvent.setup();
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const screen = render(
       <TagsSelect value={['tag1']} onChange={onChange} />,
       {},
@@ -47,7 +53,7 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
 
   it('should call onChange with the selected tag', async () => {
     const fireEvent = userEvent.setup();
-    const onChangeFn = jest.fn();
+    const onChangeFn = vi.fn();
     const screen = render(
       <TagsSelect value={[]} onChange={onChangeFn} />,
       {},
@@ -70,7 +76,7 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
 
   it('should deselect an already selected tag', async () => {
     const fireEvent = userEvent.setup();
-    const onChangeFn = jest.fn();
+    const onChangeFn = vi.fn();
     const screen = render(
       <TagsSelect value={['tag', 'noch ein tag']} onChange={onChangeFn} />,
       {},

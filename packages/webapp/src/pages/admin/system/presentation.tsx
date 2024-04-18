@@ -3,7 +3,6 @@ import { Icon } from 'shared/Icon';
 import { faPalette } from '@fortawesome/free-solid-svg-icons';
 import { Presentation } from 'administration/system/Presentation';
 import { AdminPage } from 'administration/AdminPage';
-import { GetServerSidePropsContext } from 'next';
 
 const PresentationRoute = () => {
   return (
@@ -17,12 +16,6 @@ const PresentationRoute = () => {
       hasHomeLink
     />
   );
-};
-
-export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
-  return {
-    props: {},
-  };
 };
 
 export default PresentationRoute;

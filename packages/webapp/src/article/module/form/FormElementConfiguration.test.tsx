@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render } from 'test/util';
 import { FormElementConfiguration } from './FormElementConfiguration';
 import { FormElement } from './Form';
@@ -13,7 +13,7 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
     };
     it('should provide element, type, name, label, descriptionText, required and multiline options', async () => {
       const fireEvent = userEvent.setup();
-      const updateElementFn = jest.fn();
+      const updateElementFn = vi.fn();
       const screen = render(
         <FormElementConfiguration
           element={element}
@@ -92,7 +92,7 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
     };
     it('should provide element, type, name, label, descriptionText, required and options options', async () => {
       const fireEvent = userEvent.setup();
-      const updateElementFn = jest.fn();
+      const updateElementFn = vi.fn();
       const screen = render(
         <FormElementConfiguration
           element={element}

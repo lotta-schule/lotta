@@ -17,10 +17,7 @@ describe('shared/article/module/divider/Divider', () => {
 
   it('should render a hr element', () => {
     const screen = render(
-      <Divider
-        contentModule={dividerContentModule}
-        onUpdateModule={jest.fn()}
-      />
+      <Divider contentModule={dividerContentModule} onUpdateModule={vi.fn()} />
     );
     expect(screen.getByRole('separator')).toBeVisible();
   });

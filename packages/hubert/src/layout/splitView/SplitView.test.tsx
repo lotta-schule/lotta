@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { afterEach, describe, expect, it } from 'vitest';
 import { render, waitFor } from '../../test-utils';
 import { SplitView } from './SplitView';
 import { SplitViewButton } from './SplitViewButton';
@@ -49,17 +50,19 @@ describe('SplitView', () => {
     beforeEach(() => {
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
-        value: jest.fn().mockImplementation((query) => {
-          const listeners: Function[] = [];
+        value: vi.fn().mockImplementation((query) => {
+          const listeners: ((...args: any[]) => void)[] = [];
           return {
             matches: true,
             media: query,
             onchange: null,
-            addListener: (listener: Function) => listeners.push(listener),
-            removeListener: (listener: Function) =>
+            addListener: (listener: (...args: any[]) => void) =>
+              listeners.push(listener),
+            removeListener: (listener: (...args: any[]) => void) =>
               listeners.splice(listeners.indexOf(listener), 1),
-            addEventListener: (listener: Function) => listeners.push(listener),
-            removeEventListener: (listener: Function) =>
+            addEventListener: (listener: (...args: any[]) => void) =>
+              listeners.push(listener),
+            removeEventListener: (listener: (...args: any[]) => void) =>
               listeners.splice(listeners.indexOf(listener), 1),
             dispatchEvent: () => {
               listeners.forEach((listener) => listener('change'));
@@ -71,17 +74,19 @@ describe('SplitView', () => {
     afterEach(() => {
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
-        value: jest.fn().mockImplementation((query) => {
-          const listeners: Function[] = [];
+        value: vi.fn().mockImplementation((query) => {
+          const listeners: ((...args: any[]) => void)[] = [];
           return {
             matches: false,
             media: query,
             onchange: null,
-            addListener: (listener: Function) => listeners.push(listener),
-            removeListener: (listener: Function) =>
+            addListener: (listener: (...args: any[]) => void) =>
+              listeners.push(listener),
+            removeListener: (listener: (...args: any[]) => void) =>
               listeners.splice(listeners.indexOf(listener), 1),
-            addEventListener: (listener: Function) => listeners.push(listener),
-            removeEventListener: (listener: Function) =>
+            addEventListener: (listener: (...args: any[]) => void) =>
+              listeners.push(listener),
+            removeEventListener: (listener: (...args: any[]) => void) =>
               listeners.splice(listeners.indexOf(listener), 1),
             dispatchEvent: () => {
               listeners.forEach((listener) => listener('change'));
@@ -94,17 +99,19 @@ describe('SplitView', () => {
     it('should render only sidebar', async () => {
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
-        value: jest.fn().mockImplementation((query) => {
-          const listeners: Function[] = [];
+        value: vi.fn().mockImplementation((query: string) => {
+          const listeners: ((...args: any[]) => void)[] = [];
           return {
             matches: true,
             media: query,
             onchange: null,
-            addListener: (listener: Function) => listeners.push(listener),
-            removeListener: (listener: Function) =>
+            addListener: (listener: (...args: any[]) => void) =>
+              listeners.push(listener),
+            removeListener: (listener: (...args: any[]) => void) =>
               listeners.splice(listeners.indexOf(listener), 1),
-            addEventListener: (listener: Function) => listeners.push(listener),
-            removeEventListener: (listener: Function) =>
+            addEventListener: (listener: (...args: any[]) => void) =>
+              listeners.push(listener),
+            removeEventListener: (listener: (...args: any[]) => void) =>
               listeners.splice(listeners.indexOf(listener), 1),
             dispatchEvent: () => {
               listeners.forEach((listener) => listener('change'));

@@ -2,6 +2,7 @@ import { ArticleModel } from 'model';
 import { ID } from 'model/ID';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
+
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
 
 export const useCurrentCategoryId = (): ID | null => {

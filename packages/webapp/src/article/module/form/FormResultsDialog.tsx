@@ -21,8 +21,8 @@ export interface FormResultsDialogProps {
   contentModule: ContentModuleModel<Record<string, string>, FormConfiguration>;
 }
 
-export const FormResultsDialog = React.memo<FormResultsDialogProps>(
-  ({ isOpen, onRequestClose, contentModule }) => {
+export const FormResultsDialog = React.memo(
+  ({ isOpen, onRequestClose, contentModule }: FormResultsDialogProps) => {
     const {
       data,
       loading: isLoading,

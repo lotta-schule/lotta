@@ -6,9 +6,7 @@ import userEvent from '@testing-library/user-event';
 
 import GetTenantTimeseriesAnalyticsQuery from 'api/query/analytics/GetTenantTimeseriesAnalyticsQuery.graphql';
 
-jest
-  .useFakeTimers({ advanceTimers: 1 })
-  .setSystemTime(new Date('2024-03-16').getTime());
+vi.useFakeTimers({ shouldAdvanceTime: true, now: new Date('2024-03-16') });
 
 const mocks = [
   {
@@ -74,7 +72,7 @@ describe('MetricsChart', () => {
             metric: 'PAGEVIEWS',
           },
         },
-        result: jest.fn(() => ({
+        result: vi.fn(() => ({
           data: {
             metrics: [
               { date: '2024-03-01', value: 503 },

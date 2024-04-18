@@ -1,4 +1,4 @@
-import '../styles/globals.css';
+import '../styles/globals.scss';
 
 import * as React from 'react';
 import { AppContext, AppProps } from 'next/app';

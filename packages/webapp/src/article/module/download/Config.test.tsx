@@ -13,18 +13,8 @@ const downloadContentModule = {
 };
 
 describe('shared/article/module/Download/Config', () => {
-  it('should render without an error', () => {
-    render(
-      <Config
-        contentModule={downloadContentModule}
-        onUpdateModule={() => {}}
-        onRequestClose={() => {}}
-      />
-    );
-  });
-
   it('should render a unchecked checkbox field to toggle hidePreviews which can be checked', async () => {
-    const callback = jest.fn((cm) => {
+    const callback = vi.fn((cm) => {
       expect(cm.configuration.hidePreviews).toEqual(true);
     });
     const screen = render(
@@ -47,7 +37,7 @@ describe('shared/article/module/Download/Config', () => {
   });
 
   it('should render a checked checkbox field to toggle hidePreviews which can be unchecked', async () => {
-    const callback = jest.fn((cm) => {
+    const callback = vi.fn((cm) => {
       expect(cm.configuration.hidePreviews).toEqual(false);
     });
     const screen = render(

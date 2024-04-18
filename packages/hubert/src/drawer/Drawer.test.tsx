@@ -34,7 +34,7 @@ describe('general/Drawer', () => {
   describe('close', () => {
     it('should call onClose when close button is clicked', async () => {
       const user = userEvent.setup();
-      const onClose = jest.fn();
+      const onClose = vi.fn();
 
       const screen = render(
         <Drawer isOpen onClose={() => onClose()}>
@@ -48,7 +48,7 @@ describe('general/Drawer', () => {
 
     it('should call onClose when the ESC key is pressed', async () => {
       const user = userEvent.setup();
-      const onClose = jest.fn();
+      const onClose = vi.fn();
 
       const screen = render(
         <Drawer isOpen onClose={() => onClose()}>

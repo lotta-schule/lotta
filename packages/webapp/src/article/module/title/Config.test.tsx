@@ -7,16 +7,6 @@ import userEvent from '@testing-library/user-event';
 const titleContentModule = Klausurenplan.contentModules[0];
 
 describe('shared/article/module/title/Config', () => {
-  it('should render without an error', () => {
-    render(
-      <Config
-        contentModule={titleContentModule}
-        onUpdateModule={() => {}}
-        onRequestClose={() => {}}
-      />
-    );
-  });
-
   it('should render a select field with 3 size options', async () => {
     const fireEvent = userEvent.setup();
     const screen = render(
@@ -53,7 +43,7 @@ describe('shared/article/module/title/Config', () => {
 
   it('should change the size configuration', async () => {
     const fireEvent = userEvent.setup();
-    const callback = jest.fn((cm) => {
+    const callback = vi.fn((cm) => {
       expect(cm.configuration.level).toEqual(6);
     });
     const screen = render(

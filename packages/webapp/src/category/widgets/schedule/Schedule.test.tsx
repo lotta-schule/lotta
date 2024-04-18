@@ -1,7 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { ScheduleResponse, SomeUserin, VPSchuelerWidget } from 'test/fixtures';
 import { Schedule } from './Schedule';
+
 import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';
 
 describe('shared/widgets/Schedule', () => {
@@ -78,14 +79,6 @@ describe('shared/widgets/Schedule', () => {
       },
     },
   ];
-
-  it('should render the schedule without error', () => {
-    render(
-      <Schedule widget={VPSchuelerWidget} />,
-      {},
-      { currentUser: pupil, additionalMocks: mocks }
-    );
-  });
 
   describe("Pupil's Schedule", () => {
     it('should show an information and a link to profile if userAvatar has no class', async () => {

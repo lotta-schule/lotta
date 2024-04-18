@@ -28,7 +28,7 @@ export interface ArticlePageProps {
 const BEFORE_LEAVE_MESSAGE =
   'Möchtest du die Seite wirklich verlassen? Ungespeicherte Änderungen gehen verloren.';
 
-export const EditArticlePage = React.memo<ArticlePageProps>(({ article }) => {
+export const EditArticlePage = React.memo(({ article }: ArticlePageProps) => {
   const router = useRouter();
   const currentUser = useCurrentUser();
 
@@ -148,7 +148,12 @@ export const EditArticlePage = React.memo<ArticlePageProps>(({ article }) => {
           isLoading={isLoading}
           onSave={(additionalProps) => {
             const article = {
-              ...(omit(editedArticle, ['isPinnedToTop']) as ArticleModel),
+              ...(omit(editedArticle, [
+                // isPinnedToTop is set via an extra button
+                'isPinnedToTop',
+                // updatedAt is only set if it should explicitly be overwritten
+                'updatedAt',
+              ]) as ArticleModel),
               ...additionalProps,
               contentModules: editedArticle.contentModules.map((cm) => ({
                 ...cm,
