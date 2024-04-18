@@ -34,16 +34,10 @@ describe('util/Collapse', () => {
     expect(screen.getByRole('list')).toBeVisible();
   });
 
-  it('should collapse the content', () => {
+  it('should show collapsed content and make it reappear', async () => {
     const screen = render(<Collapse visible={false}>{content}</Collapse>);
     expect(screen.getByRole('list', { hidden: true })).not.toBeVisible();
-  });
 
-  it('should collapse the content', async () => {
-    const screen = render(<Collapse visible={false}>{content}</Collapse>);
-    await waitFor(() => {
-      expect(screen.getByRole('list', { hidden: true })).not.toBeVisible();
-    });
     screen.rerender(<Collapse visible={true}>{content}</Collapse>);
     await waitFor(() => {
       expect(screen.getByRole('list')).toBeVisible();

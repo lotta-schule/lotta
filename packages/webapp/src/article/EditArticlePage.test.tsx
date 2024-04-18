@@ -1,6 +1,6 @@
 import * as React from 'react';
-import MockDate from 'mockdate';
-import { render, waitFor } from 'test/util';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { MockRouter, render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
 import { EditArticlePage } from './EditArticlePage';
 import { ArticleModel, ContentModuleModel, ContentModuleType } from 'model';
@@ -31,9 +31,10 @@ describe('article/EditArticlePage', () => {
     article: ArticleModel,
     inputArticle: Omit<Partial<ArticleModel>, 'contentModules'> & {
       contentModules: Partial<ContentModuleModel>[];
-    }
+    },
+    resultProps: Partial<ArticleModel> = {}
   ) =>
-    jest.fn(() => ({
+    vi.fn(() => ({
       data: {
         article: {
           ...article,
@@ -42,19 +43,10 @@ describe('article/EditArticlePage', () => {
             ...cm,
             id: cm.id || (Math.random() * Number.MAX_SAFE_INTEGER).toString(),
           })),
+          ...resultProps,
         },
       },
     }));
-  it('should render the EditArticleLayout without error', async () => {
-    render(
-      <EditArticlePage article={Weihnachtsmarkt} />,
-      {},
-      {
-        currentUser: SomeUser,
-        additionalMocks,
-      }
-    );
-  });
 
   it('should show the article', () => {
     const screen = render(
@@ -113,10 +105,13 @@ describe('article/EditArticlePage', () => {
     const date = new Date();
 
     beforeEach(() => {
-      MockDate.set(date);
+      vi.useFakeTimers({
+        now: date,
+        shouldAdvanceTime: true,
+      });
     });
     afterEach(() => {
-      MockDate.reset();
+      vi.useRealTimers();
     });
 
     it('should call saveArticle endpoint with updated content modules', async () => {
@@ -147,7 +142,6 @@ describe('article/EditArticlePage', () => {
           users: [],
           groups: [],
           insertedAt: Weihnachtsmarkt.insertedAt,
-          updatedAt: date.toISOString(),
           readyToPublish: true,
           published: false,
           title: 'Weihnachtsmarkt',
@@ -157,7 +151,9 @@ describe('article/EditArticlePage', () => {
           category: null,
         },
       };
-      const onSave = createOnSave(Weihnachtsmarkt, variables.article);
+      const onSave = createOnSave(Weihnachtsmarkt, variables.article, {
+        updatedAt: date,
+      });
       const screen = render(
         <EditArticlePage article={Weihnachtsmarkt} />,
         {},
@@ -175,16 +171,17 @@ describe('article/EditArticlePage', () => {
           ],
         }
       );
+
       await fireEvent.click(screen.getByRole('button', { name: /titel/i }));
       await fireEvent.click(screen.getByRole('button', { name: /speichern/i }));
       await waitFor(() => {
         expect(onSave).toHaveBeenCalled();
       });
-    }, 20000);
+    });
 
     it('should redirect to article page after saving', async () => {
       const fireEvent = userEvent.setup();
-      const onPushLocation = jest.fn(async (url: any) => {
+      const onPushLocation = vi.fn(async (url: any) => {
         expect(url).toMatch(/^\/a\//);
         return true;
       });
@@ -214,7 +211,7 @@ describe('article/EditArticlePage', () => {
           users: [],
           groups: [],
           insertedAt: Weihnachtsmarkt.insertedAt,
-          updatedAt: date.toISOString(),
+          // updatedAt: date.toISOString(),
           readyToPublish: true,
           published: false,
           title: 'Weihnachtsmarkt',
@@ -224,10 +221,11 @@ describe('article/EditArticlePage', () => {
           category: null,
         },
       };
-      const onSave = createOnSave(Weihnachtsmarkt, variables.article);
-      jest
-        .requireMock('next/router')
-        .mockRouter.reset(`/a/${Weihnachtsmarkt.id}/edit`);
+      const onSave = createOnSave(Weihnachtsmarkt, variables.article, {
+        updatedAt: date.toISOString(),
+      });
+      const { mockRouter } = await vi.importMock<MockRouter>('next/router');
+      mockRouter.reset(`/a/${Weihnachtsmarkt.id}/edit`);
       const screen = render(
         <EditArticlePage article={Weihnachtsmarkt} />,
         {},
@@ -245,15 +243,13 @@ describe('article/EditArticlePage', () => {
           ],
         }
       );
-      jest
-        .requireMock('next/router')
-        .mockRouter.events.on('routeChangeStart', onPushLocation);
+      mockRouter.events.on('routeChangeStart', onPushLocation);
       await fireEvent.click(screen.getByRole('button', { name: /titel/i }));
       await fireEvent.click(screen.getByRole('button', { name: /speichern/i }));
       await waitFor(() => {
         expect(onPushLocation).toHaveBeenCalled();
       });
-    }, 20000);
+    });
   });
 
   describe('auto-update articles when in editing mode', () => {
@@ -300,7 +296,7 @@ describe('article/EditArticlePage', () => {
           'New Preview-Text'
         );
       });
-    }, 20000);
+    });
 
     it('should update the preview when receiving update via subscription after adding a content module', async () => {
       const fireEvent = userEvent.setup();
@@ -341,18 +337,15 @@ describe('article/EditArticlePage', () => {
         'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
       );
       await fireEvent.click(screen.getByRole('button', { name: /titel/i }));
-      await waitFor(
-        () => {
-          expect(didReceiveUpdate).toEqual(true);
-        },
-        { timeout: 20_000 }
-      );
+      await waitFor(() => {
+        expect(didReceiveUpdate).toEqual(true);
+      });
       expect(
         screen.getByRole('textbox', {
           name: /preview/i,
         })
       ).toHaveValue('New Preview-Text');
-    }, 30_000);
+    });
 
     it('should show a dialog when receiving update including content-module change via subscription after adding a content module', async () => {
       const fireEvent = userEvent.setup();
@@ -419,11 +412,12 @@ describe('article/EditArticlePage', () => {
 
   describe('issue warning when userAvatar navigates away', () => {
     const originalConfirm = global.confirm;
-    beforeEach(() => {
-      jest
-        .requireMock('next/router')
-        .mockRouter.reset(`/c/${Weihnachtsmarkt.id}`);
-      global.confirm = jest.fn(() => true);
+    beforeEach(async () => {
+      const routerModule = await vi.importMock<{ mockRouter: MockRouter }>(
+        'next/router'
+      );
+      routerModule.mockRouter.reset(`/c/${Weihnachtsmarkt.id}`);
+      global.confirm = vi.fn(() => true);
     });
     afterEach(() => {
       global.confirm = originalConfirm;
@@ -443,9 +437,11 @@ describe('article/EditArticlePage', () => {
         screen.getByRole('textbox', { name: /title/i }),
         'Bla'
       );
-      jest
-        .requireMock('next/router')
-        .mockRouter.events.emit('routeChangeStart', '/c/123');
+
+      const routerModule = await vi.importMock<{ mockRouter: MockRouter }>(
+        'next/router'
+      );
+      routerModule.mockRouter.events.emit('routeChangeStart', '/c/123');
       await waitFor(() => {
         expect(global.confirm).toHaveBeenCalled();
       });
@@ -460,9 +456,10 @@ describe('article/EditArticlePage', () => {
           additionalMocks,
         }
       );
-      jest
-        .requireMock('next/router')
-        .mockRouter.events.emit('routeChangeStart', '/c/123');
+      const routerModule = await vi.importMock<{ mockRouter: MockRouter }>(
+        'next/router'
+      );
+      routerModule.mockRouter.events.emit('routeChangeStart', '/c/123');
       expect(global.confirm).not.toHaveBeenCalled();
     });
   });

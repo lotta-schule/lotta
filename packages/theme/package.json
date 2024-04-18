@@ -6,19 +6,10 @@
   "author": "Alexis Rinaldoni <alexis@rinaldoni.net>",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "lint": "eslint --ext js,jsx,ts,tsx src",
-    "typecheck": "tsc --noEmit",
-    "build": "run-p build:*",
-    "build:js": "rollup -c",
-    "build:tsd": "tsc --emitDeclarationOnly"
+    "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
+    "typecheck": "tsc --noEmit"
   },
   "type": "module",
-  "source": "src/index.ts",
-  "main": "./dist/index.js",
-  "types": "dist/index.d.ts",
-  "devDependencies": {
-    "esbuild": "^0.20.2",
-    "rollup": "^4.13.0",
-    "rollup-plugin-esbuild": "^6.1.1"
-  }
+  "main": "./src/index.ts",
+  "types": "./src/index.ts"
 }

@@ -1,41 +1,41 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`List should render 1`] = `
+exports[`List > should render 1`] = `
 <ul
-  class="root"
+  class="_root_5a05a4"
 >
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
   </li>
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
   </li>
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
   </li>
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
@@ -43,70 +43,70 @@ exports[`List should render 1`] = `
 </ul>
 `;
 
-exports[`List should render with subsection left 1`] = `
+exports[`List > should render with subsection left 1`] = `
 <ul
-  class="root"
+  class="_root_5a05a4"
 >
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div>
       <div
-        class="root"
+        class="_root_d51396"
         role="img"
         style="background-image: url();"
       />
     </div>
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
   </li>
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div>
       <div
-        class="root"
+        class="_root_d51396"
         role="img"
         style="background-image: url();"
       />
     </div>
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
   </li>
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div>
       <div
-        class="root"
+        class="_root_d51396"
         role="img"
         style="background-image: url();"
       />
     </div>
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
   </li>
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div>
       <div
-        class="root"
+        class="_root_d51396"
         role="img"
         style="background-image: url();"
       />
     </div>
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
@@ -114,35 +114,35 @@ exports[`List should render with subsection left 1`] = `
 </ul>
 `;
 
-exports[`List should render with subsection right 1`] = `
+exports[`List > should render with subsection right 1`] = `
 <ul
-  class="root"
+  class="_root_5a05a4"
 >
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div>
       <div
-        class="root"
+        class="_root_d51396"
         role="img"
         style="background-image: url();"
       />
     </div>
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
     <div>
       <button
         aria-current="false"
-        class="root root"
+        class="_root_0977c5 _root_3de4f3"
         data-variant="default"
         role="button"
         type="button"
       >
         <span
-          class="label"
+          class="_label_3de4f3"
         >
           Test
         </span>
@@ -150,23 +150,23 @@ exports[`List should render with subsection right 1`] = `
     </div>
   </li>
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
     <div>
       <button
         aria-current="false"
-        class="root root"
+        class="_root_0977c5 _root_3de4f3"
         data-variant="default"
         role="button"
         type="button"
       >
         <span
-          class="label"
+          class="_label_3de4f3"
         >
           Test
         </span>
@@ -174,23 +174,23 @@ exports[`List should render with subsection right 1`] = `
     </div>
   </li>
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
     <div>
       <button
         aria-current="false"
-        class="root root"
+        class="_root_0977c5 _root_3de4f3"
         data-variant="default"
         role="button"
         type="button"
       >
         <span
-          class="label"
+          class="_label_3de4f3"
         >
           Test
         </span>
@@ -198,23 +198,23 @@ exports[`List should render with subsection right 1`] = `
     </div>
   </li>
   <li
-    class="li"
+    class="_li_5a05a4"
   >
     <div
-      class="mainSection"
+      class="_mainSection_5a05a4"
     >
       Test
     </div>
     <div>
       <button
         aria-current="false"
-        class="root root"
+        class="_root_0977c5 _root_3de4f3"
         data-variant="default"
         role="button"
         type="button"
       >
         <span
-          class="label"
+          class="_label_3de4f3"
         >
           Test
         </span>

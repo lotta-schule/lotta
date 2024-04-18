@@ -20,8 +20,11 @@ describe('shared/articlesList/ArticlesList', () => {
     ComputerExperten,
   ];
 
-  it('should render an ArticlesList without error', () => {
-    render(<ArticlesList articles={allArticles} />, {});
+  it('should show all given articles in an ArticlesList without error', () => {
+    const screen = render(<ArticlesList articles={allArticles} />, {});
+    expect(screen.getByRole('table')).toBeVisible();
+
+    expect(screen.getAllByRole('row')).toHaveLength(allArticles.length + 1);
   });
 
   it('should sort the articles by date', async () => {

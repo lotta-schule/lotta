@@ -27,16 +27,26 @@ describe('shared/article/ArticlesByUser', () => {
     },
   ];
 
-  it('should render a ArticlesByUser without error', () => {
-    render(
+  it('should render a ArticlesByUser without articles', async () => {
+    const resFn = vi.fn(() => ({
+      data: {
+        articles: [],
+      },
+    }));
+    const screen = render(
       <ArticlesByUser user={SomeUser} />,
       {},
-      { additionalMocks: getAdditionalMocks({ data: { articles: [] } }) }
+      { additionalMocks: getAdditionalMocks(resFn) }
     );
+    await waitFor(() => {
+      expect(resFn).toHaveBeenCalled();
+    });
+
+    expect(screen.queryAllByTestId('ArticlePreview')).toHaveLength(0);
   });
 
   it('should render the articles found for a given user', async () => {
-    const resFn = jest.fn(() => ({
+    const resFn = vi.fn(() => ({
       data: {
         articles: [Weihnachtsmarkt, ComputerExperten, VivaLaRevolucion],
       },

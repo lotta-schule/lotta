@@ -5,7 +5,9 @@ import {
   SomeUserin,
   imageFile as mockImageFile,
 } from 'test/fixtures';
-import { FileExplorerProps } from 'shared/fileExplorer/FileExplorer';
+import FileExplorer, {
+  FileExplorerProps,
+} from 'shared/fileExplorer/FileExplorer';
 import { ComposeMessage } from './ComposeMessage';
 import { MessageModel } from 'model';
 import userEvent from '@testing-library/user-event';
@@ -13,10 +15,8 @@ import userEvent from '@testing-library/user-event';
 import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
 
 const mockReact = React;
-jest.mock('../shared/fileExplorer/FileExplorer', () => {
-  const originalModule = jest.requireActual(
-    '../shared/fileExplorer/FileExplorer'
-  );
+vi.mock('../shared/fileExplorer/FileExplorer', async (importOriginal) => {
+  const originalModule: typeof FileExplorer = await importOriginal();
   return {
     __esModule: true,
     ...originalModule,
@@ -30,16 +30,6 @@ jest.mock('../shared/fileExplorer/FileExplorer', () => {
 });
 
 describe('shared/layouts/messagingLayout/ComposeMessage', () => {
-  it('should render the shared', () => {
-    render(
-      <ComposeMessage
-        destination={{
-          user: SomeUserin,
-        }}
-      />
-    );
-  });
-
   it('should auto focus input field', () => {
     const screen = render(
       <ComposeMessage
@@ -153,7 +143,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
               },
             },
           },
-          result: jest.fn(() => ({
+          result: vi.fn(() => ({
             data: {
               message: {
                 id: 1,
@@ -243,7 +233,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
           },
         },
       ];
-      const onSent = jest.fn((message: MessageModel) => {
+      const onSent = vi.fn((message: MessageModel) => {
         expect(message.id).toEqual(1);
       });
       const screen = render(
@@ -265,7 +255,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
 
     it('should not send form on ENTER when SHIFT modifier is pressed', async () => {
       const fireEvent = userEvent.setup();
-      const onSent = jest.fn();
+      const onSent = vi.fn();
       const screen = render(
         <ComposeMessage
           destination={{

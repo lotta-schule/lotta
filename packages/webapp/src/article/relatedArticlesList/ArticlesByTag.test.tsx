@@ -26,14 +26,6 @@ describe('shared/article/ArticlesByTag', () => {
     },
   ];
 
-  it('should render a ArticlesByTag without error', () => {
-    render(
-      <ArticlesByTag tag={'tag'} />,
-      {},
-      { additionalMocks: getAdditionalMocks({ data: { articles: [] } }) }
-    );
-  });
-
   describe('tag header', () => {
     it('should be visible when results are found', async () => {
       const screen = render(
@@ -51,7 +43,7 @@ describe('shared/article/ArticlesByTag', () => {
     });
 
     it('should not be shown when no results are found', async () => {
-      const resFn = jest.fn(() => ({ data: { articles: [] } }));
+      const resFn = vi.fn(() => ({ data: { articles: [] } }));
       const screen = render(
         <ArticlesByTag tag={'tag'} />,
         {},
@@ -67,7 +59,7 @@ describe('shared/article/ArticlesByTag', () => {
   });
 
   it('should render the articles found for a given tag', async () => {
-    const resFn = jest.fn(() => ({
+    const resFn = vi.fn(() => ({
       data: {
         articles: [Weihnachtsmarkt, ComputerExperten, VivaLaRevolucion],
       },

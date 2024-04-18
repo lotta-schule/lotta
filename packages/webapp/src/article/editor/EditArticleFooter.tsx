@@ -180,11 +180,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                   className={'is-last-button-group-button'}
                   variant={'fill'}
                   disabled={isLoading}
-                  onClick={() =>
-                    onSave({
-                      updatedAt: new Date().toISOString(),
-                    })
-                  }
+                  onClick={() => onSave()}
                 >
                   speichern
                 </Button>

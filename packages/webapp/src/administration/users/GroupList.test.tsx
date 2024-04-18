@@ -44,7 +44,8 @@ describe('administration/users/GroupList', () => {
 
   it('should highlight a group by name', async () => {
     let scrolledElement: HTMLElement | null = null;
-    const scrollIntoViewMock = jest.fn(function () {
+    const scrollIntoViewMock = vi.fn(function (this: HTMLElement) {
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
       scrolledElement = this;
     });
     HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;

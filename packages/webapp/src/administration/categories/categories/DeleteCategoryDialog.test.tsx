@@ -27,19 +27,6 @@ const mocks = [
 ];
 
 describe('shared/layouts/adminLayout/userManagment/DeleteCategoryDialog', () => {
-  it('should render the shared', () => {
-    render(
-      <DeleteCategoryDialog
-        isOpen
-        categoryToDelete={FaecherCategory}
-        onConfirm={() => {}}
-        onRequestClose={() => {}}
-      />,
-      {},
-      { additionalMocks: mocks }
-    );
-  });
-
   it('should show the number of articles which categories will be removed.', async () => {
     render(
       <DeleteCategoryDialog
@@ -74,7 +61,7 @@ describe('shared/layouts/adminLayout/userManagment/DeleteCategoryDialog', () => 
 
   it('should call onRequestClose when clicking the "Abort" button', async () => {
     const fireEvent = userEvent.setup();
-    const onRequestClose = jest.fn();
+    const onRequestClose = vi.fn();
     render(
       <DeleteCategoryDialog
         isOpen
@@ -95,7 +82,7 @@ describe('shared/layouts/adminLayout/userManagment/DeleteCategoryDialog', () => 
   describe('send delete request', () => {
     it('delete the category and close the dialog', async () => {
       const fireEvent = userEvent.setup();
-      const onConfirm = jest.fn();
+      const onConfirm = vi.fn();
       const screen = render(
         <DeleteCategoryDialog
           isOpen

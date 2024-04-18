@@ -1,6 +1,5 @@
 import { StoryObj, Meta } from '@storybook/react';
-import { expect } from '@storybook/jest';
-import { fireEvent, waitFor, within } from '@storybook/testing-library';
+import { expect, fireEvent, waitFor, within } from '@storybook/test';
 import { Checkbox } from '@lotta-schule/hubert';
 
 export default {

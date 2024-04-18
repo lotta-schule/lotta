@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { SomeUser, SomeUserin } from 'test/fixtures';
 import { render } from 'test/util';
 import { AuthorAvatarsList } from './AuthorAvatarsList';
@@ -13,7 +14,7 @@ describe('AuthorAvatarsList', () => {
   describe('Editing', () => {
     it('should show a delete button when "onUpdate" function is given', async () => {
       const fireEvent = userEvent.setup();
-      const fn = jest.fn();
+      const fn = vi.fn();
       const screen = render(<AuthorAvatarsList users={users} onUpdate={fn} />);
       expect(
         screen.getByRole('button', { name: /che entfernen/i })
@@ -25,7 +26,7 @@ describe('AuthorAvatarsList', () => {
     });
 
     it('should show the User Search when "onUpdate" function is given', () => {
-      const fn = jest.fn();
+      const fn = vi.fn();
       const screen = render(<AuthorAvatarsList users={users} onUpdate={fn} />);
       expect(
         screen.getByRole('combobox', { name: /autor hinzufügen/i })

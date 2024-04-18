@@ -12,12 +12,6 @@ import userEvent from '@testing-library/user-event';
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 
 describe('shared/article/ArticleStateEditor', () => {
-  it('should render without errors', () => {
-    render(
-      <ArticleStateEditor article={Weihnachtsmarkt} onUpdate={jest.fn()} />
-    );
-  });
-
   describe('when in draft state', () => {
     const article = {
       ...Weihnachtsmarkt,
@@ -27,7 +21,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
     it('should have the "draft" radio button selected', () => {
       const screen = render(
-        <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+        <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
         {},
         { currentUser: SomeUserin }
       );
@@ -37,7 +31,7 @@ describe('shared/article/ArticleStateEditor', () => {
     describe('for author', () => {
       it('should have the "ready to publish" option enabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: SomeUserin }
         );
@@ -46,7 +40,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should have the "publish" option disabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: SomeUserin }
         );
@@ -57,7 +51,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should call onUpdate with "readyToPublish" set to true when "submitted" option is selected', async () => {
         const fireEvent = userEvent.setup();
-        const onUpdate = jest.fn();
+        const onUpdate = vi.fn();
         const screen = render(
           <ArticleStateEditor article={article} onUpdate={onUpdate} />,
           {},
@@ -77,7 +71,7 @@ describe('shared/article/ArticleStateEditor', () => {
     describe('for admin', () => {
       it('should have the "ready to publish" option disabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: adminUser }
         );
@@ -88,7 +82,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should have the "publish" option enabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: adminUser }
         );
@@ -97,7 +91,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should call onUpdate with "publisehd" set to true when "published" option is selected', async () => {
         const fireEvent = userEvent.setup();
-        const onUpdate = jest.fn();
+        const onUpdate = vi.fn();
         const screen = render(
           <ArticleStateEditor article={article} onUpdate={onUpdate} />,
           {},
@@ -124,7 +118,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
     it('should have the "submitted" radio button selected', () => {
       const screen = render(
-        <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+        <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
         {},
         { currentUser: SomeUserin }
       );
@@ -134,7 +128,7 @@ describe('shared/article/ArticleStateEditor', () => {
     describe('for author', () => {
       it('should have the "draft" option enabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: SomeUserin }
         );
@@ -143,7 +137,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should have the "publish" option disabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: SomeUserin }
         );
@@ -154,7 +148,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should call onUpdate with "readyToPublish" set to false when "draft" option is selected', async () => {
         const fireEvent = userEvent.setup();
-        const onUpdate = jest.fn();
+        const onUpdate = vi.fn();
         const screen = render(
           <ArticleStateEditor article={article} onUpdate={onUpdate} />,
           {},
@@ -172,7 +166,7 @@ describe('shared/article/ArticleStateEditor', () => {
     describe('for admin', () => {
       it('should have the "draft" option disabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: adminUser }
         );
@@ -183,7 +177,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should have the "publish" option enabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: adminUser }
         );
@@ -192,7 +186,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should call onUpdate with "published" set to true when "published" option is selected', async () => {
         const fireEvent = userEvent.setup();
-        const onUpdate = jest.fn();
+        const onUpdate = vi.fn();
         const screen = render(
           <ArticleStateEditor article={article} onUpdate={onUpdate} />,
           {},
@@ -220,7 +214,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
     it('should have the "published" radio button selected', () => {
       const screen = render(
-        <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+        <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
         {},
         { currentUser: SomeUserin }
       );
@@ -230,7 +224,7 @@ describe('shared/article/ArticleStateEditor', () => {
     describe('for author', () => {
       it('should have the "draft" option enabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: SomeUserin }
         );
@@ -239,7 +233,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should have the "submitted" option disabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: SomeUserin }
         );
@@ -252,7 +246,7 @@ describe('shared/article/ArticleStateEditor', () => {
     describe('for admin', () => {
       it('should have the "draft" option enabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: adminUser }
         );
@@ -261,7 +255,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should have the "submitted" option disabled', () => {
         const screen = render(
-          <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
+          <ArticleStateEditor article={article} onUpdate={vi.fn()} />,
           {},
           { currentUser: adminUser }
         );
@@ -272,7 +266,7 @@ describe('shared/article/ArticleStateEditor', () => {
 
       it('should call onUpdate with "draft" set to true when "draft" option is selected', async () => {
         const fireEvent = userEvent.setup();
-        const onUpdate = jest.fn();
+        const onUpdate = vi.fn();
         const screen = render(
           <ArticleStateEditor article={article} onUpdate={onUpdate} />,
           {},

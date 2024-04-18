@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { DirectoryModel, FileModel } from 'model';
-import { render, waitFor } from 'test/util';
+import { MockRouter, render, waitFor } from 'test/util';
 import {
   ComputerExperten,
   VivaLaRevolucion,
@@ -29,27 +30,6 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
     (f: unknown) => (f as FileModel).fileType === undefined
   ) as unknown as DirectoryModel[];
   const rootDirectories = directories.filter((d) => !d.parentDirectory);
-
-  it('should render the shared without error', () => {
-    render(
-      <DeletePage />,
-      {},
-      {
-        currentUser: SomeUser,
-        additionalMocks: [
-          {
-            request: {
-              query: GetDirectoriesAndFilesQuery,
-              variables: { parentDirectoryId: null },
-            },
-            result: {
-              data: { files: [], directories: rootDirectories },
-            },
-          },
-        ],
-      }
-    );
-  });
 
   it('should be able to go to second page and see own articles when clicking on button', async () => {
     const fireEvent = userEvent.setup();
@@ -281,6 +261,10 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
       }
     );
 
+    const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
+      'next/router'
+    );
+
     await waitFor(() => {
       screen.getByRole('button', { name: /weiter/i });
     });
@@ -313,10 +297,9 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
     await waitFor(() => {
       expect(didCallDeleteMutation).toEqual(true);
     });
+
     await waitFor(() => {
-      expect(
-        jest.requireMock('next/router').mockRouter._push.mock.calls.at(-1)?.[0]
-      ).toEqual('/');
+      expect(mockRouter._push).toHaveBeenLastCalledWith('/', '/', undefined);
     });
   }, 25_000);
 });

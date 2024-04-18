@@ -1,11 +1,11 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`list/ListItem should render a list item 1`] = `
+exports[`list/ListItem > should render a list item 1`] = `
 <li
-  class="li"
+  class="_li_5a05a4"
 >
   <div
-    class="mainSection"
+    class="_mainSection_5a05a4"
   >
     Item
   </div>

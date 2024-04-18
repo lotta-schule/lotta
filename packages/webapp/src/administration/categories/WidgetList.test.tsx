@@ -6,13 +6,13 @@ import {
   VPLehrerWidget,
   VPSchuelerWidget,
 } from 'test/fixtures';
+import { WidgetModelType } from 'model';
 import { render, waitFor } from 'test/util';
 import { WidgetList } from './WidgetList';
 import userEvent from '@testing-library/user-event';
 
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';
-import { WidgetModelType } from 'model';
 
 const renderWithContext: typeof render = (children, ...other) => {
   return render(<SplitViewProvider>{children}</SplitViewProvider>, ...other);
@@ -79,7 +79,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetList', () => {
   describe('Create new widget', () => {
     it('should create a calendar widget', async () => {
       const fireEvent = userEvent.setup();
-      const onCreateWidget = jest.fn(() => ({
+      const onCreateWidget = vi.fn(() => ({
         data: {
           widget: newWidget,
         },
@@ -133,7 +133,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetList', () => {
     it('should create a schedule widget', async () => {
       const fireEvent = userEvent.setup();
 
-      const onCreateWidget = jest.fn(() => ({
+      const onCreateWidget = vi.fn(() => ({
         data: {
           widget: newWidget,
         },
@@ -185,7 +185,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetList', () => {
 
     it('should create an iframe widget', async () => {
       const fireEvent = userEvent.setup();
-      const onCreateWidget = jest.fn(() => ({
+      const onCreateWidget = vi.fn(() => ({
         data: {
           widget: newWidget,
         },

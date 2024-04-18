@@ -1,22 +1,22 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`util/Tooltip should render 1`] = `
+exports[`util/Tooltip > should render 1`] = `
 <div>
   <div
-    class="root"
+    class="_root_2e247f"
   >
     <div
-      class="trigger"
+      class="_trigger_2e247f"
     >
       <button
         aria-current="false"
-        class="root root"
+        class="_root_0977c5 _root_3de4f3"
         data-variant="default"
         role="button"
         type="button"
       >
         <span
-          class="label"
+          class="_label_3de4f3"
         >
           Test
         </span>

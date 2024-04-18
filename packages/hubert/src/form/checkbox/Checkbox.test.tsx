@@ -11,7 +11,7 @@ describe('shared/general/form/checkbox', () => {
 
   it('should show a selected checkbox and unselect it on click', async () => {
     const fireEvent = userEvent.setup();
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const screen = render(
       <Checkbox isSelected onChange={onChange}>
         A label

@@ -22,3 +22,5 @@ export * from './theme';
 export * from './util';
 
 export * from './HubertProvider';
+
+export * from '@lotta-schule/theme';

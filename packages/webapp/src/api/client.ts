@@ -5,19 +5,18 @@ import {
   ApolloLink,
   split,
   NormalizedCacheObject,
+  RequestHandler,
 } from '@apollo/client';
 import { createLink } from 'apollo-v3-absinthe-upload-link';
+import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
 import { Socket as PhoenixSocket } from 'phoenix';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { hasSubscription } from '@jumpn/utils-graphql';
 import { JWT } from 'util/auth/jwt';
 import { TenantModel } from 'model';
 import { isAfter, sub } from 'date-fns';
-import { createAbsintheSocketLink } from './createAbsintheSocketLink';
 import axios, { AxiosRequestConfig } from 'axios';
 import getConfig from 'next/config';
 import { createCache } from './cache';
+import { getMainDefinition } from '@apollo/client/utilities';
 
 const ALLOWED_HEADERS = ['accept', 'content-type', 'authorization'] as const;
 
@@ -243,18 +242,32 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
     ? createAbsintheSocketLink(absintheSocket)
     : null;
 
+  const subscriptionLink =
+    websocketLink &&
+    ApolloLink.from([
+      errorLink,
+      websocketLink.request as any as RequestHandler,
+    ]);
+  const queryMutationLink = ApolloLink.from([errorLink, authLink, httpLink]);
+
   const link = websocketLink
     ? split(
-        (operation) => hasSubscription(operation.query),
-        ApolloLink.from([errorLink, websocketLink]),
-        ApolloLink.from([errorLink, authLink, httpLink])
+        (operation) => {
+          const definition = getMainDefinition(operation.query);
+          return (
+            definition.kind === 'OperationDefinition' &&
+            definition.operation === 'subscription'
+          );
+        },
+
+        subscriptionLink!,
+        queryMutationLink
       )
-    : ApolloLink.from([errorLink, authLink, httpLink]);
+    : queryMutationLink;
 
   const apolloClient = new ApolloClient({
     ssrMode: !isBrowser,
     link,
-    resolvers: {},
     cache: createCache(),
   });
 

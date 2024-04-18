@@ -19,13 +19,15 @@ const additionalMocks = [
 ];
 
 describe('shared/dialog/LoginDialog', () => {
-  it('should render login dialog without errors', () => {
-    render(<LoginDialog isOpen={true} onRequestClose={() => {}} />, {});
+  it('should not show the login dialog when isOpen is not true', () => {
+    const screen = render(<LoginDialog onRequestClose={() => {}} />, {});
+
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('should close the dialog when clicking on cancel', async () => {
     const fireEvent = userEvent.setup();
-    const onRequestClose = jest.fn();
+    const onRequestClose = vi.fn();
     const screen = render(
       <LoginDialog isOpen={true} onRequestClose={onRequestClose} />,
       {}
@@ -36,12 +38,12 @@ describe('shared/dialog/LoginDialog', () => {
 
   describe('fields', () => {
     afterEach(() => {
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     it('should send a complete login, then show a confirm message', async () => {
       const fireEvent = userEvent.setup();
-      const onRequestClose = jest.fn();
+      const onRequestClose = vi.fn();
       const screen = render(
         <LoginDialog isOpen={true} onRequestClose={onRequestClose} />,
         {},
@@ -53,7 +55,7 @@ describe('shared/dialog/LoginDialog', () => {
       );
       await fireEvent.type(screen.getByLabelText(/passwort/i), 'password');
 
-      jest.useFakeTimers({ advanceTimers: true });
+      vi.useFakeTimers({ shouldAdvanceTime: true });
 
       await fireEvent.click(screen.getByRole('button', { name: /anmelden/i }));
 
@@ -65,7 +67,7 @@ describe('shared/dialog/LoginDialog', () => {
         ).toBeVisible();
       });
 
-      await act(() => jest.advanceTimersByTimeAsync(2000));
+      await act(() => vi.advanceTimersByTimeAsync(2000));
 
       await waitFor(() => {
         expect(onRequestClose).toHaveBeenCalled();
@@ -75,7 +77,7 @@ describe('shared/dialog/LoginDialog', () => {
     it('should send a complete login, then show the password change dialog if the userAvatar logs in for the first time', async () => {
       const fireEvent = userEvent.setup();
       const screen = render(
-        <LoginDialog isOpen={true} onRequestClose={jest.fn()} />,
+        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
         {},
         {
           additionalMocks,

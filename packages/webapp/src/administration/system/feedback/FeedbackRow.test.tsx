@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { FeedbackModel } from 'model';
 import { FeedbackRow } from './FeedbackRow';
@@ -120,7 +121,7 @@ describe('FeedbackRow', () => {
     });
 
     it('should call onClick() handler when selected', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const fireEvent = userEvent.setup();
       const screen = render(
         <table>
@@ -141,7 +142,7 @@ describe('FeedbackRow', () => {
     });
 
     it('should show the delete feedback dialog when the delete button is clicked', async () => {
-      const onDelete = jest.fn();
+      const onDelete = vi.fn();
       const fireEvent = userEvent.setup();
       const screen = render(
         <table>

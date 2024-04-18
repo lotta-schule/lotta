@@ -1,23 +1,22 @@
 {
-  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
+  "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "src",
-    "outDir": "dist",
-    "rootDir": "src",
-    "types": [],
-    "typeRoots": [
-      "src/@types",
-      "node_modules/@types",
-      "../../node_modules/@types"
-    ],
-    "declaration": true,
-    "composite": true
+    "baseUrl": "src/",
+
+    "isolatedModules": true,
+    "incremental": true,
+    "resolveJsonModule": true,
+
+    "module": "Preserve",
+    "paths": {
+      "@lotta-schule/theme": ["../../theme/src/index.ts"]
+    }
   },
   "references": [
-    {
-      "path": "../theme"
-    }
+    { "path": "./tsconfig.test.json" },
+    { "path": "./tsconfig.lib.json" },
   ],
-  "include": ["src/**/*"]
+
+  "include": []
 }

@@ -25,7 +25,7 @@ describe('list/ListItemFactory', () => {
       ).toEqual('Test');
       expect(item.props.children).toHaveLength(4);
       expect(
-        JSON.stringify(React.Children.toArray(item.props.children))
+        JSON.stringify(React.Children.toArray(item.props.children as any))
       ).toMatchSnapshot();
     });
 
@@ -43,7 +43,7 @@ describe('list/ListItemFactory', () => {
   });
 
   describe('create ListItem', () => {
-    it('should render a listItem with complete information from an item', () => {
+    it('should render a listItem with complete information from an item with icons', () => {
       const screen = render(
         ListItemFactory.createListItem({
           rendered: ListItemFactory.createItem({
@@ -58,7 +58,7 @@ describe('list/ListItemFactory', () => {
       expect(screen.getByRole('listitem')).toMatchSnapshot();
     });
 
-    it('should render a listItem with complete information from an item', () => {
+    it('should render a listItem with complete information from an item with description', () => {
       const screen = render(
         ListItemFactory.createListItem({
           rendered: ListItemFactory.createItem({

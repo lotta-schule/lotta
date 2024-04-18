@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from '../../test-utils';
 import { Radio } from './Radio';
 import { RadioGroup } from './RadioGroup';
@@ -16,7 +17,7 @@ describe('shared/general/form/radio', () => {
     );
     const radios = screen.getAllByRole('radio') as HTMLInputElement[];
     expect(radios).toHaveLength(4);
-    expect(radios.every((r) => r.name === 'form-name'));
+    expect(radios.every((r) => r.name === 'form-name')).toBeTruthy();
   });
 
   it('should have the correct value selected when value prop is given', () => {
@@ -33,7 +34,7 @@ describe('shared/general/form/radio', () => {
 
   it('should call onChange with the newly selected value', async () => {
     const user = userEvent.setup();
-    const onChange = jest.fn((ev, val) => {
+    const onChange = vi.fn((ev, val) => {
       expect(ev.type).toEqual('change');
       expect(val).toEqual('3');
     });
