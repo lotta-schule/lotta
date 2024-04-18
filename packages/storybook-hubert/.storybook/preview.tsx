@@ -27,7 +27,7 @@ const preview: Preview = {
             supportedFonts={[
               {
                 name: 'Muli',
-                url: 'https://fonts.googleapis.com/css2?family=Muli&display=swap',
+                url: 'https://fonts.googleapis.com/css2?family=Muli&display=block',
               },
             ]}
           />
