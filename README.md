@@ -10,6 +10,41 @@ See [https://lotta.schule](lotta.schule) for more information.
 The latest git tag is the currently deployed version that also runs
 unmodified on our infrastructure.
 
+## Components
+
+### Webapp
+
+Location: packages/webapp
+
+The Webapp is a [NextJS](https://nextjs.org/) app that serves the application.
+Its primary purpose is serving the frontend.
+
+### Hubert
+
+Location: packages/hubert
+
+[Hubert](https://www.npmjs.com/package/@lotta-schule/hubert) is our component library.
+See our [storybook](https://lotta-schule.github.io/web) to get an overview over the
+available components.
+
+### Theme
+
+Location: packages/theme
+
+Here lie the definition and schema lotta uses for theming.
+
+### Storybook Hubert
+
+Location: packages/storybook-hubert
+
+The storybook project for hubert.
+
+### Storybook-Addon-Theme
+
+Location: packages/storybook-addon-theme
+
+A storybook-addon which allows editing the theme in storybook
+
 ## Development
 
 For monorepo managing, we use [nx](https://nx.dev/).
