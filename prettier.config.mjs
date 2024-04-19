@@ -5,7 +5,14 @@ const config = {
   singleQuote: true,
   overrides: [
     {
-      files: ['*.html', '*.scss', '*.css'],
+      files: ['*.scss', '*.css'],
+      options: {
+        tabWidth: 2,
+        singleQuote: false,
+      },
+    },
+    {
+      files: ['*.html'],
       options: {
         tabWidth: 4,
         singleQuote: false,

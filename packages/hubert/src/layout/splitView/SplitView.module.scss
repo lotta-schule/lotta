@@ -1,4 +1,4 @@
-@import '../../theme/breakpoints';
+@import "../../theme/breakpoints";
 
 .root {
   display: flex;
@@ -37,7 +37,6 @@
     @media screen and (max-width: $max-sm) {
       margin-left: 0;
     }
-
   }
 
   .openButton {

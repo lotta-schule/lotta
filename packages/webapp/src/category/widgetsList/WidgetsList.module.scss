@@ -1,4 +1,4 @@
-@import 'breakpoints';
+@import "breakpoints";
 
 .root {
   display: flex;
@@ -25,7 +25,7 @@
     .WidgetTab {
       border-radius: 0 !important;
       margin-bottom: 0;
-      &:not([aria-selected='true']) {
+      &:not([aria-selected="true"]) {
         filter: grayscale(0.9);
         opacity: 0.5;
       }

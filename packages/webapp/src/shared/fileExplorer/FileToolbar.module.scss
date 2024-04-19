@@ -1,4 +1,4 @@
-@import 'breakpoints';
+@import "breakpoints";
 
 .toolbar {
   @media screen and (max-width: $max-sm) {
@@ -39,7 +39,7 @@
 }
 
 .breadcrumbs {
-  & [role='button'] {
+  & [role="button"] {
     pointer-events: none;
     cursor: inherit;
   }

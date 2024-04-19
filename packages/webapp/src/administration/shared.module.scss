@@ -36,12 +36,12 @@
 .usageTable {
   justify-content: stretch;
 
-  &>div {
+  & > div {
     flex: 1;
     text-align: center;
   }
 
-  &> :first-child {
+  & > :first-child {
     flex: 0 1 16%;
   }
 }

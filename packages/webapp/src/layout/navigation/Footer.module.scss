@@ -1,4 +1,4 @@
-@import 'breakpoints';
+@import "breakpoints";
 
 .root {
   display: none;
@@ -13,10 +13,9 @@
     padding: 0;
 
     &:after {
-      content: '|';
+      content: "|";
       margin-inline: var(--lotta-spacing);
     }
-
   }
 
   @media screen and (max-width: $max-sm) {

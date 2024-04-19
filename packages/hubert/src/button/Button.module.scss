@@ -10,6 +10,7 @@
 
   .icon {
     display: flex;
+    margin-right: var(--lotta-spacing);
   }
 
   .label {
@@ -24,7 +25,11 @@
       height: 2.5em;
       width: 2.5em;
 
-      &:not([data-varaint='fill']) {
+      & .icon {
+        margin: 0px;
+      }
+
+      &:not([data-varaint="fill"]) {
         &:hover {
           background-color: rgba(var(--lotta-primary-color), 0.2);
         }

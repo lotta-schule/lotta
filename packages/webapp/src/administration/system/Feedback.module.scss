@@ -1,4 +1,4 @@
-@import '../../styles/util/breakpoints';
+@import "../../styles/util/breakpoints";
 
 .root {
   display: flex;
@@ -19,7 +19,6 @@
       border-right: none;
     }
   }
-
 
   th:not(:last-child) {
     text-align: left;
