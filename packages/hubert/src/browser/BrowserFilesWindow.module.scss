@@ -1,26 +1,13 @@
 .root {
-  .wrapper {
-    background-color: rgba(var(--lotta-page-background-color), 1);
-    height: 300px;
-    display: flex;
-    overflow: hidden;
-    display: flex;
+  background-color: rgb(var(--lotta-box-background-color));
+  height: 300px;
+  display: flex;
+  overflow: hidden;
+  display: flex;
 
-    .BrowserColumns {
-      display: flex;
-      overflow: auto;
-      width: 100%;
-    }
-  }
-  .paths {
-    svg {
-      font-size: 1.25em;
-    }
-    background-color: rgb(var(--lotta-accent-grey-color));
-    padding: var(--lotta-spacing);
-    font-size: 0.75em;
-    color: rgba(var(--lotta-text-color), 0.5);
+  .BrowserColumns {
     display: flex;
-    justify-content: baseline;
+    overflow: auto;
+    width: 100%;
   }
 }

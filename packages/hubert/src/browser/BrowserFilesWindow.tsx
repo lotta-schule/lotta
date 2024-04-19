@@ -1,35 +1,24 @@
 import * as React from 'react';
+import { useBrowserState } from './BrowserStateContext';
 import { BrowserFilesList } from './BrowserFilesList';
 import { BrowserFilePreview } from './BrowserFilePreview';
-import { Home } from '../icon';
 
 import styles from './BrowserFilesWindow.module.scss';
 
 export const BrowserFilesWindow = React.memo(() => {
-  const [isShowPreview, setIsShowPreview] = React.useState(false);
+  const { currentPath } = useBrowserState();
   return (
     <div className={styles.root}>
-      <input
-        type={'checkbox'}
-        checked={isShowPreview}
-        onChange={(e) => {
-          setIsShowPreview(e.currentTarget.checked);
-        }}
-      />{' '}
-      Vorschau anzeigen
-      <div className={styles.wrapper}>
-        <div className={styles.BrowserColumns}>
-          <BrowserFilesList narrow={!isShowPreview} />
-          <BrowserFilesList narrow={!isShowPreview} />
-          <BrowserFilesList narrow={!isShowPreview} />
-          <BrowserFilesList narrow={!isShowPreview} />
-        </div>
-        {isShowPreview && <BrowserFilePreview />}
+      <div className={styles.BrowserColumns}>
+        <BrowserFilesList path={[]} />
+        {currentPath.map((currentNode, i) => (
+          <BrowserFilesList
+            key={currentNode.parent}
+            path={currentPath.slice(0, i + 1)}
+          />
+        ))}
       </div>
-      <div className={styles.paths}>
-        {' '}
-        <Home /> / folder 1 / folder 2 / file{' '}
-      </div>
+      <BrowserFilePreview />
     </div>
   );
 });

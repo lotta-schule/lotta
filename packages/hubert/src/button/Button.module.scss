@@ -19,6 +19,7 @@
   }
 
   &.onlyIcon {
+    padding: 0;
     &:not(.grouped) {
       border-radius: 50%;
       border-color: transparent;

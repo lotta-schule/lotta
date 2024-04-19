@@ -1,28 +1,44 @@
 import * as React from 'react';
-import { Close, Delete, Edit } from '../icon';
+import { useBrowserState, BrowserNode } from './BrowserStateContext';
+import { BrowserNodeListItem } from './BrowserNodeListItem';
 import clsx from 'clsx';
 
 import styles from './BrowserFilesList.module.scss';
 
 export type BrowserFilesListProps = {
-  narrow?: boolean;
+  path: BrowserNode[];
 };
 
 export const BrowserFilesList = React.memo(
-  ({ narrow }: BrowserFilesListProps) => {
+  ({ path }: BrowserFilesListProps) => {
+    const listRef = React.useRef<HTMLElement>(null);
+
+    const { nodes, currentPath } = useBrowserState();
+
+    React.useEffect(() => {
+      if (listRef.current && path.length === currentPath.length) {
+        listRef.current.scrollIntoView({ inline: 'end', behavior: 'smooth' });
+      }
+    }, [path, currentPath]);
+
+    const parentNode = path.at(-1) ?? null;
+
+    const childNodes = React.useMemo(
+      () => nodes.filter((n) => n.parent === (parentNode?.id || null)),
+      [nodes, parentNode]
+    );
+
+    if (childNodes.length === 0) {
+      return (
+        <div ref={listRef as any} className={clsx(styles.root, styles.isEmpty)}>
+          Keine Dateien
+        </div>
+      );
+    }
     return (
-      <ul className={clsx(styles.root, { [styles.narrow]: narrow })}>
-        {Array.from({ length: 10 }).map((_, i) => (
-          <li className={styles.selected} key={i}>
-            <div className={styles.fileIcon}>
-              <Close />
-            </div>
-            <div className={styles.fileName}>Dateiname 1</div>
-            <div className={styles.fileEdit}>
-              <Edit />
-              <Delete />
-            </div>
-          </li>
+      <ul className={styles.root} ref={listRef as any}>
+        {childNodes.map((node) => (
+          <BrowserNodeListItem key={node.id} parentPath={path} node={node} />
         ))}
       </ul>
     );

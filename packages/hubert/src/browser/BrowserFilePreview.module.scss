@@ -2,12 +2,14 @@
 
 .root {
   margin: auto;
-  width: 33.333%;
+  width: 400px;
+  max-width: 50%;
   height: 100%;
   padding: var(--lotta-spacing);
   display: grid;
+
   @media screen and (max-width: $max-xs) {
-    width: 50%;
+    min-width: 50%;
   }
 
   .previewImage {

@@ -8,7 +8,6 @@ export const BrowserFilePreview = React.memo(() => {
         <img src="https://via.placeholder.com/200x150.png/"></img>
       </div>
       <div className={styles.infoSection}>
-        {' '}
         Informationen Informationen Informationen Informationen Informationen
         Informationen Informationen Informationen Informationen Informationen
         Informationen Informationen Informationen Informationen Informationen
