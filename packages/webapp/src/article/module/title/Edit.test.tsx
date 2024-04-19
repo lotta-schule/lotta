@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { Klausurenplan } from 'test/fixtures';
 import { Edit } from './Edit';
@@ -7,12 +7,6 @@ import userEvent from '@testing-library/user-event';
 const titleContentModule = Klausurenplan.contentModules[0];
 
 describe('shared/article/module/table/Edit', () => {
-  it('should render without an error', () => {
-    render(
-      <Edit contentModule={titleContentModule} onUpdateModule={() => {}} />
-    );
-  });
-
   it('should display the correct title', () => {
     const screen = render(
       <Edit contentModule={titleContentModule} onUpdateModule={() => {}} />
@@ -24,7 +18,7 @@ describe('shared/article/module/table/Edit', () => {
 
   it('should correctly call the onUpateModule prop', async () => {
     const fireEvent = userEvent.setup();
-    const callback = jest.fn((cm) => {
+    const callback = vi.fn((cm) => {
       expect(cm.content.title).toEqual('Eine neue Überschrift');
     });
     const screen = render(
@@ -43,7 +37,7 @@ describe('shared/article/module/table/Edit', () => {
 
   it('should reset title when clicking ESC', async () => {
     const fireEvent = userEvent.setup();
-    const callback = jest.fn((cm) => {
+    const callback = vi.fn((cm) => {
       expect(cm.content.title).toEqual('Na, wie war dein erster Tag?');
     });
     const screen = render(

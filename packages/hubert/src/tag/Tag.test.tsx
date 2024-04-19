@@ -5,18 +5,24 @@ import userEvent from '@testing-library/user-event';
 
 describe('Tag', () => {
   it('should correctly render a tag', () => {
-    render(<Tag>Tag</Tag>);
+    const screen = render(<Tag>Tag</Tag>);
+
+    expect(screen.getByText('Tag')).toBeVisible();
   });
 
   it('should show a Delete Button when a onDelete prop is given', async () => {
     const fireEvent = userEvent.setup({ delay: 100 });
-    const fn = jest.fn();
-    const screen = render(<Tag onDelete={fn}>Tag</Tag>);
+    const onDelete = vi.fn();
+
+    const screen = render(<Tag onDelete={onDelete}>Tag</Tag>);
+
     const deleteButton = screen.getByRole('button', {
       name: 'Tag Tag löschen',
     });
     expect(deleteButton).toBeVisible();
+
     await fireEvent.click(deleteButton);
-    expect(fn).toHaveBeenCalled();
+
+    expect(onDelete).toHaveBeenCalled();
   });
 });

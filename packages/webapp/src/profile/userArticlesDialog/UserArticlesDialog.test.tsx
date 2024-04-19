@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
 import { useRouter } from 'next/router';
@@ -20,7 +21,7 @@ describe('UserArticlesDialog', () => {
 
   it('should not show when tag is null', () => {
     const screen = render(
-      <UserArticlesDialog user={null} onRequestClose={jest.fn()} />,
+      <UserArticlesDialog user={null} onRequestClose={vi.fn()} />,
       {},
       {
         additionalMocks,
@@ -31,7 +32,7 @@ describe('UserArticlesDialog', () => {
   });
 
   it('should close the dialog when the route changes', async () => {
-    const onRequestClose = jest.fn();
+    const onRequestClose = vi.fn();
     const screen = render(
       <UserArticlesDialog user={SomeUser} onRequestClose={onRequestClose} />,
       {},
@@ -53,7 +54,7 @@ describe('UserArticlesDialog', () => {
 
   it('should render the list of articles', async () => {
     const screen = render(
-      <UserArticlesDialog user={SomeUser} onRequestClose={jest.fn()} />,
+      <UserArticlesDialog user={SomeUser} onRequestClose={vi.fn()} />,
       {},
       {
         additionalMocks,

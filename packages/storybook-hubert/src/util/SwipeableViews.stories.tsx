@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { useArgs } from '@storybook/preview-api';
-import { fireEvent, waitFor, within } from '@storybook/testing-library';
+import { expect, fireEvent, waitFor, within } from '@storybook/test';
 import { action } from '@storybook/addon-actions';
-import { expect } from '@storybook/jest';
 import {
   Button,
   SwipeableViews,

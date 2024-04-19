@@ -1,12 +1,15 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { render, waitFor } from 'test/util';
 import { MetricsOverview } from './MetricsOverview';
 
 import GetTenantAggregateAnalyticsQuery from 'api/query/analytics/GetTenantAggregateAnalyticsQuery.graphql';
 
-jest
-  .useFakeTimers({ advanceTimers: 1 })
-  .setSystemTime(new Date('2024-03-16').getTime());
+vi.useFakeTimers({
+  shouldAdvanceTime: true,
+  advanceTimeDelta: 1,
+  now: new Date('2024-03-16').getTime(),
+});
 
 const mocks = [
   {

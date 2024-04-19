@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { userEvent, within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+import { expect, userEvent, within } from '@storybook/test';
 import { Meta, StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { Avatar, Deletable } from '@lotta-schule/hubert';

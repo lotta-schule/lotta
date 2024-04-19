@@ -45,11 +45,6 @@ export const DeleteFilesDialog = React.memo(() => {
     }
   );
 
-  React.useEffect(() => {
-    if (state.showDeleteFiles) {
-    }
-  }, [state.showDeleteFiles]);
-
   return (
     <Dialog
       open={state.showDeleteFiles}

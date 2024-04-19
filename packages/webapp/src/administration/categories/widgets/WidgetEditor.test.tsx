@@ -21,7 +21,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
     const screen = renderWithContext(
       <WidgetEditor
         selectedWidget={VPSchuelerWidget}
-        onSelectWidget={jest.fn()}
+        onSelectWidget={vi.fn()}
       />
     );
 
@@ -32,7 +32,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
     const screen = renderWithContext(
       <WidgetEditor
         selectedWidget={VPSchuelerWidget}
-        onSelectWidget={jest.fn()}
+        onSelectWidget={vi.fn()}
       />
     );
 
@@ -40,7 +40,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
       <SplitViewProvider>
         <WidgetEditor
           selectedWidget={VPLehrerWidget}
-          onSelectWidget={jest.fn()}
+          onSelectWidget={vi.fn()}
         />
       </SplitViewProvider>
     );
@@ -50,7 +50,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
 
   it('should not show any title when no widget is given', () => {
     const screen = renderWithContext(
-      <WidgetEditor selectedWidget={null} onSelectWidget={jest.fn()} />
+      <WidgetEditor selectedWidget={null} onSelectWidget={vi.fn()} />
     );
     expect(screen.queryByRole('heading')).toBeNull();
   });
@@ -60,7 +60,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
       const screen = renderWithContext(
         <WidgetEditor
           selectedWidget={VPSchuelerWidget}
-          onSelectWidget={jest.fn()}
+          onSelectWidget={vi.fn()}
         />
       );
       expect(screen.getByTestId('ScheduleWidgetConfiguration')).toBeVisible();
@@ -69,7 +69,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
       const screen = renderWithContext(
         <WidgetEditor
           selectedWidget={CalendarKlassenarbeiten}
-          onSelectWidget={jest.fn()}
+          onSelectWidget={vi.fn()}
         />
       );
       expect(screen.getByTestId('CalendarWidgetConfiguration')).toBeVisible();
@@ -78,7 +78,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
       const screen = renderWithContext(
         <WidgetEditor
           selectedWidget={GangamStyleWidget}
-          onSelectWidget={jest.fn()}
+          onSelectWidget={vi.fn()}
         />
       );
       expect(screen.getByTestId('IFrameWidgetConfiguration')).toBeVisible();
@@ -99,7 +99,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
           },
         },
       },
-      result: jest.fn(() => ({
+      result: vi.fn(() => ({
         data: {
           widget: {
             ...VPSchuelerWidget,
@@ -120,7 +120,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
       const screen = renderWithContext(
         <WidgetEditor
           selectedWidget={VPSchuelerWidget}
-          onSelectWidget={jest.fn()}
+          onSelectWidget={vi.fn()}
         />,
         {},
         { additionalMocks: [mock] }
@@ -148,7 +148,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
     const screen = renderWithContext(
       <WidgetEditor
         selectedWidget={VPSchuelerWidget}
-        onSelectWidget={jest.fn()}
+        onSelectWidget={vi.fn()}
       />
     );
     await fireEvent.click(screen.getByRole('button', { name: /löschen/ }));

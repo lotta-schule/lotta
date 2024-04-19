@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render } from '../test-utils';
 import { CircularProgress } from './CircularProgress';
 
-import styles from './Progress.module.scss';
+import styles from './CircularProgress.module.scss';
 
 describe('CircularProgress', () => {
   it('should render a progress bar', () => {

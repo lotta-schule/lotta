@@ -12,14 +12,6 @@ import { ArticlePreview } from './ArticlePreview';
 import userEvent from '@testing-library/user-event';
 
 describe('shared/article/ArticlePreview', () => {
-  it('should render an ArticlePreview without error', () => {
-    render(
-      <ArticlePreview article={Weihnachtsmarkt} />,
-      {},
-      { currentUser: SomeUser }
-    );
-  });
-
   describe('should render title', () => {
     it('as heading when disableLink prop is set', () => {
       const screen = render(
@@ -57,10 +49,7 @@ describe('shared/article/ArticlePreview', () => {
 
     it('as editable when onUpdateArticle prop is given', () => {
       const screen = render(
-        <ArticlePreview
-          article={Weihnachtsmarkt}
-          onUpdateArticle={jest.fn()}
-        />,
+        <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={vi.fn()} />,
         {},
         { currentUser: SomeUser }
       );
@@ -74,7 +63,7 @@ describe('shared/article/ArticlePreview', () => {
 
     it('and call update callback when edited', async () => {
       const fireEvent = userEvent.setup();
-      const fn = jest.fn();
+      const fn = vi.fn();
       const screen = render(
         <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={fn} />,
         {},
@@ -107,10 +96,7 @@ describe('shared/article/ArticlePreview', () => {
 
     it('as editable when onUpdateArticle prop is given', () => {
       const screen = render(
-        <ArticlePreview
-          article={Weihnachtsmarkt}
-          onUpdateArticle={jest.fn()}
-        />,
+        <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={vi.fn()} />,
         {},
         { currentUser: SomeUser }
       );
@@ -126,7 +112,7 @@ describe('shared/article/ArticlePreview', () => {
 
     it('and call update callback when edited', async () => {
       const fireEvent = userEvent.setup();
-      const fn = jest.fn();
+      const fn = vi.fn();
       const screen = render(
         <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={fn} />,
         {},
@@ -178,7 +164,7 @@ describe('shared/article/ArticlePreview', () => {
         const screen = render(
           <ArticlePreview
             article={Weihnachtsmarkt}
-            onUpdateArticle={jest.fn()}
+            onUpdateArticle={vi.fn()}
           />,
           {},
           { currentUser: SomeUser }
@@ -210,10 +196,7 @@ describe('shared/article/ArticlePreview', () => {
 
     it('should show DeleteButton when in EditMode', () => {
       const screen = render(
-        <ArticlePreview
-          article={Weihnachtsmarkt}
-          onUpdateArticle={jest.fn()}
-        />,
+        <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={vi.fn()} />,
         {},
         { currentUser: SomeUser }
       );
@@ -223,7 +206,7 @@ describe('shared/article/ArticlePreview', () => {
 
     it('should delete the tag when DeleteButton is clicked', async () => {
       const fireEvent = userEvent.setup();
-      const fn = jest.fn();
+      const fn = vi.fn();
       const screen = render(
         <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={fn} />,
         {},
@@ -239,7 +222,7 @@ describe('shared/article/ArticlePreview', () => {
 
     it('should add a new tag', async () => {
       const fireEvent = userEvent.setup();
-      const fn = jest.fn();
+      const fn = vi.fn();
       const screen = render(
         <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={fn} />,
         {},
@@ -308,7 +291,7 @@ describe('shared/article/ArticlePreview', () => {
         const screen = render(
           <ArticlePreview
             article={WeihnachtsmarktWithUsers}
-            onUpdateArticle={jest.fn()}
+            onUpdateArticle={vi.fn()}
           />,
           {},
           { currentUser: SomeUser }
@@ -320,7 +303,7 @@ describe('shared/article/ArticlePreview', () => {
 
       it('should show the "delete" button for authors when in EditMode', async () => {
         const fireEvent = userEvent.setup();
-        const fn = jest.fn();
+        const fn = vi.fn();
         const screen = render(
           <ArticlePreview
             article={WeihnachtsmarktWithUsers}
@@ -340,7 +323,7 @@ describe('shared/article/ArticlePreview', () => {
       describe('should show warning when removing oneself', () => {
         it('show a warning when userAvatar tries to remove him/herself and close the popup on abort', async () => {
           const fireEvent = userEvent.setup();
-          const onUpdate = jest.fn();
+          const onUpdate = vi.fn();
           const screen = render(
             <ArticlePreview
               article={WeihnachtsmarktWithUsers}
@@ -371,7 +354,7 @@ describe('shared/article/ArticlePreview', () => {
 
         it('show a warning when userAvatar tries to remove him/herself and remove userAvatar on confirm', async () => {
           const fireEvent = userEvent.setup();
-          const onUpdate = jest.fn();
+          const onUpdate = vi.fn();
           const screen = render(
             <ArticlePreview
               article={WeihnachtsmarktWithUsers}

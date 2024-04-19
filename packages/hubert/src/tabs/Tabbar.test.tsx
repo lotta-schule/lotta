@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 describe('tabs/Tabbar', () => {
   it('snapshot test', () => {
     const screen = render(
-      <Tabbar value={'3'} onChange={jest.fn}>
+      <Tabbar value={'3'} onChange={vi.fn}>
         <Tab value={'0'}>Tab1 bla bla bla</Tab>
         <Tab value={'1'}>Tab2</Tab>
         <Tab value={'2'}>Tab3</Tab>
@@ -20,7 +20,7 @@ describe('tabs/Tabbar', () => {
 
   it('should have the correct tab selected', () => {
     const screen = render(
-      <Tabbar value={'2'} onChange={jest.fn}>
+      <Tabbar value={'2'} onChange={vi.fn}>
         <Tab value={'0'}>Tab1 bla bla bla</Tab>
         <Tab value={'1'}>Tab2</Tab>
         <Tab value={'2'}>Tab3</Tab>
@@ -35,7 +35,7 @@ describe('tabs/Tabbar', () => {
 
   it('should call onChange with the correct value', async () => {
     const user = userEvent.setup();
-    const onChange = jest.fn();
+    const onChange = vi.fn();
 
     const screen = render(
       <Tabbar value={'2'} onChange={onChange}>

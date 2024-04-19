@@ -43,8 +43,8 @@ export const FormElementConfiguration = React.memo(
                 element === 'input'
                   ? 'text'
                   : element === 'file'
-                  ? ''
-                  : 'checkbox',
+                    ? ''
+                    : 'checkbox',
               options:
                 element === 'selection'
                   ? [

@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   Box,
   Button,
+  DefaultThemes,
   ErrorMessage,
   Input,
   Label,
@@ -9,7 +10,6 @@ import {
   Select,
   useTheme,
 } from '@lotta-schule/hubert';
-import { DefaultThemes } from '@lotta-schule/theme';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { File } from 'util/model';
 import { useTenant } from 'util/tenant/useTenant';

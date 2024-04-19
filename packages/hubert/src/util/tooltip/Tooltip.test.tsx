@@ -16,7 +16,7 @@ describe('util/Tooltip', () => {
 
   it('should keep a button clickable', async () => {
     const fireEvent = userEvent.setup();
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     const screen = render(
       <Tooltip label="Test">
         <Button onClick={onClick}>Test</Button>

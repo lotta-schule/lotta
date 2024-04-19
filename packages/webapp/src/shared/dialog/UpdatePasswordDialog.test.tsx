@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
@@ -8,10 +9,6 @@ import UpdatePasswordMutation from 'api/mutation/UpdatePasswordMutation.graphql'
 import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => {
-  it('should render the shared', () => {
-    render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
-  });
-
   it('should show the shared if isOpen is true', async () => {
     render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
     await waitFor(() => {
@@ -110,7 +107,7 @@ describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => 
           result: { data: { token: 'abc' } },
         },
       ];
-      const onClose = jest.fn();
+      const onClose = vi.fn();
       render(
         <UpdatePasswordDialog isOpen onRequestClose={onClose} />,
         {},
@@ -138,7 +135,7 @@ describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => 
 
     it('should clear the form and call onAbort when clicking the "Reset" button', async () => {
       const fireEvent = userEvent.setup();
-      const onRequestClose = jest.fn();
+      const onRequestClose = vi.fn();
       render(<UpdatePasswordDialog isOpen onRequestClose={onRequestClose} />);
       await fireEvent.click(
         await screen.findByRole('button', { name: /abbrechen/i })

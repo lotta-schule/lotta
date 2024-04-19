@@ -4,18 +4,34 @@
     "default": {
       "runner": "nx-cloud",
       "options": {
-        "cacheableOperations": ["test", "lint", "typecheck", "build", "e2e"]
+        "cacheableOperations": [
+          "test",
+          "lint",
+          "typecheck",
+          "build",
+          "e2e"
+        ]
       }
     }
   },
   "targetDefaults": {
     "dev": {
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "test": {
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
-      "outputs": ["{projectRoot}/coverage"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage"
+      ]
     },
     "lint": {
       "inputs": [
@@ -26,26 +42,41 @@
       ]
     },
     "typecheck": {
-      "dependsOn": ["^build"],
-      "inputs": ["default"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "default"
+      ]
     },
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["{projectRoot}/dist"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ]
     },
     "e2e": {
-      "dependsOn": ["^e2e"],
-      "outputs": ["{projectRoot}/coverage"]
+      "dependsOn": [
+        "^e2e"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage"
+      ]
     }
   },
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
     "production": [
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?",
       "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/jest.config.[jt]s",
-      "!{projectRoot}/jest.setup.[jt]s",
+      "!{projectRoot}/vite(est)?.config.[jt]s",
+      "!{projectRoot}/test.setup.[jt]s",
       "!{projectRoot}/src/test-setup.[jt]s",
       "!{projectRoot}/src/test/util.[jt]sx?",
       "!{projectRoot}/test-setup.[jt]s",

@@ -23,7 +23,7 @@
   .iconContainer {
     position: absolute;
     height: 100%;
-    left: calc(2 * var(--lotta-spacing));
+    left: var(--lotta-spacing);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -40,13 +40,16 @@
   .label {
     transition: all 0.25s ease-in;
     opacity: 1;
-    margin: 0 calc(var(--lotta-spacing) + calc(calc(1em + var(--lotta-spacing)) / 2));
+    // has no icon, is showing only text
+    margin: 0 calc(2.5 * var(--lotta-spacing)) 0
+      calc(2.5 * var(--lotta-spacing));
   }
 
   &.isLoading,
   &:has(.iconContainer:not(:empty)) {
+    // has either icon or Progress next to text
     .label {
-      margin: 0 0 0 calc(calc(2 * var(--lotta-spacing)) + calc(1em + var(--lotta-spacing)));
+      margin: 0 var(--lotta-spacing) 0 calc(4 * var(--lotta-spacing));
     }
   }
 }

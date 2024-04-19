@@ -78,9 +78,9 @@ describe('LoadingButton', () => {
     it('should call the handler and show the success state', async () => {
       const fireEvent = userEvent.setup();
       const { promise, resolve } = createPromise();
-      const onAction = jest.fn(() => promise);
-      const onComplete = jest.fn();
-      const onError = jest.fn();
+      const onAction = vi.fn(() => promise);
+      const onComplete = vi.fn();
+      const onError = vi.fn();
       const screen = render(
         <LoadingButton
           label="Click Me"
@@ -112,9 +112,9 @@ describe('LoadingButton', () => {
     it('should call the handler and show the error state', async () => {
       const fireEvent = userEvent.setup();
       const { promise, reject } = createPromise();
-      const onAction = jest.fn(() => promise);
-      const onComplete = jest.fn();
-      const onError = jest.fn();
+      const onAction = vi.fn(() => promise);
+      const onComplete = vi.fn();
+      const onError = vi.fn();
       const screen = render(
         <LoadingButton
           label="Click Me"
@@ -146,8 +146,8 @@ describe('LoadingButton', () => {
     describe('embedded in a form', () => {
       it("should not call onAction if the type is not set to 'submit'", async () => {
         const fireEvent = userEvent.setup();
-        const onSubmit = jest.fn();
-        const onAction = jest.fn();
+        const onSubmit = vi.fn();
+        const onAction = vi.fn();
         const screen = render(
           <form onSubmit={onSubmit}>
             <input type="text" />
@@ -166,7 +166,7 @@ describe('LoadingButton', () => {
 
       it("should run the onAction handle when it's in a form that is being submitted", async () => {
         const fireEvent = userEvent.setup();
-        const onAction = jest.fn(() => Promise.resolve());
+        const onAction = vi.fn(() => Promise.resolve());
         const screen = render(
           <form>
             <input type="text" />
@@ -189,14 +189,14 @@ describe('LoadingButton', () => {
 
     describe('return to idle state', () => {
       afterEach(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
       });
 
       it('should return to the idle state after a waiting time', async () => {
-        jest.useFakeTimers({ advanceTimers: 200 });
+        vi.useFakeTimers({ shouldAdvanceTime: true });
 
         const fireEvent = userEvent.setup();
-        const onAction = jest.fn(async () => void 0);
+        const onAction = vi.fn(async () => void 0);
         const screen = render(
           <LoadingButton label="Click Me" onAction={onAction} />
         );
@@ -210,7 +210,7 @@ describe('LoadingButton', () => {
           expect(screen.getByTestId('SuccessIcon')).toBeVisible();
         });
 
-        await act(() => jest.advanceTimersByTimeAsync(5000));
+        await act(() => vi.advanceTimersByTimeAsync(5000));
 
         expect(
           screen.getByRole('button', { name: /Click Me/i })
@@ -219,10 +219,10 @@ describe('LoadingButton', () => {
       });
 
       it('should keep its state after the request if resetState=false', async () => {
-        jest.useFakeTimers({ advanceTimers: 200 });
+        vi.useFakeTimers({ shouldAdvanceTime: true });
 
         const fireEvent = userEvent.setup();
-        const onAction = jest.fn(async () => void 0);
+        const onAction = vi.fn(async () => void 0);
         const screen = render(
           <LoadingButton
             label="Click Me"
@@ -240,7 +240,7 @@ describe('LoadingButton', () => {
           expect(screen.getByTestId('SuccessIcon')).toBeVisible();
         });
 
-        await act(() => jest.advanceTimersByTimeAsync(5000));
+        await act(() => vi.advanceTimersByTimeAsync(5000));
 
         expect(screen.getByTestId('SuccessIcon')).toBeVisible();
       });

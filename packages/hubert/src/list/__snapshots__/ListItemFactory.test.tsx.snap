@@ -1,16 +1,35 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`list/ListItemFactory create Item should render an item with complete information for a listItem 1`] = `"[{"type":"span","key":".0","ref":null,"props":{"children":{"type":{"compare":null},"key":null,"ref":null,"props":{},"_owner":null,"_store":{}}},"_owner":null,"_store":{}},{"type":"span","key":".1","ref":null,"props":{"children":"Test"},"_owner":null,"_store":{}},"Test description",{"type":{"compare":null},"key":".3","ref":null,"props":{},"_owner":null,"_store":{}}]"`;
+exports[`list/ListItemFactory > create Item > should render an item with complete information for a listItem 1`] = `"[{"type":"span","key":".0","ref":null,"props":{"children":{"type":{"compare":null},"key":null,"ref":null,"props":{},"_owner":null,"_store":{}}},"_owner":null,"_store":{}},{"type":"span","key":".1","ref":null,"props":{"children":"Test"},"_owner":null,"_store":{}},"Test description",{"type":{"compare":null},"key":".3","ref":null,"props":{},"_owner":null,"_store":{}}]"`;
 
-exports[`list/ListItemFactory create ListItem should render a listItem with complete information from an item 1`] = `
+exports[`list/ListItemFactory > create ListItem > should render a listItem with complete information from an item with description 1`] = `
 <li
-  class="li"
+  class="_li_5a05a4"
+>
+  <div>
+    <span />
+  </div>
+  <div
+    class="_mainSection_5a05a4"
+  >
+    <div>
+      <span>
+        Test
+      </span>
+    </div>
+  </div>
+</li>
+`;
+
+exports[`list/ListItemFactory > create ListItem > should render a listItem with complete information from an item with icons 1`] = `
+<li
+  class="_li_5a05a4"
 >
   <div>
     <span>
       <svg
         aria-hidden="true"
-        class="root"
+        class="_root_2ade80"
         focusable="false"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
@@ -22,7 +41,7 @@ exports[`list/ListItemFactory create ListItem should render a listItem with comp
     </span>
   </div>
   <div
-    class="mainSection"
+    class="_mainSection_5a05a4"
   >
     <div>
       <span>
@@ -36,7 +55,7 @@ exports[`list/ListItemFactory create ListItem should render a listItem with comp
   <div>
     <svg
       aria-hidden="true"
-      class="root"
+      class="_root_2ade80"
       focusable="false"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
@@ -45,25 +64,6 @@ exports[`list/ListItemFactory create ListItem should render a listItem with comp
         d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"
       />
     </svg>
-  </div>
-</li>
-`;
-
-exports[`list/ListItemFactory create ListItem should render a listItem with complete information from an item 2`] = `
-<li
-  class="li"
->
-  <div>
-    <span />
-  </div>
-  <div
-    class="mainSection"
-  >
-    <div>
-      <span>
-        Test
-      </span>
-    </div>
   </div>
 </li>
 `;

@@ -8,7 +8,7 @@ import CreateLottaFeedbackMutation from 'api/mutation/CreateLottaFeedbackMutatio
 
 describe('CreateLottaFeedback', () => {
   it('should have a form with topic, content and metadata and send these information', async () => {
-    window.alert = jest.fn();
+    window.alert = vi.fn();
 
     const fireEvent = userEvent.setup();
     const screen = render(

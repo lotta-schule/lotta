@@ -56,7 +56,9 @@ export const renderElement = ({
       try {
         const url = new URL(href);
         isSameHost = window.location.host === url.host;
-      } catch {}
+      } catch {
+        console.warn('Invalid URL:', href);
+      }
       return (
         <a
           {...attributes}

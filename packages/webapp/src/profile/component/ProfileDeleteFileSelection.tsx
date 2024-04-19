@@ -23,8 +23,8 @@ export const ProfileDeleteFileSelection =
         selectedFiles.length === 0
           ? 'off'
           : selectedFiles.length === files.length
-          ? 'on'
-          : 'mixed';
+            ? 'on'
+            : 'mixed';
 
       return (
         <Table>

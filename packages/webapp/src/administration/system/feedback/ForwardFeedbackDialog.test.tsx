@@ -70,7 +70,7 @@ describe('ForwardFeedbackDialog', () => {
   });
 
   it('should have a form with message and send these information', async () => {
-    const onRequestClose = jest.fn();
+    const onRequestClose = vi.fn();
 
     const fireEvent = userEvent.setup();
     const screen = render(

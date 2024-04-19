@@ -1,28 +1,28 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Stepper should render a stepper 1`] = `
+exports[`Stepper > should render a stepper 1`] = `
 <div
   aria-valuemax="3"
   aria-valuemin="1"
   aria-valuenow="1"
-  class="root"
+  class="_root_64ceba"
   role="spinbutton"
 >
   <button
     aria-current="false"
     aria-label="Vorheriger Schritt"
-    class="root root root small"
+    class="_root_0977c5 _root_3de4f3 _root_70a42a _small_3de4f3"
     data-variant="default"
     disabled=""
     role="button"
     type="button"
   >
     <span
-      class="icon icon"
+      class="_icon_3de4f3 _icon_70a42a"
     >
       <svg
         aria-hidden="true"
-        class="root"
+        class="_root_2ade80"
         focusable="false"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +33,7 @@ exports[`Stepper should render a stepper 1`] = `
       </svg>
     </span>
     <span
-      class="label label"
+      class="_label_3de4f3 _label_70a42a"
     >
       vorheriges
     </span>
@@ -46,17 +46,17 @@ exports[`Stepper should render a stepper 1`] = `
   <button
     aria-current="false"
     aria-label="Nächster Schritt"
-    class="root root root small"
+    class="_root_0977c5 _root_3de4f3 _root_70a42a _small_3de4f3"
     data-variant="default"
     role="button"
     type="button"
   >
     <span
-      class="icon icon"
+      class="_icon_3de4f3 _icon_70a42a"
     >
       <svg
         aria-hidden="true"
-        class="root"
+        class="_root_2ade80"
         focusable="false"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +67,7 @@ exports[`Stepper should render a stepper 1`] = `
       </svg>
     </span>
     <span
-      class="label label"
+      class="_label_3de4f3 _label_70a42a"
     >
       nächstes
     </span>
