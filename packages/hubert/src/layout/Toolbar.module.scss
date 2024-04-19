@@ -1,4 +1,4 @@
-@import '../theme/breakpoints';
+@import "../theme/breakpoints";
 
 .root {
   min-height: 48px;
@@ -23,9 +23,9 @@
     }
   }
 
-  &>div,
-  &>button,
-  &>span {
+  & > div,
+  & > button,
+  & > span {
     &:not(:first-child) {
       margin-left: var(--lotta-spacing);
     }

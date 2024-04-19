@@ -1,60 +1,61 @@
 .root {
-    background: rgba(var(--lotta-box-background-color), 1);
+  background: rgba(var(--lotta-box-background-color), 1);
+  width: 100%;
+  position: relative;
+  .progressBar {
     width: 100%;
     position: relative;
-    .progressBar {
-        width: 100%;
-        position: relative;
-        height: var(--lotta-spacing);
-        border-radius: var(--lotta-border-radius);
-        overflow: hidden;
-    }
+    height: var(--lotta-spacing);
+    border-radius: var(--lotta-border-radius);
+    overflow: hidden;
+  }
+  .indicator {
+    height: 100%;
+    position: absolute;
+    background: repeating-linear-gradient(
+      135deg,
+      rgba(var(--lotta-primary-color), 0.8) 0em,
+      rgba(var(--lotta-primary-color), 1) 5em,
+      rgba(var(--lotta-primary-color), 0.8) 10em
+    );
+    background-size: 250%;
+    animation: indicator-animation 5s infinite ease-in-out;
+    left: 0;
+    top: 0;
+    transition: width ease-out 100ms;
+  }
+  &.indeterminate {
     .indicator {
-        height: 100%;
-        position: absolute;
-        background: repeating-linear-gradient(
-            135deg,
-            rgba(var(--lotta-primary-color), 0.8) 0em,
-            rgba(var(--lotta-primary-color), 1) 5em,
-            rgba(var(--lotta-primary-color), 0.8) 10em
-        );
-        background-size: 250%;
-        animation: indicator-animation 5s infinite ease-in-out;
-        left: 0;
-        top: 0;
-        transition: width ease-out 100ms;
+      animation:
+        indicator-animation 5s infinite ease-in-out,
+        indeterminate-animation 4s infinite ease-in-out;
     }
-    &.indeterminate {
-        .indicator {
-            animation: indicator-animation 5s infinite ease-in-out,
-                indeterminate-animation 4s infinite ease-in-out;
-        }
-    }
+  }
 }
 
 @keyframes indicator-animation {
-    0% {
-        background-position-x: 0%;
-    }
-    50% {
-        background-position-x: 100%;
-    }
-    100% {
-        background-position-x: 0%;
-    }
+  0% {
+    background-position-x: 0%;
+  }
+  50% {
+    background-position-x: 100%;
+  }
+  100% {
+    background-position-x: 0%;
+  }
 }
 
 @keyframes indeterminate-animation {
-    0% {
-        left: 0%;
-        width: 0%;
-    }
-    80% {
-        left: 0%;
-        width: 100%;
-    }
-    100% {
-        left: 100%;
-        width: 0%;
-    }
+  0% {
+    left: 0%;
+    width: 0%;
+  }
+  80% {
+    left: 0%;
+    width: 100%;
+  }
+  100% {
+    left: 100%;
+    width: 0%;
+  }
 }

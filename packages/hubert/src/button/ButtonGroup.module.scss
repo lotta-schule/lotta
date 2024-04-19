@@ -7,7 +7,9 @@
     background-color: #fff;
     display: inline-block;
     &:not(:only-child) {
-      &:not(:first-of-type):not(:last-of-type):not(.isFirstButton):not(.isLastButton) {
+      &:not(:first-of-type):not(:last-of-type):not(.isFirstButton):not(
+          .isLastButton
+        ) {
         border-radius: 0;
         border-right: 0;
       }

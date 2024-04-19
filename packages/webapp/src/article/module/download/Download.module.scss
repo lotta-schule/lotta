@@ -1,4 +1,4 @@
-@import 'breakpoints';
+@import "breakpoints";
 
 .root {
   padding: calc(2 * var(--lotta-spacing));
@@ -18,7 +18,7 @@
 
     @media print {
       &::before {
-        content: '\2022 '; /* equivalent of &bull; */
+        content: "\2022 "; /* equivalent of &bull; */
       }
     }
 
