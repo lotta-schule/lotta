@@ -1,0 +1,9 @@
+# Set to true to add reviewers to pull requests
+addReviewers: true
+
+reviewers:
+  - ptitmouton
+
+# A number of reviewers added to the pull request
+# Set 0 to add all the reviewers (default: 0)
+numberOfReviewers: 0
