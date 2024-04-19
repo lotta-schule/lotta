@@ -178,16 +178,16 @@ export const ProfilePage = () => {
             <h5>Meine Klasse / Mein Kürzel</h5>
             <p>
               Gib hier deine Klasse oder dein Kürzel ein. Damit kannst du
-              Zugriff auf deinen Stundenplan erhalten, wenn deine Schule 
-              eine Erweiterung besitzt (z.B. das Informationssystem Indiware 
-              VP mobil) und diese verknüpft hat. 
-            <p>
-              <small>
-                Hinweis: das Format deiner Klasse bzw. Kürzels wird vorgegeben 
-                und muss grundsätzlich beachtet werden, damit der Stundenplan 
-                korrekt angezeigt wird. Beispielkombination: " 9/3 ".
-              </small>
-            </p>
+              Zugriff auf deinen Stundenplan erhalten, wenn deine Schule eine
+              Erweiterung besitzt (z.B. das Informationssystem Indiware VP
+              mobil) und diese verknüpft hat.
+              <p>
+                <small>
+                  Hinweis: das Format deiner Klasse bzw. Kürzels wird vorgegeben
+                  und muss grundsätzlich beachtet werden, damit der Stundenplan
+                  korrekt angezeigt wird. Beispielkombination: " 9/3 ".
+                </small>
+              </p>
             </p>
             <Label label="Deine Klasse / Dein Kürzel:">
               <Input
@@ -206,9 +206,9 @@ export const ProfilePage = () => {
             <p>
               <small>
                 Nutze Einschreibeschlüssel, um dich selbst in Gruppen
-                einzutragen, um interne Medien einzusehen, die nicht 
-                öffentlich zugänglich sind. Einschreibeschlüssel
-                erhältst du ggf. von einem Administrator.
+                einzutragen, um interne Medien einzusehen, die nicht öffentlich
+                zugänglich sind. Einschreibeschlüssel erhältst du ggf. von einem
+                Administrator.
               </small>
             </p>
             <EnrollmentTokensEditor
