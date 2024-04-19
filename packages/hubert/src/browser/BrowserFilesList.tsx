@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CircularProgress } from '../progress';
 import { useBrowserState, BrowserNode } from './BrowserStateContext';
 import { BrowserNodeListItem } from './BrowserNodeListItem';
 import clsx from 'clsx';
@@ -13,7 +14,10 @@ export const BrowserFilesList = React.memo(
   ({ path }: BrowserFilesListProps) => {
     const listRef = React.useRef<HTMLElement>(null);
 
-    const { nodes, currentPath } = useBrowserState();
+    const [childNodes, setChildNodes] = React.useState<BrowserNode[] | null>(
+      null
+    );
+    const { currentPath, onRequestChildNodes } = useBrowserState();
 
     React.useEffect(() => {
       if (listRef.current && path.length === currentPath.length) {
@@ -21,17 +25,16 @@ export const BrowserFilesList = React.memo(
       }
     }, [path, currentPath]);
 
-    const parentNode = path.at(-1) ?? null;
+    const parentNode = React.useMemo(() => path.at(-1) ?? null, [path]);
 
-    const childNodes = React.useMemo(
-      () => nodes.filter((n) => n.parent === (parentNode?.id || null)),
-      [nodes, parentNode]
-    );
+    React.useEffect(() => {
+      onRequestChildNodes(parentNode).then(setChildNodes);
+    }, [parentNode]);
 
-    if (childNodes.length === 0) {
+    if (!childNodes?.length) {
       return (
         <div ref={listRef as any} className={clsx(styles.root, styles.isEmpty)}>
-          Keine Dateien
+          {childNodes === null ? <CircularProgress /> : 'Keine Dateien'}
         </div>
       );
     }

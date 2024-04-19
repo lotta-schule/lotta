@@ -14,7 +14,7 @@ export type BrowserNodeListItemProps = {
 
 export const BrowserNodeListItem = React.memo(
   ({ parentPath, node }: BrowserNodeListItemProps) => {
-    const { currentPath, selected, onSelect, onNavigate, getNodeIcon } =
+    const { currentPath, selected, onSelect, onNavigate, onRequestNodeIcon } =
       useBrowserState();
 
     const isOpen = React.useMemo(
@@ -28,7 +28,7 @@ export const BrowserNodeListItem = React.memo(
     );
 
     const nodeIcon = React.useMemo(() => {
-      const customIcon = getNodeIcon?.(node);
+      const customIcon = onRequestNodeIcon?.(node);
 
       if (customIcon) {
         return customIcon;
@@ -39,7 +39,7 @@ export const BrowserNodeListItem = React.memo(
       }
 
       return null;
-    }, [node, isOpen, getNodeIcon]);
+    }, [node, isOpen, onRequestNodeIcon]);
 
     return (
       <li
@@ -62,7 +62,9 @@ export const BrowserNodeListItem = React.memo(
         <div className={styles.fileIcon}>{nodeIcon}</div>
         <div className={styles.fileName}>{node.name}</div>
         <div>
-          {node.type === 'directory' && <DirectoryMenuButton node={node} />}
+          {node.type === 'directory' && (
+            <DirectoryMenuButton path={[...parentPath, node]} />
+          )}
           {node.type === 'file' && <FileMenuButton node={node} />}
         </div>
       </li>

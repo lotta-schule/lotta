@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Input } from '../form/input';
-import { Button } from 'button';
+import { Button } from '../button';
 import { CloudUpload, CreateNewFolder } from '../icon';
 import { useBrowserState } from './BrowserStateContext';
 
 import styles from './BrowserToolbar.module.scss';
 
 export const BrowserToolbar = React.memo(() => {
-  const { setCurrentAction, currentPath, onCreateDirectory } =
-    useBrowserState();
+  const { setCurrentAction, currentPath, createDirectory } = useBrowserState();
   return (
     <div className={styles.root}>
       <div className={styles.leftContainer}>file name</div>
@@ -16,7 +15,7 @@ export const BrowserToolbar = React.memo(() => {
         <Input placeholder="Datei suchen" />
       </div>
       <div className={styles.rightContainer}>
-        {onCreateDirectory !== undefined && (
+        {createDirectory !== undefined && (
           <Button
             icon={<CreateNewFolder />}
             title="Ordner erstellen"

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { CreateNewDirectoryDialog } from './dialogs/CreateNewDirectoryDialog';
 import { useBrowserState } from './BrowserStateContext';
+import { MoveDirectoryDialog } from './dialogs/MoveDirectoryDialog';
 
 export const BrowserDialogs = React.memo(() => {
   const { currentAction, setCurrentAction } = useBrowserState();
@@ -18,6 +19,7 @@ export const BrowserDialogs = React.memo(() => {
         }
         isOpen={currentAction?.type === 'create-directory'}
       />
+      <MoveDirectoryDialog />
     </>
   );
 });

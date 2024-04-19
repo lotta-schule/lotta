@@ -11,38 +11,54 @@ export type BrowserMode = 'view-and-edit' | 'select' | 'select-multiple';
 
 export type BrowserPath = BrowserNode[];
 
+export type BrowserAction =
+  | { type: 'create-directory'; path: BrowserPath }
+  | { type: 'move-directory'; path: BrowserPath };
+
 export interface BrowserState {
   mode: BrowserMode;
-  nodes: BrowserNode[];
   currentPath: BrowserPath;
   selected: BrowserNode[];
   onNavigate: (path: BrowserPath) => void;
   onSelect: (node: BrowserNode[]) => void;
-  getNodeIcon?: (node: BrowserNode) => React.ReactNode;
 
-  currentAction: { type: 'create-directory'; path: BrowserPath } | null;
-  setCurrentAction: (action: BrowserState['currentAction']) => void;
+  onRequestNodeIcon?: (node: BrowserNode) => React.ReactNode;
+  onRequestChildNodes: (node: BrowserNode | null) => Promise<BrowserNode[]>;
 
-  onCreateDirectory?: (
+  currentAction: BrowserAction | null;
+  setCurrentAction: (action: BrowserAction | null) => void;
+  resetAction: () => void;
+
+  canEdit: (node: BrowserNode) => boolean;
+
+  createDirectory?: (
     parentNode: BrowserNode | null,
     name: string
+  ) => PromiseLike<void>;
+  moveDirectory?: (
+    directoryToMove: BrowserNode,
+    targetParent: BrowserNode | null
   ) => PromiseLike<void>;
 }
 
 export type BrowserStateProviderProps = {
-  nodes: BrowserNode[];
   mode?: BrowserMode;
-  getNodeIcon?: BrowserState['getNodeIcon'];
-  onCreateDirectory?: BrowserState['onCreateDirectory'];
+  onRequestNodeIcon?: BrowserState['onRequestNodeIcon'];
+  createDirectory?: BrowserState['createDirectory'];
+  moveDirectory?: BrowserState['moveDirectory'];
+  onRequestChildNodes: BrowserState['onRequestChildNodes'];
+  canEdit?: BrowserState['canEdit'];
   children: React.ReactNode;
 };
 
 export const BrowserStateProvider = React.memo(
   ({
-    nodes,
     mode = 'view-and-edit',
-    getNodeIcon,
-    onCreateDirectory,
+    onRequestNodeIcon,
+    onRequestChildNodes,
+    createDirectory,
+    moveDirectory,
+    canEdit = () => true,
     children,
   }: BrowserStateProviderProps) => {
     const [currentPath, setCurrentPath] = React.useState<BrowserNode[]>([]);
@@ -50,19 +66,24 @@ export const BrowserStateProvider = React.memo(
     const [currentAction, setCurrentAction] =
       React.useState<BrowserState['currentAction']>(null);
 
+    const resetAction = React.useCallback(() => setCurrentAction(null), []);
+
     return (
       <BrowserStateContext.Provider
         value={{
           mode,
-          nodes,
           selected,
           currentPath,
           onNavigate: setCurrentPath,
           onSelect: setSelected,
           currentAction,
           setCurrentAction,
-          onCreateDirectory,
-          getNodeIcon,
+          resetAction,
+          createDirectory,
+          moveDirectory,
+          onRequestNodeIcon,
+          onRequestChildNodes,
+          canEdit,
         }}
       >
         {children}

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Button, LoadingButton } from 'button';
-import { Dialog, DialogActions, DialogContent } from 'dialog';
-import { ErrorMessage } from 'message';
-import { Label } from 'label';
-import { Input } from 'form';
+import { Button, LoadingButton } from '../../button';
+import { Dialog, DialogActions, DialogContent } from '../../dialog';
+import { ErrorMessage } from '../../message';
+import { Label } from '../../label';
+import { Input } from '../../form';
 import { BrowserNode, useBrowserState } from '../BrowserStateContext';
 
 export interface CreateNewFolderDialogProps {
@@ -17,7 +17,7 @@ export const CreateNewDirectoryDialog = React.memo(
     const [name, setName] = React.useState('');
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
-    const { onCreateDirectory } = useBrowserState();
+    const { createDirectory } = useBrowserState();
 
     React.useEffect(() => {
       if (!isOpen) {
@@ -35,7 +35,7 @@ export const CreateNewDirectoryDialog = React.memo(
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            await onCreateDirectory?.(parentNode, name);
+            await createDirectory?.(parentNode, name);
           }}
         >
           <DialogContent>

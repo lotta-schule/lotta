@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Item, MenuButton } from 'menu';
+import { Item, MenuButton } from '../menu';
+import { CloudUpload, Copy, Delete, Edit, ExpandMore } from '../icon';
 import { BrowserNode } from './BrowserStateContext';
-import { CloudUpload, Copy, Delete, Edit, ExpandMore } from 'icon';
 
 export type MenuButtonProps = {
   node: BrowserNode;
@@ -18,7 +18,7 @@ export const FileMenuButton = React.memo(({ node }: MenuButtonProps) => {
       }}
       title={'Dateimenü'}
       onAction={(action) => {
-        console.log('TODO: file node action', action);
+        console.log('TODO: file node action', action, ' on node ', node);
         /*switch (action) {
           case 'download': {
             const downloadUrl = File.getFileRemoteLocation(baseUrl, node);
