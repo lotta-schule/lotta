@@ -29,7 +29,7 @@
         margin: 0px;
       }
 
-      &:not([data-varaint='fill']) {
+      &:not([data-varaint="fill"]) {
         &:hover {
           background-color: rgba(var(--lotta-primary-color), 0.2);
         }

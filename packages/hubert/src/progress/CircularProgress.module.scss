@@ -36,7 +36,8 @@
   &.indeterminate {
     path,
     circle {
-      animation: pathStroke 3.75s infinite ease-in-out,
+      animation:
+        pathStroke 3.75s infinite ease-in-out,
         pathRotate 7.5s infinite cubic-bezier(1, 0.5, 0, 0.5);
     }
   }

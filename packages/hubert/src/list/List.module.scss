@@ -31,7 +31,7 @@
       background-color: rgba(var(--lotta-primary-color), 0.075);
     }
 
-    &:not([role='menuitem']).isSelected .mainSection {
+    &:not([role="menuitem"]).isSelected .mainSection {
       font-weight: bolder;
 
       .listItemSecondaryText {
@@ -50,13 +50,11 @@
         background-color: rgba(var(--lotta-primary-color), 0.1);
       }
 
-
-      &[role='menuitem'] {
+      &[role="menuitem"] {
         &:not([disabled]).isSelected {
           background-color: rgba(var(--lotta-primary-color), 0.1);
         }
       }
-
     }
 
     .isDivider {
@@ -68,5 +66,4 @@
       }
     }
   }
-
 }

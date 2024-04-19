@@ -50,7 +50,7 @@
   /**
       * Custom styles for different variants
       */
-  &[data-variant='fill']:not([disabled]) {
+  &[data-variant="fill"]:not([disabled]) {
     background-color: rgba(var(--lotta-primary-color), 1);
     color: rgba(var(--lotta-primary-contrast-text-color), 1);
     border: none;
@@ -69,11 +69,11 @@
     }
   }
 
-  &[data-variant='borderless'] {
+  &[data-variant="borderless"] {
     border: none;
   }
 
-  &[data-variant='error'] {
+  &[data-variant="error"] {
     background-color: rgba(var(--lotta-error-color), 1);
     color: rgba(var(--lotta-primary-contrast-text-color), 1);
     border: none;

@@ -1,4 +1,4 @@
-@import 'breakpoints';
+@import "breakpoints";
 
 .root {
   border-radius: 0;
@@ -43,7 +43,7 @@
       &::after {
         position: absolute;
         display: block;
-        content: '';
+        content: "";
         left: 0;
         top: 0;
         width: 100%;
