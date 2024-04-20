@@ -59,6 +59,7 @@ export const NodeRenameInput = React.memo(
       >
         <Input
           autoFocus
+          title={`${node.name} umbenennen`}
           ref={renamingInputRef}
           readOnly={isLoading}
           value={newNodeName}

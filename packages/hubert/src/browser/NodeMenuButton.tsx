@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Item, MenuButton } from '../menu';
 import { BrowserPath, useBrowserState } from './BrowserStateContext';
-import { Copy, Delete, Edit, ExpandMore } from '../icon';
+import { Copy, Delete, Download, Edit, MoreVert } from '../icon';
 
 export type NodeMenuButtonProps = {
   path: BrowserPath;
@@ -28,7 +28,7 @@ export const NodeMenuButton = React.memo(({ path }: NodeMenuButtonProps) => {
       }
       buttonProps={{
         small: true,
-        icon: <ExpandMore />,
+        icon: <MoreVert />,
         'aria-label': 'Ordnermenü öffnen',
         style: { width: '2em', height: '2em' },
       }}
@@ -60,7 +60,7 @@ export const NodeMenuButton = React.memo(({ path }: NodeMenuButtonProps) => {
         [
           downloadUrl && (
             <Item key={'download'} textValue={'Herunterladen'}>
-              <Copy />
+              <Download />
               Herunterladen
             </Item>
           ),

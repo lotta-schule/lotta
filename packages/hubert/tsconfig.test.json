@@ -12,9 +12,7 @@
     "vite.config.ts",
     "vitest.config.ts",
     "test.setup.ts",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "src/**/*.d.ts",
+    "src/**/*.ts",
     "src/test-utils.tsx",
     "./*.d.ts"
   ]

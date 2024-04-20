@@ -7,7 +7,8 @@ import { useBrowserState } from './BrowserStateContext';
 import styles from './Toolbar.module.scss';
 
 export const Toolbar = React.memo(() => {
-  const { setCurrentAction, currentPath, createDirectory } = useBrowserState();
+  const { currentPath, mode, createDirectory, setCurrentAction } =
+    useBrowserState();
   return (
     <div className={styles.root}>
       <div className={styles.leftContainer}>file name</div>
@@ -15,20 +16,27 @@ export const Toolbar = React.memo(() => {
         <Input placeholder="Datei suchen" />
       </div>
       <div className={styles.rightContainer}>
-        {createDirectory !== undefined && (
-          <Button
-            icon={<CreateNewFolder />}
-            title="Ordner erstellen"
-            onClick={() => {
-              setCurrentAction({ type: 'create-directory', path: currentPath });
-            }}
-          />
+        {mode === 'view-and-edit' && (
+          <>
+            {createDirectory !== undefined && (
+              <Button
+                icon={<CreateNewFolder />}
+                title="Ordner erstellen"
+                onClick={() => {
+                  setCurrentAction({
+                    type: 'create-directory',
+                    path: currentPath,
+                  });
+                }}
+              />
+            )}
+            <Button
+              icon={<CloudUpload />}
+              title="Datei hochladen"
+              onClick={() => alert('todo')}
+            />
+          </>
         )}
-        <Button
-          icon={<CloudUpload />}
-          title="Datei hochladen"
-          onClick={() => alert('todo')}
-        />
       </div>
     </div>
   );

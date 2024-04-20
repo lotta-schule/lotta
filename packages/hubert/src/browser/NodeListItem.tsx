@@ -3,6 +3,7 @@ import { Folder, FolderOpen } from '../icon';
 import { BrowserNode, useBrowserState } from './BrowserStateContext';
 import { NodeRenameInput } from './NodeRenameInput';
 import { NodeMenuButton } from './NodeMenuButton';
+import { Checkbox } from '../form';
 import clsx from 'clsx';
 
 import styles from './NodeListItem.module.scss';
@@ -15,6 +16,7 @@ export type NodeListItemProps = {
 export const NodeListItem = React.memo(
   ({ parentPath, node }: NodeListItemProps) => {
     const {
+      mode,
       currentAction,
       currentPath,
       selected,
@@ -28,12 +30,13 @@ export const NodeListItem = React.memo(
     const path = React.useMemo(() => [...parentPath, node], [parentPath, node]);
 
     const isOpen = React.useMemo(
-      () => currentPath.some((n) => n.id === node.id),
+      () =>
+        node.type === 'directory' && currentPath.some((n) => n.id === node.id),
       [currentPath, node.id]
     );
 
     const isSelected = React.useMemo(
-      () => selected.some((n) => n.id === node.id),
+      () => node.type === 'file' && selected.some((n) => n.id === node.id),
       [selected, node.id]
     );
 
@@ -66,14 +69,48 @@ export const NodeListItem = React.memo(
           [styles.isSelected]: isSelected,
         })}
         aria-selected={isSelected}
+        aria-expanded={isOpen}
+        title={node.name}
         key={node.id}
-        onClick={() => {
-          if (node.type === 'directory') {
-            onSelect([]);
-            onNavigate(path);
+        onClick={(e) => {
+          if (mode === 'select-multiple') {
+            if (node.type === 'directory') {
+              onNavigate(path);
+            } else {
+              if (
+                !(
+                  (e.target as HTMLElement).parentElement?.querySelector(
+                    'input[type=checkbox]'
+                  ) ||
+                  (e.target instanceof HTMLInputElement &&
+                    e.target.type === 'checkbox')
+                )
+              ) {
+                // if only the checkbox was clicked, don't navigate
+                // but if this was a click on the label do navigate
+                onNavigate(parentPath);
+              } else {
+                // on the other hand, if the checkbox was clicked, its
+                // onSelect has already been called, so we don't need to
+                // call it again
+                return;
+              }
+              if (isSelected) {
+                onSelect(selected.filter((n) => n.id !== node.id));
+              } else {
+                onSelect([...selected, node]);
+              }
+            }
           } else {
-            onNavigate(parentPath);
-            onSelect([node]);
+            if (node.type === 'directory') {
+              onSelect([]);
+              onNavigate(path);
+            } else {
+              if (node.parent !== currentPath.at(-1)?.id) {
+                onNavigate(parentPath);
+              }
+              onSelect([node]);
+            }
           }
         }}
       >
@@ -85,7 +122,20 @@ export const NodeListItem = React.memo(
           {!isRenaming && <span>{node.name}</span>}
         </div>
         <div className={styles.editSection}>
-          <NodeMenuButton path={path} />
+          {mode === 'view-and-edit' && <NodeMenuButton path={path} />}
+          {mode === 'select-multiple' && node.type === 'file' && (
+            <Checkbox
+              aria-label={`Datei ${node.name} auswählen`}
+              isSelected={isSelected}
+              onChange={(isSelected) => {
+                onSelect(
+                  isSelected
+                    ? [...selected, node]
+                    : selected.filter((n) => n.id !== node.id)
+                );
+              }}
+            />
+          )}
         </div>
       </li>
     );

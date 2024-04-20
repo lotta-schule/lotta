@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import { Browser, NodeList } from '@lotta-schule/hubert';
+import { Browser, BrowserNode, NodeList } from '@lotta-schule/hubert';
 
 const getChildNodes = (node: BrowserNode | null): BrowserNode[] => {
   if (!node?.id) {
@@ -72,7 +72,10 @@ const meta: Meta<typeof Browser> = {
         action('renameNode')(node, newName);
         setTimeout(resolve, 500);
       }),
-    getDownloadUrl: (node) => `https://picsum.photos/id/${node.id}/600/400`,
+    getDownloadUrl: (node) =>
+      node.type === 'file'
+        ? `https://picsum.photos/id/${node.id}/600/400`
+        : null,
     onRequestChildNodes: async (node) => {
       action('onRequestChildNodes')(node);
       const childNodes = getChildNodes(node);
@@ -86,8 +89,20 @@ const meta: Meta<typeof Browser> = {
       return <NodeList path={parentPath} nodes={nodes} />;
     },
   },
-} as Meta;
+};
 
 export default meta;
 
 export const Default: StoryObj<typeof Browser> = {};
+
+export const Select: StoryObj<typeof Browser> = {
+  args: {
+    mode: 'select',
+  },
+};
+
+export const SelectMultiple: StoryObj<typeof Browser> = {
+  args: {
+    mode: 'select-multiple',
+  },
+};

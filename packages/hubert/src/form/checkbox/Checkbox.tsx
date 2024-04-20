@@ -23,29 +23,33 @@ export type CheckboxProps = {
 } & ToggleProps &
   AriaCheckboxProps;
 
-export const Checkbox = React.memo<CheckboxProps>(
-  ({ style, className, featureColor, ...props }) => {
+export const Checkbox = React.forwardRef(
+  (
+    { style, className, featureColor, ...props }: CheckboxProps,
+    ref: React.RefObject<HTMLLabelElement>
+  ) => {
     const customStyle =
       featureColor &&
       ({
         '--control-indicator-color': featureColor.join(', '),
       } as React.CSSProperties);
 
-    const ref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
     const state = useToggleState(props);
-    const { inputProps } = useCheckbox(props, state, ref);
+    const { inputProps } = useCheckbox(props, state, inputRef);
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
       <label
         style={{ ...style, ...customStyle }}
         className={clsx(className, styles.root)}
+        ref={ref}
       >
         <VisuallyHidden>
           <input
             {...inputProps}
             {...focusProps}
-            ref={ref}
+            ref={inputRef}
             className={clsx(className, styles.input)}
           />
         </VisuallyHidden>

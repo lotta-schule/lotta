@@ -37,7 +37,7 @@ export interface BrowserState {
   setCurrentAction: (action: BrowserAction | null) => void;
 
   canEdit?: (node: BrowserNode) => boolean;
-  getDownloadUrl?: (node: BrowserNode) => string;
+  getDownloadUrl?: (node: BrowserNode) => string | null | undefined;
 
   createDirectory?: (
     parentNode: BrowserNode | null,

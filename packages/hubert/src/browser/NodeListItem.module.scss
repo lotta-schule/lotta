@@ -3,6 +3,13 @@
   align-items: center;
   width: 100%;
   padding: calc(var(--lotta-spacing) * 0.5);
+  /*
+   * 2.5em is the size of the iconbutton, which is sometimes shown
+   * and sometimes not. We want the height of the item to be the same
+   * regardless of whether the icon button is shown or not.
+   * The size of the padding (line above) is added.
+   */
+  min-height: calc(2.5em + calc(var(--lotta-spacing) * 0.5));
   font-size: 0.75rem;
 
   cursor: pointer;
@@ -22,8 +29,12 @@
   &:hover {
     background-color: rgba(var(--lotta-accent-grey-color), 0.3);
   }
-  &.isSelected,
+
+  &.isSelected:not(:has(input[type="checkbox"])) {
+    background-color: rgba(var(--lotta-primary-color), 0.25);
+  }
+
   &.isOpen {
-    background-color: rgba(var(--lotta-primary-color), 0.2);
+    background-color: rgba(var(--lotta-primary-color), 0.05);
   }
 }
