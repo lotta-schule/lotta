@@ -1,23 +1,23 @@
 import * as React from 'react';
-import { BrowserNode, BrowserPath } from '../../BrowserStateContext';
-import { Item, Menu } from '../../../menu';
-import { Toolbar } from '../../../layout/Toolbar';
-import { KeyboardArrowLeft } from '../../../icon';
+import { BrowserNode, BrowserPath } from '../BrowserStateContext';
+import { Item, Menu } from '../../menu';
+import { Toolbar } from '../../layout/Toolbar';
+import { KeyboardArrowLeft } from '../../icon';
 
-export interface DirectoryMenu {
+export interface DirectorySelector {
   getNodesForParent(parent: BrowserNode | null): Promise<BrowserNode[]>;
   value: BrowserPath;
   onChange: (value: BrowserPath) => void;
   filter?: (node: BrowserNode) => boolean;
 }
 
-export const DirectoryMenu = React.memo(
+export const DirectorySelector = React.memo(
   ({
     getNodesForParent,
     value,
     onChange,
     filter = () => true,
-  }: DirectoryMenu) => {
+  }: DirectorySelector) => {
     const currentNode = value?.at(-1) ?? null;
     const parentNode = value?.at(-2) ?? null;
 
@@ -68,4 +68,4 @@ export const DirectoryMenu = React.memo(
     );
   }
 );
-DirectoryMenu.displayName = 'DirectoryMenu';
+DirectorySelector.displayName = 'DirectorySelector';

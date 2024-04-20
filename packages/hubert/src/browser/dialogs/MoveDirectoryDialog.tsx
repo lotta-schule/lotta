@@ -6,7 +6,7 @@ import { ErrorMessage } from '../../message';
 import { Tooltip } from '../../util';
 import { Button, LoadingButton } from '../../button';
 import { CreateNewFolder } from '../../icon';
-import { DirectoryMenu } from './directorySelector/DirectoryMenu';
+import { DirectorySelector } from './DirectorySelector';
 
 export const MoveDirectoryDialog = React.memo(() => {
   const { currentAction, resetAction, moveNode, onRequestChildNodes, canEdit } =
@@ -52,7 +52,7 @@ export const MoveDirectoryDialog = React.memo(() => {
             icon={<CreateNewFolder />}
           />
         </Tooltip>
-        <DirectoryMenu
+        <DirectorySelector
           value={targetPath}
           onChange={setTargetPath}
           getNodesForParent={onRequestChildNodes}
