@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { BrowserFilesList } from './BrowserFilesList';
 
 export type BrowserNode = {
   id: string;

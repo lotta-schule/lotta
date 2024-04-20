@@ -19,7 +19,7 @@ export const BrowserFilesList = React.memo(
   ({ path, nodes }: BrowserFilesListProps) => {
     const listRef = React.useRef<HTMLElement>(null);
 
-    const { currentPath, onRequestChildNodes } = useBrowserState();
+    const { currentPath } = useBrowserState();
 
     React.useEffect(() => {
       if (listRef.current && path.length === currentPath.length) {
