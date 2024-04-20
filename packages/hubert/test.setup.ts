@@ -39,6 +39,12 @@ Object.defineProperty(window, 'scrollTo', {
   value: vi.fn(),
 });
 
+Element.prototype.scrollIntoView = vi.fn(() => void 0);
+Object.defineProperty(window, 'scrollIntoView', {
+  writable: false,
+  value: vi.fn(),
+});
+
 global.TextEncoder = TextEncoder;
 
 const originalError = console.error;

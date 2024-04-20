@@ -15,7 +15,7 @@ export const StatusBar = React.memo(() => {
   );
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} role="navigation">
       <a
         href="#"
         title="Wurzelverzeichnis"

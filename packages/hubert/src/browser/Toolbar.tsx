@@ -10,7 +10,7 @@ export const Toolbar = React.memo(() => {
   const { currentPath, mode, createDirectory, setCurrentAction } =
     useBrowserState();
   return (
-    <div className={styles.root}>
+    <div className={styles.root} role="toolbar">
       <div className={styles.leftContainer}>file name</div>
       <div className={styles.searchField}>
         <Input placeholder="Datei suchen" />
