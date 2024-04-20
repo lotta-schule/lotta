@@ -1,11 +1,19 @@
 .root {
-  svg {
-    font-size: 1.25em;
-  }
   background-color: rgb(var(--lotta-accent-grey-color));
   padding: var(--lotta-spacing);
   font-size: 0.75em;
   color: rgba(var(--lotta-text-color), 0.5);
   display: flex;
   justify-content: baseline;
+
+  svg {
+    font-size: 1.25em;
+  }
+
+  a {
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }

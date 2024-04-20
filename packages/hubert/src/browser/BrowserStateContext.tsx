@@ -35,7 +35,6 @@ export interface BrowserState {
 
   currentAction: BrowserAction | null;
   setCurrentAction: (action: BrowserAction | null) => void;
-  resetAction: () => void;
 
   canEdit?: (node: BrowserNode) => boolean;
   getDownloadUrl?: (node: BrowserNode) => string;
@@ -54,19 +53,28 @@ export interface BrowserState {
 
 export type BrowserStateProviderProps = {
   children: React.ReactNode;
+  defaultPath?: BrowserPath;
 } & Omit<
   BrowserState,
   | 'currentPath'
   | 'onNavigate'
   | 'selected'
-  | 'setSelected'
+  | 'onSelect'
   | 'currentAction'
   | 'setCurrentAction'
->;
+  | 'mode'
+> &
+  Partial<Pick<BrowserState, 'mode'>>;
 
 export const BrowserStateProvider = React.memo(
-  ({ children, ...props }: BrowserStateProviderProps) => {
-    const [currentPath, setCurrentPath] = React.useState<BrowserNode[]>([]);
+  ({
+    children,
+    mode = 'view-and-edit',
+    defaultPath = [],
+    ...props
+  }: BrowserStateProviderProps) => {
+    const [currentPath, setCurrentPath] =
+      React.useState<BrowserNode[]>(defaultPath);
     const [selected, setSelected] = React.useState<BrowserNode[]>([]);
     const [currentAction, setCurrentAction] =
       React.useState<BrowserState['currentAction']>(null);
@@ -75,6 +83,7 @@ export const BrowserStateProvider = React.memo(
       <BrowserStateContext.Provider
         value={{
           ...props,
+          mode,
           selected,
           currentPath,
           onNavigate: setCurrentPath,
