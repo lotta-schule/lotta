@@ -16,6 +16,11 @@ const meta: Meta<typeof Browser> = {
         action('move-directory')(directoryToMove, targetParent);
         setTimeout(resolve, 500);
       }),
+    deleteNode: (node) =>
+      new Promise((resolve) => {
+        action('delete-node')(node);
+        setTimeout(resolve, 500);
+      }),
     onRequestChildNodes: async (node) => {
       if (!node?.id) {
         return [
@@ -53,6 +58,10 @@ const meta: Meta<typeof Browser> = {
           { id: '17', name: 'folder 17', type: 'file', parent: '8' },
           { id: '18', name: 'folder 18', type: 'file', parent: '8' },
         ];
+      }
+
+      if (node.id === '13') {
+        return [{ id: '19', name: 'folder 19', type: 'file', parent: '13' }];
       }
 
       return [];

@@ -9,7 +9,7 @@ export type DirectoryMenuButtonProps = {
 
 export const DirectoryMenuButton = React.memo(
   ({ path }: DirectoryMenuButtonProps) => {
-    const { setCurrentAction } = useBrowserState();
+    const { setCurrentAction, deleteNode, moveDirectory } = useBrowserState();
     return (
       <MenuButton
         title={'Ordnermenü'}
@@ -22,6 +22,9 @@ export const DirectoryMenuButton = React.memo(
         onAction={(action) => {
           if (action === 'move') {
             setCurrentAction({ type: 'move-directory', path: path });
+          }
+          if (action === 'delete') {
+            setCurrentAction({ type: 'delete-directory', path: path });
           }
           console.log('TODO: directory node action', action);
           /*switch (action) {

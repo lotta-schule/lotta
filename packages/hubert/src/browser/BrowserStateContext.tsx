@@ -13,7 +13,8 @@ export type BrowserPath = BrowserNode[];
 
 export type BrowserAction =
   | { type: 'create-directory'; path: BrowserPath }
-  | { type: 'move-directory'; path: BrowserPath };
+  | { type: 'move-directory'; path: BrowserPath }
+  | { type: 'delete-directory'; path: BrowserPath };
 
 export interface BrowserState {
   mode: BrowserMode;
@@ -39,6 +40,7 @@ export interface BrowserState {
     directoryToMove: BrowserNode,
     targetParent: BrowserNode | null
   ) => PromiseLike<void>;
+  deleteNode?: (node: BrowserNode) => PromiseLike<void>;
 }
 
 export type BrowserStateProviderProps = {
@@ -46,6 +48,7 @@ export type BrowserStateProviderProps = {
   onRequestNodeIcon?: BrowserState['onRequestNodeIcon'];
   createDirectory?: BrowserState['createDirectory'];
   moveDirectory?: BrowserState['moveDirectory'];
+  deleteNode?: BrowserState['deleteNode'];
   onRequestChildNodes: BrowserState['onRequestChildNodes'];
   canEdit?: BrowserState['canEdit'];
   children: React.ReactNode;
@@ -58,6 +61,7 @@ export const BrowserStateProvider = React.memo(
     onRequestChildNodes,
     createDirectory,
     moveDirectory,
+    deleteNode,
     canEdit = () => true,
     children,
   }: BrowserStateProviderProps) => {
@@ -81,6 +85,7 @@ export const BrowserStateProvider = React.memo(
           resetAction,
           createDirectory,
           moveDirectory,
+          deleteNode,
           onRequestNodeIcon,
           onRequestChildNodes,
           canEdit,
