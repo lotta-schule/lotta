@@ -1,53 +1,70 @@
 import * as React from 'react';
-import { BrowserNode } from '../../BrowserStateContext';
+import { BrowserNode, BrowserPath } from '../../BrowserStateContext';
 import { Item, Menu } from '../../../menu';
+import { Toolbar } from '../../../layout/Toolbar';
 import { KeyboardArrowLeft } from '../../../icon';
 
 export interface DirectoryMenu {
-  directoryNodes: BrowserNode[];
-  parentNode?: BrowserNode;
-  onSelectParent?: () => void;
-  onSelectDirectory(directory: BrowserNode): void;
+  getNodesForParent(parent: BrowserNode | null): Promise<BrowserNode[]>;
+  value: BrowserPath;
+  onChange: (value: BrowserPath) => void;
+  filter?: (node: BrowserNode) => boolean;
 }
 
 export const DirectoryMenu = React.memo(
   ({
-    directoryNodes,
-    parentNode,
-    onSelectParent,
-    onSelectDirectory,
+    getNodesForParent,
+    value,
+    onChange,
+    filter = () => true,
   }: DirectoryMenu) => {
+    const currentNode = value?.at(-1) ?? null;
+    const parentNode = value?.at(-2) ?? null;
+
+    const [childNodes, setChildNodes] = React.useState<BrowserNode[]>([]);
+
+    React.useEffect(() => {
+      getNodesForParent(currentNode).then((newNodes) => {
+        setChildNodes(
+          newNodes.filter((n) => n.type === 'directory' && filter(n))
+        );
+      });
+    }, [currentNode, getNodesForParent, filter]);
+
     return (
-      <Menu
-        style={{ width: '100%' }}
-        title={'directory'}
-        onAction={(k) => {
-          if (k === 'parent') {
-            onSelectParent?.();
-          } else {
-            const directory = directoryNodes.find((d) => d.id === k);
-            if (directory) {
-              onSelectDirectory(directory);
+      <div>
+        <Toolbar>{value.map((c) => c.name).join('/') || '/'}</Toolbar>
+        <Menu
+          style={{ width: '100%' }}
+          title={currentNode?.name ?? 'Wurzelverzeichnis'}
+          onAction={(k) => {
+            if (k === 'parent') {
+              onChange(value?.slice(0, value.length - 1) ?? []);
+            } else {
+              const childNode = childNodes.find((d) => d.id === k);
+              if (childNode) {
+                onChange([...value, childNode]);
+              }
             }
-          }
-        }}
-      >
-        {onSelectParent &&
-          ((
-            <Item key={'parent'} textValue={'..'}>
-              <KeyboardArrowLeft />
-              <span>
-                ../
-                {parentNode?.name ?? JSON.stringify(parentNode)}
-              </span>
+          }}
+        >
+          {value.length > 0 &&
+            ((
+              <Item key={'parent'} textValue={'..'}>
+                <KeyboardArrowLeft />
+                <span>
+                  ../
+                  {parentNode?.name ?? 'Wurzelverzeichnis'}
+                </span>
+              </Item>
+            ) as any)}
+          {childNodes.map((directory) => (
+            <Item key={directory.id} textValue={directory.id}>
+              {directory.name}
             </Item>
-          ) as any)}
-        {directoryNodes.map((directory) => (
-          <Item key={directory.id} textValue={directory.id}>
-            {directory.name}
-          </Item>
-        ))}
-      </Menu>
+          ))}
+        </Menu>
+      </div>
     );
   }
 );

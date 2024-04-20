@@ -22,7 +22,11 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
 
   React.useEffect(() => {
     if (listRef.current && path.length === currentPath.length) {
-      listRef.current.scrollIntoView({ inline: 'end', behavior: 'smooth' });
+      listRef.current.scrollIntoView({
+        inline: 'end',
+        block: 'nearest',
+        behavior: 'smooth',
+      });
     }
   }, [path, currentPath]);
 

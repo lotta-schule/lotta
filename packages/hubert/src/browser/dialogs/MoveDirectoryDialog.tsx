@@ -1,22 +1,36 @@
 import * as React from 'react';
-import { DirectorySelector } from './directorySelector/DirectorySelector';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { Dialog, DialogActions, DialogContent } from '../../dialog';
-import { BrowserNode, useBrowserState } from '../BrowserStateContext';
+import { BrowserPath, useBrowserState } from '../BrowserStateContext';
 import { ErrorMessage } from '../../message';
 import { Tooltip } from '../../util';
 import { Button, LoadingButton } from '../../button';
 import { CreateNewFolder } from '../../icon';
+import { DirectoryMenu } from './directorySelector/DirectoryMenu';
 
 export const MoveDirectoryDialog = React.memo(() => {
-  const [targetNode, setTargetNode] = React.useState<BrowserNode | null>(null);
+  const { currentAction, resetAction, moveNode, onRequestChildNodes, canEdit } =
+    useBrowserState();
+
+  const [targetPath, setTargetPath] = React.useState<BrowserPath>(
+    currentAction?.path.slice(0, currentAction.path.length - 1) ?? []
+  );
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] =
     React.useState(false);
 
-  const { currentAction, resetAction, moveNode } = useBrowserState();
-
   const nodeToMove = currentAction?.path?.at(-1);
+
+  React.useEffect(() => {
+    if (!currentAction?.type) {
+      setTargetPath([]);
+      setErrorMessage(null);
+    } else if (currentAction?.type === 'move-node') {
+      setTargetPath(
+        currentAction?.path.slice(0, currentAction.path.length - 1) ?? []
+      );
+    }
+  }, [currentAction?.type]);
 
   return (
     <Dialog
@@ -38,9 +52,16 @@ export const MoveDirectoryDialog = React.memo(() => {
             icon={<CreateNewFolder />}
           />
         </Tooltip>
-        <DirectorySelector onSelect={setTargetNode} />
+        <DirectoryMenu
+          value={targetPath}
+          onChange={setTargetPath}
+          getNodesForParent={onRequestChildNodes}
+          filter={(n) =>
+            canEdit(n) && currentAction!.path.every((p) => p.id !== n.id)
+          }
+        />
         <CreateNewDirectoryDialog
-          parentNode={targetNode}
+          parentNode={targetPath.at(-1) ?? null}
           isOpen={isCreateNewFolderDialogOpen}
           onRequestClose={() => setIsCreateNewFolderDialogOpen(false)}
         />
@@ -48,10 +69,10 @@ export const MoveDirectoryDialog = React.memo(() => {
       <DialogActions>
         <Button onClick={resetAction}>Abbrechen</Button>
         <LoadingButton
-          disabled={targetNode?.id === nodeToMove?.id}
+          disabled={targetPath?.some((n) => n?.id === nodeToMove?.id)}
           onAction={async () => {
             try {
-              await moveNode?.(nodeToMove!, targetNode);
+              await moveNode?.(nodeToMove!, targetPath.at(-1) ?? null);
               setTimeout(resetAction, 1000);
             } catch (e: any) {
               setErrorMessage(e?.message ?? String(e));

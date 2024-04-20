@@ -78,9 +78,7 @@ const meta: Meta<typeof Browser> = {
         : null,
     onRequestChildNodes: async (node) => {
       action('onRequestChildNodes')(node);
-      const childNodes = getChildNodes(node);
-      console.log('childNodes', childNodes);
-      return childNodes;
+      return getChildNodes(node);
     },
     renderNodeList: ({ parentPath }) => {
       const parent = parentPath.at(-1) ?? null;
