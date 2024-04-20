@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor } from '../test-utils';
+import { render } from '../test-utils';
 import { StatusBar } from './StatusBar';
 import { BrowserNode, BrowserStateProvider } from './BrowserStateContext';
 import userEvent from '@testing-library/user-event';

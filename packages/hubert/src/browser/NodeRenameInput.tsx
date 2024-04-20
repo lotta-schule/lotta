@@ -2,10 +2,10 @@ import * as React from 'react';
 import { BrowserPath, useBrowserState } from './BrowserStateContext';
 import { Input } from '../form';
 import { CircularProgress } from '../progress';
-
-import styles from './NodeRenameInput.module.scss';
 import { Popover } from '../popover/new/Popover';
 import { ErrorMessage } from '../message';
+
+import styles from './NodeRenameInput.module.scss';
 
 export type NodeRenameInputProps = {
   path: BrowserPath;
