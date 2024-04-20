@@ -27,14 +27,23 @@ export const StatusBar = React.memo(() => {
         <Home />
       </a>
       {currentPath.map((node, i) => (
-        <span key={node.id}>
-          &nbsp;/&nbsp;
-          <a href={'#'} onClick={onClickLink(currentPath.slice(0, i + 1))}>
+        <>
+          <span className={styles.separator}>/</span>
+          <a
+            className={styles.pathComponent}
+            href={'#'}
+            key={node.id}
+            onClick={onClickLink(currentPath.slice(0, i + 1))}
+          >
             {node.name}
           </a>
-        </span>
+        </>
       ))}
-      {selected.length === 1 && <span>&nbsp;/&nbsp;{selected[0].name}</span>}
+      {selected.length === 1 && (
+        <span className={styles.pathComponent}>
+          &nbsp;/&nbsp;{selected[0].name}
+        </span>
+      )}
     </div>
   );
 });

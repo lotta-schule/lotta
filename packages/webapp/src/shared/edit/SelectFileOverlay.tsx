@@ -42,14 +42,14 @@ export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> 
             {children}
           </EditOverlay>
           <Dialog
+            wide
             open={isSelectFileDialogOpen}
             onRequestClose={() => setIsSelectFileDialogOpen(false)}
             title={'Datei auswählen'}
           >
             <UserBrowser
-              style={{ padding: '0 .5em' }}
               fileFilter={fileFilter}
-              onSelect={(file: FileModel) => {
+              onSelect={([file]) => {
                 setIsSelectFileDialogOpen(false);
                 onSelectFile(file);
               }}

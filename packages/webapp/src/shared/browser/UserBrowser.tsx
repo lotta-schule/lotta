@@ -1,6 +1,16 @@
 import * as React from 'react';
 import { useLazyQuery } from '@apollo/client';
-import { Browser, BrowserMode, BrowserProps } from '@lotta-schule/hubert';
+import {
+  Browser,
+  BrowserMode,
+  BrowserNode,
+  BrowserProps,
+} from '@lotta-schule/hubert';
+import { FileModel } from 'model';
+import { File } from 'util/model';
+import { useCurrentUser } from 'util/user';
+import { useServerData } from 'shared/ServerDataContext';
+import { useMoveNode, useRenameNode } from './action';
 import {
   GetDirectoriesAndFilesQueryResult,
   makeBrowserNodes,
@@ -8,20 +18,21 @@ import {
 import { RenderNodeList } from './RenderNodeList';
 
 import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
-import { FileModel } from 'model';
-import { File } from 'util/model';
-import { useCurrentUser } from 'util/user';
 
 export type UserBrowserProps = {
-  mode?: BrowserMode;
-  style?: React.CSSProperties; // TODO: Must be implemented
+  style?: React.CSSProperties;
+  multiple?: boolean;
   fileFilter?: (file: FileModel) => boolean; // TODO: Must be implemented (or maybe change the API?)
   onSelect?: (file: FileModel[]) => void; // TODO: Must be implemented
 };
 
 export const UserBrowser = React.memo(
-  ({ mode, style, fileFilter, onSelect }: UserBrowserProps) => {
+  ({ style, multiple, fileFilter, onSelect }: UserBrowserProps) => {
+    const serverData = useServerData();
     const currentUser = useCurrentUser();
+
+    const renameNode = useRenameNode();
+    const moveNode = useMoveNode();
 
     const [fetchDirectoriesAndFiles] =
       useLazyQuery<GetDirectoriesAndFilesQueryResult>(
@@ -48,7 +59,7 @@ export const UserBrowser = React.memo(
     const onRequestNodeIcon: BrowserProps['onRequestNodeIcon'] = React.useMemo(
       () => (node) => {
         if (node.type === 'file') {
-          return File.getIconForFile((node as any).meta);
+          return File.getIconForFile(node.meta);
         }
         return null;
       },
@@ -60,19 +71,33 @@ export const UserBrowser = React.memo(
         if (node.type === 'file') {
           return true;
         }
-        return File.canEditDirectory((node as any).meta, currentUser) || false;
+        return File.canEditDirectory(node.meta, currentUser) || false;
       },
       []
     );
+
+    const mode: BrowserMode = React.useMemo(() => {
+      if (onSelect) {
+        return multiple ? 'select-multiple' : 'select';
+      }
+      return 'view-and-edit';
+    }, [onSelect, multiple]);
 
     return (
       <Browser
         onRequestChildNodes={onRequestChildNodes}
         renderNodeList={RenderNodeList}
         onRequestNodeIcon={onRequestNodeIcon}
+        getPreviewUrl={React.useCallback(
+          (node: BrowserNode<FileModel>) =>
+            File.getPreviewImageLocation(serverData.baseUrl, node.meta),
+          [serverData.baseUrl]
+        )}
         canEdit={canEdit}
         mode={mode}
         style={style}
+        renameNode={renameNode}
+        moveNode={moveNode}
       />
     );
   }

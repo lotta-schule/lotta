@@ -23,6 +23,7 @@ interface DialogProps extends Omit<React.HTMLProps<HTMLDivElement>, 'ref'> {
   style?: React.CSSProperties;
   title?: string;
   open?: boolean;
+  wide?: boolean;
   onRequestClose?: () => void | null;
 }
 
@@ -81,6 +82,7 @@ export const DialogShell = ({
   className,
   style,
   title,
+  wide,
   onRequestClose,
   ...otherProps
 }: DialogProps) => {
@@ -113,7 +115,7 @@ export const DialogShell = ({
         {...innerProps}
         initial={{ scaleY: 0, y: -150 }}
         animate={{ scaleY: 1, y: 0 }}
-        className={clsx(styles.dialog, className)}
+        className={clsx(styles.dialog, className, { [styles.wide]: wide })}
         ref={ref}
       >
         <FocusScope contain autoFocus>

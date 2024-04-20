@@ -1,10 +1,11 @@
 import * as React from 'react';
 
-export type BrowserNode = {
+export type BrowserNode<T = any> = {
   id: string;
   name: string;
   type: 'directory' | 'file';
   parent: BrowserNode['id'] | null;
+  meta: T;
 };
 
 export type BrowserMode = 'view-and-edit' | 'select' | 'select-multiple';
@@ -38,6 +39,7 @@ export interface BrowserState {
 
   canEdit?: (node: BrowserNode) => boolean;
   getDownloadUrl?: (node: BrowserNode) => string | null | undefined;
+  getPreviewUrl?: (node: BrowserNode) => string | null | undefined;
 
   createDirectory?: (
     parentNode: BrowserNode | null,
