@@ -2,6 +2,7 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": "./src",
     "outDir": "dist/lib/hubert",
     "noEmit": true,
 
@@ -11,7 +12,7 @@
 
     "module": "Preserve",
     "paths": {
-      "@lotta-schule/theme": ["../theme/src/index.ts"]
+      "@lotta-schule/theme": ["../../theme/src/index.ts"]
     }
   },
   "references": [
