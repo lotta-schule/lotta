@@ -17,7 +17,6 @@ export const CurrentDirectoryMenu = React.memo(
     const [currentPathChildren, setCurrentPathChildren] = React.useState<
       BrowserNode[]
     >([]);
-
     const { canEdit, onRequestChildNodes } = useBrowserState();
 
     React.useEffect(() => {

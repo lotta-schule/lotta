@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Folder, FolderOpen } from '../icon';
 import { BrowserNode, useBrowserState } from './BrowserStateContext';
-import { DirectoryMenuButton } from './DirectoryMenuButton';
-import { FileMenuButton } from './FileMenuButton';
+import { BrowserNodeRenameInput } from './BrowserNodeRenameInput';
+import { BrowserNodeMenuButton } from './BrowserNodeMenuButton';
 import clsx from 'clsx';
 
 import styles from './BrowserNodeListItem.module.scss';
@@ -14,8 +14,18 @@ export type BrowserNodeListItemProps = {
 
 export const BrowserNodeListItem = React.memo(
   ({ parentPath, node }: BrowserNodeListItemProps) => {
-    const { currentPath, selected, onSelect, onNavigate, onRequestNodeIcon } =
-      useBrowserState();
+    const {
+      currentAction,
+      currentPath,
+      selected,
+      onSelect,
+      onNavigate,
+      onRequestNodeIcon,
+      renameNode,
+      resetAction,
+    } = useBrowserState();
+
+    const path = React.useMemo(() => [...parentPath, node], [parentPath, node]);
 
     const isOpen = React.useMemo(
       () => currentPath.some((n) => n.id === node.id),
@@ -25,6 +35,14 @@ export const BrowserNodeListItem = React.memo(
     const isSelected = React.useMemo(
       () => selected.some((n) => n.id === node.id),
       [selected, node.id]
+    );
+
+    const isRenaming = React.useMemo(
+      () =>
+        renameNode !== undefined &&
+        currentAction?.type === 'rename-node' &&
+        currentAction.path.at(-1)?.id === node.id,
+      [currentAction, node.id, renameNode]
     );
 
     const nodeIcon = React.useMemo(() => {
@@ -52,7 +70,7 @@ export const BrowserNodeListItem = React.memo(
         onClick={() => {
           if (node.type === 'directory') {
             onSelect([]);
-            onNavigate([...parentPath, node]);
+            onNavigate(path);
           } else {
             onNavigate(parentPath);
             onSelect([node]);
@@ -60,12 +78,14 @@ export const BrowserNodeListItem = React.memo(
         }}
       >
         <div className={styles.fileIcon}>{nodeIcon}</div>
-        <div className={styles.fileName}>{node.name}</div>
-        <div>
-          {node.type === 'directory' && (
-            <DirectoryMenuButton path={[...parentPath, node]} />
+        <div className={styles.fileName}>
+          {isRenaming && (
+            <BrowserNodeRenameInput path={path} onRequestClose={resetAction} />
           )}
-          {node.type === 'file' && <FileMenuButton node={node} />}
+          {!isRenaming && <span>{node.name}</span>}
+        </div>
+        <div className={styles.editSection}>
+          <BrowserNodeMenuButton path={path} />
         </div>
       </li>
     );

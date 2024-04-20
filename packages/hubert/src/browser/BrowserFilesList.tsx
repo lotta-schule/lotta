@@ -1,22 +1,24 @@
 import * as React from 'react';
 import { CircularProgress } from '../progress';
-import { useBrowserState, BrowserNode } from './BrowserStateContext';
+import {
+  useBrowserState,
+  BrowserNode,
+  BrowserPath,
+} from './BrowserStateContext';
 import { BrowserNodeListItem } from './BrowserNodeListItem';
 import clsx from 'clsx';
 
 import styles from './BrowserFilesList.module.scss';
 
 export type BrowserFilesListProps = {
-  path: BrowserNode[];
+  path: BrowserPath;
+  nodes: BrowserNode[];
 };
 
 export const BrowserFilesList = React.memo(
-  ({ path }: BrowserFilesListProps) => {
+  ({ path, nodes }: BrowserFilesListProps) => {
     const listRef = React.useRef<HTMLElement>(null);
 
-    const [childNodes, setChildNodes] = React.useState<BrowserNode[] | null>(
-      null
-    );
     const { currentPath, onRequestChildNodes } = useBrowserState();
 
     React.useEffect(() => {
@@ -25,22 +27,16 @@ export const BrowserFilesList = React.memo(
       }
     }, [path, currentPath]);
 
-    const parentNode = React.useMemo(() => path.at(-1) ?? null, [path]);
-
-    React.useEffect(() => {
-      onRequestChildNodes(parentNode).then(setChildNodes);
-    }, [parentNode]);
-
-    if (!childNodes?.length) {
+    if (!nodes?.length) {
       return (
         <div ref={listRef as any} className={clsx(styles.root, styles.isEmpty)}>
-          {childNodes === null ? <CircularProgress /> : 'Keine Dateien'}
+          {nodes === null ? <CircularProgress /> : 'Keine Dateien'}
         </div>
       );
     }
     return (
       <ul className={styles.root} ref={listRef as any}>
-        {childNodes.map((node) => (
+        {nodes.map((node) => (
           <BrowserNodeListItem key={node.id} parentPath={path} node={node} />
         ))}
       </ul>

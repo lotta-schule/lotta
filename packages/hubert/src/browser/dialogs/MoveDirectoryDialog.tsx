@@ -14,15 +14,19 @@ export const MoveDirectoryDialog = React.memo(() => {
   const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] =
     React.useState(false);
 
-  const { currentAction, resetAction, moveDirectory } = useBrowserState();
+  const { currentAction, resetAction, moveNode } = useBrowserState();
 
   const nodeToMove = currentAction?.path?.at(-1);
 
   return (
     <Dialog
-      open={currentAction?.type === 'move-directory'}
+      open={currentAction?.type === 'move-node'}
       onRequestClose={resetAction}
-      title={'Ordner verschieben'}
+      title={
+        nodeToMove?.type === 'directory'
+          ? 'Ordner verschieben'
+          : 'Datei verschieben'
+      }
     >
       <DialogContent>
         Wähle ein Zielort
@@ -47,7 +51,7 @@ export const MoveDirectoryDialog = React.memo(() => {
           disabled={targetNode?.id === nodeToMove?.id}
           onAction={async () => {
             try {
-              await moveDirectory?.(nodeToMove!, targetNode);
+              await moveNode?.(nodeToMove!, targetNode);
               setTimeout(resetAction, 1000);
             } catch (e: any) {
               setErrorMessage(e?.message ?? String(e));
