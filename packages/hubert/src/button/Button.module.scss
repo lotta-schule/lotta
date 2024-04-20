@@ -19,16 +19,15 @@
   }
 
   &.onlyIcon {
-    padding: 0;
+    .icon {
+      margin: 0px;
+    }
     &:not(.grouped) {
+      padding: 0;
       border-radius: 50%;
       border-color: transparent;
       height: 2.5em;
       width: 2.5em;
-
-      & .icon {
-        margin: 0px;
-      }
 
       &:not([data-varaint="fill"]) {
         &:hover {
