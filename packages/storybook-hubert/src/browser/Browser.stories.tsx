@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import { Browser, BrowserFilesList } from '@lotta-schule/hubert';
+import { Browser, NodeList } from '@lotta-schule/hubert';
 
 const getChildNodes = (node: BrowserNode | null): BrowserNode[] => {
   if (!node?.id) {
@@ -83,7 +83,7 @@ const meta: Meta<typeof Browser> = {
       const parent = parentPath.at(-1) ?? null;
       const nodes = getChildNodes(parent);
 
-      return <BrowserFilesList path={parentPath} nodes={nodes} />;
+      return <NodeList path={parentPath} nodes={nodes} />;
     },
   },
 } as Meta;

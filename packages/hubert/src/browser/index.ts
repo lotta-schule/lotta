@@ -1,2 +1,2 @@
 export * from './Browser';
-export * from './BrowserFilesList';
+export * from './NodeList';

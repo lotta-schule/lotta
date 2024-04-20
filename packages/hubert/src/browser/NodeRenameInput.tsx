@@ -3,17 +3,17 @@ import { BrowserPath, useBrowserState } from './BrowserStateContext';
 import { Input } from '../form';
 import { CircularProgress } from '../progress';
 
-import styles from './BrowserNodeRenameInput.module.scss';
+import styles from './NodeRenameInput.module.scss';
 import { Popover } from '../popover/new/Popover';
 import { ErrorMessage } from '../message';
 
-export type BrowserNodeRenameInputProps = {
+export type NodeRenameInputProps = {
   path: BrowserPath;
   onRequestClose: () => void;
 };
 
-export const BrowserNodeRenameInput = React.memo(
-  ({ path, onRequestClose }: BrowserNodeRenameInputProps) => {
+export const NodeRenameInput = React.memo(
+  ({ path, onRequestClose }: NodeRenameInputProps) => {
     const renamingInputRef = React.useRef<HTMLInputElement>(null);
     const node = path.at(-1);
 
@@ -84,4 +84,4 @@ export const BrowserNodeRenameInput = React.memo(
     );
   }
 );
-BrowserNodeRenameInput.displayName = 'BrowserNodeRenameInput';
+NodeRenameInput.displayName = 'NodeRenameInput';

@@ -4,9 +4,9 @@ import { Button } from '../button';
 import { CloudUpload, CreateNewFolder } from '../icon';
 import { useBrowserState } from './BrowserStateContext';
 
-import styles from './BrowserToolbar.module.scss';
+import styles from './Toolbar.module.scss';
 
-export const BrowserToolbar = React.memo(() => {
+export const Toolbar = React.memo(() => {
   const { setCurrentAction, currentPath, createDirectory } = useBrowserState();
   return (
     <div className={styles.root}>
@@ -33,4 +33,4 @@ export const BrowserToolbar = React.memo(() => {
     </div>
   );
 });
-BrowserToolbar.displayName = 'BrowserToolbar';
+Toolbar.displayName = 'Toolbar';

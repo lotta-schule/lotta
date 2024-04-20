@@ -6,7 +6,7 @@ import {
   MoveDirectoryDialog,
 } from './dialogs';
 
-export const BrowserDialogs = React.memo(() => {
+export const DialogsContainer = React.memo(() => {
   const { currentAction, setCurrentAction } = useBrowserState();
 
   const resetAction = React.useCallback(() => setCurrentAction(null), []);
@@ -27,4 +27,4 @@ export const BrowserDialogs = React.memo(() => {
     </>
   );
 });
-BrowserDialogs.displayName = 'BrowserDialogs';
+DialogsContainer.displayName = 'DialogsContainer';

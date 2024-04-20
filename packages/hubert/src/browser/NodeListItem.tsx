@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { Folder, FolderOpen } from '../icon';
 import { BrowserNode, useBrowserState } from './BrowserStateContext';
-import { BrowserNodeRenameInput } from './BrowserNodeRenameInput';
-import { BrowserNodeMenuButton } from './BrowserNodeMenuButton';
+import { NodeRenameInput } from './NodeRenameInput';
+import { NodeMenuButton } from './NodeMenuButton';
 import clsx from 'clsx';
 
-import styles from './BrowserNodeListItem.module.scss';
+import styles from './NodeListItem.module.scss';
 
-export type BrowserNodeListItemProps = {
+export type NodeListItemProps = {
   parentPath: BrowserNode[];
   node: BrowserNode;
 };
 
-export const BrowserNodeListItem = React.memo(
-  ({ parentPath, node }: BrowserNodeListItemProps) => {
+export const NodeListItem = React.memo(
+  ({ parentPath, node }: NodeListItemProps) => {
     const {
       currentAction,
       currentPath,
@@ -80,15 +80,15 @@ export const BrowserNodeListItem = React.memo(
         <div className={styles.fileIcon}>{nodeIcon}</div>
         <div className={styles.fileName}>
           {isRenaming && (
-            <BrowserNodeRenameInput path={path} onRequestClose={resetAction} />
+            <NodeRenameInput path={path} onRequestClose={resetAction} />
           )}
           {!isRenaming && <span>{node.name}</span>}
         </div>
         <div className={styles.editSection}>
-          <BrowserNodeMenuButton path={path} />
+          <NodeMenuButton path={path} />
         </div>
       </li>
     );
   }
 );
-BrowserNodeListItem.displayName = 'BrowserNodeListItem';
+NodeListItem.displayName = 'NodeListItem';

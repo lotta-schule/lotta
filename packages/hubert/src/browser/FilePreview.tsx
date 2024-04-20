@@ -1,7 +1,8 @@
 import * as React from 'react';
-import styles from './BrowserFilePreview.module.scss';
 
-export const BrowserFilePreview = React.memo(() => {
+import styles from './FilePreview.module.scss';
+
+export const FilePreview = React.memo(() => {
   return (
     <div className={styles.root}>
       <div className={styles.previewImage}>
@@ -19,4 +20,4 @@ export const BrowserFilePreview = React.memo(() => {
     </div>
   );
 });
-BrowserFilePreview.displayName = 'BrowserFilePreview';
+FilePreview.displayName = 'FilePreview';

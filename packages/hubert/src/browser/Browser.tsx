@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { BrowserToolbar } from './BrowserToolbar';
-import { BrowserFilesWindow } from './BrowserFilesWindow';
-import { BrowserStatusBar } from './BrowserStatusBar';
+import { Toolbar } from './Toolbar';
+import { Explorer } from './Explorer';
+import { StatusBar } from './StatusBar';
 import {
   BrowserStateProvider,
   BrowserStateProviderProps,
 } from './BrowserStateContext';
-import { BrowserDialogs } from './BrowserDialogs';
+import { DialogsContainer } from './DialogsContainer';
 import clsx from 'clsx';
 
 import styles from './Browser.module.scss';
@@ -19,10 +19,10 @@ export const Browser = React.memo(({ className, ...props }: BrowserProps) => {
   return (
     <BrowserStateProvider {...props}>
       <div className={clsx(className, styles.root)}>
-        <BrowserToolbar />
-        <BrowserFilesWindow />
-        <BrowserStatusBar />
-        <BrowserDialogs />
+        <Toolbar />
+        <Explorer />
+        <StatusBar />
+        <DialogsContainer />
       </div>
     </BrowserStateProvider>
   );

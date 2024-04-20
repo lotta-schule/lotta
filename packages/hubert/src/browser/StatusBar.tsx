@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Home } from '../icon';
 import { useBrowserState } from './BrowserStateContext';
 
-import styles from './BrowserStatusBar.module.scss';
+import styles from './StatusBar.module.scss';
 
-export const BrowserStatusBar = React.memo(() => {
+export const StatusBar = React.memo(() => {
   const { currentPath, selected } = useBrowserState();
 
   return (
@@ -17,4 +17,4 @@ export const BrowserStatusBar = React.memo(() => {
     </div>
   );
 });
-BrowserStatusBar.displayName = 'BrowserStatusBar';
+StatusBar.displayName = 'StatusBar';

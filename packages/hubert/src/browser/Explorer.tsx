@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useBrowserState } from './BrowserStateContext';
-import { BrowserFilePreview } from './BrowserFilePreview';
+import { FilePreview } from './FilePreview';
 
-import styles from './BrowserFilesWindow.module.scss';
+import styles from './Explorer.module.scss';
 
-export const BrowserFilesWindow = React.memo(() => {
+export const Explorer = React.memo(() => {
   const { currentPath, renderNodeList: RenderNodeList } = useBrowserState();
   return (
     <div className={styles.root}>
@@ -17,8 +17,8 @@ export const BrowserFilesWindow = React.memo(() => {
           />
         ))}
       </div>
-      <BrowserFilePreview />
+      <FilePreview />
     </div>
   );
 });
-BrowserFilesWindow.displayName = 'BrowserFilesWindow';
+Explorer.displayName = 'Explorer';
