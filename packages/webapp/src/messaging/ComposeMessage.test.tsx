@@ -5,9 +5,7 @@ import {
   SomeUserin,
   imageFile as mockImageFile,
 } from 'test/fixtures';
-import FileExplorer, {
-  FileExplorerProps,
-} from 'shared/fileExplorer/FileExplorer';
+import { UserBrowser, UserBrowserProps } from 'shared/browser';
 import { ComposeMessage } from './ComposeMessage';
 import { MessageModel } from 'model';
 import userEvent from '@testing-library/user-event';
@@ -15,12 +13,12 @@ import userEvent from '@testing-library/user-event';
 import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
 
 const mockReact = React;
-vi.mock('../shared/fileExplorer/FileExplorer', async (importOriginal) => {
-  const originalModule: typeof FileExplorer = await importOriginal();
+vi.mock('../shared/browser', async (importOriginal) => {
+  const originalModule: typeof UserBrowser = await importOriginal();
   return {
     __esModule: true,
     ...originalModule,
-    FileExplorer: ({ onSelect }: FileExplorerProps) => {
+    UserBrowser: ({ onSelect }: UserBrowserProps) => {
       mockReact.useEffect(() => {
         onSelect?.([mockImageFile as any]);
       }, []);

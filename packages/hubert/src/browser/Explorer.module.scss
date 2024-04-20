@@ -1,13 +1,16 @@
 .root {
   background-color: rgb(var(--lotta-box-background-color));
-  height: 300px;
-  display: flex;
   overflow: hidden;
   display: flex;
+  flex: 1 1 auto;
 
-  .BrowserColumns {
+  .browserColumns {
     display: flex;
     overflow: auto;
     width: 100%;
+  }
+
+  .nodeInfo {
+    flex: 0 1 max(min(50%, 500px), 250px);
   }
 }

@@ -13,18 +13,21 @@ import styles from './Browser.module.scss';
 
 export type BrowserProps = {
   className?: string;
+  style?: React.CSSProperties;
 } & Omit<BrowserStateProviderProps, 'children'>;
 
-export const Browser = React.memo(({ className, ...props }: BrowserProps) => {
-  return (
-    <BrowserStateProvider {...props}>
-      <div className={clsx(className, styles.root)}>
-        <Toolbar />
-        <Explorer />
-        <StatusBar />
-        <DialogsContainer />
-      </div>
-    </BrowserStateProvider>
-  );
-});
+export const Browser = React.memo(
+  ({ className, style, ...props }: BrowserProps) => {
+    return (
+      <BrowserStateProvider {...props}>
+        <div style={style} className={clsx(className, styles.root)}>
+          <Toolbar />
+          <Explorer className={styles.explorer} />
+          <StatusBar />
+          <DialogsContainer />
+        </div>
+      </BrowserStateProvider>
+    );
+  }
+);
 Browser.displayName = 'Browser';

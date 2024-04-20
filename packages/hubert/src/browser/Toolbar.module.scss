@@ -12,16 +12,17 @@
   padding: var(--lotta-spacing);
 
   .leftContainer {
-    min-width: 150px;
+    flex: 1 1 auto;
   }
 
   .searchField {
     flex: 0 1 400px;
+    min-width: 8em;
     max-width: 50%;
   }
 
   .rightContainer {
-    min-width: 150px;
+    flex: 1 1 fit-content;
     display: flex;
     justify-content: flex-end;
 

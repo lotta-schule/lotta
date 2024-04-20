@@ -1,14 +1,19 @@
 import * as React from 'react';
 import { useBrowserState } from './BrowserStateContext';
 import { FilePreview } from './FilePreview';
+import clsx from 'clsx';
 
 import styles from './Explorer.module.scss';
 
-export const Explorer = React.memo(() => {
+export type ExplorerProps = {
+  className?: string;
+};
+
+export const Explorer = React.memo(({ className }: ExplorerProps) => {
   const { currentPath, renderNodeList: RenderNodeList } = useBrowserState();
   return (
-    <div className={styles.root}>
-      <div className={styles.BrowserColumns}>
+    <div className={clsx(styles.root, className)}>
+      <div className={styles.browserColumns}>
         <RenderNodeList parentPath={[]} />
         {currentPath.map((currentNode, i) => (
           <RenderNodeList
@@ -17,7 +22,7 @@ export const Explorer = React.memo(() => {
           />
         ))}
       </div>
-      <FilePreview />
+      <FilePreview className={styles.nodeInfo} />
     </div>
   );
 });

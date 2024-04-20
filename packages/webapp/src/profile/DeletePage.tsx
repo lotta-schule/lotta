@@ -26,7 +26,7 @@ import { Main, Sidebar } from 'layout';
 import { ProfileDeleteFileSelection } from './component/ProfileDeleteFileSelection';
 import { useRouter } from 'next/router';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import FileExplorer from 'shared/fileExplorer/FileExplorer';
+import { UserBrowser } from 'shared/browser';
 import clsx from 'clsx';
 
 import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
@@ -319,7 +319,7 @@ export const DeletePage = React.memo(() => {
                 Du kannst Dateien, die du behalten möchtest, zur Sicherheit
                 herunterladen. Andere Dateien werden endgültig gelöscht.
               </p>
-              <FileExplorer />
+              <UserBrowser />
             </div>
             {boxActions}
           </Box>

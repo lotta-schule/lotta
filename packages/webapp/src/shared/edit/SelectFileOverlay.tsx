@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FileModel } from 'model';
-import { EditOverlay } from './EditOverlay';
 import { Dialog } from '@lotta-schule/hubert';
-import FileExplorer from 'shared/fileExplorer/FileExplorer';
+import { UserBrowser } from 'shared/browser';
+import { EditOverlay } from './EditOverlay';
 
 interface SelectFileOverlayProps {
   label: string;
@@ -46,7 +46,7 @@ export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> 
             onRequestClose={() => setIsSelectFileDialogOpen(false)}
             title={'Datei auswählen'}
           >
-            <FileExplorer
+            <UserBrowser
               style={{ padding: '0 .5em' }}
               fileFilter={fileFilter}
               onSelect={(file: FileModel) => {
