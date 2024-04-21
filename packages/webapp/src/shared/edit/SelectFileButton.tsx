@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { FileModel } from 'model';
-import { Button, ButtonProps, Dialog } from '@lotta-schule/hubert';
+import {
+  Button,
+  ButtonProps,
+  Dialog,
+  DialogActions,
+} from '@lotta-schule/hubert';
 import { UserBrowser, UserBrowserProps } from 'shared/browser';
 
 interface SelectFileButtonProps<Multiple extends boolean> {
@@ -22,14 +27,22 @@ const _SelectFileButton = <Multiple extends boolean | undefined>({
   buttonComponentProps,
   onChangeFileExplorerVisibility,
 }: SelectFileButtonProps<Multiple extends undefined ? false : Multiple>) => {
+  const [selectedFiles, setSelectedFiles] = React.useState<FileModel[]>([]);
   const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] =
     React.useState(false);
   const fileExplorerOptions: Partial<UserBrowserProps> = {};
+  const lastBrowserVisible = React.useRef(false);
 
   React.useEffect(() => {
-    onChangeFileExplorerVisibility?.(isSelectFileDialogOpen);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSelectFileDialogOpen]);
+    if (isSelectFileDialogOpen !== lastBrowserVisible.current) {
+      onChangeFileExplorerVisibility?.(isSelectFileDialogOpen);
+      lastBrowserVisible.current = isSelectFileDialogOpen;
+    }
+
+    if (!isSelectFileDialogOpen) {
+      setSelectedFiles([]);
+    }
+  }, [isSelectFileDialogOpen, onChangeFileExplorerVisibility]);
 
   return (
     <>
@@ -55,13 +68,28 @@ const _SelectFileButton = <Multiple extends boolean | undefined>({
             node.type === 'file' &&
             fileFilter?.(node.meta as FileModel) === false
           }
-          mode={multiple ? 'select-multiple' : 'select'}
-          onSelect={(result) => {
-            setIsSelectFileDialogOpen(false);
-            onSelect?.((multiple ? result : result[0]) as any);
-          }}
+          multiple={multiple}
+          onSelect={setSelectedFiles}
           {...fileExplorerOptions}
         />
+        <DialogActions>
+          <Button onClick={() => setIsSelectFileDialogOpen(false)}>
+            Abbrechen
+          </Button>
+          <Button
+            disabled={selectedFiles.length === 0}
+            onClick={() => {
+              setIsSelectFileDialogOpen(false);
+              onSelect?.((multiple ? selectedFiles : selectedFiles[0]) as any);
+            }}
+          >
+            {multiple &&
+              (selectedFiles.length > 0
+                ? `${selectedFiles.length} Dateien auswählen`
+                : 'Dateien auswählen')}
+            {!multiple && 'Datei auswählen'}
+          </Button>
+        </DialogActions>
       </Dialog>
     </>
   );

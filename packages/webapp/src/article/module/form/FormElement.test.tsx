@@ -295,16 +295,16 @@ describe('shared/article/module/form/FormElement', () => {
       await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
       await waitFor(() => expect(didCallFiles).toEqual(true));
       await waitFor(() =>
-        expect(screen.getByRole('row', { name: /logos/i })).toBeVisible()
+        expect(screen.getByRole('listitem', { name: /logos/i })).toBeVisible()
       );
-      await fireEvent.click(screen.getByRole('row', { name: /logos/i }));
+      await fireEvent.click(screen.getByRole('listitem', { name: /logos/i }));
       await waitFor(() =>
         expect(
-          screen.getByRole('row', { name: /dateiname\.jpg/i })
+          screen.getByRole('listitem', { name: /dateiname\.jpg/i })
         ).toBeVisible()
       );
       await fireEvent.click(
-        screen.getByRole('row', { name: /dateiname\.jpg/i })
+        screen.getByRole('listitem', { name: /dateiname\.jpg/i })
       );
       await fireEvent.click(screen.getByRole('button', { name: /auswählen/ }));
       expect(setValueFn).toHaveBeenCalledWith(

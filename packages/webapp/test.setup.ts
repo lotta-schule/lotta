@@ -97,6 +97,12 @@ beforeAll(() => {
     value: vi.fn(),
   });
 
+  Element.prototype.scrollIntoView = vi.fn(() => void 0);
+  Object.defineProperty(window, 'scrollIntoView', {
+    writable: false,
+    value: vi.fn(),
+  });
+
   vi.mock('next/head', () => {
     const ReactDOMServer = require('react-dom/server');
     return {
