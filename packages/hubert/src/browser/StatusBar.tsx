@@ -1,10 +1,15 @@
 import * as React from 'react';
 import { Home } from '../icon';
 import { BrowserPath, useBrowserState } from './BrowserStateContext';
+import clsx from 'clsx';
 
 import styles from './StatusBar.module.scss';
 
-export const StatusBar = React.memo(() => {
+export type StatusBarProps = {
+  className?: string;
+};
+
+export const StatusBar = React.memo(({ className }: StatusBarProps) => {
   const { currentPath, selected, onNavigate } = useBrowserState();
   const onClickLink = React.useCallback(
     (path: BrowserPath) => (e: React.MouseEvent) => {
@@ -15,7 +20,7 @@ export const StatusBar = React.memo(() => {
   );
 
   return (
-    <div className={styles.root} role="navigation">
+    <div className={clsx(styles.root, className)} role="navigation">
       <a
         href="#"
         title="Wurzelverzeichnis"
@@ -27,7 +32,7 @@ export const StatusBar = React.memo(() => {
         <Home />
       </a>
       {currentPath.map((node, i) => (
-        <>
+        <React.Fragment key={node.id}>
           <span className={styles.separator}>/</span>
           <a
             className={styles.pathComponent}
@@ -37,7 +42,7 @@ export const StatusBar = React.memo(() => {
           >
             {node.name}
           </a>
-        </>
+        </React.Fragment>
       ))}
       {selected.length === 1 && (
         <span className={styles.pathComponent}>

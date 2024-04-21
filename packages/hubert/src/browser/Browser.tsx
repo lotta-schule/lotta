@@ -21,9 +21,9 @@ export const Browser = React.memo(
     return (
       <BrowserStateProvider {...props}>
         <div style={style} className={clsx(className, styles.root)}>
-          <Toolbar />
+          <Toolbar className={styles.toolbar} />
           <Explorer className={styles.explorer} />
-          <StatusBar />
+          <StatusBar className={styles.statusBar} />
           <DialogsContainer />
         </div>
       </BrowserStateProvider>

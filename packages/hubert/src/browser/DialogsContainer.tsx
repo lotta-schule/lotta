@@ -3,6 +3,7 @@ import { useBrowserState } from './BrowserStateContext';
 import {
   CreateNewDirectoryDialog,
   DeleteDirectoryDialog,
+  DeleteFilesDialog,
   MoveDirectoryDialog,
 } from './dialogs';
 
@@ -23,6 +24,7 @@ export const DialogsContainer = React.memo(() => {
         isOpen={currentAction?.type === 'create-directory'}
       />
       <DeleteDirectoryDialog />
+      <DeleteFilesDialog />
       <MoveDirectoryDialog />
     </>
   );

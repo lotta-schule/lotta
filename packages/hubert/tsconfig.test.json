@@ -14,6 +14,7 @@
     "test.setup.ts",
     "src/**/*.ts",
     "src/test-utils.tsx",
+    "src/test-fixtures.tsx",
     "./*.d.ts"
   ]
 }

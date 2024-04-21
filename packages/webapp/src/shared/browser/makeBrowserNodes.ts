@@ -8,9 +8,9 @@ export type GetDirectoriesAndFilesQueryResult = {
 
 export const makeBrowserNodes = (
   result?: GetDirectoriesAndFilesQueryResult
-): BrowserNode[] => {
+): BrowserNode[] | null => {
   if (!result) {
-    return [];
+    return null;
   }
 
   const directoryNodes = result.directories.map(

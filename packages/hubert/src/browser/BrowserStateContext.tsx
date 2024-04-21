@@ -16,6 +16,7 @@ export type BrowserAction =
   | { type: 'create-directory'; path: BrowserPath }
   | { type: 'move-node'; path: BrowserPath }
   | { type: 'delete-directory'; path: BrowserPath }
+  | { type: 'delete-files'; paths: BrowserPath[] }
   | { type: 'rename-node'; path: BrowserPath };
 
 export type RenderNodeListProps = {

@@ -12,7 +12,7 @@ import styles from './NodeList.module.scss';
 
 export type NodeListProps = {
   path: BrowserPath;
-  nodes: BrowserNode[];
+  nodes: null | BrowserNode[];
 };
 
 export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
@@ -33,7 +33,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   if (!nodes?.length) {
     return (
       <div ref={listRef as any} className={clsx(styles.root, styles.isEmpty)}>
-        {nodes === null ? <CircularProgress /> : 'Keine Dateien'}
+        {nodes !== null && 'Keine Dateien'}
       </div>
     );
   }

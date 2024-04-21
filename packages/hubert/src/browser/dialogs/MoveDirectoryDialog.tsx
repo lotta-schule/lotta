@@ -13,7 +13,9 @@ export const MoveDirectoryDialog = React.memo(() => {
     useBrowserState();
 
   const [targetPath, setTargetPath] = React.useState<BrowserPath>(
-    currentAction?.path.slice(0, currentAction.path.length - 1) ?? []
+    (currentAction?.type === 'move-node' &&
+      currentAction?.path.slice(0, currentAction.path.length - 1)) ||
+      []
   );
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] =

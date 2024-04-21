@@ -1,90 +1,25 @@
 import * as React from 'react';
 import { vi } from 'vitest';
-import { render, waitFor, within } from '../../test-utils';
 import {
-  BrowserNode,
-  BrowserState,
-  BrowserStateContext,
-} from '../BrowserStateContext';
+  TestBrowserWrapper,
+  TestBrowserWrapperProps,
+  render,
+  waitFor,
+  within,
+  fixtures,
+} from '../../test-utils';
 import { MoveDirectoryDialog } from './MoveDirectoryDialog';
 import userEvent from '@testing-library/user-event';
 
-const defaultNodes: BrowserNode[] = [
-  {
-    id: '1',
-    name: 'folder 1',
-    type: 'directory',
-    parent: null,
-  },
-  { id: '2', name: 'folder 2', type: 'directory', parent: null },
-  { id: '3', name: 'folder 3', type: 'directory', parent: null },
-  { id: '4', name: 'folder 4', type: 'directory', parent: null },
-  { id: '5', name: 'folder 5', type: 'directory', parent: '1' },
-  { id: '6', name: 'folder 6', type: 'directory', parent: '1' },
-  { id: '7', name: 'folder 7', type: 'directory', parent: '1' },
-  { id: '8', name: 'folder 8', type: 'directory', parent: '1' },
-  { id: '9', name: 'folder 9', type: 'directory', parent: '1' },
-  { id: '10', name: 'folder 10', type: 'directory', parent: '1' },
-  { id: '11', name: 'folder 11', type: 'directory', parent: '8' },
-  { id: '12', name: 'folder 12', type: 'directory', parent: '8' },
-  { id: '13', name: 'folder 13', type: 'directory', parent: '8' },
-  { id: '14', name: 'folder 14', type: 'directory', parent: '8' },
-  { id: '15', name: 'folder 15', type: 'file', parent: '8' },
-  { id: '16', name: 'folder 16', type: 'file', parent: '8' },
-  { id: '17', name: 'folder 17', type: 'file', parent: '8' },
-  { id: '18', name: 'folder 18', type: 'file', parent: '8' },
-];
-
-const validDirectoryPath = ['1', '8'].map(
-  (id) => defaultNodes.find((n) => n.id === id)!
+const WrappedMoveDirectoryDialog = (props: TestBrowserWrapperProps) => (
+  <TestBrowserWrapper {...props}>
+    <MoveDirectoryDialog />
+  </TestBrowserWrapper>
 );
 
-const validFilePath = [...validDirectoryPath, defaultNodes[14]];
+const validDirectoryPath = fixtures.getPathForNode('8');
 
-export type WrappedMoveDirectoryDialogProps = Partial<
-  Omit<BrowserState, 'onRequestChildNodes' | 'renderNodeList' | 'mode'>
->;
-
-const WrappedMoveDirectoryDialog = ({
-  moveNode = vi.fn(),
-  currentPath = [],
-  setCurrentAction = vi.fn(),
-  currentAction = null,
-}: WrappedMoveDirectoryDialogProps) => {
-  const [nodes, setNodes] = React.useState<BrowserNode[]>(defaultNodes);
-  return (
-    <BrowserStateContext.Provider
-      value={{
-        onRequestChildNodes: async (node) =>
-          nodes.filter((n) => n.parent === (node?.id ?? null)),
-        renderNodeList: () => null,
-        currentAction,
-        onSelect: vi.fn(),
-        onNavigate: vi.fn(),
-        currentPath,
-        selected: [],
-        mode: 'view-and-edit',
-        setCurrentAction,
-        moveNode,
-        createDirectory: async (parentNode, name) => {
-          setNodes((nodes) => {
-            return [
-              ...nodes,
-              {
-                id: `${nodes.length + 1}`,
-                name,
-                type: 'directory',
-                parent: parentNode?.id ?? null,
-              },
-            ];
-          });
-        },
-      }}
-    >
-      <MoveDirectoryDialog />
-    </BrowserStateContext.Provider>
-  );
-};
+const validFilePath = fixtures.getPathForNode('15');
 
 describe('Browser/MoveDirectoryDialog', () => {
   it('should open the dialog on action and close it when aborted', async () => {
@@ -191,10 +126,11 @@ describe('Browser/MoveDirectoryDialog', () => {
 
     await waitFor(() => {
       expect(onMoveNode).toHaveBeenCalledWith(validDirectoryPath.at(-1), {
-        id: String(defaultNodes.length + 1),
+        id: String(fixtures.browserNodes.length + 1),
         name: 'bla',
         type: 'directory',
         parent: '1',
+        meta: {},
       });
     });
   });
@@ -228,7 +164,7 @@ describe('Browser/MoveDirectoryDialog', () => {
     await waitFor(() => {
       expect(onMoveNode).toHaveBeenCalledWith(
         validDirectoryPath.at(-1),
-        defaultNodes.find((n) => n.id === '10')
+        fixtures.browserNodes.find((n) => n.id === '10')
       );
     });
   });
@@ -262,7 +198,7 @@ describe('Browser/MoveDirectoryDialog', () => {
     await waitFor(() => {
       expect(onMoveNode).toHaveBeenCalledWith(
         validFilePath.at(-1),
-        defaultNodes.find((n) => n.id === '12')
+        fixtures.browserNodes.find((n) => n.id === '12')
       );
     });
   });

@@ -11,4 +11,9 @@
   .explorer {
     flex: 1 1 auto;
   }
+
+  .toolbar,
+  .statusBar {
+    flex: 0 0 auto;
+  }
 }

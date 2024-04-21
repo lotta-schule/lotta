@@ -10,7 +10,7 @@ import { FileModel } from 'model';
 import { File } from 'util/model';
 import { useCurrentUser } from 'util/user';
 import { useServerData } from 'shared/ServerDataContext';
-import { useMoveNode, useRenameNode } from './action';
+import { useDeleteNode, useMoveNode, useRenameNode } from './action';
 import {
   GetDirectoriesAndFilesQueryResult,
   makeBrowserNodes,
@@ -33,6 +33,7 @@ export const UserBrowser = React.memo(
 
     const renameNode = useRenameNode();
     const moveNode = useMoveNode();
+    const deleteNode = useDeleteNode();
 
     const [fetchDirectoriesAndFiles] =
       useLazyQuery<GetDirectoriesAndFilesQueryResult>(
@@ -98,6 +99,7 @@ export const UserBrowser = React.memo(
         style={style}
         renameNode={renameNode}
         moveNode={moveNode}
+        deleteNode={deleteNode}
       />
     );
   }

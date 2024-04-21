@@ -52,7 +52,11 @@ export const NodeMenuButton = React.memo(({ path }: NodeMenuButtonProps) => {
           });
         }
         if (action === 'delete') {
-          setCurrentAction({ type: 'delete-directory', path: path });
+          if (node.type === 'file') {
+            setCurrentAction({ type: 'delete-files', paths: [path] });
+          } else {
+            setCurrentAction({ type: 'delete-directory', path: path });
+          }
         }
       }}
     >

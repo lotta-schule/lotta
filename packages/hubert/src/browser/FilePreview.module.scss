@@ -4,6 +4,10 @@
   height: 100%;
   padding: var(--lotta-spacing);
 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
   .previewImage {
     max-width: 90%;
     border-radius: var(--lotta-border-radius);
