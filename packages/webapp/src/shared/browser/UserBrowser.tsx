@@ -10,7 +10,12 @@ import { DirectoryModel, FileModel } from 'model';
 import { File } from 'util/model';
 import { useCurrentUser } from 'util/user';
 import { useServerData } from 'shared/ServerDataContext';
-import { useDeleteNode, useMoveNode, useRenameNode } from './action';
+import {
+  useCreateDirectory,
+  useDeleteNode,
+  useMoveNode,
+  useRenameNode,
+} from './action';
 import {
   GetDirectoriesAndFilesQueryResult,
   makeBrowserNodes,
@@ -31,6 +36,7 @@ export const UserBrowser = React.memo(
     const serverData = useServerData();
     const currentUser = useCurrentUser();
 
+    const createDirectory = useCreateDirectory();
     const renameNode = useRenameNode();
     const moveNode = useMoveNode();
     const deleteNode = useDeleteNode();
@@ -110,6 +116,7 @@ export const UserBrowser = React.memo(
         isNodeDisabled={isNodeDisabled}
         mode={mode}
         style={style}
+        createDirectory={createDirectory}
         renameNode={renameNode}
         moveNode={moveNode}
         deleteNode={deleteNode}
