@@ -12,7 +12,6 @@ import {
 import { useCategories } from 'util/categories/useCategories';
 
 import DeleteCategoryMutation from 'api/mutation/DeleteCategoryMutation.graphql';
-import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 
 export interface DeleteCategoryDialogProps {
@@ -36,26 +35,11 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
       { id: ID }
     >(DeleteCategoryMutation, {
       update: (cache, { data }) => {
-        let categories: CategoryModel[] = [];
-        if (data && data.category) {
-          const readCategoriesResult = cache.readQuery<{
-            categories: CategoryModel[];
-          }>({ query: GetCategoriesQuery });
-          if (readCategoriesResult && readCategoriesResult.categories) {
-            categories = [...readCategoriesResult.categories];
+        if (data?.category) {
+          const normalizedId = cache.identify(data.category as any);
+          if (normalizedId) {
+            cache.evict({ id: normalizedId });
           }
-          cache.writeQuery<{ categories: CategoryModel[] }>({
-            query: GetCategoriesQuery,
-            data: {
-              categories: [...categories]
-                .filter((c) => c.id !== data.category.id)
-                .map((c) => ({
-                  ...c,
-                  category:
-                    c.category?.id === data.category.id ? null : c.category,
-                })),
-            },
-          });
         }
       },
       onCompleted: () => {

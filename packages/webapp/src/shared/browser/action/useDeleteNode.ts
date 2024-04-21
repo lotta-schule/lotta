@@ -3,7 +3,6 @@ import { useMutation, ApolloCache } from '@apollo/client';
 import { BrowserNode, BrowserProps } from '@lotta-schule/hubert';
 import { DirectoryModel, FileModel } from 'model';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 import DeleteDirectoryMutation from 'api/mutation/DeleteDirectoryMutation.graphql';
 import DeleteFileMutation from 'api/mutation/DeleteFileMutation.graphql';
 
@@ -13,29 +12,10 @@ const updateCache = (
     | (BrowserNode<DirectoryModel> & { type: 'directory' })
     | (BrowserNode<FileModel> & { type: 'file' })
 ) => {
-  const cache = client.readQuery<{
-    files: DirectoryModel[];
-    directories: DirectoryModel[];
-  }>({
-    query: GetDirectoriesAndFilesQuery,
-    variables: {
-      parentDirectoryId: node.parent,
-    },
-  });
-  client.writeQuery({
-    query: GetDirectoriesAndFilesQuery,
-    variables: {
-      parentDirectoryId: node.parent,
-    },
-    data: {
-      files: (cache?.files ?? []).filter(
-        (f) => node.type !== 'file' || f.id !== node.id
-      ),
-      directories: (cache?.directories ?? []).filter(
-        (d) => node.type !== 'directory' || d.id !== node.id
-      ),
-    },
-  });
+  const normalizedId = client.identify(node.meta as any);
+  if (normalizedId) {
+    client.evict({ id: normalizedId });
+  }
 };
 
 export const useDeleteNode = () => {

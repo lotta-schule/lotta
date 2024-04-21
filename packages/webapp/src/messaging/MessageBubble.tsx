@@ -4,12 +4,7 @@ import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { format } from 'date-fns';
 import { faCloudArrowDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
-import {
-  ConversationModel,
-  FileModel,
-  FileModelType,
-  MessageModel,
-} from 'model';
+import { FileModel, FileModelType, MessageModel } from 'model';
 import { File, User } from 'util/model';
 import { FileSize } from 'util/FileSize';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
@@ -18,8 +13,6 @@ import { useServerData } from 'shared/ServerDataContext';
 import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 
-import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
-import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
 
 import styles from './MessageBubble.module.scss';
@@ -36,54 +29,10 @@ export const MessageBubble = React.memo(
       variables: { id: message.id },
       update: (client, { data }) => {
         if (data?.message) {
-          let msgConversation: ConversationModel | null = null;
-          const getConversationsCache = client.readQuery<{
-            conversations: ConversationModel[];
-          }>({
-            query: GetConversationsQuery,
-          });
-          client.writeQuery({
-            query: GetConversationsQuery,
-            data: {
-              conversations:
-                getConversationsCache?.conversations?.map((conversation) => {
-                  if (
-                    conversation.messages.find((m) => m.id === data.message.id)
-                  ) {
-                    msgConversation = conversation;
-                  }
-                  return {
-                    ...conversation,
-                    messages: conversation.messages.filter(
-                      (m) => m.id !== data.message.id
-                    ),
-                  };
-                }) ?? [],
-            },
-          });
+          const normalizedId = client.identify(data.message);
 
-          if (msgConversation) {
-            const getConversationCache = client.readQuery<{
-              conversation: ConversationModel;
-            }>({
-              query: GetConversationQuery,
-              variables: {
-                id: (msgConversation as ConversationModel).id,
-              },
-            });
-            if (getConversationCache?.conversation) {
-              client.writeQuery({
-                query: GetConversationQuery,
-                data: {
-                  conversation: {
-                    ...getConversationCache.conversation,
-                    messages: getConversationCache.conversation.messages.filter(
-                      (m) => m.id !== data.message.id
-                    ),
-                  },
-                },
-              });
-            }
+          if (normalizedId) {
+            client.evict({ id: normalizedId });
           }
         }
       },
