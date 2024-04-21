@@ -11,10 +11,11 @@ import styles from './NodeListItem.module.scss';
 export type NodeListItemProps = {
   parentPath: BrowserNode[];
   node: BrowserNode;
+  isDisabled?: boolean;
 };
 
 export const NodeListItem = React.memo(
-  ({ parentPath, node }: NodeListItemProps) => {
+  ({ parentPath, node, isDisabled }: NodeListItemProps) => {
     const {
       mode,
       currentAction,
@@ -67,52 +68,57 @@ export const NodeListItem = React.memo(
         className={clsx(styles.root, {
           [styles.isOpen]: isOpen,
           [styles.isSelected]: isSelected,
+          [styles.isDisabled]: isDisabled,
         })}
         aria-selected={isSelected}
         aria-expanded={isOpen}
         title={node.name}
         key={node.id}
-        onClick={(e) => {
-          if (mode === 'select-multiple') {
-            if (node.type === 'directory') {
-              onNavigate(path);
-            } else {
-              if (
-                !(
-                  (e.target as HTMLElement).parentElement?.querySelector(
-                    'input[type=checkbox]'
-                  ) ||
-                  (e.target instanceof HTMLInputElement &&
-                    e.target.type === 'checkbox')
-                )
-              ) {
-                // if only the checkbox was clicked, don't navigate
-                // but if this was a click on the label do navigate
-                onNavigate(parentPath);
-              } else {
-                // on the other hand, if the checkbox was clicked, its
-                // onSelect has already been called, so we don't need to
-                // call it again
-                return;
+        onClick={
+          isDisabled
+            ? undefined
+            : (e) => {
+                if (mode === 'select-multiple') {
+                  if (node.type === 'directory') {
+                    onNavigate(path);
+                  } else {
+                    if (
+                      !(
+                        (e.target as HTMLElement).parentElement?.querySelector(
+                          'input[type=checkbox]'
+                        ) ||
+                        (e.target instanceof HTMLInputElement &&
+                          e.target.type === 'checkbox')
+                      )
+                    ) {
+                      // if only the checkbox was clicked, don't navigate
+                      // but if this was a click on the label do navigate
+                      onNavigate(parentPath);
+                    } else {
+                      // on the other hand, if the checkbox was clicked, its
+                      // onSelect has already been called, so we don't need to
+                      // call it again
+                      return;
+                    }
+                    if (isSelected) {
+                      onSelect(selected.filter((n) => n.id !== node.id));
+                    } else {
+                      onSelect([...selected, node]);
+                    }
+                  }
+                } else {
+                  if (node.type === 'directory') {
+                    onSelect([]);
+                    onNavigate(path);
+                  } else {
+                    if (node.parent !== currentPath.at(-1)?.id) {
+                      onNavigate(parentPath);
+                    }
+                    onSelect([node]);
+                  }
+                }
               }
-              if (isSelected) {
-                onSelect(selected.filter((n) => n.id !== node.id));
-              } else {
-                onSelect([...selected, node]);
-              }
-            }
-          } else {
-            if (node.type === 'directory') {
-              onSelect([]);
-              onNavigate(path);
-            } else {
-              if (node.parent !== currentPath.at(-1)?.id) {
-                onNavigate(parentPath);
-              }
-              onSelect([node]);
-            }
-          }
-        }}
+        }
       >
         <div className={styles.fileIcon}>{nodeIcon}</div>
         <div className={styles.fileName}>
@@ -122,11 +128,14 @@ export const NodeListItem = React.memo(
           {!isRenaming && <span>{node.name}</span>}
         </div>
         <div className={styles.editSection}>
-          {mode === 'view-and-edit' && <NodeMenuButton path={path} />}
+          {mode === 'view-and-edit' && !isDisabled && (
+            <NodeMenuButton path={path} />
+          )}
           {mode === 'select-multiple' && node.type === 'file' && (
             <Checkbox
               aria-label={`Datei ${node.name} auswählen`}
               isSelected={isSelected}
+              isDisabled={isDisabled}
               onChange={(isSelected) => {
                 onSelect(
                   isSelected

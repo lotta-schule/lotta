@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { CircularProgress } from '../progress';
 import {
   useBrowserState,
   BrowserNode,
@@ -18,7 +17,7 @@ export type NodeListProps = {
 export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   const listRef = React.useRef<HTMLElement>(null);
 
-  const { currentPath } = useBrowserState();
+  const { currentPath, isNodeDisabled } = useBrowserState();
 
   React.useEffect(() => {
     if (listRef.current && path.length === currentPath.length) {
@@ -40,7 +39,12 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   return (
     <ul className={styles.root} ref={listRef as any}>
       {nodes.map((node) => (
-        <NodeListItem key={node.id} parentPath={path} node={node} />
+        <NodeListItem
+          key={node.id}
+          parentPath={path}
+          node={node}
+          isDisabled={isNodeDisabled?.(node) ?? false}
+        />
       ))}
     </ul>
   );

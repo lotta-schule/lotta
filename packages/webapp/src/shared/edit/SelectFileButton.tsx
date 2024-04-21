@@ -51,7 +51,10 @@ const _SelectFileButton = <Multiple extends boolean | undefined>({
         title={'Datei auswählen'}
       >
         <UserBrowser
-          fileFilter={fileFilter}
+          isNodeDisabled={(node) =>
+            node.type === 'file' &&
+            fileFilter?.(node.meta as FileModel) === false
+          }
           mode={multiple ? 'select-multiple' : 'select'}
           onSelect={(result) => {
             setIsSelectFileDialogOpen(false);

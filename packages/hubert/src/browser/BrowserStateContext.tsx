@@ -39,6 +39,7 @@ export interface BrowserState {
   setCurrentAction: (action: BrowserAction | null) => void;
 
   canEdit?: (node: BrowserNode) => boolean;
+  isNodeDisabled?: (node: BrowserNode) => boolean;
   getDownloadUrl?: (node: BrowserNode) => string | null | undefined;
   getPreviewUrl?: (node: BrowserNode) => string | null | undefined;
 

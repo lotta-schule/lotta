@@ -22,12 +22,12 @@ import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.
 export type UserBrowserProps = {
   style?: React.CSSProperties;
   multiple?: boolean;
-  fileFilter?: (file: FileModel) => boolean; // TODO: Must be implemented (or maybe change the API?)
+  isNodeDisabled?: (file: FileModel) => boolean;
   onSelect?: (file: FileModel[]) => void; // TODO: Must be implemented
 };
 
 export const UserBrowser = React.memo(
-  ({ style, multiple, fileFilter, onSelect }: UserBrowserProps) => {
+  ({ style, multiple, isNodeDisabled, onSelect }: UserBrowserProps) => {
     const serverData = useServerData();
     const currentUser = useCurrentUser();
 
@@ -95,6 +95,7 @@ export const UserBrowser = React.memo(
           [serverData.baseUrl]
         )}
         canEdit={canEdit}
+        isNodeDisabled={isNodeDisabled}
         mode={mode}
         style={style}
         renameNode={renameNode}

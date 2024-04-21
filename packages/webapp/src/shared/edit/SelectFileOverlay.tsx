@@ -48,7 +48,10 @@ export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> 
             title={'Datei auswählen'}
           >
             <UserBrowser
-              fileFilter={fileFilter}
+              isNodeDisabled={(node) =>
+                node.type === 'file' &&
+                fileFilter?.(node.meta as FileModel) === false
+              }
               onSelect={([file]) => {
                 setIsSelectFileDialogOpen(false);
                 onSelectFile(file);
