@@ -6,7 +6,7 @@ import {
   BrowserNode,
   BrowserProps,
 } from '@lotta-schule/hubert';
-import { FileModel } from 'model';
+import { DirectoryModel, FileModel } from 'model';
 import { File } from 'util/model';
 import { useCurrentUser } from 'util/user';
 import { useServerData } from 'shared/ServerDataContext';
@@ -22,7 +22,7 @@ import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.
 export type UserBrowserProps = {
   style?: React.CSSProperties;
   multiple?: boolean;
-  isNodeDisabled?: (file: FileModel) => boolean;
+  isNodeDisabled?: (node: BrowserNode<FileModel | DirectoryModel>) => boolean;
   onSelect?: (file: FileModel[]) => void; // TODO: Must be implemented
 };
 
@@ -52,7 +52,7 @@ export const UserBrowser = React.memo(
             throw result.error;
           }
 
-          return makeBrowserNodes(result.data);
+          return makeBrowserNodes(result.data) ?? [];
         },
         [fetchDirectoriesAndFiles]
       );
@@ -75,6 +75,18 @@ export const UserBrowser = React.memo(
         return File.canEditDirectory(node.meta, currentUser) || false;
       },
       []
+    );
+
+    const getDownloadUrl = React.useCallback<
+      Exclude<BrowserProps['getDownloadUrl'], undefined>
+    >(
+      (node) => {
+        if (node.type === 'file') {
+          return File.getFileRemoteLocation(serverData.baseUrl, node.meta);
+        }
+        return null;
+      },
+      [serverData.baseUrl]
     );
 
     const mode: BrowserMode = React.useMemo(() => {
@@ -101,6 +113,7 @@ export const UserBrowser = React.memo(
         renameNode={renameNode}
         moveNode={moveNode}
         deleteNode={deleteNode}
+        getDownloadUrl={getDownloadUrl}
       />
     );
   }
