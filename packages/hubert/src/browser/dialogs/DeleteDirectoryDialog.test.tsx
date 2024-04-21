@@ -8,21 +8,19 @@ import {
   waitFor,
   within,
 } from '../../test-utils';
-import { DeleteFilesDialog } from './DeleteFilesDialog';
+import { DeleteDirectoryDialog } from './DeleteDirectoryDialog';
 import userEvent from '@testing-library/user-event';
 
 const WrappedDeleteDirectoryDialog = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>
-    <DeleteFilesDialog />
+    <DeleteDirectoryDialog />
   </TestBrowserWrapper>
 );
 
-const files = fixtures.browserNodes.filter(
-  (node) => node.type === 'file' && node.parent === '8'
-);
-const filePaths = files.map((file) => fixtures.getPathForNode(file.id));
+const emptyDirectoryPath = fixtures.getPathForNode('15');
+const deepNonEmptyDirectoryPath = fixtures.getPathForNode('8');
 
-describe('Browser/DeleteFilesDialog', () => {
+describe('Browser/DeleteDirectoryDialog', () => {
   it('should open the dialog on action and close it when aborted', async () => {
     const onSetCurrentAction = vi.fn();
     const user = userEvent.setup();
@@ -32,7 +30,7 @@ describe('Browser/DeleteFilesDialog', () => {
 
     screen.rerender(
       <WrappedDeleteDirectoryDialog
-        currentAction={{ type: 'delete-files', paths: [] }}
+        currentAction={{ type: 'delete-directory', path: emptyDirectoryPath }}
         setCurrentAction={onSetCurrentAction}
       />
     );
@@ -59,7 +57,7 @@ describe('Browser/DeleteFilesDialog', () => {
     });
   });
 
-  it('should delete one node', async () => {
+  it('should delete an empty directory', async () => {
     const user = userEvent.setup();
 
     const onDeleteNode = vi.fn().mockResolvedValue(null);
@@ -67,7 +65,7 @@ describe('Browser/DeleteFilesDialog', () => {
 
     const screen = render(
       <WrappedDeleteDirectoryDialog
-        currentAction={{ type: 'delete-files', paths: [filePaths[0]] }}
+        currentAction={{ type: 'delete-directory', path: emptyDirectoryPath }}
         deleteNode={onDeleteNode}
         setCurrentAction={onSetCurrentAction}
       />
@@ -75,23 +73,22 @@ describe('Browser/DeleteFilesDialog', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole('dialog', { name: /dateien löschen/i })
+        screen.getByRole('dialog', { name: /ordner löschen/i })
       ).toBeVisible();
     });
 
-    expect(screen.getByRole('list', { name: /dateien/i })).toBeVisible();
-    expect(
-      within(screen.getByRole('list', { name: /dateien/i })).getAllByRole(
-        'listitem'
-      )
-    ).toHaveLength(1);
+    await waitFor(() => {
+      expect(screen.getByText(/dieser ordner ist leer/i)).toBeVisible();
+    });
+
+    expect(screen.queryByRole('list', { name: /dateien/i })).toBeNull();
 
     await user.click(
       screen.getByRole('button', { name: /endgültig löschen/i })
     );
 
     await waitFor(() => {
-      expect(onDeleteNode).toHaveBeenCalledWith(files[0]);
+      expect(onDeleteNode).toHaveBeenCalledWith(emptyDirectoryPath.at(-1));
     });
     expect(onDeleteNode).toHaveBeenCalledTimes(1);
 
@@ -99,11 +96,11 @@ describe('Browser/DeleteFilesDialog', () => {
       () => {
         expect(onSetCurrentAction).toHaveBeenCalledWith(null);
       },
-      { timeout: 2000 }
+      { timeout: 1500 }
     );
   });
 
-  it('should delete multiple nodes', async () => {
+  it('should delete a non-empty directory with all its files and directories', async () => {
     const user = userEvent.setup();
 
     const onDeleteNode = vi.fn().mockResolvedValue(null);
@@ -111,7 +108,10 @@ describe('Browser/DeleteFilesDialog', () => {
 
     const screen = render(
       <WrappedDeleteDirectoryDialog
-        currentAction={{ type: 'delete-files', paths: filePaths }}
+        currentAction={{
+          type: 'delete-directory',
+          path: deepNonEmptyDirectoryPath,
+        }}
         deleteNode={onDeleteNode}
         setCurrentAction={onSetCurrentAction}
       />
@@ -119,27 +119,44 @@ describe('Browser/DeleteFilesDialog', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole('dialog', { name: /dateien löschen/i })
+        screen.getByRole('dialog', { name: /ordner löschen/i })
       ).toBeVisible();
     });
 
-    expect(screen.getByRole('list', { name: /dateien/i })).toBeVisible();
+    expect(screen.queryByText(/dieser ordner ist leer/i)).toBeNull();
+
+    expect(screen.getByRole('list')).toBeVisible();
     expect(
-      within(screen.getByRole('list', { name: /dateien/i })).getAllByRole(
-        'listitem'
-      )
-    ).toHaveLength(4);
+      within(screen.getByRole('list')).getAllByRole('listitem')
+    ).toHaveLength(8);
+    expect(
+      within(screen.getByRole('list')).getAllByRole('listitem').at(-1)
+        ?.textContent
+    ).toEqual('math/notes.txt');
 
     await user.click(
       screen.getByRole('button', { name: /endgültig löschen/i })
     );
 
+    const childFiles = [22, 21, 20, 19, 18, 17, 16, 15].map((id) =>
+      fixtures.browserNodes.find((n) => n.id === String(id))
+    );
+    const childDirectories = [11, 12, 13, 14].map((id) =>
+      fixtures.browserNodes.find((n) => n.id === String(id))
+    );
+
+    const nodesToDelete = [
+      ...childFiles,
+      ...childDirectories,
+      deepNonEmptyDirectoryPath.at(-1)!,
+    ];
+
     await waitFor(() => {
-      files.forEach((fileNode) => {
+      nodesToDelete.forEach((fileNode) => {
         expect(onDeleteNode).toHaveBeenCalledWith(fileNode);
       });
     });
-    expect(onDeleteNode).toHaveBeenCalledTimes(files.length);
+    expect(onDeleteNode).toHaveBeenCalledTimes(nodesToDelete.length);
 
     await waitFor(
       () => {

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, LoadingButton } from '../../button';
 import { Dialog, DialogActions, DialogContent } from '../../dialog';
 import { ErrorMessage } from '../../message';
+import { LinearProgress } from '../../progress';
 import { List, ListItem } from '../../list';
 import { BrowserNode, useBrowserState } from '../BrowserStateContext';
 
@@ -14,6 +15,7 @@ export const DeleteDirectoryDialog = React.memo(() => {
   const [directoriesToDelete, setDirectoriesToDelete] = React.useState<
     BrowserNode[]
   >([]);
+  const [isLoadingChildNodes, setIsLoadingChildNodes] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
   const { onRequestChildNodes, currentAction, resetAction, deleteNode } =
@@ -25,6 +27,7 @@ export const DeleteDirectoryDialog = React.memo(() => {
 
   const getDirectoriesAndFilesForDirectory = React.useCallback(
     async (directory: BrowserNode, relativePath = ''): Promise<void> => {
+      setIsLoadingChildNodes(true);
       try {
         setDirectoriesToDelete((directoriesToDelete) => [
           directory,
@@ -60,6 +63,8 @@ export const DeleteDirectoryDialog = React.memo(() => {
         ).then(void 0);
       } catch (e: any) {
         setErrorMessage(e?.message ?? String(e));
+      } finally {
+        setIsLoadingChildNodes(false);
       }
     },
     [onRequestChildNodes]
@@ -91,19 +96,36 @@ export const DeleteDirectoryDialog = React.memo(() => {
               wirklich mit all seinen Inhalten löschen?
             </p>
             <ErrorMessage error={errorMessage} />
-            Es werden folgende <strong>
-              {filesToDelete.length} Dateien
-            </strong>{' '}
-            gelöscht:
-            <List className={styles.filesList}>
-              {filesToDelete.map((f) => (
-                <ListItem key={f.file.id}>{f.relativePath}</ListItem>
-              ))}
-            </List>
+            {isLoadingChildNodes && (
+              <LinearProgress
+                isIndeterminate
+                aria-label="Inhalte werden geladen"
+              />
+            )}
+            {!isLoadingChildNodes && !filesToDelete.length && (
+              <p>Dieser Ordner ist leer.</p>
+            )}
+            {!isLoadingChildNodes && filesToDelete.length > 0 && (
+              <p>
+                Der Ordner enthält <strong>{filesToDelete.length}</strong>{' '}
+                Dateien, die ebenfalls gelöscht werden:
+              </p>
+            )}
+            {!isLoadingChildNodes && filesToDelete.length > 0 && (
+              <List
+                title={'Ordner, die gelöscht werden sollen'}
+                className={styles.filesList}
+              >
+                {filesToDelete.map((f) => (
+                  <ListItem key={f.file.id}>{f.relativePath}</ListItem>
+                ))}
+              </List>
+            )}
           </DialogContent>
           <DialogActions>
             <Button onClick={() => resetAction()}>Abbrechen</Button>
             <LoadingButton
+              disabled={isLoadingChildNodes}
               onAction={async () => {
                 try {
                   for (const { file } of filesToDelete) {
@@ -128,7 +150,7 @@ export const DeleteDirectoryDialog = React.memo(() => {
                 }
               }}
             >
-              Ordner löschen
+              Ordner endgültig löschen
             </LoadingButton>
           </DialogActions>
         </>

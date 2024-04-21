@@ -19,12 +19,16 @@ export const browserNodes: BrowserNode[] = [
   { id: '10', name: 'folder 10', type: 'directory', parent: '1', meta: {} },
   { id: '11', name: 'folder 11', type: 'directory', parent: '8', meta: {} },
   { id: '12', name: 'folder 12', type: 'directory', parent: '8', meta: {} },
-  { id: '13', name: 'folder 13', type: 'directory', parent: '8', meta: {} },
+  { id: '13', name: 'math', type: 'directory', parent: '8', meta: {} },
   { id: '14', name: 'folder 14', type: 'directory', parent: '8', meta: {} },
   { id: '15', name: 'folder 15', type: 'file', parent: '8', meta: {} },
   { id: '16', name: 'folder 16', type: 'file', parent: '8', meta: {} },
   { id: '17', name: 'folder 17', type: 'file', parent: '8', meta: {} },
   { id: '18', name: 'folder 18', type: 'file', parent: '8', meta: {} },
+  { id: '19', name: 'presentation.ppt', type: 'file', parent: '13', meta: {} },
+  { id: '20', name: 'graph-one.xlsx', type: 'file', parent: '13', meta: {} },
+  { id: '21', name: 'graph-two.xlsx', type: 'file', parent: '13', meta: {} },
+  { id: '22', name: 'notes.txt', type: 'file', parent: '13', meta: {} },
 ];
 
 export const getPathForNode = (node: BrowserNode | 'string'): BrowserPath => {
