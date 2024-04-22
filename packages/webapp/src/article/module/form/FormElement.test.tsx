@@ -207,6 +207,20 @@ describe('shared/article/module/form/FormElement', () => {
           };
         },
       },
+      {
+        request: {
+          query: GetDirectoriesAndFilesQuery,
+          variables: { parentDirectoryId: '8743' },
+        },
+        result: () => {
+          return {
+            data: {
+              files: [],
+              directories: [],
+            },
+          };
+        },
+      },
     ];
 
     beforeEach(() => {
@@ -309,9 +323,10 @@ describe('shared/article/module/form/FormElement', () => {
       await fireEvent.click(screen.getByRole('button', { name: /auswählen/ }));
       expect(setValueFn).toHaveBeenCalledWith(
         'lotta-file-id://' +
-          '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15",' +
-          '"filename":"Dateiname.jpg","filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE","userId":"1",' +
-          '"fileConversions":[],"parentDirectory":{"id":"8743"}}'
+          '{"id":"123","name":"Dateiname.jpg","type":"file","parent":"8743",' +
+          '"meta":{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15",' +
+          '"filename":"Dateiname.jpg","filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
+          '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}}'
       );
     });
 

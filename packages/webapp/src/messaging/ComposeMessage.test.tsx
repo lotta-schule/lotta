@@ -12,14 +12,13 @@ import userEvent from '@testing-library/user-event';
 
 import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
 
-const mockReact = React;
-vi.mock('../shared/browser', async (importOriginal) => {
+vi.mock('shared/browser', async (importOriginal) => {
   const originalModule: typeof UserBrowser = await importOriginal();
   return {
     __esModule: true,
     ...originalModule,
     UserBrowser: ({ onSelect }: UserBrowserProps) => {
-      mockReact.useEffect(() => {
+      React.useEffect(() => {
         onSelect?.([mockImageFile as any]);
       }, []);
       return null;
@@ -177,6 +176,16 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
       await fireEvent.type(screen.getByRole('textbox'), 'Hallo!');
       await fireEvent.click(
         screen.getByRole('button', { name: /datei anhängen/i })
+      );
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeVisible();
+      });
+
+      expect(
+        screen.getByRole('button', { name: /datei auswählen/i })
+      ).not.toBeDisabled();
+      await fireEvent.click(
+        screen.getByRole('button', { name: /datei auswählen/i })
       );
 
       await waitFor(() => {

@@ -179,7 +179,9 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
       expect(profilePictureButton).toBeVisible();
       await fireEvent.click(profilePictureButton);
       await waitFor(() => {
-        expect(screen.getByText(/datei auswählen/i)).toBeInTheDocument();
+        expect(
+          screen.getByRole('button', { name: /datei auswählen/i })
+        ).toBeInTheDocument();
       });
     });
   });

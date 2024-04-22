@@ -104,6 +104,7 @@ export const UserBrowser = React.memo(
 
     return (
       <Browser
+        onSelect={onSelect}
         onRequestChildNodes={onRequestChildNodes}
         renderNodeList={RenderNodeList}
         onRequestNodeIcon={onRequestNodeIcon}

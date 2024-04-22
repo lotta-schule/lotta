@@ -58,6 +58,7 @@ export interface BrowserState {
 export type BrowserStateProviderProps = {
   children: React.ReactNode;
   defaultPath?: BrowserPath;
+  onSelect?: (selected: BrowserNode[]) => void;
 } & Omit<
   BrowserState,
   | 'currentPath'
@@ -75,6 +76,7 @@ export const BrowserStateProvider = React.memo(
     children,
     mode = 'view-and-edit',
     defaultPath = [],
+    onSelect,
     ...props
   }: BrowserStateProviderProps) => {
     const [currentPath, setCurrentPath] =
@@ -82,6 +84,10 @@ export const BrowserStateProvider = React.memo(
     const [selected, setSelected] = React.useState<BrowserNode[]>([]);
     const [currentAction, setCurrentAction] =
       React.useState<BrowserState['currentAction']>(null);
+
+    React.useEffect(() => {
+      onSelect?.(selected);
+    }, [onSelect, selected]);
 
     return (
       <BrowserStateContext.Provider
