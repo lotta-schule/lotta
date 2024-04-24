@@ -65,10 +65,10 @@ const WrappedExplorer = ({
 describe('Browser/Explorer', () => {
   it('should render one level deep', async () => {
     const screen = render(<WrappedExplorer availableNodes={rootNodes} />);
-    expect(screen.queryAllByRole('list')).toHaveLength(1);
+    expect(screen.queryAllByRole('listbox')).toHaveLength(1);
 
     expect(
-      within(screen.queryAllByRole('list')[0]).getAllByRole('listitem')
+      within(screen.queryAllByRole('listbox')[0]).getAllByRole('option')
     ).toHaveLength(rootNodes.length);
   });
 
@@ -98,16 +98,16 @@ describe('Browser/Explorer', () => {
       typeof HTMLElement.prototype.scrollIntoView
     >;
 
-    const lists = screen.queryAllByRole('list');
+    const lists = screen.queryAllByRole('listbox');
     expect(lists).toHaveLength(3);
 
-    expect(within(lists[0]).getAllByRole('listitem')).toHaveLength(
+    expect(within(lists[0]).getAllByRole('option')).toHaveLength(
       rootNodes.length
     );
-    expect(within(lists[1]).getAllByRole('listitem')).toHaveLength(
+    expect(within(lists[1]).getAllByRole('option')).toHaveLength(
       level1Nodes.length
     );
-    expect(within(lists[2]).getAllByRole('listitem')).toHaveLength(
+    expect(within(lists[2]).getAllByRole('option')).toHaveLength(
       level2Nodes.length
     );
 

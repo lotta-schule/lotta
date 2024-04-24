@@ -1,96 +1,54 @@
 import * as React from 'react';
 import { vi } from 'vitest';
-import { render, waitFor } from '../test-utils';
 import {
-  BrowserNode,
-  BrowserPath,
-  BrowserState,
-  BrowserStateContext,
-} from './BrowserStateContext';
+  TestBrowserWrapper,
+  TestBrowserWrapperProps,
+  fixtures,
+  render,
+  waitFor,
+} from '../test-utils';
 import { NodeListItem, NodeListItemProps } from './NodeListItem';
 import userEvent from '@testing-library/user-event';
 
-type WrappedNodeListitemProps = {
-  defaultPath?: BrowserPath;
-  node?: NodeListItemProps['node'];
-  parentPath?: NodeListItemProps['parentPath'];
-  mode?: BrowserState['mode'];
-  currentAction?: BrowserState['currentAction'];
-  onNavigate?: (path: BrowserPath) => void;
-  selected?: BrowserNode[];
-  onSelect?: (path: BrowserNode[]) => void;
-};
-
-const filePath: BrowserPath = [
-  { id: '1', name: 'dir1', type: 'directory', parent: null },
-  { id: '2', name: 'dir2', type: 'directory', parent: '1' },
-  { id: '3', name: 'dir3', type: 'directory', parent: '2' },
-  { id: '4', name: 'file.jpg', type: 'file', parent: '3' },
-];
-
-const someOtherFile: BrowserNode = {
+const filePath = fixtures.getPathForNode('19');
+const someOtherFile = {
   id: '44',
   name: 'other-file.jpg',
   type: 'file',
   parent: '3',
-};
+  meta: {},
+} as const;
 
 const WrappedNodeListItem = ({
-  defaultPath = filePath.slice(0, 3),
-  onNavigate,
-  selected = [],
-  onSelect = vi.fn(),
-  mode,
-  currentAction = null,
-  parentPath,
-  node = defaultPath.at(-1),
-}: WrappedNodeListitemProps) => {
-  return (
-    <BrowserStateContext.Provider
-      value={{
-        mode: mode ?? 'view-and-edit',
-        selected,
-        currentPath: defaultPath,
-        onNavigate: onNavigate ?? (() => {}),
-        onSelect,
-        currentAction,
-        setCurrentAction: () => {},
-        onRequestChildNodes: () => Promise.resolve([]),
-        renderNodeList: () => null,
-        renameNode: () => Promise.resolve(),
-      }}
-    >
-      <NodeListItem
-        parentPath={
-          parentPath ??
-          defaultPath.slice(
-            0,
-            filePath.findIndex((n) => n.id === node?.id)
-          )
-        }
-        node={
-          node ??
-          (() => {
-            throw new Error('test Path not valid!');
-          })()
-        }
-      />
-    </BrowserStateContext.Provider>
-  );
-};
+  node,
+  parentPath = fixtures.getPathForNode(node).slice(0, -1),
+  currentPath = parentPath,
+  ...props
+}: TestBrowserWrapperProps &
+  Partial<NodeListItemProps> &
+  Pick<NodeListItemProps, 'node'>) => (
+  <TestBrowserWrapper currentPath={currentPath} {...props}>
+    <NodeListItem node={node} parentPath={parentPath} />
+  </TestBrowserWrapper>
+);
 
 describe('Browser/NodeListItem', () => {
   describe('render directory', () => {
     it('should render the name of a directory', () => {
-      const screen = render(<WrappedNodeListItem node={filePath[2]} />);
+      const node = filePath.at(-1);
+      const screen = render(<WrappedNodeListItem node={node} />);
 
-      expect(screen.getByRole('listitem')).toHaveAccessibleName('dir3');
+      expect(screen.getByRole('option')).toHaveAccessibleName(node.name);
     });
 
     it('should render as expanded when on the path', () => {
-      const screen = render(<WrappedNodeListItem node={filePath[2]} />);
+      const node = filePath.at(1);
+      const currentPath = filePath.slice(0, -1);
+      const screen = render(
+        <WrappedNodeListItem node={node} currentPath={currentPath} />
+      );
 
-      expect(screen.getByRole('listitem').ariaExpanded).toEqual('true');
+      expect(screen.getByRole('option').ariaExpanded).toEqual('true');
     });
 
     describe('Default Mode (view-and-edit)', () => {
@@ -107,7 +65,7 @@ describe('Browser/NodeListItem', () => {
           />
         );
 
-        await user.click(screen.getByRole('listitem'));
+        await user.click(screen.getByRole('option'));
 
         expect(onNavigate).toHaveBeenCalledWith(filePath.slice(0, 3));
         expect(onSelect).toHaveBeenCalledWith([]);
@@ -132,7 +90,7 @@ describe('Browser/NodeListItem', () => {
         );
 
         expect(
-          screen.getByRole('textbox', { name: /dir3 umbenennen/i })
+          screen.getByRole('textbox', { name: /math umbenennen/i })
         ).toBeVisible();
       });
 
@@ -163,7 +121,7 @@ describe('Browser/NodeListItem', () => {
           />
         );
 
-        await user.click(screen.getByRole('listitem'));
+        await user.click(screen.getByRole('option'));
 
         expect(onNavigate).toHaveBeenCalledWith(filePath.slice(0, 3));
         expect(onSelect).toHaveBeenCalledWith([]);
@@ -181,8 +139,15 @@ describe('Browser/NodeListItem', () => {
           <WrappedNodeListItem
             mode="select"
             parentPath={[
-              { id: '77', name: 'other-tree', type: 'directory', parent: null },
+              {
+                id: '77',
+                name: 'other-tree',
+                type: 'directory',
+                parent: null,
+                meta: {},
+              },
             ]}
+            currentPath={[]}
             node={node}
             onNavigate={onNavigate}
             selected={[]}
@@ -190,7 +155,7 @@ describe('Browser/NodeListItem', () => {
           />
         );
 
-        await user.click(screen.getByRole('listitem'));
+        await user.click(screen.getByRole('option'));
 
         await waitFor(() => {
           expect(onSelect).toHaveBeenCalledWith([node]);
@@ -201,6 +166,7 @@ describe('Browser/NodeListItem', () => {
               name: 'other-tree',
               type: 'directory',
               parent: null,
+              meta: {},
             },
           ]);
         });
@@ -229,14 +195,14 @@ describe('Browser/NodeListItem', () => {
           <WrappedNodeListItem
             mode="select-multiple"
             selected={[filePath[2]]}
-            node={filePath[2]}
+            node={filePath[1]}
             onNavigate={onNavigate}
           />
         );
 
-        await user.click(screen.getByRole('listitem'));
+        await user.click(screen.getByRole('option'));
 
-        expect(onNavigate).toHaveBeenCalledWith(filePath.slice(0, 3));
+        expect(onNavigate).toHaveBeenCalledWith(filePath.slice(0, 2));
       });
 
       it('should not show the editing menu button', async () => {
@@ -259,7 +225,9 @@ describe('Browser/NodeListItem', () => {
     it('should render the name of a directory', () => {
       const screen = render(<WrappedNodeListItem node={filePath[3]} />);
 
-      expect(screen.getByRole('listitem')).toHaveAccessibleName('file.jpg');
+      expect(screen.getByRole('option')).toHaveAccessibleName(
+        'presentation.ppt'
+      );
     });
 
     it('should render as selected when it is', () => {
@@ -267,8 +235,8 @@ describe('Browser/NodeListItem', () => {
         <WrappedNodeListItem node={filePath[3]} selected={[filePath[3]]} />
       );
 
-      expect(screen.getByRole('listitem').ariaExpanded).toEqual('false');
-      expect(screen.getByRole('listitem').ariaSelected).toEqual('true');
+      expect(screen.getByRole('option').ariaExpanded).toEqual('false');
+      expect(screen.getByRole('option').ariaSelected).toEqual('true');
     });
 
     describe('Default Mode (view-and-edit)', () => {
@@ -289,7 +257,7 @@ describe('Browser/NodeListItem', () => {
           />
         );
 
-        user.click(screen.getByRole('listitem'));
+        user.click(screen.getByRole('option'));
 
         await waitFor(() => {
           expect(onSelect).toHaveBeenCalledWith([filePath[3]]);
@@ -314,13 +282,13 @@ describe('Browser/NodeListItem', () => {
             node={filePath[3]}
             currentAction={{
               type: 'rename-node',
-              path: filePath.slice(0, 3 + 1),
+              path: filePath,
             }}
           />
         );
 
         expect(
-          screen.getByRole('textbox', { name: /file.jpg umbenennen/i })
+          screen.getByRole('textbox', { name: /presentation.ppt umbenennen/i })
         ).toBeVisible();
       });
     });
@@ -341,7 +309,7 @@ describe('Browser/NodeListItem', () => {
           />
         );
 
-        await user.click(screen.getByRole('listitem'));
+        await user.click(screen.getByRole('option'));
 
         await waitFor(() => {
           expect(onSelect).toHaveBeenCalledWith([filePath[3]]);
@@ -353,7 +321,7 @@ describe('Browser/NodeListItem', () => {
       it('should navigate to the parent folder of a selected file', async () => {
         const user = userEvent.setup();
 
-        const node = { ...someOtherFile, parent: '77' };
+        const node = { ...someOtherFile, parent: '77' } as const;
 
         const onNavigate = vi.fn();
         const onSelect = vi.fn();
@@ -362,8 +330,15 @@ describe('Browser/NodeListItem', () => {
           <WrappedNodeListItem
             mode="select"
             parentPath={[
-              { id: '77', name: 'other-tree', type: 'directory', parent: null },
+              {
+                id: '77',
+                name: 'other-tree',
+                type: 'directory',
+                parent: null,
+                meta: {},
+              },
             ]}
+            currentPath={[]}
             node={node}
             onNavigate={onNavigate}
             selected={[]}
@@ -371,7 +346,7 @@ describe('Browser/NodeListItem', () => {
           />
         );
 
-        await user.click(screen.getByRole('listitem'));
+        await user.click(screen.getByRole('option'));
 
         await waitFor(() => {
           expect(onSelect).toHaveBeenCalledWith([node]);
@@ -382,6 +357,7 @@ describe('Browser/NodeListItem', () => {
               name: 'other-tree',
               type: 'directory',
               parent: null,
+              meta: {},
             },
           ]);
         });

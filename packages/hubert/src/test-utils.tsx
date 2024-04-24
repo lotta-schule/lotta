@@ -48,15 +48,18 @@ export const createPromise = <T = void,>() => {
 export type TestBrowserWrapperProps = {
   children?: React.ReactNode;
   defaultNodes?: BrowserNode[];
-} & Partial<
-  Omit<BrowserState, 'onRequestChildNodes' | 'renderNodeList' | 'mode'>
->;
+} & Partial<Omit<BrowserState, 'onRequestChildNodes' | 'renderNodeList'>>;
 export const TestBrowserWrapper = ({
   children,
+  mode = 'view-and-edit',
   defaultNodes = fixtures.browserNodes,
   moveNode = vi.fn(),
+  renameNode = vi.fn(),
   deleteNode = vi.fn(),
   currentPath = [],
+  selected = [],
+  onSelect = vi.fn(),
+  onNavigate = vi.fn(),
   setCurrentAction = vi.fn(),
   currentAction = null,
 }: TestBrowserWrapperProps) => {
@@ -68,13 +71,14 @@ export const TestBrowserWrapper = ({
           nodes.filter((n) => n.parent === (node?.id ?? null)),
         renderNodeList: () => null,
         currentAction,
-        onSelect: vi.fn(),
-        onNavigate: vi.fn(),
+        onSelect,
+        onNavigate,
         currentPath,
-        selected: [],
-        mode: 'view-and-edit',
+        selected,
+        mode,
         setCurrentAction,
         moveNode,
+        renameNode,
         deleteNode,
         createDirectory: async (parentNode, name) => {
           setNodes((nodes) => {

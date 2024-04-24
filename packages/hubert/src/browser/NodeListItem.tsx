@@ -70,6 +70,7 @@ export const NodeListItem = React.memo(
           [styles.isSelected]: isSelected,
           [styles.isDisabled]: isDisabled,
         })}
+        role="option"
         aria-selected={isSelected}
         aria-expanded={isOpen}
         title={node.name}

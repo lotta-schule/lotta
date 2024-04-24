@@ -78,6 +78,7 @@ export const NodeRenameInput = React.memo(
           <CircularProgress
             className={styles.progress}
             size={'1em'}
+            aria-label={'Datei wird umbenannt'}
             isIndeterminate
           />
         )}
