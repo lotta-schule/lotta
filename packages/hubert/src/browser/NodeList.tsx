@@ -17,12 +17,27 @@ export type NodeListProps = {
 export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   const listRef = React.useRef<HTMLElement>(null);
 
-  const { currentPath, selected, isNodeDisabled, mode, onSelect } =
+  const { currentPath, selected, isNodeDisabled, mode, onNavigate, onSelect } =
     useBrowserState();
+
+  const isLastSelected = React.useMemo(
+    () => (path.at(-1)?.id ?? null) === (selected.at(-1)?.parent ?? null),
+    [selected, path]
+  );
+
+  const sortedSelected = React.useMemo(
+    () =>
+      [...selected].sort((n1, n2) =>
+        n1.type !== n2.type
+          ? Number(n1.type === 'directory')
+          : n1.name.localeCompare(n2.name)
+      ),
+    [selected]
+  );
 
   React.useEffect(() => {
     if (listRef.current && path.length === currentPath.length) {
-      listRef.current.scrollIntoView({
+      listRef.current?.scrollIntoView({
         inline: 'end',
         block: 'nearest',
         behavior: 'smooth',
@@ -32,10 +47,13 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
 
   const onKeyDown = React.useCallback(
     (e: KeyboardEvent) => {
+      const currentListSelected = sortedSelected.filter(
+        (s) => s.parent === path.at(-1)?.id
+      );
       if (e.key === 'ArrowDown') {
         const reversedNodeIndex = Array.from(nodes ?? [])
           .reverse()
-          .findIndex((n) => selected.find((s) => s.id === n.id));
+          .findIndex((n) => currentListSelected.find((s) => s.id === n.id));
 
         const lastSelectedNodeIndex =
           reversedNodeIndex > -1 ? nodes!.length - 1 - reversedNodeIndex : -1;
@@ -53,16 +71,24 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
           if (mode === 'select') {
             return;
           }
-          onSelect?.([...selected, nextNode]);
+          onSelect?.([...sortedSelected, nextNode]);
+          if (currentPath.at(-1)?.id !== nextNode.parent) {
+            onNavigate?.(path);
+          }
           return;
         }
 
         onSelect?.([nextNode]);
+        if (nextNode.type === 'directory') {
+          onNavigate?.([...path, nextNode]);
+        }
       }
 
       if (e.key === 'ArrowUp') {
         const firstSelectedNodeIndex =
-          nodes?.findIndex((n) => selected.find((s) => s.id === n.id)) ?? -1;
+          nodes?.findIndex((n) =>
+            currentListSelected.find((s) => s.id === n.id)
+          ) ?? -1;
 
         if (firstSelectedNodeIndex < 0) {
           return;
@@ -78,14 +104,56 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
           if (mode === 'select') {
             return;
           }
-          onSelect?.([previousNode, ...selected]);
+          onSelect?.([...sortedSelected, previousNode]);
+          if (currentPath.at(-1)?.id !== previousNode.parent) {
+            onNavigate?.(path);
+          }
           return;
         }
 
         onSelect?.([previousNode]);
+        if (previousNode.type === 'directory') {
+          onNavigate?.([...path, previousNode]);
+        }
+      }
+
+      if (e.key === 'ArrowLeft') {
+        const selectedNode = selected.at(-1);
+
+        if (
+          !selectedNode ||
+          selectedNode.parent !== (path.at(-1)?.id ?? null)
+        ) {
+          return;
+        }
+
+        const targetNode = path.at(-1);
+
+        if (targetNode) {
+          onSelect?.([targetNode]);
+        }
+      }
+
+      if (e.key === 'ArrowRight') {
+        const selectedDirectory = selected.at(-1);
+        const firstNode = nodes?.at(0);
+
+        if (!firstNode) {
+          return;
+        }
+
+        if (
+          selectedDirectory?.type !== 'directory' ||
+          selectedDirectory.id !== firstNode.parent
+        ) {
+          return;
+        }
+
+        onSelect?.([firstNode]);
+        onNavigate?.([...path, firstNode]);
       }
     },
-    [nodes, selected, onSelect]
+    [nodes, sortedSelected, onSelect]
   );
 
   React.useEffect(() => {

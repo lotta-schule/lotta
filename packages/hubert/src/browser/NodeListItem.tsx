@@ -37,7 +37,7 @@ export const NodeListItem = React.memo(
     );
 
     const isSelected = React.useMemo(
-      () => node.type === 'file' && selected.some((n) => n.id === node.id),
+      () => selected.some((n) => n.id === node.id),
       [selected, node.id]
     );
 
@@ -79,9 +79,23 @@ export const NodeListItem = React.memo(
           isDisabled
             ? undefined
             : (e) => {
-                if (mode === 'select-multiple') {
+                if (mode === 'select') {
+                  if (node.type === 'directory') {
+                    onSelect([]);
+                    onNavigate(path);
+                  } else {
+                    if (node.parent !== currentPath.at(-1)?.id) {
+                      onNavigate(parentPath);
+                    }
+                    onSelect([node]);
+                  }
+                } else if (mode === 'select-multiple') {
                   if (node.type === 'directory') {
                     onNavigate(path);
+                    onSelect([
+                      ...selected.filter((n) => n.type !== 'directory'),
+                      node,
+                    ]);
                   } else {
                     if (
                       !(
@@ -109,14 +123,9 @@ export const NodeListItem = React.memo(
                   }
                 } else {
                   if (node.type === 'directory') {
-                    onSelect([]);
                     onNavigate(path);
-                  } else {
-                    if (node.parent !== currentPath.at(-1)?.id) {
-                      onNavigate(parentPath);
-                    }
-                    onSelect([node]);
                   }
+                  onSelect([node]);
                 }
               }
         }

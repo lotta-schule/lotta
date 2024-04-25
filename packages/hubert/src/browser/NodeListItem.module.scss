@@ -35,12 +35,12 @@
     background-color: rgba(var(--lotta-accent-grey-color), 0.3);
   }
 
-  &.isSelected:not(:has(input[type="checkbox"])) {
-    background-color: rgba(var(--lotta-primary-color), 0.25);
+  &.isOpen:not(.isSelected) {
+    background-color: rgba(var(--lotta-primary-color), 0.05);
   }
 
-  &.isOpen {
-    background-color: rgba(var(--lotta-primary-color), 0.05);
+  &.isSelected:not(:has(input[type="checkbox"])) {
+    background-color: rgba(var(--lotta-primary-color), 0.25);
   }
 
   &.isDisabled {

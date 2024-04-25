@@ -52,7 +52,7 @@ describe('Browser/NodeListItem', () => {
     });
 
     describe('Default Mode (view-and-edit)', () => {
-      it('should navigate to the directory on click, resetting its selection', async () => {
+      it('should navigate to the directory on click, resetting its selection to just the directory itself', async () => {
         const user = userEvent.setup();
         const onNavigate = vi.fn();
         const onSelect = vi.fn();
@@ -68,7 +68,7 @@ describe('Browser/NodeListItem', () => {
         await user.click(screen.getByRole('option'));
 
         expect(onNavigate).toHaveBeenCalledWith(filePath.slice(0, 3));
-        expect(onSelect).toHaveBeenCalledWith([]);
+        expect(onSelect).toHaveBeenCalledWith([filePath.at(2)]);
       });
 
       it('should show the editing menu button', async () => {
@@ -107,7 +107,7 @@ describe('Browser/NodeListItem', () => {
     });
 
     describe('Single selection mode (select)', () => {
-      it('should navigate to the directory on click, resetting its selection', async () => {
+      it('should navigate to the directory on click, resetting the selection', async () => {
         const user = userEvent.setup();
         const onNavigate = vi.fn();
         const onSelect = vi.fn();
@@ -188,14 +188,16 @@ describe('Browser/NodeListItem', () => {
     });
 
     describe('Multi selection mode (select-multiple)', () => {
-      it('should navigate to the directory on click, keeping its selection', async () => {
+      it('should navigate to the directory on click', async () => {
         const user = userEvent.setup();
+        const onSelect = vi.fn();
         const onNavigate = vi.fn();
         const screen = render(
           <WrappedNodeListItem
             mode="select-multiple"
             selected={[filePath[2]]}
             node={filePath[1]}
+            onSelect={onSelect}
             onNavigate={onNavigate}
           />
         );
