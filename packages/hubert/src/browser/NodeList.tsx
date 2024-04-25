@@ -48,7 +48,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   const onKeyDown = React.useCallback(
     (e: KeyboardEvent) => {
       const currentListSelected = sortedSelected.filter(
-        (s) => s.parent === path.at(-1)?.id
+        (s) => s.parent === (path.at(-1)?.id ?? null)
       );
       if (e.key === 'ArrowDown') {
         const reversedNodeIndex = Array.from(nodes ?? [])
@@ -57,6 +57,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
 
         const lastSelectedNodeIndex =
           reversedNodeIndex > -1 ? nodes!.length - 1 - reversedNodeIndex : -1;
+
         if (lastSelectedNodeIndex < 0) {
           return;
         }

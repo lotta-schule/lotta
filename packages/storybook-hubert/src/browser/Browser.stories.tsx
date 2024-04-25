@@ -19,30 +19,75 @@ const getChildNodes = (node: BrowserNode | null): BrowserNode[] => {
 
   if (node.id === '1') {
     return [
-      { id: '5', name: 'folder 5', type: 'directory', parent: '1' },
-      { id: '6', name: 'folder 6', type: 'directory', parent: '1' },
-      { id: '7', name: 'folder 7', type: 'directory', parent: '1' },
-      { id: '8', name: 'folder 8', type: 'directory', parent: '1' },
-      { id: '9', name: 'folder 9', type: 'directory', parent: '1' },
-      { id: '10', name: 'folder 10', type: 'directory', parent: '1' },
+      { id: '5', name: 'folder 5', type: 'directory', parent: '1', meta: {} },
+      { id: '6', name: 'folder 6', type: 'directory', parent: '1', meta: {} },
+      { id: '7', name: 'folder 7', type: 'directory', parent: '1', meta: {} },
+      { id: '8', name: 'folder 8', type: 'directory', parent: '1', meta: {} },
+      { id: '9', name: 'folder 9', type: 'directory', parent: '1', meta: {} },
+      { id: '10', name: 'folder 10', type: 'directory', parent: '1', meta: {} },
     ];
   }
 
   if (node.id === '8') {
     return [
-      { id: '11', name: 'folder 11', type: 'directory', parent: '8' },
-      { id: '12', name: 'folder 12', type: 'directory', parent: '8' },
-      { id: '13', name: 'folder 13', type: 'directory', parent: '8' },
-      { id: '14', name: 'folder 14', type: 'directory', parent: '8' },
-      { id: '15', name: 'folder 15', type: 'file', parent: '8' },
-      { id: '16', name: 'folder 16', type: 'file', parent: '8' },
-      { id: '17', name: 'folder 17', type: 'file', parent: '8' },
-      { id: '18', name: 'folder 18', type: 'file', parent: '8' },
+      { id: '11', name: 'folder 11', type: 'directory', parent: '8', meta: {} },
+      { id: '12', name: 'folder 12', type: 'directory', parent: '8', meta: {} },
+      { id: '13', name: 'folder 13', type: 'directory', parent: '8', meta: {} },
+      { id: '14', name: 'folder 14', type: 'directory', parent: '8', meta: {} },
+      {
+        id: '15',
+        name: 'myfile.png',
+        type: 'file',
+        parent: '8',
+        meta: { mimeType: 'image/png' },
+      },
+      {
+        id: '16',
+        name: 'presentation.ppt',
+        type: 'file',
+        parent: '8',
+        meta: {
+          mimeType:
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        },
+      },
+      {
+        id: '17',
+        name: 'graph.svg',
+        type: 'file',
+        parent: '8',
+        meta: { mimeType: 'image/svg+xml' },
+      },
+      {
+        id: '18',
+        name: 'screen-test.mp4',
+        type: 'file',
+        parent: '8',
+        meta: { mimeType: 'video/mp4' },
+      },
     ];
   }
 
   if (node.id === '13') {
-    return [{ id: '19', name: 'folder 19', type: 'file', parent: '13' }];
+    return [
+      {
+        id: '19',
+        name: 'handout.pdf',
+        type: 'file',
+        parent: '13',
+        meta: { mimeType: 'application/pdf' },
+      },
+      {
+        id: '20',
+        name: 'friendlist.xlsx',
+        type: 'file',
+        parent: '13',
+        meta: {
+          mimeType:
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        },
+      },
+    ];
   }
 
   return [];

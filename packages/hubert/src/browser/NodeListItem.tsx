@@ -7,6 +7,7 @@ import { Checkbox } from '../form';
 import clsx from 'clsx';
 
 import styles from './NodeListItem.module.scss';
+import { FileIcon } from './FileIcon';
 
 export type NodeListItemProps = {
   parentPath: BrowserNode[];
@@ -60,7 +61,7 @@ export const NodeListItem = React.memo(
         return isOpen ? <FolderOpen /> : <Folder />;
       }
 
-      return null;
+      return <FileIcon mimeType={node.meta.mimeType} />;
     }, [node, isOpen, onRequestNodeIcon]);
 
     return (

@@ -63,16 +63,6 @@ export const UserBrowser = React.memo(
         [fetchDirectoriesAndFiles]
       );
 
-    const onRequestNodeIcon: BrowserProps['onRequestNodeIcon'] = React.useMemo(
-      () => (node) => {
-        if (node.type === 'file') {
-          return File.getIconForFile(node.meta);
-        }
-        return null;
-      },
-      []
-    );
-
     const canEdit: BrowserProps['canEdit'] = React.useMemo(
       () => (node) => {
         if (node.type === 'file') {
@@ -104,10 +94,11 @@ export const UserBrowser = React.memo(
 
     return (
       <Browser
-        onSelect={onSelect}
+        onSelect={(nodes) =>
+          onSelect?.(nodes.filter((n) => n.type === 'file').map((n) => n.meta))
+        }
         onRequestChildNodes={onRequestChildNodes}
         renderNodeList={RenderNodeList}
-        onRequestNodeIcon={onRequestNodeIcon}
         getPreviewUrl={React.useCallback(
           (node: BrowserNode<FileModel>) =>
             File.getPreviewImageLocation(serverData.baseUrl, node.meta),
