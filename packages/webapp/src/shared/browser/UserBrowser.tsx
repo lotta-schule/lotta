@@ -5,6 +5,8 @@ import {
   BrowserMode,
   BrowserNode,
   BrowserProps,
+  isDirectoryNode,
+  isFileNode,
 } from '@lotta-schule/hubert';
 import { DirectoryModel, FileModel } from 'model';
 import { File } from 'util/model';
@@ -24,10 +26,15 @@ import { RenderNodeList } from './RenderNodeList';
 
 import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
 
+declare module '@lotta-schule/hubert' {
+  export interface DefaultFileMetadata extends FileModel {}
+  export interface DefaultDirectoryMetadata extends DirectoryModel {}
+}
+
 export type UserBrowserProps = {
   style?: React.CSSProperties;
   multiple?: boolean;
-  isNodeDisabled?: (node: BrowserNode<FileModel | DirectoryModel>) => boolean;
+  isNodeDisabled?: (node: BrowserNode) => boolean;
   onSelect?: (file: FileModel[]) => void; // TODO: Must be implemented
 };
 
@@ -65,10 +72,10 @@ export const UserBrowser = React.memo(
 
     const canEdit: BrowserProps['canEdit'] = React.useMemo(
       () => (node) => {
-        if (node.type === 'file') {
-          return true;
+        if (isDirectoryNode(node)) {
+          return File.canEditDirectory(node.meta, currentUser) || false;
         }
-        return File.canEditDirectory(node.meta, currentUser) || false;
+        return true;
       },
       []
     );
@@ -77,10 +84,42 @@ export const UserBrowser = React.memo(
       Exclude<BrowserProps['getDownloadUrl'], undefined>
     >(
       (node) => {
-        if (node.type === 'file') {
+        if (isFileNode(node)) {
           return File.getFileRemoteLocation(serverData.baseUrl, node.meta);
         }
         return null;
+      },
+      [serverData.baseUrl]
+    );
+
+    const getPreviewUrl = React.useCallback(
+      (node: BrowserNode) => {
+        if (isFileNode(node)) {
+          return File.getPreviewImageLocation(serverData.baseUrl, node.meta);
+        }
+      },
+      [serverData.baseUrl]
+    );
+
+    const getMetadata = React.useCallback(
+      (node: BrowserNode) => {
+        if (isFileNode(node)) {
+          return {
+            Name: node.name,
+            'Erstellt am': node.meta.insertedAt,
+            Größe: node.meta.filesize,
+            Dateityp: node.meta.fileType,
+            mimeType: node.meta.mimeType,
+            Versionen: node.meta.fileConversions?.length ?? 0,
+            id: node.id,
+          };
+        } else if (isDirectoryNode(node)) {
+          return {
+            Name: node.name,
+            'Erstellt am': node.meta.insertedAt,
+            id: node.id,
+          };
+        }
       },
       [serverData.baseUrl]
     );
@@ -95,15 +134,12 @@ export const UserBrowser = React.memo(
     return (
       <Browser
         onSelect={(nodes) =>
-          onSelect?.(nodes.filter((n) => n.type === 'file').map((n) => n.meta))
+          onSelect?.(nodes.filter(isFileNode).map((n) => n.meta))
         }
         onRequestChildNodes={onRequestChildNodes}
         renderNodeList={RenderNodeList}
-        getPreviewUrl={React.useCallback(
-          (node: BrowserNode<FileModel>) =>
-            File.getPreviewImageLocation(serverData.baseUrl, node.meta),
-          [serverData.baseUrl]
-        )}
+        getPreviewUrl={getPreviewUrl}
+        getMetadata={getMetadata}
         canEdit={canEdit}
         isNodeDisabled={isNodeDisabled}
         mode={mode}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Input } from '../form/input';
 import { Button } from '../button';
-import { CloudUpload, CreateNewFolder } from '../icon';
+import { CloudUpload, CreateNewFolder, Home } from '../icon';
 import { useBrowserState } from './BrowserStateContext';
 import clsx from 'clsx';
 
@@ -12,11 +12,19 @@ export type ToolbarProps = {
 };
 
 export const Toolbar = React.memo(({ className }: ToolbarProps) => {
-  const { currentPath, mode, createDirectory, setCurrentAction } =
+  const { currentPath, mode, selected, createDirectory, setCurrentAction } =
     useBrowserState();
+
+  const activeDirectoryName = React.useMemo(
+    () =>
+      [...currentPath].reverse().find((node) => node.type === 'directory')
+        ?.name ?? <Home />,
+    [selected, currentPath]
+  );
+
   return (
     <div className={clsx(styles.root, className)} role="toolbar">
-      <div className={styles.leftContainer}>file name</div>
+      <div className={styles.leftContainer}>{activeDirectoryName}</div>
       <div className={styles.searchField}>
         <Input placeholder="Datei suchen" />
       </div>

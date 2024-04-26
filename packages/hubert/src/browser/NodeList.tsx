@@ -20,11 +20,6 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   const { currentPath, selected, isNodeDisabled, mode, onNavigate, onSelect } =
     useBrowserState();
 
-  const isLastSelected = React.useMemo(
-    () => (path.at(-1)?.id ?? null) === (selected.at(-1)?.parent ?? null),
-    [selected, path]
-  );
-
   const sortedSelected = React.useMemo(
     () =>
       [...selected].sort((n1, n2) =>

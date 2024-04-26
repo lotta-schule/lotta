@@ -1,11 +1,26 @@
 import * as React from 'react';
 
-export type BrowserNode<T = any> = {
+export interface DefaultFileMetadata {
+  mimeType: string;
+  size: number;
+}
+export interface DefaultDirectoryMetadata extends Record<string, string> {}
+
+export type BrowserNodeMetadata<Type extends 'file' | 'directory'> =
+  Type extends 'file'
+    ? DefaultFileMetadata
+    : Type extends 'directory'
+      ? DefaultDirectoryMetadata
+      : Record<string, string>;
+
+export type BrowserNode<
+  Type extends 'directory' | 'file' = 'directory' | 'file',
+> = {
   id: string;
   name: string;
-  type: 'directory' | 'file';
-  parent: BrowserNode['id'] | null;
-  meta: T;
+  type: Type;
+  parent: BrowserNode<'directory'>['id'] | null;
+  meta: BrowserNodeMetadata<Type>;
 };
 
 export type BrowserMode = 'view-and-edit' | 'select' | 'select-multiple';
@@ -42,6 +57,7 @@ export interface BrowserState {
   isNodeDisabled?: (node: BrowserNode) => boolean;
   getDownloadUrl?: (node: BrowserNode) => string | null | undefined;
   getPreviewUrl?: (node: BrowserNode) => string | null | undefined;
+  getMetadata?: (node: BrowserNode) => Record<string, any> | null | undefined;
 
   createDirectory?: (
     parentNode: BrowserNode | null,

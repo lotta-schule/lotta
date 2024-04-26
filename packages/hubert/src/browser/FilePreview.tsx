@@ -9,7 +9,7 @@ export type FilePreviewProps = {
 };
 
 export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
-  const { getPreviewUrl, selected } = useBrowserState();
+  const { getPreviewUrl, getMetadata, selected } = useBrowserState();
 
   const node = React.useMemo(
     () => selected.find((node) => node.type === 'file'),
@@ -21,20 +21,36 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     [getPreviewUrl, node]
   );
 
+  const meta = React.useMemo(
+    () => node && (getMetadata?.(node) || node.meta),
+    [node]
+  );
+
   return (
     <div className={clsx(styles.root, className)}>
-      <div className={styles.previewImage}>
-        {previewUrl && <img src={previewUrl} width={'100%'} />}
+      <div className={styles.previewSection}>
+        {previewUrl && (
+          <div className={styles.previewImage}>
+            <img key={previewUrl} src={previewUrl} />
+          </div>
+        )}
       </div>
-      <div className={styles.infoSection}>
-        Informationen Informationen Informationen Informationen Informationen
-        Informationen Informationen Informationen Informationen Informationen
-        Informationen Informationen Informationen Informationen Informationen
-        Informationen Informationen Informationen Informationen Informationen
-        Informationen Informationen Informationen Informationen Informationen
-        Informationen Informationen Informationen Informationen Informationen
-        Informationen
-      </div>
+      {meta && (
+        <div className={styles.infoSection}>
+          <ul>
+            {Object.entries(meta).map(([key, value]) => (
+              <li key={key}>
+                <label>{key}:</label>
+                <span>
+                  {['string', 'number'].includes(typeof value)
+                    ? value
+                    : JSON.stringify(value)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 });
