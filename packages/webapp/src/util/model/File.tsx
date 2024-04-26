@@ -17,7 +17,7 @@ import {
   UserModel,
   FileConversionModel,
 } from 'model';
-import { createImageUrl } from 'util/image/useImageUrl';
+import { ProcessingOptions, createImageUrl } from 'util/image/useImageUrl';
 import { User } from './User';
 
 export const File = {
@@ -98,14 +98,23 @@ export const File = {
     }
   },
 
-  getPreviewImageLocation(baseUrl: string, file?: FileModel, size = 200) {
+  getPreviewImageLocation(
+    baseUrl: string,
+    file?: FileModel,
+    sizeOrResizeOptions: number | ProcessingOptions = 200
+  ) {
     if (file) {
       if (file.fileType === FileModelType.Image) {
-        return createImageUrl(File.getFileRemoteLocation(baseUrl, file), {
-          width: size,
-          aspectRatio: '4:3',
-          resize: 'cover',
-        });
+        return createImageUrl(
+          File.getFileRemoteLocation(baseUrl, file),
+          typeof sizeOrResizeOptions === 'number'
+            ? {
+                width: sizeOrResizeOptions,
+                aspectRatio: '4:3',
+                resize: 'cover',
+              }
+            : sizeOrResizeOptions
+        );
       } else {
         const imageConversionFile = file.fileConversions?.find((fc) =>
           /^gif/.test(fc.format)
@@ -113,7 +122,13 @@ export const File = {
         if (imageConversionFile) {
           return createImageUrl(
             File.getFileConversionRemoteLocation(baseUrl, imageConversionFile),
-            { width: size, aspectRatio: '4:3', resize: 'cover' }
+            typeof sizeOrResizeOptions === 'number'
+              ? {
+                  width: sizeOrResizeOptions,
+                  aspectRatio: '4:3',
+                  resize: 'cover',
+                }
+              : sizeOrResizeOptions
           );
         }
       }

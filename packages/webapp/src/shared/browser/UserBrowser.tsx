@@ -95,7 +95,10 @@ export const UserBrowser = React.memo(
     const getPreviewUrl = React.useCallback(
       (node: BrowserNode) => {
         if (isFileNode(node)) {
-          return File.getPreviewImageLocation(serverData.baseUrl, node.meta);
+          return File.getPreviewImageLocation(serverData.baseUrl, node.meta, {
+            width: (devicePixelRatio || 1) * 200,
+            resize: 'contain',
+          });
         }
       },
       [serverData.baseUrl]
