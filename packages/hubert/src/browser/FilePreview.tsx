@@ -25,6 +25,11 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     onRequestNodeIcon,
   } = useBrowserState();
 
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
+  const previewSectionRef = React.useRef<HTMLDivElement>(null);
+
+  const [maxWidth, setMaxWidth] = React.useState<number | undefined>(undefined);
+
   const node = React.useMemo(() => selected.at(-1) ?? null, [selected]);
 
   const previewUrl = React.useMemo(
@@ -68,11 +73,30 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     );
   }, [node, onRequestNodeIcon, currentPath]);
 
+  React.useEffect(() => {
+    if (previewSectionRef.current && wrapperRef.current) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.target !== previewSectionRef.current) {
+              return;
+            }
+            console.log(entry.boundingClientRect.width);
+            setMaxWidth(entry.boundingClientRect.width);
+          });
+        },
+        { root: wrapperRef.current }
+      );
+
+      observer.observe(previewSectionRef.current);
+    }
+  }, []);
+
   return (
     <div className={clsx(styles.root, className)}>
-      <div className={styles.previewSection}>
-        {previewUrl ? (
-          <div className={styles.previewImage}>
+      <div className={styles.wrapper} ref={wrapperRef}>
+        <div className={styles.previewSection} ref={previewSectionRef}>
+          {previewUrl ? (
             <AnimatePresence mode={'popLayout'} initial={false}>
               <motion.img
                 key={previewUrl}
@@ -82,27 +106,27 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
                 exit={{ opacity: 0 }}
               />
             </AnimatePresence>
-          </div>
-        ) : (
-          nodeIcon
-        )}
-      </div>
-      <div className={styles.infoSection}>
-        {node?.name && <h2>{node.name}</h2>}
-        {meta && (
-          <ul>
-            {Object.entries(meta).map(([key, value]) => (
-              <li key={key}>
-                <label>{key}:</label>
-                <span>
-                  {['string', 'number'].includes(typeof value)
-                    ? value
-                    : JSON.stringify(value)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+          ) : (
+            nodeIcon
+          )}
+        </div>
+        <div className={styles.infoSection} style={{ maxWidth }}>
+          {node?.name && <h2>{node.name}</h2>}
+          {meta && (
+            <ul>
+              {Object.entries(meta).map(([key, value]) => (
+                <li key={key}>
+                  <label>{key}:</label>
+                  <span>
+                    {['string', 'number'].includes(typeof value)
+                      ? value
+                      : JSON.stringify(value)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );

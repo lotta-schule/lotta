@@ -2,103 +2,108 @@
 
 .root {
   height: 100%;
-  overflow: auto;
   padding: var(--lotta-spacing);
 
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
-  .previewSection {
-    margin: 0 auto;
-    aspect-ratio: 1.333;
-    width: 90%;
-    border-radius: var(--lotta-border-radius);
-    overflow: hidden;
-
-    & > svg {
-      // icon
-      width: 100%;
-      height: 100%;
-    }
-  }
-  .previewImage {
-    --transparent-background-white: var(--lotta-box-background-color);
-    --transparent-background-gray: #b0b0b0;
-
-    background-color: var(--transparent-background-white);
-    background-image: linear-gradient(
-        45deg,
-        var(--transparent-background-gray) 25%,
-        transparent 25%
-      ),
-      linear-gradient(
-        -45deg,
-        var(--transparent-background-gray) 25%,
-        transparent 25%
-      ),
-      linear-gradient(
-        45deg,
-        transparent 75%,
-        var(--transparent-background-gray) 75%
-      ),
-      linear-gradient(
-        -45deg,
-        transparent 75%,
-        var(--transparent-background-gray) 75%
-      );
-    background-size: 20px 20px;
-    background-position:
-      0 0,
-      0 10px,
-      10px -10px,
-      -10px 0px;
-
-    height: 100%;
+  .wrapper {
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    img {
-      object-fit: contain;
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  .infoSection {
-    margin-top: var(--lotta-spacing);
-    padding: var(--lotta-spacing);
+    height: 100%;
     width: 100%;
-    overflow: auto;
+    margin: 0 auto;
 
-    h2 {
-      font-size: 1.1em;
-      margin-bottom: var(--lotta-spacing);
-      font-weight: bold;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+    .previewSection {
+      margin: 0 auto;
+      aspect-ratio: 1.777; // 16:9
+      border-radius: var(--lotta-border-radius);
+      flex: 1 1;
+      max-width: 100%;
+      max-height: 60%;
+
+      & > svg {
+        // icon
+        width: 100%;
+        height: 100%;
+      }
+
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img {
+        --transparent-background-white: var(--lotta-box-background-color);
+        --transparent-background-gray: #b0b0b0;
+
+        background-color: var(--transparent-background-white);
+        background-image: linear-gradient(
+            45deg,
+            var(--transparent-background-gray) 25%,
+            transparent 25%
+          ),
+          linear-gradient(
+            -45deg,
+            var(--transparent-background-gray) 25%,
+            transparent 25%
+          ),
+          linear-gradient(
+            45deg,
+            transparent 75%,
+            var(--transparent-background-gray) 75%
+          ),
+          linear-gradient(
+            -45deg,
+            transparent 75%,
+            var(--transparent-background-gray) 75%
+          );
+        background-size: 20px 20px;
+        background-position:
+          0 0,
+          0 10px,
+          10px -10px,
+          -10px 0px;
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        border-radius: var(--lotta-border-radius);
+      }
     }
 
-    ul {
-      font-size: 0.75em;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      li {
-        display: flex;
-        justify-content: space-between;
+    .infoSection {
+      margin-top: var(--lotta-spacing);
+      width: 100%;
+      overflow: auto;
+
+      h2 {
+        font-size: 1.1em;
         margin-bottom: var(--lotta-spacing);
-        &:last-child {
-          margin-bottom: 0;
-        }
-        label {
-          font-weight: bold;
-          & + span {
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            padding-left: var(--lotta-spacing);
+        font-weight: bold;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      ul {
+        font-size: 0.75em;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        li {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: var(--lotta-spacing);
+          &:last-child {
+            margin-bottom: 0;
+          }
+          label {
+            font-weight: bold;
+            & + span {
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              padding-left: var(--lotta-spacing);
+            }
           }
         }
       }

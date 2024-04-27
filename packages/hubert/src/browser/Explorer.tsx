@@ -21,8 +21,8 @@ export const Explorer = React.memo(({ className }: ExplorerProps) => {
             parentPath={currentPath.slice(0, i + 1)}
           />
         ))}
+        <FilePreview className={styles.nodeInfo} />
       </div>
-      <FilePreview className={styles.nodeInfo} />
     </div>
   );
 });
