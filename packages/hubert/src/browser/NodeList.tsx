@@ -6,6 +6,7 @@ import {
 } from './BrowserStateContext';
 import { NodeListItem } from './NodeListItem';
 import { isDirectoryNode, isFileNode } from './utils';
+import { useIsMobile } from '../util';
 import clsx from 'clsx';
 
 import styles from './NodeList.module.scss';
@@ -16,10 +17,18 @@ export type NodeListProps = {
 };
 
 export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
+  const isMobile = useIsMobile();
   const listRef = React.useRef<HTMLElement>(null);
 
-  const { currentPath, selected, isNodeDisabled, mode, onNavigate, onSelect } =
-    useBrowserState();
+  const {
+    currentPath,
+    selected,
+    isNodeDisabled,
+    mode,
+    onNavigate,
+    onSelect,
+    setIsFilePreviewVisible,
+  } = useBrowserState();
 
   const sortedSelected = React.useMemo(
     () =>
@@ -31,15 +40,14 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
     [selected]
   );
 
-  React.useEffect(() => {
-    if (listRef.current && path.length === currentPath.length) {
+  React.useLayoutEffect(() => {
+    if (!isMobile && path.length === currentPath.length) {
       listRef.current?.scrollIntoView({
         inline: 'start',
-        block: 'nearest',
         behavior: 'smooth',
       });
     }
-  }, [path.length, currentPath.length]);
+  }, [path.length, currentPath.length, isMobile]);
 
   const onKeyDown = React.useCallback(
     (e: KeyboardEvent) => {
@@ -289,6 +297,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
                   onNavigate(path);
                 }
                 onSelect([node]);
+                setIsFilePreviewVisible?.(true);
               }
             }}
           />

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useIsMobile } from '../util';
 import { useBrowserState } from './BrowserStateContext';
 import { FilePreview } from './FilePreview';
 import clsx from 'clsx';
@@ -10,19 +11,31 @@ export type ExplorerProps = {
 };
 
 export const Explorer = React.memo(({ className }: ExplorerProps) => {
-  const { currentPath, renderNodeList: RenderNodeList } = useBrowserState();
+  const isMobile = useIsMobile();
+  const {
+    currentPath,
+    isFilePreviewVisible,
+    renderNodeList: RenderNodeList,
+  } = useBrowserState();
   return (
     <div className={clsx(styles.root, className)}>
-      <div className={styles.browserColumns}>
+      {(!isMobile || currentPath.length === 0) && (
         <RenderNodeList parentPath={[]} />
-        {currentPath.map((currentNode, i) => (
+      )}
+      {currentPath
+        .map((currentNode, i) => (
           <RenderNodeList
             key={currentNode.parent}
             parentPath={currentPath.slice(0, i + 1)}
           />
-        ))}
+        ))
+        .filter(
+          (_, i) =>
+            !isMobile || (!isFilePreviewVisible && i === currentPath.length - 1)
+        )}
+      {(!isMobile || isFilePreviewVisible) && (
         <FilePreview className={styles.nodeInfo} />
-      </div>
+      )}
     </div>
   );
 });

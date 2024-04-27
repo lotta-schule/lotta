@@ -3,13 +3,12 @@
 .root {
   flex: 0 0 250px;
   height: 100%;
-  display: list-item;
   border-right: 1px solid rgba(var(--lotta-accent-grey-color));
   overflow: scroll;
 
   @media screen and (max-width: $max-xs) {
-    min-width: 100%;
-    max-width: 100%;
+    flex: 0 0 100%;
+    width: 100%;
   }
 
   &.isEmpty {

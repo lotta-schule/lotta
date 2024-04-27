@@ -53,6 +53,8 @@ export interface BrowserState {
     node: BrowserNode<'directory'> | null
   ) => Promise<BrowserNode[]>;
 
+  isFilePreviewVisible: boolean;
+  setIsFilePreviewVisible: (visible: boolean) => void;
   currentAction: BrowserAction | null;
   setCurrentAction: (action: BrowserAction | null) => void;
 
@@ -76,7 +78,7 @@ export interface BrowserState {
 
 export type BrowserStateProviderProps = {
   children: React.ReactNode;
-  defaultPath?: BrowserPath;
+  defaultPath?: BrowserPath<'directory'>;
   onSelect?: (selected: BrowserNode[]) => void;
 } & Omit<
   BrowserState,
@@ -99,10 +101,12 @@ export const BrowserStateProvider = React.memo(
     ...props
   }: BrowserStateProviderProps) => {
     const [currentPath, setCurrentPath] =
-      React.useState<BrowserNode[]>(defaultPath);
+      React.useState<BrowserNode<'directory'>[]>(defaultPath);
     const [selected, setSelected] = React.useState<BrowserNode[]>([]);
     const [currentAction, setCurrentAction] =
       React.useState<BrowserState['currentAction']>(null);
+    const [isFilePreviewVisible, setIsFilePreviewVisible] =
+      React.useState<BrowserState['isFilePreviewVisible']>(false);
 
     React.useEffect(() => {
       onSelect?.(selected);
@@ -119,6 +123,8 @@ export const BrowserStateProvider = React.memo(
           onSelect: setSelected,
           currentAction,
           setCurrentAction,
+          isFilePreviewVisible,
+          setIsFilePreviewVisible,
         }}
       >
         {children}

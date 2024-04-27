@@ -16,6 +16,8 @@
   .leftContainer {
     overflow: hidden;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
 
     flex: 1 1 auto;
     transition:

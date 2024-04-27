@@ -50,8 +50,15 @@ export const Popover = React.forwardRef(
 
     React.useLayoutEffect(() => {
       setTriggerElement(trigger);
-      setPopoverElement(ref.current);
     }, [trigger]);
+
+    React.useLayoutEffect(() => {
+      if (isOpen) {
+        setPopoverElement(ref.current);
+      } else {
+        setPopoverElement(null);
+      }
+    }, [isOpen]);
 
     return (
       <AnimatePresence>
@@ -82,10 +89,12 @@ export const Popover = React.forwardRef(
             style={{ ...popperStyle.popper, zIndex: 10_000 }}
             ref={ref}
           >
-            <FocusScope restoreFocus>
-              <DismissButton onDismiss={onClose} />
-              {children}
-            </FocusScope>
+            {popoverElement && (
+              <FocusScope restoreFocus>
+                <DismissButton onDismiss={onClose} />
+                {children}
+              </FocusScope>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
