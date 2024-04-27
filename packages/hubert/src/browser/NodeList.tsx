@@ -39,7 +39,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
         behavior: 'smooth',
       });
     }
-  }, [path, currentPath]);
+  }, [path.length, currentPath.length]);
 
   const onKeyDown = React.useCallback(
     (e: KeyboardEvent) => {
