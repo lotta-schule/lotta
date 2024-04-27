@@ -4,18 +4,20 @@ import clsx from 'clsx';
 import styles from './SvgIcon.module.scss';
 
 export const FileVideo = React.memo(
-  ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      focusable="false"
-      viewBox="0 0 512 677"
-      aria-hidden="true"
-      className={clsx(styles.root, className)}
-      {...props}
-    >
-      <path
-        fill="#430088"
-        d="M-1,103.4C-1,59.1,27.7,23,63,23h384c35.3,0,64,36.1,64,80.4v402.1c0,44.4-28.7,80.4-64,80.4H63
+  React.forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
+    ({ className, ...props }, ref) => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        focusable="false"
+        viewBox="0 0 512 677"
+        aria-hidden="true"
+        className={clsx(styles.root, className)}
+        ref={ref}
+        {...props}
+      >
+        <path
+          fill="#430088"
+          d="M-1,103.4C-1,59.1,27.7,23,63,23h384c35.3,0,64,36.1,64,80.4v402.1c0,44.4-28.7,80.4-64,80.4H63
 	c-35.3,0-64-36.1-64-80.4V103.4z M47,445.2v40.2c0,11.1,7.2,20.1,16,20.1h32c8.8,0,16-9,16-20.1v-40.2c0-11.1-7.2-20.1-16-20.1H63
 	C54.2,425.1,47,434.2,47,445.2z M415,425.1c-8.8,0-16,9-16,20.1v40.2c0,11.1,7.2,20.1,16,20.1h32c8.8,0,16-9,16-20.1v-40.2
 	c0-11.1-7.2-20.1-16-20.1H415z M47,284.4v40.2c0,11.1,7.2,20.1,16,20.1h32c8.8,0,16-9,16-20.1v-40.2c0-11.1-7.2-20.1-16-20.1H63
@@ -25,8 +27,9 @@ export const FileVideo = React.memo(
 	c0-11.1-7.2-20.1-16-20.1H415z M159,143.6V224c0,22.2,14.3,40.2,32,40.2h128c17.7,0,32-18,32-40.2v-80.4c0-22.2-14.3-40.2-32-40.2
 	H191C173.3,103.4,159,121.4,159,143.6z M191,344.7c-17.7,0-32,18-32,40.2v80.4c0,22.2,14.3,40.2,32,40.2h128c17.7,0,32-18,32-40.2
 	v-80.4c0-22.2-14.3-40.2-32-40.2H191z"
-      />
-    </svg>
+        />
+      </svg>
+    )
   )
 );
 FileVideo.displayName = 'FileVideoIcon';

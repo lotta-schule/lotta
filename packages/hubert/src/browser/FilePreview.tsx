@@ -1,9 +1,14 @@
 import * as React from 'react';
+import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
 import { Folder, FolderOpen } from '../icon';
 import { isDirectoryNode } from './utils';
 import { FileIcon } from './FileIcon';
 import { useBrowserState } from './BrowserStateContext';
 import clsx from 'clsx';
+
+const AnimatedFolder = motion(Folder);
+const AnimatedFolderOpen = motion(FolderOpen);
+const AnimatedFileIcon = motion(FileIcon);
 
 import styles from './FilePreview.module.scss';
 
@@ -43,16 +48,23 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
       return customIcon;
     }
 
+    const animationProps: AnimationProps = {
+      initial: { opacity: 0 },
+      animate: { opacity: 1 },
+      exit: { opacity: 0 },
+    };
+
     if (isDirectoryNode(node)) {
       const isOpen = currentPath.some((n) => n.id === node.id);
-      return isOpen ? <FolderOpen /> : <Folder />;
+      return isOpen ? (
+        <AnimatedFolderOpen {...animationProps} />
+      ) : (
+        <AnimatedFolder {...animationProps} />
+      );
     }
 
     return (
-      <FileIcon
-        mimeType={node.meta.mimeType}
-        style={{ fontSize: '10rem', width: '100%', height: '100%' }}
-      />
+      <AnimatedFileIcon mimeType={node.meta.mimeType} {...animationProps} />
     );
   }, [node, onRequestNodeIcon, currentPath]);
 
@@ -61,7 +73,15 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
       <div className={styles.previewSection}>
         {previewUrl ? (
           <div className={styles.previewImage}>
-            <img key={previewUrl} src={previewUrl} />
+            <AnimatePresence mode={'popLayout'} initial={false}>
+              <motion.img
+                key={previewUrl}
+                src={previewUrl}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
+            </AnimatePresence>
           </div>
         ) : (
           nodeIcon
