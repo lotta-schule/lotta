@@ -19,12 +19,20 @@ export type NodeListItemProps = {
   parentPath: BrowserNode<'directory'>[];
   node: BrowserNode;
   isDisabled?: boolean;
+  isSelected?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
 };
 
 let currentContextMenuCloseFn: (() => void) | null = null;
 
 export const NodeListItem = React.memo(
-  ({ parentPath, node, isDisabled }: NodeListItemProps) => {
+  ({
+    parentPath,
+    node,
+    isDisabled,
+    isSelected,
+    onClick,
+  }: NodeListItemProps) => {
     const nodePath = React.useMemo(
       () => [...parentPath, node],
       [parentPath, node]
@@ -37,7 +45,6 @@ export const NodeListItem = React.memo(
       currentPath,
       selected,
       onSelect,
-      onNavigate,
       onRequestNodeIcon,
       renameNode,
       resetAction,
@@ -58,11 +65,6 @@ export const NodeListItem = React.memo(
       () =>
         node.type === 'directory' && currentPath.some((n) => n.id === node.id),
       [currentPath, node.id]
-    );
-
-    const isSelected = React.useMemo(
-      () => selected.some((n) => n.id === node.id),
-      [selected, node.id]
     );
 
     const isRenaming = React.useMemo(
@@ -90,7 +92,6 @@ export const NodeListItem = React.memo(
     React.useEffect(() => {
       if (isSelected && listItemRef.current) {
         listItemRef.current.scrollIntoView({
-          inline: 'start',
           block: 'center',
           behavior: 'smooth',
         });
@@ -132,62 +133,7 @@ export const NodeListItem = React.memo(
               },
             };
           }}
-          onClick={
-            isDisabled
-              ? undefined
-              : (e) => {
-                  if (mode === 'select') {
-                    if (isDirectoryNode(node)) {
-                      onSelect([]);
-                      onNavigate(parentPath);
-                    } else {
-                      if (node.parent !== currentPath.at(-1)?.id) {
-                        onNavigate(parentPath);
-                      }
-                      onSelect([node]);
-                    }
-                  } else if (mode === 'select-multiple') {
-                    if (isDirectoryNode(node)) {
-                      onNavigate([...parentPath, node]);
-                      onSelect([
-                        ...selected.filter((n) => n.type !== 'directory'),
-                        node,
-                      ]);
-                    } else {
-                      if (
-                        !(
-                          (
-                            e.target as HTMLElement
-                          ).parentElement?.querySelector(
-                            'input[type=checkbox]'
-                          ) ||
-                          (e.target instanceof HTMLInputElement &&
-                            e.target.type === 'checkbox')
-                        )
-                      ) {
-                        // if only the checkbox was clicked, don't navigate
-                        // but if this was a click on the label do navigate
-                        onNavigate(parentPath);
-                      } else {
-                        // on the other hand, if the checkbox was clicked, its
-                        // onSelect has already been called, so we don't need to
-                        // call it again
-                        return;
-                      }
-                      if (isSelected) {
-                        onSelect(selected.filter((n) => n.id !== node.id));
-                      } else {
-                        onSelect([...selected, node]);
-                      }
-                    }
-                  } else {
-                    if (isDirectoryNode(node)) {
-                      onNavigate([...parentPath, node]);
-                    }
-                    onSelect([node]);
-                  }
-                }
-          }
+          onClick={isDisabled ? undefined : (e) => onClick?.(e)}
         >
           <div className={styles.fileIcon}>{nodeIcon}</div>
           <div className={styles.fileName}>

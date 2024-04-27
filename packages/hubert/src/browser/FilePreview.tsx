@@ -148,7 +148,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
                   onClick={() => onAction('move')}
                 />
                 <Button
-                  variant={'error'}
+                  className={styles.deleteButton}
                   icon={<Delete />}
                   title={'löschen'}
                   onClick={() => onAction('delete')}
@@ -179,19 +179,19 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
           >
             <div className={styles.nodeNameWrapper}>
               <div className={styles.actionBar}>
-                {nodes.every((n) => n.type === nodes.at(0)!.type) && (
+                <Button
+                  icon={<Copy />}
+                  title={'verschieben'}
+                  onClick={() => onAction('move')}
+                />
+                {nodes.every((n) => isFileNode(n)) && (
                   <Button
-                    icon={<Copy />}
-                    title={'verschieben'}
-                    onClick={() => onAction('move')}
+                    className={styles.deleteButton}
+                    icon={<Delete />}
+                    title={'löschen'}
+                    onClick={() => onAction('delete')}
                   />
                 )}
-                <Button
-                  variant={'error'}
-                  icon={<Delete />}
-                  title={'löschen'}
-                  onClick={() => onAction('delete')}
-                />
               </div>
               <h2>
                 {nodes.every((n) => n.type === nodes.at(0)!.type)

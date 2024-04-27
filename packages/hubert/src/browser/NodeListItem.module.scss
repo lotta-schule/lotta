@@ -24,6 +24,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    user-select: none; // Prevent text selection, because it bothers when selecting with "shift" key
   }
 
   .editSection {

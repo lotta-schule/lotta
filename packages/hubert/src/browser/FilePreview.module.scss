@@ -90,6 +90,9 @@
           flex: 0 0 auto;
           button {
             margin-left: var(--lotta-spacing);
+            &.deleteButton {
+              color: rgb(var(--lotta-error-color));
+            }
           }
         }
 
