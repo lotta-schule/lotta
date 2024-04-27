@@ -17,6 +17,15 @@ export const FileIcon = React.memo(
   React.forwardRef<SVGSVGElement, FileIconProps>(
     ({ mimeType, ...props }, ref) => {
       const type = React.useMemo(() => {
+        if (mimeType?.startsWith('image/')) {
+          return 'image';
+        }
+        if (mimeType?.startsWith('audio/')) {
+          return 'audio';
+        }
+        if (mimeType?.startsWith('video/')) {
+          return 'video';
+        }
         switch (mimeType) {
           case 'application/pdf':
             return 'pdf';
@@ -28,20 +37,6 @@ export const FileIcon = React.memo(
             return 'ppt';
           case 'application/zip':
             return 'zip';
-          case 'image/jpeg':
-          case 'image/png':
-          case 'image/gif':
-          case 'image/bmp':
-          case 'image/svg+xml':
-            return 'image';
-          case 'audio/mpeg':
-          case 'audio/ogg':
-          case 'audio/wav':
-            return 'audio';
-          case 'video/mp4':
-          case 'video/ogg':
-          case 'video/webm':
-            return 'video';
           default:
             return 'file';
         }
