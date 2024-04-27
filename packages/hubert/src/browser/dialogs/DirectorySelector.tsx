@@ -3,6 +3,7 @@ import { BrowserNode, BrowserPath } from '../BrowserStateContext';
 import { Item, Menu } from '../../menu';
 import { Toolbar } from '../../layout/Toolbar';
 import { KeyboardArrowLeft } from '../../icon';
+import { isDirectoryNode } from '../utils';
 
 export interface DirectorySelector {
   getNodesForParent(parent: BrowserNode | null): Promise<BrowserNode[]>;
@@ -18,16 +19,21 @@ export const DirectorySelector = React.memo(
     onChange,
     filter = () => true,
   }: DirectorySelector) => {
-    const currentNode = value?.at(-1) ?? null;
     const parentNode = value?.at(-2) ?? null;
+    const potentialNode = value.at(-1);
+    const currentNode = (
+      potentialNode &&
+      isDirectoryNode(potentialNode) &&
+      potentialNode.parent === (parentNode?.id ?? null)
+        ? potentialNode
+        : null
+    ) as BrowserNode<'directory'> | null;
 
     const [childNodes, setChildNodes] = React.useState<BrowserNode[]>([]);
 
     React.useEffect(() => {
       getNodesForParent(currentNode).then((newNodes) => {
-        setChildNodes(
-          newNodes.filter((n) => n.type === 'directory' && filter(n))
-        );
+        setChildNodes(newNodes.filter((n) => isDirectoryNode(n) && filter(n)));
       });
     }, [currentNode, getNodesForParent, filter]);
 

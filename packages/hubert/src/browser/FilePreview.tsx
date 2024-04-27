@@ -47,7 +47,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     }
   }, [selected]);
 
-  const { onAction } = useNodeMenuProps(selected);
+  const { onAction } = useNodeMenuProps(selected.map((n) => [n]));
 
   const previewUrl = React.useMemo(
     () => node && getPreviewUrl?.(node),

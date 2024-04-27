@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { Dialog, DialogActions, DialogContent } from '../../dialog';
-import { BrowserPath, useBrowserState } from '../BrowserStateContext';
+import {
+  BrowserNode,
+  BrowserPath,
+  useBrowserState,
+} from '../BrowserStateContext';
 import { ErrorMessage } from '../../message';
 import { Tooltip } from '../../util';
 import { Button, LoadingButton } from '../../button';
@@ -34,6 +38,14 @@ export const MoveDirectoryDialog = React.memo(() => {
     }
   }, [currentAction?.type]);
 
+  const directoryFilter = React.useCallback(
+    (n: BrowserNode<'directory'>) =>
+      canEdit(n) &&
+      currentAction?.type === 'move-node' &&
+      currentAction.path.every((p) => p.id !== n.id),
+    [currentAction, canEdit]
+  );
+
   return (
     <Dialog
       open={currentAction?.type === 'move-node'}
@@ -58,9 +70,7 @@ export const MoveDirectoryDialog = React.memo(() => {
           value={targetPath}
           onChange={setTargetPath}
           getNodesForParent={onRequestChildNodes}
-          filter={(n) =>
-            canEdit(n) && currentAction!.path.every((p) => p.id !== n.id)
-          }
+          filter={directoryFilter}
         />
         <CreateNewDirectoryDialog
           parentNode={targetPath.at(-1) ?? null}
