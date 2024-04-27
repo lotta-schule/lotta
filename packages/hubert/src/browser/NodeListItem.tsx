@@ -21,6 +21,8 @@ export type NodeListItemProps = {
   isDisabled?: boolean;
 };
 
+let currentContextMenuCloseFn: (() => void) | null = null;
+
 export const NodeListItem = React.memo(
   ({ parentPath, node, isDisabled }: NodeListItemProps) => {
     const nodePath = React.useMemo(
@@ -46,6 +48,10 @@ export const NodeListItem = React.memo(
       getBoundingClientRect: () => listItemRef.current!.getBoundingClientRect(),
     });
     const [isContextMenuOpen, setIsContextMenuOpen] = React.useState(false);
+    const closeContextMenu = React.useCallback(() => {
+      setIsContextMenuOpen(false);
+      currentContextMenuCloseFn = null;
+    }, []);
     const menuProps = useNodeMenuProps(nodePath);
 
     const isOpen = React.useMemo(
@@ -106,11 +112,13 @@ export const NodeListItem = React.memo(
           key={node.id}
           ref={listItemRef}
           onContextMenu={(e) => {
+            currentContextMenuCloseFn?.();
             e.preventDefault();
             if (!isSelected) {
               onSelect([node]);
             }
             setIsContextMenuOpen(true);
+            currentContextMenuCloseFn = closeContextMenu;
             mouseRef.current = {
               getBoundingClientRect: () => {
                 return {

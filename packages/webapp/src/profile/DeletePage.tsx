@@ -111,7 +111,9 @@ export const DeletePage = React.memo(() => {
       setIsConfirmDialogOpen(false);
       await router.push('/');
       localStorage.clear();
-      apolloClient.resetStore();
+      apolloClient.clearStore().then(() => {
+        location?.reload();
+      });
     },
     onError: () => setCurrentStep((s) => s - 1),
   });
