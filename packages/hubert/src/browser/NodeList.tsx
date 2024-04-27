@@ -290,14 +290,13 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
                 ) {
                   onNavigate([...path, node]);
                 }
-                if (
-                  isFileNode(node) &&
-                  node.parent !== currentPath.at(-1)?.id
-                ) {
-                  onNavigate(path);
+                if (isFileNode(node)) {
+                  setIsFilePreviewVisible?.(true);
+                  if (node.parent !== currentPath.at(-1)?.id) {
+                    onNavigate(path);
+                  }
                 }
                 onSelect([node]);
-                setIsFilePreviewVisible?.(true);
               }
             }}
           />

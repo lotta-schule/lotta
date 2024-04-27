@@ -2,14 +2,20 @@ import * as React from 'react';
 import { Copy, Delete, Download, Edit } from '../icon';
 import { Item } from '../menu';
 import { BrowserPath, useBrowserState } from './BrowserStateContext';
-import { isFileNode } from './utils';
+import { isDirectoryNode, isFileNode } from './utils';
 
 export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
   const nodePaths = Array.isArray(nodePath.at(0))
     ? (nodePath as BrowserPath[])
     : [nodePath as BrowserPath];
-  const { setCurrentAction, renameNode, moveNode, deleteNode, getDownloadUrl } =
-    useBrowserState();
+  const {
+    setCurrentAction,
+    setIsFilePreviewVisible,
+    renameNode,
+    moveNode,
+    deleteNode,
+    getDownloadUrl,
+  } = useBrowserState();
 
   const downloadUrl = React.useMemo(() => {
     const node = nodePaths?.length === 1 && nodePaths.at(0)?.at(-1);
@@ -50,6 +56,7 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
 
   const onAction = React.useCallback(
     (action: React.Key) => {
+      setIsFilePreviewVisible(false);
       if (action === 'download') {
         if (!downloadUrl) {
           return;
@@ -82,16 +89,16 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
         });
       }
       if (action === 'delete') {
-        // TODO: Make move-node capable of moving multiple nodes
-        const path = nodePaths.at(0);
-        const node = path?.at(0);
-        if (!node) {
-          return;
-        }
-        if (isFileNode(node)) {
-          setCurrentAction({ type: 'delete-files', paths: [path] });
-        } else {
-          setCurrentAction({ type: 'delete-directory', path: nodePath });
+        if (nodePaths.every((path) => isFileNode(path.at(-1)))) {
+          setCurrentAction({ type: 'delete-files', paths: nodePaths });
+        } else if (
+          nodePaths.length === 1 &&
+          isDirectoryNode(nodePaths.at(0)?.at(-1))
+        ) {
+          setCurrentAction({
+            type: 'delete-directory',
+            path: nodePaths.at(0) as BrowserPath<'directory'>,
+          });
         }
       }
     },

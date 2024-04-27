@@ -51,7 +51,7 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
         {activeDirectoryName}
       </div>
       <div className={styles.searchField}>
-        <Input placeholder="Datei suchen" />
+        <Input placeholder="suchen" />
       </div>
       <div className={styles.rightContainer}>
         {mode === 'view-and-edit' && (

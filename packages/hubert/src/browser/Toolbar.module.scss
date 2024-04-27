@@ -47,12 +47,12 @@
     }
 
     @media (max-width: $max-sm) {
-      flex: 0 1 15em;
+      flex: 0 1 10em;
       max-width: 100%;
     }
 
     @media (max-width: $max-xs) {
-      flex: 0 1 8em;
+      flex: 0 1 4em;
       max-width: 100%;
     }
 
