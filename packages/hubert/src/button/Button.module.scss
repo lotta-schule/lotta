@@ -28,6 +28,7 @@
       border-color: transparent;
       height: 2.5em;
       width: 2.5em;
+      background-color: unset;
 
       &:not([data-varaint="fill"]) {
         &:hover {
