@@ -10,20 +10,23 @@ import { BrowserNode, useBrowserState } from './BrowserStateContext';
 import { NodeRenameInput } from './NodeRenameInput';
 import { NodeMenuButton } from './NodeMenuButton';
 import { isDirectoryNode } from './utils';
+import { useNodeMenuProps } from './useNodeMenuProps';
 import clsx from 'clsx';
 
 import styles from './NodeListItem.module.scss';
-import { useNodeMenuProps } from './useNodeMenuProps';
 
 export type NodeListItemProps = {
-  parentPath: BrowserNode[];
+  parentPath: BrowserNode<'directory'>[];
   node: BrowserNode;
   isDisabled?: boolean;
 };
 
 export const NodeListItem = React.memo(
   ({ parentPath, node, isDisabled }: NodeListItemProps) => {
-    const path = React.useMemo(() => [...parentPath, node], [parentPath, node]);
+    const nodePath = React.useMemo(
+      () => [...parentPath, node],
+      [parentPath, node]
+    );
     const isMobile = useIsMobile();
 
     const {
@@ -43,7 +46,7 @@ export const NodeListItem = React.memo(
       getBoundingClientRect: () => listItemRef.current!.getBoundingClientRect(),
     });
     const [isContextMenuOpen, setIsContextMenuOpen] = React.useState(false);
-    const menuProps = useNodeMenuProps(path);
+    const menuProps = useNodeMenuProps(nodePath);
 
     const isOpen = React.useMemo(
       () =>
@@ -77,6 +80,16 @@ export const NodeListItem = React.memo(
 
       return <FileIcon mimeType={node.meta.mimeType} />;
     }, [node, isOpen, onRequestNodeIcon]);
+
+    React.useEffect(() => {
+      if (isSelected && listItemRef.current) {
+        listItemRef.current.scrollIntoView({
+          inline: 'start',
+          block: 'center',
+          behavior: 'smooth',
+        });
+      }
+    }, [isSelected]);
 
     return (
       <>
@@ -116,9 +129,9 @@ export const NodeListItem = React.memo(
               ? undefined
               : (e) => {
                   if (mode === 'select') {
-                    if (node.type === 'directory') {
+                    if (isDirectoryNode(node)) {
                       onSelect([]);
-                      onNavigate(path);
+                      onNavigate(parentPath);
                     } else {
                       if (node.parent !== currentPath.at(-1)?.id) {
                         onNavigate(parentPath);
@@ -126,8 +139,8 @@ export const NodeListItem = React.memo(
                       onSelect([node]);
                     }
                   } else if (mode === 'select-multiple') {
-                    if (node.type === 'directory') {
-                      onNavigate(path);
+                    if (isDirectoryNode(node)) {
+                      onNavigate([...parentPath, node]);
                       onSelect([
                         ...selected.filter((n) => n.type !== 'directory'),
                         node,
@@ -160,8 +173,8 @@ export const NodeListItem = React.memo(
                       }
                     }
                   } else {
-                    if (node.type === 'directory') {
-                      onNavigate(path);
+                    if (isDirectoryNode(node)) {
+                      onNavigate([...parentPath, node]);
                     }
                     onSelect([node]);
                   }
@@ -171,7 +184,7 @@ export const NodeListItem = React.memo(
           <div className={styles.fileIcon}>{nodeIcon}</div>
           <div className={styles.fileName}>
             {isRenaming && (
-              <NodeRenameInput path={path} onRequestClose={resetAction} />
+              <NodeRenameInput path={nodePath} onRequestClose={resetAction} />
             )}
             {!isRenaming && <span>{node.name}</span>}
           </div>
@@ -179,7 +192,7 @@ export const NodeListItem = React.memo(
             {mode === 'view-and-edit' &&
               !isDisabled &&
               isDirectoryNode(node) &&
-              isMobile && <NodeMenuButton path={path} />}
+              isMobile && <NodeMenuButton path={nodePath} />}
             {mode === 'select-multiple' && node.type === 'file' && (
               <Checkbox
                 aria-label={`Datei ${node.name} auswählen`}

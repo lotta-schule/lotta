@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
-import { Button } from '@lotta-schule/hubert';
+import { Button, FileSize } from '@lotta-schule/hubert';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { useServerData } from 'shared/ServerDataContext';
 import { File } from 'util/model';
-import { FileSize } from 'util/FileSize';
 import { Icon } from 'shared/Icon';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 

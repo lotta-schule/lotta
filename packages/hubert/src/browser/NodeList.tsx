@@ -8,9 +8,10 @@ import { NodeListItem } from './NodeListItem';
 import clsx from 'clsx';
 
 import styles from './NodeList.module.scss';
+import { isDirectoryNode } from './utils';
 
 export type NodeListProps = {
-  path: BrowserPath;
+  path: BrowserPath<'directory'>;
   nodes: null | BrowserNode[];
 };
 
@@ -33,7 +34,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   React.useEffect(() => {
     if (listRef.current && path.length === currentPath.length) {
       listRef.current?.scrollIntoView({
-        inline: 'end',
+        inline: 'start',
         block: 'nearest',
         behavior: 'smooth',
       });
@@ -75,7 +76,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
         }
 
         onSelect?.([nextNode]);
-        if (nextNode.type === 'directory') {
+        if (isDirectoryNode(nextNode)) {
           onNavigate?.([...path, nextNode]);
         }
       }
@@ -108,7 +109,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
         }
 
         onSelect?.([previousNode]);
-        if (previousNode.type === 'directory') {
+        if (isDirectoryNode(previousNode)) {
           onNavigate?.([...path, previousNode]);
         }
       }
@@ -134,19 +135,19 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
         const selectedDirectory = selected.at(-1);
         const firstNode = nodes?.at(0);
 
-        if (!firstNode) {
+        if (!firstNode || !selectedDirectory) {
           return;
         }
 
         if (
-          selectedDirectory?.type !== 'directory' ||
+          !isDirectoryNode(selectedDirectory) ||
           selectedDirectory.id !== firstNode.parent
         ) {
           return;
         }
 
         onSelect?.([firstNode]);
-        onNavigate?.([...path, firstNode]);
+        onNavigate?.(path);
       }
     },
     [nodes, sortedSelected, onSelect]

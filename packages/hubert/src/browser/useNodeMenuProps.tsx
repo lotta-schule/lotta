@@ -12,7 +12,6 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
     useBrowserState();
 
   const downloadUrl = React.useMemo(() => {
-    console.log({ nodePaths });
     const node = nodePaths?.length === 1 && nodePaths.at(0)?.at(-1);
     return node && getDownloadUrl?.(node);
   }, [getDownloadUrl, nodePaths]);

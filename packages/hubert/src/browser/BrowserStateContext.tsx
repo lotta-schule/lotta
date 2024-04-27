@@ -25,7 +25,8 @@ export type BrowserNode<
 
 export type BrowserMode = 'view-and-edit' | 'select' | 'select-multiple';
 
-export type BrowserPath = BrowserNode[];
+export type BrowserPath<T extends 'directory' | 'file' = 'directory' | 'file'> =
+  BrowserNode<T>[];
 
 export type BrowserAction =
   | { type: 'create-directory'; path: BrowserPath }
@@ -40,15 +41,17 @@ export type RenderNodeListProps = {
 
 export interface BrowserState {
   mode: BrowserMode;
-  currentPath: BrowserPath;
+  currentPath: BrowserPath<'directory'>;
   selected: BrowserNode[];
-  onNavigate: (path: BrowserPath) => void;
+  onNavigate: (path: BrowserPath<'directory'>) => void;
   onSelect: (node: BrowserNode[]) => void;
 
   renderNodeList: React.ComponentType<RenderNodeListProps>;
 
   onRequestNodeIcon?: (node: BrowserNode) => React.ReactNode;
-  onRequestChildNodes: (node: BrowserNode | null) => Promise<BrowserNode[]>;
+  onRequestChildNodes: (
+    node: BrowserNode<'directory'> | null
+  ) => Promise<BrowserNode[]>;
 
   currentAction: BrowserAction | null;
   setCurrentAction: (action: BrowserAction | null) => void;

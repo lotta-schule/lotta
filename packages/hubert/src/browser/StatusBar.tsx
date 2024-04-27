@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Home } from '../icon';
 import { BrowserPath, useBrowserState } from './BrowserStateContext';
+import { isDirectoryNode, isFileNode } from './utils';
 import clsx from 'clsx';
 
 import styles from './StatusBar.module.scss';
-import { isDirectoryNode, isFileNode } from './utils';
 
 export type StatusBarProps = {
   className?: string;
@@ -17,7 +17,7 @@ export const StatusBar = React.memo(({ className }: StatusBarProps) => {
   const { currentPath, selected, onNavigate, onRequestChildNodes } =
     useBrowserState();
   const onClickLink = React.useCallback(
-    (path: BrowserPath) => (e: React.MouseEvent) => {
+    (path: BrowserPath<'directory'>) => (e: React.MouseEvent) => {
       e.preventDefault();
       onNavigate(path);
     },
