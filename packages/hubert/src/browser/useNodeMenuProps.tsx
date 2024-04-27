@@ -2,19 +2,23 @@ import * as React from 'react';
 import { Copy, Delete, Download, Edit } from '../icon';
 import { Item } from '../menu';
 import { BrowserPath, useBrowserState } from './BrowserStateContext';
+import { isFileNode } from './utils';
 
-export const useNodeMenuProps = (nodePath: BrowserPath) => {
-  const node = nodePath.at(-1);
+export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
+  const nodePaths = Array.isArray(nodePath.at(0))
+    ? (nodePath as BrowserPath[])
+    : [nodePath as BrowserPath];
   const { setCurrentAction, renameNode, moveNode, deleteNode, getDownloadUrl } =
     useBrowserState();
 
-  const downloadUrl = React.useMemo(
-    () => node && getDownloadUrl?.(node),
-    [getDownloadUrl, node]
-  );
+  const downloadUrl = React.useMemo(() => {
+    console.log({ nodePaths });
+    const node = nodePaths?.length === 1 && nodePaths.at(0)?.at(-1);
+    return node && getDownloadUrl?.(node);
+  }, [getDownloadUrl, nodePaths]);
 
   const items = React.useMemo(() => {
-    if (!node) {
+    if (!nodePaths?.length) {
       return [];
     }
     return [
@@ -24,7 +28,7 @@ export const useNodeMenuProps = (nodePath: BrowserPath) => {
           Herunterladen
         </Item>
       ),
-      renameNode && (
+      nodePaths.length === 1 && renameNode && (
         <Item key={'rename'} textValue={'Umbenennen'}>
           <Edit />
           Umbenennen
@@ -43,15 +47,16 @@ export const useNodeMenuProps = (nodePath: BrowserPath) => {
         </Item>
       ),
     ].filter(Boolean) as React.ReactElement[];
-  }, [node]);
+  }, [nodePaths]);
 
   const onAction = React.useCallback(
     (action: React.Key) => {
-      if (!node) {
-        return;
-      }
       if (action === 'download') {
         if (!downloadUrl) {
+          return;
+        }
+        const node = nodePaths.at(0)?.at(-1);
+        if (!node) {
           return;
         }
         const anchor = document.createElement('a');
@@ -60,27 +65,45 @@ export const useNodeMenuProps = (nodePath: BrowserPath) => {
         anchor.click();
       }
       if (action === 'rename') {
-        setCurrentAction({ type: 'rename-node', path: nodePath });
+        const path = nodePaths.at(0);
+        if (!path) {
+          return;
+        }
+        setCurrentAction({ type: 'rename-node', path });
       }
       if (action === 'move') {
+        // TODO: Make move-node capable of moving multiple nodes
+        const path = nodePaths.at(0);
+        if (!path) {
+          return;
+        }
         setCurrentAction({
           type: 'move-node',
-          path: nodePath,
+          path: path,
         });
       }
       if (action === 'delete') {
-        if (node.type === 'file') {
-          setCurrentAction({ type: 'delete-files', paths: [nodePath] });
+        // TODO: Make move-node capable of moving multiple nodes
+        const path = nodePaths.at(0);
+        const node = path?.at(0);
+        if (!node) {
+          return;
+        }
+        if (isFileNode(node)) {
+          setCurrentAction({ type: 'delete-files', paths: [path] });
         } else {
           setCurrentAction({ type: 'delete-directory', path: nodePath });
         }
       }
     },
-    [downloadUrl, node, nodePath]
+    [downloadUrl, nodePaths, setCurrentAction]
   );
 
-  return {
-    children: items,
-    onAction,
-  };
+  return React.useMemo(
+    () => ({
+      children: items,
+      onAction,
+    }),
+    [items, onAction]
+  );
 };

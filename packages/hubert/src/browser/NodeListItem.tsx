@@ -94,6 +94,10 @@ export const NodeListItem = React.memo(
           ref={listItemRef}
           onContextMenu={(e) => {
             e.preventDefault();
+            if (!isSelected) {
+              onSelect([node]);
+            }
+            setIsContextMenuOpen(true);
             mouseRef.current = {
               getBoundingClientRect: () => {
                 return {
@@ -106,9 +110,6 @@ export const NodeListItem = React.memo(
                 } as ClientRect;
               },
             };
-            setTimeout(() => {
-              setIsContextMenuOpen(true);
-            }, 200);
           }}
           onClick={
             isDisabled
@@ -201,7 +202,14 @@ export const NodeListItem = React.memo(
           trigger={mouseRef.current}
           placement="bottom-start"
         >
-          <Menu {...menuProps} aria-label="Kontextmenü" />
+          <Menu
+            {...menuProps}
+            onAction={(key) => {
+              setIsContextMenuOpen(false);
+              return menuProps.onAction(key);
+            }}
+            aria-label="Kontextmenü"
+          />
         </Popover>
       </>
     );

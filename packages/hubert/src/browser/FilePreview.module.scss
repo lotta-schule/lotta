@@ -19,7 +19,7 @@
       border-radius: var(--lotta-border-radius);
       flex: 1 1;
       max-width: 100%;
-      max-height: 60%;
+      max-height: 40%;
 
       & > svg {
         // icon
@@ -75,15 +75,37 @@
       width: 100%;
       overflow: auto;
 
-      h2 {
-        font-size: 1.1em;
+      .nodeNameWrapper {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        align-items: center;
         margin-bottom: var(--lotta-spacing);
-        font-weight: bold;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
+
+        .actionBar {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          flex: 0 0 auto;
+          button {
+            margin-left: var(--lotta-spacing);
+          }
+        }
+
+        h2 {
+          flex: 1 1 auto;
+          font-size: 1.1em;
+          font-weight: bold;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
       }
 
+      &.manyNodes li > div {
+        padding: 0;
+      }
       ul {
         font-size: 0.75em;
         list-style: none;
@@ -93,6 +115,7 @@
           display: flex;
           justify-content: space-between;
           margin-bottom: var(--lotta-spacing);
+          padding: 0;
           &:last-child {
             margin-bottom: 0;
           }

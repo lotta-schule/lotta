@@ -86,7 +86,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
             currentListSelected.find((s) => s.id === n.id)
           ) ?? -1;
 
-        if (firstSelectedNodeIndex < 0) {
+        if (firstSelectedNodeIndex < 1) {
           return;
         }
 

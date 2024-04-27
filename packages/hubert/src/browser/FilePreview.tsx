@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
-import { Folder, FolderOpen } from '../icon';
-import { isDirectoryNode } from './utils';
+import { Copy, Delete, Download, Edit, Folder, FolderOpen } from '../icon';
+import { List, ListItem } from '../list';
+import { Button } from '../button';
+import { isDirectoryNode, isFileNode } from './utils';
 import { FileIcon } from './FileIcon';
 import { useBrowserState } from './BrowserStateContext';
+import { useNodeMenuProps } from './useNodeMenuProps';
 import clsx from 'clsx';
+
+import styles from './FilePreview.module.scss';
 
 const AnimatedFolder = motion(Folder);
 const AnimatedFolderOpen = motion(FolderOpen);
 const AnimatedFileIcon = motion(FileIcon);
-
-import styles from './FilePreview.module.scss';
 
 export type FilePreviewProps = {
   className?: string;
@@ -30,7 +33,21 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
 
   const [maxWidth, setMaxWidth] = React.useState<number | undefined>(undefined);
 
-  const node = React.useMemo(() => selected.at(-1) ?? null, [selected]);
+  const node = React.useMemo(() => {
+    if (selected.length !== 1) {
+      return null;
+    }
+    return selected.at(0) ?? null;
+  }, [selected]);
+  const nodes = React.useMemo(() => {
+    if (selected.length === 1) {
+      return null;
+    } else {
+      return selected;
+    }
+  }, [selected]);
+
+  const { onAction } = useNodeMenuProps(selected);
 
   const previewUrl = React.useMemo(
     () => node && getPreviewUrl?.(node),
@@ -96,37 +113,103 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     <div className={clsx(styles.root, className)}>
       <div className={styles.wrapper} ref={wrapperRef}>
         <div className={styles.previewSection} ref={previewSectionRef}>
-          {previewUrl ? (
-            <AnimatePresence mode={'popLayout'} initial={false}>
-              <motion.img
-                key={previewUrl}
-                src={previewUrl}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              />
-            </AnimatePresence>
-          ) : (
-            nodeIcon
-          )}
+          {node &&
+            (previewUrl ? (
+              <AnimatePresence mode={'popLayout'} initial={false}>
+                <motion.img
+                  key={previewUrl}
+                  src={previewUrl}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                />
+              </AnimatePresence>
+            ) : (
+              nodeIcon
+            ))}
         </div>
-        <div className={styles.infoSection} style={{ maxWidth }}>
-          {node?.name && <h2>{node.name}</h2>}
-          {meta && (
-            <ul>
-              {Object.entries(meta).map(([key, value]) => (
-                <li key={key}>
-                  <label>{key}:</label>
-                  <span>
-                    {['string', 'number'].includes(typeof value)
-                      ? value
-                      : JSON.stringify(value)}
-                  </span>
-                </li>
+        {node && (
+          <div className={styles.infoSection} style={{ maxWidth }}>
+            <div className={styles.nodeNameWrapper}>
+              <div className={styles.actionBar}>
+                <Button
+                  icon={<Download />}
+                  title={'herunterladen'}
+                  onClick={() => onAction('download')}
+                />
+                <Button
+                  icon={<Edit />}
+                  title={'umbenennen'}
+                  onClick={() => onAction('rename')}
+                />
+                <Button
+                  icon={<Copy />}
+                  title={'verschieben'}
+                  onClick={() => onAction('move')}
+                />
+                <Button
+                  variant={'error'}
+                  icon={<Delete />}
+                  title={'löschen'}
+                  onClick={() => onAction('delete')}
+                />
+              </div>
+              <h2>{node.name}</h2>
+            </div>
+            {meta && (
+              <ul>
+                {Object.entries(meta).map(([key, value]) => (
+                  <li key={key}>
+                    <label>{key}:</label>
+                    <span>
+                      {['string', 'number'].includes(typeof value)
+                        ? value
+                        : JSON.stringify(value)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+        {!!nodes?.length && (
+          <div
+            className={clsx(styles.infoSection, styles.manyNodes)}
+            style={{ maxWidth }}
+          >
+            <div className={styles.nodeNameWrapper}>
+              <div className={styles.actionBar}>
+                {nodes.every((n) => n.type === nodes.at(0)!.type) && (
+                  <Button
+                    icon={<Copy />}
+                    title={'verschieben'}
+                    onClick={() => onAction('move')}
+                  />
+                )}
+                <Button
+                  variant={'error'}
+                  icon={<Delete />}
+                  title={'löschen'}
+                  onClick={() => onAction('delete')}
+                />
+              </div>
+              <h2>
+                {nodes.every((n) => n.type === nodes.at(0)!.type)
+                  ? isFileNode(nodes.at(0)!)
+                    ? `${nodes.length} Dateien`
+                    : `${nodes.length} Ordner`
+                  : `${nodes.length} Dateien und Ordner`}
+              </h2>
+            </div>
+            <List>
+              {nodes.map((node) => (
+                <ListItem key={node.id}>
+                  <span>{node.name}</span>
+                </ListItem>
               ))}
-            </ul>
-          )}
-        </div>
+            </List>
+          </div>
+        )}
       </div>
     </div>
   );
