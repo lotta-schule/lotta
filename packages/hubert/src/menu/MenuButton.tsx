@@ -72,7 +72,7 @@ export const MenuButton = React.forwardRef(
             isOpen={state.isOpen}
             onClose={state.close}
             placement={placement}
-            triggerRef={ref}
+            trigger={ref}
           >
             <Menu
               {...mergeProps(

@@ -1,13 +1,19 @@
 import * as React from 'react';
+import { VirtualElement } from '@popperjs/core';
+import { Menu } from '../menu';
 import { Folder, FolderOpen } from '../icon';
+import { Checkbox } from '../form';
+import { Popover } from '../popover/new/Popover';
+import { useIsMobile } from '../util';
+import { FileIcon } from './FileIcon';
 import { BrowserNode, useBrowserState } from './BrowserStateContext';
 import { NodeRenameInput } from './NodeRenameInput';
 import { NodeMenuButton } from './NodeMenuButton';
-import { Checkbox } from '../form';
+import { isDirectoryNode } from './utils';
 import clsx from 'clsx';
 
 import styles from './NodeListItem.module.scss';
-import { FileIcon } from './FileIcon';
+import { useNodeMenuProps } from './useNodeMenuProps';
 
 export type NodeListItemProps = {
   parentPath: BrowserNode[];
@@ -17,6 +23,9 @@ export type NodeListItemProps = {
 
 export const NodeListItem = React.memo(
   ({ parentPath, node, isDisabled }: NodeListItemProps) => {
+    const path = React.useMemo(() => [...parentPath, node], [parentPath, node]);
+    const isMobile = useIsMobile();
+
     const {
       mode,
       currentAction,
@@ -29,7 +38,12 @@ export const NodeListItem = React.memo(
       resetAction,
     } = useBrowserState();
 
-    const path = React.useMemo(() => [...parentPath, node], [parentPath, node]);
+    const listItemRef = React.useRef<HTMLLIElement>(null);
+    const mouseRef = React.useRef<VirtualElement>({
+      getBoundingClientRect: () => listItemRef.current!.getBoundingClientRect(),
+    });
+    const [isContextMenuOpen, setIsContextMenuOpen] = React.useState(false);
+    const menuProps = useNodeMenuProps(path);
 
     const isOpen = React.useMemo(
       () =>
@@ -65,99 +79,131 @@ export const NodeListItem = React.memo(
     }, [node, isOpen, onRequestNodeIcon]);
 
     return (
-      <li
-        className={clsx(styles.root, {
-          [styles.isOpen]: isOpen,
-          [styles.isSelected]: isSelected,
-          [styles.isDisabled]: isDisabled,
-        })}
-        role="option"
-        aria-selected={isSelected}
-        aria-expanded={isOpen}
-        title={node.name}
-        key={node.id}
-        onClick={
-          isDisabled
-            ? undefined
-            : (e) => {
-                if (mode === 'select') {
-                  if (node.type === 'directory') {
-                    onSelect([]);
-                    onNavigate(path);
+      <>
+        <li
+          className={clsx(styles.root, {
+            [styles.isOpen]: isOpen,
+            [styles.isSelected]: isSelected,
+            [styles.isDisabled]: isDisabled,
+          })}
+          role="option"
+          aria-selected={isSelected}
+          aria-expanded={isOpen}
+          title={node.name}
+          key={node.id}
+          ref={listItemRef}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            mouseRef.current = {
+              getBoundingClientRect: () => {
+                return {
+                  top: e.clientY + 20,
+                  left: e.clientX,
+                  right: e.clientX,
+                  bottom: e.clientY + 20,
+                  height: 0,
+                  width: 0,
+                } as ClientRect;
+              },
+            };
+            setTimeout(() => {
+              setIsContextMenuOpen(true);
+            }, 200);
+          }}
+          onClick={
+            isDisabled
+              ? undefined
+              : (e) => {
+                  if (mode === 'select') {
+                    if (node.type === 'directory') {
+                      onSelect([]);
+                      onNavigate(path);
+                    } else {
+                      if (node.parent !== currentPath.at(-1)?.id) {
+                        onNavigate(parentPath);
+                      }
+                      onSelect([node]);
+                    }
+                  } else if (mode === 'select-multiple') {
+                    if (node.type === 'directory') {
+                      onNavigate(path);
+                      onSelect([
+                        ...selected.filter((n) => n.type !== 'directory'),
+                        node,
+                      ]);
+                    } else {
+                      if (
+                        !(
+                          (
+                            e.target as HTMLElement
+                          ).parentElement?.querySelector(
+                            'input[type=checkbox]'
+                          ) ||
+                          (e.target instanceof HTMLInputElement &&
+                            e.target.type === 'checkbox')
+                        )
+                      ) {
+                        // if only the checkbox was clicked, don't navigate
+                        // but if this was a click on the label do navigate
+                        onNavigate(parentPath);
+                      } else {
+                        // on the other hand, if the checkbox was clicked, its
+                        // onSelect has already been called, so we don't need to
+                        // call it again
+                        return;
+                      }
+                      if (isSelected) {
+                        onSelect(selected.filter((n) => n.id !== node.id));
+                      } else {
+                        onSelect([...selected, node]);
+                      }
+                    }
                   } else {
-                    if (node.parent !== currentPath.at(-1)?.id) {
-                      onNavigate(parentPath);
+                    if (node.type === 'directory') {
+                      onNavigate(path);
                     }
                     onSelect([node]);
                   }
-                } else if (mode === 'select-multiple') {
-                  if (node.type === 'directory') {
-                    onNavigate(path);
-                    onSelect([
-                      ...selected.filter((n) => n.type !== 'directory'),
-                      node,
-                    ]);
-                  } else {
-                    if (
-                      !(
-                        (e.target as HTMLElement).parentElement?.querySelector(
-                          'input[type=checkbox]'
-                        ) ||
-                        (e.target instanceof HTMLInputElement &&
-                          e.target.type === 'checkbox')
-                      )
-                    ) {
-                      // if only the checkbox was clicked, don't navigate
-                      // but if this was a click on the label do navigate
-                      onNavigate(parentPath);
-                    } else {
-                      // on the other hand, if the checkbox was clicked, its
-                      // onSelect has already been called, so we don't need to
-                      // call it again
-                      return;
-                    }
-                    if (isSelected) {
-                      onSelect(selected.filter((n) => n.id !== node.id));
-                    } else {
-                      onSelect([...selected, node]);
-                    }
-                  }
-                } else {
-                  if (node.type === 'directory') {
-                    onNavigate(path);
-                  }
-                  onSelect([node]);
                 }
-              }
-        }
-      >
-        <div className={styles.fileIcon}>{nodeIcon}</div>
-        <div className={styles.fileName}>
-          {isRenaming && (
-            <NodeRenameInput path={path} onRequestClose={resetAction} />
-          )}
-          {!isRenaming && <span>{node.name}</span>}
-        </div>
-        <div className={styles.editSection}>
-          {mode === 'view-and-edit' && !isDisabled && (
-            <NodeMenuButton path={path} />
-          )}
-          {mode === 'select-multiple' && node.type === 'file' && (
-            <Checkbox
-              aria-label={`Datei ${node.name} auswählen`}
-              isSelected={isSelected}
-              isDisabled={isDisabled}
-              onChange={(isSelected) => {
-                onSelect(
-                  isSelected
-                    ? [...selected, node]
-                    : selected.filter((n) => n.id !== node.id)
-                );
-              }}
-            />
-          )}
-        </div>
-      </li>
+          }
+        >
+          <div className={styles.fileIcon}>{nodeIcon}</div>
+          <div className={styles.fileName}>
+            {isRenaming && (
+              <NodeRenameInput path={path} onRequestClose={resetAction} />
+            )}
+            {!isRenaming && <span>{node.name}</span>}
+          </div>
+          <div className={styles.editSection}>
+            {mode === 'view-and-edit' &&
+              !isDisabled &&
+              isDirectoryNode(node) &&
+              isMobile && <NodeMenuButton path={path} />}
+            {mode === 'select-multiple' && node.type === 'file' && (
+              <Checkbox
+                aria-label={`Datei ${node.name} auswählen`}
+                isSelected={isSelected}
+                isDisabled={isDisabled}
+                onChange={(isSelected) => {
+                  onSelect(
+                    isSelected
+                      ? [...selected, node]
+                      : selected.filter((n) => n.id !== node.id)
+                  );
+                }}
+              />
+            )}
+          </div>
+        </li>
+        <Popover
+          isOpen={isContextMenuOpen}
+          onClose={() => setIsContextMenuOpen(false)}
+          trigger={mouseRef.current}
+          placement="bottom-start"
+        >
+          <Menu {...menuProps} aria-label="Kontextmenü" />
+        </Popover>
+      </>
     );
   }
 );

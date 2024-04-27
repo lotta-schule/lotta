@@ -4,22 +4,24 @@ import * as React from 'react';
 import { mergeProps, DismissButton, FocusScope, useOverlay } from 'react-aria';
 import { PopperProps, usePopper } from 'react-popper';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { VirtualElement } from '@popperjs/core';
 
 export type PopoverProps = {
   children: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
   placement?: PopperProps<unknown>['placement'];
-  triggerRef: React.RefObject<HTMLElement>;
+  trigger: Element | VirtualElement;
 };
 
 export const Popover = React.forwardRef(
   (
-    { children, isOpen, onClose, placement, triggerRef }: PopoverProps,
+    { children, isOpen, onClose, placement, trigger }: PopoverProps,
     forwardedRef: React.Ref<HTMLDivElement | null>
   ) => {
-    const [triggerElement, setTriggerElement] =
-      React.useState<HTMLElement | null>(null);
+    const [triggerElement, setTriggerElement] = React.useState<
+      Element | VirtualElement | null
+    >(null);
     const [popoverElement, setPopoverElement] =
       React.useState<HTMLElement | null>(null);
 
@@ -47,9 +49,9 @@ export const Popover = React.forwardRef(
     );
 
     React.useLayoutEffect(() => {
-      setTriggerElement(triggerRef.current);
+      setTriggerElement(trigger);
       setPopoverElement(ref.current);
-    });
+    }, [trigger]);
 
     return (
       <AnimatePresence>
