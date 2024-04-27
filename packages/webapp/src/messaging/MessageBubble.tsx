@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { Button } from '@lotta-schule/hubert';
+import { Button, FileSize } from '@lotta-schule/hubert';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { format } from 'date-fns';
 import { faCloudArrowDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
 import { FileModel, FileModelType, MessageModel } from 'model';
 import { File, User } from 'util/model';
-import { FileSize } from 'util/FileSize';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { Icon } from 'shared/Icon';
 import { useServerData } from 'shared/ServerDataContext';

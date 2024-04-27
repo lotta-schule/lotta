@@ -2,6 +2,7 @@
 
 .root {
   height: 100%;
+  overflow: auto;
   padding: var(--lotta-spacing);
 
   display: flex;
@@ -14,6 +15,12 @@
     width: 90%;
     border-radius: var(--lotta-border-radius);
     overflow: hidden;
+
+    & > svg {
+      // icon
+      width: 100%;
+      height: 100%;
+    }
   }
   .previewImage {
     --transparent-background-white: var(--lotta-box-background-color);
@@ -61,6 +68,16 @@
     padding: var(--lotta-spacing);
     width: 100%;
     overflow: auto;
+
+    h2 {
+      font-size: 1.1em;
+      margin-bottom: var(--lotta-spacing);
+      font-weight: bold;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
     ul {
       font-size: 0.75em;
       list-style: none;

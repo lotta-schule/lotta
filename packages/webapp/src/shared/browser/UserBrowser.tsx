@@ -11,6 +11,7 @@ import {
 import { DirectoryModel, FileModel } from 'model';
 import { File } from 'util/model';
 import { useCurrentUser } from 'util/user';
+import { FileSize } from '@lotta-schule/hubert';
 import { useServerData } from 'shared/ServerDataContext';
 import {
   useCreateDirectory,
@@ -108,17 +109,15 @@ export const UserBrowser = React.memo(
       (node: BrowserNode) => {
         if (isFileNode(node)) {
           return {
-            Name: node.name,
             'Erstellt am': node.meta.insertedAt,
-            Größe: node.meta.filesize,
+            Größe: new FileSize(node.meta.filesize).humanize(),
             Dateityp: node.meta.fileType,
             mimeType: node.meta.mimeType,
-            Versionen: node.meta.fileConversions?.length ?? 0,
+            Formate: node.meta.fileConversions?.length ?? 0,
             id: node.id,
           };
         } else if (isDirectoryNode(node)) {
           return {
-            Name: node.name,
             'Erstellt am': node.meta.insertedAt,
             id: node.id,
           };

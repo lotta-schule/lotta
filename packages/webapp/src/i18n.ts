@@ -8,6 +8,9 @@ const resources = {
         file: 'Datei',
         files_one: '{{count}} Datei',
         files_other: '{{count}} Dateien',
+        directory: 'Ordner',
+        directories_one: '{{count}} Ordner',
+        directories_other: '{{count}} Ordner',
         format: 'Format',
         formats_one: '{{count}} Format',
         formats_other: '{{count}} Formate',
@@ -70,6 +73,7 @@ const resources = {
 _i18n.use(initReactI18next).init({
   resources,
   lng: 'de',
+  fallbackLng: 'de',
 
   keySeparator: '.',
 

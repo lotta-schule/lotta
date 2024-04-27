@@ -4,36 +4,49 @@
   font-size: 0.75em;
   color: rgba(var(--lotta-text-color), 0.5);
   display: flex;
-  align-items: center;
-  white-space: nowrap;
-  overflow: hidden;
+  justify-content: space-between;
 
-  svg {
-    font-size: 1.25em;
-  }
+  .currentPath {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
 
-  .separator {
-    margin: 0 0.25em;
-  }
+    svg {
+      font-size: 1.25em;
+    }
 
-  a {
-    text-decoration: none;
-    &:hover:not(.home) {
-      text-decoration: underline;
+    .separator {
+      margin: 0 0.25em;
+    }
+
+    a {
+      text-decoration: none;
+      &:hover:not(.home) {
+        text-decoration: underline;
+      }
+    }
+    .home {
+      flex: 0 0 auto;
+      color: rgb(var(--lotta-primary-color));
+    }
+    .pathComponent {
+      flex: 0 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: min-width 0.75s ease-in;
+      min-width: 0;
+      &:hover {
+        min-width: max-content;
+      }
     }
   }
-  .home {
+
+  .currentCount {
+    display: flex;
     flex: 0 0 auto;
-    color: rgb(var(--lotta-primary-color));
-  }
-  .pathComponent {
-    flex: 0 1 auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: min-width 0.75s ease-in;
-    min-width: 0;
-    &:hover {
-      min-width: max-content;
+    & > span ~ span {
+      margin-left: var(--lotta-spacing);
     }
   }
 }

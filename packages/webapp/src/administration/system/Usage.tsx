@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Box, ErrorMessage } from '@lotta-schule/hubert';
+import { Box, ErrorMessage, FileSize } from '@lotta-schule/hubert';
 import { useTenant } from 'util/tenant/useTenant';
-import { FileSize } from 'util/FileSize';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import clsx from 'clsx';
