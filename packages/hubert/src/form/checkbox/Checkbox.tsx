@@ -42,7 +42,7 @@ export const Checkbox = React.forwardRef(
     return (
       <label
         style={{ ...style, ...customStyle }}
-        className={clsx(className, styles.root)}
+        className={clsx(className, styles.root, 'HubertCheckbox')}
         ref={ref}
       >
         <VisuallyHidden>

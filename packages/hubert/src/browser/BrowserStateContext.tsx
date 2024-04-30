@@ -88,6 +88,8 @@ export type BrowserStateProviderProps = {
   | 'onSelect'
   | 'currentAction'
   | 'setCurrentAction'
+  | 'isFilePreviewVisible'
+  | 'setIsFilePreviewVisible'
   | 'mode'
 > &
   Partial<Pick<BrowserState, 'mode'>>;

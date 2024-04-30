@@ -244,12 +244,13 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
               if (mode === 'select') {
                 if (isDirectoryNode(node)) {
                   onSelect([]);
-                  onNavigate(path);
+                  onNavigate([...path, node]);
                 } else {
                   if (node.parent !== currentPath.at(-1)?.id) {
                     onNavigate(path);
                   }
                   onSelect([node]);
+                  setIsFilePreviewVisible?.(true);
                 }
               } else if (mode === 'select-multiple') {
                 if (isDirectoryNode(node)) {
@@ -260,22 +261,22 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
                   ]);
                 } else {
                   if (
-                    !(
-                      (e.target as HTMLElement).parentElement?.querySelector(
-                        'input[type=checkbox]'
-                      ) ||
-                      (e.target instanceof HTMLInputElement &&
-                        e.target.type === 'checkbox')
-                    )
+                    (e.target as HTMLElement).parentElement?.classList.contains(
+                      'HubertCheckbox'
+                    ) ||
+                    (e.target instanceof HTMLInputElement &&
+                      e.target.type === 'checkbox')
                   ) {
-                    // if only the checkbox was clicked, don't navigate
-                    // but if this was a click on the label do navigate
-                    onNavigate(path);
-                  } else {
-                    // on the other hand, if the checkbox was clicked, its
-                    // onSelect has already been called, so we don't need to
-                    // call it again
+                    // If the checkbox was clicked, its onSelect has already
+                    // been called, so we don't need to call it again
                     return;
+                  } else {
+                    // On the other hand, if only the checkbox was clicked,
+                    // don't navigate but if this was a click on the label,
+                    // do navigate
+                    if (node.parent !== currentPath.at(-1)?.id) {
+                      onNavigate(path);
+                    }
                   }
                   if (isSelected) {
                     onSelect(selected.filter((n) => n.id !== node.id));

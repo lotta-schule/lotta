@@ -135,9 +135,9 @@ export const UserBrowser = React.memo(
 
     return (
       <Browser
-        onSelect={(nodes) =>
-          onSelect?.(nodes.filter(isFileNode).map((n) => n.meta))
-        }
+        onSelect={React.useCallback((nodes: BrowserNode[]) => {
+          onSelect?.(nodes.filter(isFileNode).map((n) => n.meta));
+        }, [])}
         onRequestChildNodes={onRequestChildNodes}
         renderNodeList={RenderNodeList}
         getPreviewUrl={getPreviewUrl}
