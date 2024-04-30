@@ -4,7 +4,7 @@ import {
   CreateNewDirectoryDialog,
   DeleteDirectoryDialog,
   DeleteFilesDialog,
-  MoveDirectoryDialog,
+  MoveNodesDialog,
 } from './dialogs';
 
 export const DialogsContainer = React.memo(() => {
@@ -25,7 +25,7 @@ export const DialogsContainer = React.memo(() => {
       />
       <DeleteDirectoryDialog />
       <DeleteFilesDialog />
-      <MoveDirectoryDialog />
+      <MoveNodesDialog />
     </>
   );
 });

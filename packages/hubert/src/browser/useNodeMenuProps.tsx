@@ -78,14 +78,9 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
         setCurrentAction({ type: 'rename-node', path });
       }
       if (action === 'move') {
-        // TODO: Make move-node capable of moving multiple nodes
-        const path = nodePaths.at(0);
-        if (!path) {
-          return;
-        }
         setCurrentAction({
-          type: 'move-node',
-          path: path,
+          type: 'move-nodes',
+          paths: nodePaths,
         });
       }
       if (action === 'delete') {

@@ -8,12 +8,12 @@ import {
   within,
   fixtures,
 } from '../../test-utils';
-import { MoveDirectoryDialog } from './MoveDirectoryDialog';
+import { MoveNodesDialog } from './MoveNodesDialog';
 import userEvent from '@testing-library/user-event';
 
-const WrappedMoveDirectoryDialog = (props: TestBrowserWrapperProps) => (
+const WrappedMoveNodesDialog = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>
-    <MoveDirectoryDialog />
+    <MoveNodesDialog />
   </TestBrowserWrapper>
 );
 
@@ -21,16 +21,16 @@ const validDirectoryPath = fixtures.getPathForNode('8');
 
 const validFilePath = fixtures.getPathForNode('15');
 
-describe('Browser/MoveDirectoryDialog', () => {
+describe('Browser/MoveNodesDialog', () => {
   it('should open the dialog on action and close it when aborted', async () => {
     const onSetCurrentAction = vi.fn();
     const user = userEvent.setup();
-    const screen = render(<WrappedMoveDirectoryDialog />);
+    const screen = render(<WrappedMoveNodesDialog />);
 
     expect(screen.queryByRole('dialog')).toBeNull();
 
     screen.rerender(
-      <WrappedMoveDirectoryDialog
+      <WrappedMoveNodesDialog
         currentAction={{ type: 'move-node', path: validDirectoryPath }}
         setCurrentAction={onSetCurrentAction}
       />
@@ -47,7 +47,7 @@ describe('Browser/MoveDirectoryDialog', () => {
     });
 
     screen.rerender(
-      <WrappedMoveDirectoryDialog
+      <WrappedMoveNodesDialog
         currentAction={null}
         setCurrentAction={onSetCurrentAction}
       />
@@ -63,7 +63,7 @@ describe('Browser/MoveDirectoryDialog', () => {
     const onMoveNode = vi.fn();
 
     const screen = render(
-      <WrappedMoveDirectoryDialog
+      <WrappedMoveNodesDialog
         currentAction={{ type: 'move-node', path: validDirectoryPath }}
         moveNode={onMoveNode}
       />
@@ -142,7 +142,7 @@ describe('Browser/MoveDirectoryDialog', () => {
     const onSetCurrentAction = vi.fn();
 
     const screen = render(
-      <WrappedMoveDirectoryDialog
+      <WrappedMoveNodesDialog
         currentAction={{ type: 'move-node', path: validDirectoryPath }}
         moveNode={onMoveNode}
         setCurrentAction={onSetCurrentAction}
@@ -176,7 +176,7 @@ describe('Browser/MoveDirectoryDialog', () => {
     const onSetCurrentAction = vi.fn();
 
     const screen = render(
-      <WrappedMoveDirectoryDialog
+      <WrappedMoveNodesDialog
         currentAction={{ type: 'move-node', path: validFilePath }}
         moveNode={onMoveNode}
         setCurrentAction={onSetCurrentAction}

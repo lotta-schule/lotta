@@ -6,10 +6,12 @@ import { KeyboardArrowLeft } from '../../icon';
 import { isDirectoryNode } from '../utils';
 
 export interface DirectorySelector {
-  getNodesForParent(parent: BrowserNode | null): Promise<BrowserNode[]>;
+  getNodesForParent(
+    parent: BrowserNode<'directory'> | null
+  ): Promise<BrowserNode[]>;
   value: BrowserPath;
-  onChange: (value: BrowserPath) => void;
-  filter?: (node: BrowserNode) => boolean;
+  onChange: (value: BrowserPath<'directory'>) => void;
+  filter?: (node: BrowserNode<'directory'>) => boolean;
 }
 
 export const DirectorySelector = React.memo(

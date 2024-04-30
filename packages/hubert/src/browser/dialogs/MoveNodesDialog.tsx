@@ -11,50 +11,72 @@ import { Tooltip } from '../../util';
 import { Button, LoadingButton } from '../../button';
 import { CreateNewFolder } from '../../icon';
 import { DirectorySelector } from './DirectorySelector';
+import { isDirectoryNode, isFileNode } from '../utils';
 
-export const MoveDirectoryDialog = React.memo(() => {
+export const MoveNodesDialog = React.memo(() => {
   const { currentAction, resetAction, moveNode, onRequestChildNodes, canEdit } =
     useBrowserState();
 
-  const [targetPath, setTargetPath] = React.useState<BrowserPath>(
-    (currentAction?.type === 'move-node' &&
-      currentAction?.path.slice(0, currentAction.path.length - 1)) ||
+  const [targetPath, setTargetPath] = React.useState<BrowserPath<'directory'>>(
+    (currentAction?.type === 'move-nodes' &&
+      currentAction?.paths.at(0)?.filter(isDirectoryNode).slice(0, -1)) ||
       []
   );
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] =
     React.useState(false);
 
-  const nodeToMove = currentAction?.path?.at(-1);
+  const nodesToMove = React.useMemo(() => {
+    return (
+      (currentAction?.type === 'move-nodes' &&
+        currentAction?.paths?.map((p) => p.at(-1)!)) ||
+      []
+    );
+  }, [currentAction]);
 
   React.useEffect(() => {
     if (!currentAction?.type) {
       setTargetPath([]);
       setErrorMessage(null);
-    } else if (currentAction?.type === 'move-node') {
+    } else if (currentAction?.type === 'move-nodes') {
       setTargetPath(
-        currentAction?.path.slice(0, currentAction.path.length - 1) ?? []
+        currentAction?.paths.at(0)?.filter(isDirectoryNode).slice(0, -1) ?? []
       );
     }
   }, [currentAction?.type]);
 
-  const directoryFilter = React.useCallback(
-    (n: BrowserNode<'directory'>) =>
+  const nodeFilter = React.useCallback(
+    (n: BrowserNode) =>
       canEdit(n) &&
-      currentAction?.type === 'move-node' &&
-      currentAction.path.every((p) => p.id !== n.id),
+      currentAction?.type === 'move-nodes' &&
+      currentAction.paths.every((path) => path.every((p) => p.id !== n.id)),
     [currentAction, canEdit]
+  );
+
+  const nodeToMove = React.useMemo(
+    () => (nodesToMove.length === 1 ? nodesToMove[0] : null),
+    [nodesToMove]
+  );
+
+  const description = React.useMemo(
+    () =>
+      nodeToMove
+        ? isDirectoryNode(nodeToMove)
+          ? 'Ordner verschieben'
+          : 'Datei verschieben'
+        : nodesToMove.every(isDirectoryNode)
+          ? 'Ordner verschieben'
+          : nodesToMove.every(isFileNode)
+            ? `${nodesToMove.length} Dateien verschieben`
+            : `${nodesToMove.length} Dateien und Ordner verschieben`,
+    [nodeToMove, nodesToMove]
   );
 
   return (
     <Dialog
-      open={currentAction?.type === 'move-node'}
+      open={currentAction?.type === 'move-nodes'}
       onRequestClose={resetAction}
-      title={
-        nodeToMove?.type === 'directory'
-          ? 'Ordner verschieben'
-          : 'Datei verschieben'
-      }
+      title={description}
     >
       <DialogContent>
         Wähle ein Zielort
@@ -70,7 +92,7 @@ export const MoveDirectoryDialog = React.memo(() => {
           value={targetPath}
           onChange={setTargetPath}
           getNodesForParent={onRequestChildNodes}
-          filter={directoryFilter}
+          filter={nodeFilter}
         />
         <CreateNewDirectoryDialog
           parentNode={targetPath.at(-1) ?? null}
@@ -84,17 +106,19 @@ export const MoveDirectoryDialog = React.memo(() => {
           disabled={targetPath?.some((n) => n?.id === nodeToMove?.id)}
           onAction={async () => {
             try {
-              await moveNode?.(nodeToMove!, targetPath.at(-1) ?? null);
+              await Promise.all(
+                nodesToMove.map((n) => moveNode!(n, targetPath.at(-1) ?? null))
+              );
               setTimeout(resetAction, 1000);
             } catch (e: any) {
               setErrorMessage(e?.message ?? String(e));
             }
           }}
         >
-          Ordner verschieben
+          {description}
         </LoadingButton>
       </DialogActions>
     </Dialog>
   );
 });
-MoveDirectoryDialog.displayName = 'MoveDirectoryDialog';
+MoveNodesDialog.displayName = 'MoveDirectoryDialog';

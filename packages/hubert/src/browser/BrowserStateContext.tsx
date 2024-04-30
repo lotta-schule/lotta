@@ -30,7 +30,7 @@ export type BrowserPath<T extends 'directory' | 'file' = 'directory' | 'file'> =
 
 export type BrowserAction =
   | { type: 'create-directory'; path: BrowserPath }
-  | { type: 'move-node'; path: BrowserPath }
+  | { type: 'move-nodes'; paths: BrowserPath[] }
   | { type: 'delete-directory'; path: BrowserPath }
   | { type: 'delete-files'; paths: BrowserPath[] }
   | { type: 'rename-node'; path: BrowserPath };
