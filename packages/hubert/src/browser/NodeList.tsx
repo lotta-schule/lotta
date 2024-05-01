@@ -136,7 +136,9 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
 
         if (targetNode) {
           onSelect?.([targetNode]);
-          onNavigate?.(path.slice(0, -1));
+          if (path.length < currentPath.length + 1) {
+            onNavigate?.(currentPath.slice(0, path.length));
+          }
         }
       }
 
@@ -157,6 +159,17 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
 
         onSelect?.([firstNode]);
         onNavigate?.(path);
+      }
+
+      if (e.key === 'a' && (e.metaKey || e.ctrlKey)) {
+        const selectedNode = selected.at(-1);
+
+        if (selectedNode && selectedNode.parent !== (path.at(-1)?.id ?? null)) {
+          // If the selected node is not in the current directory, do nothing
+          return;
+        }
+        e.preventDefault();
+        onSelect?.(nodes ?? []);
       }
     },
     [nodes, sortedSelected, onSelect]

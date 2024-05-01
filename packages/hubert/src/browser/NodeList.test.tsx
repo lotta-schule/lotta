@@ -218,6 +218,18 @@ describe('NodeList component', () => {
       });
     });
 
+    describe('keyboard ctrl/cmd+a', () => {
+      it('should select all nodes when ctrl/cmd+a is pressed', async () => {
+        const user = userEvent.setup();
+        const onSelect = vi.fn();
+        render(<WrappedNodeList selected={[]} onSelect={onSelect} />);
+
+        await user.keyboard('{meta>}{a}');
+
+        expect(onSelect).toHaveBeenCalledWith(defaultNodes);
+      });
+    });
+
     describe('mouse', () => {
       it('should also select a range if ctrl/cmd is down when next item is clicked', async () => {
         const user = userEvent.setup();
