@@ -82,6 +82,10 @@
         flex-wrap: wrap;
         align-items: center;
         margin-bottom: var(--lotta-spacing);
+        position: sticky;
+        top: 0;
+        background: rgb(var(--lotta-box-background-color));
+        z-index: 1;
 
         .actionBar {
           display: flex;
