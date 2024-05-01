@@ -2,14 +2,14 @@ name: 'Assign issue to triage board'
 on:
   issues:
     types:
-      - "opened"
+      - 'opened'
 
 permissions:
   repository-projects: write
+  issues: write
 
 jobs:
   add-to-project:
     uses: lotta-schule/github-actions/.github/workflows/add-issue-to-project.yaml@main
     with:
       project_number: 6
-
