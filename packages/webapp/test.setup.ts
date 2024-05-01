@@ -91,6 +91,14 @@ beforeAll(() => {
     })),
   });
 
+  Object.defineProperty(window, 'IntersectionObserver', {
+    writable: false,
+    value: vi.fn(() => ({
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+    })),
+  });
+
   Element.prototype.scroll = vi.fn(() => {});
   Object.defineProperty(window, 'scrollTo', {
     writable: false,

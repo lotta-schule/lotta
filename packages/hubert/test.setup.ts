@@ -52,6 +52,7 @@ Object.defineProperty(window, 'IntersectionObserver', {
     unobserve: vi.fn(),
   })),
 });
+
 global.TextEncoder = TextEncoder;
 
 const originalError = console.error;
