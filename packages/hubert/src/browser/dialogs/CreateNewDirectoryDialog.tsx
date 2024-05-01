@@ -7,7 +7,7 @@ import { Input } from '../../form';
 import { BrowserNode, useBrowserState } from '../BrowserStateContext';
 
 export interface CreateNewFolderDialogProps {
-  parentNode: BrowserNode | null;
+  parentNode: BrowserNode<'directory'> | null;
   isOpen: boolean;
   onRequestClose(): void;
 }
@@ -32,29 +32,32 @@ export const CreateNewDirectoryDialog = React.memo(
         onRequestClose={onRequestClose}
         title={'Neuen Ordner erstellen'}
       >
-        <DialogContent>
-          <p>Wähle einen Namen für den Ordner, den du erstellen möchtest.</p>
-          <ErrorMessage error={errorMessage} />
-          <Label label={'Name des Ordners'}>
-            <Input
-              autoFocus
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setName(event.currentTarget.value)
-              }
-            />
-          </Label>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => onRequestClose()}>Abbrechen</Button>
-          <LoadingButton
-            onAction={async () => {
-              await createDirectory?.(parentNode, name);
-            }}
-            onComplete={() => setTimeout(onRequestClose, 1000)}
-          >
-            Ordner erstellen
-          </LoadingButton>
-        </DialogActions>
+        <form>
+          <DialogContent>
+            <p>Wähle einen Namen für den Ordner, den du erstellen möchtest.</p>
+            <ErrorMessage error={errorMessage} />
+            <Label label={'Name des Ordners'}>
+              <Input
+                autoFocus
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setName(event.currentTarget.value)
+                }
+              />
+            </Label>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => onRequestClose()}>Abbrechen</Button>
+            <LoadingButton
+              type="submit"
+              onAction={async () => {
+                await createDirectory?.(parentNode, name);
+              }}
+              onComplete={() => setTimeout(onRequestClose, 1000)}
+            >
+              Ordner erstellen
+            </LoadingButton>
+          </DialogActions>
+        </form>
       </Dialog>
     );
   }
