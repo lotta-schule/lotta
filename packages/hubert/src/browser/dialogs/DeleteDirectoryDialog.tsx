@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, LoadingButton } from '../../button';
 import { Dialog, DialogActions, DialogContent } from '../../dialog';
+import { isDirectoryNode, isFileNode } from '../utils';
 import { ErrorMessage } from '../../message';
 import { LinearProgress } from '../../progress';
 import { List, ListItem } from '../../list';
@@ -25,8 +26,16 @@ export const DeleteDirectoryDialog = React.memo(() => {
 
   const currentNode = (isOpen && currentAction?.path?.at(-1)) || null;
 
+  if (currentNode && !isDirectoryNode(currentNode)) {
+    console.error('currentNode is not a directory:', currentNode);
+    throw new Error('currentNode is not a directory');
+  }
+
   const getDirectoriesAndFilesForDirectory = React.useCallback(
-    async (directory: BrowserNode, relativePath = ''): Promise<void> => {
+    async (
+      directory: BrowserNode<'directory'>,
+      relativePath = ''
+    ): Promise<void> => {
       setIsLoadingChildNodes(true);
       try {
         setDirectoriesToDelete((directoriesToDelete) => [
@@ -38,15 +47,17 @@ export const DeleteDirectoryDialog = React.memo(() => {
 
         const [files, directories] = childNodes.reduce(
           ([files, directories], node) => {
-            if (node.type === 'file') {
+            if (isFileNode(node)) {
               files.push(node);
               return [files, directories];
-            } else {
+            } else if (isDirectoryNode(node)) {
               directories.push(node);
+              return [files, directories];
+            } else {
               return [files, directories];
             }
           },
-          [[], []] as [BrowserNode[], BrowserNode[]]
+          [[], []] as [BrowserNode<'file'>[], BrowserNode<'directory'>[]]
         );
 
         setFilesToDelete((filesToDelete) => [

@@ -63,6 +63,8 @@ export const TestBrowserWrapper = ({
   onNavigate = vi.fn(),
   setCurrentAction = vi.fn(),
   currentAction = null,
+  canEdit,
+  uploadClient,
 }: TestBrowserWrapperProps) => {
   const [nodes, setNodes] = React.useState<BrowserNode[]>(defaultNodes);
   const [isFilePreviewVisible, setIsFilePreviewVisible] = React.useState(false);
@@ -73,6 +75,8 @@ export const TestBrowserWrapper = ({
   return (
     <BrowserStateContext.Provider
       value={{
+        uploadClient,
+        canEdit,
         onRequestChildNodes: async (node) =>
           onRequestChildNodes(node as BrowserNode<'directory'>),
         renderNodeList: ({ path }) => (

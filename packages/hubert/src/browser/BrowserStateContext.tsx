@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useUploadClient } from './upload/useUploadClient';
 
 export interface DefaultFileMetadata {
   mimeType: string;
@@ -31,7 +32,7 @@ export type BrowserPath<T extends 'directory' | 'file' = 'directory' | 'file'> =
 export type BrowserAction =
   | { type: 'create-directory'; path: BrowserPath<'directory'> }
   | { type: 'move-nodes'; paths: BrowserPath[] }
-  | { type: 'delete-directory'; path: BrowserPath }
+  | { type: 'delete-directory'; path: BrowserPath<'directory'> }
   | { type: 'delete-files'; paths: BrowserPath[] }
   | { type: 'rename-node'; path: BrowserPath };
 
@@ -58,7 +59,7 @@ export interface BrowserState {
   currentAction: BrowserAction | null;
   setCurrentAction: (action: BrowserAction | null) => void;
 
-  canEdit?: (node: BrowserNode) => boolean;
+  canEdit?: (node: BrowserNode | null) => boolean;
   isNodeDisabled?: (node: BrowserNode) => boolean;
   getDownloadUrl?: (node: BrowserNode) => string | null | undefined;
   getPreviewUrl?: (node: BrowserNode) => string | null | undefined;
@@ -74,6 +75,8 @@ export interface BrowserState {
   ) => PromiseLike<void>;
   deleteNode?: (node: BrowserNode) => PromiseLike<void>;
   renameNode?: (node: BrowserNode, newName: string) => PromiseLike<void>;
+
+  uploadClient?: ReturnType<typeof useUploadClient>;
 }
 
 export type BrowserStateProviderProps = {
@@ -109,6 +112,7 @@ export const BrowserStateProvider = React.memo(
       React.useState<BrowserState['currentAction']>(null);
     const [isFilePreviewVisible, setIsFilePreviewVisible] =
       React.useState<BrowserState['isFilePreviewVisible']>(false);
+    const uploadClient = useUploadClient();
 
     React.useEffect(() => {
       onSelect?.(selected);
@@ -127,6 +131,7 @@ export const BrowserStateProvider = React.memo(
           setCurrentAction,
           isFilePreviewVisible,
           setIsFilePreviewVisible,
+          uploadClient,
         }}
       >
         {children}

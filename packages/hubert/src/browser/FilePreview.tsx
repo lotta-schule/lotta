@@ -98,7 +98,6 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
             if (entry.target !== previewSectionRef.current) {
               return;
             }
-            console.log(entry.boundingClientRect.width);
             setMaxWidth(entry.boundingClientRect.width);
           });
         },

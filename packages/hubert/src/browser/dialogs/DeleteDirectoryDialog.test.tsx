@@ -17,7 +17,7 @@ const WrappedDeleteDirectoryDialog = (props: TestBrowserWrapperProps) => (
   </TestBrowserWrapper>
 );
 
-const emptyDirectoryPath = fixtures.getPathForNode('15');
+const emptyDirectoryPath = fixtures.getPathForNode('14');
 const deepNonEmptyDirectoryPath = fixtures.getPathForNode('8');
 
 describe('Browser/DeleteDirectoryDialog', () => {

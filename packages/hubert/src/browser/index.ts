@@ -9,5 +9,6 @@ export {
   type BrowserMode,
   type BrowserAction,
 } from './BrowserStateContext';
+export { type Upload } from './upload/useUploadClient';
 export * from './NodeList';
 export * from './utils';

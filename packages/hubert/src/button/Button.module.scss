@@ -30,7 +30,7 @@
       width: 2.5em;
       background-color: unset;
 
-      &:not([data-varaint="fill"]) {
+      &:not([data-varaint="fill"]):not([disabled]) {
         &:hover {
           background-color: rgba(var(--lotta-primary-color), 0.2);
         }

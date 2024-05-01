@@ -270,7 +270,6 @@ export const withImages = (editor: ReactEditor) => {
 // Event Handlers
 export const onKeyDownFactory =
   (editor: ReactEditor) => (event: React.KeyboardEvent<HTMLDivElement>) => {
-    console.log(event);
     if (event.key === 'Enter' && event.shiftKey) {
       event.preventDefault();
       editor.insertText('\n');

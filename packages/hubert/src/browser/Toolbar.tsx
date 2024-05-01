@@ -1,8 +1,17 @@
 import * as React from 'react';
 import { Input } from '../form/input';
 import { Button } from '../button';
-import { CloudUpload, CreateNewFolder, Home, KeyboardArrowLeft } from '../icon';
+import { CircularProgress } from '../progress';
+import {
+  Check,
+  Close,
+  CloudUpload,
+  CreateNewFolder,
+  Home,
+  KeyboardArrowLeft,
+} from '../icon';
 import { useBrowserState } from './BrowserStateContext';
+import { ActiveUploadsDialog } from './dialogs/ActiveUploadsDialog';
 import clsx from 'clsx';
 
 import styles from './Toolbar.module.scss';
@@ -22,7 +31,13 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
     setCurrentAction,
     isFilePreviewVisible,
     setIsFilePreviewVisible,
+    uploadClient,
+    canEdit,
   } = useBrowserState();
+
+  const [isActiveUploadsDialogOpen, setIsActiveUploadsDialogOpen] =
+    React.useState(false);
+  const uploadInputRef = React.useRef<HTMLInputElement>(null);
 
   const activeDirectoryName = React.useMemo(
     () =>
@@ -30,6 +45,18 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
         ?.name ?? <Home />,
     [selected, currentPath]
   );
+
+  const isUploadAllowed = React.useMemo(() => {
+    if (currentPath.length === 0) {
+      return false;
+    }
+
+    return canEdit(currentPath.at(-1)!);
+  }, [currentPath, canEdit]);
+
+  const isDirectoryCreationAllowed = React.useMemo(() => {
+    return canEdit(currentPath.at(-1) ?? null);
+  }, [currentPath, canEdit]);
 
   return (
     <div className={clsx(styles.root, className)} role="toolbar">
@@ -56,7 +83,7 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
       <div className={styles.rightContainer}>
         {mode === 'view-and-edit' && (
           <>
-            {createDirectory !== undefined && (
+            {createDirectory !== undefined && isDirectoryCreationAllowed && (
               <Button
                 icon={<CreateNewFolder />}
                 title="Ordner erstellen"
@@ -68,14 +95,79 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
                 }}
               />
             )}
-            <Button
-              icon={<CloudUpload />}
-              title="Datei hochladen"
-              onClick={() => alert('todo')}
-            />
+            {!!uploadClient?.currentUploads.length && (
+              <Button
+                title={`Es werden ${uploadClient.currentUploads.length} Dateien hochgeladen`}
+                label={`Es werden ${uploadClient.currentUploads.length} Dateien hochgeladen (${uploadClient.currentProgress}% Fortschritt)`}
+                className={styles.uploadProgressButton}
+                icon={
+                  uploadClient.hasErrors ? (
+                    <Close />
+                  ) : uploadClient.isSuccess ? (
+                    <Check />
+                  ) : uploadClient.currentProgress !== null ? (
+                    <CircularProgress
+                      value={uploadClient.currentProgress}
+                      style={{ width: '1em', height: '1em' }}
+                      aria-label={`Der Uploadfortschritt beträgt ${uploadClient.currentProgress}%`}
+                    />
+                  ) : undefined
+                }
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsActiveUploadsDialogOpen(true);
+                }}
+              >
+                {
+                  uploadClient?.currentUploads.filter(
+                    ({ status }) => status === 'uploading'
+                  ).length
+                }
+              </Button>
+            )}
+
+            {isUploadAllowed && (
+              <Button
+                icon={<CloudUpload />}
+                onClick={() => {
+                  if (uploadInputRef.current) {
+                    uploadInputRef.current.click();
+                  }
+                }}
+                title="Datei hochladen"
+                className={styles.uploadButton}
+                onlyIcon
+              >
+                <input
+                  type="file"
+                  value={''} // to reset the input after selecting a file
+                  ref={uploadInputRef}
+                  multiple
+                  onChange={(event) => {
+                    const parentNode = currentPath.at(-1);
+
+                    if (!parentNode || !uploadClient) {
+                      return;
+                    }
+
+                    if (!event.target.files) {
+                      return;
+                    }
+
+                    for (const file of event.target.files) {
+                      uploadClient.addFile(file, parentNode);
+                    }
+                  }}
+                />
+              </Button>
+            )}
           </>
         )}
       </div>
+      <ActiveUploadsDialog
+        isOpen={isActiveUploadsDialogOpen}
+        onRequestClose={() => setIsActiveUploadsDialogOpen(false)}
+      />
     </div>
   );
 });

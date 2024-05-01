@@ -6,6 +6,8 @@
     "outDir": "dist/lib/hubert",
     "noEmit": true,
 
+    "lib": ["esnext", "dom", "dom.iterable"],
+
     "isolatedModules": true,
     "incremental": true,
     "resolveJsonModule": true,
