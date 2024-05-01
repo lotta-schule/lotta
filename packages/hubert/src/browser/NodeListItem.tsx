@@ -92,7 +92,7 @@ export const NodeListItem = React.memo(
     React.useEffect(() => {
       if (isSelected && listItemRef.current) {
         listItemRef.current.scrollIntoView({
-          block: 'center',
+          block: 'nearest',
           behavior: 'smooth',
         });
       }
