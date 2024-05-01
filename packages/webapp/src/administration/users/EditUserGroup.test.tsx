@@ -97,11 +97,13 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         expect(screen.queryByRole('progressbar')).toBeNull();
       });
 
-      expect(
-        screen.getByRole('checkbox', {
-          name: /vollständigen namen/i,
-        })
-      ).toBeDisabled();
+      await waitFor(() => {
+        expect(
+          screen.getByRole('checkbox', {
+            name: /vollständigen namen/i,
+          })
+        ).toBeDisabled();
+      });
     });
 
     describe('admin setting', () => {
