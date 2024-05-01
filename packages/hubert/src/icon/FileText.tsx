@@ -12,6 +12,7 @@ export const FileText = React.memo(
         viewBox="0 0 512 677"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="file-text-icon"
         ref={ref}
         {...props}
       >

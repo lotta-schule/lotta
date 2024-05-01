@@ -5,22 +5,17 @@ import { Toolbar } from '../../layout/Toolbar';
 import { KeyboardArrowLeft } from '../../icon';
 import { isDirectoryNode } from '../utils';
 
-export interface DirectorySelector {
+export type DirectorySelector = {
   getNodesForParent(
     parent: BrowserNode<'directory'> | null
   ): Promise<BrowserNode[]>;
-  value: BrowserPath;
+  value: BrowserPath<'directory'>;
   onChange: (value: BrowserPath<'directory'>) => void;
   filter?: (node: BrowserNode<'directory'>) => boolean;
-}
+};
 
 export const DirectorySelector = React.memo(
-  ({
-    getNodesForParent,
-    value,
-    onChange,
-    filter = () => true,
-  }: DirectorySelector) => {
+  ({ getNodesForParent, value, onChange, filter }: DirectorySelector) => {
     const parentNode = value?.at(-2) ?? null;
     const potentialNode = value.at(-1);
     const currentNode = (
@@ -31,23 +26,29 @@ export const DirectorySelector = React.memo(
         : null
     ) as BrowserNode<'directory'> | null;
 
-    const [childNodes, setChildNodes] = React.useState<BrowserNode[]>([]);
+    const [childNodes, setChildNodes] = React.useState<
+      BrowserNode<'directory'>[]
+    >([]);
 
     React.useEffect(() => {
       getNodesForParent(currentNode).then((newNodes) => {
-        setChildNodes(newNodes.filter((n) => isDirectoryNode(n) && filter(n)));
+        setChildNodes(
+          newNodes.filter(
+            (n) => isDirectoryNode(n) && (filter?.(n) ?? true)
+          ) as BrowserNode<'directory'>[]
+        );
       });
     }, [currentNode, getNodesForParent, filter]);
 
     return (
       <div>
-        <Toolbar>{value.map((c) => c.name).join('/') || '/'}</Toolbar>
+        <Toolbar>{`/${value.map((c) => c.name).join('/')}`}</Toolbar>
         <Menu
           style={{ width: '100%' }}
-          title={currentNode?.name ?? 'Wurzelverzeichnis'}
+          title={currentNode?.name ?? '/'}
           onAction={(k) => {
             if (k === 'parent') {
-              onChange(value?.slice(0, value.length - 1) ?? []);
+              onChange(value?.slice(0, -1) ?? []);
             } else {
               const childNode = childNodes.find((d) => d.id === k);
               if (childNode) {

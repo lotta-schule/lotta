@@ -9,425 +9,279 @@ import {
 } from '../test-utils';
 import { NodeListItem, NodeListItemProps } from './NodeListItem';
 import userEvent from '@testing-library/user-event';
+import { BrowserPath } from './BrowserStateContext';
 
+const directoryPath = fixtures.getPathForNode('8');
 const filePath = fixtures.getPathForNode('19');
-const someOtherFile = {
-  id: '44',
-  name: 'other-file.jpg',
-  type: 'file',
-  parent: '3',
-  meta: {},
-} as const;
+
+let isMobile = false;
+vi.mock('../util/useIsMobile', () => ({
+  useIsMobile: () => isMobile,
+}));
 
 const WrappedNodeListItem = ({
   node,
-  parentPath = fixtures.getPathForNode(node).slice(0, -1),
+  parentPath = fixtures
+    .getPathForNode(node)
+    .slice(0, -1) as BrowserPath<'directory'>,
   currentPath = parentPath,
+  onClick = vi.fn(),
+  isDisabled,
+  isSelected,
   ...props
 }: TestBrowserWrapperProps &
   Partial<NodeListItemProps> &
-  Pick<NodeListItemProps, 'node'>) => (
+  Pick<NodeListItemProps, 'node' | 'onClick'>) => (
   <TestBrowserWrapper currentPath={currentPath} {...props}>
-    <NodeListItem node={node} parentPath={parentPath} />
+    <NodeListItem
+      node={node}
+      parentPath={parentPath}
+      onClick={onClick}
+      isDisabled={isDisabled}
+      isSelected={isSelected}
+    />
   </TestBrowserWrapper>
 );
 
 describe('Browser/NodeListItem', () => {
-  describe('render directory', () => {
-    it('should render the name of a directory', () => {
-      const node = filePath.at(-1);
+  beforeEach(() => {
+    isMobile = false;
+  });
+  describe('render node', () => {
+    it('should render the name of a node', () => {
+      const node = filePath.at(-1)!;
       const screen = render(<WrappedNodeListItem node={node} />);
 
       expect(screen.getByRole('option')).toHaveAccessibleName(node.name);
     });
 
-    it('should render as expanded when on the path', () => {
-      const node = filePath.at(1);
-      const currentPath = filePath.slice(0, -1);
+    it('should render a directory expanded when on the path', () => {
       const screen = render(
-        <WrappedNodeListItem node={node} currentPath={currentPath} />
+        <WrappedNodeListItem
+          node={directoryPath.at(1)!}
+          currentPath={directoryPath as BrowserPath<'directory'>}
+        />
       );
 
       expect(screen.getByRole('option').ariaExpanded).toEqual('true');
     });
 
-    describe('Default Mode (view-and-edit)', () => {
-      it('should navigate to the directory on click, resetting its selection to just the directory itself', async () => {
-        const user = userEvent.setup();
-        const onNavigate = vi.fn();
-        const onSelect = vi.fn();
-        const screen = render(
-          <WrappedNodeListItem
-            node={filePath[2]}
-            selected={[someOtherFile]}
-            onNavigate={onNavigate}
-            onSelect={onSelect}
-          />
-        );
+    it('should render as selected when it is', () => {
+      const screen = render(
+        <WrappedNodeListItem node={filePath.at(-1)!} isSelected />
+      );
 
-        await user.click(screen.getByRole('option'));
-
-        expect(onNavigate).toHaveBeenCalledWith(filePath.slice(0, 3));
-        expect(onSelect).toHaveBeenCalledWith([filePath.at(2)]);
-      });
-
-      it('should show the editing menu button', async () => {
-        const screen = render(
-          <WrappedNodeListItem node={filePath[2]} onNavigate={vi.fn()} />
-        );
-
-        expect(
-          screen.getByRole('button', { name: /ordnermenü/i })
-        ).toBeVisible();
-      });
-
-      it('should show rename-input when rename-action is active for the current node', async () => {
-        const screen = render(
-          <WrappedNodeListItem
-            node={filePath[2]}
-            currentAction={{ type: 'rename-node', path: filePath.slice(0, 3) }}
-          />
-        );
-
-        expect(
-          screen.getByRole('textbox', { name: /math umbenennen/i })
-        ).toBeVisible();
-      });
-
-      it('should not show rename-input when rename-action is active for another node', async () => {
-        const screen = render(
-          <WrappedNodeListItem
-            node={filePath[2]}
-            currentAction={{ type: 'rename-node', path: filePath.slice(0, 2) }}
-          />
-        );
-
-        expect(screen.queryByRole('textbox')).toBeNull();
-      });
+      expect(screen.getByRole('option')).toHaveAttribute(
+        'aria-selected',
+        'true'
+      );
+      expect(screen.getByRole('option').ariaExpanded).toEqual('false');
     });
 
-    describe('Single selection mode (select)', () => {
-      it('should navigate to the directory on click, resetting the selection', async () => {
+    describe('onClick', () => {
+      it('should call onClick handler', async () => {
         const user = userEvent.setup();
-        const onNavigate = vi.fn();
-        const onSelect = vi.fn();
+        const onClick = vi.fn();
+
         const screen = render(
-          <WrappedNodeListItem
-            mode="select"
-            node={filePath[2]}
-            selected={[someOtherFile]}
-            onNavigate={onNavigate}
-            onSelect={onSelect}
-          />
+          <WrappedNodeListItem node={filePath.at(-1)!} onClick={onClick} />
         );
 
         await user.click(screen.getByRole('option'));
 
-        expect(onNavigate).toHaveBeenCalledWith(filePath.slice(0, 3));
-        expect(onSelect).toHaveBeenCalledWith([]);
+        expect(onClick).toHaveBeenCalled();
       });
 
-      it('should navigate to the parent folder of a selected file', async () => {
+      it('should not call onClick handler when disabled', async () => {
         const user = userEvent.setup();
-
-        const node = { ...someOtherFile, parent: '77' };
-
-        const onNavigate = vi.fn();
-        const onSelect = vi.fn();
+        const onClick = vi.fn();
 
         const screen = render(
           <WrappedNodeListItem
-            mode="select"
-            parentPath={[
-              {
-                id: '77',
-                name: 'other-tree',
-                type: 'directory',
-                parent: null,
-                meta: {},
-              },
-            ]}
-            currentPath={[]}
-            node={node}
-            onNavigate={onNavigate}
-            selected={[]}
-            onSelect={onSelect}
+            node={filePath.at(-1)!}
+            onClick={onClick}
+            isDisabled
           />
         );
 
+        expect(screen.getByRole('option')).toHaveAttribute(
+          'aria-disabled',
+          'true'
+        );
         await user.click(screen.getByRole('option'));
 
-        await waitFor(() => {
-          expect(onSelect).toHaveBeenCalledWith([node]);
-
-          expect(onNavigate).toHaveBeenCalledWith([
-            {
-              id: '77',
-              name: 'other-tree',
-              type: 'directory',
-              parent: null,
-              meta: {},
-            },
-          ]);
-        });
-      });
-
-      it('should not show the editing menu button', async () => {
-        const screen = render(
-          <WrappedNodeListItem
-            mode="select"
-            node={filePath[2]}
-            onNavigate={vi.fn()}
-          />
-        );
-
-        expect(
-          screen.queryByRole('button', { name: /ordnermenü/i })
-        ).toBeNull();
-      });
-    });
-
-    describe('Multi selection mode (select-multiple)', () => {
-      it('should navigate to the directory on click', async () => {
-        const user = userEvent.setup();
-        const onSelect = vi.fn();
-        const onNavigate = vi.fn();
-        const screen = render(
-          <WrappedNodeListItem
-            mode="select-multiple"
-            selected={[filePath[2]]}
-            node={filePath[1]}
-            onSelect={onSelect}
-            onNavigate={onNavigate}
-          />
-        );
-
-        await user.click(screen.getByRole('option'));
-
-        expect(onNavigate).toHaveBeenCalledWith(filePath.slice(0, 2));
-      });
-
-      it('should not show the editing menu button', async () => {
-        const screen = render(
-          <WrappedNodeListItem
-            mode="select-multiple"
-            node={filePath[2]}
-            onNavigate={vi.fn()}
-          />
-        );
-
-        expect(
-          screen.queryByRole('button', { name: /ordnermenü/i })
-        ).toBeNull();
+        expect(onClick).not.toHaveBeenCalled();
       });
     });
   });
 
-  describe('render file', () => {
-    it('should render the name of a directory', () => {
-      const screen = render(<WrappedNodeListItem node={filePath[3]} />);
-
-      expect(screen.getByRole('option')).toHaveAccessibleName(
-        'presentation.ppt'
-      );
-    });
-
-    it('should render as selected when it is', () => {
+  describe('renaming', () => {
+    it('should show rename-input when rename-action is active for the current node', async () => {
       const screen = render(
-        <WrappedNodeListItem node={filePath[3]} selected={[filePath[3]]} />
+        <WrappedNodeListItem
+          node={filePath[2]}
+          currentAction={{ type: 'rename-node', path: filePath.slice(0, 3) }}
+        />
       );
 
-      expect(screen.getByRole('option').ariaExpanded).toEqual('false');
-      expect(screen.getByRole('option').ariaSelected).toEqual('true');
+      expect(
+        screen.getByRole('textbox', { name: /math umbenennen/i })
+      ).toBeVisible();
+    });
+  });
+
+  describe('menu button', () => {
+    it('should show the menu button on directories on mobile', async () => {
+      isMobile = true;
+
+      const screen = render(
+        <WrappedNodeListItem node={directoryPath.at(-1)!} />
+      );
+
+      expect(screen.getByRole('button', { name: /ordnermenü/i })).toBeVisible();
     });
 
-    describe('Default Mode (view-and-edit)', () => {
-      it('should select the file when clicked', async () => {
-        const user = userEvent.setup();
+    it('should not show the menu button on files on mobile', async () => {
+      isMobile = true;
 
-        const onNavigate = vi.fn();
-        const onSelect = vi.fn();
+      const screen = render(<WrappedNodeListItem node={filePath.at(-1)!} />);
 
-        const screen = render(
-          <WrappedNodeListItem
-            node={filePath[3]}
-            onNavigate={onNavigate}
-            selected={[
-              { id: '44', name: 'other-file.jpg', type: 'file', parent: '3' },
-            ]}
-            onSelect={onSelect}
-          />
-        );
+      expect(screen.queryByRole('button', { name: /ordnermenü/i })).toBeNull();
+    });
 
-        user.click(screen.getByRole('option'));
+    it('should not show the menu button on directories on desktop', async () => {
+      const screen = render(
+        <WrappedNodeListItem node={directoryPath.at(-1)!} />
+      );
 
-        await waitFor(() => {
-          expect(onSelect).toHaveBeenCalledWith([filePath[3]]);
+      expect(screen.queryByRole('button', { name: /ordnermenü/i })).toBeNull();
+    });
 
-          expect(onNavigate).not.toHaveBeenCalled();
-        });
+    it('should not show the menu button on directories on mobile when the node is disabled', () => {
+      isMobile = true;
+
+      const screen = render(
+        <WrappedNodeListItem node={directoryPath.at(-1)!} isDisabled />
+      );
+
+      expect(screen.queryByRole('button', { name: /ordnermenü/i })).toBeNull();
+    });
+
+    it('should not show the menu button on directories on mobile when in "select" mode', () => {
+      isMobile = true;
+
+      const screen = render(
+        <WrappedNodeListItem mode="select" node={directoryPath.at(-1)!} />
+      );
+
+      expect(screen.queryByRole('button', { name: /ordnermenü/i })).toBeNull();
+    });
+
+    it('should not show the menu button on directories on mobile when in "select-multiple" mode', () => {
+      isMobile = true;
+
+      const screen = render(
+        <WrappedNodeListItem
+          mode="select-multiple"
+          node={directoryPath.at(-1)!}
+        />
+      );
+
+      expect(screen.queryByRole('button', { name: /ordnermenü/i })).toBeNull();
+    });
+  });
+
+  describe('context menu', () => {
+    it('should show the context menu on right click', async () => {
+      const user = userEvent.setup();
+      const screen = render(<WrappedNodeListItem node={filePath.at(-1)!} />);
+
+      await user.pointer({
+        keys: '[MouseRight>]',
+        target: screen.getByRole('option'),
       });
 
-      it('should show the editing menu button', async () => {
-        const screen = render(
-          <WrappedNodeListItem node={filePath[3]} onNavigate={vi.fn()} />
-        );
-
+      await waitFor(() => {
         expect(
-          screen.getByRole('button', { name: /ordnermenü/i })
+          screen.getByRole('menu', { name: /kontextmenü/i })
         ).toBeVisible();
       });
-
-      it('should show rename-input when rename-action is active for the current node', async () => {
-        const screen = render(
-          <WrappedNodeListItem
-            node={filePath[3]}
-            currentAction={{
-              type: 'rename-node',
-              path: filePath,
-            }}
-          />
-        );
-
-        expect(
-          screen.getByRole('textbox', { name: /presentation.ppt umbenennen/i })
-        ).toBeVisible();
-      });
-    });
-    describe('Single selection mode (select)', () => {
-      it('should select the file when clicked', async () => {
-        const user = userEvent.setup();
-
-        const onNavigate = vi.fn();
-        const onSelect = vi.fn();
-
-        const screen = render(
-          <WrappedNodeListItem
-            mode="select"
-            node={filePath[3]}
-            onNavigate={onNavigate}
-            selected={[someOtherFile]}
-            onSelect={onSelect}
-          />
-        );
-
-        await user.click(screen.getByRole('option'));
-
-        await waitFor(() => {
-          expect(onSelect).toHaveBeenCalledWith([filePath[3]]);
-
-          expect(onNavigate).not.toHaveBeenCalled();
-        });
-      });
-
-      it('should navigate to the parent folder of a selected file', async () => {
-        const user = userEvent.setup();
-
-        const node = { ...someOtherFile, parent: '77' } as const;
-
-        const onNavigate = vi.fn();
-        const onSelect = vi.fn();
-
-        const screen = render(
-          <WrappedNodeListItem
-            mode="select"
-            parentPath={[
-              {
-                id: '77',
-                name: 'other-tree',
-                type: 'directory',
-                parent: null,
-                meta: {},
-              },
-            ]}
-            currentPath={[]}
-            node={node}
-            onNavigate={onNavigate}
-            selected={[]}
-            onSelect={onSelect}
-          />
-        );
-
-        await user.click(screen.getByRole('option'));
-
-        await waitFor(() => {
-          expect(onSelect).toHaveBeenCalledWith([node]);
-
-          expect(onNavigate).toHaveBeenCalledWith([
-            {
-              id: '77',
-              name: 'other-tree',
-              type: 'directory',
-              parent: null,
-              meta: {},
-            },
-          ]);
-        });
-      });
-
-      it('should not show the editing menu button', async () => {
-        const screen = render(
-          <WrappedNodeListItem
-            mode="select"
-            node={filePath[3]}
-            onNavigate={vi.fn()}
-          />
-        );
-
-        expect(screen.queryByRole('button', { name: /dateimenü/i })).toBeNull();
-      });
     });
 
-    describe('Multi selection mode (select-multiple)', () => {
-      it('should not show the editing menu button', async () => {
-        const screen = render(
-          <WrappedNodeListItem
-            mode="select-multiple"
-            node={filePath[3]}
-            onNavigate={vi.fn()}
-          />
-        );
+    it('should show rename-input when rename-action is active for the current node', async () => {
+      const screen = render(
+        <WrappedNodeListItem
+          node={filePath[3]}
+          currentAction={{
+            type: 'rename-node',
+            path: filePath,
+          }}
+        />
+      );
 
-        expect(screen.queryByRole('button', { name: /dateimenü/i })).toBeNull();
-      });
+      expect(
+        screen.getByRole('textbox', { name: /presentation.ppt umbenennen/i })
+      ).toBeVisible();
+    });
+  });
 
-      it('should show a checkbox that toggles wether the file is selected', async () => {
-        const user = userEvent.setup();
+  describe('checkbox', () => {
+    it('should not show a checkbox on files in "view-and-edit" mode', () => {
+      const screen = render(
+        <WrappedNodeListItem node={filePath.at(-1)!} mode="view-and-edit" />
+      );
 
-        const onSelect = vi.fn();
+      expect(screen.queryByRole('checkbox')).toBeNull();
+    });
 
-        const screen = render(
-          <WrappedNodeListItem
-            mode="select-multiple"
-            node={filePath[3]}
-            selected={[someOtherFile]}
-            onSelect={onSelect}
-          />
-        );
+    it('should not show a checkbox on files in "select" mode', () => {
+      const screen = render(
+        <WrappedNodeListItem node={filePath.at(-1)!} mode="view-and-edit" />
+      );
 
-        expect(screen.getByRole('checkbox')).not.toBeChecked();
+      expect(screen.queryByRole('checkbox')).toBeNull();
+    });
 
-        await user.click(screen.getByRole('checkbox'));
+    it('should show a checkbox on files in "select-multiple" mode and add to selection when selected', async () => {
+      const otherNode = fixtures.getNode('20');
+      const user = userEvent.setup();
+      const onSelect = vi.fn();
+      const screen = render(
+        <WrappedNodeListItem
+          node={filePath.at(-1)!}
+          mode="select-multiple"
+          selected={[otherNode]}
+          onSelect={onSelect}
+        />
+      );
 
-        await waitFor(() => {
-          expect(onSelect).toHaveBeenCalledWith([someOtherFile, filePath[3]]);
-        });
+      expect(screen.getByRole('checkbox')).toBeVisible();
 
-        screen.rerender(
-          <WrappedNodeListItem
-            mode="select-multiple"
-            node={filePath[3]}
-            selected={[someOtherFile, filePath[3]]}
-            onSelect={onSelect}
-          />
-        );
+      await user.click(screen.getByRole('checkbox'));
 
-        expect(screen.getByRole('checkbox')).toBeChecked();
+      expect(onSelect).toHaveBeenCalledWith([otherNode, filePath.at(-1)!]);
+    });
 
-        await user.click(screen.getByRole('checkbox'));
+    it('should show a selected checkbox on selected files in "select-multiple" mode and remove from selection when selected', async () => {
+      const otherNode = fixtures.getNode('20');
+      const user = userEvent.setup();
+      const onSelect = vi.fn();
+      const screen = render(
+        <WrappedNodeListItem
+          node={filePath.at(-1)!}
+          mode="select-multiple"
+          selected={[otherNode, filePath.at(-1)!]}
+          onSelect={onSelect}
+          isSelected
+        />
+      );
 
-        expect(onSelect).toHaveBeenCalledWith([someOtherFile]);
-      });
+      expect(screen.getByRole('checkbox')).toBeVisible();
+      expect(screen.getByRole('checkbox')).toBeChecked();
+
+      await user.click(screen.getByRole('checkbox'));
+
+      expect(onSelect).toHaveBeenCalledWith([otherNode]);
     });
   });
 });

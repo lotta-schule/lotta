@@ -12,6 +12,7 @@ export const MoreVert = React.memo(
         viewBox="0 -960 960 960"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="more-vert-icon"
         ref={ref}
         {...props}
       >

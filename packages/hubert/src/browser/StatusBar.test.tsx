@@ -1,22 +1,27 @@
 import * as React from 'react';
-import { render } from '../test-utils';
+import {
+  TestBrowserWrapper,
+  TestBrowserWrapperProps,
+  fixtures,
+  render,
+} from '../test-utils';
 import { StatusBar } from './StatusBar';
-import { BrowserNode, BrowserStateProvider } from './BrowserStateContext';
 import userEvent from '@testing-library/user-event';
 
-const WrappedStatusBar = ({ defaultPath }: { defaultPath?: BrowserNode[] }) => (
-  <BrowserStateProvider
-    renderNodeList={() => null}
-    defaultPath={defaultPath}
-    onRequestChildNodes={async () => []}
-  >
+const defaultPath = fixtures.getPathForNode('14');
+
+const WrappedStatusBar = ({
+  currentPath = defaultPath,
+  ...props
+}: TestBrowserWrapperProps) => (
+  <TestBrowserWrapper currentPath={currentPath} {...props}>
     <StatusBar />
-  </BrowserStateProvider>
+  </TestBrowserWrapper>
 );
 
 describe('Browser/StatusBar', () => {
   it('should render correctly on home path', () => {
-    const screen = render(<WrappedStatusBar />);
+    const screen = render(<WrappedStatusBar currentPath={[]} />);
     expect(screen.getAllByRole('link')).toHaveLength(1);
     expect(
       screen.getByRole('link', { name: 'Wurzelverzeichnis' })
@@ -24,36 +29,28 @@ describe('Browser/StatusBar', () => {
   });
 
   it('should render correctly on a complex path', () => {
-    const screen = render(
-      <WrappedStatusBar
-        defaultPath={[
-          { id: '123', name: 'Test 1', type: 'directory', parent: null },
-          { id: '444', name: 'Test 2', type: 'directory', parent: '123' },
-          { id: '12312', name: 'Test 3', type: 'directory', parent: '444' },
-        ]}
-      />
-    );
+    const screen = render(<WrappedStatusBar />);
     expect(screen.getAllByRole('link')).toHaveLength(4); // Home + 3 directories
-    expect(screen.getAllByRole('link')[1]).toHaveTextContent('Test 1');
-    expect(screen.getAllByRole('link')[2]).toHaveTextContent('Test 2');
-    expect(screen.getAllByRole('link')[3]).toHaveTextContent('Test 3');
+    expect(screen.getAllByRole('link')[1]).toHaveTextContent('folder 1');
+    expect(screen.getAllByRole('link')[2]).toHaveTextContent('folder 8');
+    expect(screen.getAllByRole('link')[3]).toHaveTextContent('folder 14');
   });
 
   it('should select a path on click', async () => {
-    const fireEvent = userEvent.setup();
-    const screen = render(
-      <WrappedStatusBar
-        defaultPath={[
-          { id: '123', name: 'Test 1', type: 'directory', parent: null },
-          { id: '444', name: 'Test 2', type: 'directory', parent: '123' },
-          { id: '12312', name: 'Test 3', type: 'directory', parent: '444' },
-        ]}
-      />
-    );
-    await fireEvent.click(screen.getByRole('link', { name: 'Test 2' }));
+    const onNavigate = vi.fn();
+    const user = userEvent.setup();
+    const screen = render(<WrappedStatusBar onNavigate={onNavigate} />);
+    await user.click(screen.getByRole('link', { name: 'folder 8' }));
 
-    expect(screen.getAllByRole('link')).toHaveLength(3); // Home + 2 directories
-    expect(screen.getAllByRole('link')[1]).toHaveTextContent('Test 1');
-    expect(screen.getAllByRole('link')[2]).toHaveTextContent('Test 2');
+    expect(onNavigate).toHaveBeenCalledWith(fixtures.getPathForNode('8'));
+  });
+
+  it('should show the number of directories and files in the path', async () => {
+    const screen = render(
+      <WrappedStatusBar currentPath={fixtures.getPathForNode('8')} />
+    );
+
+    expect(await screen.findByText('Ordner: 4')).toBeVisible();
+    expect(await screen.findByText('Dateien: 4')).toBeVisible();
   });
 });

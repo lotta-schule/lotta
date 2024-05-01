@@ -12,6 +12,7 @@ export const ArrowUpwardRounded = React.memo(
         viewBox="0 0 24 24"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="arrow-upward-rounded-icon"
         ref={ref}
         {...props}
       >

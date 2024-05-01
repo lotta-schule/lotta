@@ -57,7 +57,7 @@ export const StatusBar = React.memo(({ className }: StatusBarProps) => {
             </a>
           </React.Fragment>
         ))}
-        {selected.length === 1 && (
+        {selected.filter(isFileNode).length === 1 && (
           <span className={styles.pathComponent}>
             &nbsp;/&nbsp;{selected[0].name}
           </span>

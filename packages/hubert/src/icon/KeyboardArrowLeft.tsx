@@ -12,6 +12,7 @@ export const KeyboardArrowLeft = React.memo(
         viewBox="0 0 24 24"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="keyboard-arrow-left-icon"
         ref={ref}
         {...props}
       >

@@ -12,6 +12,7 @@ export const FolderOpen = React.memo(
         viewBox="0 -960 960 960"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="folder-open-icon"
         ref={ref}
         {...props}
       >

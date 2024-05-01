@@ -31,7 +31,10 @@ describe('Browser/MoveNodesDialog', () => {
 
     screen.rerender(
       <WrappedMoveNodesDialog
-        currentAction={{ type: 'move-node', path: validDirectoryPath }}
+        currentAction={{
+          type: 'move-nodes',
+          paths: [validDirectoryPath, validFilePath],
+        }}
         setCurrentAction={onSetCurrentAction}
       />
     );
@@ -64,7 +67,10 @@ describe('Browser/MoveNodesDialog', () => {
 
     const screen = render(
       <WrappedMoveNodesDialog
-        currentAction={{ type: 'move-node', path: validDirectoryPath }}
+        currentAction={{
+          type: 'move-nodes',
+          paths: [validDirectoryPath, validFilePath],
+        }}
         moveNode={onMoveNode}
       />
     );
@@ -125,6 +131,15 @@ describe('Browser/MoveNodesDialog', () => {
     await user.click(screen.getByRole('button', { name: /verschieben/i }));
 
     await waitFor(() => {
+      expect(onMoveNode).toHaveBeenCalledWith(validFilePath.at(-1), {
+        id: String(fixtures.browserNodes.length + 1),
+        name: 'bla',
+        type: 'directory',
+        parent: '1',
+        meta: {},
+      });
+    });
+    await waitFor(() => {
       expect(onMoveNode).toHaveBeenCalledWith(validDirectoryPath.at(-1), {
         id: String(fixtures.browserNodes.length + 1),
         name: 'bla',
@@ -135,7 +150,7 @@ describe('Browser/MoveNodesDialog', () => {
     });
   });
 
-  it('should move the node', async () => {
+  it('should move the nodes', async () => {
     const user = userEvent.setup();
 
     const onMoveNode = vi.fn();
@@ -143,7 +158,10 @@ describe('Browser/MoveNodesDialog', () => {
 
     const screen = render(
       <WrappedMoveNodesDialog
-        currentAction={{ type: 'move-node', path: validDirectoryPath }}
+        currentAction={{
+          type: 'move-nodes',
+          paths: [validDirectoryPath, validFilePath],
+        }}
         moveNode={onMoveNode}
         setCurrentAction={onSetCurrentAction}
       />
@@ -165,40 +183,6 @@ describe('Browser/MoveNodesDialog', () => {
       expect(onMoveNode).toHaveBeenCalledWith(
         validDirectoryPath.at(-1),
         fixtures.browserNodes.find((n) => n.id === '10')
-      );
-    });
-  });
-
-  it('should move a file', async () => {
-    const user = userEvent.setup();
-
-    const onMoveNode = vi.fn();
-    const onSetCurrentAction = vi.fn();
-
-    const screen = render(
-      <WrappedMoveNodesDialog
-        currentAction={{ type: 'move-node', path: validFilePath }}
-        moveNode={onMoveNode}
-        setCurrentAction={onSetCurrentAction}
-      />
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole('dialog', { name: /datei verschieben/i })
-      ).toBeVisible();
-    });
-
-    expect(screen.getByRole('menu')).toBeVisible();
-
-    await user.click(screen.getByRole('menuitem', { name: /folder 12/ }));
-
-    await user.click(screen.getByRole('button', { name: /verschieben/i }));
-
-    await waitFor(() => {
-      expect(onMoveNode).toHaveBeenCalledWith(
-        validFilePath.at(-1),
-        fixtures.browserNodes.find((n) => n.id === '12')
       );
     });
   });

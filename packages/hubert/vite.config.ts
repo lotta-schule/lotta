@@ -57,6 +57,7 @@ export default defineConfig({
     coverage: {
       reportsDirectory: 'coverage',
       provider: 'istanbul',
+      exclude: ['test-utils.tsx', 'test.setup.ts', 'test-fixtures.ts'],
     },
   },
 });

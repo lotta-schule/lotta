@@ -9,13 +9,13 @@ describe('Browser', () => {
     const screen = render(
       <Browser
         className="test"
-        renderNodeList={({ parentPath }) => {
+        renderNodeList={({ path }) => {
           const nodes: BrowserNode[] =
-            parentPath.length === 0
+            path.length === 0
               ? [{ id: '1', name: 'test', type: 'directory', parent: null }]
               : [];
 
-          return <NodeList path={parentPath} nodes={nodes} />;
+          return <NodeList path={path} nodes={nodes} />;
         }}
         onRequestChildNodes={async () => []}
       />

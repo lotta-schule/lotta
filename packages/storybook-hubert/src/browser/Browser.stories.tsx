@@ -125,11 +125,11 @@ const meta: Meta<typeof Browser> = {
       action('onRequestChildNodes')(node);
       return getChildNodes(node);
     },
-    renderNodeList: ({ parentPath }) => {
-      const parent = parentPath.at(-1) ?? null;
+    renderNodeList: ({ path }) => {
+      const parent = path.at(-1) ?? null;
       const nodes = getChildNodes(parent);
 
-      return <NodeList path={parentPath} nodes={nodes} />;
+      return <NodeList path={path} nodes={nodes} />;
     },
   },
 };

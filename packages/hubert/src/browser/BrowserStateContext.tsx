@@ -36,7 +36,7 @@ export type BrowserAction =
   | { type: 'rename-node'; path: BrowserPath };
 
 export type RenderNodeListProps = {
-  parentPath: BrowserPath;
+  path: BrowserPath<'directory'>;
 };
 
 export interface BrowserState {

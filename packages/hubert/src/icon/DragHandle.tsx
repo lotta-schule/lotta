@@ -10,6 +10,7 @@ export const DragHandle = React.memo(
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         className={clsx(styles.root, className)}
+        data-testid="drag-handle-icon"
         ref={ref}
         {...(props as any)}
       >

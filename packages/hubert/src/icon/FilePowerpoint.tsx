@@ -12,6 +12,7 @@ export const FilePowerPoint = React.memo(
         viewBox="0 0 512 677"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="file-powerpoint-icon"
         ref={ref}
         {...props}
       >

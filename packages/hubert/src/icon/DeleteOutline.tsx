@@ -12,6 +12,7 @@ export const DeleteOutline = React.memo(
         viewBox="0 0 24 24"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="delete-outline-icon"
         ref={ref}
         {...props}
       >

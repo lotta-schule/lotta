@@ -12,6 +12,7 @@ export const CloudUpload = React.memo(
         viewBox="0 0 24 24"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="cloud-upload-icon"
         ref={ref}
         {...props}
       >

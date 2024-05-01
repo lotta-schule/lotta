@@ -12,6 +12,7 @@ export const Check = React.memo(
         viewBox="0 0 24 24"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="check-icon"
         ref={ref}
         {...props}
       >

@@ -1,6 +1,6 @@
 import { BrowserNode, BrowserPath } from 'browser';
 
-export const browserNodes: BrowserNode[] = [
+export const browserNodes = [
   {
     id: '1',
     name: 'folder 1',
@@ -29,28 +29,77 @@ export const browserNodes: BrowserNode[] = [
   { id: '20', name: 'graph-one.xlsx', type: 'file', parent: '13', meta: {} },
   { id: '21', name: 'graph-two.xlsx', type: 'file', parent: '13', meta: {} },
   { id: '22', name: 'notes.txt', type: 'file', parent: '13', meta: {} },
-];
+] as const satisfies BrowserNode[];
 
-export const getPathForNode = (node: BrowserNode | 'string'): BrowserPath => {
+type BrowserNodeFixture = (typeof browserNodes)[number];
+type AnyType = 'directory' | 'file';
+type BrowserNodeFixtureId<T extends AnyType = AnyType> = Extract<
+  BrowserNodeFixture,
+  { type: T }
+>['id'];
+type NodeOrNodeId<
+  T extends 'directory' | 'any' = 'any',
+  G extends AnyType = T extends 'directory' ? 'directory' : AnyType,
+> = BrowserNode<G> | BrowserNodeFixtureId<G>;
+type GetNodeType<T extends NodeOrNodeId> =
+  T extends BrowserNode<infer G>
+    ? G
+    : T extends BrowserNodeFixtureId
+      ? GetNodeFixtureIdType<T>
+      : never;
+type GetNodeFixtureIdType<
+  ID extends BrowserNodeFixtureId,
+  G extends AnyType = Extract<BrowserNodeFixture, { id: ID }>['type'],
+> = G extends 'directory' ? 'directory' : AnyType;
+
+type Node<T extends BrowserNodeFixtureId> = Extract<
+  BrowserNodeFixture,
+  { id: T }
+>;
+export const getNode = <ID extends BrowserNodeFixtureId>(id: ID): Node<ID> =>
+  browserNodes.find((n) => n.id === id)! as Node<ID>;
+
+export const getChildNodes = <T extends NodeOrNodeId<'directory'> | null>(
+  node: T
+): BrowserNode[] =>
+  browserNodes.filter(
+    (n) => n.parent === (typeof node === 'string' ? node : node?.id ?? null)
+  ) as any;
+
+export const getParentNode = <T extends NodeOrNodeId>(
+  node: T
+): BrowserNode<'directory'> | null => {
+  const id = typeof node === 'string' ? node : node.id;
+  const parent = browserNodes.find((n) => n.id === id)?.parent;
+  return parent === null
+    ? null
+    : (browserNodes.find((n) => n.id === parent) as BrowserNode<'directory'>);
+};
+
+export const getPathForNode = <T extends NodeOrNodeId>(
+  node: T
+): BrowserPath<GetNodeType<T>> => {
   const path: BrowserPath = [];
-  let current =
+  let current: any =
     typeof node === 'string' ? browserNodes.find((n) => n.id === node)! : node;
-  if (!current) {
+  if (!current || typeof current === 'string') {
     throw new Error('Node not found!');
   }
   while (current) {
     path.unshift(current);
     const id = current.id;
-    const parent = current.parent;
+    const parent: string | null = current.parent;
     if (parent === null) {
       break;
     }
-    current = browserNodes.find((n) => n.id === parent)!;
+    current = browserNodes.find(
+      (n) => n.id === parent
+    )! as BrowserNode<'directory'>;
     if (current === undefined) {
       throw new Error(
         `Parent not found for node #${id} (#${parent} does not exist)`
       );
     }
   }
-  return path;
+  return path as BrowserPath as any;
 };

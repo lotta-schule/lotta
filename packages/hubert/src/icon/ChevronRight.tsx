@@ -12,6 +12,7 @@ export const ChevronRight = React.memo(
         viewBox="0 0 24 24"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="chevron-right-icon"
         ref={ref}
         {...props}
       >

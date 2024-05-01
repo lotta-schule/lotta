@@ -7,10 +7,11 @@ import {
   TestBrowserWrapperProps,
 } from '../test-utils';
 import { NodeList, NodeListProps } from './NodeList';
+import { isDirectoryNode } from './utils';
 import userEvent from '@testing-library/user-event';
 
 const defaultPath = fixtures.getPathForNode('8');
-const defaultNodes = fixtures.browserNodes.filter((n) => n.parent === '8');
+const defaultNodes = fixtures.getChildNodes('8');
 
 const WrappedNodeList = ({
   path = defaultPath,
@@ -36,27 +37,41 @@ describe('NodeList component', () => {
   it('scrolls into view when path length matches currentPath length', () => {
     render(<WrappedNodeList />);
     expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({
-      inline: 'end',
-      block: 'nearest',
+      inline: 'start',
       behavior: 'smooth',
     });
   });
 
   describe('keyboard navigation', () => {
     describe('down arrow', () => {
+      it('should keep selection when first entry is selected', async () => {
+        const user = userEvent.setup();
+        const onSelect = vi.fn();
+        render(
+          <WrappedNodeList
+            selected={[defaultNodes.at(-1)!]}
+            onSelect={onSelect}
+          />
+        );
+
+        await user.keyboard('{arrowdown}');
+
+        expect(onSelect).not.toHaveBeenCalled();
+      });
+
       it('should select the next item if there is one', async () => {
         const user = userEvent.setup();
         const onSelect = vi.fn();
         const screen = render(
           <WrappedNodeList
-            selected={[defaultNodes.at(-2)]}
+            selected={[defaultNodes.at(-2)!]}
             onSelect={onSelect}
           />
         );
 
         expect(
           screen.getByRole('option', { selected: true })
-        ).toHaveTextContent(defaultNodes.at(-2).name);
+        ).toHaveTextContent(defaultNodes.at(-2)!.name);
 
         await user.keyboard('{arrowdown}');
 
@@ -70,7 +85,7 @@ describe('NodeList component', () => {
         const screen = render(
           <WrappedNodeList
             currentPath={fixtures.getPathForNode('11')}
-            selected={[defaultNodes.at(1)]}
+            selected={[defaultNodes.at(1)!]}
             onSelect={onSelect}
             onNavigate={onNavigate}
           />
@@ -78,7 +93,7 @@ describe('NodeList component', () => {
 
         expect(
           screen.getByRole('option', { selected: true })
-        ).toHaveTextContent(defaultNodes.at(1).name);
+        ).toHaveTextContent(defaultNodes.at(1)!.name);
 
         await user.keyboard('{Shift>}{arrowdown}{/Shift}');
 
@@ -91,20 +106,35 @@ describe('NodeList component', () => {
     });
 
     describe('keyboard up', () => {
+      it('should keep selection when last entry is selected', async () => {
+        const user = userEvent.setup();
+        const onSelect = vi.fn();
+        render(
+          <WrappedNodeList
+            selected={[defaultNodes.at(0)!]}
+            onSelect={onSelect}
+          />
+        );
+
+        await user.keyboard('{arrowup}');
+
+        expect(onSelect).not.toHaveBeenCalled();
+      });
+
       it('should select the next item if there is one', async () => {
         const user = userEvent.setup();
         const onSelect = vi.fn();
         const screen = render(
           <WrappedNodeList
             nodes={defaultNodes}
-            selected={[defaultNodes.at(-2)]}
+            selected={[defaultNodes.at(-2)!]}
             onSelect={onSelect}
           />
         );
 
         expect(
           screen.getByRole('option', { selected: true })
-        ).toHaveTextContent(defaultNodes.at(-2).name);
+        ).toHaveTextContent(defaultNodes.at(-2)!.name);
 
         await user.keyboard('{arrowup}');
 
@@ -116,14 +146,14 @@ describe('NodeList component', () => {
         const onSelect = vi.fn();
         const screen = render(
           <WrappedNodeList
-            selected={[defaultNodes.at(-2)]}
+            selected={[defaultNodes.at(-2)!]}
             onSelect={onSelect}
           />
         );
 
         expect(
           screen.getByRole('option', { selected: true })
-        ).toHaveTextContent(defaultNodes.at(-2).name);
+        ).toHaveTextContent(defaultNodes.at(-2)!.name);
 
         await user.keyboard('{Shift>}{arrowup}{/Shift}');
 
@@ -141,7 +171,7 @@ describe('NodeList component', () => {
         const onSelect = vi.fn();
         render(
           <WrappedNodeList
-            selected={[defaultNodes.at(0)]}
+            selected={[defaultNodes.at(0)!]}
             path={defaultPath}
             currentPath={defaultPath}
             onNavigate={onNavigate}
@@ -158,30 +188,85 @@ describe('NodeList component', () => {
     describe('keyboard right', () => {
       it('should navigate into the selected directory', async () => {
         const user = userEvent.setup();
-        const targetNode = defaultNodes.at(0);
-        const parentNode = fixtures.browserNodes.find(
-          (n) => n.id === targetNode.parent
-        )!;
-        const parentNodes = fixtures.browserNodes.filter(
-          (n) => n.parent === parentNode.parent
+        const targetNode = defaultNodes.at(0)!;
+
+        const parentNode = fixtures.getParentNode(targetNode)!;
+
+        const parentNodeSibblings = fixtures.getChildNodes(
+          fixtures.getParentNode(parentNode)
         );
-        const parentIndex = parentNodes.findIndex(
+        const parentIndex = parentNodeSibblings.findIndex(
           (n) => n.id === parentNode.id
         );
-        const currentDirectories = parentNodes.filter(
-          (n) => n.type === 'directory'
-        );
+        const currentDirectories = parentNodeSibblings.filter(isDirectoryNode);
         const onNavigate = vi.fn();
+        const onSelect = vi.fn();
+        const selected = currentDirectories.slice(0, parentIndex + 1);
+
         render(
           <WrappedNodeList
-            selected={currentDirectories.slice(0, parentIndex + 1)}
+            selected={selected}
             onNavigate={onNavigate}
+            onSelect={onSelect}
           />
         );
 
         await user.keyboard('{arrowright}');
 
-        expect(onNavigate).toHaveBeenCalledWith([...defaultPath, targetNode]);
+        expect(onSelect).toHaveBeenCalledWith([targetNode]);
+        expect(onNavigate).toHaveBeenCalledWith([...defaultPath]);
+      });
+    });
+
+    describe('mouse', () => {
+      it('should also select a range if ctrl/cmd is down when next item is clicked', async () => {
+        const user = userEvent.setup();
+        const onSelect = vi.fn();
+        const screen = render(
+          <WrappedNodeList
+            nodes={defaultNodes}
+            selected={[defaultNodes.at(1)!]}
+            onSelect={onSelect}
+          />
+        );
+
+        const nextNodeToSelect = defaultNodes.at(4)!;
+
+        await user.keyboard('{meta>}');
+        await user.click(
+          screen.getByRole('option', { name: nextNodeToSelect.name })
+        );
+
+        expect(onSelect).toHaveBeenCalledWith([
+          defaultNodes.at(1),
+          defaultNodes.at(4),
+        ]);
+      });
+
+      it('should select a range if shift is down when next item is clicked', async () => {
+        const user = userEvent.setup();
+        const onSelect = vi.fn();
+        const screen = render(
+          <WrappedNodeList
+            nodes={defaultNodes}
+            selected={[defaultNodes.at(1)!]}
+            onSelect={onSelect}
+          />
+        );
+
+        const nextNodeToSelect = defaultNodes.at(4)!;
+
+        await user.keyboard('{shift>}');
+        await user.click(
+          screen.getByRole('option', { name: nextNodeToSelect.name })
+        );
+
+        expect(onSelect).toHaveBeenCalledWith([
+          defaultNodes.at(1),
+          defaultNodes.at(2),
+          defaultNodes.at(3),
+          defaultNodes.at(4),
+        ]);
       });
     });
   });

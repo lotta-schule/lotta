@@ -12,6 +12,7 @@ export const Copy = React.memo(
         viewBox="0 -960 960 960"
         aria-hidden="true"
         className={clsx(styles.root, className)}
+        data-testid="copy-icon"
         ref={ref}
         {...props}
       >

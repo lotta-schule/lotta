@@ -19,14 +19,12 @@ export const Explorer = React.memo(({ className }: ExplorerProps) => {
   } = useBrowserState();
   return (
     <div className={clsx(styles.root, className)}>
-      {(!isMobile || currentPath.length === 0) && (
-        <RenderNodeList parentPath={[]} />
-      )}
+      {(!isMobile || currentPath.length === 0) && <RenderNodeList path={[]} />}
       {currentPath
         .map((currentNode, i) => (
           <RenderNodeList
             key={currentNode.parent}
-            parentPath={currentPath.slice(0, i + 1)}
+            path={currentPath.slice(0, i + 1)}
           />
         ))
         .filter(

@@ -108,6 +108,7 @@ export const NodeListItem = React.memo(
           })}
           role="option"
           aria-selected={isSelected}
+          aria-disabled={isDisabled}
           aria-expanded={isOpen}
           title={node.name}
           key={node.id}
