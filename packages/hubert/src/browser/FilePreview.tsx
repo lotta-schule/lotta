@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
-import { Copy, Delete, Download, Edit, Folder, FolderOpen } from '../icon';
+import { Delete, Download, Edit, Folder, FolderOpen, OpenWith } from '../icon';
 import { List, ListItem } from '../list';
 import { Button } from '../button';
 import { isDirectoryNode, isFileNode } from './utils';
@@ -143,7 +143,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
                   onClick={() => onAction('rename')}
                 />
                 <Button
-                  icon={<Copy />}
+                  icon={<OpenWith />}
                   title={'verschieben'}
                   onClick={() => onAction('move')}
                 />
@@ -180,7 +180,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
             <div className={styles.nodeNameWrapper}>
               <div className={styles.actionBar}>
                 <Button
-                  icon={<Copy />}
+                  icon={<OpenWith />}
                   title={'verschieben'}
                   onClick={() => onAction('move')}
                 />

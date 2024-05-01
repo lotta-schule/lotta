@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Copy, Delete, Download, Edit } from '../icon';
+import { Delete, Download, Edit, OpenWith } from '../icon';
 import { Item } from '../menu';
 import { BrowserPath, useBrowserState } from './BrowserStateContext';
 import { isDirectoryNode, isFileNode } from './utils';
@@ -41,7 +41,7 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
       ),
       moveNode && (
         <Item key={'move'} textValue={'Verschieben'}>
-          <Copy />
+          <OpenWith />
           Verschieben
         </Item>
       ),

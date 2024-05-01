@@ -52,7 +52,7 @@ export const CreateNewDirectoryDialog = React.memo(
               onAction={async () => {
                 await createDirectory?.(parentNode, name);
               }}
-              onComplete={() => setTimeout(onRequestClose, 1000)}
+              onComplete={() => onRequestClose()}
             >
               Ordner erstellen
             </LoadingButton>

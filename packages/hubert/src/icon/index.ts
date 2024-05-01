@@ -24,3 +24,4 @@ export * from './Home';
 export * from './KeyboardArrowLeft';
 export * from './KeyboardArrowRight';
 export * from './MoreVert';
+export * from './OpenWith';

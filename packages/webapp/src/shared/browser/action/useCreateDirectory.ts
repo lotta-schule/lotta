@@ -43,7 +43,7 @@ export const useCreateDirectory = () => {
         },
         update: (client, { data }) => {
           if (data) {
-            updateCache(client, parentNode?.parent ?? null, data.directory);
+            updateCache(client, parentNode?.id ?? null, data.directory);
           }
         },
       });

@@ -134,7 +134,7 @@ export const NodeListItem = React.memo(
               },
             };
           }}
-          onClick={isDisabled ? undefined : (e) => onClick?.(e)}
+          onClick={isDisabled || isRenaming ? undefined : (e) => onClick?.(e)}
         >
           <div className={styles.fileIcon}>{nodeIcon}</div>
           <div className={styles.fileName}>
