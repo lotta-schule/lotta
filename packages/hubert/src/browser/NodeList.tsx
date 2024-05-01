@@ -136,6 +136,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
 
         if (targetNode) {
           onSelect?.([targetNode]);
+          onNavigate?.(path.slice(0, -1));
         }
       }
 
