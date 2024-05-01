@@ -309,24 +309,23 @@ describe('shared/article/module/form/FormElement', () => {
       await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
       await waitFor(() => expect(didCallFiles).toEqual(true));
       await waitFor(() =>
-        expect(screen.getByRole('listitem', { name: /logos/i })).toBeVisible()
+        expect(screen.getByRole('option', { name: /logos/i })).toBeVisible()
       );
-      await fireEvent.click(screen.getByRole('listitem', { name: /logos/i }));
+      await fireEvent.click(screen.getByRole('option', { name: /logos/i }));
       await waitFor(() =>
         expect(
-          screen.getByRole('listitem', { name: /dateiname\.jpg/i })
+          screen.getByRole('option', { name: /dateiname\.jpg/i })
         ).toBeVisible()
       );
       await fireEvent.click(
-        screen.getByRole('listitem', { name: /dateiname\.jpg/i })
+        screen.getByRole('option', { name: /dateiname\.jpg/i })
       );
       await fireEvent.click(screen.getByRole('button', { name: /auswählen/ }));
       expect(setValueFn).toHaveBeenCalledWith(
         'lotta-file-id://' +
-          '{"id":"123","name":"Dateiname.jpg","type":"file","parent":"8743",' +
-          '"meta":{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15",' +
+          '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15",' +
           '"filename":"Dateiname.jpg","filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
-          '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}}'
+          '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}'
       );
     });
 
