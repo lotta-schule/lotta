@@ -36,8 +36,6 @@ export const MessagingView = React.memo(() => {
   const [createMessageDestination, setCreateMessageDestination] =
     React.useState<NewMessageDestination | null>(null);
 
-  const [isSidebarActive, setIsSidebarActive] = React.useState(true);
-
   const onMessageSent = React.useCallback((msg: MessageModel) => {
     if (msg.conversation) {
       setSelectedConversation(msg.conversation);
@@ -47,26 +45,20 @@ export const MessagingView = React.memo(() => {
   React.useEffect(() => {
     if (createMessageDestination) {
       setSelectedConversation(null);
-      setIsSidebarActive(false);
     }
   }, [createMessageDestination]);
 
   React.useEffect(() => {
     if (selectedConversation) {
       setCreateMessageDestination(null);
-      setIsSidebarActive(false);
     }
   }, [selectedConversation]);
 
   React.useEffect(() => {
-    if (
-      isSidebarActive &&
-      isMobile &&
-      document.activeElement?.nodeName === 'TEXTAREA'
-    ) {
+    if (isMobile && document.activeElement?.nodeName === 'TEXTAREA') {
       (document.activeElement as HTMLTextAreaElement).blur();
     }
-  }, [isSidebarActive, isMobile]);
+  }, [isMobile]);
 
   if (isLoading) {
     return (
@@ -111,6 +103,7 @@ export const MessagingView = React.memo(() => {
                 } else {
                   setCreateMessageDestination(destination);
                 }
+                closeSidebar({ force: true });
               }}
             />
 
