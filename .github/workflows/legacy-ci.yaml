@@ -8,6 +8,10 @@ on:
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   lint:
     name: Lint Code
@@ -215,7 +219,7 @@ jobs:
           docker build --build-arg IMAGE_NAME -t $base_image .
           echo "base-image=$base_image" >> $GITHUB_OUTPUT
           echo "Base image $base_image written to github output"
-        working-directory: ${{ inputs.working-directory }}
+        working-directory: packages/webapp
 
       - name: docker login
         uses: docker/login-action@v1.10.0
@@ -223,7 +227,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          working-directory: packages/webapp
 
       - name: push image to registry as latest
         run: |
@@ -232,4 +235,4 @@ jobs:
           docker tag ${{ steps.build.outputs.base-image }} $IMAGE_NAME:$tag
           docker push $IMAGE_NAME:$tag
     env:
-      IMAGE_NAME: lotta-schule/web
+      IMAGE_NAME: ghcr.io/lotta-schule/web
