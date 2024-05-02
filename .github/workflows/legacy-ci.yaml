@@ -1,9 +1,10 @@
 ---
-name: 'CI'
+name: 'CI (Legacy, <= 4.2.x)'
 on:
   push:
-    branches-ignore:
-      - release/4.2.*
+    branches:
+      - release/*
+
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
@@ -18,7 +19,6 @@ jobs:
           fetch-depth: 0
 
       - name: Setup main branch for reference
-        if: ${{ github.ref_name != 'main' }}
         run: git branch --track main origin/main
 
       - name: Setup NX
@@ -49,7 +49,6 @@ jobs:
           fetch-depth: 0
 
       - name: Setup main branch for reference
-        if: ${{ github.ref_name != 'main' }}
         run: git branch --track main origin/main
 
       - name: Setup NX
@@ -72,33 +71,6 @@ jobs:
           npx playwright install --with-deps chromium
           npm run nx affected -- -t e2e --configuration=ci
 
-      - name: Upload Tests for storybook-addon-theme
-        uses: codecov/codecov-action@v4
-        with:
-          working-directory: packages/storybook-addon-theme/
-          directory: coverage/
-          flags: storybook-addon-theme
-          token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
-
-      - name: Upload Tests for hubert
-        uses: codecov/codecov-action@v4
-        with:
-          working-directory: packages/hubert/
-          directory: coverage/
-          flags: hubert
-          token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
-
-      - name: Upload Tests for Webapp
-        uses: codecov/codecov-action@v4
-        with:
-          working-directory: packages/webapp/
-          directory: coverage/
-          flags: webapp
-          token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
-
   check-build:
     name: Check the projects build
     runs-on: ubuntu-latest
@@ -109,7 +81,6 @@ jobs:
           fetch-depth: 0
 
       - name: Setup main branch for reference
-        if: ${{ github.ref_name != 'main' }}
         run: git branch --track main origin/main
 
       - name: Setup NX
@@ -126,38 +97,6 @@ jobs:
 
       - name: Run build task
         run: npm run nx affected -- -t build
-
-  storybook-chromatic:
-    name: Storybook visual testing on Chromatic
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install npm dependencies
-        run: npm install --include=dev
-
-      - name: Build storybook
-        run: NODE_ENV=test npm run nx build storybook-hubert
-
-      - name: Send to Chromatic
-        uses: chromaui/action@v1
-        with:
-          workingDir: './packages/storybook-hubert'
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          skip: 'dependabot/**'
-          autoAcceptChanges: 'main'
-          storybookBuildDir: storybook-static
-        env:
-          NODE_ENV: test
 
   update-package-versions:
     name: Update the package.json versions and create commit
@@ -180,7 +119,6 @@ jobs:
           git config user.name Lottaautomatica
 
       - name: Setup main branch for reference
-        if: ${{ github.ref_name != 'main' }}
         run: git branch --track main origin/main
 
       - name: Setup NX
@@ -200,20 +138,11 @@ jobs:
         # that are to be deployed as npm packages
         run: npm run nx run-many -- -t build
 
-      - name: Create commit and tag alpha version
-        if: ${{ github.ref_name == 'main' }}
-        run: |
-          npx lerna version --conventional-prerelease \
-            --preid alpha --no-changelog -y \
-            --git-tag-command 'echo 0' # We do not want it to really tag
-
       - name: Create commit and tag version
-        if: ${{ startsWith(github.ref_name, 'release/') }}
         run: |
           npx lerna version -y --conventional-commits --conventional-graduate
 
       - name: Output new commit sha
-        if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
         id: updated-sha
         run: |
           sha=$(git rev-parse HEAD)
@@ -221,57 +150,86 @@ jobs:
           echo "Saved new commit SHA $sha to output"
 
   publish-npm-packages:
-    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
     needs:
       - update-package-versions
-    uses: ./.github/workflows/__deploy_npm_packages.yaml
-    with:
-      checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
-    secrets:
-      npm-token: ${{ secrets.NPM_TOKEN }}
-      nx-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-
-  publish-docker-image:
-    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
-    needs:
-      - update-package-versions
-      - publish-npm-packages
-    uses: ./.github/workflows/__deploy_dockerfile.yaml
-    with:
-      name: lotta-schule/web
-      tags: '["${{ needs.publish-npm-packages.outputs.version-name }}", "${{ needs.publish-npm-packages.outputs.tag-name }}", "develop"]'
-      checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
-      working-directory: packages/webapp
-    secrets:
-      password: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-storybook-page:
-    if: ${{ github.ref_name == 'main' }}
-    name: Publish Hubert Storybook as Github Page
-    needs:
-      - update-package-versions
+    name: 'Push npm packages to registry'
     runs-on: ubuntu-latest
+    outputs:
+      version-name: ${{ steps.publish.outputs.version-name }}
+      tag-name: ${{ steps.publish.outputs.tag-name }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ needs.update-package-versions.outputs.updated-sha }}
+          ref: ${{ needs.update-package-versions.outputs.updated-sha  }}
+
+      - name: Setup NX
+        uses: nrwl/nx-set-shas@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
+          registry-url: 'https://registry.npmjs.org'
           node-version: 20
           cache: 'npm'
 
       - name: Install npm dependencies
-        run: npm install --include=dev
+        run: npm ci
 
-      - name: Build storybook
-        run: npm run nx build storybook-hubert
+      - name: Run build task
+        run: npm run nx run-many -- -t build --projects=tag:deploy:npm
 
-      # Maybe think of deploying statically to S3 or so?
-      - name: 'Deploy Storybook as github page'
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Publish to npm
+        id: publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          tag='latest'
+          version=$(cat lerna.json | jq -r .version)
+          if [[ $version == *'-'* ]]; then
+            tag=$(echo $version | sed -E 's/^.*-([a-z]*).*/\1/')
+          fi
+          echo "version-name=$version" >> $GITHUB_OUTPUT
+          echo "tag-name=$tag" >> $GITHUB_OUTPUT
+          echo "Outputting version-name ($version) and tag-name ($tag) to github output"
+          lerna publish from-package --yes
+
+  publish-docker-image:
+    name: 'Publish Docker image'
+    runs-on: ubuntu-latest
+    needs:
+      - update-package-versions
+      - publish-npm-packages
+    steps:
+      - uses: actions/checkout@v4
         with:
-          folder: ./packages/storybook-hubert/storybook-static
+          fetch-depth: 2
+          ref: ${{ needs.update-package-versions.outputs.updated-sha }}
+
+      - name: Build docker image
+        id: build
+        run: |
+          tag=$(echo "${{ needs.update-package-versions.outputs.updated-sha }}")
+          base_image=$IMAGE_NAME:$tag
+          docker build --build-arg IMAGE_NAME -t $base_image .
+          echo "base-image=$base_image" >> $GITHUB_OUTPUT
+          echo "Base image $base_image written to github output"
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: docker login
+        uses: docker/login-action@v1.10.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: packages/webapp
+
+      - name: push image to registry as latest
+        run: |
+          tag=$(echo "${{ needs.publish-npm-packages.outputs.version-name }}")
+          docker push ${{ steps.build.outputs.base-image }}
+          docker tag ${{ steps.build.outputs.base-image }} $IMAGE_NAME:$tag
+          docker push $IMAGE_NAME:$tag
+    env:
+      IMAGE_NAME: lotta-schule/web

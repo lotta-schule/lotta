@@ -3,6 +3,7 @@
   "name": "@lotta-schule/webapp",
   "version": "4.2.6",
   "description": "Lotta Schule Webapp",
+  "private": true,
   "scripts": {
     "dev": "next dev",
     "start:prod": "next start",

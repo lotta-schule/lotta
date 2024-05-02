@@ -64,7 +64,7 @@ jobs:
           if [[ $version == *'-'* ]]; then
             tag=$(echo $version | sed -E 's/^.*-([a-z]*).*/\1/')
           fi
-          npm -w @lotta-schule/theme publish --tag $tag
+          # npm -w @lotta-schule/theme publish --tag $tag
           npm -w @lotta-schule/hubert publish --tag $tag
           npm -w @lotta-schule/storybook-addon-theme publish --tag $tag
           echo "version-name=$version" >> $GITHUB_OUTPUT
