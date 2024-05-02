@@ -1,1 +1,13 @@
 blank_issues_enabled: true
+contact_links:
+  - name: GitHub Discussions
+    url: https://github.com/lotta-schule/web/discussions
+    about: |
+      Für unklare Anfragen, Fragen und allgemeine Ideen und Vorschläge, die vermutlich
+      noch etwas ausgearbeitet werden sollten.
+  - name: Security
+    url: https://github.com/lotta-schule/web/security
+    about: |
+      Für Sicherheitslücken, die du gefunden hast, die nicht öffentlich diskutiert werden
+      sollten. Bitte melde Sicherheitslücken direkt an uns, wir nehmen Sicherheit sehr ernst
+      und sind sehr dankbar für Hinweise.
