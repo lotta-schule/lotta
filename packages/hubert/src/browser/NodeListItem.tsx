@@ -59,7 +59,7 @@ export const NodeListItem = React.memo(
       setIsContextMenuOpen(false);
       currentContextMenuCloseFn = null;
     }, []);
-    const menuProps = useNodeMenuProps(nodePath);
+    const menuProps = useNodeMenuProps(isSelected ? selected : nodePath);
 
     const isOpen = React.useMemo(
       () =>
