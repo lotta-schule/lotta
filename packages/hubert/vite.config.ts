@@ -58,7 +58,7 @@ export default defineConfig({
       clean: true,
       reportsDirectory: 'coverage',
       provider: 'istanbul',
-      reporter: ['default', 'json'],
+      reporter: ['json'],
       exclude: ['test-utils.tsx', 'test.setup.ts', 'test-fixtures.ts'],
     },
   },

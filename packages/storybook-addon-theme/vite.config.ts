@@ -62,7 +62,7 @@ export default defineConfig({
       clean: true,
       reportsDirectory: 'coverage',
       provider: 'istanbul',
-      reporter: ['default', 'json'],
+      reporter: ['json'],
     },
   },
 });
