@@ -61,7 +61,7 @@ describe('browser/Toolbar', () => {
       );
 
       await waitFor(() => {
-        expect(canEdit).toHaveBeenCalledWith(defaultPath.at(-1));
+        expect(canEdit).toHaveBeenCalledWith(defaultPath);
       });
 
       expect(screen.queryByTitle('Ordner erstellen')).toBeNull();
@@ -76,6 +76,7 @@ describe('browser/Toolbar', () => {
       hasErrors: false,
       isUploading: false,
       isSuccess: false,
+      byState: { uploading: [], pending: [], done: [], error: [] },
     };
 
     describe('Upload new File', () => {
@@ -128,34 +129,41 @@ describe('browser/Toolbar', () => {
       });
 
       it('should show the current number of files uploading', async () => {
+        const uploadClientUploads = [
+          {
+            status: 'uploading',
+            file: new File([''], 'test.txt', { type: 'text/plain' }),
+            error: null,
+            startTime: Date.now(),
+            progress: 5,
+            transferSpeed: 0,
+            transferedBytes: 0,
+            parentNode: defaultPath.at(-1)!,
+          },
+          {
+            status: 'uploading',
+            file: new File([''], 'test.txt', { type: 'text/plain' }),
+            error: null,
+            startTime: Date.now(),
+            progress: 15,
+            transferSpeed: 0,
+            transferedBytes: 0,
+            parentNode: defaultPath.at(-1)!,
+          },
+        ] as Upload[];
         const uploadClient = {
-          currentUploads: [
-            {
-              status: 'uploading',
-              file: new File([''], 'test.txt', { type: 'text/plain' }),
-              error: null,
-              startTime: Date.now(),
-              progress: 5,
-              transferSpeed: 0,
-              transferedBytes: 0,
-              parentNode: defaultPath.at(-1)!,
-            },
-            {
-              status: 'uploading',
-              file: new File([''], 'test.txt', { type: 'text/plain' }),
-              error: null,
-              startTime: Date.now(),
-              progress: 15,
-              transferSpeed: 0,
-              transferedBytes: 0,
-              parentNode: defaultPath.at(-1)!,
-            },
-          ] as Upload[],
+          currentUploads: uploadClientUploads,
           addFile: vi.fn(),
           currentProgress: 10,
           hasErrors: false,
           isUploading: true,
           isSuccess: false,
+          byState: {
+            uploading: uploadClientUploads,
+            pending: [],
+            done: [],
+            error: [],
+          },
         };
         const screen = render(<WrappedToolbar uploadClient={uploadClient} />);
         expect(

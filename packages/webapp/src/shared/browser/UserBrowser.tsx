@@ -9,7 +9,7 @@ import {
   isFileNode,
 } from '@lotta-schule/hubert';
 import { DirectoryModel, FileModel } from 'model';
-import { File } from 'util/model';
+import { File, User } from 'util/model';
 import { useCurrentUser } from 'util/user';
 import { FileSize } from '@lotta-schule/hubert';
 import { useServerData } from 'shared/ServerDataContext';
@@ -51,15 +51,15 @@ export const UserBrowser = React.memo(
 
     const [fetchDirectoriesAndFiles] =
       useLazyQuery<GetDirectoriesAndFilesQueryResult>(
-        GetDirectoriesAndFilesQuery,
-        { fetchPolicy: 'network-only' }
+        GetDirectoriesAndFilesQuery
       );
 
     const onRequestChildNodes: BrowserProps['onRequestChildNodes'] =
       React.useCallback(
-        async (node) => {
+        async (node, options) => {
           const result = await fetchDirectoriesAndFiles({
             variables: { parentDirectoryId: node?.id ?? null },
+            fetchPolicy: options?.refetch ? 'network-only' : 'cache-first',
           });
 
           if (result.error) {
@@ -72,11 +72,18 @@ export const UserBrowser = React.memo(
       );
 
     const canEdit: BrowserProps['canEdit'] = React.useMemo(
-      () => (node) => {
+      () => (nodePath) => {
+        const node = nodePath?.at(-1);
         if (isDirectoryNode(node)) {
           return File.canEditDirectory(node.meta, currentUser) || false;
+        } else if (isFileNode(node)) {
+          const parent = nodePath.at(-2) as BrowserNode<'directory'> | null;
+          if (!parent) {
+            return User.isAdmin(currentUser);
+          }
+          return File.canEditDirectory(parent.meta, currentUser) || false;
         }
-        return true;
+        return User.isAdmin(currentUser);
       },
       []
     );

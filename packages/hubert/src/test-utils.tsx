@@ -64,7 +64,15 @@ export const TestBrowserWrapper = ({
   setCurrentAction = vi.fn(),
   currentAction = null,
   canEdit,
-  uploadClient,
+  uploadClient = {
+    addFile: vi.fn(),
+    byState: { uploading: [], pending: [], done: [], error: [] },
+    hasErrors: false,
+    isSuccess: false,
+    isUploading: false,
+    currentProgress: null,
+    currentUploads: [],
+  },
 }: TestBrowserWrapperProps) => {
   const [nodes, setNodes] = React.useState<BrowserNode[]>(defaultNodes);
   const [isFilePreviewVisible, setIsFilePreviewVisible] = React.useState(false);

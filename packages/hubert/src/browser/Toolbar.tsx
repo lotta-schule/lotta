@@ -51,11 +51,11 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
       return false;
     }
 
-    return canEdit(currentPath.at(-1)!);
+    return canEdit(currentPath);
   }, [currentPath, canEdit]);
 
   const isDirectoryCreationAllowed = React.useMemo(() => {
-    return canEdit(currentPath.at(-1) ?? null);
+    return canEdit(currentPath);
   }, [currentPath, canEdit]);
 
   return (

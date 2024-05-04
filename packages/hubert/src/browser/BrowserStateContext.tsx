@@ -43,15 +43,16 @@ export type RenderNodeListProps = {
 export interface BrowserState {
   mode: BrowserMode;
   currentPath: BrowserPath<'directory'>;
-  selected: BrowserNode[];
+  selected: BrowserPath[];
   onNavigate: (path: BrowserPath<'directory'>) => void;
-  onSelect: (node: BrowserNode[]) => void;
+  onSelect: (node: BrowserPath[]) => void;
 
   renderNodeList: React.ComponentType<RenderNodeListProps>;
 
   onRequestNodeIcon?: (node: BrowserNode) => React.ReactNode;
   onRequestChildNodes: (
-    node: BrowserNode<'directory'> | null
+    node: BrowserNode<'directory'> | null,
+    options?: { refetch?: boolean }
   ) => Promise<BrowserNode[]>;
 
   isFilePreviewVisible: boolean;
@@ -59,7 +60,7 @@ export interface BrowserState {
   currentAction: BrowserAction | null;
   setCurrentAction: (action: BrowserAction | null) => void;
 
-  canEdit?: (node: BrowserNode | null) => boolean;
+  canEdit?: (node: BrowserPath) => boolean;
   isNodeDisabled?: (node: BrowserNode) => boolean;
   getDownloadUrl?: (node: BrowserNode) => string | null | undefined;
   getPreviewUrl?: (node: BrowserNode) => string | null | undefined;
@@ -107,7 +108,7 @@ export const BrowserStateProvider = React.memo(
   }: BrowserStateProviderProps) => {
     const [currentPath, setCurrentPath] =
       React.useState<BrowserNode<'directory'>[]>(defaultPath);
-    const [selected, setSelected] = React.useState<BrowserNode[]>([]);
+    const [selected, setSelected] = React.useState<BrowserPath[]>([]);
     const [currentAction, setCurrentAction] =
       React.useState<BrowserState['currentAction']>(null);
     const [isFilePreviewVisible, setIsFilePreviewVisible] =
@@ -115,7 +116,7 @@ export const BrowserStateProvider = React.memo(
     const uploadClient = useUploadClient();
 
     React.useEffect(() => {
-      onSelect?.(selected);
+      onSelect?.(selected.map((n) => n.at(-1)!));
     }, [onSelect, selected]);
 
     return (

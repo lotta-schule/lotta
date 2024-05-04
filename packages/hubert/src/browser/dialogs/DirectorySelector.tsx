@@ -4,6 +4,7 @@ import { Item, Menu } from '../../menu';
 import { Toolbar } from '../../layout/Toolbar';
 import { KeyboardArrowLeft } from '../../icon';
 import { isDirectoryNode } from '../utils';
+import { LinearProgress } from '../../progress';
 
 export type DirectorySelector = {
   getNodesForParent(
@@ -29,50 +30,64 @@ export const DirectorySelector = React.memo(
     const [childNodes, setChildNodes] = React.useState<
       BrowserNode<'directory'>[]
     >([]);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     React.useEffect(() => {
-      getNodesForParent(currentNode).then((newNodes) => {
-        setChildNodes(
-          newNodes.filter(
-            (n) => isDirectoryNode(n) && (filter?.(n) ?? true)
-          ) as BrowserNode<'directory'>[]
-        );
-      });
+      setIsLoading(true);
+      getNodesForParent(currentNode)
+        .then((newNodes) => {
+          setChildNodes(
+            newNodes.filter(
+              (n) => isDirectoryNode(n) && (filter?.(n) ?? true)
+            ) as BrowserNode<'directory'>[]
+          );
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }, [currentNode, getNodesForParent, filter]);
 
     return (
       <div>
         <Toolbar>{`/${value.map((c) => c.name).join('/')}`}</Toolbar>
-        <Menu
-          style={{ width: '100%' }}
-          title={currentNode?.name ?? '/'}
-          onAction={(k) => {
-            if (k === 'parent') {
-              onChange(value?.slice(0, -1) ?? []);
-            } else {
-              const childNode = childNodes.find((d) => d.id === k);
-              if (childNode) {
-                onChange([...value, childNode]);
+        {isLoading && (
+          <LinearProgress
+            aria-label="Verzeichnis wird geladen"
+            isIndeterminate
+          />
+        )}
+        {!isLoading && (
+          <Menu
+            style={{ width: '100%' }}
+            title={currentNode?.name ?? '/'}
+            onAction={(k) => {
+              if (k === 'parent') {
+                onChange(value?.slice(0, -1) ?? []);
+              } else {
+                const childNode = childNodes.find((d) => d.id === k);
+                if (childNode) {
+                  onChange([...value, childNode]);
+                }
               }
-            }
-          }}
-        >
-          {value.length > 0 &&
-            ((
-              <Item key={'parent'} textValue={'..'}>
-                <KeyboardArrowLeft />
-                <span>
-                  ../
-                  {parentNode?.name ?? 'Wurzelverzeichnis'}
-                </span>
+            }}
+          >
+            {value.length > 0 &&
+              ((
+                <Item key={'parent'} textValue={'..'}>
+                  <KeyboardArrowLeft />
+                  <span>
+                    ../
+                    {parentNode?.name ?? 'Wurzelverzeichnis'}
+                  </span>
+                </Item>
+              ) as any)}
+            {childNodes.map((directory) => (
+              <Item key={directory.id} textValue={directory.id}>
+                {directory.name}
               </Item>
-            ) as any)}
-          {childNodes.map((directory) => (
-            <Item key={directory.id} textValue={directory.id}>
-              {directory.name}
-            </Item>
-          ))}
-        </Menu>
+            ))}
+          </Menu>
+        )}
       </div>
     );
   }

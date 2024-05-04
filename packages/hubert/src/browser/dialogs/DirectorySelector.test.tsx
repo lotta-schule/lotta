@@ -121,7 +121,8 @@ describe('DirectorySelector Component', () => {
         onChange={onChange}
       />
     );
-    await user.click(screen.getByText('../folder 8'));
+
+    await user.click(await screen.findByText('../folder 8'));
     await waitFor(() => expect(onChange).toHaveBeenCalledWith(parentNodePath));
   });
 });

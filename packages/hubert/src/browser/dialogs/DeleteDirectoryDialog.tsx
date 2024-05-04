@@ -43,7 +43,9 @@ export const DeleteDirectoryDialog = React.memo(() => {
           ...directoriesToDelete,
         ]);
 
-        const childNodes = await onRequestChildNodes(directory);
+        const childNodes = await onRequestChildNodes(directory, {
+          refetch: true,
+        });
 
         const [files, directories] = childNodes.reduce(
           ([files, directories], node) => {

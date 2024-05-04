@@ -243,14 +243,14 @@ describe('Browser/NodeListItem', () => {
     });
 
     it('should show a checkbox on files in "select-multiple" mode and add to selection when selected', async () => {
-      const otherNode = fixtures.getNode('20');
+      const otherNodePath = fixtures.getPathForNode('20');
       const user = userEvent.setup();
       const onSelect = vi.fn();
       const screen = render(
         <WrappedNodeListItem
           node={filePath.at(-1)!}
           mode="select-multiple"
-          selected={[otherNode]}
+          selected={[otherNodePath]}
           onSelect={onSelect}
         />
       );
@@ -259,18 +259,18 @@ describe('Browser/NodeListItem', () => {
 
       await user.click(screen.getByRole('checkbox'));
 
-      expect(onSelect).toHaveBeenCalledWith([otherNode, filePath.at(-1)!]);
+      expect(onSelect).toHaveBeenCalledWith([otherNodePath, filePath]);
     });
 
     it('should show a selected checkbox on selected files in "select-multiple" mode and remove from selection when selected', async () => {
-      const otherNode = fixtures.getNode('20');
+      const otherNodePath = fixtures.getPathForNode('20');
       const user = userEvent.setup();
       const onSelect = vi.fn();
       const screen = render(
         <WrappedNodeListItem
           node={filePath.at(-1)!}
           mode="select-multiple"
-          selected={[otherNode, filePath.at(-1)!]}
+          selected={[otherNodePath, filePath]}
           onSelect={onSelect}
           isSelected
         />
@@ -281,7 +281,7 @@ describe('Browser/NodeListItem', () => {
 
       await user.click(screen.getByRole('checkbox'));
 
-      expect(onSelect).toHaveBeenCalledWith([otherNode]);
+      expect(onSelect).toHaveBeenCalledWith([otherNodePath]);
     });
   });
 });

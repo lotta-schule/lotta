@@ -12,6 +12,7 @@ import userEvent from '@testing-library/user-event';
 
 const defaultPath = fixtures.getPathForNode('8');
 const defaultNodes = fixtures.getChildNodes('8');
+const defaultNodesPaths = defaultNodes.map((n) => fixtures.getPathForNode(n));
 
 const WrappedNodeList = ({
   path = defaultPath,
@@ -49,7 +50,7 @@ describe('NodeList component', () => {
         const onSelect = vi.fn();
         render(
           <WrappedNodeList
-            selected={[defaultNodes.at(-1)!]}
+            selected={[defaultNodesPaths.at(-1)!]}
             onSelect={onSelect}
           />
         );
@@ -64,7 +65,7 @@ describe('NodeList component', () => {
         const onSelect = vi.fn();
         const screen = render(
           <WrappedNodeList
-            selected={[defaultNodes.at(-2)!]}
+            selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
           />
         );
@@ -75,7 +76,7 @@ describe('NodeList component', () => {
 
         await user.keyboard('{arrowdown}');
 
-        expect(onSelect).toHaveBeenCalledWith([defaultNodes.at(-1)]);
+        expect(onSelect).toHaveBeenCalledWith([defaultNodesPaths.at(-1)]);
       });
 
       it('should add the next item if there is one when shift is clicked, closing a potential open sibbling directory', async () => {
@@ -85,7 +86,7 @@ describe('NodeList component', () => {
         const screen = render(
           <WrappedNodeList
             currentPath={fixtures.getPathForNode('11')}
-            selected={[defaultNodes.at(1)!]}
+            selected={[defaultNodesPaths.at(1)!]}
             onSelect={onSelect}
             onNavigate={onNavigate}
           />
@@ -99,8 +100,8 @@ describe('NodeList component', () => {
 
         expect(onNavigate).toHaveBeenCalledWith(fixtures.getPathForNode('8'));
         expect(onSelect).toHaveBeenCalledWith([
-          defaultNodes.at(1),
-          defaultNodes.at(2),
+          defaultNodesPaths.at(1),
+          defaultNodesPaths.at(2),
         ]);
       });
     });
@@ -111,7 +112,7 @@ describe('NodeList component', () => {
         const onSelect = vi.fn();
         render(
           <WrappedNodeList
-            selected={[defaultNodes.at(0)!]}
+            selected={[defaultNodesPaths.at(0)!]}
             onSelect={onSelect}
           />
         );
@@ -127,7 +128,7 @@ describe('NodeList component', () => {
         const screen = render(
           <WrappedNodeList
             nodes={defaultNodes}
-            selected={[defaultNodes.at(-2)!]}
+            selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
           />
         );
@@ -138,7 +139,7 @@ describe('NodeList component', () => {
 
         await user.keyboard('{arrowup}');
 
-        expect(onSelect).toHaveBeenCalledWith([defaultNodes.at(-3)]);
+        expect(onSelect).toHaveBeenCalledWith([defaultNodesPaths.at(-3)]);
       });
 
       it('should add the next item if there is one when shift is clicked', async () => {
@@ -146,7 +147,7 @@ describe('NodeList component', () => {
         const onSelect = vi.fn();
         const screen = render(
           <WrappedNodeList
-            selected={[defaultNodes.at(-2)!]}
+            selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
           />
         );
@@ -158,8 +159,8 @@ describe('NodeList component', () => {
         await user.keyboard('{Shift>}{arrowup}{/Shift}');
 
         expect(onSelect).toHaveBeenCalledWith([
-          defaultNodes.at(-2),
-          defaultNodes.at(-3),
+          defaultNodesPaths.at(-2),
+          defaultNodesPaths.at(-3),
         ]);
       });
     });
@@ -171,7 +172,7 @@ describe('NodeList component', () => {
         const onSelect = vi.fn();
         render(
           <WrappedNodeList
-            selected={[defaultNodes.at(0)!]}
+            selected={[defaultNodesPaths.at(0)!]}
             path={defaultPath}
             currentPath={defaultPath}
             onNavigate={onNavigate}
@@ -181,7 +182,7 @@ describe('NodeList component', () => {
 
         await user.keyboard('{arrowleft}');
 
-        expect(onSelect).toHaveBeenCalledWith([defaultPath.at(-1)!]);
+        expect(onSelect).toHaveBeenCalledWith([defaultPath]);
       });
     });
 
@@ -201,7 +202,9 @@ describe('NodeList component', () => {
         const currentDirectories = parentNodeSibblings.filter(isDirectoryNode);
         const onNavigate = vi.fn();
         const onSelect = vi.fn();
-        const selected = currentDirectories.slice(0, parentIndex + 1);
+        const selected = currentDirectories
+          .slice(0, parentIndex + 1)
+          .map((n) => fixtures.getPathForNode(n));
 
         render(
           <WrappedNodeList
@@ -213,7 +216,9 @@ describe('NodeList component', () => {
 
         await user.keyboard('{arrowright}');
 
-        expect(onSelect).toHaveBeenCalledWith([targetNode]);
+        expect(onSelect).toHaveBeenCalledWith([
+          fixtures.getPathForNode(targetNode),
+        ]);
         expect(onNavigate).toHaveBeenCalledWith([...defaultPath]);
       });
     });
@@ -226,7 +231,7 @@ describe('NodeList component', () => {
 
         await user.keyboard('{meta>}{a}');
 
-        expect(onSelect).toHaveBeenCalledWith(defaultNodes);
+        expect(onSelect).toHaveBeenCalledWith(defaultNodesPaths);
       });
     });
 
@@ -237,7 +242,7 @@ describe('NodeList component', () => {
         const screen = render(
           <WrappedNodeList
             nodes={defaultNodes}
-            selected={[defaultNodes.at(1)!]}
+            selected={[defaultNodesPaths.at(1)!]}
             onSelect={onSelect}
           />
         );
@@ -250,8 +255,8 @@ describe('NodeList component', () => {
         );
 
         expect(onSelect).toHaveBeenCalledWith([
-          defaultNodes.at(1),
-          defaultNodes.at(4),
+          defaultNodesPaths.at(1),
+          defaultNodesPaths.at(4),
         ]);
       });
 
@@ -261,7 +266,7 @@ describe('NodeList component', () => {
         const screen = render(
           <WrappedNodeList
             nodes={defaultNodes}
-            selected={[defaultNodes.at(1)!]}
+            selected={[defaultNodesPaths.at(1)!]}
             onSelect={onSelect}
           />
         );
@@ -274,10 +279,10 @@ describe('NodeList component', () => {
         );
 
         expect(onSelect).toHaveBeenCalledWith([
-          defaultNodes.at(1),
-          defaultNodes.at(2),
-          defaultNodes.at(3),
-          defaultNodes.at(4),
+          defaultNodesPaths.at(1),
+          defaultNodesPaths.at(2),
+          defaultNodesPaths.at(3),
+          defaultNodesPaths.at(4),
         ]);
       });
     });

@@ -26,6 +26,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     getMetadata,
     selected,
     onRequestNodeIcon,
+    canEdit,
   } = useBrowserState();
 
   const wrapperRef = React.useRef<HTMLDivElement>(null);
@@ -33,13 +34,13 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
 
   const [maxWidth, setMaxWidth] = React.useState<number | undefined>(undefined);
 
-  const node = React.useMemo(() => {
+  const nodePath = React.useMemo(() => {
     if (selected.length !== 1) {
       return null;
     }
     return selected.at(0) ?? null;
   }, [selected]);
-  const nodes = React.useMemo(() => {
+  const nodePaths = React.useMemo(() => {
     if (selected.length === 1) {
       return null;
     } else {
@@ -47,19 +48,20 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     }
   }, [selected]);
 
-  const { onAction } = useNodeMenuProps(selected.map((n) => [n]));
+  const { onAction } = useNodeMenuProps(selected);
 
-  const previewUrl = React.useMemo(
-    () => node && getPreviewUrl?.(node),
-    [getPreviewUrl, node]
-  );
+  const previewUrl = React.useMemo(() => {
+    const node = nodePath?.at(-1);
+    return node && getPreviewUrl?.(node);
+  }, [getPreviewUrl, nodePath]);
 
-  const meta = React.useMemo(
-    () => node && (getMetadata?.(node) || node.meta),
-    [node]
-  );
+  const meta = React.useMemo(() => {
+    const node = nodePath?.at(-1);
+    return node && (getMetadata?.(node) || node.meta);
+  }, [nodePath]);
 
   const nodeIcon = React.useMemo(() => {
+    const node = nodePath?.at(-1);
     if (!node) {
       return null;
     }
@@ -88,7 +90,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     return (
       <AnimatedFileIcon mimeType={node.meta.mimeType} {...animationProps} />
     );
-  }, [node, onRequestNodeIcon, currentPath]);
+  }, [nodePath, onRequestNodeIcon, currentPath]);
 
   React.useEffect(() => {
     if (previewSectionRef.current && wrapperRef.current) {
@@ -112,7 +114,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     <div className={clsx(styles.root, className)}>
       <div className={styles.wrapper} ref={wrapperRef}>
         <div className={styles.previewSection} ref={previewSectionRef}>
-          {node &&
+          {nodePath &&
             (previewUrl ? (
               <AnimatePresence mode={'popLayout'} initial={false}>
                 <motion.img
@@ -127,7 +129,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
               nodeIcon
             ))}
         </div>
-        {node && (
+        {nodePath && (
           <div className={styles.infoSection} style={{ maxWidth }}>
             <div className={styles.nodeNameWrapper}>
               <div className={styles.actionBar}>
@@ -136,24 +138,30 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
                   title={'herunterladen'}
                   onClick={() => onAction('download')}
                 />
-                <Button
-                  icon={<Edit />}
-                  title={'umbenennen'}
-                  onClick={() => onAction('rename')}
-                />
-                <Button
-                  icon={<OpenWith />}
-                  title={'verschieben'}
-                  onClick={() => onAction('move')}
-                />
-                <Button
-                  className={styles.deleteButton}
-                  icon={<Delete />}
-                  title={'löschen'}
-                  onClick={() => onAction('delete')}
-                />
+                {canEdit(nodePath) && (
+                  <Button
+                    icon={<Edit />}
+                    title={'umbenennen'}
+                    onClick={() => onAction('rename')}
+                  />
+                )}
+                {canEdit(nodePath) && (
+                  <Button
+                    icon={<OpenWith />}
+                    title={'verschieben'}
+                    onClick={() => onAction('move')}
+                  />
+                )}
+                {canEdit(nodePath) && (
+                  <Button
+                    className={styles.deleteButton}
+                    icon={<Delete />}
+                    title={'löschen'}
+                    onClick={() => onAction('delete')}
+                  />
+                )}
               </div>
-              <h2>{node.name}</h2>
+              <h2>{nodePath.at(-1)!.name}</h2>
             </div>
             {meta && (
               <ul>
@@ -171,7 +179,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
             )}
           </div>
         )}
-        {!!nodes?.length && (
+        {!!nodePaths?.length && (
           <div
             className={clsx(styles.infoSection, styles.manyNodes)}
             style={{ maxWidth }}
@@ -183,7 +191,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
                   title={'verschieben'}
                   onClick={() => onAction('move')}
                 />
-                {nodes.every((n) => isFileNode(n)) && (
+                {nodePaths.every((n) => isFileNode(n.at(-1))) && (
                   <Button
                     className={styles.deleteButton}
                     icon={<Delete />}
@@ -193,19 +201,24 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
                 )}
               </div>
               <h2>
-                {nodes.every((n) => n.type === nodes.at(0)!.type)
-                  ? isFileNode(nodes.at(0)!)
-                    ? `${nodes.length} Dateien`
-                    : `${nodes.length} Ordner`
-                  : `${nodes.length} Dateien und Ordner`}
+                {nodePaths.every(
+                  (n) => n.at(-1)!.type === nodePaths.at(0)!.at(-1)!.type
+                )
+                  ? isFileNode(nodePaths.at(0)!.at(-1))
+                    ? `${nodePaths.length} Dateien`
+                    : `${nodePaths.length} Ordner`
+                  : `${nodePaths.length} Dateien und Ordner`}
               </h2>
             </div>
             <List>
-              {nodes.map((node) => (
-                <ListItem key={node.id}>
-                  <span>{node.name}</span>
-                </ListItem>
-              ))}
+              {nodePaths.map((nodePath) => {
+                const node = nodePath.at(-1)!;
+                return (
+                  <ListItem key={node.id}>
+                    <span>{node.name}</span>
+                  </ListItem>
+                );
+              })}
             </List>
           </div>
         )}

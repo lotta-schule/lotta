@@ -117,7 +117,7 @@ export const NodeListItem = React.memo(
             currentContextMenuCloseFn?.();
             e.preventDefault();
             if (!isSelected) {
-              onSelect([node]);
+              onSelect([nodePath]);
             }
             setIsContextMenuOpen(true);
             currentContextMenuCloseFn = closeContextMenu;
@@ -156,8 +156,8 @@ export const NodeListItem = React.memo(
                 onChange={(isSelected) => {
                   onSelect(
                     isSelected
-                      ? [...selected, node]
-                      : selected.filter((n) => n.id !== node.id)
+                      ? [...selected, nodePath]
+                      : selected.filter((n) => n.at(-1)?.id !== node.id)
                   );
                 }}
               />
