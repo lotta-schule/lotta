@@ -55,8 +55,10 @@ export default defineConfig({
     reporters: ['default'],
     setupFiles: ['./test.setup.ts'],
     coverage: {
+      clean: true,
       reportsDirectory: 'coverage',
       provider: 'istanbul',
+      reporter: ['default', 'json'],
       exclude: ['test-utils.tsx', 'test.setup.ts', 'test-fixtures.ts'],
     },
   },
