@@ -97,8 +97,8 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
             )}
             {!!uploadClient?.currentUploads.length && (
               <Button
-                title={`Es werden ${uploadClient.currentUploads.length} Dateien hochgeladen`}
-                label={`Es werden ${uploadClient.currentUploads.length} Dateien hochgeladen (${uploadClient.currentProgress}% Fortschritt)`}
+                title={`Es werden ${uploadClient.byState.uploading.length} Dateien hochgeladen`}
+                aria-label={`Es werden ${uploadClient.byState.uploading.length} Dateien hochgeladen (${uploadClient.currentProgress}% Fortschritt)`}
                 className={styles.uploadProgressButton}
                 icon={
                   uploadClient.hasErrors ? (
@@ -118,11 +118,8 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
                   setIsActiveUploadsDialogOpen(true);
                 }}
               >
-                {
-                  uploadClient?.currentUploads.filter(
-                    ({ status }) => status === 'uploading'
-                  ).length
-                }
+                {uploadClient.byState.pending.length +
+                  uploadClient.byState.uploading.length || null}
               </Button>
             )}
 

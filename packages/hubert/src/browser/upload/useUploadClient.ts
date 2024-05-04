@@ -138,9 +138,21 @@ export const useUploadClient = () => {
     [currentUploads]
   );
 
+  const byState = React.useMemo(
+    () =>
+      Object.fromEntries(
+        (['pending', 'uploading', 'done', 'error'] as const).map((state) => [
+          state,
+          currentUploads.filter(({ status }) => status === state),
+        ])
+      ) as Record<Upload['status'], Upload[]>,
+    [currentUploads]
+  );
+
   return React.useMemo(
     () => ({
       currentUploads,
+      byState,
       addFile,
       currentProgress,
       hasErrors,
@@ -149,6 +161,7 @@ export const useUploadClient = () => {
     }),
     [
       currentUploads,
+      byState,
       addFile,
       currentProgress,
       hasErrors,
