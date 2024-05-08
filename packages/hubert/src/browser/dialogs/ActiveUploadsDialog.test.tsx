@@ -5,6 +5,7 @@ import {
   ActiveUploadsDialog,
   ActiveUploadsDialogProps,
 } from './ActiveUploadsDialog';
+import { FileSize } from '../../util';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
@@ -146,7 +147,7 @@ describe('ActiveUploadsDialog', () => {
       if (status === 'uploading') {
         expect(
           within(fileListItem).getByText(
-            new RegExp(`${transferSpeed.toFixed(2)} MB/s`)
+            new RegExp(`${new FileSize(transferSpeed).humanize()}/s`)
           )
         ).toBeVisible();
         expect(

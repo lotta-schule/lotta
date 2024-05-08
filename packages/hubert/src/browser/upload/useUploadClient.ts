@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BrowserNode } from '../BrowserStateContext';
+import { BrowserNode, BrowserState } from '../BrowserStateContext';
 
 export type Upload = {
   file: File;
@@ -13,87 +13,42 @@ export type Upload = {
   transferedBytes: number;
 };
 
-export const useUploadClient = () => {
+export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
   const [currentUploads, setCurrentUploads] = React.useState<Upload[]>([]);
 
+  const pendingUploads = React.useMemo(
+    () => currentUploads.filter(({ status }) => status === 'pending'),
+    [currentUploads]
+  );
+
+  const updateUpload = React.useCallback(
+    (upload: Upload) => {
+      setCurrentUploads((currentUploads) =>
+        currentUploads.map((u) => (u === upload ? upload : u))
+      );
+    },
+    [setCurrentUploads, uploadNode]
+  );
+
   React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentUploads((currentUploads) => {
-        const uploads = currentUploads
-          .map((upload) => {
-            if (upload.status === 'pending') {
-              if (Math.random() > 0.8) {
-                return {
-                  ...upload,
-                  status: 'uploading',
-                } as Upload;
-              } else {
-                return upload;
-              }
-            }
+    if (pendingUploads.length < 1) {
+      return;
+    }
 
-            if (upload.status === 'uploading') {
-              const hasErrored = Math.random() > 0.98;
+    const nextUpload = pendingUploads.at(0)!;
 
-              if (hasErrored) {
-                return {
-                  ...upload,
-                  status: 'error',
-                  error: new Error('Upload failed'),
-                  endTime: new Date(),
-                } as Upload;
-              }
+    nextUpload.status = 'uploading';
+    updateUpload(nextUpload);
 
-              const currentTime = Date.now();
-              const elapsedTime = currentTime - upload.startTime;
-              const transferedBytes = upload.progress * upload.file.size;
-              const transferSpeed = transferedBytes / elapsedTime;
-              const progress = Math.floor(
-                Math.min(upload.progress + Math.random() * 10, 100)
-              );
-
-              if (progress >= 100) {
-                return {
-                  ...upload,
-                  transferSpeed,
-                  status: 'done',
-                  endTime: new Date(),
-                } as Upload;
-              }
-
-              return {
-                ...upload,
-                transferSpeed,
-                progress,
-              };
-            }
-
-            if (upload.status === 'done') {
-              if (
-                !upload.endTime ||
-                upload.endTime.getTime() < Date.now() + 60 * 1000
-              ) {
-                null;
-              }
-            }
-
-            return {
-              ...upload,
-            };
-          })
-          .filter(Boolean);
-
-        return uploads;
-      });
-    }, 750);
-
-    return () => clearInterval(interval);
-  }, []);
+    uploadNode?.(nextUpload, nextUpload.parentNode, updateUpload);
+  }, [pendingUploads, uploadNode, updateUpload]);
 
   const addFile = React.useCallback(
     async (file: File, parentNode: BrowserNode<'directory'>) => {
-      const upload = createUpload(file, parentNode);
-      setCurrentUploads((currentUploads) => [...currentUploads, upload]);
+      setCurrentUploads((currentUploads) => [
+        ...currentUploads,
+        createUpload(file, parentNode),
+      ]);
     },
     [setCurrentUploads]
   );
@@ -180,7 +135,7 @@ export const createUpload = (
     parentNode,
     status: 'pending',
     error: null,
-    startTime: Date.now(),
+    startTime: new Date().getTime(),
     progress: 0,
     transferSpeed: 0,
     transferedBytes: 0,

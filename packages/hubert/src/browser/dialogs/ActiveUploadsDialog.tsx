@@ -4,6 +4,7 @@ import { List, ListItem, ListItemSecondaryText } from '../../list';
 import { CircularProgress } from '../../progress';
 import { useBrowserState } from '../BrowserStateContext';
 import { Check, Close } from '../../icon';
+import { FileSize } from '../../util';
 import clsx from 'clsx';
 
 import styles from './ActiveUploadsDialog.module.scss';
@@ -83,7 +84,7 @@ export const ActiveUploadsDialog = React.memo(
                   <br />
                   {upload.status === 'uploading' && (
                     <span>
-                      {upload.transferSpeed.toFixed(2)} MB/s &bull;{' '}
+                      {new FileSize(upload.transferSpeed).humanize()}/s &bull;{' '}
                       {upload.progress.toFixed(2)}%
                     </span>
                   )}

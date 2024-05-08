@@ -18,6 +18,7 @@ import {
   useDeleteNode,
   useMoveNode,
   useRenameNode,
+  useUploadNode,
 } from './action';
 import {
   GetDirectoriesAndFilesQueryResult,
@@ -48,6 +49,7 @@ export const UserBrowser = React.memo(
     const renameNode = useRenameNode();
     const moveNode = useMoveNode();
     const deleteNode = useDeleteNode();
+    const uploadNode = useUploadNode();
 
     const [fetchDirectoriesAndFiles] =
       useLazyQuery<GetDirectoriesAndFilesQueryResult>(
@@ -157,6 +159,7 @@ export const UserBrowser = React.memo(
         renameNode={renameNode}
         moveNode={moveNode}
         deleteNode={deleteNode}
+        uploadNode={uploadNode}
         getDownloadUrl={getDownloadUrl}
       />
     );

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useUploadClient } from './upload/useUploadClient';
+import { Upload, useUploadClient } from './upload/useUploadClient';
 
 export interface DefaultFileMetadata {
   mimeType: string;
@@ -76,6 +76,11 @@ export interface BrowserState {
   ) => PromiseLike<void>;
   deleteNode?: (node: BrowserNode) => PromiseLike<void>;
   renameNode?: (node: BrowserNode, newName: string) => PromiseLike<void>;
+  uploadNode?: (
+    upload: Upload,
+    parentNode: BrowserNode<'directory'>,
+    update: (upload: Upload) => void
+  ) => void;
 
   uploadClient?: ReturnType<typeof useUploadClient>;
 }
@@ -113,7 +118,7 @@ export const BrowserStateProvider = React.memo(
       React.useState<BrowserState['currentAction']>(null);
     const [isFilePreviewVisible, setIsFilePreviewVisible] =
       React.useState<BrowserState['isFilePreviewVisible']>(false);
-    const uploadClient = useUploadClient();
+    const uploadClient = useUploadClient(props.uploadNode);
 
     React.useEffect(() => {
       onSelect?.(selected.map((n) => n.at(-1)!));
