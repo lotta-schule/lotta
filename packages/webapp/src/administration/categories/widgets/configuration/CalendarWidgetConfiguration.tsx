@@ -10,6 +10,8 @@ import {
 } from '@lotta-schule/hubert';
 
 import styles from './WidgetConfiguration.module.scss';
+import { faCircleMinus, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 
 export interface CalendarWidgetConfigurationProps {
   configuration: CalendarWidgetConfig;
@@ -128,6 +130,7 @@ export const CalendarWidgetConfiguration = React.memo(
                 <small>Farbe, die dem Kalender zugeordnet wird</small>
 
                 <Button
+                  icon={<Icon icon={faCircleMinus} />}
                   onClick={() =>
                     setConfiguration({
                       ...configuration,
@@ -148,6 +151,8 @@ export const CalendarWidgetConfiguration = React.memo(
         ))}
 
         <Button
+          icon={<Icon icon={faCirclePlus} />}
+          className={styles.addCalendarButton}
           onClick={() =>
             setConfiguration({
               ...configuration,
