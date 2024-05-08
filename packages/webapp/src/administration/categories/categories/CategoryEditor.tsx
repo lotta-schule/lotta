@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
-import { faAngleLeft, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleLeft,
+  faFloppyDisk,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { useMutation, useQuery } from '@apollo/client';
 import {
   Button,
@@ -374,24 +378,26 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
           selectedWidgets={selectedWidgets}
           setSelectedWidgets={(widgets) => setSelectedWidgets(widgets)}
         />
-        <p>&nbsp;</p>
-        <Button
-          className={styles.saveButton}
-          disabled={isLoading}
-          onClick={() => updateCategory()}
-        >
-          Kategorie speichern
-        </Button>
 
         {!category.isHomepage && (
           <>
             <Divider className={styles.deleteDivider} />
-            <Button
-              icon={<Icon icon={faTrash} />}
-              onClick={() => setIsDeleteCategoryDialogOpen(true)}
-            >
-              Kategorie löschen
-            </Button>
+            <div className={styles.footer}>
+              <Button
+                disabled={isLoading}
+                onClick={() => updateCategory()}
+                icon={<Icon icon={faFloppyDisk} />}
+              >
+                Kategorie speichern
+              </Button>
+              <Button
+                icon={<Icon icon={faTrash} />}
+                onClick={() => setIsDeleteCategoryDialogOpen(true)}
+                variant={'error'}
+              >
+                Kategorie löschen
+              </Button>
+            </div>
             <DeleteCategoryDialog
               isOpen={isDeleteCategoryDialogOpen}
               categoryToDelete={category}

@@ -11,7 +11,11 @@ import {
   SplitViewButton,
   Toolbar,
 } from '@lotta-schule/hubert';
-import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleRight,
+  faFloppyDisk,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { Icon } from 'shared/Icon';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import { IFrameWidgetConfiguration } from './configuration/IFrameWidgetConfiguration';
@@ -166,23 +170,25 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
             }
           />
         )}
-
-        <Divider />
+        <Divider className={styles.footerDevider} />
         <div className={styles.footer}>
-          <Button
-            variant={'error'}
-            className={styles.button}
-            onClick={() => setIsDeleteWidgetDialogOpen(true)}
-          >
-            Marginale löschen
-          </Button>
           <Button
             style={{ float: 'right' }}
             disabled={isLoading}
             className={styles.button}
             onClick={() => updateWidget()}
+            icon={<Icon icon={faFloppyDisk} />}
           >
             Marginale speichern
+          </Button>
+
+          <Button
+            variant={'error'}
+            icon={<Icon icon={faTrash} />}
+            className={styles.button}
+            onClick={() => setIsDeleteWidgetDialogOpen(true)}
+          >
+            Marginale löschen
           </Button>
 
           <DeleteWidgetDialog

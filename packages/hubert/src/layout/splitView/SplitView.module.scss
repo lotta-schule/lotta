@@ -28,6 +28,7 @@
   .contentView {
     margin-left: var(--lotta-spacing);
     padding-inline: var(--lotta-spacing);
+    padding-bottom: calc(2 * var(--lotta-spacing));
     background-color: rgba(var(--lotta-box-background-color), 1);
     flex: 1 2 100%;
     overflow: auto;

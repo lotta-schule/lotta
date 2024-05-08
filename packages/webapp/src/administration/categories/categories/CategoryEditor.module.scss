@@ -18,9 +18,9 @@
     color: gray;
   }
 
-  .saveButton {
-    float: right;
-    margin-bottom: calc(2 * var(--lotta-spacing));
+  .footer {
+    display: flex;
+    justify-content: space-between;
   }
 
   .deleteDivider {
