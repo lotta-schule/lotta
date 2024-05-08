@@ -26,7 +26,11 @@ export const NodeMenuButton = React.memo(({ path }: NodeMenuButtonProps) => {
         'aria-label': isDirectoryNode(node)
           ? 'Ordnermenü öffnen'
           : 'Dateimenü öffnen',
-        style: { width: '2em', height: '2em' },
+        style: {
+          width: '2em',
+          height: '2em',
+          marginRight: 'var(--lotta-spacing)',
+        },
       }}
       {...menuProps}
     />
