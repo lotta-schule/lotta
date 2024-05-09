@@ -275,54 +275,161 @@ describe('NodeList component', () => {
     });
 
     describe('mouse', () => {
-      it('should also select a range if ctrl/cmd is down when next item is clicked', async () => {
-        const user = userEvent.setup();
-        const onSelect = vi.fn();
-        const screen = render(
-          <WrappedNodeList
-            nodes={defaultNodes}
-            selected={[defaultNodesPaths.at(1)!]}
-            onSelect={onSelect}
-          />
-        );
+      describe('ctrl/cmd click', () => {
+        it('should also select a range if ctrl/cmd is down when next item is clicked', async () => {
+          const user = userEvent.setup();
+          const onSelect = vi.fn();
+          const screen = render(
+            <WrappedNodeList
+              nodes={defaultNodes}
+              selected={[defaultNodesPaths.at(1)!]}
+              onSelect={onSelect}
+            />
+          );
 
-        const nextNodeToSelect = defaultNodes.at(4)!;
+          const nextNodeToSelect = defaultNodes.at(4)!;
 
-        await user.keyboard('{meta>}');
-        await user.click(
-          screen.getByRole('option', { name: nextNodeToSelect.name })
-        );
+          await user.keyboard('{meta>}');
+          await user.click(
+            screen.getByRole('option', { name: nextNodeToSelect.name })
+          );
 
-        expect(onSelect).toHaveBeenCalledWith([
-          defaultNodesPaths.at(1),
-          defaultNodesPaths.at(4),
-        ]);
+          expect(onSelect).toHaveBeenCalledWith([
+            defaultNodesPaths.at(1),
+            defaultNodesPaths.at(4),
+          ]);
+        });
+
+        it('should also select a range if ctrl/cmd is down when next item is clicked in "select-multiple" mode', async () => {
+          const user = userEvent.setup();
+          const onSelect = vi.fn();
+          const screen = render(
+            <WrappedNodeList
+              mode="select-multiple"
+              nodes={defaultNodes}
+              selected={[defaultNodesPaths.at(1)!]}
+              onSelect={onSelect}
+            />
+          );
+
+          const nextNodeToSelect = defaultNodes.at(4)!;
+
+          await user.keyboard('{meta>}');
+          await user.click(
+            screen.getByRole('option', {
+              name: new RegExp(nextNodeToSelect.name),
+            })
+          );
+
+          expect(onSelect).toHaveBeenCalledWith([
+            defaultNodesPaths.at(1),
+            defaultNodesPaths.at(4),
+          ]);
+        });
+
+        it('should selected clicked item when ctrl/cmd is down in "select" mode', async () => {
+          const user = userEvent.setup();
+          const onSelect = vi.fn();
+          const screen = render(
+            <WrappedNodeList
+              mode="select"
+              nodes={defaultNodes}
+              selected={[defaultNodesPaths.at(1)!]}
+              onSelect={onSelect}
+            />
+          );
+
+          const nextNodeToSelect = defaultNodes.at(4)!;
+
+          await user.keyboard('{meta>}');
+          await user.click(
+            screen.getByRole('option', { name: nextNodeToSelect.name })
+          );
+
+          expect(onSelect).toHaveBeenCalledWith([
+            fixtures.getPathForNode(nextNodeToSelect),
+          ]);
+        });
       });
 
-      it('should select a range if shift is down when next item is clicked', async () => {
-        const user = userEvent.setup();
-        const onSelect = vi.fn();
-        const screen = render(
-          <WrappedNodeList
-            nodes={defaultNodes}
-            selected={[defaultNodesPaths.at(1)!]}
-            onSelect={onSelect}
-          />
-        );
+      describe('shift click', () => {
+        it('should select a range if shift is down when next item is clicked', async () => {
+          const user = userEvent.setup();
+          const onSelect = vi.fn();
+          const screen = render(
+            <WrappedNodeList
+              nodes={defaultNodes}
+              selected={[defaultNodesPaths.at(1)!]}
+              onSelect={onSelect}
+            />
+          );
 
-        const nextNodeToSelect = defaultNodes.at(4)!;
+          const nextNodeToSelect = defaultNodes.at(4)!;
 
-        await user.keyboard('{shift>}');
-        await user.click(
-          screen.getByRole('option', { name: nextNodeToSelect.name })
-        );
+          await user.keyboard('{shift>}');
+          await user.click(
+            screen.getByRole('option', { name: nextNodeToSelect.name })
+          );
 
-        expect(onSelect).toHaveBeenCalledWith([
-          defaultNodesPaths.at(1),
-          defaultNodesPaths.at(2),
-          defaultNodesPaths.at(3),
-          defaultNodesPaths.at(4),
-        ]);
+          expect(onSelect).toHaveBeenCalledWith([
+            defaultNodesPaths.at(1),
+            defaultNodesPaths.at(2),
+            defaultNodesPaths.at(3),
+            defaultNodesPaths.at(4),
+          ]);
+        });
+
+        it('should select a range if shift is down when next item is clicked in "select-multiple" mode', async () => {
+          const user = userEvent.setup();
+          const onSelect = vi.fn();
+          const screen = render(
+            <WrappedNodeList
+              mode="select-multiple"
+              nodes={defaultNodes}
+              selected={[defaultNodesPaths.at(1)!]}
+              onSelect={onSelect}
+            />
+          );
+
+          const nextNodeToSelect = defaultNodes.at(4)!;
+
+          await user.keyboard('{shift>}');
+          await user.click(
+            screen.getByRole('option', {
+              name: new RegExp(nextNodeToSelect.name),
+            })
+          );
+
+          expect(onSelect).toHaveBeenCalledWith([
+            defaultNodesPaths.at(1),
+            defaultNodesPaths.at(2),
+            defaultNodesPaths.at(3),
+            defaultNodesPaths.at(4),
+          ]);
+        });
+        it('should selected clicked item when shift is down in "select" mode', async () => {
+          const user = userEvent.setup();
+          const onSelect = vi.fn();
+          const screen = render(
+            <WrappedNodeList
+              mode="select"
+              nodes={defaultNodes}
+              selected={[defaultNodesPaths.at(1)!]}
+              onSelect={onSelect}
+            />
+          );
+
+          const nextNodeToSelect = defaultNodes.at(4)!;
+
+          await user.keyboard('{shift>}');
+          await user.click(
+            screen.getByRole('option', { name: nextNodeToSelect.name })
+          );
+
+          expect(onSelect).toHaveBeenCalledWith([
+            fixtures.getPathForNode(nextNodeToSelect),
+          ]);
+        });
       });
     });
   });
