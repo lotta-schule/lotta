@@ -176,7 +176,11 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
           return;
         }
         e.preventDefault();
-        onSelect?.(nodes?.map((n) => [...path, n]) ?? []);
+        onSelect?.(
+          nodes
+            ?.filter((n) => !(isNodeDisabled?.(n) ?? false))
+            .map((n) => [...path, n]) ?? []
+        );
       }
     },
     [nodes, sortedSelected, onSelect]
@@ -304,10 +308,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
               } else if (mode === 'select-multiple') {
                 if (isDirectoryNode(node)) {
                   onNavigate([...path, node]);
-                  onSelect([
-                    ...selected.filter((n) => isDirectoryNode(n.at(-1))),
-                    [...path, node],
-                  ]);
+                  onSelect([[...path, node]]);
                 } else {
                   if (
                     (e.target as HTMLElement).parentElement?.classList.contains(
@@ -330,7 +331,11 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
                   if (isSelected) {
                     onSelect(selected.filter((n) => n.at(-1)?.id !== node.id));
                   } else {
-                    onSelect([...selected, [...path, node]]);
+                    onSelect(
+                      [...selected, [...path, node]].filter(
+                        (p) => p.at(-1)!.parent === (node?.parent ?? null)
+                      )
+                    );
                   }
                 }
               } else {
