@@ -189,6 +189,25 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
     };
   }, [onKeyDown]);
 
+  React.useEffect(() => {
+    if (nodes !== null) {
+      const selectedToUnselectIds = selected
+        .filter(
+          (s) =>
+            (s.at(-2)?.id ?? null) === (path.at(-1)?.id ?? null) &&
+            !nodes.some((n) => n.id === s.at(-1)?.id)
+        )
+        .map((sp) => sp.at(-1)?.id)
+        .filter(Boolean);
+
+      if (selectedToUnselectIds.length > 0) {
+        onSelect?.(
+          selected.filter((s) => !selectedToUnselectIds.includes(s.at(-1)?.id))
+        );
+      }
+    }
+  }, [nodes]);
+
   if (!nodes?.length) {
     return (
       <div ref={listRef as any} className={clsx(styles.root, styles.isEmpty)}>

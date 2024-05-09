@@ -5,6 +5,7 @@ import {
   render,
   TestBrowserWrapper,
   TestBrowserWrapperProps,
+  waitFor,
 } from '../test-utils';
 import { NodeList, NodeListProps } from './NodeList';
 import { isDirectoryNode } from './utils';
@@ -40,6 +41,32 @@ describe('NodeList component', () => {
     expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({
       inline: 'start',
       behavior: 'smooth',
+    });
+  });
+
+  it('should automatically unselect a file when it vanishes', async () => {
+    const onSelect = vi.fn();
+    const selectedNode = defaultNodes.at(-1)!;
+    expect(selectedNode).toBeDefined();
+
+    const screen = render(
+      <WrappedNodeList
+        selected={[fixtures.getPathForNode(selectedNode)]}
+        onSelect={onSelect}
+      />
+    );
+
+    expect(screen.queryAllByRole('option', { selected: true })).toHaveLength(1);
+    screen.rerender(
+      <WrappedNodeList
+        nodes={defaultNodes.filter((n) => n.id !== selectedNode.id)}
+        selected={[fixtures.getPathForNode(selectedNode)]}
+        onSelect={onSelect}
+      />
+    );
+
+    await waitFor(() => {
+      expect(onSelect).toHaveBeenCalledWith([]);
     });
   });
 
