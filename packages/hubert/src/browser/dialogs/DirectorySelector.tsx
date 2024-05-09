@@ -12,7 +12,7 @@ export type DirectorySelector = {
   ): Promise<BrowserNode[]>;
   value: BrowserPath<'directory'>;
   onChange: (value: BrowserPath<'directory'>) => void;
-  filter?: (node: BrowserNode<'directory'>) => boolean;
+  filter?: (node: BrowserPath<'directory'>) => boolean;
 };
 
 export const DirectorySelector = React.memo(
@@ -38,7 +38,7 @@ export const DirectorySelector = React.memo(
         .then((newNodes) => {
           setChildNodes(
             newNodes.filter(
-              (n) => isDirectoryNode(n) && (filter?.(n) ?? true)
+              (n) => isDirectoryNode(n) && (filter?.([...value, n]) ?? true)
             ) as BrowserNode<'directory'>[]
           );
         })

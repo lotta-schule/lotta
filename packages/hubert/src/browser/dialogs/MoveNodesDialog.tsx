@@ -46,10 +46,12 @@ export const MoveNodesDialog = React.memo(() => {
   }, [currentAction?.type]);
 
   const nodeFilter = React.useCallback(
-    (n: BrowserNode) =>
-      canEdit(n) &&
+    (nodePath: BrowserPath<'directory'>) =>
+      canEdit(nodePath) &&
       currentAction?.type === 'move-nodes' &&
-      currentAction.paths.every((path) => path.every((p) => p.id !== n.id)),
+      currentAction.paths.every((path) =>
+        path.every((p) => p.id !== nodePath.at(-1)?.id)
+      ),
     [currentAction, canEdit]
   );
 
