@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
 import { DirectorySelector } from './DirectorySelector'; // Adjust the import path as necessary
-import { BrowserNode } from 'browser/BrowserStateContext';
+import { BrowserNode, BrowserPath } from 'browser/BrowserStateContext';
 import { fixtures } from 'test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -72,7 +72,9 @@ describe('DirectorySelector Component', () => {
   });
 
   it('filters out result returning true from the filter fn', async () => {
-    const filter = vi.fn((node: BrowserNode) => node.name !== 'math');
+    const filter = vi.fn(
+      (nodePath: BrowserPath) => nodePath.at(-1)!.name !== 'math'
+    );
     const screen = render(
       <DirectorySelector
         getNodesForParent={getNodesForParent}

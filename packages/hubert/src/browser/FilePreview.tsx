@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Delete, Download, Edit, OpenWith } from '../icon';
 import { List, ListItem } from '../list';
 import { Button } from '../button';
-import { isFileNode } from './utils';
+import { isDirectoryNode, isFileNode } from './utils';
 import { useBrowserState } from './BrowserStateContext';
 import { FilePreviewPreview } from './FilePreviewPreview';
 import { useNodeMenuProps } from './useNodeMenuProps';
@@ -75,11 +75,13 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
                   className={styles.actionBar}
                   data-testid="FilePreviewActionBar"
                 >
-                  <Button
-                    icon={<Download />}
-                    title={'herunterladen'}
-                    onClick={() => onAction('download')}
-                  />
+                  {isFileNode(nodePath.at(-1)) && (
+                    <Button
+                      icon={<Download />}
+                      title={'herunterladen'}
+                      onClick={() => onAction('download')}
+                    />
+                  )}
                   {canEdit(nodePath) && (
                     <Button
                       icon={<Edit />}

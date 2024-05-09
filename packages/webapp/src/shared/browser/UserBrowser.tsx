@@ -119,11 +119,15 @@ export const UserBrowser = React.memo(
 
     const getMetadata = React.useCallback(
       (node: BrowserNode) => {
+        const base = {
+          'Erstellt am': format(new Date(node.meta.insertedAt), 'Pp', {
+            locale: de,
+          }),
+        };
+
         if (isFileNode(node)) {
           return {
-            'Erstellt am': format(new Date(node.meta.insertedAt), 'Pp', {
-              locale: de,
-            }),
+            ...base,
             Größe: new FileSize(node.meta.filesize).humanize(),
             typ: node.meta.mimeType,
             Formate: node.meta.fileConversions?.length ?? 0,
@@ -131,7 +135,7 @@ export const UserBrowser = React.memo(
           };
         } else if (isDirectoryNode(node)) {
           return {
-            'Erstellt am': node.meta.insertedAt,
+            ...base,
           };
         }
       },

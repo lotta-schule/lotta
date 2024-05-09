@@ -64,7 +64,7 @@ describe('FilePreview Component', () => {
       expect(screen.getByText(node.name)).toBeInTheDocument();
     });
 
-    it('should show file actions', () => {
+    it('should show directory actions (no download!)', () => {
       const screen = render(<WrappedNodeListItem selected={[nodePath]} />);
       expect(screen.getByTestId('FilePreviewActionBar')).toBeVisible();
 
@@ -72,7 +72,7 @@ describe('FilePreview Component', () => {
         within(screen.getByTestId('FilePreviewActionBar')).getAllByRole(
           'button'
         )
-      ).toHaveLength(4);
+      ).toHaveLength(3);
     });
 
     it('should not show file actions when in select mode', () => {

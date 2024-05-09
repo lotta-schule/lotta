@@ -45,12 +45,14 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
           Verschieben
         </Item>
       ),
-      deleteNode && (
-        <Item key={'delete'} textValue={'Löschen'}>
-          <Delete />
-          Löschen
-        </Item>
-      ),
+      deleteNode &&
+        (nodePaths.length === 1 ||
+          nodePaths.every((path) => isFileNode(path.at(-1)))) && (
+          <Item key={'delete'} textValue={'Löschen'}>
+            <Delete />
+            Löschen
+          </Item>
+        ),
     ].filter(Boolean) as React.ReactElement[];
   }, [nodePaths]);
 
