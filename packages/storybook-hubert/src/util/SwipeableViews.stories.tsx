@@ -9,7 +9,7 @@ import {
   SwipeableViewsProps,
 } from '@lotta-schule/hubert';
 
-export default {
+const meta: Meta<typeof SwipeableViews> = {
   title: 'util/SwipeableViews',
   component: SwipeableViews,
   argTypes: {
@@ -22,7 +22,9 @@ export default {
     },
     onChange: action('onChange'),
   },
-} as Meta<typeof SwipeableViews>;
+};
+
+export default meta;
 
 export const Default: StoryObj<typeof SwipeableViews> = {
   render: ({ selectedIndex }) => {

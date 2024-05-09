@@ -10,10 +10,11 @@ const getChildNodes = (node: BrowserNode | null): BrowserNode[] => {
         name: 'folder 1',
         type: 'directory',
         parent: null,
+        meta: {},
       },
-      { id: '2', name: 'folder 2', type: 'directory', parent: null },
-      { id: '3', name: 'folder 3', type: 'directory', parent: null },
-      { id: '4', name: 'folder 4', type: 'directory', parent: null },
+      { id: '2', name: 'folder 2', type: 'directory', parent: null, meta: {} },
+      { id: '3', name: 'folder 3', type: 'directory', parent: null, meta: {} },
+      { id: '4', name: 'folder 4', type: 'directory', parent: null, meta: {} },
     ];
   }
 
