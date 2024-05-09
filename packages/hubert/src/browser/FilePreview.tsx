@@ -1,34 +1,21 @@
 import * as React from 'react';
-import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
-import { Delete, Download, Edit, Folder, FolderOpen, OpenWith } from '../icon';
+import { Delete, Download, Edit, OpenWith } from '../icon';
 import { List, ListItem } from '../list';
 import { Button } from '../button';
-import { isDirectoryNode, isFileNode } from './utils';
-import { FileIcon } from './FileIcon';
+import { isFileNode } from './utils';
 import { useBrowserState } from './BrowserStateContext';
+import { FilePreviewPreview } from './FilePreviewPreview';
 import { useNodeMenuProps } from './useNodeMenuProps';
 import clsx from 'clsx';
 
 import styles from './FilePreview.module.scss';
-
-const AnimatedFolder = motion(Folder);
-const AnimatedFolderOpen = motion(FolderOpen);
-const AnimatedFileIcon = motion(FileIcon);
 
 export type FilePreviewProps = {
   className?: string;
 };
 
 export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
-  const {
-    currentPath,
-    getPreviewUrl,
-    getMetadata,
-    selected,
-    onRequestNodeIcon,
-    canEdit,
-    mode,
-  } = useBrowserState();
+  const { getMetadata, selected, canEdit, mode } = useBrowserState();
 
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const previewSectionRef = React.useRef<HTMLDivElement>(null);
@@ -51,47 +38,10 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
 
   const { onAction } = useNodeMenuProps(selected);
 
-  const previewUrl = React.useMemo(() => {
-    const node = nodePath?.at(-1);
-    return node && getPreviewUrl?.(node);
-  }, [getPreviewUrl, nodePath]);
-
   const meta = React.useMemo(() => {
     const node = nodePath?.at(-1);
     return node && (getMetadata?.(node) || node.meta);
   }, [nodePath]);
-
-  const nodeIcon = React.useMemo(() => {
-    const node = nodePath?.at(-1);
-    if (!node) {
-      return null;
-    }
-
-    const customIcon = onRequestNodeIcon?.(node);
-
-    if (customIcon) {
-      return customIcon;
-    }
-
-    const animationProps: AnimationProps = {
-      initial: { opacity: 0 },
-      animate: { opacity: 1 },
-      exit: { opacity: 0 },
-    };
-
-    if (isDirectoryNode(node)) {
-      const isOpen = currentPath.some((n) => n.id === node.id);
-      return isOpen ? (
-        <AnimatedFolderOpen {...animationProps} />
-      ) : (
-        <AnimatedFolder {...animationProps} />
-      );
-    }
-
-    return (
-      <AnimatedFileIcon mimeType={node.meta.mimeType} {...animationProps} />
-    );
-  }, [nodePath, onRequestNodeIcon, currentPath]);
 
   React.useEffect(() => {
     if (previewSectionRef.current && wrapperRef.current) {
@@ -115,20 +65,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     <div className={clsx(styles.root, className)}>
       <div className={styles.wrapper} ref={wrapperRef}>
         <div className={styles.previewSection} ref={previewSectionRef}>
-          {nodePath &&
-            (previewUrl ? (
-              <AnimatePresence mode={'popLayout'} initial={false}>
-                <motion.img
-                  key={previewUrl}
-                  src={previewUrl}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                />
-              </AnimatePresence>
-            ) : (
-              nodeIcon
-            ))}
+          <FilePreviewPreview />
         </div>
         {nodePath && (
           <div className={styles.infoSection} style={{ maxWidth }}>
