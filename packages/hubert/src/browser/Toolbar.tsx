@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Input } from '../form/input';
 import { Button } from '../button';
 import { CircularProgress } from '../progress';
 import {
@@ -23,7 +22,6 @@ export type ToolbarProps = {
 export const Toolbar = React.memo(({ className }: ToolbarProps) => {
   const {
     currentPath,
-    mode,
     selected,
     onNavigate,
     onSelect,

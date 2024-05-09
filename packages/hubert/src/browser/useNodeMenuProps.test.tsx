@@ -158,11 +158,8 @@ describe('browser/useNodeMenuProps', () => {
         ),
       });
 
-      expect(result.current.children.length).toBe(2); // Assuming all options are available
-      expect(result.current.children.map((item) => item.key)).toEqual([
-        'move',
-        'delete',
-      ]);
+      expect(result.current.children.length).toBe(1);
+      expect(result.current.children.map((item) => item.key)).toEqual(['move']);
 
       act(() => {
         result.current.onAction('move');

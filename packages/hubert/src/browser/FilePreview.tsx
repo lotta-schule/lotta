@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Delete, Download, Edit, OpenWith } from '../icon';
 import { List, ListItem } from '../list';
 import { Button } from '../button';
-import { isDirectoryNode, isFileNode } from './utils';
+import { isFileNode } from './utils';
 import { useBrowserState } from './BrowserStateContext';
 import { FilePreviewPreview } from './FilePreviewPreview';
 import { useNodeMenuProps } from './useNodeMenuProps';

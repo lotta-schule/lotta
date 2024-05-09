@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { Dialog, DialogActions, DialogContent } from '../../dialog';
-import {
-  BrowserNode,
-  BrowserPath,
-  useBrowserState,
-} from '../BrowserStateContext';
+import { BrowserPath, useBrowserState } from '../BrowserStateContext';
 import { ErrorMessage } from '../../message';
 import { Tooltip } from '../../util';
 import { Button, LoadingButton } from '../../button';

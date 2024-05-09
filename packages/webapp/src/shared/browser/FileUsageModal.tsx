@@ -21,6 +21,7 @@ import { useServerData } from 'shared/ServerDataContext';
 import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
 
 import styles from './FileUsageModal.module.scss';
+import { useTenant } from 'util/tenant/useTenant';
 
 export type FileUsageModalProps = {
   file: FileModel;
@@ -32,6 +33,7 @@ export const FileUsageModal = React.memo(
   ({ file, isOpen, onRequestClose }: FileUsageModalProps) => {
     const { baseUrl } = useServerData();
     const { t } = useTranslation();
+    const tenant = useTenant();
     const currentUser = useCurrentUser();
 
     const { data } = useQuery<{ file: FileModel }, { id: ID }>(
@@ -61,7 +63,7 @@ export const FileUsageModal = React.memo(
 
     const getPrimaryTextForUsage = (usage: FileModelUsageLocation) => {
       if (usage.article) {
-        return `Artikel: ${usage.article.title}`;
+        return `Beitrag: ${usage.article.title}`;
       }
       if (usage.category) {
         return `Kategorie: ${usage.category.title}`;
@@ -69,10 +71,7 @@ export const FileUsageModal = React.memo(
       if (usage.user) {
         return `Nutzer: ${User.getNickname(usage.user)}`;
       }
-      if (usage.tenant) {
-        return `SeitenLayout ${usage.tenant.title}`;
-      }
-      return 'Verwendung unbekannt';
+      return `SeitenLayout ${tenant.title}`;
     };
 
     return (
