@@ -6,13 +6,11 @@
   background-color: rgb(var(--lotta-box-background-color));
   display: flex;
   position: sticky;
-  top: 0;
+  top: 48px;
   z-index: 1;
 
-  &:not(.hasScrollableParent) {
-    @media screen and (max-width: $max-xs) {
-      top: 48px;
-    }
+  &.hasScrollableParent {
+    top: 0px;
   }
 
   &.stackOnMobile {

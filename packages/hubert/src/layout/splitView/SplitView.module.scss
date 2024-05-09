@@ -12,16 +12,15 @@
     padding-inline: var(--lotta-spacing);
 
     @media screen and (max-width: $max-sm) {
-      display: none;
-
+      flex: 0 0 0%;
       &.active {
-        display: block;
+        flex: 0 0 100%;
         margin-right: var(--lotta-spacing);
-      }
-    }
 
-    @media screen and (max-width: $max-xs) {
-      flex: 0 0 100%;
+        & ~ .contentView {
+          padding-inline: 0;
+        }
+      }
     }
   }
 
