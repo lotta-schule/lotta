@@ -34,7 +34,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
   describe('form', () => {
     it('should not show the form when no group is passed', () => {
       const screen = render(
-        <EditUserGroup groupId={null} onRequestDeletion={jest.fn()} />,
+        <EditUserGroup groupId={null} onRequestDeletion={vi.fn()} />,
         {},
         { additionalMocks }
       );
@@ -47,10 +47,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
 
     it('should show the form when a group is passed', async () => {
       const screen = render(
-        <EditUserGroup
-          groupId={lehrerGroup.id}
-          onRequestDeletion={jest.fn()}
-        />,
+        <EditUserGroup groupId={lehrerGroup.id} onRequestDeletion={vi.fn()} />,
         {},
         { additionalMocks }
       );
@@ -67,10 +64,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
   describe('Form', () => {
     it('should be showing the title in a textbox', async () => {
       const screen = render(
-        <EditUserGroup
-          groupId={lehrerGroup.id}
-          onRequestDeletion={jest.fn()}
-        />,
+        <EditUserGroup groupId={lehrerGroup.id} onRequestDeletion={vi.fn()} />,
         {},
         { additionalMocks }
       );
@@ -81,10 +75,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
 
     it('should have the admin checkbox checked for a group which can read full name', async () => {
       const screen = render(
-        <EditUserGroup
-          groupId={lehrerGroup.id}
-          onRequestDeletion={jest.fn()}
-        />,
+        <EditUserGroup groupId={lehrerGroup.id} onRequestDeletion={vi.fn()} />,
         {},
         { additionalMocks }
       );
@@ -97,7 +88,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
 
     it('should disable the can read full name checkbox if the group is an admin group', async () => {
       const screen = render(
-        <EditUserGroup groupId={adminGroup.id} onRequestDeletion={jest.fn()} />,
+        <EditUserGroup groupId={adminGroup.id} onRequestDeletion={vi.fn()} />,
         {},
         { additionalMocks }
       );
@@ -116,10 +107,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
     describe('admin setting', () => {
       it('should have the admin checkbox checked for a admin group', async () => {
         const screen = render(
-          <EditUserGroup
-            groupId={adminGroup.id}
-            onRequestDeletion={jest.fn()}
-          />,
+          <EditUserGroup groupId={adminGroup.id} onRequestDeletion={vi.fn()} />,
           {},
           { additionalMocks }
         );
@@ -139,7 +127,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         const screen = render(
           <EditUserGroup
             groupId={lehrerGroup.id}
-            onRequestDeletion={jest.fn()}
+            onRequestDeletion={vi.fn()}
           />,
           {},
           { additionalMocks }
@@ -163,7 +151,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         const screen = render(
           <EditUserGroup
             groupId={lehrerGroup.id}
-            onRequestDeletion={jest.fn()}
+            onRequestDeletion={vi.fn()}
           />,
           {},
           { additionalMocks }
@@ -246,7 +234,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
               },
             },
           },
-          result: jest.fn(() => ({
+          result: vi.fn(() => ({
             data: {
               group: {
                 ...lehrerGroup,
@@ -261,7 +249,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         const screen = render(
           <EditUserGroup
             groupId={lehrerGroup.id}
-            onRequestDeletion={jest.fn()}
+            onRequestDeletion={vi.fn()}
           />,
           {},
           { additionalMocks: [...additionalMocks, saveMock] }
@@ -319,7 +307,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
   describe('delete group', () => {
     it('should show a delete button for a group and show dialog', async () => {
       const fireEvent = userEvent.setup();
-      const onRequestDeletion = jest.fn(({ id }) => {
+      const onRequestDeletion = vi.fn(({ id }) => {
         expect(id).toBe(lehrerGroup.id);
       });
       const screen = render(
@@ -339,7 +327,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
 
     it('delete button should be disabled when group is sole admin group', async () => {
       const screen = render(
-        <EditUserGroup groupId={adminGroup.id} onRequestDeletion={jest.fn()} />,
+        <EditUserGroup groupId={adminGroup.id} onRequestDeletion={vi.fn()} />,
         {},
         { additionalMocks }
       );

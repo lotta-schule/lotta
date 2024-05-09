@@ -6,10 +6,6 @@ import { Show } from './Show';
 const titleContentModule = Klausurenplan.contentModules[0];
 
 describe('shared/article/module/table/Show', () => {
-  it('should render without an error', () => {
-    render(<Show contentModule={titleContentModule} />);
-  });
-
   it('should display the correct title', () => {
     const screen = render(<Show contentModule={titleContentModule} />);
     expect(

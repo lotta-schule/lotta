@@ -1,18 +1,19 @@
 {
-    "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
-    "extends": "../../tsconfig.base.json",
-    "compilerOptions": {
-        "baseUrl": "src",
-        "outDir": "dist",
-        "rootDir": "./src",
-        "types": [],
-        "typeRoots": [
-            "src/@types",
-            "node_modules/@types",
-            "../../node_modules/@types"
-        ],
-        "declaration": true,
-        "composite": true
-    },
-    "include": ["src/**/*"]
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "../../dist/lib/theme",
+
+    "module": "Preserve",
+    "declaration": false,
+  },
+  "references": [
+    { "path": "./tsconfig.test.json" },
+    { "path": "./tsconfig.lib.json" },
+  ],
+
+  "files":[],
+  "include": [],
+  "exclude": ["dist"]
 }

@@ -28,7 +28,7 @@
     position: relative;
     &::before {
       animation: s-ripple 200ms ease-out;
-      content: '';
+      content: "";
       display: block;
       position: absolute;
       left: 0;
@@ -47,7 +47,7 @@
     &::after {
       animation: s-ripple 200ms ease-out;
       box-sizing: unset;
-      content: '';
+      content: "";
       position: absolute;
       display: none;
       height: 1.2em;
@@ -57,7 +57,7 @@
       border-radius: var(--lotta-border-radius);
       background: rgba(var(--control-indicator-color), 1);
       transition: background 200ms;
-      content: '✔︎';
+      content: "✔︎";
       color: rgba(var(--lotta-box-background-color), 1);
       text-align: center;
       line-height: 1.3em;

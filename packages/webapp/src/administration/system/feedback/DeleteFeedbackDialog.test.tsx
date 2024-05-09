@@ -54,7 +54,7 @@ describe('DeleteFeedbackDialog', () => {
 
   it('should call onRequestClose when clicking the "Abort" button', async () => {
     const fireEvent = userEvent.setup();
-    const onRequestClose = jest.fn();
+    const onRequestClose = vi.fn();
     render(
       <DeleteFeedbackDialog
         isOpen
@@ -75,7 +75,7 @@ describe('DeleteFeedbackDialog', () => {
   describe('send delete request', () => {
     it('delete the category and close the dialog', async () => {
       const fireEvent = userEvent.setup();
-      const onConfirm = jest.fn();
+      const onConfirm = vi.fn();
       const screen = render(
         <DeleteFeedbackDialog
           isOpen

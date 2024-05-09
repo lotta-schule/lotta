@@ -215,7 +215,7 @@ export const LoadingButton = React.forwardRef(
             aria-label={loadingLabel || 'Wird gerade geladen ...'}
             color={'rgb(var(--lotta-disabled-color))'}
             className={clsx(styles.circularProgress)}
-            size={'1.4em'}
+            size={'1.2em'}
           />
         )}
         <span className={clsx(styles.label)}>{label || children}</span>

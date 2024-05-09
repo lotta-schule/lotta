@@ -1,15 +1,15 @@
 .root {
-    display: inline-block;
-    height: 1.5em;
-    min-width: 1.5em;
-    line-height: 1.5em;
-    border-radius: 0.8em;
-    text-align: center;
-    padding: 0 calc(var(--lotta-spacing) / 2);
-    font-weight: bold;
-    font-size: 0.8em;
-    color: rgb(var(--lotta-text-color));
-    background-color: rgb(var(--lotta-primary-color));
-    margin: auto var(--lotta-spacing);
-    filter: invert(100%);
+  display: inline-block;
+  height: 1.5em;
+  min-width: 1.5em;
+  line-height: 1.5em;
+  border-radius: 0.8em;
+  text-align: center;
+  padding: 0 calc(var(--lotta-spacing) / 2);
+  font-weight: bold;
+  font-size: 0.8em;
+  color: rgb(var(--lotta-text-color));
+  background-color: rgb(var(--lotta-primary-color));
+  margin: auto var(--lotta-spacing);
+  filter: invert(100%);
 }

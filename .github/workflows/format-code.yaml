@@ -1,0 +1,12 @@
+name: 'Format code'
+on:
+  push:
+    branches-ignore:
+    - main
+permissions:
+  contents: write
+jobs:
+  format-code:
+    uses: lotta-schule/github-actions/.github/workflows/prettier-fix.yaml@main
+    with:
+      target: "./packages/{hubert,storybook-addon-theme,storybook-hubert,theme,webapp}/src/**/*.{ts,tsx,js,jsx,md,css,scss,html}"

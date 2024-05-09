@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { render, waitFor } from '../../test-utils';
 import { ComboBox } from './ComboBox';
 import userEvent from '@testing-library/user-event';
@@ -57,7 +58,7 @@ describe('Combobox', () => {
 
   describe('With fetched items', () => {
     it('should hide button when items is a function', () => {
-      const onItems = jest.fn(async () => [{ key: 'A', label: 'A' }]);
+      const onItems = vi.fn(async () => [{ key: 'A', label: 'A' }]);
 
       const screen = render(
         <ComboBox title={'Chose something'} items={onItems} />
@@ -67,7 +68,7 @@ describe('Combobox', () => {
     });
 
     it('should show all options when clicking on the button', async () => {
-      const onItems = jest.fn(async () => defaultItems);
+      const onItems = vi.fn(async () => defaultItems);
 
       const user = userEvent.setup();
 
@@ -86,24 +87,6 @@ describe('Combobox', () => {
       await waitFor(() => {
         expect(screen.getAllByRole('option')).toHaveLength(4);
       });
-    });
-  });
-
-  describe('onSelect', () => {
-    it('should be possible to add a custom value', async () => {
-      const user = userEvent.setup();
-      const onSelect = jest.fn();
-
-      const screen = render(
-        <ComboBox
-          title={'Chose something'}
-          allowsCustomValue
-          onSelect={onSelect}
-        />
-      );
-
-      await user.type(screen.getByRole('combobox'), 'Papaya{Enter}');
-      expect(onSelect).toHaveBeenCalledWith('Papaya');
     });
   });
 
@@ -128,9 +111,24 @@ describe('Combobox', () => {
   });
 
   describe('onSelect', () => {
+    it('should be possible to add a custom value', async () => {
+      const user = userEvent.setup();
+      const onSelect = vi.fn();
+
+      const screen = render(
+        <ComboBox
+          title={'Chose something'}
+          allowsCustomValue
+          onSelect={onSelect}
+        />
+      );
+
+      await user.type(screen.getByRole('combobox'), 'Papaya{Enter}');
+      expect(onSelect).toHaveBeenCalledWith('Papaya');
+    });
     it('should call onSelect with item key when a proposed option is selected', async () => {
       const user = userEvent.setup();
-      const onSelect = jest.fn();
+      const onSelect = vi.fn();
 
       const screen = render(
         <ComboBox
@@ -151,7 +149,7 @@ describe('Combobox', () => {
 
     it('should call onSelect with item key when the value of a proposed item is typed', async () => {
       const user = userEvent.setup();
-      const onSelect = jest.fn();
+      const onSelect = vi.fn();
 
       const screen = render(
         <ComboBox
@@ -169,7 +167,7 @@ describe('Combobox', () => {
 
     it('should not call onSelect when the value of an unpropsed item is entered', async () => {
       const user = userEvent.setup();
-      const onSelect = jest.fn();
+      const onSelect = vi.fn();
 
       const screen = render(
         <ComboBox
@@ -186,7 +184,7 @@ describe('Combobox', () => {
     describe('custom properties', () => {
       it('should call onSelect when selecting an unpropsed item when allowsCustomValue is passed', async () => {
         const user = userEvent.setup();
-        const onSelect = jest.fn();
+        const onSelect = vi.fn();
 
         const screen = render(
           <ComboBox
@@ -208,7 +206,7 @@ describe('Combobox', () => {
     describe('closing the listbox', () => {
       it('should close the listbox on select when predefined items are passed (as array)', async () => {
         const user = userEvent.setup();
-        const onSelect = jest.fn();
+        const onSelect = vi.fn();
 
         const screen = render(
           <ComboBox
@@ -235,31 +233,6 @@ describe('Combobox', () => {
           ).not.toBeVisible();
         });
       });
-
-      // I DO not understand why we do not want to close the listbox when dynamic items are passed
-      // I wait for when I understand and come back to uncomment this test, and then I ADD A PROPER
-      // EXPLANATION!
-      //
-      // it('should not close the listbox on select when dynamic items are passed (as callback)', async () => {
-      //   const user = userEvent.setup();
-      //   const getItems = jest.fn(async () => defaultItems);
-
-      //   const screen = render(
-      //     <ComboBox
-      //       title={'Chose something'}
-      //       items={getItems}
-      //       onSelect={jest.fn()}
-      //     />
-      //   );
-
-      //   await user.type(screen.getByRole('combobox'), 'Apple{Enter}');
-      //   await waitFor(() => {
-      //     expect(getItems).toHaveBeenCalledWith('Apple');
-      //   }, 10_000);
-      //   await waitFor(() => {
-      //     expect(screen.getByRole('option', { name: /apple/i })).toBeVisible();
-      //   });
-      // });
     });
   });
 

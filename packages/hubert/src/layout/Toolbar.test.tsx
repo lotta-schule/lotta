@@ -4,6 +4,8 @@ import { Toolbar } from './Toolbar';
 
 describe('Toolbar', () => {
   it('should render', () => {
-    render(<Toolbar />);
+    const screen = render(<Toolbar />);
+
+    expect(screen.getByRole('toolbar')).toBeInTheDocument();
   });
 });

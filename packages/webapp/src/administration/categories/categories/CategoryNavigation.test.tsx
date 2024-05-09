@@ -18,16 +18,6 @@ const renderWithContext: typeof render = (children, ...other) => {
 describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNavigation', () => {
   const topLevelCategories = allCategories.filter((c) => !c.category);
 
-  it('should render an CategoryNavigation without error', () => {
-    renderWithContext(
-      <CategoryNavigation
-        selectedCategory={null}
-        onSelectCategory={() => {}}
-      />,
-      {}
-    );
-  });
-
   it('should render all top-level-categories', async () => {
     const screen = renderWithContext(
       <CategoryNavigation
@@ -53,7 +43,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       it('should select a start category on click', async () => {
         const fireEvent = userEvent.setup();
         let selectedCategory = null;
-        const onSelectCategory = jest.fn(
+        const onSelectCategory = vi.fn(
           (category) => (selectedCategory = category)
         );
         const screen = renderWithContext(
@@ -76,7 +66,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       it('should select a common category on click', async () => {
         const fireEvent = userEvent.setup();
         let selectedCategory = null;
-        const onSelectCategory = jest.fn(
+        const onSelectCategory = vi.fn(
           (category) => (selectedCategory = category)
         );
         const screen = renderWithContext(
@@ -98,7 +88,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       it('should select a subcategory on click', async () => {
         const fireEvent = userEvent.setup();
         let selectedCategory = FaecherCategory;
-        const onSelectCategory = jest.fn(
+        const onSelectCategory = vi.fn(
           (category) => (selectedCategory = category)
         );
         const screen = renderWithContext(
@@ -121,7 +111,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       it('should select a sidenav-category on click', async () => {
         const fireEvent = userEvent.setup();
         let selectedCategory = null;
-        const onSelectCategory = jest.fn(
+        const onSelectCategory = vi.fn(
           (category) => (selectedCategory = category)
         );
         const screen = renderWithContext(

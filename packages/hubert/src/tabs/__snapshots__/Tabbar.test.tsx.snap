@@ -1,76 +1,76 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`tabs/Tabbar snapshot test 1`] = `
+exports[`tabs/Tabbar > snapshot test 1`] = `
 <div
-  class="tabbar"
+  class="_tabbar_1efd66"
   role="tablist"
 >
   <button
     aria-selected="false"
-    class="root root root tab"
+    class="_root_0977c5 _root_3de4f3 _root_70a42a _tab_1efd66"
     data-variant="default"
     role="tab"
     type="button"
     value="0"
   >
     <span
-      class="label label"
+      class="_label_3de4f3 _label_70a42a"
     >
       Tab1 bla bla bla
     </span>
   </button>
   <button
     aria-selected="false"
-    class="root root root tab"
+    class="_root_0977c5 _root_3de4f3 _root_70a42a _tab_1efd66"
     data-variant="default"
     role="tab"
     type="button"
     value="1"
   >
     <span
-      class="label label"
+      class="_label_3de4f3 _label_70a42a"
     >
       Tab2
     </span>
   </button>
   <button
     aria-selected="false"
-    class="root root root tab"
+    class="_root_0977c5 _root_3de4f3 _root_70a42a _tab_1efd66"
     data-variant="default"
     role="tab"
     type="button"
     value="2"
   >
     <span
-      class="label label"
+      class="_label_3de4f3 _label_70a42a"
     >
       Tab3
     </span>
   </button>
   <button
     aria-selected="true"
-    class="root root root tab selected selected selected"
+    class="_root_0977c5 _root_3de4f3 _root_70a42a _tab_1efd66 _selected_1efd66 _selected_70a42a _selected_0977c5"
     data-variant="default"
     role="tab"
     type="button"
     value="3"
   >
     <span
-      class="label label"
+      class="_label_3de4f3 _label_70a42a"
     >
       Tab4 dingsi bumso
     </span>
   </button>
   <button
     aria-selected="false"
-    class="root root root tab"
+    class="_root_0977c5 _root_3de4f3 _root_70a42a _tab_1efd66"
     data-variant="default"
     role="tab"
     type="button"
     value="4"
   >
     <span
-      class="label label"
+      class="_label_3de4f3 _label_70a42a"
     >
       Tab5
     </span>

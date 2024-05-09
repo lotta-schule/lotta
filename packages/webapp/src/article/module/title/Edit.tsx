@@ -10,8 +10,8 @@ interface EditProps {
   onUpdateModule(contentModule: ContentModuleModel<{ title: string }>): void;
 }
 
-export const Edit = React.memo<EditProps>(
-  ({ contentModule, onUpdateModule }) => {
+export const Edit = React.memo(
+  ({ contentModule, onUpdateModule }: EditProps) => {
     const requestBlurRef = React.useRef(false);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const [title, setTitle] = React.useState(

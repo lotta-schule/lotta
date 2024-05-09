@@ -56,7 +56,7 @@ describe('shared/general/form/select', () => {
 
   it('should call onChange callback with the new value', async () => {
     const fireEvent = userEvent.setup();
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const screen = render(
       <Select title={'Select'} value={'2'} onChange={onChange}>
         <Option value={'0'}>Option 0</Option>

@@ -16,7 +16,7 @@ describe('administration: DeleteUserGroupDialog', () => {
   it('should be hidden and open when "isOpen" is passed and close when cancelled', async () => {
     const fireEvent = userEvent.setup();
 
-    const onRequestClose = jest.fn();
+    const onRequestClose = vi.fn();
 
     const screen = render(
       <DeleteUserGroupDialog
@@ -61,7 +61,7 @@ describe('administration: DeleteUserGroupDialog', () => {
 
   it('should call onRequestClose when clicking the "Abort" button', async () => {
     const fireEvent = userEvent.setup();
-    const onRequestClose = jest.fn();
+    const onRequestClose = vi.fn();
     render(
       <DeleteUserGroupDialog
         group={lehrerGroup}
@@ -86,7 +86,7 @@ describe('administration: DeleteUserGroupDialog', () => {
               id: lehrerGroup.id,
             },
           },
-          result: jest.fn(() => ({
+          result: vi.fn(() => ({
             data: {
               deleteUserGroup: {
                 userGroup: lehrerGroup,
@@ -102,7 +102,7 @@ describe('administration: DeleteUserGroupDialog', () => {
       ];
 
       const fireEvent = userEvent.setup();
-      const onConfirm = jest.fn();
+      const onConfirm = vi.fn();
       const screen = render(
         <DeleteUserGroupDialog
           group={lehrerGroup}
@@ -159,8 +159,8 @@ describe('administration: DeleteUserGroupDialog', () => {
       ];
 
       const fireEvent = userEvent.setup();
-      const onConfirm = jest.fn();
-      const onRequestClose = jest.fn();
+      const onConfirm = vi.fn();
+      const onRequestClose = vi.fn();
       const screen = render(
         <DeleteUserGroupDialog
           group={lehrerGroup}

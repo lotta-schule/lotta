@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render } from 'test/util';
+import { render, within } from 'test/util';
 import {
   ComputerExperten,
   VivaLaRevolucion,
@@ -18,6 +18,19 @@ describe('pages/profiles/articles', () => {
       VivaLaRevolucion,
       ComputerExperten,
     ];
-    render(<ArticlesPage articles={articles} error={null} />, {}, {});
+    const screen = render(
+      <ArticlesPage articles={articles} error={null} />,
+      {},
+      {}
+    );
+
+    expect(screen.getByRole('heading')).toHaveTextContent(/beiträge/i);
+
+    expect(screen.getByRole('table')).toBeVisible();
+
+    const tbody = within(screen.getByRole('table')).queryAllByRole(
+      'rowgroup'
+    )[1];
+    expect(within(tbody).getAllByRole('row')).toHaveLength(5);
   });
 });

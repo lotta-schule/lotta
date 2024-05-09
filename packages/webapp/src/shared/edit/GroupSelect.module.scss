@@ -1,4 +1,4 @@
-@import 'breakpoints';
+@import "breakpoints";
 
 .root {
   position: relative;
@@ -13,7 +13,6 @@
 }
 
 .tag {
-
   /* TODO:
     Ganz schöne unaufgeräumt und unschön hier.
     Lauter hartcodierte Werte, von denen keiner
@@ -90,13 +89,13 @@
     }
   }
 
-  li[aria-selected='true'] {
+  li[aria-selected="true"] {
     svg {
       color: rgba(var(--lotta-primary-color), 1);
     }
   }
 
-  li[data-focus='true'] {
+  li[data-focus="true"] {
     background-color: rgba(var(--lotta-highlight-color), 0.3);
     cursor: pointer;
 

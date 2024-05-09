@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { describe, expect, it } from 'vitest';
 import { render } from 'test/util';
 import { CalendarKlassenarbeiten, CalendarResponse } from 'test/fixtures';
 import { Calendar } from './Calendar';
@@ -15,14 +16,6 @@ describe('shared/widgets/Calendar', () => {
       result: { data: CalendarResponse },
     },
   ];
-
-  it('should render the schedule without error', () => {
-    render(
-      <Calendar widget={CalendarKlassenarbeiten} />,
-      {},
-      { additionalMocks: mocks }
-    );
-  });
 
   describe('single calendar', () => {
     it('should show the correct number of entries', async () => {
@@ -113,7 +106,7 @@ describe('shared/widgets/Calendar', () => {
         screen
           .getByRole('figure', { name: 'Legende: Kalender' })
           .querySelector<SVGElement>('svg')
-      ).toHaveStyle({ color: 'red' });
+      ).toHaveStyle({ color: 'rgb(255, 0, 0)' });
       expect(
         screen.getByRole('figure', { name: 'Legende: Kalender 2' })
       ).toBeVisible();
@@ -121,7 +114,7 @@ describe('shared/widgets/Calendar', () => {
         screen
           .getByRole('figure', { name: 'Legende: Kalender 2' })
           .querySelector<SVGElement>('svg')
-      ).toHaveStyle({ color: 'green' });
+      ).toHaveStyle({ color: 'rgb(0, 128, 0)' });
     });
   });
 });

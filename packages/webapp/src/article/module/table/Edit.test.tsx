@@ -8,12 +8,6 @@ import userEvent from '@testing-library/user-event';
 const tableContentModule = LehrerListe.contentModules[0];
 
 describe('shared/article/module/table/Edit', () => {
-  it('should render without an error', () => {
-    render(
-      <Edit contentModule={tableContentModule} onUpdateModule={() => {}} />
-    );
-  });
-
   describe('render the table', () => {
     it('should render the table with correct content', () => {
       const screen = render(
@@ -28,7 +22,7 @@ describe('shared/article/module/table/Edit', () => {
   describe('editor table cells', () => {
     it('should editor a cell when entering text', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((cm) => {
+      const callback = vi.fn((cm) => {
         expect(cm.content).toEqual({
           rows: [
             [{ text: 'Kürzel' }, { text: 'Name' }],
@@ -60,7 +54,7 @@ describe('shared/article/module/table/Edit', () => {
     describe('navigate via enter key', () => {
       it('should jump to next column', async () => {
         const fireEvent = userEvent.setup();
-        const callback = jest.fn();
+        const callback = vi.fn();
         const screen = render(
           <Edit contentModule={tableContentModule} onUpdateModule={callback} />
         );
@@ -75,7 +69,7 @@ describe('shared/article/module/table/Edit', () => {
 
       it('should jump to next row', async () => {
         const fireEvent = userEvent.setup();
-        const callback = jest.fn();
+        const callback = vi.fn();
         const screen = render(
           <Edit contentModule={tableContentModule} onUpdateModule={callback} />
         );
@@ -92,7 +86,7 @@ describe('shared/article/module/table/Edit', () => {
         const fireEvent = userEvent.setup();
         let contentModule = tableContentModule;
         let didCallCallback = false;
-        const callback = jest.fn((cm) => {
+        const callback = vi.fn((cm) => {
           if (!didCallCallback) {
             // There is a second occurence AFTER test is finished because of blur
             expect(cm.content.rows).toHaveLength(8);
@@ -153,7 +147,7 @@ describe('shared/article/module/table/Edit', () => {
 
       it('should remove a column when clicking the button', async () => {
         const fireEvent = userEvent.setup();
-        const callback = jest.fn((cm) => {
+        const callback = vi.fn((cm) => {
           expect(cm.content).toEqual({
             rows: [
               [{ text: 'Kürzel' }],
@@ -181,7 +175,7 @@ describe('shared/article/module/table/Edit', () => {
       it('should insert a column when clicking the button', async () => {
         const fireEvent = userEvent.setup();
         let contentModule = tableContentModule;
-        const callback = jest.fn((cm) => {
+        const callback = vi.fn((cm) => {
           cm.content.rows[0].length === 1;
           contentModule = cm;
         });
@@ -205,7 +199,7 @@ describe('shared/article/module/table/Edit', () => {
 
       it('should remove a row when clicking the button', async () => {
         const fireEvent = userEvent.setup();
-        const callback = jest.fn((cm) => {
+        const callback = vi.fn((cm) => {
           expect(cm.content).toEqual({
             rows: [
               [{ text: 'Kürzel' }, { text: 'Name' }],
@@ -232,7 +226,7 @@ describe('shared/article/module/table/Edit', () => {
       it('should insert a row when clicking the button', async () => {
         const fireEvent = userEvent.setup();
         let contentModule = tableContentModule;
-        const callback = jest.fn((cm) => {
+        const callback = vi.fn((cm) => {
           expect(cm.content.rows).toHaveLength(8);
           contentModule = cm;
         });
@@ -259,7 +253,7 @@ describe('shared/article/module/table/Edit', () => {
   describe('pasting from other application', () => {
     it('should paste from excel to top-most upper-left corner', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((cm) => {
+      const callback = vi.fn((cm) => {
         expect(cm.content).toEqual({
           rows: [
             [{ text: 'A' }, { text: 'B' }, { text: 'C' }],
@@ -285,7 +279,7 @@ describe('shared/article/module/table/Edit', () => {
 
     it('should paste from numbers to top-most upper-left corner', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((cm) => {
+      const callback = vi.fn((cm) => {
         expect(cm.content).toEqual({
           rows: [
             [{ text: 'A' }, { text: 'B' }, { text: 'C' }],
@@ -311,7 +305,7 @@ describe('shared/article/module/table/Edit', () => {
 
     it('should expand the current grid if pastet to the bottom right corner', async () => {
       const fireEvent = userEvent.setup();
-      const callback = jest.fn((cm) => {
+      const callback = vi.fn((cm) => {
         expect(cm.content).toEqual({
           rows: [
             [{ text: 'Kürzel' }, { text: 'Name' }, { text: '' }, { text: '' }],

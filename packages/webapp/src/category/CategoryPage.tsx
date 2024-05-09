@@ -98,29 +98,27 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
             new Date(a1.updatedAt).getTime() - new Date(a2.updatedAt).getTime()
         )[0].updatedAt;
         if (lastFetchedElementDate !== lastDate) {
-          try {
-            fetchMore({
-              variables: {
-                filter: {
-                  first: nextFetchCount,
-                  updated_before: lastDate,
-                },
+          fetchMore({
+            variables: {
+              filter: {
+                first: nextFetchCount,
+                updated_before: lastDate,
               },
-              updateQuery: (
-                prev: { articles: ArticleModel[] },
-                { fetchMoreResult }
-              ) => {
-                if (!fetchMoreResult) {
-                  return prev;
-                }
-                setLastFetchedElementDate(lastDate);
-                return {
-                  ...prev,
-                  articles: [...data.articles, ...fetchMoreResult.articles],
-                };
-              },
-            });
-          } catch {}
+            },
+            updateQuery: (
+              prev: { articles: ArticleModel[] },
+              { fetchMoreResult }
+            ) => {
+              if (!fetchMoreResult) {
+                return prev;
+              }
+              setLastFetchedElementDate(lastDate);
+              return {
+                ...prev,
+                articles: [...data.articles, ...fetchMoreResult.articles],
+              };
+            },
+          });
         }
       }
     }

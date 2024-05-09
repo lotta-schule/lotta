@@ -2,8 +2,9 @@ import * as React from 'react';
 import { render, screen, waitFor } from 'test/util';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { WidgetModel, WidgetModelType } from 'model';
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 import userEvent from '@testing-library/user-event';
+
+import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 
 const widgets: WidgetModel[] = [
   {
@@ -57,17 +58,6 @@ describe('shared/layouts/SearchLayout', () => {
       },
     ];
     describe('show widgets state', () => {
-      it('should render the CategoryWidgetSelector', async () => {
-        render(
-          <CategoryWidgetSelector
-            selectedWidgets={[]}
-            setSelectedWidgets={() => {}}
-          />,
-          {},
-          { additionalMocks: mocks }
-        );
-      });
-
       it('should show all possible widgets in a list', async () => {
         render(
           <CategoryWidgetSelector
@@ -134,7 +124,7 @@ describe('shared/layouts/SearchLayout', () => {
     describe('select widgets', () => {
       it('should select a widget when clicked', async () => {
         const fireEvent = userEvent.setup();
-        const setSelectedWidgets = jest.fn();
+        const setSelectedWidgets = vi.fn();
         render(
           <CategoryWidgetSelector
             selectedWidgets={[]}
@@ -153,7 +143,7 @@ describe('shared/layouts/SearchLayout', () => {
 
       it('should deselect when clicked but already selected', async () => {
         const fireEvent = userEvent.setup();
-        const setSelectedWidgets = jest.fn();
+        const setSelectedWidgets = vi.fn();
         render(
           <CategoryWidgetSelector
             selectedWidgets={[widgets[0]]}
@@ -172,7 +162,7 @@ describe('shared/layouts/SearchLayout', () => {
 
       it('should select all widgets when "toggle all" is clicked', async () => {
         const fireEvent = userEvent.setup();
-        const setSelectedWidgets = jest.fn();
+        const setSelectedWidgets = vi.fn();
         render(
           <CategoryWidgetSelector
             selectedWidgets={[]}
@@ -193,7 +183,7 @@ describe('shared/layouts/SearchLayout', () => {
 
       it('should deselect all widgets when all are selected and "toggle all" is clicked', async () => {
         const fireEvent = userEvent.setup();
-        const setSelectedWidgets = jest.fn();
+        const setSelectedWidgets = vi.fn();
         render(
           <CategoryWidgetSelector
             selectedWidgets={[...widgets]}

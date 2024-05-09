@@ -312,7 +312,11 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                   if (persistedCourseList) {
                     setSelectedCourses(JSON.parse(persistedCourseList));
                   }
-                } catch {}
+                } catch {
+                  console.error(
+                    'Could not load selected courses from local storage'
+                  );
+                }
                 setIsSelectCoursesDialogOpen(false);
               }}
             />
