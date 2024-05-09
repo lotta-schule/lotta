@@ -19,6 +19,7 @@ export type NodeListProps = {
 export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   const isMobile = useIsMobile();
   const listRef = React.useRef<HTMLElement>(null);
+  const [isMounted, setIsMounted] = React.useState(false);
 
   const {
     currentPath,
@@ -40,14 +41,18 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
     [selected]
   );
 
-  React.useLayoutEffect(() => {
-    if (!isMobile && path.length === currentPath.length) {
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (isMounted && !isMobile && path.length === currentPath.length) {
       listRef.current?.scrollIntoView({
         inline: 'start',
         behavior: 'smooth',
       });
     }
-  }, [path.length, currentPath.length, isMobile]);
+  }, [path.length, currentPath.length, isMobile, isMounted]);
 
   const onKeyDown = React.useCallback(
     (e: KeyboardEvent) => {
