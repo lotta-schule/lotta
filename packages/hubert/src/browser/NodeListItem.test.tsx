@@ -223,6 +223,48 @@ describe('Browser/NodeListItem', () => {
         screen.getByRole('textbox', { name: /presentation.ppt umbenennen/i })
       ).toBeVisible();
     });
+
+    it('should not show the context menu on right click when the node is disabled', async () => {
+      const user = userEvent.setup();
+      const screen = render(
+        <WrappedNodeListItem node={filePath.at(-1)!} isDisabled />
+      );
+
+      await user.pointer({
+        keys: '[MouseRight>]',
+        target: screen.getByRole('option'),
+      });
+
+      expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
+    });
+
+    it('should not show the context menu on right click when in "select" mode', async () => {
+      const user = userEvent.setup();
+      const screen = render(
+        <WrappedNodeListItem mode="select" node={filePath.at(-1)!} />
+      );
+
+      await user.pointer({
+        keys: '[MouseRight>]',
+        target: screen.getByRole('option'),
+      });
+
+      expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
+    });
+
+    it('should not show the context menu on right click when in "select-multiple" mode', async () => {
+      const user = userEvent.setup();
+      const screen = render(
+        <WrappedNodeListItem mode="select-multiple" node={filePath.at(-1)!} />
+      );
+
+      await user.pointer({
+        keys: '[MouseRight>]',
+        target: screen.getByRole('option'),
+      });
+
+      expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
+    });
   });
 
   describe('checkbox', () => {

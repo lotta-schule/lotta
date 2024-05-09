@@ -64,6 +64,7 @@ const _SelectFileButton = <Multiple extends boolean | undefined>({
         open={isSelectFileDialogOpen}
         onRequestClose={() => setIsSelectFileDialogOpen(false)}
         title={'Datei auswählen'}
+        wide
       >
         <UserBrowser
           isNodeDisabled={(node) =>

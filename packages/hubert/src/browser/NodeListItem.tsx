@@ -116,6 +116,9 @@ export const NodeListItem = React.memo(
           onContextMenu={(e) => {
             currentContextMenuCloseFn?.();
             e.preventDefault();
+            if (mode !== 'view-and-edit' || isDisabled) {
+              return;
+            }
             if (!isSelected) {
               onSelect([nodePath]);
             }

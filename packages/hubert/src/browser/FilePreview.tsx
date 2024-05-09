@@ -27,6 +27,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
     selected,
     onRequestNodeIcon,
     canEdit,
+    mode,
   } = useBrowserState();
 
   const wrapperRef = React.useRef<HTMLDivElement>(null);
@@ -132,35 +133,40 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
         {nodePath && (
           <div className={styles.infoSection} style={{ maxWidth }}>
             <div className={styles.nodeNameWrapper}>
-              <div className={styles.actionBar}>
-                <Button
-                  icon={<Download />}
-                  title={'herunterladen'}
-                  onClick={() => onAction('download')}
-                />
-                {canEdit(nodePath) && (
+              {mode === 'view-and-edit' && (
+                <div
+                  className={styles.actionBar}
+                  data-testid="FilePreviewActionBar"
+                >
                   <Button
-                    icon={<Edit />}
-                    title={'umbenennen'}
-                    onClick={() => onAction('rename')}
+                    icon={<Download />}
+                    title={'herunterladen'}
+                    onClick={() => onAction('download')}
                   />
-                )}
-                {canEdit(nodePath) && (
-                  <Button
-                    icon={<OpenWith />}
-                    title={'verschieben'}
-                    onClick={() => onAction('move')}
-                  />
-                )}
-                {canEdit(nodePath) && (
-                  <Button
-                    className={styles.deleteButton}
-                    icon={<Delete />}
-                    title={'löschen'}
-                    onClick={() => onAction('delete')}
-                  />
-                )}
-              </div>
+                  {canEdit(nodePath) && (
+                    <Button
+                      icon={<Edit />}
+                      title={'umbenennen'}
+                      onClick={() => onAction('rename')}
+                    />
+                  )}
+                  {canEdit(nodePath) && (
+                    <Button
+                      icon={<OpenWith />}
+                      title={'verschieben'}
+                      onClick={() => onAction('move')}
+                    />
+                  )}
+                  {canEdit(nodePath) && (
+                    <Button
+                      className={styles.deleteButton}
+                      icon={<Delete />}
+                      title={'löschen'}
+                      onClick={() => onAction('delete')}
+                    />
+                  )}
+                </div>
+              )}
               <h2>{nodePath.at(-1)!.name}</h2>
             </div>
             {meta && (
@@ -185,21 +191,26 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
             style={{ maxWidth }}
           >
             <div className={styles.nodeNameWrapper}>
-              <div className={styles.actionBar}>
-                <Button
-                  icon={<OpenWith />}
-                  title={'verschieben'}
-                  onClick={() => onAction('move')}
-                />
-                {nodePaths.every((n) => isFileNode(n.at(-1))) && (
+              {mode === 'view-and-edit' && (
+                <div
+                  className={styles.actionBar}
+                  data-testid="FilePreviewActionBar"
+                >
                   <Button
-                    className={styles.deleteButton}
-                    icon={<Delete />}
-                    title={'löschen'}
-                    onClick={() => onAction('delete')}
+                    icon={<OpenWith />}
+                    title={'verschieben'}
+                    onClick={() => onAction('move')}
                   />
-                )}
-              </div>
+                  {nodePaths.every((n) => isFileNode(n.at(-1))) && (
+                    <Button
+                      className={styles.deleteButton}
+                      icon={<Delete />}
+                      title={'löschen'}
+                      onClick={() => onAction('delete')}
+                    />
+                  )}
+                </div>
+              )}
               <h2>
                 {nodePaths.every(
                   (n) => n.at(-1)!.type === nodePaths.at(0)!.at(-1)!.type
