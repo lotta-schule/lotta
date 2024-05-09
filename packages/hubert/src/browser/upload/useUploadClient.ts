@@ -23,6 +23,34 @@ export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
     [currentUploads]
   );
 
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      setCurrentUploads((currentUploads) => {
+        const doneSinceMoreThan5Seconds = currentUploads.filter(
+          (cu) =>
+            cu.status === 'done' &&
+            cu.endTime &&
+            now - cu.endTime.getTime() > 5000
+        );
+
+        if (!doneSinceMoreThan5Seconds.length) {
+          return currentUploads;
+        }
+
+        return currentUploads.filter(
+          (cu) =>
+            cu.status !== 'done' ||
+            (cu.endTime &&
+              now - cu.endTime.getTime() <= 5000 &&
+              !doneSinceMoreThan5Seconds.includes(cu))
+        );
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const createUpload = React.useCallback(
     (file: File, parentNode: BrowserNode<'directory'>) => {
       return {
