@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {
   File,
+  FileArchive,
+  FileAudio,
   FileImage,
   FilePDF,
   FilePowerPoint,
@@ -52,12 +54,12 @@ export const FileIcon = React.memo(
             return <FileTable {...props} ref={ref} />;
           case 'ppt':
             return <FilePowerPoint {...props} ref={ref} />;
-          // case 'zip':
-          //   return <Zip />;
+          case 'zip':
+            return <FileArchive {...props} ref={ref} />;
           case 'image':
             return <FileImage {...props} ref={ref} />;
-          // case 'audio':
-          //   return <Audio />;
+          case 'audio':
+            return <FileAudio {...props} ref={ref} />;
           case 'video':
             return <FileVideo {...props} ref={ref} />;
           default:

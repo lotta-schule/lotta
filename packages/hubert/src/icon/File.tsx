@@ -9,7 +9,7 @@ export const File = React.memo(
       <svg
         xmlns="http://www.w3.org/2000/svg"
         focusable="false"
-        viewBox="0 0 512 677"
+        viewBox="0 0 384 512"
         aria-hidden="true"
         className={clsx(styles.root, className)}
         data-testid="file-icon"
