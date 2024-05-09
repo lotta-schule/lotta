@@ -166,6 +166,9 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
       }
 
       if (e.key === 'a' && (e.metaKey || e.ctrlKey)) {
+        if (mode === 'select') {
+          return;
+        }
         const selectedNode = selected.at(-1)?.at(-1);
 
         if (selectedNode && selectedNode.parent !== (path.at(-1)?.id ?? null)) {

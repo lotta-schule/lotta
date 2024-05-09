@@ -233,6 +233,18 @@ describe('NodeList component', () => {
 
         expect(onSelect).toHaveBeenCalledWith(defaultNodesPaths);
       });
+
+      it('should do nothing when in "select" mode', async () => {
+        const user = userEvent.setup();
+        const onSelect = vi.fn();
+        render(
+          <WrappedNodeList mode="select" selected={[]} onSelect={onSelect} />
+        );
+
+        await user.keyboard('{meta>}{a}');
+
+        expect(onSelect).not.toHaveBeenCalled();
+      });
     });
 
     describe('mouse', () => {
