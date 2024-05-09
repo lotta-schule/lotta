@@ -69,10 +69,10 @@ export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
   );
 
   const updateUpload = React.useCallback(
-    (id: Upload['__id'], uploader: (current: Upload) => Partial<Upload>) => {
+    (id: Upload['__id'], updater: (current: Upload) => Partial<Upload>) => {
       setCurrentUploads((currentUploads) =>
         currentUploads.map((u) =>
-          u.__id === id ? Object.assign({}, u, uploader(u)) : u
+          u.__id === id ? Object.assign({}, u, updater(u)) : u
         )
       );
     },
