@@ -79,6 +79,7 @@ export const UserBrowser = React.memo(
     const canEdit: BrowserProps['canEdit'] = React.useMemo(
       () => (nodePath) => {
         const node = nodePath?.at(-1);
+
         if (isDirectoryNode(node)) {
           return File.canEditDirectory(node.meta, currentUser) || false;
         } else if (isFileNode(node)) {
@@ -136,6 +137,7 @@ export const UserBrowser = React.memo(
         } else if (isDirectoryNode(node)) {
           return {
             ...base,
+            ...(node.meta.user === null ? { Sichtbarkeit: 'Öffentlich' } : {}),
           };
         }
       },
