@@ -77,9 +77,11 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
         )}
         {activeDirectoryName}
       </div>
-      <div className={styles.searchField}>
-        <Input placeholder="suchen" />
-      </div>
+      {/*
+        <div className={styles.searchField}>
+          <Input placeholder="suchen" />
+        </div>
+      */}
       <div className={styles.rightContainer}>
         {createDirectory !== undefined && isDirectoryCreationAllowed && (
           <Button
