@@ -2,6 +2,7 @@ import * as React from 'react';
 import { BrowserNode, BrowserState } from '../BrowserStateContext';
 
 export type Upload = {
+  __id: number;
   file: File;
   parentNode: BrowserNode<'directory'>;
   status: 'pending' | 'uploading' | 'done' | 'error';
@@ -14,6 +15,7 @@ export type Upload = {
 };
 
 export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
+  const nextUploadId = React.useRef(0);
   const [currentUploads, setCurrentUploads] = React.useState<Upload[]>([]);
 
   const pendingUploads = React.useMemo(
@@ -21,13 +23,32 @@ export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
     [currentUploads]
   );
 
+  const createUpload = React.useCallback(
+    (file: File, parentNode: BrowserNode<'directory'>) => {
+      return {
+        __id: nextUploadId.current++,
+        file,
+        parentNode,
+        status: 'pending',
+        error: null,
+        startTime: new Date().getTime(),
+        progress: 0,
+        transferSpeed: 0,
+        transferedBytes: 0,
+      } as Upload;
+    },
+    []
+  );
+
   const updateUpload = React.useCallback(
-    (upload: Upload) => {
+    (id: Upload['__id'], uploader: (current: Upload) => Partial<Upload>) => {
       setCurrentUploads((currentUploads) =>
-        currentUploads.map((u) => (u === upload ? upload : u))
+        currentUploads.map((u) =>
+          u.__id === id ? Object.assign({}, u, uploader(u)) : u
+        )
       );
     },
-    [setCurrentUploads, uploadNode]
+    [setCurrentUploads]
   );
 
   React.useEffect(() => {
@@ -37,10 +58,11 @@ export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
 
     const nextUpload = pendingUploads.at(0)!;
 
-    nextUpload.status = 'uploading';
-    updateUpload(nextUpload);
+    updateUpload(nextUpload.__id, () => ({ status: 'uploading' }));
 
-    uploadNode?.(nextUpload, nextUpload.parentNode, updateUpload);
+    uploadNode?.(nextUpload, nextUpload.parentNode, (updateFn) =>
+      updateUpload(nextUpload.__id, updateFn)
+    );
   }, [pendingUploads, uploadNode, updateUpload]);
 
   const addFile = React.useCallback(
@@ -50,7 +72,7 @@ export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
         createUpload(file, parentNode),
       ]);
     },
-    [setCurrentUploads]
+    [setCurrentUploads, createUpload]
   );
 
   const currentProgress = React.useMemo(() => {
@@ -124,20 +146,4 @@ export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
       isSuccess,
     ]
   );
-};
-
-export const createUpload = (
-  file: File,
-  parentNode: BrowserNode<'directory'>
-) => {
-  return {
-    file,
-    parentNode,
-    status: 'pending',
-    error: null,
-    startTime: new Date().getTime(),
-    progress: 0,
-    transferSpeed: 0,
-    transferedBytes: 0,
-  } as Upload;
 };

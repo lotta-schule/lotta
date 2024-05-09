@@ -79,7 +79,7 @@ export interface BrowserState {
   uploadNode?: (
     upload: Upload,
     parentNode: BrowserNode<'directory'>,
-    update: (upload: Upload) => void
+    update: (updater: (update: Upload) => Partial<Upload>) => void
   ) => void;
 
   uploadClient?: ReturnType<typeof useUploadClient>;

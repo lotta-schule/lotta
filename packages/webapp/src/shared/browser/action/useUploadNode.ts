@@ -48,23 +48,19 @@ export const useUploadNode = () => {
           fetchOptions: {
             onUploadProgress: (progress: ProgressEvent) => {
               const uploadProgress = (progress.loaded / progress.total) * 100;
-              upload.progress = uploadProgress;
-              upload.transferSpeed =
-                progress.loaded / ((Date.now() - upload.startTime) / 1000);
-              upload.transferedBytes = progress.loaded;
-              update(upload);
+              update(() => ({
+                progress: uploadProgress,
+                transferSpeed: upload.transferSpeed,
+                transferedBytes: upload.transferedBytes,
+              }));
             },
           },
         },
         onCompleted: () => {
-          upload.status = 'done';
-          upload.endTime = new Date();
-          update(upload);
+          update(() => ({ status: 'done', endTime: new Date() }));
         },
         onError: (error) => {
-          upload.status = 'error';
-          upload.error = error;
-          update(upload);
+          update(() => ({ status: 'error', error }));
         },
         update: (client, { data }) => {
           if (data?.file) {

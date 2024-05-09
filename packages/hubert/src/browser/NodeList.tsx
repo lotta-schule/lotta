@@ -265,6 +265,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
                           .filter(
                             (n) => !selected.some((s) => s.at(-1)?.id === n.id)
                           )
+                          .filter((n) => !(isNodeDisabled?.(n) ?? false))
                           .map((n) => [...path, n]),
                       ]);
                       return;
