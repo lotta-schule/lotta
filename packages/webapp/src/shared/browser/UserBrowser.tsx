@@ -8,6 +8,8 @@ import {
   isDirectoryNode,
   isFileNode,
 } from '@lotta-schule/hubert';
+import { format } from 'date-fns';
+import { de } from 'date-fns/locale';
 import { DirectoryModel, FileModel } from 'model';
 import { File, User } from 'util/model';
 import { useCurrentUser } from 'util/user';
@@ -25,6 +27,7 @@ import {
   makeBrowserNodes,
 } from './makeBrowserNodes';
 import { RenderNodeList } from './RenderNodeList';
+import { FileUsageOverview } from './FileUsageOverview';
 
 import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
 
@@ -118,17 +121,17 @@ export const UserBrowser = React.memo(
       (node: BrowserNode) => {
         if (isFileNode(node)) {
           return {
-            'Erstellt am': node.meta.insertedAt,
+            'Erstellt am': format(new Date(node.meta.insertedAt), 'Pp', {
+              locale: de,
+            }),
             Größe: new FileSize(node.meta.filesize).humanize(),
-            Dateityp: node.meta.fileType,
-            mimeType: node.meta.mimeType,
+            typ: node.meta.mimeType,
             Formate: node.meta.fileConversions?.length ?? 0,
-            id: node.id,
+            Nutzung: <FileUsageOverview file={node.meta} />,
           };
         } else if (isDirectoryNode(node)) {
           return {
             'Erstellt am': node.meta.insertedAt,
-            id: node.id,
           };
         }
       },

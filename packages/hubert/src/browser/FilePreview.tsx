@@ -111,11 +111,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
                 {Object.entries(meta).map(([key, value]) => (
                   <li key={key}>
                     <label>{key}:</label>
-                    <span>
-                      {['string', 'number'].includes(typeof value)
-                        ? value
-                        : JSON.stringify(value)}
-                    </span>
+                    <span>{value}</span>
                   </li>
                 ))}
               </ul>
