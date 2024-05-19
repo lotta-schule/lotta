@@ -8,6 +8,7 @@ export interface TenantStatsModel {
 }
 
 export interface TenantModel {
+  __typename?: 'Tenant';
   id: string;
   insertedAt: string;
   updatedAt: string;

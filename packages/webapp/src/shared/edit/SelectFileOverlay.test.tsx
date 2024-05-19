@@ -97,11 +97,16 @@ describe('SelectFileOverlay Component', () => {
     });
     await user.click(selectFileButton);
 
-    expect(onSelectFileMock).toHaveBeenCalledWith({
-      ...imageFile,
-      usage: undefined,
-      userId: null,
-      parentDirectory: null,
-    });
+    expect(onSelectFileMock).toHaveBeenCalledWith(
+      Object.assign(
+        {},
+        imageFile,
+        { __typename: undefined, usage: undefined },
+        {
+          userId: null,
+          parentDirectory: null,
+        }
+      )
+    );
   });
 });

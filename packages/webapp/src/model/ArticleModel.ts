@@ -6,6 +6,7 @@ import { ID } from './ID';
 import { UserGroupModel } from './UserGroupModel';
 
 export interface ArticleModel {
+  __typename?: 'Article';
   id: ID;
   insertedAt: string;
   updatedAt: string;

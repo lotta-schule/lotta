@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { pick } from 'lodash';
 import { HubertProvider } from '@lotta-schule/hubert';
+import { InMemoryCache } from '@apollo/client';
 import {
   render,
   RenderOptions,
@@ -18,6 +19,8 @@ export type TestSetupOptions = {
   additionalMocks?: MockedResponse[];
 } & ApolloMocksOptions;
 
+export let currentApolloCache: null | InMemoryCache = null;
+
 const ProviderFactory = (options: TestSetupOptions): React.FC => {
   const ComponentClass = ({ children }: { children?: React.ReactNode }) => {
     const { cache, mocks: defaultMocks } = getDefaultApolloMocks(
@@ -29,6 +32,8 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
         'tags',
       ])
     );
+
+    currentApolloCache = cache;
 
     return (
       <I18nextProvider i18n={i18n}>

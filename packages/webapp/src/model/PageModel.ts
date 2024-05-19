@@ -4,6 +4,7 @@ import { ContentModuleModel } from './ContentModuleModel';
 import { ID } from './ID';
 
 export interface PageModel {
+  __typename?: 'Page';
   id: ID;
   title: string;
   preview?: string;
