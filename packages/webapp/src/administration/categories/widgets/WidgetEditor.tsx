@@ -8,6 +8,7 @@ import {
   ErrorMessage,
   Input,
   Label,
+  LoadingButton,
   SplitViewButton,
   Toolbar,
 } from '@lotta-schule/hubert';
@@ -40,7 +41,7 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
     const [isDeleteWidgetDialogOpen, setIsDeleteWidgetDialogOpen] =
       React.useState(false);
 
-    const [mutateWidget, { loading: isLoading, error }] = useMutation<
+    const [mutateWidget, { error }] = useMutation<
       { widget: WidgetModel },
       { id: ID; widget: any }
     >(UpdateWidgetMutation);
@@ -170,17 +171,18 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
             }
           />
         )}
+
         <Divider className={styles.footerDivider} />
+
         <div className={styles.footer}>
-          <Button
-            style={{ float: 'right' }}
-            disabled={isLoading}
-            className={styles.button}
-            onClick={() => updateWidget()}
+          <LoadingButton
+            onAction={async () => {
+              await updateWidget();
+            }}
             icon={<Icon icon={faFloppyDisk} />}
           >
             Marginale speichern
-          </Button>
+          </LoadingButton>
 
           <Button
             variant={'error'}

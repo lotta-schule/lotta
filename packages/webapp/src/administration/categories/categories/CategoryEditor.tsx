@@ -20,6 +20,7 @@ import {
   SplitViewButton,
   Toolbar,
   useSplitView,
+  LoadingButton,
 } from '@lotta-schule/hubert';
 import { motion } from 'framer-motion';
 import { CategoryModel, WidgetModel, ID, UserGroupModel } from 'model';
@@ -59,7 +60,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
     const [selectedWidgets, setSelectedWidgets] = React.useState<WidgetModel[]>(
       []
     );
-    const [mutateCategory, { loading: isLoading, error }] = useMutation<
+    const [mutateCategory, { error }] = useMutation<
       { category: CategoryModel },
       { id: ID; category: any }
     >(UpdateCategoryMutation, {
@@ -381,15 +382,16 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
 
         {!category.isHomepage && (
           <>
-            <Divider className={styles.deleteDivider} />
+            <Divider className={styles.footerDivider} />
             <div className={styles.footer}>
-              <Button
-                disabled={isLoading}
-                onClick={() => updateCategory()}
+              <LoadingButton
+                onAction={async () => {
+                  await updateCategory();
+                }}
                 icon={<Icon icon={faFloppyDisk} />}
               >
                 Kategorie speichern
-              </Button>
+              </LoadingButton>
               <Button
                 icon={<Icon icon={faTrash} />}
                 onClick={() => setIsDeleteCategoryDialogOpen(true)}

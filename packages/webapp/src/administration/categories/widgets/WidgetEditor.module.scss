@@ -8,7 +8,6 @@
   }
 
   .footerDivider {
-    clear: both;
     margin-block: calc(2 * var(--lotta-spacing));
   }
 
@@ -16,7 +15,7 @@
     display: flex;
     justify-content: space-between;
 
-    .button {
+    button {
       margin-right: var(--lotta-spacing);
     }
   }

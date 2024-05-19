@@ -23,9 +23,7 @@
     justify-content: space-between;
   }
 
-  .deleteDivider {
-    clear: both;
-    margin-bottom: calc(2 * var(--lotta-spacing));
-    margin-top: calc(2 * var(--lotta-spacing));
+  .footerDivider {
+    margin-block: calc(2 * var(--lotta-spacing));
   }
 }
