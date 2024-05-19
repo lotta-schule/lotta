@@ -170,7 +170,7 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
             }
           />
         )}
-        <Divider className={styles.footerDevider} />
+        <Divider className={styles.footerDivider} />
         <div className={styles.footer}>
           <Button
             style={{ float: 'right' }}
