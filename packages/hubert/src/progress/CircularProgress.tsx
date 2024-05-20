@@ -53,7 +53,7 @@ export const CircularProgress = React.memo(
           <svg viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="46" pathLength={288.5} />
             {!isIndeterminate && showValue && (
-              <text x="50" y="59" fontSize="30" textLength="60">
+              <text x="50" y="59" fontSize="28">
                 {Math.floor(value ?? 0)}%
               </text>
             )}
