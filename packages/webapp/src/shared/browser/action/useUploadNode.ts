@@ -59,7 +59,7 @@ export const useUploadNode = () => {
         onCompleted: () => {
           update(() => ({
             status: 'done',
-            endTime: new Date(),
+            endTime: new Date().getTime(),
             progress: 100,
           }));
         },

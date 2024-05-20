@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useDropzone } from 'react-dropzone';
 import {
   useBrowserState,
   BrowserNode,
@@ -26,6 +27,8 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
     selected,
     isNodeDisabled,
     mode,
+    uploadClient,
+    canEdit,
     onNavigate,
     onSelect,
     setIsFilePreviewVisible,
@@ -217,16 +220,48 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
     }
   }, [nodes]);
 
+  const isUploadAllowed = React.useMemo(() => {
+    if (path.length === 0) {
+      return false;
+    }
+
+    return canEdit(currentPath);
+  }, [currentPath, canEdit]);
+
+  const { getRootProps, isDragAccept, isDragActive, isDragReject } =
+    useDropzone({
+      multiple: true,
+      noClick: true,
+      disabled: !isUploadAllowed,
+      onDropAccepted(files) {
+        for (const file of files) {
+          uploadClient?.addFile?.(file, path.at(-1)!);
+        }
+      },
+    });
+  const dropzoneProps = getRootProps({
+    role: 'listbox',
+    className: clsx(styles.root, {
+      [styles.isDragging]: isDragActive,
+      [styles.isDragAccept]: isDragAccept,
+      [styles.isDragReject]: isDragReject,
+    }),
+  });
+
   if (!nodes?.length) {
     return (
-      <div ref={listRef as any} className={clsx(styles.root, styles.isEmpty)}>
+      <div
+        {...dropzoneProps}
+        ref={listRef as any}
+        className={clsx(dropzoneProps.className, styles.isEmpty)}
+      >
         {nodes !== null && 'Keine Dateien'}
       </div>
     );
   }
 
   return (
-    <ul className={styles.root} role="listbox" ref={listRef as any}>
+    <ul ref={listRef as any} {...dropzoneProps}>
       {nodes.map((node, currentNodeIndex) => {
         const isSelected = selected.some(
           (npath) => npath.at(-1)?.id === node.id

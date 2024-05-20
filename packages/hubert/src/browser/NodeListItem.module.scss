@@ -48,4 +48,35 @@
     color: rgba(var(--lotta-disabled-color), 0.5);
     cursor: default;
   }
+
+  &.isDragging {
+    position: relative;
+    &::after {
+      content: "";
+      position: absolute;
+      box-sizing: border-box;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 100;
+      padding: var(--lotta-spacing);
+      border-width: 2px;
+      border-style: dashed;
+    }
+  }
+  &.isDragAccept {
+    &::after {
+      background-color: rgba(var(--lotta-primary-color), 0.025);
+      border-color: var(--lotta-primary-color);
+    }
+  }
+  &.isDragReject {
+    &::after {
+      background-color: rgba(var(--lotta-error-color), 0.025);
+      border-color: var(--lotta-error-color);
+    }
+  }
 }

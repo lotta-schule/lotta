@@ -74,6 +74,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.24
         version: 18.2.24
+      '@types/react-dropzone':
+        specifier: ^5.1.0
+        version: 5.1.0(react@18.2.0)
       '@types/slate-base64-serializer':
         specifier: ^0.2.5
         version: 0.2.5
@@ -203,6 +206,9 @@ importers:
       react-dom:
         specifier: '>= 18.0.0'
         version: 18.2.0(react@18.2.0)
+      react-dropzone:
+        specifier: ^14.2.3
+        version: 14.2.3(react@18.2.0)
       react-popper:
         specifier: ^2.3.0
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.2.0)(react@18.2.0)
@@ -253,7 +259,7 @@ importers:
   packages/storybook-hubert:
     devDependencies:
       '@lotta-schule/storybook-addon-theme':
-        specifier: 4.2.1-alpha.0
+        specifier: ../storybook-addon-theme
         version: link:../storybook-addon-theme
       '@storybook/addon-a11y':
         specifier: ^8.0.6
@@ -446,9 +452,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-dropzone:
-        specifier: ^14.2.3
-        version: 14.2.3(react@18.2.0)
       react-i18next:
         specifier: ^14.1.0
         version: 14.1.0(i18next@23.10.1)(react-dom@18.2.0)(react@18.2.0)
@@ -7342,6 +7345,15 @@ packages:
       '@types/react': 18.2.74
     dev: true
 
+  /@types/react-dropzone@5.1.0(react@18.2.0):
+    resolution: {integrity: sha512-VCdDCwSsr1MT2frsVl5p8qH+LWwUGzsaNtGkEQekHviZqK0dmTbiIp2Pzfb8lTkH4oTE2JtBbWnbuM6B4FH80A==}
+    deprecated: This is a stub types definition. react-dropzone provides its own type definitions, so you do not need this installed.
+    dependencies:
+      react-dropzone: 14.2.3(react@18.2.0)
+    transitivePeerDependencies:
+      - react
+    dev: true
+
   /@types/react-redux@7.1.33:
     resolution: {integrity: sha512-NF8m5AjWCkert+fosDsN3hAlHzpjSiXlVy9EgQEmLoBhaNXbmyeGs/aj5dQzKuF+/q+S7JQagorGDW8pJ28Hmg==}
     dependencies:
@@ -8429,7 +8441,6 @@ packages:
   /attr-accept@2.2.2:
     resolution: {integrity: sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==}
     engines: {node: '>=4'}
-    dev: false
 
   /available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
@@ -10949,7 +10960,6 @@ packages:
     engines: {node: '>= 12'}
     dependencies:
       tslib: 2.6.2
-    dev: false
 
   /file-system-cache@2.3.0:
     resolution: {integrity: sha512-l4DMNdsIPsVnKrgEXbJwDJsA5mB8rGwHYERMgqQx/xAUtChPJMre1bXBzDEqqVbWv9AIbFezXMxeEkZDSrXUOQ==}
@@ -16036,7 +16046,6 @@ packages:
       file-selector: 0.6.0
       prop-types: 15.8.1
       react: 18.2.0
-    dev: false
 
   /react-element-to-jsx-string@15.0.0(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-UDg4lXB6BzlobN60P8fHWVPX3Kyw8ORrTeBtClmIlGdkOOE+GYQSFvmEU5iLLpwp/6v42DINwNcwOhOLfQ//FQ==}

@@ -16,4 +16,15 @@
     justify-content: center;
     align-items: center;
   }
+
+  &.isDragging {
+    position: relative;
+    filter: blur(1px);
+  }
+  &.isDragAccept {
+    position: relative;
+  }
+  &.isDragReject {
+    position: relative;
+  }
 }

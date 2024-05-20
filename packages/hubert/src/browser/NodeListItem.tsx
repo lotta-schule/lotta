@@ -1,12 +1,17 @@
 import * as React from 'react';
 import { VirtualElement } from '@popperjs/core';
+import { useDropzone } from 'react-dropzone';
 import { Menu } from '../menu';
 import { Folder, FolderOpen } from '../icon';
 import { Checkbox } from '../form';
 import { Popover } from '../popover/new/Popover';
 import { useIsMobile } from '../util';
 import { FileIcon } from './FileIcon';
-import { BrowserNode, useBrowserState } from './BrowserStateContext';
+import {
+  BrowserNode,
+  BrowserPath,
+  useBrowserState,
+} from './BrowserStateContext';
 import { NodeRenameInput } from './NodeRenameInput';
 import { NodeMenuButton } from './NodeMenuButton';
 import { isDirectoryNode } from './utils';
@@ -34,7 +39,7 @@ export const NodeListItem = React.memo(
     onClick,
   }: NodeListItemProps) => {
     const nodePath = React.useMemo(
-      () => [...parentPath, node],
+      () => [...parentPath, node] as BrowserPath,
       [parentPath, node]
     );
     const isMobile = useIsMobile();
@@ -44,6 +49,9 @@ export const NodeListItem = React.memo(
       currentAction,
       currentPath,
       selected,
+      canEdit,
+      uploadClient,
+      onNavigate,
       onSelect,
       onRequestNodeIcon,
       renameNode,
@@ -82,7 +90,7 @@ export const NodeListItem = React.memo(
         return customIcon;
       }
 
-      if (node.type === 'directory') {
+      if (isDirectoryNode(node)) {
         return isOpen ? <FolderOpen /> : <Folder />;
       }
 
@@ -98,45 +106,71 @@ export const NodeListItem = React.memo(
       }
     }, [isSelected]);
 
+    const isUploadAllowed = React.useMemo(
+      () => isDirectoryNode(node) && canEdit(nodePath),
+      [canEdit]
+    );
+
+    const onDropAccepted = React.useCallback((files: File[]) => {
+      onNavigate(nodePath as BrowserPath<'directory'>);
+      for (const file of files) {
+        uploadClient?.addFile?.(file, node as BrowserNode<'directory'>);
+      }
+    }, []);
+    const { getRootProps, isDragAccept, isDragActive, isDragReject } =
+      useDropzone({
+        multiple: true,
+        noClick: true,
+        disabled: !isUploadAllowed,
+        noDragEventsBubbling: true,
+        onDropAccepted,
+      });
+    const dropzoneProps = getRootProps({
+      role: 'option',
+      className: clsx(styles.root, {
+        [styles.isDragging]: isDragActive,
+        [styles.isDragAccept]: isDragAccept,
+        [styles.isDragReject]: isDragReject,
+        [styles.isOpen]: isOpen,
+        [styles.isSelected]: isSelected,
+        [styles.isDisabled]: isDisabled,
+      }),
+      ['aria-selected']: isSelected,
+      ['aria-disabled']: isDisabled,
+      ['aria-expanded']: isOpen,
+      title: node.name,
+      key: node.id,
+      onContextMenu: (e) => {
+        currentContextMenuCloseFn?.();
+        e.preventDefault();
+        if (mode !== 'view-and-edit' || isDisabled) {
+          return;
+        }
+        if (!isSelected) {
+          onSelect([nodePath]);
+        }
+        setIsContextMenuOpen(true);
+        currentContextMenuCloseFn = closeContextMenu;
+        mouseRef.current = {
+          getBoundingClientRect: () => {
+            return {
+              top: e.clientY + 20,
+              left: e.clientX,
+              right: e.clientX,
+              bottom: e.clientY + 20,
+              height: 0,
+              width: 0,
+            } as ClientRect;
+          },
+        };
+      },
+    });
+
     return (
       <>
         <li
-          className={clsx(styles.root, {
-            [styles.isOpen]: isOpen,
-            [styles.isSelected]: isSelected,
-            [styles.isDisabled]: isDisabled,
-          })}
-          role="option"
-          aria-selected={isSelected}
-          aria-disabled={isDisabled}
-          aria-expanded={isOpen}
-          title={node.name}
-          key={node.id}
+          {...dropzoneProps}
           ref={listItemRef}
-          onContextMenu={(e) => {
-            currentContextMenuCloseFn?.();
-            e.preventDefault();
-            if (mode !== 'view-and-edit' || isDisabled) {
-              return;
-            }
-            if (!isSelected) {
-              onSelect([nodePath]);
-            }
-            setIsContextMenuOpen(true);
-            currentContextMenuCloseFn = closeContextMenu;
-            mouseRef.current = {
-              getBoundingClientRect: () => {
-                return {
-                  top: e.clientY + 20,
-                  left: e.clientX,
-                  right: e.clientX,
-                  bottom: e.clientY + 20,
-                  height: 0,
-                  width: 0,
-                } as ClientRect;
-              },
-            };
-          }}
           onClick={isDisabled || isRenaming ? undefined : (e) => onClick?.(e)}
         >
           <div className={styles.fileIcon}>{nodeIcon}</div>

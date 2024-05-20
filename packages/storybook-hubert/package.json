@@ -15,7 +15,7 @@
   },
   "type": "module",
   "devDependencies": {
-    "@lotta-schule/storybook-addon-theme": "4.2.1-alpha.0",
+    "@lotta-schule/storybook-addon-theme": "../storybook-addon-theme",
     "@storybook/addon-a11y": "^8.0.6",
     "@storybook/addon-actions": "^8.0.6",
     "@storybook/addon-coverage": "^1.0.1",

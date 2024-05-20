@@ -73,7 +73,7 @@ export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
         )
       );
     },
-    [setCurrentUploads]
+    []
   );
 
   React.useEffect(() => {
@@ -92,10 +92,8 @@ export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
 
   const addFile = React.useCallback(
     async (file: File, parentNode: BrowserNode<'directory'>) => {
-      setCurrentUploads((currentUploads) => [
-        ...currentUploads,
-        createUpload(file, parentNode),
-      ]);
+      const newUpload = createUpload(file, parentNode);
+      setCurrentUploads((currentUploads) => [...currentUploads, newUpload]);
     },
     [setCurrentUploads, createUpload]
   );
