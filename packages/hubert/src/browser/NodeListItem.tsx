@@ -159,7 +159,14 @@ export const NodeListItem = React.memo(
                 onChange={(isSelected) => {
                   onSelect(
                     isSelected
-                      ? [...selected, nodePath]
+                      ? [
+                          ...selected.filter(
+                            (path) =>
+                              (path.at(-1)?.parent ?? null) ===
+                              nodePath.at(-1)?.parent
+                          ),
+                          nodePath,
+                        ]
                       : selected.filter((n) => n.at(-1)?.id !== node.id)
                   );
                 }}
