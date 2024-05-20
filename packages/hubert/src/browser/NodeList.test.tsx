@@ -62,6 +62,7 @@ describe('NodeList component', () => {
         nodes={defaultNodes.filter((n) => n.id !== selectedNode.id)}
         selected={[fixtures.getPathForNode(selectedNode)]}
         onSelect={onSelect}
+        onNavigate={vi.fn()}
       />
     );
 
@@ -94,6 +95,7 @@ describe('NodeList component', () => {
           <WrappedNodeList
             selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
+            onNavigate={vi.fn()}
           />
         );
 
@@ -141,6 +143,7 @@ describe('NodeList component', () => {
           <WrappedNodeList
             selected={[defaultNodesPaths.at(0)!]}
             onSelect={onSelect}
+            onNavigate={vi.fn()}
           />
         );
 
@@ -157,6 +160,7 @@ describe('NodeList component', () => {
             nodes={defaultNodes}
             selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
+            onNavigate={vi.fn()}
           />
         );
 
@@ -176,6 +180,7 @@ describe('NodeList component', () => {
           <WrappedNodeList
             selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
+            onNavigate={vi.fn()}
           />
         );
 
@@ -254,7 +259,13 @@ describe('NodeList component', () => {
       it('should select all nodes when ctrl/cmd+a is pressed', async () => {
         const user = userEvent.setup();
         const onSelect = vi.fn();
-        render(<WrappedNodeList selected={[]} onSelect={onSelect} />);
+        render(
+          <WrappedNodeList
+            selected={[]}
+            onSelect={onSelect}
+            onNavigate={vi.fn()}
+          />
+        );
 
         await user.keyboard('{meta>}{a}');
 
@@ -265,7 +276,12 @@ describe('NodeList component', () => {
         const user = userEvent.setup();
         const onSelect = vi.fn();
         render(
-          <WrappedNodeList mode="select" selected={[]} onSelect={onSelect} />
+          <WrappedNodeList
+            mode="select"
+            selected={[]}
+            onSelect={onSelect}
+            onNavigate={vi.fn()}
+          />
         );
 
         await user.keyboard('{meta>}{a}');

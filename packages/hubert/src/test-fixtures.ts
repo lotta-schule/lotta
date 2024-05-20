@@ -25,10 +25,46 @@ export const browserNodes = [
   { id: '16', name: 'folder 16', type: 'file', parent: '8', meta: {} },
   { id: '17', name: 'folder 17', type: 'file', parent: '8', meta: {} },
   { id: '18', name: 'folder 18', type: 'file', parent: '8', meta: {} },
-  { id: '19', name: 'presentation.ppt', type: 'file', parent: '13', meta: {} },
-  { id: '20', name: 'graph-one.xlsx', type: 'file', parent: '13', meta: {} },
-  { id: '21', name: 'graph-two.xlsx', type: 'file', parent: '13', meta: {} },
-  { id: '22', name: 'notes.txt', type: 'file', parent: '13', meta: {} },
+  {
+    id: '19',
+    name: 'presentation.ppt',
+    type: 'file',
+    parent: '13',
+    meta: {
+      size: 1024,
+      mimeType:
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    },
+  },
+  {
+    id: '20',
+    name: 'graph-one.xlsx',
+    type: 'file',
+    parent: '13',
+    meta: {
+      size: 1311234,
+      mimeType:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    },
+  },
+  {
+    id: '21',
+    name: 'graph-two.xlsx',
+    type: 'file',
+    parent: '13',
+    meta: {
+      size: 828574,
+      mimeType:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    },
+  },
+  {
+    id: '22',
+    name: 'notes.txt',
+    type: 'file',
+    parent: '13',
+    meta: { size: 87, mimeType: 'text/plain' },
+  },
 ] as const satisfies BrowserNode[];
 
 type BrowserNodeFixture = (typeof browserNodes)[number];

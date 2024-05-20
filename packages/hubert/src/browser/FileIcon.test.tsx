@@ -28,9 +28,19 @@ describe('browser/FileIcon', () => {
     expect(screen.getByTestId('file-powerpoint-icon')).toBeInTheDocument();
   });
 
+  it('should render the correct icon for an archive file', () => {
+    const screen = render(<FileIcon mimeType="application/zip" />);
+    expect(screen.getByTestId('file-archive-icon')).toBeInTheDocument();
+  });
+
   it('should render the correct icon for an image file', () => {
     const screen = render(<FileIcon mimeType="image/jpeg" />);
     expect(screen.getByTestId('file-image-icon')).toBeInTheDocument();
+  });
+
+  it('should render the correct icon for a audio file', () => {
+    const screen = render(<FileIcon mimeType="audio/mp3" />);
+    expect(screen.getByTestId('file-audio-icon')).toBeInTheDocument();
   });
 
   it('should render the correct icon for an video file', () => {

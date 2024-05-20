@@ -7,6 +7,7 @@ import {
   fixtures,
 } from 'test-utils';
 import { BrowserPath } from './BrowserStateContext';
+import userEvent from '@testing-library/user-event';
 
 const WrappedNodeListItem = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>
@@ -29,8 +30,15 @@ describe('FilePreview Component', () => {
       expect(screen.getByText(node.name)).toBeInTheDocument();
     });
 
-    it('should show file actions', () => {
-      const screen = render(<WrappedNodeListItem selected={[nodePath]} />);
+    it('should show file action buttons and exec action onClick', async () => {
+      const user = userEvent.setup();
+      const onAction = vi.fn();
+      const screen = render(
+        <WrappedNodeListItem
+          selected={[nodePath]}
+          setCurrentAction={onAction}
+        />
+      );
       expect(screen.getByTestId('FilePreviewActionBar')).toBeVisible();
 
       expect(
@@ -38,6 +46,26 @@ describe('FilePreview Component', () => {
           'button'
         )
       ).toHaveLength(4);
+
+      await user.click(screen.getByRole('button', { name: /umbenennen/i }));
+      expect(onAction).toHaveBeenCalledWith({
+        type: 'rename-node',
+        path: nodePath,
+      });
+      onAction.mockClear();
+
+      await user.click(screen.getByRole('button', { name: /verschieben/i }));
+      expect(onAction).toHaveBeenCalledWith({
+        type: 'move-nodes',
+        paths: [nodePath],
+      });
+      onAction.mockClear();
+
+      await user.click(screen.getByRole('button', { name: /löschen/i }));
+      expect(onAction).toHaveBeenCalledWith({
+        type: 'delete-files',
+        paths: [nodePath],
+      });
     });
 
     it('should not show file actions when in select mode', () => {

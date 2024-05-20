@@ -60,15 +60,12 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
     (action: React.Key) => {
       setIsFilePreviewVisible(false);
       if (action === 'download') {
-        if (!downloadUrl) {
-          return;
-        }
         const node = nodePaths.at(0)?.at(-1);
         if (!node) {
           return;
         }
         const anchor = document.createElement('a');
-        anchor.href = downloadUrl;
+        anchor.href = downloadUrl as string;
         anchor.download = node.name ?? 'datei';
         anchor.click();
       }
