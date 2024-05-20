@@ -139,13 +139,13 @@ export const NodeListItem = React.memo(
       ['aria-disabled']: isDisabled,
       ['aria-expanded']: isOpen,
       title: node.name,
-      key: node.id,
     });
 
     return (
       <>
         <li
           {...dropzoneProps}
+          key={node.id}
           onContextMenu={(e) => {
             currentContextMenuCloseFn?.();
             e.preventDefault();

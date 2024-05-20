@@ -80,7 +80,7 @@ describe('useUploadNode', () => {
         status: 'done',
         progress: 100,
         startTime: upload.startTime,
-        endTime: expect.any(Date),
+        endTime: expect.any(Number),
         parentNode: parentDirectoryNode,
         transferSpeed: 0,
         transferedBytes: 0,

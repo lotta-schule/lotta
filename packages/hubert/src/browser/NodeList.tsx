@@ -258,7 +258,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   }
 
   return (
-    <ul role={'listbox'} {...dropzoneProps}>
+    <ul {...dropzoneProps} role={'listbox'}>
       {nodes.map((node, currentNodeIndex) => {
         const isSelected = selected.some(
           (npath) => npath.at(-1)?.id === node.id
