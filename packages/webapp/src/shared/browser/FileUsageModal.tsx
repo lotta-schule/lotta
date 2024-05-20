@@ -87,7 +87,7 @@ export const FileUsageModal = React.memo(
               <ListItem
                 key={i}
                 leftSection={
-                  <>
+                  <div className={styles.listItemPreviewImage}>
                     {usage.article?.previewImageFile && (
                       <ResponsiveImage
                         resize={'contain'}
@@ -112,7 +112,7 @@ export const FileUsageModal = React.memo(
                       />
                     )}
                     {usage.user && <UserAvatar user={usage.user} size={50} />}
-                  </>
+                  </div>
                 }
                 rightSection={
                   hasSecondaryAction(usage) && (
