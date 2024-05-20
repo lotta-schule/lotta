@@ -153,7 +153,7 @@ describe('pages/admin/users/list', () => {
     await fireEvent.click(screen.getAllByRole('option')[0]);
 
     await fireEvent.click(
-      screen.getByRole('button', { name: /zuletzt angemeldet/i })
+      await screen.findByRole('button', { name: /zuletzt angemeldet/i })
     );
 
     await waitFor(() => {

@@ -23,8 +23,8 @@
     "./preview": "./dist/preview.js"
   },
   "devDependencies": {
-    "@storybook/blocks": "^8.0.4",
-    "@testing-library/jest-dom": "^6.4.2"
+    "@storybook/blocks": "^8.1.1",
+    "@testing-library/jest-dom": "^6.4.5"
   },
   "peerDependencies": {
     "@storybook/blocks": "^8.0.0",
