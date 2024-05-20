@@ -19,7 +19,6 @@ export type NodeListProps = {
 
 export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   const isMobile = useIsMobile();
-  const listRef = React.useRef<HTMLElement>(null);
   const [isMounted, setIsMounted] = React.useState(false);
 
   const {
@@ -47,15 +46,6 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   React.useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  React.useEffect(() => {
-    if (isMounted && !isMobile && path.length === currentPath.length) {
-      listRef.current?.scrollIntoView({
-        inline: 'start',
-        behavior: 'smooth',
-      });
-    }
-  }, [path.length, currentPath.length, isMobile, isMounted]);
 
   const onKeyDown = React.useCallback(
     (e: KeyboardEvent) => {
@@ -228,7 +218,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
     return canEdit(currentPath);
   }, [currentPath, canEdit]);
 
-  const { getRootProps, isDragAccept, isDragActive, isDragReject } =
+  const { getRootProps, isDragAccept, isDragActive, isDragReject, rootRef } =
     useDropzone({
       multiple: true,
       noClick: true,
@@ -240,7 +230,6 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
       },
     });
   const dropzoneProps = getRootProps({
-    role: 'listbox',
     className: clsx(styles.root, {
       [styles.isDragging]: isDragActive,
       [styles.isDragAccept]: isDragAccept,
@@ -248,11 +237,19 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
     }),
   });
 
+  React.useEffect(() => {
+    if (isMounted && !isMobile && path.length === currentPath.length) {
+      rootRef.current?.scrollIntoView({
+        inline: 'start',
+        behavior: 'smooth',
+      });
+    }
+  }, [path.length, currentPath.length, isMobile, isMounted]);
+
   if (!nodes?.length) {
     return (
       <div
         {...dropzoneProps}
-        ref={listRef as any}
         className={clsx(dropzoneProps.className, styles.isEmpty)}
       >
         {nodes !== null && 'Keine Dateien'}
@@ -261,7 +258,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
   }
 
   return (
-    <ul ref={listRef as any} {...dropzoneProps}>
+    <ul role={'listbox'} {...dropzoneProps}>
       {nodes.map((node, currentNodeIndex) => {
         const isSelected = selected.some(
           (npath) => npath.at(-1)?.id === node.id

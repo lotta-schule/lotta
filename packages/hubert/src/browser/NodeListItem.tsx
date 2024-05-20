@@ -58,9 +58,28 @@ export const NodeListItem = React.memo(
       resetAction,
     } = useBrowserState();
 
-    const listItemRef = React.useRef<HTMLLIElement>(null);
+    const isUploadAllowed = React.useMemo(
+      () => isDirectoryNode(node) && canEdit(nodePath),
+      [canEdit]
+    );
+
+    const onDropAccepted = React.useCallback((files: File[]) => {
+      onNavigate(nodePath as BrowserPath<'directory'>);
+      for (const file of files) {
+        uploadClient?.addFile?.(file, node as BrowserNode<'directory'>);
+      }
+    }, []);
+    const { getRootProps, isDragAccept, isDragActive, isDragReject, rootRef } =
+      useDropzone({
+        multiple: true,
+        noClick: true,
+        disabled: !isUploadAllowed,
+        noDragEventsBubbling: true,
+        onDropAccepted,
+      });
+
     const mouseRef = React.useRef<VirtualElement>({
-      getBoundingClientRect: () => listItemRef.current!.getBoundingClientRect(),
+      getBoundingClientRect: () => rootRef.current!.getBoundingClientRect(),
     });
     const [isContextMenuOpen, setIsContextMenuOpen] = React.useState(false);
     const closeContextMenu = React.useCallback(() => {
@@ -98,33 +117,14 @@ export const NodeListItem = React.memo(
     }, [node, isOpen, onRequestNodeIcon]);
 
     React.useEffect(() => {
-      if (isSelected && listItemRef.current) {
-        listItemRef.current.scrollIntoView({
+      if (isSelected && rootRef.current) {
+        rootRef.current.scrollIntoView({
           block: 'nearest',
           behavior: 'smooth',
         });
       }
     }, [isSelected]);
 
-    const isUploadAllowed = React.useMemo(
-      () => isDirectoryNode(node) && canEdit(nodePath),
-      [canEdit]
-    );
-
-    const onDropAccepted = React.useCallback((files: File[]) => {
-      onNavigate(nodePath as BrowserPath<'directory'>);
-      for (const file of files) {
-        uploadClient?.addFile?.(file, node as BrowserNode<'directory'>);
-      }
-    }, []);
-    const { getRootProps, isDragAccept, isDragActive, isDragReject } =
-      useDropzone({
-        multiple: true,
-        noClick: true,
-        disabled: !isUploadAllowed,
-        noDragEventsBubbling: true,
-        onDropAccepted,
-      });
     const dropzoneProps = getRootProps({
       role: 'option',
       className: clsx(styles.root, {
@@ -140,37 +140,36 @@ export const NodeListItem = React.memo(
       ['aria-expanded']: isOpen,
       title: node.name,
       key: node.id,
-      onContextMenu: (e) => {
-        currentContextMenuCloseFn?.();
-        e.preventDefault();
-        if (mode !== 'view-and-edit' || isDisabled) {
-          return;
-        }
-        if (!isSelected) {
-          onSelect([nodePath]);
-        }
-        setIsContextMenuOpen(true);
-        currentContextMenuCloseFn = closeContextMenu;
-        mouseRef.current = {
-          getBoundingClientRect: () => {
-            return {
-              top: e.clientY + 20,
-              left: e.clientX,
-              right: e.clientX,
-              bottom: e.clientY + 20,
-              height: 0,
-              width: 0,
-            } as ClientRect;
-          },
-        };
-      },
     });
 
     return (
       <>
         <li
           {...dropzoneProps}
-          ref={listItemRef}
+          onContextMenu={(e) => {
+            currentContextMenuCloseFn?.();
+            e.preventDefault();
+            if (mode !== 'view-and-edit' || isDisabled) {
+              return;
+            }
+            if (!isSelected) {
+              onSelect([nodePath]);
+            }
+            setIsContextMenuOpen(true);
+            currentContextMenuCloseFn = closeContextMenu;
+            mouseRef.current = {
+              getBoundingClientRect: () => {
+                return {
+                  top: e.clientY + 20,
+                  left: e.clientX,
+                  right: e.clientX,
+                  bottom: e.clientY + 20,
+                  height: 0,
+                  width: 0,
+                } as ClientRect;
+              },
+            };
+          }}
           onClick={isDisabled || isRenaming ? undefined : (e) => onClick?.(e)}
         >
           <div className={styles.fileIcon}>{nodeIcon}</div>
