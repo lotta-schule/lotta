@@ -8,7 +8,7 @@ export type Upload = {
   status: 'pending' | 'uploading' | 'done' | 'error';
   error: Error | null;
   startTime: number;
-  endTime?: Date;
+  endTime?: number;
   progress: number;
   transferSpeed: number;
   transferedBytes: number;
@@ -28,10 +28,7 @@ export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
       const now = new Date().getTime();
       setCurrentUploads((currentUploads) => {
         const doneSinceMoreThan5Seconds = currentUploads.filter(
-          (cu) =>
-            cu.status === 'done' &&
-            cu.endTime &&
-            now - cu.endTime.getTime() > 5000
+          (cu) => cu.status === 'done' && cu.endTime && now - cu.endTime > 5000
         );
 
         if (!doneSinceMoreThan5Seconds.length) {
@@ -42,7 +39,7 @@ export const useUploadClient = (uploadNode: BrowserState['uploadNode']) => {
           (cu) =>
             cu.status !== 'done' ||
             (cu.endTime &&
-              now - cu.endTime.getTime() <= 5000 &&
+              now - cu.endTime <= 5000 &&
               !doneSinceMoreThan5Seconds.includes(cu))
         );
       });
