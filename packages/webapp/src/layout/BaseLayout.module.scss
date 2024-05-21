@@ -1,6 +1,6 @@
 @import "breakpoints";
 
-.root {
+.root:not(empty) {
   color: rgb(var(--lotta-text-color));
   background-color: initial;
   width: 100%;

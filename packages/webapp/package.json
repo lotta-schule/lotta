@@ -17,6 +17,7 @@
     "@absinthe/socket": "^0.2.1",
     "@absinthe/socket-apollo-link": "^0.2.1",
     "@apollo/client": "^3.10.4",
+    "@apollo/experimental-nextjs-app-support": "^0.10.1",
     "@apollo/link-error": "^2.0.0-beta.3",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
@@ -59,6 +60,5 @@
     "slate": "^0.76.0",
     "slate-react": "^0.76.0",
     "slugify": "^1.6.6"
-  },
-  "devDependencies": {}
+  }
 }

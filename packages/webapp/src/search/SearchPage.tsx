@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArticleModel, CategoryModel } from 'model';
 import { useDebounce } from 'util/useDebounce';
 import { Icon } from 'shared/Icon';
-import { Header, Main, Sidebar } from 'layout';
+import { LegacyHeader, Main, Sidebar } from 'layout';
 import { CategorySelect } from 'shared/categorySelect/CategorySelect';
 import { ArticlePreview } from 'article/preview';
 
@@ -32,9 +32,9 @@ export const SearchPage = () => {
   return (
     <>
       <Main className={styles.root}>
-        <Header bannerImageUrl={'/searchBanner.png'}>
+        <LegacyHeader bannerImageUrl={'/searchBanner.png'}>
           <h2>Suche</h2>
-        </Header>
+        </LegacyHeader>
 
         <section className={styles.inputSection}>
           <div className={styles.description}>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { checkExpiredToken } from 'api/client';
+import { checkExpiredToken } from 'api/legacyClient';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ConversationModel, ID, MessageModel } from 'model';
 import { useSubscription } from '@apollo/client';

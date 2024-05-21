@@ -1,6 +1,6 @@
 import { NextApiHandler, MetadataRoute } from 'next';
 import { TenantModel } from 'model';
-import { getApolloClient } from 'api/client';
+import { getApolloClient } from 'api/legacyClient';
 
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 

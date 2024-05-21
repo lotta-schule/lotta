@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Button, ButtonProps } from './Button';
 import { CircularProgress } from '../progress';

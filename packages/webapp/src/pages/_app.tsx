@@ -6,7 +6,7 @@ import { add } from 'date-fns';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import { ServerDownError } from 'error/ServerDownError';
 import { TenantNotFoundError } from 'error/TenantNotFoundError';
-import { getApolloClient } from 'api/client';
+import { getApolloClient } from 'api/legacyClient';
 import { AppContextProviders } from 'layout/AppContextProviders';
 import opentelemetry, { SpanStatusCode } from '@opentelemetry/api';
 import axios from 'axios';

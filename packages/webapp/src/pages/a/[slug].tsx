@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { getApolloClient } from 'api/client';
+import { getApolloClient } from 'api/legacyClient';
 import { Main, Sidebar } from 'layout';
 import { ArticleModel, ID } from 'model';
 import { ErrorMessage } from '@lotta-schule/hubert';

@@ -6,7 +6,7 @@ import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAnce
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
-import { isMobileDrawerOpenVar } from 'api/cache';
+import { isMobileDrawerOpenVar } from 'api/apollo/cache';
 import { useRouter } from 'next/router';
 import clsx from 'clsx';
 import Link from 'next/link';

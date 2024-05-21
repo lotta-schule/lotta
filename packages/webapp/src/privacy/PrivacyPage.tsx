@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box } from '@lotta-schule/hubert';
-import { Header, Main, Sidebar } from 'layout';
+import { LegacyHeader, Main, Sidebar } from 'layout';
 
 import styles from './PrivacyPage.module.scss';
 
@@ -8,11 +8,11 @@ export const PrivacyPage = () => {
   return (
     <>
       <Main className={styles.root}>
-        <Header>
+        <LegacyHeader>
           <Box>
             <h3>Datenschutzerklärung</h3>
           </Box>
-        </Header>
+        </LegacyHeader>
         <Box className={styles.box}>
           <h4>Einleitung</h4>
           <p>

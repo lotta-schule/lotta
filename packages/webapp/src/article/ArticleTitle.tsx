@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ArticleModel } from 'model';
-import { Header } from 'layout';
+import { LegacyHeader } from 'layout';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Box } from '@lotta-schule/hubert';
@@ -20,7 +20,7 @@ export const ArticleTitle = React.memo<ArticleTitleProps>(
       (User.canEditArticle(currentUser, article) || User.isAdmin(currentUser));
     return (
       <Box style={{ borderRadius: 0 }}>
-        <Header>
+        <LegacyHeader>
           <ArticlePreview
             article={article}
             isEmbedded
@@ -29,7 +29,7 @@ export const ArticleTitle = React.memo<ArticleTitleProps>(
             disableEdit={!showEditSection}
             disablePin={!User.isAdmin(currentUser)}
           />
-        </Header>
+        </LegacyHeader>
       </Box>
     );
   }

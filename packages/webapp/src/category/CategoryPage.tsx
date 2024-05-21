@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { ArticleModel, WidgetModel, ID, ArticleFilter } from 'model';
-import { Header, Main, Sidebar } from 'layout';
+import { LegacyHeader, Main, Sidebar } from 'layout';
 import { ErrorMessage, NoSsr } from '@lotta-schule/hubert';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { File, User } from 'util/model';
@@ -172,14 +172,14 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
     <>
       <CategoryHead category={category} />
       <Main>
-        <Header
+        <LegacyHeader
           bannerImageUrl={
             category.bannerImageFile &&
             File.getFileRemoteLocation(baseUrl, category.bannerImageFile)
           }
         >
           <h2 data-testid="title">{category.title}</h2>
-        </Header>
+        </LegacyHeader>
         <div className={styles.articles}>
           {[...articlesToShow]
             .sort((a1, a2) => {

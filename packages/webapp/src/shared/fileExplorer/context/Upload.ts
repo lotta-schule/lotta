@@ -1,4 +1,4 @@
-import { getApolloClient } from 'api/client';
+import { getApolloClient } from 'api/legacyClient';
 import { UploadModel, FileModel, DirectoryModel } from 'model';
 import UploadFileMutation from 'api/mutation/UploadFileMutation.graphql';
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';

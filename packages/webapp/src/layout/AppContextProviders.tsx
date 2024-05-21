@@ -13,7 +13,7 @@ import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueCont
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
 import { fonts } from 'administration/system/presentation/fonts';
 import { useTenant } from 'util/tenant/useTenant';
-import { getApolloClient } from 'api/client';
+import { getApolloClient } from 'api/legacyClient';
 import { BaseLayout } from './BaseLayout';
 import { i18n } from '../i18n';
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getApolloClient } from 'api/client';
+import { getApolloClient } from 'api/legacyClient';
 import { ArticleModel } from 'model';
 import { ArticlesPage } from 'profile/ArticlesPage';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';

@@ -12,7 +12,7 @@ export interface MainProps {
 export const Main = ({ className, children, style }: MainProps) => {
   return (
     <div className={clsx(styles.root, className)}>
-      <div style={{ ...style, width: '100%' }}>{children}</div>
+      <div style={style}>{children}</div>
     </div>
   );
 };

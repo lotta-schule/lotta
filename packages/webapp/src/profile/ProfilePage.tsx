@@ -22,7 +22,7 @@ import { FileModelType, UserModel, FileModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { useServerData } from 'shared/ServerDataContext';
-import { Header, Main } from 'layout';
+import { LegacyHeader, Main } from 'layout';
 import Link from 'next/link';
 
 import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
@@ -61,9 +61,9 @@ export const ProfilePage = () => {
 
   return (
     <Main className={styles.root}>
-      <Header bannerImageUrl={'/bannerProfil.png'}>
+      <LegacyHeader bannerImageUrl={'/bannerProfil.png'}>
         <h2>Meine Daten</h2>
-      </Header>
+      </LegacyHeader>
 
       <Box className={styles.container}>
         <h4>Meine Daten</h4>

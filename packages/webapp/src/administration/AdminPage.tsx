@@ -5,7 +5,7 @@ import {
   faCubes,
 } from '@fortawesome/free-solid-svg-icons';
 import { Box } from '@lotta-schule/hubert';
-import { Header, Main, Sidebar } from 'layout';
+import { LegacyHeader, Main, Sidebar } from 'layout';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
 import Link from 'next/link';
@@ -32,9 +32,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   return (
     <>
       <Main className={clsx(className, styles.root)}>
-        <Header bannerImageUrl={'/bannerAdmin.png'}>
+        <LegacyHeader bannerImageUrl={'/bannerAdmin.png'}>
           <h2 data-testid={'title'}>Administration</h2>
-        </Header>
+        </LegacyHeader>
         <section>
           {isAllowed && (
             <>

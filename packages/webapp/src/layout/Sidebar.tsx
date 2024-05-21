@@ -3,7 +3,7 @@ import { Drawer, NoSsr, useIsMobile } from '@lotta-schule/hubert';
 import { useReactiveVar } from '@apollo/client';
 import { Footer } from './navigation/Footer';
 import { WidgetsList } from 'category/widgetsList/WidgetsList';
-import { isMobileDrawerOpenVar } from 'api/cache';
+import { isMobileDrawerOpenVar } from 'api/apollo/cache';
 import { useRouter } from 'next/router';
 
 import styles from './Sidebar.module.scss';

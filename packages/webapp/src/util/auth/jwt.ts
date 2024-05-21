@@ -47,10 +47,10 @@ export class JWT {
     public header: JWTHeader = { algorithm: 'HS512', type: 'JWT' }
   ) {}
 
-  isExpired(): boolean {
-    const now = new Date();
+  isExpired(buffer = 30_000): boolean {
+    const now = new Date().getTime() + buffer;
 
-    return now <= this.body.expires;
+    return now <= this.body.expires.getTime();
   }
 
   isValid(): boolean {
