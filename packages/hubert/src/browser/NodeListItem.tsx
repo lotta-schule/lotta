@@ -35,7 +35,7 @@ export const NodeListItem = React.memo(
     parentPath,
     node,
     isDisabled,
-    isSelected,
+    isSelected = false,
     onClick,
   }: NodeListItemProps) => {
     const nodePath = React.useMemo(
@@ -103,7 +103,11 @@ export const NodeListItem = React.memo(
     );
 
     const nodeIcon = React.useMemo(() => {
-      const customIcon = onRequestNodeIcon?.(node);
+      const customIcon = onRequestNodeIcon?.(node, {
+        isSelected,
+        isOpen,
+        isPreview: false,
+      });
 
       if (customIcon) {
         return customIcon;

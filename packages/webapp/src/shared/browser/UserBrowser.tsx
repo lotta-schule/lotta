@@ -14,6 +14,9 @@ import { DirectoryModel, FileModel } from 'model';
 import { File, User } from 'util/model';
 import { useCurrentUser } from 'util/user';
 import { FileSize } from '@lotta-schule/hubert';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
+import { faFolder } from '@fortawesome/free-solid-svg-icons';
 import { useServerData } from 'shared/ServerDataContext';
 import {
   useCreateDirectory,
@@ -170,6 +173,20 @@ export const UserBrowser = React.memo(
         deleteNode={deleteNode}
         uploadNode={uploadNode}
         getDownloadUrl={getDownloadUrl}
+        onRequestNodeIcon={(node, { isOpen, isPreview }) => {
+          if (isDirectoryNode(node) && node.meta.user === null) {
+            const style = {
+              opacity: 0.5,
+              fontSize: isPreview ? undefined : '1.5em',
+              width: isPreview ? undefined : '1em',
+              height: isPreview ? undefined : '1em',
+            };
+            if (isOpen) {
+              return <FontAwesomeIcon icon={faFolderOpen} style={style} />;
+            }
+            return <FontAwesomeIcon icon={faFolder} style={style} />;
+          }
+        }}
       />
     );
   }

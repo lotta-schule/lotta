@@ -49,7 +49,10 @@ export interface BrowserState {
 
   renderNodeList: React.ComponentType<RenderNodeListProps>;
 
-  onRequestNodeIcon?: (node: BrowserNode) => React.ReactNode;
+  onRequestNodeIcon?: (
+    node: BrowserNode,
+    state: { isSelected: boolean; isOpen?: boolean; isPreview: boolean }
+  ) => React.ReactNode;
   onRequestChildNodes: (
     node: BrowserNode<'directory'> | null,
     options?: { refetch?: boolean }

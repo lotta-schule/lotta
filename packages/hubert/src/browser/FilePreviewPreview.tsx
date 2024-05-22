@@ -37,7 +37,11 @@ export const FilePreviewPreview = ({ className }: FilePreviewPreviewProps) => {
       return null;
     }
 
-    const customIcon = onRequestNodeIcon?.(node);
+    const customIcon = onRequestNodeIcon?.(node, {
+      isSelected: false,
+      isOpen: false,
+      isPreview: true,
+    });
 
     if (customIcon) {
       return customIcon;
