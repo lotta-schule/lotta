@@ -15,6 +15,12 @@ import { TextEncoder, TextDecoder } from 'util';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
 import { MockRouter, BlobPolyfill } from 'test/mocks';
 import { NEXT_DATA } from 'next/dist/shared/lib/utils';
+import { DirectoryModel, FileModel } from 'model';
+
+declare module '@lotta-schule/hubert' {
+  export interface DefaultFileMetadata extends FileModel {}
+  export interface DefaultDirectoryMetadata extends DirectoryModel {}
+}
 
 declare global {
   interface Window {
@@ -91,8 +97,22 @@ beforeAll(() => {
     })),
   });
 
+  Object.defineProperty(window, 'IntersectionObserver', {
+    writable: false,
+    value: vi.fn(() => ({
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+    })),
+  });
+
   Element.prototype.scroll = vi.fn(() => {});
   Object.defineProperty(window, 'scrollTo', {
+    writable: false,
+    value: vi.fn(),
+  });
+
+  Element.prototype.scrollIntoView = vi.fn(() => void 0);
+  Object.defineProperty(window, 'scrollIntoView', {
     writable: false,
     value: vi.fn(),
   });

@@ -1,0 +1,30 @@
+@import "../theme/breakpoints.scss";
+
+.root {
+  flex: 0 0 250px;
+  height: 100%;
+  border-right: 1px solid rgba(var(--lotta-accent-grey-color));
+  overflow: scroll;
+
+  @media screen and (max-width: $max-xs) {
+    flex: 0 0 100%;
+    width: 100%;
+  }
+
+  &.isEmpty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &.isDragging {
+    position: relative;
+    filter: blur(1px);
+  }
+  &.isDragAccept {
+    position: relative;
+  }
+  &.isDragReject {
+    position: relative;
+  }
+}

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { pick } from 'lodash';
 import { HubertProvider } from '@lotta-schule/hubert';
+import { InMemoryCache } from '@apollo/client';
 import {
   render,
   RenderOptions,
@@ -10,21 +11,15 @@ import {
   RenderHookOptions,
 } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
 import { ApolloMocksOptions, getDefaultApolloMocks } from 'test/mocks';
 import { i18n } from '../i18n';
-import {
-  reducer as fileExplorerStateReducer,
-  Action as FileExploreerStateAction,
-} from 'shared/fileExplorer/context/reducer';
-import fileExplorerContext, {
-  defaultState as defaultFileExplorerState,
-} from 'shared/fileExplorer/context/FileExplorerContext';
 
 export type TestSetupOptions = {
   additionalMocks?: MockedResponse[];
 } & ApolloMocksOptions;
+
+export let currentApolloCache: null | InMemoryCache = null;
 
 const ProviderFactory = (options: TestSetupOptions): React.FC => {
   const ComponentClass = ({ children }: { children?: React.ReactNode }) => {
@@ -38,6 +33,8 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
       ])
     );
 
+    currentApolloCache = cache;
+
     return (
       <I18nextProvider i18n={i18n}>
         <HubertProvider>
@@ -46,7 +43,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
             addTypename={false}
             cache={cache}
           >
-            <UploadQueueProvider>{children}</UploadQueueProvider>
+            {children}
           </MockedProvider>
         </HubertProvider>
       </I18nextProvider>
@@ -100,31 +97,6 @@ export const getMetaTagValue = (metaName: string) => {
       return metas[i].getAttribute('content');
     }
   }
-};
-
-export interface TestFileExplorerContextProviderProps {
-  children: any;
-  defaultValue?: Partial<typeof defaultFileExplorerState>;
-  onUpdateState?(currentState: typeof defaultFileExplorerState): void;
-}
-export const TestFileExplorerContextProvider: React.FC<
-  TestFileExplorerContextProviderProps
-> = ({ children, defaultValue, onUpdateState }) => {
-  const [state, dispatch] = React.useReducer<
-    React.Reducer<typeof defaultFileExplorerState, FileExploreerStateAction>
-  >(fileExplorerStateReducer, {
-    ...defaultFileExplorerState,
-    ...defaultValue,
-  });
-  React.useEffect(() => {
-    onUpdateState?.(state);
-    // eslint-disable-next-line
-  }, [state]);
-  return (
-    <fileExplorerContext.Provider value={[state, dispatch]}>
-      {children}
-    </fileExplorerContext.Provider>
-  );
 };
 
 // override render method

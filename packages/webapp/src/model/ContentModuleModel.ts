@@ -15,6 +15,7 @@ export enum ContentModuleType {
 }
 
 export interface ContentModuleModel<C = any, T = any> {
+  __typename?: 'ContentModule';
   id: ID;
   type: ContentModuleType;
   insertedAt: string;
@@ -26,6 +27,7 @@ export interface ContentModuleModel<C = any, T = any> {
 }
 
 export interface ContentModuleResultModel<T = any> {
+  __typename?: 'ContentModuleResult';
   id: ID;
   insertedAt: string;
   updatedAt: string;

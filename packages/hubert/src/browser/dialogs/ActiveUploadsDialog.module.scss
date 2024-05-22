@@ -1,0 +1,17 @@
+.root {
+  .icon {
+    width: 2em;
+    height: 2em;
+  }
+
+  .errorIcon {
+    color: rgb(var(--lotta-error-color));
+  }
+  .errorMessage {
+    color: rgb(var(--lotta-error-color));
+  }
+
+  .successIcon {
+    color: rgb(var(--lotta-success-color));
+  }
+}

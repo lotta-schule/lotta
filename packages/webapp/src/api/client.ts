@@ -267,6 +267,7 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
 
   const apolloClient = new ApolloClient({
     ssrMode: !isBrowser,
+    connectToDevTools: process.env.NODE_ENV === 'development' && isBrowser,
     link,
     cache: createCache(),
   });

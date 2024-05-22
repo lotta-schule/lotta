@@ -1,7 +1,9 @@
+import { ID } from './ID';
 import { UserModel } from './UserModel';
 
 export type FeedbackModel = {
-  id: string;
+  __typename?: 'Feedback';
+  id: ID;
   topic: string;
   content: string;
   metadata?: string;

@@ -1,72 +1,100 @@
 import * as React from 'react';
 import { FileModel } from 'model';
-import { Button, ButtonProps, Dialog } from '@lotta-schule/hubert';
 import {
-  FileExplorer,
-  FileExplorerProps,
-} from 'shared/fileExplorer/FileExplorer';
+  Button,
+  ButtonProps,
+  Dialog,
+  DialogActions,
+} from '@lotta-schule/hubert';
+import { UserBrowser, UserBrowserProps } from 'shared/browser';
+import { useTranslation } from 'react-i18next';
 
-interface SelectFileButtonProps {
+interface SelectFileButtonProps<Multiple extends boolean> {
   label: string | JSX.Element;
   buttonComponent?: any;
   buttonComponentProps?: any;
-  multiple?: boolean;
+  multiple?: Multiple;
   fileFilter?(file: FileModel): boolean;
-  onSelect?(file: FileModel | FileModel[]): void;
+  onSelect?(file: Multiple extends true ? FileModel[] : FileModel): void;
   onChangeFileExplorerVisibility?(isFileExplorerVisible: boolean): void;
 }
 
-export const SelectFileButton = React.memo(
-  ({
-    label,
-    fileFilter,
-    multiple,
-    onSelect,
-    buttonComponent,
-    buttonComponentProps,
-    onChangeFileExplorerVisibility,
-  }: SelectFileButtonProps) => {
-    const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] =
-      React.useState(false);
-    const fileExplorerOptions: Partial<FileExplorerProps> = {};
+const _SelectFileButton = <Multiple extends boolean | undefined>({
+  label,
+  fileFilter,
+  multiple,
+  onSelect,
+  buttonComponent,
+  buttonComponentProps,
+  onChangeFileExplorerVisibility,
+}: SelectFileButtonProps<Multiple extends undefined ? false : Multiple>) => {
+  const { t } = useTranslation();
+  const [selectedFiles, setSelectedFiles] = React.useState<FileModel[]>([]);
+  const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] =
+    React.useState(false);
+  const fileExplorerOptions: Partial<UserBrowserProps> = {};
+  const lastBrowserVisible = React.useRef(false);
 
-    React.useEffect(() => {
+  React.useEffect(() => {
+    if (isSelectFileDialogOpen !== lastBrowserVisible.current) {
       onChangeFileExplorerVisibility?.(isSelectFileDialogOpen);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isSelectFileDialogOpen]);
+      lastBrowserVisible.current = isSelectFileDialogOpen;
+    }
 
-    return (
-      <>
-        {React.createElement<ButtonProps>(
-          buttonComponent || Button,
-          {
-            onMouseDown: (e: React.MouseEvent) => {
-              e.stopPropagation();
-              e.preventDefault();
-              setIsSelectFileDialogOpen(true);
-            },
-            ...buttonComponentProps,
+    if (!isSelectFileDialogOpen) {
+      setSelectedFiles([]);
+    }
+  }, [isSelectFileDialogOpen, onChangeFileExplorerVisibility]);
+
+  return (
+    <>
+      {React.createElement<ButtonProps>(
+        buttonComponent || Button,
+        {
+          onMouseDown: (e: React.MouseEvent) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setIsSelectFileDialogOpen(true);
           },
-          label
-        )}
-        <Dialog
-          open={isSelectFileDialogOpen}
-          onRequestClose={() => setIsSelectFileDialogOpen(false)}
-          title={'Datei auswählen'}
-        >
-          <FileExplorer
-            style={{ padding: '0 .5em' }}
-            fileFilter={fileFilter}
-            multiple={multiple}
-            onSelect={(result) => {
+          ...buttonComponentProps,
+        },
+        label
+      )}
+      <Dialog
+        open={isSelectFileDialogOpen}
+        onRequestClose={() => setIsSelectFileDialogOpen(false)}
+        title={'Datei auswählen'}
+        wide
+      >
+        <UserBrowser
+          isNodeDisabled={(node) =>
+            node.type === 'file' &&
+            fileFilter?.(node.meta as FileModel) === false
+          }
+          multiple={multiple}
+          onSelect={setSelectedFiles}
+          {...fileExplorerOptions}
+        />
+        <DialogActions>
+          <Button onClick={() => setIsSelectFileDialogOpen(false)}>
+            Abbrechen
+          </Button>
+          <Button
+            disabled={selectedFiles.length === 0}
+            onClick={() => {
               setIsSelectFileDialogOpen(false);
-              onSelect?.(result);
+              onSelect?.((multiple ? selectedFiles : selectedFiles[0]) as any);
             }}
-            {...fileExplorerOptions}
-          />
-        </Dialog>
-      </>
-    );
-  }
-);
-SelectFileButton.displayName = 'SelectFileButton';
+          >
+            {multiple &&
+              `${t('files.file', { count: selectedFiles.length })} auswählen`}
+            {!multiple && 'Datei auswählen'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
+_SelectFileButton.displayName = 'SelectFileButton';
+
+export const SelectFileButton = React.memo(_SelectFileButton);

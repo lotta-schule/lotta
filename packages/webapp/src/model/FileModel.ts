@@ -6,6 +6,7 @@ import { ContentModuleModel } from './ContentModuleModel';
 import { CategoryModel } from './CategoryModel';
 
 export interface DirectoryModel {
+  __typename?: 'Directory';
   id: ID;
   insertedAt: string;
   updatedAt: string;
@@ -24,6 +25,7 @@ export enum FileModelType {
 }
 
 export interface FileModel {
+  __typename?: 'File';
   id: ID;
   userId: ID;
   user?: UserModel;
@@ -39,6 +41,7 @@ export interface FileModel {
 }
 
 export interface FileConversionModel {
+  __typename?: 'FileConversion';
   id?: ID;
   fileType: FileModelType;
   format: string;

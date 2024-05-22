@@ -7,6 +7,8 @@
     "incremental": true,
     "resolveJsonModule": true,
     "module": "esnext",
+    "lib": ["esnext", "dom", "dom.iterable"],
+
     "paths": {
       "@lotta-schule/hubert": [
         "../../hubert/src/index.ts"
@@ -14,7 +16,8 @@
       "@lotta-schule/theme": [
         "../../theme/src/index.ts"
       ]
-    }
+    },
+    "noEmit": true
   },
   "references": [
     {
@@ -22,8 +25,11 @@
     },
     {
       "path": "./tsconfig.test.json"
-    },
+    }
   ],
   "files": [],
-  "include": []
+  "include": [],
+  "exclude": [
+    "node_modules"
+  ]
 }

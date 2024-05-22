@@ -12,9 +12,9 @@ export interface EditToolbarImageButtonProps {
   onImageAdded?(): void;
 }
 
-export const EditToolbarImageButton: React.FC<EditToolbarImageButtonProps> = ({
+export const EditToolbarImageButton = ({
   onImageAdded,
-}) => {
+}: EditToolbarImageButtonProps) => {
   const editor = useSlate();
   const [lastEditorSelection, setLastEditorSelection] =
     React.useState<Range | null>(null);
