@@ -384,6 +384,13 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
           <>
             <Divider className={styles.footerDivider} />
             <div className={styles.footer}>
+              <Button
+                icon={<Icon icon={faTrash} />}
+                onClick={() => setIsDeleteCategoryDialogOpen(true)}
+                variant={'error'}
+              >
+                Kategorie löschen
+              </Button>
               <LoadingButton
                 onAction={async () => {
                   await updateCategory();
@@ -392,13 +399,6 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
               >
                 Kategorie speichern
               </LoadingButton>
-              <Button
-                icon={<Icon icon={faTrash} />}
-                onClick={() => setIsDeleteCategoryDialogOpen(true)}
-                variant={'error'}
-              >
-                Kategorie löschen
-              </Button>
             </div>
             <DeleteCategoryDialog
               isOpen={isDeleteCategoryDialogOpen}

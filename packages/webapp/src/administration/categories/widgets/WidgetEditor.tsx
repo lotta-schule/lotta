@@ -175,15 +175,6 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
         <Divider className={styles.footerDivider} />
 
         <div className={styles.footer}>
-          <LoadingButton
-            onAction={async () => {
-              await updateWidget();
-            }}
-            icon={<Icon icon={faFloppyDisk} />}
-          >
-            Marginale speichern
-          </LoadingButton>
-
           <Button
             variant={'error'}
             icon={<Icon icon={faTrash} />}
@@ -192,6 +183,15 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
           >
             Marginale löschen
           </Button>
+
+          <LoadingButton
+            onAction={async () => {
+              await updateWidget();
+            }}
+            icon={<Icon icon={faFloppyDisk} />}
+          >
+            Marginale speichern
+          </LoadingButton>
 
           <DeleteWidgetDialog
             isOpen={isDeleteWidgetDialogOpen}
