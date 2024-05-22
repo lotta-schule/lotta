@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FileModel, ID } from 'model';
 import { FileUsageModal } from './FileUsageModal';
 
@@ -38,7 +40,16 @@ export const FileUsageOverview = React.memo(
           }}
           style={{ cursor: fileUsageCount > 0 ? 'pointer' : 'default' }}
         >
-          👁️ {fileUsageCount}
+          <FontAwesomeIcon
+            icon={faEye}
+            style={{
+              color:
+                fileUsageCount > 0
+                  ? 'rgb(var(--lotta-primary-color))'
+                  : undefined,
+            }}
+          />{' '}
+          {fileUsageCount}
         </span>
         <FileUsageModal
           file={file}
