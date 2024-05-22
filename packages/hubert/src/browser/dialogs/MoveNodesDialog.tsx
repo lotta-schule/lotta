@@ -36,7 +36,7 @@ export const MoveNodesDialog = React.memo(() => {
       setErrorMessage(null);
     } else if (currentAction?.type === 'move-nodes') {
       setTargetPath(
-        currentAction?.paths.at(0)?.filter(isDirectoryNode).slice(0, -1) ?? []
+        currentAction?.paths.at(0)?.slice(0, -1).filter(isDirectoryNode) ?? []
       );
     }
   }, [currentAction?.type]);
@@ -45,8 +45,10 @@ export const MoveNodesDialog = React.memo(() => {
     (nodePath: BrowserPath<'directory'>) =>
       canEdit(nodePath) &&
       currentAction?.type === 'move-nodes' &&
-      currentAction.paths.every((path) =>
-        path.every((p) => p.id !== nodePath.at(-1)?.id)
+      currentAction.paths.every(
+        (path) =>
+          isFileNode(path.at(-1)) ||
+          path.every((p) => p.id !== nodePath.at(-1)?.id)
       ),
     [currentAction, canEdit]
   );
