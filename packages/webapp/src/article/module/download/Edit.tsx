@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Button, DragHandle, Input, FileSize } from '@lotta-schule/hubert';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { ContentModuleModel, FileModel } from 'model';
-import { Button, DragHandle, Input } from '@lotta-schule/hubert';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
-import { FileSize } from 'util/FileSize';
 
 import styles from './Download.module.scss';
 

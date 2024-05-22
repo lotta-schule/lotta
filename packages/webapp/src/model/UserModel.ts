@@ -3,6 +3,7 @@ import { ID } from './ID';
 import { FileModel } from 'model';
 
 export interface UserModel {
+  __typename?: 'User';
   id: ID;
   insertedAt: string;
   updatedAt: string;

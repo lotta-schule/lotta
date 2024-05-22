@@ -1,0 +1,82 @@
+.root {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: calc(var(--lotta-spacing) * 0.5);
+  /*
+   * 2.5em is the size of the iconbutton, which is sometimes shown
+   * and sometimes not. We want the height of the item to be the same
+   * regardless of whether the icon button is shown or not.
+   * The size of the padding (line above) is added.
+   */
+  min-height: calc(2.5em + calc(var(--lotta-spacing) * 0.5));
+  font-size: 0.75rem;
+
+  cursor: pointer;
+
+  .fileIcon {
+    flex: 0 0 2.5em;
+    text-align: center;
+  }
+
+  .fileName {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: none; // Prevent text selection, because it bothers when selecting with "shift" key
+  }
+
+  .editSection {
+    flex: 0 0 fit-content;
+    padding-inline-start: var(--lotta-spacing);
+  }
+
+  &:not(.isDisabled):hover {
+    background-color: rgba(var(--lotta-accent-grey-color), 0.3);
+  }
+
+  &.isOpen:not(.isSelected) {
+    background-color: rgba(var(--lotta-primary-color), 0.05);
+  }
+
+  &.isSelected:not(:has(input[type="checkbox"])) {
+    background-color: rgba(var(--lotta-primary-color), 0.25);
+  }
+
+  &.isDisabled {
+    color: rgba(var(--lotta-disabled-color), 0.5);
+    cursor: default;
+  }
+
+  &.isDragging {
+    position: relative;
+    &::after {
+      content: "";
+      position: absolute;
+      box-sizing: border-box;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 100;
+      padding: var(--lotta-spacing);
+      border-width: 2px;
+      border-style: dashed;
+    }
+  }
+  &.isDragAccept {
+    &::after {
+      background-color: rgba(var(--lotta-primary-color), 0.025);
+      border-color: var(--lotta-primary-color);
+    }
+  }
+  &.isDragReject {
+    &::after {
+      background-color: rgba(var(--lotta-error-color), 0.025);
+      border-color: var(--lotta-error-color);
+    }
+  }
+}

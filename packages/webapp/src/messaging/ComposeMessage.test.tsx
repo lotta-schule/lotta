@@ -5,23 +5,20 @@ import {
   SomeUserin,
   imageFile as mockImageFile,
 } from 'test/fixtures';
-import FileExplorer, {
-  FileExplorerProps,
-} from 'shared/fileExplorer/FileExplorer';
+import { UserBrowser, UserBrowserProps } from 'shared/browser';
 import { ComposeMessage } from './ComposeMessage';
 import { MessageModel } from 'model';
 import userEvent from '@testing-library/user-event';
 
 import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
 
-const mockReact = React;
-vi.mock('../shared/fileExplorer/FileExplorer', async (importOriginal) => {
-  const originalModule: typeof FileExplorer = await importOriginal();
+vi.mock('shared/browser', async (importOriginal) => {
+  const originalModule: typeof UserBrowser = await importOriginal();
   return {
     __esModule: true,
     ...originalModule,
-    FileExplorer: ({ onSelect }: FileExplorerProps) => {
-      mockReact.useEffect(() => {
+    UserBrowser: ({ onSelect }: UserBrowserProps) => {
+      React.useEffect(() => {
         onSelect?.([mockImageFile as any]);
       }, []);
       return null;
@@ -179,6 +176,16 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
       await fireEvent.type(screen.getByRole('textbox'), 'Hallo!');
       await fireEvent.click(
         screen.getByRole('button', { name: /datei anhängen/i })
+      );
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeVisible();
+      });
+
+      expect(
+        screen.getByRole('button', { name: /datei auswählen/i })
+      ).not.toBeDisabled();
+      await fireEvent.click(
+        screen.getByRole('button', { name: /datei auswählen/i })
       );
 
       await waitFor(() => {

@@ -1,0 +1,16 @@
+.root {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+
+  input {
+    padding: calc(var(--lotta-spacing) * 0.5);
+  }
+
+  .progress {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+  }
+}

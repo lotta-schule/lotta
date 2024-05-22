@@ -1,0 +1,19 @@
+.root {
+  .listItemText {
+    padding: 0 var(--lotta-spacing);
+  }
+
+  .listItemPreviewImage {
+    max-width: 10em;
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  .listItemTextLine {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}

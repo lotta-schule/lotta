@@ -1,4 +1,5 @@
 export interface ScheduleResult {
+  __typename?: 'ScheduleResult';
   head: ScheduleResultHead;
   body: ScheduleResultBody | null;
   footer: ScheduleResultFooter;

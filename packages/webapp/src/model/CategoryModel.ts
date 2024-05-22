@@ -4,6 +4,7 @@ import { WidgetModel } from './WidgetModel';
 import { ID } from './ID';
 
 export interface CategoryModel {
+  __typename?: 'Category';
   id: ID;
   title: string;
   sortKey: number;

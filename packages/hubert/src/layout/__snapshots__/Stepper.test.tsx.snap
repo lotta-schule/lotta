@@ -23,6 +23,7 @@ exports[`Stepper > should render a stepper 1`] = `
       <svg
         aria-hidden="true"
         class="_root_2ade80"
+        data-testid="keyboard-arrow-left-icon"
         focusable="false"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
@@ -57,6 +58,7 @@ exports[`Stepper > should render a stepper 1`] = `
       <svg
         aria-hidden="true"
         class="_root_2ade80"
+        data-testid="keyboard-arrow-right-icon"
         focusable="false"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
