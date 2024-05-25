@@ -241,10 +241,23 @@ jobs:
       nx-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
   publish-docker-image:
+    if: ${{ github.ref_name != 'main'}}
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: lotta-schule/web
       tags: '["${{ github.sha }}"]'
+      # checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
+      working-directory: .
+      dockerfile: packages/webapp/Dockerfile
+    secrets:
+      password: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-staging-docker-image:
+    if: ${{ github.ref_name == 'main'}}
+    uses: ./.github/workflows/__deploy_dockerfile.yaml
+    with:
+      name: lotta-schule/web
+      tags: '["${{ github.sha }}", "canary-${{ github.sha }}"]'
       # checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
       working-directory: .
       dockerfile: packages/webapp/Dockerfile

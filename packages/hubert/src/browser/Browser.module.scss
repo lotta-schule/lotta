@@ -1,0 +1,19 @@
+.root {
+  border-radius: var(--lotta-border-radius);
+  border: 1px solid rgba(var(--lotta-accent-grey-color));
+
+  height: 600px;
+  max-height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  .explorer {
+    flex: 1 1 auto;
+  }
+
+  .toolbar,
+  .statusBar {
+    flex: 0 0 auto;
+  }
+}

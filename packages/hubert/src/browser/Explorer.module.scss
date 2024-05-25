@@ -1,0 +1,25 @@
+@import "../theme/breakpoints.scss";
+
+.root {
+  background-color: rgb(var(--lotta-box-background-color));
+  overflow: auto hidden;
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
+
+  .nodeInfo {
+    flex: 1 1 min(40%, 500px);
+    min-width: max(20%, 200px);
+    position: sticky;
+    right: 0;
+    background: rgb(var(--lotta-box-background-color));
+
+    @media screen and (max-width: $max-xs) {
+      right: initial;
+      position: relative;
+      flex: 0 0 auto;
+      width: 100%;
+      overflow: hidden;
+    }
+  }
+}

@@ -20,10 +20,14 @@
     border-radius: var(--lotta-border-radius);
     flex-direction: column;
     width: calc(100vw - calc(4 * var(--lotta-spacing)));
+    max-width: 700px;
     max-height: calc(100% - calc(8 * var(--lotta-spacing)));
-    max-width: 600px;
     margin: calc(4 * var(--lotta-spacing)) auto;
     color: rgb(var(--lotta-text-color));
+
+    &.wide {
+      max-width: 1000px;
+    }
 
     @media screen and (max-width: $max-xs) {
       width: 100vw;

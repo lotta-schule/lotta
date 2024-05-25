@@ -12,7 +12,6 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 
-import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
 
@@ -36,19 +35,6 @@ export const DeleteUserGroupDialog = React.memo(
       >(DeleteUserGroupMutation, {
         update: (cache, { data }) => {
           if (data?.deleteUserGroup?.userGroup) {
-            const readUserGroupsResult = cache.readQuery<{
-              userGroups: UserGroupModel[];
-            }>({ query: GetUserGroupsQuery });
-            cache.writeQuery<{ userGroups: UserGroupModel[] }>({
-              query: GetUserGroupsQuery,
-              data: {
-                userGroups: (readUserGroupsResult?.userGroups ?? []).filter(
-                  (g) => g.id !== data.deleteUserGroup.userGroup.id
-                ),
-              },
-            });
-          }
-          if (data?.deleteUserGroup?.userGroup) {
             const unpublishedArticlesResult = cache.readQuery<{
               articles: ArticleModel[];
             }>({ query: GetUnpublishedArticlesQuery });
@@ -61,6 +47,13 @@ export const DeleteUserGroupDialog = React.memo(
                 ],
               },
             });
+
+            const normalizedId = cache.identify(
+              data.deleteUserGroup.userGroup as any
+            );
+            if (normalizedId) {
+              cache.evict({ id: normalizedId });
+            }
           }
         },
       });

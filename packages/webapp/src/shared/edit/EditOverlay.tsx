@@ -21,7 +21,7 @@ export const EditOverlay = React.memo<EditOverlayProps>(
         <div className={styles.overlay}>
           {!!onClickRemove && (
             <Button
-              aria-label={'remove'}
+              aria-label={'entfernen'}
               className={styles.removeButton}
               onClick={onClickRemove}
               icon={<Icon icon={faXmark} size={'lg'} />}

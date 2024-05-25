@@ -1,0 +1,96 @@
+@import "../theme/breakpoints.scss";
+
+.root {
+  height: 100%;
+  padding: var(--lotta-spacing);
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+
+    .previewSection {
+      margin: auto;
+      aspect-ratio: 1.777; // 16:9
+      border-radius: var(--lotta-border-radius);
+      flex: 1 1;
+      max-width: 100%;
+      max-height: 40%;
+
+      height: 100%;
+    }
+
+    .infoSection {
+      margin-top: var(--lotta-spacing);
+      width: 100%;
+      overflow: auto;
+
+      .nodeNameWrapper {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: var(--lotta-spacing);
+        position: sticky;
+        top: 0;
+        background: rgb(var(--lotta-box-background-color));
+        z-index: 1;
+
+        .actionBar {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          flex: 0 0 auto;
+          button {
+            margin-left: var(--lotta-spacing);
+            &.deleteButton {
+              color: rgb(var(--lotta-error-color));
+            }
+          }
+        }
+
+        h2 {
+          flex: 1 1 auto;
+          font-size: 1.1em;
+          font-weight: bold;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+      }
+
+      &.manyNodes li > div {
+        padding: 0;
+      }
+      ul {
+        font-size: 0.75em;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        li {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: var(--lotta-spacing);
+          padding: 0;
+          &:last-child {
+            margin-bottom: 0;
+          }
+          label {
+            font-weight: bold;
+            & + span {
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              padding-left: var(--lotta-spacing);
+            }
+          }
+        }
+      }
+    }
+  }
+}

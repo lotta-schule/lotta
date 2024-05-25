@@ -8,6 +8,7 @@ export type NewMessageDestination =
   | { user: UserModel; group?: never };
 
 export interface ConversationModel {
+  __typename?: 'Conversation';
   id: ID;
   insertedAt: string;
   updatedAt: string;
@@ -18,6 +19,7 @@ export interface ConversationModel {
 }
 
 export interface MessageModel {
+  __typename?: 'Message';
   id: ID;
   insertedAt: string;
   updatedAt: string;

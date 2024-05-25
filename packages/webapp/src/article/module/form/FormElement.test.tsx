@@ -207,6 +207,20 @@ describe('shared/article/module/form/FormElement', () => {
           };
         },
       },
+      {
+        request: {
+          query: GetDirectoriesAndFilesQuery,
+          variables: { parentDirectoryId: '8743' },
+        },
+        result: () => {
+          return {
+            data: {
+              files: [],
+              directories: [],
+            },
+          };
+        },
+      },
     ];
 
     beforeEach(() => {
@@ -295,23 +309,23 @@ describe('shared/article/module/form/FormElement', () => {
       await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
       await waitFor(() => expect(didCallFiles).toEqual(true));
       await waitFor(() =>
-        expect(screen.getByRole('row', { name: /logos/i })).toBeVisible()
+        expect(screen.getByRole('option', { name: /logos/i })).toBeVisible()
       );
-      await fireEvent.click(screen.getByRole('row', { name: /logos/i }));
+      await fireEvent.click(screen.getByRole('option', { name: /logos/i }));
       await waitFor(() =>
         expect(
-          screen.getByRole('row', { name: /dateiname\.jpg/i })
+          screen.getByRole('option', { name: /dateiname\.jpg/i })
         ).toBeVisible()
       );
       await fireEvent.click(
-        screen.getByRole('row', { name: /dateiname\.jpg/i })
+        screen.getByRole('option', { name: /dateiname\.jpg/i })
       );
       await fireEvent.click(screen.getByRole('button', { name: /auswählen/ }));
       expect(setValueFn).toHaveBeenCalledWith(
         'lotta-file-id://' +
           '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15",' +
-          '"filename":"Dateiname.jpg","filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE","userId":"1",' +
-          '"fileConversions":[],"parentDirectory":{"id":"8743"}}'
+          '"filename":"Dateiname.jpg","filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
+          '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}'
       );
     });
 

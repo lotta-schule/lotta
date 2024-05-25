@@ -58,15 +58,17 @@ export const userGroups = [adminGroup, lehrerGroup, schuelerGroup, elternGroup];
  *
  */
 
-export const logosDirectory: DirectoryModel = {
+export const logosDirectory = {
+  __typename: 'Directory',
   id: '8743',
   insertedAt: '2010-01-01 10:00',
   updatedAt: '2010-01-01 10:00',
   name: 'Logos',
   parentDirectory: null,
-};
+} as DirectoryModel;
 
-export const profilDirectory: DirectoryModel = {
+export const profilDirectory = {
+  __typename: 'Directory',
   id: '8744',
   insertedAt: '2010-01-01 10:00',
   updatedAt: '2010-01-01 10:00',
@@ -74,7 +76,8 @@ export const profilDirectory: DirectoryModel = {
   parentDirectory: null,
 };
 
-export const podcastsDirectory: DirectoryModel = {
+export const podcastsDirectory = {
+  __typename: 'Directory',
   id: '8745',
   insertedAt: '2010-01-01 10:00',
   updatedAt: '2010-01-01 10:00',
@@ -82,7 +85,8 @@ export const podcastsDirectory: DirectoryModel = {
   parentDirectory: null,
 };
 
-export const videoPodcastsDirectory: DirectoryModel = {
+export const videoPodcastsDirectory = {
+  __typename: 'Directory',
   id: '8790',
   insertedAt: '2010-01-01 10:00',
   updatedAt: '2010-01-01 10:00',
@@ -90,7 +94,8 @@ export const videoPodcastsDirectory: DirectoryModel = {
   parentDirectory: podcastsDirectory,
 };
 
-export const audioPodcastsDirectory: DirectoryModel = {
+export const audioPodcastsDirectory = {
+  __typename: 'Directory',
   id: '8791',
   insertedAt: '2010-01-01 10:00',
   updatedAt: '2010-01-01 10:00',
@@ -98,7 +103,8 @@ export const audioPodcastsDirectory: DirectoryModel = {
   parentDirectory: podcastsDirectory,
 };
 
-export const schulweitDirectory: DirectoryModel = {
+export const schulweitDirectory = {
+  __typename: 'Directory',
   id: '8746',
   insertedAt: '2010-01-01 10:00',
   updatedAt: '2010-01-01 10:00',
@@ -114,6 +120,7 @@ export const schulweitDirectory: DirectoryModel = {
  */
 
 export const imageFile = {
+  __typename: 'File',
   id: '123',
   filename: 'Dateiname.jpg',
   filesize: 123123,
@@ -126,6 +133,7 @@ export const imageFile = {
 } as Partial<FileModel> as FileModel;
 
 export const otherImageFile = {
+  __typename: 'File',
   id: '245',
   filename: 'Animiert.gif',
   filesize: 2123123,
@@ -138,6 +146,7 @@ export const otherImageFile = {
 } as Partial<FileModel> as FileModel;
 
 export const documentFile = {
+  __typename: 'File',
   id: '5445',
   filename: 'Manifest.pdf',
   filesize: 822123123,
@@ -150,6 +159,7 @@ export const documentFile = {
 } as Partial<FileModel> as FileModel;
 
 export const convertedDocumentFile = {
+  __typename: 'File',
   id: '5545',
   filename: 'Bilderbuch.pdf',
   filesize: 2123123,
@@ -160,6 +170,7 @@ export const convertedDocumentFile = {
   usage: [],
   fileConversions: [
     {
+      __typename: 'FileConversion',
       id: '55451',
       insertedAt: '2001-01-21 00:00',
       updatedAt: '2001-01-21 00:00',
@@ -168,6 +179,7 @@ export const convertedDocumentFile = {
       mimeType: 'image/jpg',
     },
     {
+      __typename: 'FileConversion',
       id: '55452',
       insertedAt: '2001-01-21 00:00',
       updatedAt: '2001-01-21 00:00',
@@ -176,6 +188,7 @@ export const convertedDocumentFile = {
       mimeType: 'audio/mp3',
     },
     {
+      __typename: 'FileConversion',
       id: '55453',
       insertedAt: '2001-01-21 00:00',
       updatedAt: '2001-01-21 00:00',
@@ -187,6 +200,7 @@ export const convertedDocumentFile = {
 } as Partial<FileModel> as FileModel;
 
 export const podcastTextFile = {
+  __typename: 'File',
   id: '5546',
   filename: 'Podcast.txt',
   filesize: 2123123,
@@ -199,6 +213,7 @@ export const podcastTextFile = {
 } as Partial<FileModel> as FileModel;
 
 export const movieFile = {
+  __typename: 'File',
   id: '75000',
   filename: 'Amelie.mp4',
   filesize: 2323232123123,
@@ -209,6 +224,7 @@ export const movieFile = {
   usage: [],
   fileConversions: [
     {
+      __typename: 'FileConversion',
       id: '75001',
       fileType: FileModelType.Image,
       format: 'gif:300',
@@ -217,6 +233,7 @@ export const movieFile = {
       updatedAt: '2001-01-21 00:00',
     },
     {
+      __typename: 'FileConversion',
       id: '75002',
       fileType: FileModelType.Image,
       format: 'storyboard:800',
@@ -225,6 +242,7 @@ export const movieFile = {
       updatedAt: '2001-01-21 00:00',
     },
     {
+      __typename: 'FileConversion',
       id: '75003',
       fileType: FileModelType.Video,
       format: 'webm:1080',
@@ -233,6 +251,7 @@ export const movieFile = {
       updatedAt: '2001-01-21 00:00',
     },
     {
+      __typename: 'FileConversion',
       id: '75004',
       fileType: FileModelType.Video,
       format: 'webm:768',
@@ -241,6 +260,7 @@ export const movieFile = {
       updatedAt: '2001-01-21 00:00',
     },
     {
+      __typename: 'FileConversion',
       id: '75005',
       fileType: FileModelType.Video,
       format: 'mp4:1080',
@@ -249,6 +269,7 @@ export const movieFile = {
       updatedAt: '2001-01-21 00:00',
     },
     {
+      __typename: 'FileConversion',
       id: '75006',
       fileType: FileModelType.Video,
       format: 'mp4:768',
@@ -257,6 +278,7 @@ export const movieFile = {
       updatedAt: '2001-01-21 00:00',
     },
     {
+      __typename: 'FileConversion',
       id: '75007',
       fileType: FileModelType.Audio,
       format: 'mp3:std',
@@ -268,6 +290,7 @@ export const movieFile = {
 } as Partial<FileModel> as FileModel;
 
 export const audioFile = {
+  __typename: 'File',
   id: '99000',
   filename: 'Kaenguru.wav',
   filesize: 3232123123,
@@ -278,6 +301,7 @@ export const audioFile = {
   usage: [],
   fileConversions: [
     {
+      __typename: 'FileConversion',
       id: '99001',
       fileType: FileModelType.Audio,
       format: 'hifi:flac',
@@ -286,6 +310,7 @@ export const audioFile = {
       updatedAt: '2001-01-21 00:00',
     },
     {
+      __typename: 'FileConversion',
       id: '99002',
       fileType: FileModelType.Audio,
       format: 'lofi:mp3',
@@ -297,6 +322,7 @@ export const audioFile = {
 } as Partial<FileModel> as FileModel;
 
 export const powerpointFile = {
+  __typename: 'File',
   id: '20',
   filename: 'praesi.ppt',
   filesize: 23123,
@@ -307,6 +333,7 @@ export const powerpointFile = {
   usage: [],
   fileConversions: [
     {
+      __typename: 'FileConversion',
       id: '21',
       fileType: FileModelType.Misc,
       format: 'thumbnail:jpg',

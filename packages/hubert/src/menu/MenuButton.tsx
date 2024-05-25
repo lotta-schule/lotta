@@ -31,7 +31,7 @@ export const MenuButton = React.forwardRef(
 
     const isBrowser = typeof window !== 'undefined';
 
-    const ref = React.useRef<HTMLButtonElement>(null);
+    const ref = React.useRef<HTMLButtonElement>(null!);
 
     React.useImperativeHandle(forwardedRef, () => ref.current);
 
@@ -67,28 +67,26 @@ export const MenuButton = React.forwardRef(
     return (
       <>
         <Button ref={ref} {...buttonProps} {...ariaButtonProps} />
-        {ref.current && (
-          <Popover
-            isOpen={state.isOpen}
+        <Popover
+          isOpen={state.isOpen}
+          onClose={state.close}
+          placement={placement}
+          trigger={ref.current}
+        >
+          <Menu
+            {...mergeProps(
+              {
+                ...menuProps,
+                autoFocus: !!menuProps.autoFocus,
+              },
+              props
+            )}
+            className={styles.menu}
             onClose={state.close}
-            placement={placement}
-            triggerRef={ref}
           >
-            <Menu
-              {...mergeProps(
-                {
-                  ...menuProps,
-                  autoFocus: !!menuProps.autoFocus,
-                },
-                props
-              )}
-              className={styles.menu}
-              onClose={state.close}
-            >
-              {props.children as any}
-            </Menu>
-          </Popover>
-        )}
+            {props.children as any}
+          </Menu>
+        </Popover>
       </>
     );
   }

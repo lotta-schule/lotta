@@ -9,7 +9,6 @@ import { AppHead } from './AppHead';
 import { ApolloProvider } from '@apollo/client';
 import { I18nextProvider } from 'react-i18next';
 import { Authentication } from 'shared/Authentication';
-import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
 import { fonts } from 'administration/system/presentation/fonts';
 import { useTenant } from 'util/tenant/useTenant';
@@ -49,10 +48,8 @@ const TenantContextProviders = React.memo(
       <HubertProvider>
         <GlobalStyles theme={theme} supportedFonts={fonts} />
         <Authentication />
-        <UploadQueueProvider>
-          <AppHead />
-          <BaseLayout>{children}</BaseLayout>
-        </UploadQueueProvider>
+        <AppHead />
+        <BaseLayout>{children}</BaseLayout>
       </HubertProvider>
     );
   }

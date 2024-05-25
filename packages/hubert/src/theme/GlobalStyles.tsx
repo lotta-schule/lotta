@@ -14,7 +14,10 @@ export const GlobalStyles = React.memo(
       <>
         <CSSVariables theme={theme} />
         <FontLoader theme={theme} supportedFonts={supportedFonts} />
-        <style data-hubert-global-styles>{`
+        <style
+          data-hubert-global-styles
+          dangerouslySetInnerHTML={{
+            __html: `
             * {
                 box-sizing: border-box;
             }
@@ -95,7 +98,9 @@ export const GlobalStyles = React.memo(
                 font-size: 8pt;
               }
             }
-        `}</style>
+        `,
+          }}
+        />
       </>
     );
   }

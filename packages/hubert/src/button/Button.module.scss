@@ -19,18 +19,18 @@
   }
 
   &.onlyIcon {
+    .icon {
+      margin: 0px;
+    }
     &:not(.grouped) {
+      padding: 0;
       border-radius: 50%;
       border-color: transparent;
       height: 2.5em;
       width: 2.5em;
       background-color: unset;
 
-      & .icon {
-        margin: 0px;
-      }
-
-      &:not([data-varaint="fill"]) {
+      &:not([data-varaint="fill"]):not([disabled]) {
         &:hover {
           background-color: rgba(var(--lotta-primary-color), 0.2);
         }

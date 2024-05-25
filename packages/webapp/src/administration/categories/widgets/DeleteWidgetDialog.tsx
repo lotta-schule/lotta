@@ -11,7 +11,6 @@ import {
 
 import DeleteWidgetMutation from 'api/mutation/DeleteWidgetMutation.graphql';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 
 export interface DeleteWidgetDialogProps {
   isOpen: boolean;
@@ -27,18 +26,11 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
       { id: ID }
     >(DeleteWidgetMutation, {
       update: (cache, { data }) => {
-        if (data && data.widget) {
-          const readWdgetsResult = cache.readQuery<{
-            widgets: WidgetModel[];
-          }>({ query: GetWidgetsQuery });
-          cache.writeQuery<{ widgets: WidgetModel[] }>({
-            query: GetWidgetsQuery,
-            data: {
-              widgets: readWdgetsResult!.widgets.filter(
-                (w) => w.id !== data.widget.id
-              ),
-            },
-          });
+        if (data?.widget) {
+          const normalizedId = cache.identify(data.widget);
+          if (normalizedId) {
+            cache.evict({ id: normalizedId });
+          }
         }
       },
       refetchQueries: [{ query: GetCategoriesQuery }],

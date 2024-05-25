@@ -10,8 +10,6 @@ import {
 import { useMutation } from '@apollo/client';
 import { FeedbackModel } from 'model';
 
-import GetFeedbackQuery from 'api/query/GetFeedbackQuery.graphql';
-import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
 import DeleteFeedbackMutation from 'api/mutation/DeleteFeedbackMutation.graphql';
 
 export interface DeleteFeedbackDialogProps {
@@ -36,34 +34,10 @@ export const DeleteFeedbackDialog = React.memo(
     >(DeleteFeedbackMutation, {
       update: (client, { data }) => {
         if (data?.feedback) {
-          const feedbackCache = client.readQuery<{
-            feedbacks: FeedbackModel[];
-          }>({
-            query: GetFeedbackQuery,
-          });
-          client.writeQuery({
-            query: GetFeedbackQuery,
-            data: {
-              feedbacks:
-                feedbackCache?.feedbacks?.filter(
-                  (f) => f.id !== data.feedback.id
-                ) ?? [],
-            },
-          });
-          const feedbackOverviewCache = client.readQuery<{
-            feedbacks: FeedbackModel[];
-          }>({
-            query: GetFeedbackOverviewQuery,
-          });
-          client.writeQuery({
-            query: GetFeedbackOverviewQuery,
-            data: {
-              feedbacks:
-                feedbackOverviewCache?.feedbacks?.filter(
-                  (f) => f.id !== data.feedback.id
-                ) ?? [],
-            },
-          });
+          const normalizedId = client.identify(data.feedback);
+          if (normalizedId) {
+            client.evict({ id: normalizedId });
+          }
         }
       },
     });

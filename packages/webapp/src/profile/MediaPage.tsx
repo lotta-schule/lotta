@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Box } from '@lotta-schule/hubert';
-import { FileExplorer } from 'shared/fileExplorer/FileExplorer';
 import { LegacyHeader, Main } from 'layout';
+import { UserBrowser } from 'shared/browser';
+
 import styles from './MediaPage.module.scss';
 
 export const MediaPage = () => {
@@ -12,7 +13,7 @@ export const MediaPage = () => {
       </LegacyHeader>
 
       <Box className={styles.container}>
-        <FileExplorer />
+        <UserBrowser />
       </Box>
     </Main>
   );

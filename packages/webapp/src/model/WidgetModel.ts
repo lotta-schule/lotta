@@ -10,12 +10,14 @@ export enum WidgetModelType {
 }
 
 export interface WidgetIconModel {
+  __typename?: 'WidgetIcon';
   iconName?: string;
   overlayText?: string;
   overlayTextColor?: string;
 }
 
 export type WidgetModel<T extends WidgetModelType = WidgetModelType> = {
+  __typename?: 'Widget';
   id: ID;
   title: string;
   type: T;

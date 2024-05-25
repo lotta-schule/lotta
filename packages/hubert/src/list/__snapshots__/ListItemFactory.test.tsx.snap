@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`list/ListItemFactory > create Item > should render an item with complete information for a listItem 1`] = `"[{"type":"span","key":".0","ref":null,"props":{"children":{"type":{"compare":null},"key":null,"ref":null,"props":{},"_owner":null,"_store":{}}},"_owner":null,"_store":{}},{"type":"span","key":".1","ref":null,"props":{"children":"Test"},"_owner":null,"_store":{}},"Test description",{"type":{"compare":null},"key":".3","ref":null,"props":{},"_owner":null,"_store":{}}]"`;
+exports[`list/ListItemFactory > create Item > should render an item with complete information for a listItem 1`] = `"[{"type":"span","key":".0","ref":null,"props":{"children":{"type":{"type":{},"compare":null},"key":null,"ref":null,"props":{},"_owner":null,"_store":{}}},"_owner":null,"_store":{}},{"type":"span","key":".1","ref":null,"props":{"children":"Test"},"_owner":null,"_store":{}},"Test description",{"type":{"type":{},"compare":null},"key":".3","ref":null,"props":{},"_owner":null,"_store":{}}]"`;
 
 exports[`list/ListItemFactory > create ListItem > should render a listItem with complete information from an item with description 1`] = `
 <li
@@ -30,6 +30,7 @@ exports[`list/ListItemFactory > create ListItem > should render a listItem with 
       <svg
         aria-hidden="true"
         class="_root_2ade80"
+        data-testid="close-icon"
         focusable="false"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
@@ -56,6 +57,7 @@ exports[`list/ListItemFactory > create ListItem > should render a listItem with 
     <svg
       aria-hidden="true"
       class="_root_2ade80"
+      data-testid="chevron-right-icon"
       focusable="false"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"

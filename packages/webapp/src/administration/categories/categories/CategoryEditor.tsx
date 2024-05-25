@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
-import { faAngleLeft, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleLeft,
+  faFloppyDisk,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { useMutation, useQuery } from '@apollo/client';
 import {
   Button,
@@ -16,6 +20,7 @@ import {
   SplitViewButton,
   Toolbar,
   useSplitView,
+  LoadingButton,
 } from '@lotta-schule/hubert';
 import { motion } from 'framer-motion';
 import { CategoryModel, WidgetModel, ID, UserGroupModel } from 'model';
@@ -55,7 +60,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
     const [selectedWidgets, setSelectedWidgets] = React.useState<WidgetModel[]>(
       []
     );
-    const [mutateCategory, { loading: isLoading, error }] = useMutation<
+    const [mutateCategory, { error }] = useMutation<
       { category: CategoryModel },
       { id: ID; category: any }
     >(UpdateCategoryMutation, {
@@ -374,24 +379,27 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
           selectedWidgets={selectedWidgets}
           setSelectedWidgets={(widgets) => setSelectedWidgets(widgets)}
         />
-        <p>&nbsp;</p>
-        <Button
-          className={styles.saveButton}
-          disabled={isLoading}
-          onClick={() => updateCategory()}
-        >
-          Kategorie speichern
-        </Button>
 
         {!category.isHomepage && (
           <>
-            <Divider className={styles.deleteDivider} />
-            <Button
-              icon={<Icon icon={faTrash} />}
-              onClick={() => setIsDeleteCategoryDialogOpen(true)}
-            >
-              Kategorie löschen
-            </Button>
+            <Divider className={styles.footerDivider} />
+            <div className={styles.footer}>
+              <Button
+                icon={<Icon icon={faTrash} />}
+                onClick={() => setIsDeleteCategoryDialogOpen(true)}
+                variant={'error'}
+              >
+                Kategorie löschen
+              </Button>
+              <LoadingButton
+                onAction={async () => {
+                  await updateCategory();
+                }}
+                icon={<Icon icon={faFloppyDisk} />}
+              >
+                Kategorie speichern
+              </LoadingButton>
+            </div>
             <DeleteCategoryDialog
               isOpen={isDeleteCategoryDialogOpen}
               categoryToDelete={category}
