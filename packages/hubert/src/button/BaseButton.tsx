@@ -9,6 +9,8 @@ export type BaseButtonProps = {
    */
   selected?: boolean;
 
+  component?: React.ElementType;
+
   /**
    * Chose from different styles
    */
@@ -47,11 +49,12 @@ export const BaseButton = React.forwardRef<any, BaseButtonProps>(
       variant = 'default',
       fullWidth = false,
       selected = false,
+      component = 'button',
       ...props
     },
     ref
   ) => {
-    const ComponentClass = props.href ? 'a' : ('button' as any);
+    const ComponentClass = component || props.href ? 'a' : ('button' as any);
     const selectedAriaAttribute =
       props.role && ['gridcell', 'option', 'row', 'tab'].includes(props.role)
         ? 'aria-selected'

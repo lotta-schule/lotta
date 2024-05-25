@@ -19,7 +19,7 @@ import Link from 'next/link';
 
 import styles from './page.module.scss';
 
-export const AdminPage = () => {
+async function AdminPage() {
   return (
     <div className={styles.root}>
       <h3>Mein lotta</h3>
@@ -125,7 +125,6 @@ export const AdminPage = () => {
       </section>
     </div>
   );
-};
-AdminPage.displayName = 'AdminPage';
+}
 
 export default AdminPage;

@@ -35,7 +35,6 @@ export const sendRefreshRequest = async (
         console.log(e.response.data);
         throw e;
       });
-    console.log({ refreshData: data });
     return data;
   } catch (e) {
     // TODO: Sentry

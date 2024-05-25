@@ -4,7 +4,6 @@ const isBrowser = typeof window !== 'undefined';
 const tenantSlugOverwrite = undefined;
 
 export const createHeaders = (headers: Record<string, string> = {}) => {
-  console.log({ incomingHeaders: headers });
   return Object.assign(
     {
       accept: 'application/json',
@@ -35,8 +34,6 @@ export const createCustomFetch = (
       ...headers,
       ...requestExtraHeaders(),
     });
-    console.log({ outgoingHeaders });
-
     const axiosResponse = await axios({
       ...miscOptions,
       headers: outgoingHeaders,

@@ -115,8 +115,12 @@ export const Navigation = React.memo(() => {
           </BaseButton>
         </Link>
 
-        <Link href={'/admin/categories/widgets'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
+        <Link href={'/admin/categories/widgets'} passHref>
+          <BaseButton
+            component={'a'}
+            variant={'borderless'}
+            className={styles.button}
+          >
             <span>
               <Icon icon={faSquareCaretRight} />
             </span>
