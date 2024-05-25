@@ -10,7 +10,7 @@ import { ApolloProvider } from '@apollo/client';
 import { I18nextProvider } from 'react-i18next';
 import { Authentication } from 'shared/Authentication';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
-import { fonts } from 'administration/system/presentation/fonts';
+import { fonts } from 'app/admin/system/presentation/fonts';
 import { useTenant } from 'util/tenant/useTenant';
 import { getApolloClient } from 'api/legacyClient';
 import { BaseLayout } from './BaseLayout';
@@ -98,7 +98,7 @@ export const AppContextProviders = ({
       : requestBaseUrl ?? window.location.origin;
 
   return (
-    <ServerDataContextProvider value={{ baseUrl }}>
+    <ServerDataContextProvider baseUrl={baseUrl}>
       <ApolloProvider client={client}>
         <I18nextProvider i18n={i18n}>
           <TenantContextProviders>{children}</TenantContextProviders>

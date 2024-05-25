@@ -6,8 +6,8 @@ import {
   GlobalStyles,
   HubertProvider,
 } from '@lotta-schule/hubert';
-import { fonts } from 'administration/system/presentation/fonts';
 import { TenantNotFoundError } from 'error/TenantNotFoundError';
+import { fonts } from './admin/system/presentation/fonts';
 import { loadTenant } from '../loader/loadTenant';
 import { TenantLayout } from '../layout/TenantLayout';
 import { ApolloProvider } from '../component/provider/ApolloProvider';

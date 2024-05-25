@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 const ServerDataContext = React.createContext({
-  baseUrl: '',
+  baseUrl: null! as string,
 });
 
 export type ServerDataContextProviderProps = React.PropsWithChildren<{

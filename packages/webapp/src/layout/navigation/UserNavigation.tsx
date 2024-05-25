@@ -141,7 +141,7 @@ export const UserNavigation = React.memo(() => {
                 case 'administration':
                   return router.push('/admin');
                 case 'unpublished':
-                  return router.push('/admin/unpublished');
+                  return router.push('/unpublished');
                 case 'logout':
                   return onLogout();
               }

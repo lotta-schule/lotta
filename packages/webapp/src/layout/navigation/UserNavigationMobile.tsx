@@ -179,7 +179,7 @@ export const UserNavigationMobile = React.memo(() => {
                   </span>
                 </BaseButton>
               </Link>
-              <Link href={'/admin/unpublished'} passHref legacyBehavior>
+              <Link href={'/unpublished'} passHref legacyBehavior>
                 <BaseButton variant={'borderless'} className={styles.button}>
                   <Icon icon={faClipboardList} size="xl" />
                   <span className={styles.label}>
