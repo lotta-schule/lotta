@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { Label, Option, Select, Toolbar } from '@lotta-schule/hubert';
@@ -5,10 +7,7 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from 'shared/Icon';
 import { addMonths, format, isSameMonth } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { MetricsOverview } from './analytics/MetricsOverview';
-import { MetricsChart } from './analytics/MetricsChart';
-
-import styles from '../shared.module.scss';
+import { MetricsOverview, MetricsChart } from './component';
 
 import GetTenantRealtimeAnalyticsQuery from 'api/query/analytics/GetTenantRealtimeAnalyticsQuery.graphql';
 
@@ -39,7 +38,7 @@ export const Analytics = React.memo(() => {
 
   return (
     <div>
-      <Toolbar>
+      <Toolbar style={{ zIndex: 2 }}>
         <Select
           title="Monat wählen"
           value={currentDate}
@@ -59,12 +58,7 @@ export const Analytics = React.memo(() => {
         {currentUserCount !== null && (
           <Label label={'Aktuell online'} style={{ marginLeft: 'auto' }}>
             <div style={{ height: '2.8em', lineHeight: '2.8em' }}>
-              <Icon
-                icon={faCircle}
-                size="xs"
-                style={{ color: 'green' }}
-                className={styles.calendarColorDot}
-              />
+              <Icon icon={faCircle} size="xs" style={{ color: 'green' }} />
               {currentUserCount} Besucher
             </div>
           </Label>

@@ -287,7 +287,7 @@ export const ComboBox = React.memo(
           />
         )}
         <Popover
-          triggerRef={inputRef}
+          trigger={inputRef.current!}
           ref={popoverRef}
           isOpen={state.isOpen}
           onClose={state.close}

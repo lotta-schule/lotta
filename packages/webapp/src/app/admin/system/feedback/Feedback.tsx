@@ -1,21 +1,19 @@
+'use client'; // this must not be a client component if feedback id is held in url
+
 import * as React from 'react';
-import { ErrorMessage, Table } from '@lotta-schule/hubert';
-import { useQuery } from '@apollo/client';
+import { Table } from '@lotta-schule/hubert';
 import { FeedbackModel } from 'model';
-import { FeedbackRow } from './feedback/FeedbackRow';
-import { CreateLottaFeedback } from './feedback/CreateLottaFeedback';
+import { CreateLottaFeedback, FeedbackRow } from './component';
 
 import styles from './Feedback.module.scss';
 
-import GetFeedbackQuery from 'api/query/GetFeedbackQuery.graphql';
+export type FeedbackProps = {
+  feedbacks: FeedbackModel[];
+};
 
-export const Feedback = React.memo(() => {
+export const Feedback = React.memo(({ feedbacks }: FeedbackProps) => {
   const [activeFeedbackId, setActiveFeedbackId] = React.useState<string | null>(
     null
-  );
-
-  const { data, error } = useQuery<{ feedbacks: FeedbackModel[] }>(
-    GetFeedbackQuery
   );
 
   const isActive = (feedback: FeedbackModel) =>
@@ -25,7 +23,6 @@ export const Feedback = React.memo(() => {
     <div className={styles.root}>
       <section className={styles.userFeedback}>
         <h5>Feedback von Nutzern</h5>
-        {error && <ErrorMessage error={error} />}
         <Table>
           <thead>
             <tr>
@@ -37,7 +34,7 @@ export const Feedback = React.memo(() => {
             </tr>
           </thead>
           <tbody>
-            {data?.feedbacks.map((feedback) => (
+            {feedbacks.map((feedback) => (
               <FeedbackRow
                 feedback={feedback}
                 key={feedback.id}

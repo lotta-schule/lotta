@@ -1,17 +1,6 @@
-.headerBox {
-  display: block;
-  line-height: calc(3 * var(--lotta-spacing));
-  margin-bottom: calc(4 * var(--lotta-spacing));
-  background-color: rgba(var(--lotta-divider-color), 0.2);
-}
-
 .gridContainer {
   display: flex;
   margin-bottom: calc(3 * var(--lotta-spacing));
-}
-
-.scrollHorizontally {
-  overflow-x: auto;
 }
 
 .saveButtonContainer {
@@ -31,17 +20,4 @@
 
 .section {
   margin-bottom: calc(2 * var(--lotta-spacing));
-}
-
-.usageTable {
-  justify-content: stretch;
-
-  & > div {
-    flex: 1;
-    text-align: center;
-  }
-
-  & > :first-child {
-    flex: 0 1 16%;
-  }
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { faCommentDots } from '@fortawesome/free-regular-svg-icons';
 import { faShare, faTrash } from '@fortawesome/free-solid-svg-icons';

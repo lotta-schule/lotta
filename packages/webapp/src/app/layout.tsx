@@ -1,7 +1,11 @@
 import '../styles/globals.scss';
 
 import * as React from 'react';
-import { DefaultThemes, GlobalStyles } from '@lotta-schule/hubert';
+import {
+  DefaultThemes,
+  GlobalStyles,
+  HubertProvider,
+} from '@lotta-schule/hubert';
 import { fonts } from 'administration/system/presentation/fonts';
 import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { loadTenant } from '../loader/loadTenant';
@@ -42,13 +46,15 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
         )}
       </head>
       <body>
-        {tenant && (
-          <ApolloProvider tenant={tenant}>
-            <TenantLayout>{children}</TenantLayout>
-          </ApolloProvider>
-        )}
-        {!tenant && <TenantNotFoundError />}
-        <GlobalStyles theme={theme} supportedFonts={fonts} />
+        <HubertProvider>
+          {tenant && (
+            <ApolloProvider tenant={tenant}>
+              <TenantLayout>{children}</TenantLayout>
+            </ApolloProvider>
+          )}
+          {!tenant && <TenantNotFoundError />}
+          <GlobalStyles theme={theme} supportedFonts={fonts} />
+        </HubertProvider>
       </body>
     </html>
   );
