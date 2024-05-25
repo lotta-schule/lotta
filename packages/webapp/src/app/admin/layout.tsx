@@ -10,18 +10,15 @@ import styles from './layout.module.scss';
 import { loadCurrentUser } from '../../loader/loadCurrentUser';
 
 interface AdminPageProps {
-  className?: string;
-  hasHomeLink?: boolean;
-  title: string | React.ReactNode;
   children: React.ReactNode;
 }
 
-export default async function AdminPage({
-  children,
-  className,
-  hasHomeLink,
-  title,
-}: AdminPageProps) {
+export default async function AdminPage({ children }: AdminPageProps) {
+  // TODO: Implement the layout for the administration pages
+  const title = 'Administration';
+  const hasHomeLink = true;
+  const className = 'admin-page';
+  // /TODO
   const user = await loadCurrentUser();
   const isAllowed = User.isAdmin(user);
 

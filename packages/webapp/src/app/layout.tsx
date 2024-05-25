@@ -17,6 +17,8 @@ import { getBaseUrl } from 'helper';
 // TODO: Remove this once we have a proper solution for this
 const requestBaseUrl = 'https://ehrenberg.lotta.schule';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AppLayout({ children }: React.PropsWithChildren) {
   const tenant = await loadTenant().catch(() => null);
 
@@ -57,6 +59,7 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
             <GlobalStyles theme={theme} supportedFonts={fonts} />
           </ServerDataContextProvider>
         </HubertProvider>
+        <div id={'dialogContainer'} />
       </body>
     </html>
   );

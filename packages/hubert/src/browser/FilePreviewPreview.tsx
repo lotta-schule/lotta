@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
 import { Folder, FolderOpen } from '../icon';
 import { useBrowserState } from './BrowserStateContext';
-import { isDirectoryNode } from './utils';
+import { isFileNode } from './utils';
 import { FileIcon } from './FileIcon';
 import clsx from 'clsx';
 
@@ -53,17 +53,17 @@ export const FilePreviewPreview = ({ className }: FilePreviewPreviewProps) => {
       exit: { opacity: 0 },
     };
 
-    if (isDirectoryNode(node)) {
-      const isOpen = currentPath.some((n) => n.id === node.id);
-      return isOpen ? (
-        <AnimatedFolderOpen {...animationProps} />
-      ) : (
-        <AnimatedFolder {...animationProps} />
+    if (isFileNode(node)) {
+      return (
+        <AnimatedFileIcon mimeType={node.meta.mimeType} {...animationProps} />
       );
     }
 
-    return (
-      <AnimatedFileIcon mimeType={node.meta.mimeType} {...animationProps} />
+    const isOpen = currentPath.some((n) => n.id === node.id);
+    return isOpen ? (
+      <AnimatedFolderOpen {...animationProps} />
+    ) : (
+      <AnimatedFolder {...animationProps} />
     );
   }, [selected, onRequestNodeIcon, currentPath]);
 

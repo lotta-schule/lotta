@@ -3,7 +3,7 @@ import { GeneralSettings } from './GeneralSettings';
 import { loadTenant } from 'loader';
 import { getBaseUrl } from 'helper';
 
-export async function GeneralSettingsPage() {
+async function GeneralSettingsPage() {
   const tenant = await loadTenant();
   const baseUrl = await getBaseUrl();
 

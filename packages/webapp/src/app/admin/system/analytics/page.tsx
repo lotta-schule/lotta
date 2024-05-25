@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Analytics } from './Analytics';
 
-export async function AnalyticsPage() {
+async function AnalyticsPage() {
   return <Analytics />;
 }
 

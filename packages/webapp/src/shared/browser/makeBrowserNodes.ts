@@ -35,5 +35,5 @@ export const makeBrowserNodes = (
       }) as const
   );
 
-  return [...directoryNodes, ...fileNodes];
+  return [...directoryNodes, ...fileNodes] as BrowserNode[];
 };

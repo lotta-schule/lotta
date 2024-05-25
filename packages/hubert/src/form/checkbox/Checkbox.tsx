@@ -23,11 +23,8 @@ export type CheckboxProps = {
 } & ToggleProps &
   AriaCheckboxProps;
 
-export const Checkbox = React.forwardRef(
-  (
-    { style, className, featureColor, ...props }: CheckboxProps,
-    ref: React.RefObject<HTMLLabelElement>
-  ) => {
+export const Checkbox = React.forwardRef<HTMLLabelElement, CheckboxProps>(
+  ({ style, className, featureColor, ...props }, ref) => {
     const customStyle =
       featureColor &&
       ({

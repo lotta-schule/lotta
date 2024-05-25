@@ -3,7 +3,7 @@ import { Presentation } from './Presentation';
 import { loadTenant } from 'loader';
 import { getBaseUrl } from 'helper';
 
-export async function PresentationPage() {
+async function PresentationPage() {
   const tenant = await loadTenant();
   const baseUrl = await getBaseUrl();
 
