@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { getClient } from '../api/client';
 import { TenantModel } from '../model/TenantModel';
 
@@ -11,8 +12,8 @@ export class TenantNotFoundError extends Error {
   }
 }
 
-export const loadTenant = () =>
-  getClient()
+export const loadTenant = cache(async () => {
+  return await getClient()
     .query<{ tenant: TenantModel }>({
       query: GetTenantQuery,
     })
@@ -23,3 +24,4 @@ export const loadTenant = () =>
           throw new TenantNotFoundError();
         })()
     );
+});

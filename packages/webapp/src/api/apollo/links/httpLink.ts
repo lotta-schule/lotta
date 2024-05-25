@@ -3,13 +3,13 @@ import { createCustomFetch } from '../customFetch';
 
 const isBrowser = typeof window !== 'undefined';
 
-const API_URL = 'http://127.0.0.1:4000';
+const API_URL = 'http://127.0.0.1:4000/api';
 
 export const createHttpLink = ({
-  requestExtraHeaders,
+  requestExtraHeaders = () => ({}),
 }: {
-  requestExtraHeaders: () => Record<string, string | null | undefined>;
-}) => {
+  requestExtraHeaders?: () => Record<string, string | null | undefined>;
+} = {}) => {
   const opts = {
     uri: isBrowser
       ? '/api/backend'

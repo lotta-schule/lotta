@@ -1,8 +1,6 @@
 import { ApolloLink } from '@apollo/client';
 import { Observable, ObservableSubscription } from '@apollo/client/utilities';
 
-const isBrowser = typeof window !== 'undefined';
-
 type AuthLinkParams = {
   requestToken?: () => Promise<string | null | undefined>;
 };

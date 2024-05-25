@@ -24,23 +24,29 @@ async function AdminPage() {
     <div className={styles.root}>
       <h3>Mein lotta</h3>
       <section className={styles.buttonRow}>
-        <Link href={'/admin/system/general'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
-            <span>
-              <Icon icon={faSliders} />
-            </span>
-            <span>Grundeinstellungen</span>
-          </BaseButton>
-        </Link>
+        <BaseButton
+          component={Link}
+          href={'/admin/system/general'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faSliders} />
+          </span>
+          <span>Grundeinstellungen</span>
+        </BaseButton>
 
-        <Link href={'/admin/system/presentation'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
-            <span>
-              <Icon icon={faPalette} />
-            </span>
-            <span>Darstellung</span>
-          </BaseButton>
-        </Link>
+        <BaseButton
+          component={Link}
+          href={'/admin/system/presentation'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faPalette} />
+          </span>
+          <span>Darstellung</span>
+        </BaseButton>
 
         <Link href={'/admin/system/usage'} passHref legacyBehavior>
           <BaseButton variant={'borderless'} className={styles.button}>

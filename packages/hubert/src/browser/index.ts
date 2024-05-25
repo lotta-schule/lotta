@@ -1,3 +1,4 @@
+'use client';
 export * from './Browser';
 export {
   useBrowserState,

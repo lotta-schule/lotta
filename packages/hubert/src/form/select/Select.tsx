@@ -154,7 +154,7 @@ export const Select = React.forwardRef<any, SelectProps>(
             </Button>
           </div>
           <Popover
-            triggerRef={ref}
+            trigger={ref.current!}
             ref={popoverRef}
             isOpen={state.isOpen}
             onClose={state.close}

@@ -1,0 +1,9 @@
+.root {
+  section {
+    margin-bottom: calc(2 * var(--lotta-spacing));
+    &:last-child {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+}
