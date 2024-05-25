@@ -20,13 +20,12 @@
         "../../theme/src/index.ts"
       ]
     },
-    "noEmit": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "strictNullChecks": true
+    "noEmit": true
   },
   "references": [
     {
@@ -37,12 +36,6 @@
     }
   ],
   "files": [],
-  "include": [
-    "**/*.d.ts",
-    "src/**/*.ts",
-    "src/**/*.ts?",
-    ".next/types/**/*.ts",
-    "**/*.d.ts"
-  ],
+  "include": [],
   "exclude": []
 }
