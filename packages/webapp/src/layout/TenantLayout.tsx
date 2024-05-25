@@ -2,15 +2,31 @@ import * as React from 'react';
 import { File } from 'util/model';
 import { Box, NoSsr, ScrollToTopButton } from '@lotta-schule/hubert';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
+import { loadTenant } from '../loader';
+import { getBaseUrl } from '../helper';
 import Link from 'next/link';
 
 import styles from './BaseLayout.module.scss';
-import { loadTenant } from '../loader/loadTenant';
-import { headers } from 'next/headers';
-import { getBaseUrl } from '../helper';
 
 export type TenantLayoutProps = {
   children: React.ReactNode | React.ReactNode[];
+};
+
+const getImageUrls = (backgroundImageUrl?: string | null) => {
+  if (!backgroundImageUrl) {
+    return [null, null];
+  }
+
+  const baseImageUrl = new URL(backgroundImageUrl);
+  baseImageUrl.protocol = 'https:';
+  baseImageUrl.searchParams.append('format', 'webp');
+  baseImageUrl.searchParams.append('fn', 'cover');
+  const imageUrlSimple = new URL(baseImageUrl);
+  imageUrlSimple.searchParams.append('width', '1250');
+  const imageUrlRetina = new URL(baseImageUrl);
+  imageUrlRetina.searchParams.append('width', '2500');
+
+  return [imageUrlSimple, imageUrlRetina];
 };
 
 export const TenantLayout = async ({ children }: TenantLayoutProps) => {
@@ -24,14 +40,7 @@ export const TenantLayout = async ({ children }: TenantLayoutProps) => {
       tenant.configuration.backgroundImageFile
     );
 
-  const baseImageUrl = new URL(backgroundImageUrl);
-  baseImageUrl.protocol = 'https:';
-  baseImageUrl.searchParams.append('format', 'webp');
-  baseImageUrl.searchParams.append('fn', 'cover');
-  const imageUrlSimple = new URL(baseImageUrl);
-  imageUrlSimple.searchParams.append('width', '1250');
-  const imageUrlRetina = new URL(baseImageUrl);
-  imageUrlRetina.searchParams.append('width', '2500');
+  const [imageUrlSimple, imageUrlRetina] = getImageUrls(backgroundImageUrl);
 
   return (
     <Box className={styles.root}>
@@ -41,8 +50,8 @@ export const TenantLayout = async ({ children }: TenantLayoutProps) => {
             __html: `
 @media screen and (min-width: 600px) {
 body::after {
-background-image: url(${imageUrlSimple.toString()});
-background-image: image-set(url(${imageUrlSimple.toString()}) 1x, url(${imageUrlRetina.toString()}) 2x);
+background-image: url(${imageUrlSimple?.toString()});
+background-image: image-set(url(${imageUrlSimple?.toString()}) 1x, url(${imageUrlRetina?.toString()}) 2x);
 }
 }
 `,

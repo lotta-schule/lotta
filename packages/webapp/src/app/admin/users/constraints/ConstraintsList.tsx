@@ -1,14 +1,16 @@
+'use client';
+
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import { faSdCard } from '@fortawesome/free-solid-svg-icons';
 import {
-  Button,
   Checkbox,
   ErrorMessage,
   Input,
   Label,
+  LoadingButton,
 } from '@lotta-schule/hubert';
-import { useTenant } from 'util/tenant/useTenant';
+import { TenantModel } from 'model';
 import { useMutation } from '@apollo/client';
 import { motion } from 'framer-motion';
 
@@ -18,8 +20,11 @@ import styles from './ConstraintsList.module.scss';
 
 const MEGABYTE = 1024 * 1024;
 
-export const ConstraintList = () => {
-  const tenant = useTenant();
+export type ConstraintListProps = {
+  tenant: TenantModel;
+};
+
+export const ConstraintList = ({ tenant }: ConstraintListProps) => {
   const lastSetLimitRef = React.useRef(20);
   const [value, setValue] = React.useState(
     tenant.configuration.userMaxStorageConfig
@@ -35,19 +40,16 @@ export const ConstraintList = () => {
     }
   }, [isLimitSet, value]);
 
-  const [updateTenant, { loading: isLoading, error }] = useMutation(
-    UpdateTenantMutation,
-    {
-      variables: {
-        tenant: {
-          configuration: {
-            ...tenant.configuration,
-            userMaxStorageConfig: String(value * MEGABYTE),
-          },
+  const [updateTenant, { error }] = useMutation(UpdateTenantMutation, {
+    variables: {
+      tenant: {
+        configuration: {
+          ...tenant.configuration,
+          userMaxStorageConfig: String(value * MEGABYTE),
         },
       },
-    }
-  );
+    },
+  });
 
   return (
     <div className={styles.root}>
@@ -89,7 +91,7 @@ export const ConstraintList = () => {
         </Checkbox>
 
         <motion.div
-          initial={'closd'}
+          initial={'closed'}
           animate={isLimitSet ? 'open' : 'closed'}
           variants={{
             open: { opacity: 1, height: 'auto' },
@@ -129,9 +131,13 @@ export const ConstraintList = () => {
             </div>
           </div>
         </motion.div>
-        <Button onClick={() => updateTenant()} disabled={isLoading}>
+        <LoadingButton
+          onAction={async () => {
+            await updateTenant();
+          }}
+        >
           Speichern
-        </Button>
+        </LoadingButton>
       </div>
     </div>
   );

@@ -76,6 +76,7 @@ export const ComboBox = React.memo(
     resetOnSelect,
     onSelect,
   }: ComboBoxProps) => {
+    const ref = React.useRef<HTMLDivElement>(null);
     const [calculatedItems, setCalculatedItems] = React.useState<
       ListItemPreliminaryItem[]
     >([]);
@@ -262,55 +263,49 @@ export const ComboBox = React.memo(
       ? { 'aria-label': title, 'aria-labelledby': '' }
       : {};
 
-    const labelContent = (
-      <div
-        className={clsx(styles.inputWrapper, {
-          [styles.withoutButton]: typeof items === 'function',
-        })}
-      >
-        <Input {...inputProps} {...inputAriaLabelProps} ref={inputRef} />
-        {typeof items !== 'function' && (
-          <Button
-            {...buttonProps}
-            ref={buttonRef}
-            className={styles.triggerButton}
-          >
-            <ExpandMore />
-          </Button>
-        )}
-        {isLoading && (
-          <CircularProgress
-            isIndeterminate
-            className={styles.progress}
-            style={{ width: '1em', height: '1em' }}
-            label={'Vorschläge werden geladen'}
-          />
-        )}
-        <Popover
-          trigger={inputRef.current!}
-          ref={popoverRef}
-          isOpen={state.isOpen}
-          onClose={state.close}
-          placement={'bottom'}
-        >
-          <ListBox {...listBoxProps} ref={listBoxRef} state={state} />
-        </Popover>
-      </div>
-    );
-
     return (
       <div
+        ref={ref}
         className={clsx(styles.root, className, {
           [styles.isFullWidth]: fullWidth,
         })}
         style={style}
       >
-        {!hideLabel && (
-          <Label {...labelProps} label={title}>
-            {labelContent}
-          </Label>
-        )}
-        {hideLabel && labelContent}
+        <Label {...labelProps} label={title} hide={hideLabel}>
+          <div
+            className={clsx(styles.inputWrapper, {
+              [styles.withoutButton]: typeof items === 'function',
+            })}
+          >
+            <Input {...inputProps} {...inputAriaLabelProps} ref={inputRef} />
+            {typeof items !== 'function' && (
+              <Button
+                {...buttonProps}
+                ref={buttonRef}
+                className={styles.triggerButton}
+              >
+                <ExpandMore />
+              </Button>
+            )}
+            {isLoading && (
+              <CircularProgress
+                isIndeterminate
+                className={styles.progress}
+                style={{ width: '1em', height: '1em' }}
+                label={'Vorschläge werden geladen'}
+              />
+            )}
+            <Popover
+              trigger={ref.current!}
+              ref={popoverRef}
+              isOpen={state.isOpen}
+              onClose={state.close}
+              placement={'bottom'}
+            >
+              <ListBox {...listBoxProps} ref={listBoxRef} state={state} />
+            </Popover>
+          </div>
+        </Label>
       </div>
     );
   }

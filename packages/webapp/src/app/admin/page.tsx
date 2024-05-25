@@ -48,65 +48,83 @@ async function AdminPage() {
           <span>Darstellung</span>
         </BaseButton>
 
-        <Link href={'/admin/system/usage'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
-            <span>
-              <Icon icon={faChartBar} />
-            </span>
-            <span>Nutzung</span>
-          </BaseButton>
-        </Link>
+        <BaseButton
+          component={Link}
+          href={'/admin/system/usage'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faChartBar} />
+          </span>
+          <span>Nutzung</span>
+        </BaseButton>
 
-        <Link href={'/admin/system/analytics'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
-            <span>
-              <Icon icon={faChartLine} />
-            </span>
-            <span>Statistiken</span>
-          </BaseButton>
-        </Link>
+        <BaseButton
+          component={Link}
+          href={'/admin/system/analytics'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faChartLine} />
+          </span>
+          <span>Statistiken</span>
+        </BaseButton>
 
-        <Link href={'/admin/system/feedback'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
-            <span>
-              <Icon icon={faCommentDots} />
-            </span>
-            <span>
-              Feedback
-              <NewFeedbackCountBadge />
-            </span>
-          </BaseButton>
-        </Link>
+        <BaseButton
+          component={Link}
+          href={'/admin/system/feedback'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faCommentDots} />
+          </span>
+          <span>
+            Feedback
+            <NewFeedbackCountBadge />
+          </span>
+        </BaseButton>
       </section>
 
       <h3>Nutzer und Gruppen</h3>
       <section className={styles.buttonRow}>
-        <Link href={'/admin/users/list'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
-            <span>
-              <Icon icon={faCircleUser} />
-            </span>
-            <span>Nutzer</span>
-          </BaseButton>
-        </Link>
+        <BaseButton
+          component={Link}
+          href={'/admin/users/list'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faCircleUser} />
+          </span>
+          <span>Nutzer</span>
+        </BaseButton>
 
-        <Link href={'/admin/users/groups'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
-            <span>
-              <Icon icon={faUserGroup} />
-            </span>
-            <span>Gruppen</span>
-          </BaseButton>
-        </Link>
+        <BaseButton
+          component={Link}
+          href={'/admin/users/groups'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faUserGroup} />
+          </span>
+          <span>Gruppen</span>
+        </BaseButton>
 
-        <Link href={'/admin/users/constraints'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
-            <span>
-              <Icon icon={faExpand} />
-            </span>
-            <span>Beschränkungen</span>
-          </BaseButton>
-        </Link>
+        <BaseButton
+          component={Link}
+          href={'/admin/users/constraints'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faExpand} />
+          </span>
+          <span>Beschränkungen</span>
+        </BaseButton>
       </section>
 
       <h3>Kategorien und Marginalen</h3>

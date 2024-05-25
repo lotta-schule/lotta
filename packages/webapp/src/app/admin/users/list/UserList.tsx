@@ -1,10 +1,12 @@
+'use client';
+
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
-import { UserModel, UserGroupModel, TenantModel } from 'model';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { UserModel, UserGroupModel, TenantModel } from 'model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import {
@@ -16,18 +18,22 @@ import {
   Table,
   Toolbar,
 } from '@lotta-schule/hubert';
-import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
+import { EditUserPermissionsDialog } from './component';
 import { useDebounce } from 'util/useDebounce';
 import clsx from 'clsx';
 
 import SearchUsersAsAdminQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
-import GetTenantWithStatsQuery from 'api/query/GetTenantWithStatsQuery.graphql';
 
 import styles from './UserList.module.scss';
 
-export const UserList = React.memo(() => {
+export type UserListProps = {
+  tenant: TenantModel;
+  currentUser: UserModel;
+};
+
+export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
+  const router = useRouter();
   const { t } = useTranslation();
-  const currentUser = useCurrentUser();
 
   const [searchText, setSearchText] = React.useState('');
   const debouncedSearchtext = useDebounce(searchText, 500);
@@ -69,11 +75,7 @@ export const UserList = React.memo(() => {
     }
   );
 
-  const { data: detailedTenantData } = useQuery<{ tenant: TenantModel }>(
-    GetTenantWithStatsQuery
-  );
-
-  const totalUsers = detailedTenantData?.tenant?.stats?.userCount;
+  const totalUsers = tenant.stats?.userCount;
 
   const rows = React.useMemo(() => {
     return (
@@ -207,7 +209,10 @@ export const UserList = React.memo(() => {
 
           {selectedUser && (
             <EditUserPermissionsDialog
-              onRequestClose={() => setSelectedUser(null)}
+              onRequestClose={() => {
+                setSelectedUser(null);
+                router.refresh();
+              }}
               user={selectedUser}
             />
           )}

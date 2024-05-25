@@ -159,6 +159,20 @@ export const EditUserGroup = React.memo(
                   });
                 }}
               />
+            </section>
+
+            <section className={styles.actions}>
+              {!isSoleAdminGroup && (
+                <>
+                  <Button
+                    className={styles.deleteButton}
+                    onClick={() => onRequestDeletion(group)}
+                    variant="error"
+                  >
+                    Gruppe "{group.name}" löschen
+                  </Button>
+                </>
+              )}
 
               <LoadingButton
                 type="submit"
@@ -180,17 +194,6 @@ export const EditUserGroup = React.memo(
               >
                 Gruppe Speichern
               </LoadingButton>
-              {!isSoleAdminGroup && (
-                <>
-                  <Button
-                    className={styles.deleteButton}
-                    onClick={() => onRequestDeletion(group)}
-                    variant="error"
-                  >
-                    Gruppe "{group.name}" löschen
-                  </Button>
-                </>
-              )}
             </section>
           </form>
         )}

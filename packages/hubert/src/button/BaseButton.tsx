@@ -46,23 +46,24 @@ export const BaseButton = React.forwardRef<any, BaseButtonProps>(
       children,
       style,
       className,
+      href,
       variant = 'default',
       fullWidth = false,
       selected = false,
-      component = 'button',
+      component = href ? 'a' : 'button',
       ...props
     },
     ref
   ) => {
-    const ComponentClass = component || props.href ? 'a' : ('button' as any);
     const selectedAriaAttribute =
       props.role && ['gridcell', 'option', 'row', 'tab'].includes(props.role)
         ? 'aria-selected'
         : 'aria-current';
     return React.createElement(
-      ComponentClass,
+      component,
       {
         ref,
+        href,
         type: props.type ?? 'button',
         role: 'button',
         style,

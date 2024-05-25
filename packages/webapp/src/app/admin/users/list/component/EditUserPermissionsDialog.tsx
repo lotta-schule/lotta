@@ -25,8 +25,8 @@ export interface EditUserPermissionsDialogProps {
   onRequestClose(): void;
 }
 
-export const EditUserPermissionsDialog =
-  React.memo<EditUserPermissionsDialogProps>(({ user, onRequestClose }) => {
+export const EditUserPermissionsDialog = React.memo(
+  ({ user, onRequestClose }: EditUserPermissionsDialogProps) => {
     const allUserGroups = useUserGroups();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
@@ -166,5 +166,6 @@ export const EditUserPermissionsDialog =
         )}
       </>
     );
-  });
+  }
+);
 EditUserPermissionsDialog.displayName = 'EditUserPermissionsDialog';
