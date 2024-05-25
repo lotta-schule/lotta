@@ -46,8 +46,8 @@ export interface CategoryEditorProps {
   onSelectCategory(category: CategoryModel | null): void;
 }
 
-export const CategoryEditor = React.memo<CategoryEditorProps>(
-  ({ selectedCategory, onSelectCategory }) => {
+export const CategoryEditor = React.memo(
+  ({ selectedCategory, onSelectCategory }: CategoryEditorProps) => {
     const { baseUrl } = useServerData();
     const { open: openSidebar } = useSplitView();
 

@@ -1,28 +1,39 @@
 import { headers } from 'next/headers';
 import { loadTenant } from '../loader';
+import { cache } from 'react';
 
-export const getBaseUrl = async (
-  params: Partial<URL & { searchParams: Record<string, string> }> = {}
-) => {
+export const getBaseUrlString = cache(async () => {
+  if (process.env.FORCE_BASE_URL) {
+    return process.env.FORCE_BASE_URL;
+  }
   const tenant = await loadTenant();
   const host = headers().get('host') || tenant.host;
   const protocol = headers().get('x-forwarded-proto') || 'https';
 
-  const stringUrl =
-    process.env.FORCE_BASE_URL ?? [protocol, '://', host].join('');
-  const url = new URL(stringUrl);
+  console.log([protocol, '://', host].join(''));
+  return [protocol, '://', host].join('');
+});
 
-  for (const [key, value] of Object.entries(params)) {
-    if (key === 'searchParams' && !!params.searchParams) {
-      for (const [searchParam, searchValue] of Object.entries(
-        params.searchParams
-      )) {
-        url.searchParams.append(searchParam, searchValue);
+export const getBaseUrl = cache(
+  async (
+    params: Partial<URL & { searchParams: Record<string, string> }> = {}
+  ) => {
+    const stringUrl = await getBaseUrlString();
+    const url = new URL(stringUrl);
+
+    for (const [key, value] of Object.entries(params)) {
+      if (key === 'searchParams' && !!params.searchParams) {
+        for (const [searchParam, searchValue] of Object.entries(
+          params.searchParams
+        )) {
+          url.searchParams.append(searchParam, searchValue);
+        }
+      } else {
+        (url as any)[key] = value;
       }
-    } else {
-      url[key] = value;
     }
-  }
 
-  return url.toString();
-};
+    console.log({ url: url.toString() });
+    return url.toString();
+  }
+);

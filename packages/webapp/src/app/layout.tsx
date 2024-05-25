@@ -11,11 +11,11 @@ import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { loadTenant } from '../loader/loadTenant';
 import { TenantLayout } from '../layout/TenantLayout';
 import { ApolloProvider } from '../component/provider/ApolloProvider';
+import { ServerDataContextProvider } from 'shared/ServerDataContext';
+import { getBaseUrl } from 'helper';
 
 // TODO: Remove this once we have a proper solution for this
 const requestBaseUrl = 'https://ehrenberg.lotta.schule';
-
-export const dynamic = 'force-dynamic';
 
 export default async function AppLayout({ children }: React.PropsWithChildren) {
   const tenant = await loadTenant().catch(() => null);
@@ -47,13 +47,15 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
       </head>
       <body>
         <HubertProvider>
-          {tenant && (
-            <ApolloProvider tenant={tenant}>
-              <TenantLayout>{children}</TenantLayout>
-            </ApolloProvider>
-          )}
-          {!tenant && <TenantNotFoundError />}
-          <GlobalStyles theme={theme} supportedFonts={fonts} />
+          <ServerDataContextProvider baseUrl={await getBaseUrl()}>
+            {tenant && (
+              <ApolloProvider tenant={tenant}>
+                <TenantLayout>{children}</TenantLayout>
+              </ApolloProvider>
+            )}
+            {!tenant && <TenantNotFoundError />}
+            <GlobalStyles theme={theme} supportedFonts={fonts} />
+          </ServerDataContextProvider>
         </HubertProvider>
       </body>
     </html>

@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import { faAngleRight, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
@@ -11,9 +13,11 @@ import {
   SplitViewNavigation,
   Toolbar,
 } from '@lotta-schule/hubert';
-import { CategoryNavigation } from './categories/CategoryNavigation';
-import { CategoryEditor } from './categories/CategoryEditor';
-import { CreateCategoryDialog } from './categories/CreateCategoryDialog';
+import {
+  CategoryEditor,
+  CreateCategoryDialog,
+  CategoryNavigation,
+} from './component';
 
 import styles from './CategoryList.module.scss';
 

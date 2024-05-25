@@ -129,23 +129,29 @@ async function AdminPage() {
 
       <h3>Kategorien und Marginalen</h3>
       <section className={styles.buttonRow}>
-        <Link href={'/admin/categories/list'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
-            <span>
-              <Icon icon={faShapes} />
-            </span>
-            <span>Kategorien</span>
-          </BaseButton>
-        </Link>
+        <BaseButton
+          component={Link}
+          href={'/admin/categories/list'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faShapes} />
+          </span>
+          <span>Kategorien</span>
+        </BaseButton>
 
-        <Link href={'/admin/categories/widgets'} passHref legacyBehavior>
-          <BaseButton variant={'borderless'} className={styles.button}>
-            <span>
-              <Icon icon={faSquareCaretRight} />
-            </span>
-            <span>Marginalen</span>
-          </BaseButton>
-        </Link>
+        <BaseButton
+          component={Link}
+          href={'/admin/categories/widgets'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faSquareCaretRight} />
+          </span>
+          <span>Marginalen</span>
+        </BaseButton>
       </section>
     </div>
   );
