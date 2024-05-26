@@ -1,4 +1,6 @@
+import { appConfig } from 'config';
 import * as React from 'react';
+import { useServerData } from 'shared/ServerDataContext';
 
 export type ProcessingOptions = {
   width?: number;
@@ -12,11 +14,21 @@ export const createImageUrl = (
   src: string,
   { resize, width, height, aspectRatio, format }: ProcessingOptions
 ) => {
+  const { baseUrl } = useServerData();
   if (!src) {
     return src;
   }
 
-  const url = new URL(src);
+  const url = React.useMemo(() => {
+    if (src.startsWith('//')) {
+      return new URL(`https:${src}`);
+    }
+    if (src.startsWith('/')) {
+      return new URL(src, baseUrl);
+    }
+    return new URL(src);
+  }, [src, baseUrl]);
+
   if (width) {
     url.searchParams.set('width', String(width));
     if (aspectRatio) {

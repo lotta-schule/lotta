@@ -76,7 +76,9 @@ export async function middleware(request: NextRequest) {
   }
 
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('Authorization', `Bearer ${authInfo.accessToken}`);
+  if (authInfo.accessToken) {
+    requestHeaders.set('Authorization', `Bearer ${authInfo.accessToken}`);
+  }
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   if (authInfo.refreshToken) {
