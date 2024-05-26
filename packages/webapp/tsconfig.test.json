@@ -21,6 +21,7 @@
     "src/test/**/*.ts",
     "src/test/**/*.tsx",
     "**/*.d.ts",
-    "**/*.graphql"
+    "**/*.graphql",
+    "src/**/*.json",
   ]
 }

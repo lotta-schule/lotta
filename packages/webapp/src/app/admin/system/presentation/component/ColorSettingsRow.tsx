@@ -12,6 +12,8 @@ export interface ColorSettingRowProps {
 
 export const ColorSettingRow = React.memo<ColorSettingRowProps>(
   ({ label, hint, value, onChange }) => {
+    const labelId = React.useId();
+    const hintId = React.useId();
     return (
       <div className={styles.root}>
         <div className={styles.colorInput}>
@@ -20,12 +22,16 @@ export const ColorSettingRow = React.memo<ColorSettingRowProps>(
             value={value}
             style={{ padding: 0 }}
             onChange={(e) => onChange(e.currentTarget.value)}
+            aria-labelledby={labelId}
+            aria-describedby={hint && hintId}
           />
         </div>
         <div className={styles.description}>
-          <p style={{ margin: 0 }}>{label}</p>
+          <p style={{ margin: 0 }} id={labelId} role={'label'}>
+            {label}
+          </p>
           {hint && (
-            <p style={{ margin: 0 }}>
+            <p style={{ margin: 0 }} id={hintId}>
               <small>{hint}</small>
             </p>
           )}

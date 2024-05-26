@@ -32,22 +32,41 @@ const defaultTheme = DefaultThemes.standard;
 export type PresentationProps = {
   tenant: TenantModel;
   baseUrl: string;
+  additionalThemes: {
+    title: string;
+    theme: Partial<ReturnType<typeof useTheme>>;
+  }[];
 };
 
 export const Presentation = React.memo(
-  ({ tenant, baseUrl }: PresentationProps) => {
+  ({ tenant, baseUrl, additionalThemes }: PresentationProps) => {
     const router = useRouter();
     const theme = {
       ...defaultTheme,
       ...tenant.configuration.customTheme,
     };
 
-    const [allThemes, setAllThemes] = React.useState<
-      { title: string; theme: Partial<ReturnType<typeof useTheme>> }[]
-    >([{ title: 'Standard', theme: {} }]);
+    const allThemes = React.useMemo(
+      () => [{ title: 'Standard', theme: {} }, ...additionalThemes],
+      []
+    );
 
-    const [customTheme, setCustomTheme] =
-      React.useState<Partial<ReturnType<typeof useTheme>>>(theme);
+    const [customTheme, setCustomTheme] = React.useState<
+      ReturnType<typeof useTheme>
+    >({ ...theme });
+
+    const updateThemeProperties = React.useCallback(
+      (properties: Partial<ReturnType<typeof useTheme>>) => {
+        setCustomTheme((prev) => {
+          const theme = {
+            ...prev,
+            ...properties,
+          };
+          return theme;
+        });
+      },
+      []
+    );
 
     const [backgroundImage, setBackgroundImage] = React.useState(
       tenant.configuration.backgroundImageFile
@@ -55,23 +74,6 @@ export const Presentation = React.memo(
 
     const [updateSystem, { loading: isLoading, error }] =
       useMutation(UpdateTenantMutation);
-
-    React.useEffect(() => {
-      Promise.all(
-        ['Purple Pastel', 'Neutral', 'Retro Contrast'].map(async (title) => {
-          const pureName = title.toLowerCase().replace(/\s/g, '_');
-          const partialTheme = await fetch(
-            `/theme/${pureName}/theme.json`
-          ).then((res) => res.json());
-          return { title, theme: { ...defaultTheme, ...partialTheme } };
-        })
-      ).then((customThemes) => {
-        setAllThemes([
-          { title: 'Standard', theme: defaultTheme },
-          ...customThemes,
-        ]);
-      });
-    }, []);
 
     return (
       <div className={styles.root}>
@@ -85,7 +87,7 @@ export const Presentation = React.memo(
                   <SelectTemplateButton
                     title={title}
                     theme={partialTheme}
-                    onClick={() => setCustomTheme(partialTheme)}
+                    onClick={() => updateThemeProperties(partialTheme)}
                   />
                 </div>
               );
@@ -101,15 +103,17 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Akzente'}
                 hint={'Akzentfarbe für wichtige und interaktive Elemente'}
-                value={theme.primaryColor}
-                onChange={(primaryColor) => setCustomTheme({ primaryColor })}
+                value={customTheme.primaryColor}
+                onChange={(primaryColor) => {
+                  updateThemeProperties({ primaryColor });
+                }}
               />
               <ColorSettingRow
                 label={'Hintergrund der Navigationsleiste'}
                 hint={'Farbe für den Hintergrund der Navigationsleiste'}
-                value={theme.navigationBackgroundColor}
+                value={customTheme.navigationBackgroundColor}
                 onChange={(navigationBackgroundColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     navigationBackgroundColor,
                   })
                 }
@@ -117,9 +121,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Fehler'}
                 hint={'Farbe für Fehlermeldungen'}
-                value={theme.errorColor}
+                value={customTheme.errorColor}
                 onChange={(errorColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     errorColor,
                   })
                 }
@@ -127,9 +131,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Erfolg'}
                 hint={'Farbe für Erfolgsmeldungen'}
-                value={theme.successColor}
+                value={customTheme.successColor}
                 onChange={(successColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     successColor,
                   })
                 }
@@ -137,9 +141,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Text Hauptnavigation'}
                 hint={'Textfarbe für die Buttons in der Hauptnavigationsleiste'}
-                value={theme.navigationContrastTextColor}
+                value={customTheme.navigationContrastTextColor}
                 onChange={(navigationContrastTextColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     navigationContrastTextColor,
                   })
                 }
@@ -147,9 +151,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Deaktiviert'}
                 hint={'Farbe für deaktivierte Elemente'}
-                value={theme.disabledColor}
+                value={customTheme.disabledColor}
                 onChange={(disabledColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     disabledColor,
                   })
                 }
@@ -157,9 +161,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Text'}
                 hint={'Farbe für Text'}
-                value={theme.textColor}
+                value={customTheme.textColor}
                 onChange={(textColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     textColor,
                   })
                 }
@@ -169,9 +173,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Beschriftungen'}
                 hint={'Farbe für Text in Beschriftungen'}
-                value={theme.labelTextColor}
+                value={customTheme.labelTextColor}
                 onChange={(labelTextColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     labelTextColor,
                   })
                 }
@@ -181,9 +185,9 @@ export const Presentation = React.memo(
                 hint={
                   'Alternative Textfarbe für mit der Primärfarbe gefüllte Elemente'
                 }
-                value={theme.primaryContrastTextColor}
+                value={customTheme.primaryContrastTextColor}
                 onChange={(primaryContrastTextColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     primaryContrastTextColor,
                   })
                 }
@@ -191,9 +195,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Hintergrund'}
                 hint={'Farbe für den Hintergrund des Inhaltsbereichs'}
-                value={theme.boxBackgroundColor}
+                value={customTheme.boxBackgroundColor}
                 onChange={(boxBackgroundColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     boxBackgroundColor,
                   })
                 }
@@ -201,9 +205,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Seitenhintergrund'}
                 hint={'Farbe für den Hintergrund des gesamten Seiteninhalts'}
-                value={theme.pageBackgroundColor}
+                value={customTheme.pageBackgroundColor}
                 onChange={(pageBackgroundColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     pageBackgroundColor,
                   })
                 }
@@ -211,9 +215,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Trennlinien'}
                 hint={'Farbe für Trennlinien'}
-                value={theme.dividerColor}
+                value={customTheme.dividerColor}
                 onChange={(dividerColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     dividerColor,
                   })
                 }
@@ -221,9 +225,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Hervorhebung'}
                 hint={'Farbe für Hervorhebungen'}
-                value={theme.highlightColor}
+                value={customTheme.highlightColor}
                 onChange={(highlightColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     highlightColor,
                   })
                 }
@@ -231,9 +235,9 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Bannerhintergrund'}
                 hint={'Farbe für den Hintergrund des Banners'}
-                value={theme.bannerBackgroundColor}
+                value={customTheme.bannerBackgroundColor}
                 onChange={(bannerBackgroundColor) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     bannerBackgroundColor,
                   })
                 }
@@ -247,10 +251,10 @@ export const Presentation = React.memo(
             <div>
               <Label label={'Abstand'}>
                 <Input
-                  value={theme.spacing}
+                  value={customTheme.spacing}
                   disabled={isLoading}
                   onChange={(e) =>
-                    setCustomTheme({
+                    updateThemeProperties({
                       spacing: e.currentTarget.value,
                     })
                   }
@@ -261,9 +265,9 @@ export const Presentation = React.memo(
               <Label label={'Rundungen'}>
                 <Input
                   disabled={isLoading}
-                  value={theme.borderRadius}
+                  value={customTheme.borderRadius}
                   onChange={(e) =>
-                    setCustomTheme({
+                    updateThemeProperties({
                       borderRadius: e.currentTarget.value,
                     })
                   }
@@ -318,7 +322,7 @@ export const Presentation = React.memo(
                 title={'Schriftart Überschriften'}
                 value={theme.titleFontFamily}
                 onChange={(titleFontFamily) => {
-                  setCustomTheme({
+                  updateThemeProperties({
                     titleFontFamily,
                   });
                 }}
@@ -343,7 +347,7 @@ export const Presentation = React.memo(
                 title={'Schriftart Fließtext'}
                 value={theme.textFontFamily}
                 onChange={(textFontFamily) =>
-                  setCustomTheme({
+                  updateThemeProperties({
                     textFontFamily,
                   })
                 }
