@@ -13,8 +13,7 @@
     "**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.ts?",
-    ".next/types/**/*.ts",
-    "**/*.d.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "**/*.test.ts",

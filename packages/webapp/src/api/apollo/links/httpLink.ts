@@ -3,7 +3,7 @@ import { createCustomFetch } from '../customFetch';
 
 const isBrowser = typeof window !== 'undefined';
 
-const API_URL = 'http://127.0.0.1:4000/api';
+const API_URL = `${process.env.API_URL}/api`;
 
 export const createHttpLink = ({
   requestExtraHeaders = () => ({}),

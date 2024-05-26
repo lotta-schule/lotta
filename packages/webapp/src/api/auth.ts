@@ -22,8 +22,7 @@ export const sendRefreshRequest = async (
     const { data } = await axios
       .request<any>({
         method: 'post',
-        // TODO: Use API_URL
-        baseURL: 'http://127.0.0.1:4000/auth',
+        baseURL: `${process.env.API_URL}/auth`,
         url: 'token/refresh',
         withCredentials: isBrowser,
         headers: createHeaders({
