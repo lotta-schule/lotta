@@ -8,15 +8,16 @@ import {
   RequestHandler,
 } from '@apollo/client';
 import { createLink } from 'apollo-v3-absinthe-upload-link';
+import { getMainDefinition } from '@apollo/client/utilities';
 import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
 import { Socket as PhoenixSocket } from 'phoenix';
 import { JWT } from 'util/auth/jwt';
 import { TenantModel } from 'model';
+import { appConfig } from 'config';
 import { isAfter, sub } from 'date-fns';
 import axios, { AxiosRequestConfig } from 'axios';
 import getConfig from 'next/config';
 import { createCache } from './apollo/cache';
-import { getMainDefinition } from '@apollo/client/utilities';
 
 const ALLOWED_HEADERS = ['accept', 'content-type', 'authorization'] as const;
 
@@ -59,8 +60,8 @@ const sendRefreshRequest = async () => {
   try {
     const { data } = await axios.request<any>({
       method: 'post',
-      baseURL: '/auth',
-      url: 'token/refresh',
+      baseURL: typeof window !== 'undefined' ? '/' : appConfig.get('API_URL'),
+      url: '/auth/token/refresh',
       withCredentials: true,
     });
     if (data?.accessToken) {
@@ -203,7 +204,7 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
     uri: isBrowser
       ? '/api/backend'
       : (() => {
-          const url = new URL(process.env.API_URL);
+          const url = new URL(appConfig.get('API_URL'));
           url.pathname = '/api';
           return url.toString();
         })(),

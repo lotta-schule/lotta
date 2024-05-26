@@ -33,6 +33,7 @@
     "@opentelemetry/resources": "^1.24.1",
     "@opentelemetry/sdk-node": "^0.51.1",
     "@opentelemetry/semantic-conventions": "^1.24.1",
+    "@ptitmouton/app-config": "^0.0.2",
     "@sentry/nextjs": "^7.108.0",
     "apollo-v3-absinthe-upload-link": "^1.6.0",
     "axios": "^1.7.0",

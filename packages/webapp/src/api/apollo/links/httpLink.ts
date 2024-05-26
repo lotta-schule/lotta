@@ -1,9 +1,10 @@
 import { createLink } from 'apollo-v3-absinthe-upload-link';
 import { createCustomFetch } from '../customFetch';
+import { appConfig } from 'config';
 
 const isBrowser = typeof window !== 'undefined';
 
-const API_URL = `${process.env.API_URL}/api`;
+const API_URL = `${appConfig.get('API_URL')}/api`;
 
 export const createHttpLink = ({
   requestExtraHeaders = () => ({}),

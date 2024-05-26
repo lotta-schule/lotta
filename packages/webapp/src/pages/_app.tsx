@@ -3,11 +3,12 @@ import '../styles/globals.scss';
 import * as React from 'react';
 import { AppContext, AppProps } from 'next/app';
 import { add } from 'date-fns';
-import { config } from '@fortawesome/fontawesome-svg-core';
+import { config as faConfig } from '@fortawesome/fontawesome-svg-core';
 import { ServerDownError } from 'error/ServerDownError';
 import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { getApolloClient } from 'api/legacyClient';
 import { AppContextProviders } from 'layout/AppContextProviders';
+import { appConfig } from 'config';
 import opentelemetry, { SpanStatusCode } from '@opentelemetry/api';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
@@ -17,7 +18,7 @@ import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
-config.autoAddCss = false;
+faConfig.autoAddCss = false;
 
 const TopProgressBar = dynamic(() => import('shared/TopProgressBar'), {
   ssr: false,
@@ -85,8 +86,8 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
 
   try {
     await maybeChangeRefreshToken(context);
-  } catch (e) {
-    console.error('Error in maybeChangeRefreshToken: ', e);
+  } catch (e: any) {
+    console.error('Error in maybeChangeRefreshToken: ', e.message);
   }
 
   const additionalAuthHeader = context.ctx.res?.getHeader('authorization') as
@@ -196,7 +197,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
     await tracer.startActiveSpan('refreshToken', async (childSpan) => {
       try {
         const refreshResponse = await axios.request({
-          baseURL: process.env.API_URL,
+          baseURL: appConfig.get('API_URL'),
           url: '/auth/token/refresh',
           data: {
             token: refreshToken,
@@ -214,6 +215,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
           },
         });
         const refreshResponseData = refreshResponse?.data;
+        console.log({ refreshResponseData });
 
         if (refreshResponseData?.accessToken) {
           response.setHeader(
@@ -242,8 +244,8 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
           code: SpanStatusCode.OK,
           message: 'Token refreshed',
         });
-      } catch (e) {
-        console.error('User Token handling eror: ', e);
+      } catch (e: any) {
+        console.error('User Token handling eror: ', e.message);
         childSpan.setStatus({
           code: SpanStatusCode.ERROR,
           message:

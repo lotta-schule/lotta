@@ -3,6 +3,7 @@ import { JWT } from 'util/auth/jwt';
 import { isAfter, sub } from 'date-fns';
 import { cookies } from 'next/headers';
 import { createHeaders } from './apollo/customFetch';
+import { appConfig } from 'config';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -22,8 +23,8 @@ export const sendRefreshRequest = async (
     const { data } = await axios
       .request<any>({
         method: 'post',
-        baseURL: `${process.env.API_URL}/auth`,
-        url: 'token/refresh',
+        baseURL: appConfig.get('API_URL'),
+        url: '/auth/token/refresh',
         withCredentials: isBrowser,
         headers: createHeaders({
           ...headers,
