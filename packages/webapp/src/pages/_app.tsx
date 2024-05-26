@@ -83,7 +83,11 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
 
   const headers = context.ctx.req?.headers ?? {};
 
-  await maybeChangeRefreshToken(context);
+  try {
+    await maybeChangeRefreshToken(context);
+  } catch (e) {
+    console.error('Error in maybeChangeRefreshToken: ', e);
+  }
 
   const additionalAuthHeader = context.ctx.res?.getHeader('authorization') as
     | string
