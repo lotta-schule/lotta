@@ -115,7 +115,7 @@ describe('Presentation', () => {
     });
   });
 
-  it.only('should save the changes', async () => {
+  it('should save the changes', async () => {
     const user = userEvent.setup();
     const onResult = vi.fn(() => ({
       data: { tenant: { ...mockTenant, logoImageFile: null } },
