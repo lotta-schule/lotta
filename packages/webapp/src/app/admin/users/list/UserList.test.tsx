@@ -7,12 +7,11 @@ import {
   adminGroup,
   tenant,
 } from 'test/fixtures';
-import { UserList } from 'administration/users/UserList';
+import { UserList } from './UserList';
 import userEvent from '@testing-library/user-event';
 
 import GetUserQuery from 'api/query/GetUserQuery.graphql';
 import SearchUsersQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
-import GetTenantWithStatsQuery from 'api/query/GetTenantWithStatsQuery.graphql';
 
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 
@@ -61,23 +60,15 @@ const additionalMocks = [
       },
     },
   },
-  {
-    request: {
-      query: GetTenantWithStatsQuery,
-    },
-    result: {
-      data: {
-        tenant: {
-          ...tenant,
-          stats: {
-            userCount: 2,
-            articleCount: 5,
-          },
-        },
-      },
-    },
-  },
 ];
+
+const tenantWithStats = {
+  ...tenant,
+  stats: {
+    userCount: 2,
+    articleCount: 5,
+  },
+};
 
 describe('pages/admin/users/list', () => {
   const mocks = [
@@ -95,9 +86,9 @@ describe('pages/admin/users/list', () => {
 
   it('should show the total count of users when no search is entered', async () => {
     const screen = render(
-      <UserList />,
+      <UserList currentUser={adminUser} tenant={tenantWithStats} />,
       {},
-      { currentUser: adminUser, additionalMocks: mocks }
+      { additionalMocks: mocks }
     );
 
     await waitFor(() => {
@@ -110,10 +101,9 @@ describe('pages/admin/users/list', () => {
   it('should search users and show results, open popup when clicking on result', async () => {
     const fireEvent = userEvent.setup();
     const screen = render(
-      <UserList />,
+      <UserList currentUser={adminUser} tenant={tenant} />,
       {},
       {
-        currentUser: adminUser,
         additionalMocks: mocks,
       }
     );
@@ -135,10 +125,9 @@ describe('pages/admin/users/list', () => {
   it('should search with groups and lastSeen, showing a message when no results were found', async () => {
     const fireEvent = userEvent.setup();
     const screen = render(
-      <UserList />,
+      <UserList currentUser={adminUser} tenant={tenantWithStats} />,
       {},
       {
-        currentUser: adminUser,
         additionalMocks: mocks,
       }
     );
@@ -150,7 +139,9 @@ describe('pages/admin/users/list', () => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });
     await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
-    await fireEvent.click(screen.getAllByRole('option')[0]);
+    await fireEvent.click(
+      screen.getByRole('option', { name: /administrator/i })
+    );
 
     await fireEvent.click(
       await screen.findByRole('button', { name: /zuletzt angemeldet/i })

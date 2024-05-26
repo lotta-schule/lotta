@@ -1,4 +1,3 @@
-import { MockedResponse } from '@apollo/client/testing';
 import { SplitViewProvider } from '@lotta-schule/hubert';
 import {
   CalendarKlassenarbeiten,
@@ -11,29 +10,17 @@ import { render, waitFor } from 'test/util';
 import { WidgetList } from './WidgetList';
 import userEvent from '@testing-library/user-event';
 
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';
 
 const renderWithContext: typeof render = (children, ...other) => {
   return render(<SplitViewProvider>{children}</SplitViewProvider>, ...other);
 };
 
-const additionalMocks: MockedResponse[] = [
-  {
-    request: {
-      query: GetWidgetsQuery,
-    },
-    result: {
-      data: {
-        widgets: [
-          GangamStyleWidget,
-          VPSchuelerWidget,
-          VPLehrerWidget,
-          CalendarKlassenarbeiten,
-        ],
-      },
-    },
-  },
+const widgets = [
+  GangamStyleWidget,
+  VPSchuelerWidget,
+  VPLehrerWidget,
+  CalendarKlassenarbeiten,
 ];
 
 const newWidget = {
@@ -47,7 +34,7 @@ const newWidget = {
 
 describe('layouts/adminLayout/categoryManagment/widgets/WidgetList', () => {
   it('should list the widgets', async () => {
-    const screen = renderWithContext(<WidgetList />, {}, { additionalMocks });
+    const screen = renderWithContext(<WidgetList widgets={widgets} />);
 
     await waitFor(() => {
       expect(screen.getByRole('list')).toBeVisible();
@@ -57,7 +44,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetList', () => {
 
   it('should select a widget', async () => {
     const fireEvent = userEvent.setup();
-    const screen = renderWithContext(<WidgetList />, {}, { additionalMocks });
+    const screen = renderWithContext(<WidgetList widgets={widgets} />);
 
     await waitFor(() => {
       expect(
@@ -86,11 +73,10 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetList', () => {
       }));
 
       const screen = renderWithContext(
-        <WidgetList />,
+        <WidgetList widgets={widgets} />,
         {},
         {
           additionalMocks: [
-            ...additionalMocks,
             {
               request: {
                 query: CreateWidgetMutation,
@@ -140,11 +126,10 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetList', () => {
       }));
 
       const screen = renderWithContext(
-        <WidgetList />,
+        <WidgetList widgets={widgets} />,
         {},
         {
           additionalMocks: [
-            ...additionalMocks,
             {
               request: {
                 query: CreateWidgetMutation,
@@ -192,11 +177,10 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetList', () => {
       }));
 
       const screen = renderWithContext(
-        <WidgetList />,
+        <WidgetList widgets={widgets} />,
         {},
         {
           additionalMocks: [
-            ...additionalMocks,
             {
               request: {
                 query: CreateWidgetMutation,

@@ -67,5 +67,7 @@ export class MockRouter {
     this._emitter.emit('routeChangeEnd', pathname);
   }
 
+  refresh = vi.fn();
+
   events = this._emitter;
 }

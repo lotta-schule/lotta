@@ -4,7 +4,7 @@ import { render, waitFor, within } from 'test/util';
 import { GroupList } from './GroupList';
 import userEvent from '@testing-library/user-event';
 
-import GetGroupQuery from '../../api/query/GetGroupQuery.graphql';
+import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
 import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
 
 const renderWithContext: typeof render = (children, ...other) => {
@@ -31,14 +31,7 @@ const additionalMocks = extendedUserGroups.map((group) => ({
 }));
 describe('administration/users/GroupList', () => {
   it('should list all groups', () => {
-    const screen = renderWithContext(
-      <GroupList />,
-      {},
-      {
-        userGroups: extendedUserGroups,
-        additionalMocks,
-      }
-    );
+    const screen = renderWithContext(<GroupList groups={extendedUserGroups} />);
     expect(screen.getAllByRole('listitem').length).toEqual(29);
   });
 
@@ -51,12 +44,9 @@ describe('administration/users/GroupList', () => {
     HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
     const fireEvent = userEvent.setup();
     const screen = renderWithContext(
-      <GroupList />,
+      <GroupList groups={extendedUserGroups} />,
       {},
-      {
-        userGroups: extendedUserGroups,
-        additionalMocks,
-      }
+      { additionalMocks }
     );
     expect(screen.getByRole('textbox', { name: /suche/i })).toBeVisible();
     await fireEvent.type(
@@ -72,13 +62,7 @@ describe('administration/users/GroupList', () => {
   });
 
   it('should show the group name', () => {
-    const screen = renderWithContext(
-      <GroupList />,
-      {},
-      {
-        userGroups: extendedUserGroups,
-      }
-    );
+    const screen = renderWithContext(<GroupList groups={extendedUserGroups} />);
     expect(
       screen.getAllByRole('listitem', { name: 'New group 1' }).length
     ).toEqual(1);
@@ -87,7 +71,7 @@ describe('administration/users/GroupList', () => {
   it('should open the EditGroup when clicking on the group name', async () => {
     const fireEvent = userEvent.setup();
     const screen = renderWithContext(
-      <GroupList />,
+      <GroupList groups={extendedUserGroups} />,
       {},
       {
         userGroups: extendedUserGroups,
@@ -107,17 +91,12 @@ describe('administration/users/GroupList', () => {
 
   it('should change sorting via the select', async () => {
     const fireEvent = userEvent.setup();
-    const screen = renderWithContext(
-      <GroupList />,
-      {},
-      {
-        userGroups: extendedUserGroups,
-        additionalMocks,
-      }
-    );
-    expect(screen.getAllByRole('listitem')[0]).toHaveTextContent(
-      /new group 0/i
-    );
+    const screen = renderWithContext(<GroupList groups={extendedUserGroups} />);
+    await waitFor(() => {
+      expect(screen.getAllByRole('listitem')[0]).toHaveTextContent(
+        /new group 0/i
+      );
+    });
 
     await fireEvent.click(screen.getByRole('button', { name: /sortierung/i }));
     await waitFor(() => {
@@ -138,7 +117,7 @@ describe('administration/users/GroupList', () => {
     it('should show a delete dialog', async () => {
       const fireEvent = userEvent.setup();
       const screen = render(
-        <GroupList />,
+        <GroupList groups={extendedUserGroups} />,
         {},
         {
           additionalMocks: [
@@ -208,7 +187,11 @@ describe('administration/users/GroupList', () => {
 
     it('should hide a delete dialog when dialog is "canceled"', async () => {
       const fireEvent = userEvent.setup();
-      const screen = render(<GroupList />, {}, { additionalMocks });
+      const screen = render(
+        <GroupList groups={userGroups} />,
+        {},
+        { additionalMocks }
+      );
 
       await fireEvent.click(screen.getByRole('listitem', { name: /lehrer/i }));
 

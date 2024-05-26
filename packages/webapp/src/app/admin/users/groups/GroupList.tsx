@@ -61,7 +61,7 @@ export const GroupList = ({ groups }: GroupListProps) => {
 
   const sortedGroups = React.useMemo(() => {
     return sorting === 'custom'
-      ? groups
+      ? groups.sort((g1, g2) => g1.sortKey - g2.sortKey)
       : [...groups].sort((g1, g2) => g1.name.localeCompare(g2.name));
   }, [groups, sorting]);
 

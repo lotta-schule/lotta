@@ -155,6 +155,14 @@ beforeAll(() => {
     };
   });
 
+  vi.mock('next/navigation', () => {
+    return {
+      __esModule: true,
+      mockRouter: mockRouter,
+      useRouter: () => mockRouter,
+    };
+  });
+
   const originalError = console.error;
   vi.spyOn(console, 'error').mockImplementation((...args) => {
     if (

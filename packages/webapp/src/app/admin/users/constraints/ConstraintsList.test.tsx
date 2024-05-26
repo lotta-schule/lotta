@@ -12,16 +12,17 @@ describe('pages/admin/users/constraints', () => {
   describe('should not impose limit', () => {
     it('should have "no limit" checkbox checked when limit is -1', async () => {
       const screen = render(
-        <ConstraintList />,
-        {},
-        {
-          tenant: {
+        <ConstraintList
+          tenant={{
             ...tenant,
             configuration: {
               ...tenant.configuration,
               userMaxStorageConfig: '-1',
             },
-          },
+          }}
+        />,
+        {},
+        {
           currentUser: adminUser,
         }
       );
@@ -38,16 +39,17 @@ describe('pages/admin/users/constraints', () => {
     it('should set a limit when clicking corresponding checkbox', async () => {
       const fireEvent = userEvent.setup();
       const screen = render(
-        <ConstraintList />,
-        {},
-        {
-          tenant: {
+        <ConstraintList
+          tenant={{
             ...tenant,
             configuration: {
               ...tenant.configuration,
               userMaxStorageConfig: '-1',
             },
-          },
+          }}
+        />,
+        {},
+        {
           currentUser: adminUser,
         }
       );
@@ -62,7 +64,11 @@ describe('pages/admin/users/constraints', () => {
 
   describe('should impose limit', () => {
     it('should have "no limit" checkbox checked when limit is 20', () => {
-      const screen = render(<ConstraintList />, {}, { currentUser: adminUser });
+      const screen = render(
+        <ConstraintList tenant={tenant} />,
+        {},
+        { currentUser: adminUser }
+      );
       expect(
         screen.getByRole('checkbox', { name: /begrenzen auf/i })
       ).toBeChecked();
@@ -73,7 +79,11 @@ describe('pages/admin/users/constraints', () => {
 
     it('should remember the limit set when disabling and reenabling the limit', async () => {
       const fireEvent = userEvent.setup();
-      const screen = render(<ConstraintList />, {}, { currentUser: adminUser });
+      const screen = render(
+        <ConstraintList tenant={tenant} />,
+        {},
+        { currentUser: adminUser }
+      );
       await fireEvent.type(
         screen.getByRole('spinbutton', {
           name: /begrenzung/i,
@@ -93,7 +103,11 @@ describe('pages/admin/users/constraints', () => {
     });
 
     it('have the tenant value prefilled', () => {
-      const screen = render(<ConstraintList />, {}, { currentUser: adminUser });
+      const screen = render(
+        <ConstraintList tenant={tenant} />,
+        {},
+        { currentUser: adminUser }
+      );
       expect(
         screen.getByRole('spinbutton', { name: /begrenzung/i })
       ).toHaveValue(20);
@@ -130,7 +144,7 @@ describe('pages/admin/users/constraints', () => {
           },
         ];
         const screen = render(
-          <ConstraintList />,
+          <ConstraintList tenant={tenant} />,
           {},
           { additionalMocks: mocks, currentUser: adminUser }
         );
