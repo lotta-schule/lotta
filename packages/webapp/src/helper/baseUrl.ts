@@ -33,7 +33,6 @@ export const getBaseUrl = cache(
       }
     }
 
-    console.log({ url: url.toString() });
     return url.toString();
   }
 );

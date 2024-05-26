@@ -1,4 +1,3 @@
-import { appConfig } from 'config';
 import * as React from 'react';
 import { useServerData } from 'shared/ServerDataContext';
 
@@ -84,10 +83,12 @@ export const useImageUrl = (
   }: ProcessingOptions = {},
   { maxDisplayWidth = 1920 }: { maxDisplayWidth?: number } = {}
 ) => {
-  const createUrl = useUrlCreator(imageUrl ?? '');
   const getUrlForDimensions = React.useCallback(
     (dimensions: { width?: number; height?: number }) => {
-      return createUrl({
+      if (!imageUrl) {
+        return imageUrl;
+      }
+      return createImageUrl(imageUrl, {
         width: dimensions.width,
         height: dimensions.height,
         aspectRatio,
