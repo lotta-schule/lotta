@@ -78,6 +78,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
       ((context.ctx.req.connection as any).encrypted ? 'https' : 'http');
     return proto.split(/\s*,\s*/)[0];
   };
+
   const url =
     process.env.FORCE_BASE_URL ??
     (context.ctx.req && `${getProtocol()}://${context.ctx.req.headers.host}`);
@@ -215,7 +216,6 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
           },
         });
         const refreshResponseData = refreshResponse?.data;
-        console.log({ refreshResponseData });
 
         if (refreshResponseData?.accessToken) {
           response.setHeader(

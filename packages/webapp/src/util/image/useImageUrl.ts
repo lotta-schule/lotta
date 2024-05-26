@@ -11,24 +11,11 @@ export type ProcessingOptions = {
 };
 
 export const createImageUrl = (
-  src: string,
+  urlOrString: URL | string,
   { resize, width, height, aspectRatio, format }: ProcessingOptions
 ) => {
-  const { baseUrl } = useServerData();
-  if (!src) {
-    return src;
-  }
-
-  const url = React.useMemo(() => {
-    if (src.startsWith('//')) {
-      return new URL(`https:${src}`);
-    }
-    if (src.startsWith('/')) {
-      return new URL(src, baseUrl);
-    }
-    return new URL(src);
-  }, [src, baseUrl]);
-
+  const url =
+    urlOrString instanceof URL ? urlOrString : new URL(urlOrString.toString());
   if (width) {
     url.searchParams.set('width', String(width));
     if (aspectRatio) {
@@ -53,6 +40,39 @@ export const createImageUrl = (
   return url.toString();
 };
 
+export const useUrlCreator = (src: string) => {
+  const { baseUrl } = useServerData();
+
+  const url = React.useMemo(() => {
+    if (!src) {
+      return null;
+    }
+    if (src.startsWith('//')) {
+      return new URL(`https:${src}`);
+    }
+    if (src.startsWith('/')) {
+      return new URL(src, baseUrl);
+    }
+    return new URL(src);
+  }, [src, baseUrl]);
+
+  return React.useCallback(
+    ({ resize, width, height, aspectRatio, format }: ProcessingOptions) => {
+      if (!url) {
+        return src;
+      }
+      return createImageUrl(url, {
+        resize,
+        width,
+        height,
+        aspectRatio,
+        format,
+      });
+    },
+    [url]
+  );
+};
+
 export const useImageUrl = (
   imageUrl: string | null | undefined,
   {
@@ -64,13 +84,10 @@ export const useImageUrl = (
   }: ProcessingOptions = {},
   { maxDisplayWidth = 1920 }: { maxDisplayWidth?: number } = {}
 ) => {
+  const createUrl = useUrlCreator(imageUrl ?? '');
   const getUrlForDimensions = React.useCallback(
     (dimensions: { width?: number; height?: number }) => {
-      if (!imageUrl) {
-        return null;
-      }
-
-      return createImageUrl(imageUrl, {
+      return createUrl({
         width: dimensions.width,
         height: dimensions.height,
         aspectRatio,

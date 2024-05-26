@@ -17,7 +17,7 @@ export const User = {
   getAvatarUrl(baseUrl: string, user?: UserModel | null, size = 100) {
     return user?.avatarImageFile
       ? createImageUrl(
-          File.getFileRemoteLocation(baseUrl, user.avatarImageFile),
+          new URL(File.getFileRemoteLocation(baseUrl, user.avatarImageFile)),
           { width: size, aspectRatio: '1:1', resize: 'cover' }
         )
       : User.getDefaultAvatarUrl(user);
