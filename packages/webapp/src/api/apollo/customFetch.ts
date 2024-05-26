@@ -1,9 +1,10 @@
 import axios from 'axios';
+import { appConfig } from 'config';
 
 const isBrowser = typeof window !== 'undefined';
-const tenantSlugOverwrite = undefined;
 
 export const createHeaders = (headers: Record<string, string> = {}) => {
+  const tenantSlugOverwrite = appConfig.get('FORCE_TENANT_SLUG');
   return Object.assign(
     {
       accept: 'application/json',
@@ -34,6 +35,7 @@ export const createCustomFetch = (
       ...headers,
       ...requestExtraHeaders(),
     });
+
     const axiosResponse = await axios({
       ...miscOptions,
       headers: outgoingHeaders,

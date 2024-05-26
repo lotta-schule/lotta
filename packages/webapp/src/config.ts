@@ -6,4 +6,7 @@ export const appConfig = createConfig({
     fallback: 'http://localhost:4000',
   },
   API_SOCKET_URL: {},
+  FORCE_TENANT_SLUG: {
+    fallback: '',
+  },
 });
