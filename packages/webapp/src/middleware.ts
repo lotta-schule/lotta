@@ -20,14 +20,15 @@ export async function middleware(request: NextRequest) {
   const incomingRefreshToken = request.cookies.get('SignInRefreshToken')?.value;
   const authHeader = request.headers.get('Authorization');
   if (incomingRefreshToken) {
-    // User has a refresh token, so we could renew the access token
-    // if it is expired or about to expire
-    authInfo.refreshToken = incomingRefreshToken;
-
-    const refreshTokenJwt = JWT.parse(incomingRefreshToken);
+    let refreshTokenJwt = null;
+    try {
+      refreshTokenJwt = JWT.parse(incomingRefreshToken);
+    } catch (e) {
+      console.error('Error parsing refresh token', e);
+    }
 
     if (
-      refreshTokenJwt.isValid() &&
+      refreshTokenJwt?.isValid() &&
       (refreshTokenJwt.body.expires.getTime() - Date.now() < 1000 * 60 * 5 ||
         !authInfo.accessToken)
     ) {
@@ -50,14 +51,19 @@ export async function middleware(request: NextRequest) {
     if (!authInfo.accessToken && authHeader?.startsWith('Bearer ')) {
       const accessToken = authHeader.slice(7);
 
-      const accessTokenJwt = JWT.parse(accessToken);
+      let accessTokenJwt = null;
+      try {
+        accessTokenJwt = JWT.parse(accessToken);
+      } catch (e) {
+        console.error('Error parsing access token', e);
+      }
 
-      if (!accessTokenJwt.isValid()) {
+      if (!accessTokenJwt?.isValid()) {
         console.log('Access token is not valid!', accessTokenJwt);
       } else if (accessTokenJwt.isExpired()) {
         console.log('Access token is expired!', accessTokenJwt);
       } else {
-        console.log('Access token is valid!', accessTokenJwt);
+        console.log('Access token is valid!');
         authInfo.accessToken = accessToken;
       }
     }
@@ -69,7 +75,7 @@ export async function middleware(request: NextRequest) {
     const accessTokenJwt = JWT.parse(accessToken);
 
     if (accessTokenJwt.isValid() && !accessTokenJwt.isExpired(0)) {
-      console.log('Access token is valid!', accessTokenJwt);
+      console.log('Access token is valid!');
 
       authInfo.accessToken = accessToken;
     }
@@ -87,14 +93,18 @@ export async function middleware(request: NextRequest) {
       sameSite: 'lax',
       path: '/',
     });
-  }
 
-  if (authInfo.accessToken) {
-    response.cookies.set('SigninAccessToken', authInfo.accessToken, {
-      httpOnly: false,
-      sameSite: 'lax',
-      path: '/',
-    });
+    // We only want to set the access token cookie if a new access token was
+    // generated.
+    // This is the case when a new refresh token (authInfo.refreshToken !== null) was
+    // issued
+    if (authInfo.accessToken) {
+      response.cookies.set('SigninAccessToken', authInfo.accessToken, {
+        httpOnly: false,
+        sameSite: 'lax',
+        path: '/',
+      });
+    }
   }
 
   return response;

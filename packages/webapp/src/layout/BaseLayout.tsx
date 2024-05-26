@@ -44,7 +44,7 @@ export const BaseLayout = React.memo(({ children }: BaseLayoutProps) => {
                             background-image: image-set(url(${imageUrlSimple}) 1x, url(${imageUrlRetina}) 2x);
                         }
                     }
-                `,
+                `.trim(),
           }}
         />
       )}

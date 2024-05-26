@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { JWT } from 'util/auth/jwt';
-import { isAfter, sub } from 'date-fns';
 import { cookies } from 'next/headers';
 import { createHeaders } from './apollo/customFetch';
 import { appConfig } from 'config';
@@ -40,21 +38,5 @@ export const sendRefreshRequest = async (
     // TODO: Sentry
     console.error(e);
     return null;
-  }
-};
-
-export const checkExpiredToken = async () => {
-  const accessToken = localStorage.getItem('id');
-  if (accessToken) {
-    try {
-      const jwt = JWT.parse(accessToken);
-      const now = new Date();
-
-      if (isAfter(now, sub(new Date(jwt.body.expires), { minutes: 1 }))) {
-        await sendRefreshRequest();
-      }
-    } catch (e) {
-      localStorage.clear();
-    }
   }
 };
