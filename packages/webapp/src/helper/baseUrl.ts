@@ -1,22 +1,25 @@
 import { headers } from 'next/headers';
 import { loadTenant } from '../loader';
 import { cache } from 'react';
+import { appConfig } from 'config';
 
 export const getBaseUrlString = cache(async () => {
-  if (process.env.FORCE_BASE_URL) {
-    return process.env.FORCE_BASE_URL;
+  const forcedBaseUrl = appConfig.get('FORCE_BASE_URL');
+  if (forcedBaseUrl) {
+    return forcedBaseUrl;
   }
   const tenant = await loadTenant();
   const host = headers().get('host') || tenant.host;
   const protocol = headers().get('x-forwarded-proto') || 'https';
 
-  console.log([protocol, '://', host].join(''));
   return [protocol, '://', host].join('');
 });
 
 export const getBaseUrl = cache(
   async (
-    params: Partial<URL & { searchParams: Record<string, string> }> = {}
+    params: Partial<
+      Omit<URL, 'searchParams'> & { searchParams: Record<string, string> }
+    > = {}
   ) => {
     const stringUrl = await getBaseUrlString();
     const url = new URL(stringUrl);

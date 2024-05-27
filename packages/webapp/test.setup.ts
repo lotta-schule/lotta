@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/vitest';
+import * as React from 'react';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
 
 declare module 'vitest' {
@@ -162,6 +163,11 @@ beforeAll(() => {
       useRouter: () => mockRouter,
     };
   });
+
+  vi.mock('react', () => ({
+    ...require('react'),
+    cache: vi.fn((fn) => fn),
+  }));
 
   const originalError = console.error;
   vi.spyOn(console, 'error').mockImplementation((...args) => {

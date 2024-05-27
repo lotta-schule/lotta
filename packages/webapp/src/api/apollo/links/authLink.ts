@@ -18,7 +18,7 @@ export const createAuthLink = ({ requestToken }: AuthLinkParams) =>
           if (token) {
             context.headers = {
               ...context.headers,
-              authorization: `Bearer ${token}`, // maybe we shure keep the tokens at one place in context?
+              authorization: `Bearer ${token}`,
             };
           }
 
