@@ -4,6 +4,8 @@ import { Presentation } from './Presentation';
 import { loadTenant } from 'loader';
 import { getBaseUrl } from 'helper';
 import * as themes from './theme';
+import { AdminPage } from 'app/admin/_component/AdminPage';
+import { faPalette } from '@fortawesome/free-solid-svg-icons';
 
 const defaultTheme = DefaultThemes.standard;
 
@@ -23,11 +25,13 @@ async function PresentationPage() {
   ];
 
   return (
-    <Presentation
-      tenant={tenant}
-      baseUrl={baseUrl}
-      additionalThemes={additionalThemes}
-    />
+    <AdminPage icon={faPalette} title={'Darstellung'} hasHomeLink>
+      <Presentation
+        tenant={tenant}
+        baseUrl={baseUrl}
+        additionalThemes={additionalThemes}
+      />
+    </AdminPage>
   );
 }
 

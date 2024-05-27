@@ -14,14 +14,15 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { BaseButton } from '@lotta-schule/hubert';
 import { Icon } from 'shared/Icon';
-import { NewFeedbackCountBadge } from '../../component/feedback/NewFeedbackCountBadge';
+import { NewFeedbackCountBadge } from 'component/feedback/NewFeedbackCountBadge';
+import { AdminPage } from './_component/AdminPage';
 import Link from 'next/link';
 
 import styles from './page.module.scss';
 
-async function AdminPage() {
+async function AdminRootPage() {
   return (
-    <div className={styles.root}>
+    <AdminPage title={'Administration'} className={styles.root}>
       <h3>Mein lotta</h3>
       <section className={styles.buttonRow}>
         <BaseButton
@@ -153,8 +154,8 @@ async function AdminPage() {
           <span>Marginalen</span>
         </BaseButton>
       </section>
-    </div>
+    </AdminPage>
   );
 }
 
-export default AdminPage;
+export default AdminRootPage;

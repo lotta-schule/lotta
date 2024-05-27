@@ -19,6 +19,10 @@ const searchUsersMock = (searchTerm: string, results: UserModel[]) =>
   }));
 
 describe('CreateMessageDialog', () => {
+  afterEach(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 75));
+  });
+
   describe('select detination popup', () => {
     const SomeUserWithGroups = { ...SomeUser, groups: [schuelerGroup] };
 
