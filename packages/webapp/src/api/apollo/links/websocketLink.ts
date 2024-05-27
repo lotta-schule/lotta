@@ -1,14 +1,11 @@
 'use client';
 
 import * as AbsintheSocket from '@absinthe/socket';
-import { TenantModel } from 'model';
-import { Socket as PhoenixSocket } from 'phoenix';
 import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
-
-const isBrowser = typeof window !== 'undefined';
-
-// TODO: Get url correclty from env
-const socketUrl = 'ws://127.0.0.1:4000/api/user-socket';
+import { Socket as PhoenixSocket } from 'phoenix';
+import { TenantModel } from 'model';
+import { isBrowser } from 'util/isBrowser';
+import { appConfig } from 'config';
 
 const createAbsoluteSocketUrl = (urlString: string) => {
   if (/^\//.test(urlString)) {
@@ -21,8 +18,9 @@ const createAbsoluteSocketUrl = (urlString: string) => {
 };
 
 export const createWebsocketLink = (tenant: TenantModel) => {
+  const socketUrl = appConfig.get('API_SOCKET_URL');
   const phoenixSocket =
-    isBrowser && socketUrl
+    isBrowser() && socketUrl
       ? new PhoenixSocket(createAbsoluteSocketUrl(socketUrl), {
           params: () => {
             const token = localStorage.getItem('id');

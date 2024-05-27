@@ -1,16 +1,15 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
 import { createHeaders } from './apollo/customFetch';
+import { isBrowser } from 'util/isBrowser';
 import { appConfig } from 'config';
-
-const isBrowser = typeof window !== 'undefined';
 
 const getRefreshTokenFromServer = () => {
   return cookies().get('SignInRefreshToken')?.value?.trim() ?? null;
 };
 
 const getRefreshToken = () => {
-  return isBrowser ? null : getRefreshTokenFromServer();
+  return isBrowser() ? null : getRefreshTokenFromServer();
 };
 
 export const sendRefreshRequest = async (
@@ -23,7 +22,7 @@ export const sendRefreshRequest = async (
         method: 'post',
         baseURL: appConfig.get('API_URL'),
         url: '/auth/token/refresh',
-        withCredentials: isBrowser,
+        withCredentials: isBrowser(),
         headers: createHeaders({
           ...headers,
           Cookie: `SignInRefreshToken=${token}`,

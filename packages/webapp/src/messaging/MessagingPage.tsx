@@ -4,8 +4,9 @@ import { useIsMobile } from '@lotta-schule/hubert';
 import { useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { LegacyHeader, Main, Sidebar } from 'layout';
-import { MessagingView } from './MessagingView';
+import { isBrowser } from 'util/isBrowser';
 import { ConversationModel } from 'model';
+import { MessagingView } from './MessagingView';
 
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 
@@ -22,11 +23,7 @@ export const MessagingPage = React.memo(
 
     const isMobile = useIsMobile();
 
-    if (
-      typeof window !== 'undefined' &&
-      conversations &&
-      !didWriteCache.current
-    ) {
+    if (isBrowser() && conversations && !didWriteCache.current) {
       apolloClient.writeQuery({
         query: GetConversationsQuery,
         data: {

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { appConfig } from 'config';
-
-const isBrowser = typeof window !== 'undefined';
+import { isBrowser } from 'util/isBrowser';
 
 export const createHeaders = (headers: Record<string, string> = {}) => {
   const tenantSlugOverwrite = appConfig.get('FORCE_TENANT_SLUG');
@@ -42,7 +41,7 @@ export const createCustomFetch = (
       url,
       method,
       data: body,
-      withCredentials: isBrowser,
+      withCredentials: isBrowser(),
     });
     return new Response(JSON.stringify(axiosResponse.data), {
       headers: Object.entries(axiosResponse.headers).map(([key, value]) => {

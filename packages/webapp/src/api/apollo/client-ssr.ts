@@ -13,23 +13,23 @@ import { createAuthLink } from './links/authLink';
 import { createHttpLink } from './links/httpLink';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 import { getMainDefinition } from '@apollo/client/utilities';
+import { isBrowser } from 'util/isBrowser';
 
 export const createSSRClient = (tenant: TenantModel) => {
-  const networkLink =
-    typeof window === 'undefined'
-      ? createHttpLink()
-      : split(
-          (operation) => {
-            const definition = getMainDefinition(operation.query);
-            return (
-              definition.kind === 'OperationDefinition' &&
-              definition.operation === 'subscription'
-            );
-          },
+  const networkLink = isBrowser()
+    ? createHttpLink()
+    : split(
+        (operation) => {
+          const definition = getMainDefinition(operation.query);
+          return (
+            definition.kind === 'OperationDefinition' &&
+            definition.operation === 'subscription'
+          );
+        },
 
-          createWebsocketLink(tenant) as any,
-          createHttpLink()
-        );
+        createWebsocketLink(tenant) as any,
+        createHttpLink()
+      );
 
   return new NextSSRApolloClient({
     cache: new NextSSRInMemoryCache(),

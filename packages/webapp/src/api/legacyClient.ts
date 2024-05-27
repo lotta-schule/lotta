@@ -15,17 +15,16 @@ import { JWT } from 'util/auth/jwt';
 import { TenantModel } from 'model';
 import { appConfig } from 'config';
 import { isAfter, sub } from 'date-fns';
+import { createCache } from './apollo/cache';
+import { isBrowser } from 'util/isBrowser';
 import axios, { AxiosRequestConfig } from 'axios';
 import getConfig from 'next/config';
-import { createCache } from './apollo/cache';
 
 const ALLOWED_HEADERS = ['accept', 'content-type', 'authorization'] as const;
 
 const {
   publicRuntimeConfig: { socketUrl, tenantSlugOverwrite },
 } = getConfig();
-
-const isBrowser = typeof window !== 'undefined';
 
 const createHeaders = (headers?: any) => {
   if (!headers) {
@@ -45,7 +44,7 @@ const createHeaders = (headers?: any) => {
       )
     ),
     tenantSlugOverwrite ? { tenant: `slug:${tenantSlugOverwrite}` } : {},
-    isBrowser
+    isBrowser()
       ? {}
       : {
           'user-agent': [
@@ -60,7 +59,7 @@ const sendRefreshRequest = async () => {
   try {
     const { data } = await axios.request<any>({
       method: 'post',
-      baseURL: typeof window !== 'undefined' ? '/' : appConfig.get('API_URL'),
+      baseURL: isBrowser() ? '/' : appConfig.get('API_URL'),
       url: '/auth/token/refresh',
       withCredentials: true,
     });
@@ -90,13 +89,13 @@ export const checkExpiredToken = async () => {
   }
 };
 
-if (isBrowser) {
+if (isBrowser()) {
   checkExpiredToken();
 }
 
 let cachedApolloClient: ApolloClient<NormalizedCacheObject> | null = null;
 export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
-  if (isBrowser) {
+  if (isBrowser()) {
     if (cachedApolloClient !== null) {
       return cachedApolloClient;
     }
@@ -143,7 +142,7 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
         }
         if (
           typeof obj[key] === 'object' &&
-          !(isBrowser && obj[key] instanceof File)
+          !(isBrowser() && obj[key] instanceof File)
         ) {
           return {
             ...newObj,
@@ -187,7 +186,7 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
     const headers: Record<string, string> = {};
     const token =
       operation.getContext().authToken ??
-      (isBrowser && localStorage.getItem('id'));
+      (isBrowser() && localStorage.getItem('id'));
     if (token) {
       headers['authorization'] = `Bearer ${token}`;
     }
@@ -201,7 +200,7 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
   });
 
   const httpLink = createLink({
-    uri: isBrowser
+    uri: isBrowser()
       ? '/api/backend'
       : (() => {
           const url = new URL(appConfig.get('API_URL'));
@@ -222,7 +221,7 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
   };
 
   const phoenixSocket =
-    isBrowser && socketUrl
+    isBrowser() && socketUrl
       ? new PhoenixSocket(createAbsoluteSocketUrl(socketUrl), {
           params: () => {
             const token = localStorage.getItem('id');
@@ -267,12 +266,12 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
     : queryMutationLink;
 
   const apolloClient = new ApolloClient({
-    ssrMode: !isBrowser,
+    ssrMode: !isBrowser(),
     link,
     cache: createCache(),
   });
 
-  if (isBrowser) {
+  if (isBrowser()) {
     cachedApolloClient = apolloClient;
   }
   return apolloClient;
