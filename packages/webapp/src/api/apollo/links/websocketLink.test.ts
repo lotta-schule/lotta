@@ -4,14 +4,12 @@ import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
 import { Socket as PhoenixSocket } from 'phoenix';
 import { createWebsocketLink } from './websocketLink';
 import { isBrowser } from 'util/isBrowser';
-import { appConfig } from 'config';
 import { TenantModel } from 'model';
 
 vi.mock('@absinthe/socket');
 vi.mock('@absinthe/socket-apollo-link');
 vi.mock('phoenix');
 vi.mock('util/isBrowser');
-const appConfigGet = vi.spyOn(appConfig, 'get');
 
 const isBrowserMock = isBrowser as MockedFunction<typeof isBrowser>;
 const PhoenixSocketMock = PhoenixSocket as MockedClass<typeof PhoenixSocket>;
@@ -22,7 +20,6 @@ describe('createWebsocketLink', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     isBrowserMock.mockReturnValue(true);
-    appConfigGet.mockReturnValue('ws://localhost:4000/socket');
     global.localStorage.setItem('id', 'test-token');
     delete (window as any).location;
     (window as any).location = {
@@ -44,7 +41,7 @@ describe('createWebsocketLink', () => {
     (AbsintheSocket.create as Mock).mockReturnValue(mockAbsintheSocket);
     (createAbsintheSocketLink as Mock).mockReturnValue('mock-link');
 
-    const result = createWebsocketLink(tenant);
+    const result = createWebsocketLink(tenant, 'ws://localhost:4000/socket');
 
     expect(PhoenixSocket).toHaveBeenCalledWith('ws://localhost:4000/socket', {
       params: expect.any(Function),
@@ -70,7 +67,7 @@ describe('createWebsocketLink', () => {
     (createAbsintheSocketLink as Mock).mockReturnValue('mock-link');
 
     global.localStorage.removeItem('id');
-    const result = createWebsocketLink(tenant);
+    const result = createWebsocketLink(tenant, 'ws://localhost:4000/socket');
 
     expect(PhoenixSocket).toHaveBeenCalledWith('ws://localhost:4000/socket', {
       params: expect.any(Function),
@@ -88,7 +85,7 @@ describe('createWebsocketLink', () => {
     const tenant: TenantModel = { id: 'test-tenant-id' } as TenantModel;
     (isBrowser as Mock).mockReturnValue(false);
 
-    const result = createWebsocketLink(tenant);
+    const result = createWebsocketLink(tenant, 'ws://localhost:4000/socket');
 
     expect(PhoenixSocket).not.toHaveBeenCalled();
     expect(AbsintheSocket.create).not.toHaveBeenCalled();
@@ -98,9 +95,8 @@ describe('createWebsocketLink', () => {
 
   it('should return null if no socket URL is provided', () => {
     const tenant: TenantModel = { id: 'test-tenant-id' } as TenantModel;
-    (appConfig.get as Mock).mockReturnValue(null);
 
-    const result = createWebsocketLink(tenant);
+    const result = createWebsocketLink(tenant, null);
 
     expect(PhoenixSocket).not.toHaveBeenCalled();
     expect(AbsintheSocket.create).not.toHaveBeenCalled();

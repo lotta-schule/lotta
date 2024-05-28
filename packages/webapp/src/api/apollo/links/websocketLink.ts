@@ -5,7 +5,6 @@ import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
 import { Socket as PhoenixSocket } from 'phoenix';
 import { TenantModel } from 'model';
 import { isBrowser } from 'util/isBrowser';
-import { appConfig } from 'config';
 
 const createAbsoluteSocketUrl = (urlString: string) => {
   if (/^\//.test(urlString)) {
@@ -17,25 +16,25 @@ const createAbsoluteSocketUrl = (urlString: string) => {
   return urlString;
 };
 
-export const createWebsocketLink = (tenant: TenantModel) => {
-  const socketUrl = appConfig.get('API_SOCKET_URL');
-  const phoenixSocket =
-    isBrowser() && socketUrl
-      ? new PhoenixSocket(createAbsoluteSocketUrl(socketUrl), {
-          params: () => {
-            const token = localStorage.getItem('id');
-            if (token) {
-              return { token, tid: tenant?.id };
-            } else {
-              return { tid: tenant?.id };
-            }
-          },
-        })
-      : null;
+export const createWebsocketLink = (
+  tenant: TenantModel,
+  socketUrl?: string | null
+) => {
+  if (!socketUrl || !isBrowser()) {
+    return null;
+  }
+  const phoenixSocket = new PhoenixSocket(createAbsoluteSocketUrl(socketUrl), {
+    params: () => {
+      const token = localStorage.getItem('id');
+      if (token) {
+        return { token, tid: tenant?.id };
+      } else {
+        return { tid: tenant?.id };
+      }
+    },
+  });
 
-  const absintheSocket = phoenixSocket
-    ? AbsintheSocket.create(phoenixSocket)
-    : null;
+  const absintheSocket = AbsintheSocket.create(phoenixSocket);
 
-  return absintheSocket ? createAbsintheSocketLink(absintheSocket) : null;
+  return createAbsintheSocketLink(absintheSocket);
 };

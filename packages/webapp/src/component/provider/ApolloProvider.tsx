@@ -7,11 +7,18 @@ import { TenantModel } from 'model';
 
 export type ApolloProviderProps = React.PropsWithChildren<{
   tenant: TenantModel;
+  socketUrl: string;
 }>;
 
-export function ApolloProvider({ children, tenant }: ApolloProviderProps) {
+export function ApolloProvider({
+  children,
+  tenant,
+  socketUrl,
+}: ApolloProviderProps) {
   return (
-    <ApolloNextAppProvider makeClient={() => createSSRClient(tenant)}>
+    <ApolloNextAppProvider
+      makeClient={() => createSSRClient(tenant, socketUrl)}
+    >
       {children}
     </ApolloNextAppProvider>
   );

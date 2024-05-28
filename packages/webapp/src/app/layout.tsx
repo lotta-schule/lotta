@@ -13,6 +13,7 @@ import { TenantLayout } from '../layout/TenantLayout';
 import { ApolloProvider } from '../component/provider/ApolloProvider';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
 import { getBaseUrl } from 'helper';
+import { appConfig } from 'config';
 
 // TODO: Remove this once we have a proper solution for this
 const requestBaseUrl = 'https://ehrenberg.lotta.schule';
@@ -21,6 +22,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function AppLayout({ children }: React.PropsWithChildren) {
   const tenant = await loadTenant().catch(() => null);
+  const socketUrl = appConfig.get('API_SOCKET_URL');
 
   const origin =
     requestBaseUrl ??
@@ -51,7 +53,7 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
         <HubertProvider>
           <ServerDataContextProvider baseUrl={await getBaseUrl()}>
             {tenant && (
-              <ApolloProvider tenant={tenant}>
+              <ApolloProvider tenant={tenant} socketUrl={socketUrl}>
                 <TenantLayout>{children}</TenantLayout>
               </ApolloProvider>
             )}

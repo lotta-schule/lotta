@@ -13,12 +13,14 @@ import { createAuthLink } from './links/authLink';
 import { createHttpLink } from './links/httpLink';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { isBrowser } from 'util/isBrowser';
 
-export const createSSRClient = (tenant: TenantModel) => {
-  const networkLink = isBrowser()
-    ? createHttpLink()
-    : split(
+export const createSSRClient = (
+  tenant: TenantModel,
+  socketUrl?: string | null
+) => {
+  const websocketLink = createWebsocketLink(tenant, socketUrl);
+  const networkLink = websocketLink
+    ? split(
         (operation) => {
           const definition = getMainDefinition(operation.query);
           return (
@@ -27,9 +29,10 @@ export const createSSRClient = (tenant: TenantModel) => {
           );
         },
 
-        createWebsocketLink(tenant) as any,
+        createWebsocketLink(tenant, socketUrl)!.request as any as ApolloLink,
         createHttpLink()
-      );
+      )
+    : createHttpLink();
 
   return new NextSSRApolloClient({
     cache: new NextSSRInMemoryCache(),
@@ -37,6 +40,7 @@ export const createSSRClient = (tenant: TenantModel) => {
       [
         createErrorLink(),
         createAuthLink({
+          // TODO: Does not seem right. What do we do on server?
           requestToken: async () => localStorage.getItem('id'),
         }),
         // in a SSR environment, if you use multipart features like
