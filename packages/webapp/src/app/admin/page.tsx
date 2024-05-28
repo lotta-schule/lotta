@@ -11,6 +11,7 @@ import {
   faSquareCaretRight,
   faCommentDots,
   faChartLine,
+  faCubes,
 } from '@fortawesome/free-solid-svg-icons';
 import { BaseButton } from '@lotta-schule/hubert';
 import { Icon } from 'shared/Icon';
@@ -22,7 +23,7 @@ import styles from './page.module.scss';
 
 async function AdminRootPage() {
   return (
-    <AdminPage title={'Administration'} className={styles.root}>
+    <AdminPage icon={faCubes} title={'Administration'} className={styles.root}>
       <h3>Mein lotta</h3>
       <section className={styles.buttonRow}>
         <BaseButton
