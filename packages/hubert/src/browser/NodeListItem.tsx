@@ -149,7 +149,6 @@ export const NodeListItem = React.memo(
       <>
         <li
           {...dropzoneProps}
-          key={node.id}
           onContextMenu={(e) => {
             currentContextMenuCloseFn?.();
             e.preventDefault();

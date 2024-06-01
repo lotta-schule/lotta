@@ -1,65 +1,85 @@
 'use client';
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { DialogShell } from './DialogHelpers';
+import { usePreventScroll } from '../util';
+import { Divider } from '../divider';
+import { Button } from '../button';
+import { Close } from '../icon';
+import clsx from 'clsx';
 
-export interface DialogProps
-  extends Omit<React.HTMLProps<HTMLDivElement>, 'ref'> {
+import styles from './Dialog.module.scss';
+
+export type DialogProps = React.PropsWithChildren<{
   className?: string;
   style?: React.CSSProperties;
   title?: string;
   open?: boolean;
   wide?: boolean;
   onRequestClose?: () => void | null;
-}
+}>;
 
 export const Dialog = ({
+  title,
   open,
   onRequestClose,
-  style,
+  className,
+  wide,
+  children,
   ...props
-}: DialogProps & { open?: boolean }) => {
-  const isBrowser = typeof window !== 'undefined';
-
-  const element = React.useRef<HTMLDivElement | null>(null);
-
-  if (isBrowser && element.current === null) {
-    element.current = document.createElement('div');
-    const dialogContainer =
-      document.getElementById('dialogContainer') ||
-      (() => {
-        const container = document.createElement('div');
-        container.id = 'dialogContainer';
-        document.body.appendChild(container);
-        return container;
-      })();
-    dialogContainer.appendChild(element.current);
-  }
-
-  React.useEffect(() => () => element.current?.remove(), []);
+}: DialogProps) => {
+  const dialogRef = React.useRef<HTMLDialogElement>(null);
 
   React.useEffect(() => {
     if (open) {
-      const onKeyDown = (e: KeyboardEvent) => {
-        if (e.code === 'Escape') {
-          e.preventDefault();
-          onRequestClose?.();
-        }
-      };
-      document.addEventListener('keydown', onKeyDown);
-      return () => {
-        document.removeEventListener('keydown', onKeyDown);
-      };
+      dialogRef.current?.showModal();
+    } else {
+      dialogRef.current?.close();
     }
-  }, [onRequestClose, open]);
+  }, [open]);
+  usePreventScroll({ isDisabled: !open });
 
-  if (!open || !isBrowser) {
-    return null;
-  }
-
-  return ReactDOM.createPortal(
-    <DialogShell style={style} onRequestClose={onRequestClose} {...props} />,
-    element.current as HTMLDivElement
+  return (
+    <dialog
+      ref={dialogRef}
+      title={title}
+      onClose={() => {
+        onRequestClose?.();
+      }}
+      {...props}
+      className={clsx(styles.root, className, { [styles.wide]: wide })}
+    >
+      {open && (
+        <>
+          <section>
+            {onRequestClose && (
+              <Button
+                small
+                title={'schließen'}
+                className={styles.close}
+                onClick={() => onRequestClose()}
+                icon={<Close />}
+              />
+            )}
+            <h3>{title}</h3>
+            <Divider />
+          </section>
+          {children}
+        </>
+      )}
+    </dialog>
   );
+};
+
+export const DialogContent: React.FC<React.HTMLProps<HTMLDivElement>> = ({
+  className,
+  ...props
+}) => {
+  return <section className={clsx(className, styles.content)} {...props} />;
+};
+
+export const DialogActions: React.FC<React.HTMLProps<HTMLDivElement>> = ({
+  className,
+  ...props
+}) => {
+  return <section className={clsx(className, styles.actions)} {...props} />;
 };

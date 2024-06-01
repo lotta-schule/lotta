@@ -40,7 +40,6 @@ class LottaWebDocument extends Document {
         </Head>
         <body>
           <Main />
-          <div id={'dialogContainer'} />
           <NextScript />
         </body>
       </Html>

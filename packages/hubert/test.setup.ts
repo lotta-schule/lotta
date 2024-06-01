@@ -13,11 +13,6 @@ declare module 'vitest' {
     extends TestingLibraryMatchers<unknown, unknown> {}
 }
 
-// create setup document
-const dialogContainer = document.createElement('div');
-dialogContainer.setAttribute('id', 'dialogContainer');
-document.body.appendChild(dialogContainer);
-
 // window.matchMedia mock
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -51,6 +46,24 @@ Object.defineProperty(window, 'IntersectionObserver', {
     observe: vi.fn(),
     unobserve: vi.fn(),
   })),
+});
+
+HTMLDialogElement.prototype.show = vi.fn(function mock(
+  this: HTMLDialogElement
+) {
+  this.open = true;
+});
+
+HTMLDialogElement.prototype.showModal = vi.fn(function mock(
+  this: HTMLDialogElement
+) {
+  this.open = true;
+});
+
+HTMLDialogElement.prototype.close = vi.fn(function mock(
+  this: HTMLDialogElement
+) {
+  this.open = false;
 });
 
 global.TextEncoder = TextEncoder;
