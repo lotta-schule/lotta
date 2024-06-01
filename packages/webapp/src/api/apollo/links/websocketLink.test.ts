@@ -41,7 +41,11 @@ describe('createWebsocketLink', () => {
     (AbsintheSocket.create as Mock).mockReturnValue(mockAbsintheSocket);
     (createAbsintheSocketLink as Mock).mockReturnValue('mock-link');
 
-    const result = createWebsocketLink(tenant, 'ws://localhost:4000/socket');
+    const result = createWebsocketLink(
+      tenant,
+      'ws://localhost:4000/socket',
+      'test-token'
+    );
 
     expect(PhoenixSocket).toHaveBeenCalledWith('ws://localhost:4000/socket', {
       params: expect.any(Function),

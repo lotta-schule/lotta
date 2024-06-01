@@ -1,13 +1,16 @@
 import axios from 'axios';
 import { appConfig } from 'config';
-import { Mocked } from 'vitest';
+import { Mocked, MockedFunction } from 'vitest';
 import { sendRefreshRequest } from './auth';
+import { isBrowser } from 'util/isBrowser';
 
 vi.mock('axios');
 vi.mock('config');
+vi.mock('util/isBrowser');
 
 const mockAxios = axios as Mocked<typeof axios>;
 const mockAppConfig = appConfig as Mocked<typeof appConfig>;
+const isBrowserMock = isBrowser as MockedFunction<typeof isBrowser>;
 
 describe('sendRefreshRequest', () => {
   beforeEach(() => {
@@ -19,11 +22,13 @@ describe('sendRefreshRequest', () => {
       accessToken: 'newAccessToken',
       refreshToken: 'newRefreshToken',
     };
+    isBrowserMock.mockReturnValue(false);
     mockAxios.request.mockResolvedValue({ data: mockData });
     mockAppConfig.get.mockReturnValue('http://api.test');
 
-    const result = await sendRefreshRequest('testToken', {
+    const result = await sendRefreshRequest({
       'Custom-Header': 'value',
+      Cookie: 'SignInRefreshToken=testToken',
     });
 
     expect(mockAxios.request).toHaveBeenCalledWith(
@@ -46,7 +51,9 @@ describe('sendRefreshRequest', () => {
       .mockImplementation(() => {});
     mockAxios.request.mockRejectedValue(new Error('Network Error'));
 
-    const result = await sendRefreshRequest('testToken');
+    const result = await sendRefreshRequest({
+      Cookie: 'SignInRefreshToken=testToken',
+    });
 
     expect(mockAxios.request).toHaveBeenCalled();
     expect(result).toBeNull();

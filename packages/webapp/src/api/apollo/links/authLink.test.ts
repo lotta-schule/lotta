@@ -1,7 +1,9 @@
-import { Mock } from 'vitest';
+import { Mock, MockedFunction } from 'vitest';
 import { Observable, Operation, FetchResult } from '@apollo/client';
 import { waitFor } from '@testing-library/react';
 import { createAuthLink } from './authLink';
+import { isBrowser } from 'util/isBrowser';
+import { jwtDecode } from 'jwt-decode';
 
 class MockObserver {
   next = vi.fn();
@@ -9,13 +11,20 @@ class MockObserver {
   complete = vi.fn();
 }
 
+vi.mock('util/isBrowser');
+vi.mock('jwt-decode');
+const isBrowserMock = isBrowser as MockedFunction<typeof isBrowser>;
+const jwtDecodeMock = jwtDecode as MockedFunction<typeof jwtDecode>;
+
 describe('createAuthLink', () => {
-  let requestTokenMock: Mock;
+  let sendRefreshTokenRequestMock: Mock;
   let operation: Operation;
   let forward: Mock;
 
+  const initialToken = 'test-token';
+
   beforeEach(() => {
-    requestTokenMock = vi.fn();
+    sendRefreshTokenRequestMock = vi.fn();
     operation = {
       setContext: vi.fn(),
       getContext: vi.fn().mockReturnValue({ headers: {} }),
@@ -23,9 +32,14 @@ describe('createAuthLink', () => {
     forward = vi.fn(() => new Observable<FetchResult>(() => {}));
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should add authorization header if token is provided', async () => {
-    requestTokenMock.mockResolvedValue('test-token');
-    const authLink = createAuthLink({ requestToken: requestTokenMock });
+    const authLink = createAuthLink({ initialToken });
+    isBrowserMock.mockReturnValue(false);
+    jwtDecodeMock.mockReturnValue({ exp: Date.now() / 1000 - 3600 });
 
     const subscription = authLink
       .request(operation, forward)!
@@ -33,6 +47,7 @@ describe('createAuthLink', () => {
 
     await waitFor(() => {
       expect(operation.setContext).toHaveBeenCalledWith({
+        accessToken: 'test-token',
         headers: { authorization: 'Bearer test-token' },
       });
     });
@@ -42,17 +57,15 @@ describe('createAuthLink', () => {
   });
 
   it('should not add authorization header if token is not provided', async () => {
-    requestTokenMock.mockResolvedValue(null);
-    const authLink = createAuthLink({ requestToken: requestTokenMock });
+    sendRefreshTokenRequestMock.mockResolvedValue(null);
+    const authLink = createAuthLink({});
 
     const subscription = authLink
       .request(operation, forward)!
       .subscribe(new MockObserver());
 
     await waitFor(() => {
-      expect(operation.setContext).toHaveBeenCalledWith({
-        headers: {},
-      });
+      expect(operation.setContext).not.toHaveBeenCalled();
     });
     expect(forward).toHaveBeenCalledWith(operation);
 
@@ -60,9 +73,13 @@ describe('createAuthLink', () => {
   });
 
   it('should handle errors from requestToken', async () => {
-    const error = new Error('Request token error');
-    requestTokenMock.mockRejectedValue(error);
-    const authLink = createAuthLink({ requestToken: requestTokenMock });
+    jwtDecodeMock.mockReturnValue({ exp: Date.now() / 1000 - 3600 });
+    const error = new Error('Invalid token specified: missing part #2');
+    sendRefreshTokenRequestMock.mockRejectedValue(error);
+    const authLink = createAuthLink({
+      initialToken,
+      sendRefreshTokenRequest: sendRefreshTokenRequestMock,
+    });
 
     const observer = new MockObserver();
     const subscription = authLink

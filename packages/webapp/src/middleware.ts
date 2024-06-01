@@ -1,4 +1,5 @@
 import { sendRefreshRequest } from 'api/auth';
+import { serialize } from 'cookie-es';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { JWT } from 'util/auth/jwt';
@@ -34,7 +35,12 @@ export async function middleware(request: NextRequest) {
     ) {
       const updateRefreshTokenResult = await sendRefreshRequest({
         'x-lotta-originary-host': request.headers.get('host'),
-        Cookie: `SignInRefreshToken=${incomingRefreshToken}`,
+        Cookie: serialize('SignInRefreshToken', incomingRefreshToken, {
+          sameSite: 'strict',
+          expires: refreshTokenJwt.body.expires,
+          secure: process.env.NODE_ENV === 'production',
+          httpOnly: true,
+        }),
       });
 
       if (updateRefreshTokenResult) {
@@ -57,24 +63,19 @@ export async function middleware(request: NextRequest) {
       }
 
       if (!accessTokenJwt?.isValid()) {
-        console.log('Access token is not valid!', accessTokenJwt);
+        console.warn('Access token is not valid!', accessTokenJwt);
       } else if (accessTokenJwt.isExpired()) {
-        console.log('Access token is expired!', accessTokenJwt);
+        console.warn('Access token is expired!', accessTokenJwt);
       } else {
-        console.log('Access token is valid!');
         authInfo.accessToken = accessToken;
       }
     }
   } else if (authHeader) {
-    console.log('User does not have a refresh token');
+    console.warn('User does not have a refresh token');
     const accessToken = authHeader.slice(7);
-    console.log('User has an access token', accessToken);
-
     const accessTokenJwt = JWT.parse(accessToken);
 
     if (accessTokenJwt.isValid() && !accessTokenJwt.isExpired(0)) {
-      console.log('Access token is valid!');
-
       authInfo.accessToken = accessToken;
     }
   }

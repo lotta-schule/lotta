@@ -1,8 +1,9 @@
 import { Mocked, MockedFunction } from 'vitest';
 import { sendRefreshRequest } from 'api/auth';
 import { type NextRequest } from 'next/server';
-import { middleware, config } from './middleware';
+import { serialize } from 'cookie-es';
 import { JWT } from 'util/auth/jwt';
+import { middleware, config } from './middleware';
 
 vi.mock('api/auth');
 vi.mock('util/auth/jwt');
@@ -35,10 +36,11 @@ describe('middleware', () => {
       { SignInRefreshToken: 'mockRefreshToken' },
       { host: 'mockHost' }
     );
+    const expirationTime = new Date(Date.now() + 4 * 60 * 1000); // 4 minutes in the future
     const mockRefreshTokenJwt = {
       isValid: vi.fn().mockReturnValue(true),
       body: {
-        expires: new Date(Date.now() + 4 * 60 * 1000), // 4 minutes in the future
+        expires: expirationTime,
       },
     } as any as JWT;
 
@@ -52,8 +54,14 @@ describe('middleware', () => {
 
     const response = await middleware(mockRequest);
 
-    expect(mockSendRefreshRequest).toHaveBeenCalledWith('mockRefreshToken', {
+    expect(mockSendRefreshRequest).toHaveBeenCalledWith({
       'x-lotta-originary-host': 'mockHost',
+      Cookie: serialize('SignInRefreshToken', 'mockRefreshToken', {
+        sameSite: 'strict',
+        secure: false,
+        expires: expirationTime,
+        httpOnly: true,
+      }),
     });
     expect(response.cookies.get('SigninRefreshToken')?.value).toEqual(
       'newRefreshToken'

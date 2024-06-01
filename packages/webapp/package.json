@@ -38,6 +38,7 @@
     "apollo-v3-absinthe-upload-link": "^1.6.0",
     "axios": "^1.7.0",
     "clsx": "^2.1.1",
+    "cookie-es": "^1.1.0",
     "cookies": "^0.9.1",
     "date-fns": "^3.6.0",
     "file-saver": "^2.0.5",

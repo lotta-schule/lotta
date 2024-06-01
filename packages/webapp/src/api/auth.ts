@@ -10,7 +10,7 @@ export const sendRefreshRequest = async (
     const { data } = await axios
       .request<any>({
         method: 'post',
-        baseURL: typeof window === 'undefined' ? appConfig.get('API_URL') : '/',
+        baseURL: isBrowser() ? '/' : appConfig.get('API_URL'),
         url: '/auth/token/refresh',
         withCredentials: isBrowser(),
         headers: createHeaders(headers),

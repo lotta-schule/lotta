@@ -13,7 +13,7 @@ import {
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { I18nextProvider } from 'react-i18next';
 import { ApolloMocksOptions, getDefaultApolloMocks } from 'test/mocks';
-import { i18n } from '../i18n';
+import { TranslationsProvider } from 'i18n/client';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
 
 export type TestSetupOptions = {
@@ -37,7 +37,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
     currentApolloCache = cache;
 
     return (
-      <I18nextProvider i18n={i18n}>
+      <TranslationsProvider>
         <ServerDataContextProvider baseUrl="https://example.com">
           <HubertProvider>
             <MockedProvider
@@ -49,7 +49,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
             </MockedProvider>
           </HubertProvider>
         </ServerDataContextProvider>
-      </I18nextProvider>
+      </TranslationsProvider>
     );
   };
 
