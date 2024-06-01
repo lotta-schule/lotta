@@ -87,9 +87,7 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
             icon={<Icon icon={faAngleRight} />}
           />
           <h5>{selectedWidget ? selectedWidget.title : widget.title}</h5>
-          <span className={styles.widgetType}>
-            {t(`widgets.widgetTypes.${widget.type}`)}
-          </span>
+          <span className={styles.widgetType}>{t(widget.type)}</span>
         </Toolbar>
         <ErrorMessage error={error} />
         <Label label="Name des Widget">

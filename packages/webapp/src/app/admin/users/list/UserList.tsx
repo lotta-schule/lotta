@@ -105,7 +105,7 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
 
   return (
     <section className={styles.root}>
-      <h5 className={styles.headline}>Nutzersuche</h5>
+      <h5 className={styles.headline}>{t('Search user')}</h5>
 
       <Toolbar stackOnMobile>
         <GroupSelect
@@ -171,7 +171,7 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
       {rows.length > 0 && searchIsValid && !isLoading && (
         <>
           <div>
-            {t('administration.results', {
+            {t('results', {
               count: rows.length,
               total: totalUsers ?? '?',
             })}

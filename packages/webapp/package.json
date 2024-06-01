@@ -10,7 +10,8 @@
     "test": "vitest",
     "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit",
-    "schema:download": "npx get-graphql-schema http://127.0.0.1:4000/api > src/api/schema.graphql"
+    "schema:download": "pnpm dlx get-graphql-schema http://127.0.0.1:4000/api > src/api/schema.graphql",
+    "translations:collect": "pnpm i18next"
   },
   "type": "module",
   "dependencies": {
@@ -61,5 +62,8 @@
     "slate": "^0.76.0",
     "slate-react": "^0.76.0",
     "slugify": "^1.6.6"
+  },
+  "devDependencies": {
+    "i18next-parser": "^8.13.0"
   }
 }

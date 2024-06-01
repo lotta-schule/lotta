@@ -17,11 +17,11 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, Category, File, User } from 'util/model';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { useServerData } from 'shared/ServerDataContext';
+import { useTenant } from 'util/tenant/useTenant';
 
 import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
 
 import styles from './FileUsageModal.module.scss';
-import { useTenant } from 'util/tenant/useTenant';
 
 export type FileUsageModalProps = {
   file: FileModel;
@@ -97,7 +97,9 @@ export const FileUsageModal = React.memo(
                           baseUrl,
                           usage.article.previewImageFile
                         )}
-                        alt={`Vorschaubild zu ${usage.article.title}`}
+                        alt={t('preview image of {{title}}', {
+                          title: usage.article.title,
+                        })}
                       />
                     )}
                     {usage.tenant?.configuration.logoImageFile && (
@@ -108,7 +110,9 @@ export const FileUsageModal = React.memo(
                           baseUrl,
                           usage.tenant.configuration.logoImageFile
                         )}
-                        alt={`Logo von ${usage.tenant.title}`}
+                        alt={t('Logo of {{title}}', {
+                          title: usage.tenant.title,
+                        })}
                       />
                     )}
                     {usage.user && <UserAvatar user={usage.user} size={50} />}
@@ -127,7 +131,15 @@ export const FileUsageModal = React.memo(
                   {getPrimaryTextForUsage(usage)}
                 </div>
                 <ListItemSecondaryText className={styles.listItemTextLine}>
-                  {t(`files.usage.${usage.usage}`)}
+                  {t('file is used as {{usage}}', {
+                    usage: usage.usage && t(usage.usage),
+                    // t('preview')
+                    // t('banner')
+                    // t('file')
+                    // t('avatar')
+                    // t('logo')
+                    // t('background')
+                  })}
                 </ListItemSecondaryText>
               </ListItem>
             ))}

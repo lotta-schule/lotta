@@ -5,6 +5,7 @@ import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useIsRetina } from 'util/useIsRetina';
 import { useServerData } from 'shared/ServerDataContext';
+import { useTranslation } from 'react-i18next';
 
 export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
   user: UserModel;
@@ -18,6 +19,7 @@ export const UserAvatar = React.memo(
       { user, size, ...otherProps }: UserAvatarProps,
       ref: React.ForwardedRef<HTMLDivElement>
     ) => {
+      const { t } = useTranslation();
       const { baseUrl } = useServerData();
       const retinaMultiplier = useIsRetina() ? 2 : 1;
       const src = User.getAvatarUrl(
@@ -32,7 +34,7 @@ export const UserAvatar = React.memo(
           src={src}
           ref={ref}
           style={size ? { width: size, height: size } : {}}
-          title={`Profilbild von ${User.getNickname(user)}`}
+          title={t('Avatar of {{name}}', { name: User.getNickname(user) })}
           {...otherProps}
         />
       );

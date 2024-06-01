@@ -74,7 +74,7 @@ export const MetricsChart = React.memo(({ date }: MetricsChartProps) => {
 
   const series: { label: string; data: DailyMetric[] }[] = [
     {
-      label: t(`analytics.${selectedMetric}`),
+      label: t(selectedMetric),
       data:
         data?.metrics.map((m) => ({
           date: new Date(m.date),
@@ -93,23 +93,29 @@ export const MetricsChart = React.memo(({ date }: MetricsChartProps) => {
           />
         )}
         <Select
-          title="Metrik wählen"
+          title={t('Select metric')}
           value={selectedMetric}
           onChange={(value) => setSelectedMetric(value)}
           className={styles.metricSelect}
         >
-          {[
-            'visits',
-            'visitors',
-            'pageviews',
-            'bounceRate',
-            'visitDuration',
-            'viewsPerVisit',
-          ].map((metric) => (
-            <Option key={metric} value={metric}>
-              {t(`analytics.${metric}`)}
-            </Option>
-          ))}
+          <Option key={'visits'} value={'visits'}>
+            {t('visits')}
+          </Option>
+          <Option key={'visitors'} value={'visitors'}>
+            {t('visitors')}
+          </Option>
+          <Option key={'pageviews'} value={'pageviews'}>
+            {t('pageviews')}
+          </Option>
+          <Option key={'bounceRate'} value={'bounceRate'}>
+            {t('bounceRate')}
+          </Option>
+          <Option key={'visitDuration'} value={'visitDuration'}>
+            {t('visitDuration')}
+          </Option>
+          <Option key={'viewsPerVisit'} value={'viewsPerVisit'}>
+            {t('viewsPerVisit')}
+          </Option>
         </Select>
       </Toolbar>
       {error && <ErrorMessage error={error} />}

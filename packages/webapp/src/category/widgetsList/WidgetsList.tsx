@@ -1,11 +1,15 @@
 import * as React from 'react';
 import { WidgetModel, WidgetModelType } from 'model';
-import { Tabbar, Tab, SwipeableViews } from '@lotta-schule/hubert';
+import {
+  Tabbar,
+  Tab,
+  SwipeableViews,
+  useScrollEvent,
+} from '@lotta-schule/hubert';
 import { Widget } from 'category/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
-import { useScrollEvent } from 'util/useScrollEvent';
 import { WidgetIcon } from 'category/widgets/WidgetIcon';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useCurrentUser } from 'util/user/useCurrentUser';

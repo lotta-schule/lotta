@@ -9,7 +9,7 @@ export type BaseButtonProps = {
    */
   selected?: boolean;
 
-  component?: React.ElementType;
+  as?: React.ElementType;
 
   /**
    * Chose from different styles
@@ -35,7 +35,19 @@ export type BaseButtonProps = {
    * Content to show on the button
    */
   children?: any;
-} & React.HTMLProps<HTMLButtonElement>;
+} & Record<
+  Exclude<
+    string,
+    | 'selected'
+    | 'as'
+    | 'variant'
+    | 'fullWidth'
+    | 'className'
+    | 'style'
+    | 'children'
+  >,
+  any
+>;
 
 /**
  * Primary UI shared for userAvatar interaction

@@ -11,7 +11,6 @@ import {
   RenderHookOptions,
 } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { I18nextProvider } from 'react-i18next';
 import { ApolloMocksOptions, getDefaultApolloMocks } from 'test/mocks';
 import { TranslationsProvider } from 'i18n/client';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';

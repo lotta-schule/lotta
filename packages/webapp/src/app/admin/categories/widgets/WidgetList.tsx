@@ -65,7 +65,10 @@ export const WidgetList = React.memo(({ widgets }: WidgetListProps) => {
                 >
                   {widget.title}
                   <ListItemSecondaryText>
-                    {t(`widgets.widgetTypes.${widget.type}`)}
+                    {t(widget.type)}
+                    {/*t('CALENDAR')*/}
+                    {/*t('SCHEDULE')*/}
+                    {/*t('IFRAME')*/}
                   </ListItemSecondaryText>
                 </ListItem>
               )) ?? null}
