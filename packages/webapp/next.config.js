@@ -11,6 +11,8 @@ const __dirname = new URL('.', import.meta.url).pathname;
  * @type {import('next').NextConfig}
  **/
 const nextConfig = {
+  output: 'standalone',
+
   experimental: {
     externalDir: true,
     instrumentationHook: true,
@@ -109,6 +111,4 @@ export default withSentryConfig(nextConfig, {
   org: 'lotta',
   project: 'web',
   widenClientFileUpload: true,
-
-  authToken: env.SENTRY_AUTH_TOKEN,
 });
