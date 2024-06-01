@@ -1,24 +1,26 @@
 ARG SENTRY_AUTH_TOKEN
 ARG NODE_VERSION=20.12
 
-FROM node:${NODE_VERSION}-slim AS base
+FROM node:${NODE_VERSION}-slim AS node-base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 WORKDIR /app
 COPY . /app
 
-FROM base AS dev-deps
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+FROM node-base AS base
 WORKDIR /app
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
+COPY . /app
 
-FROM node:${NODE_VERSION}-slim AS prod-deps
+FROM base AS dev-deps
+WORKDIR /app
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+
+FROM node-base AS prod-deps
 WORKDIR /app
 COPY packages/webapp/package.json ./
-RUN npm install --production
+# no --frozen-lockfile because we do not have a single lockfile yet
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod
 
 # Build the source code
 FROM dev-deps AS builder
@@ -38,7 +40,6 @@ COPY --from=builder /app/packages/webapp/public ./public
 COPY --from=builder /app/packages/webapp/.next ./.next
 COPY --from=builder /app/packages/webapp/server.js ./server.js
 COPY --from=builder /app/packages/webapp/tracing.js ./tracing.js
-COPY --from=prod-deps --chown=nextjs:nodejs /app/package-lock.json ./package-lock.json
 COPY --from=prod-deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 USER nextjs
