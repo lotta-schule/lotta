@@ -1,11 +1,21 @@
 import { ApolloLink } from '@apollo/client';
 import { Observable, ObservableSubscription } from '@apollo/client/utilities';
+import { JwtPayload, jwtDecode } from 'jwt-decode';
+import { isBrowser } from 'util/isBrowser';
+
+const REFRESH_TOKEN_BUFFER = 60 * 5; // 5 minutes
 
 type AuthLinkParams = {
-  requestToken?: () => Promise<string | null | undefined>;
+  initialToken?: string;
+  sendRefreshTokenRequest?: () => Promise<string>;
 };
 
-export const createAuthLink = ({ requestToken }: AuthLinkParams) =>
+let currentToken: string | null = null;
+
+export const createAuthLink = ({
+  initialToken,
+  sendRefreshTokenRequest,
+}: AuthLinkParams) =>
   new ApolloLink((operation, forward) => {
     return new Observable((observer) => {
       let handle: ObservableSubscription;
@@ -13,15 +23,45 @@ export const createAuthLink = ({ requestToken }: AuthLinkParams) =>
 
       Promise.resolve(operation.getContext())
         .then(async (context) => {
-          const token = await requestToken?.();
+          const token = isBrowser()
+            ? initialToken
+            : currentToken || initialToken;
+          if (initialToken) {
+            const decoded = jwtDecode<JwtPayload>(initialToken);
 
-          if (token) {
+            if (!decoded) {
+              return context;
+            }
+
+            const now = Date.now() / 1000;
+            const expires = decoded.exp;
+
+            if (
+              expires &&
+              expires < now - REFRESH_TOKEN_BUFFER &&
+              sendRefreshTokenRequest
+            ) {
+              const newToken = await sendRefreshTokenRequest();
+
+              if (newToken) {
+                context.headers = {
+                  ...context.headers,
+                  authorization: `Bearer ${newToken}`,
+                };
+                context.accessToken = newToken;
+                if (isBrowser()) {
+                  currentToken = newToken;
+                }
+                return context;
+              }
+            }
+
             context.headers = {
               ...context.headers,
-              authorization: `Bearer ${token}`,
+              authorization: `Bearer ${initialToken}`,
             };
+            context.accessToken = token;
           }
-
           return context;
         })
         .then(operation.setContext)

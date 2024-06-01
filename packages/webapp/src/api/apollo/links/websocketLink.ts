@@ -18,16 +18,17 @@ const createAbsoluteSocketUrl = (urlString: string) => {
 
 export const createWebsocketLink = (
   tenant: TenantModel,
-  socketUrl?: string | null
+  socketUrl?: string | null,
+  accessToken?: string | null
 ) => {
   if (!socketUrl || !isBrowser()) {
     return null;
   }
+
   const phoenixSocket = new PhoenixSocket(createAbsoluteSocketUrl(socketUrl), {
     params: () => {
-      const token = localStorage.getItem('id');
-      if (token) {
-        return { token, tid: tenant?.id };
+      if (accessToken) {
+        return { token: accessToken, tid: tenant?.id };
       } else {
         return { tid: tenant?.id };
       }

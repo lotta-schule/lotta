@@ -12,17 +12,18 @@ import { loadTenant } from '../loader/loadTenant';
 import { TenantLayout } from '../layout/TenantLayout';
 import { ApolloProvider } from '../component/provider/ApolloProvider';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
-import { getBaseUrl } from 'helper';
+import { getBaseUrl, getBaseUrlString } from 'helper';
 import { appConfig } from 'config';
-
-// TODO: Remove this once we have a proper solution for this
-const requestBaseUrl = 'https://ehrenberg.lotta.schule';
+import { getAuthTokenFromHeader } from 'api/apollo/client-rsc';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AppLayout({ children }: React.PropsWithChildren) {
-  const tenant = await loadTenant().catch(() => null);
   const socketUrl = appConfig.get('API_SOCKET_URL');
+  const requestBaseUrl = await getBaseUrlString();
+  const accessToken = getAuthTokenFromHeader();
+
+  const tenant = await loadTenant().catch(() => null);
 
   const origin =
     requestBaseUrl ??
@@ -53,7 +54,11 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
         <HubertProvider>
           <ServerDataContextProvider baseUrl={await getBaseUrl()}>
             {tenant && (
-              <ApolloProvider tenant={tenant} socketUrl={socketUrl}>
+              <ApolloProvider
+                tenant={tenant}
+                socketUrl={socketUrl}
+                accessToken={accessToken ?? undefined}
+              >
                 <TenantLayout>{children}</TenantLayout>
               </ApolloProvider>
             )}

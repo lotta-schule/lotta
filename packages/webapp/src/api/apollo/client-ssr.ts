@@ -13,12 +13,14 @@ import { createAuthLink } from './links/authLink';
 import { createHttpLink } from './links/httpLink';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 import { getMainDefinition } from '@apollo/client/utilities';
+import { sendRefreshRequest } from 'api/auth';
 
 export const createSSRClient = (
   tenant: TenantModel,
-  socketUrl?: string | null
+  socketUrl?: string | null,
+  accessToken?: string
 ) => {
-  const websocketLink = createWebsocketLink(tenant, socketUrl);
+  const websocketLink = createWebsocketLink(tenant, socketUrl, accessToken);
   const networkLink = websocketLink
     ? split(
         (operation) => {
@@ -29,7 +31,7 @@ export const createSSRClient = (
           );
         },
 
-        createWebsocketLink(tenant, socketUrl)!.request as any as ApolloLink,
+        websocketLink as any as ApolloLink,
         createHttpLink()
       )
     : createHttpLink();
@@ -40,8 +42,15 @@ export const createSSRClient = (
       [
         createErrorLink(),
         createAuthLink({
-          // TODO: Does not seem right. What do we do on server?
-          requestToken: async () => localStorage.getItem('id'),
+          initialToken: accessToken,
+          sendRefreshTokenRequest: async () => {
+            const res = await sendRefreshRequest({});
+
+            if (!res) {
+              throw new Error('Failed to refresh token');
+            }
+            return res.accessToken;
+          },
         }),
         // in a SSR environment, if you use multipart features like
         // @defer, you need to decide how to handle these.

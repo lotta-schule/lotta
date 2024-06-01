@@ -32,12 +32,10 @@ export async function middleware(request: NextRequest) {
       (refreshTokenJwt.body.expires.getTime() - Date.now() < 1000 * 60 * 5 ||
         !authInfo.accessToken)
     ) {
-      const updateRefreshTokenResult = await sendRefreshRequest(
-        incomingRefreshToken,
-        {
-          'x-lotta-originary-host': request.headers.get('host'),
-        }
-      );
+      const updateRefreshTokenResult = await sendRefreshRequest({
+        'x-lotta-originary-host': request.headers.get('host'),
+        Cookie: `SignInRefreshToken=${incomingRefreshToken}`,
+      });
 
       if (updateRefreshTokenResult) {
         const { accessToken, refreshToken: updatedRefreshToken } =

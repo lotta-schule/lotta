@@ -2,7 +2,7 @@ import axios from 'axios';
 import { appConfig } from 'config';
 import { isBrowser } from 'util/isBrowser';
 
-export const createHeaders = (headers: Record<string, string> = {}) => {
+export const createHeaders = (headers: Record<string, string | null> = {}) => {
   const tenantSlugOverwrite = appConfig.get('FORCE_TENANT_SLUG');
   return Object.assign(
     {

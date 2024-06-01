@@ -6,20 +6,22 @@ import { createHttpLink } from './links/httpLink';
 import { headers } from 'next/headers';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 
+export const getAuthTokenFromHeader = () => {
+  const authHeader = headers().get('authorization');
+  if (authHeader?.startsWith('Bearer ')) {
+    return authHeader.slice(7);
+  }
+
+  return null;
+};
+
 export const createRSCClient = () => {
   return new ApolloClient({
     cache: createCache(),
     link: ApolloLink.from([
       createErrorLink(),
       createAuthLink({
-        requestToken: async () => {
-          const authHeader = headers().get('authorization');
-          if (authHeader?.startsWith('Bearer ')) {
-            return authHeader.slice(7);
-          }
-
-          return null;
-        },
+        initialToken: getAuthTokenFromHeader() ?? undefined,
       }),
       createVariableInputMutationsLink(),
       createHttpLink({
