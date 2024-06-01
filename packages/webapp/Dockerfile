@@ -2,26 +2,27 @@ ARG NODE_VERSION=22.2
 ARG RELEASE_NAME
 ARG SENTRY_DSN
 
-FROM node:${NODE_VERSION}-slim AS node-base
+FROM node:${NODE_VERSION}-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV SENTRY_RELEASE=${RELEASE_NAME}
 ENV RELEASE_NAME=${RELEASE_NAME}
-RUN apt-get update && apt-get install -y ca-certificates
 RUN corepack enable
 WORKDIR /app
-COPY . /app
 
-FROM node-base AS base
-WORKDIR /app
+FROM base AS deps
 COPY . /app
-
-FROM base AS dev-deps
 WORKDIR /app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
+FROM base AS prod-deps
+COPY packages/webapp/package.json /app
+WORKDIR /app
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod
+
 # Build the source code
-FROM dev-deps AS builder
+FROM deps AS builder
+RUN apt-get update && apt-get install -y ca-certificates
 ENV NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
 RUN --mount=type=secret,id=sentry_auth_token \
   SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token) \
@@ -39,11 +40,10 @@ ENV RELEASE_NAME=${RELEASE_NAME}
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/packages/webapp/public ./public
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-COPY --from=builder --chown=nextjs:nodejs /app/packages/webapp/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/packages/webapp/.next/static ./.next/static
+COPY --from=builder /app/packages/webapp /app
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=prod-deps /app/package.json /app/package.json
+RUN chown nextjs:nodejs /app
 
 USER nextjs
 
@@ -57,4 +57,4 @@ ENV HOSTNAME "0.0.0.0"
 # Uncomment the following line in case you want to disable telemetry.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD ["node", "server.js"]
+CMD ["node", "--run", "start:prod"]
