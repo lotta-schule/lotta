@@ -15,6 +15,7 @@ import { ServerDataContextProvider } from 'shared/ServerDataContext';
 import { getBaseUrl, getBaseUrlString } from 'helper';
 import { appConfig } from 'config';
 import { getAuthTokenFromHeader } from 'api/apollo/client-rsc';
+import { TranslationsProvider } from 'i18n/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,16 +54,18 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
       <body>
         <HubertProvider>
           <ServerDataContextProvider baseUrl={await getBaseUrl()}>
-            {tenant && (
-              <ApolloProvider
-                tenant={tenant}
-                socketUrl={socketUrl}
-                accessToken={accessToken ?? undefined}
-              >
-                <TenantLayout>{children}</TenantLayout>
-              </ApolloProvider>
-            )}
-            {!tenant && <TenantNotFoundError />}
+            <TranslationsProvider>
+              {tenant && (
+                <ApolloProvider
+                  tenant={tenant}
+                  socketUrl={socketUrl}
+                  accessToken={accessToken ?? undefined}
+                >
+                  <TenantLayout>{children}</TenantLayout>
+                </ApolloProvider>
+              )}
+              {!tenant && <TenantNotFoundError />}
+            </TranslationsProvider>
             <GlobalStyles theme={theme} supportedFonts={fonts} />
           </ServerDataContextProvider>
         </HubertProvider>

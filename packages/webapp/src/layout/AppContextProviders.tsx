@@ -7,14 +7,12 @@ import {
 import { CategoryModel, TenantModel, UserModel } from 'model';
 import { AppHead } from './AppHead';
 import { ApolloProvider } from '@apollo/client';
-import { I18nextProvider } from 'react-i18next';
 import { Authentication } from 'shared/Authentication';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
 import { fonts } from 'app/admin/system/presentation/fonts';
 import { useTenant } from 'util/tenant/useTenant';
 import { getApolloClient } from 'api/legacyClient';
 import { BaseLayout } from './BaseLayout';
-import { i18n } from '../i18n';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
@@ -100,9 +98,7 @@ export const AppContextProviders = ({
   return (
     <ServerDataContextProvider baseUrl={baseUrl}>
       <ApolloProvider client={client}>
-        <I18nextProvider i18n={i18n}>
-          <TenantContextProviders>{children}</TenantContextProviders>
-        </I18nextProvider>
+        <TenantContextProviders>{children}</TenantContextProviders>
       </ApolloProvider>
     </ServerDataContextProvider>
   );

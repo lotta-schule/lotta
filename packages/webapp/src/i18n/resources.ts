@@ -1,7 +1,4 @@
-import _i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-
-const resources = {
+export const resources = {
   de: {
     translation: {
       files: {
@@ -69,17 +66,3 @@ const resources = {
     },
   },
 };
-
-_i18n.use(initReactI18next).init({
-  resources,
-  lng: 'de',
-  fallbackLng: 'de',
-
-  keySeparator: '.',
-
-  interpolation: {
-    escapeValue: false,
-  },
-});
-
-export const i18n = _i18n;

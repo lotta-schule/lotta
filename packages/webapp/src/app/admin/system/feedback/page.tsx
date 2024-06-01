@@ -8,7 +8,7 @@ async function FeedbackPage() {
   const feedbacks = await loadFeedback();
 
   return (
-    <AdminPage icon={faCommentDots} title="Feedback">
+    <AdminPage hasHomeLink icon={faCommentDots} title="Feedback">
       <Feedback feedbacks={feedbacks} />
     </AdminPage>
   );
