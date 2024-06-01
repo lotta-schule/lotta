@@ -7,15 +7,19 @@
   }
 
   section {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
     overflow-x: auto;
+    grid-gap: var(--lotta-spacing);
     padding-bottom: var(--lotta-spacing);
+
+    grid-template-columns: repeat(auto-fill, minmax(14em, 1fr));
+    justify-items: center;
+
     &:not(:last-child) {
       border-bottom: 1px solid rgba(var(--lotta-divider-color), 1);
     }
-
     &:last-child {
+      display: flex;
       padding-top: var(--lotta-spacing);
       justify-content: flex-end;
     }
