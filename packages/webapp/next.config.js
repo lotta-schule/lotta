@@ -91,11 +91,14 @@ const nextConfig = {
   publicRuntimeConfig: {
     appEnvironment: env.APP_ENVIRONMENT || env.NODE_ENV || 'development',
     imageName: env.IMAGE_NAME || 'test',
-    sentryDsn: env.SENTRY_DSN,
+    sentryDsn: env.NEXT_PUBLIC_SENTRY_DSN,
     socketUrl: env.API_SOCKET_URL,
     tenantSlugOverwrite: env.FORCE_TENANT_SLUG,
   },
 };
+
+console.log('Sentry DSN:', env.NEXT_PUBLIC_SENTRY_DSN);
+console.log('Sentry AUth Token:', env.SENTRY_AUTH_TOKEN);
 
 // sentry should be last, wrapping the rest
 export default withSentryConfig(nextConfig, {
@@ -103,7 +106,7 @@ export default withSentryConfig(nextConfig, {
 
   disableLogger: true,
 
-  org: 'lotta-schule',
+  org: 'lotta',
   project: 'web',
   widenClientFileUpload: true,
 

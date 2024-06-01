@@ -1,6 +1,6 @@
-ARG NODE_VERSION=20.12
-ARG RELEASE_NAME=""
-ARG SENTRY_DSN=""
+ARG NODE_VERSION=22.2
+ARG RELEASE_NAME
+ARG SENTRY_DSN
 
 FROM node:${NODE_VERSION}-slim AS node-base
 ENV PNPM_HOME="/pnpm"
@@ -57,4 +57,4 @@ EXPOSE 3000
 # Uncomment the following line in case you want to disable telemetry.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD ["npm", "start"]
+CMD ["node", "--run", "start"]

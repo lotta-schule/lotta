@@ -58,6 +58,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: '${{ inputs.registry }}/${{ inputs.name }}'
+      SENTRY_DSN: '${{ secrets.sentry_dsn }}'
+      SENTRY_AUTH_TOKEN: '${{ secrets.sentry_auth_token }}'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -68,14 +70,12 @@ jobs:
         id: build
         run: |
           tag=$(echo "${{ fromJSON(inputs.tags)[0] }}")
-          base_image=$IMAGE_NAME:$tag
-          sentry_auth_token="${{ secrets.sentry_auth_token || '' }}"
-          SENTRY_DSN="${{ secrets.sentry_dsn || '' }}"
+          base_image="$IMAGE_NAME:$tag"
           docker build \
             --build-arg IMAGE_NAME \
             --build-arg RELEASE_NAME="$tag" \
             --build-arg SENTRY_DSN \
-            --secret id=sentry_auth_token,env=sentry_auth_token \
+            --secret id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
             -f ${{ inputs.dockerfile || 'Dockerfile' }} \
             -t $base_image ${{ inputs.working-directory }}
           echo "base-image=$base_image" >> $GITHUB_OUTPUT
