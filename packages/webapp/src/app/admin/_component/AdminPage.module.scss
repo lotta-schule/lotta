@@ -1,3 +1,5 @@
+@import "breakpoints";
+
 .root {
   background: rgb(var(--lotta-box-background-color));
   padding: var(--lotta-spacing);
@@ -13,7 +15,7 @@
       padding: var(--lotta-spacing);
     }
 
-    a:not(:last-child) {
+    a:not(.logoLink, .logoLinkClose) {
       display: flex;
       align-items: center;
       border-right: 1px solid rgb(var(--lotta-divider-color));
@@ -21,7 +23,8 @@
     }
 
     /* Logo with link to home */
-    a:last-child {
+    .logoLink,
+    .logoLinkClose {
       margin-left: auto;
     }
 
@@ -34,11 +37,19 @@
       margin-inline: 0;
       padding-left: var(--lotta-spacing);
     }
-  }
 
-  .backLink {
-    display: flex;
-    padding: calc(0.5 * var(--lotta-spacing));
-    justify-content: flex-end;
+    .logoLink {
+      @media screen and (min-width: $min-sm) {
+        display: none;
+      }
+    }
+    .logoLinkClose:not(.forceLogoLinkClose) {
+      svg {
+        padding: 0;
+      }
+      @media screen and (max-width: $max-xs) {
+        display: none;
+      }
+    }
   }
 }

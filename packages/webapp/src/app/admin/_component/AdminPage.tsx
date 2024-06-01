@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faDoorOpen } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { Button, Close } from '@lotta-schule/hubert';
 import { File } from 'util/model';
 import { getBaseUrl } from 'helper';
 import { loadTenant } from 'loader';
@@ -40,7 +41,7 @@ export const AdminPage = async ({
           {icon && <FontAwesomeIcon icon={icon} />} {title}
         </h2>
         {tenant.configuration.logoImageFile && (
-          <Link href={'/'} title={'Startseite'}>
+          <Link href={'/'} title={'Startseite'} className={styles.logoLink}>
             <ResponsiveImage
               resize={'inside'}
               height={30}
@@ -52,13 +53,16 @@ export const AdminPage = async ({
             />
           </Link>
         )}
+        <Button
+          icon={<Close />}
+          component={Link}
+          href={'/'}
+          className={clsx(styles.logoLinkClose, {
+            [styles.forceLogoLinkClose]: !tenant.configuration.logoImageFile,
+          })}
+        />
       </nav>
-      <div className={styles.backLink}>
-        <Link href={'/'}>
-          <FontAwesomeIcon icon={faDoorOpen} /> Administrationsbereich verlassen
-        </Link>
-      </div>
-      <section className={styles.contentSection}>{children}</section>
+      <main className={styles.contentSection}>{children}</main>
     </div>
   );
 };

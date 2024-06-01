@@ -12,6 +12,7 @@ import {
   faCommentDots,
   faChartLine,
   faCubes,
+  faDoorOpen,
 } from '@fortawesome/free-solid-svg-icons';
 import { BaseButton } from '@lotta-schule/hubert';
 import { Icon } from 'shared/Icon';
@@ -25,7 +26,7 @@ async function AdminRootPage() {
   return (
     <AdminPage icon={faCubes} title={'Administration'} className={styles.root}>
       <h3>Mein lotta</h3>
-      <section className={styles.buttonRow}>
+      <section>
         <BaseButton
           component={Link}
           href={'/admin/system/general'}
@@ -91,7 +92,7 @@ async function AdminRootPage() {
       </section>
 
       <h3>Nutzer und Gruppen</h3>
-      <section className={styles.buttonRow}>
+      <section>
         <BaseButton
           component={Link}
           href={'/admin/users/list'}
@@ -130,7 +131,7 @@ async function AdminRootPage() {
       </section>
 
       <h3>Kategorien und Marginalen</h3>
-      <section className={styles.buttonRow}>
+      <section>
         <BaseButton
           component={Link}
           href={'/admin/categories/list'}
@@ -153,6 +154,20 @@ async function AdminRootPage() {
             <Icon icon={faSquareCaretRight} />
           </span>
           <span>Marginalen</span>
+        </BaseButton>
+      </section>
+
+      <section>
+        <BaseButton
+          component={Link}
+          href={'/'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faDoorOpen} />
+          </span>
+          <span>Bereich verlassen</span>
         </BaseButton>
       </section>
     </AdminPage>

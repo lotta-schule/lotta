@@ -6,13 +6,18 @@
     text-transform: uppercase;
   }
 
-  .buttonRow {
+  section {
     display: flex;
     flex-wrap: wrap;
     overflow-x: auto;
     padding-bottom: var(--lotta-spacing);
     &:not(:last-child) {
       border-bottom: 1px solid rgba(var(--lotta-divider-color), 1);
+    }
+
+    &:last-child {
+      padding-top: var(--lotta-spacing);
+      justify-content: flex-end;
     }
   }
 
