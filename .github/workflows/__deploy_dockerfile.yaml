@@ -46,6 +46,11 @@ on:
         description: |
           The sentry auth token to use for the build. This is required
           if you want to upload sourcemaps to sentry
+      sentry_dsn:
+        required: false
+        description: |
+          The sentry dsn to use for the build. This is required
+          if you want to upload sourcemaps to sentry
 
 jobs:
   build-image:
@@ -64,14 +69,15 @@ jobs:
         run: |
           tag=$(echo "${{ fromJSON(inputs.tags)[0] }}")
           base_image=$IMAGE_NAME:$tag
-          sentry_auth_token=${{ secrets.sentry_auth_token || '' }}
+          sentry_auth_token="${{ secrets.sentry_auth_token || '' }}"
+          SENTRY_DSN="${{ secrets.sentry_dsn || '' }}"
           docker build \
             --build-arg IMAGE_NAME \
             --build-arg RELEASE_NAME="$tag" \
-            --secret id=sentry_auth_token \
+            --build-arg SENTRY_DSN \
+            --secret id=sentry_auth_token,env=sentry_auth_token \
             -f ${{ inputs.dockerfile || 'Dockerfile' }} \
-            -t $base_image \
-            ${{ inputs.working-directory }}
+            -t $base_image ${{ inputs.working-directory }}
           echo "base-image=$base_image" >> $GITHUB_OUTPUT
           echo "Base image $base_image written to github output"
 

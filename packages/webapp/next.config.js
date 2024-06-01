@@ -106,4 +106,6 @@ export default withSentryConfig(nextConfig, {
   org: 'lotta-schule',
   project: 'web',
   widenClientFileUpload: true,
+
+  authToken: env.SENTRY_AUTH_TOKEN,
 });

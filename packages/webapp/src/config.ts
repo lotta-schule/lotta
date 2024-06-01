@@ -17,7 +17,9 @@ export const appConfig = createConfig({
   NEXT_PUBLIC_SENTRY_DSN: {
     fallback: '',
   },
-  API_SOCKET_URL: {},
+  API_SOCKET_URL: {
+    fallback: 'ws://127.0.0.1:4000/user-socket/graphql',
+  },
   APP_ENVIRONMENT: {
     fallback: process.env.NODE_ENV ?? 'development',
   },

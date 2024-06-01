@@ -1,5 +1,6 @@
 ARG NODE_VERSION=20.12
 ARG RELEASE_NAME=""
+ARG SENTRY_DSN=""
 
 FROM node:${NODE_VERSION}-slim AS node-base
 ENV PNPM_HOME="/pnpm"
@@ -26,6 +27,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod
 
 # Build the source code
 FROM dev-deps AS builder
+ENV NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
 RUN --mount=type=secret,id=sentry_auth_token \
   SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token) \
   pnpm --filter ./packages/webapp run build
@@ -44,8 +46,6 @@ COPY --from=builder /app/packages/webapp/package.json ./
 COPY --from=builder /app/packages/webapp/next.config.js ./
 COPY --from=builder /app/packages/webapp/public ./public
 COPY --from=builder /app/packages/webapp/.next ./.next
-COPY --from=builder /app/packages/webapp/server.js ./server.js
-COPY --from=builder /app/packages/webapp/tracing.js ./tracing.js
 COPY --from=prod-deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 USER nextjs
@@ -57,4 +57,4 @@ EXPOSE 3000
 # Uncomment the following line in case you want to disable telemetry.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
