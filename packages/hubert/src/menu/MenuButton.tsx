@@ -29,8 +29,6 @@ export const MenuButton = React.forwardRef(
       onOpenChangeRef.current = onOpenChange;
     }, [onOpenChange]);
 
-    const isBrowser = typeof window !== 'undefined';
-
     const ref = React.useRef<HTMLButtonElement>(null!);
 
     React.useImperativeHandle(forwardedRef, () => ref.current);
@@ -46,23 +44,7 @@ export const MenuButton = React.forwardRef(
       ref
     );
 
-    const element = React.useRef<HTMLDivElement | null>(null);
     const { buttonProps: ariaButtonProps } = useButton(menuTriggerProps, ref);
-
-    React.useEffect(() => () => element.current?.remove(), []);
-
-    if (isBrowser && element.current === null) {
-      element.current = document.createElement('div');
-      const dialogContainer =
-        document.getElementById('dialogContainer') ||
-        (() => {
-          const container = document.createElement('div');
-          container.id = 'dialogContainer';
-          document.body.appendChild(container);
-          return container;
-        })();
-      dialogContainer.appendChild(element.current);
-    }
 
     return (
       <>

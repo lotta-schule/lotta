@@ -40,6 +40,7 @@ export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> 
           setSelectedFile(null);
         }
       }, [isSelectFileDialogOpen]);
+
       return (
         <>
           <EditOverlay

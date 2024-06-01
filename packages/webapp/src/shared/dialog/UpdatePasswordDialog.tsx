@@ -20,8 +20,13 @@ export interface UpdatePasswordDialogProps {
   onRequestClose(): void;
 }
 
-export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
-  ({ isOpen, onRequestClose, isFirstPasswordChange, withCurrentPassword }) => {
+export const UpdatePasswordDialog = React.memo(
+  ({
+    isOpen,
+    onRequestClose,
+    isFirstPasswordChange,
+    withCurrentPassword,
+  }: UpdatePasswordDialogProps) => {
     const [showRequestHisecToken, setShowRequestHisecToken] =
       React.useState(false);
     const [newPassword, setNewPassword] = React.useState('');
@@ -46,6 +51,7 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
       <>
         <Dialog
           open={isOpen}
+          aria-hidden={!isOpen || showRequestHisecToken}
           title={'Passwort ändern'}
           onRequestClose={onRequestClose}
         >
@@ -69,7 +75,7 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
               <ErrorMessage error={error} />
               <Label label={'Neues Passwort:'}>
                 <Input
-                  autoFocus
+                  autoFocus={isOpen}
                   id="new-password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.currentTarget.value)}
