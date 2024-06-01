@@ -5,24 +5,6 @@ import { env, version } from 'node:process';
 import { URL } from 'node:url';
 import { withSentryConfig } from '@sentry/nextjs';
 
-const SentryWebpackPluginOptions = {
-  // Additional config options for the Sentry Webpack plugin. Keep in mind that
-  // the following options are set automatically, and overriding them is not
-  // recommended:
-  //   release, url, org, project, authToken, configFile, stripPrefix,
-  //   urlPrefix, include, ignore
-
-  silent: true,
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options.
-
-  dryRun: !env.SENTRY_AUTH_TOKEN?.length,
-  dsn: env.SENTRY_DSN,
-  environment: env.APP_ENVIRONMENT || env.NODE_ENV || 'development',
-  enabled: env.NODE_ENV === 'production',
-  release: env.IMAGE_NAME?.split(':')[1] ?? version ?? '?',
-};
-
 const __dirname = new URL('.', import.meta.url).pathname;
 
 /**
@@ -31,6 +13,7 @@ const __dirname = new URL('.', import.meta.url).pathname;
 const nextConfig = {
   experimental: {
     externalDir: true,
+    instrumentationHook: true,
   },
   transpileModules: [
     '@lotta-schule/hubert',
@@ -114,4 +97,18 @@ const nextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, SentryWebpackPluginOptions);
+// sentry should be last, wrapping the rest
+export default withSentryConfig(nextConfig, {
+  silent: true,
+
+  disableLogger: true,
+
+  dryRun: !env.SENTRY_AUTH_TOKEN?.length,
+  dsn: env.SENTRY_DSN,
+  environment: env.APP_ENVIRONMENT || env.NODE_ENV || 'development',
+  enabled: env.NODE_ENV === 'production',
+  org: 'lotta-schule',
+  project: 'web',
+  widenClientFileUpload: true,
+  release: env.IMAGE_NAME?.split(':')[1] ?? version ?? '?',
+});
