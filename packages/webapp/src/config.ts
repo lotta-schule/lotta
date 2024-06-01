@@ -1,6 +1,9 @@
 import { createConfig } from '@ptitmouton/app-config';
 
 export const appConfig = createConfig({
+  NODE_ENV: {
+    fallback: 'development',
+  },
   PUBLIC_URL: {},
   API_URL: {
     fallback: 'http://localhost:4000',
@@ -14,8 +17,8 @@ export const appConfig = createConfig({
   NEXT_PUBLIC_SENTRY_DSN: {
     fallback: '',
   },
-  NEXT_PUBLIC_API_SOCKET_URL: {},
+  API_SOCKET_URL: {},
   APP_ENVIRONMENT: {
-    fallback: process.env.NODE_ENV,
+    fallback: process.env.NODE_ENV ?? 'development',
   },
 });

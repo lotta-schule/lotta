@@ -41,6 +41,11 @@ on:
         required: false
       password:
         required: true
+      sentry_auth_token:
+        required: false
+        description: |
+          The sentry auth token to use for the build. This is required
+          if you want to upload sourcemaps to sentry
 
 jobs:
   build-image:
@@ -59,7 +64,14 @@ jobs:
         run: |
           tag=$(echo "${{ fromJSON(inputs.tags)[0] }}")
           base_image=$IMAGE_NAME:$tag
-          docker build --build-arg IMAGE_NAME -f ${{ inputs.dockerfile || 'Dockerfile' }} -t $base_image ${{ inputs.working-directory }}
+          sentry_auth_token=${{ secrets.sentry_auth_token || '' }}
+          docker build \
+            --build-arg IMAGE_NAME \
+            --build-arg RELEASE_NAME="$tag" \
+            --secret id=sentry_auth_token \
+            -f ${{ inputs.dockerfile || 'Dockerfile' }} \
+            -t $base_image \
+            ${{ inputs.working-directory }}
           echo "base-image=$base_image" >> $GITHUB_OUTPUT
           echo "Base image $base_image written to github output"
 

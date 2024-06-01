@@ -99,16 +99,11 @@ const nextConfig = {
 
 // sentry should be last, wrapping the rest
 export default withSentryConfig(nextConfig, {
-  silent: true,
+  silent: false,
 
   disableLogger: true,
 
-  dryRun: !env.SENTRY_AUTH_TOKEN?.length,
-  dsn: env.SENTRY_DSN,
-  environment: env.APP_ENVIRONMENT || env.NODE_ENV || 'development',
-  enabled: env.NODE_ENV === 'production',
   org: 'lotta-schule',
   project: 'web',
   widenClientFileUpload: true,
-  release: env.IMAGE_NAME?.split(':')[1] ?? version ?? '?',
 });
