@@ -1,6 +1,8 @@
 // @ts-check
 
 import { resolve } from 'node:path';
+import { env, version } from 'node:process';
+import { URL } from 'node:url';
 import { withSentryConfig } from '@sentry/nextjs';
 
 const SentryWebpackPluginOptions = {
@@ -14,12 +16,11 @@ const SentryWebpackPluginOptions = {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options.
 
-  dryRun: !process.env.SENTRY_AUTH_TOKEN?.length,
-  dsn: process.env.SENTRY_DSN,
-  environment:
-    process.env.APP_ENVIRONMENT || process.env.NODE_ENV || 'development',
-  enabled: process.env.NODE_ENV === 'production',
-  release: process.env.IMAGE_NAME?.split(':')[1] ?? process.version ?? '?',
+  dryRun: !env.SENTRY_AUTH_TOKEN?.length,
+  dsn: env.SENTRY_DSN,
+  environment: env.APP_ENVIRONMENT || env.NODE_ENV || 'development',
+  enabled: env.NODE_ENV === 'production',
+  release: env.IMAGE_NAME?.split(':')[1] ?? version ?? '?',
 };
 
 const __dirname = new URL('.', import.meta.url).pathname;
@@ -105,12 +106,11 @@ const nextConfig = {
     return config;
   },
   publicRuntimeConfig: {
-    appEnvironment:
-      process.env.APP_ENVIRONMENT || process.env.NODE_ENV || 'development',
-    imageName: process.env.IMAGE_NAME || 'test',
-    sentryDsn: process.env.SENTRY_DSN,
-    socketUrl: process.env.API_SOCKET_URL,
-    tenantSlugOverwrite: process.env.FORCE_TENANT_SLUG,
+    appEnvironment: env.APP_ENVIRONMENT || env.NODE_ENV || 'development',
+    imageName: env.IMAGE_NAME || 'test',
+    sentryDsn: env.SENTRY_DSN,
+    socketUrl: env.API_SOCKET_URL,
+    tenantSlugOverwrite: env.FORCE_TENANT_SLUG,
   },
 };
 
