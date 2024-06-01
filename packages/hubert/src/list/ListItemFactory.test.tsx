@@ -25,7 +25,11 @@ describe('list/ListItemFactory', () => {
       ).toEqual('Test');
       expect(item.props.children).toHaveLength(4);
       expect(
-        JSON.stringify(React.Children.toArray(item.props.children as any))
+        JSON.stringify(
+          React.Children.toArray(item.props.children as any),
+          null,
+          2
+        )
       ).toMatchSnapshot();
     });
 
