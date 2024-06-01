@@ -17,8 +17,6 @@ import { appConfig } from 'config';
 import { getAuthTokenFromHeader } from 'api/apollo/client-rsc';
 import { TranslationsProvider } from 'i18n/client';
 
-export const dynamic = 'force-dynamic';
-
 export default async function AppLayout({ children }: React.PropsWithChildren) {
   const socketUrl = appConfig.get('API_SOCKET_URL');
   const requestBaseUrl = await getBaseUrlString();
