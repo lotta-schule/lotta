@@ -76,11 +76,25 @@ beforeAll(() => {
     assign: (url) => Object.assign(window.location, { url: url }),
   };
 
-  // create setup document
-  const dialogContainer = document.createElement('div');
-  dialogContainer.setAttribute('id', 'dialogContainer');
-  document.body.appendChild(dialogContainer);
+  HTMLDialogElement.prototype.show = vi.fn(function mock(
+    this: HTMLDialogElement
+  ) {
+    this.open = true;
+  });
 
+  HTMLDialogElement.prototype.showModal = vi.fn(function mock(
+    this: HTMLDialogElement
+  ) {
+    this.open = true;
+  });
+
+  HTMLDialogElement.prototype.close = vi.fn(function mock(
+    this: HTMLDialogElement
+  ) {
+    this.open = false;
+  });
+
+  // create setup document
   Object.assign(global, { TextDecoder, TextEncoder });
 
   // window.matchMedia mock

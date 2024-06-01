@@ -64,6 +64,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
       <>
         <Dialog
           open={isOpen}
+          aria-hidden={!isOpen || isShowUpdatePasswordDialog}
           className={styles.root}
           title={'Auf der Website anmelden'}
           onRequestClose={onRequestClose}
