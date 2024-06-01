@@ -13,3 +13,4 @@ jobs:
     uses: lotta-schule/github-actions/.github/workflows/add-issue-to-project.yaml@main
     with:
       project_number: 6
+      github-token: ${{ secrets.GITHUB_TOKEN }}
