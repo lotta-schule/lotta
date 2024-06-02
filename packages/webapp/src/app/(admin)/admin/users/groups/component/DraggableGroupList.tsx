@@ -75,7 +75,7 @@ export const DraggableGroupList = ({
     >
       <ErrorMessage error={error} />
       <Droppable
-        isDropDisabled={isDraggingDisabled}
+        isDropDisabled={!!isDraggingDisabled}
         droppableId={'groups'}
         type={'root-groups'}
       >
@@ -86,7 +86,7 @@ export const DraggableGroupList = ({
                 key={group.id}
                 draggableId={String(group.id)}
                 index={index}
-                isDragDisabled={isDraggingDisabled}
+                isDragDisabled={!!isDraggingDisabled}
               >
                 {({ innerRef, dragHandleProps, draggableProps }) => (
                   <ListItem

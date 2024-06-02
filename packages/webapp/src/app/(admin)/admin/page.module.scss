@@ -1,6 +1,8 @@
 @import "breakpoints";
 
 .root {
+  padding: var(--lotta-spacing);
+
   h3 {
     padding-top: var(--lotta-spacing);
     text-transform: uppercase;

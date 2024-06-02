@@ -148,7 +148,15 @@ export const CategoryNavigation = React.memo(
 
         <h6>Hauptnavigation</h6>
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId={'categories-root'} type={'main-categories'}>
+          <Droppable
+            droppableId={'categories-root'}
+            type={'main-categories'}
+            mode="standard"
+            direction="vertical"
+            isDropDisabled={false}
+            isCombineEnabled={false}
+            ignoreContainerClipping={false}
+          >
             {({ droppableProps, innerRef, placeholder }) => (
               <div {...droppableProps} ref={innerRef}>
                 {mainCategories.map((category, index) => (
@@ -175,6 +183,9 @@ export const CategoryNavigation = React.memo(
                           title={category.title}
                         />
                         <Droppable
+                          isDropDisabled={false}
+                          isCombineEnabled={false}
+                          ignoreContainerClipping={false}
                           droppableId={String(category.id)}
                           type={'subcategories'}
                         >
