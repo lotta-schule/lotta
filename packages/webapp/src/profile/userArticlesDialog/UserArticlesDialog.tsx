@@ -8,7 +8,7 @@ import {
 import { UserModel } from 'model';
 import { User } from 'util/model';
 import { ArticlesByUser } from 'article/relatedArticlesList';
-import { useRouter } from 'next/router';
+import { isBrowser } from 'util/isBrowser';
 
 import styles from './UserArticlesDialog.module.scss';
 
@@ -19,15 +19,18 @@ export interface UserArticlesDialogProps {
 
 export const UserArticlesDialog = React.memo(
   ({ user, onRequestClose }: UserArticlesDialogProps) => {
-    const router = useRouter();
-
+    // TODO: use router from next/navigation as soon
+    // as we fully switch to app router
     React.useEffect(() => {
-      router.events.on('routeChangeStart', onRequestClose);
+      if (!isBrowser()) {
+        return;
+      }
+      window.addEventListener('popstate', onRequestClose);
 
       return () => {
-        router.events.off('routeChangeStart', onRequestClose);
+        window.removeEventListener('popstate', onRequestClose);
       };
-    }, [router, onRequestClose]);
+    }, [onRequestClose]);
 
     return (
       <Dialog

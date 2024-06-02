@@ -7,7 +7,7 @@ import {
 } from '@lotta-schule/hubert';
 import { ArticlesByTag } from '../relatedArticlesList';
 import styles from './TagDetailsDialog.module.scss';
-import { useRouter } from 'next/router';
+import { isBrowser } from 'util/isBrowser';
 
 export interface TagDetailsDialogProps {
   tag: string | null;
@@ -16,15 +16,18 @@ export interface TagDetailsDialogProps {
 
 export const TagDetailsDialog = React.memo(
   ({ tag, onRequestClose }: TagDetailsDialogProps) => {
-    const router = useRouter();
-
+    // TODO: use router from next/navigation as soon
+    // as we fully switch to app router
     React.useEffect(() => {
-      router.events.on('routeChangeStart', onRequestClose);
+      if (!isBrowser()) {
+        return;
+      }
+      window.addEventListener('popstate', onRequestClose);
 
       return () => {
-        router.events.off('routeChangeStart', onRequestClose);
+        window.removeEventListener('popstate', onRequestClose);
       };
-    }, [router, onRequestClose]);
+    }, [onRequestClose]);
 
     return (
       <Dialog

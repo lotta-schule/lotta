@@ -61,7 +61,7 @@ background-image: image-set(url(${imageUrlSimple?.toString()}) 1x, url(${imageUr
       <header className={styles.header}>
         <div className={styles.logoGridItem}>
           {tenant.configuration.logoImageFile && (
-            <Link href={'/'} passHref title={'Startseite'}>
+            <Link href={'/'} title={'Startseite'}>
               <ResponsiveImage
                 resize={'inside'}
                 height={80}

@@ -5,7 +5,7 @@
   padding: var(--lotta-spacing);
   margin-bottom: var(--lotta-spacing);
 
-  nav {
+  & > nav {
     display: flex;
     align-items: center;
     padding-bottom: calc(0.5 * var(--lotta-spacing));
