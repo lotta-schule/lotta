@@ -5,12 +5,18 @@ import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { loadTenant } from '../loader';
 import { getBaseUrl } from '../helper';
 import Link from 'next/link';
+import clsx from 'clsx';
 
 import styles from './BaseLayout.module.scss';
 
-export type TenantLayoutProps = {
-  children: React.ReactNode | React.ReactNode[];
-};
+export type TenantLayoutProps = React.PropsWithChildren<{
+  /**
+   * If true, the main content will take the
+   * full height of the viewport, and will rely on
+   * its content having a scrollable overflow.
+   */
+  fullSizeScrollable?: boolean;
+}>;
 
 const getImageUrls = (backgroundImageUrl?: string | null) => {
   if (!backgroundImageUrl) {
@@ -29,7 +35,10 @@ const getImageUrls = (backgroundImageUrl?: string | null) => {
   return [imageUrlSimple, imageUrlRetina];
 };
 
-export const TenantLayout = async ({ children }: TenantLayoutProps) => {
+export const TenantLayout = async ({
+  children,
+  fullSizeScrollable,
+}: TenantLayoutProps) => {
   const tenant = await loadTenant();
   const baseUrl = await getBaseUrl();
 
@@ -43,7 +52,11 @@ export const TenantLayout = async ({ children }: TenantLayoutProps) => {
   const [imageUrlSimple, imageUrlRetina] = getImageUrls(backgroundImageUrl);
 
   return (
-    <Box className={styles.root}>
+    <Box
+      className={clsx(styles.root, {
+        [styles.fullSizeScrollable]: fullSizeScrollable,
+      })}
+    >
       {tenant.configuration.backgroundImageFile && (
         <style
           dangerouslySetInnerHTML={{
@@ -81,9 +94,11 @@ background-image: image-set(url(${imageUrlSimple?.toString()}) 1x, url(${imageUr
       {/*<Navbar />*/}
       <main className={styles.main}>
         {children}
-        <NoSsr>
-          <ScrollToTopButton />
-        </NoSsr>
+        {!fullSizeScrollable && (
+          <NoSsr>
+            <ScrollToTopButton />
+          </NoSsr>
+        )}
       </main>
     </Box>
   );

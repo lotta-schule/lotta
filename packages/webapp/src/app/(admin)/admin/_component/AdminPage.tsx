@@ -30,7 +30,11 @@ export const AdminPage = async ({
   const baseUrl = await getBaseUrl();
 
   return (
-    <div className={clsx(styles.root, className)}>
+    <div
+      className={clsx(styles.root, className, {
+        [styles.isRootPage]: !hasHomeLink,
+      })}
+    >
       <nav>
         {hasHomeLink && (
           <Link href={'/admin'} title={'Zurück zum Administrations-Hauptmenü'}>

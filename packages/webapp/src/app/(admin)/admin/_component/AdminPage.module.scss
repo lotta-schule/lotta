@@ -1,14 +1,19 @@
 @import "breakpoints";
 
 .root {
+  display: flex;
+  flex-direction: column;
   background: rgb(var(--lotta-box-background-color));
-  padding: var(--lotta-spacing);
-  margin-bottom: var(--lotta-spacing);
+  width: 100%;
+  height: fit-content;
+  max-height: 100%;
+  min-height: 0;
+
+  transition: min-height 0.3s ease-in-out;
 
   & > nav {
     display: flex;
     align-items: center;
-    padding-bottom: calc(0.5 * var(--lotta-spacing));
     border-bottom: 1px solid rgb(var(--lotta-divider-color));
 
     svg {
@@ -19,7 +24,7 @@
       display: flex;
       align-items: center;
       border-right: 1px solid rgb(var(--lotta-divider-color));
-      padding-right: var(--lotta-spacing);
+      padding-inline: var(--lotta-spacing);
     }
 
     /* Logo with link to home */
@@ -51,5 +56,13 @@
         display: none;
       }
     }
+  }
+
+  &:not(.isRootPage) {
+    min-height: 100%;
+  }
+
+  .contentSection {
+    overflow: auto;
   }
 }

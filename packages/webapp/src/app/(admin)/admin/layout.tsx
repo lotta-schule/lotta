@@ -1,9 +1,6 @@
 import * as React from 'react';
-import { Main } from 'layout/Main';
 import { User } from 'util/model';
-import { loadCurrentUser } from '../../loader/loadCurrentUser';
-
-import styles from './layout.module.scss';
+import { loadCurrentUser } from 'loader';
 
 interface AdminPageProps {
   children: React.ReactNode;
@@ -17,5 +14,5 @@ export default async function AdminLayout({ children }: AdminPageProps) {
     return <div>Du nicht!</div>;
   }
 
-  return <Main className={styles.root}>{children}</Main>;
+  return children;
 }

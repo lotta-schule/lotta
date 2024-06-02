@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { loadCurrentUser, loadTenant } from 'loader';
 import { UserList } from './UserList';
-import { AdminPage } from 'app/admin/_component/AdminPage';
+import { AdminPage } from 'app/(admin)/admin/_component/AdminPage';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 
 async function UserListPage() {

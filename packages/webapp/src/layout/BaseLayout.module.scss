@@ -8,12 +8,23 @@
   margin-right: auto;
   padding-left: 0;
   padding-right: 0;
+
+  &.fullSizeScrollable {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
   @media screen and (min-width: $min-md) {
     max-width: calc(100% - 2rem);
   }
+
   @media screen and (min-width: $min-lg) {
     max-width: $min-lg;
   }
+
   @media screen and (min-width: $min-md) {
     padding-left: calc(var(--lotta-spacing) * 2);
     padding-right: calc(var(--lotta-spacing) * 2);
@@ -39,6 +50,7 @@
   }
 
   .main {
+    flex: 1 1;
     display: flex;
     justify-content: flex-start;
     margin-top: var(--lotta-spacing);
@@ -46,6 +58,10 @@
     padding-bottom: var(--lotta-spacing);
     @media screen and (max-width: $max-sm) {
       flex-direction: column-reverse;
+    }
+
+    &:is(.fullSizeScrollable .main) {
+      overflow: hidden;
     }
   }
 

@@ -1,4 +1,4 @@
-import '../styles/globals.scss';
+import '../../styles/globals.scss';
 
 import * as React from 'react';
 import {
@@ -8,9 +8,9 @@ import {
 } from '@lotta-schule/hubert';
 import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { fonts } from './admin/system/presentation/fonts';
-import { loadTenant } from '../loader/loadTenant';
-import { TenantLayout } from '../layout/TenantLayout';
-import { ApolloProvider } from '../component/provider/ApolloProvider';
+import { loadTenant } from 'loader';
+import { TenantLayout } from '../../layout/TenantLayout';
+import { ApolloProvider } from '../../component/provider/ApolloProvider';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
 import { getBaseUrl, getBaseUrlString } from 'helper';
 import { appConfig } from 'config';
@@ -59,7 +59,7 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
                   socketUrl={socketUrl}
                   accessToken={accessToken ?? undefined}
                 >
-                  <TenantLayout>{children}</TenantLayout>
+                  <TenantLayout fullSizeScrollable>{children}</TenantLayout>
                 </ApolloProvider>
               )}
               {!tenant && <TenantNotFoundError />}

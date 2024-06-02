@@ -4,7 +4,7 @@ import { Presentation } from './Presentation';
 import { loadTenant } from 'loader';
 import { getBaseUrl } from 'helper';
 import * as themes from './theme';
-import { AdminPage } from 'app/admin/_component/AdminPage';
+import { AdminPage } from 'app/(admin)/admin/_component/AdminPage';
 import { faPalette } from '@fortawesome/free-solid-svg-icons';
 
 const defaultTheme = DefaultThemes.standard;
