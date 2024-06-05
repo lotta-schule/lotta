@@ -1,0 +1,7 @@
+@import "breakpoints.scss";
+
+.hideOnMobile {
+  @media screen and (max-width: $max-sm) {
+    display: none;
+  }
+}

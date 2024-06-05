@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Input, Label, NoSsr, Tag } from '@lotta-schule/hubert';
 import { AnimatePresence, motion } from 'framer-motion';

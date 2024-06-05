@@ -63,6 +63,18 @@
   }
 
   .contentSection {
-    overflow: auto;
+    overflow: hidden;
+    padding: var(--lotta-spacing);
+    &:has(aside) {
+      display: flex;
+      flex: 1 1 min-content;
+      aside {
+        display: flex;
+        flex-direction: column;
+        flex: 0 0 30%;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+    }
   }
 }

@@ -1,29 +1,58 @@
+'use client';
+
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { DragHandle, ErrorMessage, List, ListItem } from '@lotta-schule/hubert';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupInputModel, UserGroupModel } from 'model';
+import { useUserGroups } from 'util/tenant/useUserGroups';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import clsx from 'clsx';
 
 import styles from './DraggableGroupList.module.scss';
 
-export type DraggableGroupListProps = {
-  groups: UserGroupModel[];
-  highlightedGroups: UserGroupModel[];
-  selectedGroupId: UserGroupModel['id'] | null;
-  isDraggingDisabled: boolean;
-  onSelect: (groupId: UserGroupModel) => void;
-};
-
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
+import { isBrowser } from 'util/isBrowser';
 
-export const DraggableGroupList = ({
-  groups,
-  isDraggingDisabled,
-  highlightedGroups,
-  selectedGroupId,
-  onSelect,
-}: DraggableGroupListProps) => {
+export const DraggableGroupList = () => {
+  const router = useRouter();
+  const { groupId: selectedGroupId } = useParams()!;
+  const searchParams = useSearchParams();
+
+  const searchTerm = searchParams?.get('s') ?? '';
+
+  const groups = useUserGroups();
+  // TODO:
+  const isDraggingDisabled = false;
+
+  const highlightedGroups = React.useMemo(
+    () =>
+      (searchTerm &&
+        groups.filter((group) =>
+          group.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )) ||
+      [],
+    [searchTerm, groups]
+  );
+
+  React.useEffect(() => {
+    if (highlightedGroups.length > 0 && isBrowser()) {
+      const firstHighlightedElement = document.querySelector(
+        `[data-groupid="${highlightedGroups[0].id}"]`
+      );
+      if (firstHighlightedElement) {
+        firstHighlightedElement.scrollIntoView({
+          block: 'start',
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [highlightedGroups]);
+
+  const onSelect = (group: UserGroupModel) => {
+    router.push(`/admin/users/groups/${group.id}`);
+  };
+
   const [updateGroup, { error }] = useMutation<
     { group: UserGroupModel },
     { id: ID; group: UserGroupInputModel }

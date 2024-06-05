@@ -41,7 +41,7 @@ export type SelectProps = React.AriaAttributes & {
 };
 
 export type OptionProps = {
-  children?: React.ReactNode | React.ReactNodeArray;
+  children?: React.ReactNode | React.ReactNode[];
 
   value: string;
 
