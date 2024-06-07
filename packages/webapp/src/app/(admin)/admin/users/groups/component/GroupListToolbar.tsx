@@ -10,9 +10,9 @@ import {
   Toolbar,
 } from '@lotta-schule/hubert';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { CreateUserGroupDialog } from './CreateUserGroupDialog';
 
 import styles from './GroupListToolbar.module.scss';
-import { CreateUserGroupDialog } from './CreateUserGroupDialog';
 
 type Sorting = 'custom' | 'name';
 
@@ -55,6 +55,12 @@ export const GroupListToolbar = () => {
 
   return (
     <Toolbar hasScrollableParent stackOnMobile className={styles.root}>
+      <Button
+        className={styles.createGroupButton}
+        onClick={() => setIsCreateGroupDialogOpen(true)}
+      >
+        Gruppe erstellen
+      </Button>
       <Label label={'Suche'} className={styles.groupSearch}>
         <Input
           placeholder={'Gruppenname'}
@@ -75,12 +81,6 @@ export const GroupListToolbar = () => {
         <Option value={'custom'}>Eigene</Option>
         <Option value={'name'}>Name</Option>
       </Select>
-      <Button
-        className={styles.createGroupButton}
-        onClick={() => setIsCreateGroupDialogOpen(true)}
-      >
-        Gruppe erstellen
-      </Button>
       <CreateUserGroupDialog
         isOpen={isCreateGroupDialogOpen}
         onConfirm={(group) => {

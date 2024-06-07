@@ -142,7 +142,7 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
                   variant="error"
                   onClick={() => setIsDeleteUserGroupDialogOpen(true)}
                 >
-                  Gruppe "{group.name}" löschen
+                  "{group.name}" löschen
                 </Button>
               </>
             )}
@@ -165,7 +165,7 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
                 });
               }}
             >
-              Gruppe Speichern
+              speichern
             </LoadingButton>
           </section>
         </form>

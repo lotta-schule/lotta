@@ -107,7 +107,7 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
     <section className={styles.root}>
       <h5 className={styles.headline}>{t('Search user')}</h5>
 
-      <Toolbar stackOnMobile>
+      <Toolbar stackOnMobile hasScrollableParent>
         <GroupSelect
           row
           allowNoneSelection

@@ -6,16 +6,16 @@
   .groupSearch,
   .sorting {
     padding: 0;
-    margin-bottom: var(--lotta-spacing);
+    margin-top: var(--lotta-spacing);
   }
 
   .groupSearch {
-    flex: 1 1 auto;
+    flex: 3 1 auto;
     width: auto;
   }
 
   .sorting {
-    flex: 0 0 auto;
+    flex: 1 0 auto;
     width: auto;
 
     @media screen and (max-width: $max-sm) {
@@ -25,7 +25,8 @@
     }
   }
 
-  .createGroupButton:not(:first-child):not(:empty) {
+  .createGroupButton:not(:last-child):not(:empty) {
+    width: 100%;
     flex-grow: 1;
     margin-left: 0;
   }

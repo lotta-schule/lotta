@@ -44,6 +44,12 @@
     text-align: right;
     display: flex;
 
+    @media screen and (max-width: $max-sm) {
+      min-height: 60px;
+      height: auto;
+      padding-block: var(--lotta-spacing);
+    }
+
     img {
       height: 80px;
     }

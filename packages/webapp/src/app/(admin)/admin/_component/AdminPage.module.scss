@@ -9,6 +9,8 @@
   max-height: 100%;
   min-height: 0;
 
+  margin-bottom: auto;
+
   transition: min-height 0.3s ease-in-out;
 
   & > nav {
@@ -63,17 +65,32 @@
   }
 
   .contentSection {
-    overflow: hidden;
+    overflow: auto;
     padding: var(--lotta-spacing);
     &:has(aside) {
+      overflow: hidden;
       display: flex;
       flex: 1 1 min-content;
-      aside {
+      padding: 0;
+      & > aside {
         display: flex;
         flex-direction: column;
         flex: 0 0 30%;
         overflow-x: hidden;
         overflow-y: auto;
+        &:first-child:last-child {
+          flex: 1 1 auto;
+        }
+        &:not(:first-child:last-child) {
+          @media screen and (max-width: $max-xs) {
+            display: none;
+          }
+        }
+        & + * {
+          overflow-x: hidden;
+          overflow-y: auto;
+          padding: var(--lotta-spacing);
+        }
       }
     }
   }

@@ -1,0 +1,11 @@
+@import "breakpoints.scss";
+
+.backButton {
+  display: inline-block;
+  height: 100%;
+  padding-block: var(--lotta-spacing);
+
+  @media (min-width: $min-sm) {
+    display: none;
+  }
+}

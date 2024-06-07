@@ -1,8 +1,12 @@
 import * as React from 'react';
-import { Toolbar } from '@lotta-schule/hubert';
+import { Button, Toolbar } from '@lotta-schule/hubert';
 import { EditUserGroup } from '../component';
 import { loadUserGroup } from 'loader';
 import { notFound } from 'next/navigation';
+import { Icon } from 'shared/Icon';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+
+import styles from './page.module.scss';
 
 async function GroupPage({
   params: { groupId },
@@ -18,13 +22,14 @@ async function GroupPage({
   return (
     <div>
       <Toolbar hasScrollableParent>
-        {/*<Button
-          className={styles.createGroupButton}
-          icon={<Icon icon={faCirclePlus} />}
-          onClick={() => setIsCreateUserGroupDialogOpen(true)}
-        >
-          Gruppe erstellen
-        </Button>*/}
+        <h3>
+          <Button
+            icon={<Icon icon={faAngleLeft} title={'Zurück'} />}
+            href={'/admin/users/groups'}
+            className={styles.backButton}
+          />
+          {group.name}
+        </h3>
       </Toolbar>
       <EditUserGroup group={group} />
     </div>

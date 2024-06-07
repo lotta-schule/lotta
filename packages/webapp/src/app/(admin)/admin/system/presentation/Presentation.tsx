@@ -311,7 +311,7 @@ export const Presentation = React.memo(
         </section>
 
         <section>
-          <h3>Schriften</h3>
+          <h3>Schriftarten</h3>
           {headerFonts.concat(textFonts).map(({ url }) => (
             <link rel={'stylesheet'} href={url} key={url} />
           ))}
@@ -319,7 +319,7 @@ export const Presentation = React.memo(
             <div>
               <Select
                 fullWidth
-                title={'Schriftart Überschriften'}
+                title={'Überschriften'}
                 value={theme.titleFontFamily}
                 onChange={(titleFontFamily) => {
                   updateThemeProperties({
@@ -344,7 +344,7 @@ export const Presentation = React.memo(
             <div>
               <Select
                 fullWidth
-                title={'Schriftart Fließtext'}
+                title={'Fließtext'}
                 value={theme.textFontFamily}
                 onChange={(textFontFamily) =>
                   updateThemeProperties({

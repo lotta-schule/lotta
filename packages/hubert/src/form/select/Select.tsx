@@ -91,12 +91,12 @@ export const Select = React.forwardRef<any, SelectProps>(
       },
     });
 
-    const ref = React.useRef<HTMLDivElement>(null);
+    const ref = React.useRef<HTMLDivElement>(null!);
 
     React.useImperativeHandle(forwardedRef, () => ref.current);
 
-    const triggerRef = React.useRef<HTMLButtonElement>(null);
-    const popoverRef = React.useRef<HTMLDivElement>(null);
+    const triggerRef = React.useRef<HTMLButtonElement>(null!);
+    const popoverRef = React.useRef<HTMLDivElement>(null!);
 
     const {
       labelProps,

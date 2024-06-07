@@ -4,8 +4,12 @@
   padding: var(--lotta-spacing);
 
   h3 {
+    position: sticky;
+    top: calc(-1 * var(--lotta-spacing));
+    z-index: 1;
     padding-top: var(--lotta-spacing);
     text-transform: uppercase;
+    background: rgb(var(--lotta-box-background-color));
   }
 
   section {
@@ -14,7 +18,7 @@
     grid-gap: calc(2 * var(--lotta-spacing));
     padding-bottom: var(--lotta-spacing);
 
-    grid-template-columns: repeat(auto-fill, minmax(12em, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
     justify-items: center;
 
     &:not(:last-child) {

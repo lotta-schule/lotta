@@ -3,18 +3,19 @@ import { AdminPage } from 'app/(admin)/admin/_component/AdminPage';
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { DraggableGroupList } from './component/DraggableGroupList';
 import { GroupListToolbar } from './component/GroupListToolbar';
-import clsx from 'clsx';
+import { headers } from 'next/headers';
 
-import styles from './layout.module.scss';
+export const dynamic = 'force-dynamic';
 
 async function GroupsLayout({
   children,
   params,
 }: React.PropsWithChildren<{ params: { groupId?: string } }>) {
+  console.log(Array.from(headers().entries()));
   console.log({ params });
   return (
     <AdminPage icon={faUserGroup} title={'Gruppen'} hasHomeLink>
-      <aside className={clsx({ [styles.hideOnMobile]: !!params.groupId })}>
+      <aside>
         <GroupListToolbar />
         <DraggableGroupList />
       </aside>

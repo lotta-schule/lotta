@@ -7,7 +7,8 @@ export const useUserGroups = (): UserGroupModel[] => {
   const { data } = useQuery<{ userGroups: UserGroupModel[] }>(
     GetUserGroupsQuery
   );
-  return (
-    [...(data?.userGroups ?? [])].sort((a, b) => a.sortKey - b.sortKey) ?? []
-  );
+  const groups =
+    [...(data?.userGroups ?? [])].sort((a, b) => a.sortKey - b.sortKey) ?? [];
+
+  return groups;
 };
