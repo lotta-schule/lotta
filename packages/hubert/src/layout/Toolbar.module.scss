@@ -3,7 +3,7 @@
 .root {
   flex-shrink: 0;
   min-height: 48px;
-  padding: var(--lotta-spacing);
+  padding-block: var(--lotta-spacing);
   background-color: rgb(var(--lotta-box-background-color));
   display: flex;
   position: sticky;
@@ -22,11 +22,24 @@
     }
   }
 
+  &.withPadding {
+    padding-inline: var(--lotta-spacing);
+  }
+
   & > div,
   & > button,
   & > span {
     &:not(:first-child) {
       margin-left: var(--lotta-spacing);
     }
+  }
+
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6 {
+    margin: 0;
   }
 }

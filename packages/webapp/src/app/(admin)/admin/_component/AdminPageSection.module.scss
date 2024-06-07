@@ -1,0 +1,16 @@
+.root {
+  &:not(:last-child) {
+    margin-bottom: calc(2 * var(--lotta-spacing));
+  }
+
+  &.bottomToolbar {
+    position: sticky;
+    background-color: rgb(var(--lotta-box-background-color));
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: var(--lotta-spacing) 0 0;
+    border-top: 1px solid rgb(var(--lotta-divider-color));
+  }
+}

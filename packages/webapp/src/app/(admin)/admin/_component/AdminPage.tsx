@@ -66,7 +66,7 @@ export const AdminPage = async ({
           })}
         />
       </nav>
-      <main className={styles.contentSection}>{children}</main>
+      <div className={styles.contentSection}>{children}</div>
     </div>
   );
 };

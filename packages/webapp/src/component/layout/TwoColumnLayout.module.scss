@@ -1,0 +1,34 @@
+@import "breakpoints";
+
+.root {
+  display: flex;
+  width: 100%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 30%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  @media screen and (max-width: $max-xs) {
+    &:has(+ .main:empty) {
+      flex: 1 1 auto;
+    }
+    &:has(+ .main:not(:empty)) {
+      display: none;
+    }
+  }
+}
+
+.main {
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: var(--lotta-spacing);
+  flex: 1 1;
+  position: relative;
+
+  &:empty {
+    display: none;
+  }
+}

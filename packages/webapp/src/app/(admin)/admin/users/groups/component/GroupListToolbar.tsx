@@ -54,7 +54,12 @@ export const GroupListToolbar = () => {
   }, [sorting, searchParams, pathname, router]);
 
   return (
-    <Toolbar hasScrollableParent stackOnMobile className={styles.root}>
+    <Toolbar
+      hasScrollableParent
+      stackOnMobile
+      withPadding
+      className={styles.root}
+    >
       <Button
         className={styles.createGroupButton}
         onClick={() => setIsCreateGroupDialogOpen(true)}

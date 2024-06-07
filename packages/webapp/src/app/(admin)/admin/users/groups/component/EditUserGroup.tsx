@@ -13,6 +13,7 @@ import {
 } from '@lotta-schule/hubert';
 import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
+import { AdminPageSection } from 'app/(admin)/admin/_component/AdminPageSection';
 import { useRouter } from 'next/navigation';
 
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
@@ -58,7 +59,7 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
   }, [editedGroup]);
 
   return (
-    <div>
+    <>
       {editedGroup && (
         <form
           aria-label={`Gruppe "${group.name}" bearbeiten`}
@@ -66,8 +67,7 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
         >
           <ErrorMessage error={updateError} />
 
-          <section>
-            <h4>Allgemein</h4>
+          <AdminPageSection title="Allgemein">
             <Label label={'Gruppenname'}>
               <Input
                 id="group-name"
@@ -85,10 +85,9 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
             <small id="group-name-help-text">
               Gib der Gruppe einen verständlichen Namen
             </small>
-          </section>
+          </AdminPageSection>
 
-          <section>
-            <h4>Berechtigungen</h4>
+          <AdminPageSection title="Berechtigungen">
             {group.isAdminGroup && (
               <Checkbox
                 isDisabled={isLoadingUpdateGroup || group.isAdminGroup}
@@ -113,10 +112,9 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
               Diese Gruppe kann die vollständigen Namen von Nutzern sehen, auch
               wenn diese sie nicht freigegeben haben
             </Checkbox>
-          </section>
+          </AdminPageSection>
 
-          <section>
-            <h4>Einschreibeschlüssel</h4>
+          <AdminPageSection title="Einschreibeschlüssel">
             <p>
               Nutzer, die bei der Registrierung einen Einschreibeschlüssel
               verwenden, werden automatisch dieser Gruppe zugeordnet.
@@ -132,9 +130,9 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
                 });
               }}
             />
-          </section>
+          </AdminPageSection>
 
-          <section className={styles.actions}>
+          <AdminPageSection bottomToolbar>
             {!group.isAdminGroup && (
               <>
                 <Button
@@ -167,7 +165,7 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
             >
               speichern
             </LoadingButton>
-          </section>
+          </AdminPageSection>
         </form>
       )}
       <DeleteUserGroupDialog
@@ -178,7 +176,7 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
           router.replace('/admin/users/groups');
         }}
       />
-    </div>
+    </>
   );
 });
 EditUserGroup.displayName = 'AdministrationEditUserGroupDialog';

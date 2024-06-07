@@ -1,25 +1,33 @@
-import * as React from 'react';
+import { Suspense } from 'react';
 import { AdminPage } from 'app/(admin)/admin/_component/AdminPage';
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { DraggableGroupList } from './component/DraggableGroupList';
 import { GroupListToolbar } from './component/GroupListToolbar';
-import { headers } from 'next/headers';
-
-export const dynamic = 'force-dynamic';
+import {
+  TwoColumnLayout,
+  TwoColumnLayoutContent,
+  TwoColumnLayoutSidebar,
+} from 'component/layout';
+import { LinearProgress } from '@lotta-schule/hubert';
 
 async function GroupsLayout({
   children,
-  params,
 }: React.PropsWithChildren<{ params: { groupId?: string } }>) {
-  console.log(Array.from(headers().entries()));
-  console.log({ params });
   return (
     <AdminPage icon={faUserGroup} title={'Gruppen'} hasHomeLink>
-      <aside>
-        <GroupListToolbar />
-        <DraggableGroupList />
-      </aside>
-      {children}
+      <TwoColumnLayout>
+        <TwoColumnLayoutSidebar>
+          <GroupListToolbar />
+          <Suspense
+            fallback={
+              <LinearProgress aria-label="Gruppen werden geladen ..." />
+            }
+          >
+            <DraggableGroupList />
+          </Suspense>
+        </TwoColumnLayoutSidebar>
+        <TwoColumnLayoutContent>{children}</TwoColumnLayoutContent>
+      </TwoColumnLayout>
     </AdminPage>
   );
 }

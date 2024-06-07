@@ -2,18 +2,4 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  position: relative;
-
-  section:not(:last-child) {
-    margin-bottom: calc(2 * var(--lotta-spacing));
-  }
-
-  section:last-child {
-    position: sticky;
-    background-color: rgb(var(--lotta-box-background-color));
-    bottom: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-  }
 }

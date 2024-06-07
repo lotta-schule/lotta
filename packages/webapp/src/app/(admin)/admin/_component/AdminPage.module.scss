@@ -72,26 +72,6 @@
       display: flex;
       flex: 1 1 min-content;
       padding: 0;
-      & > aside {
-        display: flex;
-        flex-direction: column;
-        flex: 0 0 30%;
-        overflow-x: hidden;
-        overflow-y: auto;
-        &:first-child:last-child {
-          flex: 1 1 auto;
-        }
-        &:not(:first-child:last-child) {
-          @media screen and (max-width: $max-xs) {
-            display: none;
-          }
-        }
-        & + * {
-          overflow-x: hidden;
-          overflow-y: auto;
-          padding: var(--lotta-spacing);
-        }
-      }
     }
   }
 }
