@@ -29,10 +29,6 @@
     margin-top: calc(4 * var(--lotta-spacing));
   }
 
-  .active {
-    background-color: rgba(var(--lotta-divider-color), 0.1);
-  }
-
   .title {
     cursor: pointer;
 
@@ -56,5 +52,9 @@
     .answerButton {
       margin-left: var(--lotta-spacing);
     }
+  }
+
+  .active {
+    background-color: rgba(var(--lotta-divider-color), 0.1);
   }
 }

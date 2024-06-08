@@ -1,11 +1,10 @@
 'use client';
 
-import * as React from 'react';
+import { useState, Fragment, memo } from 'react';
 import { faCommentDots } from '@fortawesome/free-regular-svg-icons';
 import { faShare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@lotta-schule/hubert';
 import { format } from 'date-fns';
-import { motion } from 'framer-motion';
 import { FeedbackModel } from 'model';
 import { Icon } from 'shared/Icon';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
@@ -24,16 +23,16 @@ export type FeedbackRowProps = {
   onDelete: () => void;
 };
 
-export const FeedbackRow = React.memo(
+export const FeedbackRow = memo(
   ({ feedback, isActive, onClick, onDelete }: FeedbackRowProps) => {
     const [isForwardFeedbackDialogOpen, setIsForwardFeedbackDialogOpen] =
-      React.useState(false);
+      useState(false);
     const [isRespondToFeedbackDialogOpen, setIsRespondToFeedbackDialogOpen] =
-      React.useState(false);
+      useState(false);
     const [isDeleteFeedbackDialogOpen, setIsDeleteFeedbackDialogOpen] =
-      React.useState(false);
+      useState(false);
     return (
-      <React.Fragment key={feedback.id}>
+      <Fragment key={feedback.id}>
         <tr
           className={clsx(styles.title, {
             [styles.active]: isActive,
@@ -58,15 +57,29 @@ export const FeedbackRow = React.memo(
                 setIsDeleteFeedbackDialogOpen(true);
               }}
             />
+            <ForwardFeedbackDialog
+              feedback={feedback}
+              isOpen={isForwardFeedbackDialogOpen}
+              onRequestClose={() => setIsForwardFeedbackDialogOpen(false)}
+            />
+            <RespondToFeedbackDialog
+              feedback={feedback}
+              isOpen={isRespondToFeedbackDialogOpen}
+              onRequestClose={() => setIsRespondToFeedbackDialogOpen(false)}
+            />
+            <DeleteFeedbackDialog
+              feedback={feedback}
+              isOpen={isDeleteFeedbackDialogOpen}
+              onRequestClose={() => setIsDeleteFeedbackDialogOpen(false)}
+              onConfirm={() => {
+                setIsDeleteFeedbackDialogOpen(false);
+                onDelete();
+              }}
+            />
           </td>
         </tr>
         {isActive && (
-          <motion.tr
-            initial={{ opacity: 0, y: -50, height: 0 }}
-            exit={{ opacity: 0, y: -50, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: 'auto' }}
-            className={styles.info}
-          >
+          <tr className={clsx(styles.info, { [styles.active]: isActive })}>
             <td colSpan={4}>
               <h6>Nachricht:</h6>
               <div className={styles.messageSection}>
@@ -93,28 +106,9 @@ export const FeedbackRow = React.memo(
                 </div>
               </div>
             </td>
-          </motion.tr>
+          </tr>
         )}
-        <ForwardFeedbackDialog
-          feedback={feedback}
-          isOpen={isForwardFeedbackDialogOpen}
-          onRequestClose={() => setIsForwardFeedbackDialogOpen(false)}
-        />
-        <RespondToFeedbackDialog
-          feedback={feedback}
-          isOpen={isRespondToFeedbackDialogOpen}
-          onRequestClose={() => setIsRespondToFeedbackDialogOpen(false)}
-        />
-        <DeleteFeedbackDialog
-          feedback={feedback}
-          isOpen={isDeleteFeedbackDialogOpen}
-          onRequestClose={() => setIsDeleteFeedbackDialogOpen(false)}
-          onConfirm={() => {
-            setIsDeleteFeedbackDialogOpen(false);
-            onDelete();
-          }}
-        />
-      </React.Fragment>
+      </Fragment>
     );
   }
 );

@@ -38,7 +38,7 @@ export const Analytics = React.memo(() => {
 
   return (
     <div>
-      <Toolbar style={{ zIndex: 2 }}>
+      <Toolbar hasScrollableParent style={{ zIndex: 2 }}>
         <Select
           title="Monat wählen"
           value={currentDate}

@@ -16,8 +16,10 @@ export const Feedback = React.memo(({ feedbacks }: FeedbackProps) => {
     null
   );
 
-  const isActive = (feedback: FeedbackModel) =>
-    feedback.id === activeFeedbackId;
+  const isActive = React.useCallback(
+    (feedback: FeedbackModel) => feedback.id === activeFeedbackId,
+    [activeFeedbackId]
+  );
 
   return (
     <div className={styles.root}>

@@ -53,9 +53,13 @@ export const TenantLayout = async ({
 
   return (
     <Box
-      className={clsx(styles.root, {
-        [styles.fullSizeScrollable]: fullSizeScrollable,
-      })}
+      className={clsx(
+        styles.root,
+        {
+          [styles.fullSizeScrollable]: fullSizeScrollable,
+        },
+        styles.fullWidth
+      )}
     >
       {tenant.configuration.backgroundImageFile && (
         <style

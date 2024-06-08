@@ -66,7 +66,7 @@
 
   .contentSection {
     overflow: auto;
-    padding: var(--lotta-spacing);
+    padding-block: var(--lotta-spacing);
     &:has(aside) {
       overflow: hidden;
       display: flex;

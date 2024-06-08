@@ -22,7 +22,10 @@
   }
 
   @media screen and (min-width: $min-lg) {
-    max-width: min(2000px, calc(100% - 4rem));
+    max-width: $min-lg;
+    &.fullWidth {
+      max-width: min(2000px, calc(100% - 4rem));
+    }
   }
 
   @media screen and (min-width: $min-md) {
