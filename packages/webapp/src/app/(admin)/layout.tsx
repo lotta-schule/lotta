@@ -16,6 +16,7 @@ import { getBaseUrl, getBaseUrlString } from 'helper';
 import { appConfig } from 'config';
 import { getAuthTokenFromHeader } from 'api/apollo/client-rsc';
 import { TranslationsProvider } from 'i18n/client';
+import { TenantGlobalStyleTag } from 'layout/TenantGlobalStyleTag';
 
 export default async function AppLayout({ children }: React.PropsWithChildren) {
   const socketUrl = appConfig.get('API_SOCKET_URL');
@@ -48,6 +49,8 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
             src="/p/script.js"
           ></script>
         )}
+        {tenant && <TenantGlobalStyleTag tenant={tenant} />}
+        <GlobalStyles theme={theme} supportedFonts={fonts} />
       </head>
       <body>
         <HubertProvider>
@@ -64,7 +67,6 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
               )}
               {!tenant && <TenantNotFoundError />}
             </TranslationsProvider>
-            <GlobalStyles theme={theme} supportedFonts={fonts} />
           </ServerDataContextProvider>
         </HubertProvider>
         <div id={'dialogContainer'} />

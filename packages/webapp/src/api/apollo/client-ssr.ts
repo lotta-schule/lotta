@@ -21,6 +21,11 @@ export const createSSRClient = (
   accessToken?: string
 ) => {
   const websocketLink = createWebsocketLink(tenant, socketUrl, accessToken);
+  const httpLink = createHttpLink({
+    requestExtraHeaders: () => ({
+      tenant: `id:${tenant.id}`,
+    }),
+  });
   const networkLink = websocketLink
     ? split(
         (operation) => {
@@ -32,9 +37,9 @@ export const createSSRClient = (
         },
 
         websocketLink as any as ApolloLink,
-        createHttpLink()
+        httpLink
       )
-    : createHttpLink();
+    : httpLink;
 
   return new NextSSRApolloClient({
     cache: new NextSSRInMemoryCache(),
