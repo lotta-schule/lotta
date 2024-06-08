@@ -1,3 +1,3 @@
 export * from './CategoryNavigation';
 export * from './CategoryEditor';
-export * from './CategoriesListToolbar';
+export * from './CategoryListToolbar';
