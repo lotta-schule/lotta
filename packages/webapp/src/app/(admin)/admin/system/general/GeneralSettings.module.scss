@@ -1,9 +1,15 @@
 .root {
-  section {
-    margin-bottom: calc(2 * var(--lotta-spacing));
-    &:last-child {
-      display: flex;
-      justify-content: flex-end;
+  .gridContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    .gridItem:not(:first-child) {
+      margin-left: var(--lotta-spacing);
+      &:is(p) {
+        max-width: 25em;
+      }
     }
   }
 }

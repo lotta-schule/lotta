@@ -6,6 +6,7 @@ import {
   Box,
   ErrorMessage,
   Input,
+  Label,
   LoadingButton,
   Table,
 } from '@lotta-schule/hubert';
@@ -14,6 +15,7 @@ import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { File } from 'util/model/File';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
+import { AdminPageSection } from '../../_component/AdminPageSection';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -36,45 +38,44 @@ export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
   return (
     <div className={styles.root}>
       <ErrorMessage error={error} />
-      <h3>Name der Seite</h3>
 
-      <section>
-        <Input
-          value={title}
-          onChange={(e) => setTitle(e.currentTarget.value)}
-        />
-      </section>
+      <AdminPageSection title="Name und Logo">
+        <Label label="Name der Seite">
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.currentTarget.value)}
+          />
+        </Label>
 
-      <h3>Logo der Seite</h3>
-      <section>
-        <div className={styles.gridContainer}>
-          <Box className={styles.gridItem} style={{ width: '25%' }}>
-            <SelectFileOverlay
-              label={'Logo ändern'}
-              onSelectFile={(logo) => setLogo(logo)}
-              allowDeletion
-            >
-              {logo ? (
-                <ResponsiveImage
-                  resize={'inside'}
-                  height={80}
-                  src={File.getFileRemoteLocation(baseUrl, logo)}
-                  alt={`Logo ${title}`}
-                />
-              ) : (
-                <PlaceholderImage width={160} height={80} />
-              )}
-            </SelectFileOverlay>
-          </Box>
-          <p className={styles.gridItem}>
-            Für eine optimale Darstellung sollte das Logo eine Höhe von
-            mindestens 160 Pixeln haben.
-          </p>
-        </div>
-      </section>
+        <Label label={'Logo der Seite'}>
+          <div className={styles.gridContainer}>
+            <Box className={styles.gridItem} style={{ width: '25%' }}>
+              <SelectFileOverlay
+                label={'Logo ändern'}
+                onSelectFile={(logo) => setLogo(logo)}
+                allowDeletion
+              >
+                {logo ? (
+                  <ResponsiveImage
+                    resize={'inside'}
+                    height={80}
+                    src={File.getFileRemoteLocation(baseUrl, logo)}
+                    alt={`Logo ${title}`}
+                  />
+                ) : (
+                  <PlaceholderImage width={160} height={80} />
+                )}
+              </SelectFileOverlay>
+            </Box>
+            <p className={styles.gridItem}>
+              Für eine optimale Darstellung sollte das Logo eine Höhe von
+              mindestens 160 Pixeln haben.
+            </p>
+          </div>
+        </Label>
+      </AdminPageSection>
 
-      <h3>Domains</h3>
-      <section>
+      <AdminPageSection title="Domain">
         <Table>
           <tbody>
             <tr>
@@ -84,9 +85,10 @@ export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
             </tr>
           </tbody>
         </Table>
-      </section>
+      </AdminPageSection>
 
-      <section>
+      <AdminPageSection bottomToolbar>
+        <div />
         <LoadingButton
           onAction={async () => {
             await updateTenant({
@@ -109,7 +111,7 @@ export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
         >
           speichern
         </LoadingButton>
-      </section>
+      </AdminPageSection>
     </div>
   );
 };

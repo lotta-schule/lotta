@@ -13,7 +13,7 @@ const tenantMock: TenantModel = {
   },
 };
 
-describe('BaseLayout', () => {
+describe('TenantLayout', () => {
   it('should render title, logo and child', () => {
     const screen = render(
       <BaseLayout>

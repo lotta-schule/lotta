@@ -16,6 +16,7 @@ export const PlaceholderImage = React.memo<PlaceholderImageProps>(
       icon === 'video' ? '/img/SwitchVideo.svg' : '/img/Photo.svg';
     return (
       <div
+        data-testid="placeholder-image"
         style={{ width, height, backgroundImage: `url(${iconSource})` }}
         className={clsx(styles.root, {
           [styles.withDescription]: !!description,
