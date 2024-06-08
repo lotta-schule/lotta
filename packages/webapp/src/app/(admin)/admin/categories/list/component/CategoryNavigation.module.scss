@@ -1,13 +1,13 @@
 .root {
   .heading {
-    margin-bottom: calc(3 * var(--lotta-spacing));
+    margin-top: calc(3 * var(--lotta-spacing));
   }
-  nav {
-    overflow: hidden;
+  .categoriesSublist {
     margin-bottom: var(--lotta-spacing);
     background-color: rgb(var(--lotta-box-background-color));
     color: rgb(var(--lotta-text-color));
     padding-left: calc(2 * var(--lotta-spacing));
+
     &:hover {
       border-color: rgb(var(--lotta-primary-color));
     }

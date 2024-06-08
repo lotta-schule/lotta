@@ -132,6 +132,12 @@ describe('pages/admin/users/list', () => {
       }
     );
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('combobox', { name: /gruppe filtern/i })
+      ).toBeVisible();
+    });
+
     await fireEvent.click(
       screen.getByRole('button', { name: /gruppe filtern/i })
     );

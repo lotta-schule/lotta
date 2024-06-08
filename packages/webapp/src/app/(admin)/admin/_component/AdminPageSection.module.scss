@@ -3,6 +3,10 @@
     margin-bottom: calc(2 * var(--lotta-spacing));
   }
 
+  &:not(.bottomToolbar) > * {
+    width: 100%;
+  }
+
   &.bottomToolbar {
     position: sticky;
     background-color: rgb(var(--lotta-box-background-color));
@@ -10,7 +14,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: var(--lotta-spacing) 0 0;
+    padding: var(--lotta-spacing) 0;
     border-top: 1px solid rgb(var(--lotta-divider-color));
   }
 }

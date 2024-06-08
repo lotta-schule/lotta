@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { memo, Suspense, useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -31,17 +31,15 @@ export type UserListProps = {
   currentUser: UserModel;
 };
 
-export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
+export const UserList = memo(({ currentUser, tenant }: UserListProps) => {
   const router = useRouter();
   const { t } = useTranslation();
 
-  const [searchText, setSearchText] = React.useState('');
+  const [searchText, setSearchText] = useState('');
   const debouncedSearchtext = useDebounce(searchText, 500);
-  const [selectedUser, setSelectedUser] = React.useState<UserModel | null>(
-    null
-  );
+  const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
 
-  const [searchFilter, setSearchFilter] = React.useState<{
+  const [searchFilter, setSearchFilter] = useState<{
     name: string;
     groups: (UserGroupModel | null)[];
     lastSeen: number | null;
@@ -51,7 +49,7 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
     lastSeen: null,
   });
 
-  React.useEffect(
+  useEffect(
     () => setSearchFilter((f) => ({ ...f, name: debouncedSearchtext })),
     [debouncedSearchtext]
   );
@@ -77,7 +75,7 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
 
   const totalUsers = tenant.stats?.userCount;
 
-  const rows = React.useMemo(() => {
+  const rows = useMemo(() => {
     return (
       data?.users?.map((user) => ({
         avatarImage: (
@@ -108,18 +106,27 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
       <h5 className={styles.headline}>{t('Search user')}</h5>
 
       <Toolbar stackOnMobile hasScrollableParent>
-        <GroupSelect
-          row
-          allowNoneSelection
-          hidePublicGroupSelection
-          disableAdminGroupsExclusivity
-          label={'Nach Gruppe filtern:'}
-          selectedGroups={searchFilter.groups ?? []}
-          onSelectGroups={(groups) =>
-            setSearchFilter({ ...searchFilter, groups })
+        <Suspense
+          fallback={
+            <LinearProgress
+              isIndeterminate
+              aria-label="Gruppen werden geladen..."
+            />
           }
-          className={styles.filter}
-        />
+        >
+          <GroupSelect
+            row
+            allowNoneSelection
+            hidePublicGroupSelection
+            disableAdminGroupsExclusivity
+            label={'Nach Gruppe filtern:'}
+            selectedGroups={searchFilter.groups ?? []}
+            onSelectGroups={(groups) =>
+              setSearchFilter({ ...searchFilter, groups })
+            }
+            className={styles.filter}
+          />
+        </Suspense>
         <Label label={'Namen suchen:'} className={clsx(styles.nameSearch)}>
           <Input
             value={searchText}

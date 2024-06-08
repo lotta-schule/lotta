@@ -19,7 +19,7 @@ import styles from './WidgetsList.module.scss';
 
 export interface WidgetsListProps {
   widgets: WidgetModel[];
-  children?: JSX.Element;
+  children?: React.ReactNode | React.ReactNode[];
 }
 
 export const WidgetsList = React.memo(

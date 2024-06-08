@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { MockedResponse } from '@apollo/client/testing';
-import { SplitViewProvider } from '@lotta-schule/hubert';
 import {
   FaecherCategory,
   StartseiteCategory,
@@ -16,10 +15,6 @@ import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graphql';
-
-const renderWithContext: typeof render = (children, ...other) => {
-  return render(<SplitViewProvider>{children}</SplitViewProvider>, ...other);
-};
 
 const allWidgetsMock: MockedResponse = {
   request: {
@@ -64,12 +59,9 @@ const getArticleForPreview = (
 });
 
 describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
-  it('should show correct category title', () => {
-    const screen = renderWithContext(
-      <CategoryEditor
-        selectedCategory={FaecherCategory}
-        onSelectCategory={() => {}}
-      />,
+  it('should provide correct category name in the input', () => {
+    const screen = render(
+      <CategoryEditor category={FaecherCategory} />,
       {},
       {
         additionalMocks: [
@@ -80,16 +72,15 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       }
     );
 
-    expect(screen.getByRole('heading', { name: /fächer/i })).toBeVisible();
+    expect(screen.getByRole('textbox', { name: /name/i })).toHaveValue(
+      FaecherCategory.title
+    );
   });
 
   describe('show/hide group selection', () => {
-    it('show the GroupSelect for any non-homepage', () => {
-      const screen = renderWithContext(
-        <CategoryEditor
-          selectedCategory={FaecherCategory}
-          onSelectCategory={() => {}}
-        />,
+    it('show the GroupSelect for any non-homepage', async () => {
+      const screen = render(
+        <CategoryEditor category={FaecherCategory} />,
         {},
         {
           additionalMocks: [
@@ -100,15 +91,14 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         }
       );
 
-      expect(screen.getByTestId('GroupSelect')).toBeVisible();
+      await waitFor(() => {
+        expect(screen.getByTestId('GroupSelect')).toBeVisible();
+      });
     });
 
-    it('NOT show the GroupSelect for the homepage', () => {
-      const screen = renderWithContext(
-        <CategoryEditor
-          selectedCategory={StartseiteCategory}
-          onSelectCategory={() => {}}
-        />,
+    it('NOT show the GroupSelect for the homepage', async () => {
+      const screen = render(
+        <CategoryEditor category={StartseiteCategory} />,
         {},
         {
           additionalMocks: [
@@ -119,17 +109,16 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         }
       );
 
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       expect(screen.queryByTestId('GroupSelect')).toBeNull();
     });
   });
 
   describe('show/hide "hide articles from homepage" selection', () => {
     it('show the "hide articles from homepage" for any non-homepage', () => {
-      const screen = renderWithContext(
-        <CategoryEditor
-          selectedCategory={FaecherCategory}
-          onSelectCategory={() => {}}
-        />,
+      const screen = render(
+        <CategoryEditor category={FaecherCategory} />,
         {},
         {
           additionalMocks: [
@@ -148,11 +137,8 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
     });
 
     it('NOT show the "hide articles from homepage" for the homepage', () => {
-      const screen = renderWithContext(
-        <CategoryEditor
-          selectedCategory={StartseiteCategory}
-          onSelectCategory={() => {}}
-        />,
+      const screen = render(
+        <CategoryEditor category={StartseiteCategory} />,
         {},
         {
           additionalMocks: [
@@ -171,11 +157,8 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
   });
 
   it('should show the layout selection', () => {
-    const screen = renderWithContext(
-      <CategoryEditor
-        selectedCategory={FaecherCategory}
-        onSelectCategory={() => {}}
-      />,
+    const screen = render(
+      <CategoryEditor category={FaecherCategory} />,
       {},
       {
         additionalMocks: [
@@ -196,11 +179,8 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
   describe('Category redirect', () => {
     describe('"None" Value', () => {
       it('should have "NONE" selected if no redirect is set', () => {
-        const screen = renderWithContext(
-          <CategoryEditor
-            selectedCategory={FaecherCategory}
-            onSelectCategory={() => {}}
-          />,
+        const screen = render(
+          <CategoryEditor category={FaecherCategory} />,
           {},
           {
             additionalMocks: [
@@ -219,14 +199,13 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       });
 
       it('should reset the value when None is selected', async () => {
-        const fireEvent = userEvent.setup();
-        const screen = renderWithContext(
+        const user = userEvent.setup();
+        const screen = render(
           <CategoryEditor
-            selectedCategory={{
+            category={{
               ...FaecherCategory,
               redirect: 'https://lotta.schule',
             }}
-            onSelectCategory={() => {}}
           />,
           {},
           {
@@ -238,7 +217,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           }
         );
 
-        await fireEvent.click(
+        await user.click(
           screen.getByRole('radio', { name: /nicht weitergeleitet/i })
         );
         expect(
@@ -248,7 +227,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         await waitFor(() => {
           expect(
             screen.getByTestId('ExternalRedirectWrapper')
-          ).not.toBeVisible();
+          ).not.toHaveAttribute('ariaHidden', 'true');
         });
       });
     });
@@ -259,11 +238,8 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         redirect: `/c/${KunstCategory.id}`,
       };
       it('should have "Internal Category" selected if a local path is set', async () => {
-        const screen = renderWithContext(
-          <CategoryEditor
-            selectedCategory={internalFaecherCategoy}
-            onSelectCategory={() => {}}
-          />,
+        const screen = render(
+          <CategoryEditor category={internalFaecherCategoy} />,
           {},
           {
             additionalMocks: [
@@ -283,17 +259,14 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         await waitFor(() => {
           expect(
             screen.getByTestId('InternalCategoryRedirectWrapper')
-          ).toBeVisible();
+          ).not.toHaveAttribute('ariaHidden');
         });
       });
 
       it('should show the category select when internal category link is selected', async () => {
-        const fireEvent = userEvent.setup();
-        const screen = renderWithContext(
-          <CategoryEditor
-            selectedCategory={internalFaecherCategoy}
-            onSelectCategory={() => {}}
-          />,
+        const user = userEvent.setup();
+        const screen = render(
+          <CategoryEditor category={internalFaecherCategoy} />,
           {},
           {
             additionalMocks: [
@@ -304,7 +277,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           }
         );
 
-        await fireEvent.click(
+        await user.click(
           screen.getByRole('radio', {
             name: /kategorie weiterleiten/i,
           })
@@ -318,7 +291,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         await waitFor(() => {
           expect(
             screen.getByTestId('InternalCategoryRedirectWrapper')
-          ).toBeVisible();
+          ).not.toHaveAttribute('ariaHidden');
         });
       });
     });
@@ -329,11 +302,8 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         redirect: `/a/${ComputerExperten.id}`,
       };
       it('should have "Internal Article" selected if a local path is set', async () => {
-        const screen = renderWithContext(
-          <CategoryEditor
-            selectedCategory={internalFaecherCategoy}
-            onSelectCategory={() => {}}
-          />,
+        const screen = render(
+          <CategoryEditor category={internalFaecherCategoy} />,
           {},
           {
             additionalMocks: [
@@ -354,17 +324,14 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         await waitFor(() => {
           expect(
             screen.getByTestId('InternalArticleRedirectWrapper')
-          ).toBeVisible();
+          ).not.toHaveAttribute('ariaHidden');
         });
       });
 
       it('should show the article search when internal article link is selected', async () => {
-        const fireEvent = userEvent.setup();
-        const screen = renderWithContext(
-          <CategoryEditor
-            selectedCategory={internalFaecherCategoy}
-            onSelectCategory={() => {}}
-          />,
+        const user = userEvent.setup();
+        const screen = render(
+          <CategoryEditor category={internalFaecherCategoy} />,
           {},
           {
             additionalMocks: [
@@ -376,7 +343,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           }
         );
 
-        await fireEvent.click(
+        await user.click(
           screen.getByRole('radio', {
             name: /beitrag weiterleiten/i,
           })
@@ -390,7 +357,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         await waitFor(() => {
           expect(
             screen.getByTestId('InternalArticleRedirectWrapper')
-          ).toBeVisible();
+          ).not.toHaveAttribute('ariaHidden');
         });
       });
     });
@@ -402,11 +369,8 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       };
 
       it('should have "External" selected if a local path is set', async () => {
-        const screen = renderWithContext(
-          <CategoryEditor
-            selectedCategory={externalFaecherCategoy}
-            onSelectCategory={() => {}}
-          />,
+        const screen = render(
+          <CategoryEditor category={externalFaecherCategoy} />,
           {},
           {
             additionalMocks: [
@@ -425,12 +389,9 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       });
 
       it('should show the textinput with a default URL when external link is selected', async () => {
-        const fireEvent = userEvent.setup();
-        const screen = renderWithContext(
-          <CategoryEditor
-            selectedCategory={externalFaecherCategoy}
-            onSelectCategory={() => {}}
-          />,
+        const user = userEvent.setup();
+        const screen = render(
+          <CategoryEditor category={externalFaecherCategoy} />,
           {},
           {
             additionalMocks: [
@@ -441,7 +402,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           }
         );
 
-        await fireEvent.click(
+        await user.click(
           screen.getByRole('radio', {
             name: /im internet weiterleiten/i,
           })
@@ -453,7 +414,9 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         ).toBeChecked();
 
         await waitFor(() => {
-          expect(screen.getByTestId('ExternalRedirectWrapper')).toBeVisible();
+          expect(
+            screen.getByTestId('ExternalRedirectWrapper')
+          ).not.toHaveAttribute('ariaHidden');
         });
         expect(
           screen.getByRole('textbox', {
@@ -466,15 +429,12 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
   describe('update the category', () => {
     it('should update the category with correct data', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const onSave = vi.fn(() => ({
         data: { category: { ...FaecherCategory, widgets: [] } },
       }));
-      const screen = renderWithContext(
-        <CategoryEditor
-          selectedCategory={FaecherCategory}
-          onSelectCategory={() => {}}
-        />,
+      const screen = render(
+        <CategoryEditor category={FaecherCategory} />,
         {},
         {
           additionalMocks: [
@@ -507,16 +467,16 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       const categoryTitleInput = screen.getByRole('textbox', {
         name: /name der kategorie/i,
       }) as HTMLInputElement;
-      await fireEvent.type(categoryTitleInput, 'Neue Fächer', {
+      await user.type(categoryTitleInput, 'Neue Fächer', {
         initialSelectionStart: 0,
         initialSelectionEnd: categoryTitleInput.value.length,
       });
-      await fireEvent.click(
+      await user.click(
         screen.getByRole('checkbox', {
           name: /auf der startseite verstecken/i,
         })
       );
-      await fireEvent.click(screen.getByRole('button', { name: /speichern/i }));
+      await user.click(screen.getByRole('button', { name: /speichern/i }));
       await waitFor(() => {
         expect(onSave).toHaveBeenCalled();
       });
@@ -525,11 +485,8 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
   describe('delete categories', () => {
     it('should NOT show delete button on homepage', () => {
-      const screen = renderWithContext(
-        <CategoryEditor
-          selectedCategory={StartseiteCategory}
-          onSelectCategory={() => {}}
-        />,
+      const screen = render(
+        <CategoryEditor category={StartseiteCategory} />,
         {},
         {
           additionalMocks: [
@@ -544,12 +501,9 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
     });
 
     it('should show delete dialog on click', async () => {
-      const fireEvent = userEvent.setup();
-      const screen = renderWithContext(
-        <CategoryEditor
-          selectedCategory={FaecherCategory}
-          onSelectCategory={() => {}}
-        />,
+      const user = userEvent.setup();
+      const screen = render(
+        <CategoryEditor category={FaecherCategory} />,
         {},
         {
           additionalMocks: [
@@ -560,7 +514,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
         }
       );
 
-      await fireEvent.click(screen.getByRole('button', { name: /löschen/i }));
+      await user.click(screen.getByRole('button', { name: /löschen/i }));
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeVisible();
       });

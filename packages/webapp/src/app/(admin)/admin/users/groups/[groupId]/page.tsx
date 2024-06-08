@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { Button, Toolbar } from '@lotta-schule/hubert';
 import { EditUserGroup } from '../component';
 import { loadUserGroup } from 'loader';
 import { notFound } from 'next/navigation';
-import { Icon } from 'shared/Icon';
-import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 
-import styles from './page.module.scss';
+import { AdminPageTitle } from 'app/(admin)/admin/_component/AdminPageTitle';
 
 async function GroupPage({
   params: { groupId },
@@ -21,16 +18,9 @@ async function GroupPage({
 
   return (
     <div>
-      <Toolbar hasScrollableParent>
-        <h3>
-          <Button
-            icon={<Icon icon={faAngleLeft} title={'Zurück'} />}
-            href={'/admin/users/groups'}
-            className={styles.backButton}
-          />
-          {group.name}
-        </h3>
-      </Toolbar>
+      <AdminPageTitle backUrl={'/admin/users/groups'}>
+        {group.name}
+      </AdminPageTitle>
       <EditUserGroup group={group} />
     </div>
   );

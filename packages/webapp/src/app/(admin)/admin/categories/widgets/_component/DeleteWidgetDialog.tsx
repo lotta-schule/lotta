@@ -3,6 +3,7 @@ import { useMutation } from '@apollo/client';
 import { WidgetModel, ID } from 'model';
 import {
   Button,
+  LoadingButton,
   Dialog,
   DialogActions,
   DialogContent,
@@ -25,6 +26,7 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
       { widget: WidgetModel },
       { id: ID }
     >(DeleteWidgetMutation, {
+      variables: { id: widget.id },
       update: (cache, { data }) => {
         if (data?.widget) {
           const normalizedId = cache.identify(data.widget);
@@ -34,9 +36,6 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
         }
       },
       refetchQueries: [{ query: GetCategoriesQuery }],
-      onCompleted: () => {
-        onConfirm();
-      },
     });
 
     return (
@@ -59,12 +58,14 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
           >
             Abbrechen
           </Button>
-          <Button
-            onClick={() => deleteWidget({ variables: { id: widget.id } })}
-            disabled={isLoading}
+          <LoadingButton
+            onAction={async () => {
+              await deleteWidget();
+            }}
+            onComplete={onConfirm}
           >
             Marginale endgültig löschen
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     );

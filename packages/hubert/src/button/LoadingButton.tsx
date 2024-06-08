@@ -88,7 +88,7 @@ export const LoadingButton = React.forwardRef(
     }: LoadingButtonProps,
     forwardedRef: React.Ref<HTMLButtonElement | null>
   ) => {
-    const ref = React.useRef<HTMLButtonElement>(null);
+    const ref = React.useRef<HTMLButtonElement>(null!);
 
     const [currentState, setCurrentState] = React.useState<LoadingButtonState>(
       state || 'idle'

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { DragHandle, ErrorMessage, List, ListItem } from '@lotta-schule/hubert';
+import { DraggableListItem, ErrorMessage, List } from '@lotta-schule/hubert';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupInputModel, UserGroupModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
@@ -118,27 +118,23 @@ export const DraggableGroupList = () => {
                 isDragDisabled={!!isDraggingDisabled}
               >
                 {({ innerRef, dragHandleProps, draggableProps }) => (
-                  <ListItem
+                  <DraggableListItem
+                    {...draggableProps}
                     className={clsx({
                       [styles.highlighted]: highlightedGroups.includes(group),
-                      [styles.selected]: selectedGroupId === group.id,
                     })}
                     title={group.name}
+                    selected={selectedGroupId === group.id}
                     onClick={() => onSelect(group)}
                     data-groupid={group.id}
                     key={group.id}
                     ref={innerRef}
-                    rightSection={
-                      !isDraggingDisabled && (
-                        <span {...dragHandleProps}>
-                          <DragHandle className={styles.draghandleIcon} />
-                        </span>
-                      )
+                    dragHandleProps={
+                      isDraggingDisabled
+                        ? undefined
+                        : dragHandleProps ?? undefined
                     }
-                    {...draggableProps}
-                  >
-                    {group.name}
-                  </ListItem>
+                  />
                 )}
               </Draggable>
             ))}

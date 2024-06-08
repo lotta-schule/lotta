@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, screen, waitFor } from 'test/util';
+import { render, screen, waitFor, within } from 'test/util';
 import { FaecherCategory, SomeUser } from 'test/fixtures';
 import { CreateCategoryDialog } from './CreateCategoryDialog';
 import { CategoryModel } from 'model';
@@ -113,10 +113,12 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
       const screen = render(
         <CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />
       );
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      expect(screen.getByTestId('CategorySelect').parentElement).toHaveStyle({
-        height: 0,
-      });
+      const collapser = screen.getByTestId('CategorySelectCollapse');
+
+      expect(collapser).toHaveAttribute('aria-hidden', 'true');
+      expect(
+        within(collapser).getByTestId('CategorySelect')
+      ).toBeInTheDocument();
     });
 
     it('should create a main article with the given title', async () => {

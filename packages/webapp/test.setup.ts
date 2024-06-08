@@ -171,10 +171,12 @@ beforeAll(() => {
   });
 
   vi.mock('next/navigation', () => {
+    const mockParams = {};
     return {
       __esModule: true,
       mockRouter: mockRouter,
-      useRouter: () => mockRouter,
+      useRouter: vi.fn().mockReturnValue(mockRouter),
+      useParams: vi.fn().mockReturnValue(mockParams),
     };
   });
 

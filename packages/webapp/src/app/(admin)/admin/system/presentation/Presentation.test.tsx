@@ -50,7 +50,7 @@ describe('Presentation', () => {
     expect(screen.getByText('Vorlagen')).toBeInTheDocument();
     expect(screen.getByText('Farben')).toBeInTheDocument();
     expect(screen.getByText('Maße')).toBeInTheDocument();
-    expect(screen.getByText('Schriften')).toBeInTheDocument();
+    expect(screen.getByText('Schriftarten')).toBeInTheDocument();
   });
 
   it('should update the color settings', async () => {

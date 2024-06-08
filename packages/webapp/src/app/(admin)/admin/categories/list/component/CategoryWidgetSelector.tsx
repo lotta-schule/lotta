@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CircularProgress, Checkbox, ErrorMessage } from '@lotta-schule/hubert';
+import { Checkbox, ErrorMessage, LinearProgress } from '@lotta-schule/hubert';
 import { WidgetModel } from 'model';
 import { useQuery } from '@apollo/client';
 import { WidgetIcon } from 'category/widgets/WidgetIcon';
@@ -43,7 +43,7 @@ export const CategoryWidgetSelector = React.memo<CategoryWidgetSelectorProps>(
     if (isLoadingPossibleWidgets) {
       return (
         <div>
-          <CircularProgress
+          <LinearProgress
             isIndeterminate
             aria-label={'Marginalen werden geladen'}
           />

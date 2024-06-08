@@ -44,7 +44,11 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
               addTypename={false}
               cache={cache}
             >
-              {children}
+              <React.Suspense
+                fallback={<div>React Suspense is loading...</div>}
+              >
+                {children}
+              </React.Suspense>
             </MockedProvider>
           </HubertProvider>
         </ServerDataContextProvider>

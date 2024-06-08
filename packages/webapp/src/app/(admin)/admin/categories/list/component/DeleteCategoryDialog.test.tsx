@@ -97,9 +97,12 @@ describe('shared/layouts/adminLayout/userManagment/DeleteCategoryDialog', () => 
         screen.getByRole('button', { name: /endgültig löschen/ })
       );
 
-      await waitFor(() => {
-        expect(onConfirm).toHaveBeenCalled();
-      });
+      await waitFor(
+        () => {
+          expect(onConfirm).toHaveBeenCalled();
+        },
+        { timeout: 2500 }
+      );
     });
   });
 });

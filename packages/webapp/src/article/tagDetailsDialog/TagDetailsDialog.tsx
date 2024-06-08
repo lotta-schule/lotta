@@ -6,8 +6,9 @@ import {
   DialogContent,
 } from '@lotta-schule/hubert';
 import { ArticlesByTag } from '../relatedArticlesList';
-import styles from './TagDetailsDialog.module.scss';
 import { isBrowser } from 'util/isBrowser';
+
+import styles from './TagDetailsDialog.module.scss';
 
 export interface TagDetailsDialogProps {
   tag: string | null;

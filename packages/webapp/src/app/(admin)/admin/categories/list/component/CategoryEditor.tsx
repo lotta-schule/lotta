@@ -1,15 +1,12 @@
-import * as React from 'react';
+'use client';
+
+import { Suspense, memo, useCallback, useEffect, useState } from 'react';
 import { Icon } from 'shared/Icon';
-import {
-  faAngleLeft,
-  faFloppyDisk,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
+import { faFloppyDisk, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation, useQuery } from '@apollo/client';
 import {
   Button,
   Checkbox,
-  Divider,
   ErrorMessage,
   Input,
   Label,
@@ -17,12 +14,10 @@ import {
   RadioGroup,
   Option,
   Select,
-  SplitViewButton,
-  Toolbar,
-  useSplitView,
   LoadingButton,
+  Collapse,
+  LinearProgress,
 } from '@lotta-schule/hubert';
-import { motion } from 'framer-motion';
 import { CategoryModel, WidgetModel, ID, UserGroupModel } from 'model';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { useCategories } from 'util/categories/useCategories';
@@ -34,181 +29,143 @@ import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import { Category, File, RedirectType } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
-import clsx from 'clsx';
+import { AdminPageSection } from '../../../_component/AdminPageSection';
+import { useRouter } from 'next/navigation';
 
 import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 
-import styles from './CategoryEditor.module.scss';
-
 export interface CategoryEditorProps {
-  selectedCategory: CategoryModel | null;
-  onSelectCategory(category: CategoryModel | null): void;
+  category: CategoryModel;
 }
 
-export const CategoryEditor = React.memo(
-  ({ selectedCategory, onSelectCategory }: CategoryEditorProps) => {
-    const { baseUrl } = useServerData();
-    const { open: openSidebar } = useSplitView();
+export const CategoryEditor = memo(({ category }: CategoryEditorProps) => {
+  const router = useRouter();
+  const { baseUrl } = useServerData();
 
-    const [categories] = useCategories();
+  const [categories] = useCategories();
 
-    const [category, setCategory] = React.useState<CategoryModel | null>(null);
-    const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] =
-      React.useState(false);
+  const [categoryOptions, setCategoryOptions] = useState(category);
+  const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] =
+    useState(false);
 
-    const [selectedWidgets, setSelectedWidgets] = React.useState<WidgetModel[]>(
-      []
-    );
-    const [mutateCategory, { error }] = useMutation<
-      { category: CategoryModel },
-      { id: ID; category: any }
-    >(UpdateCategoryMutation, {
-      refetchQueries: [
-        {
-          query: GetCategoryWidgetsQuery,
-          variables: { categoryId: category?.id ?? null },
-        },
-      ],
-    });
-    const { data: currentWidgetsData, error: currentWidgetsError } = useQuery(
-      GetCategoryWidgetsQuery,
+  const [selectedWidgets, setSelectedWidgets] = useState<WidgetModel[]>([]);
+  const [mutateCategory, { error }] = useMutation<
+    { category: CategoryModel },
+    { id: ID; category: any }
+  >(UpdateCategoryMutation, {
+    refetchQueries: [
       {
-        variables: { categoryId: category?.id },
-        skip: !category?.id,
-      }
-    );
-    React.useEffect(() => {
-      if (currentWidgetsData) {
-        setSelectedWidgets(currentWidgetsData.widgets);
-      }
-    }, [currentWidgetsData]);
+        query: GetCategoryWidgetsQuery,
+        variables: { categoryId: categoryOptions?.id ?? null },
+      },
+    ],
+  });
+  const { data: currentWidgetsData, error: currentWidgetsError } = useQuery(
+    GetCategoryWidgetsQuery,
+    {
+      variables: { categoryId: categoryOptions?.id },
+      skip: !categoryOptions?.id,
+    }
+  );
+  useEffect(() => {
+    if (currentWidgetsData) {
+      setSelectedWidgets(currentWidgetsData.widgets);
+    }
+  }, [currentWidgetsData]);
 
-    const updateCategory = React.useCallback(() => {
-      if (!selectedCategory || !category) {
-        return null;
-      }
-      return mutateCategory({
-        variables: {
-          id: selectedCategory.id,
-          category: {
-            title: category.title,
-            bannerImageFile: category.bannerImageFile && {
-              id: category.bannerImageFile.id,
-            },
-            groups: category.groups?.map(({ id }) => ({ id })),
-            redirect: category.redirect,
-            layoutName: category.layoutName,
-            hideArticlesFromHomepage:
-              category.hideArticlesFromHomepage || false,
-            widgets: selectedWidgets?.map(({ id }) => ({ id })) ?? [],
-          },
-        },
-      });
-    }, [category, mutateCategory, selectedCategory, selectedWidgets]);
-
-    React.useEffect(() => {
-      if (selectedCategory === null && category !== null) {
-        setCategory(null);
-      } else if (selectedCategory) {
-        if (!category || category.id !== selectedCategory.id) {
-          setCategory({ ...selectedCategory });
-        }
-      }
-    }, [category, selectedCategory]);
-
-    if (!category) {
+  const updateCategory = useCallback(() => {
+    if (!category || !categoryOptions) {
       return null;
     }
+    return mutateCategory({
+      variables: {
+        id: category.id,
+        category: {
+          title: categoryOptions.title,
+          bannerImageFile: categoryOptions.bannerImageFile && {
+            id: categoryOptions.bannerImageFile.id,
+          },
+          groups: categoryOptions.groups?.map(({ id }) => ({ id })),
+          redirect: categoryOptions.redirect,
+          layoutName: categoryOptions.layoutName,
+          hideArticlesFromHomepage:
+            categoryOptions.hideArticlesFromHomepage || false,
+          widgets: selectedWidgets?.map(({ id }) => ({ id })) ?? [],
+        },
+      },
+    });
+  }, [categoryOptions, mutateCategory, category, selectedWidgets]);
 
-    return (
-      <div className={styles.root}>
-        <Toolbar hasScrollableParent>
-          <SplitViewButton
-            action="open"
-            icon={<Icon icon={faAngleLeft} size={'lg'} />}
-          />
-          <h3 className={styles.title}>
-            {selectedCategory
-              ? selectedCategory.title
-              : category && category.title}
-          </h3>
-        </Toolbar>
-        <ErrorMessage error={error || currentWidgetsError} />
+  return (
+    <div>
+      <ErrorMessage error={error || currentWidgetsError} />
+
+      <AdminPageSection title="Allgemeines">
         <Label label={'Name der Kategorie'}>
           <Input
-            className={styles.input}
             aria-label={'Name der Kategorie'}
-            value={category.title ?? ''}
+            value={categoryOptions.title ?? ''}
             onChange={(e) =>
-              setCategory({
-                ...category,
+              setCategoryOptions({
+                ...categoryOptions,
                 title: e.currentTarget.value,
               })
             }
           />
         </Label>
 
-        {!category.isHomepage && (
-          <GroupSelect
-            className={styles.input}
-            selectedGroups={category.groups || []}
-            onSelectGroups={(groups: UserGroupModel[]) => {
-              setCategory({ ...category, groups });
-            }}
-          />
-        )}
-
-        <h4 className={clsx(styles.input, styles.heading)}>
-          Wähle ein Banner für diese Kategorie
-        </h4>
-
-        <SelectFileOverlay
-          label={'Banner ändern'}
-          onSelectFile={(bannerImageFile) =>
-            setCategory({ ...category, bannerImageFile })
-          }
-          allowDeletion
-        >
-          {category.bannerImageFile ? (
-            <ResponsiveImage
-              style={{ width: '100%' }}
-              alt={`Banner für ${category.title}`}
-              width={900}
-              aspectRatio={'6:1'}
-              sizes={'80vw'}
-              src={File.getFileRemoteLocation(
-                baseUrl,
-                category.bannerImageFile
-              )}
-            />
-          ) : (
-            <PlaceholderImage width={'100%'} height={75} />
-          )}
-        </SelectFileOverlay>
-
-        {!category.isHomepage && (
-          <Checkbox
-            isSelected={category.hideArticlesFromHomepage}
-            onChange={(isSelected) =>
-              setCategory({
-                ...category,
-                hideArticlesFromHomepage: isSelected,
-              })
+        {!categoryOptions.isHomepage && (
+          <Suspense
+            fallback={
+              <LinearProgress
+                isIndeterminate
+                aria-label="Gruppen werden geladen..."
+              />
             }
-            value={'hideArticlesFromHomepage'}
           >
-            Beiträge dieser Kategorie auf der Startseite verstecken
-          </Checkbox>
+            <GroupSelect
+              selectedGroups={categoryOptions.groups || []}
+              onSelectGroups={(groups: UserGroupModel[]) => {
+                setCategoryOptions({ ...categoryOptions, groups });
+              }}
+            />
+          </Suspense>
         )}
+      </AdminPageSection>
 
+      <AdminPageSection title="Darstellung">
+        <Label label={'Bannerbild'}>
+          <SelectFileOverlay
+            label={'Banner ändern'}
+            onSelectFile={(bannerImageFile) =>
+              setCategoryOptions({ ...categoryOptions, bannerImageFile })
+            }
+            allowDeletion
+          >
+            {categoryOptions.bannerImageFile ? (
+              <ResponsiveImage
+                style={{ width: '100%' }}
+                alt={`Banner für ${categoryOptions.title}`}
+                width={900}
+                aspectRatio={'6:1'}
+                sizes={'80vw'}
+                src={File.getFileRemoteLocation(
+                  baseUrl,
+                  categoryOptions.bannerImageFile
+                )}
+              />
+            ) : (
+              <PlaceholderImage width={'100%'} height={75} />
+            )}
+          </SelectFileOverlay>
+        </Label>
         <Select
-          className={styles.input}
           title={'Layout für die Kategorie wählen'}
-          value={category.layoutName ?? 'standard'}
+          value={categoryOptions.layoutName ?? 'standard'}
           onChange={(layoutName) =>
-            setCategory({
-              ...category,
+            setCategoryOptions({
+              ...categoryOptions,
               layoutName: layoutName as 'standard' | 'densed' | '2-columns',
             })
           }
@@ -218,202 +175,183 @@ export const CategoryEditor = React.memo(
           <Option value={'densed'}>Kompaktlayout</Option>
           <Option value={'2-columns'}>Zweispaltenlayout</Option>
         </Select>
+      </AdminPageSection>
 
-        {!category.isHomepage && (
-          <>
-            <h4 className={clsx(styles.input, styles.heading)}>
-              Die Kategorie als Weiterleitung
-            </h4>
+      {!categoryOptions.isHomepage && (
+        <AdminPageSection title="Konfiguration">
+          <Checkbox
+            isSelected={categoryOptions.hideArticlesFromHomepage}
+            onChange={(isSelected) =>
+              setCategoryOptions({
+                ...categoryOptions,
+                hideArticlesFromHomepage: isSelected,
+              })
+            }
+            value={'hideArticlesFromHomepage'}
+          >
+            Beiträge dieser Kategorie auf der Startseite verstecken. Wenn diese
+            Option ausgewählt ist, werden Beiträge, die dieser Kategorie
+            zugeordnet sind, nicht auf der Startseite angezeigt.
+          </Checkbox>
+          <RadioGroup
+            name={'category-redirect-type'}
+            aria-label={'Die Kategorie als Weiterleitung'}
+            value={Category.getRedirectType(categoryOptions)}
+            onChange={(_e, value) => {
+              if (value === RedirectType.None) {
+                setCategoryOptions({
+                  ...categoryOptions,
+                  redirect: null,
+                });
+              }
+              if (value === RedirectType.InternalCategory) {
+                setCategoryOptions({
+                  ...categoryOptions,
+                  redirect: Category.getPath(categories[0]),
+                });
+              }
+              if (value === RedirectType.InternalArticle) {
+                setCategoryOptions({
+                  ...categoryOptions,
+                  redirect: '/a/',
+                });
+              }
+              if (value === RedirectType.Extern) {
+                setCategoryOptions({
+                  ...categoryOptions,
+                  redirect: 'https://lotta.schule',
+                });
+              }
+            }}
+          >
+            <Radio
+              value={RedirectType.None}
+              label={
+                'Kategorie wird nicht weitergeleitet und zeigt eigene Beiträge an.'
+              }
+            />
+            <Radio
+              value={RedirectType.InternalCategory}
+              label={'Kategorie zu einer anderen Kategorie weiterleiten:'}
+            />
 
-            <RadioGroup
-              name={'category-redirect-type'}
-              aria-label={'Die Kategorie als Weiterleitung'}
-              value={Category.getRedirectType(category)}
-              onChange={(_e, value) => {
-                if (value === RedirectType.None) {
-                  setCategory({
-                    ...category,
-                    redirect: null,
-                  });
-                }
-                if (value === RedirectType.InternalCategory) {
-                  setCategory({
-                    ...category,
-                    redirect: Category.getPath(categories[0]),
-                  });
-                }
-                if (value === RedirectType.InternalArticle) {
-                  setCategory({
-                    ...category,
-                    redirect: '/a/',
-                  });
-                }
-                if (value === RedirectType.Extern) {
-                  setCategory({
-                    ...category,
-                    redirect: 'https://lotta.schule',
-                  });
-                }
-              }}
+            <Collapse
+              data-testid={'InternalCategoryRedirectWrapper'}
+              isOpen={
+                Category.getRedirectType(categoryOptions) ===
+                RedirectType.InternalCategory
+              }
             >
-              <Radio
-                value={RedirectType.None}
-                label={
-                  'Kategorie wird nicht weitergeleitet und zeigt eigene Beiträge an.'
+              <Select
+                title={'Zu einer anderen Kategorie weiterleiten ...'}
+                value={categoryOptions.redirect || 'null'}
+                onChange={(redirect) =>
+                  setCategoryOptions({
+                    ...categoryOptions,
+                    redirect,
+                  })
                 }
-              />
-              <Radio
-                value={RedirectType.InternalCategory}
-                label={'Kategorie zu einer anderen Kategorie weiterleiten:'}
-              />
-
-              <motion.div
-                data-testid={'InternalCategoryRedirectWrapper'}
-                className={styles.input}
-                initial={'closed'}
-                animate={
-                  Category.getRedirectType(category) ===
-                  RedirectType.InternalCategory
-                    ? 'open'
-                    : 'closed'
-                }
-                variants={{
-                  open: { opacity: 1, height: 'auto' },
-                  closed: { opacity: 0, height: 0 },
-                }}
+                id={'category-redirect'}
               >
-                <Select
-                  title={'Zu einer anderen Kategorie weiterleiten ...'}
-                  value={category.redirect || 'null'}
-                  onChange={(redirect) =>
-                    setCategory({
-                      ...category,
-                      redirect,
-                    })
-                  }
-                  id={'category-redirect'}
-                >
-                  {categories.map((category) => (
-                    <Option
-                      key={category.id}
-                      value={Category.getPath(category)}
-                    >
-                      {category.title}
-                    </Option>
-                  ))}
-                </Select>
-              </motion.div>
+                {categories.map((category) => (
+                  <Option key={category.id} value={Category.getPath(category)}>
+                    {category.title}
+                  </Option>
+                ))}
+              </Select>
+            </Collapse>
 
-              <Radio
-                value={RedirectType.InternalArticle}
-                label={'Kategorie zu einem Beitrag weiterleiten:'}
-              />
+            <Radio
+              value={RedirectType.InternalArticle}
+              label={'Kategorie zu einem Beitrag weiterleiten:'}
+            />
 
-              <motion.div
-                data-testid={'InternalArticleRedirectWrapper'}
-                initial={'closed'}
-                animate={
-                  Category.getRedirectType(category) ===
-                  RedirectType.InternalArticle
-                    ? 'open'
-                    : 'closed'
+            <Collapse
+              data-testid={'InternalArticleRedirectWrapper'}
+              isOpen={
+                Category.getRedirectType(categoryOptions) ===
+                RedirectType.InternalArticle
+              }
+            >
+              <CategoryArticleRedirectSelection
+                redirectPath={categoryOptions.redirect ?? '/a/'}
+                onSelectRedirectPath={(redirect) =>
+                  setCategoryOptions({
+                    ...categoryOptions,
+                    redirect,
+                  })
                 }
-                variants={{
-                  open: { opacity: 1, height: 'auto' },
-                  closed: { opacity: 0, height: 0 },
-                }}
-              >
-                <CategoryArticleRedirectSelection
-                  redirectPath={category.redirect ?? '/a/'}
-                  onSelectRedirectPath={(redirect) =>
-                    setCategory({
-                      ...category,
-                      redirect,
+              />
+            </Collapse>
+
+            <Radio
+              value={RedirectType.Extern}
+              label={'Kategorie zu einer Seite im Internet weiterleiten'}
+            />
+
+            <Collapse
+              data-testid={'ExternalRedirectWrapper'}
+              isOpen={
+                Category.getRedirectType(categoryOptions) ===
+                RedirectType.Extern
+              }
+            >
+              <Label label={'Ziel der Weiterleitung:'}>
+                <Input
+                  aria-label={'Ziel der Weiterleitung'}
+                  value={categoryOptions.redirect ?? ''}
+                  onChange={(e) =>
+                    setCategoryOptions({
+                      ...categoryOptions,
+                      redirect: e.currentTarget.value,
                     })
                   }
                 />
-              </motion.div>
+              </Label>
+            </Collapse>
+          </RadioGroup>
+        </AdminPageSection>
+      )}
 
-              <Radio
-                value={RedirectType.Extern}
-                label={'Kategorie zu einer Seite im Internet weiterleiten'}
-              />
-
-              <motion.div
-                data-testid={'ExternalRedirectWrapper'}
-                initial={'closed'}
-                animate={
-                  Category.getRedirectType(category) === RedirectType.Extern
-                    ? 'open'
-                    : 'closed'
-                }
-                variants={{
-                  open: { opacity: 1, height: 'auto' },
-                  closed: { opacity: 0, height: 0 },
-                }}
-              >
-                <Label label={'Ziel der Weiterleitung:'}>
-                  <Input
-                    className={styles.input}
-                    aria-label={'Ziel der Weiterleitung'}
-                    value={category.redirect ?? ''}
-                    onChange={(e) =>
-                      setCategory({
-                        ...category,
-                        redirect: e.currentTarget.value,
-                      })
-                    }
-                  />
-                </Label>
-              </motion.div>
-            </RadioGroup>
-
-            <p>&nbsp;</p>
-          </>
-        )}
-
-        <h4 className={clsx(styles.input, styles.heading)}>
-          Wähle die marginalen Module für diese Kategorie
-        </h4>
+      <AdminPageSection title="Marginalen">
         <CategoryWidgetSelector
           selectedWidgets={selectedWidgets}
           setSelectedWidgets={(widgets) => setSelectedWidgets(widgets)}
         />
+      </AdminPageSection>
 
-        {!category.isHomepage && (
-          <>
-            <Divider className={styles.footerDivider} />
-            <div className={styles.footer}>
-              <Button
-                icon={<Icon icon={faTrash} />}
-                onClick={() => setIsDeleteCategoryDialogOpen(true)}
-                variant={'error'}
-              >
-                Kategorie löschen
-              </Button>
-              <LoadingButton
-                onAction={async () => {
-                  await updateCategory();
-                }}
-                icon={<Icon icon={faFloppyDisk} />}
-              >
-                Kategorie speichern
-              </LoadingButton>
-            </div>
-            <DeleteCategoryDialog
-              isOpen={isDeleteCategoryDialogOpen}
-              categoryToDelete={category}
-              onRequestClose={() => setIsDeleteCategoryDialogOpen(false)}
-              onConfirm={() => {
-                setIsDeleteCategoryDialogOpen(false);
-                onSelectCategory(null);
-                openSidebar();
-              }}
-            />
-          </>
+      <AdminPageSection bottomToolbar>
+        {categoryOptions.isHomepage ? (
+          <div />
+        ) : (
+          <Button
+            icon={<Icon icon={faTrash} />}
+            onClick={() => setIsDeleteCategoryDialogOpen(true)}
+            variant={'error'}
+          >
+            löschen
+          </Button>
         )}
-      </div>
-    );
-  }
-);
+        <LoadingButton
+          type="submit"
+          onAction={async () => {
+            await updateCategory();
+          }}
+          icon={<Icon icon={faFloppyDisk} />}
+        >
+          speichern
+        </LoadingButton>
+        <DeleteCategoryDialog
+          isOpen={isDeleteCategoryDialogOpen}
+          categoryToDelete={categoryOptions}
+          onRequestClose={() => setIsDeleteCategoryDialogOpen(false)}
+          onConfirm={() => {
+            setIsDeleteCategoryDialogOpen(false);
+            router.replace('/admin/categories/list');
+          }}
+        />
+      </AdminPageSection>
+    </div>
+  );
+});
 CategoryEditor.displayName = 'AdministrationCategoryEditor';

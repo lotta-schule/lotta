@@ -4,66 +4,66 @@
   list-style: none;
   background-color: rgb(var(--lotta-box-background-color));
   padding: var(--lotta-spacing) 0;
+}
 
-  .li {
+.li {
+  display: flex;
+  align-items: center;
+  padding: var(--lotta-spacing);
+
+  transition: background-color 0.2s ease-in-out;
+
+  .mainSection {
+    flex: 1;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
     padding: var(--lotta-spacing);
+    margin: auto;
+  }
 
-    transition: background-color 0.2s ease-in-out;
+  .listItemSecondaryText {
+    color: rgba(var(--lotta-label-text-color), 0.9);
+    font-size: smaller;
+  }
 
-    .mainSection {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      box-sizing: border-box;
-      padding: var(--lotta-spacing);
-      margin: auto;
-    }
+  &.isFocused:not(.isSelected) {
+    background-color: rgba(var(--lotta-primary-color), 0.075);
+  }
+
+  &:not([role="menuitem"]).isSelected .mainSection {
+    font-weight: bolder;
 
     .listItemSecondaryText {
-      color: rgba(var(--lotta-label-text-color), 0.9);
-      font-size: smaller;
+      font-weight: normal;
+    }
+  }
+
+  &.isDisabled {
+    color: rgba(var(--lotta-disabled-color), 0.5);
+  }
+
+  &.isClickable {
+    cursor: pointer;
+
+    &:not(.isSelected):hover {
+      background-color: rgba(var(--lotta-primary-color), 0.1);
     }
 
-    &.isFocused:not(.isSelected) {
-      background-color: rgba(var(--lotta-primary-color), 0.075);
-    }
-
-    &:not([role="menuitem"]).isSelected .mainSection {
-      font-weight: bolder;
-
-      .listItemSecondaryText {
-        font-weight: normal;
-      }
-    }
-
-    &.isDisabled {
-      color: rgba(var(--lotta-disabled-color), 0.5);
-    }
-
-    &.isClickable {
-      cursor: pointer;
-
-      &:not(.isSelected):hover {
+    &[role="menuitem"] {
+      &:not([disabled]).isSelected {
         background-color: rgba(var(--lotta-primary-color), 0.1);
       }
-
-      &[role="menuitem"] {
-        &:not([disabled]).isSelected {
-          background-color: rgba(var(--lotta-primary-color), 0.1);
-        }
-      }
     }
+  }
 
-    .isDivider {
-      padding: calc(var(--lotta-spacing) / 2) 0;
+  .isDivider {
+    padding: calc(var(--lotta-spacing) / 2) 0;
 
-      hr {
-        margin: 1px;
-        width: 100%;
-      }
+    hr {
+      margin: 1px;
+      width: 100%;
     }
   }
 }

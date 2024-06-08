@@ -75,14 +75,16 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
           <div className={styles.gridItem}>
             <h6>Sichtbarkeit</h6>
             <div>
-              <GroupSelect
-                label={undefined}
-                aria-label={'Gruppenauswahl'}
-                selectedGroups={article.groups}
-                onSelectGroups={(groups: UserGroupModel[]) =>
-                  onUpdate({ ...article, groups })
-                }
-              />
+              <React.Suspense fallback={null}>
+                <GroupSelect
+                  label={undefined}
+                  aria-label={'Gruppenauswahl'}
+                  selectedGroups={article.groups}
+                  onSelectGroups={(groups: UserGroupModel[]) =>
+                    onUpdate({ ...article, groups })
+                  }
+                />
+              </React.Suspense>
             </div>
             <div className={styles.buttonWrapper}>
               <Button

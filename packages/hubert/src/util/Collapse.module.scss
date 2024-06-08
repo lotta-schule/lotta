@@ -1,0 +1,30 @@
+.root {
+  display: grid;
+
+  width: 100%;
+
+  opacity: 1;
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows 0.25s ease-out,
+    display 0.25s ease-out,
+    opacity 0.25s ease-out,
+    pointer-events 0.25s ease-out;
+  transition-behavior: allow-discrete;
+
+  @starting-style {
+    opacity: 0;
+    grid-template-rows: 0fr;
+  }
+
+  &[aria-hidden="true"] {
+    opacity: 0;
+    grid-template-rows: 0fr;
+    pointer-events: none;
+    display: none;
+  }
+
+  & > div {
+    overflow: hidden;
+  }
+}

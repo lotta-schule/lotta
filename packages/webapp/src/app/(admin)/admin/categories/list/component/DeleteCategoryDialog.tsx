@@ -8,6 +8,7 @@ import {
   DialogContent,
   ErrorMessage,
   LinearProgress,
+  LoadingButton,
 } from '@lotta-schule/hubert';
 import { useCategories } from 'util/categories/useCategories';
 
@@ -42,9 +43,6 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
           }
         }
       },
-      onCompleted: () => {
-        onConfirm();
-      },
     });
 
     return (
@@ -53,9 +51,6 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
         onRequestClose={onRequestClose}
         title={'Kategorie löschen'}
       >
-        {isLoading && (
-          <LinearProgress isIndeterminate label={'Kategorie wird gelöscht'} />
-        )}
         <DialogContent>
           <ErrorMessage error={error} />
           <p>
@@ -95,16 +90,16 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
           >
             Abbrechen
           </Button>
-          <Button
-            onClick={() =>
-              deleteCategory({
+          <LoadingButton
+            onAction={async () =>
+              await deleteCategory({
                 variables: { id: categoryToDelete.id },
               })
             }
-            disabled={isLoading}
+            onComplete={onConfirm}
           >
             Kategorie endgültig löschen
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     );

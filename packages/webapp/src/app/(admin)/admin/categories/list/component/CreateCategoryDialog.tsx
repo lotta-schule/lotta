@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { motion } from 'framer-motion';
 import { CategoryModel } from 'model';
 import {
   Button,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   ErrorMessage,
   Input,
   Label,
-  LinearProgress,
+  LoadingButton,
   Radio,
   RadioGroup,
 } from '@lotta-schule/hubert';
@@ -80,28 +80,7 @@ export const CreateCategoryDialog = React.memo(
         onRequestClose={() => onAbort()}
         title={'Kategorie erstellen'}
       >
-        {isLoading && (
-          <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }}>
-            <LinearProgress isIndeterminate label={'Kategorie wird erstellt'} />
-          </motion.div>
-        )}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            createCategory({
-              variables: {
-                category: {
-                  title,
-                  isSidenav: categoryPosition === CategoryPosition.Side,
-                  category:
-                    categoryPosition !== CategoryPosition.Side && parentCategory
-                      ? { id: parentCategory.id }
-                      : null,
-                },
-              },
-            });
-          }}
-        >
+        <form>
           <DialogContent>
             <ErrorMessage error={error} />
             <Label label="Name der Kategorie:">
@@ -132,17 +111,9 @@ export const CreateCategoryDialog = React.memo(
                   label={'Hauptnavigation'}
                 />
                 <Radio value={CategoryPosition.Sub} label={'Subnavigation'} />
-                <motion.div
-                  initial={'closed'}
-                  animate={
-                    categoryPosition === CategoryPosition.Sub
-                      ? 'open'
-                      : 'closed'
-                  }
-                  variants={{
-                    open: { opacity: 1, height: 'auto' },
-                    closed: { opacity: 0, height: 0 },
-                  }}
+                <Collapse
+                  isOpen={categoryPosition === CategoryPosition.Sub}
+                  data-testid="CategorySelectCollapse"
                 >
                   <CategorySelect
                     hideSubCategories
@@ -154,7 +125,7 @@ export const CreateCategoryDialog = React.memo(
                     selectedCategory={parentCategory}
                     onSelectCategory={setParentCategory}
                   />
-                </motion.div>
+                </Collapse>
                 <Radio value={CategoryPosition.Side} label={'Randnavigation'} />
               </RadioGroup>
             </Label>
@@ -168,16 +139,31 @@ export const CreateCategoryDialog = React.memo(
             >
               Abbrechen
             </Button>
-            <Button
-              type={'submit'}
+            <LoadingButton
+              type="submit"
               disabled={
                 !title ||
                 isLoading ||
                 (categoryPosition === CategoryPosition.Sub && !parentCategory)
               }
+              onAction={async () => {
+                await createCategory({
+                  variables: {
+                    category: {
+                      title,
+                      isSidenav: categoryPosition === CategoryPosition.Side,
+                      category:
+                        categoryPosition !== CategoryPosition.Side &&
+                        parentCategory
+                          ? { id: parentCategory.id }
+                          : null,
+                    },
+                  },
+                });
+              }}
             >
               Kategorie erstellen
-            </Button>
+            </LoadingButton>
           </DialogActions>
         </form>
       </Dialog>

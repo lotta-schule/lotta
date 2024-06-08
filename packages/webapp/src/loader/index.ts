@@ -1,3 +1,4 @@
+export * from './loadCategories';
 export * from './loadCurrentUser';
 export * from './loadFeedback';
 export * from './loadTenant';

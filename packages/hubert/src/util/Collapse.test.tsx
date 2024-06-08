@@ -1,5 +1,6 @@
 import { Collapse } from './Collapse';
 import { render, waitFor } from '../test-utils';
+import styles from './Collapse.module.scss';
 
 const content = (
   <div>
@@ -30,15 +31,19 @@ const content = (
 
 describe('util/Collapse', () => {
   it('should render the content', () => {
-    const screen = render(<Collapse visible>{content}</Collapse>);
+    const screen = render(<Collapse isOpen>{content}</Collapse>);
     expect(screen.getByRole('list')).toBeVisible();
   });
 
   it('should show collapsed content and make it reappear', async () => {
-    const screen = render(<Collapse visible={false}>{content}</Collapse>);
-    expect(screen.getByRole('list', { hidden: true })).not.toBeVisible();
+    const screen = render(<Collapse isOpen={false}>{content}</Collapse>);
 
-    screen.rerender(<Collapse visible={true}>{content}</Collapse>);
+    expect(screen.container.querySelector(`.${styles.root}`)).toHaveProperty(
+      'ariaHidden',
+      'true'
+    );
+
+    screen.rerender(<Collapse isOpen={true}>{content}</Collapse>);
     await waitFor(() => {
       expect(screen.getByRole('list')).toBeVisible();
     });

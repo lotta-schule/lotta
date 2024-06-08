@@ -1,37 +1,27 @@
 'use client';
 
 import * as React from 'react';
-import { motion } from 'framer-motion';
+import clsx from 'clsx';
 
-export interface CollapseProps {
-  visible: boolean;
-  axis?: 'x' | 'y';
-  children: React.ReactNode;
-}
+import styles from './Collapse.module.scss';
 
-export const Collapse = ({ visible, axis = 'y', children }: CollapseProps) => {
-  const variants = {
-    visible: {
-      height: 'auto',
-      width: 'auto',
-      opacity: 1,
-    },
-    hidden: {
-      height: axis !== 'x' ? 0 : 'auto',
-      width: axis === 'x' ? 0 : 'auto',
-      opacity: 0,
-    },
-  };
-  const state = visible ? 'visible' : 'hidden';
+export type CollapseProps = React.HTMLProps<HTMLDivElement> & {
+  isOpen: boolean;
+};
+
+export const Collapse = ({
+  isOpen,
+  className,
+  children,
+  ...props
+}: CollapseProps) => {
   return (
-    <motion.div
-      aria-hidden={!visible}
-      style={{ overflow: visible ? 'auto' : 'hidden' }}
-      initial={state}
-      animate={state}
-      variants={variants}
+    <div
+      {...props}
+      aria-hidden={!isOpen}
+      className={clsx(className, styles.root)}
     >
-      {children}
-    </motion.div>
+      <div>{children}</div>
+    </div>
   );
 };

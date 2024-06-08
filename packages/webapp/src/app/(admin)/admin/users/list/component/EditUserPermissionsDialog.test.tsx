@@ -9,33 +9,28 @@ import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
 import GetUserQuery from 'api/query/GetUserQuery.graphql';
 
 describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', () => {
-  let userInfoLoaded = false;
-
   const mocks = (user: any) =>
     [
       {
         request: { query: GetUserQuery, variables: { id: user.id } },
-        result: () => {
-          userInfoLoaded = true;
-          return { data: { user } };
-        },
+        result: vi.fn(() => ({ data: { user } })),
       },
     ] as MockedResponse[];
 
-  beforeEach(() => {
-    userInfoLoaded = false;
-  });
-
   describe('show userAvatar basic information', () => {
     it('should show userAvatar information', async () => {
-      const user = { ...SomeUser, groups: [], assignedGroups: [] };
+      const targetUser = { ...SomeUser, groups: [], assignedGroups: [] };
+      const additionalMocks = mocks(targetUser);
       const screen = render(
-        <EditUserPermissionsDialog user={user} onRequestClose={() => {}} />,
+        <EditUserPermissionsDialog
+          user={targetUser}
+          onRequestClose={() => {}}
+        />,
         {},
-        { additionalMocks: mocks(user) }
+        { additionalMocks }
       );
       await waitFor(() => {
-        expect(userInfoLoaded).toEqual(true);
+        expect(additionalMocks[0].result).toHaveBeenCalled();
       });
       await waitFor(() => {
         expect(
@@ -51,15 +46,19 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
 
   describe('show and select correct groups', () => {
     it('should show assigned and dynamic groups', async () => {
-      const user = {
+      const targetUser = {
         ...SomeUser,
         groups: [adminGroup, lehrerGroup],
         assignedGroups: [adminGroup],
       };
+      const additionalMocks = mocks(targetUser);
       const screen = render(
-        <EditUserPermissionsDialog user={user} onRequestClose={() => {}} />,
+        <EditUserPermissionsDialog
+          user={targetUser}
+          onRequestClose={() => {}}
+        />,
         {},
-        { additionalMocks: mocks(user) }
+        { additionalMocks }
       );
       await waitFor(() => {
         expect(
@@ -76,49 +75,48 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
     });
 
     it('should assign new group on click', async () => {
-      const fireEvent = userEvent.setup();
-      let mutationHasBeenCalled = false;
-      const user = {
+      const user = userEvent.setup();
+      const targetUser = {
         ...SomeUser,
         groups: [adminGroup, lehrerGroup],
         assignedGroups: [adminGroup],
       };
       const additionalMocks = [
-        ...mocks(user),
+        ...mocks(targetUser),
         {
           request: {
             query: UpdateUserMutation,
             variables: {
-              id: user.id,
+              id: targetUser.id,
               groups: [adminGroup.id, elternGroup.id].map((id) => ({ id })),
             },
           },
-          result: () => {
-            mutationHasBeenCalled = true;
-            return {
-              data: {
-                user: {
-                  ...user,
-                  assignedGroups: [...user.assignedGroups, elternGroup],
-                },
+          result: vi.fn(() => ({
+            data: {
+              user: {
+                ...targetUser,
+                assignedGroups: [...targetUser.assignedGroups, elternGroup],
               },
-            };
-          },
+            },
+          })),
         },
       ];
       const screen = render(
-        <EditUserPermissionsDialog user={user} onRequestClose={() => {}} />,
+        <EditUserPermissionsDialog
+          user={targetUser}
+          onRequestClose={() => {}}
+        />,
         {},
         { additionalMocks }
       );
       await waitFor(() => {
-        expect(userInfoLoaded).toEqual(true);
+        expect(additionalMocks[0].result).toHaveBeenCalled();
       });
 
       const assignedGroups = await screen.findByTestId('GroupSelectSelection');
       expect(assignedGroups).toHaveTextContent(/Administrator/i);
 
-      await fireEvent.click(
+      await user.click(
         await screen.findByRole('button', { name: /vorschläge/i })
       );
       await waitFor(() => {
@@ -127,25 +125,22 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
 
       await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
 
-      await fireEvent.click(
-        await screen.findByRole('option', { name: 'Eltern' })
-      );
+      await user.click(await screen.findByRole('option', { name: 'Eltern' }));
 
       await waitFor(() => {
-        expect(mutationHasBeenCalled).toEqual(true);
+        expect(additionalMocks[1].result).toHaveBeenCalled();
       });
     });
 
     it('should unassign new group on click', async () => {
-      const fireEvent = userEvent.setup();
-      let mutationHasBeenCalled = false;
-      const user = {
+      const user = userEvent.setup();
+      const targetUser = {
         ...SomeUser,
         groups: [adminGroup, lehrerGroup, elternGroup],
         assignedGroups: [adminGroup, elternGroup],
       };
       const additionalMocks = [
-        ...mocks(user),
+        ...mocks(targetUser),
         {
           request: {
             query: UpdateUserMutation,
@@ -154,28 +149,28 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
               groups: [{ id: adminGroup.id }],
             },
           },
-          result: () => {
-            mutationHasBeenCalled = true;
-            return {
-              data: {
-                user: { ...user, assignedGroups: [adminGroup] },
-              },
-            };
-          },
+          result: vi.fn(() => ({
+            data: {
+              user: { ...targetUser, assignedGroups: [adminGroup] },
+            },
+          })),
         },
       ];
       const screen = render(
-        <EditUserPermissionsDialog user={user} onRequestClose={() => {}} />,
+        <EditUserPermissionsDialog
+          user={targetUser}
+          onRequestClose={() => {}}
+        />,
         {},
         { additionalMocks }
       );
       await waitFor(() => {
-        expect(userInfoLoaded).toEqual(true);
+        expect(additionalMocks[0].result).toHaveBeenCalled();
       });
       const assignedGroups = await screen.findByTestId('GroupSelectSelection');
       expect(assignedGroups).toHaveTextContent('Administrator');
 
-      await fireEvent.click(
+      await user.click(
         await screen.findByRole('button', { name: /vorschläge/i })
       );
       await waitFor(() => {
@@ -184,27 +179,30 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
 
       await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
 
-      await fireEvent.click(
-        await screen.findByRole('option', { name: 'Eltern' })
-      );
+      await user.click(await screen.findByRole('option', { name: 'Eltern' }));
 
       await waitFor(() => {
-        expect(mutationHasBeenCalled).toEqual(true);
+        expect(additionalMocks[1].result).toHaveBeenCalled();
       });
     });
   });
 
   it('should open delete user dialog when delete button is clicked', async () => {
-    const fireEvent = userEvent.setup();
-    const user = { ...SomeUser, groups: [], assignedGroups: [] };
+    const user = userEvent.setup();
+    const targetUser = { ...SomeUser, groups: [], assignedGroups: [] };
+
+    const additionalMocks = mocks(targetUser);
     const screen = render(
-      <EditUserPermissionsDialog user={user} onRequestClose={() => {}} />,
+      <EditUserPermissionsDialog user={targetUser} onRequestClose={() => {}} />,
       {},
-      { additionalMocks: mocks(user) }
+      { additionalMocks }
     );
-    await fireEvent.click(
-      screen.getByRole('button', { name: /benutzer löschen/i })
-    );
+
+    await waitFor(() => {
+      expect(additionalMocks[0].result).toHaveBeenCalled();
+    });
+
+    await user.click(screen.getByRole('button', { name: /benutzer löschen/i }));
     await waitFor(() => {
       expect(
         screen.getByRole('dialog', { name: /ernesto guevara löschen/i })

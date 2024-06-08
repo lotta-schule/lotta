@@ -16,7 +16,7 @@ export const AdminPageSection = ({
     <section
       className={clsx(styles.root, { [styles.bottomToolbar]: !!bottomToolbar })}
     >
-      {title && <h4>Allgemein</h4>}
+      {title && <h4>{title}</h4>}
       {children}
     </section>
   );

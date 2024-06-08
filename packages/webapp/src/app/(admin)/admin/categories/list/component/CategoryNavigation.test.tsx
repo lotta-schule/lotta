@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, within } from 'test/util';
 import { SplitViewProvider } from '@lotta-schule/hubert';
+import { useParams, useRouter } from 'next/navigation';
 import {
   allCategories,
   DatenschutzCategory,
   FaecherCategory,
-  MatheCategory,
   StartseiteCategory,
+  MatheCategory,
 } from 'test/fixtures';
 import { CategoryNavigation } from './CategoryNavigation';
 import userEvent from '@testing-library/user-event';
+import { MockRouter } from 'test/mocks';
+import { MockedFunction } from 'vitest';
 
 const renderWithContext: typeof render = (children, ...other) => {
   return render(<SplitViewProvider>{children}</SplitViewProvider>, ...other);
@@ -17,22 +20,21 @@ const renderWithContext: typeof render = (children, ...other) => {
 
 describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNavigation', () => {
   const topLevelCategories = allCategories.filter((c) => !c.category);
+  const router: MockRouter = useRouter() as any;
+
+  afterEach(() => {
+    router.reset('/');
+  });
 
   it('should render all top-level-categories', async () => {
-    const screen = renderWithContext(
-      <CategoryNavigation
-        selectedCategory={null}
-        onSelectCategory={() => {}}
-      />,
-      {}
-    );
+    const screen = renderWithContext(<CategoryNavigation />, {});
     await waitFor(() => {
       expect([
         ...screen
-          .getAllByRole('button')
+          .getAllByRole('listitem')
           .filter((el) => el.dataset.testid === 'main-category-item'),
         ...screen
-          .getAllByRole('button')
+          .getAllByRole('listitem')
           .filter((el) => el.dataset.testid === 'sidenav-category-item'),
       ]).toHaveLength(topLevelCategories.length);
     });
@@ -42,128 +44,127 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
     describe('select category', () => {
       it('should select a start category on click', async () => {
         const fireEvent = userEvent.setup();
-        let selectedCategory = null;
-        const onSelectCategory = vi.fn(
-          (category) => (selectedCategory = category)
-        );
-        const screen = renderWithContext(
-          <CategoryNavigation
-            selectedCategory={null}
-            onSelectCategory={onSelectCategory}
-          />,
-          {}
-        );
+        const screen = renderWithContext(<CategoryNavigation />, {});
         await waitFor(() => {
-          expect(screen.getByRole('button', { name: /start/i })).toBeVisible();
+          expect(
+            screen.getByRole('listitem', { name: /start/i })
+          ).toBeVisible();
         });
-        await fireEvent.click(screen.getByRole('button', { name: /start/i }));
+        await fireEvent.click(screen.getByRole('listitem', { name: /start/i }));
         await waitFor(() => {
-          expect(onSelectCategory).toHaveBeenCalled();
+          expect(router._push).toHaveBeenCalledWith(
+            `/admin/categories/list/${StartseiteCategory.id}`,
+            `/admin/categories/list/${StartseiteCategory.id}`,
+            undefined
+          );
         });
-        expect(selectedCategory).toHaveProperty('id', StartseiteCategory.id);
       });
 
       it('should select a common category on click', async () => {
         const fireEvent = userEvent.setup();
-        let selectedCategory = null;
-        const onSelectCategory = vi.fn(
-          (category) => (selectedCategory = category)
-        );
-        const screen = renderWithContext(
-          <CategoryNavigation
-            selectedCategory={null}
-            onSelectCategory={onSelectCategory}
-          />,
-          {}
+        const screen = renderWithContext(<CategoryNavigation />, {});
+        await waitFor(() => {
+          expect(
+            screen.getByRole('listitem', { name: /fächer/i })
+          ).toBeVisible();
+        });
+        await fireEvent.click(
+          screen.getByRole('listitem', { name: /fächer/i })
         );
         await waitFor(() => {
-          expect(screen.getByRole('button', { name: /fächer/i })).toBeVisible();
+          expect(router._push).toHaveBeenCalledWith(
+            `/admin/categories/list/${FaecherCategory.id}`,
+            `/admin/categories/list/${FaecherCategory.id}`,
+            undefined
+          );
         });
-        await fireEvent.click(screen.getByRole('button', { name: /fächer/i }));
-        await waitFor(() => {
-          expect(onSelectCategory).toHaveBeenCalled();
-        });
-        expect(selectedCategory).toHaveProperty('id', FaecherCategory.id);
       });
+
       it('should select a subcategory on click', async () => {
         const fireEvent = userEvent.setup();
-        let selectedCategory = FaecherCategory;
-        const onSelectCategory = vi.fn(
-          (category) => (selectedCategory = category)
-        );
-        const screen = renderWithContext(
-          <CategoryNavigation
-            selectedCategory={selectedCategory}
-            onSelectCategory={onSelectCategory}
-          />,
-          {}
-        );
+        const screen = renderWithContext(<CategoryNavigation />, {});
         await waitFor(() => {
-          expect(screen.getByRole('button', { name: /mathe/i })).toBeVisible();
+          expect(
+            screen.getByRole('listitem', { name: /fächer/i })
+          ).toBeVisible();
         });
-        await fireEvent.click(screen.getByRole('button', { name: /mathe/i }));
+        await fireEvent.click(
+          screen.getByRole('listitem', { name: /fächer/i })
+        );
+
+        const expandButton = within(
+          screen.getByRole('listitem', { name: /fächer/i })
+        ).getByRole('button', { name: /unter/i });
+
+        await fireEvent.click(expandButton);
+
         await waitFor(() => {
-          expect(onSelectCategory).toHaveBeenCalled();
+          expect(
+            screen.getByRole('listitem', { name: /mathe/i })
+          ).toBeVisible();
         });
-        expect(selectedCategory).toHaveProperty('id', MatheCategory.id);
+
+        await fireEvent.click(screen.getByRole('listitem', { name: /mathe/i }));
+
+        await waitFor(() => {
+          expect(router._push).toHaveBeenCalledWith(
+            `/admin/categories/list/${MatheCategory.id}`,
+            `/admin/categories/list/${MatheCategory.id}`,
+            undefined
+          );
+        });
       });
 
       it('should select a sidenav-category on click', async () => {
         const fireEvent = userEvent.setup();
-        let selectedCategory = null;
-        const onSelectCategory = vi.fn(
-          (category) => (selectedCategory = category)
-        );
-        const screen = renderWithContext(
-          <CategoryNavigation
-            selectedCategory={selectedCategory}
-            onSelectCategory={onSelectCategory}
-          />,
-          {}
-        );
+        const screen = renderWithContext(<CategoryNavigation />, {});
         await waitFor(() => {
           expect(
-            screen.getByRole('button', { name: /datenschutz/i })
+            screen.getByRole('listitem', { name: /datenschutz/i })
           ).toBeVisible();
         });
         await fireEvent.click(
-          screen.getByRole('button', { name: /datenschutz/i })
+          screen.getByRole('listitem', { name: /datenschutz/i })
         );
         await waitFor(() => {
-          expect(onSelectCategory).toHaveBeenCalled();
+          expect(router._push).toHaveBeenCalledWith(
+            `/admin/categories/list/${DatenschutzCategory.id}`,
+            `/admin/categories/list/${DatenschutzCategory.id}`,
+            undefined
+          );
         });
-        expect(selectedCategory).toHaveProperty('id', DatenschutzCategory.id);
       });
     });
 
     it('should show subtree when parent-tree is selected', async () => {
-      const screen = renderWithContext(
-        <CategoryNavigation
-          selectedCategory={FaecherCategory}
-          onSelectCategory={() => {}}
-        />,
-        {}
-      );
+      const screen = renderWithContext(<CategoryNavigation />, {});
+      (useParams as MockedFunction<typeof useParams>).mockReturnValue({
+        categoryId: FaecherCategory.id,
+      });
       await waitFor(() => {
         expect(
-          screen.getByRole('button', {
-            name: /fächer/i,
+          screen.getByRole('listitem', {
+            name: /mathe/i,
           })
         ).toBeVisible();
       });
     });
 
-    it('should show expanded tree if selected category is in it', async () => {
-      const screen = renderWithContext(
-        <CategoryNavigation
-          selectedCategory={MatheCategory}
-          onSelectCategory={() => {}}
-        />,
-        {}
-      );
+    it('should show sibblings and parent subtree is selected', async () => {
+      const screen = renderWithContext(<CategoryNavigation />, {});
+      (useParams as MockedFunction<typeof useParams>).mockReturnValue({
+        categoryId: MatheCategory.id,
+      });
       await waitFor(() => {
         expect(
-          screen.getByRole('button', {
+          screen.getByRole('listitem', {
+            name: /mathe/i,
+          })
+        ).toBeVisible();
+      });
+      await waitFor(() => {
+        expect(
+          screen.getByRole('listitem', {
             name: /fächer/i,
           })
         ).toBeVisible();

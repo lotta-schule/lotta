@@ -9,19 +9,10 @@ import { render, waitFor, within } from 'test/util';
 import { EditUserGroup } from './EditUserGroup';
 import userEvent from '@testing-library/user-event';
 
-import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
 import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 
 const additionalMocks = [
-  {
-    request: { query: GetGroupQuery, variables: { id: adminGroup.id } },
-    result: { data: { group: adminGroup } },
-  },
-  {
-    request: { query: GetGroupQuery, variables: { id: lehrerGroup.id } },
-    result: { data: { group: lehrerGroup } },
-  },
   {
     request: { query: GetUserGroupsQuery },
     result: {
@@ -32,22 +23,9 @@ const additionalMocks = [
 
 describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
   describe('form', () => {
-    it('should not show the form when no group is passed', () => {
-      const screen = render(
-        <EditUserGroup groupId={null} onRequestDeletion={vi.fn()} />,
-        {},
-        { additionalMocks }
-      );
-      expect(
-        screen.queryByRole('form', {
-          name: /bearbeiten/i,
-        })
-      ).toBeNull();
-    });
-
     it('should show the form when a group is passed', async () => {
       const screen = render(
-        <EditUserGroup groupId={lehrerGroup.id} onRequestDeletion={vi.fn()} />,
+        <EditUserGroup group={lehrerGroup} />,
         {},
         { additionalMocks }
       );
@@ -64,7 +42,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
   describe('Form', () => {
     it('should be showing the title in a textbox', async () => {
       const screen = render(
-        <EditUserGroup groupId={lehrerGroup.id} onRequestDeletion={vi.fn()} />,
+        <EditUserGroup group={lehrerGroup} />,
         {},
         { additionalMocks }
       );
@@ -75,7 +53,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
 
     it('should have the admin checkbox checked for a group which can read full name', async () => {
       const screen = render(
-        <EditUserGroup groupId={lehrerGroup.id} onRequestDeletion={vi.fn()} />,
+        <EditUserGroup group={lehrerGroup} />,
         {},
         { additionalMocks }
       );
@@ -88,7 +66,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
 
     it('should disable the can read full name checkbox if the group is an admin group', async () => {
       const screen = render(
-        <EditUserGroup groupId={adminGroup.id} onRequestDeletion={vi.fn()} />,
+        <EditUserGroup group={adminGroup} />,
         {},
         { additionalMocks }
       );
@@ -109,7 +87,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
     describe('admin setting', () => {
       it('should have the admin checkbox checked for a admin group', async () => {
         const screen = render(
-          <EditUserGroup groupId={adminGroup.id} onRequestDeletion={vi.fn()} />,
+          <EditUserGroup group={adminGroup} />,
           {},
           { additionalMocks }
         );
@@ -127,10 +105,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
 
       it('should not show the admin checkbox if group is not an admin group', async () => {
         const screen = render(
-          <EditUserGroup
-            groupId={lehrerGroup.id}
-            onRequestDeletion={vi.fn()}
-          />,
+          <EditUserGroup group={lehrerGroup} />,
           {},
           { additionalMocks }
         );
@@ -151,10 +126,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
       it('should disable the save button when no changes are made', async () => {
         const fireEvent = userEvent.setup();
         const screen = render(
-          <EditUserGroup
-            groupId={lehrerGroup.id}
-            onRequestDeletion={vi.fn()}
-          />,
+          <EditUserGroup group={lehrerGroup} />,
           {},
           { additionalMocks }
         );
@@ -222,7 +194,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
       });
 
       it('make changes and save them', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const saveMock = {
           request: {
             query: UpdateUserGroupMutation,
@@ -249,10 +221,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
           })),
         };
         const screen = render(
-          <EditUserGroup
-            groupId={lehrerGroup.id}
-            onRequestDeletion={vi.fn()}
-          />,
+          <EditUserGroup group={lehrerGroup} />,
           {},
           { additionalMocks: [...additionalMocks, saveMock] }
         );
@@ -261,7 +230,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         });
 
         // Change the group name
-        await fireEvent.type(
+        await user.type(
           await screen.findByRole('textbox', { name: /gruppenname/i }),
           'Lehrer umbenannt',
           {
@@ -271,14 +240,14 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         );
 
         // allow read full name
-        await fireEvent.click(
+        await user.click(
           await screen.findByRole('checkbox', {
             name: /vollständigen Namen/i,
           })
         );
 
         // add a new token
-        await fireEvent.type(
+        await user.type(
           await screen.findByPlaceholderText(/einschreibeschlüssel/i),
           'NeuerToken{enter}'
         );
@@ -287,9 +256,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
           screen.getByRole('button', { name: /speichern/i })
         ).not.toBeDisabled();
 
-        await fireEvent.click(
-          screen.getByRole('button', { name: /speichern/i })
-        );
+        await user.click(screen.getByRole('button', { name: /speichern/i }));
 
         await waitFor(() => {
           expect(saveMock.result).toHaveBeenCalledTimes(1);
@@ -308,28 +275,22 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
 
   describe('delete group', () => {
     it('should show a delete button for a group and show dialog', async () => {
-      const fireEvent = userEvent.setup();
-      const onRequestDeletion = vi.fn(({ id }) => {
-        expect(id).toBe(lehrerGroup.id);
-      });
+      const user = userEvent.setup();
       const screen = render(
-        <EditUserGroup
-          groupId={lehrerGroup.id}
-          onRequestDeletion={onRequestDeletion}
-        />,
+        <EditUserGroup group={lehrerGroup} />,
         {},
         { additionalMocks }
       );
-      await fireEvent.click(
-        await screen.findByRole('button', { name: /gruppe .* löschen/i })
+      await user.click(
+        await screen.findByRole('button', { name: /"lehrer" löschen/i })
       );
 
-      expect(onRequestDeletion).toHaveBeenCalledTimes(1);
+      expect(screen.getByRole('dialog', { name: /löschen/i })).toBeVisible();
     });
 
     it('delete button should be disabled when group is sole admin group', async () => {
       const screen = render(
-        <EditUserGroup groupId={adminGroup.id} onRequestDeletion={vi.fn()} />,
+        <EditUserGroup group={adminGroup} />,
         {},
         { additionalMocks }
       );

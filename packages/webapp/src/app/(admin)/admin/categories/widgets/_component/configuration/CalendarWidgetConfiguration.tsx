@@ -8,8 +8,6 @@ import {
   Option,
   Select,
 } from '@lotta-schule/hubert';
-
-import styles from './WidgetConfiguration.module.scss';
 import { faCircleMinus, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from 'shared/Icon';
 
@@ -26,7 +24,6 @@ export const CalendarWidgetConfiguration = React.memo(
           <div key={index}>
             <Label label="URL des Kalenders">
               <Input
-                className={styles.input}
                 value={calendar.url}
                 onChange={(e) =>
                   setConfiguration({
@@ -47,7 +44,7 @@ export const CalendarWidgetConfiguration = React.memo(
             <small>Link zu einer *.ics-Datei</small>
 
             <Select
-              className={styles.calendarDays}
+              style={{ width: '100%' }}
               title={'Zeit, für die Termine abgerufen werden'}
               value={String(calendar.days ?? 90)}
               onChange={(daysString) => {
@@ -86,7 +83,6 @@ export const CalendarWidgetConfiguration = React.memo(
               <>
                 <Label label="Name des Kalenders">
                   <Input
-                    className={styles.input}
                     value={calendar.name || ''}
                     onChange={(e) =>
                       setConfiguration({
@@ -110,7 +106,6 @@ export const CalendarWidgetConfiguration = React.memo(
                 <Label label="Farbe des Kalenders">
                   <Input
                     type={'color'}
-                    className={styles.input}
                     value={calendar.color || ''}
                     onChange={(e) =>
                       setConfiguration({
@@ -144,15 +139,12 @@ export const CalendarWidgetConfiguration = React.memo(
                 </Button>
               </>
             )}
-            {index < (configuration.calendars || []).length - 1 && (
-              <Divider className={styles.divider} />
-            )}
+            {index < (configuration.calendars || []).length - 1 && <Divider />}
           </div>
         ))}
 
         <Button
           icon={<Icon icon={faCirclePlus} />}
-          className={styles.addCalendarButton}
           onClick={() =>
             setConfiguration({
               ...configuration,

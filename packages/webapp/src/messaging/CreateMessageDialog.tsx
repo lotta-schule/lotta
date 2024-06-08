@@ -6,6 +6,7 @@ import {
   DialogContent,
   Tabbar,
   Tab,
+  LinearProgress,
 } from '@lotta-schule/hubert';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
@@ -64,32 +65,41 @@ export const CreateMessageDialog = React.memo(
                 )}
               </Tabbar>
               <div className={styles.tabsPanel}>
-                {newMessageType === 'user' && (
-                  <SearchUserField
-                    className={styles.input}
-                    onSelectUser={(user) => {
-                      setMessageDestination({ user });
-                    }}
-                  />
-                )}
-                {newMessageType === 'group' && (
-                  <GroupSelect
-                    className={styles.input}
-                    hidePublicGroupSelection
-                    label={'Gruppe wählen'}
-                    selectedGroups={[]}
-                    suggestionFilter={(group: UserGroupModel) =>
-                      !!currentUser!.groups.find((g) => g.id === group.id)
-                    }
-                    onSelectGroups={([group]) => {
-                      if (group) {
-                        setMessageDestination({
-                          group,
-                        });
+                <React.Suspense
+                  fallback={
+                    <LinearProgress
+                      isIndeterminate
+                      aria-label="Es werden weitere Informationen geladen"
+                    />
+                  }
+                >
+                  {newMessageType === 'user' && (
+                    <SearchUserField
+                      className={styles.input}
+                      onSelectUser={(user) => {
+                        setMessageDestination({ user });
+                      }}
+                    />
+                  )}
+                  {newMessageType === 'group' && (
+                    <GroupSelect
+                      className={styles.input}
+                      hidePublicGroupSelection
+                      label={'Gruppe wählen'}
+                      selectedGroups={[]}
+                      suggestionFilter={(group: UserGroupModel) =>
+                        !!currentUser!.groups.find((g) => g.id === group.id)
                       }
-                    }}
-                  />
-                )}
+                      onSelectGroups={([group]) => {
+                        if (group) {
+                          setMessageDestination({
+                            group,
+                          });
+                        }
+                      }}
+                    />
+                  )}
+                </React.Suspense>
               </div>
             </motion.div>
           )}
