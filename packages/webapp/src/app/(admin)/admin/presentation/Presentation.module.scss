@@ -1,18 +1,4 @@
 .root {
-  section {
-    margin-bottom: calc(2 * var(--lotta-spacing));
-
-    &:last-child {
-      margin: 0;
-      display: flex;
-      justify-content: flex-end;
-      position: sticky;
-      bottom: calc(-1 * var(--lotta-spacing));
-      background: rgb(var(--lotta-box-background-color));
-      padding: var(--lotta-spacing);
-    }
-  }
-
   .grid {
     display: flex;
     margin-bottom: calc(3 * var(--lotta-spacing));

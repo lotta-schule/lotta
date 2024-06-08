@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ForbiddenErrorPage > should render the ForbiddenErrorPage component 1`] = `
+<div>
+  <section
+    class="_error_42c9b3"
+  >
+    <h1>
+      Unzureichende Berechtigungen
+    </h1>
+    <div>
+      <img
+        alt="Diese Seite existiert nicht"
+        role="presentation"
+        src="/AccessDeniedImage.svg"
+      />
+      <p>
+        Du hast nicht die nötigen Berechtigungen, um diese Seite zu sehen.
+      </p>
+      <p>
+        Bist du sicher, dass du hier sein solltest?
+      </p>
+      <p>
+        Du wirst gleich auf die Startseite weitergeleitet.
+      </p>
+    </div>
+  </section>
+</div>
+`;

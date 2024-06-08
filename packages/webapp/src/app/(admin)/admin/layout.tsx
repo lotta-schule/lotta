@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { User } from 'util/model';
 import { loadCurrentUser } from 'loader';
+import { ForbiddenErrorPage } from 'layout/error/ForbiddenErrorPage';
 
 interface AdminPageProps {
   children: React.ReactNode;
@@ -11,7 +12,7 @@ export default async function AdminLayout({ children }: AdminPageProps) {
   const isAllowed = User.isAdmin(user);
 
   if (!isAllowed) {
-    return <div>Du nicht!</div>;
+    return <ForbiddenErrorPage />;
   }
 
   return children;

@@ -14,6 +14,7 @@ import {
 } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client';
 import { File } from 'util/model';
+import { AdminPageSection } from '../_component/AdminPageSection';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
@@ -78,8 +79,8 @@ export const Presentation = React.memo(
     return (
       <div className={styles.root}>
         <ErrorMessage error={error} />
-        <section>
-          <h3>Vorlagen</h3>
+
+        <AdminPageSection title={'Vorlagen'}>
           <div className={clsx(styles.grid, styles.scrollHorizontally)}>
             {allThemes.map(({ title, theme: partialTheme }) => {
               return (
@@ -93,11 +94,9 @@ export const Presentation = React.memo(
               );
             })}
           </div>
-        </section>
+        </AdminPageSection>
 
-        <section>
-          <h3>Farben</h3>
-          <ErrorMessage error={error} />
+        <AdminPageSection title={'Farben'}>
           <div className={styles.grid}>
             <div>
               <ColorSettingRow
@@ -244,38 +243,36 @@ export const Presentation = React.memo(
               />
             </div>
           </div>
+        </AdminPageSection>
 
-          <section>
-            <h3>Maße</h3>
+        <AdminPageSection title={'Maße'}>
+          <div className={styles.grid}>
+            <Label label={'Abstand'}>
+              <Input
+                value={customTheme.spacing}
+                disabled={isLoading}
+                onChange={(e) =>
+                  updateThemeProperties({
+                    spacing: e.currentTarget.value,
+                  })
+                }
+              />
+            </Label>
+            <Label label={'Rundungen'}>
+              <Input
+                disabled={isLoading}
+                value={customTheme.borderRadius}
+                onChange={(e) =>
+                  updateThemeProperties({
+                    borderRadius: e.currentTarget.value,
+                  })
+                }
+              />
+            </Label>
+          </div>
+        </AdminPageSection>
 
-            <div>
-              <Label label={'Abstand'}>
-                <Input
-                  value={customTheme.spacing}
-                  disabled={isLoading}
-                  onChange={(e) =>
-                    updateThemeProperties({
-                      spacing: e.currentTarget.value,
-                    })
-                  }
-                />
-              </Label>
-            </div>
-            <div>
-              <Label label={'Rundungen'}>
-                <Input
-                  disabled={isLoading}
-                  value={customTheme.borderRadius}
-                  onChange={(e) =>
-                    updateThemeProperties({
-                      borderRadius: e.currentTarget.value,
-                    })
-                  }
-                />
-              </Label>
-            </div>
-          </section>
-
+        <AdminPageSection title={'Hintergrund'}>
           <div className={styles.grid}>
             <div>
               <Box>
@@ -308,10 +305,9 @@ export const Presentation = React.memo(
               </p>
             </div>
           </div>
-        </section>
+        </AdminPageSection>
 
-        <section>
-          <h3>Schriftarten</h3>
+        <AdminPageSection title="Schriftarten">
           {headerFonts.concat(textFonts).map(({ url }) => (
             <link rel={'stylesheet'} href={url} key={url} />
           ))}
@@ -367,34 +363,33 @@ export const Presentation = React.memo(
               </Select>
             </div>
           </div>
-        </section>
+        </AdminPageSection>
 
-        <section>
-          <div>
-            <LoadingButton
-              onAction={async () => {
-                await updateSystem({
-                  variables: {
-                    tenant: {
-                      configuration: {
-                        ...tenant.configuration,
-                        customTheme,
-                        backgroundImageFile: backgroundImage && {
-                          id: backgroundImage.id,
-                        },
+        <AdminPageSection bottomToolbar>
+          <div />
+          <LoadingButton
+            onAction={async () => {
+              await updateSystem({
+                variables: {
+                  tenant: {
+                    configuration: {
+                      ...tenant.configuration,
+                      customTheme,
+                      backgroundImageFile: backgroundImage && {
+                        id: backgroundImage.id,
                       },
                     },
                   },
-                });
-              }}
-              onComplete={() => {
-                router.refresh();
-              }}
-            >
-              speichern
-            </LoadingButton>
-          </div>
-        </section>
+                },
+              });
+            }}
+            onComplete={() => {
+              router.refresh();
+            }}
+          >
+            speichern
+          </LoadingButton>
+        </AdminPageSection>
       </div>
     );
   }
