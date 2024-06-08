@@ -69,7 +69,7 @@ describe('FeedbackRow', () => {
 
   describe('interaction', () => {
     it('should open the ForwardFeedbackDialog when selecting the forward button', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <table>
           <tbody>
@@ -83,9 +83,7 @@ describe('FeedbackRow', () => {
         </table>
       );
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /weiterleiten/ })
-      );
+      await user.click(screen.getByRole('button', { name: /weiterleiten/ }));
 
       await waitFor(() => {
         expect(
@@ -95,7 +93,7 @@ describe('FeedbackRow', () => {
     });
 
     it('should open the RespondToFeedbackDialog when selecting the forward button', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <table>
           <tbody>
@@ -109,9 +107,7 @@ describe('FeedbackRow', () => {
         </table>
       );
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /beantworten/ })
-      );
+      await user.click(screen.getByRole('button', { name: /beantworten/ }));
 
       await waitFor(() => {
         expect(
@@ -122,7 +118,7 @@ describe('FeedbackRow', () => {
 
     it('should call onClick() handler when selected', async () => {
       const onChange = vi.fn();
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <table>
           <tbody>
@@ -136,14 +132,14 @@ describe('FeedbackRow', () => {
         </table>
       );
 
-      await fireEvent.click(screen.getAllByRole('row')[0]);
+      await user.click(screen.getAllByRole('row')[0]);
 
       expect(onChange).toHaveBeenCalled();
     });
 
     it('should show the delete feedback dialog when the delete button is clicked', async () => {
       const onDelete = vi.fn();
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <table>
           <tbody>
@@ -174,7 +170,7 @@ describe('FeedbackRow', () => {
       await waitFor(() => {
         expect(screen.getByRole('button', { name: /löschen/i })).toBeVisible();
       });
-      await fireEvent.click(screen.getByRole('button', { name: /löschen/ }));
+      await user.click(screen.getByRole('button', { name: /löschen/ }));
 
       await waitFor(() => {
         expect(
@@ -182,7 +178,7 @@ describe('FeedbackRow', () => {
         ).toBeVisible();
       });
 
-      await fireEvent.click(
+      await user.click(
         screen.getByRole('button', { name: /endgültig löschen/ })
       );
 
