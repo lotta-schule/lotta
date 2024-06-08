@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PageNotFoundErrorPage > should render the PageNotFoundErrorPage component 1`] = `
+<div>
+  <section
+    class="_error_42c9b3"
+  >
+    <h1>
+      Diese Seite existiert nicht
+    </h1>
+    <div>
+      <img
+        alt="Diese Seite existiert nicht"
+        role="presentation"
+        src="/RoadSignNotFound.svg"
+      />
+      <p>
+        Die Seite konnte nicht gefunden werden. Entweder ist die Adresse falsch, oder die Seite wurde entfernt.
+      </p>
+    </div>
+  </section>
+</div>
+`;

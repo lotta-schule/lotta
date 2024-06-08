@@ -9,7 +9,7 @@ import { AppHead } from './AppHead';
 import { ApolloProvider } from '@apollo/client';
 import { Authentication } from 'shared/Authentication';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
-import { fonts } from 'app/(admin)/admin/system/presentation/fonts';
+import { fonts } from 'styles/fonts';
 import { useTenant } from 'util/tenant/useTenant';
 import { getApolloClient } from 'api/legacyClient';
 import { BaseLayout } from './BaseLayout';

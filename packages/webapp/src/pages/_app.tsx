@@ -4,8 +4,8 @@ import * as React from 'react';
 import { AppContext, AppProps } from 'next/app';
 import { add } from 'date-fns';
 import { config as faConfig } from '@fortawesome/fontawesome-svg-core';
-import { ServerDownError } from 'error/ServerDownError';
-import { TenantNotFoundError } from 'error/TenantNotFoundError';
+import { ServerDownErrorPage } from 'layout/error/ServerDownErrorPage';
+import { TenantNotFoundErrorPage } from 'layout/error/TenantNotFoundErrorPage';
 import { getApolloClient } from 'api/legacyClient';
 import { AppContextProviders } from 'layout/AppContextProviders';
 import { appConfig } from 'config';
@@ -36,11 +36,11 @@ const LottaWebApp = ({
   },
 }: AppProps) => {
   if (error) {
-    return <ServerDownError error={error} />;
+    return <ServerDownErrorPage error={error} />;
   }
 
   if (!tenant) {
-    return <TenantNotFoundError />;
+    return <TenantNotFoundErrorPage />;
   }
 
   const origin =

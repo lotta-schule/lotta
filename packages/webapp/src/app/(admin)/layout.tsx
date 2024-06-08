@@ -6,8 +6,8 @@ import {
   GlobalStyles,
   HubertProvider,
 } from '@lotta-schule/hubert';
-import { TenantNotFoundError } from 'error/TenantNotFoundError';
-import { fonts } from './admin/system/presentation/fonts';
+import { TenantNotFoundErrorPage } from 'layout/error/TenantNotFoundErrorPage';
+import { fonts } from 'styles/fonts';
 import { loadTenant } from 'loader';
 import { TenantLayout } from '../../layout/TenantLayout';
 import { ApolloProvider } from '../../component/provider/ApolloProvider';
@@ -65,11 +65,10 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
                   <TenantLayout fullSizeScrollable>{children}</TenantLayout>
                 </ApolloProvider>
               )}
-              {!tenant && <TenantNotFoundError />}
+              {!tenant && <TenantNotFoundErrorPage />}
             </TranslationsProvider>
           </ServerDataContextProvider>
         </HubertProvider>
-        <div id={'dialogContainer'} />
       </body>
     </html>
   );

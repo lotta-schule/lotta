@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TenantNotFoundErrorPage > should render the TenantNotFoundErrorPage component 1`] = `
+<div>
+  <section
+    class="_error_42c9b3"
+  >
+    <h1>
+      Es gibt kein Lotta unter dieser Adresse
+    </h1>
+    <div>
+      <img
+        alt="Diese Seite existiert nicht"
+        role="presentation"
+        src="/TenantNotFoundImage.svg"
+      />
+      <p>
+        Unter dieser Adresse ist aktuell keine lotta-Plattform zu erreichen. Überprüfe die Adresse in der Adressleiste.
+      </p>
+      <p
+        class="_secondary_42c9b3"
+      >
+        Sie haben Interesse, ein eigenes lotta unter dieser Adresse anzubieten? Weitere Informationen gibt es auf
+         
+        <a
+          href="https://lotta.schule"
+          title="Zur Lotta-Projektseite"
+        >
+          lotta.schule
+        </a>
+        .
+      </p>
+    </div>
+  </section>
+</div>
+`;

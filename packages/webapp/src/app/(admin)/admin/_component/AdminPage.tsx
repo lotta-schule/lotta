@@ -37,7 +37,11 @@ export const AdminPage = async ({
     >
       <nav>
         {hasHomeLink && (
-          <Link href={'/admin'} title={'Zurück zum Administrations-Hauptmenü'}>
+          <Link
+            className={styles.homeLink}
+            href={'/admin'}
+            title={'Zurück zum Administrations-Hauptmenü'}
+          >
             <FontAwesomeIcon icon={faChevronLeft} />
           </Link>
         )}

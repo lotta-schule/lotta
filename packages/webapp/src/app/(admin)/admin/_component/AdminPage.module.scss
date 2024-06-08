@@ -15,8 +15,23 @@
 
   & > nav {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     border-bottom: 1px solid rgb(var(--lotta-divider-color));
+
+    .homeLink {
+      transition: background 0.25s ease-out;
+
+      svg {
+        transition: transform 0.25s ease-in;
+      }
+
+      &:hover {
+        background: rgba(var(--lotta-primary-color), 0.1);
+        svg {
+          transform: scale(1.21);
+        }
+      }
+    }
 
     svg {
       padding: var(--lotta-spacing);

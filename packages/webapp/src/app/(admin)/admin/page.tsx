@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import {
   faCircleUser,
   faUserGroup,
@@ -35,7 +34,7 @@ async function AdminRootPage() {
       <section>
         <BaseButton
           as={Link}
-          href={'/admin/system/general'}
+          href={'/admin/general'}
           variant={'borderless'}
           className={styles.button}
         >
@@ -47,7 +46,7 @@ async function AdminRootPage() {
 
         <BaseButton
           as={Link}
-          href={'/admin/system/presentation'}
+          href={'/admin/presentation'}
           variant={'borderless'}
           className={styles.button}
         >
@@ -59,7 +58,7 @@ async function AdminRootPage() {
 
         <BaseButton
           as={Link}
-          href={'/admin/system/usage'}
+          href={'/admin/usage'}
           variant={'borderless'}
           className={styles.button}
         >
@@ -71,7 +70,7 @@ async function AdminRootPage() {
 
         <BaseButton
           as={Link}
-          href={'/admin/system/analytics'}
+          href={'/admin/analytics'}
           variant={'borderless'}
           className={styles.button}
         >
@@ -83,7 +82,7 @@ async function AdminRootPage() {
 
         <BaseButton
           as={Link}
-          href={'/admin/system/feedback'}
+          href={'/admin/feedback'}
           variant={'borderless'}
           className={styles.button}
         >
@@ -101,7 +100,7 @@ async function AdminRootPage() {
       <section>
         <BaseButton
           as={Link}
-          href={'/admin/users/list'}
+          href={'/admin/users'}
           variant={'borderless'}
           className={styles.button}
         >
@@ -113,7 +112,7 @@ async function AdminRootPage() {
 
         <BaseButton
           as={Link}
-          href={'/admin/users/groups'}
+          href={'/admin/groups'}
           variant={'borderless'}
           className={styles.button}
         >
@@ -125,7 +124,7 @@ async function AdminRootPage() {
 
         <BaseButton
           as={Link}
-          href={'/admin/users/constraints'}
+          href={'/admin/constraints'}
           variant={'borderless'}
           className={styles.button}
         >
@@ -140,7 +139,7 @@ async function AdminRootPage() {
       <section>
         <BaseButton
           as={Link}
-          href={'/admin/categories/list'}
+          href={'/admin/groups'}
           variant={'borderless'}
           className={styles.button}
         >
@@ -152,7 +151,7 @@ async function AdminRootPage() {
 
         <BaseButton
           as={Link}
-          href={'/admin/categories/widgets'}
+          href={'/admin/widgets'}
           variant={'borderless'}
           className={styles.button}
         >
