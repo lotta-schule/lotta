@@ -5,20 +5,19 @@
 
   h3 {
     position: sticky;
-    top: calc(-1 * var(--lotta-spacing));
+    top: 0;
     z-index: 1;
-    padding-top: var(--lotta-spacing);
+    padding-block: var(--lotta-spacing);
     text-transform: uppercase;
     background: rgb(var(--lotta-box-background-color));
   }
 
   section {
     display: grid;
-    overflow-x: auto;
     grid-gap: calc(2 * var(--lotta-spacing));
     padding-bottom: var(--lotta-spacing);
 
-    grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(12em, 1fr));
     justify-items: center;
 
     &:not(:last-child) {
@@ -29,15 +28,20 @@
       padding-top: var(--lotta-spacing);
       justify-content: flex-end;
     }
+
+    @media screen and (max-width: $max-xs) {
+      grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
+      grid-gap: var(--lotta-spacing);
+    }
   }
 
   .button {
     font-weight: bolder;
     flex-direction: column;
+    align-items: center;
     width: 14em;
     text-align: center;
     @media screen and (max-width: $max-xs) {
-      width: auto;
       font-size: 0.65rem;
     }
     span:first-child {
@@ -51,7 +55,7 @@
       }
     }
     &:hover svg {
-      transform: scale(1.12);
+      transform: scale(1.21) translateY(-0.05em);
     }
   }
 }
