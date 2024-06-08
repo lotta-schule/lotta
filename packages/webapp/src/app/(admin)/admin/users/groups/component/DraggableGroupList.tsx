@@ -7,12 +7,12 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupInputModel, UserGroupModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { isBrowser } from 'util/isBrowser';
 import clsx from 'clsx';
 
 import styles from './DraggableGroupList.module.scss';
 
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
-import { isBrowser } from 'util/isBrowser';
 
 export const DraggableGroupList = () => {
   const router = useRouter();

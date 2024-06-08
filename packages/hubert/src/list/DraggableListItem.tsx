@@ -30,6 +30,7 @@ export const DraggableListItem = ({
     <li
       onClick={onClick}
       title={title}
+      aria-current={selected ? 'page' : undefined}
       {...props}
       className={clsx(className, styles.root, {
         [styles.selected]: selected,
