@@ -90,7 +90,7 @@ export const GroupListToolbar = () => {
         isOpen={isCreateGroupDialogOpen}
         onConfirm={(group) => {
           setIsCreateGroupDialogOpen(false);
-          router.push(`/admin/users/groups/${group.id}`);
+          router.push(`/admin/groups/${group.id}`);
         }}
         onAbort={() => setIsCreateGroupDialogOpen(false)}
       />

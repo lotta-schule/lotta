@@ -81,7 +81,7 @@ describe('CategoryListToolbar', () => {
       screen.queryByTestId('CreateCategoryDialog')
     ).not.toBeInTheDocument();
     expect(mockRouter.push).toHaveBeenCalledWith(
-      '/admin/categories/list/new-category'
+      '/admin/categories/new-category'
     );
   });
 });

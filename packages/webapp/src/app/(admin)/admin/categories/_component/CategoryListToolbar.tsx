@@ -25,7 +25,7 @@ export const CategoryListToolbar = () => {
         onAbort={() => setIsCreateCategoryDialogOpen(false)}
         onConfirm={(category) => {
           setIsCreateCategoryDialogOpen(false);
-          router.push(`/admin/categories/list/${category.id}`);
+          router.push(`/admin/categories/${category.id}`);
         }}
       />
     </Toolbar>

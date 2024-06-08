@@ -173,7 +173,7 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
         onRequestClose={() => setIsDeleteUserGroupDialogOpen(false)}
         onConfirm={() => {
           setIsDeleteUserGroupDialogOpen(false);
-          router.replace('/admin/users/groups');
+          router.replace('/admin/groups');
         }}
       />
     </>

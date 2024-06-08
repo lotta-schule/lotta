@@ -50,7 +50,7 @@ export const DraggableGroupList = () => {
   }, [highlightedGroups]);
 
   const onSelect = (group: UserGroupModel) => {
-    router.push(`/admin/users/groups/${group.id}`);
+    router.push(`/admin/groups/${group.id}`);
   };
 
   const [updateGroup, { error }] = useMutation<

@@ -129,7 +129,7 @@ export const CategoryNavigation = memo(() => {
   const onSelectCategory = useCallback(
     (category: CategoryModel) => {
       if (category.id !== selectedCategory?.id) {
-        router.push(`/admin/categories/list/${category.id}`);
+        router.push(`/admin/categories/${category.id}`);
       }
     },
     [router]

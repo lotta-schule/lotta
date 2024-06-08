@@ -23,7 +23,7 @@ describe('GroupListToolbar', () => {
 
   beforeEach(() => {
     (useRouter as Mock).mockReturnValue(mockRouter);
-    (usePathname as Mock).mockReturnValue('/admin/users/groups');
+    (usePathname as Mock).mockReturnValue('/admin/groups');
     (useSearchParams as Mock).mockReturnValue({
       get: vi.fn().mockImplementation((key) => {
         if (key === 's') return 'initialSearch';
@@ -62,7 +62,7 @@ describe('GroupListToolbar', () => {
 
     expect(input).toHaveValue('New Group');
     expect(mockRouter.replace).toHaveBeenCalledWith(
-      '/admin/users/groups?s=New+Group'
+      '/admin/groups?s=New+Group'
     );
   });
 
@@ -73,9 +73,7 @@ describe('GroupListToolbar', () => {
     fireEvent.change(select, { target: { value: 'name' } });
 
     expect(select).toHaveValue('name');
-    expect(mockRouter.replace).toHaveBeenCalledWith(
-      '/admin/users/groups?sort=name'
-    );
+    expect(mockRouter.replace).toHaveBeenCalledWith('/admin/groups?sort=name');
   });
 
   describe('Create a new group', () => {
@@ -97,7 +95,7 @@ describe('GroupListToolbar', () => {
       await user.click(screen.getByText('Confirm'));
 
       await waitFor(() => {
-        expect(mockRouter.push).toHaveBeenCalledWith('/admin/users/groups/1');
+        expect(mockRouter.push).toHaveBeenCalledWith('/admin/groups/1');
       });
     });
 

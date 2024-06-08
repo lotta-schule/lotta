@@ -53,8 +53,8 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
         await fireEvent.click(screen.getByRole('listitem', { name: /start/i }));
         await waitFor(() => {
           expect(router._push).toHaveBeenCalledWith(
-            `/admin/categories/list/${StartseiteCategory.id}`,
-            `/admin/categories/list/${StartseiteCategory.id}`,
+            `/admin/categories/${StartseiteCategory.id}`,
+            `/admin/categories/${StartseiteCategory.id}`,
             undefined
           );
         });
@@ -73,8 +73,8 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
         );
         await waitFor(() => {
           expect(router._push).toHaveBeenCalledWith(
-            `/admin/categories/list/${FaecherCategory.id}`,
-            `/admin/categories/list/${FaecherCategory.id}`,
+            `/admin/categories/${FaecherCategory.id}`,
+            `/admin/categories/${FaecherCategory.id}`,
             undefined
           );
         });
@@ -108,8 +108,8 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
 
         await waitFor(() => {
           expect(router._push).toHaveBeenCalledWith(
-            `/admin/categories/list/${MatheCategory.id}`,
-            `/admin/categories/list/${MatheCategory.id}`,
+            `/admin/categories/${MatheCategory.id}`,
+            `/admin/categories/${MatheCategory.id}`,
             undefined
           );
         });
@@ -128,8 +128,8 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
         );
         await waitFor(() => {
           expect(router._push).toHaveBeenCalledWith(
-            `/admin/categories/list/${DatenschutzCategory.id}`,
-            `/admin/categories/list/${DatenschutzCategory.id}`,
+            `/admin/categories/${DatenschutzCategory.id}`,
+            `/admin/categories/${DatenschutzCategory.id}`,
             undefined
           );
         });

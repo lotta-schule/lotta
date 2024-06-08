@@ -347,7 +347,7 @@ export const CategoryEditor = memo(({ category }: CategoryEditorProps) => {
           onRequestClose={() => setIsDeleteCategoryDialogOpen(false)}
           onConfirm={() => {
             setIsDeleteCategoryDialogOpen(false);
-            router.replace('/admin/categories/list');
+            router.replace('/admin/categories');
           }}
         />
       </AdminPageSection>

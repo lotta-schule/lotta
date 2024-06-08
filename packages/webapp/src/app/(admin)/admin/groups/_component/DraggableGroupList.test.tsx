@@ -104,7 +104,7 @@ describe('DraggableGroupList', () => {
 
     await waitFor(() => {
       expect(mockRouter.push).toHaveBeenCalledWith(
-        `/admin/users/groups/${schuelerGroup.id}`
+        `/admin/groups/${schuelerGroup.id}`
       );
     });
   });
