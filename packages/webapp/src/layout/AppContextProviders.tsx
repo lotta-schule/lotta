@@ -82,7 +82,7 @@ export const AppContextProviders = ({
       });
     }
     if (typeof window !== 'undefined') {
-      const authToken = document.cookie.match(/AuthToken=(.+);?/i)?.[1];
+      const authToken = document.cookie.match(/SignInAccessToken=(.+);?/i)?.[1];
       if (authToken) {
         localStorage.setItem('id', authToken);
       }

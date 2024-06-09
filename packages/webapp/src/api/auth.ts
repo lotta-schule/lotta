@@ -16,7 +16,6 @@ export const sendRefreshRequest = async (
         headers: createHeaders(headers),
       })
       .catch((e) => {
-        console.log(e.response.data);
         throw e;
       });
     return data;

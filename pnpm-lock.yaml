@@ -70,9 +70,6 @@ importers:
       '@types/node':
         specifier: ^20.13.0
         version: 20.13.0
-      '@types/nprogress':
-        specifier: ^0.2.3
-        version: 0.2.3
       '@types/phoenix':
         specifier: ^1.6.4
         version: 1.6.4
@@ -421,9 +418,6 @@ importers:
       next:
         specifier: 15.0.0-rc.0
         version: 15.0.0-rc.0(patch_hash=eqafz2g7jmbkalkprhcvcsxiji)(@babel/core@7.24.6)(@opentelemetry/api@1.8.0)(react-dom@19.0.0-rc-6d3110b4d9-20240531)(react@19.0.0-rc-6d3110b4d9-20240531)
-      nprogress:
-        specifier: ^0.2.0
-        version: 0.2.0
       phoenix:
         specifier: ^1.7.12
         version: 1.7.12
@@ -8253,10 +8247,6 @@ packages:
 
   /@types/normalize-package-data@2.4.4:
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
-    dev: true
-
-  /@types/nprogress@0.2.3:
-    resolution: {integrity: sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==}
     dev: true
 
   /@types/pg-pool@2.0.4:
@@ -16512,10 +16502,6 @@ packages:
       gauge: 4.0.4
       set-blocking: 2.0.0
     dev: true
-
-  /nprogress@0.2.0:
-    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
-    dev: false
 
   /nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}

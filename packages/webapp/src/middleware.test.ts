@@ -63,10 +63,10 @@ describe('middleware', () => {
         httpOnly: true,
       }),
     });
-    expect(response.cookies.get('SigninRefreshToken')?.value).toEqual(
+    expect(response.cookies.get('SignInRefreshToken')?.value).toEqual(
       'newRefreshToken'
     );
-    expect(response.cookies.get('SigninAccessToken')?.value).toEqual(
+    expect(response.cookies.get('SignInAccessToken')?.value).toEqual(
       'newAccessToken'
     );
   });
@@ -93,8 +93,8 @@ describe('middleware', () => {
 
     const response = await middleware(mockRequest);
 
-    expect(response.cookies.has('SigninRefreshToken')).toEqual(false);
-    expect(response.cookies.has('SigninAccessToken')).toEqual(false);
+    expect(response.cookies.has('SignInRefreshToken')).toEqual(false);
+    expect(response.cookies.has('SignInAccessToken')).toEqual(false);
   });
 
   it('should handle expired access token', async () => {
@@ -111,15 +111,14 @@ describe('middleware', () => {
 
     const response = await middleware(mockRequest);
 
-    expect(response.cookies.has('SigninAccessToken')).toEqual(false);
+    expect(response.cookies.has('SignInAccessToken')).toEqual(false);
   });
 });
 
 describe('config', () => {
   it('should have the correct matcher', () => {
     expect(config.matcher).toEqual([
-      '/((?!_next/static|_next/image|font|favicon.ico|p/).*)',
-      '/(.*).svg',
+      '/((?!_next/static|_next/image|font|favicon.ico|favicon|p/).*)',
     ]);
   });
 });

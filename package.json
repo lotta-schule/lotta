@@ -28,7 +28,6 @@
     "@types/is-url": "^1.2.32",
     "@types/lodash": "^4.17.4",
     "@types/node": "^20.13.0",
-    "@types/nprogress": "^0.2.3",
     "@types/phoenix": "^1.6.4",
     "@types/react": "npm:types-react@rc",
     "@types/react-beautiful-dnd": "^13.1.8",

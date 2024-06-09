@@ -97,9 +97,6 @@ const nextConfig = {
   },
 };
 
-console.log('Sentry DSN:', env.NEXT_PUBLIC_SENTRY_DSN);
-console.log('Sentry AUth Token:', env.SENTRY_AUTH_TOKEN);
-
 // sentry should be last, wrapping the rest
 export default withSentryConfig(nextConfig, {
   silent: false,

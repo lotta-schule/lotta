@@ -10,7 +10,6 @@ export const ForbiddenErrorPage = memo(() => {
   useEffect(() => {
     router.prefetch('/');
     const timeout = setTimeout(() => {
-      console.log('timeout');
       router.replace('/');
     }, 5000);
     return () => clearTimeout(timeout);
