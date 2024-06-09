@@ -149,7 +149,7 @@ export const DeletePage = React.memo(() => {
       );
     return (
       <Box className={styles.boxActions}>
-        <Collapse visible={!isLoading && currentStep > ProfileDeleteStep.Start}>
+        <Collapse isOpen={!isLoading && currentStep > ProfileDeleteStep.Start}>
           <Button
             small
             icon={<Icon icon={faAngleLeft} size={'lg'} />}
@@ -160,7 +160,7 @@ export const DeletePage = React.memo(() => {
             Zurück
           </Button>
         </Collapse>
-        <Collapse visible={!isLoading}>{button}</Collapse>
+        <Collapse isOpen={!isLoading}>{button}</Collapse>
       </Box>
     );
   }, [currentStep, isLoading]);
@@ -180,7 +180,7 @@ export const DeletePage = React.memo(() => {
         <ErrorMessage error={ownArticlesError || relevantFilesError} />
 
         <Collapse
-          visible={!isLoading && currentStep === ProfileDeleteStep.Start}
+          isOpen={!isLoading && currentStep === ProfileDeleteStep.Start}
         >
           <Box
             className={styles.container}
@@ -216,7 +216,7 @@ export const DeletePage = React.memo(() => {
         </Collapse>
 
         <Collapse
-          visible={
+          isOpen={
             !isLoading && currentStep === ProfileDeleteStep.ReviewArticles
           }
         >
@@ -256,7 +256,7 @@ export const DeletePage = React.memo(() => {
         </Collapse>
 
         <Collapse
-          visible={!isLoading && currentStep === ProfileDeleteStep.ReviewFiles}
+          isOpen={!isLoading && currentStep === ProfileDeleteStep.ReviewFiles}
         >
           <Box
             className={styles.container}
@@ -328,7 +328,7 @@ export const DeletePage = React.memo(() => {
         </Collapse>
 
         <Collapse
-          visible={
+          isOpen={
             !isLoading && currentStep === ProfileDeleteStep.ConfirmDeletion
           }
         >

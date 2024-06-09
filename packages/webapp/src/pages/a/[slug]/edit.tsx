@@ -2,7 +2,7 @@ import * as React from 'react';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { ArticleModel, ID } from 'model';
 import { ErrorMessage } from '@lotta-schule/hubert';
-import { getApolloClient } from 'api/client';
+import { getApolloClient } from 'api/legacyClient';
 import { useQuery } from '@apollo/client';
 import { Main, Sidebar } from 'layout';
 import { EditArticlePage } from 'article/EditArticlePage';

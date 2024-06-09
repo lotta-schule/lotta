@@ -1,0 +1,15 @@
+.root {
+  .grid {
+    display: flex;
+    margin-bottom: calc(3 * var(--lotta-spacing));
+
+    & > * {
+      flex: 1;
+      margin-right: calc(1 * var(--lotta-spacing));
+    }
+  }
+
+  .scrollHorizontally {
+    overflow-x: auto;
+  }
+}

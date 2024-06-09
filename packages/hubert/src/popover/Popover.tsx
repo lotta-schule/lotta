@@ -22,7 +22,7 @@ export const Popover = ({
 }: PopoverProps) => {
   const state = useOverlayTriggerState({});
 
-  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const triggerRef = React.useRef<HTMLButtonElement>(null!);
   const overlayRef = React.useRef<HTMLDivElement>(null);
 
   const { styles: popperStyles, attributes: popperAttributes } = usePopper(

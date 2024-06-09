@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Button, ButtonProps } from './Button';
 import { CircularProgress } from '../progress';
@@ -86,7 +88,7 @@ export const LoadingButton = React.forwardRef(
     }: LoadingButtonProps,
     forwardedRef: React.Ref<HTMLButtonElement | null>
   ) => {
-    const ref = React.useRef<HTMLButtonElement>(null);
+    const ref = React.useRef<HTMLButtonElement>(null!);
 
     const [currentState, setCurrentState] = React.useState<LoadingButtonState>(
       state || 'idle'

@@ -14,15 +14,18 @@ import userEvent from '@testing-library/user-event';
 
 describe('shared/editor/GroupSelect', () => {
   describe('label prop', () => {
-    it('should show a default label', () => {
+    it('should show a default label', async () => {
       const screen = render(
         <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
         {}
       );
-      expect(screen.getByText('Gruppe suchen')).toBeVisible();
+
+      await waitFor(() => {
+        expect(screen.getByText('Gruppe suchen')).toBeVisible();
+      });
     });
 
-    it('should show a given label', () => {
+    it('should show a given label', async () => {
       const screen = render(
         <GroupSelect
           label={'Wähle Gruppen:'}
@@ -31,7 +34,9 @@ describe('shared/editor/GroupSelect', () => {
         />,
         {}
       );
-      expect(screen.getByText('Wähle Gruppen:')).toBeVisible();
+      await waitFor(() => {
+        expect(screen.getByText('Wähle Gruppen:')).toBeVisible();
+      });
     });
   });
 
@@ -42,11 +47,13 @@ describe('shared/editor/GroupSelect', () => {
         {}
       );
 
-      const input = screen.getByRole('combobox', {
-        name: /gruppe suchen/i,
+      await waitFor(() => {
+        const input = screen.getByRole('combobox', {
+          name: /gruppe suchen/i,
+        });
+        expect(input).toBeVisible();
+        expect(input).toBeDisabled();
       });
-      expect(input).toBeVisible();
-      expect(input).toBeDisabled();
     });
 
     it('should disable the remove group button', async () => {
@@ -59,6 +66,9 @@ describe('shared/editor/GroupSelect', () => {
         {}
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
       expect(screen.queryByLabelText(/Schüler löschen/)).toBeNull();
     });
 
@@ -71,6 +81,10 @@ describe('shared/editor/GroupSelect', () => {
         />,
         {}
       );
+
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
 
       const checkbox = await screen.findByRole('checkbox');
 
@@ -86,6 +100,10 @@ describe('shared/editor/GroupSelect', () => {
         { userGroups: [] }
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
       expect(screen.getByRole('combobox')).toBeDisabled();
       expect(screen.getByRole('checkbox')).toBeDisabled();
     });
@@ -100,6 +118,10 @@ describe('shared/editor/GroupSelect', () => {
         { userGroups: [] }
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
       expect(screen.getByRole('combobox')).toBeDisabled();
       expect(screen.getByRole('checkbox')).toBeDisabled();
     });
@@ -111,6 +133,10 @@ describe('shared/editor/GroupSelect', () => {
         <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
         {}
       );
+
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
 
       const selection = await screen.findByLabelText(/alle sichtbar/i);
 
@@ -126,13 +152,17 @@ describe('shared/editor/GroupSelect', () => {
         {}
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
       const selection = await screen.findByLabelText(/alle sichtbar/i);
 
       expect(selection).not.toBeChecked();
     });
 
     it('should add all groups when checkbox is unchecked', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const callback = vi.fn((newGroups) => {
         expect(newGroups.map((g: UserGroupModel) => g.name)).toEqual([
           'Administrator',
@@ -146,9 +176,13 @@ describe('shared/editor/GroupSelect', () => {
         {}
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
       const selection = await screen.findByLabelText(/alle sichtbar/i);
 
-      await fireEvent.click(selection);
+      await user.click(selection);
 
       await waitFor(() => {
         expect(callback).toHaveBeenCalled();
@@ -168,6 +202,10 @@ describe('shared/editor/GroupSelect', () => {
         {}
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
       const selection = await screen.findByLabelText(/alle sichtbar/i);
 
       await fireEvent.click(selection);
@@ -177,7 +215,7 @@ describe('shared/editor/GroupSelect', () => {
       });
     });
 
-    it('should not show element when hidePublicGroupSelection prop is given', () => {
+    it('should not show element when hidePublicGroupSelection prop is given', async () => {
       const screen = render(
         <GroupSelect
           hidePublicGroupSelection
@@ -186,10 +224,15 @@ describe('shared/editor/GroupSelect', () => {
         />,
         {}
       );
+
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
       expect(screen.queryByLabelText(/alle sichtbar/i)).toBeNull();
     });
 
-    it('should change the elements description when publicGroupSelectionLabel is given', () => {
+    it('should change the elements description when publicGroupSelectionLabel is given', async () => {
       const screen = render(
         <GroupSelect
           publicGroupSelectionLabel={'Keine Gruppen'}
@@ -198,6 +241,11 @@ describe('shared/editor/GroupSelect', () => {
         />,
         {}
       );
+
+      await waitFor(() => {
+        expect(screen.getByRole('checkbox')).toBeVisible();
+      });
+
       expect(screen.queryByLabelText(/keine gruppen/i)).toBeInTheDocument();
     });
   });
@@ -208,6 +256,10 @@ describe('shared/editor/GroupSelect', () => {
         <GroupSelect selectedGroups={[adminGroup]} onSelectGroups={() => {}} />,
         {}
       );
+
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
 
       const selection = await screen.findByTestId('GroupSelectSelection');
 
@@ -223,6 +275,10 @@ describe('shared/editor/GroupSelect', () => {
         {}
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
       const selection = await screen.findByTestId('GroupSelectSelection');
 
       expect(selection).toHaveTextContent(/AdministratorLehrerSchüler/i);
@@ -237,6 +293,10 @@ describe('shared/editor/GroupSelect', () => {
         <GroupSelect selectedGroups={[]} onSelectGroups={onSelectGroups} />,
         {}
       );
+
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
 
       const combobox = screen.queryByRole('combobox');
 
@@ -304,6 +364,10 @@ describe('shared/editor/GroupSelect', () => {
         {}
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
       await fireEvent.click(await screen.findByLabelText(/Schüler löschen/));
 
       await waitFor(() => {
@@ -314,15 +378,17 @@ describe('shared/editor/GroupSelect', () => {
 
   describe('listbox options', () => {
     it('should provide all groups as options when clicking into the input field', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
         {}
       );
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /vorschläge/i })
-      );
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
+      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
       await waitFor(() => {
         expect(
@@ -343,6 +409,10 @@ describe('shared/editor/GroupSelect', () => {
         {}
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
       const combobox = screen.getByRole('combobox');
       await fireEvent.type(combobox, 'Schü');
 
@@ -361,7 +431,7 @@ describe('shared/editor/GroupSelect', () => {
     });
 
     it('should show selected options with a checkmark', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <GroupSelect
           selectedGroups={[lehrerGroup]}
@@ -370,9 +440,11 @@ describe('shared/editor/GroupSelect', () => {
         {}
       );
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /vorschläge/i })
-      );
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
+      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
       const selectedOption = screen.getByRole('option', {
         name: 'Lehrer',
@@ -396,7 +468,7 @@ describe('shared/editor/GroupSelect', () => {
       };
 
       it('should select a group after having clicked on it', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const callback = vi.fn((groups) => {
           expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
             'Administrator',
@@ -414,9 +486,11 @@ describe('shared/editor/GroupSelect', () => {
           { userGroups: [...userGroups, secondAdminGroup] }
         );
 
-        await fireEvent.click(
-          screen.getByRole('button', { name: /vorschläge/i })
-        );
+        await waitFor(() => {
+          expect(screen.getByRole('checkbox')).toBeVisible();
+        });
+
+        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
@@ -427,7 +501,7 @@ describe('shared/editor/GroupSelect', () => {
           name: 'Schüler',
         });
 
-        await fireEvent.click(selectedOption);
+        await user.click(selectedOption);
 
         await waitFor(() => {
           expect(callback).toHaveBeenCalled();
@@ -452,6 +526,10 @@ describe('shared/editor/GroupSelect', () => {
           { userGroups: [...userGroups, secondAdminGroup] }
         );
 
+        await waitFor(() => {
+          expect(screen.getByRole('combobox')).toBeVisible();
+        });
+
         await fireEvent.click(
           screen.getByRole('button', { name: /vorschläge/i })
         );
@@ -473,7 +551,7 @@ describe('shared/editor/GroupSelect', () => {
       });
 
       it('should deselect a selected non-admin group after having clicked on it', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const callback = vi.fn((groups) => {
           expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
             'Administrator',
@@ -489,9 +567,11 @@ describe('shared/editor/GroupSelect', () => {
           { userGroups: [...userGroups, secondAdminGroup] }
         );
 
-        await fireEvent.click(
-          screen.getByRole('button', { name: /vorschläge/i })
-        );
+        await waitFor(() => {
+          expect(screen.getByRole('combobox')).toBeVisible();
+        });
+
+        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
@@ -502,7 +582,7 @@ describe('shared/editor/GroupSelect', () => {
           name: 'Lehrer',
         });
 
-        await fireEvent.click(selectedOption);
+        await user.click(selectedOption);
 
         await waitFor(() => {
           expect(callback).toHaveBeenCalled();
@@ -510,7 +590,7 @@ describe('shared/editor/GroupSelect', () => {
       });
 
       it('should deselect all selected groups after having clicked on a selected admin group', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const callback = vi.fn((groups) => {
           expect(groups.map((g: UserGroupModel) => g.name)).toEqual([]);
         });
@@ -524,9 +604,11 @@ describe('shared/editor/GroupSelect', () => {
           { userGroups: [...userGroups, secondAdminGroup] }
         );
 
-        await fireEvent.click(
-          screen.getByRole('button', { name: /vorschläge/i })
-        );
+        await waitFor(() => {
+          expect(screen.getByRole('combobox')).toBeVisible();
+        });
+
+        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
@@ -537,7 +619,7 @@ describe('shared/editor/GroupSelect', () => {
           name: 'Administrator',
         });
 
-        await fireEvent.click(selectedOption);
+        await user.click(selectedOption);
 
         await waitFor(() => {
           expect(callback).toHaveBeenCalled();
@@ -546,7 +628,7 @@ describe('shared/editor/GroupSelect', () => {
 
       describe('with disableGroupExclusivity enabled', () => {
         it('should select a group after having clicked on it', async () => {
-          const fireEvent = userEvent.setup();
+          const user = userEvent.setup();
           const callback = vi.fn((groups) => {
             expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
               'Administrator',
@@ -564,9 +646,11 @@ describe('shared/editor/GroupSelect', () => {
             {}
           );
 
-          await fireEvent.click(
-            screen.getByRole('button', { name: /vorschläge/i })
-          );
+          await waitFor(() => {
+            expect(screen.getByRole('combobox')).toBeVisible();
+          });
+
+          await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
           await waitFor(() => {
             expect(screen.getByRole('listbox')).toBeVisible();
@@ -577,7 +661,7 @@ describe('shared/editor/GroupSelect', () => {
             name: 'Schüler',
           });
 
-          await fireEvent.click(selectedOption);
+          await user.click(selectedOption);
 
           await waitFor(() => {
             expect(callback).toHaveBeenCalled();
@@ -585,7 +669,7 @@ describe('shared/editor/GroupSelect', () => {
         });
 
         it('should deselect a selected group after having clicked on it', async () => {
-          const fireEvent = userEvent.setup();
+          const user = userEvent.setup();
           const callback = vi.fn((groups) => {
             expect(groups.map((g: UserGroupModel) => g.name)).toEqual([
               'Lehrer',
@@ -601,9 +685,11 @@ describe('shared/editor/GroupSelect', () => {
             {}
           );
 
-          await fireEvent.click(
-            screen.getByRole('button', { name: /vorschläge/i })
-          );
+          await waitFor(() => {
+            expect(screen.getByRole('combobox')).toBeVisible();
+          });
+
+          await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
           await waitFor(() => {
             expect(screen.getByRole('listbox')).toBeVisible();
@@ -614,7 +700,7 @@ describe('shared/editor/GroupSelect', () => {
             name: 'Administrator',
           });
 
-          await fireEvent.click(selectedOption);
+          await user.click(selectedOption);
 
           await waitFor(() => {
             expect(callback).toHaveBeenCalled();
@@ -626,7 +712,7 @@ describe('shared/editor/GroupSelect', () => {
 
   describe('allowNoneSelection', () => {
     it('should add a "None" selection when allowNoneSelection prop is passed', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const onSelectGroups = vi.fn();
       const screen = render(
         <GroupSelect
@@ -638,9 +724,11 @@ describe('shared/editor/GroupSelect', () => {
         { userGroups: [...userGroups] }
       );
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /vorschläge/i })
-      );
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
+      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
       await waitFor(() => {
         expect(screen.getByRole('listbox')).toBeVisible();
@@ -651,7 +739,7 @@ describe('shared/editor/GroupSelect', () => {
         screen.getByRole('option', { name: 'Ohne zugewiesene Gruppe' })
       ).toBeVisible();
 
-      await fireEvent.click(
+      await user.click(
         screen.getByRole('option', { name: 'Ohne zugewiesene Gruppe' })
       );
 
@@ -681,7 +769,7 @@ describe('shared/editor/GroupSelect', () => {
         screen.getByTestId('GroupSelectSelection')
       ).getByRole('button', { name: /Tag ohne zugewiesene gruppe/i });
 
-      await fireEvent.click(tagDeleteButton);
+      await user.click(tagDeleteButton);
 
       await waitFor(() => {
         expect(onSelectGroups).toHaveBeenCalledWith([]);
@@ -689,7 +777,7 @@ describe('shared/editor/GroupSelect', () => {
     });
 
     it('should toggle the "None" option on and off when clicked two times', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const onSelectGroups = vi.fn();
       const screen = render(
         <GroupSelect
@@ -702,16 +790,18 @@ describe('shared/editor/GroupSelect', () => {
         { userGroups: [...userGroups] }
       );
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /vorschläge/i })
-      );
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
+      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
       await waitFor(() => {
         expect(screen.getByRole('listbox')).toBeVisible();
       });
       await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
 
-      await fireEvent.click(
+      await user.click(
         await screen.findByRole('option', { name: 'Ohne zugewiesene Gruppe' })
       );
 
@@ -740,9 +830,7 @@ describe('shared/editor/GroupSelect', () => {
         );
       });
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /vorschläge/i })
-      );
+      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
       await waitFor(() => {
         expect(
@@ -753,7 +841,7 @@ describe('shared/editor/GroupSelect', () => {
         ).toBeVisible();
       });
 
-      await fireEvent.click(
+      await user.click(
         await screen.findByRole('option', {
           name: 'Ohne zugewiesene Gruppe',
           hidden: true,

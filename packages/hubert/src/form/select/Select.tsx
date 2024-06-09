@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { useSelectState } from 'react-stately';
 import { HiddenSelect, useSelect } from 'react-aria';
@@ -39,7 +41,7 @@ export type SelectProps = React.AriaAttributes & {
 };
 
 export type OptionProps = {
-  children?: React.ReactNode | React.ReactNodeArray;
+  children?: React.ReactNode | React.ReactNode[];
 
   value: string;
 
@@ -89,12 +91,12 @@ export const Select = React.forwardRef<any, SelectProps>(
       },
     });
 
-    const ref = React.useRef<HTMLDivElement>(null);
+    const ref = React.useRef<HTMLDivElement>(null!);
 
     React.useImperativeHandle(forwardedRef, () => ref.current);
 
-    const triggerRef = React.useRef<HTMLButtonElement>(null);
-    const popoverRef = React.useRef<HTMLDivElement>(null);
+    const triggerRef = React.useRef<HTMLButtonElement>(null!);
+    const popoverRef = React.useRef<HTMLDivElement>(null!);
 
     const {
       labelProps,
@@ -152,7 +154,7 @@ export const Select = React.forwardRef<any, SelectProps>(
             </Button>
           </div>
           <Popover
-            triggerRef={ref}
+            trigger={ref.current!}
             ref={popoverRef}
             isOpen={state.isOpen}
             onClose={state.close}

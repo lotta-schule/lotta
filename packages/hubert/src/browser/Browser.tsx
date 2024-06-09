@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Toolbar } from './Toolbar';
 import { Explorer } from './Explorer';

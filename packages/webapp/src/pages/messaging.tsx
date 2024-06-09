@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ConversationModel } from 'model';
-import { getApolloClient } from 'api/client';
+import { getApolloClient } from 'api/legacyClient';
 import { MessagingPage } from 'messaging/MessagingPage';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 

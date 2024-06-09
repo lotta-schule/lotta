@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TwoColumnLayout > should render successfully 1`] = `
+<div
+  data-overlay-container="true"
+>
+  <div
+    class="_root_a3c7d4"
+  >
+    <aside
+      class="_sidebar_a3c7d4"
+    >
+      Sidebar
+    </aside>
+    <main
+      class="_main_a3c7d4"
+    >
+      Content
+    </main>
+  </div>
+</div>
+`;

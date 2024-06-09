@@ -3,7 +3,7 @@ import { UserModel } from 'model';
 import { AvatarGroup, Deletable, Tooltip } from '@lotta-schule/hubert';
 import { User } from 'util/model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
-import { SearchUserField } from 'administration/users/SearchUserField';
+import { SearchUserField } from 'component/form';
 import clsx from 'clsx';
 
 import styles from './AuthorAvatarsList.module.scss';

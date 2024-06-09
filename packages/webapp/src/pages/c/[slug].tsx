@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { ArticleModel, ArticleFilter, ID } from 'model';
-import { getApolloClient } from 'api/client';
+import { getApolloClient } from 'api/legacyClient';
 import { CategoryPage } from 'category/CategoryPage';
 
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';

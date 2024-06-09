@@ -1,0 +1,92 @@
+@import "breakpoints";
+
+.root {
+  display: flex;
+  flex-direction: column;
+  background: rgb(var(--lotta-box-background-color));
+  width: 100%;
+  height: fit-content;
+  max-height: 100%;
+  min-height: 0;
+
+  margin-bottom: auto;
+
+  transition: min-height 0.3s ease-in-out;
+
+  & > nav {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid rgb(var(--lotta-divider-color));
+
+    .homeLink {
+      transition: background 0.25s ease-out;
+
+      svg {
+        transition: transform 0.25s ease-in;
+      }
+
+      &:hover {
+        background: rgba(var(--lotta-primary-color), 0.1);
+        svg {
+          transform: scale(1.21);
+        }
+      }
+    }
+
+    svg {
+      padding: var(--lotta-spacing);
+    }
+
+    a:not(.logoLink, .logoLinkClose) {
+      display: flex;
+      align-items: center;
+      border-right: 1px solid rgb(var(--lotta-divider-color));
+      padding-inline: var(--lotta-spacing);
+    }
+
+    /* Logo with link to home */
+    .logoLink,
+    .logoLinkClose {
+      margin-left: auto;
+    }
+
+    h2 {
+      display: flex;
+      align-items: center;
+      font-size: 1.2rem;
+      margin: 0;
+      margin-block: 0;
+      margin-inline: 0;
+      padding-left: var(--lotta-spacing);
+    }
+
+    .logoLink {
+      @media screen and (min-width: $min-sm) {
+        display: none;
+      }
+    }
+    .logoLinkClose:not(.forceLogoLinkClose) {
+      svg {
+        padding: 0;
+      }
+      @media screen and (max-width: $max-xs) {
+        display: none;
+      }
+    }
+  }
+
+  &:not(.isRootPage) {
+    min-height: 100%;
+  }
+
+  .contentSection {
+    overflow: auto;
+    padding-inline: var(--lotta-spacing);
+    &:has(aside) {
+      overflow: hidden;
+      display: flex;
+      flex: 1 1 min-content;
+      padding: 0;
+    }
+  }
+}

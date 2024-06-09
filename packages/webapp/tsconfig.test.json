@@ -4,6 +4,7 @@
   "extends": "./tsconfig.json",
 
   "compilerOptions": {
+    "baseUrl": "src/",
     "composite": true,
     "outDir": "../../dist/app/web/test",
     "types": ["vitest/globals", "vitest/importMeta", "vite/client", "vitest"],
@@ -20,6 +21,7 @@
     "src/test/**/*.ts",
     "src/test/**/*.tsx",
     "**/*.d.ts",
-    "**/*.graphql"
+    "**/*.graphql",
+    "src/**/*.json",
   ]
 }

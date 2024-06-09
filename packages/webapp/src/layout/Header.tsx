@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { UserNavigation } from './navigation/UserNavigation';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { useServerData } from 'shared/ServerDataContext';
 import clsx from 'clsx';
 
 import styles from './Header.module.scss';
@@ -11,25 +9,19 @@ export interface HeaderProps {
   children?: any;
 }
 
-export const Header = React.memo<HeaderProps>(
-  ({ children, bannerImageUrl }) => {
-    const { baseUrl } = useServerData();
-
-    const normalizedUrl = bannerImageUrl?.startsWith('/')
-      ? new URL(bannerImageUrl, baseUrl).toString()
-      : bannerImageUrl;
-
+export const Header = React.memo(
+  ({ children, bannerImageUrl }: HeaderProps) => {
     return (
       <section
         data-testid="Header"
         className={clsx(styles.root, {
-          [styles.hasBannerImage]: !!normalizedUrl,
+          [styles.hasBannerImage]: !!bannerImageUrl,
         })}
       >
         <div data-testid="HeaderContent" className={styles.subheader}>
-          {normalizedUrl && (
+          {bannerImageUrl && (
             <ResponsiveImage
-              src={normalizedUrl}
+              src={bannerImageUrl}
               alt=""
               width={900}
               aspectRatio={'6:1'}
@@ -40,9 +32,9 @@ export const Header = React.memo<HeaderProps>(
           )}
           <div className={styles.headerContent}>{children}</div>
         </div>
-        <div className={styles.userNavigationGridItem}>
+        {/*<div className={styles.userNavigationGridItem}>
           <UserNavigation />
-        </div>
+        </div>*/}
       </section>
     );
   }

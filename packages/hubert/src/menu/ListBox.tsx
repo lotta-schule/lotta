@@ -22,7 +22,7 @@ export const ListBox = React.forwardRef(
     { className, state, ...props }: ListBoxProps,
     forwardedRef: React.Ref<HTMLUListElement | null>
   ) => {
-    const ref = React.useRef<HTMLUListElement>(null);
+    const ref = React.useRef<HTMLUListElement>(null!);
 
     React.useImperativeHandle(forwardedRef, () => ref.current);
 
@@ -35,7 +35,7 @@ export const ListBox = React.forwardRef(
           {...listBoxProps}
           ref={ref}
         >
-          {[...state.collection].map((item) => (
+          {Array.from(state.collection).map((item) => (
             <ListBoxOption key={item.key} item={item} state={state} />
           ))}
         </List>

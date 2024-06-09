@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ServerDownErrorPage > should render the ServerDownErrorPage component 1`] = `
+<div>
+  <section
+    class="_error_42c9b3"
+  >
+    <h1>
+      Server nicht erreichbar
+    </h1>
+    <div>
+      <img
+        alt="Diese Seite existiert nicht"
+        role="presentation"
+        src="/ServerDownImage.svg"
+      />
+      <p>
+        Der Server hat einen unbekannten Fehler geworfen. Das Team wurde informiert.
+      </p>
+      <p>
+        Es tut uns leid für die Unannehmlichkeiten, hoffentlich funktioniert alles in ein paar Minuten wieder.
+      </p>
+      <p>
+        Upsi
+      </p>
+    </div>
+  </section>
+</div>
+`;

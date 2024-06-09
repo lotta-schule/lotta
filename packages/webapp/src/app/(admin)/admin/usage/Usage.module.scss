@@ -1,0 +1,23 @@
+.root {
+  .infoBox {
+    display: block;
+    line-height: calc(3 * var(--lotta-spacing));
+    margin-bottom: calc(4 * var(--lotta-spacing));
+    background-color: rgba(var(--lotta-divider-color), 0.2);
+  }
+
+  [role="table"] [role="row"] {
+    display: flex;
+    margin-bottom: calc(3 * var(--lotta-spacing));
+    justify-content: stretch;
+
+    & > div {
+      flex: 1;
+      text-align: center;
+    }
+
+    & > :first-child {
+      flex: 0 1 16%;
+    }
+  }
+}

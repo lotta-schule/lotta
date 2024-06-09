@@ -8,6 +8,7 @@ import styles from './Label.module.scss';
 
 export type LabelProps = {
   label: React.ReactNode;
+  hide?: boolean;
 } & React.HTMLProps<HTMLDivElement>;
 
 export const Label = React.forwardRef(
@@ -24,6 +25,10 @@ export const Label = React.forwardRef(
       labelElementType: 'span',
       ...props,
     });
+
+    if (props.hide) {
+      return <>{children}</>;
+    }
 
     return (
       <div {...props} ref={ref} className={clsx(className, styles.root)}>

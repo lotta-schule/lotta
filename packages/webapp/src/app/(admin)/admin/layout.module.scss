@@ -1,0 +1,18 @@
+.root {
+  .noAccessMessageContainer {
+    text-align: center;
+
+    div {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      margin: auto;
+      color: rgb(var(--lotta-error-color));
+
+      span {
+        padding-left: var(--lotta-spacing);
+        font-weight: bolder;
+      }
+    }
+  }
+}

@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { BaseButton, BaseButtonProps } from './BaseButton';
 import { useButtonGroupContext } from './ButtonGroupContext';

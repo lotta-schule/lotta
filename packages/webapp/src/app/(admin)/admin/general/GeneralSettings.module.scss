@@ -1,0 +1,15 @@
+.root {
+  .gridContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    .gridItem:not(:first-child) {
+      margin-left: var(--lotta-spacing);
+      &:is(p) {
+        max-width: 25em;
+      }
+    }
+  }
+}

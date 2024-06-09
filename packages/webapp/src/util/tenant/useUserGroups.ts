@@ -1,13 +1,17 @@
-import { useQuery } from '@apollo/client';
+import { useSuspenseQuery } from '@apollo/client';
 import { UserGroupModel } from 'model/UserGroupModel';
 
 import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 
-export const useUserGroups = (): UserGroupModel[] => {
-  const { data } = useQuery<{ userGroups: UserGroupModel[] }>(
-    GetUserGroupsQuery
+export const useUserGroups = () => {
+  const { data } = useSuspenseQuery<{ userGroups: UserGroupModel[] }>(
+    GetUserGroupsQuery,
+    { fetchPolicy: 'network-only', returnPartialData: false }
   );
-  return (
-    [...(data?.userGroups ?? [])].sort((a, b) => a.sortKey - b.sortKey) ?? []
-  );
+
+  // TODO: Server's job
+  const groups =
+    [...(data?.userGroups ?? [])].sort((a, b) => a.sortKey - b.sortKey) ?? [];
+
+  return groups;
 };

@@ -1,8 +1,9 @@
+'use client';
 import * as React from 'react';
 import { motion } from 'framer-motion';
+import clsx from 'clsx';
 
 import styles from './SwipeableViews.module.scss';
-import clsx from 'clsx';
 
 export type SwipeableViewsProps = {
   children: React.ReactElement[];

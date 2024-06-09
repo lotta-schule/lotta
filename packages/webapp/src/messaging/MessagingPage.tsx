@@ -3,9 +3,10 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useIsMobile } from '@lotta-schule/hubert';
 import { useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { Header, Main, Sidebar } from 'layout';
-import { MessagingView } from './MessagingView';
+import { LegacyHeader, Main, Sidebar } from 'layout';
+import { isBrowser } from 'util/isBrowser';
 import { ConversationModel } from 'model';
+import { MessagingView } from './MessagingView';
 
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 
@@ -22,11 +23,7 @@ export const MessagingPage = React.memo(
 
     const isMobile = useIsMobile();
 
-    if (
-      typeof window !== 'undefined' &&
-      conversations &&
-      !didWriteCache.current
-    ) {
+    if (isBrowser() && conversations && !didWriteCache.current) {
       apolloClient.writeQuery({
         query: GetConversationsQuery,
         data: {
@@ -45,9 +42,9 @@ export const MessagingPage = React.memo(
       <>
         <Main>
           {!isMobile && (
-            <Header bannerImageUrl={'/bannerMessaging.png'}>
+            <LegacyHeader bannerImageUrl={'/bannerMessaging.png'}>
               <h2 data-testid={'title'}>Nachrichten</h2>
-            </Header>
+            </LegacyHeader>
           )}
           <MessagingView />
         </Main>

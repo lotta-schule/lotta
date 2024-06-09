@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AdminPageSection > should render a bottomtoolbar section 1`] = `
+<div
+  data-overlay-container="true"
+>
+  <section
+    class="_root_ee9ac9 _bottomToolbar_ee9ac9"
+  />
+</div>
+`;

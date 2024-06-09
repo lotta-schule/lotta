@@ -11,9 +11,9 @@ import {
   RenderHookOptions,
 } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { I18nextProvider } from 'react-i18next';
 import { ApolloMocksOptions, getDefaultApolloMocks } from 'test/mocks';
-import { i18n } from '../i18n';
+import { TranslationsProvider } from 'i18n/client';
+import { ServerDataContextProvider } from 'shared/ServerDataContext';
 
 export type TestSetupOptions = {
   additionalMocks?: MockedResponse[];
@@ -36,17 +36,23 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
     currentApolloCache = cache;
 
     return (
-      <I18nextProvider i18n={i18n}>
-        <HubertProvider>
-          <MockedProvider
-            mocks={[...defaultMocks, ...(options.additionalMocks || [])]}
-            addTypename={false}
-            cache={cache}
-          >
-            {children}
-          </MockedProvider>
-        </HubertProvider>
-      </I18nextProvider>
+      <TranslationsProvider>
+        <ServerDataContextProvider baseUrl="https://example.com">
+          <HubertProvider>
+            <MockedProvider
+              mocks={[...defaultMocks, ...(options.additionalMocks || [])]}
+              addTypename={false}
+              cache={cache}
+            >
+              <React.Suspense
+                fallback={<div>React Suspense is loading...</div>}
+              >
+                {children}
+              </React.Suspense>
+            </MockedProvider>
+          </HubertProvider>
+        </ServerDataContextProvider>
+      </TranslationsProvider>
     );
   };
 

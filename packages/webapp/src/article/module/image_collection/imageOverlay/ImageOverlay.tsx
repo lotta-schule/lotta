@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '@lotta-schule/hubert';
+import { Button, useWindowSize } from '@lotta-schule/hubert';
 import {
   faChevronLeft,
   faChevronRight,
@@ -7,7 +7,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FileModel } from 'model';
 import { File } from 'util/model';
-import { useWindowSize } from 'util/useWindowSize';
 import { useIsRetina } from 'util/useIsRetina';
 import { useLockBodyScroll } from 'util/useLockBodyScroll';
 import { useServerData } from 'shared/ServerDataContext';

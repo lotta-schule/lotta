@@ -19,7 +19,7 @@ export const useCurrentUser = () => {
         email: currentUser.email,
       });
     } else {
-      Sentry.configureScope((scope) => scope.setUser(null));
+      Sentry.setUser(null);
     }
   }, [currentUser]);
 

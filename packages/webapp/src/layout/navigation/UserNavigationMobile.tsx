@@ -19,7 +19,7 @@ import {
 import { ArticleModel } from 'model';
 import { User, Article } from 'util/model';
 import { useOnLogout } from 'util/user/useOnLogout';
-import { isMobileDrawerOpenVar } from 'api/cache';
+import { isMobileDrawerOpenVar } from 'api/apollo/cache';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
@@ -179,7 +179,7 @@ export const UserNavigationMobile = React.memo(() => {
                   </span>
                 </BaseButton>
               </Link>
-              <Link href={'/admin/unpublished'} passHref legacyBehavior>
+              <Link href={'/unpublished'} passHref legacyBehavior>
                 <BaseButton variant={'borderless'} className={styles.button}>
                   <Icon icon={faClipboardList} size="xl" />
                   <span className={styles.label}>

@@ -7,8 +7,11 @@
     "incremental": true,
     "resolveJsonModule": true,
     "module": "esnext",
-    "lib": ["esnext", "dom", "dom.iterable"],
-
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
     "paths": {
       "@lotta-schule/hubert": [
         "../../hubert/src/index.ts"
@@ -17,6 +20,11 @@
         "../../theme/src/index.ts"
       ]
     },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "noEmit": true
   },
   "references": [
@@ -29,7 +37,5 @@
   ],
   "files": [],
   "include": [],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": []
 }

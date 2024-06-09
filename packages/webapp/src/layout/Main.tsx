@@ -11,9 +11,9 @@ export interface MainProps {
 
 export const Main = ({ className, children, style }: MainProps) => {
   return (
-    <div className={clsx(styles.root, className)}>
-      <div style={{ ...style, width: '100%' }}>{children}</div>
-    </div>
+    <main className={clsx(styles.root, className)} style={style}>
+      {children}
+    </main>
   );
 };
 Main.displayName = 'BaseLayoutMainContent';

@@ -1,6 +1,5 @@
 import { render, waitFor } from 'test/util';
 import { Weihnachtsmarkt } from 'test/fixtures';
-import { useRouter } from 'next/router';
 import { TagDetailsDialog } from './TagDetailsDialog';
 
 import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
@@ -44,7 +43,7 @@ describe('TagDetailsDialog', () => {
       expect(screen.getByRole('dialog')).toBeVisible();
     });
 
-    useRouter().push('/new-path');
+    window.dispatchEvent(new PopStateEvent('popstate'));
 
     await waitFor(() => {
       expect(onRequestClose).toHaveBeenCalled();

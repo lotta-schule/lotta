@@ -6,6 +6,8 @@ export const useCategories = (): [CategoryModel[]] => {
   const { data } = useQuery<{ categories: CategoryModel[] }>(
     GetCategoriesQuery
   );
+
+  // TODO: Server's job
   const categories = [...(data?.categories ?? [])].sort(
     (cat1, cat2) => cat1.sortKey - cat2.sortKey
   );

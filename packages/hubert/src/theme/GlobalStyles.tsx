@@ -81,7 +81,7 @@ export const GlobalStyles = React.memo(
                 font-size: 1.25em;
             }
             h4 {
-                font-size: 1.2em;
+                font-size: 1.1em;
             }
             h5,
             h6 {

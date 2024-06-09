@@ -1,0 +1,32 @@
+@import "breakpoints";
+
+.root {
+  flex-wrap: wrap;
+
+  .groupSearch,
+  .sorting {
+    padding: 0;
+    margin-top: var(--lotta-spacing);
+  }
+
+  .groupSearch:not(:empty) {
+    flex: 3 1 auto;
+    width: auto;
+    margin-left: 0;
+  }
+
+  .sorting {
+    flex: 1 0 auto;
+    width: auto;
+
+    @media screen and (max-width: $max-sm) {
+      margin-left: 0;
+    }
+  }
+
+  .createGroupButton:not(:last-child):not(:empty) {
+    width: 100%;
+    flex-grow: 1;
+    margin-left: 0;
+  }
+}

@@ -251,6 +251,8 @@ jobs:
       dockerfile: packages/webapp/Dockerfile
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
+      sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      sentry_dsn: ${{ secrets.SENTRY_DSN }}
 
   publish-staging-docker-image:
     if: ${{ github.ref_name == 'main'}}
@@ -263,6 +265,8 @@ jobs:
       dockerfile: packages/webapp/Dockerfile
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
+      sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      sentry_dsn: ${{ secrets.SENTRY_DSN }}
 
   publish-storybook-page:
     if: ${{ github.ref_name == 'main' }}

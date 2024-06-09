@@ -86,9 +86,8 @@ const _SelectFileButton = <Multiple extends boolean | undefined>({
               onSelect?.((multiple ? selectedFiles : selectedFiles[0]) as any);
             }}
           >
-            {multiple &&
-              `${t('files.file', { count: selectedFiles.length })} auswählen`}
-            {!multiple && 'Datei auswählen'}
+            {multiple && t('select files', { count: selectedFiles.length })}
+            {!multiple && t('select file')}
           </Button>
         </DialogActions>
       </Dialog>

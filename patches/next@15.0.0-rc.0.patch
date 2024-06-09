@@ -1,0 +1,24 @@
+diff --git a/dist/esm/lib/typescript/writeConfigurationDefaults.js b/dist/esm/lib/typescript/writeConfigurationDefaults.js
+index aae0311806624d2b807e6e16ced7c09ab68107ac..b1b85367b0b074ba54b78655aa6f4d4d3e8df506 100644
+--- a/dist/esm/lib/typescript/writeConfigurationDefaults.js
++++ b/dist/esm/lib/typescript/writeConfigurationDefaults.js
+@@ -115,6 +115,7 @@ export function getRequiredConfiguration(ts) {
+     return res;
+ }
+ export async function writeConfigurationDefaults(ts, tsConfigPath, isFirstTimeSetup, hasAppDir, distDir, hasPagesDir) {
++  return;
+     var _userTsConfig_compilerOptions;
+     if (isFirstTimeSetup) {
+         await fs.writeFile(tsConfigPath, '{}' + os.EOL);
+diff --git a/dist/lib/typescript/writeConfigurationDefaults.js b/dist/lib/typescript/writeConfigurationDefaults.js
+index 81bf49e849988154625f0ed84c734b6bc2f27ff5..b673bca1b51946398cb49ba9205e67d887acb559 100644
+--- a/dist/lib/typescript/writeConfigurationDefaults.js
++++ b/dist/lib/typescript/writeConfigurationDefaults.js
+@@ -183,6 +183,7 @@ function getRequiredConfiguration(ts) {
+     return res;
+ }
+ async function writeConfigurationDefaults(ts, tsConfigPath, isFirstTimeSetup, hasAppDir, distDir, hasPagesDir) {
++  return;
+     var _userTsConfig_compilerOptions;
+     if (isFirstTimeSetup) {
+         await _fs.promises.writeFile(tsConfigPath, '{}' + _os.default.EOL);

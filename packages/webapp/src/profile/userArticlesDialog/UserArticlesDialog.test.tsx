@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
-import { useRouter } from 'next/router';
 import { UserArticlesDialog } from './UserArticlesDialog';
 
 import GetArticlesByUserQuery from 'api/query/GetArticlesByUserQuery.graphql';
@@ -45,7 +44,7 @@ describe('UserArticlesDialog', () => {
       expect(screen.getByRole('dialog')).toBeVisible();
     });
 
-    useRouter().push('/new-path');
+    window.dispatchEvent(new PopStateEvent('popstate'));
 
     await waitFor(() => {
       expect(onRequestClose).toHaveBeenCalled();

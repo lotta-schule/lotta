@@ -6,11 +6,12 @@ import {
   DialogContent,
   Tabbar,
   Tab,
+  LinearProgress,
 } from '@lotta-schule/hubert';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import { NewMessageDestination, UserGroupModel } from 'model';
-import { SearchUserField } from 'administration/users/SearchUserField';
+import { SearchUserField } from 'component/form';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Icon } from 'shared/Icon';
 import { GroupSelect } from 'shared/edit/GroupSelect';
@@ -24,8 +25,8 @@ export interface CreateMessageDialogProps {
   onAbort(): void;
 }
 
-export const CreateMessageDialog = React.memo<CreateMessageDialogProps>(
-  ({ isOpen, onConfirm, onAbort }) => {
+export const CreateMessageDialog = React.memo(
+  ({ isOpen, onConfirm, onAbort }: CreateMessageDialogProps) => {
     const currentUser = useCurrentUser();
     const [newMessageType, setNewMessageType] = React.useState<
       'user' | 'group'
@@ -64,32 +65,41 @@ export const CreateMessageDialog = React.memo<CreateMessageDialogProps>(
                 )}
               </Tabbar>
               <div className={styles.tabsPanel}>
-                {newMessageType === 'user' && (
-                  <SearchUserField
-                    className={styles.input}
-                    onSelectUser={(user) => {
-                      setMessageDestination({ user });
-                    }}
-                  />
-                )}
-                {newMessageType === 'group' && (
-                  <GroupSelect
-                    className={styles.input}
-                    hidePublicGroupSelection
-                    label={'Gruppe wählen'}
-                    selectedGroups={[]}
-                    suggestionFilter={(group: UserGroupModel) =>
-                      !!currentUser!.groups.find((g) => g.id === group.id)
-                    }
-                    onSelectGroups={([group]) => {
-                      if (group) {
-                        setMessageDestination({
-                          group,
-                        });
+                <React.Suspense
+                  fallback={
+                    <LinearProgress
+                      isIndeterminate
+                      aria-label="Es werden weitere Informationen geladen"
+                    />
+                  }
+                >
+                  {newMessageType === 'user' && (
+                    <SearchUserField
+                      className={styles.input}
+                      onSelectUser={(user) => {
+                        setMessageDestination({ user });
+                      }}
+                    />
+                  )}
+                  {newMessageType === 'group' && (
+                    <GroupSelect
+                      className={styles.input}
+                      hidePublicGroupSelection
+                      label={'Gruppe wählen'}
+                      selectedGroups={[]}
+                      suggestionFilter={(group: UserGroupModel) =>
+                        !!currentUser!.groups.find((g) => g.id === group.id)
                       }
-                    }}
-                  />
-                )}
+                      onSelectGroups={([group]) => {
+                        if (group) {
+                          setMessageDestination({
+                            group,
+                          });
+                        }
+                      }}
+                    />
+                  )}
+                </React.Suspense>
               </div>
             </motion.div>
           )}

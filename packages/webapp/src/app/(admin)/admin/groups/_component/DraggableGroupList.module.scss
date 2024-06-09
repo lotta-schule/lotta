@@ -1,0 +1,10 @@
+.root {
+  overflow: auto;
+  max-height: 100%;
+
+  li {
+    &.highlighted {
+      font-weight: bold;
+    }
+  }
+}

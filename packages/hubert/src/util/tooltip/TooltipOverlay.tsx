@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { mergeProps, useTooltip } from 'react-aria';
 import { TooltipTriggerState } from 'react-stately';

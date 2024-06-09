@@ -69,7 +69,7 @@ export const NodeRenameInput = React.memo(
         <Popover
           isOpen={!!errorMessage}
           placement={'bottom'}
-          triggerRef={renamingInputRef}
+          trigger={renamingInputRef.current!}
           onClose={() => setErrorMessage(null)}
         >
           <ErrorMessage error={errorMessage} />

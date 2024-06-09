@@ -25,7 +25,7 @@ export const Popover = React.forwardRef(
     const [popoverElement, setPopoverElement] =
       React.useState<HTMLElement | null>(null);
 
-    const ref = React.useRef<HTMLDivElement>(null);
+    const ref = React.useRef<HTMLDivElement>(null!);
     React.useImperativeHandle(forwardedRef, () => ref.current);
 
     const shouldReduceMotion = useReducedMotion();

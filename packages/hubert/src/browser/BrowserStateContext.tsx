@@ -5,7 +5,7 @@ export interface DefaultFileMetadata {
   mimeType: string;
   size: number;
 }
-export interface DefaultDirectoryMetadata extends Record<string, string> {}
+export interface DefaultDirectoryMetadata extends Record<string, any> {}
 
 export type BrowserNodeMetadata<Type extends 'file' | 'directory'> =
   Type extends 'file'

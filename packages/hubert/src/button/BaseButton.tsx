@@ -9,6 +9,8 @@ export type BaseButtonProps = {
    */
   selected?: boolean;
 
+  as?: React.ElementType;
+
   /**
    * Chose from different styles
    */
@@ -33,7 +35,19 @@ export type BaseButtonProps = {
    * Content to show on the button
    */
   children?: any;
-} & React.HTMLProps<HTMLButtonElement>;
+} & Record<
+  Exclude<
+    string,
+    | 'selected'
+    | 'as'
+    | 'variant'
+    | 'fullWidth'
+    | 'className'
+    | 'style'
+    | 'children'
+  >,
+  any
+>;
 
 /**
  * Primary UI shared for userAvatar interaction
@@ -44,22 +58,24 @@ export const BaseButton = React.forwardRef<any, BaseButtonProps>(
       children,
       style,
       className,
+      href,
       variant = 'default',
       fullWidth = false,
       selected = false,
+      component = href ? 'a' : 'button',
       ...props
     },
     ref
   ) => {
-    const ComponentClass = props.href ? 'a' : ('button' as any);
     const selectedAriaAttribute =
       props.role && ['gridcell', 'option', 'row', 'tab'].includes(props.role)
         ? 'aria-selected'
         : 'aria-current';
     return React.createElement(
-      ComponentClass,
+      component,
       {
         ref,
+        href,
         type: props.type ?? 'button',
         role: 'button',
         style,

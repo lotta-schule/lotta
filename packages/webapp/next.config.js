@@ -1,26 +1,9 @@
 // @ts-check
 
 import { resolve } from 'node:path';
+import { env, version } from 'node:process';
+import { URL } from 'node:url';
 import { withSentryConfig } from '@sentry/nextjs';
-
-const SentryWebpackPluginOptions = {
-  // Additional config options for the Sentry Webpack plugin. Keep in mind that
-  // the following options are set automatically, and overriding them is not
-  // recommended:
-  //   release, url, org, project, authToken, configFile, stripPrefix,
-  //   urlPrefix, include, ignore
-
-  silent: true,
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options.
-
-  dryRun: !process.env.SENTRY_AUTH_TOKEN?.length,
-  dsn: process.env.SENTRY_DSN,
-  environment:
-    process.env.APP_ENVIRONMENT || process.env.NODE_ENV || 'development',
-  enabled: process.env.NODE_ENV === 'production',
-  release: process.env.IMAGE_NAME?.split(':')[1] ?? process.version ?? '?',
-};
 
 const __dirname = new URL('.', import.meta.url).pathname;
 
@@ -30,6 +13,7 @@ const __dirname = new URL('.', import.meta.url).pathname;
 const nextConfig = {
   experimental: {
     externalDir: true,
+    instrumentationHook: true,
   },
   transpileModules: [
     '@lotta-schule/hubert',
@@ -105,13 +89,21 @@ const nextConfig = {
     return config;
   },
   publicRuntimeConfig: {
-    appEnvironment:
-      process.env.APP_ENVIRONMENT || process.env.NODE_ENV || 'development',
-    imageName: process.env.IMAGE_NAME || 'test',
-    sentryDsn: process.env.SENTRY_DSN,
-    socketUrl: process.env.API_SOCKET_URL,
-    tenantSlugOverwrite: process.env.FORCE_TENANT_SLUG,
+    appEnvironment: env.APP_ENVIRONMENT || env.NODE_ENV || 'development',
+    imageName: env.IMAGE_NAME || 'test',
+    sentryDsn: env.NEXT_PUBLIC_SENTRY_DSN,
+    socketUrl: env.API_SOCKET_URL,
+    tenantSlugOverwrite: env.FORCE_TENANT_SLUG,
   },
 };
 
-export default withSentryConfig(nextConfig, SentryWebpackPluginOptions);
+// sentry should be last, wrapping the rest
+export default withSentryConfig(nextConfig, {
+  silent: false,
+
+  disableLogger: true,
+
+  org: 'lotta',
+  project: 'web',
+  widenClientFileUpload: true,
+});

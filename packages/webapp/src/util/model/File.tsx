@@ -17,7 +17,7 @@ export const File = {
     if (file) {
       if (file.fileType === FileModelType.Image) {
         return createImageUrl(
-          File.getFileRemoteLocation(baseUrl, file),
+          new URL(File.getFileRemoteLocation(baseUrl, file)),
           typeof sizeOrResizeOptions === 'number'
             ? {
                 width: sizeOrResizeOptions,
@@ -64,8 +64,8 @@ export const File = {
     return this.canEditDirectory(directory, user);
   },
 
-  getFileRemoteLocation(baseUrl: string, file: FileModel, qs = '') {
-    return [baseUrl, 'storage', 'f', file.id]
+  getFileRemoteLocation(baseUrl: string | URL, file: FileModel, qs = '') {
+    return [baseUrl.toString(), 'storage', 'f', file.id]
       .join('/')
       .concat(qs ? `?${qs}` : '');
   },

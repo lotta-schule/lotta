@@ -1,6 +1,6 @@
 @import "breakpoints";
 
-.root {
+.root:not(empty) {
   color: rgb(var(--lotta-text-color));
   background-color: initial;
   width: 100%;
@@ -8,15 +8,25 @@
   margin-right: auto;
   padding-left: 0;
   padding-right: 0;
+
+  &.fullSizeScrollable {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
   @media screen and (min-width: $min-md) {
     max-width: calc(100% - 2rem);
   }
+
   @media screen and (min-width: $min-lg) {
     max-width: $min-lg;
   }
+
   @media screen and (min-width: $min-md) {
-    padding-left: calc(var(--lotta-spacing) * 2);
-    padding-right: calc(var(--lotta-spacing) * 2);
+    padding-inline: calc(var(--lotta-spacing) * 2);
   }
   h1 {
     font-family: var(--lotta-font-family);
@@ -33,19 +43,29 @@
     text-align: right;
     display: flex;
 
+    @media screen and (max-width: $max-sm) {
+      min-height: 60px;
+      height: auto;
+      padding-block: var(--lotta-spacing);
+    }
+
     img {
       height: 80px;
     }
   }
 
   .main {
+    flex: 1 1;
     display: flex;
     justify-content: flex-start;
     margin-top: var(--lotta-spacing);
     max-width: 100%;
-    padding-bottom: var(--lotta-spacing);
     @media screen and (max-width: $max-sm) {
       flex-direction: column-reverse;
+    }
+
+    &:is(.fullSizeScrollable .main) {
+      overflow: hidden;
     }
   }
 
