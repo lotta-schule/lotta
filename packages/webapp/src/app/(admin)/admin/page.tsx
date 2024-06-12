@@ -139,7 +139,7 @@ async function AdminRootPage() {
       <section>
         <BaseButton
           as={Link}
-          href={'/admin/groups'}
+          href={'/admin/categories'}
           variant={'borderless'}
           className={styles.button}
         >
