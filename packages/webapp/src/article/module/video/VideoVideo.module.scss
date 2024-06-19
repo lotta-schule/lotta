@@ -1,11 +1,11 @@
 @import "breakpoints";
 
 .Video {
-    max-height: 80vh;
-    width: 100%;
-    background-color: #000;
+  max-height: 80vh;
+  width: 100%;
+  background-color: #000;
 
-    @media screen and (max-width: $max-xs) {
-        max-height: 100%;
-      }
+  @media screen and (max-width: $max-xs) {
+    max-height: 100%;
+  }
 }

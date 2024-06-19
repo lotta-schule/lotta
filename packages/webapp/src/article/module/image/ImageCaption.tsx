@@ -26,9 +26,7 @@ export const ImageCaption = React.memo<ImageCaptionProps>(
                 : undefined
             }
           />
-          <Checkbox>
-            volle Größe
-          </Checkbox>
+          <Checkbox>volle Größe</Checkbox>
         </figcaption>
       );
     }
