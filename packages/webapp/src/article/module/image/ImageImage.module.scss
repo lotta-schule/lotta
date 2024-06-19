@@ -1,11 +1,14 @@
 @import "breakpoints";
 
 .root {
-  margin: 0;
+  margin: 0 auto;
   padding-left: var(--lotta-spacing);
   padding-right: var(--lotta-spacing);
+  width: fit-content;
 
   @media screen and (max-width: $max-xs) {
     padding: 0;
+    margin: 0;
+    width: auto;
   }
 }

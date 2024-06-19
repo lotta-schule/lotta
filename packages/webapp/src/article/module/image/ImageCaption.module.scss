@@ -1,5 +1,8 @@
 .root {
   padding: 0 var(--lotta-spacing);
+  display: inline-flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .figcaption {
@@ -7,5 +10,5 @@
   border-top: none;
   border-left: none;
   border-right: none;
-  width: 100%;
+  width: 50%;
 }

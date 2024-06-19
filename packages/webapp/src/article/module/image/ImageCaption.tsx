@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import styles from './ImageCaption.module.scss';
+import { Checkbox } from '../../../../../hubert/src/form/checkbox';
 
 interface ImageCaptionProps {
   isEditModeEnabled: boolean;
@@ -25,6 +26,9 @@ export const ImageCaption = React.memo<ImageCaptionProps>(
                 : undefined
             }
           />
+          <Checkbox>
+            volle Größe
+          </Checkbox>
         </figcaption>
       );
     }
