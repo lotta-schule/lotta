@@ -35,6 +35,7 @@ export const Edit = React.memo<EditProps>(
             contentEditable={true}
             defaultValue={captions[0]}
             className={styles.figcaption}
+            placeholder={'Videobeschreibung'}
             onChange={(e: React.FormEvent<HTMLInputElement>) => {
               onUpdateModule({
                 ...contentModule,

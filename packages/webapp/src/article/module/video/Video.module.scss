@@ -1,17 +1,23 @@
 @import "breakpoints";
 
 .show {
-  margin: 0;
+  margin: 0 auto;
   padding-left: var(--lotta-spacing);
   padding-right: var(--lotta-spacing);
+
   @media screen and (max-width: $max-xs) {
     padding: 0;
+    margin: 0;
+    width: auto;
   }
 }
 
 .edit {
-  figcaption: {
-    border: 1px solid var(--lotta-color-secondary);
+  .figcaption {
+    border-bottom: 1px solid rgba(var(--lotta-text-color), 1);
+    border-top: none;
+    border-left: none;
+    border-right: none;
     width: 100%;
-  }
+}
 }

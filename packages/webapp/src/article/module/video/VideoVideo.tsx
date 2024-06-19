@@ -3,6 +3,7 @@ import { File } from 'util/model';
 import { ContentModuleModel } from 'model';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import { useServerData } from 'shared/ServerDataContext';
+import styles from './VideoVideo.module.scss';
 
 interface VideoVideoProps {
   contentModule: ContentModuleModel;
@@ -56,7 +57,7 @@ export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
       playsInline
       controls
       poster={posterFileLocation || undefined}
-      style={{ width: '100%' }}
+      className={styles.Video}
     >
       {videoFiles.map((vf) => (
         <source
