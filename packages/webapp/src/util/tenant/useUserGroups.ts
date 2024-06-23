@@ -5,8 +5,7 @@ import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 
 export const useUserGroups = () => {
   const { data } = useSuspenseQuery<{ userGroups: UserGroupModel[] }>(
-    GetUserGroupsQuery,
-    { fetchPolicy: 'network-only', returnPartialData: false }
+    GetUserGroupsQuery
   );
 
   // TODO: Server's job

@@ -9,6 +9,7 @@ import {
   ListItem,
   ListItemSecondaryText,
   ListProps,
+  SortableDraggableList,
 } from '@lotta-schule/hubert';
 
 const meta: Meta<typeof List> = {
@@ -90,23 +91,20 @@ export const ActionList: Story = {
 };
 
 export const DraggableList: Story = {
-  render: (args: ListProps) => (
-    <List {...args}>
-      <DraggableListItem title={'Test 1'} dragHandleProps={{} as any} />
-      <DraggableListItem
-        title={'Test 2 is selected'}
-        dragHandleProps={{} as any}
-        selected
-      />
-      <DraggableListItem title={'Test 3'} dragHandleProps={{} as any} />
-      <DraggableListItem
-        title={'Test 4 has a main action and an icon'}
-        dragHandleProps={{} as any}
-        icon={<Close />}
-        onClick={() => alert('Clicked text!')}
-        onClickIcon={() => alert('Clicked icon!')}
-      />
-      <DraggableListItem title={'I have no drag handle'} />
-    </List>
-  ),
+  render: (args: ListProps) => {
+    const items = [
+      { id: '1', title: 'Test 1' },
+      { id: '2', title: 'Test 2 is selected', selected: true },
+      { id: '3', title: 'Test 3' },
+      {
+        id: '4',
+        title: 'Test 4 has a main action and an icon',
+        icon: <Close />,
+      },
+      { id: '5', title: 'I have no drag handle' },
+    ];
+    return (
+      <SortableDraggableList items={items} {...args} onChange={() => {}} />
+    );
+  },
 };

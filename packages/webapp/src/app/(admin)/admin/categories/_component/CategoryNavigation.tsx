@@ -2,15 +2,13 @@
 
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { Collapse, DraggableListItem } from '@lotta-schule/hubert';
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-  ResponderProvided,
-} from 'react-beautiful-dnd';
+  Collapse,
+  DraggableListItem,
+  SortableDraggableList,
+  SortableItem,
+} from '@lotta-schule/hubert';
+import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { ID, CategoryModel } from 'model';
 import { useParams, useRouter } from 'next/navigation';
 import { Icon } from 'shared/Icon';
@@ -31,6 +29,8 @@ export const CategoryNavigation = memo(() => {
   );
 
   const [expandedMainCategoryId, setExpandedMainCategoryId] =
+    useState<ID | null>(null);
+  const [expandedMainCategoryToRestore, setExpandedMainCategoryToRestore] =
     useState<ID | null>(null);
 
   const homepageCategory = useMemo(
@@ -64,58 +64,6 @@ export const CategoryNavigation = memo(() => {
     { id: ID; category: any }
   >(UpdateCategoryMutation);
 
-  const onDragEnd = (
-    { destination, source, draggableId }: DropResult,
-    _provided: ResponderProvided
-  ) => {
-    if (!destination) {
-      return;
-    }
-
-    if (destination.droppableId !== source.droppableId) {
-      return;
-    }
-
-    const initialCategoriesArray =
-      destination.droppableId === 'categories-root'
-        ? mainCategories
-        : getSubcategoriesForCategory({
-            id: destination.droppableId,
-          });
-    const sourceIndex = initialCategoriesArray.findIndex(
-      (category) => category.id === draggableId
-    );
-    const newCategoriesArray = [...initialCategoriesArray];
-    newCategoriesArray.splice(sourceIndex, 1);
-    newCategoriesArray.splice(
-      destination.index,
-      0,
-      initialCategoriesArray[sourceIndex]
-    );
-    newCategoriesArray.forEach((category, index) => {
-      if (category) {
-        const sortKey = index * 10 + 10;
-        updateCategory({
-          variables: {
-            id: category.id,
-            category: {
-              sortKey,
-            },
-          },
-          optimisticResponse: {
-            __typename: 'Mutation',
-            category: {
-              __typename: 'Category',
-              ...category,
-              sortKey,
-              widgets: null,
-            },
-          } as any,
-        });
-      }
-    });
-  };
-
   useEffect(() => {
     if (selectedCategory) {
       if (selectedCategory.category?.id) {
@@ -126,6 +74,12 @@ export const CategoryNavigation = memo(() => {
     }
   }, [selectedCategory]);
 
+  useEffect(() => {
+    if (expandedMainCategoryId) {
+      setExpandedMainCategoryToRestore(null);
+    }
+  }, [expandedMainCategoryId]);
+
   const onSelectCategory = useCallback(
     (category: CategoryModel) => {
       if (category.id !== selectedCategory?.id) {
@@ -135,10 +89,39 @@ export const CategoryNavigation = memo(() => {
     [router]
   );
 
+  const onChangeCategories = useCallback((categories: SortableItem[]) => {
+    const newCategories = categories.map((category, index) => ({
+      id: category.id,
+      sortKey: index * 10 + 10,
+    }));
+
+    newCategories.forEach((category) => {
+      updateCategory({
+        variables: {
+          id: category.id,
+          category: {
+            sortKey: category.sortKey,
+          },
+        },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          category: {
+            __typename: 'Category',
+            id: category.id,
+            sortKey: category.sortKey,
+            widgets: null,
+          },
+        } as any,
+      });
+    });
+  }, []);
+
   return (
     <div className={styles.root}>
       {homepageCategory && (
         <DraggableListItem
+          id={homepageCategory.id}
+          isDraggable={false}
           data-testid={'main-category-item'}
           title={homepageCategory.title}
           className={styles.before}
@@ -150,132 +133,67 @@ export const CategoryNavigation = memo(() => {
       )}
 
       <h5>Hauptnavigation</h5>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable
-          droppableId={'categories-root'}
-          type={'main-categories'}
-          mode="standard"
-          direction="vertical"
-          isDropDisabled={false}
-          isCombineEnabled={false}
-          ignoreContainerClipping={false}
-        >
-          {({ droppableProps, innerRef, placeholder }) => (
-            <div {...droppableProps} ref={innerRef}>
-              {mainCategories.map((category, index) => (
-                <Draggable
-                  key={category.id}
-                  draggableId={String(category.id)}
-                  index={index}
-                  disableInteractiveElementBlocking
-                >
-                  {(provided) => (
-                    <div {...provided.draggableProps} ref={provided.innerRef}>
-                      <DraggableListItem
-                        data-testid={'main-category-item'}
-                        onClick={() => {
-                          onSelectCategory(category);
-                          setExpandedMainCategoryId((categoryId) =>
-                            categoryId === category.id ? null : categoryId
-                          );
-                        }}
-                        icon={
-                          getSubcategoriesForCategory(category).length > 0 && (
-                            <Icon
-                              title="Unterkategorien anzeigen"
-                              role={'button'}
-                              icon={
-                                expandedMainCategoryId === category.id
-                                  ? faCaretDown
-                                  : faCaretUp
-                              }
-                            />
-                          )
-                        }
-                        onClickIcon={(e) => {
-                          e.stopPropagation();
-                          setExpandedMainCategoryId((categoryId) =>
-                            categoryId === category.id ? null : category.id
-                          );
-                        }}
-                        dragHandleProps={provided.dragHandleProps ?? undefined}
-                        title={category.title}
-                        selected={selectedCategory?.id === category.id}
-                      />
-                      <Collapse isOpen={expandedMainCategoryId === category.id}>
-                        <Droppable
-                          isDropDisabled={false}
-                          isCombineEnabled={false}
-                          ignoreContainerClipping={false}
-                          droppableId={String(category.id)}
-                          type={'subcategories'}
-                        >
-                          {({ droppableProps, innerRef, placeholder }) => (
-                            <div
-                              role="list"
-                              className={styles.categoriesSublist}
-                              ref={innerRef}
-                              {...droppableProps}
-                            >
-                              {getSubcategoriesForCategory(category).map(
-                                (subcategory, index) => (
-                                  <Draggable
-                                    key={subcategory.id}
-                                    draggableId={String(subcategory.id)}
-                                    index={index}
-                                  >
-                                    {({
-                                      innerRef,
-                                      dragHandleProps,
-                                      draggableProps,
-                                    }) => (
-                                      <DraggableListItem
-                                        key={subcategory.id}
-                                        data-testid={'subcategory-item'}
-                                        ref={innerRef}
-                                        {...draggableProps}
-                                        onClick={() => {
-                                          onSelectCategory(subcategory);
-                                        }}
-                                        dragHandleProps={
-                                          dragHandleProps ?? undefined
-                                        }
-                                        title={subcategory.title}
-                                        selected={
-                                          selectedCategory?.id ===
-                                          subcategory.id
-                                        }
-                                      />
-                                    )}
-                                  </Draggable>
-                                )
-                              )}
-                              {placeholder}
-                            </div>
-                          )}
-                        </Droppable>
-                      </Collapse>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <SortableDraggableList
+        id={'main-categories'}
+        onChange={onChangeCategories}
+        onDragStart={() => {
+          setExpandedMainCategoryId(null);
+          setExpandedMainCategoryToRestore(expandedMainCategoryId);
+        }}
+        onDragEnd={() => {
+          setExpandedMainCategoryId(expandedMainCategoryToRestore);
+        }}
+        items={mainCategories.map((c) => ({
+          id: c.id,
+          title: c.title,
+          icon:
+            getSubcategoriesForCategory(c).length > 0 ? (
+              <Icon
+                title="Unterkategorien anzeigen"
+                role={'button'}
+                icon={expandedMainCategoryId === c.id ? faCaretUp : faCaretDown}
+              />
+            ) : undefined,
+          onClickIcon: (e) => {
+            e.stopPropagation();
+            setExpandedMainCategoryId((categoryId) =>
+              categoryId === c.id ? null : c.id
+            );
+          },
+          selected: selectedCategory?.id === c.id,
+          onClick: () => onSelectCategory(c),
+          testId: 'main-category-item',
+          children: (
+            <Collapse isOpen={expandedMainCategoryId === c.id}>
+              <SortableDraggableList
+                id={`subcategories-for-c-${c.id}`}
+                className={styles.categoriesSublist}
+                items={getSubcategoriesForCategory(c).map((subcategory) => ({
+                  id: subcategory.id,
+                  title: subcategory.title,
+                  onClick: () => onSelectCategory(subcategory),
+                  selected: selectedCategory?.id === subcategory.id,
+                }))}
+                onChange={() => {}}
+              />
+            </Collapse>
+          ),
+        }))}
+      />
 
       <h5 className={styles.heading}>Randnavigation</h5>
       {sidenavCategories.map((category) => (
         <DraggableListItem
+          id={category.id}
           data-testid={'sidenav-category-item'}
           key={category.id}
           title={category.title}
           className={styles.before}
+          selected={selectedCategory?.id === category.id}
+          isDraggable={false}
           onClick={() => {
             onSelectCategory(category);
           }}
-          selected={selectedCategory?.id === category.id}
         />
       ))}
     </div>

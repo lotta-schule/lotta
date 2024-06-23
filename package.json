@@ -76,5 +76,8 @@
     "patchedDependencies": {
       "next@15.0.0-rc.0": "patches/next@15.0.0-rc.0.patch"
     }
+  },
+  "dependencies": {
+    "@epic-web/invariant": "^1.0.0"
   }
 }
