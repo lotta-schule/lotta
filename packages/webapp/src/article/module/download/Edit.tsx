@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Button, DragHandle, Input, FileSize } from '@lotta-schule/hubert';
-import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { Input, SortableDraggableList } from '@lotta-schule/hubert';
 import { ContentModuleModel, FileModel } from 'model';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 
@@ -15,152 +14,104 @@ export interface EditProps {
 
 export const Edit = React.memo<EditProps>(
   ({ contentModule, onUpdateModule }) => {
-    const getConfiguration = (file: FileModel) => {
-      if (
-        contentModule.configuration &&
-        contentModule.configuration.files &&
-        contentModule.configuration.files[file.id]
-      ) {
-        return {
-          description: '',
-          sortKey: 0,
-          ...contentModule.configuration.files[file.id],
-        };
-      } else {
-        return {
-          description: '',
-          sortKey: 0,
-        };
-      }
-    };
+    const [isDragging, setIsDragging] = React.useState(false);
+    const getConfiguration = React.useCallback(
+      (file: FileModel) => {
+        if (
+          contentModule.configuration &&
+          contentModule.configuration.files &&
+          contentModule.configuration.files[file.id]
+        ) {
+          return {
+            description: '',
+            sortKey: 0,
+            ...contentModule.configuration.files[file.id],
+          };
+        } else {
+          return {
+            description: '',
+            sortKey: 0,
+          };
+        }
+      },
+      [contentModule]
+    );
+
+    const sortedFiles = React.useMemo(
+      () =>
+        Array.from(contentModule.files).sort(
+          (a, b) =>
+            (getConfiguration(a).sortKey || 0) -
+            (getConfiguration(b).sortKey || 0)
+        ),
+      [contentModule.files, getConfiguration]
+    );
 
     return (
       <div className={styles.root}>
-        <DragDropContext
-          onDragEnd={({ destination, source }) => {
-            if (!destination) {
-              return;
-            }
+        <SortableDraggableList
+          id={`downloads-${contentModule.id}`}
+          items={sortedFiles.map((f) => ({
+            id: f.id,
+            title: f.filename,
+            children: (
+              <div style={{ opacity: isDragging ? 0.5 : 1 }}>
+                <Input
+                  multiline
+                  className={styles.textArea}
+                  placeholder={`Beschreibung des Downloads`}
+                  defaultValue={getConfiguration(f).description}
+                  onBlur={(event) =>
+                    onUpdateModule({
+                      ...contentModule,
+                      configuration: {
+                        ...contentModule.configuration,
+                        files: {
+                          ...contentModule.configuration.files,
+                          [f.id]: {
+                            ...getConfiguration(f),
+                            description: event.target.value,
+                          },
+                        },
+                      },
+                    })
+                  }
+                />
+              </div>
+            ),
+            icon: <Icon icon={faTrash} />,
+            onClickIcon: () => {
+              onUpdateModule({
+                ...contentModule,
+                files: contentModule.files.filter((file) => file.id !== f.id),
+              });
+            },
+          }))}
+          onDragStart={() => setIsDragging(true)}
+          onDragEnd={() => setIsDragging(false)}
+          onChange={(files) => {
+            const updatedFiles = files.map((file, index) => ({
+              id: file.id,
+              sortKey: index * 10 + 10,
+            }));
 
-            if (
-              destination.droppableId === source.droppableId &&
-              destination.index === source.index
-            ) {
-              return;
-            }
+            console.log(contentModule.configuration.files);
 
-            const filesConfiguration =
-              (contentModule.configuration &&
-                contentModule.configuration.files) ||
-              {};
-            const sortedFileIds = [...contentModule.files]
-              .sort(
-                (f1, f2) =>
-                  getConfiguration(f1).sortKey - getConfiguration(f2).sortKey
-              )
-              .map((f) => f.id);
-            const sourceId = sortedFileIds[source.index];
-            sortedFileIds.splice(source.index, 1);
-            sortedFileIds.splice(destination.index, 0, sourceId);
-            const newFilesConfiguration = sortedFileIds.reduce(
-              (prev, fileId, i) => {
+            const updatedConfiguration = {
+              ...contentModule.configuration,
+              files: updatedFiles.reduce((filesConfig, { id, sortKey }) => {
                 return {
-                  ...prev,
-                  [fileId]: {
-                    ...filesConfiguration[fileId],
-                    sortKey: i * 10,
-                  },
+                  ...filesConfig,
+                  [id]: { ...filesConfig[id], sortKey },
                 };
-              },
-              {}
-            );
+              }, contentModule.configuration?.files || {}),
+            };
             onUpdateModule({
               ...contentModule,
-              configuration: {
-                ...contentModule.configuration,
-                files: newFilesConfiguration,
-              },
+              configuration: updatedConfiguration,
             });
           }}
-        >
-          <Droppable droppableId={String(contentModule.id)}>
-            {(provided) => (
-              <section {...provided.droppableProps} ref={provided.innerRef}>
-                {[...contentModule.files]
-                  .sort(
-                    (f1, f2) =>
-                      getConfiguration(f1).sortKey -
-                      getConfiguration(f2).sortKey
-                  )
-                  .map((file, index) => (
-                    <Draggable
-                      key={file.id}
-                      draggableId={String(file.id)}
-                      index={index}
-                    >
-                      {(draggableProvided) => (
-                        <div
-                          className={styles.downloadItemWrapper}
-                          key={file.id}
-                          ref={draggableProvided.innerRef}
-                          {...draggableProvided.draggableProps}
-                        >
-                          <div className={styles.downloadWrapperHeader}>
-                            <span {...draggableProvided.dragHandleProps}>
-                              <DragHandle className={styles.dragHandle} />
-                            </span>
-                            <div>
-                              <div className={styles.downloadDescription}>
-                                {file.filename}
-                              </div>
-                              <div className={styles.secondaryHeading}>
-                                {new FileSize(file.filesize).humanize()}
-                              </div>
-                            </div>
-                            <Button
-                              icon={<Icon icon={faTrash} />}
-                              onClick={() =>
-                                onUpdateModule({
-                                  ...contentModule,
-                                  files: contentModule.files.filter(
-                                    (f) => f.id !== file.id
-                                  ),
-                                })
-                              }
-                            />
-                          </div>
-                          <div className={styles.downloadDescription}>
-                            <Input
-                              multiline
-                              className={styles.textArea}
-                              placeholder={`Beschreibung des Downloads`}
-                              defaultValue={getConfiguration(file).description}
-                              onBlur={(event) =>
-                                onUpdateModule({
-                                  ...contentModule,
-                                  configuration: {
-                                    ...contentModule.configuration,
-                                    files: {
-                                      ...contentModule.configuration.files,
-                                      [file.id]: {
-                                        ...getConfiguration(file),
-                                        description: event.target.value,
-                                      },
-                                    },
-                                  },
-                                })
-                              }
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                {provided.placeholder}
-              </section>
-            )}
-          </Droppable>
-        </DragDropContext>
+        />
         <SelectFileButton
           multiple
           label={'Datei hinzufügen'}
