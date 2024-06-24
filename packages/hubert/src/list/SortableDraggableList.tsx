@@ -54,25 +54,28 @@ export const SortableDraggableList = ({
   ...props
 }: SortableDraggableListProps<SortableItem>) => {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const handleDragEnd = useCallback((event: any) => {
-    const { active, over } = event;
+  const handleDragEnd = useCallback(
+    (event: any) => {
+      const { active, over } = event;
 
-    if (active.id !== over.id) {
-      const oldIndex = items.findIndex((item) => item.id === active.id);
-      const newIndex = items.findIndex((item) => item.id === over.id);
+      if (active.id !== over.id) {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
 
-      invariant(oldIndex !== -1, 'Old index not found');
-      invariant(newIndex !== -1, 'New index not found');
+        invariant(oldIndex !== -1, 'Old index not found');
+        invariant(newIndex !== -1, 'New index not found');
 
-      const newArray = arrayMove(items, oldIndex, newIndex);
+        const newArray = arrayMove(items, oldIndex, newIndex);
 
-      onChange(newArray);
-    }
+        onChange(newArray);
+      }
 
-    setActiveId(null);
+      setActiveId(null);
 
-    onDragEnd?.();
-  }, []);
+      onDragEnd?.();
+    },
+    [items, onChange, onDragEnd]
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor),
