@@ -89,32 +89,43 @@ export const CategoryNavigation = memo(() => {
     [router]
   );
 
-  const onChangeCategories = useCallback((categories: SortableItem[]) => {
-    const newCategories = categories.map((category, index) => ({
-      id: category.id,
-      sortKey: index * 10 + 10,
-    }));
-
-    newCategories.forEach((category) => {
-      updateCategory({
-        variables: {
-          id: category.id,
-          category: {
-            sortKey: category.sortKey,
-          },
-        },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          category: {
-            __typename: 'Category',
+  const onChangeCategories = useCallback(
+    (updatedCategories: SortableItem[]) => {
+      updatedCategories
+        .map((category, index) => ({
+          ...(categories.find((c) => c.id === category.id) ?? {
             id: category.id,
-            sortKey: category.sortKey,
-            widgets: null,
-          },
-        } as any,
-      });
-    });
-  }, []);
+          }),
+          sortKey: index * 10 + 10,
+        }))
+        .filter(
+          (category) =>
+            category.sortKey !==
+            categories.find((c) => c.id === category.id)?.sortKey
+        )
+        .forEach((category) => {
+          updateCategory({
+            variables: {
+              id: category.id,
+              category: {
+                sortKey: category.sortKey,
+              },
+            },
+            optimisticResponse: {
+              __typename: 'Mutation',
+              category: {
+                __typename: 'Category',
+                ...category,
+                id: category.id,
+                sortKey: category.sortKey,
+                widgets: null,
+              },
+            } as any,
+          });
+        });
+    },
+    []
+  );
 
   return (
     <div className={styles.root}>
