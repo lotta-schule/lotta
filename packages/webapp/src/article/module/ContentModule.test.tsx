@@ -104,7 +104,7 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
+        const dragHandle = screen.getByTitle(/modul konfigurieren/i);
         expect(dragHandle).toBeInTheDocument();
       });
 
@@ -113,7 +113,6 @@ describe('shared/article/module/ContentModule', () => {
           <ContentModule
             isEditModeEnabled
             article={article}
-            elementProps={{ style: { opacity: 0.8 } }}
             contentModule={textContentModule}
             index={0}
             onUpdateModule={() => {}}
@@ -158,7 +157,7 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
+        const dragHandle = screen.getByTitle(/modul konfigurieren/i);
         expect(dragHandle).toBeInTheDocument();
       });
 
@@ -168,7 +167,6 @@ describe('shared/article/module/ContentModule', () => {
           <ContentModule
             isEditModeEnabled
             article={article}
-            elementProps={{ style: { opacity: 0.8 } }}
             contentModule={titleContentModule}
             index={0}
             onUpdateModule={() => {}}
@@ -230,7 +228,7 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
+        const dragHandle = screen.getByTitle(/modul konfigurieren/i);
         expect(dragHandle).toBeInTheDocument();
       });
 
@@ -239,7 +237,6 @@ describe('shared/article/module/ContentModule', () => {
           <ContentModule
             isEditModeEnabled
             article={article}
-            elementProps={{ style: { opacity: 0.8 } }}
             contentModule={imageContentModule}
             index={0}
             onUpdateModule={() => {}}
@@ -293,7 +290,7 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
+        const dragHandle = screen.getByTitle(/modul konfigurieren/i);
         expect(dragHandle).toBeInTheDocument();
       });
 
@@ -302,7 +299,6 @@ describe('shared/article/module/ContentModule', () => {
         const screen = render(
           <ContentModule
             isEditModeEnabled
-            elementProps={{ style: { opacity: 0.8 } }}
             article={article}
             contentModule={imageCollectionContentModule}
             index={0}
@@ -388,7 +384,7 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
+        const dragHandle = screen.getByTitle(/modul konfigurieren/i);
         expect(dragHandle).toBeInTheDocument();
       });
 
@@ -397,7 +393,6 @@ describe('shared/article/module/ContentModule', () => {
           <ContentModule
             isEditModeEnabled
             article={article}
-            elementProps={{ style: { opacity: 0.8 } }}
             contentModule={videoContentModule}
             index={0}
             onUpdateModule={() => {}}
@@ -451,7 +446,7 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
+        const dragHandle = screen.getByTitle(/modul konfigurieren/i);
         expect(dragHandle).toBeInTheDocument();
       });
 
@@ -460,7 +455,6 @@ describe('shared/article/module/ContentModule', () => {
           <ContentModule
             isEditModeEnabled
             article={article}
-            elementProps={{ style: { opacity: 0.8 } }}
             contentModule={videoContentModule}
             index={0}
             onUpdateModule={() => {}}
@@ -514,7 +508,7 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
+        const dragHandle = screen.getByTitle(/modul konfigurieren/i);
         expect(dragHandle).toBeInTheDocument();
       });
 
@@ -523,7 +517,6 @@ describe('shared/article/module/ContentModule', () => {
         const screen = render(
           <ContentModule
             isEditModeEnabled
-            elementProps={{ style: { opacity: 0.8 } }}
             article={article}
             contentModule={downloadContentModule}
             index={0}
@@ -634,7 +627,7 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
+        const dragHandle = screen.getByTitle(/modul konfigurieren/i);
         expect(dragHandle).toBeInTheDocument();
       });
 
@@ -643,7 +636,6 @@ describe('shared/article/module/ContentModule', () => {
           <ContentModule
             isEditModeEnabled
             article={article}
-            elementProps={{ style: { opacity: 0.8 } }}
             contentModule={formContentModule}
             index={0}
             onUpdateModule={() => {}}
@@ -697,7 +689,7 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
+        const dragHandle = screen.getByTitle(/modul konfigurieren/i);
         expect(dragHandle).toBeInTheDocument();
       });
 
@@ -706,7 +698,6 @@ describe('shared/article/module/ContentModule', () => {
           <ContentModule
             isEditModeEnabled
             article={article}
-            elementProps={{ style: { opacity: 0.8 } }}
             contentModule={tableContentModule}
             index={0}
             onUpdateModule={() => {}}

@@ -7,28 +7,21 @@
   &.isEditModeEnabled {
     border-width: 1px;
   }
-  &.dragging {
-    border-color: rgb(var(--lotta-primary-color));
-    .dragbar {
-      background-color: rgba(var(--lotta-primary-color), 0.6);
-      opacity: 1;
-    }
-  }
   &:hover,
   &:focus-within {
     border-color: rgb(var(--lotta-highlight-color));
-    .dragbar {
+    .titlebar {
       opacity: 0.8;
     }
   }
   &.active {
     border-color: rgb(var(--lotta-primary-color));
-    .dragbar {
+    .titlebar {
       opacity: 0.8;
     }
   }
 
-  .dragbar {
+  .titlebar {
     opacity: 0;
     padding: 0.1em 0.5em;
     height: 2.2em;
@@ -51,7 +44,7 @@
     }
   }
 
-  .dragbarButton {
+  .titlebarButton {
     padding: 0 5px;
     height: 28px;
     width: 28px;

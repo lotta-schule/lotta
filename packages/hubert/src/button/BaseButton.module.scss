@@ -73,7 +73,7 @@
     border: none;
   }
 
-  &[data-variant="error"] {
+  &[data-variant="error"]:not([bump-specificity]):not([bump-it-hard]) {
     background-color: rgba(var(--lotta-error-color), 1);
     color: rgba(var(--lotta-primary-contrast-text-color), 1);
     border: none;
