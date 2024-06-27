@@ -10,6 +10,12 @@ const config = [
   },
   ...baseConfig,
   ...storybook.configs.recommended.overrides,
+  {
+    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+    rules: {
+      'react-compiler/react-compiler': 'off',
+    },
+  },
 ];
 
 export default config;

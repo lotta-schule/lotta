@@ -5,6 +5,8 @@ import react from 'eslint-plugin-react';
 import reactJsx from 'eslint-plugin-react/configs/jsx-runtime.js';
 import reactRecommended from 'eslint-plugin-react/configs/recommended.js';
 import reactHooks from 'eslint-plugin-react-hooks';
+import reactCompiler from 'eslint-plugin-react-compiler';
+
 import ts from 'typescript-eslint';
 import vitest from 'eslint-plugin-vitest';
 
@@ -16,7 +18,12 @@ const config = [
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     ...reactRecommended,
-    plugins: { react, 'react-hooks': reactHooks, ...reactRecommended.plugins },
+    plugins: {
+      react,
+      'react-hooks': reactHooks,
+      'react-compiler': reactCompiler,
+      ...reactRecommended.plugins,
+    },
     languageOptions: {
       ...reactRecommended.languageOptions,
       parserOptions: {
@@ -40,6 +47,7 @@ const config = [
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/no-unescaped-entities': 'off',
+      'react-compiler/react-compiler': 'error',
     },
     settings: {
       react: {
@@ -63,8 +71,18 @@ const config = [
     },
   },
   {
+    files: [
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.test.js',
+      '**/*.test.jsx',
+      '**/test/util.tsx',
+    ],
     ...vitest.configs.recommended,
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.test.js', '**/*.test.jsx'],
+    rules: {
+      ...vitest.configs.recommended.rules,
+      'react-compiler/react-compiler': 'off',
+    },
   },
 ];
 

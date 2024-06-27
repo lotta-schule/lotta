@@ -29,8 +29,7 @@ export const Edit = React.memo<EditProps>(
       []
     );
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const onKeyDown = React.useCallback(onKeyDownFactory(editor), [editor]);
+    const onKeyDown = React.useMemo(() => onKeyDownFactory(editor), [editor]);
 
     return (
       <Slate
