@@ -30,7 +30,6 @@
     "@types/node": "^20.14.9",
     "@types/phoenix": "^1.6.5",
     "@types/react": "npm:types-react@rc",
-    "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "npm:types-react-dom@rc",
     "@types/slate-base64-serializer": "^0.2.5",
     "@types/user-event": "^4.1.3",
