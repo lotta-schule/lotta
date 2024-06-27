@@ -1,15 +1,16 @@
+'use client';
+
 import { HTMLProps, MouseEventHandler } from 'react';
 import { DragHandle } from '../icon/DragHandle';
-import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import clsx from 'clsx';
 
 import styles from './DraggableListItem.module.scss';
 
-export type DraggableListItemProps = Omit<
-  HTMLProps<HTMLLIElement>,
-  'children'
-> & {
-  dragHandleProps?: DraggableProvidedDragHandleProps;
+export type DraggableListItemProps = HTMLProps<HTMLDivElement> & {
+  id: string;
+  isDraggable?: boolean;
   onClickIcon?: MouseEventHandler<HTMLDivElement>;
   icon?: React.ReactNode;
   selected?: boolean;
@@ -18,53 +19,67 @@ export type DraggableListItemProps = Omit<
 
 export const DraggableListItem = ({
   title,
-  dragHandleProps,
   className,
+  isDraggable = true,
   selected,
   icon,
   onClick,
   onClickIcon,
+  children,
   ...props
 }: DraggableListItemProps) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: props.id, disabled: !isDraggable });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   return (
-    <li
-      onClick={onClick}
-      title={title}
-      aria-current={selected ? 'page' : undefined}
+    <div
+      {...attributes}
       {...props}
+      ref={setNodeRef}
+      onClick={onClick}
+      aria-current={selected ? 'page' : undefined}
       className={clsx(className, styles.root, {
         [styles.selected]: selected,
         [styles.isClickable]: onClick,
       })}
     >
-      {dragHandleProps && (
-        <div
-          className={styles.dragHandle}
-          aria-label="Reihenfolge ändern"
-          {...dragHandleProps}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <DragHandle className={styles.moveCategoryHandlerIcon} />
-        </div>
-      )}
-      <div className={styles.titleWrapper}>{title}</div>
-      {icon && (
-        <div
-          className={clsx(styles.icon, {
-            [styles.isIconClickable]: onClickIcon,
-          })}
-          onClick={(e) => {
-            if (onClickIcon) {
+      <li title={title} style={style}>
+        {isDraggable && (
+          <div
+            className={styles.dragHandle}
+            aria-label="Reihenfolge ändern"
+            data-testid="drag-handle"
+            {...listeners}
+            onClick={(e) => {
               e.stopPropagation();
-              onClickIcon(e);
-            }
-          }}
-        >
-          {icon}
-        </div>
-      )}
-    </li>
+            }}
+          >
+            <DragHandle className={styles.moveCategoryHandlerIcon} />
+          </div>
+        )}
+        <div className={styles.titleWrapper}>{title}</div>
+        {icon && (
+          <div
+            className={clsx(styles.icon, {
+              [styles.isIconClickable]: onClickIcon,
+            })}
+            onClick={(e) => {
+              if (onClickIcon) {
+                e.stopPropagation();
+                onClickIcon(e);
+              }
+            }}
+          >
+            {icon}
+          </div>
+        )}
+      </li>
+      {children}
+    </div>
   );
 };

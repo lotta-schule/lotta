@@ -1,63 +1,64 @@
 .root {
-  border-radius: var(--lotta-border-radius);
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  border: 1px solid rgb(var(--lotta-divider-color));
-  margin-bottom: var(--lotta-spacing);
-  background-color: rgba(var(--lotta-highlight-color), 0.3);
+  & > li {
+    border-radius: var(--lotta-border-radius);
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    border: 1px solid rgb(var(--lotta-divider-color));
+    margin-bottom: var(--lotta-spacing);
+    background-color: rgba(var(--lotta-highlight-color), 0.3);
 
-  &.selected {
+    .dragHandle {
+      background: rgba(var(--lotta-primary-color), 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3em;
+      border-top-left-radius: var(--lotta-border-radius);
+      border-top-left-radius: var(--lotta-border-radius);
+
+      cursor: grab;
+
+      .moveCategoryHandlerIcon {
+        vertical-align: bottom;
+        color: rgb(var(--lotta-primary-color));
+      }
+
+      &:hover {
+        background: rgba(var(--lotta-primary-color), 0.3);
+      }
+    }
+
+    .icon {
+      background-color: rgba(var(--lotta-highlight-color), 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3em;
+
+      &.isIconClickable {
+        cursor: pointer;
+        &:hover {
+          background-color: rgba(var(--lotta-highlight-color), 0.5);
+        }
+      }
+    }
+
+    .titleWrapper {
+      padding: var(--lotta-spacing);
+      flex: 1;
+    }
+  }
+  &.selected > li {
     border-color: rgba(var(--lotta-primary-color), 0.5);
   }
 
-  &.isClickable {
+  &.isClickable > li {
     &:has(.titleWrapper:hover) {
       border-color: rgb(var(--lotta-primary-color));
     }
     .titleWrapper {
       cursor: pointer;
     }
-  }
-
-  .dragHandle {
-    background: rgba(var(--lotta-primary-color), 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 3em;
-    border-top-left-radius: var(--lotta-border-radius);
-    border-top-left-radius: var(--lotta-border-radius);
-
-    cursor: grab;
-
-    .moveCategoryHandlerIcon {
-      vertical-align: bottom;
-      color: rgb(var(--lotta-primary-color));
-    }
-
-    &:hover {
-      background: rgba(var(--lotta-primary-color), 0.3);
-    }
-  }
-
-  .icon {
-    background-color: rgba(var(--lotta-highlight-color), 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 3em;
-
-    &.isIconClickable {
-      cursor: pointer;
-      &:hover {
-        background-color: rgba(var(--lotta-highlight-color), 0.5);
-      }
-    }
-  }
-
-  .titleWrapper {
-    padding: var(--lotta-spacing);
-    flex: 1;
   }
 }

@@ -25,8 +25,8 @@ export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
     ?.filter((fc) => /^image/.test(fc.mimeType))
     .sort(
       (a, b) =>
-        Number(!b.mimeType.includes('gif')) -
-        Number(!a.mimeType?.includes('gif'))
+        Number(!(b.mimeType.includes('gif') && b.format.includes('anim'))) -
+        Number(!(a.mimeType.includes('gif') && a.format.includes('anim')))
     )[0];
 
   const posterFileLocation =

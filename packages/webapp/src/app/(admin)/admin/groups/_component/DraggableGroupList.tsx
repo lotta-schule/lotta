@@ -1,14 +1,12 @@
 'use client';
 
 import * as React from 'react';
+import { SortableDraggableList } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client';
-import { DraggableListItem, ErrorMessage, List } from '@lotta-schule/hubert';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupInputModel, UserGroupModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { isBrowser } from 'util/isBrowser';
-import clsx from 'clsx';
 
 import styles from './DraggableGroupList.module.scss';
 
@@ -20,10 +18,9 @@ export const DraggableGroupList = () => {
   const searchParams = useSearchParams();
 
   const searchTerm = searchParams?.get('s') ?? '';
+  const isDraggingDisabled = searchParams?.get('sort') === 'name';
 
   const groups = useUserGroups();
-  // TODO:
-  const isDraggingDisabled = false;
 
   const highlightedGroups = React.useMemo(
     () =>
@@ -49,20 +46,23 @@ export const DraggableGroupList = () => {
     }
   }, [highlightedGroups]);
 
-  const onSelect = (group: UserGroupModel) => {
+  const onSelect = React.useCallback((group: UserGroupModel) => {
     router.push(`/admin/groups/${group.id}`);
-  };
+  }, []);
 
-  const [updateGroup, { error }] = useMutation<
+  const [updateGroup] = useMutation<
     { group: UserGroupModel },
     { id: ID; group: UserGroupInputModel }
   >(UpdateUserGroupMutation, {
     optimisticResponse: ({ id, group }) => {
+      const originalGroup = groups.find((g) => g.id === id);
       return {
         __typename: 'Mutation',
         group: {
           __typename: 'UserGroup',
           id,
+          ...originalGroup,
+          enrollmentTokens: group.enrollmentTokens ?? [],
           sortKey: group.sortKey,
         },
       } as any;
@@ -70,78 +70,37 @@ export const DraggableGroupList = () => {
   });
 
   return (
-    <DragDropContext
-      onDragEnd={({ destination, source }) => {
-        if (!destination) {
-          return;
-        }
-        if (
-          destination.droppableId === source.droppableId &&
-          destination.index === source.index
-        ) {
-          return;
-        }
+    <SortableDraggableList
+      className={styles.root}
+      id={'groups'}
+      disabled={isDraggingDisabled}
+      onChange={async (newGroups) => {
+        const newGroupSortKeys = Object.fromEntries(
+          newGroups.map((group, index) => [group.id, (index + 1) * 10])
+        );
 
-        const newGroupsArray = Array.from(groups);
-        newGroupsArray.splice(source.index, 1);
-        newGroupsArray.splice(destination.index, 0, groups[source.index]);
-        const from = Math.min(source.index, destination.index);
-        const to = Math.max(source.index, destination.index) + 1;
-        newGroupsArray.slice(from, to).forEach((group, index) => {
-          if (group) {
-            updateGroup({
-              variables: {
-                id: group.id,
-                group: {
-                  name: group.name,
-                  sortKey: (from + index) * 10 + 10,
-                },
+        const groupsToUpdate = groups.filter(
+          (group) => newGroupSortKeys[group.id] !== group.sortKey
+        );
+
+        groupsToUpdate.map((group) => {
+          updateGroup({
+            variables: {
+              id: group.id,
+              group: {
+                name: group.name,
+                sortKey: newGroupSortKeys[group.id],
               },
-            });
-          }
+            },
+          });
         });
       }}
-    >
-      <ErrorMessage error={error} />
-      <Droppable
-        isDropDisabled={!!isDraggingDisabled}
-        droppableId={'groups'}
-        type={'root-groups'}
-      >
-        {({ droppableProps, innerRef, placeholder }) => (
-          <List {...droppableProps} ref={innerRef} className={styles.root}>
-            {groups.map((group, index) => (
-              <Draggable
-                key={group.id}
-                draggableId={String(group.id)}
-                index={index}
-                isDragDisabled={!!isDraggingDisabled}
-              >
-                {({ innerRef, dragHandleProps, draggableProps }) => (
-                  <DraggableListItem
-                    {...draggableProps}
-                    className={clsx({
-                      [styles.highlighted]: highlightedGroups.includes(group),
-                    })}
-                    title={group.name}
-                    selected={selectedGroupId === group.id}
-                    onClick={() => onSelect(group)}
-                    data-groupid={group.id}
-                    key={group.id}
-                    ref={innerRef}
-                    dragHandleProps={
-                      isDraggingDisabled
-                        ? undefined
-                        : dragHandleProps ?? undefined
-                    }
-                  />
-                )}
-              </Draggable>
-            ))}
-            {placeholder}
-          </List>
-        )}
-      </Droppable>
-    </DragDropContext>
+      items={groups.map((g) => ({
+        id: g.id,
+        title: g.name,
+        selected: selectedGroupId === g.id,
+        onClick: () => onSelect(g),
+      }))}
+    />
   );
 };
