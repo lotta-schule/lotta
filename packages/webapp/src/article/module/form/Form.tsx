@@ -1,19 +1,11 @@
 import * as React from 'react';
 import { Button } from '@lotta-schule/hubert';
-
-import { ContentModuleModel } from 'model';
 import { FormResultsDialog } from './FormResultsDialog';
 import { Show } from './Show';
 import { Edit } from './Edit';
 import { faInbox } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from 'shared/Icon';
-
-export interface FormProps {
-  contentModule: ContentModuleModel;
-  isEditModeEnabled?: boolean;
-  showResults?: boolean;
-  onUpdateModule?: (contentModule: ContentModuleModel) => void;
-}
+import { ContentModuleComponentProps } from '../ContentModule';
 
 export interface FormElementOption {
   selected?: boolean;
@@ -44,9 +36,9 @@ export const Form = React.memo(
   ({
     contentModule,
     isEditModeEnabled,
-    showResults,
+    userCanEditArticle,
     onUpdateModule,
-  }: FormProps) => {
+  }: ContentModuleComponentProps) => {
     const [isFormResultsDialogOpen, setIsFormResultsDialogOpen] =
       React.useState(false);
     return (
@@ -55,7 +47,7 @@ export const Form = React.memo(
           <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
         )}
         {!isEditModeEnabled && <Show contentModule={contentModule} />}
-        {showResults && (
+        {userCanEditArticle && (
           <>
             <Button
               onClick={() => setIsFormResultsDialogOpen(true)}

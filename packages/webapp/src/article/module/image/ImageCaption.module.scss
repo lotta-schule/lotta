@@ -6,9 +6,12 @@
 }
 
 .figcaption {
-  border-bottom: 1px solid rgba(var(--lotta-text-color), 1);
-  border-top: none;
-  border-left: none;
-  border-right: none;
+  border: none;
+  border-bottom: 1px solid rgb(var(--lotta-text-color));
   width: 50%;
+  min-width: 25em;
+  max-width: 100%;
+  &[contenteditable] {
+    width: 100%;
+  }
 }

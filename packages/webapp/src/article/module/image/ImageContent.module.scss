@@ -1,11 +1,13 @@
 @import "breakpoints";
 
-.clickableImage {
-  cursor: pointer;
-}
+.root {
+  &:not(.isUsingFullHeight) {
+    max-height: 80vh;
+  }
 
-.img {
-  max-height: 80vh;
+  &.isClickable {
+    cursor: pointer;
+  }
 
   @media screen and (max-width: $max-xs) {
     max-height: 100%;

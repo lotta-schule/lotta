@@ -4,6 +4,7 @@
   border-color: transparent;
   border-style: solid;
   overflow: initial;
+  padding-bottom: var(--lotta-spacing);
   &.isEditModeEnabled {
     border-width: 1px;
   }
@@ -23,8 +24,8 @@
 
   .titlebar {
     opacity: 0;
-    padding: 0.1em 0.5em;
-    height: 2.2em;
+    padding: calc(0.5 * var(--lotta-spacing));
+    margin-bottom: var(--lotta-spacing);
     width: 100%;
     background-color: rgb(var(--lotta-highlight-color));
     display: flex;
@@ -33,37 +34,27 @@
     & > span {
       display: flex;
     }
-  }
 
-  .leftButtonSection {
-    display: flex;
-    color: rgba(var(--lotta-text-color), 0.7);
-    & > * {
-      margin-right: var(--lotta-spacing);
-      margin-left: var(--lotta-spacing);
+    section {
+      display: flex;
+      color: rgba(var(--lotta-text-color), 0.7);
+      & > *:not(:last-child) {
+        margin-right: calc(0.5 * var(--lotta-spacing));
+      }
     }
-  }
 
-  .titlebarButton {
-    padding: 0 5px;
-    height: 28px;
-    width: 28px;
-  }
+    button {
+      padding: 0 5px;
 
-  .buttonIcon {
-    color: rgb(var(--lotta-highlight-color));
-  }
+      svg {
+        color: rgba(var(--lotta-text-color), 0.7);
+      }
 
-  .activeButtonIcon {
-    color: rgba(var(--lotta-primary-color), 1);
-  }
-
-  .configSection {
-    position: absolute;
-    top: 2.25em;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    background-color: rgba(var(--lotta-box-background-color), 1);
+      &.deleteButton {
+        svg {
+          color: rgba(var(--lotta-error-color), 1);
+        }
+      }
+    }
   }
 }

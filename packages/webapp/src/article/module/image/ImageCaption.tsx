@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import styles from './ImageCaption.module.scss';
-import { Checkbox } from '../../../../../hubert/src/form/checkbox';
 
 interface ImageCaptionProps {
   isEditModeEnabled: boolean;
@@ -19,14 +18,10 @@ export const ImageCaption = React.memo<ImageCaptionProps>(
             placeholder={'Bildbeschreibung'}
             defaultValue={value}
             className={styles.figcaption}
-            onBlur={
-              isEditModeEnabled
-                ? (e: React.FocusEvent<HTMLInputElement>) =>
-                    onUpdate((e.target as HTMLInputElement).value)
-                : undefined
+            onBlur={(e: React.FocusEvent<HTMLInputElement>) =>
+              onUpdate(e.currentTarget.value)
             }
           />
-          <Checkbox>volle Größe</Checkbox>
         </figcaption>
       );
     }

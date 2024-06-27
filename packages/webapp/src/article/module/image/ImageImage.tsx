@@ -10,21 +10,23 @@ interface ImageImageProps extends Omit<ImageContentProps, 'onClick' | 'alt'> {
   isEditModeEnabled: boolean;
   file?: FileModel | null;
   caption: string;
+  isUsingFullHeight?: boolean;
   onUpdateFile(file: FileModel): void;
   onUpdateCaption(caption: string): void;
   onSelect?(e: React.MouseEvent<HTMLImageElement>): void;
 }
 
-export const ImageImage = React.memo<ImageImageProps>(
+export const ImageImage = React.memo(
   ({
     isEditModeEnabled,
     file,
     caption,
+    isUsingFullHeight,
     onUpdateFile,
     onUpdateCaption,
     onSelect,
     ...otherProps
-  }) => {
+  }: ImageImageProps) => {
     const imageContent = isEditModeEnabled ? (
       <SelectFileOverlay
         label={'Bild auswechseln'}
@@ -37,6 +39,7 @@ export const ImageImage = React.memo<ImageImageProps>(
       <ImageContent
         alt={caption}
         onClick={onSelect}
+        isUsingFullHeight={!isEditModeEnabled && isUsingFullHeight}
         file={file}
         {...otherProps}
       />

@@ -3,26 +3,38 @@ import clsx from 'clsx';
 
 import styles from './PlaceholderImage.module.scss';
 
-export interface PlaceholderImageProps {
-  width: number | string;
-  height: number | string;
+export type PlaceholderImageProps = {
+  height?: number | string;
+  width?: number | string;
+  aspectRatio?: number;
   icon?: 'video' | 'image';
   description?: string | React.ReactElement;
-}
+};
 
-export const PlaceholderImage = React.memo<PlaceholderImageProps>(
-  ({ width, height, icon, description }) => {
+export const PlaceholderImage = React.memo(
+  ({
+    height,
+    icon,
+    description,
+    width,
+    aspectRatio = width ? undefined : 16 / 9,
+  }: PlaceholderImageProps) => {
     const iconSource =
       icon === 'video' ? '/img/SwitchVideo.svg' : '/img/Photo.svg';
     return (
       <div
         data-testid="placeholder-image"
-        style={{ width, height, backgroundImage: `url(${iconSource})` }}
+        style={{
+          height,
+          width,
+          aspectRatio,
+          backgroundImage: `url(${iconSource})`,
+        }}
         className={clsx(styles.root, {
           [styles.withDescription]: !!description,
         })}
       >
-        <h5 style={{ margin: '1em auto' }}>{description}</h5>
+        <h5>{description}</h5>
       </div>
     );
   }

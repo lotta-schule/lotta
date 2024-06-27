@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
 import { Edit } from './Edit';
 import { Show } from './Show';
+import { ContentModuleComponentProps } from '../ContentModule';
 
 import styles from './Table.module.scss';
 
@@ -15,14 +15,12 @@ export interface TableContent {
 
 export type TableConfiguration = Record<never, never>; // Have done nothing yet
 
-export interface TableProps {
-  contentModule: ContentModuleModel;
-  isEditModeEnabled?: boolean;
-  onUpdateModule?: (contentModule: ContentModuleModel) => void;
-}
-
-export const Table = React.memo<TableProps>(
-  ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
+export const Table = React.memo(
+  ({
+    isEditModeEnabled,
+    contentModule,
+    onUpdateModule,
+  }: ContentModuleComponentProps) => {
     return (
       <div className={styles.root} data-testid="TableContentModule">
         {isEditModeEnabled && onUpdateModule && (

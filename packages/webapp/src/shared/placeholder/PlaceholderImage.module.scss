@@ -1,4 +1,5 @@
 .root {
+  max-height: 100%;
   background-color: rgba(var(--lotta-box-background-color), 1);
   background-repeat: no-repeat;
   text-align: center;
@@ -11,5 +12,9 @@
     background-size: 35%;
     background-position: top center;
     align-items: flex-end;
+  }
+
+  h5 {
+    margin: var(--lotta-spacing) 0;
   }
 }

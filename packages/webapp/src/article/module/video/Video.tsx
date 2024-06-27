@@ -1,16 +1,14 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
 import { Edit } from './Edit';
 import { Show } from './Show';
+import { ContentModuleComponentProps } from '../ContentModule';
 
-export interface VideoProps {
-  contentModule: ContentModuleModel;
-  isEditModeEnabled?: boolean;
-  onUpdateModule?: (contentModule: ContentModuleModel) => void;
-}
-
-export const Video = React.memo<VideoProps>(
-  ({ isEditModeEnabled, contentModule, onUpdateModule }) => (
+export const Video = React.memo(
+  ({
+    isEditModeEnabled,
+    contentModule,
+    onUpdateModule,
+  }: ContentModuleComponentProps) => (
     <div style={{ padding: 0 }} data-testid="VideoContentModule">
       {isEditModeEnabled && onUpdateModule ? (
         <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />

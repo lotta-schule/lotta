@@ -32,12 +32,11 @@ export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
   const posterFileLocation =
     posterFile && File.getFileConversionRemoteLocation(baseUrl, posterFile);
   if (!file) {
-    return <PlaceholderImage width={'100%'} height={350} icon={'video'} />;
+    return <PlaceholderImage height={350} icon={'video'} />;
   }
   if (!videoFiles || !videoFiles.length) {
     return (
       <PlaceholderImage
-        width={'100%'}
         height={350}
         icon={'video'}
         description={
