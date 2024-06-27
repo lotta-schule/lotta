@@ -18,10 +18,6 @@ patchedDependencies:
 importers:
 
   .:
-    dependencies:
-      '@epic-web/invariant':
-        specifier: ^1.0.0
-        version: 1.0.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.5.0
@@ -197,6 +193,9 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.2
         version: 3.2.2(react@19.0.0-rc-6d3110b4d9-20240531)
+      '@epic-web/invariant':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@popperjs/core':
         specifier: ^2.11.8
         version: 2.11.8
