@@ -5,12 +5,11 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
   Checkbox,
-  DragHandle,
   Divider,
   Input,
   Label,
+  SortableDraggableList,
 } from '@lotta-schule/hubert';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';
@@ -38,95 +37,57 @@ export const Edit = React.memo(
 
     return (
       <div className={styles.root}>
-        <DragDropContext
-          onDragEnd={({ destination, source }) => {
-            if (!destination) {
-              return;
-            }
-
-            if (
-              destination.droppableId === source.droppableId &&
-              destination.index === source.index
-            ) {
-              return;
-            }
-
-            const elements = [...configuration.elements];
-            const sourceElement = elements[source.index];
-            elements.splice(source.index, 1);
-            elements.splice(destination.index, 0, sourceElement);
+        <SortableDraggableList
+          id={`from-${contentModule.id}`}
+          onChange={(updatedItems) => {
+            const elements = updatedItems.map(
+              (item) => configuration.elements[Number(item.id)]
+            );
             updateConfiguration({ elements });
           }}
-        >
-          <Droppable droppableId={`form-${contentModule.id}`}>
-            {(provided) => (
-              <section {...provided.droppableProps} ref={provided.innerRef}>
-                {configuration.elements.map((element: any, index) => (
-                  <Draggable
-                    key={index}
-                    draggableId={String(index)}
-                    index={index}
-                  >
-                    {(draggableProvided) => (
-                      <div
-                        className={styles.downloadItemWrapper}
-                        ref={draggableProvided.innerRef}
-                        {...draggableProvided.draggableProps}
-                      >
-                        <div className={styles.downloadWrapperHeader}>
-                          <span {...draggableProvided.dragHandleProps}>
-                            <DragHandle className={styles.dragHandle} />
-                          </span>
-                          <Button
-                            onClick={() =>
-                              updateConfiguration({
-                                elements: configuration.elements.filter(
-                                  (_el, i) => i !== index
-                                ),
-                              })
-                            }
-                            icon={<Icon icon={faTrash} />}
-                          />
-                        </div>
-                        <div className={styles.inputWrapper}>
-                          <div>
-                            <FormElement
-                              element={element}
-                              isEditModeEnabled
-                              value={''}
-                              onSetValue={() => {}}
-                            />
-                          </div>
-                          <div>
-                            <FormElementConfiguration
-                              element={element}
-                              updateElement={(updatedElementOptions) =>
-                                updateConfiguration({
-                                  elements: configuration.elements.map(
-                                    (el, i) => {
-                                      if (i === index) {
-                                        return {
-                                          ...element,
-                                          ...updatedElementOptions,
-                                        };
-                                      }
-                                      return el;
-                                    }
-                                  ),
-                                })
-                              }
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </section>
-            )}
-          </Droppable>
-        </DragDropContext>
+          items={configuration.elements.map((element, index) => ({
+            id: String(index),
+            title: element.name,
+            icon: <Icon icon={faTrash} />,
+            onClickIcon: () => {
+              updateConfiguration({
+                elements: configuration.elements.filter(
+                  (_el, i) => i !== index
+                ),
+              });
+            },
+            children: (
+              <div className={styles.inputWrapper}>
+                <div>
+                  <FormElement
+                    element={element}
+                    isEditModeEnabled
+                    value={''}
+                    onSetValue={() => {}}
+                  />
+                </div>
+                <div>
+                  <FormElementConfiguration
+                    element={element}
+                    updateElement={(updatedElementOptions) =>
+                      updateConfiguration({
+                        elements: configuration.elements.map((el, i) => {
+                          if (i === index) {
+                            return {
+                              ...element,
+                              ...updatedElementOptions,
+                            };
+                          }
+                          return el;
+                        }),
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            ),
+          }))}
+        />
         <div className={styles.inputWrapper}>
           <div>
             <Button type={'submit'} disabled>

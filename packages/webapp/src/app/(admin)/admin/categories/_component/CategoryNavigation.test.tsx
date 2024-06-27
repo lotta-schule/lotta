@@ -31,10 +31,10 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
     await waitFor(() => {
       expect([
         ...screen
-          .getAllByRole('listitem')
+          .getAllByRole('button')
           .filter((el) => el.dataset.testid === 'main-category-item'),
         ...screen
-          .getAllByRole('listitem')
+          .getAllByRole('button')
           .filter((el) => el.dataset.testid === 'sidenav-category-item'),
       ]).toHaveLength(topLevelCategories.length);
     });

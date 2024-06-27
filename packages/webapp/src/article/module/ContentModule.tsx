@@ -8,7 +8,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
-  DragHandle,
   Dialog,
   DialogActions,
   DialogContent,
@@ -38,9 +37,6 @@ interface ContentModuleProps {
   article: ArticleModel;
   index: number;
   isEditModeEnabled?: boolean;
-  isDragging?: boolean;
-  elementProps?: Omit<React.HTMLProps<HTMLElement>, 'className'>;
-  dragbarProps?: Omit<React.HTMLAttributes<HTMLDivElement>, 'className'>;
   onUpdateModule?: (contentModule: ContentModuleModel) => void;
   onRemoveContentModule?: () => void;
   onMoveUp?: () => void;
@@ -52,9 +48,6 @@ export const ContentModule = React.memo<ContentModuleProps>(
     isEditModeEnabled,
     article,
     contentModule,
-    isDragging,
-    elementProps,
-    dragbarProps,
     onUpdateModule,
     onRemoveContentModule,
     onMoveUp,
@@ -106,25 +99,18 @@ export const ContentModule = React.memo<ContentModuleProps>(
         <section
           className={clsx(styles.root, {
             [styles.active]: false /* TODO: popupState.isOpen, */,
-            [styles.dragging]: isDragging,
             [styles.isEditModeEnabled]: isEditModeEnabled,
           })}
           data-testid={'ContentModule'}
-          {...elementProps}
         >
           {isEditModeEnabled && (
-            <div
-              {...dragbarProps}
-              className={styles.dragbar}
-              title={'Klicken und Ziehen zum verschieben'}
-            >
+            <div className={styles.titlebar} title="Modul konfigurieren">
               <section className={styles.leftButtonSection}>
-                <DragHandle />
                 {onMoveUp && (
                   <Button
                     small
                     aria-label={'Modul um eine Stelle nach oben bewegen'}
-                    className={styles.dragbarButton}
+                    className={styles.titlebarButton}
                     icon={<Icon icon={faArrowUp} />}
                     onClick={() => onMoveUp()}
                   />
@@ -133,7 +119,7 @@ export const ContentModule = React.memo<ContentModuleProps>(
                   <Button
                     small
                     aria-label={'Modul um eine Stelle nach unten bewegen'}
-                    className={styles.dragbarButton}
+                    className={styles.titlebarButton}
                     icon={<Icon icon={faArrowDown} />}
                     onClick={() => onMoveDown()}
                   />
@@ -143,7 +129,7 @@ export const ContentModule = React.memo<ContentModuleProps>(
                 {config && (
                   <Button
                     small
-                    className={styles.dragbarButton}
+                    className={styles.titlebarButton}
                     aria-label={'Moduleinstellungen'}
                     onClick={() => setIsSettingsOpen(true)}
                     icon={

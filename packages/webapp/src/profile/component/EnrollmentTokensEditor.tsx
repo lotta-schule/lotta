@@ -20,10 +20,12 @@ export const EnrollmentTokensEditor = React.memo<EnrollmentTokensEditorProps>(
     const [inputValue, setInputValue] = React.useState('');
 
     React.useEffect(() => {
-      if (tokens.length && tokens[tokens.length - 1] === inputValue) {
-        setInputValue('');
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      setInputValue((inputValue) => {
+        if (tokens.length && tokens[tokens.length - 1] === inputValue) {
+          return '';
+        }
+        return inputValue;
+      });
     }, [tokens]);
 
     return (

@@ -36,16 +36,21 @@ export const EditArticlePage = React.memo(({ article }: ArticlePageProps) => {
   const [editedArticle, setEditedArticle] = React.useState(article);
   const [isUpdatedArticleModalVisible, setIsUpdatedArticleModalVisible] =
     React.useState(false);
+
   React.useEffect(() => {
-    if (article.id === editedArticle.id) {
-      setEditedArticle({
-        ...editedArticle,
-        ...article,
-        contentModules: editedArticle.contentModules,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setEditedArticle((editedArticle) => {
+      if (article.id === editedArticle.id) {
+        return {
+          ...editedArticle,
+          ...article,
+          contentModules: editedArticle.contentModules,
+        };
+      }
+
+      return editedArticle;
+    });
   }, [article]);
+
   const [saveArticle, { loading: isLoading, data: updatedArticleData }] =
     useMutation<{ article: ArticleModel }, { id: ID; article: any }>(
       UpdateArticleMutation,

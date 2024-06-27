@@ -56,7 +56,7 @@ describe('DraggableGroupList', () => {
       expect(screen.getByRole('list')).toBeVisible();
     });
 
-    expect(screen.getAllByRole('listitem')).toHaveLength(userGroups.length);
+    expect(screen.getAllByRole('button')).toHaveLength(userGroups.length);
   });
 
   it('should have the current group selected', async () => {
@@ -77,12 +77,12 @@ describe('DraggableGroupList', () => {
       expect(screen.getByRole('list')).toBeVisible();
     });
 
-    expect(screen.getByRole('listitem', { name: /lehrer/i })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: /lehrer/i })).toHaveAttribute(
       'aria-current',
       'page'
     );
     expect(
-      screen.getByRole('listitem', { name: /schüler/i })
+      screen.getByRole('button', { name: /schüler/i })
     ).not.toHaveAttribute('aria-current', 'page');
   });
 
@@ -100,7 +100,7 @@ describe('DraggableGroupList', () => {
       expect(screen.getByRole('list')).toBeVisible();
     });
 
-    await user.click(screen.getByRole('listitem', { name: /schüler/i }));
+    await user.click(screen.getByRole('button', { name: /schüler/i }));
 
     await waitFor(() => {
       expect(mockRouter.push).toHaveBeenCalledWith(

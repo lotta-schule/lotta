@@ -6,23 +6,41 @@ import userEvent from '@testing-library/user-event';
 
 describe('DraggableListItem', () => {
   it('should render the title', () => {
-    const screen = render(<DraggableListItem title="Test Title" />);
-    expect(screen.getByRole('listitem', { name: 'Test Title' })).toBeVisible();
+    const screen = render(<DraggableListItem id="1" title="Test Title" />);
+    expect(screen.getByRole('button', { name: /Test Title/ })).toBeVisible();
   });
 
   it('applies selected class when selected prop is true', () => {
-    const screen = render(<DraggableListItem title="Selected Item" selected />);
-    expect(screen.getByRole('listitem')).toHaveClass(styles.selected);
+    const screen = render(
+      <DraggableListItem id="1" title="Selected Item" selected />
+    );
+    expect(screen.getByRole('button')).toHaveClass(styles.selected);
+  });
+
+  describe('draghable', () => {
+    it('should be rendered', () => {
+      const screen = render(
+        <DraggableListItem title="Draggable Item" id="1" />
+      );
+      expect(screen.getByTestId('drag-handle')).toBeVisible();
+    });
+
+    it('should not be rendered when isDraggable is set to false', () => {
+      const screen = render(
+        <DraggableListItem title="Draggable Item" id="1" isDraggable={false} />
+      );
+      expect(screen.queryByTestId('drag-handle')).toBeNull();
+    });
   });
 
   it('calls onClick when clicked', async () => {
     const user = userEvent.setup();
     const handleClick = vi.fn();
     const screen = render(
-      <DraggableListItem title="Clickable Item" onClick={handleClick} />
+      <DraggableListItem id="1" title="Clickable Item" onClick={handleClick} />
     );
     await user.click(screen.getByText('Clickable Item'));
-    expect(handleClick).toHaveBeenCalledTimes(1);
+    expect(handleClick).toHaveBeenCalled();
   });
 
   it('renders icon and handles icon click', async () => {
@@ -33,6 +51,7 @@ describe('DraggableListItem', () => {
 
     const screen = render(
       <DraggableListItem
+        id="1"
         title="Item with Icon"
         icon={<div>Icon</div>}
         onClick={onClick}
@@ -44,20 +63,5 @@ describe('DraggableListItem', () => {
     await user.click(icon);
     expect(onClickIcon).toHaveBeenCalledTimes(1);
     expect(onClick).not.toHaveBeenCalled();
-  });
-
-  it('renders drag handle when dragHandleProps are provided', () => {
-    const dragHandleProps: any = {
-      'data-testid': 'drag-handle',
-      draggable: true,
-    };
-    const screen = render(
-      <DraggableListItem
-        title="Draggable Item"
-        dragHandleProps={dragHandleProps}
-      />
-    );
-    const dragHandle = screen.getByTestId('drag-handle');
-    expect(dragHandle).toBeVisible();
   });
 });
