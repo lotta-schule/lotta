@@ -1,18 +1,16 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
 import { Edit } from './Edit';
 import { Show } from './Show';
 
 import styles from './Text.module.scss';
+import { ContentModuleComponentProps } from '../ContentModule';
 
-export interface TextProps {
-  contentModule: ContentModuleModel;
-  isEditModeEnabled?: boolean;
-  onUpdateModule?: (contentModule: ContentModuleModel) => void;
-}
-
-export const Text = React.memo<TextProps>(
-  ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
+export const Text = React.memo(
+  ({
+    isEditModeEnabled,
+    contentModule,
+    onUpdateModule,
+  }: ContentModuleComponentProps) => {
     return (
       <div className={styles.root} data-testid="TextContentModule">
         {isEditModeEnabled && onUpdateModule ? (

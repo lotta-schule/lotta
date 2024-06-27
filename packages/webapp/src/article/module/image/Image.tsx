@@ -1,22 +1,22 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
 import { ImageImage } from './ImageImage';
+import { ContentModuleComponentProps } from '../ContentModule';
 
-export interface ImageProps {
-  contentModule: ContentModuleModel<{ caption: string }>;
-  isEditModeEnabled?: boolean;
-  onUpdateModule?: (
-    contentModule: ContentModuleModel<{ caption: string }>
-  ) => void;
-}
-
-export const Image = React.memo<ImageProps>(
-  ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
+export const Image = React.memo(
+  ({
+    contentModule,
+    isEditModeEnabled,
+    onUpdateModule,
+  }: ContentModuleComponentProps<{
+    caption?: string;
+    isUsingFullHeight?: boolean;
+  }>) => {
     const imageCaption = contentModule.content?.caption;
     return (
       <div data-testid="ImageContentModule">
         <ImageImage
           isEditModeEnabled={!!isEditModeEnabled}
+          isUsingFullHeight={!!contentModule.configuration?.isUsingFullHeight}
           caption={imageCaption ?? ''}
           file={contentModule.files ? contentModule.files[0] : null}
           onUpdateFile={(newFile) =>

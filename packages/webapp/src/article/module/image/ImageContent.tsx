@@ -13,11 +13,12 @@ import styles from './ImageContent.module.scss';
 
 export type ImageContentProps = {
   file?: FileModel | null;
+  isUsingFullHeight?: boolean;
   alt: string;
 } & Omit<ResponsiveImageProps, 'src' | 'alt' | 'ref'>;
 
 export const ImageContent = React.memo(
-  ({ file, className, ...props }: ImageContentProps) => {
+  ({ file, isUsingFullHeight, className, ...props }: ImageContentProps) => {
     const { baseUrl } = useServerData();
     const imageSource = file ? File.getFileRemoteLocation(baseUrl, file) : null;
     return imageSource ? (
@@ -27,13 +28,16 @@ export const ImageContent = React.memo(
         sizes={'(max-width: 960px) 80vw, 80vw'}
         {...props}
         className={clsx(
-          { [styles.clickableImage]: !!props.onClick },
-          styles.img,
+          {
+            [styles.isClickable]: !!props.onClick,
+            [styles.isUsingFullHeight]: isUsingFullHeight,
+          },
+          styles.root,
           className
         )}
       />
     ) : (
-      <PlaceholderImage width={'100%'} height={350} />
+      <PlaceholderImage height={350} />
     );
   }
 );

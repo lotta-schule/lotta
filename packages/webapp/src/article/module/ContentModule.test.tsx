@@ -232,7 +232,7 @@ describe('shared/article/module/ContentModule', () => {
         expect(dragHandle).toBeInTheDocument();
       });
 
-      it('no settings button should be visible', async () => {
+      it('should show settings button', async () => {
         const screen = render(
           <ContentModule
             isEditModeEnabled
@@ -244,10 +244,10 @@ describe('shared/article/module/ContentModule', () => {
           />
         );
         expect(
-          screen.queryByRole('button', {
+          screen.getByRole('button', {
             name: /moduleinstellungen/i,
           })
-        ).toBeNull();
+        ).toBeVisible();
       });
     });
   });

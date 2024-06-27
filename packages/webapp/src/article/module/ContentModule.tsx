@@ -18,6 +18,7 @@ import { Title } from './title/Title';
 import { Config as TitleConfig } from './title/Config';
 import { Config as DownloadConfig } from './download/Config';
 import { Image as ImageModule } from './image/Image';
+import { Config as ImageConfig } from './image/Config';
 import { ImageCollection } from './image_collection/ImageCollection';
 import { Config as ImageCollectionConfig } from './image_collection/Config';
 import { Video } from './video/Video';
@@ -32,7 +33,7 @@ import clsx from 'clsx';
 
 import styles from './ContentModule.module.scss';
 
-interface ContentModuleProps {
+export type ContentModuleProps = {
   contentModule: ContentModuleModel;
   article: ArticleModel;
   index: number;
@@ -41,9 +42,22 @@ interface ContentModuleProps {
   onRemoveContentModule?: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
-}
+};
 
-export const ContentModule = React.memo<ContentModuleProps>(
+export type ContentModuleComponentProps<C = any> = {
+  contentModule: ContentModuleModel<C>;
+  isEditModeEnabled?: boolean;
+  onUpdateModule?: (contentModule: ContentModuleModel) => void;
+  userCanEditArticle: boolean;
+};
+
+export type ContentModuleConfigProps<T = Record<string, any>> = {
+  contentModule: ContentModuleModel<any, T>;
+  onUpdateModule: (contentModule: ContentModuleModel) => void;
+  onRequestClose: () => void;
+};
+
+export const ContentModule = React.memo(
   ({
     isEditModeEnabled,
     article,
@@ -52,53 +66,86 @@ export const ContentModule = React.memo<ContentModuleProps>(
     onRemoveContentModule,
     onMoveUp,
     onMoveDown,
-  }) => {
+  }: ContentModuleProps) => {
     const user = useCurrentUser();
     const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
 
-    const canEditArticle = User.canEditArticle(user, article);
+    const userCanEditArticle = User.canEditArticle(user, article);
 
-    const config = React.useMemo(() => {
+    const components = React.useMemo(
+      () => ({
+        [ContentModuleType.TITLE]: { Component: Title, Config: TitleConfig },
+        [ContentModuleType.TEXT]: { Component: Text, Config: null },
+        [ContentModuleType.IMAGE]: {
+          Component: ImageModule,
+          Config: ImageConfig,
+        },
+        [ContentModuleType.IMAGE_COLLECTION]: {
+          Component: ImageCollection,
+          Config: ImageCollectionConfig,
+        },
+        [ContentModuleType.DIVIDER]: { Component: DividerCM, Config: null },
+        [ContentModuleType.VIDEO]: { Component: Video, Config: null },
+        [ContentModuleType.AUDIO]: { Component: Audio, Config: null },
+        [ContentModuleType.DOWNLOAD]: {
+          Component: Download,
+          Config: DownloadConfig,
+        },
+        [ContentModuleType.FORM]: { Component: Form, Config: null },
+        [ContentModuleType.TABLE]: { Component: Table, Config: null },
+      }),
+      []
+    );
+
+    const configComponent = React.useMemo(() => {
       if (!onUpdateModule) {
         return null;
       }
-      switch (contentModule.type) {
-        case ContentModuleType.TITLE:
-          return (
-            <TitleConfig
-              contentModule={contentModule}
-              onUpdateModule={onUpdateModule}
-              onRequestClose={() => setIsSettingsOpen(false)}
-            />
-          );
-        case ContentModuleType.IMAGE_COLLECTION:
-          return (
-            <ImageCollectionConfig
-              contentModule={contentModule}
-              onUpdateModule={onUpdateModule}
-              onRequestClose={() => {
-                /* TODO: ?!?! */
-              }}
-            />
-          );
-        case ContentModuleType.DOWNLOAD:
-          return (
-            <DownloadConfig
-              contentModule={contentModule}
-              onUpdateModule={onUpdateModule}
-              onRequestClose={() => {
-                /* TODO: ?!?! */
-              }}
-            />
-          );
+      const ConfigComponent = components[contentModule.type]?.Config;
+
+      if (!ConfigComponent) {
+        return null;
       }
-    }, [contentModule, onUpdateModule]);
+
+      return (
+        <ConfigComponent
+          contentModule={contentModule}
+          onUpdateModule={onUpdateModule}
+          onRequestClose={() => setIsSettingsOpen(false)}
+        />
+      );
+    }, [contentModule, components, onUpdateModule]);
+
+    const mainComponent = React.useMemo(() => {
+      const MainComponent = components[contentModule.type]?.Component;
+
+      if (!MainComponent) {
+        return null;
+      }
+
+      return (
+        <MainComponent
+          contentModule={contentModule}
+          isEditModeEnabled={isEditModeEnabled}
+          onUpdateModule={onUpdateModule}
+          userCanEditArticle={userCanEditArticle}
+        />
+      );
+    }, [
+      contentModule,
+      components,
+      isEditModeEnabled,
+      onUpdateModule,
+      userCanEditArticle,
+    ]);
+
+    console.log({ contentModule, mainComponent, configComponent });
 
     return (
       <>
         <section
           className={clsx(styles.root, {
-            [styles.active]: false /* TODO: popupState.isOpen, */,
+            [styles.active]: isSettingsOpen,
             [styles.isEditModeEnabled]: isEditModeEnabled,
           })}
           data-testid={'ContentModule'}
@@ -110,7 +157,6 @@ export const ContentModule = React.memo<ContentModuleProps>(
                   <Button
                     small
                     aria-label={'Modul um eine Stelle nach oben bewegen'}
-                    className={styles.titlebarButton}
                     icon={<Icon icon={faArrowUp} />}
                     onClick={() => onMoveUp()}
                   />
@@ -119,123 +165,43 @@ export const ContentModule = React.memo<ContentModuleProps>(
                   <Button
                     small
                     aria-label={'Modul um eine Stelle nach unten bewegen'}
-                    className={styles.titlebarButton}
                     icon={<Icon icon={faArrowDown} />}
                     onClick={() => onMoveDown()}
                   />
                 )}
               </section>
-              <span>
-                {config && (
+              <section>
+                {configComponent && (
                   <Button
                     small
-                    className={styles.titlebarButton}
                     aria-label={'Moduleinstellungen'}
                     onClick={() => setIsSettingsOpen(true)}
-                    icon={
-                      <Icon
-                        icon={faGear}
-                        className={clsx(styles.buttonIcon, {
-                          [styles.activeButtonIcon]: isSettingsOpen,
-                        })}
-                      />
-                    }
+                    icon={<Icon icon={faGear} />}
                   />
                 )}
                 <Button
                   small
-                  variant={'error'}
-                  icon={
-                    <Icon icon={faTrash} className={clsx(styles.buttonIcon)} />
-                  }
-                  aria-label={'Modul löschen'}
-                  style={{ float: 'right' }}
+                  icon={<Icon icon={faTrash} />}
+                  className={styles.deleteButton}
+                  title={'Modul löschen'}
                   onClick={() => onRemoveContentModule?.()}
                 />
-              </span>
+              </section>
             </div>
           )}
-          {contentModule.type === ContentModuleType.TITLE && (
-            <Title
-              contentModule={contentModule}
-              isEditModeEnabled={isEditModeEnabled}
-              onUpdateModule={onUpdateModule}
-            />
-          )}
-          {contentModule.type === ContentModuleType.TEXT && (
-            <Text
-              contentModule={contentModule}
-              isEditModeEnabled={isEditModeEnabled}
-              onUpdateModule={onUpdateModule}
-            />
-          )}
-          {contentModule.type === ContentModuleType.IMAGE && (
-            <ImageModule
-              contentModule={contentModule}
-              isEditModeEnabled={isEditModeEnabled}
-              onUpdateModule={onUpdateModule}
-            />
-          )}
-          {contentModule.type === ContentModuleType.IMAGE_COLLECTION && (
-            <ImageCollection
-              contentModule={contentModule}
-              isEditModeEnabled={isEditModeEnabled}
-              onUpdateModule={onUpdateModule}
-            />
-          )}
-          {contentModule.type === ContentModuleType.DIVIDER && (
-            <DividerCM
-              contentModule={contentModule}
-              isEditModeEnabled={isEditModeEnabled}
-              onUpdateModule={onUpdateModule}
-            />
-          )}
-          {contentModule.type === ContentModuleType.VIDEO && (
-            <Video
-              contentModule={contentModule}
-              isEditModeEnabled={isEditModeEnabled}
-              onUpdateModule={onUpdateModule}
-            />
-          )}
-          {contentModule.type === ContentModuleType.AUDIO && (
-            <Audio
-              contentModule={contentModule}
-              isEditModeEnabled={isEditModeEnabled}
-              onUpdateModule={onUpdateModule}
-            />
-          )}
-          {contentModule.type === ContentModuleType.DOWNLOAD && (
-            <Download
-              contentModule={contentModule}
-              isEditModeEnabled={isEditModeEnabled}
-              onUpdateModule={onUpdateModule}
-            />
-          )}
-          {contentModule.type === ContentModuleType.FORM && (
-            <Form
-              contentModule={contentModule}
-              isEditModeEnabled={isEditModeEnabled}
-              onUpdateModule={onUpdateModule}
-              showResults={canEditArticle}
-            />
-          )}
-          {contentModule.type === ContentModuleType.TABLE && (
-            <Table
-              contentModule={contentModule}
-              isEditModeEnabled={isEditModeEnabled}
-              onUpdateModule={onUpdateModule}
-            />
-          )}
+          {mainComponent}
         </section>
-        {config && (
+        {configComponent && (
           <Dialog
             open={isSettingsOpen}
             title={'Moduleinstellungen'}
             onRequestClose={() => setIsSettingsOpen(false)}
           >
-            <DialogContent>{config}</DialogContent>
+            <DialogContent>{configComponent}</DialogContent>
             <DialogActions>
-              <Button onClick={() => setIsSettingsOpen(false)}>OK</Button>
+              <Button onClick={() => setIsSettingsOpen(false)}>
+                Schließen
+              </Button>
             </DialogActions>
           </Dialog>
         )}

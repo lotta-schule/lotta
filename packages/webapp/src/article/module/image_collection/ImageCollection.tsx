@@ -1,27 +1,25 @@
 import * as React from 'react';
 import { Carousel } from './wrapper/Carousel';
-import { ContentModuleModel } from '../../../model';
 import { Gallery } from './wrapper/Gallery';
 import { ImageStyle } from './Config';
-import get from 'lodash/get';
+import { ContentModuleComponentProps } from '../ContentModule';
 
 import styles from './ImageCollection.module.scss';
 
-export interface ImageProps {
-  contentModule: ContentModuleModel<{ captions: string[] }>;
-  isEditModeEnabled?: boolean;
-  onUpdateModule?: (
-    contentModule: ContentModuleModel<{ captions: string[] }>
-  ) => void;
-}
-
-export const ImageCollection = React.memo<ImageProps>(
-  ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
+export const ImageCollection = React.memo(
+  ({
+    isEditModeEnabled,
+    contentModule,
+    onUpdateModule,
+  }: ContentModuleComponentProps<{
+    caption: string[];
+    imageStyle: ImageStyle;
+  }>) => {
     // We should not need parseInt, but making sure it is really
     // a number is safer for not mismatching 1 and "1", for example
-    const imageStyle: ImageStyle = parseInt(
-      get(contentModule.configuration, 'imageStyle', ImageStyle.GALLERY)
-    );
+    const imageStyle = Number(
+      contentModule.configuration?.imageStyle ?? ImageStyle.GALLERY
+    ) as ImageStyle;
 
     return (
       <div className={styles.root} data-testid="ImageCollectionContentModule">

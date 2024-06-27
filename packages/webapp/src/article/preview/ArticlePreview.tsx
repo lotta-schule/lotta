@@ -131,7 +131,7 @@ export const ArticlePreview = React.memo(
                     maxDisplayWidth={400}
                   />
                 ) : (
-                  <PlaceholderImage width={'100%'} height={150} />
+                  <PlaceholderImage aspectRatio={3 / 2} width={'100%'} />
                 )}
               </SelectFileOverlay>
             )}

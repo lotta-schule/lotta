@@ -114,10 +114,13 @@ export const EditArticlePage = React.memo(({ article }: ArticlePageProps) => {
     }
   }, [article, currentUser, router]);
 
-  const changeArticle = (article: ArticleModel) => {
-    setEditedArticle(article);
-    setIsArticleDirty(true);
-  };
+  const changeArticle = React.useCallback(
+    (article: React.SetStateAction<ArticleModel>) => {
+      setEditedArticle(article);
+      setIsArticleDirty(true);
+    },
+    []
+  );
 
   return (
     <>

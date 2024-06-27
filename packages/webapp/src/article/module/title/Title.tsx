@@ -1,18 +1,16 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
 import { Edit } from './Edit';
 import { Show } from './Show';
+import { ContentModuleComponentProps } from '../ContentModule';
 
 import styles from './Title.module.scss';
 
-export interface TitleProps {
-  contentModule: ContentModuleModel;
-  isEditModeEnabled?: boolean;
-  onUpdateModule?: (contentModule: ContentModuleModel) => void;
-}
-
-export const Title = React.memo<TitleProps>(
-  ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
+export const Title = React.memo(
+  ({
+    isEditModeEnabled,
+    contentModule,
+    onUpdateModule,
+  }: ContentModuleComponentProps) => {
     return (
       <div className={styles.root} data-testid="TitleContentModule">
         {isEditModeEnabled && onUpdateModule && (

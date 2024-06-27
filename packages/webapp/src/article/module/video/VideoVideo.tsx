@@ -3,6 +3,7 @@ import { File } from 'util/model';
 import { ContentModuleModel } from 'model';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import { useServerData } from 'shared/ServerDataContext';
+import styles from './VideoVideo.module.scss';
 
 interface VideoVideoProps {
   contentModule: ContentModuleModel;
@@ -31,12 +32,11 @@ export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
   const posterFileLocation =
     posterFile && File.getFileConversionRemoteLocation(baseUrl, posterFile);
   if (!file) {
-    return <PlaceholderImage width={'100%'} height={350} icon={'video'} />;
+    return <PlaceholderImage height={350} icon={'video'} />;
   }
   if (!videoFiles || !videoFiles.length) {
     return (
       <PlaceholderImage
-        width={'100%'}
         height={350}
         icon={'video'}
         description={
@@ -56,7 +56,7 @@ export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
       playsInline
       controls
       poster={posterFileLocation || undefined}
-      style={{ width: '100%' }}
+      className={styles.Video}
     >
       {videoFiles.map((vf) => (
         <source
