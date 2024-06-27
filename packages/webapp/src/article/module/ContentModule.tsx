@@ -117,9 +117,6 @@ export const ContentModule = React.memo(
     }, [contentModule, components, onUpdateModule]);
 
     const mainComponent = React.useMemo(() => {
-      if (!onUpdateModule) {
-        return null;
-      }
       const MainComponent = components[contentModule.type]?.Component;
 
       if (!MainComponent) {
@@ -134,7 +131,15 @@ export const ContentModule = React.memo(
           userCanEditArticle={userCanEditArticle}
         />
       );
-    }, [contentModule, components, onUpdateModule]);
+    }, [
+      contentModule,
+      components,
+      isEditModeEnabled,
+      onUpdateModule,
+      userCanEditArticle,
+    ]);
+
+    console.log({ contentModule, mainComponent, configComponent });
 
     return (
       <>
@@ -194,7 +199,9 @@ export const ContentModule = React.memo(
           >
             <DialogContent>{configComponent}</DialogContent>
             <DialogActions>
-              <Button onClick={() => setIsSettingsOpen(false)}>OK</Button>
+              <Button onClick={() => setIsSettingsOpen(false)}>
+                Schließen
+              </Button>
             </DialogActions>
           </Dialog>
         )}

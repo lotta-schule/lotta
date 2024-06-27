@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Input } from '@lotta-schule/hubert';
 
 import styles from './ImageCaption.module.scss';
 
@@ -13,7 +14,7 @@ export const ImageCaption = React.memo<ImageCaptionProps>(
     if (isEditModeEnabled) {
       return (
         <figcaption className={styles.root}>
-          <input
+          <Input
             contentEditable
             placeholder={'Bildbeschreibung'}
             defaultValue={value}

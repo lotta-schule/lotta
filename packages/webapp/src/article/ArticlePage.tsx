@@ -11,8 +11,8 @@ export interface ArticlePageProps {
   article: ArticleModel;
 }
 
-export const ArticlePage = React.memo<ArticlePageProps>(
-  ({ article, title }) => {
+export const ArticlePage = React.memo(
+  ({ article, title }: ArticlePageProps) => {
     return (
       <div className={styles.root}>
         <ArticleHead article={article} />

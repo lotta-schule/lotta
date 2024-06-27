@@ -7,10 +7,10 @@ import styles from './Article.module.scss';
 
 interface ArticleProps {
   article: ArticleModel;
-  onUpdateArticle?(article: ArticleModel): void;
 }
 
-export const Article = React.memo<ArticleProps>(({ article }) => {
+export const Article = React.memo(({ article }: ArticleProps) => {
+  console.log({ article });
   return (
     <article className={styles.root} data-testid={'Article'}>
       <ArticleTitle article={article} />
