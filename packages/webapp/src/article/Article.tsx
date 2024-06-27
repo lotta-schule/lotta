@@ -10,7 +10,6 @@ interface ArticleProps {
 }
 
 export const Article = React.memo(({ article }: ArticleProps) => {
-  console.log({ article });
   return (
     <article className={styles.root} data-testid={'Article'}>
       <ArticleTitle article={article} />
