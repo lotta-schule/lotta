@@ -50,8 +50,12 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
       return true;
     }
     if (
-      (group.enrollmentTokens ?? []).sort().join() !==
-      (editedGroup.enrollmentTokens ?? []).sort().join()
+      Array.from(group.enrollmentTokens ?? [])
+        .sort()
+        .join() !==
+      Array.from(editedGroup.enrollmentTokens ?? [])
+        .sort()
+        .join()
     ) {
       return true;
     }
