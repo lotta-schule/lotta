@@ -309,33 +309,50 @@ jobs:
       npm-token: ${{ secrets.NPM_TOKEN }}
       nx-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
-  publish-docker-image:
-    if: ${{ github.ref_name != 'main'}}
+  publish-docker-images:
+    name: Publish Docker Images
+    strategy:
+      matrix:
+        environment: ['preview', 'staging']
+        image:
+          - name: lotta-schule/web
+            dockerfile: apps/webapp/Dockerfile
+            working-directory: .
+          - name: lotta-schule/core
+            dockerfile: Dockerfile
+            working-directory: apps/core-api
+        exclude:
+          - environment: ${{ github.ref_name == 'main' && 'staging' || 'staging' }}
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
-      name: lotta-schule/web
-      tags: '["${{ github.sha }}"]'
-      # checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
-      working-directory: .
-      dockerfile: apps/webapp/Dockerfile
+      name: ${{ matrix.image.name }}
+      tags: ${{ matrix.environment == 'preview' && '["${{ github.sha }}"]' || '["${{ github.sha }}", "canary-${{ github.sha }}"]' }}
+      working-directory: ${{ matrix.image.working-directory }}
+      dockerfile: ${{ matrix.image.dockerfile }}
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
       sentry_dsn: ${{ secrets.SENTRY_DSN }}
 
-  publish-staging-docker-image:
-    if: ${{ github.ref_name == 'main'}}
-    uses: ./.github/workflows/__deploy_dockerfile.yaml
-    with:
-      name: lotta-schule/web
-      tags: '["${{ github.sha }}", "canary-${{ github.sha }}"]'
-      # checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
-      working-directory: .
-      dockerfile: apps/webapp/Dockerfile
-    secrets:
-      password: ${{ secrets.GITHUB_TOKEN }}
-      sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      sentry_dsn: ${{ secrets.SENTRY_DSN }}
+  create-sentry-release:
+    name: Create Sentry release
+    needs:
+      - publish-docker-images
+    strategy:
+      matrix:
+        project:
+          - core
+          - web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ matrix.project }}
+        with:
+          environment: staging
+          version: ${{ github.sha }}
 
   publish-storybook-page:
     if: ${{ github.ref_name == 'main' }}
