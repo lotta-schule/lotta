@@ -336,7 +336,7 @@ jobs:
 
   create-sentry-release:
     name: |
-      Release to Sentry: ${{ matrix.project }} (${{ matrix.environment }})
+      Sentry Rel.: ${{ matrix.project }} (${{ matrix.environment }})
     needs:
       - publish-docker-images
     strategy:
