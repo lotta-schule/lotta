@@ -13,7 +13,7 @@
   "devDependencies": {
     "@eslint/js": "^9.5.0",
     "@next/eslint-plugin-next": "^14.2.4",
-    "@nx/workspace": "18.2.3",
+    "@nx/workspace": "19.3.2",
     "@react-types/checkbox": "^3.8.1",
     "@react-types/progress": "^3.5.4",
     "@react-types/shared": "^3.23.1",
@@ -26,7 +26,7 @@
     "@types/cookies": "^0.9.0",
     "@types/file-saver": "^2.0.7",
     "@types/is-url": "^1.2.32",
-    "@types/lodash": "^4.17.5",
+    "@types/lodash": "^4.17.6",
     "@types/node": "^20.14.9",
     "@types/phoenix": "^1.6.5",
     "@types/react": "npm:types-react@rc",
@@ -52,15 +52,14 @@
     "jsdom": "^24.1.0",
     "lerna": "^8.1.5",
     "lint-staged": "^15.2.7",
-    "nx": "18.1.2",
-    "nx-cloud": "18.0.0",
+    "nx": "19.3.2",
     "playwright": "^1.45.0",
     "prettier": "^3.3.2",
     "react": "19.0.0-rc-6d3110b4d9-20240531",
     "react-dom": "19.0.0-rc-6d3110b4d9-20240531",
     "typescript": "^5.5.2",
     "typescript-eslint": "^7.14.1",
-    "vite": "^5.3.1",
+    "vite": "^5.3.2",
     "vite-plugin-dts": "^3.9.1",
     "vite-plugin-externalize-deps": "^0.8.0",
     "vite-tsconfig-paths": "^4.3.2",
@@ -76,6 +75,5 @@
     "patchedDependencies": {
       "next@15.0.0-rc.0": "patches/next@15.0.0-rc.0.patch"
     }
-  },
-  "dependencies": {}
+  }
 }

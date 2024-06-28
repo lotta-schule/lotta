@@ -20,7 +20,10 @@ defmodule Lotta.MixProject do
           applications: [opentelemetry_exporter: :permanent, opentelemetry: :temporary]
         ]
       ],
-      test_coverage: [tool: ExCoveralls],
+      test_coverage: [
+        tool: ExCoveralls,
+        output: "coverage"
+      ],
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.json": :test,

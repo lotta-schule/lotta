@@ -2,8 +2,7 @@
 name: 'CI'
 on:
   push:
-    paths-ignore:
-      - 'apps/core-api/**'
+
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
@@ -34,6 +33,12 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+
+      - name: Setup the BEAM and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '26.2.2'
+          elixir-version: '1.16.1'
 
       - name: Install node dependencies
         run: pnpm install

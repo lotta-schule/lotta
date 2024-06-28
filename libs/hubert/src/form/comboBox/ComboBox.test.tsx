@@ -228,9 +228,7 @@ describe('Combobox', () => {
           expect(onSelect).toHaveBeenCalledWith('Apple');
         });
         await waitFor(() => {
-          expect(
-            screen.queryByRole('option', { name: /apple/i })
-          ).not.toBeVisible();
+          expect(screen.queryByRole('option', { name: /apple/i })).toBeNull();
         });
       });
     });

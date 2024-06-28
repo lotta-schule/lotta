@@ -1,5 +1,5 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "name": "hubert",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "tags": ["deploy:npm"]
 }

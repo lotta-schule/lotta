@@ -1,19 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/nrwl/nx/master/packages/nx/schemas/nx-schema.json",
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx-cloud",
-      "options": {
-        "cacheableOperations": [
-          "test",
-          "lint",
-          "typecheck",
-          "build",
-          "e2e"
-        ]
-      }
-    }
-  },
   "targetDefaults": {
     "dev": {
       "dependsOn": [
@@ -21,6 +7,7 @@
       ]
     },
     "test": {
+      "cache": true,
       "dependsOn": [
         "^build"
       ],
@@ -29,9 +16,23 @@
         "^production",
         "{workspaceRoot}/vitest.workspace.ts"
       ],
-      "outputs": [
-        "{projectRoot}/coverage"
-      ]
+      "outputs": [],
+      "configurations": {
+        "coverage": {
+          "outputs": [
+            "{projectRoot}/coverage"
+          ],
+          "executor": "nx:run-commands",
+          "options": {
+            "commands": [
+              "vitest"
+            ],
+            "args": [
+              "--coverage"
+            ]
+          }
+        }
+      }
     },
     "lint": {
       "inputs": [
@@ -39,7 +40,8 @@
         "{projectRoot}/.eslintrc.json",
         "{workspaceRoot}/.eslintrc.json",
         "{workspaceRoot}/.eslintignore"
-      ]
+      ],
+      "cache": true
     },
     "typecheck": {
       "dependsOn": [
@@ -47,7 +49,8 @@
       ],
       "inputs": [
         "default"
-      ]
+      ],
+      "cache": true
     },
     "build": {
       "dependsOn": [
@@ -55,7 +58,12 @@
       ],
       "outputs": [
         "{projectRoot}/dist"
-      ]
+      ],
+      "inputs": [
+        "production",
+        "^production"
+      ],
+      "cache": true
     },
     "e2e": {
       "dependsOn": [
@@ -63,7 +71,11 @@
       ],
       "outputs": [
         "{projectRoot}/coverage"
-      ]
+      ],
+      "cache": true
+    },
+    "dependencies": {
+      "cache": true
     }
   },
   "namedInputs": {
@@ -87,7 +99,5 @@
       "{workspaceRoot}/jest.base-config.cjs"
     ]
   },
-  "affected": {
-    "defaultBase": "main"
-  }
+  "defaultBase": "main"
 }
