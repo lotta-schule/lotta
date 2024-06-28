@@ -16,23 +16,7 @@
         "^production",
         "{workspaceRoot}/vitest.workspace.ts"
       ],
-      "outputs": [],
-      "configurations": {
-        "coverage": {
-          "outputs": [
-            "{projectRoot}/coverage"
-          ],
-          "executor": "nx:run-commands",
-          "options": {
-            "commands": [
-              "vitest"
-            ],
-            "args": [
-              "--coverage"
-            ]
-          }
-        }
-      }
+      "outputs": []
     },
     "lint": {
       "inputs": [
