@@ -68,6 +68,7 @@ jobs:
 
       - name: Build docker image
         id: build
+        working-directory: ${{ inputs.working-directory }}
         run: |
           tag=$(echo "${{ fromJSON(inputs.tags)[0] }}")
           base_image="$IMAGE_NAME:$tag"
