@@ -22,7 +22,7 @@ defmodule Lotta.MixProject do
       ],
       test_coverage: [
         tool: ExCoveralls,
-        output: "coverage",
+        output: "coverage"
       ],
       preferred_cli_env: [
         coveralls: :test,
