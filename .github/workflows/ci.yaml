@@ -310,22 +310,22 @@ jobs:
       nx-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
   publish-docker-images:
-    name: Publish Docker Images
+    name: ${{ matrix.image.name }} (${{ matrix.environment }}) Docker images
     strategy:
       matrix:
         environment: ['preview', 'staging']
         image:
-          - name: lotta-schule/web
+          - name: web
             dockerfile: apps/webapp/Dockerfile
             working-directory: .
-          - name: lotta-schule/core
+          - name: core
             dockerfile: Dockerfile
             working-directory: apps/core-api
         exclude:
           - environment: ${{ github.ref_name == 'main' && 'staging' || 'staging' }}
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
-      name: ${{ matrix.image.name }}
+      name: lotta-schule/${{ matrix.image.name }}
       tags: ${{ format(matrix.environment == 'preview' && '["{0}"]' || '["{0}", "canary-{0}"]', github.sha) }}
       working-directory: ${{ matrix.image.working-directory }}
       dockerfile: ${{ matrix.image.dockerfile }}
@@ -335,23 +335,30 @@ jobs:
       sentry_dsn: ${{ secrets.SENTRY_DSN }}
 
   create-sentry-release:
-    name: Create Sentry release
+    name: |
+      Release to Sentry: ${{ matrix.project }} (${{ matrix.environment }})
     needs:
       - publish-docker-images
     strategy:
       matrix:
-        project:
-          - core
-          - web
+        environment: ['preview', 'staging']
+        project: ['core', 'web']
+        exclude:
+          - environment: ${{ github.ref_name == 'main' && 'staging' || 'staging' }}
     runs-on: ubuntu-latest
     steps:
+      # Sentry does need a repository it seems
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: getsentry/action-release@v1
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ matrix.project }}
         with:
-          environment: staging
+          environment: ${{ matrix.environment }}
           version: ${{ github.sha }}
 
   publish-storybook-page:
