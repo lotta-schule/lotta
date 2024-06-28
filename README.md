@@ -3,7 +3,7 @@
 Lotta is a simple-to use platform aimed at schools.
 Its comprehensible interface makes it easy for students and teachers
 to create a sophisticated webpage for their school,
-providing articles, files and media in access-controlled spaces.
+providing articles, files, messages and media in access-controlled spaces.
 
 See [https://lotta.schule](lotta.schule) for more information.
 
@@ -19,6 +19,15 @@ Location: apps/webapp
 The Webapp is a [NextJS](https://nextjs.org/) app that serves the application.
 Its primary purpose is serving the frontend.
 
+### Core
+
+Location: apps/core
+
+The Core is a [Phoenix](https://www.phoenixframework.org/) app that serves the backend,
+handles authentication and authorization, data storage and retrieval, real-time notifications,
+and more.
+The boundary to the outside wolrd consists primarily of a [GraphQL](https://graphql.org/) API.
+
 ### Hubert
 
 Location: libs/hubert
@@ -31,19 +40,20 @@ available components.
 
 Location: libs/theme
 
-Here lie the definition and schema lotta uses for theming.
+Here lies the definition and schema lotta uses for theming.
 
 ### Storybook Hubert
 
 Location: apps/storybook-hubert
 
-The storybook project for hubert.
+The storybook project for hubert. It's just for illustration purposes and drives the
+[storybook](https://lotta-schule.github.io/web) for hubert.
 
 ### Storybook-Addon-Theme
 
 Location: libs/storybook-addon-theme
 
-A storybook-addon which allows editing the theme in storybook
+A storybook-addon which allows editing the lotta theme in storybook
 
 ## Development
 
@@ -52,11 +62,18 @@ For monorepo managing, we use [nx](https://nx.dev/).
 ### Prerequisites
 
 - Have nodejs installed (See [.tool-versions](.tool-versions)) to see which one
+- Have elixir installed (See [.tool-versions](.tool-versions)) to see which one.
+  Take care to have the same version of [OTP](https://en.wikipedia.org/wiki/Open_Telecom_Platform) installed as well.
 - This is a monorepo taking advantage of [pnpm workspaces](https://pnpm.io/workspaces).
   You will have to have [pnpm installed](https://pnpm.io/installation) on your machine.
-- Have a working [core instance](https://github.com/lotta-schule/core) running.
+- Either have a local postgres database, redis cache, and a RabbitMQ broker running,
+  or just have a docker daemon running.
+  The services you'll need are defined in `apps/core-api/docker-compose.services.yml`.
 
-### Commands
+We know getting started is not very easy at this point, but it has not been a priority yet.
+If you are interested in contributing, or have any questions, feel free to reach out to us.
+
+### Commands (Webapp)
 
 1. Install the necessary dependencies. In the project's root folder, run:
 
