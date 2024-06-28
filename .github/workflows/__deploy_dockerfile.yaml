@@ -76,8 +76,8 @@ jobs:
             --build-arg RELEASE_NAME="$tag" \
             --build-arg SENTRY_DSN \
             --secret id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
-            -f ${{ inputs.dockerfile || 'Dockerfile' }} \
-            -t $base_image ${{ inputs.working-directory }}
+            -f "${{ format('{0}/{1}', inputs.working-directory, (inputs.dockerfile || 'Dockerfile')) }}" \
+            -t $base_image "${{ inputs.working-directory }}"
           echo "base-image=$base_image" >> $GITHUB_OUTPUT
           echo "Base image $base_image written to github output"
 
