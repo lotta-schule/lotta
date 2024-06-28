@@ -2,16 +2,14 @@ import * as React from 'react';
 import { StoryObj, Meta } from '@storybook/react';
 import { Input, Label, Select } from '@lotta-schule/hubert';
 
-const meta = {
+export default {
   title: 'Form/Label',
   component: Label,
   argTypes: {},
   args: {
     label: 'I am a pretty label',
   },
-} satisfies Meta<typeof Label>;
-
-export default meta;
+} as Meta<typeof Label>;
 
 export const InputLabel: StoryObj<typeof Label> = {
   render: ({ ...args }) => (

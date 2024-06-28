@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { Option, Select } from '@lotta-schule/hubert';
 
-const meta = {
+export default {
   title: 'Form/Select',
   component: Select,
   subcomponents: { Option: Option as any },
@@ -28,8 +28,6 @@ const meta = {
   },
 
   argTypes: {},
-} satisfies Meta<typeof Select>;
-
-export default meta;
+} as Meta<typeof Select>;
 
 export const Default: StoryObj<typeof Select> = {};

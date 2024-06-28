@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react';
 import { useArgs } from '@storybook/preview-api';
 import { expect, fireEvent, waitFor, within } from '@storybook/test';
 import { action } from '@storybook/addon-actions';
@@ -9,7 +9,7 @@ import {
   SwipeableViewsProps,
 } from '@lotta-schule/hubert';
 
-const meta: Meta<typeof SwipeableViews> = {
+export default {
   title: 'util/SwipeableViews',
   component: SwipeableViews,
   argTypes: {
@@ -23,8 +23,6 @@ const meta: Meta<typeof SwipeableViews> = {
     onChange: action('onChange'),
   },
 };
-
-export default meta;
 
 export const Default: StoryObj<typeof SwipeableViews> = {
   render: ({ selectedIndex }) => {

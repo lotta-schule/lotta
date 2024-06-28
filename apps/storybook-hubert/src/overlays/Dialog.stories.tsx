@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react';
 import { Button, Dialog, DialogProps } from '@lotta-schule/hubert';
 import { action } from '@storybook/addon-actions';
 import { useArgs } from '@storybook/preview-api';
 
-const meta: Meta<typeof Dialog> = {
+export default {
   title: 'overlays/Dialog',
   component: Dialog,
   args: {
@@ -30,8 +30,6 @@ const meta: Meta<typeof Dialog> = {
     );
   },
 };
-
-export default meta;
 
 export const Default: StoryObj<typeof Dialog> = {
   args: {

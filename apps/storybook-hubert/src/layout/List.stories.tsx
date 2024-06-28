@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react';
 import {
   Avatar,
   Button,
@@ -12,7 +12,7 @@ import {
   SortableDraggableList,
 } from '@lotta-schule/hubert';
 
-const meta: Meta<typeof List> = {
+export default {
   title: 'layout/List',
   component: List,
   subcomponents: {
@@ -20,8 +20,6 @@ const meta: Meta<typeof List> = {
     DraggableListItem,
   } as any,
 };
-
-export default meta;
 
 const getAvatarUrl = (i: string | number) =>
   `https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`;

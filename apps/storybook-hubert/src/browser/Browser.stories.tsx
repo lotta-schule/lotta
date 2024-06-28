@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { Browser, BrowserNode, NodeList } from '@lotta-schule/hubert';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
@@ -9,7 +9,7 @@ const getChildNodes = (node: BrowserNode | null): BrowserNode[] => {
   return browserNodes.filter((n) => n.parent === parent);
 };
 
-const meta: Meta<typeof Browser> = {
+export default {
   title: 'browser/Default',
   component: Browser,
   args: {
@@ -49,8 +49,6 @@ const meta: Meta<typeof Browser> = {
     },
   },
 };
-
-export default meta;
 
 export const Default: StoryObj<typeof Browser> = {
   play: async ({ canvasElement }) => {

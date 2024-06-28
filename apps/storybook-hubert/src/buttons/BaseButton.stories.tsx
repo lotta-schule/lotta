@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react';
 import { Avatar, BaseButton } from '@lotta-schule/hubert';
 
-const meta: Meta<typeof BaseButton> = {
+export default {
   title: 'Buttons/BaseButton',
   component: BaseButton,
   argTypes: {},
   parameters: {},
 };
-
-export default meta;
 
 export const General: StoryObj<typeof BaseButton> = {
   args: {
