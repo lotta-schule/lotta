@@ -33,7 +33,7 @@
       ],
       "options": {
         "commands": [
-          "mix build"
+          "mix compile --force"
         ],
         "cwd": "{projectRoot}"
       }
