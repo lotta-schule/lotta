@@ -83,7 +83,7 @@ jobs:
       - name: Upload Tests for storybook-addon-theme
         uses: codecov/codecov-action@v4
         with:
-          directory: packages/storybook-addon-theme/coverage/
+          directory: libs/storybook-addon-theme/coverage/
           flags: storybook-addon-theme
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
@@ -91,7 +91,7 @@ jobs:
       - name: Upload Tests for hubert
         uses: codecov/codecov-action@v4
         with:
-          directory: packages/hubert/coverage/
+          directory: libs/hubert/coverage/
           flags: hubert
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
@@ -99,7 +99,7 @@ jobs:
       - name: Upload Tests for Webapp
         uses: codecov/codecov-action@v4
         with:
-          directory: packages/webapp/coverage/
+          directory: apps/webapp/coverage/
           flags: webapp
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
@@ -166,7 +166,7 @@ jobs:
       - name: Send to Chromatic
         uses: chromaui/action@v1
         with:
-          workingDir: './packages/storybook-hubert'
+          workingDir: './apps/storybook-hubert'
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           skip: 'dependabot/**'
           autoAcceptChanges: 'main'
@@ -248,7 +248,7 @@ jobs:
       tags: '["${{ github.sha }}"]'
       # checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
       working-directory: .
-      dockerfile: packages/webapp/Dockerfile
+      dockerfile: apps/webapp/Dockerfile
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -262,7 +262,7 @@ jobs:
       tags: '["${{ github.sha }}", "canary-${{ github.sha }}"]'
       # checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
       working-directory: .
-      dockerfile: packages/webapp/Dockerfile
+      dockerfile: apps/webapp/Dockerfile
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -302,4 +302,4 @@ jobs:
       - name: 'Deploy Storybook as github page'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ./packages/storybook-hubert/storybook-static
+          folder: ./apps/storybook-hubert/storybook-static

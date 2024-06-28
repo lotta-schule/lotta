@@ -1,15 +1,15 @@
 ---
 name: Tag production image
 
-on:
-  push:
-    tags:
-      - "*"
+# on:
+#   push:
+#     tags:
+#       - "*"
 
 jobs:
   tagProdVersion:
     runs-on: ubuntu-latest
-    name: "Push semver-tagged image to registry and notify sentry of release"
+    name: 'Push semver-tagged image to registry and notify sentry of release'
     steps:
       - uses: actions/checkout@v4
         with:

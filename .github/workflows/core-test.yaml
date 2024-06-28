@@ -6,13 +6,21 @@ on:
     branches:
       - main
       - hotfix/**
+    paths:
+      - 'apps/core-api/**'
   pull_request:
     branches:
       - main
+    paths:
+      - 'apps/core-api/**'
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./apps/core-api
 
     services:
       postgres:
@@ -58,8 +66,8 @@ jobs:
 
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: "26.2.2"
-          elixir-version: "1.16.1"
+          otp-version: '26.2.2'
+          elixir-version: '1.16.1'
 
       - name: Install test dependencies
         run: mix deps.get --only test
@@ -91,8 +99,8 @@ jobs:
       - uses: erlef/setup-beam@v1
         name: Setup Elixir
         with:
-          otp-version: "26.2.2"
-          elixir-version: "1.16.1"
+          otp-version: '26.2.2'
+          elixir-version: '1.16.1'
 
       - name: Get dependencies
         run: mix deps.get
@@ -112,8 +120,8 @@ jobs:
       - uses: erlef/setup-beam@v1
         name: Setup Elixir
         with:
-          otp-version: "26.2.2"
-          elixir-version: "1.16.1"
+          otp-version: '26.2.2'
+          elixir-version: '1.16.1'
 
       - name: Get dependencies
         run: mix deps.get
