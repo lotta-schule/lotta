@@ -91,6 +91,10 @@ jobs:
     name: Make sure it compiles
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./app
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -111,6 +115,10 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./app
 
     steps:
       - uses: actions/checkout@v4

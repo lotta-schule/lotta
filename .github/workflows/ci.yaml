@@ -2,6 +2,8 @@
 name: 'CI'
 on:
   push:
+    paths-ignore:
+      - 'apps/core-api/**'
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
