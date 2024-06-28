@@ -1,12 +1,18 @@
 {
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
   "version": "4.2.1-alpha.2",
-  "packages": ["packages/*"],
+  "packages": [
+    "libs/*",
+    "apps/*"
+  ],
   "npmClient": "npm",
   "exact": true,
   "conventionalCommits": true,
   "changelogPreset": "angular",
-  "allowBranch": ["main", "release/*"],
+  "allowBranch": [
+    "main",
+    "release/*"
+  ],
   "forcePublish": true,
   "command": {
     "version": {

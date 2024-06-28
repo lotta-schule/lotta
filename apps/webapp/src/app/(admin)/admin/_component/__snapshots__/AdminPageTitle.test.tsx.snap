@@ -1,0 +1,32 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AdminPageTitle > should render correctly 1`] = `
+<div
+  data-overlay-container="true"
+>
+  <div
+    class="_root_833c91 _root_61ca45 _hasScrollableParent_833c91"
+    role="toolbar"
+  >
+    <h3>
+      <a
+        aria-current="false"
+        class="_root_a3b6d5 _root_0f34c5 _backButton_61ca45 _onlyIcon_0f34c5"
+        data-variant="default"
+        href="/admin"
+        role="button"
+        type="button"
+      >
+        <span
+          class="_icon_0f34c5"
+        >
+          <span
+            class="_root_8d26a2"
+          />
+        </span>
+      </a>
+      My Page
+    </h3>
+  </div>
+</div>
+`;

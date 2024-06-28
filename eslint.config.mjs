@@ -68,6 +68,7 @@ const config = [
           varsIgnorePattern: '^_',
         },
       ],
+      'react-hooks/rules-of-hooks': 'warn',
     },
   },
   {

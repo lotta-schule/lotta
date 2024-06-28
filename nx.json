@@ -27,7 +27,7 @@
       "inputs": [
         "default",
         "^production",
-        "{workspaceRoot}/jest.preset.js"
+        "{workspaceRoot}/vitest.workspace.ts"
       ],
       "outputs": [
         "{projectRoot}/coverage"

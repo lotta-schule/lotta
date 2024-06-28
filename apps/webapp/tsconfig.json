@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "src/",
+    "isolatedModules": true,
+    "incremental": true,
+    "resolveJsonModule": true,
+    "module": "esnext",
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
+    "paths": {
+      "@lotta-schule/hubert": [
+        "../../../libs/hubert/src/index.ts"
+      ],
+      "@lotta-schule/theme": [
+        "../../../libs/theme/src/index.ts"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "noEmit": true
+  },
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.test.json"
+    }
+  ],
+  "files": [],
+  "include": [],
+  "exclude": []
+}
