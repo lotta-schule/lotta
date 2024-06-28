@@ -1,0 +1,104 @@
+{
+            "nodes": [
+              {
+                "children": [
+                  {
+                    "text": "Folgende Features erlauben Ihnen Ihr Lotta für Nutzergruppen passend einzustellen:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "Name & Banner:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "text": "Jede Kategorie sollte einen kurzen und eindeutigen Namen haben. Das erleichtert den Nutzern die Orientierung. Ein individuell gestalteter Banner kann jeder Kategorie hinzugefügt werden und gibt Ihrem Lotta ein individuelles Aussehen. "
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "Layout:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "text": "Die drei Layoutansichten ermöglichen es Ihnen jeder Kategorie ein eigenes Aussehen zu verleihen und je nach Umfang der angehängten Beiträge, schneller auf Inhalte zuzugreifen. Die Kompaktansicht stellt mehr Beiträge in Ihrem Fenster dar als die Standardansicht oder die Zweispaltenansicht. Die Zweispaltenansicht rückt Ihre Vorschaubilder in den Fokus."
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "Sichtbarkeit:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "text": "Über die Sichtbarkeit können Sie in Ihrem Lotta interne Bereiche schaffen. Somit werden Menüpunkte (die Kategorien) erst dann sichtbar, wenn sich ein Nutzer einer Gruppe, wie zum Beispiel der Gruppe "
+                  },
+                  {
+                    "italic": true,
+                    "text": "Schüler"
+                  },
+                  {
+                    "text": ", angemeldet hat. Alle dieser Kategorie zugeordneten Beiträge sind nur für die entsprechende Nutzergruppe sichtbar. Da man mit Lotta auch die Sichtbarkeit einzelner Beiträge einstellen kann, ist die Sichtbarkeit von Kategorien Ihre Grundlage, um interne Bereiche zu erstellen. Dass Beiträge einer bestimmten Kategorie auch auf der Startseite erscheinen, kann man an den Einstellungen zur Kategorie unterbinden."
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "Weiterleitung:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "text": "Das Menü von Lotta kann über zwei Ebenen angelegt werden. Oft wird die obere Ebene als Menüpunkt genutzt, um die zweite Ebene zu öffnen. In dem Fall ist es möglich, von einer Kategorie auf eine andere Kategorie weiterzuleiten. Gerade, wenn sich eine Seite im Aufbau befindet, ist diese Funktion von Vorteil, bis Inhalte für neu angelegte Kategorien zur Verfügung stehen."
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "Die Marginale:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "text": "Ein weiterer Vorteil von Lotta sind die Marginalen, welche an Kategorien 'anhängt' werden können. Marginale sind konfigurierbare Bereiche der Seitenleiste, zum Beispiel ein Kalender oder ein Vertretungsplan, die rechts neben dem Hauptfenster angezeigt werden. Jeder Kategorie kann man mehrere Marginalen zuweisen. Sie bestimmen, in welchen Kategorien die Marginale sichtbar sind. Auch hier kann zusätzlich die Sichtbarkeit einer Marginale auf ausgewählte Gruppen beschränkt werden."
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }

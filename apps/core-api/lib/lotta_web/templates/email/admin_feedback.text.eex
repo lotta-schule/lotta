@@ -1,0 +1,9 @@
+Ein Admin hat eben Feedback für <%= @tenant.title %> erstellt.
+
+Nutzername: <%= @user.name %>
+Email: <%= @user.email %>
+Kunde: <%= @tenant.title %>
+
+<%= @subject %>
+---
+<%= @message %>

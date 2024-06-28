@@ -1,0 +1,32 @@
+<p>
+  Es wurde eben Feedback für <%= @tenant.title %> weitergeleitet.
+</p>
+
+<p>
+  Weitergeleitet vom Administrator:
+  <%= @user.name %> (<%= @user.email %>)
+</p>
+
+<%= if @message do %>
+  <p>
+    Folgende Nachricht wurde mitgeschickt:
+    <%= @message %>
+  </p>
+<% end %>
+
+<p>
+  Folgendes Feedback wurde vom Nutzer hinterlassen:
+</p>
+<p style="border: 1px; font-style: italic">
+  <strong><%= @feedback.topic %></strong><br />
+  <%= @feedback.content %>
+</p>
+  
+<%= if @feedback.metadata do %>
+  <p>Folgene Metadaten hat der Nutzer hinterlassen:</p>
+  <ul>
+    <%= for line <- String.split(@feedback.metadata, "\n") do %>
+      <li><%= line %></li>
+    <% end %>
+  </ul>
+<% end %>

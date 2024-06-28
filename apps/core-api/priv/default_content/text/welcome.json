@@ -1,0 +1,347 @@
+{
+  "nodes": [
+              {
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ],
+                    "size": "small",
+                    "src": "__REMOTE_URL____willkommen-persoenliches-menu.jpg",
+                    "type": "image"
+                  },
+                  {
+                    "text": "Schön, dass Sie sich für Lotta entschieden haben. Damit sie sofort loslegen können, haben wir für Sie Vorbereitungen getroffen und einige wichtige Features angelegt, die Ihnen den Einstieg erleichtern sollen, wie diesen Beitrag."
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "text": "Möchten Sie etwas über den Gundaufbau von Lotta und seine Funktionsweise erfahren, "
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "klicken Sie hier"
+                      }
+                    ],
+                    "href": "https://info.lotta.schule/a/1096-01-Lotta-der-Uberblick",
+                    "type": "link"
+                  },
+                  {
+                    "text": "."
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "text": "Grundsätzlich sind Sie Administrator der Seite und können alle Features einsehen. Alle Beiträge, die freigegeben wurden, sind für Sie sichtbar. Um Ihr Lotta einzurichten, gibt es viele Möglichkeiten und Wege, die Sie gehen können. Alle folgenden Schritte sind eine Empfehlung von uns und können in der Regel auch in einer anderen Reichenfolge bearbeitet werden."
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "text": "Grundsätzlich erreichen Sie den Administrationsbereich über Ihr individuelles Menü bei \""
+                  },
+                  {
+                    "bold": true,
+                    "text": "MEIN PROFIL"
+                  },
+                  {
+                    "text": "\" im Banner neben Ihrem Profilbild (vgl. Foto rechts)."
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "text": "Wählen Sie den Menüpunkt \""
+                  },
+                  {
+                    "bold": true,
+                    "text": "Seite administrieren"
+                  },
+                  {
+                    "text": "\" aus, um an die Einstellungen Ihres Lotta zu gelangen. Folgende Einstellungen können Sie hier vornehmen, wenn Sie den entsprechenden Bereich in der Marginale (Seitenleiste rechts, siehe Bild rechts) wählen:"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "MEIN LOTTA"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "text": "Grundeinstellungen (Name der Webseite, Logo, Domains)"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Darstellung (Farben, Hintergrundbild, Schriften)"
+                      }
+                    ],
+                    "type": "list-item"
+                  }
+                ],
+                "type": "unordered-list"
+              },
+              {
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ],
+                    "src": "__REMOTE_URL____willkommen-admin-nav.png",
+                    "type": "image"
+                  },
+                  {
+                    "bold": true,
+                    "text": "NUTZER & Gruppen"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "text": "Nutzerüberblick (Gruppenfilter, Gruppenzuweisung, Nutzersperrung)"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Gruppen (Verwaltung von Gruppen, dynamische Einschreibeschlüssel)"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": ""
+                      },
+                      {
+                        "children": [
+                          {
+                            "text": "Deitaillierte Informationen zu den Nutzergruppen finden Sie hier!"
+                          }
+                        ],
+                        "href": "https://info.lotta.schule/a/1138-04-Erste-Schritte-mit-Lotta",
+                        "type": "link"
+                      },
+                      {
+                        "text": ""
+                      }
+                    ],
+                    "type": "list-item"
+                  }
+                ],
+                "type": "unordered-list"
+              },
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "KATEGORIEN"
+                  },
+                  {
+                    "text": " (Das Menü für ihr Lotta)"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "text": "Name der Kategorie"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Sichtbarkeit für Gruppen"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Banner der Kategorie"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Sichtbarkeit der angehängten Beiträge auf der Startseite"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Layout (Standard, Kompakt oder Zweispaltenansicht)"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Weiterleitung (zu einer anderen Kategorie)"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Zuordnung der marginalen Module (für die Seitenleiste)"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": ""
+                      },
+                      {
+                        "children": [
+                          {
+                            "text": "Detaillierte Informationen zu den Kategorien finden Sie hier!"
+                          }
+                        ],
+                        "href": "https://info.lotta.schule/a/1113-03-Erste-Schritte-mit-Lotta:-KATEGORIEN",
+                        "type": "link"
+                      },
+                      {
+                        "text": ""
+                      }
+                    ],
+                    "type": "list-item"
+                  }
+                ],
+                "type": "unordered-list"
+              },
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "MARGINALEN"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "text": "Name des Widget (der Marginale)"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Icon (Symbol für die Marginale)"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Beschriftung der Icon | Textfarbe der Beschriftung"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Sichtbarkeit der Marginale (für Gruppen)"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "URL (z.Bsp. bei Kalendern)"
+                      }
+                    ],
+                    "type": "list-item"
+                  },
+                  {
+                    "children": [
+                      {
+                        "text": "Umfang der Anzeige (z.Bsp. Termine der nächsten 3 Monate)"
+                      }
+                    ],
+                    "type": "list-item"
+                  }
+                ],
+                "type": "unordered-list"
+              },
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "FREIZUGEBENDE BEITRÄGE"
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "text": "Hier tauchen die Beiträge auf, die sich in der Warteschleife befinden. Da mit Lotta jeder registrierte Nutzer Beiträge erstellen kann, müssen die Administratoren die Beiträge an die entsrechenden Kategorien \"anhängen\", bevor die Beiträge sichtbar werden. Alle Beiträge, die in Ihrem Lotta erstellt werden, müssen durch die Administratoren freigegeben werden."
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+}

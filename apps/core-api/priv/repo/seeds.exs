@@ -1,0 +1,1 @@
+Lotta.Repo.Seeder.seed()

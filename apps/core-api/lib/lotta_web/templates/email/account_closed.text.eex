@@ -1,0 +1,8 @@
+Hallo <%= @user.name %>,
+Dein Benutzerkonto bei <%= @tenant.title %> wurde soeben gelöscht.
+
+Du hast damit keinen Zugriff mehr auf die geschützten Bereiche.
+Deine Benutzerdaten und Dateien wurden gelöscht.
+
+Solltest du dir nicht sicher sein, warum dein Konto gelöscht wurde,
+melde dich bei <%= @tenant.title %>.

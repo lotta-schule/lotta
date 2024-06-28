@@ -1,0 +1,37 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "text": ""
+            },
+            {
+              "children": [
+                {
+                  "text": ""
+                }
+              ],
+              "src": "__REMOTE_URL____kategorien-anlegen-s1.jpg",
+              "type": "image"
+            },
+            {
+              "text": "Gehen Sie auf Ihre Lotta-Seite. Den Link finden Sie in Ihrer E-Mail, die Ihnen nach erfolgreichem Einrichten Ihres Lottas gesendet wurde."
+            }
+          ],
+          "type": "list-item"
+        },
+        {
+          "children": [
+            {
+              "text": "Wählen Sie im Banner \"anmelden\", um sich mit Ihrer Email-Adresse und Ihrem selbst gewählten Passwort anzumelden"
+            }
+          ],
+          "type": "list-item"
+        }
+      ],
+      "type": "unordered-list"
+    }
+  ]
+}

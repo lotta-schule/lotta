@@ -1,0 +1,14 @@
+Hallo <%= @feedback.user.name %>,
+Du hast folgendes Feedback für <%= @tenant.title %> hinterlassen:
+
+---
+# <%= @feedback.topic %>
+<%= @feedback.content %>
+---
+
+Der Administrator <%= @user.name %> hat dein Feedback beantwortet.
+
+<%= if @subject do %>
+<%= @subject %>
+<% end %>
+<%= @message %>

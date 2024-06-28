@@ -1,0 +1,14 @@
+<p>
+  Hallo <%= @user.name %>,<br />
+  Dein Benutzerkonto bei <%= @tenant.title %> wurde soeben gelöscht.
+</p>
+
+<p>
+  Du hast damit keinen Zugriff mehr auf die geschützten Bereiche.
+  Deine Benutzerdaten und Dateien wurden gelöscht.
+</p>
+
+<p>
+  Solltest du dir nicht sicher sein, warum dein Konto gelöscht wurde,
+  melde dich bei <a href={tenant_url(@tenant)}><%= @tenant.title %></a>.
+</p>
