@@ -2,11 +2,9 @@ name: Fehlermeldung (Bugreport)
 description: |
   Die Anwendung, im weitesten Sinne mit all ihren Bestandteilen,
   verhält sich nicht wie erwartet oder erwünscht.
-title: "[Bug]: "
-assignees:
-  - BillyTheKing
+title: '[Bug]: '
 labels:
-  - "Triage"
+  - 'Triage'
 body:
   - type: markdown
     attributes:
