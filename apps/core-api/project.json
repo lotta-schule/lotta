@@ -20,10 +20,28 @@
         "cwd": "{projectRoot}"
       }
     },
+    "dev": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "inputs": [
+        "default"
+      ],
+      "dependsOn": [
+        "dependencies"
+      ],
+      "outputs": [
+        "{projectRoot}/_build"
+      ],
+      "options": {
+        "command": "mix phx.server",
+        "cwd": "{projectRoot}"
+      }
+    },
     "build": {
       "executor": "nx:run-commands",
       "inputs": [
-        "default"
+        "default",
+        "!{projectRoot}/test/**/*"
       ],
       "dependsOn": [
         "dependencies"

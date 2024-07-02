@@ -19,13 +19,13 @@ for these services is provided.
 If you want to use it, [install docker](https://docs.docker.com/engine/install/)
 and then start the services:
 
-``` bash
+```bash
 docker-compose -f docker-compose.services.yml up -d
 ```
 
 You will then be able to start phoenix using:
 
-``` bash
+```bash
 mix phx.server
 ```
 
@@ -34,13 +34,13 @@ mix phx.server
 To setup a site (a "tenant"), the easiest way is to startup the server
 with an open console:
 
-``` bash
+```bash
 iex -S mix phx.server
 ```
 
 The [IEX Console](https://hexdocs.pm/iex/1.13/IEx.html) opens. Type:
 
-``` elixir
+```elixir
 Tenants.create_tenant(
   user_params: %{email: "<your-email>", name: "<your-name>"},
   tenant: %{slug: "<chose-a-slug>", title: "<tenant-title>"}

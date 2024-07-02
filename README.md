@@ -73,7 +73,7 @@ For monorepo managing, we use [nx](https://nx.dev/).
 We know getting started is not very easy at this point, but it has not been a priority yet.
 If you are interested in contributing, or have any questions, feel free to reach out to us.
 
-### Commands (Webapp)
+### Commands
 
 1. Install the necessary dependencies. In the project's root folder, run:
 
@@ -81,20 +81,26 @@ If you are interested in contributing, or have any questions, feel free to reach
 pnpm install
 ```
 
-2. Run all available tests (this will take a few minutes, depending on the machine you run it on):
+2. Make sure you have the necessary services running. If you have docker installed, you can start them with:
 
 ```sh
-pnpm test -- --no-watch
+docker-compose -f apps/core-api/docker-compose.services.yml up -d
 ```
 
-3. Run all available linters / typecheckers:
+3. Run all available tests (this will take a few minutes, depending on the machine you run it on):
+
+```sh
+pnpm test
+```
+
+4. Run all available linters / typecheckers:
 
 ```sh
 pnpm lint
 pnpm typecheck
 ```
 
-4. Start the Development environment:
+5. Start the Development environment:
 
 ```sh
 pnpm dev
@@ -105,6 +111,9 @@ This will start:
 - The _Hubert Storybook_ on [localhost:6006](http://localhost:6006).
   This project lists, shows and documents any components we have available
   in our component library _Hubert_.
+- The _Lotta Core API_. The main backend to a lotta project.
+  By default, it'll start on [localhost:4000](http://localhost:4000) on
+  your machine.
 - The _Lotta Webapp_. The main web frontend to a lotta project.
   This is what is usually referred to by _lotta_.
   By default, it'll start on [localhost:3000](http://localhost:3000) on
