@@ -34,9 +34,9 @@ defmodule LottaWeb.TenantPlug do
 
     if tenant do
       OpenTelemetry.Tracer.set_attributes(%{
-        tenant_id: tenant.id,
-        tenant_slug: tenant.slug,
-        tenant_prefix: tenant.prefix
+        "tenant.id": tenant.id,
+        "tenant.slug": tenant.slug,
+        "tenant.prefix": tenant.prefix
       })
 
       Repo.put_prefix(tenant.prefix)

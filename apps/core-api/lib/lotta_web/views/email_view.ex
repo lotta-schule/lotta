@@ -6,9 +6,6 @@ defmodule LottaWeb.EmailView do
 
   use LottaWeb, :view
 
-  import Phoenix.HTML.Tag
-  import Phoenix.HTML.Link
-
   alias Lotta.{Repo, Storage, Tenants}
   alias Lotta.Tenants.Tenant
   alias Lotta.Content.Article

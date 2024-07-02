@@ -15,6 +15,8 @@ defmodule LottaWeb.Endpoint do
     websocket: [check_origin: false],
     longpoll: [check_origin: false]
 
+  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest

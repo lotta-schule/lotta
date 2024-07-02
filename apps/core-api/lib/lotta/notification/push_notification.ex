@@ -8,6 +8,7 @@ defmodule Lotta.Notification.PushNotification do
   use GenServer
 
   require Logger
+  require OpenTelemetry.Tracer
 
   alias Lotta.{Messages, Repo}
   alias Lotta.Notification.PushNotificationRequest
@@ -134,9 +135,14 @@ defmodule Lotta.Notification.PushNotification do
   end
 
   defp list_recipients_for_message(message, conversation) do
+    otel_ctx = OpenTelemetry.Tracer.start_span(:list_recipients_for_message)
+
     conversation
     |> Messages.list_conversation_users()
     |> Enum.filter(&(&1.id != message.user_id))
+    |> tap(fn _ ->
+      OpenTelemetry.Tracer.end_span(otel_ctx)
+    end)
   end
 
   defp log_notification(notification),
