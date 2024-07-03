@@ -220,7 +220,7 @@
       }
 
       .titleGridItem {
-        grid-column: 2;
+        grid-column-start: 2;
         grid-row: 1;
         .title {
           font-family: var(--lotta-title-font-family);
@@ -235,6 +235,10 @@
       .previewGridItem {
         grid-column: 2;
         grid-row: 2;
+        @media screen and (max-width: $max-sm) {
+          grid-column-start: 2;
+          grid-column-end: 4;
+        }
       }
 
       .dateGridItem {
@@ -334,7 +338,7 @@
       }
     }
     .authorsGridItem {
-      grid-column: 1;
+      grid-column: 2;
       grid-row: 4;
       justify-self: start;
       padding-left: var(--lotta-spacing, 1);
