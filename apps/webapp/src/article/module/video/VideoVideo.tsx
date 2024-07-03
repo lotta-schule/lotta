@@ -53,6 +53,7 @@ export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
   }
   return (
     <video
+      data-testid="video"
       playsInline
       controls
       poster={posterFileLocation || undefined}

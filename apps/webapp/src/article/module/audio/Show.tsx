@@ -6,8 +6,12 @@ interface ShowProps {
   contentModule: ContentModuleModel<{ captions: string[] }>;
 }
 
-export const Show = React.memo<ShowProps>(({ contentModule }) => {
-  const captions: string[] = contentModule.content?.captions ?? [];
+export const Show = React.memo(({ contentModule }: ShowProps) => {
+  const captions = contentModule.content?.captions ?? [];
+
+  if (!contentModule.files.length) {
+    return null;
+  }
   return (
     <figure>
       <AudioAudio contentModule={contentModule} />

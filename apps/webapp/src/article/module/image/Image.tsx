@@ -12,6 +12,11 @@ export const Image = React.memo(
     isUsingFullHeight?: boolean;
   }>) => {
     const imageCaption = contentModule.content?.caption;
+
+    if (!contentModule.files.length) {
+      return <div data-testid="ImageContentModule" />;
+    }
+
     return (
       <div data-testid="ImageContentModule">
         <ImageImage

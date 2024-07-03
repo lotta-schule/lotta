@@ -20,7 +20,11 @@ export const AudioAudio = React.memo<AudioAudioProps>(({ contentModule }) => {
       /^audio/.test(f.mimeType)
     );
   return (
-    <audio controls style={{ height: '2em', display: 'block', width: '100%' }}>
+    <audio
+      controls
+      style={{ height: '2em', display: 'block', width: '100%' }}
+      data-testid="audio"
+    >
       {(audioFiles || []).map((af) => (
         <source
           key={File.getFileConversionRemoteLocation(baseUrl, af)}
