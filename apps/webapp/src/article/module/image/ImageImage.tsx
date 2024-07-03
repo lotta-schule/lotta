@@ -27,22 +27,34 @@ export const ImageImage = React.memo(
     onSelect,
     ...otherProps
   }: ImageImageProps) => {
-    const imageContent = isEditModeEnabled ? (
-      <SelectFileOverlay
-        label={'Bild auswechseln'}
-        fileFilter={(f) => f.fileType === FileModelType.Image}
-        onSelectFile={onUpdateFile}
-      >
-        <ImageContent alt={caption} file={file} {...otherProps} />
-      </SelectFileOverlay>
-    ) : (
-      <ImageContent
-        alt={caption}
-        onClick={onSelect}
-        isUsingFullHeight={!isEditModeEnabled && isUsingFullHeight}
-        file={file}
-        {...otherProps}
-      />
+    const imageContent = React.useMemo(
+      () =>
+        isEditModeEnabled ? (
+          <SelectFileOverlay
+            label={'Bild auswechseln'}
+            fileFilter={(f) => f.fileType === FileModelType.Image}
+            onSelectFile={onUpdateFile}
+          >
+            <ImageContent alt={caption} file={file} {...otherProps} />
+          </SelectFileOverlay>
+        ) : (
+          <ImageContent
+            alt={caption}
+            onClick={onSelect}
+            isUsingFullHeight={!isEditModeEnabled && isUsingFullHeight}
+            file={file}
+            {...otherProps}
+          />
+        ),
+      [
+        isEditModeEnabled,
+        file,
+        caption,
+        isUsingFullHeight,
+        onUpdateFile,
+        onSelect,
+        otherProps,
+      ]
     );
     return (
       <figure className={styles.root}>
