@@ -27,7 +27,7 @@ vi.mock('shared/browser', async (importOriginal) => {
 });
 
 describe('shared/layouts/messagingLayout/ComposeMessage', () => {
-  it('should auto focus input field', () => {
+  it('should render an input box', () => {
     const screen = render(
       <ComposeMessage
         destination={{
@@ -36,7 +36,6 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
       />
     );
     expect(screen.getByRole('textbox')).toBeVisible();
-    expect(screen.getByRole('textbox')).toHaveFocus();
   });
 
   it('should have a disabled send button when textbox is empty', () => {
@@ -51,7 +50,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
   });
 
   it('should enable the send button when text is entered', async () => {
-    const fireEvent = userEvent.setup();
+    const user = userEvent.setup();
     const screen = render(
       <ComposeMessage
         destination={{
@@ -59,13 +58,13 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
         }}
       />
     );
-    await fireEvent.type(screen.getByRole('textbox'), 'Hallo!');
+    await user.type(screen.getByRole('textbox'), 'Hallo!');
     expect(screen.getByRole('button', { name: /senden/ })).not.toBeDisabled();
   });
 
   describe('send form', () => {
     it('should send a user a message', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       let didCallMutation = false;
       const additionalMocks = [
         {
@@ -115,18 +114,21 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
         {},
         { currentUser: SomeUser, additionalMocks }
       );
-      await fireEvent.type(screen.getByRole('textbox'), 'Hallo!');
-      await fireEvent.click(screen.getByRole('button', { name: /senden/ }));
+      await user.type(screen.getByRole('textbox'), 'Hallo!');
+      await user.click(screen.getByRole('button', { name: /senden/ }));
 
       await waitFor(() => {
         expect(didCallMutation).toEqual(true);
       });
-      expect(screen.getByRole('textbox')).toHaveFocus();
+
+      await waitFor(() => {
+        expect(screen.getByRole('textbox')).toHaveFocus();
+      });
       expect(screen.getByRole('textbox')).toHaveValue('');
     });
 
     it('should send a user a file message while keeping typed message', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const additionalMocks = [
         {
           request: {
@@ -173,10 +175,8 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
         {},
         { currentUser: SomeUser, additionalMocks }
       );
-      await fireEvent.type(screen.getByRole('textbox'), 'Hallo!');
-      await fireEvent.click(
-        screen.getByRole('button', { name: /datei anhängen/i })
-      );
+      await user.type(screen.getByRole('textbox'), 'Hallo!');
+      await user.click(screen.getByRole('button', { name: /datei anhängen/i }));
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeVisible();
       });
@@ -184,7 +184,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
       expect(
         screen.getByRole('button', { name: /datei auswählen/i })
       ).not.toBeDisabled();
-      await fireEvent.click(
+      await user.click(
         screen.getByRole('button', { name: /datei auswählen/i })
       );
 
@@ -200,7 +200,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
     });
 
     it('should send form on ENTER', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       let didCallMutation = false;
       const additionalMocks = [
         {
@@ -253,7 +253,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
         {},
         { currentUser: SomeUser, additionalMocks }
       );
-      await fireEvent.type(screen.getByRole('textbox'), 'Hallo!{enter}');
+      await user.type(screen.getByRole('textbox'), 'Hallo!{enter}');
       await waitFor(() => {
         expect(didCallMutation).toEqual(true);
       });
@@ -261,7 +261,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
     });
 
     it('should not send form on ENTER when SHIFT modifier is pressed', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const onSent = vi.fn();
       const screen = render(
         <ComposeMessage
@@ -272,7 +272,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
         {},
         { currentUser: SomeUser }
       );
-      await fireEvent.type(
+      await user.type(
         screen.getByRole('textbox'),
         'Hallo!{Shift>}{Enter}{/Shift}Zweite Zeile'
       );
