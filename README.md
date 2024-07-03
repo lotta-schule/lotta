@@ -103,7 +103,7 @@ pnpm typecheck
 5. Start the Development environment:
 
 ```sh
-pnpm dev
+pnpm dev:full
 ```
 
 This will start:

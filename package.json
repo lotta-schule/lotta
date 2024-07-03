@@ -1,10 +1,11 @@
 {
-  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "@lotta-schule/lotta",
   "description": "Lotta Web Monorepo",
   "homepage": "https://lotta.schule",
   "scripts": {
-    "dev": "nx run-many --target=dev --parallel",
+    "dev": "nx run-many --target=dev --parallel --exclude core-api",
+    "dev:full": "nx run-many --target=dev --parallel",
     "test": "nx run-many --target=test --parallel",
     "lint": "nx run-many --target=lint --parallel",
     "typecheck": "nx run-many --target=typecheck --parallel",
