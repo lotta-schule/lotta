@@ -1,7 +1,17 @@
+@import "breakpoints";
+
 .root {
   --deletable-button-offset: 4px;
 
   display: inline-flex;
+  @media screen and (max-width: $max-sm) {
+    background: linear-gradient(
+      270deg,
+      rgb(var(--lotta-box-background-color)) 80%,
+      rgba(var(--lotta-box-background-color), 0.1) 100%
+    );
+    padding-left: calc(2 * var(--lotta-spacing));
+  }
   .avatar {
     margin-right: calc(var(--deletable-button-offset) * -1);
     cursor: pointer;
