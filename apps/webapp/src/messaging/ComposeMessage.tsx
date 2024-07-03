@@ -29,18 +29,8 @@ export interface ComposeMessageProps {
 export const ComposeMessage = React.memo(
   ({ destination, onSent }: ComposeMessageProps) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
+    const [shouldSetAutofocus, setShouldSetAutofocus] = React.useState(true);
     const [content, setContent] = React.useState('');
-
-    React.useEffect(() => {
-      setContent('');
-      inputRef.current?.focus();
-    }, [destination]);
-
-    React.useEffect(() => {
-      if (content === '') {
-        inputRef.current?.focus();
-      }
-    }, [content]);
 
     const [createMessage, { loading: isLoading, error }] = useMutation<{
       message: Partial<MessageModel>;
@@ -112,6 +102,13 @@ export const ComposeMessage = React.memo(
       },
     });
 
+    React.useEffect(() => {
+      if (shouldSetAutofocus) {
+        inputRef.current?.focus();
+        setShouldSetAutofocus(false);
+      }
+    }, [shouldSetAutofocus]);
+
     const onSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       createMessage();
@@ -147,6 +144,9 @@ export const ComposeMessage = React.memo(
                     recipientGroup:
                       destination.group && pick(destination.group, 'id'),
                   },
+                },
+                onCompleted: () => {
+                  setShouldSetAutofocus(true);
                 },
               });
             }}
