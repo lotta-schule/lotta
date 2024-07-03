@@ -31,7 +31,7 @@ RUN cat apps/webapp/next.config.js | sed -z 's/transpileModules: \[[^;]*\],\n//'
 
 FROM node:${NODE_VERSION}-alpine AS runner
 
-LABEL org.opencontainers.image.source https://github.com/lotta-schule/lotta
+LABEL org.opencontainers.image.source="https://github.com/lotta-schule/lotta"
 LABEL org.opencontainers.image.authors="Lotta Schule <kontakt@lotta.schule>"
 LABEL org.opencontainers.image.url="https://lotta.schule"
 

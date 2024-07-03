@@ -43,7 +43,7 @@ RUN mix release
 # From this line onwards, we're in a new image, which will be the image used in production
 FROM alpine:${ALPINE_VERSION}
 
-LABEL org.opencontainers.image.source https://github.com/lotta-schule/lotta
+LABEL org.opencontainers.image.source="https://github.com/lotta-schule/lotta"
 LABEL org.opencontainers.image.authors="Lotta Schule <kontakt@lotta.schule>"
 LABEL org.opencontainers.image.url="https://lotta.schule"
 
