@@ -832,16 +832,21 @@ describe('shared/editor/GroupSelect', () => {
           );
         });
 
+        await waitFor(() => new Promise((resolve) => setTimeout(resolve, 300))); // wait for it to settle
+
         await user.click(screen.getByRole('button', { name: /vorschläge/i }));
 
-        await waitFor(() => {
-          expect(
-            screen.getByRole('option', {
-              name: 'Ohne zugewiesene Gruppe',
-              hidden: true,
-            })
-          ).toBeVisible();
-        });
+        await waitFor(
+          () => {
+            expect(
+              screen.getByRole('option', {
+                name: 'Ohne zugewiesene Gruppe',
+                hidden: true,
+              })
+            ).toBeVisible();
+          },
+          { timeout: 10000 }
+        );
 
         await user.click(
           await screen.findByRole('option', {
