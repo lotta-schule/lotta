@@ -4,7 +4,7 @@ import { expect, fireEvent, spyOn, waitFor, within } from '@storybook/test';
 import { KeyboardArrowLeft, LoadingButton } from '@lotta-schule/hubert';
 import { action } from '@storybook/addon-actions';
 
-const meta = {
+export default {
   title: 'Buttons/LoadingButton',
   component: LoadingButton,
   args: {
@@ -18,7 +18,7 @@ const meta = {
       if (args.onAction) {
         spyOn(args, 'onAction').mockImplementationOnce(
           () =>
-            new Promise((resolve, reject) => {
+            new Promise<void>((resolve, reject) => {
               setTimeout(() => {
                 if (parameters.fail) {
                   const message =
@@ -38,9 +38,7 @@ const meta = {
       return <Story />;
     },
   ],
-} satisfies Meta<typeof LoadingButton>;
-
-export default meta;
+} as Meta<typeof LoadingButton>;
 
 export const Default: StoryObj<typeof LoadingButton> = {
   args: {

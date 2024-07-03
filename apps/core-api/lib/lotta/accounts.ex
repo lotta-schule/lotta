@@ -304,11 +304,6 @@ defmodule Lotta.Accounts do
   """
   @spec request_password_reset(User.email()) :: {:ok, User.t()} | {:error, term()}
   def request_password_reset(email) do
-    token =
-      :crypto.strong_rand_bytes(32)
-      |> Base.url_encode64(padding: false)
-      |> URI.encode()
-
     user =
       Repo.one(
         from(u in User,
@@ -319,6 +314,11 @@ defmodule Lotta.Accounts do
     if is_nil(user) do
       {:error, :nouser}
     else
+      token =
+        :crypto.strong_rand_bytes(32)
+        |> Base.url_encode64(padding: false)
+        |> URI.encode()
+
       prefix = Ecto.get_meta(user, :prefix)
 
       with {:ok, _res} <-

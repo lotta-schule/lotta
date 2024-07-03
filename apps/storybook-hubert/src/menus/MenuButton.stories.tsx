@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { StoryObj, Meta } from '@storybook/react';
+import { StoryObj } from '@storybook/react';
 import { Close, ChevronRight, MenuButton, Item } from '@lotta-schule/hubert';
 import { action } from '@storybook/addon-actions';
 
-const meta: Meta<typeof MenuButton> = {
+export default {
   title: 'menus/MenuButton',
   component: MenuButton,
   subcomponents: {
@@ -34,8 +34,6 @@ const meta: Meta<typeof MenuButton> = {
     </div>
   ),
 };
-
-export default meta;
 
 type Story = StoryObj<typeof MenuButton>;
 

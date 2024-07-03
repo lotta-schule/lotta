@@ -28,6 +28,6 @@ erl_crash.dump
 api-*.tar
 
 .env
+.elixir_ls
 
 .DS_Store
-

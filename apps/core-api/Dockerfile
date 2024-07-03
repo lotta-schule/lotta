@@ -1,7 +1,7 @@
 # The version of Alpine to use for the final image
 ARG ALPINE_VERSION=3.19
 
-FROM elixir:1.16-alpine AS builder
+FROM elixir:1.17.1-otp-26-alpine AS builder
 
 ENV MIX_ENV=prod
 
@@ -42,6 +42,10 @@ RUN mix release
 
 # From this line onwards, we're in a new image, which will be the image used in production
 FROM alpine:${ALPINE_VERSION}
+
+LABEL org.opencontainers.image.source https://github.com/lotta-schule/lotta
+LABEL org.opencontainers.image.authors="Lotta Schule <kontakt@lotta.schule>"
+LABEL org.opencontainers.image.url="https://lotta.schule"
 
 EXPOSE 4000
 

@@ -163,7 +163,10 @@ config :opentelemetry, :resource,
 
 config :opentelemetry, :processors,
   otel_batch_processor: %{
-    exporter: {:opentelemetry_exporter, %{endpoints: [{:http, ~c"tempo.monitoring", 4318, []}]}}
+    exporter: {
+      :opentelemetry_exporter,
+      %{endpoints: []}
+    }
   }
 
 config :lotta,

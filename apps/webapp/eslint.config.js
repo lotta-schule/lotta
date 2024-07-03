@@ -16,6 +16,8 @@ const config = [
       ...next.configs['core-web-vitals'].rules,
       'react/no-unescaped-entities': 'off',
       '@next/next/no-img-element': 'off',
+      '@next/next/no-duplicate-head': 'off',
+      '@next/next/no-page-custom-font': 'off',
     },
   },
 ];

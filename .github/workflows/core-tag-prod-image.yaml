@@ -1,43 +1,46 @@
----
-name: Tag production image
-
-# on:
-#   push:
-#     tags:
-#       - "*"
-
-jobs:
-  tagProdVersion:
-    runs-on: ubuntu-latest
-    name: 'Push semver-tagged image to registry and notify sentry of release'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Docker Login
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: pull current image
-        run: |
-          docker pull ghcr.io/lotta-schule/core:$GITHUB_SHA
-
-      - name: push tagged image
-        run: |
-          docker tag ghcr.io/lotta-schule/core:$GITHUB_SHA ghcr.io/lotta-schule/core:$GITHUB_REF_NAME
-          docker tag ghcr.io/lotta-schule/core:$GITHUB_SHA ghcr.io/lotta-schule/core:latest
-          docker push ghcr.io/lotta-schule/core:$GITHUB_REF_NAME
-          docker push ghcr.io/lotta-schule/core:latest
-
-      - name: Create Sentry release
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: core
-        with:
-          environment: production
-          version: ${{ github.ref_name }}
+# TODO:
+# We have no way to push to prod yet, we need a plan!
+#
+# ---
+# name: Tag production image
+#
+# # on:
+# #   push:
+# #     tags:
+# #       - "*"
+#
+# jobs:
+#   tagProdVersion:
+#     runs-on: ubuntu-latest
+#     name: 'Push semver-tagged image to registry and notify sentry of release'
+#     steps:
+#       - uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#       - name: Docker Login
+#         uses: docker/login-action@v3
+#         with:
+#           registry: ghcr.io
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.GITHUB_TOKEN }}
+#
+#       - name: pull current image
+#         run: |
+#           docker pull ghcr.io/lotta-schule/core:$GITHUB_SHA
+#
+#       - name: push tagged image
+#         run: |
+#           docker tag ghcr.io/lotta-schule/core:$GITHUB_SHA ghcr.io/lotta-schule/core:$GITHUB_REF_NAME
+#           docker tag ghcr.io/lotta-schule/core:$GITHUB_SHA ghcr.io/lotta-schule/core:latest
+#           docker push ghcr.io/lotta-schule/core:$GITHUB_REF_NAME
+#           docker push ghcr.io/lotta-schule/core:latest
+#
+#       - name: Create Sentry release
+#         uses: getsentry/action-release@v1
+#         env:
+#           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+#           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+#           SENTRY_PROJECT: core
+#         with:
+#           environment: production
+#           version: ${{ github.ref_name }}

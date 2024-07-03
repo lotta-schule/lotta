@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react';
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
 import { action } from '@storybook/addon-actions';
 import {
@@ -15,7 +15,7 @@ import {
 } from '@lotta-schule/hubert';
 import { expect, fireEvent, waitFor, within } from '@storybook/test';
 
-const meta: Meta<typeof SplitView> = {
+export default {
   title: 'Layout/SplitView',
   component: SplitView,
   argTypes: {},
@@ -30,7 +30,6 @@ const meta: Meta<typeof SplitView> = {
     },
   },
 };
-export default meta;
 
 type Story = StoryObj<typeof SplitView>;
 

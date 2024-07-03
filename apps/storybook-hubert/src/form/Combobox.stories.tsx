@@ -103,7 +103,7 @@ export const WithRequestedItems: StoryObj<typeof ComboBox> = {
     await fireEvent.click(canvas.getByRole('option', { name: 'Yoda' }));
 
     await waitFor(() => {
-      expect(canvas.getByRole('listbox')).not.toBeVisible();
+      expect(canvas.queryByRole('listbox')).toBeNull();
     });
     expect(args.onSelect).toHaveBeenCalledWith('Yoda');
   },

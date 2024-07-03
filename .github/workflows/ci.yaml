@@ -2,10 +2,10 @@
 name: 'CI'
 on:
   push:
-    paths-ignore:
-      - 'apps/core-api/**'
+
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  GITHUB_ACTIONS: true
 
 jobs:
   lint:
@@ -35,6 +35,12 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Setup the BEAM and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '26.2.2'
+          elixir-version: '1.16.1'
+
       - name: Install node dependencies
         run: pnpm install
 
@@ -47,11 +53,49 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        options: >-
+          -e POSTGRES_USER=lotta
+          -e POSTGRES_PASSWORD=lotta
+      rabbitmq:
+        image: rabbitmq:latest
+        ports:
+          - 5672:5672
+      redis:
+        image: bitnami/redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          -e REDIS_PASSWORD=lotta
+      minio:
+        image: bitnami/minio:latest
+        ports:
+          - 9000:9000
+        options: >-
+          -e MINIO_ROOT_USER="AKIAIOSFODNN7EXAMPLE"
+          -e MINIO_ROOT_PASSWORD="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+          -e MINIO_DEFAULT_BUCKETS="lotta-dev-ugc"
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup minio
+        run: >
+          docker run --network host --name minio_setup --entrypoint /bin/bash minio/mc -c "
+          /usr/bin/mc config host add minio http://localhost:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY;
+          /usr/bin/mc rm -r --force minio/lotta-dev-ugc;
+          /usr/bin/mc mb minio/lotta-dev-ugc;
+          /usr/bin/mc anonymous set download minio/lotta-dev-ugc;
+          exit 0;
+          "
 
       - name: Setup main branch for reference
         if: ${{ github.ref_name != 'main' }}
@@ -71,11 +115,20 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Setup the BEAM and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '26.2.2'
+          elixir-version: '1.16.1'
+
       - name: Install npm dependencies
         run: pnpm install
 
       - name: Run Unit / Component tests
-        run: pnpm nx affected -t test --coverage --configuration=ci
+        run: pnpm nx affected -t test --configuration=coverage
+        env:
+          NODE_ENV: test
+          MIX_ENV: test
 
       - name: Run end-to-end tests
         run: |
@@ -106,6 +159,14 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
+      - name: Upload Tests for CoreApi
+        uses: codecov/codecov-action@v4
+        with:
+          directory: apps/core-api/cover/
+          flags: core-api
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
   check-build:
     name: Check the projects build
     runs-on: ubuntu-latest
@@ -132,6 +193,12 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+
+      - name: Setup the BEAM and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '26.2.2'
+          elixir-version: '1.16.1'
 
       - name: Install npm dependencies
         run: pnpm install
@@ -242,33 +309,57 @@ jobs:
       npm-token: ${{ secrets.NPM_TOKEN }}
       nx-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
-  publish-docker-image:
-    if: ${{ github.ref_name != 'main'}}
+  publish-docker-images:
+    name: ${{ matrix.image.name }} (${{ matrix.environment }}) Docker images
+    strategy:
+      matrix:
+        environment: ['preview', 'staging']
+        image:
+          - name: web
+            dockerfile: apps/webapp/Dockerfile
+            working-directory: .
+          - name: core
+            dockerfile: Dockerfile
+            working-directory: apps/core-api
+        exclude:
+          - environment: ${{ github.ref_name == 'main' && 'staging' || 'staging' }}
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
-      name: lotta-schule/web
-      tags: '["${{ github.sha }}"]'
-      # checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
-      working-directory: .
-      dockerfile: apps/webapp/Dockerfile
+      name: lotta-schule/${{ matrix.image.name }}
+      tags: ${{ format(matrix.environment == 'preview' && '["{0}"]' || '["{0}", "canary-{0}"]', github.sha) }}
+      working-directory: ${{ matrix.image.working-directory }}
+      dockerfile: ${{ matrix.image.dockerfile }}
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
       sentry_dsn: ${{ secrets.SENTRY_DSN }}
 
-  publish-staging-docker-image:
-    if: ${{ github.ref_name == 'main'}}
-    uses: ./.github/workflows/__deploy_dockerfile.yaml
-    with:
-      name: lotta-schule/web
-      tags: '["${{ github.sha }}", "canary-${{ github.sha }}"]'
-      # checkout-ref: ${{ needs.update-package-versions.outputs.updated-sha }}
-      working-directory: .
-      dockerfile: apps/webapp/Dockerfile
-    secrets:
-      password: ${{ secrets.GITHUB_TOKEN }}
-      sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      sentry_dsn: ${{ secrets.SENTRY_DSN }}
+  create-sentry-release:
+    name: |
+      Sentry Rel.: ${{ matrix.project }} (${{ matrix.environment }})
+    needs:
+      - publish-docker-images
+    strategy:
+      matrix:
+        environment: ['preview', 'staging']
+        project: ['core', 'web']
+        exclude:
+          - environment: ${{ github.ref_name == 'main' && 'staging' || 'staging' }}
+    runs-on: ubuntu-latest
+    steps:
+      # Sentry does need a repository it seems
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ matrix.project }}
+        with:
+          environment: ${{ matrix.environment }}
+          version: ${{ github.sha }}
 
   publish-storybook-page:
     if: ${{ github.ref_name == 'main' }}

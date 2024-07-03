@@ -18,7 +18,7 @@ describe('Header', () => {
       <Header bannerImageUrl={bannerImageUrl}>Test Header Content</Header>
     );
 
-    const imageElement = screen.getByRole('img');
+    const imageElement = screen.getByRole('presentation');
     expect(imageElement).toBeInTheDocument();
     expect(imageElement.getAttribute('srcset')).toContain(bannerImageUrl);
   });

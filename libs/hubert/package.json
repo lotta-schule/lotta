@@ -6,7 +6,7 @@
   "author": "Alexis Rinaldoni <alexis.rinaldoni@einsa.net>",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "test": "vitest",
+    "test": "vitest --coverage",
     "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit"
   },

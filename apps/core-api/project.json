@@ -1,0 +1,108 @@
+{
+  "name": "core-api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "tags": [],
+  "projectType": "application",
+  "targets": {
+    "dependencies": {
+      "cache": true,
+      "executor": "nx:run-commands",
+      "inputs": [
+        "mixfiles"
+      ],
+      "outputs": [
+        "{projectRoot}/deps"
+      ],
+      "options": {
+        "commands": [
+          "mix deps.get"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "inputs": [
+        "default"
+      ],
+      "dependsOn": [
+        "dependencies"
+      ],
+      "outputs": [
+        "{projectRoot}/_build"
+      ],
+      "options": {
+        "command": "mix phx.server",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        "!{projectRoot}/test/**/*"
+      ],
+      "dependsOn": [
+        "dependencies"
+      ],
+      "outputs": [
+        "{projectRoot}/_build"
+      ],
+      "options": {
+        "commands": [
+          "mix compile --force"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        "mixfiles",
+        "{projectRoot}/.credo.exs"
+      ],
+      "dependsOn": [
+        "dependencies"
+      ],
+      "outputs": [],
+      "options": {
+        "command": "mix credo",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        "mixfiles",
+        "{projectRoot}/test/**/*"
+      ],
+      "dependsOn": [
+        "dependencies"
+      ],
+      "outputs": [
+        "{workspaceRoot}/coverage/core-api"
+      ],
+      "options": {
+        "command": "mix coveralls.json",
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "mixfiles"
+    ],
+    "mixfiles": [
+      "{projectRoot}/mix.exs",
+      "{projectRoot}/mix.lock"
+    ],
+    "production": [
+      "default",
+      "!{projectRoot}/test/**/*"
+    ]
+  }
+}

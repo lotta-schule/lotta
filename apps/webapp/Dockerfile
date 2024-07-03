@@ -30,6 +30,11 @@ RUN --mount=type=secret,id=sentry_auth_token \
 RUN cat apps/webapp/next.config.js | sed -z 's/transpileModules: \[[^;]*\],\n//' > apps/webapp/next.config.js
 
 FROM node:${NODE_VERSION}-alpine AS runner
+
+LABEL org.opencontainers.image.source https://github.com/lotta-schule/lotta
+LABEL org.opencontainers.image.authors="Lotta Schule <kontakt@lotta.schule>"
+LABEL org.opencontainers.image.url="https://lotta.schule"
+
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
