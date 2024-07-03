@@ -285,7 +285,7 @@ jobs:
             dockerfile: Dockerfile
             working-directory: apps/core-api
         exclude:
-          - environment: ${{ github.ref_name == 'main' && 'staging' || 'staging' }}
+          - environment: ${{ github.ref_name == 'main' && 'preview' || 'staging' }}
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: lotta-schule/${{ matrix.image.name }}
@@ -307,7 +307,7 @@ jobs:
         environment: ['preview', 'staging']
         project: ['core', 'web']
         exclude:
-          - environment: ${{ github.ref_name == 'main' && 'staging' || 'staging' }}
+          - environment: ${{ github.ref_name == 'main' && 'preview' || 'staging' }}
     runs-on: ubuntu-latest
     steps:
       # Sentry does need a repository it seems
