@@ -31,7 +31,7 @@ describe('ImageConfig Component', () => {
     expect(screen.getByRole('checkbox')).not.toBeChecked();
   });
 
-  it('should toggle state and call onUpdateModule and onRequestClose', async () => {
+  it('should toggle state and call onUpdateModule', async () => {
     const user = userEvent.setup();
 
     const screen = render(
@@ -57,7 +57,5 @@ describe('ImageConfig Component', () => {
         isUsingFullHeight: true,
       },
     });
-
-    expect(mockOnRequestClose).toHaveBeenCalled();
   });
 });

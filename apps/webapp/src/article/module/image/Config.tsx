@@ -6,7 +6,6 @@ export const Config = React.memo(
   ({
     contentModule,
     onUpdateModule,
-    onRequestClose,
   }: ContentModuleConfigProps<{ isUsingFullHeight?: boolean }>) => {
     return (
       <form data-testid="ImageContentModuleConfiguration">
@@ -20,7 +19,6 @@ export const Config = React.memo(
                 isUsingFullHeight,
               },
             });
-            onRequestClose();
           }}
         >
           Bild in voller Höhe anzeigen
