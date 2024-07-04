@@ -7,11 +7,10 @@ const DEFAULT_LEVEL = 4;
 interface ConfigProps {
   contentModule: ContentModuleModel;
   onUpdateModule(contentModule: ContentModuleModel): void;
-  onRequestClose(): void;
 }
 
 export const Config = React.memo<ConfigProps>(
-  ({ contentModule, onUpdateModule, onRequestClose }) => {
+  ({ contentModule, onUpdateModule }) => {
     const headingLevel = contentModule.configuration?.level ?? DEFAULT_LEVEL;
 
     return (
@@ -28,7 +27,6 @@ export const Config = React.memo<ConfigProps>(
                 level: isNaN(newLevel) ? DEFAULT_LEVEL : newLevel,
               },
             });
-            onRequestClose();
           }}
         >
           <Option value={'4'}>Überschrift groß</Option>
