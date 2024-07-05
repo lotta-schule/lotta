@@ -26,7 +26,6 @@ export const GlobalStyles = React.memo(
             body {
                 margin: 0;
                 font-family: var(--lotta-text-font-family);
-
             }
 
             body {
@@ -69,6 +68,7 @@ export const GlobalStyles = React.memo(
             h6 {
                 margin-block-start: 0;
                 margin-block-end: calc(0.5 * var(--lotta-spacing));
+                font-family: var(--lotta-title-font-family);
             }
 
             h1 {
