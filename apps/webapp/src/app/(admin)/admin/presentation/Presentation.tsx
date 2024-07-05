@@ -316,7 +316,7 @@ export const Presentation = React.memo(
               <Select
                 fullWidth
                 title={'Überschriften'}
-                value={theme.titleFontFamily}
+                value={customTheme.titleFontFamily}
                 onChange={(titleFontFamily) => {
                   updateThemeProperties({
                     titleFontFamily,
@@ -341,7 +341,7 @@ export const Presentation = React.memo(
               <Select
                 fullWidth
                 title={'Fließtext'}
-                value={theme.textFontFamily}
+                value={customTheme.textFontFamily}
                 onChange={(textFontFamily) =>
                   updateThemeProperties({
                     textFontFamily,
