@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { ArticleModel } from 'model';
-import { ArticleTitle } from './ArticleTitle';
 import { ContentModule } from './module/ContentModule';
+import { ArticleTitle } from './ArticleTitle';
+import { ArticleReactions } from './articleReactions';
 
 import styles from './Article.module.scss';
 
@@ -25,6 +26,7 @@ export const Article = React.memo(({ article }: ArticleProps) => {
             />
           ))}
       </section>
+      {article.isReactionsEnabled && <ArticleReactions article={article} />}
     </article>
   );
 });

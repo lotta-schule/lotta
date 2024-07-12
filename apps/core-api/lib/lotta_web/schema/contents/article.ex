@@ -10,6 +10,7 @@ defmodule LottaWeb.Schema.Contents.Article do
     field :preview, :string
     field :ready_to_publish, :boolean
     field :published, :boolean
+    field :is_reactions_enabled, :boolean
     field :tags, list_of(non_null(:string))
     field :preview_image_file, :select_file_input
     field :groups, list_of(:select_user_group_input)
@@ -45,6 +46,7 @@ defmodule LottaWeb.Schema.Contents.Article do
     field :ready_to_publish, :boolean
     field :published, :boolean
     field :is_pinned_to_top, :boolean
+    field :is_reactions_enabled, :boolean
 
     field :preview_image_file, :file,
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Storage)

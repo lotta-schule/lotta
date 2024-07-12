@@ -23,6 +23,7 @@ defmodule Lotta.Content.Article do
           tags: tags(),
           ready_to_publish: boolean(),
           published: boolean(),
+          is_reactions_enabled: boolean(),
           is_pinned_to_top: boolean()
         }
 
@@ -35,6 +36,7 @@ defmodule Lotta.Content.Article do
     field(:ready_to_publish, :boolean)
     field(:published, :boolean, default: false)
     field(:is_pinned_to_top, :boolean)
+    field(:is_reactions_enabled, :boolean, default: false)
     field(:rank, :float, virtual: true)
 
     belongs_to :category, Category, on_replace: :nilify
@@ -114,6 +116,7 @@ defmodule Lotta.Content.Article do
       :updated_at,
       :ready_to_publish,
       :published,
+      :is_reactions_enabled,
       :preview,
       :tags
     ])

@@ -8,6 +8,7 @@ query GetArticle($id: ID!) {
     tags
     readyToPublish
     published
+    isReactionsEnabled
     isPinnedToTop
     previewImageFile {
       id

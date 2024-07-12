@@ -15,7 +15,7 @@ div.root {
   .gridItem {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-grow: 1;
     & > :nth-child(2) {
       flex-grow: 1;

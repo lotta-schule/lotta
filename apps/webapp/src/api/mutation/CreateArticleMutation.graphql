@@ -8,6 +8,7 @@ mutation CreateArticle($article: ArticleInput!) {
     tags
     readyToPublish
     published
+    isReactionsEnabled
     isPinnedToTop
     previewImageFile {
       id

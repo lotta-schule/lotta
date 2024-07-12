@@ -38,6 +38,7 @@ type Article {
   id: ID
   insertedAt: DateTime
   isPinnedToTop: Boolean
+  isReactionsEnabled: Boolean
   preview: String
   previewImageFile: File
   published: Boolean
@@ -62,6 +63,7 @@ input ArticleInput {
   contentModules: [ContentModuleInput]
   groups: [SelectUserGroupInput]
   insertedAt: DateTime
+  isReactionsEnabled: Boolean
   preview: String
   previewImageFile: SelectFileInput
   published: Boolean

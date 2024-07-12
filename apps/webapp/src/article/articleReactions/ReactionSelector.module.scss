@@ -1,0 +1,7 @@
+.root {
+  display: flex;
+  flex-direction: row;
+
+  background-color: rgb(var(--lotta-box-background-color));
+  padding: calc(0.5 * var(--lotta-spacing));
+}

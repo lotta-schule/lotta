@@ -14,6 +14,7 @@ export interface ArticleModel {
   preview?: string;
   readyToPublish: boolean;
   published: boolean;
+  isReactionsEnabled?: boolean;
   isPinnedToTop: boolean;
   tags: string[];
   previewImageFile?: FileModel | null;
