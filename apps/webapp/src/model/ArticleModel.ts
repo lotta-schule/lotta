@@ -4,6 +4,17 @@ import { UserModel } from './UserModel';
 import { FileModel } from './FileModel';
 import { ID } from './ID';
 import { UserGroupModel } from './UserGroupModel';
+import { supportedReactionIconNames } from 'article/articleReactions/supportedReactionIcons';
+
+export type ArticleReactionType =
+  | 'HEART'
+  | 'HEART_CRACK'
+  | 'FACE_SMILE'
+  | 'FACE_FLUSHED'
+  | 'LEMON'
+  | 'PEPPER'
+  | 'THUMB_UP'
+  | 'SKULL';
 
 export interface ArticleModel {
   __typename?: 'Article';
@@ -22,6 +33,10 @@ export interface ArticleModel {
   users: UserModel[];
   category?: CategoryModel | null;
   groups: UserGroupModel[];
+  reactionCounts?: {
+    type: ArticleReactionType;
+    count: number;
+  }[];
 }
 
 export type ArticleModelInput = Omit<

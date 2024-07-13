@@ -7,23 +7,30 @@ import {
   faPepperHot,
   faSkull,
   faThumbsUp,
+  IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const supportedReactionIcons = {
-  heart: {
+  HEART: {
     icon: faHeart,
   },
-  heartCrack: {
+  HEART_CRACK: {
     icon: faHeartCrack,
   },
-  faceSmile: { icon: faFaceSmile },
-  faceFlushed: { icon: faFaceFlushed },
-  lemon: { icon: faLemon },
-  pepper: { icon: faPepperHot },
-  thumbUp: { icon: faThumbsUp },
-  skull: { icon: faSkull },
+  FACE_SMILE: { icon: faFaceSmile },
+  FACE_FLUSHED: { icon: faFaceFlushed },
+  LEMON: { icon: faLemon },
+  PEPPER: { icon: faPepperHot },
+  THUMB_UP: { icon: faThumbsUp },
+  SKULL: { icon: faSkull },
 } as const;
 
 export const supportedReactionIconNames = Object.keys(
   supportedReactionIcons
 ) as (keyof typeof supportedReactionIcons)[];
+
+export const iconForReactionType = (
+  reactionType: (typeof supportedReactionIconNames)[number]
+): { icon: IconDefinition } | null =>
+  supportedReactionIcons[reactionType as keyof typeof supportedReactionIcons] ||
+  null;

@@ -59,6 +59,14 @@ defmodule LottaWeb.Schema.Contents.Article do
 
     field :users, list_of(:user), resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts)
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Tenants)
+
+    field :reaction_counts, list_of(:article_reaction_count),
+      resolve: &LottaWeb.ArticleReactionResolver.resolve_article_reaction_counts/2
+  end
+
+  object :article_reaction_count do
+    field :type, :article_reaction_type
+    field :count, :integer
   end
 
   object :content_module do
@@ -91,5 +99,16 @@ defmodule LottaWeb.Schema.Contents.Article do
     value(:form, as: "form")
     value(:table, as: "table")
     value(:divider, as: "divider")
+  end
+
+  enum :article_reaction_type do
+    value(:heart, as: "heart")
+    value(:heart_crack, as: "heart_crack")
+    value(:face_smile, as: "face_smile")
+    value(:face_flushed, as: "face_flushed")
+    value(:lemon, as: "lemon")
+    value(:pepper, as: "pepper")
+    value(:thumb_up, as: "thumb_up")
+    value(:skull, as: "skull")
   end
 end

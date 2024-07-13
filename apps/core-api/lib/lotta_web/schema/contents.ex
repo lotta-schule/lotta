@@ -98,6 +98,15 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleResolver.toggle_pin/2)
     end
 
+    field :react_to_article, type: :article do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      arg(:article_id, non_null(:id))
+      arg(:type, non_null(:article_reaction_type))
+
+      resolve(&LottaWeb.ArticleReactionResolver.react_to_article/2)
+    end
+
     field :send_form_response, type: :boolean do
       arg(:content_module_id, non_null(:id))
       arg(:response, non_null(:json))

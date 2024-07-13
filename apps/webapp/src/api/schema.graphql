@@ -42,6 +42,7 @@ type Article {
   preview: String
   previewImageFile: File
   published: Boolean
+  reactionCounts: [ArticleReactionCount]
   readyToPublish: Boolean
   tags: [String!]
   title: String
@@ -72,6 +73,22 @@ input ArticleInput {
   title: String!
   updatedAt: DateTime
   users: [SelectUserInput]
+}
+
+type ArticleReactionCount {
+  count: Int
+  type: ArticleReactionType
+}
+
+enum ArticleReactionType {
+  FACE_FLUSHED
+  FACE_SMILE
+  HEART
+  HEART_CRACK
+  LEMON
+  PEPPER
+  SKULL
+  THUMB_UP
 }
 
 type Authresult {
@@ -355,6 +372,7 @@ type RootMutationType {
   destroyAccount(transferFileIds: [ID!], userId: ID!): User
   login(password: String, username: String): Authresult
   logout: Authresult
+  reactToArticle(articleId: ID!, type: ArticleReactionType!): Article
   register(groupKey: String, user: RegisterUserParams!): Boolean
   registerDevice(device: RegisterDeviceInput!): Device
   requestHisecToken(password: String): String

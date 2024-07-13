@@ -9,7 +9,7 @@ defmodule Lotta.Content.Article do
 
   alias Lotta.{Accounts, Email, Mailer, Repo}
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Content.{Article, ContentModule}
+  alias Lotta.Content.{Article, ArticleReaction, ContentModule}
   alias Lotta.Storage.File
   alias Lotta.Tenants.Category
 
@@ -46,6 +46,7 @@ defmodule Lotta.Content.Article do
       type: :binary_id
 
     has_many :content_modules, ContentModule, on_replace: :delete
+    has_many :reactions, ArticleReaction, on_replace: :delete
 
     many_to_many(
       :groups,

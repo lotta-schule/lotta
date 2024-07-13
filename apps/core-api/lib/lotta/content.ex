@@ -9,7 +9,7 @@ defmodule Lotta.Content do
   alias Lotta.Repo
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.File
-  alias Lotta.Content.{Article, Category, ContentModule, ContentModuleResult}
+  alias Lotta.Content.{Article, ArticleReaction, Category, ContentModule, ContentModuleResult}
 
   @type filter() :: %{
           optional(:first) => pos_integer(),
@@ -56,7 +56,7 @@ defmodule Lotta.Content do
   Get all the available tags
 
   ## Examples
-      
+
       iex> list_all_tags(nil)
       ["Tag 1", "Tag 2", ...]
   """
@@ -316,6 +316,18 @@ defmodule Lotta.Content do
   @spec delete_article(Article.t()) :: {:ok, Article.t()} | {:error, Ecto.Changeset.t()}
   def delete_article(%Article{} = article) do
     Repo.delete(article)
+  end
+
+  @doc """
+  Adds a user reaction to an article.
+  """
+  @doc since: "4.3.0"
+  @spec create_article_reaction(Article.t(), User.t(), String.t()) ::
+          {:ok, ArticleReaction.t()} | {:error, Ecto.Changeset.t()} | {:error, String.t()}
+  def create_article_reaction(article, user, type) do
+    %ArticleReaction{}
+    |> ArticleReaction.changeset(%{article_id: article.id, user_id: user.id, type: type})
+    |> Repo.insert(prefix: Ecto.get_meta(article, :prefix))
   end
 
   @doc """

@@ -37,6 +37,10 @@ query GetArticle($id: ID!) {
         }
       }
     }
+    reactionCounts {
+      type
+      count
+    }
     category {
       id
       title
