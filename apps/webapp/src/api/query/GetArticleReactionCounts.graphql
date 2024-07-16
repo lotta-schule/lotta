@@ -1,0 +1,9 @@
+query GetArticleReactionsCount($id: ID!) {
+  article(id: $id) {
+    id
+    reactionCounts {
+      type
+      count
+    }
+  }
+}

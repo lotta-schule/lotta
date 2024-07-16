@@ -1,8 +1,9 @@
-import * as React from 'react';
+import { Suspense, memo } from 'react';
 import { ArticleModel } from 'model';
 import { ContentModule } from './module/ContentModule';
 import { ArticleTitle } from './ArticleTitle';
 import { ArticleReactions } from './articleReactions';
+import { ReactionCountButtons } from './articleReactions/ReactionCountButtons';
 
 import styles from './Article.module.scss';
 
@@ -10,7 +11,7 @@ interface ArticleProps {
   article: ArticleModel;
 }
 
-export const Article = React.memo(({ article }: ArticleProps) => {
+export const Article = memo(({ article }: ArticleProps) => {
   return (
     <article className={styles.root} data-testid={'Article'}>
       <ArticleTitle article={article} />
@@ -26,7 +27,15 @@ export const Article = React.memo(({ article }: ArticleProps) => {
             />
           ))}
       </section>
-      {article.isReactionsEnabled && <ArticleReactions article={article} />}
+      {article.isReactionsEnabled && (
+        <Suspense
+          fallback={
+            <ReactionCountButtons reactions={article.reactionCounts ?? []} />
+          }
+        >
+          <ArticleReactions article={article} />
+        </Suspense>
+      )}
     </article>
   );
 });
