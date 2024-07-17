@@ -35,6 +35,8 @@ export const headerFonts = [
     name: 'Oranienbaum',
     url: '/font/oranienbaum/style.css',
   },
+  { name: 'Cormorant SC', url: '/font/cormorant-sc/style.css' },
+  { name: 'Grandstander', url: '/font/grandstander/style.css' },
 ];
 
 export const textFonts = [
@@ -44,7 +46,7 @@ export const textFonts = [
   },
   {
     name: 'Balloo 2',
-    url: '/font/baloo-2/style.css',
+    url: '/font/balloo-2/style.css',
   },
   {
     name: 'Be Vietnam',
@@ -66,6 +68,12 @@ export const textFonts = [
     name: 'Spectral',
     url: '/font/spectral/style.css',
   },
+  { name: 'Nunito', url: '/font/nunito/style.css' },
+  { name: 'Inter', url: '/font/inter/style.css' },
+  { name: 'Teachers', url: '/font/teachers/style.css' },
+  { name: 'Assistant', url: '/font/assistant/style.css' },
+  { name: 'Ibarra Real Nova', url: '/font/ibarra-real-nova/style.css' },
+  { name: 'Cormorant', url: '/font/cormorant/style.css' },
 ];
 
 export const fonts = [...headerFonts, ...textFonts];

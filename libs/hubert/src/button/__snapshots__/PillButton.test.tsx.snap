@@ -1,23 +1,38 @@
-import * as React from 'react';
-import { Theme } from '@lotta-schule/theme';
-import { CSSVariables } from './CSSVariables';
-import { ExternalFont, FontLoader } from './FontLoader';
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-export type GlobalStylesProps = {
-  theme: Theme;
-  supportedFonts?: ExternalFont[];
-};
-
-export const GlobalStyles = React.memo(
-  ({ theme, supportedFonts = [] }: GlobalStylesProps) => {
-    return (
-      <>
-        <CSSVariables theme={theme} />
-        <FontLoader theme={theme} supportedFonts={supportedFonts} />
-        <style
-          data-hubert-global-styles
-          dangerouslySetInnerHTML={{
-            __html: `
+exports[`PillButton > renders correctly 1`] = `
+<div
+  data-overlay-container="true"
+>
+  <style
+    data-hubert-css-variables-def="true"
+  >
+    :root {
+    --lotta-primary-color: 255, 87, 34;
+    --lotta-navigation-background-color: 51, 51, 51;
+    --lotta-navigation-contrast-text-color: 234, 234, 234;
+    --lotta-error-color: 255, 0, 0;
+    --lotta-success-color: 10, 82, 37;
+    --lotta-disabled-color: 97, 97, 97;
+    --lotta-text-color: 33, 33, 33;
+    --lotta-label-text-color: 158, 158, 158;
+    --lotta-primary-contrast-text-color: 255, 255, 255;
+    --lotta-box-background-color: 255, 255, 255;
+    --lotta-page-background-color: 202, 205, 215;
+    --lotta-divider-color: 224, 224, 224;
+    --lotta-highlight-color: 224, 224, 224;
+    --lotta-banner-background-color: 54, 123, 240;
+    --lotta-accent-grey-color: 227, 227, 227;
+    --lotta-spacing: 8px;
+    --lotta-border-radius: 4px;
+    --lotta-text-font-family: Muli;
+    --lotta-title-font-family: 'Schoolbell', cursive;
+}
+  </style>
+  <style
+    data-hubert-global-styles="true"
+  >
+    
             * {
                 box-sizing: border-box;
             }
@@ -98,11 +113,36 @@ export const GlobalStyles = React.memo(
                 font-size: 8pt;
               }
             }
-        `,
-          }}
+        
+  </style>
+  <button
+    aria-current="false"
+    class="_root_0977c5 _root_3de4f3 _root_6e7a63 _button_6e7a63 _onlyIcon_3de4f3"
+    data-variant="default"
+    role="button"
+    type="button"
+  >
+    <span
+      class="_icon_3de4f3"
+    >
+      <svg
+        aria-hidden="true"
+        class="_root_2ade80"
+        data-testid="close-icon"
+        focusable="false"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
         />
-      </>
-    );
-  }
-);
-GlobalStyles.displayName = 'GlobalHubertStyles';
+      </svg>
+    </span>
+    <span
+      class="_label_3de4f3"
+    >
+      Button
+    </span>
+  </button>
+</div>
+`;
