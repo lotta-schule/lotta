@@ -173,7 +173,7 @@ export const EditArticlePage = React.memo(({ article }: ArticlePageProps) => {
               variables: {
                 id: article.id,
                 article: {
-                  ...omit(article, ['id']),
+                  ...omit(article, ['id', 'reactionCounts']),
                   contentModules: article.contentModules.map((cm) => ({
                     ...omit(
                       cm,
