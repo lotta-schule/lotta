@@ -4,7 +4,6 @@ import { UserModel } from './UserModel';
 import { FileModel } from './FileModel';
 import { ID } from './ID';
 import { UserGroupModel } from './UserGroupModel';
-import { supportedReactionIconNames } from 'article/articleReactions/supportedReactionIcons';
 
 export type ArticleReactionType =
   | 'HEART'

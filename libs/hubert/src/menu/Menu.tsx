@@ -27,7 +27,7 @@ export type MenuProps = MenuListProps &
 
 export const Menu = React.forwardRef(
   (
-    { className, title, onAction, onClose, ...props }: MenuProps,
+    { title, onAction, onClose, ...props }: MenuProps,
     forwardedRef: React.Ref<HTMLUListElement | null>
   ) => {
     const ref = React.useRef<HTMLUListElement>(null);

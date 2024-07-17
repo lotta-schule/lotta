@@ -2,7 +2,6 @@ import { memo, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
-  CircularProgress,
   LinearProgress,
   ListItem,
   MenuList,

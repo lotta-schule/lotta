@@ -30,11 +30,10 @@ defmodule LottaWeb.ArticleReactionResolver do
     if is_nil(article) do
       {:error, "Beitrag nicht gefunden."}
     else
-      with {:ok, _reaction} = result <-
-             Content.create_article_reaction(article, current_user, type) do
-        {:ok, article}
-        |> IO.inspect(label: "result")
-      else
+      case Content.create_article_reaction(article, current_user, type) do
+        {:ok, _reaction} ->
+          {:ok, article}
+
         error ->
           error
       end
