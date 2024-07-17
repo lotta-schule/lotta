@@ -5,10 +5,7 @@ import { CollectionChildren } from '@react-types/shared';
 import { useTreeState } from 'react-stately';
 import { mergeProps, useMenu } from 'react-aria';
 import { MenuItem } from './MenuItem';
-import { List, ListProps } from '../list';
-import clsx from 'clsx';
-
-import styles from './Menu.module.scss';
+import { MenuList, MenuListProps } from './MenuList';
 
 export type WithDescription =
   | {
@@ -21,7 +18,7 @@ export type WithDescription =
   | { 'aria-label': string }
   | { 'aria-labelledby': string };
 
-export type MenuProps = ListProps &
+export type MenuProps = MenuListProps &
   WithDescription & {
     children: CollectionChildren<object>;
     onClose?: () => void;
@@ -52,11 +49,7 @@ export const Menu = React.forwardRef(
     );
 
     return (
-      <List
-        className={clsx(styles.root, className)}
-        {...mergeProps(menuProps, props)}
-        ref={ref}
-      >
+      <MenuList {...mergeProps(menuProps, props)} ref={ref}>
         {[...state.collection].map((item) => (
           <MenuItem
             key={item.key}
@@ -67,7 +60,7 @@ export const Menu = React.forwardRef(
           />
         ))}
         {props.children}
-      </List>
+      </MenuList>
     );
   }
 );

@@ -9,6 +9,7 @@ export type ListItemProps = React.HTMLProps<HTMLLIElement> & {
   rightSection?: React.ReactNode;
   isDivider?: boolean;
   isDisabled?: boolean;
+  isHeader?: boolean;
   isFocused?: boolean;
   isSelected?: boolean;
 };
@@ -21,6 +22,7 @@ export const ListItem = React.forwardRef(
       isDisabled,
       isFocused,
       isSelected,
+      isHeader,
       leftSection,
       rightSection,
       ...props
@@ -47,6 +49,7 @@ export const ListItem = React.forwardRef(
           [styles.isDisabled]: isDisabled,
           [styles.isFocused]: isFocused,
           [styles.isSelected]: isSelected,
+          [styles.isHeader]: isHeader,
         })}
         {...(isFocused ? { ['data-is-focused']: true } : {})}
         ref={ref}

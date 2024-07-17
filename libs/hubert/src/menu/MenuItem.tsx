@@ -6,7 +6,7 @@ import { TreeState, Item as AriaItem } from 'react-stately';
 import { Node } from '@react-types/shared';
 import { ListItem } from '../list';
 
-import styles from './Menu.module.scss';
+import styles from './MenuList.module.scss';
 
 export const Item = AriaItem;
 

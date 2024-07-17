@@ -1,12 +1,20 @@
-import { memo, useRef, useState } from 'react';
+import { memo, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
-import { Button } from '@lotta-schule/hubert';
+import {
+  Button,
+  CircularProgress,
+  LinearProgress,
+  ListItem,
+  MenuList,
+  Popover,
+} from '@lotta-schule/hubert';
 import { useMutation, useSuspenseQuery } from '@apollo/client';
-import { useRouter } from 'next/router';
-import { ArticleModel } from 'model';
+import { ArticleModel, ArticleReactionType } from 'model';
 import { Icon } from 'shared/Icon';
 import { ReactionSelector } from './ReactionSelector';
 import { ReactionCountButtons } from './ReactionCountButtons';
+import { iconForReactionType } from './supportedReactionIcons';
+import { ReactionUserList } from './RactionUserList';
 
 import styles from './ArticleReactions.module.scss';
 
@@ -19,8 +27,16 @@ export type ArticleReactionsProps = {
 
 export const ArticleReactions = memo(({ article }: ArticleReactionsProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const router = useRouter();
+  const typeButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isReactionSelectorOpen, setIsReactionSelectorOpen] = useState(false);
+  const [selectedReactionType, setSelectedReactionType] =
+    useState<ArticleReactionType | null>(null);
+
+  useEffect(() => {
+    if (selectedReactionType) {
+      setIsReactionSelectorOpen(false);
+    }
+  }, [selectedReactionType]);
 
   const [reactToArticle] = useMutation(ReactToArticleMutation);
   const {
@@ -32,6 +48,19 @@ export const ArticleReactions = memo(({ article }: ArticleReactionsProps) => {
   }>(GetArticleReactionCounts, {
     variables: { id: article.id },
   });
+
+  const selectedReactionTypeIcon = useMemo(
+    () => selectedReactionType && iconForReactionType(selectedReactionType),
+    [selectedReactionType]
+  );
+
+  const selectedReactionTypeCount = useMemo(
+    () =>
+      selectedReactionType &&
+      reactionCounts.find((reaction) => reaction.type === selectedReactionType)
+        ?.count,
+    [selectedReactionType, reactionCounts]
+  );
 
   return (
     <div data-testid="ArticleReactions" className={styles.root}>
@@ -52,8 +81,58 @@ export const ArticleReactions = memo(({ article }: ArticleReactionsProps) => {
       />
       <ReactionCountButtons
         reactions={reactionCounts}
-        onSelect={() => setIsReactionSelectorOpen(true)}
+        onSelect={(type, el) => {
+          typeButtonRef.current = el;
+          setSelectedReactionType(type);
+        }}
       />
+      <Popover
+        isOpen={!!selectedReactionType}
+        trigger={typeButtonRef.current!}
+        placement={'top'}
+        onClose={() => setSelectedReactionType(null)}
+      >
+        <Suspense
+          fallback={
+            <MenuList>
+              {selectedReactionTypeIcon && (
+                <ListItem
+                  isHeader
+                  leftSection={
+                    <Icon
+                      icon={iconForReactionType(selectedReactionType!)!.icon}
+                    />
+                  }
+                >
+                  {selectedReactionTypeCount}
+                </ListItem>
+              )}
+              <ListItem>
+                <LinearProgress isIndeterminate />
+              </ListItem>
+            </MenuList>
+          }
+        >
+          <ReactionUserList
+            articleId={article.id}
+            reaction={selectedReactionType!}
+            header={
+              selectedReactionTypeIcon && (
+                <ListItem
+                  isHeader
+                  leftSection={
+                    <Icon
+                      icon={iconForReactionType(selectedReactionType!)!.icon}
+                    />
+                  }
+                >
+                  {selectedReactionTypeCount}
+                </ListItem>
+              )
+            }
+          />
+        </Suspense>
+      </Popover>
       <Button
         ref={buttonRef}
         title={`Auf "${article.title}" reagieren`}
