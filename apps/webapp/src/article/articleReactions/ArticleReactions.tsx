@@ -1,5 +1,5 @@
 import { memo, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { faAdd } from '@fortawesome/free-solid-svg-icons';
+import { faHeart } from '@fortawesome/free-regular-svg-icons';
 import {
   Button,
   LinearProgress,
@@ -78,6 +78,12 @@ export const ArticleReactions = memo(({ article }: ArticleReactionsProps) => {
           setIsReactionSelectorOpen(false);
         }}
       />
+      <Button
+        ref={buttonRef}
+        title={`Auf "${article.title}" reagieren`}
+        icon={<Icon icon={faHeart} />}
+        onClick={() => setIsReactionSelectorOpen(true)}
+      />
       <ReactionCountButtons
         reactions={reactionCounts}
         onSelect={(type, el) => {
@@ -134,12 +140,6 @@ export const ArticleReactions = memo(({ article }: ArticleReactionsProps) => {
           )}
         </Suspense>
       </Popover>
-      <Button
-        ref={buttonRef}
-        title={`Auf "${article.title}" reagieren`}
-        icon={<Icon icon={faAdd} />}
-        onClick={() => setIsReactionSelectorOpen(true)}
-      />
     </div>
   );
 });

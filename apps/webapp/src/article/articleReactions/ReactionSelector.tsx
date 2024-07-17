@@ -17,7 +17,12 @@ export type ReactionSelectorProps = {
 export const ReactionSelector = memo(
   ({ isOpen, trigger, onSelect }: ReactionSelectorProps) => {
     return (
-      <Popover isOpen={isOpen} trigger={trigger} onClose={() => onSelect()}>
+      <Popover
+        isOpen={isOpen}
+        trigger={trigger}
+        placement="top"
+        onClose={() => onSelect()}
+      >
         <div className={styles.root}>
           {supportedReactionIconNames.map((iconName) => (
             <Button
