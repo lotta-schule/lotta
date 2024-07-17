@@ -1,8 +1,7 @@
-import {} from 'react';
 import { Button, ButtonProps } from './Button';
+import clsx from 'clsx';
 
 import styles from './PillButton.module.scss';
-import clsx from 'clsx';
 
 export type PillButtonProps = Omit<ButtonProps, 'onlyIcon'>;
 
