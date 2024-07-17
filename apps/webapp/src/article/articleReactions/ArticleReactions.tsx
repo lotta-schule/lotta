@@ -113,24 +113,26 @@ export const ArticleReactions = memo(({ article }: ArticleReactionsProps) => {
             </MenuList>
           }
         >
-          <ReactionUserList
-            articleId={article.id}
-            reaction={selectedReactionType!}
-            header={
-              selectedReactionTypeIcon && (
-                <ListItem
-                  isHeader
-                  leftSection={
-                    <Icon
-                      icon={iconForReactionType(selectedReactionType!)!.icon}
-                    />
-                  }
-                >
-                  {selectedReactionTypeCount}
-                </ListItem>
-              )
-            }
-          />
+          {selectedReactionType && (
+            <ReactionUserList
+              articleId={article.id}
+              reaction={selectedReactionType}
+              header={
+                selectedReactionTypeIcon && (
+                  <ListItem
+                    isHeader
+                    leftSection={
+                      <Icon
+                        icon={iconForReactionType(selectedReactionType!)!.icon}
+                      />
+                    }
+                  >
+                    {selectedReactionTypeCount}
+                  </ListItem>
+                )
+              }
+            />
+          )}
         </Suspense>
       </Popover>
       <Button

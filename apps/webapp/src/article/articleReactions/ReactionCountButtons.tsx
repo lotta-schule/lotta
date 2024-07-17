@@ -1,8 +1,10 @@
 import { ArticleModel, ArticleReactionType } from 'model';
 import { iconForReactionType } from './supportedReactionIcons';
-import { Button } from '@lotta-schule/hubert';
+import { PillButton } from '@lotta-schule/hubert';
 import { Icon } from 'shared/Icon';
 import { MouseEvent } from 'react';
+
+import styles from './ReactionCountButtons.module.scss';
 
 export const ReactionCountButtons = ({
   reactions,
@@ -19,15 +21,15 @@ export const ReactionCountButtons = ({
     }))
     .filter((res) => !!res.icon)
     .map(({ type, icon, count }) => (
-      <Button
+      <PillButton
         key={type}
-        onlyIcon
+        className={styles.button}
         icon={<Icon icon={icon!.icon} />}
         onClick={(e: MouseEvent<HTMLButtonElement>) =>
           onSelect?.(type, e.currentTarget)
         }
       >
         {count}
-      </Button>
+      </PillButton>
     ));
 };
