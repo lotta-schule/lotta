@@ -102,13 +102,13 @@ defmodule LottaWeb.Schema.Contents.Article do
   end
 
   enum :article_reaction_type do
-    value(:heart, as: "heart")
-    value(:heart_crack, as: "heart_crack")
-    value(:face_smile, as: "face_smile")
-    value(:face_flushed, as: "face_flushed")
-    value(:lemon, as: "lemon")
-    value(:pepper, as: "pepper")
-    value(:thumb_up, as: "thumb_up")
-    value(:skull, as: "skull")
+    value(:heart, as: "HEART")
+    value(:heart_crack, as: "HEART_CRACK")
+    value(:face_smile, as: "FACE_SMILE")
+    value(:face_flushed, as: "FACE_FLUSHED")
+    value(:lemon, as: "LEMON")
+    value(:pepper, as: "PEPPER")
+    value(:thumb_up, as: "THUMB_UP")
+    value(:skull, as: "SKULL")
   end
 end

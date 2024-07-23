@@ -41,6 +41,7 @@ defmodule LottaWeb.ArticleReactionResolver do
   end
 
   def get_reaction_users(%{id: article_id, type: type}, _info) do
+    type = String.upcase(type)
     article = Content.get_article(article_id)
 
     if is_nil(article) do

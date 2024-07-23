@@ -14,6 +14,7 @@ defmodule Lotta.Repo.TenantMigrations.CreateArticleReactions do
 
     create(index(:article_reactions, [:article_id]))
     create(index(:article_reactions, [:user_id]))
-    create(index(:article_reactions, [:article_id, :user_id]))
+    create(index(:article_reactions, [:article_id, :type]))
+    create(index(:article_reactions, [:article_id, :user_id, :type]))
   end
 end
