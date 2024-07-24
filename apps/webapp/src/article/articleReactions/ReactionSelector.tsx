@@ -23,10 +23,11 @@ export const ReactionSelector = memo(
         placement="top"
         onClose={() => onSelect()}
       >
-        <div className={styles.root}>
+        <div className={styles.root} data-testid="ReactionSelector">
           {supportedReactionIconNames.map((iconName) => (
             <Button
               key={iconName}
+              data-testid={`reaction-${iconName}`}
               icon={<Icon icon={supportedReactionIcons[iconName].icon} />}
               onClick={() => onSelect(iconName)}
             />
