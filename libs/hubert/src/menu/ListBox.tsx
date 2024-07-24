@@ -27,7 +27,7 @@ export const ListBox = React.forwardRef(
 
     return (
       <div aria-label={(labelProps.children as any) ?? 'Vorschläge'}>
-        <MenuList className={className} {...listBoxProps}>
+        <MenuList className={className} {...listBoxProps} ref={ref}>
           {Array.from(state.collection).map((item) => (
             <ListBoxOption key={item.key} item={item} state={state} />
           ))}
