@@ -100,7 +100,7 @@ describe('DraggableGroupList', () => {
       expect(screen.getByRole('list')).toBeVisible();
     });
 
-    await user.click(screen.getByRole('button', { name: /schüler/i }));
+    await user.click(screen.getByRole('listitem', { name: /schüler/i }));
 
     await waitFor(() => {
       expect(mockRouter.push).toHaveBeenCalledWith(
