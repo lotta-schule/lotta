@@ -198,10 +198,10 @@ export const ComboBox = React.memo(
       }
     }, [state.inputValue]);
 
-    const buttonRef = React.useRef<HTMLButtonElement>(null!);
-    const inputRef = React.useRef<HTMLInputElement>(null!);
-    const listBoxRef = React.useRef<HTMLUListElement>(null!);
-    const popoverRef = React.useRef<HTMLDivElement>(null!);
+    const buttonRef = React.useRef<HTMLButtonElement>(null);
+    const inputRef = React.useRef<HTMLInputElement>(null);
+    const listBoxRef = React.useRef<HTMLUListElement>(null);
+    const popoverRef = React.useRef<HTMLDivElement>(null);
 
     const {
       buttonProps: triggerProps,

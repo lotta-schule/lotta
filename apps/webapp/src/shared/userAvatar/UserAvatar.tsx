@@ -14,46 +14,33 @@ export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
 }
 
 export const UserAvatar = React.memo(
-  React.forwardRef(
-    (
-      { user, size, ...otherProps }: UserAvatarProps,
-      ref: React.ForwardedRef<HTMLDivElement>
-    ) => {
-      const { t } = useTranslation();
-      const { baseUrl } = useServerData();
-      const retinaMultiplier = useIsRetina() ? 2 : 1;
-      const src = User.getAvatarUrl(
-        baseUrl,
-        user,
-        size ? size * retinaMultiplier : undefined
-      );
+  ({ user, size, ...props }: UserAvatarProps) => {
+    const { t } = useTranslation();
+    const { baseUrl } = useServerData();
+    const retinaMultiplier = useIsRetina() ? 2 : 1;
+    const src = User.getAvatarUrl(
+      baseUrl,
+      user,
+      size ? size * retinaMultiplier : undefined
+    );
 
-      return (
-        <Avatar
-          data-testid={'Avatar'}
-          src={src}
-          ref={ref}
-          style={size ? { width: size, height: size } : {}}
-          title={t('Avatar of {{name}}', { name: User.getNickname(user) })}
-          {...otherProps}
-        />
-      );
-    }
-  )
+    return (
+      <Avatar
+        data-testid={'Avatar'}
+        src={src}
+        style={size ? { width: size, height: size } : {}}
+        title={t('Avatar of {{name}}', { name: User.getNickname(user) })}
+        {...props}
+      />
+    );
+  }
 );
 UserAvatar.displayName = 'UserAvatar';
 
 export const CurrentUserAvatar = React.memo(
-  React.forwardRef(
-    (
-      props: Omit<UserAvatarProps, 'user'>,
-      ref: React.ForwardedRef<HTMLDivElement>
-    ) => {
-      const currentUser = useCurrentUser();
-      return currentUser ? (
-        <UserAvatar user={currentUser} ref={ref} {...props} />
-      ) : null;
-    }
-  )
+  (props: Omit<UserAvatarProps, 'user'>) => {
+    const currentUser = useCurrentUser();
+    return currentUser ? <UserAvatar user={currentUser} {...props} /> : null;
+  }
 );
 CurrentUserAvatar.displayName = 'CurrentUserAvatar';

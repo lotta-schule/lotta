@@ -14,31 +14,25 @@ export type TagProps = {
 } & React.HTMLProps<HTMLDivElement>;
 
 export const Tag = React.memo(
-  React.forwardRef(
-    (
-      { onDelete, children, className, ...props }: TagProps,
-      ref: React.ForwardedRef<HTMLDivElement>
-    ) => {
-      return (
-        <div
-          data-testid={'Tag'}
-          ref={ref}
-          {...props}
-          className={clsx(styles.root, className)}
-        >
-          {children}
-          {onDelete && (
-            <Button
-              small
-              className={styles.deleteButton}
-              aria-label={`Tag ${children} löschen`}
-              onClick={onDelete}
-              icon={<Close />}
-            />
-          )}
-        </div>
-      );
-    }
-  )
+  ({ onDelete, children, className, ...props }: TagProps) => {
+    return (
+      <div
+        data-testid={'Tag'}
+        {...props}
+        className={clsx(styles.root, className)}
+      >
+        {children}
+        {onDelete && (
+          <Button
+            small
+            className={styles.deleteButton}
+            aria-label={`Tag ${children} löschen`}
+            onClick={onDelete}
+            icon={<Close />}
+          />
+        )}
+      </div>
+    );
+  }
 );
 Tag.displayName = 'Tag';

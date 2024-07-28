@@ -18,49 +18,45 @@ export interface CircularProgressProps extends AriaProgressBarProps {
 }
 
 export const CircularProgress = React.memo(
-  React.forwardRef(
-    (
-      {
-        className,
-        color,
-        showValue,
-        size = '5em',
-        ...props
-      }: CircularProgressProps,
-      ref: React.ForwardedRef<HTMLDivElement>
-    ) => {
-      const { value, isIndeterminate } = props;
-      const { progressBarProps } = useProgressBar(props);
-      const style: React.CSSProperties = {
-        ...(value !== undefined && { '--value': value / 100 }),
-        ...(color !== undefined && {
-          '--lotta-circular-progress-color': color,
-        }),
-        width: size,
-        height: size,
-        ...props.style,
-      };
+  ({
+    className,
+    color,
+    showValue,
+    isIndeterminate,
+    size = '5em',
+    ...props
+  }: CircularProgressProps) => {
+    const { value } = props;
+    const { progressBarProps } = useProgressBar({ ...props, isIndeterminate });
+    const style: React.CSSProperties = {
+      ...(value !== undefined && { '--value': value / 100 }),
+      ...(color !== undefined && {
+        '--lotta-circular-progress-color': color,
+      }),
+      width: size,
+      height: size,
+      ...props.style,
+    };
 
-      return (
-        <div
-          className={clsx(className, styles.root, {
-            [styles.indeterminate]: isIndeterminate,
-          })}
-          ref={ref}
-          style={style}
-          {...progressBarProps}
-        >
-          <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="46" pathLength={288.5} />
-            {!isIndeterminate && showValue && (
-              <text x="50" y="59" fontSize="28">
-                {Math.floor(value ?? 0)}%
-              </text>
-            )}
-          </svg>
-        </div>
-      );
-    }
-  )
+    return (
+      <div
+        className={clsx(className, styles.root, {
+          [styles.indeterminate]: isIndeterminate,
+        })}
+        style={style}
+        {...props}
+        {...progressBarProps}
+      >
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" pathLength={288.5} />
+          {!isIndeterminate && showValue && (
+            <text x="50" y="59" fontSize="28">
+              {Math.floor(value ?? 0)}%
+            </text>
+          )}
+        </svg>
+      </div>
+    );
+  }
 );
 CircularProgress.displayName = 'CircularProgress';
