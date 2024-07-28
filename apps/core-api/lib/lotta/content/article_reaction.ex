@@ -2,6 +2,10 @@ defmodule Lotta.Content.ArticleReaction do
   @moduledoc false
 
   use Ecto.Schema
+
+  alias Lotta.Content.Article
+  alias Lotta.Accounts.User
+
   import Ecto.Changeset
 
   @timestamps_opts [type: :utc_datetime]
