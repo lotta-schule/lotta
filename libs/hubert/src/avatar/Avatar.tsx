@@ -21,22 +21,16 @@ export interface AvatarProps
 }
 
 export const Avatar = React.memo(
-  React.forwardRef(
-    (
-      { src, title, className, style, ...htmlProps }: AvatarProps,
-      ref: React.ForwardedRef<HTMLDivElement>
-    ) => {
-      return (
-        <div
-          {...htmlProps}
-          role={'img'}
-          title={title}
-          ref={ref}
-          className={clsx(styles.root, className)}
-          style={{ ...style, backgroundImage: `url(${src})` }}
-        />
-      );
-    }
-  )
+  ({ src, title, className, role, style, ...props }: AvatarProps) => {
+    return (
+      <div
+        {...props}
+        role={role || 'img'}
+        title={title}
+        className={clsx(styles.root, className)}
+        style={{ ...style, backgroundImage: `url(${src})` }}
+      />
+    );
+  }
 );
 Avatar.displayName = 'Avatar';

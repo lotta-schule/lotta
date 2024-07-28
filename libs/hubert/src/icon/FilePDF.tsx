@@ -4,21 +4,19 @@ import clsx from 'clsx';
 import styles from './SvgIcon.module.scss';
 
 export const FilePDF = React.memo(
-  React.forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
-    ({ className, ...props }, ref) => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        focusable="false"
-        viewBox="0 0 384 512"
-        aria-hidden="true"
-        className={clsx(styles.root, className)}
-        data-testid="file-pdf-icon"
-        ref={ref}
-        {...props}
-      >
-        <path
-          fill="#BF191B"
-          d="M92.5,326.7c-3-1.9-8.5-2.8-16.4-2.8h-6.9v26.1h7c5.4,0,9.6-0.3,12.5-1c2.9-0.7,5-1.9,6.3-3.8
+  ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      focusable="false"
+      viewBox="0 0 384 512"
+      aria-hidden="true"
+      className={clsx(styles.root, className)}
+      data-testid="file-pdf-icon"
+      {...props}
+    >
+      <path
+        fill="#BF191B"
+        d="M92.5,326.7c-3-1.9-8.5-2.8-16.4-2.8h-6.9v26.1h7c5.4,0,9.6-0.3,12.5-1c2.9-0.7,5-1.9,6.3-3.8
 	c1.3-1.8,2-4.5,2-7.9C97.1,332.1,95.6,328.6,92.5,326.7z M92.5,326.7c-3-1.9-8.5-2.8-16.4-2.8h-6.9v26.1h7c5.4,0,9.6-0.3,12.5-1
 	c2.9-0.7,5-1.9,6.3-3.8c1.3-1.8,2-4.5,2-7.9C97.1,332.1,95.6,328.6,92.5,326.7z M92.5,326.7c-3-1.9-8.5-2.8-16.4-2.8h-6.9v26.1h7
 	c5.4,0,9.6-0.3,12.5-1c2.9-0.7,5-1.9,6.3-3.8c1.3-1.8,2-4.5,2-7.9C97.1,332.1,95.6,328.6,92.5,326.7z M221.6,337.1
@@ -51,9 +49,8 @@ export const FilePDF = React.memo(
 	c-3.4-4.9-7.4-8.2-12.1-9.9c-4.7-1.7-9.5-2.5-14.4-2.5h-13.9v64.1h13.9c8.5,0,15.9-2,22.2-6.1c6.2-4.1,9.4-12.4,9.4-25.1
 	C226.7,348.9,225,342.1,221.6,337.1z M92.5,326.7c-3-1.9-8.5-2.8-16.4-2.8h-6.9v26.1h7c5.4,0,9.6-0.3,12.5-1c2.9-0.7,5-1.9,6.3-3.8
 	c1.3-1.8,2-4.5,2-7.9C97.1,332.1,95.6,328.6,92.5,326.7z M256,0v128h128L256,0z"
-        />
-      </svg>
-    )
+      />
+    </svg>
   )
 );
 FilePDF.displayName = 'FilePDFIcon';

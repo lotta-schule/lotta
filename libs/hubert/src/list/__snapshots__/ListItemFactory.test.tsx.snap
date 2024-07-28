@@ -8,7 +8,6 @@ exports[`list/ListItemFactory > create Item > should render an item with complet
     "props": {
       "children": {
         "type": {
-          "type": {},
           "compare": null
         },
         "key": null,
@@ -32,7 +31,6 @@ exports[`list/ListItemFactory > create Item > should render an item with complet
   "Test description",
   {
     "type": {
-      "type": {},
       "compare": null
     },
     "key": ".3",

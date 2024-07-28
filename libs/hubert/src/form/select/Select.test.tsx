@@ -7,7 +7,7 @@ describe('shared/general/form/select', () => {
   it('should render and show options', async () => {
     const fireEvent = userEvent.setup();
     const screen = render(
-      <Select title={'Select'}>
+      <Select title={'Select'} value={'0'}>
         <Option value={'0'}>Option 0</Option>
         <Option value={'1'}>Option 1</Option>
         <Option value={'2'}>Option 2</Option>
@@ -15,7 +15,7 @@ describe('shared/general/form/select', () => {
       </Select>
     );
     expect(screen.getByRole('button', { name: /Select/ })).toEqual(
-      screen.getByRole('button', { name: /Bitte wählen.../ })
+      screen.getByRole('button', { name: /Option 0/ })
     );
     await fireEvent.click(screen.getByRole('button', { name: /Select/ }));
     expect(screen.getAllByRole('option')).toHaveLength(4);

@@ -17,21 +17,25 @@ export interface MultiLineInputProps extends TextareaProps {
 
 export type InputProps = SingleLineInputProps | MultiLineInputProps;
 
-export const Input = React.forwardRef(
-  ({ className, inline, multiline, children, ...props }: InputProps) => {
-    const component = multiline === true ? Textarea : 'input';
-    return React.createElement(
-      component,
-      {
-        ...props,
-        className: clsx(
-          clsx(className, styles.root, {
-            [styles.inline]: inline,
-          })
-        ),
-      } as any,
-      children
-    );
-  }
-);
+export const Input = ({
+  className,
+  inline,
+  multiline,
+  children,
+  ...props
+}: InputProps) => {
+  const component = multiline === true ? Textarea : 'input';
+  return React.createElement(
+    component,
+    {
+      ...props,
+      className: clsx(
+        clsx(className, styles.root, {
+          [styles.inline]: inline,
+        })
+      ),
+    } as any,
+    children
+  );
+};
 Input.displayName = 'Input';

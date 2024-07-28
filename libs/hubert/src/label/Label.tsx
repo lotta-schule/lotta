@@ -11,33 +11,25 @@ export type LabelProps = {
   hide?: boolean;
 } & React.HTMLProps<HTMLDivElement>;
 
-export const Label = React.forwardRef(
-  (
-    { children, className, label, ...props }: LabelProps,
-    forwardedRef: React.Ref<HTMLDivElement | null>
-  ) => {
-    const ref = React.useRef<HTMLDivElement>(null);
+export const Label = ({ children, className, label, ...props }: LabelProps) => {
+  const { labelProps, fieldProps } = useLabel({
+    label,
+    labelElementType: 'span',
+    ...props,
+  });
 
-    React.useImperativeHandle(forwardedRef, () => ref.current);
-
-    const { labelProps, fieldProps } = useLabel({
-      label,
-      labelElementType: 'span',
-      ...props,
-    });
-
-    if (props.hide) {
-      return <>{children}</>;
-    }
-
-    return (
-      <div {...props} ref={ref} className={clsx(className, styles.root)}>
-        <span className={styles.label} {...labelProps}>
-          {label}
-        </span>
-        {React.cloneElement(children as React.ReactElement, fieldProps)}
-      </div>
-    );
-  }
-);
+  return (
+    <div
+      {...props}
+      className={clsx(className, styles.root, {
+        [styles.isHidden]: !!props.hide,
+      })}
+    >
+      <span className={styles.label} {...labelProps}>
+        {label}
+      </span>
+      {React.cloneElement(children as React.ReactElement, fieldProps)}
+    </div>
+  );
+};
 Label.displayName = 'Label';

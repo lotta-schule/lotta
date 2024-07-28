@@ -33,17 +33,19 @@ export const Textarea = ({ maxHeight, ref, ...props }: TextareaProps) => {
 
   const onChange = React.useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      flushSync(() => {
+      if (props.onChange) {
+        // controlled component, resize only after value has been set
         setTextareaHeight('auto');
         if (elem) {
           setParentHeight(`${elem.scrollHeight}px`);
         }
-      });
-      if (props.onChange) {
-        // controlled component, resize only after value has been set
         props.onChange(e);
       } else if (elem) {
         // not controlled. Value should have been changed by now, just set the elem height
+        flushSync(() => {
+          setTextareaHeight('auto');
+          setParentHeight(`${elem.scrollHeight}px`);
+        });
         setInputHeight(elem);
       }
     },
