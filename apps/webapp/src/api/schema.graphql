@@ -416,6 +416,7 @@ type RootQueryType {
   feedbacks: [Feedback]
   file(id: ID): File
   files(parentDirectoryId: ID): [File]
+  getReactionUsers(id: ID!, type: ArticleReactionType!): [User]
   group(id: ID!): UserGroup
   ownArticles: [Article]
   realtimeAnalytics: Int
