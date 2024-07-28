@@ -13,7 +13,7 @@ export const Image = React.memo(
   }>) => {
     const imageCaption = contentModule.content?.caption;
 
-    if (!contentModule.files.length) {
+    if (!contentModule.files.length && !isEditModeEnabled) {
       return <div data-testid="ImageContentModule" />;
     }
 
