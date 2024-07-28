@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Option, Select } from '@lotta-schule/hubert';
 import { ContentModuleModel, FileModel } from 'model';
+import { ContentModuleConfigProps } from '../ContentModule';
 
 import styles from '../Config.module.scss';
 
@@ -15,12 +16,6 @@ export enum Sorting {
   FILENAME_DESC = 2,
   FILE_UPLOAD_DATE_ASC = 3,
   FILE_UPLOAD_DATE_DESC = 4,
-}
-
-interface ConfigProps {
-  contentModule: ContentModuleModel;
-  onUpdateModule(contentModule: ContentModuleModel): void;
-  onRequestClose(): void;
 }
 
 export const FileSorter =
@@ -53,7 +48,7 @@ export const FileSorter =
   };
 
 export const Config = React.memo(
-  ({ contentModule, onUpdateModule, onRequestClose }: ConfigProps) => {
+  ({ contentModule, onUpdateModule }: ContentModuleConfigProps) => {
     const imageStyle: ImageStyle =
       contentModule.configuration?.imageStyle ?? ImageStyle.GALLERY;
 
@@ -76,7 +71,6 @@ export const Config = React.memo(
                 imageStyle,
               },
             });
-            onRequestClose();
           }}
           name={'image-style'}
           id={'image-style'}
@@ -99,7 +93,6 @@ export const Config = React.memo(
                 sorting,
               },
             });
-            onRequestClose();
           }}
           name={'sorting'}
           id={'sorting'}
