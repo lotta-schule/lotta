@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, Suspense, useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -31,15 +31,17 @@ export type UserListProps = {
   currentUser: UserModel;
 };
 
-export const UserList = memo(({ currentUser, tenant }: UserListProps) => {
+export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
   const router = useRouter();
   const { t } = useTranslation();
 
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = React.useState('');
   const debouncedSearchtext = useDebounce(searchText, 500);
-  const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
+  const [selectedUser, setSelectedUser] = React.useState<UserModel | null>(
+    null
+  );
 
-  const [searchFilter, setSearchFilter] = useState<{
+  const [searchFilter, setSearchFilter] = React.useState<{
     name: string;
     groups: (UserGroupModel | null)[];
     lastSeen: number | null;
@@ -49,7 +51,7 @@ export const UserList = memo(({ currentUser, tenant }: UserListProps) => {
     lastSeen: null,
   });
 
-  useEffect(
+  React.useEffect(
     () => setSearchFilter((f) => ({ ...f, name: debouncedSearchtext })),
     [debouncedSearchtext]
   );
@@ -75,7 +77,7 @@ export const UserList = memo(({ currentUser, tenant }: UserListProps) => {
 
   const totalUsers = tenant.stats?.userCount;
 
-  const rows = useMemo(() => {
+  const rows = React.useMemo(() => {
     return (
       data?.users?.map((user) => ({
         avatarImage: (
@@ -106,7 +108,7 @@ export const UserList = memo(({ currentUser, tenant }: UserListProps) => {
       <h5 className={styles.headline}>{t('Search user')}</h5>
 
       <Toolbar stackOnMobile hasScrollableParent>
-        <Suspense
+        <React.Suspense
           fallback={
             <LinearProgress
               isIndeterminate
@@ -126,7 +128,7 @@ export const UserList = memo(({ currentUser, tenant }: UserListProps) => {
             }
             className={styles.filter}
           />
-        </Suspense>
+        </React.Suspense>
         <Label label={'Namen suchen:'} className={clsx(styles.nameSearch)}>
           <Input
             value={searchText}

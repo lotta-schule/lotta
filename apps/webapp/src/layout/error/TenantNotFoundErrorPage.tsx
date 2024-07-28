@@ -1,8 +1,8 @@
-import { memo } from 'react';
+import * as React from 'react';
 
 import { FullErrorPage, SecondaryErrorText } from './FullErrorPage';
 
-export const TenantNotFoundErrorPage = memo(() => {
+export const TenantNotFoundErrorPage = React.memo(() => {
   return (
     <FullErrorPage
       title={'Es gibt kein Lotta unter dieser Adresse'}

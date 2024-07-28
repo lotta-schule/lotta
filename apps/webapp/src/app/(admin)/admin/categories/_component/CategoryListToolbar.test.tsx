@@ -1,4 +1,4 @@
-import {} from 'react';
+import * as React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { Mock, vi } from 'vitest';
 import { CategoryListToolbar } from './CategoryListToolbar';

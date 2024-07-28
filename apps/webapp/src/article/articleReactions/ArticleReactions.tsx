@@ -1,10 +1,11 @@
-import { memo, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import * as React from 'react';
 import { faHeart } from '@fortawesome/free-regular-svg-icons';
 import {
   Button,
   LinearProgress,
+  List,
   ListItem,
-  MenuList,
+  Overlay,
   Popover,
 } from '@lotta-schule/hubert';
 import { useMutation, useSuspenseQuery } from '@apollo/client';
@@ -24,123 +25,133 @@ export type ArticleReactionsProps = {
   article: ArticleModel;
 };
 
-export const ArticleReactions = memo(({ article }: ArticleReactionsProps) => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const typeButtonRef = useRef<HTMLButtonElement | null>(null);
-  const [isReactionSelectorOpen, setIsReactionSelectorOpen] = useState(false);
-  const [selectedReactionType, setSelectedReactionType] =
-    useState<ArticleReactionType | null>(null);
+export const ArticleReactions = React.memo(
+  ({ article }: ArticleReactionsProps) => {
+    const buttonRef = React.useRef<HTMLButtonElement>(null);
+    const typeButtonRef = React.useRef<HTMLButtonElement | null>(null);
+    const [isReactionSelectorOpen, setIsReactionSelectorOpen] =
+      React.useState(false);
+    const [selectedReactionType, setSelectedReactionType] =
+      React.useState<ArticleReactionType | null>(null);
 
-  useEffect(() => {
-    if (selectedReactionType) {
-      setIsReactionSelectorOpen(false);
-    }
-  }, [selectedReactionType]);
+    React.useEffect(() => {
+      if (selectedReactionType) {
+        setIsReactionSelectorOpen(false);
+      }
+    }, [selectedReactionType]);
 
-  const [reactToArticle] = useMutation(ReactToArticleMutation);
-  const {
-    data: {
-      article: { reactionCounts },
-    },
-  } = useSuspenseQuery<{
-    article: Required<Pick<ArticleModel, 'reactionCounts'>>;
-  }>(GetArticleReactionCounts, {
-    variables: { id: article.id },
-  });
+    const [reactToArticle] = useMutation(ReactToArticleMutation);
+    const {
+      data: {
+        article: { reactionCounts },
+      },
+    } = useSuspenseQuery<{
+      article: Required<Pick<ArticleModel, 'reactionCounts'>>;
+    }>(GetArticleReactionCounts, {
+      variables: { id: article.id },
+    });
 
-  const selectedReactionTypeIcon = useMemo(
-    () => selectedReactionType && iconForReactionType(selectedReactionType),
-    [selectedReactionType]
-  );
+    const selectedReactionTypeIcon = React.useMemo(
+      () => selectedReactionType && iconForReactionType(selectedReactionType),
+      [selectedReactionType]
+    );
 
-  const selectedReactionTypeCount = useMemo(
-    () =>
-      selectedReactionType &&
-      reactionCounts.find((reaction) => reaction.type === selectedReactionType)
-        ?.count,
-    [selectedReactionType, reactionCounts]
-  );
+    const selectedReactionTypeCount = React.useMemo(
+      () =>
+        selectedReactionType &&
+        reactionCounts.find(
+          (reaction) => reaction.type === selectedReactionType
+        )?.count,
+      [selectedReactionType, reactionCounts]
+    );
 
-  return (
-    <div data-testid="ArticleReactions" className={styles.root}>
-      <ReactionSelector
-        trigger={buttonRef.current!}
-        isOpen={isReactionSelectorOpen}
-        onSelect={(reaction) => {
-          if (reaction) {
-            reactToArticle({
-              variables: {
-                id: article.id,
-                reaction: reaction.toUpperCase(),
-              },
-            });
-          }
-          setIsReactionSelectorOpen(false);
-        }}
-      />
-      <Button
-        ref={buttonRef}
-        title={`Auf "${article.title}" reagieren`}
-        icon={<Icon icon={faHeart} />}
-        onClick={() => setIsReactionSelectorOpen(true)}
-      />
-      <ReactionCountButtons
-        reactions={reactionCounts}
-        onSelect={(type, el) => {
-          typeButtonRef.current = el;
-          setSelectedReactionType(type);
-        }}
-      />
-      <Popover
-        isOpen={!!selectedReactionType}
-        trigger={typeButtonRef.current!}
-        placement={'top'}
-        onClose={() => setSelectedReactionType(null)}
-      >
-        <Suspense
-          fallback={
-            <MenuList>
-              {selectedReactionTypeIcon && (
-                <ListItem
-                  isHeader
-                  leftSection={
-                    <Icon
-                      icon={iconForReactionType(selectedReactionType!)!.icon}
-                    />
-                  }
-                >
-                  {selectedReactionTypeCount}
-                </ListItem>
-              )}
-              <ListItem>
-                <LinearProgress isIndeterminate />
-              </ListItem>
-            </MenuList>
-          }
+    return (
+      <div data-testid="ArticleReactions" className={styles.root}>
+        <ReactionSelector
+          trigger={buttonRef.current!}
+          isOpen={isReactionSelectorOpen}
+          onSelect={(reaction) => {
+            if (reaction) {
+              reactToArticle({
+                variables: {
+                  id: article.id,
+                  reaction: reaction.toUpperCase(),
+                },
+              });
+            }
+            setIsReactionSelectorOpen(false);
+          }}
+        />
+        <Button
+          ref={buttonRef}
+          title={`Auf "${article.title}" reagieren`}
+          icon={<Icon icon={faHeart} />}
+          onClick={() => setIsReactionSelectorOpen(true)}
+        />
+        <ReactionCountButtons
+          reactions={reactionCounts}
+          onSelect={(type, el) => {
+            typeButtonRef.current = el;
+            setSelectedReactionType(type);
+          }}
+        />
+        <Popover
+          isOpen={!!selectedReactionType}
+          trigger={typeButtonRef.current!}
+          placement={'top'}
+          onClose={() => setSelectedReactionType(null)}
         >
-          {selectedReactionType && (
-            <ReactionUserList
-              articleId={article.id}
-              reaction={selectedReactionType}
-              header={
-                selectedReactionTypeIcon && (
-                  <ListItem
-                    isHeader
-                    leftSection={
-                      <Icon
-                        icon={iconForReactionType(selectedReactionType!)!.icon}
-                      />
-                    }
-                  >
-                    {selectedReactionTypeCount}
+          <Overlay>
+            <React.Suspense
+              fallback={
+                <List>
+                  {selectedReactionTypeIcon && (
+                    <ListItem
+                      isHeader
+                      leftSection={
+                        <Icon
+                          icon={
+                            iconForReactionType(selectedReactionType!)!.icon
+                          }
+                        />
+                      }
+                    >
+                      {selectedReactionTypeCount}
+                    </ListItem>
+                  )}
+                  <ListItem>
+                    <LinearProgress isIndeterminate />
                   </ListItem>
-                )
+                </List>
               }
-            />
-          )}
-        </Suspense>
-      </Popover>
-    </div>
-  );
-});
+            >
+              {selectedReactionType && (
+                <ReactionUserList
+                  articleId={article.id}
+                  reaction={selectedReactionType}
+                  header={
+                    selectedReactionTypeIcon && (
+                      <ListItem
+                        isHeader
+                        leftSection={
+                          <Icon
+                            icon={
+                              iconForReactionType(selectedReactionType!)!.icon
+                            }
+                          />
+                        }
+                      >
+                        {selectedReactionTypeCount}
+                      </ListItem>
+                    )
+                  }
+                />
+              )}
+            </React.Suspense>
+          </Overlay>
+        </Popover>
+      </div>
+    );
+  }
+);
 ArticleReactions.displayName = 'ArticleReactions';

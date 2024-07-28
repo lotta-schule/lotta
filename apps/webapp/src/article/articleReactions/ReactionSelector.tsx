@@ -1,5 +1,5 @@
 import { Button, Popover } from '@lotta-schule/hubert';
-import { memo } from 'react';
+import * as React from 'react';
 import { Icon } from 'shared/Icon';
 
 import styles from './ReactionSelector.module.scss';
@@ -14,7 +14,7 @@ export type ReactionSelectorProps = {
   onSelect: (iconName?: string) => void;
 };
 
-export const ReactionSelector = memo(
+export const ReactionSelector = React.memo(
   ({ isOpen, trigger, onSelect }: ReactionSelectorProps) => {
     return (
       <Popover

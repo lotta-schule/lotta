@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StoryObj } from '@storybook/react';
 import { Close, ChevronRight, MenuButton, Item } from '@lotta-schule/hubert';
-import { action } from '@storybook/addon-actions';
+import { fn } from '@storybook/test';
 
 export default {
   title: 'menus/MenuButton',
@@ -43,7 +43,7 @@ export const Default: Story = {
       label: 'Open the menu',
     },
     title: 'Chose a MenuItem number',
-    onAction: action('onAction'),
-    onOpenChange: action('onOpenChange'),
+    onAction: fn(),
+    onOpenChange: fn(),
   },
 };

@@ -125,7 +125,7 @@ describe('Browser/DeleteDirectoryDialog', () => {
 
     expect(screen.queryByText(/dieser ordner ist leer/i)).toBeNull();
 
-    expect(screen.getByRole('list')).toBeVisible();
+    expect(await screen.findByRole('list')).toBeVisible();
     expect(
       within(screen.getByRole('list')).getAllByRole('listitem')
     ).toHaveLength(8);

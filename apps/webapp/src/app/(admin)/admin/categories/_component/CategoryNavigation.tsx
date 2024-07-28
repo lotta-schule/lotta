@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import {
   Collapse,
@@ -18,26 +18,26 @@ import styles from './CategoryNavigation.module.scss';
 
 import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
 
-export const CategoryNavigation = memo(() => {
+export const CategoryNavigation = React.memo(() => {
   const router = useRouter();
   const params = useParams();
   const [categories] = useCategories();
 
-  const selectedCategory = useMemo(
+  const selectedCategory = React.useMemo(
     () => categories.find((category) => category.id === params?.categoryId),
     [categories, params]
   );
 
   const [expandedMainCategoryId, setExpandedMainCategoryId] =
-    useState<ID | null>(null);
+    React.useState<ID | null>(null);
   const [expandedMainCategoryToRestore, setExpandedMainCategoryToRestore] =
-    useState<ID | null>(null);
+    React.useState<ID | null>(null);
 
-  const homepageCategory = useMemo(
+  const homepageCategory = React.useMemo(
     () => categories.find((category) => category.isHomepage),
     [categories]
   );
-  const mainCategories = useMemo(
+  const mainCategories = React.useMemo(
     () =>
       categories.filter(
         (category) =>
@@ -45,12 +45,12 @@ export const CategoryNavigation = memo(() => {
       ),
     [categories]
   );
-  const sidenavCategories = useMemo(
+  const sidenavCategories = React.useMemo(
     () => categories.filter((c) => c.isSidenav),
     [categories]
   );
 
-  const getSubcategoriesForCategory = useCallback(
+  const getSubcategoriesForCategory = React.useCallback(
     (category: Partial<CategoryModel>) => {
       return categories.filter(
         (c) => c.category && c.category.id === category.id
@@ -64,7 +64,7 @@ export const CategoryNavigation = memo(() => {
     { id: ID; category: any }
   >(UpdateCategoryMutation);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (selectedCategory) {
       if (selectedCategory.category?.id) {
         setExpandedMainCategoryId(selectedCategory.category.id);
@@ -74,13 +74,13 @@ export const CategoryNavigation = memo(() => {
     }
   }, [selectedCategory]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (expandedMainCategoryId) {
       setExpandedMainCategoryToRestore(null);
     }
   }, [expandedMainCategoryId]);
 
-  const onSelectCategory = useCallback(
+  const onSelectCategory = React.useCallback(
     (category: CategoryModel) => {
       if (category.id !== selectedCategory?.id) {
         router.push(`/admin/categories/${category.id}`);
@@ -89,7 +89,7 @@ export const CategoryNavigation = memo(() => {
     [router]
   );
 
-  const onChangeCategories = useCallback(
+  const onChangeCategories = React.useCallback(
     (updatedCategories: SortableItem[]) => {
       updatedCategories
         .map((category, index) => ({

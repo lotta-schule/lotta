@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StoryFn, Meta } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 import { Item, Menu } from '@lotta-schule/hubert';
+import { fn } from '@storybook/test';
 
 export default {
   title: 'menus/Menu',
@@ -26,7 +26,7 @@ export const Default = {
 
   args: {
     title: 'Chose a MenuItem number',
-    onAction: action('onAction'),
+    onAction: fn(),
     onClose: undefined,
   },
 };

@@ -5,7 +5,7 @@ import { CollectionChildren } from '@react-types/shared';
 import { useMenuTriggerState } from 'react-stately';
 import { mergeProps, useButton, useMenuTrigger } from 'react-aria';
 import { Button, ButtonProps } from '../button/Button';
-import { Popover, PopoverProps } from '../popover/new/Popover';
+import { Popover, PopoverProps, Overlay } from '../popover';
 import { Menu, WithDescription } from './Menu';
 
 import styles from './MenuButton.module.scss';
@@ -20,7 +20,13 @@ export type MenuButtonProps = {
 
 export const MenuButton = React.forwardRef(
   (
-    { buttonProps, onOpenChange, placement, ...props }: MenuButtonProps,
+    {
+      buttonProps,
+      onOpenChange,
+      placement,
+      onAction,
+      ...props
+    }: MenuButtonProps,
     forwardedRef: React.Ref<HTMLButtonElement | null>
   ) => {
     const onOpenChangeRef = React.useRef(onOpenChange);
@@ -55,19 +61,22 @@ export const MenuButton = React.forwardRef(
           placement={placement}
           trigger={ref.current}
         >
-          <Menu
-            {...mergeProps(
-              {
-                ...menuProps,
-                autoFocus: !!menuProps.autoFocus,
-              },
-              props
-            )}
-            className={styles.menu}
-            onClose={state.close}
-          >
-            {props.children as any}
-          </Menu>
+          <Overlay>
+            <Menu
+              {...mergeProps(
+                {
+                  ...menuProps,
+                  autoFocus: !!menuProps.autoFocus,
+                },
+                props
+              )}
+              onAction={onAction}
+              className={styles.menu}
+              onClose={state.close}
+            >
+              {props.children as any}
+            </Menu>
+          </Overlay>
         </Popover>
       </>
     );

@@ -1,10 +1,10 @@
+import * as React from 'react';
 import { useSuspenseQuery } from '@apollo/client';
-import { MenuList, ListItem } from '@lotta-schule/hubert';
+import { List, ListItem, Overlay } from '@lotta-schule/hubert';
 import { ArticleModel, ArticleReactionType, UserModel } from 'model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 
 import GetReactionUsersQuery from 'api/query/GetReactionUsersQuery.graphql';
-import { memo } from 'react';
 
 export type ReactionUserListProps = {
   articleId: ArticleModel['id'];
@@ -12,7 +12,7 @@ export type ReactionUserListProps = {
   header?: React.ReactNode | React.ReactNode[];
 };
 
-export const ReactionUserList = memo(
+export const ReactionUserList = React.memo(
   ({ articleId, reaction, header }: ReactionUserListProps) => {
     const {
       data: { users },
@@ -20,14 +20,16 @@ export const ReactionUserList = memo(
       variables: { id: articleId, reaction },
     });
     return (
-      <MenuList>
+      <Overlay>
         {header || null}
-        {users.map((user) => (
-          <ListItem leftSection={<UserAvatar user={user} />} key={user.id}>
-            {user.name}
-          </ListItem>
-        ))}
-      </MenuList>
+        <List>
+          {users.map((user) => (
+            <ListItem leftSection={<UserAvatar user={user} />} key={user.id}>
+              {user.name}
+            </ListItem>
+          ))}
+        </List>
+      </Overlay>
     );
   }
 );

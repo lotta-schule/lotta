@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import * as React from 'react';
 import { Button, Toolbar } from '@lotta-schule/hubert';
 import { Icon } from 'shared/Icon';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 export const CategoryListToolbar = () => {
   const router = useRouter();
   const [isCreateCategoryDialogOpen, setIsCreateCategoryDialogOpen] =
-    useState(false);
+    React.useState(false);
   return (
     <Toolbar hasScrollableParent withPadding>
       <Button

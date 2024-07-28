@@ -1,4 +1,4 @@
-import { Suspense, memo } from 'react';
+import * as React from 'react';
 import { ArticleModel } from 'model';
 import { ContentModule } from './module/ContentModule';
 import { ArticleTitle } from './ArticleTitle';
@@ -11,7 +11,7 @@ interface ArticleProps {
   article: ArticleModel;
 }
 
-export const Article = memo(({ article }: ArticleProps) => {
+export const Article = React.memo(({ article }: ArticleProps) => {
   return (
     <article className={styles.root} data-testid={'Article'}>
       <ArticleTitle article={article} />
@@ -28,13 +28,13 @@ export const Article = memo(({ article }: ArticleProps) => {
           ))}
       </section>
       {article.isReactionsEnabled && (
-        <Suspense
+        <React.Suspense
           fallback={
             <ReactionCountButtons reactions={article.reactionCounts ?? []} />
           }
         >
           <ArticleReactions article={article} />
-        </Suspense>
+        </React.Suspense>
       )}
     </article>
   );

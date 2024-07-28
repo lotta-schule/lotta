@@ -5,7 +5,10 @@ import { CollectionChildren } from '@react-types/shared';
 import { useTreeState } from 'react-stately';
 import { mergeProps, useMenu } from 'react-aria';
 import { MenuItem } from './MenuItem';
-import { MenuList, MenuListProps } from './MenuList';
+import { List, ListProps } from '../list';
+import clsx from 'clsx';
+
+import styles from './Menu.module.scss';
 
 export type WithDescription =
   | {
@@ -18,50 +21,59 @@ export type WithDescription =
   | { 'aria-label': string }
   | { 'aria-labelledby': string };
 
-export type MenuProps = MenuListProps &
+export type MenuProps = ListProps &
   WithDescription & {
     children: CollectionChildren<object>;
+    ref?: React.Ref<HTMLElement>;
     onClose?: () => void;
     onAction?: (_key: React.Key) => void;
   };
 
-export const Menu = React.forwardRef(
-  (
-    { title, onAction, onClose, ...props }: MenuProps,
-    forwardedRef: React.Ref<HTMLUListElement | null>
-  ) => {
-    const ref = React.useRef<HTMLUListElement>(null);
+export const Menu = ({
+  title,
+  onAction,
+  onClose,
+  className,
+  ref: propRef,
+  ...props
+}: MenuProps) => {
+  const defaultRef = React.useRef<HTMLUListElement>(null);
 
-    React.useImperativeHandle(forwardedRef, () => ref.current);
+  const ref = (propRef || defaultRef) as React.RefObject<HTMLUListElement>;
 
-    const state = useTreeState({
-      children: props.children,
-      selectionMode: 'none',
-    });
+  const state = useTreeState({
+    children: props.children,
+    selectionMode: 'none',
+    onAction,
+  } as any);
 
-    const { menuProps } = useMenu(
-      {
-        'aria-label': title,
-        ...props,
-      },
-      state,
-      ref
-    );
+  const { menuProps } = useMenu(
+    {
+      'aria-label': title,
+      onAction,
+      ...props,
+    },
+    state,
+    ref
+  );
 
-    return (
-      <MenuList {...mergeProps(menuProps, props)} ref={ref}>
-        {[...state.collection].map((item) => (
-          <MenuItem
-            key={item.key}
-            item={item as any}
-            state={state}
-            onAction={onAction}
-            onClose={onClose}
-          />
-        ))}
-        {props.children}
-      </MenuList>
-    );
-  }
-);
+  return (
+    <List
+      {...mergeProps(menuProps, props)}
+      className={clsx(className, styles.root)}
+      ref={ref}
+    >
+      {[...state.collection].map((item) => (
+        <MenuItem
+          key={item.key}
+          item={item as any}
+          state={state}
+          onAction={onAction}
+          onClose={onClose}
+        />
+      ))}
+      {props.children}
+    </List>
+  );
+};
 Menu.displayName = 'Menu';

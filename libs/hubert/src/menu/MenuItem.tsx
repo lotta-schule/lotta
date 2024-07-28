@@ -6,35 +6,34 @@ import { TreeState, Item as AriaItem } from 'react-stately';
 import { Node } from '@react-types/shared';
 import { ListItem } from '../list';
 
-import styles from './MenuList.module.scss';
+import styles from './Menu.module.scss';
 
 export const Item = AriaItem;
 
-export interface MenuItemProps {
+export type MenuItemProps = {
   item: Node<object>;
   state: TreeState<object>;
   isDisabled?: boolean;
   isDivider?: boolean;
+  ref?: React.Ref<HTMLLIElement>;
   onAction?: (_key: React.Key) => void;
   onClose?: () => void;
-}
+};
 
-export const MenuItem = React.forwardRef(
-  (
-    {
-      item,
-      state,
-      isDisabled = false,
-      isDivider = false,
-      onAction,
-      onClose,
-    }: MenuItemProps,
-    forwardedRef: React.Ref<HTMLLIElement | null>
-  ) => {
+export const MenuItem = React.memo(
+  ({
+    item,
+    state,
+    isDisabled = false,
+    isDivider = false,
+    onAction,
+    onClose,
+    ref: propRef,
+  }: MenuItemProps) => {
     // Get props for the menu item element
-    const ref = React.useRef<HTMLLIElement>(null);
+    const defaultRef = React.useRef<HTMLLIElement>(null);
 
-    React.useImperativeHandle(forwardedRef, () => ref.current);
+    const ref = (propRef || defaultRef) as React.RefObject<HTMLLIElement>;
 
     const { menuItemProps } = useMenuItem(
       {
@@ -60,9 +59,10 @@ export const MenuItem = React.forwardRef(
       ? item.rendered[1]
       : item.rendered;
 
+    const mergedProps = mergeProps(menuItemProps, focusProps);
     return (
       <ListItem
-        {...mergeProps(menuItemProps, focusProps)}
+        {...mergedProps}
         ref={ref}
         isSelected={isFocused}
         leftSection={<div className={styles.leftSection}>{leftSection}</div>}

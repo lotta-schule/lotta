@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import * as React from 'react';
 import { AdminPage } from '../_component/AdminPage';
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { DraggableGroupList } from './_component/DraggableGroupList';
@@ -18,13 +18,13 @@ async function GroupsLayout({
       <TwoColumnLayout>
         <TwoColumnLayoutSidebar>
           <GroupListToolbar />
-          <Suspense
+          <React.Suspense
             fallback={
               <LinearProgress aria-label="Gruppen werden geladen ..." />
             }
           >
             <DraggableGroupList />
-          </Suspense>
+          </React.Suspense>
         </TwoColumnLayoutSidebar>
         <TwoColumnLayoutContent>{children}</TwoColumnLayoutContent>
       </TwoColumnLayout>

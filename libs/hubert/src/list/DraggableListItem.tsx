@@ -1,6 +1,6 @@
 'use client';
 
-import { HTMLProps, MouseEventHandler } from 'react';
+import * as React from 'react';
 import { DragHandle } from '../icon/DragHandle';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -8,10 +8,10 @@ import clsx from 'clsx';
 
 import styles from './DraggableListItem.module.scss';
 
-export type DraggableListItemProps = HTMLProps<HTMLDivElement> & {
+export type DraggableListItemProps = React.HTMLProps<HTMLDivElement> & {
   id: string;
   isDraggable?: boolean;
-  onClickIcon?: MouseEventHandler<HTMLDivElement>;
+  onClickIcon?: React.MouseEventHandler<HTMLDivElement>;
   icon?: React.ReactNode;
   selected?: boolean;
   title: string;

@@ -1,13 +1,13 @@
 'use client';
 
-import { memo, useEffect } from 'react';
+import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { FullErrorPage } from './FullErrorPage';
 
-export const ForbiddenErrorPage = memo(() => {
+export const ForbiddenErrorPage = React.memo(() => {
   const router = useRouter();
 
-  useEffect(() => {
+  React.useEffect(() => {
     router.prefetch('/');
     const timeout = setTimeout(() => {
       router.replace('/');

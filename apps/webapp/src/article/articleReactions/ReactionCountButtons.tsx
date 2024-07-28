@@ -2,7 +2,7 @@ import { ArticleModel, ArticleReactionType } from 'model';
 import { iconForReactionType } from './supportedReactionIcons';
 import { PillButton } from '@lotta-schule/hubert';
 import { Icon } from 'shared/Icon';
-import { MouseEvent } from 'react';
+import * as React from 'react';
 
 import styles from './ReactionCountButtons.module.scss';
 
@@ -25,7 +25,7 @@ export const ReactionCountButtons = ({
         key={type}
         className={styles.button}
         icon={<Icon icon={icon!.icon} />}
-        onClick={(e: MouseEvent<HTMLButtonElement>) =>
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
           onSelect?.(type, e.currentTarget)
         }
       >
