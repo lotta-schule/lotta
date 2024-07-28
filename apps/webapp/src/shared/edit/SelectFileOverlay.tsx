@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { FileModel } from 'model';
-import { Button, Dialog, DialogActions } from '@lotta-schule/hubert';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+} from '@lotta-schule/hubert';
 import { UserBrowser } from 'shared/browser';
 import { EditOverlay } from './EditOverlay';
 
@@ -56,13 +61,15 @@ export const SelectFileOverlay = ({
         onRequestClose={() => setIsSelectFileDialogOpen(false)}
         title={'Datei auswählen'}
       >
-        <UserBrowser
-          isNodeDisabled={(node) =>
-            node.type === 'file' &&
-            fileFilter?.(node.meta as FileModel) === false
-          }
-          onSelect={(files) => setSelectedFile(files.at(-1) ?? null)}
-        />
+        <DialogContent>
+          <UserBrowser
+            isNodeDisabled={(node) =>
+              node.type === 'file' &&
+              fileFilter?.(node.meta as FileModel) === false
+            }
+            onSelect={(files) => setSelectedFile(files.at(-1) ?? null)}
+          />
+        </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsSelectFileDialogOpen(false)}>
             Abbrechen
