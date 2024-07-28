@@ -74,7 +74,12 @@ export const DialogContent: React.FC<React.HTMLProps<HTMLDivElement>> = ({
   className,
   ...props
 }) => {
-  return <section className={clsx(className, styles.content)} {...props} />;
+  return (
+    <section
+      className={clsx(className, 'HubertDialogContent', styles.content)}
+      {...props}
+    />
+  );
 };
 
 export const DialogActions: React.FC<React.HTMLProps<HTMLDivElement>> = ({

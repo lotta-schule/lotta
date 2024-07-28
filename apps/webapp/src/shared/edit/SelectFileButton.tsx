@@ -5,12 +5,13 @@ import {
   ButtonProps,
   Dialog,
   DialogActions,
+  DialogContent,
 } from '@lotta-schule/hubert';
 import { UserBrowser, UserBrowserProps } from 'shared/browser';
 import { useTranslation } from 'react-i18next';
 
 interface SelectFileButtonProps<Multiple extends boolean> {
-  label: string | JSX.Element;
+  label: string | React.ReactNode;
   buttonComponent?: any;
   buttonComponentProps?: any;
   multiple?: Multiple;
@@ -66,15 +67,17 @@ const _SelectFileButton = <Multiple extends boolean | undefined>({
         title={'Datei auswählen'}
         wide
       >
-        <UserBrowser
-          isNodeDisabled={(node) =>
-            node.type === 'file' &&
-            fileFilter?.(node.meta as FileModel) === false
-          }
-          multiple={multiple}
-          onSelect={setSelectedFiles}
-          {...fileExplorerOptions}
-        />
+        <DialogContent>
+          <UserBrowser
+            isNodeDisabled={(node) =>
+              node.type === 'file' &&
+              fileFilter?.(node.meta as FileModel) === false
+            }
+            multiple={multiple}
+            onSelect={setSelectedFiles}
+            {...fileExplorerOptions}
+          />
+        </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsSelectFileDialogOpen(false)}>
             Abbrechen

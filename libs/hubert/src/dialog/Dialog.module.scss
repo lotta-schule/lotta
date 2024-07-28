@@ -61,6 +61,7 @@
     max-height: 100dvh;
     border-radius: 0;
     margin: auto;
+    display: flex;
   }
 
   .close {
@@ -88,6 +89,7 @@
 
   .content {
     flex-shrink: 1;
+    flex-grow: 1;
     overflow: auto;
     padding: var(--lotta-spacing) 0;
   }

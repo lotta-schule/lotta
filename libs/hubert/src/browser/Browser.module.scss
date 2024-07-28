@@ -1,9 +1,19 @@
+@import "../theme/breakpoints";
+
 .root {
   border-radius: var(--lotta-border-radius);
   border: 1px solid rgba(var(--lotta-accent-grey-color));
 
+  min-height: min(80vh, 600px);
   height: 600px;
   max-height: 100%;
+
+  @media screen and (max-width: $max-xs) {
+    &:is(:global(.HubertDialogContent) > .root) {
+      height: -webkit-fill-available;
+      height: fill-available;
+    }
+  }
 
   display: flex;
   flex-direction: column;
