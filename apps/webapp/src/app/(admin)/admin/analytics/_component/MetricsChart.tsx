@@ -1,17 +1,12 @@
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
-import {
-  Box,
-  CircularProgress,
-  ErrorMessage,
-  Option,
-  Select,
-  Toolbar,
-} from '@lotta-schule/hubert';
+import { useSuspenseQuery } from '@apollo/client';
+import { Box, Option, Select, Toolbar } from '@lotta-schule/hubert';
 import { type AxisOptions } from 'react-charts';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
+import { formatDate } from '../_util';
 import { de } from 'date-fns/locale';
+import { Period } from '../Analytics';
 import dynamic from 'next/dynamic';
 
 import styles from './MetricsChart.module.scss';
@@ -24,7 +19,7 @@ const Chart = dynamic(
 );
 
 export type MetricsChartProps = {
-  date: string;
+  period: Period;
 };
 
 type DailyMetric = {
@@ -32,20 +27,23 @@ type DailyMetric = {
   value: number;
 };
 
-export const MetricsChart = React.memo(({ date }: MetricsChartProps) => {
+export const MetricsChart = React.memo(({ period }: MetricsChartProps) => {
   const { t } = useTranslation();
 
   const [selectedMetric, setSelectedMetric] = React.useState('visits');
 
-  const { data, loading, error } = useQuery<
+  const {
+    data: { metrics },
+  } = useSuspenseQuery<
     {
       metrics: { date: string; value: number }[];
     },
-    { date: string; metric: string }
+    { date: string; metric: string; period: 'month' | '30d' }
   >(GetTenantTimeseriesAnalyticsQuery, {
     variables: {
-      date,
+      date: formatDate(period.type === '30d' ? new Date() : period.date),
       metric: selectedMetric.replace(/([A-Z])/g, '_$1').toUpperCase(),
+      period: period.type,
     },
   });
 
@@ -72,30 +70,31 @@ export const MetricsChart = React.memo(({ date }: MetricsChartProps) => {
     []
   );
 
-  const series: { label: string; data: DailyMetric[] }[] = [
-    {
-      label: t(selectedMetric),
-      data:
-        data?.metrics.map((m) => ({
-          date: new Date(m.date),
-          value: m.value,
-        })) ?? [],
-    },
-  ];
+  const series: { label: string; data: DailyMetric[] }[] = React.useMemo(
+    () => [
+      {
+        label: t(selectedMetric),
+        data:
+          metrics.map((m) => ({
+            date: new Date(m.date),
+            value: m.value,
+          })) ?? [],
+      },
+    ],
+    [metrics]
+  );
 
   return (
     <Box className={styles.root}>
-      <Toolbar>
-        {loading && (
-          <CircularProgress
-            isIndeterminate
-            aria-label={'Statistiken werden geladen'}
-          />
-        )}
+      <Toolbar className={styles.toolbar}>
         <Select
           title={t('Select metric')}
           value={selectedMetric}
-          onChange={(value) => setSelectedMetric(value)}
+          onChange={(value) => {
+            React.startTransition(() => {
+              setSelectedMetric(value);
+            });
+          }}
           className={styles.metricSelect}
         >
           <Option key={'visits'} value={'visits'}>
@@ -118,26 +117,22 @@ export const MetricsChart = React.memo(({ date }: MetricsChartProps) => {
           </Option>
         </Select>
       </Toolbar>
-      {error && <ErrorMessage error={error} />}
-      {data?.metrics && (
-        // The chart must be wrapped in a div with a known size when chart begins rendering.
-        <div className={styles.chartWrapper} data-testid="ChartWrapper">
-          <Chart
-            options={{
-              data: series,
-              primaryAxis,
-              secondaryAxes,
-              padding: {
-                top: 40,
-                right: 40,
-                bottom: 40,
-                left: 40,
-              },
-              defaultColors: ['rgb(var(--lotta-primary-color))'],
-            }}
-          />
-        </div>
-      )}
+      <div className={styles.chartWrapper} data-testid="ChartWrapper">
+        <Chart
+          options={{
+            data: series,
+            primaryAxis,
+            secondaryAxes,
+            padding: {
+              top: 40,
+              right: 40,
+              bottom: 40,
+              left: 40,
+            },
+            defaultColors: ['rgb(var(--lotta-primary-color))'],
+          }}
+        />
+      </div>
     </Box>
   );
 });

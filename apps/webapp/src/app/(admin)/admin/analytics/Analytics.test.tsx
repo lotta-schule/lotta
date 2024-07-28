@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import GetTenantRealtimeAnalyticsQuery from 'api/query/analytics/GetTenantRealtimeAnalyticsQuery.graphql';
 import GetTenantAggregateAnalyticsQuery from 'api/query/analytics/GetTenantAggregateAnalyticsQuery.graphql';
 import GetTenantTimeseriesAnalyticsQuery from 'api/query/analytics/GetTenantTimeseriesAnalyticsQuery.graphql';
+import GetTenantBreakdownAnalyticsQuery from 'api/query/analytics/GetTenantBreakdownAnalyticsQuery.graphql';
 
 vi.useFakeTimers({
   shouldAdvanceTime: true,
@@ -26,7 +27,7 @@ const mocks = [
   {
     request: {
       query: GetTenantAggregateAnalyticsQuery,
-      variables: { date: '2025-08-01' },
+      variables: { date: '2025-08-16', period: '30d' },
     },
     result: vi.fn(() => ({
       data: {
@@ -45,8 +46,9 @@ const mocks = [
     request: {
       query: GetTenantTimeseriesAnalyticsQuery,
       variables: {
-        date: '2025-08-01',
+        date: '2025-08-16',
         metric: 'VISITS',
+        period: '30d',
       },
     },
     result: vi.fn(() => ({
@@ -62,7 +64,7 @@ const mocks = [
   {
     request: {
       query: GetTenantAggregateAnalyticsQuery,
-      variables: { date: '2025-04-01' },
+      variables: { date: '2025-04-01', period: 'month' },
     },
     result: vi.fn(() => ({
       data: {
@@ -83,6 +85,7 @@ const mocks = [
       variables: {
         date: '2025-04-01',
         metric: 'VISITS',
+        period: 'month',
       },
     },
     result: vi.fn(() => ({
@@ -95,6 +98,86 @@ const mocks = [
       },
     })),
   },
+  {
+    request: {
+      query: GetTenantBreakdownAnalyticsQuery,
+      variables: {
+        date: '2025-08-16',
+        metric: 'VISITORS',
+        period: '30d',
+        property: 'VISIT_DEVICE',
+      },
+    },
+    result: vi.fn(() => ({
+      data: {
+        properties: [
+          { property: 'mobile', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'tablet', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'desktop', metrics: [{ metric: 'VISITS', value: 100 }] },
+        ],
+      },
+    })),
+  },
+  {
+    request: {
+      query: GetTenantBreakdownAnalyticsQuery,
+      variables: {
+        date: '2025-08-16',
+        metric: 'VISITORS',
+        period: '30d',
+        property: 'VISIT_SOURCE',
+      },
+    },
+    result: vi.fn(() => ({
+      data: {
+        properties: [
+          { property: 'mobile', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'tablet', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'desktop', metrics: [{ metric: 'VISITS', value: 100 }] },
+        ],
+      },
+    })),
+  },
+  {
+    request: {
+      query: GetTenantBreakdownAnalyticsQuery,
+      variables: {
+        date: '2025-04-01',
+        metric: 'VISITORS',
+        period: 'month',
+        property: 'VISIT_DEVICE',
+      },
+    },
+    result: vi.fn(() => ({
+      data: {
+        properties: [
+          { property: 'mobile', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'tablet', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'desktop', metrics: [{ metric: 'VISITS', value: 100 }] },
+        ],
+      },
+    })),
+  },
+  {
+    request: {
+      query: GetTenantBreakdownAnalyticsQuery,
+      variables: {
+        date: '2025-04-01',
+        metric: 'VISITORS',
+        period: 'month',
+        property: 'VISIT_SOURCE',
+      },
+    },
+    result: vi.fn(() => ({
+      data: {
+        properties: [
+          { property: 'mobile', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'tablet', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'desktop', metrics: [{ metric: 'VISITS', value: 100 }] },
+        ],
+      },
+    })),
+  },
 ];
 
 describe('Analytics', () => {
@@ -102,8 +185,8 @@ describe('Analytics', () => {
     const { getByText } = render(<Analytics />, {}, { additionalMocks: mocks });
 
     await waitFor(() => {
-      expect(getByText('Aktuell online')).toBeInTheDocument();
-      expect(getByText('50 Besucher')).toBeInTheDocument();
+      expect(getByText('aktuell online')).toBeInTheDocument();
+      expect(getByText(/50 Besucher online/)).toBeInTheDocument();
     });
 
     await waitFor(() => {
@@ -120,19 +203,22 @@ describe('Analytics', () => {
 
       expect(
         screen.getByRole('button', {
-          name: 'August 2025 Monat wählen',
+          name: 'vergangene 30 Tage Monat wählen',
         })
       ).toBeVisible();
 
       await fireEvent.click(
         screen.getByRole('button', {
-          name: 'August 2025 Monat wählen',
+          name: 'vergangene 30 Tage Monat wählen',
         })
       );
 
       await waitFor(() => {
-        expect(screen.getByRole('option', { name: 'Juli 2025' })).toBeVisible();
+        expect(
+          screen.getByRole('option', { name: 'August 2025' })
+        ).toBeVisible();
       });
+      expect(screen.getByRole('option', { name: 'Juli 2025' })).toBeVisible();
       expect(screen.getByRole('option', { name: 'Juni 2025' })).toBeVisible();
       expect(screen.getByRole('option', { name: 'Mai 2025' })).toBeVisible();
       expect(screen.getByRole('option', { name: 'April 2025' })).toBeVisible();
@@ -167,7 +253,7 @@ describe('Analytics', () => {
 
       await waitFor(() => {
         expect(mocks[3].result).toHaveBeenCalled();
-        expect(mocks[4].result).toHaveBeenCalled();
+        expect(mocks[5].result).toHaveBeenCalled();
       });
     }, 20_000);
   });

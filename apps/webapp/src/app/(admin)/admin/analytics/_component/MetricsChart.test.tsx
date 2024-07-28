@@ -2,6 +2,7 @@ import * as React from 'react';
 import { MockedResponse } from '@apollo/client/testing';
 import { render, waitFor } from 'test/util';
 import { MetricsChart } from './MetricsChart';
+import { Period } from '../Analytics';
 import userEvent from '@testing-library/user-event';
 
 import GetTenantTimeseriesAnalyticsQuery from 'api/query/analytics/GetTenantTimeseriesAnalyticsQuery.graphql';
@@ -15,6 +16,7 @@ const mocks = [
       variables: {
         date: '2024-03-16',
         metric: 'VISITS',
+        period: 'month',
       },
     },
     result: {
@@ -29,27 +31,16 @@ const mocks = [
   },
 ];
 
+const monthPeriod: Period = {
+  type: 'month',
+  date: new Date('2024-03-16'),
+  key: '2024-03-16',
+};
+
 describe('MetricsChart', () => {
-  it('renders loading state initially', async () => {
-    const screen = render(
-      <MetricsChart date="2024-03-16" />,
-      {},
-      { additionalMocks: mocks }
-    );
-
-    expect(
-      screen.getByLabelText('Statistiken werden geladen')
-    ).toBeInTheDocument();
-
-    await waitFor(() => {
-      // Wait for loading state to disappear
-      expect(screen.queryByLabelText('Statistiken werden geladen')).toBeNull();
-    });
-  });
-
   it('renders chart when data is fetched', async () => {
     const screen = render(
-      <MetricsChart date="2024-03-16" />,
+      <MetricsChart period={monthPeriod} />,
       {},
       { additionalMocks: mocks }
     );
@@ -70,6 +61,7 @@ describe('MetricsChart', () => {
           variables: {
             date: '2024-03-16',
             metric: 'PAGEVIEWS',
+            period: 'month',
           },
         },
         result: vi.fn(() => ({
@@ -83,13 +75,16 @@ describe('MetricsChart', () => {
         })),
       };
       const screen = render(
-        <MetricsChart date="2024-03-16" />,
+        <MetricsChart period={monthPeriod} />,
         {},
         { additionalMocks: [...mocks, getPageviewsMock] }
       );
-      expect(
-        screen.getByRole('button', { name: 'Besuche Metrik wählen' })
-      ).toBeVisible();
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: 'Besuche Metrik wählen' })
+        ).toBeVisible();
+      });
       await fireEvent.click(
         screen.getByRole('button', { name: 'Besuche Metrik wählen' })
       );

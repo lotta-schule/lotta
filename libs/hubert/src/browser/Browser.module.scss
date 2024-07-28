@@ -10,8 +10,7 @@
 
   @media screen and (max-width: $max-xs) {
     &:is(:global(.HubertDialogContent) > .root) {
-      height: -webkit-fill-available;
-      height: fill-available;
+      height: stretch;
     }
   }
 

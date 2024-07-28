@@ -82,6 +82,35 @@ defmodule Lotta.AnalyticsTest do
              }
            }
          }}
+
+      %Tesla.Env{
+        method: :get,
+        url: "https://plausible.io/api/v1/stats/breakdown",
+        query: [
+          period: "month",
+          date: "2024-03-01",
+          metrics: "visits",
+          property: "visit:device",
+          site_id: "test.lotta.schule"
+        ],
+        headers: [
+          {_, _},
+          {"authorization", "Bearer test"}
+        ],
+        body: nil
+      } ->
+        {:ok,
+         %Tesla.Env{
+           status: 200,
+           body: %{
+             "results" => [
+               %{"device" => "mobile", "visits" => 28123},
+               %{"device" => "tablet", "visits" => 234},
+               %{"device" => "desktop", "visits" => 1992},
+               %{"device" => "(not set)", "visits" => 255}
+             ]
+           }
+         }}
     end)
 
     {:ok, tenant: tenant}
@@ -140,6 +169,43 @@ defmodule Lotta.AnalyticsTest do
                 %{
                   date: "2024-03-05",
                   value: 1746
+                }
+              ]} = response
+    end
+
+    test "get_breakdown_metrics returns metrics when analytics is enabled", %{tenant: tenant} do
+      period = "month"
+      date = "2024-03-01"
+      metric = "visits"
+      property = "visit_device"
+
+      response = Analytics.get_breakdown_metrics(tenant, period, date, property, metric)
+
+      assert {:ok,
+              [
+                %{
+                  property: "mobile",
+                  metrics: [
+                    %{metric: :visits, value: 28123}
+                  ]
+                },
+                %{
+                  property: "tablet",
+                  metrics: [
+                    %{metric: :visits, value: 234}
+                  ]
+                },
+                %{
+                  property: "desktop",
+                  metrics: [
+                    %{metric: :visits, value: 1992}
+                  ]
+                },
+                %{
+                  property: "(not set)",
+                  metrics: [
+                    %{metric: :visits, value: 255}
+                  ]
                 }
               ]} = response
     end

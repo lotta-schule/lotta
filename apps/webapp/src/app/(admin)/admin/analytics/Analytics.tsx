@@ -1,25 +1,35 @@
 'use client';
 
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
-import { Label, Option, Select, Toolbar } from '@lotta-schule/hubert';
-import { faCircle } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
+import { LinearProgress, Option, Select, Toolbar } from '@lotta-schule/hubert';
 import { addMonths, format, isSameMonth } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { de } from 'date-fns/locale';
-import { MetricsOverview, MetricsChart } from './_component';
+import { AdminPageSection } from '../_component/AdminPageSection';
+import {
+  MetricsOverview,
+  MetricsChart,
+  PropertyBreakdown,
+  CurrentOnlineUserCounter,
+} from './_component';
+import { formatDate } from './_util';
 
-import GetTenantRealtimeAnalyticsQuery from 'api/query/analytics/GetTenantRealtimeAnalyticsQuery.graphql';
+import styles from './Analytics.module.scss';
+
+export type Period = ({ type: 'month'; date: Date } | { type: '30d' }) & {
+  key: string;
+};
 
 export const Analytics = React.memo(() => {
-  const { data } = useQuery(GetTenantRealtimeAnalyticsQuery, {
-    pollInterval: 30_000,
-  });
-  const currentUserCount = data?.currentUserCount ?? null;
+  const { t } = useTranslation();
 
-  const availableDates = React.useMemo(() => {
-    const firstEverDate = new Date('2024-03-01');
-    const months = [firstEverDate];
+  const THIRTYDAYS_PERIOD = React.useMemo(
+    () => ({ type: '30d', key: '30d' }) as Period,
+    []
+  );
+
+  const availableMonths = React.useMemo(() => {
+    const months = [new Date('2024-03-01')];
     while (
       !isSameMonth(new Date(), months.slice(-1)[0] ?? new Date()) &&
       months.length < 120
@@ -30,44 +40,90 @@ export const Analytics = React.memo(() => {
     return months.reverse();
   }, []);
 
-  const [currentDate, setCurrentDate] = React.useState(() =>
-    format(availableDates[0], 'yyyy-MM-dd', {
-      locale: de,
-    })
+  const possiblePeriods = React.useMemo(
+    () => [
+      { period: THIRTYDAYS_PERIOD, label: t('last 30 days') },
+      ...availableMonths.map((date) => ({
+        period: {
+          type: 'month',
+          date,
+          key: formatDate(date),
+        } as Period,
+        label: format(date, 'MMMM yyyy', { locale: de }),
+      })),
+    ],
+    [t, availableMonths]
+  );
+
+  const [currentPeriod, setCurrentPeriod] = React.useState(possiblePeriods[0]);
+
+  const changePeriod = React.useCallback(
+    (key: string) => {
+      const p = possiblePeriods.find(({ period }) => period.key === key);
+      if (p) {
+        React.startTransition(() => {
+          setCurrentPeriod(p);
+        });
+      }
+    },
+    [possiblePeriods]
   );
 
   return (
-    <div>
-      <Toolbar hasScrollableParent style={{ zIndex: 2 }}>
+    <div className={styles.root}>
+      <Toolbar hasScrollableParent className={styles.toolbar}>
         <Select
           title="Monat wählen"
-          value={currentDate}
-          onChange={(value) => setCurrentDate(value)}
+          value={currentPeriod.period.key}
+          onChange={changePeriod}
         >
-          {availableDates.map((date) => {
-            const dateKey = format(date, 'yyyy-MM-dd', {
-              locale: de,
-            });
-            return (
-              <Option key={dateKey} value={dateKey}>
-                {format(date, 'MMMM yyyy', { locale: de })}
-              </Option>
-            );
-          })}
+          {possiblePeriods.map(({ period, label }) => (
+            <Option key={period.key} value={period.key}>
+              {label}
+            </Option>
+          ))}
         </Select>
-        {currentUserCount !== null && (
-          <Label label={'Aktuell online'} style={{ marginLeft: 'auto' }}>
-            <div style={{ height: '2.8em', lineHeight: '2.8em' }}>
-              <Icon icon={faCircle} size="xs" style={{ color: 'green' }} />
-              {currentUserCount} Besucher
-            </div>
-          </Label>
-        )}
+        <CurrentOnlineUserCounter />
       </Toolbar>
 
-      <MetricsOverview date={currentDate} />
+      <React.Suspense
+        fallback={
+          <>
+            <AdminPageSection title={t('overview')}>
+              <div
+                style={{ height: 'calc(3em + calc(2 * var(--lotta-spacing)))' }}
+              />
+            </AdminPageSection>
+            <AdminPageSection title={t('overview')}>
+              <div style={{ height: 500, width: '100%' }} />
+            </AdminPageSection>
+          </>
+        }
+      >
+        <AdminPageSection title={t('overview')}>
+          <MetricsOverview period={currentPeriod.period} />
+        </AdminPageSection>
 
-      <MetricsChart date={currentDate} />
+        <AdminPageSection title={t('development')}>
+          <MetricsChart period={currentPeriod.period} />
+        </AdminPageSection>
+      </React.Suspense>
+
+      <AdminPageSection title={t('visitor breakdown')}>
+        <React.Suspense
+          fallback={
+            <LinearProgress
+              isIndeterminate
+              label={t('visitor breakdown is being loaded ...')}
+            />
+          }
+        >
+          <div className={styles.breakdownGrid}>
+            <PropertyBreakdown period={currentPeriod.period} type="device" />
+            <PropertyBreakdown period={currentPeriod.period} type="source" />
+          </div>
+        </React.Suspense>
+      </AdminPageSection>
     </div>
   );
 });

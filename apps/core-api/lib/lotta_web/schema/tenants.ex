@@ -55,6 +55,17 @@ defmodule LottaWeb.Schema.Tenants do
 
       resolve(&LottaWeb.AnalyticsResolver.timeseries/2)
     end
+
+    field :breakdown_analytics, list_of(non_null(:breakdown_metrics)) do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
+      arg(:period, non_null(:analytics_period))
+      arg(:date, non_null(:date))
+      arg(:property, non_null(:analytics_property))
+      arg(:metric, :analytics_metric)
+
+      resolve(&LottaWeb.AnalyticsResolver.breakdown/2)
+    end
   end
 
   object :tenants_mutations do

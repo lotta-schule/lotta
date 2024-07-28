@@ -1,4 +1,11 @@
 .root {
+  padding: 0;
+
+  .toolbar {
+    padding: 0;
+    top: calc(48px + calc(2 * var(--lotta-spacing)));
+  }
+
   .metricSelect {
     margin-left: auto;
     min-width: 15em;

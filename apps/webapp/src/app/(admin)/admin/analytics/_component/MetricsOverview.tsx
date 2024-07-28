@@ -1,64 +1,74 @@
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery, useSuspenseQuery } from '@apollo/client';
 import { Box, LinearProgress } from '@lotta-schule/hubert';
 import { MetricType } from './MetricType';
+import { formatDate } from '../_util';
+import { Period } from '../Analytics';
+import { t } from 'i18next';
 
 import styles from './MetricsOverview.module.scss';
 
 import GetTenantAggregateAnalyticsQuery from 'api/query/analytics/GetTenantAggregateAnalyticsQuery.graphql';
 
 export type MetricsOverviewProps = {
-  date: string;
+  period: Period;
 };
 
-export const MetricsOverview = React.memo(({ date }: MetricsOverviewProps) => {
-  const { data, loading } = useQuery<
-    {
-      analytics: Record<MetricType, number>;
-    },
-    { date: string }
-  >(GetTenantAggregateAnalyticsQuery, { variables: { date } });
+export const MetricsOverview = React.memo(
+  ({ period }: MetricsOverviewProps) => {
+    const {
+      data: {
+        analytics: {
+          visits,
+          visitors,
+          pageviews,
+          bounceRate,
+          visitDuration,
+          viewsPerVisit,
+        },
+      },
+    } = useSuspenseQuery<
+      {
+        analytics: Record<MetricType, number>;
+      },
+      { date: string; period: '30d' | 'month' }
+    >(GetTenantAggregateAnalyticsQuery, {
+      variables: {
+        date: formatDate(period.type === '30d' ? new Date() : period.date),
+        period: period.type,
+      },
+    });
 
-  if (loading) {
     return (
-      <LinearProgress isIndeterminate aria-label={'Metriken werden geladen'} />
+      <Box className={styles.root}>
+        <div>
+          <span>{t('visits')}:</span>
+          <span>{visits}</span>
+        </div>
+        <div>
+          <span>{t('visitors')}:</span>
+          <span>{visitors}</span>
+        </div>
+        <div>
+          <span>{t('pageviews')}:</span>
+          <span>{pageviews}</span>
+        </div>
+        <div>
+          <span>{t('bouncerate')}:</span>
+          <span>{bounceRate}%</span>
+        </div>
+        <div>
+          <span>⌀ {t('visitDuration')}:</span>
+          <span>
+            {Math.floor(visitDuration / 60)}m {visitDuration % 60}s
+          </span>
+        </div>
+        <div>
+          <span>{t('pageviews per visit')}:</span>
+          <span>{viewsPerVisit}</span>
+        </div>
+      </Box>
     );
   }
-
-  return (
-    <Box className={styles.root}>
-      {data?.analytics && (
-        <>
-          <div>
-            <span>Besuche:</span>
-            <span>{data?.analytics.visits}</span>
-          </div>
-          <div>
-            <span>Besucher:</span>
-            <span>{data?.analytics.visitors}</span>
-          </div>
-          <div>
-            <span>Seitenaufrufe:</span>
-            <span>{data?.analytics.pageviews}</span>
-          </div>
-          <div>
-            <span>Absprungrate:</span>
-            <span>{data?.analytics.bounceRate}%</span>
-          </div>
-          <div>
-            <span>⌀ Besuchsdauer:</span>
-            <span>
-              {Math.floor(data.analytics.visitDuration / 60)}m{' '}
-              {data.analytics.visitDuration % 60}s
-            </span>
-          </div>
-          <div>
-            <span>Seiten pro Besuch:</span>
-            <span>{data?.analytics.viewsPerVisit}</span>
-          </div>
-        </>
-      )}
-    </Box>
-  );
-});
+);
 MetricsOverview.displayName = 'MetricsOverview';

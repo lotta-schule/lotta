@@ -1,0 +1,9 @@
+query GetTenantBreakdownAnalytics($date: Date!, $property: AnalyticsProperty!, $metric: AnalyticsMetric!, $period: AnalyticsPeriod!) {
+  properties: breakdownAnalytics(date: $date, period: $period, property: $property, metric: $metric) {
+    property
+    metrics {
+      metric
+      value
+    }
+  }
+}

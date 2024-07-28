@@ -31,6 +31,29 @@ type AnalyticsMetrics {
 """The `AnalyticsPeriod` scalar type is a description of a period of time"""
 scalar AnalyticsPeriod
 
+enum AnalyticsProperty {
+  EVENT_GOAL
+  EVENT_HOSTNAME
+  EVENT_PAGE
+  VISIT_BROWSER
+  VISIT_BROWSER_VERSION
+  VISIT_CITY
+  VISIT_COUNTRY
+  VISIT_DEVICE
+  VISIT_ENTRY_PAGE
+  VISIT_EXIT_PAGE
+  VISIT_OS
+  VISIT_OS_VERSION
+  VISIT_REFERRER
+  VISIT_REGION
+  VISIT_SOURCE
+  VISIT_UTM_CAMPAIGN
+  VISIT_UTM_CONTENT
+  VISIT_UTM_MEDIUM
+  VISIT_UTM_SOURCE
+  VISIT_UTM_TERM
+}
+
 type Article {
   category: Category
   contentModules: [ContentModule]
@@ -94,6 +117,11 @@ enum ArticleReactionType {
 type Authresult {
   accessToken: String
   refreshToken: String
+}
+
+type BreakdownMetrics {
+  metrics: [MetricResult]!
+  property: String!
 }
 
 type CalendarEvent {
@@ -335,6 +363,11 @@ input MessageInput {
   recipientUser: SelectUserInput
 }
 
+type MetricResult {
+  metric: AnalyticsMetric!
+  value: Int!
+}
+
 input RegisterDeviceInput {
   customName: String
   deviceType: String
@@ -404,6 +437,7 @@ type RootQueryType {
   articlesByTag(tag: String!): [Article!]
   articlesByUser(id: ID!): [Article!]
   articlesWithUserFiles(userId: ID!): [Article]
+  breakdownAnalytics(date: Date!, metric: AnalyticsMetric, period: AnalyticsPeriod!, property: AnalyticsProperty!): [BreakdownMetrics!]
   calendar(days: Int, url: String!): [CalendarEvent]
   categories: [Category]
   contentModuleResults(contentModuleId: ID!): [ContentModuleResult]
