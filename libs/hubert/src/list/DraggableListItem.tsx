@@ -11,6 +11,7 @@ import styles from './DraggableListItem.module.scss';
 export type DraggableListItemProps = React.HTMLProps<HTMLDivElement> & {
   id: string;
   isDraggable?: boolean;
+  onClick?: React.MouseEventHandler<HTMLLIElement>;
   onClickIcon?: React.MouseEventHandler<HTMLDivElement>;
   icon?: React.ReactNode;
   selected?: boolean;
@@ -41,14 +42,13 @@ export const DraggableListItem = ({
       {...attributes}
       {...props}
       ref={setNodeRef}
-      onClick={onClick}
       aria-current={selected ? 'page' : undefined}
       className={clsx(className, styles.root, {
         [styles.selected]: selected,
         [styles.isClickable]: onClick,
       })}
     >
-      <li title={title} style={style}>
+      <li title={title} style={style} onClick={onClick}>
         {isDraggable && (
           <div
             className={styles.dragHandle}

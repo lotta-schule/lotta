@@ -69,7 +69,6 @@ export const UserNavigation = React.memo(() => {
 
   const onAction = React.useCallback(
     (action: React.Key) => {
-      alert(action);
       switch (action) {
         case 'profile':
           router.push('/profile');
