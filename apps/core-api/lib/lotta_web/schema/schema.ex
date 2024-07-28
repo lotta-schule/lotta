@@ -58,11 +58,14 @@ defmodule LottaWeb.Schema do
   #   middleware ++ [LottaWeb.Schema.Middleware.HandleChangesetErrors]
   # end
 
-  def middleware(middleware, _field, %{identifier: :mutation}) do
-    middleware
+  def middleware(middleware, _field, %{identifier: identifier})
+      when identifier in [:query, :mutation, :subscription] do
+    [LottaWeb.Schema.Middleware.EnsureTenant] ++ middleware
   end
 
-  def middleware(middleware, _field, _object), do: middleware
+  def middleware(middleware, _field, _object) do
+    middleware
+  end
 
   def plugins do
     [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()

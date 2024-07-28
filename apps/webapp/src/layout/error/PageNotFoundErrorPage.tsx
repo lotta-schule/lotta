@@ -1,8 +1,8 @@
-import { memo } from 'react';
+import * as React from 'react';
 
 import { FullErrorPage } from './FullErrorPage';
 
-export const PageNotFoundErrorPage = memo(() => {
+export const PageNotFoundErrorPage = React.memo(() => {
   return (
     <FullErrorPage
       title={'Diese Seite existiert nicht'}

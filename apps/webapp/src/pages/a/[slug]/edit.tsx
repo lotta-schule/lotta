@@ -5,12 +5,20 @@ import { ErrorMessage } from '@lotta-schule/hubert';
 import { getApolloClient } from 'api/legacyClient';
 import { useQuery } from '@apollo/client';
 import { Main, Sidebar } from 'layout';
-import { EditArticlePage } from 'article/EditArticlePage';
+import { EditArticlePageProps } from 'article/EditArticlePage';
 import { Article, User } from 'util/model';
 import { useCurrentUser } from 'util/user';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
+
+const DynamicEditArticlePage = dynamic<EditArticlePageProps>(
+  () => import('article/EditArticlePage'),
+  {
+    ssr: false,
+  }
+);
 
 const EditArticleRoute = ({
   article,
@@ -54,7 +62,7 @@ const EditArticleRoute = ({
   return (
     <>
       <Main>
-        <EditArticlePage article={data?.article ?? article} />
+        <DynamicEditArticlePage article={data?.article ?? article} />
       </Main>
       <Sidebar isEmpty />
     </>

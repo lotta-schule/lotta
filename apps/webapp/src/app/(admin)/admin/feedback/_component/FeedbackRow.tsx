@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Fragment, memo } from 'react';
+import * as React from 'react';
 import { faCommentDots } from '@fortawesome/free-regular-svg-icons';
 import { faShare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@lotta-schule/hubert';
@@ -23,16 +23,16 @@ export type FeedbackRowProps = {
   onDelete: () => void;
 };
 
-export const FeedbackRow = memo(
+export const FeedbackRow = React.memo(
   ({ feedback, isActive, onClick, onDelete }: FeedbackRowProps) => {
     const [isForwardFeedbackDialogOpen, setIsForwardFeedbackDialogOpen] =
-      useState(false);
+      React.useState(false);
     const [isRespondToFeedbackDialogOpen, setIsRespondToFeedbackDialogOpen] =
-      useState(false);
+      React.useState(false);
     const [isDeleteFeedbackDialogOpen, setIsDeleteFeedbackDialogOpen] =
-      useState(false);
+      React.useState(false);
     return (
-      <Fragment key={feedback.id}>
+      <React.Fragment key={feedback.id}>
         <tr
           className={clsx(styles.title, {
             [styles.active]: isActive,
@@ -108,7 +108,7 @@ export const FeedbackRow = memo(
             </td>
           </tr>
         )}
-      </Fragment>
+      </React.Fragment>
     );
   }
 );

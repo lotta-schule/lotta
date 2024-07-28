@@ -21,6 +21,7 @@ import {
   DialogActions,
   MenuButton,
   Item,
+  Checkbox,
 } from '@lotta-schule/hubert';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
 import { useRouter } from 'next/router';
@@ -103,18 +104,6 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
             </div>
           </div>
           <div className={styles.gridItem}>
-            <h6>Kategorie zuordnen</h6>
-            <div>
-              <CategorySelect
-                selectedCategory={article.category || null}
-                onSelectCategory={(category) =>
-                  onUpdate({ ...article, category })
-                }
-              />
-            </div>
-            <div />
-          </div>
-          <div className={styles.gridItem}>
             <h6>Veröffentlichung</h6>
             <ArticleStateEditor article={article} onUpdate={onUpdate} />
             <div className={styles.buttonWrapper}>
@@ -148,46 +137,69 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                   />
                 </>
               )}
-              <ButtonGroup fullWidth>
-                <MenuButton
-                  title={'Speicheroptionen'}
-                  buttonProps={{
-                    className: 'is-first-button-group-button',
-                    variant: 'fill',
-                    children: <Icon icon={faCaretDown} />,
-                  }}
-                  placement={'top'}
-                  onAction={(action) => {
-                    switch (action) {
-                      case 'save-no-pudated-at':
-                        return onSave({
-                          updatedAt: new Date(article.updatedAt).toISOString(),
-                        });
-                      case 'save-updated-on-created':
-                        return onSave({
-                          updatedAt: article.insertedAt,
-                        });
-                    }
-                  }}
-                >
-                  <Item key={'save-no-updated-at'}>
-                    Ohne Aktualisierszeit zu ändern
-                  </Item>
-                  <Item key={'save-updated-on-created'}>
-                    Aktualisierszeit auf Erstellszeit setzen
-                  </Item>
-                </MenuButton>
-                <Button
-                  fullWidth
-                  className={'is-last-button-group-button'}
-                  variant={'fill'}
-                  disabled={isLoading}
-                  onClick={() => onSave()}
-                >
-                  speichern
-                </Button>
-              </ButtonGroup>
             </div>
+          </div>
+          <div className={styles.gridItem}>
+            <h6>Kategorie zuordnen</h6>
+            <div>
+              <CategorySelect
+                selectedCategory={article.category || null}
+                onSelectCategory={(category) =>
+                  onUpdate({ ...article, category })
+                }
+              />
+            </div>
+            <h6>Reaktionen auf Beitrag</h6>
+            <div>
+              <Checkbox
+                isSelected={article.isReactionsEnabled ?? false}
+                onChange={(isReactionsEnabled) =>
+                  onUpdate({ ...article, isReactionsEnabled })
+                }
+              >
+                zulassen
+              </Checkbox>
+            </div>
+            <div />
+            <ButtonGroup fullWidth>
+              <MenuButton
+                title={'Speicheroptionen'}
+                buttonProps={{
+                  className: 'is-first-button-group-button',
+                  variant: 'fill',
+                  children: <Icon icon={faCaretDown} />,
+                }}
+                placement={'top'}
+                onAction={(action) => {
+                  switch (action) {
+                    case 'save-no-pudated-at':
+                      return onSave({
+                        updatedAt: new Date(article.updatedAt).toISOString(),
+                      });
+                    case 'save-updated-on-created':
+                      return onSave({
+                        updatedAt: article.insertedAt,
+                      });
+                  }
+                }}
+              >
+                <Item key={'save-no-updated-at'}>
+                  Ohne Aktualisierszeit zu ändern
+                </Item>
+                <Item key={'save-updated-on-created'}>
+                  Aktualisierszeit auf Erstellszeit setzen
+                </Item>
+              </MenuButton>
+              <Button
+                fullWidth
+                className={'is-last-button-group-button'}
+                variant={'fill'}
+                disabled={isLoading}
+                onClick={() => onSave()}
+              >
+                speichern
+              </Button>
+            </ButtonGroup>
           </div>
         </div>
         <Dialog

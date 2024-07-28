@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, within } from '@storybook/test';
 import { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 import { Avatar, Deletable } from '@lotta-schule/hubert';
 
 export default {
@@ -21,7 +20,7 @@ export const Default: StoryObj<typeof Deletable> = {
   ),
 
   args: {
-    onDelete: action('onDelete'),
+    onDelete: fn(),
   },
 
   play: async ({ canvasElement, initialArgs }) => {

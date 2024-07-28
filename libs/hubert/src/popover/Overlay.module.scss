@@ -1,0 +1,10 @@
+.root {
+  background-color: rgb(var(--lotta-box-background-color));
+  border-radius: var(--lotta-border-radius);
+  border: 1px solid rgb(var(--lotta-accent-grey-color));
+  overflow: auto;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 40px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}

@@ -1,0 +1,9 @@
+.root {
+  display: flex;
+  flex-direction: row;
+
+  background-color: rgb(var(--lotta-box-background-color));
+  border-radius: var(--lotta-border-radius);
+  border: 1px solid rgb(var(--lotta-accent-grey-color));
+  padding: calc(0.5 * var(--lotta-spacing));
+}

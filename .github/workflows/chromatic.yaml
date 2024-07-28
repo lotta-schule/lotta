@@ -1,5 +1,5 @@
 ---
-name: 'CI'
+name: 'Chromatic e2e component tests'
 on:
   push:
     paths:

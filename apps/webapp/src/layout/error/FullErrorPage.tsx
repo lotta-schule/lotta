@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import * as React from 'react';
 
 import styles from './error.module.scss';
 
@@ -30,6 +30,6 @@ export const FullErrorPage = ({
 };
 FullErrorPage.displayName = 'FullErrorPage';
 
-export const SecondaryErrorText = ({ children }: PropsWithChildren) => {
+export const SecondaryErrorText = ({ children }: React.PropsWithChildren) => {
   return <p className={styles.secondary}>{children}</p>;
 };

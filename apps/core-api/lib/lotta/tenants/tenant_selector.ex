@@ -92,7 +92,9 @@ defmodule Lotta.Tenants.TenantSelector do
     {20_231_003_064_073, Lotta.Repo.TenantMigrations.AddUserDevices},
     {20_231_122_205_912, Lotta.Repo.TenantMigrations.AddFeedback},
     {20_231_211_135_976, Lotta.Repo.TenantMigrations.ChangeFeedbackContentToText},
-    {20_240_303_164_027, Lotta.Repo.TenantMigrations.AddCanReadFullNameToUserGroups}
+    {20_240_303_164_027, Lotta.Repo.TenantMigrations.AddCanReadFullNameToUserGroups},
+    {20_240_711_212_714, Lotta.Repo.TenantMigrations.AddReactionsEnabledToArticle},
+    {20_240_712_194_738, Lotta.Repo.TenantMigrations.CreateArticleReactions}
   ]
   alias Ecto.Migration.SchemaMigration
   alias Lotta.Tenants.Tenant

@@ -173,7 +173,7 @@ describe('Browser/MoveNodesDialog', () => {
       ).toBeVisible();
     });
 
-    expect(screen.getByRole('menu')).toBeVisible();
+    expect(await screen.findByRole('menu')).toBeVisible();
 
     await user.click(screen.getByRole('menuitem', { name: 'folder 10' }));
 

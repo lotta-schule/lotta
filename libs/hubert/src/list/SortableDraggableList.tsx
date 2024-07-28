@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useCallback, useState } from 'react';
+import * as React from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -28,7 +28,7 @@ export type SortableItem = {
   selected?: boolean;
   icon?: React.ReactNode;
   testId?: string;
-  children?: ReactNode | ReactNode[];
+  children?: React.ReactNode | React.ReactNode[];
   onClick?: () => void;
   onClickIcon?: (e: React.MouseEvent<HTMLDivElement>) => void;
 };
@@ -53,8 +53,8 @@ export const SortableDraggableList = ({
   onDragEnd,
   ...props
 }: SortableDraggableListProps<SortableItem>) => {
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const handleDragEnd = useCallback(
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+  const handleDragEnd = React.useCallback(
     (event: any) => {
       const { active, over } = event;
 

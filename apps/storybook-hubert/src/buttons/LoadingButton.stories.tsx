@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fireEvent, spyOn, waitFor, within } from '@storybook/test';
+import { expect, fireEvent, fn, spyOn, waitFor, within } from '@storybook/test';
 import { KeyboardArrowLeft, LoadingButton } from '@lotta-schule/hubert';
-import { action } from '@storybook/addon-actions';
 
 export default {
   title: 'Buttons/LoadingButton',
   component: LoadingButton,
   args: {
-    onAction: action('onAction') as () => Promise<void>,
-    onError: action('onError') as (_error: unknown) => void,
-    onComplete: action('onComplete') as () => void,
+    onAction: fn(),
+    onError: fn(),
+    onComplete: fn(),
   },
   argTypes: {},
   decorators: [

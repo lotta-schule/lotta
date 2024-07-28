@@ -123,7 +123,7 @@ describe('pages/admin/users/list', () => {
   });
 
   it('should search with groups and lastSeen, showing a message when no results were found', async () => {
-    const fireEvent = userEvent.setup();
+    const user = userEvent.setup();
     const screen = render(
       <UserList currentUser={adminUser} tenant={tenantWithStats} />,
       {},
@@ -138,18 +138,14 @@ describe('pages/admin/users/list', () => {
       ).toBeVisible();
     });
 
-    await fireEvent.click(
-      screen.getByRole('button', { name: /gruppe filtern/i })
-    );
+    await user.click(screen.getByRole('button', { name: /gruppe filtern/i }));
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });
-    await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
-    await fireEvent.click(
-      screen.getByRole('option', { name: /administrator/i })
-    );
 
-    await fireEvent.click(
+    await user.click(screen.getByRole('option', { name: /administrator/i }));
+
+    await user.click(
       await screen.findByRole('button', { name: /zuletzt angemeldet/i })
     );
 
@@ -158,9 +154,8 @@ describe('pages/admin/users/list', () => {
         screen.getByRole('listbox', { name: /angemeldet/i })
       ).toBeVisible();
     });
-    await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
 
-    await fireEvent.click(screen.getAllByRole('option')[0]);
+    await user.click(screen.getAllByRole('option')[0]);
     await waitFor(() => {
       expect(screen.getByText('Keine Nutzer gefunden.')).toBeVisible();
     });

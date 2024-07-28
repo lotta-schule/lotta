@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { StoryObj, Meta } from '@storybook/react';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import {
   Close,
   ComboBox,
   DragHandle,
   KeyboardArrowLeft,
 } from '@lotta-schule/hubert';
-import { action } from '@storybook/addon-actions';
 
 export default {
   title: 'form/ComboBox',
@@ -15,7 +14,7 @@ export default {
   subcomponents: {},
   args: {
     title: 'Chose an icon ... wisely',
-    onSelect: action('onSelect'),
+    onSelect: fn(),
   },
   docs: {
     description: {

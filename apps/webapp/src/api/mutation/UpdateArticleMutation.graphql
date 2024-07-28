@@ -8,6 +8,7 @@ mutation UpdateArticle($id: ID!, $article: ArticleInput!) {
     tags
     readyToPublish
     published
+    isReactionsEnabled
     isPinnedToTop
     previewImageFile {
       id

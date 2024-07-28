@@ -1,0 +1,11 @@
+mutation ReactToArticle($id: ID!, $reaction: ArticleReactionType!) {
+  article: reactToArticle(articleId: $id, type: $reaction) {
+    id
+    insertedAt
+    updatedAt
+    reactionCounts {
+      type
+      count
+    }
+  }
+}

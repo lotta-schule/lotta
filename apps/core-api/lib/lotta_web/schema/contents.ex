@@ -55,6 +55,15 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleResolver.by_user/2)
     end
 
+    field :get_reaction_users, type: list_of(:user) do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      arg(:id, non_null(:id))
+      arg(:type, non_null(:article_reaction_type))
+
+      resolve(&LottaWeb.ArticleReactionResolver.get_reaction_users/2)
+    end
+
     field :content_module_results, list_of(:content_module_result) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
@@ -96,6 +105,15 @@ defmodule LottaWeb.Schema.Contents do
       arg(:id, non_null(:id))
 
       resolve(&LottaWeb.ArticleResolver.toggle_pin/2)
+    end
+
+    field :react_to_article, type: :article do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      arg(:article_id, non_null(:id))
+      arg(:type, non_null(:article_reaction_type))
+
+      resolve(&LottaWeb.ArticleReactionResolver.react_to_article/2)
     end
 
     field :send_form_response, type: :boolean do

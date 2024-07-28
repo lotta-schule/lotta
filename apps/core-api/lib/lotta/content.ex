@@ -9,7 +9,7 @@ defmodule Lotta.Content do
   alias Lotta.Repo
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.File
-  alias Lotta.Content.{Article, Category, ContentModule, ContentModuleResult}
+  alias Lotta.Content.{Article, ArticleReaction, Category, ContentModule, ContentModuleResult}
 
   @type filter() :: %{
           optional(:first) => pos_integer(),
@@ -56,7 +56,7 @@ defmodule Lotta.Content do
   Get all the available tags
 
   ## Examples
-      
+
       iex> list_all_tags(nil)
       ["Tag 1", "Tag 2", ...]
   """
@@ -316,6 +316,54 @@ defmodule Lotta.Content do
   @spec delete_article(Article.t()) :: {:ok, Article.t()} | {:error, Ecto.Changeset.t()}
   def delete_article(%Article{} = article) do
     Repo.delete(article)
+  end
+
+  @doc """
+  Adds a user reaction to an article.
+  If the user has already reacted to the article, the reaction will be updated.
+  If the user has already reacted with the same reaction, the reaction will be removed.
+  """
+  @doc since: "5.0.0"
+  @spec create_article_reaction(Article.t(), User.t(), String.t()) ::
+          {:ok, ArticleReaction.t()} | {:error, Ecto.Changeset.t()} | {:error, String.t()}
+  def create_article_reaction(article, user, type) do
+    type = String.upcase(type)
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.one(
+      :existing_like,
+      from(ar in ArticleReaction,
+        where: ar.article_id == ^article.id and ar.user_id == ^user.id and ar.type == ^type
+      ),
+      prefix: Ecto.get_meta(article, :prefix)
+    )
+    |> Ecto.Multi.delete_all(
+      :delete_existing_reactions,
+      from(ar in ArticleReaction,
+        where: ar.article_id == ^article.id and ar.user_id == ^user.id
+      ),
+      prefix: Ecto.get_meta(article, :prefix)
+    )
+    |> Ecto.Multi.run(
+      :insert_reaction,
+      fn
+        repo, %{existing_like: nil} ->
+          ArticleReaction.changeset(%ArticleReaction{}, %{
+            article_id: article.id,
+            user_id: user.id,
+            type: type
+          })
+          |> repo.insert(prefix: Ecto.get_meta(article, :prefix))
+
+        _repo, _changes ->
+          {:ok, nil}
+      end
+    )
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{insert_reaction: reaction}} -> {:ok, reaction}
+      {:error, _, failed_value, _} -> {:error, failed_value}
+    end
   end
 
   @doc """

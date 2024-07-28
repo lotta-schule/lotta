@@ -10,6 +10,7 @@ defmodule LottaWeb.Schema.Contents.Article do
     field :preview, :string
     field :ready_to_publish, :boolean
     field :published, :boolean
+    field :is_reactions_enabled, :boolean
     field :tags, list_of(non_null(:string))
     field :preview_image_file, :select_file_input
     field :groups, list_of(:select_user_group_input)
@@ -45,6 +46,7 @@ defmodule LottaWeb.Schema.Contents.Article do
     field :ready_to_publish, :boolean
     field :published, :boolean
     field :is_pinned_to_top, :boolean
+    field :is_reactions_enabled, :boolean
 
     field :preview_image_file, :file,
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Storage)
@@ -57,6 +59,14 @@ defmodule LottaWeb.Schema.Contents.Article do
 
     field :users, list_of(:user), resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts)
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Tenants)
+
+    field :reaction_counts, list_of(:article_reaction_count),
+      resolve: &LottaWeb.ArticleReactionResolver.resolve_article_reaction_counts/2
+  end
+
+  object :article_reaction_count do
+    field :type, :article_reaction_type
+    field :count, :integer
   end
 
   object :content_module do
@@ -89,5 +99,16 @@ defmodule LottaWeb.Schema.Contents.Article do
     value(:form, as: "form")
     value(:table, as: "table")
     value(:divider, as: "divider")
+  end
+
+  enum :article_reaction_type do
+    value(:heart, as: "HEART")
+    value(:heart_crack, as: "HEART_CRACK")
+    value(:face_smile, as: "FACE_SMILE")
+    value(:face_flushed, as: "FACE_FLUSHED")
+    value(:lemon, as: "LEMON")
+    value(:pepper, as: "PEPPER")
+    value(:thumb_up, as: "THUMB_UP")
+    value(:skull, as: "SKULL")
   end
 end

@@ -80,6 +80,7 @@ export const ComputerExperten: ArticleModel = {
   insertedAt: '2015-05-01T12:00:00.000Z',
   updatedAt: '2016-03-02T10:00:00.000Z',
   isPinnedToTop: false,
+  isReactionsEnabled: true,
   readyToPublish: true,
   previewImageFile: null,
   title: 'Computerexperten',

@@ -8,6 +8,7 @@ query GetArticle($id: ID!) {
     tags
     readyToPublish
     published
+    isReactionsEnabled
     isPinnedToTop
     previewImageFile {
       id
@@ -35,6 +36,10 @@ query GetArticle($id: ID!) {
           mimeType
         }
       }
+    }
+    reactionCounts {
+      type
+      count
     }
     category {
       id

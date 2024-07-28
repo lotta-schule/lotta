@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { checkExpiredToken } from 'api/legacyClient';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -9,7 +11,7 @@ import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscript
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
 
-export const Authentication = React.memo(() => {
+const Authentication = React.memo(() => {
   const currentUser = useCurrentUser();
 
   React.useEffect(() => {
@@ -19,7 +21,7 @@ export const Authentication = React.memo(() => {
     return () => {
       clearInterval(intervalId);
     };
-  });
+  }, []);
 
   useSubscription<{ message: MessageModel }>(ReceiveMessageSubscription, {
     skip: typeof window === 'undefined' || !currentUser,
@@ -82,3 +84,5 @@ export const Authentication = React.memo(() => {
   return null;
 });
 Authentication.displayName = 'Authentication';
+
+export default Authentication;

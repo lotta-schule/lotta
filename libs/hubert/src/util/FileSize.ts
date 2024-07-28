@@ -79,7 +79,7 @@ export class FileSize {
   protected calculate(spec: FileSizeSpec = 'iec'): CalculationResult {
     const type = equals(spec, 'si') ? ['k', 'B'] : ['K', 'iB'];
     const algorithm = equals(spec, 'si') ? 1e3 : 1024;
-    const magnitude = (Math.log(this.bytes) / Math.log(algorithm)) | 0; // eslint-disable-line no-bitwise
+    const magnitude = (Math.log(this.bytes) / Math.log(algorithm)) | 0;
     const result = this.bytes / algorithm ** magnitude;
     const fixed = result.toFixed(this.options.fixed);
 
@@ -91,10 +91,7 @@ export class FileSize {
     if (magnitude) {
       suffix = `${type[0]}MGTPEZY`[magnitude - 1] + type[1];
     } else {
-      suffix =
-        (this.options.fixed | 0) === 1 // eslint-disable-line no-bitwise
-          ? 'Byte'
-          : 'Bytes';
+      suffix = (this.options.fixed | 0) === 1 ? 'Byte' : 'Bytes';
     }
 
     return {

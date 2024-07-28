@@ -81,17 +81,20 @@ defmodule LottaWeb.TenantResolverTest do
              }
     end
 
-    test "returns NULL if no tenant is set" do
+    test "returns a 400 error if no tenant is set" do
       res =
         build_conn()
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
-                 "tenant" => nil
-               }
-             }
+                 "tenant" => null
+               },
+               "errors" => errors
+             } = res
+
+      refute is_nil(errors)
     end
   end
 

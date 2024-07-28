@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { ArticleModel } from 'model';
-import { ArticleTitle } from './ArticleTitle';
 import { ContentModule } from './module/ContentModule';
+import { ArticleTitle } from './ArticleTitle';
+import { ArticleReactions } from './articleReactions';
+import { ReactionCountButtons } from './articleReactions/ReactionCountButtons';
 
 import styles from './Article.module.scss';
 
@@ -25,6 +27,15 @@ export const Article = React.memo(({ article }: ArticleProps) => {
             />
           ))}
       </section>
+      {article.isReactionsEnabled && (
+        <React.Suspense
+          fallback={
+            <ReactionCountButtons reactions={article.reactionCounts ?? []} />
+          }
+        >
+          <ArticleReactions article={article} />
+        </React.Suspense>
+      )}
     </article>
   );
 });

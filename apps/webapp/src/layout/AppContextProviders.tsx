@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import {
   DefaultThemes,
@@ -7,12 +9,16 @@ import {
 import { CategoryModel, TenantModel, UserModel } from 'model';
 import { AppHead } from './AppHead';
 import { ApolloProvider } from '@apollo/client';
-import { Authentication } from 'shared/Authentication';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
 import { fonts } from 'styles/fonts';
 import { useTenant } from 'util/tenant/useTenant';
 import { getApolloClient } from 'api/legacyClient';
 import { BaseLayout } from './BaseLayout';
+import dynamic from 'next/dynamic';
+
+const DynamicAuthentication = dynamic(() => import('shared/Authentication'), {
+  ssr: false,
+});
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
@@ -45,7 +51,7 @@ const TenantContextProviders = React.memo(
     return (
       <HubertProvider>
         <GlobalStyles theme={theme} supportedFonts={fonts} />
-        <Authentication />
+        <DynamicAuthentication />
         <AppHead />
         <BaseLayout>{children}</BaseLayout>
       </HubertProvider>

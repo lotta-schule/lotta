@@ -1,0 +1,10 @@
+query GetReactionUsersQuery($id: ID!, $reaction: ArticleReactionType!) {
+  users: getReactionUsers(id: $id, type: $reaction) {
+    id
+    nickname
+    name
+    avatarImageFile {
+      id
+    }
+  }
+}

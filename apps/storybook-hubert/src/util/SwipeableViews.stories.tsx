@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { StoryObj } from '@storybook/react';
 import { useArgs } from '@storybook/preview-api';
-import { expect, fireEvent, waitFor, within } from '@storybook/test';
-import { action } from '@storybook/addon-actions';
+import { expect, fireEvent, fn, waitFor, within } from '@storybook/test';
 import {
   Button,
   SwipeableViews,
@@ -20,7 +19,7 @@ export default {
         max: 5,
       },
     },
-    onChange: action('onChange'),
+    onChange: fn(),
   },
 };
 
@@ -78,7 +77,7 @@ export const Default: StoryObj<typeof SwipeableViews> = {
   },
   args: {
     selectedIndex: 0,
-    onChange: action('onChange'),
+    onChange: fn(),
   },
   play: async ({ canvasElement }) => {
     const screen = within(canvasElement);

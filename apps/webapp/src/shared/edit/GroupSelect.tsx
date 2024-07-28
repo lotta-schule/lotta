@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Checkbox, ComboBox, NoSsr, Tag } from '@lotta-schule/hubert';
 import { UserGroupModel } from 'model';

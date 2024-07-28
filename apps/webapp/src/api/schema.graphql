@@ -38,9 +38,11 @@ type Article {
   id: ID
   insertedAt: DateTime
   isPinnedToTop: Boolean
+  isReactionsEnabled: Boolean
   preview: String
   previewImageFile: File
   published: Boolean
+  reactionCounts: [ArticleReactionCount]
   readyToPublish: Boolean
   tags: [String!]
   title: String
@@ -62,6 +64,7 @@ input ArticleInput {
   contentModules: [ContentModuleInput]
   groups: [SelectUserGroupInput]
   insertedAt: DateTime
+  isReactionsEnabled: Boolean
   preview: String
   previewImageFile: SelectFileInput
   published: Boolean
@@ -70,6 +73,22 @@ input ArticleInput {
   title: String!
   updatedAt: DateTime
   users: [SelectUserInput]
+}
+
+type ArticleReactionCount {
+  count: Int
+  type: ArticleReactionType
+}
+
+enum ArticleReactionType {
+  FACE_FLUSHED
+  FACE_SMILE
+  HEART
+  HEART_CRACK
+  LEMON
+  PEPPER
+  SKULL
+  THUMB_UP
 }
 
 type Authresult {
@@ -353,6 +372,7 @@ type RootMutationType {
   destroyAccount(transferFileIds: [ID!], userId: ID!): User
   login(password: String, username: String): Authresult
   logout: Authresult
+  reactToArticle(articleId: ID!, type: ArticleReactionType!): Article
   register(groupKey: String, user: RegisterUserParams!): Boolean
   registerDevice(device: RegisterDeviceInput!): Device
   requestHisecToken(password: String): String
@@ -396,6 +416,7 @@ type RootQueryType {
   feedbacks: [Feedback]
   file(id: ID): File
   files(parentDirectoryId: ID): [File]
+  getReactionUsers(id: ID!, type: ArticleReactionType!): [User]
   group(id: ID!): UserGroup
   ownArticles: [Article]
   realtimeAnalytics: Int

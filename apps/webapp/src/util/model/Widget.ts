@@ -1,11 +1,11 @@
 import { WidgetModel, WidgetModelType } from 'model';
 import { File } from 'util/model';
-import { createElement } from 'react';
+import * as React from 'react';
 
 export const Widget = {
   getIcon(widget: WidgetModel) {
     return widget.iconImageFile
-      ? createElement('img', {
+      ? React.createElement('img', {
           src: File.getFileRemoteLocation('/', widget.iconImageFile),
           style: { width: '1.5rem', height: '1.5rem' },
         })
@@ -15,22 +15,22 @@ export const Widget = {
   getIconForType(type: WidgetModelType) {
     switch (type) {
       case WidgetModelType.Schedule:
-        return createElement('img', {
+        return React.createElement('img', {
           src: '/img/schedule.svg',
           style: { width: '1.5rem', height: '1.5rem' },
         });
       case WidgetModelType.Calendar:
-        return createElement('img', {
+        return React.createElement('img', {
           src: '/img/calendar.svg',
           style: { width: '1.5rem', height: '1.5rem' },
         });
       case WidgetModelType.IFrame:
-        return createElement('img', {
+        return React.createElement('img', {
           src: '/img/profile.svg',
           style: { width: '1.5rem', height: '1.5rem' },
         });
       default:
-        return createElement('img', {
+        return React.createElement('img', {
           src: '/img/profile.svg',
           style: { width: '1.5rem', height: '1.5rem' },
         });

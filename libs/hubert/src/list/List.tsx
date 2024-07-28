@@ -3,18 +3,13 @@ import clsx from 'clsx';
 
 import styles from './List.module.scss';
 
-export type ListProps = Omit<React.HTMLProps<HTMLUListElement>, 'ref'>;
+export type ListProps = React.HTMLProps<HTMLUListElement>;
 
-export const List = React.forwardRef(
-  (
-    { children, className, ...props }: ListProps,
-    ref: React.Ref<HTMLUListElement>
-  ) => {
-    return (
-      <ul className={clsx(styles.root, className)} {...props} ref={ref}>
-        {children}
-      </ul>
-    );
-  }
-);
+export const List = ({ children, className, ...props }: ListProps) => {
+  return (
+    <ul className={clsx(styles.root, className)} {...props}>
+      {children}
+    </ul>
+  );
+};
 List.displayName = 'List';
