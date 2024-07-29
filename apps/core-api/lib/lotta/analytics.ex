@@ -133,11 +133,12 @@ defmodule Lotta.Analytics do
           period :: String.t(),
           date :: String.t(),
           property :: String.t(),
-          metric :: String.t() | nil
+          metrics :: list(String.t() | :atom)
         ) ::
           {:ok, list(map())} | {:error, any()}
-  def get_breakdown_metrics(tenant, period, date, property, metric) do
-    metric_string = to_string(metric)
+  def get_breakdown_metrics(tenant, period, date, property, metrics) do
+    metrics = Enum.map(metrics, &to_string/1)
+    combined_metrics_string = Enum.join(metrics, ",")
     property_string = to_string(property)
 
     host = Urls.get_tenant_host(tenant)
@@ -149,18 +150,23 @@ defmodule Lotta.Analytics do
              query: [
                period: period,
                date: date,
-               metrics: metric_string,
+               metrics: combined_metrics_string,
                property: "#{prop_category}:#{prop_name}"
              ]
            ) do
       {:ok,
-       Enum.map(results, fn %{^prop_name => property, ^metric_string => metric_value} ->
+       Enum.map(results, fn %{^prop_name => property} = metrics_map ->
          %{
            property: property,
-           metrics: [%{metric: String.to_existing_atom(metric_string), value: metric_value}]
+           metrics:
+             Enum.map(metrics, fn metric_name ->
+               %{
+                 metric: String.to_existing_atom(metric_name),
+                 value: Map.get(metrics_map, to_string(metric_name))
+               }
+             end)
          }
-       end)
-       |> IO.inspect(label: "result")}
+       end)}
     else
       nil ->
         {:error, "Analytics is not enabled"}

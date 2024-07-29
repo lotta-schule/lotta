@@ -437,7 +437,7 @@ type RootQueryType {
   articlesByTag(tag: String!): [Article!]
   articlesByUser(id: ID!): [Article!]
   articlesWithUserFiles(userId: ID!): [Article]
-  breakdownAnalytics(date: Date!, metric: AnalyticsMetric, period: AnalyticsPeriod!, property: AnalyticsProperty!): [BreakdownMetrics!]
+  breakdownAnalytics(date: Date!, metrics: [AnalyticsMetric!]!, period: AnalyticsPeriod!, property: AnalyticsProperty!): [BreakdownMetrics!]
   calendar(days: Int, url: String!): [CalendarEvent]
   categories: [Category]
   contentModuleResults(contentModuleId: ID!): [ContentModuleResult]

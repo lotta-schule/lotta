@@ -89,7 +89,7 @@ defmodule Lotta.AnalyticsTest do
         query: [
           period: "month",
           date: "2024-03-01",
-          metrics: "visits",
+          metrics: "visits,visitors",
           property: "visit:device",
           site_id: "test.lotta.schule"
         ],
@@ -104,10 +104,10 @@ defmodule Lotta.AnalyticsTest do
            status: 200,
            body: %{
              "results" => [
-               %{"device" => "mobile", "visits" => 28123},
-               %{"device" => "tablet", "visits" => 234},
-               %{"device" => "desktop", "visits" => 1992},
-               %{"device" => "(not set)", "visits" => 255}
+               %{"device" => "mobile", "visits" => 28_123, "visitors" => 12_328},
+               %{"device" => "tablet", "visits" => 234, "visitors" => 123},
+               %{"device" => "desktop", "visits" => 1992, "visitors" => 299},
+               %{"device" => "(not set)", "visits" => 255, "visitors" => 144}
              ]
            }
          }}
@@ -176,35 +176,39 @@ defmodule Lotta.AnalyticsTest do
     test "get_breakdown_metrics returns metrics when analytics is enabled", %{tenant: tenant} do
       period = "month"
       date = "2024-03-01"
-      metric = "visits"
+      metrics = ["visits", :visitors]
       property = "visit_device"
 
-      response = Analytics.get_breakdown_metrics(tenant, period, date, property, metric)
+      response = Analytics.get_breakdown_metrics(tenant, period, date, property, metrics)
 
       assert {:ok,
               [
                 %{
                   property: "mobile",
                   metrics: [
-                    %{metric: :visits, value: 28123}
+                    %{metric: :visits, value: 28_123},
+                    %{metric: :visitors, value: 12_328}
                   ]
                 },
                 %{
                   property: "tablet",
                   metrics: [
-                    %{metric: :visits, value: 234}
+                    %{metric: :visits, value: 234},
+                    %{metric: :visitors, value: 123}
                   ]
                 },
                 %{
                   property: "desktop",
                   metrics: [
-                    %{metric: :visits, value: 1992}
+                    %{metric: :visits, value: 1992},
+                    %{metric: :visitors, value: 299}
                   ]
                 },
                 %{
                   property: "(not set)",
                   metrics: [
-                    %{metric: :visits, value: 255}
+                    %{metric: :visits, value: 255},
+                    %{metric: :visitors, value: 144}
                   ]
                 }
               ]} = response

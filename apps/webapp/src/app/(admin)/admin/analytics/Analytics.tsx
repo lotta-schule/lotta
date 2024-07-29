@@ -11,6 +11,7 @@ import {
   MetricsChart,
   PropertyBreakdown,
   CurrentOnlineUserCounter,
+  MetricType,
 } from './_component';
 import { formatDate } from './_util';
 
@@ -21,6 +22,7 @@ export type Period = ({ type: 'month'; date: Date } | { type: '30d' }) & {
 };
 
 export const Analytics = React.memo(() => {
+  const [isPending, startTransition] = React.useTransition();
   const { t } = useTranslation();
 
   const THIRTYDAYS_PERIOD = React.useMemo(
@@ -56,12 +58,14 @@ export const Analytics = React.memo(() => {
   );
 
   const [currentPeriod, setCurrentPeriod] = React.useState(possiblePeriods[0]);
+  const [selectedMetric, setSelectedMetric] =
+    React.useState<MetricType>('visits');
 
   const changePeriod = React.useCallback(
     (key: string) => {
       const p = possiblePeriods.find(({ period }) => period.key === key);
       if (p) {
-        React.startTransition(() => {
+        startTransition(() => {
           setCurrentPeriod(p);
         });
       }
@@ -75,6 +79,7 @@ export const Analytics = React.memo(() => {
         <Select
           title="Monat wählen"
           value={currentPeriod.period.key}
+          disabled={isPending}
           onChange={changePeriod}
         >
           {possiblePeriods.map(({ period, label }) => (
@@ -82,6 +87,36 @@ export const Analytics = React.memo(() => {
               {label}
             </Option>
           ))}
+        </Select>
+        <Select
+          title={t('Select metric')}
+          value={selectedMetric}
+          disabled={isPending}
+          onChange={(value) => {
+            startTransition(() => {
+              setSelectedMetric(value as MetricType);
+            });
+          }}
+          className={styles.metricSelect}
+        >
+          <Option key={'visits'} value={'visits'}>
+            {t('visits')}
+          </Option>
+          <Option key={'visitors'} value={'visitors'}>
+            {t('visitors')}
+          </Option>
+          <Option key={'pageviews'} value={'pageviews'}>
+            {t('pageviews')}
+          </Option>
+          <Option key={'bounceRate'} value={'bounceRate'}>
+            {t('bounceRate')}
+          </Option>
+          <Option key={'visitDuration'} value={'visitDuration'}>
+            {t('visitDuration')}
+          </Option>
+          <Option key={'viewsPerVisit'} value={'viewsPerVisit'}>
+            {t('viewsPerVisit')}
+          </Option>
         </Select>
         <CurrentOnlineUserCounter />
       </Toolbar>
@@ -105,7 +140,7 @@ export const Analytics = React.memo(() => {
         </AdminPageSection>
 
         <AdminPageSection title={t('development')}>
-          <MetricsChart period={currentPeriod.period} />
+          <MetricsChart period={currentPeriod.period} metric={selectedMetric} />
         </AdminPageSection>
       </React.Suspense>
 
@@ -119,8 +154,24 @@ export const Analytics = React.memo(() => {
           }
         >
           <div className={styles.breakdownGrid}>
-            <PropertyBreakdown period={currentPeriod.period} type="device" />
-            <PropertyBreakdown period={currentPeriod.period} type="source" />
+            <PropertyBreakdown
+              period={currentPeriod.period}
+              metric={selectedMetric}
+              properties={[
+                { name: 'VISIT_DEVICE', label: t('device type') },
+                { name: 'VISIT_BROWSER', label: t('browser') },
+                { name: 'VISIT_OS', label: t('OS') },
+              ]}
+            />
+            <PropertyBreakdown
+              period={currentPeriod.period}
+              metric={selectedMetric}
+              properties={[
+                { name: 'VISIT_SOURCE', label: t('visitor source') },
+                { name: 'VISIT_ENTRY_PAGE', label: t('entry page') },
+                { name: 'VISIT_EXIT_PAGE', label: t('exit page') },
+              ]}
+            />
           </div>
         </React.Suspense>
       </AdminPageSection>

@@ -123,7 +123,7 @@ export const getChildNodes = <T extends NodeOrNodeId<'directory'> | null>(
   node: T
 ): BrowserNode[] =>
   browserNodes.filter(
-    (n) => n.parent === (typeof node === 'string' ? node : node?.id ?? null)
+    (n) => n.parent === (typeof node === 'string' ? node : (node?.id ?? null))
   ) as any;
 
 export const getParentNode = <T extends NodeOrNodeId>(

@@ -28,11 +28,11 @@ const updateCache = <T extends FileModel | DirectoryModel>(
         files:
           'file' in updateResult
             ? data.files.filter((f) => f.id !== initialModel.id)
-            : data?.files ?? [],
+            : (data?.files ?? []),
         directories:
           'directory' in updateResult
             ? data.directories.filter((d) => d.id !== initialModel.id)
-            : data?.directories ?? [],
+            : (data?.directories ?? []),
       }
   );
 

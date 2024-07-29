@@ -62,7 +62,7 @@ defmodule LottaWeb.Schema.Tenants do
       arg(:period, non_null(:analytics_period))
       arg(:date, non_null(:date))
       arg(:property, non_null(:analytics_property))
-      arg(:metric, :analytics_metric)
+      arg(:metrics, non_null(list_of(non_null(:analytics_metric))))
 
       resolve(&LottaWeb.AnalyticsResolver.breakdown/2)
     end

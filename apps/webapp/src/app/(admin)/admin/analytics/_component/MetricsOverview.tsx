@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useQuery, useSuspenseQuery } from '@apollo/client';
-import { Box, LinearProgress } from '@lotta-schule/hubert';
+import { useSuspenseQuery } from '@apollo/client';
+import { Box } from '@lotta-schule/hubert';
 import { MetricType } from './MetricType';
 import { formatDate } from '../_util';
 import { Period } from '../Analytics';

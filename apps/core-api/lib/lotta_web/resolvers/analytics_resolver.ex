@@ -20,9 +20,9 @@ defmodule LottaWeb.AnalyticsResolver do
     Analytics.get_timeseries_metrics(tenant, period, date, metric)
   end
 
-  def breakdown(%{period: period, date: date, property: property, metric: metric}, %{
+  def breakdown(%{period: period, date: date, property: property, metrics: metrics}, %{
         context: %Context{tenant: tenant}
       }) do
-    Analytics.get_breakdown_metrics(tenant, period, date, property, metric)
+    Analytics.get_breakdown_metrics(tenant, period, date, property, metrics)
   end
 end

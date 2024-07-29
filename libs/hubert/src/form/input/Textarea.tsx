@@ -15,7 +15,7 @@ export const Textarea = ({ maxHeight, ref, ...props }: TextareaProps) => {
 
   const setInputHeight = (elem: HTMLTextAreaElement) => {
     const height = `min(${elem.scrollHeight}px, ${
-      typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight ?? '100vh'
+      typeof maxHeight === 'number' ? `${maxHeight}px` : (maxHeight ?? '100vh')
     })`;
     setParentHeight(height);
     setTextareaHeight(`calc(calc(0.5 * var(--lotta-spacing)) + ${height})`);

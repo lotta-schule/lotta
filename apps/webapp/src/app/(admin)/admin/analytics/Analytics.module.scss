@@ -1,3 +1,5 @@
+@import "breakpoints";
+
 .root {
   .toolbar {
     z-index: 2;
@@ -8,5 +10,13 @@
     grid-template: auto / 1fr 1fr;
     align-items: baseline;
     column-gap: calc(6 * var(--lotta-spacing));
+    row-gap: calc(6 * var(--lotta-spacing));
+    @media screen and (max-width: $max-md) {
+      column-grap: var(--lotta-spacing);
+    }
+
+    @media screen and (max-width: $max-sm) {
+      grid-template: auto / 1fr;
+    }
   }
 }
