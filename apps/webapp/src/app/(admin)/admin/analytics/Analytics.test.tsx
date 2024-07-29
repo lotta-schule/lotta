@@ -1,32 +1,38 @@
 import * as React from 'react';
+import { MockedFunction } from 'vitest';
 import { render, waitFor } from 'test/util';
 import { Analytics } from './Analytics';
+import { PropertyBreakdown } from './_component';
 import userEvent from '@testing-library/user-event';
 
-import GetTenantRealtimeAnalyticsQuery from 'api/query/analytics/GetTenantRealtimeAnalyticsQuery.graphql';
 import GetTenantAggregateAnalyticsQuery from 'api/query/analytics/GetTenantAggregateAnalyticsQuery.graphql';
 import GetTenantTimeseriesAnalyticsQuery from 'api/query/analytics/GetTenantTimeseriesAnalyticsQuery.graphql';
+import GetTenantBreakdownAnalyticsQuery from 'api/query/analytics/GetTenantBreakdownAnalyticsQuery.graphql';
 
 vi.useFakeTimers({
   shouldAdvanceTime: true,
   now: new Date('2025-08-16T12:00:00.000Z'),
 });
 
+vi.mock('./_component/PropertyBreakdown', () => ({
+  PropertyBreakdown: vi.fn(() => <div data-testid="PropertyBreakdown"></div>),
+}));
+
+vi.mock('./_component/CurrentOnlineUserCounter', () => ({
+  CurrentOnlineUserCounter: vi.fn(() => (
+    <div data-testid="CurrentOnlineUserCounter"></div>
+  )),
+}));
+
+const MockPropertyBreakdown = PropertyBreakdown as MockedFunction<
+  typeof PropertyBreakdown
+>;
+
 const mocks = [
   {
     request: {
-      query: GetTenantRealtimeAnalyticsQuery,
-    },
-    result: {
-      data: {
-        currentUserCount: 50,
-      },
-    },
-  },
-  {
-    request: {
       query: GetTenantAggregateAnalyticsQuery,
-      variables: { date: '2025-08-01' },
+      variables: { date: '2025-08-16', period: '30d' },
     },
     result: vi.fn(() => ({
       data: {
@@ -45,8 +51,9 @@ const mocks = [
     request: {
       query: GetTenantTimeseriesAnalyticsQuery,
       variables: {
-        date: '2025-08-01',
+        date: '2025-08-16',
         metric: 'VISITS',
+        period: '30d',
       },
     },
     result: vi.fn(() => ({
@@ -62,7 +69,7 @@ const mocks = [
   {
     request: {
       query: GetTenantAggregateAnalyticsQuery,
-      variables: { date: '2025-04-01' },
+      variables: { date: '2025-04-01', period: 'month' },
     },
     result: vi.fn(() => ({
       data: {
@@ -83,6 +90,7 @@ const mocks = [
       variables: {
         date: '2025-04-01',
         metric: 'VISITS',
+        period: 'month',
       },
     },
     result: vi.fn(() => ({
@@ -95,44 +103,145 @@ const mocks = [
       },
     })),
   },
+  {
+    request: {
+      query: GetTenantTimeseriesAnalyticsQuery,
+      variables: {
+        date: '2025-08-16',
+        metric: 'VISITORS',
+        period: '30d',
+      },
+    },
+    result: vi.fn(() => ({
+      data: {
+        metrics: [
+          { date: '2025-08-01', value: 100 },
+          { date: '2025-08-02', value: 150 },
+          { date: '2025-08-03', value: 200 },
+        ],
+      },
+    })),
+  },
+  {
+    request: {
+      query: GetTenantBreakdownAnalyticsQuery,
+      variables: {
+        date: '2025-08-16',
+        metric: 'VISITORS',
+        period: '30d',
+        property: 'VISIT_DEVICE',
+      },
+    },
+    result: vi.fn(() => ({
+      data: {
+        properties: [
+          { property: 'mobile', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'tablet', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'desktop', metrics: [{ metric: 'VISITS', value: 100 }] },
+        ],
+      },
+    })),
+  },
+  {
+    request: {
+      query: GetTenantBreakdownAnalyticsQuery,
+      variables: {
+        date: '2025-08-16',
+        metric: 'VISITORS',
+        period: '30d',
+        property: 'VISIT_SOURCE',
+      },
+    },
+    result: vi.fn(() => ({
+      data: {
+        properties: [
+          { property: 'mobile', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'tablet', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'desktop', metrics: [{ metric: 'VISITS', value: 100 }] },
+        ],
+      },
+    })),
+  },
+  {
+    request: {
+      query: GetTenantBreakdownAnalyticsQuery,
+      variables: {
+        date: '2025-04-01',
+        metric: 'VISITORS',
+        period: 'month',
+        property: 'VISIT_DEVICE',
+      },
+    },
+    result: vi.fn(() => ({
+      data: {
+        properties: [
+          { property: 'mobile', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'tablet', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'desktop', metrics: [{ metric: 'VISITS', value: 100 }] },
+        ],
+      },
+    })),
+  },
+  {
+    request: {
+      query: GetTenantBreakdownAnalyticsQuery,
+      variables: {
+        date: '2025-04-01',
+        metric: 'VISITORS',
+        period: 'month',
+        property: 'VISIT_SOURCE',
+      },
+    },
+    result: vi.fn(() => ({
+      data: {
+        properties: [
+          { property: 'mobile', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'tablet', metrics: [{ metric: 'VISITS', value: 100 }] },
+          { property: 'desktop', metrics: [{ metric: 'VISITS', value: 100 }] },
+        ],
+      },
+    })),
+  },
 ];
 
 describe('Analytics', () => {
   it('renders with default date and user count', async () => {
-    const { getByText } = render(<Analytics />, {}, { additionalMocks: mocks });
+    const screen = render(<Analytics />, {}, { additionalMocks: mocks });
 
     await waitFor(() => {
-      expect(getByText('Aktuell online')).toBeInTheDocument();
-      expect(getByText('50 Besucher')).toBeInTheDocument();
+      expect(screen.getByTestId('CurrentOnlineUserCounter')).toBeVisible();
     });
 
     await waitFor(() => {
+      expect(mocks[0].result).toHaveBeenCalled();
       expect(mocks[1].result).toHaveBeenCalled();
-      expect(mocks[2].result).toHaveBeenCalled();
     });
   });
 
   describe('month selector', () => {
     it('shows the correct amount of months in the selection', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
 
       const screen = render(<Analytics />, {}, { additionalMocks: mocks });
 
       expect(
         screen.getByRole('button', {
-          name: 'August 2025 Monat wählen',
+          name: 'vergangene 30 Tage Monat wählen',
         })
       ).toBeVisible();
 
-      await fireEvent.click(
+      await user.click(
         screen.getByRole('button', {
-          name: 'August 2025 Monat wählen',
+          name: 'vergangene 30 Tage Monat wählen',
         })
       );
 
       await waitFor(() => {
-        expect(screen.getByRole('option', { name: 'Juli 2025' })).toBeVisible();
+        expect(
+          screen.getByRole('option', { name: 'August 2025' })
+        ).toBeVisible();
       });
+      expect(screen.getByRole('option', { name: 'Juli 2025' })).toBeVisible();
       expect(screen.getByRole('option', { name: 'Juni 2025' })).toBeVisible();
       expect(screen.getByRole('option', { name: 'Mai 2025' })).toBeVisible();
       expect(screen.getByRole('option', { name: 'April 2025' })).toBeVisible();
@@ -161,14 +270,62 @@ describe('Analytics', () => {
       expect(screen.getByRole('option', { name: 'März 2024' })).toBeVisible();
       expect(screen.queryByRole('option', { name: 'Februar 2024' })).toBeNull();
 
-      await new Promise((resolve) => setTimeout(resolve, 400));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-      await fireEvent.click(screen.getByRole('option', { name: 'April 2025' }));
+      await user.click(screen.getByRole('option', { name: 'April 2025' }));
 
       await waitFor(() => {
-        expect(mocks[3].result).toHaveBeenCalled();
-        expect(mocks[4].result).toHaveBeenCalled();
+        expect(
+          screen.getByRole('button', {
+            name: 'April 2025 Monat wählen',
+          })
+        ).toBeVisible();
       });
+
+      await waitFor(() => {
+        expect(mocks[2].result).toHaveBeenCalled();
+        expect(mocks[3].result).toHaveBeenCalled();
+      });
+    }, 20_000);
+  });
+
+  describe('metric selector', () => {
+    it('shows the metric and updates the PropertyBreakdown components', async () => {
+      const user = userEvent.setup();
+
+      const screen = render(<Analytics />, {}, { additionalMocks: mocks });
+
+      await waitFor(() => {
+        const props = MockPropertyBreakdown.mock.lastCall?.at(0);
+        expect(props).toHaveProperty('metric', 'visits');
+      });
+
+      expect(
+        screen.getByRole('button', {
+          name: 'Besuche Metrik wählen',
+        })
+      ).toBeVisible();
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', {
+            name: 'Besuche Metrik wählen',
+          })
+        ).not.toBeDisabled();
+      });
+
+      await user.click(
+        screen.getByRole('button', {
+          name: 'Besuche Metrik wählen',
+        })
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('option', { name: 'Besucher' })).toBeVisible();
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      await user.click(screen.getByRole('option', { name: 'Besucher' }));
     }, 20_000);
   });
 });

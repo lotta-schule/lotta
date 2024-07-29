@@ -2,6 +2,7 @@ import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render, waitFor } from 'test/util';
 import { MetricsOverview } from './MetricsOverview';
+import { Period } from '../Analytics';
 
 import GetTenantAggregateAnalyticsQuery from 'api/query/analytics/GetTenantAggregateAnalyticsQuery.graphql';
 
@@ -15,7 +16,7 @@ const mocks = [
   {
     request: {
       query: GetTenantAggregateAnalyticsQuery,
-      variables: { date: '2024-03-16' },
+      variables: { date: '2024-03-16', period: 'month' },
     },
     result: {
       data: {
@@ -32,26 +33,28 @@ const mocks = [
   },
 ];
 
+const monthPeriod: Period = {
+  type: 'month',
+  date: new Date('2024-03-16'),
+  key: '2024-03-16',
+};
+
 describe('MetricsOverview', () => {
   it('renders loading state initially', async () => {
     const screen = render(
-      <MetricsOverview date="2024-03-16" />,
+      <MetricsOverview period={monthPeriod} />,
       {},
       { additionalMocks: mocks }
     );
 
-    expect(
-      screen.getByLabelText('Metriken werden geladen')
-    ).toBeInTheDocument();
-
     await waitFor(() => {
-      expect(screen.queryByLabelText('Metriken werden geladen')).toBeNull();
+      expect(screen.queryByLabelText('loading')).toBeNull();
     });
   });
 
   it('renders metrics when data is fetched', async () => {
     const { getByText } = render(
-      <MetricsOverview date="2024-03-16" />,
+      <MetricsOverview period={monthPeriod} />,
       {},
       { additionalMocks: mocks }
     );

@@ -1,0 +1,31 @@
+export const propertyIconData = {
+  VISIT_DEVICE: {
+    desktop: 'device/desktop.png',
+    mobile: 'device/mobile.png',
+    tablet: 'device/tablet.png',
+  },
+  VISIT_BROWSER: {
+    chrome: 'browser/chrome.png',
+    edge: 'browser/edge.png',
+    firefox: 'browser/firefox.png',
+    huawei: 'browser/huawei.png',
+    opera: 'browser/opera.png',
+    safari: 'browser/safari.png',
+    samsung: 'browser/samsung.png',
+    tmobile: 'browser/tmobile.png',
+    tonline: 'browser/tmobile.png',
+  },
+  VISIT_OS: {
+    android: 'os/android.png',
+    ios: 'os/apple.png',
+    ipados: 'os/apple.png',
+    windows: 'os/windows.png',
+    mac: 'os/mac.png',
+    linux: 'os/linux.png',
+    ubuntu: 'os/ubuntu.png',
+    debian: 'os/debian.png',
+    fedora: 'os/linux.png',
+    arch: 'os/linux.png',
+    chrome: 'browser/chrome.png',
+  },
+} as const;

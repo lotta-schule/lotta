@@ -1,0 +1,20 @@
+.root {
+  .propertySelectionCell {
+    font-weight: normal;
+    & > .selectedProperty {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    & a {
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 0.9em;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  .propertySelectionDevider {
+    margin-inline: calc(0.5 * var(--lotta-spacing));
+  }
+}

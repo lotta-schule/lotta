@@ -35,7 +35,7 @@ export const getServerSideProps = async ({
     return { props: {} };
   }
   const rawCategoryId = (params?.slug as string)?.replace(/^(\d+).*/, '$1');
-  const categoryId = rawCategoryId === '0' ? null : rawCategoryId ?? null;
+  const categoryId = rawCategoryId === '0' ? null : (rawCategoryId ?? null);
 
   const {
     data: { articles },

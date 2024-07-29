@@ -12,11 +12,11 @@ defmodule LottaWeb.Schema.CustomTypes.Analytics do
   end
 
   @spec parse_analytics_period(Absinthe.Blueprint.Input.String.t()) ::
-          {:ok, :month | :date} | :error
+          {:ok, :month | :date | :"30d"} | :error
   @spec parse_analytics_period(Absinthe.Blueprint.Input.Null.t()) :: {:ok, nil}
   defp parse_analytics_period(%Absinthe.Blueprint.Input.String{value: value}) do
     case String.to_existing_atom(value) do
-      period when period in [:date, :month] -> {:ok, period}
+      period when period in [:date, :month, :"30d"] -> {:ok, period}
       _ -> :error
     end
   rescue

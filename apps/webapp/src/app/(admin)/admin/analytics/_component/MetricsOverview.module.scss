@@ -15,5 +15,8 @@
     width: 100%;
     max-width: 15em;
     justify-content: space-between;
+    & > span:last-child {
+      font-size: 1.15em;
+    }
   }
 }

@@ -1,5 +1,5 @@
-query GetTenantTimeseriesAnalytics($date: Date!, $metric: AnalyticsMetric!) {
-  metrics: timeseriesAnalytics(date: $date, metric: $metric, period: "month") {
+query GetTenantTimeseriesAnalytics($date: Date!, $metric: AnalyticsMetric!, $period: AnalyticsPeriod!) {
+  metrics: timeseriesAnalytics(date: $date, metric: $metric, period: $period) {
     date
     value
   }

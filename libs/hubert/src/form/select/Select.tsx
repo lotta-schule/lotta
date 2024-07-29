@@ -17,7 +17,7 @@ import clsx from 'clsx';
 import styles from './select.module.scss';
 
 export type SelectProps = React.AriaAttributes &
-  React.HTMLProps<HTMLDivElement> & {
+  Omit<React.HTMLProps<HTMLDivElement>, 'onChange'> & {
     className?: string;
 
     style?: React.CSSProperties;
