@@ -8,6 +8,7 @@ import {
   gqlCompatibleMetricType,
   MetricType,
 } from './MetricType';
+import { PropertyIcon } from './PropertyIcon';
 import { t } from 'i18next';
 
 import styles from './PropertyBreakdown.module.scss';
@@ -99,7 +100,13 @@ export const PropertyBreakdown = React.memo(
           {properties.map(
             ({ property, metrics: [{ metric: _metricName, value }] }) => (
               <tr key={property}>
-                <td>{property}</td>
+                <td>
+                  <PropertyIcon
+                    name={selectedProperty.name as any}
+                    value={property}
+                  />
+                  {property}
+                </td>
                 <td align="right">{value}</td>
               </tr>
             )

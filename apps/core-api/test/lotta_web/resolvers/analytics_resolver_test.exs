@@ -184,8 +184,8 @@ defmodule LottaWeb.AnalyticsResolverTest do
 
   describe "breakdown query" do
     @query """
-      query GetTenantBreakdownAnalytics($date: Date!, $period: AnalyticsPeriod!, $metric: AnalyticsMetric!, $property: AnalyticsProperty!) {
-        metrics: breakdownAnalytics(date: $date, metric: $metric, period: $period, property: $property) {
+      query GetTenantBreakdownAnalytics($date: Date!, $period: AnalyticsPeriod!, $metrics: [AnalyticsMetric!]!, $property: AnalyticsProperty!) {
+        metrics: breakdownAnalytics(date: $date, metrics: $metrics, period: $period, property: $property) {
           property
           metrics {
             metric
@@ -204,7 +204,7 @@ defmodule LottaWeb.AnalyticsResolverTest do
           variables: %{
             date: "2021-01-01",
             period: "month",
-            metric: "VISITS",
+            metrics: ["VISITS"],
             property: "VISIT_DEVICE"
           }
         )
@@ -231,7 +231,7 @@ defmodule LottaWeb.AnalyticsResolverTest do
           variables: %{
             date: "2021-01-01",
             period: "month",
-            metric: "VISITS",
+            metrics: ["VISITS"],
             property: "VISIT_DEVICE"
           }
         )
