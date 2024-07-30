@@ -389,6 +389,53 @@ defmodule Lotta.Storage do
   end
 
   @doc """
+  Searches for files with filenames matching a given string
+
+  # Examples
+    iex> search_files(user, "house")
+    [%File{filename: "house_poem.txt", ...}, %File{filename: "image_house.png", ...}]
+  """
+  @doc since: "5.0.0"
+  @spec search_files(user :: User.t(), searchterm :: String.t()) ::
+          list(Lotta.Storage.File.t())
+  def search_files(user, searchterm) do
+    matching_searchtext =
+      searchterm
+      |> String.replace(~r/_|%/, &"\\#{&1}")
+      |> then(&"%#{&1}%")
+
+    from(f in Lotta.Storage.File,
+      where:
+        (f.user_id == ^user.id or is_nil(f.user_id)) and ilike(f.filename, ^matching_searchtext),
+      order_by: [:filename]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Searches for directories with names matching a given string
+
+  # Examples
+    iex> search_directories(user, "house")
+    [%Directory{name: "house_utils", ...}, %Directory{name: "my_house_music", ...}]
+  """
+  @doc since: "5.0.0"
+  @spec search_directories(user :: User.t(), searchterm :: String.t()) ::
+          list(Lotta.Storage.Directory.t())
+  def search_directories(user, searchterm) do
+    matching_searchtext =
+      searchterm
+      |> String.replace(~r/_|%/, &"\\#{&1}")
+      |> then(&"%#{&1}%")
+
+    from(d in Directory,
+      where: (d.user_id == ^user.id or is_nil(d.user_id)) and ilike(d.name, ^matching_searchtext),
+      order_by: [:name]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Get the http URL for a given file
 
   ### TODO

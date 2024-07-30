@@ -14,6 +14,7 @@ import { ActiveUploadsDialog } from './dialogs/ActiveUploadsDialog';
 import clsx from 'clsx';
 
 import styles from './Toolbar.module.scss';
+import { Searchbar } from './Searchbar';
 
 export type ToolbarProps = {
   className?: string;
@@ -75,11 +76,9 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
         )}
         {activeDirectoryName}
       </div>
-      {/*
-        <div className={styles.searchField}>
-          <Input placeholder="suchen" />
-        </div>
-      */}
+
+      <Searchbar className={styles.searchField} />
+
       <div className={styles.rightContainer}>
         {createDirectory !== undefined && isDirectoryCreationAllowed && (
           <Button

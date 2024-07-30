@@ -7,6 +7,7 @@ defmodule LottaWeb.FileResolver do
   import Lotta.Accounts.Permissions
   import LottaWeb.ErrorHelpers
 
+  alias Ecto.Adapter.Storage
   alias LottaWeb.Context
   alias Lotta.Tenants
   alias Lotta.Tenants.Category
@@ -110,6 +111,14 @@ defmodule LottaWeb.FileResolver do
   end
 
   def files(_, _), do: {:ok, []}
+
+  def search_files(%{searchterm: term}, %{context: %{current_user: user}}) do
+    {:ok, Storage.search_files(user, term)}
+  end
+
+  def search_directories(%{searchterm: term}, %{context: %{current_user: user}}) do
+    {:ok, Storage.search_directories(user, term)}
+  end
 
   def relevant_files_in_usage(_args, %{context: %Context{current_user: current_user}}) do
     category_files =

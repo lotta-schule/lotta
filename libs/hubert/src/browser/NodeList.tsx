@@ -38,7 +38,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
       [...selected].sort((n1, n2) =>
         n1.at(-1)?.type !== n2.at(-1)?.type
           ? Number(n1.at(-1)?.type === 'directory')
-          : (n1.at(-1)?.name.localeCompare(n2.at(-1)?.name ?? '') ?? 0)
+          : n1.at(-1)?.name.localeCompare(n2.at(-1)?.name ?? '') ?? 0
       ),
     [selected]
   );
@@ -49,6 +49,9 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
 
   const onKeyDown = React.useCallback(
     (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement && e.target.type === 'text') {
+        return;
+      }
       const currentListSelected = sortedSelected.filter(
         (s) => s.at(-1)?.parent === (path.at(-1)?.id ?? null)
       );
