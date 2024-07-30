@@ -18,10 +18,9 @@ import styles from './MetricsChart.module.scss';
 
 import GetTenantTimeseriesAnalyticsQuery from 'api/query/analytics/GetTenantTimeseriesAnalyticsQuery.graphql';
 
-const Chart = dynamic(
-  () => import('react-charts').then((mod) => mod.Chart),
-  {}
-);
+const Chart = dynamic(() => import('react-charts').then((mod) => mod.Chart), {
+  ssr: false,
+});
 
 export type MetricsChartProps = {
   period: Period;

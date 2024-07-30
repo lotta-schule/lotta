@@ -1,3 +1,5 @@
+@import "breakpoints";
+
 .root {
   .propertySelectionCell {
     font-weight: normal;
@@ -16,5 +18,18 @@
   }
   .propertySelectionDevider {
     margin-inline: calc(0.5 * var(--lotta-spacing));
+  }
+
+  @media screen and (max-width: $max-xs) {
+    .propertySelectionCell {
+      a {
+        font-size: 1em;
+      }
+    }
+    .propertySelectionDevider {
+      display: block;
+      visibility: hidden;
+      height: 0;
+    }
   }
 }

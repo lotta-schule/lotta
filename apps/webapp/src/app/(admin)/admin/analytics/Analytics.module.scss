@@ -4,7 +4,15 @@
   .toolbar {
     z-index: 2;
     padding: 0;
+
+    @media screen and (max-width: $max-xs) {
+      flex-wrap: wrap;
+      & > div:last-child {
+        width: 100%;
+      }
+    }
   }
+
   .breakdownGrid {
     display: grid;
     grid-template: auto / 1fr 1fr;
@@ -18,5 +26,9 @@
     @media screen and (max-width: $max-sm) {
       grid-template: auto / 1fr;
     }
+  }
+
+  section {
+    font-size: 0.9rem;
   }
 }
