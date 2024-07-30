@@ -66,6 +66,15 @@ export const ArticlePreview = React.memo(
       null
     );
 
+    const selectedUsers = React.useMemo(
+      () =>
+        selectedUser && [
+          selectedUser,
+          ...article.users.filter(({ id }) => id !== selectedUser?.id),
+        ],
+      [selectedUser, article]
+    );
+
     const showEditSection =
       User.canEditArticle(currentUser, article) || User.isAdmin(currentUser);
 
@@ -349,7 +358,7 @@ export const ArticlePreview = React.memo(
         )}
         {UserArticlesDialog && (
           <UserArticlesDialog
-            user={selectedUser}
+            users={selectedUsers}
             onRequestClose={() => setSelectedUser(null)}
           />
         )}
