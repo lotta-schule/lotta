@@ -7,6 +7,7 @@ import { ServerDownErrorPage } from 'layout/error/ServerDownErrorPage';
 import { TenantNotFoundErrorPage } from 'layout/error/TenantNotFoundErrorPage';
 import { getApolloClient } from 'api/legacyClient';
 import { AppContextProviders } from 'layout/AppContextProviders';
+import { TranslationsProvider } from 'i18n/client';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
@@ -52,7 +53,9 @@ const LottaWebApp = ({
         data-api="/p/e"
         src="/p/script.js"
       ></script>
-      <Component {...componentProps} />
+      <TranslationsProvider>
+        <Component {...componentProps} />
+      </TranslationsProvider>
     </AppContextProviders>
   );
 };

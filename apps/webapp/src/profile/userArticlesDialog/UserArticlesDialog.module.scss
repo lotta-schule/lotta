@@ -1,3 +1,7 @@
 .root {
   display: flex;
+
+  .tabbarAvatar {
+    margin-right: var(--lotta-spacing);
+  }
 }

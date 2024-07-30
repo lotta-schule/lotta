@@ -99,7 +99,7 @@ export const AppContextProviders = ({
   const baseUrl =
     typeof window === 'undefined'
       ? requestBaseUrl
-      : (requestBaseUrl ?? window.location.origin);
+      : requestBaseUrl ?? window.location.origin;
 
   return (
     <ServerDataContextProvider baseUrl={baseUrl}>

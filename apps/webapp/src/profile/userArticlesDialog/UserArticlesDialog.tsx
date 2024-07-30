@@ -4,21 +4,34 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  Tab,
+  Tabbar,
 } from '@lotta-schule/hubert';
 import { UserModel } from 'model';
 import { User } from 'util/model';
 import { ArticlesByUser } from 'article/relatedArticlesList';
 import { isBrowser } from 'util/isBrowser';
+import { UserAvatar } from 'shared/userAvatar/UserAvatar';
+import { useTranslation } from 'react-i18next';
 
 import styles from './UserArticlesDialog.module.scss';
 
 export interface UserArticlesDialogProps {
-  user: UserModel | null;
+  users: UserModel[] | null;
   onRequestClose(): void;
 }
 
 export const UserArticlesDialog = React.memo(
-  ({ user, onRequestClose }: UserArticlesDialogProps) => {
+  ({ users, onRequestClose }: UserArticlesDialogProps) => {
+    const { t } = useTranslation();
+    const [selectedUser, setSelectedUser] = React.useState(
+      users?.at(0) ?? null
+    );
+
+    React.useEffect(() => {
+      setSelectedUser(users?.at(0) ?? null);
+    }, [users]);
+
     // TODO: use router from next/navigation as soon
     // as we fully switch to app router
     React.useEffect(() => {
@@ -34,13 +47,37 @@ export const UserArticlesDialog = React.memo(
 
     return (
       <Dialog
-        open={!!user}
+        open={!!users}
         className={styles.root}
-        title={`Weitere Beiträge von ${User.getName(user)}`}
+        title={t('more articles from {{username}}', {
+          username: User.getName(selectedUser),
+        })}
         onRequestClose={onRequestClose}
       >
         <DialogContent>
-          {user && <ArticlesByUser key={user.id} user={user} />}
+          {!!users && (
+            <>
+              <Tabbar
+                value={selectedUser?.id}
+                onChange={(userId) => {
+                  const newSelectedUser = users.find(({ id }) => userId === id);
+                  if (newSelectedUser) {
+                    setSelectedUser(newSelectedUser);
+                  }
+                }}
+              >
+                {users.map((user) => (
+                  <Tab key={user.id} value={user.id}>
+                    <UserAvatar user={user} className={styles.tabbarAvatar} />{' '}
+                    {user.name}
+                  </Tab>
+                ))}
+              </Tabbar>
+              {selectedUser && (
+                <ArticlesByUser key={selectedUser.id} user={selectedUser} />
+              )}
+            </>
+          )}
         </DialogContent>
         <DialogActions>
           <Button
