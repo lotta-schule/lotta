@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { VirtualElement } from '@popperjs/core';
 import { useDropzone } from 'react-dropzone';
+import { Overlay } from '../popover';
 import { Menu } from '../menu';
 import { Folder, FolderOpen } from '../icon';
 import { Checkbox } from '../form';
@@ -25,6 +26,7 @@ export type NodeListItemProps = {
   node: BrowserNode;
   isDisabled?: boolean;
   isSelected?: boolean;
+  isEditingDisabled?: boolean;
   onClick?: (e: React.MouseEvent) => void;
 };
 
@@ -34,6 +36,7 @@ export const NodeListItem = React.memo(
   ({
     parentPath,
     node,
+    isEditingDisabled = false,
     isDisabled,
     isSelected = false,
     onClick,
@@ -152,7 +155,7 @@ export const NodeListItem = React.memo(
           onContextMenu={(e) => {
             currentContextMenuCloseFn?.();
             e.preventDefault();
-            if (mode !== 'view-and-edit' || isDisabled) {
+            if (mode !== 'view-and-edit' || isDisabled || isEditingDisabled) {
               return;
             }
             if (!isSelected) {
@@ -185,6 +188,7 @@ export const NodeListItem = React.memo(
           <div className={styles.editSection}>
             {mode === 'view-and-edit' &&
               !isDisabled &&
+              !isEditingDisabled &&
               isDirectoryNode(node) &&
               isMobile && <NodeMenuButton path={nodePath} />}
             {mode === 'select-multiple' && node.type === 'file' && (
@@ -216,14 +220,16 @@ export const NodeListItem = React.memo(
           trigger={mouseRef.current}
           placement="bottom-start"
         >
-          <Menu
-            {...menuProps}
-            onAction={(key) => {
-              setIsContextMenuOpen(false);
-              return menuProps.onAction(key);
-            }}
-            aria-label="Kontextmenü"
-          />
+          <Overlay>
+            <Menu
+              {...menuProps}
+              onAction={(key) => {
+                setIsContextMenuOpen(false);
+                return menuProps.onAction(key);
+              }}
+              aria-label="Kontextmenü"
+            />
+          </Overlay>
         </Popover>
       </>
     );

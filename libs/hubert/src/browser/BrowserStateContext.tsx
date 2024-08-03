@@ -62,8 +62,8 @@ export interface BrowserState {
   setIsFilePreviewVisible: (visible: boolean) => void;
   currentAction: BrowserAction | null;
   setCurrentAction: (action: BrowserAction | null) => void;
-  currentSearchResults: null | BrowserNode[];
-  setCurrentSearchResults: (results: null | BrowserNode[]) => void;
+  currentSearchResults: null | BrowserPath[];
+  setCurrentSearchResults: (results: null | BrowserPath[]) => void;
 
   canEdit?: (node: BrowserPath) => boolean;
   isNodeDisabled?: (node: BrowserNode) => boolean;
@@ -86,7 +86,7 @@ export interface BrowserState {
     parentNode: BrowserNode<'directory'>,
     update: (updater: (update: Upload) => Partial<Upload>) => void
   ) => void;
-  searchNodes?: (term: string) => PromiseLike<BrowserNode[]>;
+  searchNodes?: (term: string) => PromiseLike<BrowserPath[]>;
 
   uploadClient?: ReturnType<typeof useUploadClient>;
 }
@@ -133,6 +133,14 @@ export const BrowserStateProvider = React.memo(
     React.useEffect(() => {
       onSelect?.(selected.map((n) => n.at(-1)!));
     }, [onSelect, selected]);
+
+    React.useEffect(() => {
+      if (currentSearchResults) {
+        setSelected([]);
+      } else {
+        setIsFilePreviewVisible(false);
+      }
+    }, [currentSearchResults]);
 
     return (
       <BrowserStateContext.Provider

@@ -165,4 +165,31 @@ describe('FilePreview Component', () => {
       expect(screen.queryByTestId('FilePreviewActionBar')).toBeNull();
     });
   });
+
+  describe('showing search results', () => {
+    const node = fixtures.getNode('19');
+    const nodePath = fixtures.getPathForNode(node);
+
+    it('should show a "show" button', async () => {
+      const user = userEvent.setup();
+      const onSetCurrentSearchResults = vi.fn();
+
+      const screen = render(
+        <WrappedNodeListItem
+          selected={[nodePath]}
+          currentSearchResults={[nodePath]}
+          setCurrentSearchResults={onSetCurrentSearchResults}
+        />
+      );
+      expect(screen.getByTestId('FilePreviewActionBar')).toBeVisible();
+
+      expect(
+        within(screen.getByTestId('FilePreviewActionBar')).getByRole('button')
+      ).toHaveTextContent('anzeigen');
+
+      await user.click(
+        within(screen.getByTestId('FilePreviewActionBar')).getByRole('button')
+      );
+    });
+  });
 });

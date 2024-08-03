@@ -10,6 +10,18 @@ query SearchDirectoriesAndFiles($searchterm: String!) {
     parentDirectory {
       id
     }
+    path {
+      id
+      insertedAt
+      updatedAt
+      name
+      user {
+        id
+      }
+      parentDirectory {
+        id
+      }
+    }
   }
   files: searchFiles(searchterm: $searchterm) {
     id
@@ -29,6 +41,18 @@ query SearchDirectoriesAndFiles($searchterm: String!) {
     }
     parentDirectory {
       id
+    }
+    path {
+      id
+      insertedAt
+      updatedAt
+      name
+      user {
+        id
+      }
+      parentDirectory {
+        id
+      }
     }
   }
 }

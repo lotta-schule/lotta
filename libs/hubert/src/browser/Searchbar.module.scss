@@ -8,7 +8,8 @@
     flex-shrink 0.5s ease-in,
     flex-basis 0.5s ease-in;
 
-  &:focus-within {
+  &:focus-within,
+  &.isShowingSearchResults {
     flex-grow: 8;
     flex-basis: 100%;
 
@@ -23,7 +24,7 @@
   }
 
   @media (max-width: $max-xs) {
-    flex: 0 1 4em;
+    flex: 0 1 6em;
     max-width: 100%;
   }
 

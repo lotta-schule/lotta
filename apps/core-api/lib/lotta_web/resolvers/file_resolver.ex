@@ -71,6 +71,12 @@ defmodule LottaWeb.FileResolver do
     end
   end
 
+  def resolve_path(file_or_directory, _args, %{
+        context: %Context{current_user: user}
+      }) do
+    {:ok, Storage.get_path(file_or_directory, user)}
+  end
+
   def resolve_remote_location(%Storage.File{} = file, _args, _info)
       when is_struct(file, Storage.File) or is_struct(file, Storage.FileConversion) do
     {:ok, Storage.get_http_url(file)}

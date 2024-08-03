@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useIsMobile } from '../util';
 import { useBrowserState } from './BrowserStateContext';
 import { FilePreview } from './FilePreview';
-import { NodeList } from './NodeList';
+import { SearchResultNodeList } from './SearchResultNodeList';
 import clsx from 'clsx';
 
 import styles from './Explorer.module.scss';
@@ -14,9 +14,13 @@ export type SearchResultsProps = {
 export const SearchResults = React.memo(({ className }: SearchResultsProps) => {
   const isMobile = useIsMobile();
   const { isFilePreviewVisible, currentSearchResults } = useBrowserState();
+
   return (
-    <div className={clsx(styles.root, className)}>
-      <NodeList path={[]} nodes={currentSearchResults} />
+    <div
+      className={clsx(styles.root, className)}
+      data-testid="SearchResultNodeList"
+    >
+      <SearchResultNodeList results={currentSearchResults ?? []} />
       {(!isMobile || isFilePreviewVisible) && (
         <FilePreview className={styles.nodeInfo} />
       )}

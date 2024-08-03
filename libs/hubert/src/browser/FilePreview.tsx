@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Delete, Download, Edit, OpenWith } from '../icon';
 import { List, ListItem } from '../list';
 import { Button } from '../button';
-import { isFileNode } from './utils';
-import { useBrowserState } from './BrowserStateContext';
+import { isDirectoryNode, isFileNode } from './utils';
+import { BrowserPath, useBrowserState } from './BrowserStateContext';
 import { FilePreviewPreview } from './FilePreviewPreview';
 import { useNodeMenuProps } from './useNodeMenuProps';
 import clsx from 'clsx';
@@ -15,7 +15,15 @@ export type FilePreviewProps = {
 };
 
 export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
-  const { getMetadata, selected, canEdit, mode } = useBrowserState();
+  const {
+    getMetadata,
+    selected,
+    currentSearchResults,
+    canEdit,
+    mode,
+    setCurrentSearchResults,
+    onNavigate,
+  } = useBrowserState();
 
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const previewSectionRef = React.useRef<HTMLDivElement>(null);
@@ -70,7 +78,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
         {nodePath && (
           <div className={styles.infoSection} style={{ maxWidth }}>
             <div className={styles.nodeNameWrapper}>
-              {mode === 'view-and-edit' && (
+              {currentSearchResults === null && mode === 'view-and-edit' && (
                 <div
                   className={styles.actionBar}
                   data-testid="FilePreviewActionBar"
@@ -104,6 +112,31 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
                       onClick={() => onAction('delete')}
                     />
                   )}
+                </div>
+              )}
+              {currentSearchResults !== null && (
+                <div
+                  className={clsx(
+                    styles.actionBar,
+                    styles.actionBarSearchShowButton
+                  )}
+                  data-testid="FilePreviewActionBar"
+                >
+                  <Button
+                    onClick={() => {
+                      setCurrentSearchResults(null);
+                      const [path] = selected;
+                      if (isDirectoryNode(path.at(-1))) {
+                        onNavigate(path as BrowserPath<'directory'>);
+                      } else {
+                        onNavigate(
+                          path.slice(0, -1) as BrowserPath<'directory'>
+                        );
+                      }
+                    }}
+                  >
+                    anzeigen
+                  </Button>
                 </div>
               )}
               <h2>{nodePath.at(-1)!.name}</h2>

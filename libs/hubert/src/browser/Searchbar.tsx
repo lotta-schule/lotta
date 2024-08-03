@@ -11,43 +11,77 @@ export type SearchbarProps = {
 };
 
 export const Searchbar = React.memo(({ className }: SearchbarProps) => {
-  const { searchNodes, setCurrentSearchResults } = useBrowserState();
+  const {
+    searchNodes,
+    currentSearchResults,
+    setCurrentSearchResults,
+    onSelect,
+  } = useBrowserState();
   const [searchtext, setSearchtext] = React.useState('');
 
   const debouncedSearchtext = useDebounce(searchtext, 750);
 
   React.useEffect(() => {
     let isCancelled = false;
-    if (searchtext.length > 2) {
+    if (debouncedSearchtext.length > 2) {
       searchNodes?.(searchtext).then((results) => {
         if (!isCancelled) {
           setCurrentSearchResults(results);
         }
       });
     }
+    if (!debouncedSearchtext) {
+      setCurrentSearchResults(null);
+    }
     return () => {
       isCancelled = true;
     };
   }, [debouncedSearchtext]);
 
+  React.useEffect(() => {
+    if (currentSearchResults === null) {
+      setSearchtext('');
+    }
+  }, [currentSearchResults]);
+
   if (!searchNodes) {
     return null;
   }
+
   return (
-    <div className={clsx(className, styles.root)}>
+    <section
+      className={clsx(className, styles.root, {
+        [styles.isShowingSearchResults]: currentSearchResults !== null,
+      })}
+    >
       <Input
         placeholder="suchen"
         value={searchtext}
         onChange={(e) => setSearchtext(e.currentTarget.value)}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            searchNodes(e.currentTarget.value).then((nodes) => {
-              setCurrentSearchResults(nodes);
-            });
+          if (currentSearchResults?.length) {
+            if (e.key === 'ArrowDown') {
+              // select first element
+              onSelect([currentSearchResults.at(0)!]);
+              e.preventDefault();
+              e.stopPropagation();
+              e.currentTarget.blur();
+            }
+            if (e.key === 'ArrowUp') {
+              onSelect([currentSearchResults.at(-1)!]);
+              e.preventDefault();
+              e.stopPropagation();
+              e.currentTarget.blur();
+            }
+          }
+        }}
+        onBlur={() => {
+          if (!currentSearchResults?.length) {
+            setSearchtext('');
           }
         }}
       />
-    </div>
+    </section>
   );
 });
 Searchbar.displayName = 'Searchbar';

@@ -1,13 +1,20 @@
 @import "../theme/breakpoints";
 
 .root {
+  display: none;
+
   &[open] {
     opacity: 1;
     transform: translateY(0);
 
+    @media screen and (max-width: $max-xs) {
+      display: flex;
+    }
+
     @starting-style {
       opacity: 0;
       transform: translateY(30%);
+      display: none;
     }
   }
 
@@ -61,7 +68,6 @@
     max-height: 100dvh;
     border-radius: 0;
     margin: auto;
-    display: flex;
   }
 
   .close {

@@ -26,6 +26,8 @@ defmodule LottaWeb.Schema.Accounts.File do
 
     field :parent_directory, :directory,
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Storage)
+
+    field :path, list_of(:directory), resolve: &LottaWeb.FileResolver.resolve_path/3
   end
 
   object :file do
@@ -45,6 +47,8 @@ defmodule LottaWeb.Schema.Accounts.File do
 
     field :parent_directory, :directory,
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Storage)
+
+    field :path, list_of(:directory), resolve: &LottaWeb.FileResolver.resolve_path/3
 
     field :usage, list_of(:file_usage_location),
       resolve: &LottaWeb.FileResolver.resolve_file_usage/3

@@ -26,6 +26,9 @@
       flex-basis 0.5s ease-in;
     &:has(~ .searchField:focus-within) {
       flex: 1 0 0%;
+      & ~ .rightContainer {
+        flex: 1 0 0%;
+      }
     }
   }
 
@@ -42,6 +45,13 @@
 
     & > *:not(:last-child) {
       margin-right: var(--lotta-spacing);
+    }
+  }
+
+  &.isShowingSearchResults {
+    .leftContainer,
+    .rightContainer {
+      flex: 1 0 0%;
     }
   }
 

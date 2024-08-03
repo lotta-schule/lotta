@@ -496,6 +496,38 @@ defmodule Lotta.Storage do
     end)
   end
 
+  @doc """
+  Given a node (file or a directory), return the directories needed to traverse in order
+  to reach that node, starting from the first directory node the user has permission to
+  access.
+
+  ## Examples
+
+      iex> get_path(%Directory{id: 5, parent: 2 ...}, %User{})
+      [%Directory{id: 1, parent: null, ...}, %Directory{id: 2, parent: 1, ...}]
+
+      iex> get_path(%File{id: 6, parent: 2 ...}, %User{})
+      [%Directory{id: 1, parent: null, ...}, %Directory{id: 2, parent: 1, ...}]
+  """
+  @doc since: "5.0.0"
+  @spec get_path(Directory.t() | File.t(), User.t()) :: [Directory.t()]
+  def get_path(file_or_directory, user), do: get_path(file_or_directory, user, [])
+
+  defp get_path(%{parent_directory_id: nil}, user, current_path), do: current_path
+
+  defp get_path(%{parent_directory_id: id}, user, current_path) do
+    case Repo.get(Lotta.Storage.Directory, id) do
+      nil ->
+        current_path
+
+      %{user_id: user_id} when user_id != user.id and not is_nil(user_id) ->
+        current_path
+
+      parent ->
+        get_path(parent, user, [parent | current_path])
+    end
+  end
+
   @spec ensure_archive_directory(String.t() | nil) :: [Directory.t()]
   defp ensure_archive_directory(path) do
     [
