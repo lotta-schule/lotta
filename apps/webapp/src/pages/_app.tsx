@@ -1,6 +1,7 @@
 import '../styles/globals.scss';
 
 import * as React from 'react';
+import { trace } from '@opentelemetry/api';
 import { AppContext, AppProps } from 'next/app';
 import { config as faConfig } from '@fortawesome/fontawesome-svg-core';
 import { ServerDownErrorPage } from 'layout/error/ServerDownErrorPage';
@@ -77,12 +78,16 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
 
   const headers = context.ctx.req?.headers ?? {};
 
-  const { data, error } = await getApolloClient().query({
-    query: GetTenantQuery,
-    context: {
-      headers,
-    },
-  });
+  const { data, error } = await trace
+    .getTracer('lotta-web')
+    .startActiveSpan('fetchTenant', async () => {
+      return await getApolloClient().query({
+        query: GetTenantQuery,
+        context: {
+          headers,
+        },
+      });
+    });
   const tenant = data?.tenant ?? null;
   if (context.ctx.req) {
     (context.ctx.req as any).tenant = tenant;
@@ -95,6 +100,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
       },
     };
   }
+
   const { data: userData } = await getApolloClient().query({
     query: GetCurrentUserQuery,
     context: {
