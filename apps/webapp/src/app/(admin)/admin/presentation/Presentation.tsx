@@ -48,7 +48,10 @@ export const Presentation = React.memo(
     };
 
     const allThemes = React.useMemo(
-      () => [{ title: 'Standard', theme: {} }, ...additionalThemes],
+      () => [
+        { title: 'Bildungseinrichtung', theme: defaultTheme },
+        ...additionalThemes,
+      ],
       []
     );
 
@@ -82,17 +85,15 @@ export const Presentation = React.memo(
 
         <AdminPageSection title={'Vorlagen'}>
           <div className={clsx(styles.grid, styles.scrollHorizontally)}>
-            {allThemes.map(({ title, theme: partialTheme }) => {
-              return (
-                <div key={title}>
-                  <SelectTemplateButton
-                    title={title}
-                    theme={partialTheme}
-                    onClick={() => updateThemeProperties(partialTheme)}
-                  />
-                </div>
-              );
-            })}
+            {allThemes.map(({ title, theme: partialTheme }) => (
+              <div key={title}>
+                <SelectTemplateButton
+                  title={title}
+                  theme={partialTheme}
+                  onClick={() => updateThemeProperties(partialTheme)}
+                />
+              </div>
+            ))}
           </div>
         </AdminPageSection>
 
