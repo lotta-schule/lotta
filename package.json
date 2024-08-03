@@ -31,6 +31,7 @@
     "@types/node": "^20.14.12",
     "@types/phoenix": "^1.6.5",
     "@types/react": "npm:types-react@rc",
+    "@types/react-big-calendar": "^1.8.9",
     "@types/react-dom": "npm:types-react-dom@rc",
     "@types/slate-base64-serializer": "^0.2.5",
     "@types/user-event": "^4.1.3",

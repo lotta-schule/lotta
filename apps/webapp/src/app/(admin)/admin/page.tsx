@@ -12,6 +12,7 @@ import {
   faChartLine,
   faCubes,
   faDoorOpen,
+  faCalendar,
 } from '@fortawesome/free-solid-svg-icons';
 import { BaseButton } from '@lotta-schule/hubert';
 import { serverTranslations } from 'i18n/server';
@@ -54,6 +55,18 @@ async function AdminRootPage() {
             <Icon icon={faPalette} />
           </span>
           <span>Darstellung</span>
+        </BaseButton>
+
+        <BaseButton
+          as={Link}
+          href={'/admin/calendars'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faCalendar} />
+          </span>
+          <span>Kalender</span>
         </BaseButton>
 
         <BaseButton
