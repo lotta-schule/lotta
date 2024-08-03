@@ -165,6 +165,25 @@ describe('Combobox', () => {
       });
     });
 
+    it('should call onSelect when typing a key from the "additionalConfirmChars" array', async () => {
+      const user = userEvent.setup();
+      const onSelect = vi.fn();
+
+      const screen = render(
+        <ComboBox
+          title={'Chose something'}
+          items={defaultItems}
+          onSelect={onSelect}
+          additionalConfirmChars={['#']}
+        />
+      );
+
+      await user.type(screen.getByRole('combobox'), 'Apple#');
+      await waitFor(() => {
+        expect(onSelect).toHaveBeenCalledWith('Apple');
+      });
+    });
+
     it('should not call onSelect when the value of an unpropsed item is entered', async () => {
       const user = userEvent.setup();
       const onSelect = vi.fn();
