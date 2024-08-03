@@ -30,6 +30,30 @@
         flex: 1 0 0%;
       }
     }
+
+    .mobileSearchBackButton {
+      max-width: 0px;
+      opacity: 0;
+      transition:
+        max-width 0.3s ease-in,
+        opacity 0.3s ease-in;
+      & ~ span {
+        transition:
+          max-width 0.3s ease-in,
+          opacity 0.3s ease-in;
+        opacity: 1;
+      }
+    }
+    @media screen and (max-width: $max-sm) {
+      .mobileSearchBackButton {
+        max-width: 30px;
+        opacity: 1;
+
+        & ~ span {
+          opacity: 0;
+        }
+      }
+    }
   }
 
   .rightContainer {
@@ -49,7 +73,9 @@
   }
 
   &.isShowingSearchResults {
-    .leftContainer,
+    .leftContainer {
+      flex: 0 0 calc(24px + calc(0.5 * var(--lotta-spacing)));
+    }
     .rightContainer {
       flex: 1 0 0%;
     }

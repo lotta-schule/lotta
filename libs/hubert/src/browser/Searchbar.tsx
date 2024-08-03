@@ -15,6 +15,7 @@ export const Searchbar = React.memo(({ className }: SearchbarProps) => {
     searchNodes,
     currentSearchResults,
     setCurrentSearchResults,
+    setIsFilePreviewVisible,
     onSelect,
   } = useBrowserState();
   const [searchtext, setSearchtext] = React.useState('');
@@ -26,6 +27,7 @@ export const Searchbar = React.memo(({ className }: SearchbarProps) => {
     if (debouncedSearchtext.length > 2) {
       searchNodes?.(searchtext).then((results) => {
         if (!isCancelled) {
+          setIsFilePreviewVisible(false);
           setCurrentSearchResults(results);
         }
       });
@@ -72,6 +74,13 @@ export const Searchbar = React.memo(({ className }: SearchbarProps) => {
               e.preventDefault();
               e.stopPropagation();
               e.currentTarget.blur();
+            }
+            if (e.key === 'Escape') {
+              if (searchtext) {
+                setSearchtext('');
+              } else {
+                e.currentTarget.blur();
+              }
             }
           }
         }}

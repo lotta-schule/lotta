@@ -31,6 +31,7 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
     setCurrentAction,
     isFilePreviewVisible,
     setIsFilePreviewVisible,
+    setCurrentSearchResults,
     uploadClient,
     canEdit,
   } = useBrowserState();
@@ -85,7 +86,23 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
             {activeDirectoryName}
           </>
         )}
-        {currentSearchResults !== null && <span>Suche</span>}
+        {currentSearchResults !== null && (
+          <>
+            <Button
+              icon={<KeyboardArrowLeft />}
+              className={styles.mobileSearchBackButton}
+              title={'Schließen'}
+              onClick={() => {
+                if (isFilePreviewVisible) {
+                  setIsFilePreviewVisible(false);
+                } else {
+                  setCurrentSearchResults(null);
+                }
+              }}
+            />
+            <span>Suchen</span>
+          </>
+        )}
       </section>
 
       <Searchbar className={styles.searchField} />

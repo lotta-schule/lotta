@@ -20,7 +20,9 @@ export const SearchResults = React.memo(({ className }: SearchResultsProps) => {
       className={clsx(styles.root, className)}
       data-testid="SearchResultNodeList"
     >
-      <SearchResultNodeList results={currentSearchResults ?? []} />
+      {(!isMobile || !isFilePreviewVisible) && (
+        <SearchResultNodeList results={currentSearchResults ?? []} />
+      )}
       {(!isMobile || isFilePreviewVisible) && (
         <FilePreview className={styles.nodeInfo} />
       )}
