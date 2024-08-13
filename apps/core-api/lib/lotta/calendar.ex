@@ -32,4 +32,3 @@ defmodule Lotta.Calendar do
     queryable
   end
 end
-
