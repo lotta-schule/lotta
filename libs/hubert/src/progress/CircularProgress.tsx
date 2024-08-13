@@ -43,8 +43,8 @@ export const CircularProgress = React.memo(
         className={clsx(className, styles.root, {
           [styles.indeterminate]: isIndeterminate,
         })}
-        style={style}
         {...props}
+        style={style}
         {...progressBarProps}
       >
         <svg viewBox="0 0 100 100">
