@@ -74,7 +74,10 @@
 
   &.isShowingSearchResults {
     .leftContainer {
-      flex: 0 0 calc(24px + calc(0.5 * var(--lotta-spacing)));
+      flex: 1 0 0%;
+      @media screen and (max-width: $max-sm) {
+        flex: 1 0 calc(24px + calc(0.5 * var(--lotta-spacing)));
+      }
     }
     .rightContainer {
       flex: 1 0 0%;
