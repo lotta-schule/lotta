@@ -457,6 +457,8 @@ type RootQueryType {
   relevantFilesInUsage: [File]
   schedule(date: Date, widgetId: ID!): Json
   search(options: SearchOptions, searchText: String!): [Article]
+  searchDirectories(searchterm: String): [Directory!]!
+  searchFiles(searchterm: String): [File!]!
   searchUsers(groups: [SelectUserGroupInput], lastSeen: Int, searchtext: String): [User!]!
   tags: [String!]
   tenant(slug: String): Tenant

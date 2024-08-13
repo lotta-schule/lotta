@@ -28,6 +28,7 @@ const WrappedNodeListItem = ({
   onClick = vi.fn(),
   isDisabled,
   isSelected,
+  isEditingDisabled,
   ...props
 }: TestBrowserWrapperProps &
   Partial<NodeListItemProps> &
@@ -39,6 +40,7 @@ const WrappedNodeListItem = ({
       onClick={onClick}
       isDisabled={isDisabled}
       isSelected={isSelected}
+      isEditingDisabled={isEditingDisabled}
     />
   </TestBrowserWrapper>
 );
@@ -189,6 +191,18 @@ describe('Browser/NodeListItem', () => {
 
       expect(screen.queryByRole('button', { name: /ordnermenü/i })).toBeNull();
     });
+
+    it('should not show the menu button on directories on mobile when "isEditingDisabled" prop is passed', () => {
+      const screen = render(
+        <WrappedNodeListItem
+          mode="select"
+          node={directoryPath.at(-1)!}
+          isEditingDisabled
+        />
+      );
+
+      expect(screen.queryByRole('button', { name: /ordnermenü/i })).toBeNull();
+    });
   });
 
   describe('context menu', () => {
@@ -228,6 +242,20 @@ describe('Browser/NodeListItem', () => {
       const user = userEvent.setup();
       const screen = render(
         <WrappedNodeListItem node={filePath.at(-1)!} isDisabled />
+      );
+
+      await user.pointer({
+        keys: '[MouseRight>]',
+        target: screen.getByRole('option'),
+      });
+
+      expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
+    });
+
+    it('should not show the context menu on right click when the node has props "isEditingDisabled"', async () => {
+      const user = userEvent.setup();
+      const screen = render(
+        <WrappedNodeListItem node={filePath.at(-1)!} isEditingDisabled />
       );
 
       await user.pointer({

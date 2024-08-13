@@ -1,0 +1,34 @@
+@import "breakpoints";
+
+.root {
+  flex: 0 1 25em;
+  max-width: 50%;
+  transition:
+    flex-grow 0.3s ease-in,
+    flex-shrink 0.3s ease-in,
+    flex-basis 0.3s ease-in;
+
+  &:focus-within,
+  &.isShowingSearchResults {
+    flex-grow: 8;
+    flex-basis: 100%;
+
+    ~ .rightContainer {
+      flex: 1 0 0%;
+    }
+  }
+
+  @media (max-width: $max-sm) {
+    flex: 0 1 10em;
+    max-width: 100%;
+  }
+
+  @media (max-width: $max-xs) {
+    flex: 0 1 6em;
+    max-width: 100%;
+  }
+
+  input::placeholder {
+    text-align: center;
+  }
+}

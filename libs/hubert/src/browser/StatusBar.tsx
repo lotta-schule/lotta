@@ -11,17 +11,37 @@ export type StatusBarProps = {
 };
 
 export const StatusBar = React.memo(({ className }: StatusBarProps) => {
-  const [childDirectoriesCount, setChildDirectoriesCount] =
-    React.useState<number>(0);
-  const [childFilesCount, setChildFilesCount] = React.useState<number>(0);
-  const { currentPath, selected, onNavigate, onRequestChildNodes } =
-    useBrowserState();
+  const [childDirectoriesCount, setChildDirectoriesCount] = React.useState(0);
+  const [childFilesCount, setChildFilesCount] = React.useState(0);
+  const {
+    currentPath,
+    selected,
+    currentSearchResults,
+    onNavigate,
+    onRequestChildNodes,
+    onSelect,
+    setCurrentSearchResults,
+  } = useBrowserState();
+
   const onClickLink = React.useCallback(
     (path: BrowserPath<'directory'>) => (e: React.MouseEvent) => {
       e.preventDefault();
-      onNavigate(path);
+      setCurrentSearchResults(null);
+      if (currentPath !== path) {
+        onNavigate(path);
+        onSelect(path.length ? [path] : []);
+      }
     },
     [onNavigate]
+  );
+
+  const searchDirectoriesCount = React.useMemo(
+    () => currentSearchResults?.filter((r) => isDirectoryNode(r.at(-1))).length,
+    [currentSearchResults]
+  );
+  const searchFilesCount = React.useMemo(
+    () => currentSearchResults?.filter((r) => isFileNode(r.at(-1))).length,
+    [currentSearchResults]
   );
 
   React.useEffect(() => {
@@ -34,14 +54,7 @@ export const StatusBar = React.memo(({ className }: StatusBarProps) => {
   return (
     <div className={clsx(styles.root, className)} role="navigation">
       <div className={styles.currentPath}>
-        <a
-          href="#"
-          title="Wurzelverzeichnis"
-          onClick={(e) => {
-            e.preventDefault();
-            onNavigate([]);
-          }}
-        >
+        <a href="#" title="Wurzelverzeichnis" onClick={onClickLink([])}>
           <Home />
         </a>
         {currentPath.map((node, i) => (
@@ -63,7 +76,8 @@ export const StatusBar = React.memo(({ className }: StatusBarProps) => {
           </span>
         )}
       </div>
-      {childDirectoriesCount || childFilesCount ? (
+      {currentSearchResults === null &&
+      (childDirectoriesCount || childFilesCount) ? (
         <div className={styles.currentCount}>
           {!!childDirectoriesCount && (
             <span>Ordner: {childDirectoriesCount}</span>
@@ -71,6 +85,15 @@ export const StatusBar = React.memo(({ className }: StatusBarProps) => {
           {!!childFilesCount && <span>Dateien: {childFilesCount}</span>}
         </div>
       ) : null}
+
+      {currentSearchResults?.length && (
+        <div className={styles.currentCount}>
+          {!!searchDirectoriesCount && (
+            <span>Ordner: {searchDirectoriesCount}</span>
+          )}
+          {!!searchFilesCount && <span>Dateien: {searchFilesCount}</span>}
+        </div>
+      )}
     </div>
   );
 });
