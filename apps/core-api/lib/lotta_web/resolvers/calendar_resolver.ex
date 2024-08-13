@@ -52,4 +52,18 @@ defmodule LottaWeb.CalendarResolver do
         error
     end
   end
+
+  def list(_args, %{context: %{current_user: _current_user, tenant: tenant}}) do
+    # TODO: Who should have access to calendars?!
+    IO.inspect(tenant, label: "tenant")
+    {:ok, Lotta.Calendar.list_calendars()}
+  end
+
+  def list(_, _), do: {:error, "AuthError"}
+
+  def create(args, %{context: %{current_user: _current_user, tenant: tenant}}) do
+    IO.inspect(tenant, label: "tenant")
+    IO.inspect(Lotta.Repo.get_prefix(), label: "prefix")
+    Lotta.Calendar.create_calendar(args)
+  end
 end
