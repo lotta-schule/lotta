@@ -185,7 +185,7 @@ describe('FilePreview Component', () => {
 
       expect(
         within(screen.getByTestId('FilePreviewActionBar')).getByRole('button')
-      ).toHaveTextContent('anzeigen');
+      ).toHaveTextContent('zur Datei');
 
       await user.click(
         within(screen.getByTestId('FilePreviewActionBar')).getByRole('button')
