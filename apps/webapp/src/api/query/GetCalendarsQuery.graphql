@@ -1,0 +1,10 @@
+query GetCalendars {
+  calendars: calendars {
+    id
+    name
+    defaultColor
+    events {
+      id
+    }
+  }
+}

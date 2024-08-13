@@ -1,0 +1,10 @@
+mutation createCalendar($name: String!, $color: String) {
+  calendar: createCalendar(name: $name, defaultColor: $color) {
+    id
+    name
+    defaultColor
+    events {
+      id
+    }
+  }
+}

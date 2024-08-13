@@ -5,6 +5,7 @@ import { format, parse, startOfWeek, getDay, isSameDay } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { useTranslation } from 'react-i18next';
+import { CalendarToolbar } from './CalendarToolbar';
 
 import './CalendarView.scss';
 
@@ -63,6 +64,9 @@ export const CalendarView = React.memo(() => {
             title: 'ABC',
           },
         ]}
+        components={{
+          toolbar: CalendarToolbar,
+        }}
       />
     </div>
   );
