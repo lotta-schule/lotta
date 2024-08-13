@@ -5,6 +5,7 @@
   height: 100%;
   border-right: 1px solid rgba(var(--lotta-accent-grey-color));
   overflow: scroll;
+  text-align: initial;
 
   @media screen and (max-width: $max-xs) {
     flex: 0 0 100%;

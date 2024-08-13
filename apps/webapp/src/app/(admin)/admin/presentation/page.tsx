@@ -14,12 +14,12 @@ async function PresentationPage() {
 
   const additionalThemes = [
     {
-      title: 'Purple Pastel',
+      title: 'Frau Flieders Pastellpalast',
       theme: { ...defaultTheme, ...themes.PurplePastel },
     },
-    { title: 'Neutral', theme: { ...defaultTheme, ...themes.Neutral } },
+    { title: 'Klassenbester', theme: { ...defaultTheme, ...themes.Neutral } },
     {
-      title: 'Retro Contrast',
+      title: 'Schiefertafel',
       theme: { ...defaultTheme, ...themes.RetroContrast },
     },
   ];
