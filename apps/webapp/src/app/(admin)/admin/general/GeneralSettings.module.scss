@@ -8,7 +8,7 @@
     .gridItem:not(:first-child) {
       margin-left: var(--lotta-spacing);
       &:is(p) {
-        max-width: 25em;
+        max-width: auto;
       }
     }
   }
