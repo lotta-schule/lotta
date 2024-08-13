@@ -135,7 +135,9 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
                       }
                     }}
                   >
-                    anzeigen
+                    {isDirectoryNode(nodePath.at(-1))
+                      ? 'zum Ordner'
+                      : 'zur Datei'}
                   </Button>
                 </div>
               )}
