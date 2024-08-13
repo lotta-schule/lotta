@@ -1,0 +1,58 @@
+query SearchDirectoriesAndFiles($searchterm: String!) {
+  directories: searchDirectories(searchterm: $searchterm) {
+    id
+    insertedAt
+    updatedAt
+    name
+    user {
+      id
+    }
+    parentDirectory {
+      id
+    }
+    path {
+      id
+      insertedAt
+      updatedAt
+      name
+      user {
+        id
+      }
+      parentDirectory {
+        id
+      }
+    }
+  }
+  files: searchFiles(searchterm: $searchterm) {
+    id
+    insertedAt
+    updatedAt
+    filename
+    filesize
+    mimeType
+    fileType
+    userId
+    fileConversions {
+      id
+      insertedAt
+      updatedAt
+      format
+      mimeType
+    }
+    parentDirectory {
+      id
+    }
+    path {
+      id
+      insertedAt
+      updatedAt
+      name
+      user {
+        id
+      }
+      parentDirectory {
+        id
+      }
+    }
+  }
+}

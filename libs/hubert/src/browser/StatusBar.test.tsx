@@ -53,4 +53,48 @@ describe('Browser/StatusBar', () => {
     expect(await screen.findByText('Ordner: 4')).toBeVisible();
     expect(await screen.findByText('Dateien: 4')).toBeVisible();
   });
+
+  describe('showing search results', () => {
+    it('should show the number of directories and files in search results', async () => {
+      const screen = render(
+        <WrappedStatusBar
+          currentSearchResults={[
+            fixtures.getPathForNode('8'),
+            fixtures.getPathForNode('11'),
+            fixtures.getPathForNode('19'),
+          ]}
+        />
+      );
+
+      expect(await screen.findByText('Ordner: 2')).toBeVisible();
+      expect(await screen.findByText('Dateien: 1')).toBeVisible();
+    });
+
+    it('should close the search window and select path when clicking path segment', async () => {
+      const user = userEvent.setup();
+      const onNavigate = vi.fn();
+      const onSetCurrentSearchResults = vi.fn();
+      const screen = render(
+        <WrappedStatusBar
+          selected={[fixtures.getPathForNode('19')]}
+          currentSearchResults={[
+            fixtures.getPathForNode('8'),
+            fixtures.getPathForNode('11'),
+            fixtures.getPathForNode('19'),
+          ]}
+          onNavigate={onNavigate}
+          setCurrentSearchResults={onSetCurrentSearchResults}
+        />
+      );
+
+      await user.click(
+        screen.getByRole('link', {
+          name: 'folder 14',
+        })
+      );
+
+      expect(onNavigate).toHaveBeenCalledWith(fixtures.getPathForNode('14'));
+      expect(onSetCurrentSearchResults).toHaveBeenCalledWith(null);
+    });
+  });
 });

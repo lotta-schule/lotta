@@ -25,6 +25,7 @@ import {
   useDeleteNode,
   useMoveNode,
   useRenameNode,
+  useSearchNodes,
   useUploadNode,
 } from './action';
 import {
@@ -58,12 +59,12 @@ export const UserBrowser = React.memo(
     const moveNode = useMoveNode();
     const deleteNode = useDeleteNode();
     const uploadNode = useUploadNode();
+    const searchNodes = useSearchNodes();
 
     const [fetchDirectoriesAndFiles] =
       useLazyQuery<GetDirectoriesAndFilesQueryResult>(
         GetDirectoriesAndFilesQuery
       );
-
     const onRequestChildNodes: BrowserProps['onRequestChildNodes'] =
       React.useCallback(
         async (node, options) => {
@@ -174,6 +175,7 @@ export const UserBrowser = React.memo(
         moveNode={moveNode}
         deleteNode={deleteNode}
         uploadNode={uploadNode}
+        searchNodes={searchNodes}
         getDownloadUrl={getDownloadUrl}
         onRequestNodeIcon={(node, { isOpen, isPreview }) => {
           if (isDirectoryNode(node) && node.meta.user === null) {

@@ -9,8 +9,6 @@ defmodule Lotta.Search do
   alias Lotta.Content.ContentModule
   alias Lotta.Tenants.Category
 
-  @type search_options :: [category_id: Category.id(), published: boolean()]
-
   @doc """
   Executes a fulltext search for a given search query in
   a given teannt.

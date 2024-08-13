@@ -26,38 +26,33 @@
       flex-basis 0.5s ease-in;
     &:has(~ .searchField:focus-within) {
       flex: 1 0 0%;
-    }
-  }
-
-  .searchField {
-    flex: 0 1 25em;
-    max-width: 50%;
-    transition:
-      flex-grow 0.5s ease-in,
-      flex-shrink 0.5s ease-in,
-      flex-basis 0.5s ease-in;
-
-    &:focus-within {
-      flex-grow: 8;
-      flex-basis: 100%;
-
-      ~ .rightContainer {
+      & ~ .rightContainer {
         flex: 1 0 0%;
       }
     }
 
-    @media (max-width: $max-sm) {
-      flex: 0 1 10em;
-      max-width: 100%;
+    .mobileSearchBackButton {
+      max-width: 0px;
+      opacity: 0;
+      transition:
+        max-width 0.3s ease-in,
+        opacity 0.3s ease-in;
+      & ~ span {
+        transition:
+          max-width 0.3s ease-in,
+          opacity 0.3s ease-in;
+        opacity: 1;
+      }
     }
+    @media screen and (max-width: $max-sm) {
+      .mobileSearchBackButton {
+        max-width: 30px;
+        opacity: 1;
 
-    @media (max-width: $max-xs) {
-      flex: 0 1 4em;
-      max-width: 100%;
-    }
-
-    input::placeholder {
-      text-align: center;
+        & ~ span {
+          opacity: 0;
+        }
+      }
     }
   }
 
@@ -74,6 +69,18 @@
 
     & > *:not(:last-child) {
       margin-right: var(--lotta-spacing);
+    }
+  }
+
+  &.isShowingSearchResults {
+    .leftContainer {
+      flex: 1 0 0%;
+      @media screen and (max-width: $max-sm) {
+        flex: 1 0 calc(24px + calc(0.5 * var(--lotta-spacing)));
+      }
+    }
+    .rightContainer {
+      flex: 1 0 0%;
     }
   }
 

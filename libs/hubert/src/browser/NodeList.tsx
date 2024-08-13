@@ -49,6 +49,9 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
 
   const onKeyDown = React.useCallback(
     (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement && e.target.type === 'text') {
+        return;
+      }
       const currentListSelected = sortedSelected.filter(
         (s) => s.at(-1)?.parent === (path.at(-1)?.id ?? null)
       );

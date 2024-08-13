@@ -14,6 +14,8 @@ defmodule Lotta.StorageTest do
   @prefix "tenant_test"
 
   setup do
+    Repo.put_prefix(@prefix)
+
     user =
       Repo.one!(
         from(u in User,
@@ -152,6 +154,21 @@ defmodule Lotta.StorageTest do
     } do
       assert Storage.get_http_url(user_file) =~
                ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\/.*/
+    end
+
+    test "should call get_path with directory", %{
+      user_directory: dir,
+      user: user
+    } do
+      assert Storage.get_path(dir, user) == []
+    end
+
+    test "should call get_path with file", %{
+      user_file: file,
+      user: user
+    } do
+      assert path = Storage.get_path(file, user)
+      assert Enum.map(path, & &1.name) == ["ehrenberg-on-air"]
     end
   end
 end

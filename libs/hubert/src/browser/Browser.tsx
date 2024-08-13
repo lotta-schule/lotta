@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Toolbar } from './Toolbar';
-import { Explorer } from './Explorer';
+import { MainView } from './MainView';
 import { StatusBar } from './StatusBar';
 import {
   BrowserStateProvider,
@@ -24,7 +24,7 @@ export const Browser = React.memo(
       <BrowserStateProvider {...props}>
         <div style={style} className={clsx(className, styles.root)}>
           <Toolbar className={styles.toolbar} />
-          <Explorer className={styles.explorer} />
+          <MainView className={styles.mainView} />
           <StatusBar className={styles.statusBar} />
           <DialogsContainer />
         </div>

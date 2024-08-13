@@ -17,9 +17,9 @@ import {
   Option,
   Table,
   Toolbar,
+  useDebounce,
 } from '@lotta-schule/hubert';
 import { EditUserPermissionsDialog } from './_component';
-import { useDebounce } from 'util/useDebounce';
 import clsx from 'clsx';
 
 import SearchUsersAsAdminQuery from 'api/query/SearchUsersAsAdminQuery.graphql';

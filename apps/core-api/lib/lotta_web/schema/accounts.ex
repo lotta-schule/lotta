@@ -77,6 +77,18 @@ defmodule LottaWeb.Schema.Accounts do
       resolve(&LottaWeb.FileResolver.file/2)
     end
 
+    field :search_files, non_null(list_of(non_null(:file))) do
+      arg(:searchterm, :string)
+
+      resolve(&LottaWeb.FileResolver.search_files/2)
+    end
+
+    field :search_directories, non_null(list_of(non_null(:directory))) do
+      arg(:searchterm, :string)
+
+      resolve(&LottaWeb.FileResolver.search_directories/2)
+    end
+
     field :relevant_files_in_usage, list_of(:file) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
