@@ -5,6 +5,7 @@ import { usePreventScroll } from '../util';
 import { Divider } from '../divider';
 import { Button } from '../button';
 import { Close } from '../icon';
+import { ButtonGroupContextProvider } from '../button/ButtonGroupContext';
 import clsx from 'clsx';
 
 import styles from './Dialog.module.scss';
@@ -39,34 +40,36 @@ export const Dialog = ({
   usePreventScroll({ isDisabled: !open });
 
   return (
-    <dialog
-      ref={dialogRef}
-      title={title}
-      onClose={() => {
-        onRequestClose?.();
-      }}
-      {...props}
-      className={clsx(styles.root, className, { [styles.wide]: wide })}
-    >
-      {open && (
-        <>
-          <section>
-            {onRequestClose && (
-              <Button
-                small
-                title={'schließen'}
-                className={styles.close}
-                onClick={() => onRequestClose()}
-                icon={<Close />}
-              />
-            )}
-            <h3>{title}</h3>
-            <Divider />
-          </section>
-          {children}
-        </>
-      )}
-    </dialog>
+    <ButtonGroupContextProvider reset>
+      <dialog
+        ref={dialogRef}
+        title={title}
+        onClose={() => {
+          onRequestClose?.();
+        }}
+        {...props}
+        className={clsx(styles.root, className, { [styles.wide]: wide })}
+      >
+        {open && (
+          <>
+            <section>
+              {onRequestClose && (
+                <Button
+                  small
+                  title={'schließen'}
+                  className={styles.close}
+                  onClick={() => onRequestClose()}
+                  icon={<Close />}
+                />
+              )}
+              <h3>{title}</h3>
+              <Divider />
+            </section>
+            {children}
+          </>
+        )}
+      </dialog>
+    </ButtonGroupContextProvider>
   );
 };
 

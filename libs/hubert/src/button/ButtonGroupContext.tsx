@@ -9,11 +9,10 @@ export const ButtonGroupContext = React.createContext<ButtonGroupContextType>({
 });
 
 export const ButtonGroupContextProvider = ({
+  reset,
   children,
-}: {
-  children: React.ReactChild;
-}) => (
-  <ButtonGroupContext.Provider value={{ grouped: true }}>
+}: React.PropsWithChildren<{ reset?: boolean }>) => (
+  <ButtonGroupContext.Provider value={{ grouped: !reset }}>
     {children}
   </ButtonGroupContext.Provider>
 );
