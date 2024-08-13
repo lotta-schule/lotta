@@ -36,6 +36,8 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
     canEdit,
   } = useBrowserState();
 
+  console.log(uploadClient?.currentProgress);
+
   const [isActiveUploadsDialogOpen, setIsActiveUploadsDialogOpen] =
     React.useState(false);
   const uploadInputRef = React.useRef<HTMLInputElement>(null);
