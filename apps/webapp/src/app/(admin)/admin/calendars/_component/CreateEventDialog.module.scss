@@ -1,0 +1,49 @@
+.root {
+  .row {
+    display: flex;
+  }
+
+  .nameRow {
+    display: flex;
+    & > :first-child {
+      flex: 1;
+    }
+  }
+
+  .configRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    & > * {
+      flex: 1;
+    }
+    & > div:last-of-type {
+      flex: 0 0 max-content;
+      display: flex;
+      flex-direction: column;
+      padding-inline: var(--lotta-spacing);
+      label {
+        padding-top: 0;
+        padding-bottom: var(--lotta-spacing);
+      }
+    }
+  }
+
+  .dateRow {
+    display: grid;
+    grid-template: 1fr / auto 8em 8em;
+    & > :first-child {
+      flex: 1;
+    }
+  }
+
+  .mayBeInvisible {
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+
+    &.isVisible {
+      opacity: 1;
+    }
+  }
+}
