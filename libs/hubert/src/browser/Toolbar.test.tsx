@@ -178,5 +178,23 @@ describe('browser/Toolbar', () => {
         );
       });
     });
+
+    describe('searching', () => {
+      it('should not show left and right section when searchresults are shown', () => {
+        const screen = render(
+          <WrappedToolbar
+            currentSearchResults={[fixtures.getPathForNode('8')]}
+          />
+        );
+        const toolbarSections = screen
+          .getByRole('toolbar')
+          .querySelectorAll('section');
+        expect(toolbarSections).toHaveLength(3);
+
+        const [leftSection, _, rightSection] = toolbarSections;
+        expect(leftSection).toHaveTextContent('Suche');
+        expect(rightSection).toBeEmptyDOMElement();
+      });
+    });
   });
 });

@@ -49,7 +49,7 @@ export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
 
         <Label label={'Logo der Seite'}>
           <div className={styles.gridContainer}>
-            <Box className={styles.gridItem} style={{ width: '25%' }}>
+            <Box className={styles.gridItem}>
               <SelectFileOverlay
                 label={'Logo ändern'}
                 onSelectFile={(logo) => setLogo(logo)}

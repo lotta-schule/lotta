@@ -6,6 +6,7 @@ import { useButtonGroupContext } from './ButtonGroupContext';
 import clsx from 'clsx';
 
 import styles from './Button.module.scss';
+import buttonGroupStyles from './ButtonGroup.module.scss';
 
 export type ButtonProps = {
   /**
@@ -60,6 +61,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {
             [styles.small]: small,
             [styles.grouped]: grouped,
+            [buttonGroupStyles.grouped]: grouped,
           }
         )}
       >

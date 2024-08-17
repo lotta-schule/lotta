@@ -49,6 +49,12 @@ export type ComboBoxProps = {
   allowsCustomValue?: boolean;
 
   /**
+   * Additional keyboard keys to be interprated as "confirmation" character.
+   * The default is just Enter.
+   **/
+  additionalConfirmChars?: string[];
+
+  /**
    * If set, the input text field will be reset to an empty string after an item has been selected
    * This is useful for search fields that should be cleared after a selection has been made
    **/
@@ -74,6 +80,7 @@ export const ComboBox = React.memo(
     title,
     allowsCustomValue,
     resetOnSelect,
+    additionalConfirmChars = [],
     onSelect,
   }: ComboBoxProps) => {
     const ref = React.useRef<HTMLDivElement>(null);
@@ -113,10 +120,11 @@ export const ComboBox = React.memo(
           }
         });
 
-        if (results.length > 0) {
-          if (!options?.matchOnlyIfExclusive) {
-            return results[0];
-          }
+        if (
+          results.length === 1 ||
+          (results.length > 0 && !options?.matchOnlyIfExclusive)
+        ) {
+          return results[0];
         }
         return null;
       },
@@ -221,30 +229,32 @@ export const ComboBox = React.memo(
         allowsCustomValue,
         placeholder: placeholder ?? title,
         onKeyDown: (event) => {
-          if (
-            event.code === 'Enter' &&
-            !state.selectedKey &&
-            state.inputValue !== ''
-          ) {
-            const select = (item: ListItemPreliminaryItem | string) => {
-              const value = typeof item === 'string' ? item : item.key;
+          if ([...additionalConfirmChars, 'Enter'].includes(event.key)) {
+            event.preventDefault();
+            if (!state.selectedKey && state.inputValue !== '') {
+              const select = (item: ListItemPreliminaryItem | string) => {
+                const value = typeof item === 'string' ? item : item.key;
 
-              state.selectionManager.replaceSelection(value as string);
+                state.selectionManager.replaceSelection(value as string);
 
-              onSelect?.(value);
-            };
+                onSelect?.(value);
+              };
 
-            const item = findItem(state.inputValue, {
-              matchOnlyIfExclusive: true,
-              matchExact: true,
-            });
+              const item = findItem(state.inputValue, {
+                matchOnlyIfExclusive: true,
+                matchExact: true,
+              });
 
-            if (item && state.collection.getItem(item.key as string | number)) {
-              select(item);
-              return;
-            } else if (!item && allowsCustomValue) {
-              select(state.inputValue);
-              return;
+              if (
+                item &&
+                state.collection.getItem(item.key as string | number)
+              ) {
+                select(item);
+                return;
+              } else if (!item && allowsCustomValue) {
+                select(state.inputValue);
+                return;
+              }
             }
           }
 

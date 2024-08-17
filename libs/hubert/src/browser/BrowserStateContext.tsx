@@ -62,6 +62,8 @@ export interface BrowserState {
   setIsFilePreviewVisible: (visible: boolean) => void;
   currentAction: BrowserAction | null;
   setCurrentAction: (action: BrowserAction | null) => void;
+  currentSearchResults: null | BrowserPath[];
+  setCurrentSearchResults: (results: null | BrowserPath[]) => void;
 
   canEdit?: (node: BrowserPath) => boolean;
   isNodeDisabled?: (node: BrowserNode) => boolean;
@@ -84,6 +86,7 @@ export interface BrowserState {
     parentNode: BrowserNode<'directory'>,
     update: (updater: (update: Upload) => Partial<Upload>) => void
   ) => void;
+  searchNodes?: (term: string) => PromiseLike<BrowserPath[]>;
 
   uploadClient?: ReturnType<typeof useUploadClient>;
 }
@@ -102,6 +105,8 @@ export type BrowserStateProviderProps = {
   | 'setCurrentAction'
   | 'isFilePreviewVisible'
   | 'setIsFilePreviewVisible'
+  | 'currentSearchResults'
+  | 'setCurrentSearchResults'
   | 'mode'
 > &
   Partial<Pick<BrowserState, 'mode'>>;
@@ -122,10 +127,20 @@ export const BrowserStateProvider = React.memo(
     const [isFilePreviewVisible, setIsFilePreviewVisible] =
       React.useState<BrowserState['isFilePreviewVisible']>(false);
     const uploadClient = useUploadClient(props.uploadNode);
+    const [currentSearchResults, setCurrentSearchResults] =
+      React.useState<BrowserState['currentSearchResults']>(null);
 
     React.useEffect(() => {
       onSelect?.(selected.map((n) => n.at(-1)!));
     }, [onSelect, selected]);
+
+    React.useEffect(() => {
+      if (currentSearchResults) {
+        setSelected([]);
+      } else {
+        setIsFilePreviewVisible(false);
+      }
+    }, [currentSearchResults]);
 
     return (
       <BrowserStateContext.Provider
@@ -140,6 +155,8 @@ export const BrowserStateProvider = React.memo(
           setCurrentAction,
           isFilePreviewVisible,
           setIsFilePreviewVisible,
+          currentSearchResults,
+          setCurrentSearchResults,
           uploadClient,
         }}
       >

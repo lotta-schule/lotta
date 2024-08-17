@@ -31,6 +31,7 @@ export const TagsSelect = React.memo(({ value, onChange }: TagsSelectProps) => {
       ))}
       <ComboBox
         fullWidth
+        additionalConfirmChars={[',', ';', '#', ' ']}
         title={'Tag hinzufügen'}
         className={styles.inputWrapper}
         items={availableTags.map((tag) => ({

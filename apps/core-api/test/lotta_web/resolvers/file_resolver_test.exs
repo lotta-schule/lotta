@@ -431,6 +431,9 @@ defmodule LottaWeb.FileResolverTest do
         parentDirectory {
           name
         }
+        path {
+          name
+        }
       }
     }
     """
@@ -459,17 +462,20 @@ defmodule LottaWeb.FileResolverTest do
                    %{
                      "filename" => "pc3.m4v",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "podcast"}
+                     "parentDirectory" => %{"name" => "podcast"},
+                     "path" => [%{"name" => "podcast"}]
                    },
                    %{
                      "filename" => "podcast1.mp4",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "podcast"}
+                     "parentDirectory" => %{"name" => "podcast"},
+                     "path" => [%{"name" => "podcast"}]
                    },
                    %{
                      "filename" => "podcast2.mov",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "podcast"}
+                     "parentDirectory" => %{"name" => "podcast"},
+                     "path" => [%{"name" => "podcast"}]
                    }
                  ]
                }
@@ -494,22 +500,26 @@ defmodule LottaWeb.FileResolverTest do
                    %{
                      "filename" => "logo1.jpg",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "logos"}
+                     "parentDirectory" => %{"name" => "logos"},
+                     "path" => [%{"name" => "logos"}]
                    },
                    %{
                      "filename" => "logo2.jpg",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "logos"}
+                     "parentDirectory" => %{"name" => "logos"},
+                     "path" => [%{"name" => "logos"}]
                    },
                    %{
                      "filename" => "logo3.png",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "logos"}
+                     "parentDirectory" => %{"name" => "logos"},
+                     "path" => [%{"name" => "logos"}]
                    },
                    %{
                      "filename" => "logo4.png",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "logos"}
+                     "parentDirectory" => %{"name" => "logos"},
+                     "path" => [%{"name" => "logos"}]
                    }
                  ]
                }
@@ -534,22 +544,26 @@ defmodule LottaWeb.FileResolverTest do
                    %{
                      "filename" => "logo1.jpg",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "logos"}
+                     "parentDirectory" => %{"name" => "logos"},
+                     "path" => [%{"name" => "logos"}]
                    },
                    %{
                      "filename" => "logo2.jpg",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "logos"}
+                     "parentDirectory" => %{"name" => "logos"},
+                     "path" => [%{"name" => "logos"}]
                    },
                    %{
                      "filename" => "logo3.png",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "logos"}
+                     "parentDirectory" => %{"name" => "logos"},
+                     "path" => [%{"name" => "logos"}]
                    },
                    %{
                      "filename" => "logo4.png",
                      "userId" => Integer.to_string(admin_account.id),
-                     "parentDirectory" => %{"name" => "logos"}
+                     "parentDirectory" => %{"name" => "logos"},
+                     "path" => [%{"name" => "logos"}]
                    }
                  ]
                }
