@@ -1,0 +1,24 @@
+query GetCalendarEventsQuery($calendarId: ID!) {
+  calendarEvents(calendarId: $calendarId) {
+    id
+    start
+    end
+    summary
+    description
+    isFullDay
+    repetitionRule
+    calendar {
+      id
+    }
+    # recurrence {
+    #   id
+    #   frequency
+    #   interval
+    #   endDate
+    #   daysOfWeek
+    #   daysOfMonth
+    #   monthsOfYear
+    #   occurrences
+    # }
+  }
+}

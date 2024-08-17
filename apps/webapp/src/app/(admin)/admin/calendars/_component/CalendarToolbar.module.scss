@@ -1,4 +1,22 @@
 .root {
   justify-content: space-between;
   align-items: baseline;
+  z-index: 100;
+
+  & > section:last-child {
+    display: flex;
+    align-items: center;
+  }
+
+  .calendarSelectionListItemContent {
+    display: grid;
+    grid-template: auto / 1fr auto;
+  }
+
+  .checkmark {
+    color: rgba(var(--lotta-disabled-color), 0.25);
+    &.isActive {
+      color: rgb(var(--lotta-primary-color));
+    }
+  }
 }

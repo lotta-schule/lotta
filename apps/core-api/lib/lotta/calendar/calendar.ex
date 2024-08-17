@@ -6,7 +6,9 @@ defmodule Lotta.Calendar.Calendar do
 
   alias Lotta.Calendar.CalendarEvent
 
-  @type t() :: %__MODULE__{name: :string, default_color: :string | nil}
+  @type id() :: String.t()
+
+  @type t() :: %__MODULE__{id: id(), name: :string, default_color: :string | nil}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @timestamps_opts [type: :utc_datetime]

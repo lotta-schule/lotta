@@ -170,7 +170,7 @@ defmodule Lotta.Tenants do
   @spec get_custom_domains(Tenant.t()) :: CustomDomain.t()
   def get_custom_domains(tenant) do
     tenant
-    |> Repo.preload(:custom_domains)
+    |> Repo.preload(:custom_domains, prefix: "public")
     |> Map.get(:custom_domains)
     |> Enum.sort_by(& &1.is_main_domain)
   end
@@ -720,7 +720,7 @@ defmodule Lotta.Tenants do
   end
 
   def data() do
-    Dataloader.Ecto.new(Repo, query: &query/2)
+    Dataloader.Ecto.new(Repo, query: &query/2, repo_opts: [prefix: Repo.get_prefix()])
   end
 
   def query(queryable, _params) do

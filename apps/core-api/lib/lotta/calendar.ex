@@ -2,10 +2,13 @@ defmodule Lotta.Calendar do
   alias Lotta.Calendar.{Calendar, CalendarEvent}
   alias Lotta.Repo
 
-  @spec list_calendars() :: list(Calendar)
+  @spec list_calendars() :: list(Calendar.t())
   def list_calendars() do
     Repo.all(Calendar)
   end
+
+  @spec get_calendar(id :: Calendar.id()) :: Calendar.t() | nil
+  def get_calendar(id), do: Repo.get(Calendar, id)
 
   @spec create_calendar(data :: map()) ::
           {:ok, Calendar} | {:error, Ecto.Changeset.t(Calendar.t())}
@@ -20,6 +23,12 @@ defmodule Lotta.Calendar do
     calendar
     |> Ecto.assoc(:events)
     |> Repo.all()
+  end
+
+  @spec create_event(map()) :: CalendarEvent.t()
+  def create_event(args) do
+    CalendarEvent.create_changeset(args)
+    |> Repo.insert(prefix: Repo.get_prefix())
   end
 
   def data() do

@@ -13,7 +13,7 @@ defmodule Lotta.Accounts do
   alias Lotta.Storage.File
 
   def data() do
-    Dataloader.Ecto.new(Repo, query: &query/2)
+    Dataloader.Ecto.new(Repo, query: &query/2, repo_opts: [prefix: Repo.get_prefix()])
   end
 
   def query(queryable, _params) do
@@ -477,7 +477,7 @@ defmodule Lotta.Accounts do
     |> Changeset.change(%{
       last_seen: DateTime.truncate(DateTime.utc_now(), :second)
     })
-    |> Repo.update()
+    |> Repo.update(prefix: Ecto.get_meta(user, :prefix))
   end
 
   @doc """

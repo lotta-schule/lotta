@@ -44,3 +44,7 @@ $today-highlight-bg: rgba(var(--lotta-primary-color), 0.1);
 .rbc-date-cell button {
   font: inherit;
 }
+
+.rbc-event {
+  font-size: clamp(10px, 0.75rem, 14px);
+}

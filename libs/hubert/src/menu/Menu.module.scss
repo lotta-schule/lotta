@@ -1,7 +1,7 @@
 .root {
   width: 20em;
   max-height: 380px;
-  overlay: auto;
+  overflow: auto;
   padding-block: 0; //calc(var(--lotta-spacing) / 2);
   li {
     padding: var(--lotta-spacing);

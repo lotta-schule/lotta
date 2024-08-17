@@ -15,7 +15,7 @@ defmodule Lotta.Storage do
   alias Lotta.Storage.{Directory, ImageProcessingUrl, RemoteStorage, RemoteStorageEntity}
 
   def data() do
-    Dataloader.Ecto.new(Repo, query: &query/2)
+    Dataloader.Ecto.new(Repo, query: &query/2, repo_opts: [prefix: Repo.get_prefix()])
   end
 
   def query(queryable, _params) do

@@ -10,6 +10,14 @@ defmodule LottaWeb.Schema.Calendar do
       resolve(&LottaWeb.CalendarResolver.get_external/2)
     end
 
+    field :calendar_events, list_of(:calendar_event) do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      arg(:calendar_id, non_null(:id))
+
+      resolve(&LottaWeb.CalendarResolver.list_calendar_events/2)
+    end
+
     field :calendars, list_of(:calendar) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
@@ -25,6 +33,23 @@ defmodule LottaWeb.Schema.Calendar do
       arg(:default_color, :string)
 
       resolve(&LottaWeb.CalendarResolver.create/2)
+    end
+
+    field :create_calendar_event, :calendar_event do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
+      arg(:calendar_id, non_null(:id))
+
+      arg(:summary, non_null(:string))
+      arg(:description, :string)
+
+      arg(:start, non_null(:datetime))
+      arg(:end, :datetime)
+      arg(:is_full_day, :boolean)
+
+      arg(:repetition_rule, :string)
+
+      resolve(&LottaWeb.CalendarResolver.create_event/2)
     end
   end
 
@@ -45,6 +70,9 @@ defmodule LottaWeb.Schema.Calendar do
     field :end, non_null(:datetime)
     field :is_full_day, non_null(:boolean)
     field :repetition_rule, :string
+
+    field :calendar, non_null(:calendar),
+      resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Calendar)
   end
 
   object :external_calendar_event do

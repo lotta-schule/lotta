@@ -13,7 +13,7 @@ defmodule Lotta.Messages do
   alias Lotta.Storage.File
 
   def data() do
-    Dataloader.Ecto.new(Repo, query: &query/2)
+    Dataloader.Ecto.new(Repo, query: &query/2, repo_opts: [prefix: Repo.get_prefix()])
   end
 
   def query(queryable, _params) do
@@ -133,7 +133,7 @@ defmodule Lotta.Messages do
   @doc """
   Returns the number of unread messages for a given user.
   Either pass a conversation, in which case the unread
-  messages for that given conversation is given, 
+  messages for that given conversation is given,
   or skip for being given unread messages of all conversations.
   """
   @spec count_unread_messages(User.t(), Conversation.t() | nil) :: number()

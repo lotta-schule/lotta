@@ -82,7 +82,8 @@
   .contentSection {
     overflow: auto;
     padding-inline: var(--lotta-spacing);
-    &:has(aside) {
+    &:has(aside),
+    &:has(:first-child:last-child) {
       overflow: hidden;
       display: flex;
       flex: 1 1 min-content;

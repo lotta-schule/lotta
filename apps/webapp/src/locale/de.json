@@ -62,6 +62,7 @@
   "results_one": "{{count}} Ergebnis aus {{total}}",
   "results_many": "{{count}} aus {{total}} Ergebnisse",
   "results_other": "{{count}} aus {{total}} Ergebnisse",
+  "save": "speichern",
   "SCHEDULE": "Stundenplan",
   "Search user": "Nutzer suchen",
   "select file": "Datei auswählen",

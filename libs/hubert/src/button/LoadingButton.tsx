@@ -68,161 +68,156 @@ const AnimatedCircularProgress = motion(CircularProgress);
  * It can be used to show the user that an action is being executed,
  * or to show the result of an action.
  */
-export const LoadingButton = React.forwardRef(
-  (
-    {
-      icon,
-      disabled,
-      label,
-      loadingLabel,
-      children,
-      className,
-      state,
-      classes: { successIcon, errorIcon, ...classes } = {},
-      resetState = true,
-      onAction,
-      onClick,
-      onComplete,
-      onError,
-      ...props
-    }: LoadingButtonProps,
-    forwardedRef: React.Ref<HTMLButtonElement | null>
-  ) => {
-    const ref = React.useRef<HTMLButtonElement>(null!);
+export const LoadingButton = ({
+  icon,
+  disabled,
+  label,
+  loadingLabel,
+  children,
+  className,
+  state,
+  classes: { successIcon, errorIcon, ...classes } = {},
+  resetState = true,
+  onAction,
+  onClick,
+  onComplete,
+  onError,
+  ref: propRef,
+  ...props
+}: LoadingButtonProps) => {
+  const defaultRef = React.useRef<React.ComponentRef<'button'>>(null);
+  const ref = propRef || defaultRef;
 
-    const [currentState, setCurrentState] = React.useState<LoadingButtonState>(
-      state || 'idle'
-    );
+  const [currentState, setCurrentState] = React.useState<LoadingButtonState>(
+    state || 'idle'
+  );
 
-    React.useImperativeHandle(forwardedRef, () => ref.current);
+  const isDisabled = currentState !== 'idle' || disabled;
 
-    const isDisabled = currentState !== 'idle' || disabled;
-
-    const executeHandler = React.useCallback(
-      async (e: React.MouseEvent<HTMLButtonElement> | SubmitEvent) => {
-        if (isDisabled) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-        if (e.type === 'click') {
-          onClick?.(e as React.MouseEvent<HTMLButtonElement>);
-        }
-        if (state) {
-          // if a state has been explicitly set,
-          // we don't want to handle the state internally
-          if (onAction) {
-            console.warn('onAction will be ignored when state is set');
-          }
-          return;
-        }
-
+  const executeHandler = React.useCallback(
+    async (e: React.MouseEvent<HTMLButtonElement> | SubmitEvent) => {
+      if (isDisabled) {
         e.preventDefault();
         e.stopPropagation();
-
-        try {
-          setCurrentState('loading');
-          await onAction?.(e);
-          setCurrentState('success');
-          onComplete?.();
-        } catch (e) {
-          setCurrentState('error');
-          onError?.(e);
-        } finally {
-          if (resetState !== false) {
-            setTimeout(() => {
-              setCurrentState('idle');
-            }, 4000);
-          }
-        }
-      },
-      [onAction, onClick, onComplete, onError, resetState, state, isDisabled]
-    );
-
-    React.useEffect(() => {
-      if (state) {
-        setCurrentState(state);
+        return;
       }
-    }, [state]);
-
-    React.useEffect(() => {
-      if (props.type !== 'submit') {
+      if (e.type === 'click') {
+        onClick?.(e as React.MouseEvent<HTMLButtonElement>);
+      }
+      if (state) {
+        // if a state has been explicitly set,
+        // we don't want to handle the state internally
+        if (onAction) {
+          console.warn('onAction will be ignored when state is set');
+        }
         return;
       }
 
-      const form = ref.current?.closest('form');
-      if (form) {
-        const callback = (e: SubmitEvent) => {
-          executeHandler(e);
-        };
+      e.preventDefault();
+      e.stopPropagation();
 
-        form.addEventListener('submit', callback);
-        return () => {
-          form.removeEventListener('submit', callback);
-        };
+      try {
+        setCurrentState('loading');
+        await onAction?.(e);
+        setCurrentState('success');
+        onComplete?.();
+      } catch (e) {
+        setCurrentState('error');
+        onError?.(e);
+      } finally {
+        if (resetState !== false) {
+          setTimeout(() => {
+            setCurrentState('idle');
+          }, 4000);
+        }
       }
-    }, [executeHandler]);
+    },
+    [onAction, onClick, onComplete, onError, resetState, state, isDisabled]
+  );
 
-    const currentIcon = React.useMemo(() => {
-      switch (currentState) {
-        case 'success':
-          return <Check data-testid={'SuccessIcon'} />;
-        case 'error':
-          return <Close data-testid={'ErrorIcon'} />;
-        case 'loading':
-          return null;
-        default:
-          return icon;
-      }
-    }, [currentState]);
+  React.useEffect(() => {
+    if (state) {
+      setCurrentState(state);
+    }
+  }, [state]);
 
-    const animatedIcon = React.useMemo(
-      () => (
-        <motion.div
-          initial={false}
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 1, animationDelay: '500ms' },
-          }}
-          animate={currentState !== 'loading' ? 'visible' : 'hidden'}
-          className={clsx(
-            styles.iconContainer,
-            currentState === 'success' && [styles.successIcon, successIcon],
-            currentState === 'error' && [styles.errorIcon, errorIcon]
-          )}
-        >
-          {currentIcon}
-        </motion.div>
-      ),
-      [currentState, currentIcon]
-    );
-    return (
-      <Button
-        {...props}
-        disabled={currentState !== 'idle' || disabled}
-        icon={animatedIcon}
-        ref={ref}
-        className={clsx(styles.root, className, {
-          [styles.isLoading]: currentState === 'loading',
-        })}
-        classes={{
-          ...classes,
-          icon: clsx(classes?.icon, styles.icon),
+  React.useEffect(() => {
+    if (props.type !== 'submit') {
+      return;
+    }
+
+    const form = ref.current?.closest('form');
+    if (form) {
+      const callback = (e: SubmitEvent) => {
+        executeHandler(e);
+      };
+
+      form.addEventListener('submit', callback);
+      return () => {
+        form.removeEventListener('submit', callback);
+      };
+    }
+  }, [executeHandler]);
+
+  const currentIcon = React.useMemo(() => {
+    switch (currentState) {
+      case 'success':
+        return <Check data-testid={'SuccessIcon'} />;
+      case 'error':
+        return <Close data-testid={'ErrorIcon'} />;
+      case 'loading':
+        return null;
+      default:
+        return icon;
+    }
+  }, [currentState]);
+
+  const animatedIcon = React.useMemo(
+    () => (
+      <motion.div
+        initial={false}
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { opacity: 1, animationDelay: '500ms' },
         }}
-        onClick={executeHandler}
-      >
-        {currentState === 'loading' && (
-          <AnimatedCircularProgress
-            isIndeterminate
-            aria-label={loadingLabel || 'Wird gerade geladen ...'}
-            color={'rgb(var(--lotta-disabled-color))'}
-            className={clsx(styles.circularProgress)}
-            size={'1.2em'}
-          />
+        animate={currentState !== 'loading' ? 'visible' : 'hidden'}
+        className={clsx(
+          styles.iconContainer,
+          currentState === 'success' && [styles.successIcon, successIcon],
+          currentState === 'error' && [styles.errorIcon, errorIcon]
         )}
-        <span className={clsx(styles.label)}>{label || children}</span>
-      </Button>
-    );
-  }
-);
+      >
+        {currentIcon}
+      </motion.div>
+    ),
+    [currentState, currentIcon]
+  );
+  return (
+    <Button
+      {...props}
+      disabled={currentState !== 'idle' || disabled}
+      icon={animatedIcon}
+      ref={ref}
+      className={clsx(styles.root, className, {
+        [styles.isLoading]: currentState === 'loading',
+      })}
+      classes={{
+        ...classes,
+        icon: clsx(classes?.icon, styles.icon),
+      }}
+      onClick={executeHandler}
+    >
+      {currentState === 'loading' && (
+        <AnimatedCircularProgress
+          isIndeterminate
+          aria-label={loadingLabel || 'Wird gerade geladen ...'}
+          color={'rgb(var(--lotta-disabled-color))'}
+          className={clsx(styles.circularProgress)}
+          size={'1.2em'}
+        />
+      )}
+      <span className={clsx(styles.label)}>{label || children}</span>
+    </Button>
+  );
+};
 LoadingButton.displayName = 'LoadingButton';

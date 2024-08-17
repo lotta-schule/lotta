@@ -25,6 +25,7 @@ export type MenuProps = ListProps &
   WithDescription & {
     children: CollectionChildren<object>;
     ref?: React.Ref<HTMLElement>;
+    closeOnAction?: boolean;
     onClose?: () => void;
     onAction?: (_key: React.Key) => void;
   };
@@ -33,6 +34,7 @@ export const Menu = ({
   title,
   onAction,
   onClose,
+  closeOnAction,
   className,
   ref: propRef,
   ...props
@@ -67,6 +69,7 @@ export const Menu = ({
         <MenuItem
           key={item.key}
           item={item as any}
+          closeOnSelect={closeOnAction}
           state={state}
           onAction={onAction}
           onClose={onClose}

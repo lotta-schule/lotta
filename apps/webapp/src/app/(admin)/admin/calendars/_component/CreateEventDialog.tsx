@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMutation, useSuspenseQuery } from '@apollo/client';
 import {
   Dialog,
   DialogContent,
@@ -10,22 +11,28 @@ import {
   Select,
   Option,
   Collapse,
+  LoadingButton,
+  ErrorMessage,
 } from '@lotta-schule/hubert';
-import { useTranslation } from 'react-i18next';
-import { useSuspenseQuery } from '@apollo/client';
 import {
   addDays,
   addHours,
   endOfDay,
   format,
+  isAfter,
+  isBefore,
   isSameDay,
   startOfHour,
 } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { invariant } from '@epic-web/invariant';
 import clsx from 'clsx';
 
 import styles from './CreateEventDialog.module.scss';
 
 import GetCalendarsQuery from 'api/query/GetCalendarsQuery.graphql';
+import GetCalendarEventsQuery from 'api/query/GetCalendarEventsQuery.graphql';
+import CreateCalendarEventMutation from 'api/mutation/CreateCalendarEventMutation.graphql';
 
 export type CreateEventDialogProps = {
   isOpen: boolean;
@@ -43,18 +50,66 @@ export const CreateEventDialog = React.memo(
       }
     );
 
+    const nameInputRef = React.useRef<React.ComponentRef<'input'>>(null);
+
     const { t } = useTranslation();
-    const isLoading = false;
+    const [name, setName] = React.useState('');
+    const [description, setDescription] = React.useState('');
     const [calendarId, setCalendarId] = React.useState(calendars.at(0)?.id);
     const [date, setDate] = React.useState(() => startOfHour(new Date()));
-    const [endDate, setEndDate] = React.useState<Date>(() => addHours(date, 1));
-    const [isAllDay, setIsAllDay] = React.useState(true);
+    const [endDate, setEndDate] = React.useState(() => addHours(date, 1));
+    const [isFullDay, setIsAllDay] = React.useState(true);
     const [repetition, setRepetition] = React.useState('');
 
     const isMultipleDays = React.useMemo(
       () => !isSameDay(date, endDate),
       [date, endDate]
     );
+
+    const [createEvent, { loading: isLoading, error }] = useMutation(
+      CreateCalendarEventMutation,
+      {
+        variables: {
+          name,
+          description,
+          calendarId,
+          start: date.toISOString(),
+          end: endDate?.toISOString(),
+          isFullDay,
+          repetition: !repetition ? undefined : repetition,
+        },
+        update: (cache, { data }, { variables }) => {
+          const calendarId = variables?.calendarId;
+          invariant(calendarId, 'Calendar ID is required');
+          if (data?.event) {
+            cache.updateQuery(
+              { query: GetCalendarEventsQuery, variables: { calendarId } },
+              (prev) => ({
+                calendarEvents: [...(prev?.calendarEvents ?? []), data.event],
+              })
+            );
+          }
+        },
+      }
+    );
+
+    const resetForm = () => {
+      setName('');
+      setDescription('');
+      setCalendarId(calendars.at(0)?.id);
+      setDate(startOfHour(new Date()));
+      setEndDate(addHours(date, 1));
+      setIsAllDay(true);
+      setRepetition('');
+    };
+
+    React.useEffect(() => {
+      if (isOpen) {
+        nameInputRef.current?.focus();
+      } else {
+        resetForm();
+      }
+    }, [isOpen]);
 
     return (
       <Dialog
@@ -65,13 +120,26 @@ export const CreateEventDialog = React.memo(
       >
         <form>
           <DialogContent>
+            <ErrorMessage error={error} />
             <div className={clsx(styles.row, styles.nameRow)}>
               <Label label={t('name')} style={{ flex: 1 }}>
-                <Input autoFocus={isOpen} id="name" disabled={isLoading} />
+                <Input
+                  ref={nameInputRef}
+                  id="name"
+                  disabled={isLoading}
+                  value={name}
+                  onChange={(e) => setName(e.currentTarget.value)}
+                />
               </Label>
             </div>
             <Label label={t('description')}>
-              <Input multiline id="description" disabled={isLoading} />
+              <Input
+                multiline
+                id="description"
+                disabled={isLoading}
+                value={description}
+                onChange={(e) => setDescription(e.currentTarget.value)}
+              />
             </Label>
 
             <div className={styles.configRow}>
@@ -115,8 +183,13 @@ export const CreateEventDialog = React.memo(
                 <Checkbox
                   id="allDay"
                   isDisabled={isLoading}
-                  isSelected={isAllDay}
-                  onChange={setIsAllDay}
+                  isSelected={isFullDay}
+                  onChange={(isSelected) => {
+                    setIsAllDay(isSelected);
+                    if (!isSelected) {
+                      setEndDate(addHours(date, 1));
+                    }
+                  }}
                 >
                   {t('all-day')}
                 </Checkbox>
@@ -132,7 +205,7 @@ export const CreateEventDialog = React.memo(
                     }
                   }}
                   className={clsx(styles.mayBeInvisible, {
-                    [styles.isVisible]: isAllDay,
+                    [styles.isVisible]: isFullDay,
                   })}
                 >
                   {t('multiple days')}
@@ -147,15 +220,22 @@ export const CreateEventDialog = React.memo(
                   id="startdate"
                   value={date.toISOString().split('T')[0]}
                   onChange={(e) => {
-                    setDate((d) => {
-                      const newDate = e.currentTarget.valueAsDate;
-                      if (newDate) {
-                        newDate.setHours(d.getHours());
-                        newDate.setMinutes(d.getMinutes());
-                        return newDate;
-                      }
-                      return d;
-                    });
+                    const [year, month, day] = e.currentTarget.value
+                      .split('-')
+                      .map((v) => parseInt(v, 10));
+                    invariant(
+                      year !== undefined && month && day,
+                      'Invalid date'
+                    );
+                    const newDate = new Date(date);
+                    newDate.setFullYear(year);
+                    newDate.setMonth(month - 1);
+                    newDate.setDate(day);
+
+                    setDate(newDate);
+                    if (endDate && isAfter(newDate, endDate)) {
+                      setEndDate(addDays(newDate, 1));
+                    }
                   }}
                   disabled={isLoading}
                 />
@@ -164,7 +244,7 @@ export const CreateEventDialog = React.memo(
                 label={t('start time')}
                 style={{ flexGrow: 1 }}
                 className={clsx(styles.mayBeInvisible, {
-                  [styles.isVisible]: !isAllDay,
+                  [styles.isVisible]: !isFullDay,
                 })}
               >
                 <Input
@@ -173,8 +253,23 @@ export const CreateEventDialog = React.memo(
                   disabled={isLoading}
                   value={format(date, 'HH:mm')}
                   onChange={(e) => {
-                    const newTime = e.currentTarget.valueAsDate;
-                    console.log({ newTime });
+                    const [hours = 0, minutes = 0, seconds = 0] =
+                      e.currentTarget.value
+                        .split(':')
+                        .map((v) => parseInt(v, 10));
+                    invariant(
+                      hours !== undefined && minutes !== undefined,
+                      'Hours and minutes are required'
+                    );
+                    const newDate = new Date(date);
+                    newDate.setHours(hours);
+                    newDate.setMinutes(minutes);
+                    newDate.setSeconds(seconds);
+                    setDate(newDate);
+
+                    if (isAfter(newDate, endDate)) {
+                      setEndDate(addHours(newDate, 1));
+                    }
                   }}
                 />
               </Label>
@@ -182,7 +277,7 @@ export const CreateEventDialog = React.memo(
                 label={t('end time')}
                 style={{ flexGrow: 1 }}
                 className={clsx(styles.mayBeInvisible, {
-                  [styles.isVisible]: !isAllDay,
+                  [styles.isVisible]: !isFullDay,
                 })}
               >
                 <Input
@@ -191,8 +286,23 @@ export const CreateEventDialog = React.memo(
                   disabled={isLoading}
                   value={endDate ? format(endDate, 'HH:mm') : ''}
                   onChange={(e) => {
-                    const newTime = e.currentTarget.valueAsDate;
-                    console.log({ newTime });
+                    const [hours = 0, minutes = 0, seconds = 0] =
+                      e.currentTarget.value
+                        .split(':')
+                        .map((v) => parseInt(v, 10));
+                    invariant(
+                      hours !== undefined && minutes !== undefined,
+                      'Hours and minutes are required'
+                    );
+                    const newDate = new Date(date);
+                    newDate.setHours(hours);
+                    newDate.setMinutes(minutes);
+                    newDate.setSeconds(seconds);
+                    setEndDate(newDate);
+
+                    if (isBefore(newDate, date)) {
+                      setDate(addHours(newDate, -1));
+                    }
                   }}
                 />
               </Label>
@@ -206,9 +316,11 @@ export const CreateEventDialog = React.memo(
                     id="enddate"
                     value={endDate?.toISOString().split('T')[0]}
                     onChange={(e) => {
-                      const newDate = e.currentTarget.valueAsDate;
-                      if (newDate) {
-                        setEndDate(endOfDay(newDate));
+                      invariant(e.currentTarget.valueAsDate, 'Invalid date');
+                      const newDate = endOfDay(e.currentTarget.valueAsDate);
+                      setEndDate(newDate);
+                      if (isBefore(newDate, date)) {
+                        setDate(addDays(newDate, -1));
                       }
                     }}
                     disabled={isLoading}
@@ -219,6 +331,25 @@ export const CreateEventDialog = React.memo(
           </DialogContent>
           <DialogActions>
             <Button onClick={() => onClose()}>{t('close')}</Button>
+            <LoadingButton
+              disabled={
+                isLoading ||
+                !name ||
+                !calendarId ||
+                !date ||
+                (!(isFullDay && !isMultipleDays) && isAfter(date, endDate))
+              }
+              type="submit"
+              onAction={async (e) => {
+                e.preventDefault();
+                await createEvent();
+              }}
+              onComplete={() => {
+                onClose();
+              }}
+            >
+              {t('save')}
+            </LoadingButton>
           </DialogActions>
         </form>
       </Dialog>

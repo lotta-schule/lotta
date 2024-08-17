@@ -53,17 +53,38 @@ defmodule LottaWeb.CalendarResolver do
     end
   end
 
-  def list(_args, %{context: %{current_user: _current_user, tenant: tenant}}) do
-    # TODO: Who should have access to calendars?!
-    IO.inspect(tenant, label: "tenant")
+  def list(_args, _context) do
     {:ok, Lotta.Calendar.list_calendars()}
   end
 
-  def list(_, _), do: {:error, "AuthError"}
+  def list_calendar_events(%{calendar_id: id}, _context) do
+    with calendar when not is_nil(calendar) <-
+           Lotta.Calendar.get_calendar(id) do
+      {:ok, Lotta.Calendar.list_calendar_events(calendar)}
+    else
+      nil -> {:error, "Calendar not found"}
+      error -> error
+    end
+  end
 
   def create(args, %{context: %{current_user: _current_user, tenant: tenant}}) do
     IO.inspect(tenant, label: "tenant")
     IO.inspect(Lotta.Repo.get_prefix(), label: "prefix")
     Lotta.Calendar.create_calendar(args)
+  end
+
+  def create_event(%{calendar_id: calendar_id} = args, _context) do
+    IO.inspect(args, label: "create_event")
+    IO.inspect(Lotta.Repo.get_prefix(), label: "prefix")
+
+    with calendar when not is_nil(calendar) <- Lotta.Calendar.get_calendar(calendar_id),
+         {:ok, event} <- Lotta.Calendar.create_event(args) do
+      {:ok, event}
+    else
+      nil -> {:error, "Calendar not found"}
+      error -> error
+    end
+
+    Lotta.Calendar.create_event(args)
   end
 end

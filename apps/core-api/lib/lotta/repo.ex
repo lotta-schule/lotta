@@ -6,14 +6,9 @@ defmodule Lotta.Repo do
   @dialyzer {:nowarn_function, rollback: 1}
 
   @impl true
-  def prepare_query(_operation, query, opts) do
-    prefix = get_prefix()
-
-    if opts[:prefix] || is_nil(prefix) do
-      {query, opts}
-    else
-      {query, Keyword.put(opts, :prefix, prefix)}
-    end
+  def default_options(operation) do
+    IO.inspect(operation, label: "default_options")
+    [prefix: get_prefix()]
   end
 
   def build_prefixed_assoc(%{__struct__: _schema} = struct, assoc, attributes \\ %{}) do
