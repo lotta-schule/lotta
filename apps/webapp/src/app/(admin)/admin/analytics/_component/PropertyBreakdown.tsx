@@ -3,17 +3,13 @@ import { useSuspenseQuery } from '@apollo/client';
 import { Table } from '@lotta-schule/hubert';
 import { formatDate } from '../_util';
 import { Period } from '../Analytics';
-import {
-  GQLCompatibleMetricType,
-  gqlCompatibleMetricType,
-  MetricType,
-} from './MetricType';
+import { gqlCompatibleMetricType, MetricType } from './MetricType';
 import { PropertyIcon } from './PropertyIcon';
 import { t } from 'i18next';
 
 import styles from './PropertyBreakdown.module.scss';
 
-import GetTenantBreakdownAnalytics from 'api/query/analytics/GetTenantBreakdownAnalyticsQuery.graphql';
+import { GET_TENANT_BREAKDOWN_ANALYTICS } from '../_graphql';
 
 export type PropertyBreakdownProps = {
   period: Period;
@@ -41,24 +37,11 @@ export const PropertyBreakdown = React.memo(
 
     const {
       data: { properties },
-    } = useSuspenseQuery<
-      {
-        properties: {
-          property: string;
-          metrics: { metric: MetricType; value: number }[];
-        }[];
-      },
-      {
-        date: string;
-        period: '30d' | 'month';
-        property: string;
-        metrics: GQLCompatibleMetricType[];
-      }
-    >(GetTenantBreakdownAnalytics, {
+    } = useSuspenseQuery(GET_TENANT_BREAKDOWN_ANALYTICS, {
       variables: {
         date: formatDate(period.type === '30d' ? new Date() : period.date),
         period: period.type,
-        property: selectedProperty.name,
+        property: selectedProperty.name as any,
         metrics,
       },
     });

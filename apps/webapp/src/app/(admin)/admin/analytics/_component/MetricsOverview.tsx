@@ -5,10 +5,9 @@ import { MetricType } from './MetricType';
 import { formatDate } from '../_util';
 import { Period } from '../Analytics';
 import { t } from 'i18next';
+import { GET_TENANT_AGGREGATE_ANALYTICS } from '../_graphql';
 
 import styles from './MetricsOverview.module.scss';
-
-import GetTenantAggregateAnalyticsQuery from 'api/query/analytics/GetTenantAggregateAnalyticsQuery.graphql';
 
 export type MetricsOverviewProps = {
   period: Period;
@@ -27,12 +26,7 @@ export const MetricsOverview = React.memo(
           viewsPerVisit,
         },
       },
-    } = useSuspenseQuery<
-      {
-        analytics: Record<MetricType, number>;
-      },
-      { date: string; period: '30d' | 'month' }
-    >(GetTenantAggregateAnalyticsQuery, {
+    } = useSuspenseQuery(GET_TENANT_AGGREGATE_ANALYTICS, {
       variables: {
         date: formatDate(period.type === '30d' ? new Date() : period.date),
         period: period.type,
