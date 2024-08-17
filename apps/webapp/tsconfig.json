@@ -23,6 +23,11 @@
     "plugins": [
       {
         "name": "next"
+      },
+      {
+        "name": "gql.tada/ts-plugin",
+        "schema": "http://127.0.0.1:4000/api",
+        "tadaOutputLocation": "./src/graphql-env.d.ts"
       }
     ],
     "noEmit": true
