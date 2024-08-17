@@ -65,10 +65,9 @@ export const CalendarView = React.memo(
     const fetchAllEvents = React.useCallback(async () => {
       const events = await Promise.all(
         activeCalendarIds.map(async (calendarId) => {
-          const { data, previousData, error, loading, variables } =
-            await fetchEvents({
-              variables: { calendarId },
-            });
+          const { data } = await fetchEvents({
+            variables: { calendarId },
+          });
           return data?.calendarEvents || [];
         })
       );
@@ -163,7 +162,7 @@ export const CalendarView = React.memo(
           event: t('event'),
           today: t('today'),
           allDay: t('all-day'),
-          showMore: (count) => t('show {count} more', { count }),
+          showMore: (count: number) => t('show {count} more', { count }),
           time: t('time'),
           yesterday: t('yesterday'),
           tomorrow: t('tomorrow'),

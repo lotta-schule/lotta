@@ -26,7 +26,7 @@ import { CalendarContext } from './CalendarContext';
 import clsx from 'clsx';
 
 export const CalendarToolbar = React.memo(
-  ({ label, date, view, localizer, onNavigate }: ToolbarProps) => {
+  ({ label, localizer, onNavigate }: ToolbarProps) => {
     const { t } = useTranslation();
     const { isCalendarActive, toggleCalendar } = React.use(CalendarContext);
 
