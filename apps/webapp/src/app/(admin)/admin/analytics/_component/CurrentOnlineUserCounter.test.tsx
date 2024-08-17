@@ -15,7 +15,7 @@ describe('CurrentOnlineUserCounter', () => {
         },
         result: {
           data: {
-            currentUserCount: 0,
+            realtimeAnalytics: 0,
           },
         },
       },
@@ -42,7 +42,7 @@ describe('CurrentOnlineUserCounter', () => {
         },
         result: {
           data: {
-            currentUserCount: 5,
+            realtimeAnalytics: 5,
           },
         },
       },
