@@ -115,7 +115,7 @@ export const CreateEventDialog = React.memo(
       <Dialog
         open={isOpen}
         onRequestClose={onClose}
-        title={t('Create event')}
+        title={t('create event')}
         className={styles.root}
       >
         <form>
