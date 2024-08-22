@@ -10,7 +10,8 @@ defmodule LottaWeb.EmailViewTest do
   @prefix "tenant_test"
 
   setup do
-    # Repo.put_prefix(@prefix)
+    Repo.put_prefix(@prefix)
+
     {:ok, %{tenant: Tenants.get_tenant_by_prefix(@prefix)}}
   end
 

@@ -13,7 +13,7 @@ defmodule Lotta.Accounts do
   alias Lotta.Storage.File
 
   def data() do
-    Dataloader.Ecto.new(Repo, query: &query/2, repo_opts: [prefix: Repo.get_prefix()])
+    Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
   def query(queryable, _params) do

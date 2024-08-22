@@ -16,6 +16,8 @@ defmodule LottaWeb.CategoryResolverTest do
   setup do
     tenant = Tenants.get_tenant_by_prefix(@prefix)
 
+    Repo.put_prefix(@prefix)
+
     faecher_category =
       Repo.one!(
         from(c in Category,

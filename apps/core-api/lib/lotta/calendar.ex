@@ -1,4 +1,8 @@
 defmodule Lotta.Calendar do
+  @moduledoc """
+    This module provides functions to interact with the calendar functionality of lotta.
+  """
+
   alias Lotta.Calendar.{Calendar, CalendarEvent}
   alias Lotta.Repo
 
@@ -36,8 +40,6 @@ defmodule Lotta.Calendar do
   end
 
   def query(queryable, params) do
-    IO.inspect(queryable)
-    IO.inspect(params)
     queryable
   end
 end

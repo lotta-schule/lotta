@@ -53,7 +53,6 @@ defmodule Lotta.Calendar.CalendarEvent do
   defp validate_datetime(changeset) do
     start = get_change(changeset, :start)
     end_date = get_change(changeset, :end)
-    IO.inspect({start, end_date}, label: "validate_datetime")
 
     changeset
   end
