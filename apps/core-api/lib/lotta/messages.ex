@@ -70,7 +70,7 @@ defmodule Lotta.Messages do
 
     conversation_subjects
     |> Conversation.list_conversations_query!()
-    |> Repo.all()
+    |> Repo.all(prefix: Ecto.get_meta(from, :prefix))
     |> List.first()
     |> case do
       nil ->
