@@ -7,7 +7,6 @@ defmodule Lotta.Search do
   import Ecto.Query
 
   alias Lotta.Content.ContentModule
-  alias Lotta.Tenants.Category
 
   @doc """
   Executes a fulltext search for a given search query in

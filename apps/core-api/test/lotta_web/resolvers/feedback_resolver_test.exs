@@ -204,7 +204,7 @@ defmodule LottaWeb.FeedbackResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{},
+               "data" => nil,
                "errors" => [
                  %{
                    "locations" => [%{"column" => 3, "line" => 2}],
@@ -278,7 +278,7 @@ defmodule LottaWeb.FeedbackResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{},
+               "data" => nil,
                "errors" => [
                  %{
                    "locations" => [%{"column" => 3, "line" => 2}],
@@ -371,9 +371,7 @@ defmodule LottaWeb.FeedbackResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "feedback" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Feedback mit der id 0 nicht gefunden.",
@@ -397,9 +395,7 @@ defmodule LottaWeb.FeedbackResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "feedback" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -421,9 +417,7 @@ defmodule LottaWeb.FeedbackResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "feedback" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",

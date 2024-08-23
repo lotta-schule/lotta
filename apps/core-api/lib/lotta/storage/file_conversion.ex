@@ -14,13 +14,13 @@ defmodule Lotta.Storage.FileConversion do
   @timestamps_opts [type: :utc_datetime]
 
   schema "file_conversions" do
-    field :file_type, :string
-    field :filesize, :integer
-    field :format, :string
-    field :mime_type, :string
-    field :full_metadata, :map
-    field :metadata, :map
-    field :media_duration, :float
+    field(:file_type, :string)
+    field(:filesize, :integer)
+    field(:format, :string)
+    field(:mime_type, :string)
+    field(:full_metadata, :map)
+    field(:metadata, :map)
+    field(:media_duration, :float)
 
     belongs_to :file, File, type: :binary_id
     belongs_to :remote_storage_entity, RemoteStorageEntity, type: :binary_id, on_replace: :nilify

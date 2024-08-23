@@ -23,11 +23,11 @@ defmodule Lotta.Content.ContentModule do
   @timestamps_opts [type: :utc_datetime]
 
   schema "content_modules" do
-    field :content, :map
-    field :type, :string
-    field :text, :string
-    field :sort_key, :integer
-    field :configuration, :map
+    field(:content, :map)
+    field(:type, :string)
+    field(:text, :string)
+    field(:sort_key, :integer)
+    field(:configuration, :map)
 
     belongs_to :article, Article
     has_many :results, ContentModuleResult

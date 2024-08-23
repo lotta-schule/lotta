@@ -18,9 +18,9 @@ defmodule Lotta.Tenants.Widget do
   @timestamps_opts [type: :utc_datetime]
 
   schema "widgets" do
-    field :configuration, :map
-    field :title, :string
-    field :type, :string
+    field(:configuration, :map)
+    field(:title, :string)
+    field(:type, :string)
 
     belongs_to :icon_image_file, File,
       on_replace: :nilify,

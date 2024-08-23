@@ -264,7 +264,7 @@ defmodule LottaWeb.DirectoryResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{"directories" => nil},
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du hast nicht die Rechte, diesen Ordner anzusehen.",
@@ -286,7 +286,7 @@ defmodule LottaWeb.DirectoryResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{"directories" => nil},
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du hast nicht die Rechte, diesen Ordner anzusehen.",

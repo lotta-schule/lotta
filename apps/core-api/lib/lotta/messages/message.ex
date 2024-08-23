@@ -11,7 +11,7 @@ defmodule Lotta.Messages.Message do
   @timestamps_opts [type: :utc_datetime]
 
   schema "messages" do
-    field :content, :string
+    field(:content, :string)
 
     belongs_to :user, User
     belongs_to :conversation, Conversation, type: :binary_id, on_replace: :delete

@@ -621,9 +621,7 @@ defmodule LottaWeb.UserResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "users" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
