@@ -6,26 +6,26 @@ defmodule LottaWeb.Schema.Contents do
   alias Lotta.Tenants
 
   object :contents_queries do
-    field :article, :article do
+    field(:article, :article) do
       arg(:id, non_null(:id))
 
       resolve(&LottaWeb.ArticleResolver.get/2)
     end
 
-    field :articles, list_of(:article) do
+    field(:articles, list_of(:article)) do
       arg(:category_id, :id)
       arg(:filter, :article_filter)
 
       resolve(&LottaWeb.ArticleResolver.all/2)
     end
 
-    field :unpublished_articles, list_of(:article) do
+    field(:unpublished_articles, list_of(:article)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       resolve(&LottaWeb.ArticleResolver.all_unpublished/2)
     end
 
-    field :articles_with_user_files, list_of(:article) do
+    field(:articles_with_user_files, list_of(:article)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:user_id, non_null(:id))
@@ -33,29 +33,29 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleResolver.with_user_files/2)
     end
 
-    field :own_articles, list_of(:article) do
+    field(:own_articles, list_of(:article)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       resolve(&LottaWeb.ArticleResolver.own/2)
     end
 
-    field :tags, list_of(non_null(:string)) do
+    field(:tags, list_of(non_null(:string))) do
       resolve(&LottaWeb.ArticleResolver.get_all_tags/2)
     end
 
-    field :articles_by_tag, list_of(non_null(:article)) do
+    field(:articles_by_tag, list_of(non_null(:article))) do
       arg(:tag, non_null(:string))
 
       resolve(&LottaWeb.ArticleResolver.by_tag/2)
     end
 
-    field :articles_by_user, list_of(non_null(:article)) do
+    field(:articles_by_user, list_of(non_null(:article))) do
       arg(:id, non_null(:id))
 
       resolve(&LottaWeb.ArticleResolver.by_user/2)
     end
 
-    field :get_reaction_users, type: list_of(:user) do
+    field(:get_reaction_users, type: list_of(:user)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:id, non_null(:id))
@@ -64,7 +64,7 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleReactionResolver.get_reaction_users/2)
     end
 
-    field :content_module_results, list_of(:content_module_result) do
+    field(:content_module_results, list_of(:content_module_result)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:content_module_id, non_null(:id))
@@ -74,7 +74,7 @@ defmodule LottaWeb.Schema.Contents do
   end
 
   object :contents_mutations do
-    field :create_article, type: :article do
+    field(:create_article, type: :article) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:article, non_null(:article_input))
@@ -82,7 +82,7 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleResolver.create/2)
     end
 
-    field :update_article, type: :article do
+    field(:update_article, type: :article) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:id, non_null(:id))
@@ -91,7 +91,7 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleResolver.update/2)
     end
 
-    field :delete_article, type: :article do
+    field(:delete_article, type: :article) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:id, non_null(:id))
@@ -99,7 +99,7 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleResolver.delete/2)
     end
 
-    field :toggle_article_pin, type: :article do
+    field(:toggle_article_pin, type: :article) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:id, non_null(:id))
@@ -107,7 +107,7 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleResolver.toggle_pin/2)
     end
 
-    field :react_to_article, type: :article do
+    field(:react_to_article, type: :article) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:article_id, non_null(:id))
@@ -116,7 +116,7 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleReactionResolver.react_to_article/2)
     end
 
-    field :send_form_response, type: :boolean do
+    field(:send_form_response, type: :boolean) do
       arg(:content_module_id, non_null(:id))
       arg(:response, non_null(:json))
 
@@ -125,7 +125,7 @@ defmodule LottaWeb.Schema.Contents do
   end
 
   object :contents_subscriptions do
-    field :article_is_updated, type: :article do
+    field(:article_is_updated, type: :article) do
       arg(:id, non_null(:id))
 
       config(&LottaWeb.ArticleResolver.article_is_updated_config/2)

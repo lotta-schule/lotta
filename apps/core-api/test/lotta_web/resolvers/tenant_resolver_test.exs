@@ -88,9 +88,7 @@ defmodule LottaWeb.TenantResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "tenant" => null
-               },
+               "data" => %{"tenant" => nil},
                "errors" => errors
              } = res
 
@@ -232,9 +230,7 @@ defmodule LottaWeb.TenantResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "usage" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -252,9 +248,7 @@ defmodule LottaWeb.TenantResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "usage" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -310,9 +304,7 @@ defmodule LottaWeb.TenantResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "updateTenant" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -334,9 +326,7 @@ defmodule LottaWeb.TenantResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "updateTenant" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",

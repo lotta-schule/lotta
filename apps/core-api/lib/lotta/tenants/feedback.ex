@@ -27,12 +27,12 @@ defmodule Lotta.Tenants.Feedback do
   @timestamps_opts [type: :utc_datetime]
 
   schema "feedbacks" do
-    field :topic, :string
-    field :content, :string
-    field :is_new, :boolean
-    field :is_forwarded, :boolean
-    field :is_responded, :boolean
-    field :metadata, :string
+    field(:topic, :string)
+    field(:content, :string)
+    field(:is_new, :boolean)
+    field(:is_forwarded, :boolean)
+    field(:is_responded, :boolean)
+    field(:metadata, :string)
 
     belongs_to :user, Lotta.Accounts.User
 

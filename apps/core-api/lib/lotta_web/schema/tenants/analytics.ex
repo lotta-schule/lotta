@@ -4,12 +4,12 @@ defmodule LottaWeb.Schema.Tenants.Analytics do
   use Absinthe.Schema.Notation
 
   object :analytics_metrics do
-    field :bounce_rate, :integer
-    field :pageviews, :integer
-    field :visitors, :integer
-    field :visits, :integer
-    field :views_per_visit, :float
-    field :visit_duration, :integer
+    field(:bounce_rate, non_null(:integer))
+    field(:pageviews, non_null(:integer))
+    field(:visitors, non_null(:integer))
+    field(:visits, non_null(:integer))
+    field(:views_per_visit, non_null(:float))
+    field(:visit_duration, non_null(:integer))
   end
 
   enum :analytics_metric do
@@ -45,17 +45,17 @@ defmodule LottaWeb.Schema.Tenants.Analytics do
   end
 
   object :timeseries_metrics do
-    field :date, non_null(:string)
-    field :value, :float
+    field(:date, non_null(:string))
+    field(:value, :float)
   end
 
   object :breakdown_metrics do
-    field :property, non_null(:string)
-    field :metrics, non_null(list_of(:metric_result))
+    field(:property, non_null(:string))
+    field(:metrics, non_null(list_of(non_null(:metric_result))))
   end
 
   object :metric_result do
-    field :metric, non_null(:analytics_metric)
-    field :value, non_null(:integer)
+    field(:metric, non_null(:analytics_metric))
+    field(:value, non_null(:integer))
   end
 end

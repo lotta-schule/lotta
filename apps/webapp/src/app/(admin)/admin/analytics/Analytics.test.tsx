@@ -3,11 +3,12 @@ import { MockedFunction } from 'vitest';
 import { render, waitFor } from 'test/util';
 import { Analytics } from './Analytics';
 import { PropertyBreakdown } from './_component';
+import {
+  GET_TENANT_AGGREGATE_ANALYTICS,
+  GET_TENANT_BREAKDOWN_ANALYTICS,
+  GET_TENANT_TIMESERIES_ANALYTICS,
+} from './_graphql';
 import userEvent from '@testing-library/user-event';
-
-import GetTenantAggregateAnalyticsQuery from 'api/query/analytics/GetTenantAggregateAnalyticsQuery.graphql';
-import GetTenantTimeseriesAnalyticsQuery from 'api/query/analytics/GetTenantTimeseriesAnalyticsQuery.graphql';
-import GetTenantBreakdownAnalyticsQuery from 'api/query/analytics/GetTenantBreakdownAnalyticsQuery.graphql';
 
 vi.useFakeTimers({
   shouldAdvanceTime: true,
@@ -31,7 +32,7 @@ const MockPropertyBreakdown = PropertyBreakdown as MockedFunction<
 const mocks = [
   {
     request: {
-      query: GetTenantAggregateAnalyticsQuery,
+      query: GET_TENANT_AGGREGATE_ANALYTICS,
       variables: { date: '2025-08-16', period: '30d' },
     },
     result: vi.fn(() => ({
@@ -49,7 +50,7 @@ const mocks = [
   },
   {
     request: {
-      query: GetTenantTimeseriesAnalyticsQuery,
+      query: GET_TENANT_TIMESERIES_ANALYTICS,
       variables: {
         date: '2025-08-16',
         metric: 'VISITS',
@@ -68,7 +69,7 @@ const mocks = [
   },
   {
     request: {
-      query: GetTenantAggregateAnalyticsQuery,
+      query: GET_TENANT_AGGREGATE_ANALYTICS,
       variables: { date: '2025-04-01', period: 'month' },
     },
     result: vi.fn(() => ({
@@ -86,7 +87,7 @@ const mocks = [
   },
   {
     request: {
-      query: GetTenantTimeseriesAnalyticsQuery,
+      query: GET_TENANT_TIMESERIES_ANALYTICS,
       variables: {
         date: '2025-04-01',
         metric: 'VISITS',
@@ -105,7 +106,7 @@ const mocks = [
   },
   {
     request: {
-      query: GetTenantTimeseriesAnalyticsQuery,
+      query: GET_TENANT_TIMESERIES_ANALYTICS,
       variables: {
         date: '2025-08-16',
         metric: 'VISITORS',
@@ -124,7 +125,7 @@ const mocks = [
   },
   {
     request: {
-      query: GetTenantBreakdownAnalyticsQuery,
+      query: GET_TENANT_BREAKDOWN_ANALYTICS,
       variables: {
         date: '2025-08-16',
         metric: 'VISITORS',
@@ -144,7 +145,7 @@ const mocks = [
   },
   {
     request: {
-      query: GetTenantBreakdownAnalyticsQuery,
+      query: GET_TENANT_BREAKDOWN_ANALYTICS,
       variables: {
         date: '2025-08-16',
         metric: 'VISITORS',
@@ -164,7 +165,7 @@ const mocks = [
   },
   {
     request: {
-      query: GetTenantBreakdownAnalyticsQuery,
+      query: GET_TENANT_BREAKDOWN_ANALYTICS,
       variables: {
         date: '2025-04-01',
         metric: 'VISITORS',
@@ -184,7 +185,7 @@ const mocks = [
   },
   {
     request: {
-      query: GetTenantBreakdownAnalyticsQuery,
+      query: GET_TENANT_BREAKDOWN_ANALYTICS,
       variables: {
         date: '2025-04-01',
         metric: 'VISITORS',

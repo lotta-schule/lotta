@@ -32,10 +32,10 @@ defmodule Lotta.Tenants.Tenant do
         }
 
   schema "tenants" do
-    field :title, :string
-    field :slug, :string
-    field :prefix, :string
-    field :configuration, :map, virtual: true
+    field(:title, :string)
+    field(:slug, :string)
+    field(:prefix, :string)
+    field(:configuration, :map, virtual: true)
 
     has_many :custom_domains, Lotta.Tenants.CustomDomain
 

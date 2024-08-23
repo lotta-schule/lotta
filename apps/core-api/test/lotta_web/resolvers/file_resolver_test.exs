@@ -591,7 +591,7 @@ defmodule LottaWeb.FileResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{"files" => nil},
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du hast nicht die Rechte, diesen Ordner zu lesen.",
@@ -622,7 +622,7 @@ defmodule LottaWeb.FileResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{"files" => nil},
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du hast nicht die Rechte, diesen Ordner zu lesen.",

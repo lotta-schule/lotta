@@ -161,11 +161,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
-               "data" => %{
-                 "group" => nil
-               }
-             }
+      assert res == %{"data" => %{"group" => nil}}
     end
 
     test "should return an error if user is not an admin", %{
@@ -180,9 +176,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "group" => nil
-               },
+               "data" => %{"group" => nil},
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -200,9 +194,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "group" => nil
-               },
+               "data" => %{"group" => nil},
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -274,9 +266,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "UpdateUserGroup" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Gruppe mit der id 0 existiert nicht.",
@@ -308,9 +298,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "UpdateUserGroup" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -338,9 +326,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "UpdateUserGroup" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -428,9 +414,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "deleteUserGroup" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Gruppe existiert nicht.",
@@ -452,9 +436,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "deleteUserGroup" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -473,9 +455,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "deleteUserGroup" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -548,9 +528,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "createUserGroup" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -578,9 +556,7 @@ defmodule LottaWeb.UserGroupResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "createUserGroup" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",

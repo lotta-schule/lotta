@@ -7,13 +7,13 @@ defmodule LottaWeb.Schema.Messages do
   alias Lotta.Messages.Conversation
 
   object :messages_queries do
-    field :conversations, list_of(:conversation) do
+    field(:conversations, list_of(:conversation)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       resolve(&LottaWeb.MessagesResolver.list_conversations/2)
     end
 
-    field :conversation, :conversation do
+    field(:conversation, :conversation) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:id, non_null(:id))
@@ -24,7 +24,7 @@ defmodule LottaWeb.Schema.Messages do
   end
 
   object :messages_mutations do
-    field :create_message, type: :message do
+    field(:create_message, type: :message) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:message, non_null(:message_input))
@@ -32,7 +32,7 @@ defmodule LottaWeb.Schema.Messages do
       resolve(&LottaWeb.MessagesResolver.create/2)
     end
 
-    field :delete_message, type: :message do
+    field(:delete_message, type: :message) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:id, non_null(:id))
@@ -42,7 +42,7 @@ defmodule LottaWeb.Schema.Messages do
   end
 
   object :messages_subscriptions do
-    field :receive_message, :message do
+    field(:receive_message, :message) do
       config(fn
         _args,
         %{

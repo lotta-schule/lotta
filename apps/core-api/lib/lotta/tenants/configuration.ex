@@ -18,9 +18,9 @@ defmodule Lotta.Tenants.Configuration do
   @timestamps_opts [type: :utc_datetime]
 
   schema "configuration" do
-    field :name, :string
-    field :string_value, :string
-    field :json_value, :map
+    field(:name, :string)
+    field(:string_value, :string)
+    field(:json_value, :map)
 
     belongs_to :file_value, File, type: :binary_id
 

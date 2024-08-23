@@ -15,7 +15,7 @@ defmodule Lotta.Storage.Directory do
   @timestamps_opts [type: :utc_datetime]
 
   schema "directories" do
-    field :name, :string
+    field(:name, :string)
 
     belongs_to :user, User
     belongs_to :parent_directory, __MODULE__, type: :binary_id

@@ -10,7 +10,7 @@ defmodule Lotta.Content.ContentModuleResult do
   @timestamps_opts [type: :utc_datetime]
 
   schema "content_module_results" do
-    field :result, :map
+    field(:result, :map)
 
     belongs_to :content_module, Lotta.Content.ContentModule
     belongs_to :user, Lotta.Accounts.User

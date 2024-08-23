@@ -16,22 +16,22 @@ defmodule Lotta.Accounts.User do
   @timestamps_opts [type: :utc_datetime]
 
   schema "users" do
-    field :email, :string
-    field :name, :string
-    field :nickname, :string
-    field :class, :string
-    field :last_seen, :utc_datetime
-    field :hide_full_name, :boolean
-    field :password, :string, virtual: true
-    field :password_hash, :string
-    field :password_hash_format, :integer
-    field :has_changed_default_password, :boolean
+    field(:email, :string)
+    field(:name, :string)
+    field(:nickname, :string)
+    field(:class, :string)
+    field(:last_seen, :utc_datetime)
+    field(:hide_full_name, :boolean)
+    field(:password, :string, virtual: true)
+    field(:password_hash, :string)
+    field(:password_hash_format, :integer)
+    field(:has_changed_default_password, :boolean)
 
-    field :all_groups, {:array, :any}, virtual: true, default: []
-    field :is_admin?, :boolean, virtual: true, default: false
-    field :access_level, :string, virtual: true
+    field(:all_groups, {:array, :any}, virtual: true, default: [])
+    field(:is_admin?, :boolean, virtual: true, default: false)
+    field(:access_level, :string, virtual: true)
 
-    field :enrollment_tokens, {:array, :string}, default: []
+    field(:enrollment_tokens, {:array, :string}, default: [])
 
     belongs_to :avatar_image_file, File,
       on_replace: :nilify,

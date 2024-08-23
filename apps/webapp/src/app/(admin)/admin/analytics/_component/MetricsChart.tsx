@@ -7,16 +7,11 @@ import { format } from 'date-fns';
 import { formatDate } from '../_util';
 import { de } from 'date-fns/locale';
 import { Period } from '../Analytics';
-import {
-  gqlCompatibleMetricType,
-  GQLCompatibleMetricType,
-  MetricType,
-} from './MetricType';
+import { gqlCompatibleMetricType, MetricType } from './MetricType';
+import { GET_TENANT_TIMESERIES_ANALYTICS } from '../_graphql';
 import dynamic from 'next/dynamic';
 
 import styles from './MetricsChart.module.scss';
-
-import GetTenantTimeseriesAnalyticsQuery from 'api/query/analytics/GetTenantTimeseriesAnalyticsQuery.graphql';
 
 const Chart = dynamic(() => import('react-charts').then((mod) => mod.Chart), {
   ssr: false,
@@ -29,7 +24,7 @@ export type MetricsChartProps = {
 
 type DailyMetric = {
   date: Date;
-  value: number;
+  value: number | null;
 };
 
 export const MetricsChart = React.memo(
@@ -42,12 +37,7 @@ export const MetricsChart = React.memo(
 
     const {
       data: { metrics },
-    } = useSuspenseQuery<
-      {
-        metrics: { date: string; value: number }[];
-      },
-      { date: string; metric: GQLCompatibleMetricType; period: 'month' | '30d' }
-    >(GetTenantTimeseriesAnalyticsQuery, {
+    } = useSuspenseQuery(GET_TENANT_TIMESERIES_ANALYTICS, {
       variables: {
         date: formatDate(period.type === '30d' ? new Date() : period.date),
         metric,

@@ -33,14 +33,14 @@ defmodule Lotta.Accounts.UserDevice do
         }
 
   schema "user_devices" do
-    field :custom_name, :string
-    field :platform_id, :string
-    field :model_name, :string
-    field :device_type, :string
-    field :operating_system, :string
-    field :last_used, :utc_datetime_usec
-    field :push_token, :string
-    field :active, :boolean, default: true
+    field(:custom_name, :string)
+    field(:platform_id, :string)
+    field(:model_name, :string)
+    field(:device_type, :string)
+    field(:operating_system, :string)
+    field(:last_used, :utc_datetime_usec)
+    field(:push_token, :string)
+    field(:active, :boolean, default: true)
 
     belongs_to :user, User, foreign_key: :user_id
 

@@ -5,14 +5,19 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@apollo/client';
 import { Icon } from 'shared/Icon';
 import { t } from 'i18next';
+import { graphql } from 'api/graphql';
 
-import GetTenantRealtimeAnalyticsQuery from 'api/query/analytics/GetTenantRealtimeAnalyticsQuery.graphql';
+export const GET_TENANT_REALTIME_ANALYTICS = graphql(`
+  query GetTenantRealtimeAnalytics {
+    realtimeAnalytics
+  }
+`);
 
 export const CurrentOnlineUserCounter = () => {
-  const { data } = useQuery(GetTenantRealtimeAnalyticsQuery, {
-    pollInterval: 30_000,
+  const { data } = useQuery(GET_TENANT_REALTIME_ANALYTICS, {
+    pollInterval: 15_000,
   });
-  const currentUserCount = data?.currentUserCount ?? null;
+  const currentUserCount = data?.realtimeAnalytics ?? null;
 
   return (
     <Label label={t('currently online')} style={{ marginLeft: 'auto' }}>
