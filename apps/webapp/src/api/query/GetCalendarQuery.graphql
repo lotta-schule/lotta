@@ -1,9 +1,0 @@
-query GetCalendar($url: String!, $days: Int) {
-  externalCalendarEvents(url: $url, days: $days) {
-    uid
-    description
-    summary
-    start
-    end
-  }
-}

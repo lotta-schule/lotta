@@ -36,7 +36,7 @@ defmodule Lotta.Calendar.Renderer do
       COLOR:#{calendar.default_color}
       DTSTAMP:#{to_ics_date(calendar.updated_at)}
 
-      #{Enum.join(Enum.map(calendar.events, &to_ics/1), "\n")}
+      #{Enum.map_join(calendar.events, "\n", &to_ics/1)}
       """
     end
   end

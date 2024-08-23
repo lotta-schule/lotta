@@ -37,7 +37,7 @@ defmodule LottaWeb.Router do
     post("/token/refresh", LottaWeb.TokenController, :refresh)
   end
 
-  # TODO: /storage endpoint could (and probably should) be moved to /data/storage
+  # /storage endpoint could (and probably should) be moved to /data/storage
   scope "/storage" do
     pipe_through([:tenant, :auth])
 

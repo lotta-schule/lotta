@@ -2,15 +2,13 @@ import * as React from 'react';
 import { describe, expect, it } from 'vitest';
 import { render } from 'test/util';
 import { CalendarKlassenarbeiten, CalendarResponse } from 'test/fixtures';
-import { Calendar } from './Calendar';
-
-import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
+import { Calendar, GET_CALENDAR } from './Calendar';
 
 describe('shared/widgets/Calendar', () => {
   const mocks = [
     {
       request: {
-        query: GetCalendarQuery,
+        query: GET_CALENDAR,
         variables: { url: 'http://calendar', days: 14 },
       },
       result: { data: CalendarResponse },

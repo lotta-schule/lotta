@@ -1,14 +1,13 @@
 import { MockedResponse } from '@apollo/client/testing';
 import { render, fireEvent, waitFor } from 'test/util';
 import { CreateEventDialog } from './CreateEventDialog';
+import { GET_CALENDARS } from '../_graphql';
 import userEvent from '@testing-library/user-event';
 
-import GetCalendarsQuery from 'api/query/GetCalendarsQuery.graphql';
-
-const additionalMocks: MockedResponse[] = [
+const additionalMocks = [
   {
     request: {
-      query: GetCalendarsQuery,
+      query: GET_CALENDARS,
     },
     result: {
       data: {
@@ -24,7 +23,7 @@ const additionalMocks: MockedResponse[] = [
       },
     },
   },
-];
+] satisfies MockedResponse[];
 
 describe('CreateEventDialog', () => {
   beforeEach(() => {

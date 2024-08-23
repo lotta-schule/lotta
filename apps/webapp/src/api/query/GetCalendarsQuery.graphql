@@ -1,7 +1,0 @@
-query GetCalendars {
-  calendars {
-    id
-    name
-    defaultColor
-  }
-}

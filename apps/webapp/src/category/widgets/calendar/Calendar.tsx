@@ -8,16 +8,27 @@ import {
   WidgetModelType,
 } from 'model';
 import { CalendarEntry } from './CalendarEntry';
-
-import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
-
-import styles from './Calendar.module.scss';
 import { Icon } from 'shared/Icon';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { graphql } from 'api/graphql';
+
+import styles from './Calendar.module.scss';
 
 export interface CalendarProps {
   widget: WidgetModel<WidgetModelType.Calendar>;
 }
+
+export const GET_CALENDAR = graphql(`
+  query GetCalendar($url: String!, $days: Int) {
+    calendar: externalCalendarEvents(url: $url, days: $days) {
+      uid
+      summary
+      description
+      start
+      end
+    }
+  }
+`);
 
 export const Calendar = React.memo<CalendarProps>(({ widget }) => {
   const isMounted = React.useRef(true);
@@ -43,15 +54,15 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
     setIsLoading(true);
     setError(null);
     Promise.all(
-      (calendars || []).map(async (calendar) => {
-        const { data } = await apolloClient.query<{
-          calendar: CalendarEventModel[];
-        }>({
-          query: GetCalendarQuery,
-          variables: { url: calendar.url, days: calendar.days },
-        });
-        return data?.calendar.map((event) => ({ ...event, calendar }));
-      })
+      (calendars || [])
+        .filter((calendar) => calendar.url !== undefined)
+        .map(async (calendar) => {
+          const { data } = await apolloClient.query({
+            query: GET_CALENDAR,
+            variables: { url: calendar.url!, days: calendar.days },
+          });
+          return data?.calendar.map((event) => ({ ...event, calendar }));
+        })
     )
       .then((eventsArr: any[]) => {
         if (isMounted.current) {

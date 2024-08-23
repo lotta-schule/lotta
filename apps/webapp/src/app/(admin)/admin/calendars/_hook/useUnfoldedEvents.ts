@@ -14,12 +14,29 @@ import {
 type recurrence = {
   frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
   interval: number;
-  until?: string;
+  until: string | null;
   count?: number;
 } | null;
 
+const eventMapper = <T extends { start: string; end: string }>({
+  start,
+  end,
+  ...rest
+}: T) => {
+  return {
+    ...rest,
+    start: new Date(start),
+    end: new Date(end),
+  };
+};
+
 export const useUnfoldedEvents = <
-  T extends { id: string; start: Date; end: Date; recurrence?: recurrence },
+  T extends {
+    id: string;
+    start: string;
+    end: string;
+    recurrence: recurrence | null;
+  },
 >(
   events: T[],
   rangeStart: Date,
@@ -39,7 +56,8 @@ export const useUnfoldedEvents = <
       YEARLY: differenceInYears,
     } as const;
     return events
-      .map((event) => {
+      .map((originalEvent) => {
+        const event = eventMapper(originalEvent);
         if (!event.recurrence || !propMap[event.recurrence.frequency]) {
           return [event];
         }
@@ -75,6 +93,6 @@ export const useUnfoldedEvents = <
         }
         return result;
       })
-      .flat() as (T | (Omit<T, 'recurrence'> & { originalEvent: T }))[];
+      .flat();
   }, [events, rangeStart, rangeEnd]);
 };

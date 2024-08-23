@@ -17,13 +17,12 @@ import { ToolbarProps } from 'react-big-calendar';
 import { useQuery } from '@apollo/client';
 import { Icon } from 'shared/Icon';
 import { CreateEventDialog } from './CreateEventDialog';
-import { CalendarModel, CreateCalendarDialog } from './CreateCalendarDialog';
+import { CreateCalendarDialog } from './CreateCalendarDialog';
 import { CalendarContext } from './CalendarContext';
+import { GET_CALENDARS } from '../_graphql';
 import clsx from 'clsx';
 
 import styles from './CalendarToolbar.module.scss';
-
-import GetCalendarsQuery from 'api/query/GetCalendarsQuery.graphql';
 
 export const CalendarToolbar = React.memo(
   ({ label, localizer, onNavigate }: ToolbarProps) => {
@@ -35,9 +34,7 @@ export const CalendarToolbar = React.memo(
     const [isCreateCalendarDialogOpen, setIsCreateCalendarDialogOpen] =
       React.useState(false);
 
-    const { data } = useQuery<{
-      calendars: CalendarModel[];
-    }>(GetCalendarsQuery);
+    const { data } = useQuery(GET_CALENDARS);
 
     const calendarMenuItems = React.useMemo(
       () => [

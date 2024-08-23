@@ -1,5 +1,9 @@
-import { loadCalendars } from 'loader';
+import React from 'react';
 import dynamic from 'next/dynamic';
+import { getClient } from 'api/client';
+import { GET_CALENDARS } from './_graphql';
+import { CircularProgress } from '@lotta-schule/hubert';
+import { t } from 'i18next';
 
 const DynamicCalendarView = dynamic(
   () =>
@@ -10,7 +14,12 @@ const DynamicCalendarView = dynamic(
 );
 
 async function CalendarPage() {
-  const calendars = await loadCalendars();
+  const {
+    data: { calendars },
+  } = await getClient().query({
+    query: GET_CALENDARS,
+  });
+
   return (
     <div
       style={{
@@ -19,7 +28,11 @@ async function CalendarPage() {
         paddingInline: 'var(--lotta-spacing)',
       }}
     >
-      <DynamicCalendarView calendars={calendars} />
+      <React.Suspense
+        fallback={<CircularProgress label={t('loading calendar')} />}
+      >
+        <DynamicCalendarView calendars={calendars} />
+      </React.Suspense>
     </div>
   );
 }

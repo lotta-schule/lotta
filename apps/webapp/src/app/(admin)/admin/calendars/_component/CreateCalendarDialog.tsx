@@ -11,15 +11,11 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { useRouter } from 'next/navigation';
-
-import GetCalendarsQuery from 'api/query/GetCalendarsQuery.graphql';
-import CreateCalendarMutation from 'api/mutation/CreateCalendarMutation.graphql';
-
-export type CalendarModel = { id: string; name: string; defaultColor?: string };
+import { CREATE_CALENDAR, GET_CALENDARS } from '../_graphql';
 
 export interface CreateCalendarDialogProps {
   isOpen: boolean;
-  onClose(calendar?: CalendarModel): void;
+  onClose(): void;
 }
 
 export const CreateCalendarDialog = React.memo(
@@ -33,32 +29,30 @@ export const CreateCalendarDialog = React.memo(
       setColor('#ff0000');
     };
 
-    const [createCalendar, { loading: isLoading, error }] = useMutation<
-      { calendar: CalendarModel },
-      any
-    >(CreateCalendarMutation, {
-      variables: {
-        name,
-        color,
-      },
-      onCompleted: ({ calendar }) => {
-        onClose(calendar);
-        resetForm();
-        if (calendar) {
+    const [createCalendar, { loading: isLoading, error }] = useMutation(
+      CREATE_CALENDAR,
+      {
+        variables: {
+          name,
+          color,
+        },
+        onCompleted: () => {
+          onClose();
+          resetForm();
           router.refresh();
-        }
-      },
-      update: (cache, { data }) => {
-        if (data?.calendar) {
-          cache.updateQuery({ query: GetCalendarsQuery }, (prev) => {
-            if (prev?.calendars) {
-              return { calendars: [...prev.calendars, data.calendar] };
-            }
-            return prev;
-          });
-        }
-      },
-    });
+        },
+        update: (cache, { data }) => {
+          if (data?.calendar) {
+            cache.updateQuery({ query: GET_CALENDARS }, (prev) => {
+              if (prev?.calendars) {
+                return { calendars: [...prev.calendars, data.calendar] };
+              }
+              return prev;
+            });
+          }
+        },
+      }
+    );
 
     return (
       <Dialog

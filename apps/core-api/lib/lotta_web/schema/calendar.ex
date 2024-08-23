@@ -48,7 +48,7 @@ defmodule LottaWeb.Schema.Calendar do
 
       arg(:start, non_null(:datetime))
       arg(:end, non_null(:datetime))
-      arg(:is_full_day, :boolean)
+      arg(:is_full_day, non_null(:boolean))
 
       arg(:recurrence, :recurrence_input)
 
@@ -76,7 +76,7 @@ defmodule LottaWeb.Schema.Calendar do
   end
 
   object :calendar_event do
-    field(:id, :id)
+    field(:id, non_null(:id))
     field(:summary, non_null(:string))
     field(:description, :string)
     field(:start, non_null(:datetime))
@@ -90,10 +90,10 @@ defmodule LottaWeb.Schema.Calendar do
   end
 
   object :calendar_event_recurrence do
-    field(:frequency, :calendar_event_recurrence_frequency)
-    field(:interval, :integer)
-    field(:days_of_week, list_of(:string))
-    field(:days_of_month, list_of(:integer))
+    field(:frequency, non_null(:calendar_event_recurrence_frequency))
+    field(:interval, non_null(:integer))
+    field(:days_of_week, list_of(non_null(:string)))
+    field(:days_of_month, list_of(non_null(:integer)))
     field(:until, :datetime)
     field(:occurrences, :integer)
   end

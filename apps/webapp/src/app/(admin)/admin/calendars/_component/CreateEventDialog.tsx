@@ -26,28 +26,45 @@ import {
 } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { invariant } from '@epic-web/invariant';
+import {
+  CREATE_CALENDAR_EVENT,
+  GET_CALENDAR_EVENTS,
+  GET_CALENDARS,
+  RECURRENCE_FRAGMENT,
+} from '../_graphql';
 import clsx from 'clsx';
 
 import styles from './CreateEventDialog.module.scss';
-
-import GetCalendarsQuery from 'api/query/GetCalendarsQuery.graphql';
-import CreateCalendarEventMutation from 'api/mutation/CreateCalendarEventMutation.graphql';
+import { FragmentOf } from 'gql.tada';
 
 export type CreateEventDialogProps = {
   isOpen: boolean;
   onClose(): void;
 };
 
+type PickNullable<T> = {
+  [P in keyof T as null extends T[P] ? P : never]: T[P];
+};
+
+type PickNotNullable<T> = {
+  [P in keyof T as null extends T[P] ? never : P]: T[P];
+};
+
+type OptionalNullable<T> = T extends object
+  ? {
+      [K in keyof PickNullable<T>]?: OptionalNullable<Exclude<T[K], null>>;
+    } & {
+      [K in keyof PickNotNullable<T>]: OptionalNullable<T[K]>;
+    }
+  : T;
+
 export const CreateEventDialog = React.memo(
   ({ isOpen, onClose }: CreateEventDialogProps) => {
     const {
       data: { calendars },
-    } = useSuspenseQuery<{ calendars: { id: string; name: string }[] }>(
-      GetCalendarsQuery,
-      {
-        fetchPolicy: 'cache-first',
-      }
-    );
+    } = useSuspenseQuery(GET_CALENDARS, {
+      fetchPolicy: 'cache-first',
+    });
 
     const nameInputRef = React.useRef<React.ComponentRef<'input'>>(null);
 
@@ -68,7 +85,7 @@ export const CreateEventDialog = React.memo(
             return {
               name: 'daily',
               recurrence: {
-                frequency: 'DAILY',
+                frequency: 'DAILY' as const,
                 interval: 1,
               },
             };
@@ -76,7 +93,7 @@ export const CreateEventDialog = React.memo(
             return {
               name: 'weekly',
               recurrence: {
-                frequency: 'WEEKLY',
+                frequency: 'WEEKLY' as const,
                 interval: 1,
               },
             };
@@ -84,7 +101,7 @@ export const CreateEventDialog = React.memo(
             return {
               name: 'biweekly',
               recurrence: {
-                frequency: 'WEEKLY',
+                frequency: 'WEEKLY' as const,
                 interval: 2,
               },
             };
@@ -92,7 +109,7 @@ export const CreateEventDialog = React.memo(
             return {
               name: 'monthly',
               recurrence: {
-                frequency: 'MONTHLY',
+                frequency: 'MONTHLY' as const,
                 interval: 1,
               },
             };
@@ -100,7 +117,7 @@ export const CreateEventDialog = React.memo(
             return {
               name: 'yearly',
               recurrence: {
-                frequency: 'YEARLY',
+                frequency: 'YEARLY' as const,
                 interval: 1,
               },
             };
@@ -110,28 +127,32 @@ export const CreateEventDialog = React.memo(
       },
       { name: '', recurrence: null } as {
         name: string;
-        recurrence: { frequency: string; interval: number } | null;
+        recurrence: OptionalNullable<
+          FragmentOf<typeof RECURRENCE_FRAGMENT>
+        > | null;
       }
     );
-
     const isMultipleDays = React.useMemo(
       () => !isSameDay(date, endDate),
       [date, endDate]
     );
 
     const [createEvent, { loading: isLoading, error }] = useMutation(
-      CreateCalendarEventMutation,
+      CREATE_CALENDAR_EVENT,
       {
         variables: {
           name,
           description,
-          calendarId,
+          calendarId: calendarId ?? null!,
           start: date.toISOString(),
           end: endDate?.toISOString(),
           isFullDay,
-          recurrence: recurrence?.recurrence ?? null,
+          recurrence: (recurrence?.recurrence ?? null) as {
+            frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+            interval: number;
+          } | null,
         },
-        refetchQueries: ['GetCalendarEventsQuery'],
+        refetchQueries: [GET_CALENDAR_EVENTS],
       }
     );
 
