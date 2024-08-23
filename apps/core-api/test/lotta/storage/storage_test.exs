@@ -14,8 +14,6 @@ defmodule Lotta.StorageTest do
   @prefix "tenant_test"
 
   setup do
-    Repo.put_prefix(@prefix)
-
     user =
       Repo.one!(
         from(u in User,
