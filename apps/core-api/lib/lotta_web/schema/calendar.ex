@@ -14,6 +14,9 @@ defmodule LottaWeb.Schema.Calendar do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:calendar_id, non_null(:id))
+      arg(:from, non_null(:datetime))
+      arg(:latest, :datetime)
+      arg(:limit, :integer)
 
       resolve(&LottaWeb.CalendarResolver.list_calendar_events/2)
     end
@@ -44,13 +47,22 @@ defmodule LottaWeb.Schema.Calendar do
       arg(:description, :string)
 
       arg(:start, non_null(:datetime))
-      arg(:end, :datetime)
+      arg(:end, non_null(:datetime))
       arg(:is_full_day, :boolean)
 
-      arg(:repetition_rule, :string)
+      arg(:recurrence, :recurrence_input)
 
       resolve(&LottaWeb.CalendarResolver.create_event/2)
     end
+  end
+
+  input_object :recurrence_input do
+    field :frequency, non_null(:calendar_event_recurrence_frequency)
+    field :interval, non_null(:integer)
+    field :days_of_week, list_of(non_null(:string))
+    field :days_of_month, list_of(non_null(:integer))
+    field :until, :datetime
+    field :occurrences, :integer
   end
 
   object :calendar do
@@ -69,10 +81,19 @@ defmodule LottaWeb.Schema.Calendar do
     field :start, non_null(:datetime)
     field :end, non_null(:datetime)
     field :is_full_day, non_null(:boolean)
-    field :repetition_rule, :string
+    field :recurrence, :calendar_event_recurrence
 
     field :calendar, non_null(:calendar),
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Calendar)
+  end
+
+  object :calendar_event_recurrence do
+    field :frequency, :calendar_event_recurrence_frequency
+    field :interval, :integer
+    field :days_of_week, list_of(:string)
+    field :days_of_month, list_of(:integer)
+    field :until, :datetime
+    field :occurrences, :integer
   end
 
   object :external_calendar_event do
@@ -81,5 +102,12 @@ defmodule LottaWeb.Schema.Calendar do
     field :summary, :string
     field :start, :datetime
     field :end, :datetime
+  end
+
+  enum :calendar_event_recurrence_frequency do
+    value(:daily, as: "daily")
+    value(:weekly, as: "weekly")
+    value(:monthly, as: "monthly")
+    value(:yearly, as: "yearly")
   end
 end

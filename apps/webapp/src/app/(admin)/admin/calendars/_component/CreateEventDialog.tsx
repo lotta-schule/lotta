@@ -31,7 +31,6 @@ import clsx from 'clsx';
 import styles from './CreateEventDialog.module.scss';
 
 import GetCalendarsQuery from 'api/query/GetCalendarsQuery.graphql';
-import GetCalendarEventsQuery from 'api/query/GetCalendarEventsQuery.graphql';
 import CreateCalendarEventMutation from 'api/mutation/CreateCalendarEventMutation.graphql';
 
 export type CreateEventDialogProps = {
@@ -59,7 +58,61 @@ export const CreateEventDialog = React.memo(
     const [date, setDate] = React.useState(() => startOfHour(new Date()));
     const [endDate, setEndDate] = React.useState(() => addHours(date, 1));
     const [isFullDay, setIsAllDay] = React.useState(true);
-    const [repetition, setRepetition] = React.useState('');
+    const [recurrence, dispatchRecurrence] = React.useReducer(
+      (
+        _prevState,
+        rule: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'yearly' | null
+      ) => {
+        switch (rule) {
+          case 'daily':
+            return {
+              name: 'daily',
+              recurrence: {
+                frequency: 'DAILY',
+                interval: 1,
+              },
+            };
+          case 'weekly':
+            return {
+              name: 'weekly',
+              recurrence: {
+                frequency: 'WEEKLY',
+                interval: 1,
+              },
+            };
+          case 'biweekly':
+            return {
+              name: 'biweekly',
+              recurrence: {
+                frequency: 'WEEKLY',
+                interval: 2,
+              },
+            };
+          case 'monthly':
+            return {
+              name: 'monthly',
+              recurrence: {
+                frequency: 'MONTHLY',
+                interval: 1,
+              },
+            };
+          case 'yearly':
+            return {
+              name: 'yearly',
+              recurrence: {
+                frequency: 'YEARLY',
+                interval: 1,
+              },
+            };
+          default:
+            return { name: '', recurrence: null };
+        }
+      },
+      { name: '', recurrence: null } as {
+        name: string;
+        recurrence: { frequency: string; interval: number } | null;
+      }
+    );
 
     const isMultipleDays = React.useMemo(
       () => !isSameDay(date, endDate),
@@ -76,20 +129,9 @@ export const CreateEventDialog = React.memo(
           start: date.toISOString(),
           end: endDate?.toISOString(),
           isFullDay,
-          repetition: !repetition ? undefined : repetition,
+          recurrence: recurrence?.recurrence ?? null,
         },
-        update: (cache, { data }, { variables }) => {
-          const calendarId = variables?.calendarId;
-          invariant(calendarId, 'Calendar ID is required');
-          if (data?.event) {
-            cache.updateQuery(
-              { query: GetCalendarEventsQuery, variables: { calendarId } },
-              (prev) => ({
-                calendarEvents: [...(prev?.calendarEvents ?? []), data.event],
-              })
-            );
-          }
-        },
+        refetchQueries: ['GetCalendarEventsQuery'],
       }
     );
 
@@ -100,7 +142,7 @@ export const CreateEventDialog = React.memo(
       setDate(startOfHour(new Date()));
       setEndDate(addHours(date, 1));
       setIsAllDay(true);
-      setRepetition('');
+      dispatchRecurrence(null);
     };
 
     React.useEffect(() => {
@@ -157,8 +199,12 @@ export const CreateEventDialog = React.memo(
 
               <Select
                 title={t('repetition')}
-                value={repetition}
-                onChange={setRepetition}
+                value={recurrence?.name ?? ''}
+                onChange={(value) =>
+                  dispatchRecurrence(
+                    value as Parameters<typeof dispatchRecurrence>[0]
+                  )
+                }
               >
                 <Option key={'none'} value={''}>
                   {t('none')}
@@ -233,8 +279,22 @@ export const CreateEventDialog = React.memo(
                     newDate.setDate(day);
 
                     setDate(newDate);
-                    if (endDate && isAfter(newDate, endDate)) {
-                      setEndDate(addDays(newDate, 1));
+
+                    if (isMultipleDays) {
+                      if (isAfter(endOfDay(newDate), endOfDay(endDate))) {
+                        setEndDate(addDays(newDate, 1));
+                      }
+                    } else if (isFullDay) {
+                      setEndDate(addHours(newDate, 1));
+                    } else {
+                      setEndDate((endDate) => {
+                        const newEndDate = new Date(endDate);
+                        newEndDate.setFullYear(newDate.getFullYear());
+                        newEndDate.setMonth(newDate.getMonth());
+                        newEndDate.setDate(newDate.getDate());
+
+                        return newEndDate;
+                      });
                     }
                   }}
                   disabled={isLoading}

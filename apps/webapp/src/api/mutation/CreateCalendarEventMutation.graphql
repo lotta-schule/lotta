@@ -1,12 +1,19 @@
-mutation createCalendarEvent($calendarId: ID!, $name: String!, $description: String, $start: DateTime!, $end: DateTime, $isFullDay: Boolean, $repetition: String) {
-  event: createCalendarEvent(calendarId: $calendarId, summary: $name, description: $description, start: $start, end: $end, isFullDay: $isFullDay, repetitionRule: $repetition) {
+mutation createCalendarEvent($calendarId: ID!, $name: String!, $description: String, $start: DateTime!, $end: DateTime!, $isFullDay: Boolean, $recurrence: RecurrenceInput) {
+  event: createCalendarEvent(calendarId: $calendarId, summary: $name, description: $description, start: $start, end: $end, isFullDay: $isFullDay, recurrence: $recurrence) {
     id
     summary
     description
     start
     end
     isFullDay
-    repetitionRule
+    recurrence {
+      frequency
+      interval
+      until
+      daysOfWeek
+      daysOfMonth
+      occurrences
+    }
     calendar {
       id
     }

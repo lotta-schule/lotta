@@ -142,8 +142,17 @@ describe('CreateEventDialog', () => {
         { additionalMocks }
       );
 
+      const allDayCheckbox = await screen.findByLabelText('ganztägig');
+      const multidayCheckbox = await screen.findByLabelText('mehrtägig');
+
+      expect(allDayCheckbox).toBeChecked();
+      expect(multidayCheckbox).not.toBeChecked();
+
       const dateInput = await screen.findByLabelText('Datum');
       fireEvent.change(dateInput, { target: { value: '2024-08-17' } });
+
+      expect(allDayCheckbox).toBeChecked();
+      expect(multidayCheckbox).not.toBeChecked();
 
       expect(dateInput).toHaveValue('2024-08-17');
     });

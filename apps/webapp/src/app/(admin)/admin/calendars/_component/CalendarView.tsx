@@ -1,7 +1,16 @@
 'use client';
 
 import * as React from 'react';
-import { format, parse, startOfWeek, getDay, isSameDay } from 'date-fns';
+import {
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  isSameDay,
+  startOfMonth,
+  endOfMonth,
+  formatISO,
+} from 'date-fns';
 import { de } from 'date-fns/locale';
 import {
   Calendar,
@@ -13,6 +22,9 @@ import { CalendarToolbar } from './CalendarToolbar';
 import { useLazyQuery, useApolloClient } from '@apollo/client';
 import { CalendarModel } from './CreateCalendarDialog';
 import { CalendarContext } from './CalendarContext';
+import { useUnfoldedEvents } from '../_hook';
+
+import GetCalendarEventsQuery from 'api/query/GetCalendarEventsQuery.graphql';
 
 import './CalendarView.scss';
 
@@ -28,13 +40,22 @@ const eventMapper = <T extends { start: string | Date; end: string | Date }>({
   };
 };
 
-import GetCalendarEventsQuery from 'api/query/GetCalendarEventsQuery.graphql';
-
 export const CalendarView = React.memo(
   ({ calendars }: { calendars: CalendarModel[] }) => {
     const { t } = useTranslation();
     const client = useApolloClient();
     const { activeCalendarIds } = React.use(CalendarContext);
+    const [currentDate, setCurrentDate] = React.useState(new Date());
+    const [currentRange, setCurrentRange] = React.useState(() => ({
+      start: startOfMonth(currentDate),
+      end: endOfMonth(currentDate),
+    }));
+
+    const [from, latest] = React.useMemo(
+      () => [currentRange.start, currentRange.end],
+      [currentRange]
+    );
+
     const [events, setEvents] = React.useState<
       {
         id: string;
@@ -43,9 +64,20 @@ export const CalendarView = React.memo(
         start: Date;
         end: Date;
         isFullDay: boolean;
+        recurrence?: {
+          frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+          interval: number;
+          count?: number;
+          until?: string;
+          byDay?: string[];
+          byMonthDay?: number[];
+          byMonth?: number[];
+        };
         calendar: { id: string };
       }[]
     >([]);
+
+    const unfoldedEvents = useUnfoldedEvents(events, from, latest);
 
     const [fetchEvents] = useLazyQuery<
       {
@@ -59,8 +91,14 @@ export const CalendarView = React.memo(
           calendar: { id: string };
         }[];
       },
-      { calendarId: string }
-    >(GetCalendarEventsQuery);
+      { calendarId: string; from?: string; latest?: string }
+    >(GetCalendarEventsQuery, {
+      variables: {
+        calendarId: undefined!,
+        from: formatISO(from),
+        latest: formatISO(latest),
+      },
+    });
 
     const fetchAllEvents = React.useCallback(async () => {
       const events = await Promise.all(
@@ -89,10 +127,14 @@ export const CalendarView = React.memo(
                 calendar: { id: string };
               }[];
             },
-            { calendarId: string }
+            { calendarId: string; from?: string; latest?: string }
           >({
             query: GetCalendarEventsQuery,
-            variables: { calendarId },
+            variables: {
+              calendarId,
+              from: formatISO(from),
+              latest: formatISO(latest),
+            },
           })
           .subscribe(({ data }) => {
             if (data) {
@@ -147,6 +189,14 @@ export const CalendarView = React.memo(
           getDay,
           locales: { de_DE: de },
         })}
+        date={currentDate}
+        onNavigate={(date) => setCurrentDate(date)}
+        onRangeChange={(range) => {
+          if (Array.isArray(range) || !range) {
+            throw new Error('Invalid range');
+          }
+          setCurrentRange(range);
+        }}
         view="month"
         views={{
           month: true,
@@ -189,7 +239,7 @@ export const CalendarView = React.memo(
           }
           return {};
         }}
-        events={events.map((event) => ({
+        events={unfoldedEvents.map((event) => ({
           ...event,
           title: event.summary,
         }))}

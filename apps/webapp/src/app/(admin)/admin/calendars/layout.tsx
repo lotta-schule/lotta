@@ -6,7 +6,7 @@ async function CalendarsLayout({
   children,
 }: React.PropsWithChildren<{ params: { groupId?: string } }>) {
   return (
-    <AdminPage icon={faCalendar} title={'Kalender'} hasHomeLink>
+    <AdminPage icon={faCalendar} title={'Kalender'} hasHomeLink takesFullSpace>
       {children}
     </AdminPage>
   );

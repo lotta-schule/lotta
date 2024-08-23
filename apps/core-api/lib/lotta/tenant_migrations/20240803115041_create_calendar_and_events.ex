@@ -17,17 +17,27 @@ defmodule Lotta.Repo.TenantMigrations.CreateCalendarAndEvents do
       add :summary, :string
       add :description, :text
 
-      add :start, :utc_datetime
-      add :end, :utc_datetime
+      add :start, :timestamptz
+      add :end, :timestamptz
       add :is_full_day, :boolean
-
-      add :repetition_rule, :string
 
       add :location_name, :string
 
-      add :calendar_id, references("calendars", type: :binary_id)
+      add :recurrence_frequency, :string
+      add :recurrence_interval, :integer
+      add :recurrence_byday, {:array, :string}
+      add :recurrence_bymonthday, {:array, :integer}
+      add :recurrence_until, :timestamptz
+      add :recurrence_count, :integer
+
+      add :calendar_id, references("calendars", type: :binary_id), on_delete: :delete_all
 
       timestamps()
     end
+
+    create index(:calendar_events, [:calendar_id, :start])
+    create index(:calendar_events, [:calendar_id, :end])
+    create index(:calendar_events, [:recurrence_frequency])
+    create index(:calendar_events, [:recurrence_frequency, :recurrence_until])
   end
 end

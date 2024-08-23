@@ -18,12 +18,12 @@ import { useQuery } from '@apollo/client';
 import { Icon } from 'shared/Icon';
 import { CreateEventDialog } from './CreateEventDialog';
 import { CalendarModel, CreateCalendarDialog } from './CreateCalendarDialog';
+import { CalendarContext } from './CalendarContext';
+import clsx from 'clsx';
 
 import styles from './CalendarToolbar.module.scss';
 
 import GetCalendarsQuery from 'api/query/GetCalendarsQuery.graphql';
-import { CalendarContext } from './CalendarContext';
-import clsx from 'clsx';
 
 export const CalendarToolbar = React.memo(
   ({ label, localizer, onNavigate }: ToolbarProps) => {
@@ -35,21 +35,54 @@ export const CalendarToolbar = React.memo(
     const [isCreateCalendarDialogOpen, setIsCreateCalendarDialogOpen] =
       React.useState(false);
 
-    const { data, loading: isLoading } = useQuery<{
+    const { data } = useQuery<{
       calendars: CalendarModel[];
     }>(GetCalendarsQuery);
+
+    const calendarMenuItems = React.useMemo(
+      () => [
+        <Item key={'create_calendar'} textValue={t('create calendar')}>
+          <span>{t('create calendar')}</span>
+        </Item>,
+        ...(data?.calendars.map((calendar) => (
+          <Item key={calendar.id} textValue={calendar.name}>
+            <div style={{ color: calendar.defaultColor ?? '#ff0000' }}>
+              <Icon icon={faCircle} />
+            </div>
+            <div className={styles.calendarSelectionListItemContent}>
+              <span>{calendar.name}</span>
+              <span
+                className={clsx(styles.checkmark, {
+                  [styles.isActive]: isCalendarActive(calendar.id),
+                })}
+              >
+                <Icon icon={faCheck} />
+              </span>
+            </div>
+          </Item>
+        )) ?? []),
+      ],
+      [data, isCalendarActive, t]
+    );
 
     return (
       <Toolbar hasScrollableParent className={styles.root}>
         <section>
           <ButtonGroup>
-            <Button onClick={() => onNavigate('PREV')}>&lt;</Button>
-            <Button onClick={() => onNavigate('TODAY')}>
+            <Button
+              onClick={() => onNavigate('PREV')}
+              title={t('previous month')}
+            >
+              &lt;
+            </Button>
+            <Button title={t('today')} onClick={() => onNavigate('TODAY')}>
               {localizer.messages.today}
             </Button>
             <Button
-              onClick={() => onNavigate('NEXT')}
-              title={t('Create event')}
+              onClick={() => {
+                onNavigate('NEXT');
+              }}
+              title={t('next month')}
             >
               &gt;
             </Button>
@@ -58,57 +91,30 @@ export const CalendarToolbar = React.memo(
         <section>{label}</section>
         <section>
           <MenuButton
-            title={t('Calendar')}
+            title={t('calendars')}
             onAction={(key) => {
-              toggleCalendar(key as string);
+              if (key === 'create_calendar') {
+                setIsCreateCalendarDialogOpen(true);
+              } else {
+                toggleCalendar(key as string);
+              }
             }}
             closeOnAction={false}
             placement="bottom"
             buttonProps={{
               icon: <Icon icon={faCalendar} />,
-              disabled: isLoading,
             }}
           >
-            {data?.calendars.map((calendar) => (
-              <Item key={calendar.id} textValue={calendar.name}>
-                <div style={{ color: calendar.defaultColor ?? '#ff0000' }}>
-                  <Icon icon={faCircle} />
-                </div>
-                <div className={styles.calendarSelectionListItemContent}>
-                  <span>{calendar.name}</span>
-                  <span
-                    className={clsx(styles.checkmark, {
-                      [styles.isActive]: isCalendarActive(calendar.id),
-                    })}
-                  >
-                    <Icon icon={faCheck} />
-                  </span>
-                </div>
-              </Item>
-            )) ?? []}
+            {calendarMenuItems}
           </MenuButton>
-          <MenuButton
-            title={t('New')}
-            onAction={(key) => {
-              if (key === 'calendar') {
-                setIsCreateCalendarDialogOpen(true);
-              }
-              if (key === 'event') {
-                setIsCreateEventDialogOpen(true);
-              }
+          <Button
+            icon={<Icon icon={faAdd} />}
+            title={t('create event')}
+            onClick={() => {
+              setIsCreateEventDialogOpen(true);
             }}
-            placement="bottom"
-            buttonProps={{
-              icon: <Icon icon={faAdd} />,
-            }}
-          >
-            <Item key={'calendar'} textValue={t('create calendar')}>
-              <span>{t('create calendar')}</span>
-            </Item>
-            <Item key={'event'} textValue={t('create event')}>
-              <span>{t('create event')}</span>
-            </Item>
-          </MenuButton>
+            disabled={!data?.calendars.length}
+          ></Button>
           <CreateEventDialog
             isOpen={isCreateEventDialogOpen}
             onClose={() => setIsCreateEventDialogOpen(false)}

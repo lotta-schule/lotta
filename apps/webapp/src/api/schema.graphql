@@ -124,12 +124,38 @@ type BreakdownMetrics {
   property: String!
 }
 
+type Calendar {
+  defaultColor: String
+  events: [CalendarEvent]
+  id: ID
+  name: String
+}
+
 type CalendarEvent {
+  calendar: Calendar!
   description: String
-  end: DateTime
-  start: DateTime
-  summary: String
-  uid: String
+  end: DateTime!
+  id: ID
+  isFullDay: Boolean!
+  recurrence: CalendarEventRecurrence
+  start: DateTime!
+  summary: String!
+}
+
+type CalendarEventRecurrence {
+  daysOfMonth: [Int]
+  daysOfWeek: [String]
+  frequency: CalendarEventRecurrenceFrequency
+  interval: Int
+  occurrences: Int
+  until: DateTime
+}
+
+enum CalendarEventRecurrenceFrequency {
+  DAILY
+  MONTHLY
+  WEEKLY
+  YEARLY
 }
 
 type Category {
@@ -256,8 +282,17 @@ type Directory {
   insertedAt: DateTime
   name: String
   parentDirectory: Directory
+  path: [Directory]
   updatedAt: DateTime
   user: User
+}
+
+type ExternalCalendarEvent {
+  description: String
+  end: DateTime
+  start: DateTime
+  summary: String
+  uid: String
 }
 
 type Feedback {
@@ -282,6 +317,7 @@ type File {
   insertedAt: DateTime
   mimeType: String
   parentDirectory: Directory
+  path: [Directory]
   remoteLocation: String
   updatedAt: DateTime
   usage: [FileUsageLocation]
@@ -368,6 +404,15 @@ type MetricResult {
   value: Int!
 }
 
+input RecurrenceInput {
+  daysOfMonth: [Int!]
+  daysOfWeek: [String!]
+  frequency: CalendarEventRecurrenceFrequency!
+  interval: Int!
+  occurrences: Int
+  until: DateTime
+}
+
 input RegisterDeviceInput {
   customName: String
   deviceType: String
@@ -386,6 +431,8 @@ input RegisterUserParams {
 
 type RootMutationType {
   createArticle(article: ArticleInput!): Article
+  createCalendar(defaultColor: String, name: String!): Calendar
+  createCalendarEvent(calendarId: ID!, description: String, end: DateTime!, isFullDay: Boolean, recurrence: RecurrenceInput, start: DateTime!, summary: String!): CalendarEvent
   createCategory(category: CreateCategoryInput!): Category
   createDirectory(isPublic: Boolean, name: String!, parentDirectoryId: ID): Directory
   createFeedback(feedback: CreateFeedbackInput!): Feedback
@@ -438,7 +485,8 @@ type RootQueryType {
   articlesByUser(id: ID!): [Article!]
   articlesWithUserFiles(userId: ID!): [Article]
   breakdownAnalytics(date: Date!, metrics: [AnalyticsMetric!]!, period: AnalyticsPeriod!, property: AnalyticsProperty!): [BreakdownMetrics!]
-  calendar(days: Int, url: String!): [CalendarEvent]
+  calendarEvents(calendarId: ID!, from: DateTime!, latest: DateTime, limit: Int): [CalendarEvent]
+  calendars: [Calendar]
   categories: [Category]
   contentModuleResults(contentModuleId: ID!): [ContentModuleResult]
   conversation(id: ID!, markAsRead: Boolean): Conversation
@@ -447,6 +495,7 @@ type RootQueryType {
   devices: [Device]
   directories(parentDirectoryId: ID): [Directory]
   directory(id: ID): Directory
+  externalCalendarEvents(days: Int, url: String!): [ExternalCalendarEvent]
   feedbacks: [Feedback]
   file(id: ID): File
   files(parentDirectoryId: ID): [File]

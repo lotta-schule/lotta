@@ -1,9 +1,11 @@
 defmodule LottaWeb.CalendarResolver do
   @moduledoc false
 
+  alias Lotta.Calendar.CalendarEvent
+
   require Logger
 
-  def get(%{url: url} = args, _info) do
+  def get_external(%{url: url} = args, _info) do
     result_body =
       ConCache.fetch_or_store(:http_cache, url, fn ->
         case :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}]) do
@@ -57,29 +59,83 @@ defmodule LottaWeb.CalendarResolver do
     {:ok, Lotta.Calendar.list_calendars()}
   end
 
-  def list_calendar_events(%{calendar_id: id}, _context) do
+  def list_calendar_events(
+        %{calendar_id: id} = args,
+        _context
+      ) do
+    opts =
+      args
+      |> Map.take([:from, :latest, :limit])
+      |> Enum.into([])
+
     case Lotta.Calendar.get_calendar(id) do
       nil ->
         {:error, "Calendar not found"}
 
       calendar ->
-        {:ok, Lotta.Calendar.list_calendar_events(calendar)}
+        calendar
+        |> Lotta.Calendar.list_calendar_events(opts)
+        |> Enum.map(&format_event/1)
+        |> then(&{:ok, &1})
     end
   end
 
-  def create(args) do
+  def create(args, _info) do
     Lotta.Calendar.create_calendar(args)
   end
 
   def create_event(%{calendar_id: calendar_id} = args, _context) do
-    with calendar when not is_nil(calendar) <- Lotta.Calendar.get_calendar(calendar_id),
-         {:ok, event} <- Lotta.Calendar.create_event(args) do
-      {:ok, event}
-    else
-      nil -> {:error, "Calendar not found"}
-      error -> error
-    end
+    case Lotta.Calendar.get_calendar(calendar_id) do
+      nil ->
+        {:error, "Calendar not found"}
 
-    Lotta.Calendar.create_event(args)
+      calendar ->
+        Lotta.Calendar.create_event(
+          calendar,
+          parse_event_input(args)
+        )
+    end
   end
+
+  defp format_event(%CalendarEvent{} = event) do
+    event
+    |> Map.put(:recurrence, get_recurrence(event))
+    |> Map.reject(fn {key, _val} -> String.starts_with?(to_string(key), "recurrence_") end)
+  end
+
+  defp parse_event_input(input) do
+    input
+    |> Map.merge(make_recurrence(input[:recurrence]) || %{})
+    |> Map.reject(&(&1 == :recurrence))
+  end
+
+  defp get_recurrence(%CalendarEvent{recurrence_frequency: nil}), do: nil
+
+  defp get_recurrence(%CalendarEvent{} = event) do
+    %{
+      frequency: event.recurrence_frequency,
+      interval: event.recurrence_interval,
+      days_of_week: event.recurrence_byday,
+      days_of_month: event.recurrence_bymonthday,
+      until: event.recurrence_until,
+      occurrences: event.recurrence_count
+    }
+  end
+
+  defp make_recurrence(
+         %{
+           frequency: frequency
+         } = recurrence
+       ) do
+    %{
+      recurrence_frequency: frequency,
+      recurrence_interval: Map.get(recurrence, :interval),
+      recurrence_byday: Map.get(recurrence, :days_of_week),
+      recurrence_bymonthday: Map.get(recurrence, :days_of_month),
+      recurrence_until: Map.get(recurrence, :until),
+      recurrence_count: Map.get(recurrence, :occurrences)
+    }
+  end
+
+  defp make_recurrence(nil), do: nil
 end
