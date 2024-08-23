@@ -22,12 +22,12 @@ defmodule Lotta.Accounts.UserGroup do
   @timestamps_opts [type: :utc_datetime]
 
   schema "user_groups" do
-    field :name, :string
-    field :sort_key, :integer
-    field :is_admin_group, :boolean
-    field :can_read_full_name, :boolean
+    field(:name, :string)
+    field(:sort_key, :integer)
+    field(:is_admin_group, :boolean)
+    field(:can_read_full_name, :boolean)
 
-    field :enrollment_tokens, {:array, :string}, default: []
+    field(:enrollment_tokens, {:array, :string}, default: [])
 
     many_to_many :users,
                  User,

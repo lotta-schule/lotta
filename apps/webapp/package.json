@@ -10,7 +10,7 @@
     "test": "vitest",
     "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit",
-    "schema:download": "pnpm dlx get-graphql-schema http://127.0.0.1:4000/api > src/api/schema.graphql",
+    "schema:download": "pnpm dlx get-graphql-schema http://127.0.0.1:4000/api > .tmp/schema.graphql",
     "translations:collect": "pnpm i18next"
   },
   "type": "module",
@@ -37,6 +37,7 @@
     "date-fns": "^3.6.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^11.3.19",
+    "gql.tada": "^1.8.5",
     "graphql": "^16.9.0",
     "http-proxy-middleware": "^2.0.6",
     "i18next": "^23.12.2",

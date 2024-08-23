@@ -1,6 +1,4 @@
 ---
-version: "3.8"
-
 services:
   postgres:
     image: postgres:15.1
@@ -8,8 +6,8 @@ services:
       - ./_data/postgres:/var/lib/postgresql/data
     restart: always
     ports:
-      - "5432:5432"
-      - "5433:5433"
+      - '5432:5432'
+      - '5433:5433'
     environment:
       POSTGRES_USER: lotta
       POSTGRES_PASSWORD: lotta
@@ -20,7 +18,7 @@ services:
     environment:
       - REDIS_PASSWORD=lotta
     ports:
-      - "6379:6379"
+      - '6379:6379'
 
   rabbitmq:
     image: rabbitmq:3.12-management
@@ -29,14 +27,12 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - '5672:5672'
+      - '15672:15672'
 
   minio:
     image: minio/minio
     command: server /data
-    volumes:
-      - ./_data/minio:/data
     environment:
       - MINIO_ROOT_USER=AKIAIOSFODNN7EXAMPLE
       - MINIO_ROOT_PASSWORD=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
@@ -49,10 +45,8 @@ services:
       - minio
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc config host add minio http://minio:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY;
+      /usr/bin/mc alias set minio http://minio:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY;
       /usr/bin/mc rm -r --force minio/lotta-dev-ugc;
       /usr/bin/mc mb minio/lotta-dev-ugc;
-      /usr/bin/mc policy set download minio/lotta-dev-ugc;
-      exit 0;
-      "
-      
+      /usr/bin/mc anonymous set download minio/lotta-dev-ugc;
+      exit 0;"

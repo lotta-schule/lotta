@@ -325,6 +325,9 @@ importers:
       framer-motion:
         specifier: ^11.3.19
         version: 11.3.19(react-dom@19.0.0-rc-6d3110b4d9-20240531)(react@19.0.0-rc-6d3110b4d9-20240531)
+      gql.tada:
+        specifier: ^1.8.5
+        version: 1.8.5(graphql@16.9.0)(typescript@5.5.4)
       graphql:
         specifier: ^16.9.0
         version: 16.9.0
@@ -472,6 +475,28 @@ importers:
   libs/theme: {}
 
 packages:
+
+  /@0no-co/graphql.web@1.0.7(graphql@16.9.0):
+    resolution: {integrity: sha512-E3Qku4mTzdrlwVWGPxklDnME5ANrEGetvYw4i2GCRlppWXXE4QD66j7pwb8HelZwS6LnqEChhrSOGCXpbiu6MQ==}
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+    peerDependenciesMeta:
+      graphql:
+        optional: true
+    dependencies:
+      graphql: 16.9.0
+    dev: false
+
+  /@0no-co/graphqlsp@1.12.13(graphql@16.9.0)(typescript@5.5.4):
+    resolution: {integrity: sha512-/C9yXft+mq+VdoniBgWvA+iK5X6cB50KKThg1je4bFIhhBNccLJlNbWFxOglXseKuisq+h5oIY4ELTVKs6GhRQ==}
+    peerDependencies:
+      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
+      typescript: ^5.0.0
+    dependencies:
+      '@gql.tada/internal': 1.0.6(graphql@16.9.0)(typescript@5.5.4)
+      graphql: 16.9.0
+      typescript: 5.5.4
+    dev: false
 
   /@absinthe/socket-apollo-link@0.2.1(phoenix@1.7.14):
     resolution: {integrity: sha512-QxEazdjUXth+XMTAdlODZwS5h7fUAq9LEIH5O/EN0c/pS7Q3dFrTM1ZiP6n/0VdSEc+xBZyTisN63N2cPgE8ZQ==}
@@ -3174,6 +3199,37 @@ packages:
       '@fortawesome/fontawesome-svg-core': 6.6.0
       prop-types: 15.8.1
       react: 19.0.0-rc-6d3110b4d9-20240531
+    dev: false
+
+  /@gql.tada/cli-utils@1.6.0(@0no-co/graphqlsp@1.12.13)(graphql@16.9.0)(typescript@5.5.4):
+    resolution: {integrity: sha512-RYWpoWVm6/ypvDp7UTzh3UrEgIJq2+HaUlAcbdLzKdO8ZfFgP16gBpxtYvbRPWwQEjn5HMGgpzIBh7Kftp10PA==}
+    peerDependencies:
+      '@0no-co/graphqlsp': ^1.12.9
+      '@gql.tada/svelte-support': 1.0.1
+      '@gql.tada/vue-support': 1.0.1
+      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      '@gql.tada/svelte-support':
+        optional: true
+      '@gql.tada/vue-support':
+        optional: true
+    dependencies:
+      '@0no-co/graphqlsp': 1.12.13(graphql@16.9.0)(typescript@5.5.4)
+      '@gql.tada/internal': 1.0.6(graphql@16.9.0)(typescript@5.5.4)
+      graphql: 16.9.0
+      typescript: 5.5.4
+    dev: false
+
+  /@gql.tada/internal@1.0.6(graphql@16.9.0)(typescript@5.5.4):
+    resolution: {integrity: sha512-K5dKMqqU0pcNWS+/i6EnoUGvA7lW2Agwl+nepZOEWbGpG80aJxXfL+yAvaHihP5VqGZFOygyc3NDBo1mm+Z4KQ==}
+    peerDependencies:
+      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
+      typescript: ^5.0.0
+    dependencies:
+      '@0no-co/graphql.web': 1.0.7(graphql@16.9.0)
+      graphql: 16.9.0
+      typescript: 5.5.4
     dev: false
 
   /@graphql-typed-document-node/core@3.2.0(graphql@15.9.0):
@@ -12998,6 +13054,23 @@ packages:
     dependencies:
       get-intrinsic: 1.2.4
 
+  /gql.tada@1.8.5(graphql@16.9.0)(typescript@5.5.4):
+    resolution: {integrity: sha512-A6uwkWjy0Pq6A804T4pnrBtnGG5XBSaordSNW2loxWqeov+FqEaOI5+Oy/Be2NIrSpxaM0TQhV1+xtYxsxJOjw==}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.0.0
+    dependencies:
+      '@0no-co/graphql.web': 1.0.7(graphql@16.9.0)
+      '@0no-co/graphqlsp': 1.12.13(graphql@16.9.0)(typescript@5.5.4)
+      '@gql.tada/cli-utils': 1.6.0(@0no-co/graphqlsp@1.12.13)(graphql@16.9.0)(typescript@5.5.4)
+      '@gql.tada/internal': 1.0.6(graphql@16.9.0)(typescript@5.5.4)
+      typescript: 5.5.4
+    transitivePeerDependencies:
+      - '@gql.tada/svelte-support'
+      - '@gql.tada/vue-support'
+      - graphql
+    dev: false
+
   /graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
@@ -19572,7 +19645,6 @@ packages:
     resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /ufo@1.5.4:
     resolution: {integrity: sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ==}

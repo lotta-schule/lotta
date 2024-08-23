@@ -10,9 +10,7 @@ defmodule LottaWeb.ArticleReactionResolverTest do
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.User
-  alias Lotta.Storage.File
   alias Lotta.Content.Article
-  alias Lotta.Tenants.Category
 
   @prefix "tenant_test"
 

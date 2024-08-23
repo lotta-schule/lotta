@@ -2,15 +2,14 @@ import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { MetricsChart } from './MetricsChart';
 import { Period } from '../Analytics';
-
-import GetTenantTimeseriesAnalyticsQuery from 'api/query/analytics/GetTenantTimeseriesAnalyticsQuery.graphql';
+import { GET_TENANT_TIMESERIES_ANALYTICS } from '../_graphql';
 
 vi.useFakeTimers({ shouldAdvanceTime: true, now: new Date('2024-03-16') });
 
 const mocks = [
   {
     request: {
-      query: GetTenantTimeseriesAnalyticsQuery,
+      query: GET_TENANT_TIMESERIES_ANALYTICS,
       variables: {
         date: '2024-03-16',
         metric: 'VISITS',

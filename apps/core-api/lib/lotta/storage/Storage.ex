@@ -513,7 +513,7 @@ defmodule Lotta.Storage do
   @spec get_path(Directory.t() | File.t(), User.t()) :: [Directory.t()]
   def get_path(file_or_directory, user), do: get_path(file_or_directory, user, [])
 
-  defp get_path(%{parent_directory_id: nil}, user, current_path), do: current_path
+  defp get_path(%{parent_directory_id: nil}, _user, current_path), do: current_path
 
   defp get_path(%{parent_directory_id: id}, user, current_path) do
     case Repo.get(Lotta.Storage.Directory, id) do

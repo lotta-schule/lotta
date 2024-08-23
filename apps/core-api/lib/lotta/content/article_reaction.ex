@@ -11,7 +11,7 @@ defmodule Lotta.Content.ArticleReaction do
   @timestamps_opts [type: :utc_datetime]
 
   schema "article_reactions" do
-    field :type, :string
+    field(:type, :string)
 
     belongs_to :article, Article
     belongs_to :user, User

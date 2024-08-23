@@ -523,9 +523,7 @@ defmodule LottaWeb.CategoryResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "updateCategory" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Kategorie mit der id 0 nicht gefunden.",
@@ -551,9 +549,7 @@ defmodule LottaWeb.CategoryResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "updateCategory" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -575,9 +571,7 @@ defmodule LottaWeb.CategoryResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "updateCategory" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -631,9 +625,7 @@ defmodule LottaWeb.CategoryResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "createCategory" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -655,9 +647,7 @@ defmodule LottaWeb.CategoryResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "createCategory" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -741,9 +731,7 @@ defmodule LottaWeb.CategoryResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "deleteCategory" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Kategorie mit der id 0 nicht gefunden.",
@@ -765,9 +753,7 @@ defmodule LottaWeb.CategoryResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "deleteCategory" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -785,9 +771,7 @@ defmodule LottaWeb.CategoryResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "deleteCategory" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",

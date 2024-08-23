@@ -255,9 +255,7 @@ defmodule LottaWeb.WidgetResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "createWidget" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -275,9 +273,7 @@ defmodule LottaWeb.WidgetResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "createWidget" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -357,9 +353,7 @@ defmodule LottaWeb.WidgetResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "updateWidget" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -380,9 +374,7 @@ defmodule LottaWeb.WidgetResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "updateWidget" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -428,9 +420,7 @@ defmodule LottaWeb.WidgetResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "deleteWidget" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -448,9 +438,7 @@ defmodule LottaWeb.WidgetResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "deleteWidget" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",

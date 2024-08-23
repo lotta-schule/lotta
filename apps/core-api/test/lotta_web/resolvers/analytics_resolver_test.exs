@@ -50,7 +50,7 @@ defmodule LottaWeb.AnalyticsResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{"currentUserCount" => nil},
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -69,9 +69,7 @@ defmodule LottaWeb.AnalyticsResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "currentUserCount" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -104,7 +102,7 @@ defmodule LottaWeb.AnalyticsResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{},
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -123,7 +121,7 @@ defmodule LottaWeb.AnalyticsResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{},
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -152,7 +150,7 @@ defmodule LottaWeb.AnalyticsResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{"metrics" => nil},
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -171,9 +169,7 @@ defmodule LottaWeb.AnalyticsResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "metrics" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -213,7 +209,7 @@ defmodule LottaWeb.AnalyticsResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{"metrics" => nil},
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",
@@ -240,9 +236,7 @@ defmodule LottaWeb.AnalyticsResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{
-                 "metrics" => nil
-               },
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst Administrator sein um das zu tun.",

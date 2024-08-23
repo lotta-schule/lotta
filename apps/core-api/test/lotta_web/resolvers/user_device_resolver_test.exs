@@ -101,7 +101,7 @@ defmodule LottaWeb.UserDeviceResolverTest do
         |> json_response(200)
 
       assert %{
-               "data" => %{"devices" => nil},
+               "data" => nil,
                "errors" => [
                  %{
                    "message" => "Du musst angemeldet sein um das zu tun.",

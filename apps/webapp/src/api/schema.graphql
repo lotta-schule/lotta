@@ -115,8 +115,8 @@ enum ArticleReactionType {
 }
 
 type Authresult {
-  accessToken: String
-  refreshToken: String
+  accessToken: String!
+  refreshToken: String!
 }
 
 type BreakdownMetrics {
@@ -278,12 +278,12 @@ type Device {
 }
 
 type Directory {
-  id: ID
-  insertedAt: DateTime
-  name: String
+  id: ID!
+  insertedAt: DateTime!
+  name: String!
   parentDirectory: Directory
-  path: [Directory]
-  updatedAt: DateTime
+  path: [Directory!]!
+  updatedAt: DateTime!
   user: User
 }
 
@@ -309,49 +309,49 @@ type Feedback {
 }
 
 type File {
-  fileConversions: [FileConversion]
-  fileType: FileType
-  filename: String
-  filesize: Int
-  id: ID
-  insertedAt: DateTime
-  mimeType: String
+  fileConversions: [FileConversion!]!
+  fileType: FileType!
+  filename: String!
+  filesize: Int!
+  id: ID!
+  insertedAt: DateTime!
+  mimeType: String!
   parentDirectory: Directory
-  path: [Directory]
-  remoteLocation: String
-  updatedAt: DateTime
-  usage: [FileUsageLocation]
+  path: [Directory!]!
+  remoteLocation: String!
+  updatedAt: DateTime!
+  usage: [FileUsageLocation!]!
   user: User
   userId: ID
 }
 
 type FileArticleUsageLocation {
-  article: Article
-  usage: String
+  article: Article!
+  usage: String!
 }
 
 type FileCategoryUsageLocation {
-  category: Category
-  usage: String
+  category: Category!
+  usage: String!
 }
 
 type FileContentModuleUsageLocation {
-  article: Article
-  contentModule: ContentModule
-  usage: String
+  article: Article!
+  contentModule: ContentModule!
+  usage: String!
 }
 
 type FileConversion {
-  format: String
-  id: ID
-  insertedAt: DateTime
-  mimeType: String
-  remoteLocation: String
-  updatedAt: DateTime
+  format: String!
+  id: ID!
+  insertedAt: DateTime!
+  mimeType: String!
+  remoteLocation: String!
+  updatedAt: DateTime!
 }
 
 type FileSystemUsageLocation {
-  usage: String
+  usage: String!
 }
 
 enum FileType {
@@ -365,8 +365,8 @@ enum FileType {
 union FileUsageLocation = FileArticleUsageLocation | FileCategoryUsageLocation | FileContentModuleUsageLocation | FileSystemUsageLocation | FileUserUsageLocation
 
 type FileUserUsageLocation {
-  usage: String
-  user: User
+  usage: String!
+  user: User!
 }
 
 """
@@ -384,17 +384,17 @@ type MediaUsage {
 
 type Message {
   content: String
-  conversation: Conversation
-  files: [File]
-  id: ID
-  insertedAt: DateTime
-  updatedAt: DateTime
+  conversation: Conversation!
+  files: [File!]
+  id: ID!
+  insertedAt: DateTime!
+  updatedAt: DateTime!
   user: User
 }
 
 input MessageInput {
   content: String
-  files: [SelectFileInput]
+  files: [SelectFileInput!]
   recipientGroup: SelectUserGroupInput
   recipientUser: SelectUserInput
 }
@@ -423,9 +423,9 @@ input RegisterDeviceInput {
 }
 
 input RegisterUserParams {
-  email: String
+  email: String!
   hideFullName: Boolean
-  name: String
+  name: String!
   nickname: String
 }
 
@@ -534,7 +534,7 @@ input SelectCategoryInput {
 }
 
 input SelectFileInput {
-  id: ID
+  id: ID!
 }
 
 input SelectUserGroupInput {
@@ -542,7 +542,7 @@ input SelectUserGroupInput {
 }
 
 input SelectUserInput {
-  id: ID
+  id: ID!
 }
 
 input SelectWidgetInput {
@@ -635,22 +635,22 @@ type Usage {
 }
 
 type User {
-  articles: [Article]
-  assignedGroups: [UserGroup]
+  articles: [Article!]!
+  assignedGroups: [UserGroup!]!
   avatarImageFile: File
   class: String
   email: String
-  enrollmentTokens: [String]
-  groups: [UserGroup]
+  enrollmentTokens: [String!]!
+  groups: [UserGroup!]!
   hasChangedDefaultPassword: Boolean
-  hideFullName: Boolean
-  id: ID
-  insertedAt: DateTime
+  hideFullName: Boolean!
+  id: ID!
+  insertedAt: DateTime!
   lastSeen: DateTime
   name: String
   nickname: String
   unreadMessages: Int
-  updatedAt: DateTime
+  updatedAt: DateTime!
 }
 
 type UserGroup {

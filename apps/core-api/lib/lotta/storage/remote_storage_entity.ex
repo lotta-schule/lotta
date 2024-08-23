@@ -11,8 +11,8 @@ defmodule Lotta.Storage.RemoteStorageEntity do
   @timestamps_opts [type: :utc_datetime]
 
   schema "remote_storage_entities" do
-    field :store_name, :string
-    field :path, :string
+    field(:store_name, :string)
+    field(:path, :string)
 
     has_one :file, File
     has_one :file_conversion, FileConversion

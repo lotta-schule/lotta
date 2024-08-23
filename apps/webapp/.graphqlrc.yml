@@ -1,5 +1,0 @@
-schema: 'src/api/schema.graphql'
-documents:
-  - 'src/api/mutation/*.graphql'
-  - 'src/api/query/*.graphql'
-  - 'src/api/subscription/*.graphql'

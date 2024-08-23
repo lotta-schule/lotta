@@ -28,13 +28,13 @@ defmodule Lotta.Tenants.Category do
   @timestamps_opts [type: :utc_datetime]
 
   schema "categories" do
-    field :title, :string
-    field :sort_key, :integer
-    field :is_sidenav, :boolean
-    field :is_homepage, :boolean
-    field :layout_name, :string
-    field :redirect, :string
-    field :hide_articles_from_homepage, :boolean
+    field(:title, :string)
+    field(:sort_key, :integer)
+    field(:is_sidenav, :boolean)
+    field(:is_homepage, :boolean)
+    field(:layout_name, :string)
+    field(:redirect, :string)
+    field(:hide_articles_from_homepage, :boolean)
 
     belongs_to :banner_image_file, File,
       on_replace: :nilify,

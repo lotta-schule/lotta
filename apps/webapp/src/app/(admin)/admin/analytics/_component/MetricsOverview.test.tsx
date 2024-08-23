@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, waitFor } from 'test/util';
 import { MetricsOverview } from './MetricsOverview';
 import { Period } from '../Analytics';
-
-import GetTenantAggregateAnalyticsQuery from 'api/query/analytics/GetTenantAggregateAnalyticsQuery.graphql';
+import { GET_TENANT_AGGREGATE_ANALYTICS } from '../_graphql';
+import { MockedResponse } from '@apollo/client/testing';
 
 vi.useFakeTimers({
   shouldAdvanceTime: true,
@@ -12,10 +12,10 @@ vi.useFakeTimers({
   now: new Date('2024-03-16').getTime(),
 });
 
-const mocks = [
+const mocks: MockedResponse[] = [
   {
     request: {
-      query: GetTenantAggregateAnalyticsQuery,
+      query: GET_TENANT_AGGREGATE_ANALYTICS,
       variables: { date: '2024-03-16', period: 'month' },
     },
     result: {

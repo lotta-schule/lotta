@@ -4,40 +4,40 @@ defmodule LottaWeb.Schema.Tenants do
   use Absinthe.Schema.Notation
 
   object :tenants_queries do
-    field :tenant, :tenant do
+    field(:tenant, :tenant) do
       arg(:slug, :string)
       resolve(&LottaWeb.TenantResolver.get/2)
     end
 
-    field :categories, list_of(:category) do
+    field(:categories, non_null(list_of(non_null(:category)))) do
       resolve(&LottaWeb.CategoryResolver.all/2)
     end
 
-    field :widgets, list_of(:widget) do
+    field(:widgets, non_null(list_of(non_null(:widget)))) do
       arg(:category_id, :id)
 
       resolve(&LottaWeb.WidgetResolver.all/2)
     end
 
-    field :feedbacks, type: list_of(:feedback) do
+    field(:feedbacks, type: non_null(list_of(non_null(:feedback)))) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       resolve(&LottaWeb.FeedbackResolver.list/2)
     end
 
-    field :usage, list_of(:usage) do
+    field(:usage, non_null(list_of(non_null(:usage)))) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       resolve(&LottaWeb.TenantResolver.usage/2)
     end
 
-    field :realtime_analytics, :integer do
+    field(:realtime_analytics, non_null(:integer)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       resolve(&LottaWeb.AnalyticsResolver.realtime/2)
     end
 
-    field :aggregate_analytics, :analytics_metrics do
+    field(:aggregate_analytics, non_null(:analytics_metrics)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:date, non_null(:date))
@@ -46,7 +46,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.AnalyticsResolver.aggregate/2)
     end
 
-    field :timeseries_analytics, list_of(non_null(:timeseries_metrics)) do
+    field(:timeseries_analytics, non_null(list_of(non_null(:timeseries_metrics)))) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:date, non_null(:date))
@@ -56,7 +56,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.AnalyticsResolver.timeseries/2)
     end
 
-    field :breakdown_analytics, list_of(non_null(:breakdown_metrics)) do
+    field(:breakdown_analytics, non_null(list_of(non_null(:breakdown_metrics)))) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:period, non_null(:analytics_period))
@@ -69,7 +69,7 @@ defmodule LottaWeb.Schema.Tenants do
   end
 
   object :tenants_mutations do
-    field :update_tenant, type: :tenant do
+    field(:update_tenant, type: non_null(:tenant)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:tenant, non_null(:tenant_input))
@@ -77,7 +77,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.TenantResolver.update/2)
     end
 
-    field :create_category, type: :category do
+    field(:create_category, type: non_null(:category)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:category, non_null(:create_category_input))
@@ -85,7 +85,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.CategoryResolver.create/2)
     end
 
-    field :update_category, type: :category do
+    field(:update_category, type: non_null(:category)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:id, non_null(:id))
@@ -94,7 +94,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.CategoryResolver.update/2)
     end
 
-    field :delete_category, type: :category do
+    field(:delete_category, type: non_null(:category)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:id, non_null(:id))
@@ -102,7 +102,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.CategoryResolver.delete/2)
     end
 
-    field :create_widget, type: :widget do
+    field(:create_widget, type: non_null(:widget)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:title, non_null(:string))
@@ -111,7 +111,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.WidgetResolver.create/2)
     end
 
-    field :update_widget, type: :widget do
+    field(:update_widget, type: non_null(:widget)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:id, non_null(:id))
@@ -120,7 +120,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.WidgetResolver.update/2)
     end
 
-    field :delete_widget, type: :widget do
+    field(:delete_widget, type: non_null(:widget)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:id, non_null(:id))
@@ -128,7 +128,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.WidgetResolver.delete/2)
     end
 
-    field :create_feedback, type: :feedback do
+    field(:create_feedback, type: non_null(:feedback)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:feedback, non_null(:create_feedback_input))
@@ -136,7 +136,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.FeedbackResolver.create/2)
     end
 
-    field :send_feedback_to_lotta, type: :feedback do
+    field(:send_feedback_to_lotta, type: non_null(:feedback)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:id, non_null(:id))
@@ -145,7 +145,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.FeedbackResolver.send_to_lotta/2)
     end
 
-    field :create_lotta_feedback, type: :boolean do
+    field(:create_lotta_feedback, type: non_null(:boolean)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:subject, :string)
@@ -154,7 +154,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.FeedbackResolver.create_for_lotta/2)
     end
 
-    field :respond_to_feedback, type: :feedback do
+    field(:respond_to_feedback, type: non_null(:feedback)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:id, non_null(:id))
@@ -164,7 +164,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.FeedbackResolver.respond/2)
     end
 
-    field :delete_feedback, type: :feedback do
+    field(:delete_feedback, type: non_null(:feedback)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:id, non_null(:id))
