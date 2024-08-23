@@ -42,22 +42,6 @@ export type CreateEventDialogProps = {
   onClose(): void;
 };
 
-type PickNullable<T> = {
-  [P in keyof T as null extends T[P] ? P : never]: T[P];
-};
-
-type PickNotNullable<T> = {
-  [P in keyof T as null extends T[P] ? never : P]: T[P];
-};
-
-type OptionalNullable<T> = T extends object
-  ? {
-      [K in keyof PickNullable<T>]?: OptionalNullable<Exclude<T[K], null>>;
-    } & {
-      [K in keyof PickNotNullable<T>]: OptionalNullable<T[K]>;
-    }
-  : T;
-
 export const CreateEventDialog = React.memo(
   ({ isOpen, onClose }: CreateEventDialogProps) => {
     const {
@@ -75,63 +59,10 @@ export const CreateEventDialog = React.memo(
     const [date, setDate] = React.useState(() => startOfHour(new Date()));
     const [endDate, setEndDate] = React.useState(() => addHours(date, 1));
     const [isFullDay, setIsAllDay] = React.useState(true);
-    const [recurrence, dispatchRecurrence] = React.useReducer(
-      (
-        _prevState,
-        rule: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'yearly' | null
-      ) => {
-        switch (rule) {
-          case 'daily':
-            return {
-              name: 'daily',
-              recurrence: {
-                frequency: 'DAILY' as const,
-                interval: 1,
-              },
-            };
-          case 'weekly':
-            return {
-              name: 'weekly',
-              recurrence: {
-                frequency: 'WEEKLY' as const,
-                interval: 1,
-              },
-            };
-          case 'biweekly':
-            return {
-              name: 'biweekly',
-              recurrence: {
-                frequency: 'WEEKLY' as const,
-                interval: 2,
-              },
-            };
-          case 'monthly':
-            return {
-              name: 'monthly',
-              recurrence: {
-                frequency: 'MONTHLY' as const,
-                interval: 1,
-              },
-            };
-          case 'yearly':
-            return {
-              name: 'yearly',
-              recurrence: {
-                frequency: 'YEARLY' as const,
-                interval: 1,
-              },
-            };
-          default:
-            return { name: '', recurrence: null };
-        }
-      },
-      { name: '', recurrence: null } as {
-        name: string;
-        recurrence: OptionalNullable<
-          FragmentOf<typeof RECURRENCE_FRAGMENT>
-        > | null;
-      }
-    );
+    const [recurrence, dispatchRecurrence] = React.useState<FragmentOf<
+      typeof RECURRENCE_FRAGMENT
+    > | null>(null);
+
     const isMultipleDays = React.useMemo(
       () => !isSameDay(date, endDate),
       [date, endDate]
@@ -147,10 +78,7 @@ export const CreateEventDialog = React.memo(
           start: date.toISOString(),
           end: endDate?.toISOString(),
           isFullDay,
-          recurrence: (recurrence?.recurrence ?? null) as {
-            frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
-            interval: number;
-          } | null,
+          recurrence,
         },
         refetchQueries: [GET_CALENDAR_EVENTS],
       }
@@ -211,7 +139,7 @@ export const CreateEventDialog = React.memo(
                 value={calendarId}
                 onChange={setCalendarId}
               >
-                {calendars.map((calendar: any) => (
+                {calendars.map((calendar) => (
                   <Option key={calendar.id} value={calendar.id}>
                     {calendar.name}
                   </Option>
@@ -220,29 +148,40 @@ export const CreateEventDialog = React.memo(
 
               <Select
                 title={t('repetition')}
-                value={recurrence?.name ?? ''}
-                onChange={(value) =>
-                  dispatchRecurrence(
-                    value as Parameters<typeof dispatchRecurrence>[0]
-                  )
+                value={
+                  recurrence ? recurrence.interval + recurrence.frequency : ''
                 }
+                onChange={(value) => {
+                  const regex = /(?<interval>\d+)(?<frequency>\w+)/;
+                  const match = regex.exec(value);
+                  invariant(match, 'Invalid value');
+                  const { interval, frequency } = match.groups!;
+                  dispatchRecurrence({
+                    interval: parseInt(interval, 10),
+                    frequency: frequency as any,
+                    until: null,
+                    daysOfWeek: null,
+                    daysOfMonth: null,
+                    occurrences: null,
+                  });
+                }}
               >
                 <Option key={'none'} value={''}>
                   {t('none')}
                 </Option>
-                <Option key={'daily'} value={'daily'}>
+                <Option key={'daily'} value={'1daily'}>
                   {t('daily')}
                 </Option>
-                <Option key={'weekly'} value={'weekly'}>
+                <Option key={'weekly'} value={'1weekly'}>
                   {t('weekly')}
                 </Option>
-                <Option key={'biweekly'} value={'biweekly'}>
+                <Option key={'biweekly'} value={'2weekly'}>
                   {t('biweekly')}
                 </Option>
-                <Option key={'monthly'} value={'monthly'}>
+                <Option key={'monthly'} value={'1monthly'}>
                   {t('monthly')}
                 </Option>
-                <Option key={'yearly'} value={'yearly'}>
+                <Option key={'yearly'} value={'1yearly'}>
                   {t('yearly')}
                 </Option>
               </Select>

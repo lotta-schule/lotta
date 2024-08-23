@@ -8,25 +8,30 @@ defmodule Lotta.Calendar.Calendar do
 
   @type id() :: String.t()
 
-  @type t() :: %__MODULE__{id: id(), name: :string, default_color: :string | nil}
+  @type t() :: %__MODULE__{id: id(), name: :string, color: :string}
+
+  @required_fields [:name]
+  @optional_fields [:color, :is_publicly_available]
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @timestamps_opts [type: :utc_datetime]
 
   schema "calendars" do
     field :name, :string
-    field :default_color, :string
+    field :color, :string, default: "#330000"
+    field :is_publicly_available, :boolean, default: false
 
     has_many :events, CalendarEvent, on_replace: :delete
 
     timestamps()
   end
 
-  @spec create_changeset(data :: map()) :: Ecto.Changeset.t(t())
-  def create_changeset(data) do
-    %__MODULE__{}
-    |> cast(data, [:name, :default_color])
-    |> validate_required(:name)
-    |> validate_format(:default_color, ~r/^#([A-Fa-f0-9]{6})$/)
+  @spec changeset(data :: map()) :: Ecto.Changeset.t(t())
+  @spec changeset(t(), data :: map()) :: Ecto.Changeset.t(t())
+  def changeset(struct \\ %__MODULE__{}, data) do
+    struct
+    |> cast(data, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
+    |> validate_format(:color, ~r/^#([A-Fa-f0-9]{6})$/)
   end
 end

@@ -27,8 +27,16 @@ defmodule Lotta.Calendar do
           {:ok, Calendar} | {:error, Ecto.Changeset.t(Calendar.t())}
   def create_calendar(data) do
     data
-    |> Calendar.create_changeset()
+    |> Calendar.changeset()
     |> Repo.insert(prefix: Repo.get_prefix())
+  end
+
+  @spec update_calendar(Calendar.t(), data :: map()) ::
+          {:ok, Calendar} | {:error, Ecto.Changeset.t(Calendar.t())}
+  def update_calendar(calendar, data) do
+    calendar
+    |> Calendar.changeset(data)
+    |> Repo.update()
   end
 
   @doc """

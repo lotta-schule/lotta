@@ -6,7 +6,9 @@ defmodule Lotta.Repo.TenantMigrations.CreateCalendarAndEvents do
   def change do
     create table(:calendars, primary_key: [name: :id, type: :binary_id]) do
       add :name, :string
-      add :default_color, :string, null: true
+      add :color, :string, null: false, default: "#330000"
+
+      add :is_publicly_available, :boolean, null: false, default: false
 
       timestamps()
     end

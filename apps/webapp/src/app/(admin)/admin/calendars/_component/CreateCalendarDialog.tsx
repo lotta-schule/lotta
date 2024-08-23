@@ -12,6 +12,8 @@ import {
 } from '@lotta-schule/hubert';
 import { useRouter } from 'next/navigation';
 import { CREATE_CALENDAR, GET_CALENDARS } from '../_graphql';
+import { useTranslation } from 'react-i18next';
+import { BasicCalendarFormElement } from './BasicCalendarFormElement';
 
 export interface CreateCalendarDialogProps {
   isOpen: boolean;
@@ -21,6 +23,8 @@ export interface CreateCalendarDialogProps {
 export const CreateCalendarDialog = React.memo(
   ({ isOpen, onClose }: CreateCalendarDialogProps) => {
     const router = useRouter();
+    const { t } = useTranslation();
+
     const [name, setName] = React.useState('');
     const [color, setColor] = React.useState('#ff0000');
 
@@ -33,8 +37,10 @@ export const CreateCalendarDialog = React.memo(
       CREATE_CALENDAR,
       {
         variables: {
-          name,
-          color,
+          data: {
+            name,
+            color,
+          },
         },
         onCompleted: () => {
           onClose();
@@ -58,40 +64,21 @@ export const CreateCalendarDialog = React.memo(
       <Dialog
         open={isOpen}
         onRequestClose={() => onClose()}
-        title={'Kalender erstellen'}
+        title={t('create calendar')}
       >
         <form>
           <DialogContent>
             <ErrorMessage error={error} />
             Gib dem neuen Kalender einen Namen
             <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <Label label="Kalenderfarbe" style={{ flex: '0 0 2em' }}>
-                <Input
-                  autoFocus
-                  id="color"
-                  type="color"
-                  value={color}
-                  style={{
-                    height: 'calc(1.5em + calc(2* var(--lotta-spacing)))',
-                    padding: 'calc(0.5 * var(--lotta-spacing))',
-                    top: -1,
-                  }}
-                  onChange={({ currentTarget }) =>
-                    setColor(currentTarget.value)
-                  }
-                  disabled={isLoading}
-                />
-              </Label>
-              <Label label="Name des Kalenders" style={{ flex: '1' }}>
-                <Input
-                  autoFocus
-                  id="name"
-                  value={name}
-                  onChange={({ currentTarget }) => setName(currentTarget.value)}
-                  disabled={isLoading}
-                  placeholder="Klausuren"
-                />
-              </Label>
+              <BasicCalendarFormElement
+                calendar={{ name, color }}
+                disabled={isLoading}
+                onChange={({ name, color }) => {
+                  setName(name);
+                  setColor(color);
+                }}
+              />
             </div>
           </DialogContent>
           <DialogActions>

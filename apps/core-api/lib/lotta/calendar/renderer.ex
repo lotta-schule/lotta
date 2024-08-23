@@ -33,7 +33,7 @@ defmodule Lotta.Calendar.Renderer do
       PRODID:-//einsa Gbr//Lotta//DE
       X-WR-CALNAME:#{calendar.name}
       NAME:#{calendar.name}
-      COLOR:#{calendar.default_color}
+      COLOR:#{calendar.color}
       DTSTAMP:#{to_ics_date(calendar.updated_at)}
 
       #{Enum.map_join(calendar.events, "\n", &to_ics/1)}

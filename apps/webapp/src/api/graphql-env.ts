@@ -679,10 +679,13 @@ const introspection = {
         "name": "Calendar",
         "fields": [
           {
-            "name": "defaultColor",
+            "name": "color",
             "type": {
-              "kind": "SCALAR",
-              "name": "String"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -718,6 +721,18 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "isPubliclyAvailable",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
             "name": "name",
             "type": {
               "kind": "NON_NULL",
@@ -725,6 +740,15 @@ const introspection = {
                 "kind": "SCALAR",
                 "name": "String"
               }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "subscriptionUrl",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
             },
             "args": [],
             "isDeprecated": false
@@ -929,6 +953,41 @@ const introspection = {
             "isDeprecated": false
           }
         ]
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "CalendarInput",
+        "inputFields": [
+          {
+            "name": "color",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
+            }
+          },
+          {
+            "name": "isPubliclyAvailable",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean"
+              }
+            },
+            "defaultValue": "false"
+          },
+          {
+            "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
+            }
+          }
+        ],
+        "isOneOf": false
       },
       {
         "kind": "OBJECT",
@@ -2756,19 +2815,12 @@ const introspection = {
             },
             "args": [
               {
-                "name": "defaultColor",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String"
-                }
-              },
-              {
-                "name": "name",
+                "name": "data",
                 "type": {
                   "kind": "NON_NULL",
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String"
+                    "kind": "INPUT_OBJECT",
+                    "name": "CalendarInput"
                   }
                 }
               }
@@ -3594,6 +3646,39 @@ const introspection = {
                   "ofType": {
                     "kind": "SCALAR",
                     "name": "ID"
+                  }
+                }
+              }
+            ],
+            "isDeprecated": false
+          },
+          {
+            "name": "updateCalendar",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Calendar"
+              }
+            },
+            "args": [
+              {
+                "name": "data",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "CalendarInput"
+                  }
+                }
+              },
+              {
+                "name": "id",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String"
                   }
                 }
               }

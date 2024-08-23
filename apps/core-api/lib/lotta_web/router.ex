@@ -50,7 +50,7 @@ defmodule LottaWeb.Router do
 
     scope "/calendar" do
       pipe_through([:ics])
-      get("/:id/ics", LottaWeb.CalendarController, :get)
+      get("/:id/ics", LottaWeb.CalendarController, :get, as: :calendar_ics)
     end
   end
 

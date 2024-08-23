@@ -32,10 +32,18 @@ defmodule LottaWeb.Schema.Calendar do
     field(:create_calendar, non_null(:calendar)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
-      arg(:name, non_null(:string))
-      arg(:default_color, :string)
+      arg(:data, non_null(:calendar_input))
 
       resolve(&LottaWeb.CalendarResolver.create/2)
+    end
+
+    field(:update_calendar, non_null(:calendar)) do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
+      arg(:id, non_null(:string))
+      arg(:data, non_null(:calendar_input))
+
+      resolve(&LottaWeb.CalendarResolver.update/2)
     end
 
     field(:create_calendar_event, non_null(:calendar_event)) do
@@ -56,7 +64,7 @@ defmodule LottaWeb.Schema.Calendar do
     end
   end
 
-  input_object :recurrence_input do
+  input_object(:recurrence_input) do
     field(:frequency, non_null(:calendar_event_recurrence_frequency))
     field(:interval, non_null(:integer))
     field(:days_of_week, list_of(non_null(:string)))
@@ -65,10 +73,21 @@ defmodule LottaWeb.Schema.Calendar do
     field(:occurrences, :integer)
   end
 
+  input_object(:calendar_input) do
+    field(:name, non_null(:string))
+    field(:color, :string, default_value: nil)
+    field(:is_publicly_available, non_null(:boolean), default_value: false)
+  end
+
   object :calendar do
     field(:id, non_null(:id))
     field(:name, non_null(:string))
-    field(:default_color, :string)
+    field(:color, non_null(:string))
+    field(:is_publicly_available, non_null(:boolean))
+
+    field(:subscription_url, :string,
+      resolve: &LottaWeb.CalendarResolver.resolve_subscription_url/3
+    )
 
     field(:events, non_null(list_of(non_null(:calendar_event))),
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Calendar)

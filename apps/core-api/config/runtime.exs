@@ -150,7 +150,7 @@ config :lotta, :base_uri,
   host: host,
   alias: alias,
   scheme: SystemConfig.get("BASE_URI_SCHEME"),
-  port: SystemConfig.get("BASE_URI_PORT")
+  port: SystemConfig.get("BASE_URI_PORT", cast: :integer)
 
 # The secret key base is used to sign/encrypt cookies and other secrets.
 config :lotta, LottaWeb.Endpoint, secret_key_base: SystemConfig.get("SECRET_KEY_BASE")

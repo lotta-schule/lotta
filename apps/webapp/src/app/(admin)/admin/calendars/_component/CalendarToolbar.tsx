@@ -17,7 +17,7 @@ import { ToolbarProps } from 'react-big-calendar';
 import { useQuery } from '@apollo/client';
 import { Icon } from 'shared/Icon';
 import { CreateEventDialog } from './CreateEventDialog';
-import { CreateCalendarDialog } from './CreateCalendarDialog';
+import { ManageCalendarsDialog } from './ManageCalendarsDialog';
 import { CalendarContext } from './CalendarContext';
 import { GET_CALENDARS } from '../_graphql';
 import clsx from 'clsx';
@@ -31,19 +31,19 @@ export const CalendarToolbar = React.memo(
 
     const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] =
       React.useState(false);
-    const [isCreateCalendarDialogOpen, setIsCreateCalendarDialogOpen] =
+    const [isManageCalendarsDialogOpen, setIsManageCalendarsDialogOpen] =
       React.useState(false);
 
     const { data } = useQuery(GET_CALENDARS);
 
     const calendarMenuItems = React.useMemo(
       () => [
-        <Item key={'create_calendar'} textValue={t('create calendar')}>
-          <span>{t('create calendar')}</span>
+        <Item key={'manage_calendars'} textValue={t('manage calendars')}>
+          <span>{t('manage calendars')}</span>
         </Item>,
         ...(data?.calendars.map((calendar) => (
           <Item key={calendar.id} textValue={calendar.name}>
-            <div style={{ color: calendar.defaultColor ?? '#ff0000' }}>
+            <div style={{ color: calendar.color }}>
               <Icon icon={faCircle} />
             </div>
             <div className={styles.calendarSelectionListItemContent}>
@@ -90,8 +90,8 @@ export const CalendarToolbar = React.memo(
           <MenuButton
             title={t('calendars')}
             onAction={(key) => {
-              if (key === 'create_calendar') {
-                setIsCreateCalendarDialogOpen(true);
+              if (key === 'manage_calendars') {
+                setIsManageCalendarsDialogOpen(true);
               } else {
                 toggleCalendar(key as string);
               }
@@ -112,15 +112,13 @@ export const CalendarToolbar = React.memo(
             }}
             disabled={!data?.calendars.length}
           ></Button>
+          <ManageCalendarsDialog
+            isOpen={isManageCalendarsDialogOpen}
+            onClose={() => setIsManageCalendarsDialogOpen(false)}
+          />
           <CreateEventDialog
             isOpen={isCreateEventDialogOpen}
             onClose={() => setIsCreateEventDialogOpen(false)}
-          />
-          <CreateCalendarDialog
-            isOpen={isCreateCalendarDialogOpen}
-            onClose={() => {
-              setIsCreateCalendarDialogOpen(false);
-            }}
           />
         </section>
       </Toolbar>

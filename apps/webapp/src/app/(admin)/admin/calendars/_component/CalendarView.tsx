@@ -120,9 +120,7 @@ export const CalendarView = React.memo(
     const getCalendarColor = React.useCallback(
       (calendarId: string) => {
         const calendar = calendars.find((c) => c.id === calendarId);
-        return (
-          calendar?.defaultColor || 'rgba(var(--lotta-primary-color), 0.75)'
-        );
+        return calendar?.color;
       },
       [calendars]
     );

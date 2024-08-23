@@ -1,6 +1,7 @@
 defmodule LottaWeb.CalendarResolver do
   @moduledoc false
 
+  alias LottaWeb.Urls
   alias Lotta.Calendar.CalendarEvent
 
   require Logger
@@ -80,8 +81,8 @@ defmodule LottaWeb.CalendarResolver do
     end
   end
 
-  def create(args, _info) do
-    Lotta.Calendar.create_calendar(args)
+  def create(%{data: data}, _info) do
+    Lotta.Calendar.create_calendar(data)
   end
 
   def create_event(%{calendar_id: calendar_id} = args, _context) do
@@ -96,6 +97,29 @@ defmodule LottaWeb.CalendarResolver do
         )
     end
   end
+
+  def update(%{id: id, data: data}, _info) do
+    case Lotta.Calendar.get_calendar(id) do
+      nil ->
+        {:error, "Calendar not found"}
+
+      calendar ->
+        Lotta.Calendar.update_calendar(calendar, data)
+    end
+  end
+
+  def resolve_subscription_url(%{is_publicly_available: true, id: id}, _args, %{
+        context: %{tenant: tenant}
+      }),
+      do:
+        {:ok,
+         LottaWeb.Router.Helpers.calendar_ics_url(
+           Urls.get_tenant_uri(tenant),
+           :get,
+           id
+         )}
+
+  def resolve_subscription_url(_calendar, _args, _info), do: {:ok, nil}
 
   defp format_event(%CalendarEvent{} = event) do
     event
