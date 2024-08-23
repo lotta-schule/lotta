@@ -21,7 +21,7 @@ defmodule Lotta.Calendar do
   """
   @doc since: "5.0.0"
   @spec get_calendar(id :: Calendar.id()) :: Calendar.t() | nil
-  def get_calendar(id), do: Repo.get(Calendar, id)
+  def get_calendar(id), do: Repo.get(Calendar, id, prefix: Repo.get_prefix())
 
   @spec create_calendar(data :: map()) ::
           {:ok, Calendar} | {:error, Ecto.Changeset.t(Calendar.t())}
