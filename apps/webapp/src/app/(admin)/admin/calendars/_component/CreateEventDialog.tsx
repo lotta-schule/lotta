@@ -169,19 +169,19 @@ export const CreateEventDialog = React.memo(
                 <Option key={'none'} value={''}>
                   {t('none')}
                 </Option>
-                <Option key={'daily'} value={'1daily'}>
+                <Option key={'daily'} value={'1DAILY'}>
                   {t('daily')}
                 </Option>
-                <Option key={'weekly'} value={'1weekly'}>
+                <Option key={'weekly'} value={'1WEEKLY'}>
                   {t('weekly')}
                 </Option>
-                <Option key={'biweekly'} value={'2weekly'}>
+                <Option key={'biweekly'} value={'2WEEKLY'}>
                   {t('biweekly')}
                 </Option>
-                <Option key={'monthly'} value={'1monthly'}>
+                <Option key={'monthly'} value={'1MONTHLY'}>
                   {t('monthly')}
                 </Option>
-                <Option key={'yearly'} value={'1yearly'}>
+                <Option key={'yearly'} value={'1YEARLY'}>
                   {t('yearly')}
                 </Option>
               </Select>
