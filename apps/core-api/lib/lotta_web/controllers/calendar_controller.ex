@@ -13,7 +13,7 @@ defmodule LottaWeb.CalendarController do
       Calendar.get_calendar(id)
       |> Repo.preload(:events)
 
-    if is_nil(calendar) do
+    if is_nil(calendar) || !calendar.is_publicly_visible do
       conn
       |> put_status(404)
       |> put_view(LottaWeb.ErrorView)

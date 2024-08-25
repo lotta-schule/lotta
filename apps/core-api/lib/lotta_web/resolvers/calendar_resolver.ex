@@ -85,16 +85,20 @@ defmodule LottaWeb.CalendarResolver do
     Lotta.Calendar.create_calendar(data)
   end
 
-  def create_event(%{calendar_id: calendar_id} = args, _context) do
-    case Lotta.Calendar.get_calendar(calendar_id) do
+  def create_event(%{calendar_id: calendar_id, data: data}, _context) do
+    with calendar when not is_nil(calendar) <- Lotta.Calendar.get_calendar(calendar_id),
+         {:ok, event} <-
+           Lotta.Calendar.create_event(
+             calendar,
+             parse_event_input(data)
+           ) do
+      {:ok, format_event(event)}
+    else
       nil ->
         {:error, "Calendar not found"}
 
-      calendar ->
-        Lotta.Calendar.create_event(
-          calendar,
-          parse_event_input(args)
-        )
+      error ->
+        error
     end
   end
 
@@ -105,6 +109,23 @@ defmodule LottaWeb.CalendarResolver do
 
       calendar ->
         Lotta.Calendar.update_calendar(calendar, data)
+    end
+  end
+
+  def update_event(%{id: id, data: data}, _info) do
+    with event when not is_nil(event) <- Lotta.Calendar.get_calendar_event(id),
+         {:ok, event} <-
+           Lotta.Calendar.update_event(
+             event,
+             parse_event_input(data)
+           ) do
+      {:ok, format_event(event)}
+    else
+      nil ->
+        {:error, "Event not found"}
+
+      error ->
+        error
     end
   end
 
@@ -127,10 +148,10 @@ defmodule LottaWeb.CalendarResolver do
     |> Map.reject(fn {key, _val} -> String.starts_with?(to_string(key), "recurrence_") end)
   end
 
-  defp parse_event_input(input) do
-    input
-    |> Map.merge(make_recurrence(input[:recurrence]) || %{})
-    |> Map.reject(&(&1 == :recurrence))
+  defp parse_event_input(data) do
+    data
+    |> Map.merge(make_recurrence(data[:recurrence]) || %{})
+    |> Map.reject(&(elem(&1, 0) == :recurrence))
   end
 
   defp get_recurrence(%CalendarEvent{recurrence_frequency: nil}), do: nil

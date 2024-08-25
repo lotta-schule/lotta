@@ -40,7 +40,7 @@ defmodule LottaWeb.Schema.Calendar do
     field(:update_calendar, non_null(:calendar)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
-      arg(:id, non_null(:string))
+      arg(:id, non_null(:id))
       arg(:data, non_null(:calendar_input))
 
       resolve(&LottaWeb.CalendarResolver.update/2)
@@ -50,18 +50,36 @@ defmodule LottaWeb.Schema.Calendar do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:calendar_id, non_null(:id))
-
-      arg(:summary, non_null(:string))
-      arg(:description, :string)
-
-      arg(:start, non_null(:datetime))
-      arg(:end, non_null(:datetime))
-      arg(:is_full_day, non_null(:boolean))
-
-      arg(:recurrence, :recurrence_input)
+      arg(:data, non_null(:calendar_event_input))
 
       resolve(&LottaWeb.CalendarResolver.create_event/2)
     end
+
+    field(:update_calendar_event, non_null(:calendar_event)) do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
+      arg(:id, non_null(:id))
+      arg(:data, non_null(:calendar_event_input))
+
+      resolve(&LottaWeb.CalendarResolver.update_event/2)
+    end
+  end
+
+  input_object(:calendar_input) do
+    field(:name, non_null(:string))
+    field(:color, :string, default_value: nil)
+    field(:is_publicly_available, non_null(:boolean), default_value: false)
+  end
+
+  input_object(:calendar_event_input) do
+    field(:summary, non_null(:string))
+    field(:description, :string)
+
+    field(:start, non_null(:datetime))
+    field(:end, non_null(:datetime))
+    field(:is_full_day, non_null(:boolean))
+
+    field(:recurrence, :recurrence_input)
   end
 
   input_object(:recurrence_input) do
@@ -71,12 +89,6 @@ defmodule LottaWeb.Schema.Calendar do
     field(:days_of_month, list_of(non_null(:integer)))
     field(:until, :datetime)
     field(:occurrences, :integer)
-  end
-
-  input_object(:calendar_input) do
-    field(:name, non_null(:string))
-    field(:color, :string, default_value: nil)
-    field(:is_publicly_available, non_null(:boolean), default_value: false)
   end
 
   object :calendar do

@@ -16,7 +16,6 @@ import { Icon } from 'shared/Icon';
 import { useTranslation } from 'react-i18next';
 import { CALENDAR_FRAGMENT, UPDATE_CALENDAR } from '../_graphql';
 import { BasicCalendarFormElement } from './BasicCalendarFormElement';
-import { useServerData } from 'shared/ServerDataContext';
 import { FragmentOf } from 'gql.tada';
 import { useMutation } from '@apollo/client';
 import { invariant } from '@epic-web/invariant';

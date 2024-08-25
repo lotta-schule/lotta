@@ -110,9 +110,10 @@ defmodule Lotta.MixProject do
       {:con_cache, "~> 1.0"},
       {:libcluster, "~> 3.2"},
       # Test
-      {:mock, "~> 0.3", only: :test},
+      {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.14", only: :test},
       {:junit_formatter, "~> 3.2", only: :test},
+      {:mock, "~> 0.3", only: :test},
       # Development
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},

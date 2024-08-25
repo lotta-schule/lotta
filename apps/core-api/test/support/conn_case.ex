@@ -20,6 +20,7 @@ defmodule LottaWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
+      import LottaWeb.ConnCase
 
       # The default endpoint for testing
       @endpoint LottaWeb.Endpoint
@@ -36,5 +37,17 @@ defmodule LottaWeb.ConnCase do
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
+  end
+
+  def authorize(conn, user) do
+    {:ok, jwt, _} = LottaWeb.Auth.AccessToken.encode_and_sign(user)
+
+    conn
+    |> Plug.Conn.put_req_header("authorization", "Bearer #{jwt}")
+  end
+
+  def build_tenant_conn(prefix \\ "test") do
+    Phoenix.ConnTest.build_conn()
+    |> Plug.Conn.put_req_header("tenant", "slug:#{prefix}")
   end
 end

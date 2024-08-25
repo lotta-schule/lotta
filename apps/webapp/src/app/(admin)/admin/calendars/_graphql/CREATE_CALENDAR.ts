@@ -14,7 +14,7 @@ export const CREATE_CALENDAR = graphql(
 
 export const UPDATE_CALENDAR = graphql(
   `
-    mutation updateCalendar($id: String!, $data: CalendarInput!) {
+    mutation updateCalendar($id: ID!, $data: CalendarInput!) {
       calendar: updateCalendar(id: $id, data: $data) {
         ...CalendarFragment
       }

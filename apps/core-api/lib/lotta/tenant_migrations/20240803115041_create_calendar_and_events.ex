@@ -32,7 +32,9 @@ defmodule Lotta.Repo.TenantMigrations.CreateCalendarAndEvents do
       add :recurrence_until, :timestamptz
       add :recurrence_count, :integer
 
-      add :calendar_id, references("calendars", type: :binary_id), on_delete: :delete_all
+      add :calendar_id, references("calendars", type: :binary_id),
+        null: false,
+        on_delete: :delete_all
 
       timestamps()
     end

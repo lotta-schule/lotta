@@ -23,6 +23,13 @@ defmodule Lotta.Calendar do
   @spec get_calendar(id :: Calendar.id()) :: Calendar.t() | nil
   def get_calendar(id), do: Repo.get(Calendar, id, prefix: Repo.get_prefix())
 
+  @doc """
+  Get the calendar event with a given id.
+  """
+  @doc since: "5.0.0"
+  @spec get_calendar_event(id :: CalendarEvent.id()) :: CalendarEvent.t() | nil
+  def get_calendar_event(id), do: Repo.get(CalendarEvent, id, prefix: Repo.get_prefix())
+
   @spec create_calendar(data :: map()) ::
           {:ok, Calendar} | {:error, Ecto.Changeset.t(Calendar.t())}
   def create_calendar(data) do
@@ -59,11 +66,25 @@ defmodule Lotta.Calendar do
   Create a new event for a given calendar.
   """
   @doc since: "5.0.0"
-  @spec create_event(Calendar.t(), map()) :: CalendarEvent.t()
+  @spec create_event(Calendar.t(), map()) ::
+          {:ok, CalendarEvent.t()} | {:error, Ecto.Changeset.t(CalendarEvent.t())}
   def create_event(%{id: calendar_id} = calendar, args) do
-    %{args | calendar_id: calendar_id}
-    |> CalendarEvent.create_changeset()
+    args
+    |> Map.put(:calendar_id, calendar_id)
+    |> CalendarEvent.changeset()
     |> Repo.insert(prefix: Ecto.get_meta(calendar, :prefix))
+  end
+
+  @doc """
+  Update an event
+  """
+  @doc since: "5.0.0"
+  @spec update_event(CalendarEvent.t(), data :: map()) ::
+          {:ok, CalendarEvent.t()} | {:error, Ecto.Changeset.t(CalendarEvent.t())}
+  def update_event(calendar, data) do
+    calendar
+    |> CalendarEvent.changeset(data)
+    |> Repo.update()
   end
 
   def data() do

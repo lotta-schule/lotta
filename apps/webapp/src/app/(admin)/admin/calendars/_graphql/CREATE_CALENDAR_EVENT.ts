@@ -5,22 +5,9 @@ export const CREATE_CALENDAR_EVENT = graphql(
   `
     mutation CREATE_CALENDAR_EVENT(
       $calendarId: ID!
-      $name: String!
-      $description: String
-      $start: DateTime!
-      $end: DateTime!
-      $isFullDay: Boolean!
-      $recurrence: RecurrenceInput
+      $data: CalendarEventInput!
     ) {
-      event: createCalendarEvent(
-        calendarId: $calendarId
-        summary: $name
-        description: $description
-        start: $start
-        end: $end
-        isFullDay: $isFullDay
-        recurrence: $recurrence
-      ) {
+      event: createCalendarEvent(calendarId: $calendarId, data: $data) {
         id
         summary
         description
