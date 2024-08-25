@@ -150,7 +150,7 @@
           {Credo.Check.Warning.OperationWithConstantResult, []},
           {Credo.Check.Warning.RaiseInsideRescue, []},
           {Credo.Check.Warning.SpecWithStruct, []},
-          {Credo.Check.Warning.WrongTestFileExtension, files: %{excluded: ["test/support/"]}},
+          {Credo.Check.Warning.WrongTestFileExtension, false},
           {Credo.Check.Warning.UnusedEnumOperation, []},
           {Credo.Check.Warning.UnusedFileOperation, []},
           {Credo.Check.Warning.UnusedKeywordOperation, []},

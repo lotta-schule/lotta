@@ -1,4 +1,5 @@
 defmodule Lotta.Factory do
+  @moduledoc false
   use ExMachina.Ecto, repo: Lotta.Repo
 
   alias Lotta.{Calendar, Accounts}
