@@ -102,7 +102,7 @@ export const AppContextProviders = ({
       : (requestBaseUrl ?? window.location.origin);
 
   return (
-    <ServerDataContextProvider baseUrl={baseUrl}>
+    <ServerDataContextProvider baseUrl={baseUrl} tenant={tenant}>
       <ApolloProvider client={client}>
         <TenantContextProviders>{children}</TenantContextProviders>
       </ApolloProvider>
