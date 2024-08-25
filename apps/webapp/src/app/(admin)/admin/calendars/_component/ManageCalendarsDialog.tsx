@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  LinearProgress,
   List,
   ListItem,
 } from '@lotta-schule/hubert';
@@ -23,7 +24,7 @@ export interface ManageCalendarsDialogProps {
 
 export const ManageCalendarsDialog = React.memo(
   ({ isOpen, onClose }: ManageCalendarsDialogProps) => {
-    const { data } = useQuery(GET_CALENDARS);
+    const { data, loading: isLoading } = useQuery(GET_CALENDARS);
 
     const [isCreateCalendarDialogOpen, setIsCreateCalendarDialogOpen] =
       React.useState(false);
@@ -46,31 +47,41 @@ export const ManageCalendarsDialog = React.memo(
         {!calendarBeingEdited && (
           <>
             <DialogContent>
+              {isLoading && (
+                <LinearProgress
+                  isIndeterminate
+                  aria-label={t('loading calendars')}
+                />
+              )}
               <List>
-                {!data?.calendars.length && (
-                  <ListItem>{t('no calendars found')}</ListItem>
-                )}
-                {data?.calendars.map((calendar) => (
-                  <ListItem
-                    key={calendar.id}
-                    leftSection={
-                      <div style={{ color: calendar.color }}>
-                        <Icon icon={faCircle} />
-                      </div>
-                    }
-                    rightSection={
-                      <Button
-                        icon={<Icon icon={faEdit} />}
-                        title={t('edit')}
-                        onClick={() => {
-                          setCalendarBeingEdited(calendar);
-                        }}
-                      />
-                    }
-                  >
-                    {calendar.name}
-                  </ListItem>
-                ))}
+                {!isLoading &&
+                  (data?.calendars.length ? (
+                    data.calendars.map((calendar) => (
+                      <ListItem
+                        key={calendar.id}
+                        leftSection={
+                          <div style={{ color: calendar.color }}>
+                            <Icon icon={faCircle} />
+                          </div>
+                        }
+                        rightSection={
+                          <Button
+                            icon={<Icon icon={faEdit} />}
+                            title={t('edit')}
+                            onClick={() => {
+                              setCalendarBeingEdited(calendar);
+                            }}
+                          />
+                        }
+                      >
+                        {calendar.name}
+                      </ListItem>
+                    ))
+                  ) : (
+                    <ListItem key={'emptyli'}>
+                      {t('no calendars found')}
+                    </ListItem>
+                  ))}
               </List>
             </DialogContent>
             <DialogActions>

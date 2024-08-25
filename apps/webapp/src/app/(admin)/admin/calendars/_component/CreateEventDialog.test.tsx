@@ -13,18 +13,21 @@ const additionalMocks = [
       data: {
         calendars: [
           {
+            __typename: 'Calendar',
             id: '1',
             name: 'Klausuren',
             color: '#ff0000',
             isPubliclyAvailable: false,
           },
           {
+            __typename: 'Calendar',
             id: '2',
             name: 'Ferien & Feiertage',
             color: '#00ff00',
             isPubliclyAvailable: true,
           },
           {
+            __typename: 'Calendar',
             id: '3',
             name: 'Schulfeiern',
             color: '#0000ff',

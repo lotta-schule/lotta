@@ -28,6 +28,7 @@ export const ListItem = ({
   if (props.isDivider === true) {
     return (
       <li
+        key="listitem"
         className={clsx(styles.li, styles.isDivider, className)}
         {...Object.fromEntries(
           Object.entries(props).filter(([key]) => key !== 'isDivider')
@@ -40,6 +41,7 @@ export const ListItem = ({
 
   return (
     <li
+      key="listitem"
       className={clsx(styles.li, className, {
         [styles.isClickable]: props.onClick !== undefined,
         [styles.isDisabled]: isDisabled,

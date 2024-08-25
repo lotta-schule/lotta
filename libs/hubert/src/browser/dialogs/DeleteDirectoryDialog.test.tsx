@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { vi } from 'vitest';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
