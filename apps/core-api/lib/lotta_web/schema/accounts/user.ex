@@ -24,8 +24,8 @@ defmodule LottaWeb.Schema.Accounts.User do
   end
 
   object :authresult do
-    field(:access_token, non_null(:string))
-    field(:refresh_token, non_null(:string))
+    field(:access_token, :string)
+    field(:refresh_token, :string)
   end
 
   object :user do
