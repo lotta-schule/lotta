@@ -854,6 +854,67 @@ const introspection = {
         "interfaces": []
       },
       {
+        "kind": "INPUT_OBJECT",
+        "name": "CalendarEventInput",
+        "inputFields": [
+          {
+            "name": "description",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
+            }
+          },
+          {
+            "name": "end",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime"
+              }
+            }
+          },
+          {
+            "name": "isFullDay",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean"
+              }
+            }
+          },
+          {
+            "name": "recurrence",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "RecurrenceInput"
+            }
+          },
+          {
+            "name": "start",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime"
+              }
+            }
+          },
+          {
+            "name": "summary",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
+            }
+          }
+        ],
+        "isOneOf": false
+      },
+      {
         "kind": "OBJECT",
         "name": "CalendarEventRecurrence",
         "fields": [
@@ -2848,56 +2909,12 @@ const introspection = {
                 }
               },
               {
-                "name": "description",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String"
-                }
-              },
-              {
-                "name": "end",
+                "name": "data",
                 "type": {
                   "kind": "NON_NULL",
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "DateTime"
-                  }
-                }
-              },
-              {
-                "name": "isFullDay",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Boolean"
-                  }
-                }
-              },
-              {
-                "name": "recurrence",
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "RecurrenceInput"
-                }
-              },
-              {
-                "name": "start",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "DateTime"
-                  }
-                }
-              },
-              {
-                "name": "summary",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String"
+                    "kind": "INPUT_OBJECT",
+                    "name": "CalendarEventInput"
                   }
                 }
               }
@@ -3678,7 +3695,40 @@ const introspection = {
                   "kind": "NON_NULL",
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "String"
+                    "name": "ID"
+                  }
+                }
+              }
+            ],
+            "isDeprecated": false
+          },
+          {
+            "name": "updateCalendarEvent",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "CalendarEvent"
+              }
+            },
+            "args": [
+              {
+                "name": "data",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "CalendarEventInput"
+                  }
+                }
+              },
+              {
+                "name": "id",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID"
                   }
                 }
               }

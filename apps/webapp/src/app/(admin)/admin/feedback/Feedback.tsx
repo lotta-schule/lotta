@@ -1,5 +1,7 @@
-'use client'; // this must not be a client component if feedback id is held in url
+'use client';
 
+// this must not be a client component if feedback id is held in url
+//
 import * as React from 'react';
 import { Table } from '@lotta-schule/hubert';
 import { FeedbackModel } from 'model';
@@ -41,9 +43,9 @@ export const Feedback = React.memo(({ feedbacks }: FeedbackProps) => {
                 feedback={feedback}
                 key={feedback.id}
                 isActive={isActive(feedback)}
-                onClick={() =>
-                  setActiveFeedbackId(isActive(feedback) ? null : feedback.id)
-                }
+                onClick={() => {
+                  setActiveFeedbackId(isActive(feedback) ? null : feedback.id);
+                }}
                 onDelete={() => setActiveFeedbackId(null)}
               />
             ))}

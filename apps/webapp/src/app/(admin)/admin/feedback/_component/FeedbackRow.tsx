@@ -52,7 +52,7 @@ export const FeedbackRow = React.memo(
               small
               icon={<Icon icon={faTrash} />}
               title={'Feedback löschen'}
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 setIsDeleteFeedbackDialogOpen(true);
               }}
