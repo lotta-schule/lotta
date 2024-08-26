@@ -6,8 +6,7 @@ import { CircularProgress } from '@lotta-schule/hubert';
 import { t } from 'i18next';
 
 const DynamicCalendarView = dynamic(
-  () =>
-    import('./_component/CalendarWrapper').then((mod) => mod.CalendarWrapper),
+  () => import('./_component/CalendarWrapper'),
   {
     ssr: false,
   }

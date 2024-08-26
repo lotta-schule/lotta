@@ -18,3 +18,5 @@ export const CalendarWrapper = React.memo(
   }
 );
 CalendarWrapper.displayName = 'CalendarWrapper';
+
+export default CalendarWrapper;
