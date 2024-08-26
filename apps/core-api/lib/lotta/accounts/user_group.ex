@@ -23,9 +23,9 @@ defmodule Lotta.Accounts.UserGroup do
 
   schema "user_groups" do
     field(:name, :string)
-    field(:sort_key, :integer)
-    field(:is_admin_group, :boolean)
-    field(:can_read_full_name, :boolean)
+    field(:sort_key, :integer, default: 0)
+    field(:is_admin_group, :boolean, default: false)
+    field(:can_read_full_name, :boolean, default: false)
 
     field(:enrollment_tokens, {:array, :string}, default: [])
 

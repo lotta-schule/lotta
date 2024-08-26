@@ -54,7 +54,10 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
       </head>
       <body>
         <HubertProvider>
-          <ServerDataContextProvider baseUrl={await getBaseUrl()}>
+          <ServerDataContextProvider
+            baseUrl={await getBaseUrl()}
+            tenant={tenant}
+          >
             <TranslationsProvider>
               {tenant && (
                 <ApolloProvider
