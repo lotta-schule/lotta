@@ -19,7 +19,12 @@ export type ListBoxProps = ListProps &
       | SelectState<ListItemPreliminaryItem>;
   };
 
-export const ListBox = ({ className, state, ...props }: ListBoxProps) => {
+export const ListBox = ({
+  className,
+  state,
+  ref: propRef,
+  ...props
+}: ListBoxProps) => {
   const internalRef = React.useRef<HTMLUListElement>(null);
 
   const { listBoxProps, labelProps } = useListBox(
@@ -34,24 +39,24 @@ export const ListBox = ({ className, state, ...props }: ListBoxProps) => {
         className={className}
         {...listBoxProps}
         ref={(node) => {
-          if (props.ref) {
-            if ('current' in props.ref) {
-              props.ref.current = node;
+          internalRef.current = node;
+          if (propRef) {
+            if ('current' in propRef) {
+              propRef.current = node;
             } else {
-              props.ref(node);
+              propRef(node);
             }
-            internalRef.current = node;
-            return () => {
-              if (props.ref) {
-                if ('current' in props.ref) {
-                  props.ref.current = null;
-                } else {
-                  props.ref(null);
-                }
-                internalRef.current = null;
-              }
-            };
           }
+          return () => {
+            internalRef.current = null;
+            if (propRef) {
+              if ('current' in propRef) {
+                propRef.current = null;
+              } else {
+                propRef(null);
+              }
+            }
+          };
         }}
       >
         {Array.from(state.collection).map((item) => (
