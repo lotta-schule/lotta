@@ -20,8 +20,8 @@ export interface CreateArticleDialogProps {
   onAbort(): void;
 }
 
-export const CreateArticleDialog = React.memo<CreateArticleDialogProps>(
-  ({ isOpen, onConfirm, onAbort }) => {
+export const CreateArticleDialog = React.memo(
+  ({ isOpen, onConfirm, onAbort }: CreateArticleDialogProps) => {
     const [title, setTitle] = React.useState('');
     const [createArticle, { loading: isLoading, error }] = useMutation<
       { article: ArticleModel },
