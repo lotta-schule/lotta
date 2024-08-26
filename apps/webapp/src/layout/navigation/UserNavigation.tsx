@@ -254,13 +254,15 @@ export const UserNavigation = React.memo(() => {
       );
     }
   }, [
-    registerModalIsOpen,
-    router,
-    unpublishedBadgeNumber,
-    newFeedbackBadgeNumber,
-    newMessagesBadgeNumber,
     currentUser,
+    newMessagesBadgeNumber,
+    newFeedbackBadgeNumber,
+    unpublishedBadgeNumber,
+    createArticleModalIsOpen,
+    registerModalIsOpen,
+    loginModalIsOpen,
     onAction,
+    router,
   ]);
 
   return (
