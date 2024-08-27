@@ -72,13 +72,15 @@ export const CreateEventDialog = React.memo(
       CREATE_CALENDAR_EVENT,
       {
         variables: {
-          name,
-          description,
           calendarId: calendarId ?? null!,
-          start: date.toISOString(),
-          end: endDate?.toISOString(),
-          isFullDay,
-          recurrence,
+          data: {
+            summary: name,
+            description,
+            start: date.toISOString(),
+            end: endDate?.toISOString(),
+            isFullDay,
+            recurrence,
+          },
         },
         refetchQueries: [GET_CALENDAR_EVENTS],
       }
