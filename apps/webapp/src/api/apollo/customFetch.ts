@@ -31,6 +31,9 @@ export const createCustomFetch = (
     const { headers, body, method, ...miscOptions } = options;
 
     const outgoingHeaders = createHeaders({
+      ...(body instanceof FormData
+        ? { 'Content-Type': 'multipart/formdata' }
+        : {}),
       ...headers,
       ...requestExtraHeaders(),
     });
