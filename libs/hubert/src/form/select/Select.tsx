@@ -172,9 +172,10 @@ export const Select = ({
           ref={popoverRef}
           isOpen={state.isOpen}
           onClose={state.close}
-          placement={'bottom'}
+          placement={'bottom-end'}
         >
           <ListBox
+            className={styles.listbox}
             aria-label={title}
             {...(menuProps as any)}
             label={title}
