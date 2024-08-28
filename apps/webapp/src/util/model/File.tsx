@@ -2,7 +2,6 @@ import {
   FileModel,
   FileModelType,
   DirectoryModel,
-  UserModel,
   FileConversionModel,
 } from 'model';
 import { ProcessingOptions, createImageUrl } from 'util/image/useImageUrl';
@@ -49,14 +48,24 @@ export const File = {
 
   canEditDirectory(
     directory: DirectoryModel,
-    user: UserModel | null | undefined
+    user:
+      | {
+          __typename?: 'User';
+          id: string;
+          groups?: { isAdminGroup: boolean }[];
+        }
+      | null
+      | undefined
   ) {
     return user && (directory.user?.id === user.id || User.isAdmin(user));
   },
 
   canCreateDirectory(
     directory: DirectoryModel,
-    user: UserModel | null | undefined
+    user:
+      | { __typename: 'User'; id: string; groups?: { isAdminGroup: boolean }[] }
+      | null
+      | undefined
   ) {
     if (directory.id === null) {
       return true; // Is a root directory

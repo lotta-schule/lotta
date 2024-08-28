@@ -51,7 +51,7 @@ export type UserBrowserProps = {
 
 export const UserBrowser = React.memo(
   ({ style, multiple, isNodeDisabled, onSelect }: UserBrowserProps) => {
-    const serverData = useServerData();
+    const { baseUrl } = useServerData();
     const currentUser = useCurrentUser();
 
     const createDirectory = useCreateDirectory();
@@ -79,7 +79,7 @@ export const UserBrowser = React.memo(
 
           return makeBrowserNodes(result.data) ?? [];
         },
-        [fetchDirectoriesAndFiles]
+        [fetchDirectoriesAndFiles, makeBrowserNodes, baseUrl]
       );
 
     const canEdit: BrowserProps['canEdit'] = React.useMemo(
@@ -97,7 +97,7 @@ export const UserBrowser = React.memo(
         }
         return User.isAdmin(currentUser);
       },
-      []
+      [currentUser]
     );
 
     const getDownloadUrl = React.useCallback<
@@ -105,23 +105,23 @@ export const UserBrowser = React.memo(
     >(
       (node) => {
         if (isFileNode(node)) {
-          return File.getFileRemoteLocation(serverData.baseUrl, node.meta);
+          return File.getFileRemoteLocation(baseUrl, node.meta);
         }
         return null;
       },
-      [serverData.baseUrl]
+      [baseUrl]
     );
 
     const getPreviewUrl = React.useCallback(
       (node: BrowserNode) => {
         if (isFileNode(node)) {
-          return File.getPreviewImageLocation(serverData.baseUrl, node.meta, {
+          return File.getPreviewImageLocation(baseUrl, node.meta, {
             width: (devicePixelRatio || 1) * 200,
             resize: 'contain',
           });
         }
       },
-      [serverData.baseUrl]
+      [baseUrl]
     );
 
     const getMetadata = React.useCallback(
@@ -147,7 +147,7 @@ export const UserBrowser = React.memo(
           };
         }
       },
-      [serverData.baseUrl]
+      [baseUrl]
     );
 
     const mode: BrowserMode = React.useMemo(() => {
