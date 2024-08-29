@@ -13,7 +13,7 @@ import dynamic from 'next/dynamic';
 
 import styles from './MetricsChart.module.scss';
 
-const Chart = dynamic(() => import('react-charts').then((mod) => mod.Chart), {
+const Chart = dynamic(() => import('./DynamicChart'), {
   ssr: false,
 });
 

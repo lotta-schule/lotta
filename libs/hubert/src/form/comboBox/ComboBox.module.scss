@@ -6,6 +6,11 @@
     width: 100%;
   }
 
+  .listbox {
+    overflow: auto;
+    max-height: min(300px, 50vh);
+  }
+
   .inputWrapper {
     position: relative;
     display: flex;
