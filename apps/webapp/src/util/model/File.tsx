@@ -1,16 +1,20 @@
-import {
-  FileModel,
-  FileModelType,
-  DirectoryModel,
-  FileConversionModel,
-} from 'model';
+import { FileModelType, DirectoryModel } from 'model';
 import { ProcessingOptions, createImageUrl } from 'util/image/useImageUrl';
 import { User } from './User';
 
 export const File = {
   getPreviewImageLocation(
     baseUrl: string,
-    file?: FileModel,
+    file?: {
+      __typename?: 'File';
+      fileType: FileModelType;
+      fileConversions?: {
+        __typename?: 'FileConversion';
+        format: string;
+        id: string;
+      }[];
+      id: string;
+    },
     sizeOrResizeOptions: number | ProcessingOptions = 200
   ) {
     if (file) {
@@ -73,7 +77,11 @@ export const File = {
     return this.canEditDirectory(directory, user);
   },
 
-  getFileRemoteLocation(baseUrl: string | URL, file: FileModel, qs = '') {
+  getFileRemoteLocation(
+    baseUrl: string | URL,
+    file: { __typename?: 'File'; id: string },
+    qs = ''
+  ) {
     return [baseUrl.toString(), 'storage', 'f', file.id]
       .join('/')
       .concat(qs ? `?${qs}` : '');
@@ -81,7 +89,7 @@ export const File = {
 
   getFileConversionRemoteLocation(
     baseUrl: string,
-    fileConversion: FileConversionModel
+    fileConversion: { __typename?: 'FileConversion'; id: string }
   ) {
     return [baseUrl, 'storage', 'fc', fileConversion.id].join('/');
   },
