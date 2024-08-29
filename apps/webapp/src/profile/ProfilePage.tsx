@@ -11,6 +11,7 @@ import {
   ErrorMessage,
   Input,
   Label,
+  LoadingButton,
 } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client';
 import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
@@ -42,7 +43,7 @@ export const ProfilePage = () => {
     currentUser.hideFullName
   );
   const [avatarImageFile, setAvatarImageFile] = React.useState<
-    FileModel | null | undefined
+    { id: string } | null | undefined
   >(currentUser.avatarImageFile);
   const [enrollmentTokens, setEnrollmentTokens] = React.useState<string[]>(
     currentUser.enrollmentTokens ?? []
@@ -121,7 +122,7 @@ export const ProfilePage = () => {
                 autoFocus
                 disabled
                 id="email"
-                value={currentUser.email}
+                value={currentUser.email || ''}
                 placeholder="beispiel@medienportal.org"
                 type="email"
                 maxLength={100}
@@ -143,7 +144,7 @@ export const ProfilePage = () => {
                 onChange={(e) => setName(e.currentTarget.value)}
                 maxLength={100}
                 disabled={isLoading}
-                value={name}
+                value={name || ''}
                 type="name"
               />
             </Label>
@@ -152,7 +153,7 @@ export const ProfilePage = () => {
               <Input
                 autoFocus
                 id="nickname"
-                value={nickname}
+                value={nickname || ''}
                 onChange={(e) => setNickname(e.currentTarget.value)}
                 placeholder="El Professore"
                 type="text"
@@ -184,7 +185,7 @@ export const ProfilePage = () => {
               <Input
                 autoFocus
                 id="classOrShortName"
-                value={classOrShortName}
+                value={classOrShortName || ''}
                 onChange={(e) => setClassOrShortName(e.currentTarget.value)}
                 placeholder="7/4"
                 disabled={isLoading}
@@ -207,12 +208,12 @@ export const ProfilePage = () => {
             />
             <Divider className={styles.divider} />
 
-            <Button
+            <LoadingButton
               type={'submit'}
               style={{ float: 'right' }}
-              disabled={isLoading}
-              onClick={() =>
-                updateProfile({
+              onAction={async (e: SubmitEvent | React.MouseEvent) => {
+                e.preventDefault();
+                await updateProfile({
                   variables: {
                     user: {
                       name,
@@ -225,11 +226,11 @@ export const ProfilePage = () => {
                       enrollmentTokens,
                     },
                   },
-                })
-              }
+                });
+              }}
             >
               Speichern
-            </Button>
+            </LoadingButton>
             <UpdatePasswordDialog
               isOpen={isShowUpdatePasswordDialog}
               onRequestClose={() => setIsShowUpdatePasswordDialog(false)}
