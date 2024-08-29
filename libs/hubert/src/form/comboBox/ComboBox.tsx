@@ -310,9 +310,14 @@ export const ComboBox = React.memo(
               ref={popoverRef}
               isOpen={state.isOpen}
               onClose={state.close}
-              placement={'bottom'}
+              placement={'bottom-end'}
             >
-              <ListBox {...listBoxProps} ref={listBoxRef} state={state} />
+              <ListBox
+                {...listBoxProps}
+                className={styles.listbox}
+                ref={listBoxRef}
+                state={state}
+              />
             </Popover>
           </div>
         </Label>
