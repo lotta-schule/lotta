@@ -11,6 +11,7 @@ import {
   faCalendar,
   faCheck,
   faCircle,
+  faGear,
 } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
 import { ToolbarProps } from 'react-big-calendar';
@@ -39,6 +40,9 @@ export const CalendarToolbar = React.memo(
     const calendarMenuItems = React.useMemo(
       () => [
         <Item key={'manage_calendars'} textValue={t('manage calendars')}>
+          <div>
+            <Icon icon={faGear} />
+          </div>
           <span>{t('manage calendars')}</span>
         </Item>,
         ...(data?.calendars.map((calendar) => (

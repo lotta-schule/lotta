@@ -352,7 +352,7 @@ export const CreateEventDialog = React.memo(
             </Collapse>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => onClose()}>{t('close')}</Button>
+            <Button onClick={() => onClose()}>{t('cancel')}</Button>
             <LoadingButton
               disabled={
                 isLoading ||

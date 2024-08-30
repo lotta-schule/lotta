@@ -48,3 +48,15 @@ $today-highlight-bg: rgba(var(--lotta-primary-color), 0.1);
 .rbc-event {
   font-size: clamp(10px, 0.75rem, 14px);
 }
+
+.rbc-month-header {
+  min-height: 2em;
+}
+
+.rbc-header {
+  line-height: 2rem;
+}
+
+.rbc-month-view {
+  margin-bottom: var(--lotta-spacing);
+}

@@ -107,7 +107,7 @@ export const ManageCalendarsDialog = React.memo(
                   onClose();
                 }}
               >
-                {t('close')}
+                {t('cancel')}
               </Button>
             </DialogActions>
           </>
