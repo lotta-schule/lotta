@@ -1,18 +1,19 @@
 import * as React from 'react';
 import { useQuery, useMutation } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 import { ID, UserGroupModel, UserModel } from 'model';
 import {
   Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   Divider,
   ErrorMessage,
+  LinearProgress,
+  LoadingButton,
 } from '@lotta-schule/hubert';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
-import { useUserGroups } from 'util/tenant/useUserGroups';
 import { DeleteUserDialog } from './DeleteUserDialog';
 
 import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
@@ -21,88 +22,81 @@ import GetUserQuery from 'api/query/GetUserQuery.graphql';
 import styles from './EditUserPermissionDialog.module.scss';
 
 export interface EditUserPermissionsDialogProps {
-  user: UserModel;
+  selectedUser: UserModel | null;
   onRequestClose(): void;
 }
 
 export const EditUserPermissionsDialog = React.memo(
-  ({ user, onRequestClose }: EditUserPermissionsDialogProps) => {
-    const allUserGroups = useUserGroups();
+  ({ selectedUser, onRequestClose }: EditUserPermissionsDialogProps) => {
+    const { t } = useTranslation();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+    const [assignedUserRoles, setAssignedUserRoles] = React.useState<
+      UserGroupModel[]
+    >([]);
 
     const { data, loading, error } = useQuery<{ user: UserModel }, { id: ID }>(
       GetUserQuery,
       {
-        variables: { id: user.id },
+        variables: selectedUser ? { id: selectedUser?.id } : undefined,
         fetchPolicy: 'network-only',
         nextFetchPolicy: 'cache-first',
+        skip: selectedUser === null,
+        onCompleted: ({ user }) => {
+          setAssignedUserRoles(user.assignedGroups ?? []);
+        },
       }
     );
+
     const [updateUser, { error: updateUserError }] = useMutation<
       { user: UserModel },
       { id: ID; groups?: { id: ID }[] }
     >(UpdateUserMutation, {
-      optimisticResponse: ({ id, groups }) =>
-        ({
-          __typename: 'Mutation',
-          user: {
-            __typename: 'User',
-            id,
-            ...(groups && {
-              groups: data?.user.groups.map((group) => ({
-                ...group,
-                __typename: 'UserGroup',
-              })),
-              assignedGroups: allUserGroups
-                .filter(
-                  (group) => groups.map((g) => g.id).indexOf(group.id) > -1
-                )
-                .map((group) => ({
-                  id: group.id,
-                  name: group.name,
-                  __typename: 'UserGroup',
-                })),
-            }),
-          },
-        }) as any,
+      variables: {
+        id: selectedUser?.id ?? null!,
+        groups: assignedUserRoles.map((group) => ({ id: group.id })),
+      },
     });
 
-    const dynamicGroups =
-      data &&
-      data.user.groups.filter(
-        (group) =>
-          !(data.user.assignedGroups ?? []).find(
-            (assignedGroup) => assignedGroup.id === group.id
-          )
-      );
+    const dynamicGroups = React.useMemo(
+      () =>
+        data?.user.groups.filter(
+          (group) =>
+            !(data.user.assignedGroups ?? []).find(
+              (assignedGroup) => assignedGroup.id === group.id
+            )
+        ) ?? [],
+      [data]
+    );
 
     return (
       <>
         <Dialog
-          open={true}
+          open={!!selectedUser}
           onRequestClose={onRequestClose}
           className={styles.root}
-          title={`${user.name}s Details`}
+          title={t('Edit {{username}}', { username: selectedUser?.name })}
         >
           <DialogContent>
             <ErrorMessage error={error || updateUserError} />
-            <div className={styles.header}>
-              <UserAvatar user={user} size={100} />
-              <div>
-                <h6 data-testid="UserName">{user.name}</h6>
-                {user.nickname && (
-                  <p data-testid="UserNickname">
-                    <strong>{user.nickname}</strong>
-                  </p>
-                )}
-                <p data-testid="UserEmail">{user.email}</p>
-                {user.class && (
-                  <p data-testid="UserClass">Klasse: {user.class}</p>
-                )}
+            {selectedUser && (
+              <div className={styles.header}>
+                <UserAvatar user={selectedUser} size={100} />
+                <div>
+                  <h6 data-testid="UserName">{selectedUser.name}</h6>
+                  {selectedUser.nickname && (
+                    <p data-testid="UserNickname">
+                      <strong>{selectedUser.nickname}</strong>
+                    </p>
+                  )}
+                  <p data-testid="UserEmail">{selectedUser.email}</p>
+                  {selectedUser.class && (
+                    <p data-testid="UserClass">Klasse: {selectedUser.class}</p>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
             {loading && (
-              <CircularProgress
+              <LinearProgress
                 isIndeterminate
                 aria-label={'Nutzer wird geladen'}
               />
@@ -116,21 +110,14 @@ export const EditUserPermissionsDialog = React.memo(
                     hidePublicGroupSelection
                     disableAdminGroupsExclusivity
                     className={styles.groupSelect}
-                    selectedGroups={data.user?.assignedGroups ?? []}
-                    onSelectGroups={(groups: UserGroupModel[]) =>
-                      updateUser({
-                        variables: {
-                          id: user.id,
-                          groups: groups.map((g) => ({
-                            id: g.id,
-                          })),
-                        },
-                      })
+                    selectedGroups={assignedUserRoles}
+                    onSelectGroups={(groups) =>
+                      setAssignedUserRoles(groups.filter((g) => g !== null))
                     }
                     label={'Gruppe zuweisen'}
                   />
                 </section>
-                {dynamicGroups && (
+                {!!dynamicGroups.length && (
                   <span data-testid="DynamicGroups">
                     Über Einschreibeschlüssel zugewiesene Gruppen:
                     {dynamicGroups.map((group, i, arr) => (
@@ -145,23 +132,40 @@ export const EditUserPermissionsDialog = React.memo(
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => onRequestClose()}>Abbrechen</Button>
             <Button
               variant={'error'}
               onClick={() => setIsDeleteDialogOpen(true)}
             >
               Benutzer löschen
             </Button>
+            <Button onClick={() => onRequestClose()}>Abbrechen</Button>
+            <LoadingButton
+              style={{ marginLeft: 'auto' }}
+              onComplete={() => {
+                setTimeout(() => {
+                  onRequestClose();
+                }, 2500);
+              }}
+              onAction={() =>
+                updateUser().then((res) => {
+                  if (res.errors?.length) {
+                    throw res.errors[0];
+                  }
+                })
+              }
+            >
+              {t('save')}
+            </LoadingButton>
           </DialogActions>
         </Dialog>
-        {isDeleteDialogOpen && (
+        {isDeleteDialogOpen && selectedUser && (
           <DeleteUserDialog
             onRequestClose={() => setIsDeleteDialogOpen(false)}
             onConfirm={() => {
               setIsDeleteDialogOpen(false);
               onRequestClose();
             }}
-            user={user}
+            user={selectedUser}
           />
         )}
       </>
