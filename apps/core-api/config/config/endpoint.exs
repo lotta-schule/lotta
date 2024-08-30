@@ -2,7 +2,7 @@ import Config
 
 {ip, port} =
   case config_env() do
-    :dev -> {{127, 0, 0, 1}, 4000}
+    :dev -> {{0, 0, 0, 0}, 4000}
     :test -> {{127, 0, 0, 1}, 4001}
     :prod -> {{0, 0, 0, 0, 0, 0, 0, 0}, 4000}
   end
