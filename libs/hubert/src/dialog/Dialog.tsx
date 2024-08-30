@@ -44,7 +44,8 @@ export const Dialog = ({
       <dialog
         ref={dialogRef}
         title={title}
-        onClose={() => {
+        onClose={(e) => {
+          e.stopPropagation();
           onRequestClose?.();
         }}
         {...props}
