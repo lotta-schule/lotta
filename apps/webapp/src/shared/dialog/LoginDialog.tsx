@@ -109,11 +109,16 @@ export const LoginDialog = React.memo<LoginDialogProps>(
               </Button>
               <LoadingButton
                 type={'submit'}
-                onAction={async (e) => {
+                onAction={async (e: SubmitEvent | React.MouseEvent) => {
                   e.preventDefault();
                   e.stopPropagation();
                   await login({
                     variables: { username: email, password },
+                  }).then((res) => {
+                    if (res.errors?.length) {
+                      throw res.errors[0];
+                    }
+                    return res;
                   });
                 }}
               >
