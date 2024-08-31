@@ -304,6 +304,7 @@ jobs:
       Sentry Rel.: ${{ matrix.project }} (${{ matrix.environment }})
     needs:
       - publish-docker-images
+    if: contains(github.event.pull_request.labels.*.name, 'preview') || github.ref_name == 'main'
     strategy:
       matrix:
         environment: ['preview', 'staging']
