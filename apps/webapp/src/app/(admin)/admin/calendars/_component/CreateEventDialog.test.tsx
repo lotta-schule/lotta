@@ -93,7 +93,7 @@ describe('CreateEventDialog', () => {
     await waitFor(() => {
       expect(screen.getByRole('dialog')).toBeVisible();
     });
-    await user.click(screen.getByText('schließen'));
+    await user.click(screen.getByText('abbrechen'));
 
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
