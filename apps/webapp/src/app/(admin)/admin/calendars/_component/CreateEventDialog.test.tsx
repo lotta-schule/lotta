@@ -290,6 +290,7 @@ describe('CreateEventDialog', () => {
         initialSelectionStart: 0,
         initialSelectionEnd: 5,
       });
+      await user.click(screen.container.querySelector('form')); // blur input
       expect(endTimeInput).toHaveValue('10:00');
 
       expect(startTimeInput).toHaveValue('09:00');
