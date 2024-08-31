@@ -101,7 +101,7 @@ describe('ManageCalendarsDialog', () => {
       { additionalMocks }
     );
 
-    await user.click(screen.getByText('schließen'));
+    await user.click(screen.getByText('abbrechen'));
 
     expect(onClose).toHaveBeenCalled();
   });
