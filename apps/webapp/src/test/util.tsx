@@ -14,6 +14,7 @@ import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { ApolloMocksOptions, getDefaultApolloMocks } from 'test/mocks';
 import { TranslationsProvider } from 'i18n/client';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
+import { tenant } from './fixtures';
 
 export type TestSetupOptions = {
   additionalMocks?: MockedResponse[];
@@ -38,7 +39,10 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
 
     return (
       <TranslationsProvider>
-        <ServerDataContextProvider baseUrl="https://example.com">
+        <ServerDataContextProvider
+          tenant={options.tenant ?? tenant}
+          baseUrl="https://example.com"
+        >
           <HubertProvider>
             <MockedProvider
               mocks={[...defaultMocks, ...(options.additionalMocks || [])]}

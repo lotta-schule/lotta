@@ -2,15 +2,18 @@ import * as React from 'react';
 import { ErrorMessage, List, LinearProgress } from '@lotta-schule/hubert';
 import { useApolloClient } from '@apollo/client';
 import { CalendarEventModel } from 'model/CalendarEventModel';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { addDays } from 'date-fns';
 import {
   WidgetModel,
-  CalendarWidgetCalendarConfig,
   WidgetModelType,
+  CalendarWidgetExternalCalendarConfig,
+  CalendarWidgetInternalCalendarConfig,
 } from 'model';
 import { CalendarEntry } from './CalendarEntry';
 import { Icon } from 'shared/Icon';
-import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import { graphql } from 'api/graphql';
+import { useUnfoldedEvents } from 'app/(admin)/admin/calendars/_hook';
 
 import styles from './Calendar.module.scss';
 
@@ -18,8 +21,8 @@ export interface CalendarProps {
   widget: WidgetModel<WidgetModelType.Calendar>;
 }
 
-export const GET_CALENDAR = graphql(`
-  query GetCalendar($url: String!, $days: Int) {
+export const GET_EXTERNAL_CALENDAR_EVENTS = graphql(`
+  query GET_EXTERNAL_CALENDAR_EVENTS($url: String!, $days: Int) {
     calendar: externalCalendarEvents(url: $url, days: $days) {
       uid
       summary
@@ -30,17 +33,35 @@ export const GET_CALENDAR = graphql(`
   }
 `);
 
-export const Calendar = React.memo<CalendarProps>(({ widget }) => {
+export const Calendar = React.memo(({ widget }: CalendarProps) => {
   const isMounted = React.useRef(true);
   const [isLoading, setIsLoading] = React.useState(false);
   const [events, setEvents] = React.useState<
-    (CalendarEventModel & { calendar: CalendarWidgetCalendarConfig })[]
+    (CalendarEventModel & {
+      calendarConfig: CalendarWidgetExternalCalendarConfig;
+    })[]
   >([]);
   const [error, setError] = React.useState<Error | null>(null);
 
   const calendars = React.useMemo(() => {
     return widget.configuration?.calendars ?? [];
   }, [widget.configuration]);
+
+  const days = calendars.find((calendar) => calendar.days)?.days || 180;
+
+  const unfoldedEvents = useUnfoldedEvents(
+    widget.calendarEvents?.map((event) => ({
+      ...event,
+      calendarConfig: calendars.find(
+        (calendarConfig) =>
+          calendarConfig.type === 'internal' &&
+          calendarConfig.calendarId === event.calendar.id
+      ) as CalendarWidgetInternalCalendarConfig,
+    })) ?? [],
+    new Date(),
+    addDays(new Date(), days)
+  );
+
   const apolloClient = useApolloClient();
 
   React.useEffect(
@@ -54,15 +75,17 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
     setIsLoading(true);
     setError(null);
     Promise.all(
-      (calendars || [])
-        .filter((calendar) => calendar.url !== undefined)
-        .map(async (calendar) => {
-          const { data } = await apolloClient.query({
-            query: GET_CALENDAR,
-            variables: { url: calendar.url!, days: calendar.days },
-          });
-          return data?.calendar.map((event) => ({ ...event, calendar }));
-        })
+      (
+        (calendars || []).filter(
+          (calendar) => calendar.type !== 'internal' && !!calendar.url
+        ) as CalendarWidgetExternalCalendarConfig[]
+      ).map(async (calendarConfig) => {
+        const { data } = await apolloClient.query({
+          query: GET_EXTERNAL_CALENDAR_EVENTS,
+          variables: { url: calendarConfig.url!, days: calendarConfig.days },
+        });
+        return data?.calendar.map((event) => ({ ...event, calendarConfig }));
+      })
     )
       .then((eventsArr: any[]) => {
         if (isMounted.current) {
@@ -77,6 +100,11 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
         }
       });
   }, [apolloClient, calendars]);
+
+  const combinedEvents = React.useMemo(
+    () => [...unfoldedEvents, ...events],
+    [events, unfoldedEvents]
+  );
 
   if (isLoading) {
     return (
@@ -114,8 +142,8 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
           </figcaption>
         )}
         <List className={styles.list}>
-          {[...events]
-            .sort(
+          {combinedEvents
+            .toSorted(
               (ev1, ev2) =>
                 new Date(ev1.start).getTime() - new Date(ev2.start).getTime()
             )
@@ -124,7 +152,11 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                 <CalendarEntry
                   event={event}
                   dot={
-                    calendars.length > 1 ? event.calendar.color || 'red' : null
+                    calendars.length > 1
+                      ? ('calendarConfig' in event &&
+                          event.calendarConfig.color) ||
+                        'red'
+                      : null
                   }
                   key={i}
                 />

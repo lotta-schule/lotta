@@ -3,8 +3,8 @@ defmodule LottaWeb.WidgetResolver do
 
   import LottaWeb.ErrorHelpers
 
-  alias LottaWeb.Context
-  alias Lotta.Tenants
+  alias LottaWeb.{CalendarResolver, Context}
+  alias Lotta.{Calendar, Tenants}
 
   def all(%{category_id: category_id}, %{
         context: %Context{current_user: current_user}
@@ -33,14 +33,14 @@ defmodule LottaWeb.WidgetResolver do
   end
 
   def update(%{id: id, widget: widget_params}, _info) do
-    widget = Tenants.get_widget(id)
+    case Tenants.get_widget(id) do
+      nil ->
+        {:error, "Marginale mit der id #{id} nicht gefunden."}
 
-    if widget do
-      widget
-      |> Tenants.update_widget(widget_params)
-      |> format_errors("Bearbeiten der Marginale fehlgeschlagen.")
-    else
-      {:error, "Marginale mit der id #{id} nicht gefunden."}
+      widget ->
+        widget
+        |> Tenants.update_widget(widget_params)
+        |> format_errors("Bearbeiten der Marginale fehlgeschlagen.")
     end
   end
 
@@ -54,5 +54,37 @@ defmodule LottaWeb.WidgetResolver do
     else
       {:error, "Marginale mit der id #{id} nicht gefunden."}
     end
+  end
+
+  def resolve_calendar_events(_args, %{source: %{configuration: %{"calendars" => calendars}}}) do
+    calendars
+    |> Enum.flat_map(fn
+      %{"type" => "internal", "calendarId" => calendar_id} = config ->
+        days =
+          case Map.get(config, "days") do
+            days when is_integer(days) and days > 0 and days < 370 -> days
+            _ -> 180
+          end
+
+        case Calendar.get_calendar(calendar_id) do
+          nil ->
+            []
+
+          calendar ->
+            Calendar.list_calendar_events(calendar, [
+              {:from, DateTime.utc_now()},
+              {:latest, DateTime.add(DateTime.utc_now(), days, :day)}
+            ])
+        end
+
+      _ ->
+        []
+    end)
+    |> Enum.map(&CalendarResolver.format_event/1)
+    |> then(&{:ok, &1})
+  end
+
+  def resolve_calendar_events(_args, info) do
+    {:ok, nil}
   end
 end

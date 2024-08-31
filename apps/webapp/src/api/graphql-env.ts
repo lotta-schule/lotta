@@ -5202,8 +5202,11 @@ const introspection = {
           {
             "name": "id",
             "type": {
-              "kind": "SCALAR",
-              "name": "ID"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID"
+              }
             }
           }
         ],
@@ -6065,6 +6068,21 @@ const introspection = {
         "name": "Widget",
         "fields": [
           {
+            "name": "calendarEvents",
+            "type": {
+              "kind": "LIST",
+              "ofType": {
+                "kind": "NON_NULL",
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CalendarEvent"
+                }
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
             "name": "configuration",
             "type": {
               "kind": "SCALAR",
@@ -6140,8 +6158,11 @@ const introspection = {
             "type": {
               "kind": "LIST",
               "ofType": {
-                "kind": "INPUT_OBJECT",
-                "name": "SelectUserGroupInput"
+                "kind": "NON_NULL",
+                "ofType": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "SelectUserGroupInput"
+                }
               }
             }
           },

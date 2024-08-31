@@ -7,6 +7,25 @@ query widgets($categoryId: ID!) {
     iconImageFile {
       id
     }
+    calendarEvents {
+      id
+      start
+      end
+      summary
+      description
+      isFullDay
+      calendar {
+        id
+      }
+      recurrence {
+        frequency
+        interval
+        until
+        daysOfWeek
+        daysOfMonth
+        occurrences
+      }
+    }
     groups {
       id
     }

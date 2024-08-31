@@ -156,7 +156,7 @@ defmodule LottaWeb.CalendarResolver do
 
   def resolve_subscription_url(_calendar, _args, _info), do: {:ok, nil}
 
-  defp format_event(%CalendarEvent{} = event) do
+  def format_event(%CalendarEvent{} = event) do
     event
     |> Map.put(:recurrence, get_recurrence(event))
     |> Map.reject(fn {key, _val} -> String.starts_with?(to_string(key), "recurrence_") end)
