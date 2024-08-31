@@ -36,7 +36,7 @@ const additionalMocks = [
 
 const eventToBeEdited = createEventFixture(calendars[1]);
 
-describe('CreateEventDialog', () => {
+describe('EditEventDialog', () => {
   describe('show / hide with eventToBeEdited prop', () => {
     it('should show the dialog when event is passed', async () => {
       const screen = render(
@@ -50,7 +50,7 @@ describe('CreateEventDialog', () => {
           screen.getByRole('dialog', { name: 'Ereignis bearbeiten' })
         ).toBeVisible();
       });
-      expect(screen.getByLabelText('Name')).toHaveValue(
+      expect(await screen.findByLabelText('Name')).toHaveValue(
         eventToBeEdited.summary
       );
       expect(screen.getByLabelText('Beschreibung')).toHaveValue(

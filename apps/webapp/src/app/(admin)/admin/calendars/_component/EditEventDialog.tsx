@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { GET_CALENDAR_EVENTS, UPDATE_CALENDAR_EVENT } from '../_graphql';
 import { EditEventFormContent, EditEventInput } from './EditEventFormContent';
 import { ResultOf } from 'gql.tada';
+import { DeleteEventConfirmationDialog } from './DeleteEventConfirmationDialog';
 
 export type EditEventDialogProps = {
   eventToBeEdited:
@@ -23,12 +24,13 @@ export type EditEventDialogProps = {
 
 export const EditEventDialog = React.memo(
   ({ eventToBeEdited, onClose }: EditEventDialogProps) => {
+    const { t } = useTranslation();
     const formRef = React.useRef<React.ComponentRef<'input'>>(null);
 
-    const { t } = useTranslation();
     const [eventData, setEventData] = React.useState<EditEventInput | null>(
       null
     );
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
     const [updateEvent, { loading: isLoading, error }] = useMutation(
       UPDATE_CALENDAR_EVENT,
@@ -94,6 +96,13 @@ export const EditEventDialog = React.memo(
               )}
             </DialogContent>
             <DialogActions>
+              <Button
+                variant="error"
+                onClick={() => setIsDeleteDialogOpen(true)}
+                style={{ marginRight: 'auto' }}
+              >
+                {t('delete event')}
+              </Button>
               <Button onClick={() => onClose()}>{t('cancel')}</Button>
               <LoadingButton
                 disabled={
@@ -119,6 +128,15 @@ export const EditEventDialog = React.memo(
             </DialogActions>
           </form>
         </React.Suspense>
+        <DeleteEventConfirmationDialog
+          eventToDelete={isDeleteDialogOpen ? eventToBeEdited : null}
+          onClose={(deleted) => {
+            setIsDeleteDialogOpen(false);
+            if (deleted) {
+              onClose();
+            }
+          }}
+        />
       </Dialog>
     );
   }

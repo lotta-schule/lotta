@@ -87,6 +87,21 @@ defmodule Lotta.Calendar do
     |> Repo.update()
   end
 
+  @doc """
+  Delete an event
+  """
+  @doc since: "5.0.0"
+  @spec delete_event(CalendarEvent.t()) ::
+          :ok | {:error, Ecto.Changeset.t(CalendarEvent.t())}
+  def delete_event(calendar) do
+    calendar
+    |> Repo.delete()
+    |> case do
+      {:ok, _} -> :ok
+      error -> error
+    end
+  end
+
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end

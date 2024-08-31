@@ -48,7 +48,7 @@ defmodule LottaWeb.CalendarResolverTest do
     """
     test "returns all the events belonging to a calendar" do
       calendar =
-        insert(:calendar, events: build_list(62, :calendar_event, []))
+        insert(:calendar, [events: build_list(62, :calendar_event, [])], prefix: @prefix)
 
       admin = insert(:admin_user, [], prefix: @prefix)
 
@@ -118,8 +118,8 @@ defmodule LottaWeb.CalendarResolverTest do
 
   describe "create calendar event" do
     @query """
-    mutation createCalendarEvent($calendarId: ID!, $data: CalendarEventInput!) {
-      createCalendarEvent(calendarId: $calendarId, data: $data) {
+    mutation createCalendarEvent($data: CalendarEventInput!) {
+      createCalendarEvent(data: $data) {
         id
         summary
         description
@@ -137,7 +137,7 @@ defmodule LottaWeb.CalendarResolverTest do
     }
     """
     test "creates an event for a given calendar when given the data" do
-      %{id: calendar_id} = calendar = insert(:calendar, [], prefix: @prefix)
+      %{id: calendar_id} = insert(:calendar, [], prefix: @prefix)
       admin = insert(:admin_user, [], prefix: @prefix)
 
       res =
@@ -146,13 +146,13 @@ defmodule LottaWeb.CalendarResolverTest do
         |> post("/api",
           query: @query,
           variables: %{
-            calendarId: calendar.id,
             data: %{
               summary: "Test Event",
               description: "Test Description",
               start: "2021-01-01 00:00:00Z",
               end: "2021-01-01 23:59:59Z",
               isFullDay: true,
+              calendarId: calendar_id,
               recurrence: %{
                 frequency: "WEEKLY",
                 interval: 2
@@ -253,8 +253,8 @@ defmodule LottaWeb.CalendarResolverTest do
     }
     """
     test "creates an event for a given calendar when given the data" do
-      %{id: calendar_id} = calendar = insert(:calendar, [], prefix: @prefix)
-      event = insert(:calendar_event, [calendar_id: calendar.id], prefix: @prefix)
+      %{id: calendar_id} = insert(:calendar, [], prefix: @prefix)
+      event = insert(:calendar_event, [calendar_id: calendar_id], prefix: @prefix)
 
       admin = insert(:admin_user, [], prefix: @prefix)
 
@@ -267,6 +267,7 @@ defmodule LottaWeb.CalendarResolverTest do
             id: event.id,
             data: %{
               summary: "Updated test event",
+              calendarId: calendar_id,
               description: "This is a new description",
               start: "2024-01-01 18:00:00Z",
               end: "2024-01-01 18:30:00Z",
@@ -299,6 +300,45 @@ defmodule LottaWeb.CalendarResolverTest do
                  }
                }
              } = res
+    end
+  end
+
+  describe "delete calendar event" do
+    @query """
+    mutation deleteCalendarEvent($id: ID!) {
+      deleteCalendarEvent(id: $id) {
+        id
+      }
+    }
+    """
+    test "deletes an event with a given id" do
+      %{id: calendar_id} = insert(:calendar, [], prefix: @prefix)
+
+      %{id: event_id} =
+        event = insert(:calendar_event, [calendar_id: calendar_id], prefix: @prefix)
+
+      admin = insert(:admin_user, [], prefix: @prefix)
+
+      res =
+        build_tenant_conn()
+        |> authorize(admin)
+        |> post("/api",
+          query: @query,
+          variables: %{
+            id: event.id
+          }
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "deleteCalendarEvent" => %{
+                   "id" => id
+                 }
+               }
+             } = res
+
+      assert id == event_id
     end
   end
 end

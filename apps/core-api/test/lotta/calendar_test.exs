@@ -119,5 +119,14 @@ defmodule Lotta.CalendarTest do
 
       assert Repo.get(Calendar.CalendarEvent, event.id) == event
     end
+
+    test "delete calendar event" do
+      calendar = insert(:calendar, [], prefix: @prefix)
+      event = insert(:calendar_event, [calendar_id: calendar.id], prefix: @prefix)
+
+      assert Calendar.delete_event(event) == :ok
+
+      assert Repo.get(Calendar.CalendarEvent, event.id) == nil
+    end
   end
 end

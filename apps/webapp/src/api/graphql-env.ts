@@ -3122,6 +3122,29 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "deleteCalendarEvent",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "CalendarEvent"
+              }
+            },
+            "args": [
+              {
+                "name": "id",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                }
+              }
+            ],
+            "isDeprecated": false
+          },
+          {
             "name": "deleteCategory",
             "type": {
               "kind": "NON_NULL",

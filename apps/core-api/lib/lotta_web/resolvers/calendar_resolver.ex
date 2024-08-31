@@ -129,6 +129,20 @@ defmodule LottaWeb.CalendarResolver do
     end
   end
 
+  def delete_event(%{id: id}, _info) do
+    with event when not is_nil(event) <- Lotta.Calendar.get_calendar_event(id),
+         :ok <-
+           Lotta.Calendar.delete_event(event) do
+      {:ok, format_event(event)}
+    else
+      nil ->
+        {:error, "Event not found"}
+
+      error ->
+        error
+    end
+  end
+
   def resolve_subscription_url(%{is_publicly_available: true, id: id}, _args, %{
         context: %{tenant: tenant}
       }),
