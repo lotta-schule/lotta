@@ -35,6 +35,8 @@ const LottaWebApp = ({
     return <TenantNotFoundErrorPage />;
   }
 
+  const baseHost = process.env.NEXT_PUBLIC_BASE_HOST;
+  const identifier = `${tenant.slug}.${process.env.NEXT_PUBLIC_BASE_HOST}`;
   const origin =
     requestBaseUrl ??
     (typeof globalThis.location !== 'undefined'
@@ -48,12 +50,22 @@ const LottaWebApp = ({
       currentUser={currentUser}
       requestBaseUrl={origin}
     >
-      <script
-        defer
-        data-domain={origin.replace(/^https?:\/\/(www\.)?/, '')}
-        data-api="/p/e"
-        src="/p/script.js"
-      ></script>
+      {process.env.NODE_ENV !== 'development' && (
+        <>
+          <script
+            defer
+            data-domain={identifier}
+            data-api="/p/e"
+            src="/p/script.js"
+          ></script>
+          <script
+            defer
+            data-domain={baseHost}
+            data-api="/p/e"
+            src="/p/script.js"
+          ></script>
+        </>
+      )}
       <TranslationsProvider>
         <Component {...componentProps} />
       </TranslationsProvider>
