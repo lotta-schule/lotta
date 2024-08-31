@@ -2,6 +2,7 @@ import { MockedResponse } from '@apollo/client/testing';
 import { render, fireEvent, waitFor } from 'test/util';
 import { CreateEventDialog } from './CreateEventDialog';
 import { GET_CALENDARS } from '../_graphql';
+import { createCalendarFixture } from 'test/fixtures';
 import userEvent from '@testing-library/user-event';
 
 const additionalMocks = [
@@ -12,27 +13,12 @@ const additionalMocks = [
     result: {
       data: {
         calendars: [
-          {
-            __typename: 'Calendar',
-            id: '1',
-            name: 'Klausuren',
-            color: '#ff0000',
-            isPubliclyAvailable: false,
-          },
-          {
-            __typename: 'Calendar',
+          createCalendarFixture({ id: '1', name: 'Klausuren' }),
+          createCalendarFixture({
             id: '2',
             name: 'Ferien & Feiertage',
-            color: '#00ff00',
-            isPubliclyAvailable: true,
-          },
-          {
-            __typename: 'Calendar',
-            id: '3',
-            name: 'Schulfeiern',
-            color: '#0000ff',
-            isPubliclyAvailable: true,
-          },
+          }),
+          createCalendarFixture(),
         ],
       },
     },
@@ -290,7 +276,7 @@ describe('CreateEventDialog', () => {
         initialSelectionStart: 0,
         initialSelectionEnd: 5,
       });
-      await user.click(screen.container.querySelector('form')); // blur input
+      await user.click(screen.container.querySelector('form')!); // blur input
       expect(endTimeInput).toHaveValue('10:00');
 
       expect(startTimeInput).toHaveValue('09:00');

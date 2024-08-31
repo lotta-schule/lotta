@@ -23,6 +23,7 @@ import { useLazyQuery, useApolloClient } from '@apollo/client';
 import { CalendarContext } from './CalendarContext';
 import { useUnfoldedEvents } from '../_hook';
 import { ResultOf } from 'api/graphql';
+import { EditEventDialog } from './EditEventDialog';
 
 import { GET_CALENDAR_EVENTS, GET_CALENDARS } from '../_graphql';
 
@@ -36,7 +37,8 @@ export const CalendarView = React.memo(
   }) => {
     const { t } = useTranslation();
     const client = useApolloClient();
-    const { activeCalendarIds } = React.use(CalendarContext);
+    const { activeCalendarIds, editingEvent, setEditingEvent } =
+      React.use(CalendarContext);
     const [currentDate, setCurrentDate] = React.useState(new Date());
     const [currentRange, setCurrentRange] = React.useState(() => ({
       start: startOfMonth(currentDate),
@@ -126,82 +128,94 @@ export const CalendarView = React.memo(
     );
 
     return (
-      <Calendar
-        localizer={dateFnsLocalizer({
-          format,
-          parse,
-          startOfWeek,
-          getDay,
-          locales: { de_DE: de },
-        })}
-        date={currentDate}
-        onNavigate={(date) => setCurrentDate(date)}
-        onRangeChange={(range) => {
-          if (Array.isArray(range) || !range) {
-            throw new Error('Invalid range');
-          }
-          setCurrentRange(range);
-        }}
-        view="month"
-        views={{
-          month: true,
-          week: false,
-          work_week: false,
-          agenda: false,
-          day: false,
-        }}
-        culture="de_DE"
-        messages={{
-          day: t('day'),
-          date: t('date'),
-          event: t('event'),
-          today: t('today'),
-          allDay: t('all-day'),
-          showMore: (count: number) => t('show {count} more', { count }),
-          time: t('time'),
-          yesterday: t('yesterday'),
-          tomorrow: t('tomorrow'),
-          next: t('next'),
-          previous: t('previous'),
-        }}
-        eventPropGetter={(event, _start, _end, _selected) => ({
-          style: {
-            backgroundColor: getCalendarColor(event.calendar.id),
-          },
-          title: event.summary,
-        })}
-        dayPropGetter={(date, _resourceId) => {
-          if (isSameDay(date, new Date())) {
-            return {
-              fontWeight: 'bolder',
-              color: 'rgb(var(--lotta-primary-color))',
-            };
-          }
-          return {};
-        }}
-        events={unfoldedEvents.map((event) => ({
-          ...event,
-          start: event.start,
-          end: event.end,
-          title: event.summary,
-        }))}
-        components={{
-          toolbar: CalendarToolbar,
-          eventWrapper: ({
-            event,
-            children,
-          }: React.PropsWithChildren<
-            EventWrapperProps<(typeof unfoldedEvents)[number]>
-          >) => {
-            const { isCalendarActive } = React.use(CalendarContext);
-            if (!isCalendarActive(event.calendar.id)) {
-              return null;
+      <>
+        <Calendar
+          localizer={dateFnsLocalizer({
+            format,
+            parse,
+            startOfWeek,
+            getDay,
+            locales: { de_DE: de },
+          })}
+          date={currentDate}
+          onNavigate={(date) => setCurrentDate(date)}
+          onRangeChange={(range) => {
+            if (Array.isArray(range) || !range) {
+              throw new Error('Invalid range');
             }
+            setCurrentRange(range);
+          }}
+          view="month"
+          views={{
+            month: true,
+            week: false,
+            work_week: false,
+            agenda: false,
+            day: false,
+          }}
+          culture="de_DE"
+          onSelectEvent={(event) => {
+            const eventId =
+              'originalEvent' in event ? event.originalEvent.id : event.id;
+            const ev = events.find((ev) => ev.id === eventId);
+            if (ev) {
+              setEditingEvent(ev);
+            }
+          }}
+          messages={{
+            day: t('day'),
+            date: t('date'),
+            event: t('event'),
+            today: t('today'),
+            allDay: t('all-day'),
+            showMore: (count: number) => t('show {count} more', { count }),
+            time: t('time'),
+            yesterday: t('yesterday'),
+            tomorrow: t('tomorrow'),
+            next: t('next'),
+            previous: t('previous'),
+          }}
+          eventPropGetter={(event, _start, _end, _selected) => ({
+            style: {
+              backgroundColor: getCalendarColor(event.calendar.id),
+            },
+            title: event.summary,
+          })}
+          dayPropGetter={(date, _resourceId) => {
+            if (isSameDay(date, new Date())) {
+              return {
+                fontWeight: 'bolder',
+                color: 'rgb(var(--lotta-primary-color))',
+              };
+            }
+            return {};
+          }}
+          events={unfoldedEvents.map((event) => ({
+            ...event,
+            title: event.summary,
+          }))}
+          components={{
+            toolbar: CalendarToolbar,
+            eventWrapper: ({
+              event,
+              children,
+            }: React.PropsWithChildren<
+              EventWrapperProps<(typeof unfoldedEvents)[number]>
+            >) => {
+              const { isCalendarActive } = React.use(CalendarContext);
+              if (!isCalendarActive(event.calendar.id)) {
+                return null;
+              }
 
-            return children;
-          },
-        }}
-      />
+              return children;
+            },
+          }}
+        />
+        <EditEventDialog
+          eventToBeEdited={editingEvent}
+          onClose={() => setEditingEvent(null)}
+        />
+      </>
     );
   }
 );

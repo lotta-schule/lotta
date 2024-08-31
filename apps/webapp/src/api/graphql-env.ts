@@ -609,11 +609,8 @@ const introspection = {
           {
             "name": "accessToken",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String"
-              }
+              "kind": "SCALAR",
+              "name": "String"
             },
             "args": [],
             "isDeprecated": false
@@ -621,11 +618,8 @@ const introspection = {
           {
             "name": "refreshToken",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String"
-              }
+              "kind": "SCALAR",
+              "name": "String"
             },
             "args": [],
             "isDeprecated": false
@@ -857,6 +851,16 @@ const introspection = {
         "kind": "INPUT_OBJECT",
         "name": "CalendarEventInput",
         "inputFields": [
+          {
+            "name": "calendarId",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID"
+              }
+            }
+          },
           {
             "name": "description",
             "type": {
@@ -2898,16 +2902,6 @@ const introspection = {
               }
             },
             "args": [
-              {
-                "name": "calendarId",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID"
-                  }
-                }
-              },
               {
                 "name": "data",
                 "type": {

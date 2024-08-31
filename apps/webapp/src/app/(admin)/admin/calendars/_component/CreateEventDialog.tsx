@@ -17,7 +17,7 @@ import {
   RECURRENCE_FRAGMENT,
 } from '../_graphql';
 import { FragmentOf } from 'gql.tada';
-import { EditEventFormContent } from './EditEventFormContent';
+import { EditEventFormContent, EditEventInput } from './EditEventFormContent';
 
 export type CreateEventDialogProps = {
   isOpen: boolean;
@@ -34,13 +34,13 @@ export const CreateEventDialog = React.memo(
       fetchPolicy: 'cache-first',
     });
 
-    const EMPTY_EVENT = React.useMemo(
+    const EMPTY_EVENT = React.useMemo<EditEventInput>(
       () => ({
         summary: '',
         description: '',
         calendarId: calendars.at(0)?.id ?? '',
-        date: startOfHour(new Date()),
-        endDate: addHours(startOfHour(new Date()), 1),
+        start: startOfHour(new Date()),
+        end: addHours(startOfHour(new Date()), 1),
         isFullDay: true,
         recurrence: null as FragmentOf<typeof RECURRENCE_FRAGMENT> | null,
       }),
@@ -54,14 +54,14 @@ export const CreateEventDialog = React.memo(
       CREATE_CALENDAR_EVENT,
       {
         variables: {
-          calendarId: eventData.calendarId ?? null!,
           data: {
             summary: eventData.summary,
             description: eventData.description,
-            start: eventData.date.toISOString(),
-            end: eventData.endDate.toISOString(),
+            start: eventData.start.toISOString(),
+            end: eventData.end.toISOString(),
             isFullDay: eventData.isFullDay,
             recurrence: eventData.recurrence,
+            calendarId: eventData.calendarId ?? null!,
           },
         },
         refetchQueries: [GET_CALENDAR_EVENTS],
@@ -69,8 +69,8 @@ export const CreateEventDialog = React.memo(
     );
 
     const isMultipleDays = React.useMemo(
-      () => !isSameDay(eventData.date, eventData.endDate),
-      [eventData.date, eventData.endDate]
+      () => !isSameDay(eventData.start, eventData.end),
+      [eventData.start, eventData.end]
     );
 
     React.useEffect(() => {
@@ -95,9 +95,9 @@ export const CreateEventDialog = React.memo(
                 isLoading ||
                 !eventData.summary ||
                 !eventData.calendarId ||
-                !eventData.date ||
+                !eventData.start ||
                 (!(eventData.isFullDay && !isMultipleDays) &&
-                  isAfter(eventData.date, eventData.endDate))
+                  isAfter(eventData.start, eventData.end))
               }
               type="submit"
               onAction={async (e: SubmitEvent | React.MouseEvent) => {

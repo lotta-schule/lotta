@@ -1,10 +1,10 @@
 import { graphql } from 'api/graphql';
 import { RECURRENCE_FRAGMENT } from './GET_CALENDAR_EVENTS';
 
-export const CREATE_CALENDAR_EVENT = graphql(
+export const UPDATE_CALENDAR_EVENT = graphql(
   `
-    mutation CREATE_CALENDAR_EVENT($data: CalendarEventInput!) {
-      event: createCalendarEvent(data: $data) {
+    mutation UPDATE_CALENDAR_EVENT($id: ID!, $data: CalendarEventInput!) {
+      event: updateCalendarEvent(id: $id, data: $data) {
         id
         summary
         description

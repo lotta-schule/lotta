@@ -85,7 +85,7 @@ defmodule LottaWeb.CalendarResolver do
     Lotta.Calendar.create_calendar(data)
   end
 
-  def create_event(%{calendar_id: calendar_id, data: data}, _context) do
+  def create_event(%{data: %{calendar_id: calendar_id} = data}, _context) do
     with calendar when not is_nil(calendar) <- Lotta.Calendar.get_calendar(calendar_id),
          {:ok, event} <-
            Lotta.Calendar.create_event(

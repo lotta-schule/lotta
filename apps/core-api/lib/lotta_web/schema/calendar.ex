@@ -49,7 +49,6 @@ defmodule LottaWeb.Schema.Calendar do
     field(:create_calendar_event, non_null(:calendar_event)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
-      arg(:calendar_id, non_null(:id))
       arg(:data, non_null(:calendar_event_input))
 
       resolve(&LottaWeb.CalendarResolver.create_event/2)
@@ -72,6 +71,8 @@ defmodule LottaWeb.Schema.Calendar do
   end
 
   input_object(:calendar_event_input) do
+    field(:calendar_id, non_null(:id))
+
     field(:summary, non_null(:string))
     field(:description, :string)
 
