@@ -16,6 +16,7 @@ export type AdminPageProps = React.PropsWithChildren<{
   icon?: IconProp;
   title: string;
   hasHomeLink?: boolean;
+  takesFullSpace?: boolean;
   className?: string;
 }>;
 
@@ -23,6 +24,7 @@ export const AdminPage = async ({
   title,
   icon,
   hasHomeLink,
+  takesFullSpace,
   className,
   children,
 }: AdminPageProps) => {
@@ -70,7 +72,13 @@ export const AdminPage = async ({
           })}
         />
       </nav>
-      <div className={styles.contentSection}>{children}</div>
+      <div
+        className={clsx(styles.contentSection, {
+          [styles.takesFullSpace]: takesFullSpace,
+        })}
+      >
+        {children}
+      </div>
     </div>
   );
 };

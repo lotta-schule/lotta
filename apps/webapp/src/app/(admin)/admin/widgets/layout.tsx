@@ -12,7 +12,12 @@ async function WidgetsLayout({
   children,
 }: React.PropsWithChildren<{ params: { groupId?: string } }>) {
   return (
-    <AdminPage icon={faSquareCaretRight} title={'Marginalen'} hasHomeLink>
+    <AdminPage
+      icon={faSquareCaretRight}
+      title={'Marginalen'}
+      hasHomeLink
+      takesFullSpace
+    >
       <TwoColumnLayout>
         <TwoColumnLayoutSidebar>
           <Toolbar hasScrollableParent withPadding>

@@ -80,9 +80,9 @@
   }
 
   .contentSection {
-    overflow: visible;
+    overflow: auto;
     padding-inline: var(--lotta-spacing);
-    &:has(aside) {
+    &.takesFullSpace {
       overflow: hidden;
       display: flex;
       flex: 1 1 min-content;

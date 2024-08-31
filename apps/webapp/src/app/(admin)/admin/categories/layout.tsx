@@ -11,7 +11,12 @@ async function CategoriesLayout({
   children,
 }: React.PropsWithChildren<{ params: { groupId?: string } }>) {
   return (
-    <AdminPage icon={faUserGroup} title={'Kategorien'} hasHomeLink>
+    <AdminPage
+      icon={faUserGroup}
+      title={'Kategorien'}
+      hasHomeLink
+      takesFullSpace
+    >
       <TwoColumnLayout>
         <TwoColumnLayoutSidebar>
           <CategoryListToolbar />

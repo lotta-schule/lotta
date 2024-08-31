@@ -14,7 +14,7 @@ async function GroupsLayout({
   children,
 }: React.PropsWithChildren<{ params: { groupId?: string } }>) {
   return (
-    <AdminPage icon={faUserGroup} title={'Gruppen'} hasHomeLink>
+    <AdminPage icon={faUserGroup} title={'Gruppen'} hasHomeLink takesFullSpace>
       <TwoColumnLayout>
         <TwoColumnLayoutSidebar>
           <GroupListToolbar />
