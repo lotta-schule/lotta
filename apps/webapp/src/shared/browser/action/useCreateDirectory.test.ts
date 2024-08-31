@@ -16,7 +16,7 @@ const parentDirectoryNode = {
   parent: logosDirectory.parentDirectory?.id ?? null,
 } satisfies BrowserNode<'directory'>;
 
-export const additionalMocks: MockedResponse[] = [
+const additionalMocks = [
   {
     request: {
       query: CreateDirectoryMutation,
@@ -39,7 +39,7 @@ export const additionalMocks: MockedResponse[] = [
       },
     },
   },
-];
+] satisfies MockedResponse[];
 
 describe('useCreateDirectory', () => {
   it('should create a new directory', async () => {

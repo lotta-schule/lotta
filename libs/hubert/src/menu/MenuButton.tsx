@@ -16,11 +16,13 @@ export type MenuButtonProps = {
   placement?: PopoverProps['placement'];
   onOpenChange?: (_isOpen: boolean) => void;
   onAction?: (_action: React.Key) => void;
+  closeOnAction?: boolean;
 } & WithDescription;
 
 export const MenuButton = ({
   buttonProps,
   onOpenChange,
+  closeOnAction,
   placement,
   onAction,
   ...props
@@ -65,6 +67,7 @@ export const MenuButton = ({
               props
             )}
             onAction={onAction}
+            closeOnAction={closeOnAction}
             className={styles.menu}
             onClose={state.close}
           >

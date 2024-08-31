@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { CalendarWidgetConfig } from 'model';
-import {
-  Button,
-  Divider,
-  Input,
-  Label,
-  Option,
-  Select,
-} from '@lotta-schule/hubert';
-import { faCircleMinus, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { CalendarWidgetCalendarConfig, CalendarWidgetConfig } from 'model';
+import { Button, Divider, ErrorMessage } from '@lotta-schule/hubert';
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from 'shared/Icon';
+import { useTranslation } from 'react-i18next';
+import { CalendarConfiguration } from './CalendarConfiguration';
+import { useQuery } from '@apollo/client';
+import { GET_CALENDARS } from 'app/(admin)/admin/calendars/_graphql';
 
 export interface CalendarWidgetConfigurationProps {
   configuration: CalendarWidgetConfig;
@@ -18,141 +15,82 @@ export interface CalendarWidgetConfigurationProps {
 
 export const CalendarWidgetConfiguration = React.memo(
   ({ configuration, setConfiguration }: CalendarWidgetConfigurationProps) => {
+    const { t } = useTranslation();
+
+    const { data, loading: isLoading, error } = useQuery(GET_CALENDARS);
+
+    const createNewCalendarConfiguration = React.useCallback(() => {
+      if (!data?.calendars.length) {
+        return { type: 'external', url: '' } as const;
+      }
+      return {
+        type: 'internal',
+        calendarId: data.calendars[0].id,
+        name: data.calendars[0].name,
+        color: data.calendars[0].color,
+      } as const;
+    }, [data]);
+
+    const calendarConfigurations = React.useMemo(
+      () => configuration.calendars ?? [],
+      [configuration.calendars]
+    );
+
+    const updateCalendarConfiguration = React.useCallback(
+      (index: number, configuration: CalendarWidgetCalendarConfig) => {
+        setConfiguration({
+          ...configuration,
+          calendars: calendarConfigurations.map((calendar, i) =>
+            i === index ? configuration : calendar
+          ),
+        });
+      },
+      [calendarConfigurations, setConfiguration]
+    );
+
     return (
       <div data-testid={'CalendarWidgetConfiguration'}>
-        {(configuration.calendars || []).map((calendar, index) => (
-          <div key={index}>
-            <Label label="URL des Kalenders">
-              <Input
-                value={calendar.url}
-                onChange={(e) =>
+        <ErrorMessage error={error} />
+        {calendarConfigurations.map((calendar, index) => {
+          return (
+            <React.Fragment key={index}>
+              <CalendarConfiguration
+                configuration={calendar}
+                isOneOfMany={calendarConfigurations.length > 1}
+                onChange={(config) => {
+                  updateCalendarConfiguration(index, config);
+                }}
+                onDelete={() =>
                   setConfiguration({
                     ...configuration,
-                    calendars:
-                      configuration.calendars?.map((cal, i) => {
-                        return i === index
-                          ? {
-                              ...calendar,
-                              url: e.currentTarget.value,
-                            }
-                          : cal;
-                      }) ?? [],
+                    calendars: calendarConfigurations.filter(
+                      (_, i) => i !== index
+                    ),
                   })
                 }
               />
-            </Label>
-            <small>Link zu einer *.ics-Datei</small>
-
-            <Select
-              style={{ width: '100%' }}
-              title={'Zeit, für die Termine abgerufen werden'}
-              value={String(calendar.days ?? 90)}
-              onChange={(daysString) => {
-                const days = Number(daysString);
-                setConfiguration({
-                  ...configuration,
-                  calendars:
-                    configuration.calendars?.map((cal, i) => {
-                      return i === index
-                        ? {
-                            ...calendar,
-                            days,
-                          }
-                        : cal;
-                    }) ?? [],
-                });
-              }}
-            >
-              <Option value={String(7)}>
-                Termine der nächsten 7 Tage anzeigen
-              </Option>
-              <Option value={String(30)}>
-                Termine der nächsten 30 Tage anzeigen
-              </Option>
-              <Option value={String(90)}>
-                Termine der nächsten 3 Monate anzeigen
-              </Option>
-              <Option value={String(180)}>
-                Termine der nächsten 6 Monate anzeigen
-              </Option>
-              <Option value={String(365)}>
-                Termine des nächsten Jahres anzeigen
-              </Option>
-            </Select>
-            {configuration.calendars && configuration.calendars.length > 1 && (
-              <>
-                <Label label="Name des Kalenders">
-                  <Input
-                    value={calendar.name || ''}
-                    onChange={(e) =>
-                      setConfiguration({
-                        ...configuration,
-                        calendars: configuration.calendars?.map((cal, i) => {
-                          return i === index
-                            ? {
-                                ...calendar,
-                                name: e.currentTarget.value,
-                              }
-                            : cal;
-                        }),
-                      })
-                    }
-                  />
-                </Label>
-                <small>
-                  Kalender einen beschreibenden Namen für die Legende zuordnen
-                </small>
-
-                <Label label="Farbe des Kalenders">
-                  <Input
-                    type={'color'}
-                    value={calendar.color || ''}
-                    onChange={(e) =>
-                      setConfiguration({
-                        ...configuration,
-                        calendars: configuration.calendars?.map((cal, i) => {
-                          return i === index
-                            ? {
-                                ...calendar,
-                                color: e.currentTarget.value,
-                              }
-                            : cal;
-                        }),
-                      })
-                    }
-                  />
-                </Label>
-                <small>Farbe, die dem Kalender zugeordnet wird</small>
-
-                <Button
-                  icon={<Icon icon={faCircleMinus} />}
-                  onClick={() =>
-                    setConfiguration({
-                      ...configuration,
-                      calendars: configuration.calendars?.filter(
-                        (_c, i) => i !== index
-                      ),
-                    })
-                  }
-                >
-                  Kalender-URL entfernen
-                </Button>
-              </>
-            )}
-            {index < (configuration.calendars || []).length - 1 && <Divider />}
-          </div>
-        ))}
+              {index !== (configuration?.calendars ?? []).length - 1 && (
+                <Divider style={{ marginBlock: 'var(--lotta-spacing)' }} />
+              )}
+            </React.Fragment>
+          );
+        })}
 
         <Button
           icon={<Icon icon={faCirclePlus} />}
+          disabled={isLoading}
+          style={{ marginBlock: 'var(--lotta-spacing)' }}
           onClick={() =>
             setConfiguration({
               ...configuration,
-              calendars: [...(configuration.calendars || []), { url: '' }],
+              calendars: [
+                ...calendarConfigurations,
+                createNewCalendarConfiguration(),
+              ],
             })
           }
         >
-          Kalender-URL hinzufügen
+          {t('Add Calendar')}
         </Button>
       </div>
     );

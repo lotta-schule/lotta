@@ -5,12 +5,20 @@ import { format, intervalToDuration, isSameMinute } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { Icon } from 'shared/Icon';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { useUnfoldedEvents } from 'app/(admin)/admin/calendars/_hook';
+import { CalendarWidgetCalendarConfig, WidgetModel } from 'model';
 import clsx from 'clsx';
 
 import styles from './CalendarEntry.module.scss';
 
+type UnfoldedEvent = ReturnType<
+  typeof useUnfoldedEvents<NonNullable<WidgetModel['calendarEvents']>[number]>
+>[number];
+
 export type CalendarEntryProps = {
-  event: CalendarEventModel;
+  event: (CalendarEventModel | UnfoldedEvent) & {
+    calendarConfig: CalendarWidgetCalendarConfig;
+  };
   dot?: string | null;
 };
 
@@ -20,10 +28,16 @@ const stripHtml = (html: string) => {
   return div.textContent || div.innerText || '';
 };
 
-export const CalendarEntry = React.memo<CalendarEntryProps>(
-  ({ event, dot }) => {
-    const summary = stripHtml(event.summary);
-    const description = stripHtml(event.description);
+export const CalendarEntry = React.memo(
+  ({ event, dot }: CalendarEntryProps) => {
+    const summary = React.useMemo(
+      () => stripHtml(event.summary),
+      [event.summary]
+    );
+    const description = React.useMemo(
+      () => stripHtml(event.description ?? ''),
+      [event.description]
+    );
     const start = new Date(event.start);
     const end = new Date(event.end);
 

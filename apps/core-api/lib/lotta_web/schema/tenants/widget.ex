@@ -18,6 +18,10 @@ defmodule LottaWeb.Schema.Tenants.Widget do
 
     field(:icon_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Storage))
 
+    field(:calendar_events, list_of(non_null(:calendar_event)),
+      resolve: &LottaWeb.WidgetResolver.resolve_calendar_events/2
+    )
+
     field(:groups, list_of(:user_group),
       resolve: &LottaWeb.UserGroupResolver.resolve_model_groups/2
     )
@@ -25,12 +29,17 @@ defmodule LottaWeb.Schema.Tenants.Widget do
 
   input_object :widget_input do
     field(:title, non_null(:string))
-    field(:groups, list_of(:select_user_group_input))
+    field(:groups, list_of(non_null(:select_user_group_input)))
     field(:icon_image_file, :select_file_input)
     field(:configuration, :json)
   end
 
   input_object :select_widget_input do
-    field(:id, :id)
+    field(:id, non_null(:id))
+  end
+
+  input_object :select_calendar_input do
+    field(:id, non_null(:id))
+    field(:color, :string)
   end
 end

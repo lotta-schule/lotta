@@ -17,6 +17,8 @@ defmodule LottaWeb.ArticleReactionResolverTest do
   setup do
     tenant = Tenants.get_tenant_by_prefix(@prefix)
 
+    Repo.put_prefix(@prefix)
+
     emails = [
       "alexis.rinaldoni@lotta.schule",
       "eike.wiewiorra@lotta.schule"

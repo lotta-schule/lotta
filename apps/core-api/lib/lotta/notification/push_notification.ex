@@ -107,7 +107,7 @@ defmodule Lotta.Notification.PushNotification do
 
   defp push_to_user(notification, user) do
     user
-    |> Repo.preload(:devices)
+    |> Repo.preload(:devices, prefix: Ecto.get_meta(user, :prefix))
     |> Map.get(:devices)
     |> Enum.filter(& &1.push_token)
     |> Enum.each(&push_to_device(notification, &1))

@@ -18,6 +18,8 @@ defmodule LottaWeb.ContentModuleResolverTest do
   setup do
     tenant = Tenants.get_tenant_by_prefix(@prefix)
 
+    Repo.put_prefix(@prefix)
+
     query =
       from(cm in ContentModule,
         where: fragment("?->>? = ?", cm.content, "value", "Pizza Test-Formular")

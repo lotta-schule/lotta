@@ -16,6 +16,8 @@ defmodule LottaWeb.UserGroupResolverTest do
   setup do
     tenant = Tenants.get_tenant_by_prefix(@prefix)
 
+    Repo.put_prefix(@prefix)
+
     admin =
       Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
         prefix: tenant.prefix

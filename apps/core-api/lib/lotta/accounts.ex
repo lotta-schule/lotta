@@ -477,7 +477,7 @@ defmodule Lotta.Accounts do
     |> Changeset.change(%{
       last_seen: DateTime.truncate(DateTime.utc_now(), :second)
     })
-    |> Repo.update()
+    |> Repo.update(prefix: Ecto.get_meta(user, :prefix))
   end
 
   @doc """

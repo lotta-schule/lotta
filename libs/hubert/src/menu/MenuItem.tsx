@@ -15,6 +15,7 @@ export type MenuItemProps = {
   state: TreeState<object>;
   isDisabled?: boolean;
   isDivider?: boolean;
+  closeOnSelect?: boolean;
   ref?: React.Ref<HTMLLIElement>;
   onAction?: (_key: React.Key) => void;
   onClose?: () => void;
@@ -26,6 +27,7 @@ export const MenuItem = React.memo(
     state,
     isDisabled = false,
     isDivider = false,
+    closeOnSelect,
     onAction,
     onClose,
     ref: propRef,
@@ -39,6 +41,7 @@ export const MenuItem = React.memo(
       {
         key: item.key,
         isDisabled: isDisabled || isDivider,
+        closeOnSelect,
         onAction,
         onClose,
       },

@@ -1,0 +1,70 @@
+@import "breakpoints";
+
+.root {
+  .row {
+    display: flex;
+  }
+
+  .nameRow {
+    display: flex;
+    & > :first-child {
+      flex: 1;
+    }
+  }
+
+  .configRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    @media screen and (max-width: $max-xs) {
+      flex-wrap: wrap;
+    }
+    & > * {
+      flex: 1;
+    }
+    & > div:last-of-type {
+      flex: 0 0 max-content;
+      display: flex;
+      flex-direction: column;
+      padding-inline: var(--lotta-spacing);
+      label {
+        padding-top: 0;
+        padding-bottom: var(--lotta-spacing);
+      }
+
+      @media screen and (max-width: $max-xs) {
+        flex: 1 1 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 0;
+        margin-top: var(--lotta-spacing);
+      }
+    }
+  }
+
+  .dateRow {
+    display: grid;
+    grid-template: 1fr / auto 8em 8em;
+
+    @media screen and (max-width: $max-xs) {
+      grid-template: 1fr / auto auto;
+      & > :first-child {
+        grid-column-end: span 2;
+      }
+
+      &:not(:has(.mayBeInvisible.isVisible)) {
+        grid-template: 1fr 0 / auto 0;
+      }
+    }
+  }
+
+  .mayBeInvisible {
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+
+    &.isVisible {
+      opacity: 1;
+    }
+  }
+}

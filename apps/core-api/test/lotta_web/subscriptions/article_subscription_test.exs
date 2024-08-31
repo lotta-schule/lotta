@@ -14,6 +14,8 @@ defmodule LottaWeb.ArticleSubscriptionTest do
   @prefix "tenant_test"
 
   setup do
+    Repo.put_prefix(@prefix)
+
     emails = [
       "alexis.rinaldoni@lotta.schule",
       "eike.wiewiorra@lotta.schule",

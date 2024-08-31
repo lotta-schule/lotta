@@ -1,7 +1,7 @@
 defmodule Lotta.Tenants.DefaultContentTest do
   @moduledoc false
 
-  use Lotta.DataCase, async: true
+  use Lotta.DataCase, async: false
   use Bamboo.Test
 
   import Ecto.Query

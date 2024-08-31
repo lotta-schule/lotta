@@ -14,6 +14,8 @@ defmodule LottaWeb.AnalyticsResolverTest do
   setup do
     tenant = Tenants.get_tenant_by_prefix(@prefix)
 
+    Repo.put_prefix(@prefix)
+
     admin =
       from(u in User, where: u.email == ^"alexis.rinaldoni@einsa.net")
       |> Repo.one!(prefix: tenant.prefix)

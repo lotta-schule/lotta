@@ -1,0 +1,16 @@
+.eventName {
+  font-weight: bold;
+}
+
+.eventDetails {
+  margin: var(--lotta-spacing);
+  span {
+    display: block;
+  }
+  .eventName {
+    font-weight: bold;
+  }
+  .eventDates {
+    font-style: italic;
+  }
+}

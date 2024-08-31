@@ -10,7 +10,7 @@
     "test": "vitest",
     "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit",
-    "schema:download": "pnpm dlx get-graphql-schema http://127.0.0.1:4000/api > src/api/schema.graphql",
+    "schema:download": "pnpm dlx get-graphql-schema http://127.0.0.1:4000/api > .tmp/schema.graphql",
     "translations:collect": "pnpm i18next"
   },
   "type": "module",
@@ -47,6 +47,7 @@
     "next": "15.0.0-canary.130",
     "phoenix": "^1.7.14",
     "react": "19.0.0-rc-b57d2823-20240822",
+    "react-big-calendar": "^1.13.1",
     "react-charts": "^3.0.0-beta.57",
     "react-dom": "19.0.0-rc-b57d2823-20240822",
     "react-i18next": "^15.0.0",

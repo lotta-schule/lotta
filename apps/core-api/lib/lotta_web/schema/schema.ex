@@ -34,6 +34,7 @@ defmodule LottaWeb.Schema do
     import_fields(:messages_mutations)
     import_fields(:tenants_mutations)
     import_fields(:contents_mutations)
+    import_fields(:calendar_mutations)
   end
 
   subscription do
@@ -49,6 +50,7 @@ defmodule LottaWeb.Schema do
       |> Dataloader.add_source(Lotta.Messages, Lotta.Messages.data())
       |> Dataloader.add_source(Lotta.Storage, Lotta.Storage.data())
       |> Dataloader.add_source(Lotta.Tenants, Lotta.Tenants.data())
+      |> Dataloader.add_source(Lotta.Calendar, Lotta.Calendar.data())
 
     Map.put(ctx, :loader, loader)
   end
