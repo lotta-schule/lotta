@@ -216,15 +216,13 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
             </Table>
           </div>
 
-          {selectedUser && (
-            <EditUserPermissionsDialog
-              onRequestClose={() => {
-                setSelectedUser(null);
-                router.refresh();
-              }}
-              user={selectedUser}
-            />
-          )}
+          <EditUserPermissionsDialog
+            onRequestClose={() => {
+              setSelectedUser(null);
+              router.refresh();
+            }}
+            selectedUser={selectedUser}
+          />
         </>
       )}
     </section>

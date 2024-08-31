@@ -4,7 +4,11 @@ import { File } from './File';
 
 export const User = {
   getName(
-    user?: { __typename?: 'User'; nickname?: string; name?: string } | null
+    user?: {
+      __typename?: 'User';
+      nickname?: string | null;
+      name?: string | null;
+    } | null
   ) {
     if (user?.name && user?.nickname) {
       return `${user.nickname} (${user.name})`;
@@ -13,7 +17,11 @@ export const User = {
   },
 
   getNickname(
-    user?: { __typename?: 'User'; nickname?: string; name?: string } | null
+    user?: {
+      __typename?: 'User';
+      nickname?: string | null;
+      name?: string | null;
+    } | null
   ) {
     return user?.nickname || user?.name || '';
   },
@@ -28,7 +36,11 @@ export const User = {
   },
 
   getDefaultAvatarUrl(
-    user?: { __typename?: 'User'; nickname?: string; name?: string } | null
+    user?: {
+      __typename?: 'User';
+      nickname?: string | null;
+      name?: string | null;
+    } | null
   ) {
     return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
       User.getNickname(user) ?? ''

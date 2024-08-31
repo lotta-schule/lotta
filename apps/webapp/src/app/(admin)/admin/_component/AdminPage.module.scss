@@ -80,7 +80,7 @@
   }
 
   .contentSection {
-    overflow: visible;
+    overflow: auto;
     padding-inline: var(--lotta-spacing);
     &.takesFullSpace {
       overflow: hidden;
