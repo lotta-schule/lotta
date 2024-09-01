@@ -159,7 +159,13 @@ config :opentelemetry, :resource,
   service: %{
     name: SystemConfig.get("SERVICE_NAME"),
     namespace: System.get_env("NAMESPACE")
-  }
+  },
+  deployment: %{
+    environment: SystemConfig.get("APP_ENVIRONMENT"),
+    version: SystemConfig.get("IMAGE_NAME")
+  },
+  span_processor: :batch,
+  traces_exporter: :otlp
 
 config :opentelemetry, :processors,
   otel_batch_processor: %{
