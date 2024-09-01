@@ -179,7 +179,7 @@ config :lotta,
        pool:
          (case config_env() do
             :test -> Ecto.Adapters.SQL.Sandbox
-            _ -> Ecto.Adapters.SQL.Sandbox
+            _ -> Ecto.Adapters.Postgres
           end)
 
 config :lotta, :rabbitmq,
