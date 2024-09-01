@@ -1,0 +1,9 @@
+.helpText {
+  a {
+    color: rgb(var(--lotta-primary-color));
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

@@ -20,6 +20,8 @@ import { FragmentOf } from 'gql.tada';
 import { useMutation } from '@apollo/client';
 import { invariant } from '@epic-web/invariant';
 
+import styles from './CalendarEditor.module.scss';
+
 export type CalendarEditorProps = {
   calendar: FragmentOf<typeof CALENDAR_FRAGMENT>;
   onClose(): void;
@@ -94,12 +96,14 @@ export const CalendarEditor = React.memo(
                         }}
                       />
                     </div>
-                    <small>
-                      Kleine Anleitung mit dem einen Link oder auch dem anderen
-                      bla bla bla damit die Leute auch wissen dass sie das Ding
-                      abonnieren sollen und nicht einfach runterladen und
-                      importieren
-                    </small>
+                    <small
+                      className={styles.helpText}
+                      dangerouslySetInnerHTML={{
+                        __html: t(
+                          'This link allows you to share the calendar with others. Anyone with the link can subscribe to the calendar. Have a look at <a href="https://www.radioblau.de/erinnerung/wie-abonniere-ich-erinnerungen-im-kalender/" target="_blank" rel="noopener noreferrer">Wie abonniere ich Erinnerungen im Kalender?</a> to see how to subscribe to a calendar.'
+                        ),
+                      }}
+                    />
                   </>
                 )}
                 {!calendar.subscriptionUrl && (
