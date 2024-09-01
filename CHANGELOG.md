@@ -1,3 +1,16 @@
+## 5.0.4 (2024-09-01)
+
+
+### 🩹 Fixes
+
+- **core-api:** Use correct adapter for every env except test ([#356](https://github.com/lotta-schule/lotta/pull/356))
+- **webapp:** Add back availability to see events outside of own month, fix eslint setup ([#351](https://github.com/lotta-schule/lotta/pull/351))
+- **webapp:** Fix safari shrunking contents of UserArticlesDialog ([#355](https://github.com/lotta-schule/lotta/pull/355))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.3 (2024-09-01)
 
 This was a version bump only, there were no code changes.
