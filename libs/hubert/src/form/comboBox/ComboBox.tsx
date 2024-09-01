@@ -131,6 +131,29 @@ export const ComboBox = React.memo(
       [allItems]
     );
 
+    React.useEffect(() => {
+      if (searchText?.length < 1) {
+        return;
+      }
+
+      if (typeof items !== 'function') {
+        return;
+      }
+
+      setIsLoading(true);
+      items(searchText)
+        .then((newItems) => {
+          setCalculatedItems(newItems);
+          if (newItems.length) {
+            state.setOpen(true);
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchText]);
+
     const state = useComboBoxState({
       children: ListItemFactory.createItem,
       items: allItems,
@@ -178,33 +201,12 @@ export const ComboBox = React.memo(
     );
 
     React.useEffect(() => {
-      if (searchText?.length < 1) {
-        return;
-      }
-
-      if (typeof items !== 'function') {
-        return;
-      }
-
-      setIsLoading(true);
-      items(searchText)
-        .then((newItems) => {
-          setCalculatedItems(newItems);
-          if (newItems.length) {
-            state.setOpen(true);
-          }
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }, [items, searchText, state]);
-
-    React.useEffect(() => {
       const item = findItem(state.inputValue);
       if (item) {
         state.selectionManager.setFocusedKey(item.key as string | number);
       }
-    }, [findItem, state.inputValue, state.selectionManager]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state.inputValue]);
 
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -316,7 +318,7 @@ export const ComboBox = React.memo(
                 {...listBoxProps}
                 className={styles.listbox}
                 ref={listBoxRef}
-                state={state ?? undefined}
+                state={state}
               />
             </Popover>
           </div>
