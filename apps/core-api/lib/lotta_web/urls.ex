@@ -15,6 +15,7 @@ defmodule LottaWeb.Urls do
   @doc """
   Returns the primary URI to the start page
   of a given tenant.
+  If the tenant has a custom domain, it will be used.
   If no tenant is given, the process' current
   tenant is used.
 
@@ -107,6 +108,27 @@ defmodule LottaWeb.Urls do
   end
 
   @doc """
+  Returns the host identifier of the given tenant.
+  This will be the tenant's slug, followed by the
+  base host of the lotta installation, regardless
+  of whether the tenant has a custom domain or not.
+
+  This is useful not so much for generating URLs, but
+  for identifying the tenant in a multi-tenant setup,
+  where a uniform identifier is preferred.
+
+  ### Example
+
+      iex> Urls.get_tenant_identifier(%Tenant{slug: "example"})
+      "example.lotta.schule"
+  """
+  @doc since: "5.0.0"
+  @spec get_tenant_identifier(Tenant.t()) :: String.t()
+  def get_tenant_identifier(tenant) do
+    "#{tenant.slug}.#{config()[:host]}"
+  end
+
+  @doc """
   Get the pure hostname of the current instance.
   """
   @doc since: "2.6.0"
@@ -121,7 +143,7 @@ defmodule LottaWeb.Urls do
     |> Enum.filter(& &1.is_main_domain)
     |> case do
       [] ->
-        struct(URI, Application.get_env(:lotta, :base_uri, []))
+        struct(URI, config())
         |> Map.update(
           :host,
           nil,
@@ -132,5 +154,9 @@ defmodule LottaWeb.Urls do
         struct(URI, Application.get_env(:lotta, :base_uri, []))
         |> Map.put(:host, host)
     end
+  end
+
+  defp config() do
+    Application.get_env(:lotta, :base_uri, [])
   end
 end

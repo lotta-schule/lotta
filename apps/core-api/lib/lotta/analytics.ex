@@ -15,9 +15,9 @@ defmodule Lotta.Analytics do
   @doc since: "4.2.0"
   @spec get_realtime_users(tenant :: Tenant.t()) :: {:ok, integer()} | {:error, any()}
   def get_realtime_users(tenant) do
-    host = Urls.get_tenant_host(tenant)
+    identifier = Urls.get_tenant_identifier(tenant)
 
-    with client when not is_nil(client) <- create_client(host),
+    with client when not is_nil(client) <- create_client(identifier),
          {:ok, %{body: body}} <-
            get(client, "/realtime/visitors") do
       {:ok, body}
@@ -42,9 +42,9 @@ defmodule Lotta.Analytics do
   @spec get_aggregation_metrics(Tenant.t(), String.t(), String.t()) ::
           {:ok, map()} | {:error, any()}
   def get_aggregation_metrics(tenant, period, date) do
-    host = Urls.get_tenant_host(tenant)
+    identifier = Urls.get_tenant_identifier(tenant)
 
-    with client when not is_nil(client) <- create_client(host),
+    with client when not is_nil(client) <- create_client(identifier),
          {:ok, %{body: %{"results" => results}}} <-
            get(client, "/aggregate",
              query: [
@@ -92,9 +92,9 @@ defmodule Lotta.Analytics do
   def get_timeseries_metrics(tenant, period, date, metric) do
     metric_string = to_string(metric)
 
-    host = Urls.get_tenant_host(tenant)
+    identifier = Urls.get_tenant_identifier(tenant)
 
-    with client when not is_nil(client) <- create_client(host),
+    with client when not is_nil(client) <- create_client(identifier),
          {:ok, %{body: %{"results" => results}}} <-
            get(client, "/timeseries",
              query: [
@@ -141,9 +141,9 @@ defmodule Lotta.Analytics do
     combined_metrics_string = Enum.join(metrics, ",")
     property_string = to_string(property)
 
-    host = Urls.get_tenant_host(tenant)
+    identifier = Urls.get_tenant_identifier(tenant)
 
-    with client when not is_nil(client) <- create_client(host),
+    with client when not is_nil(client) <- create_client(identifier),
          {:ok, [category: prop_category, name: prop_name]} <- parse_property(property_string),
          {:ok, %{body: %{"results" => results}}} <-
            get(client, "/breakdown",

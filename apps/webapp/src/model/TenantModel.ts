@@ -15,6 +15,7 @@ export interface TenantModel {
   slug: string;
   title: string;
   host: string;
+  identifier?: string;
   configuration: {
     userMaxStorageConfig: string;
     customTheme?: any;

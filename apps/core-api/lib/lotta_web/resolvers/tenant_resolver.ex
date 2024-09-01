@@ -37,9 +37,7 @@ defmodule LottaWeb.TenantResolver do
 
   def custom_domains(_, _), do: {:ok, []}
 
-  def host(_, %{context: %{tenant: tenant}}) do
-    {:ok, Urls.get_tenant_host(tenant)}
-  end
+  def host(_, %{context: %{tenant: tenant}}), do: {:ok, Urls.get_tenant_host(tenant)}
 
   def get_stats(_, %{context: %{tenant: tenant}}) do
     {:ok, Tenants.get_stats(tenant)}

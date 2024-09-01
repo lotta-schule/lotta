@@ -4,6 +4,7 @@ query GetTenant {
     title
     slug
     host
+    identifier
     configuration {
       backgroundImageFile {
         id

@@ -3,7 +3,7 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
 
   use Absinthe.Schema.Notation
 
-  alias LottaWeb.TenantResolver
+  alias LottaWeb.{TenantResolver, Urls}
 
   object :tenant do
     field(:id, :id)
@@ -12,6 +12,12 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
     field(:configuration, :tenant_configuration, resolve: &TenantResolver.resolve_configuration/2)
     field(:inserted_at, :datetime)
     field(:host, :string, resolve: &TenantResolver.host/2)
+
+    field(:identifier, non_null(:string),
+      resolve: fn tenant, _, _ ->
+        {:ok, Urls.get_tenant_identifier(tenant)}
+      end
+    )
 
     field(:stats, :tenant_stats) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)

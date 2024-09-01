@@ -7,8 +7,9 @@ import {
   ErrorMessage,
   Input,
   Label,
+  List,
+  ListItem,
   LoadingButton,
-  Table,
 } from '@lotta-schule/hubert';
 import { TenantModel } from 'model';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
@@ -76,15 +77,18 @@ export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
       </AdminPageSection>
 
       <AdminPageSection title="Domain">
-        <Table>
-          <tbody>
-            <tr>
-              <td>
-                <Link href={`https://${tenant.host}`}>{tenant.host}</Link>
-              </td>
-            </tr>
-          </tbody>
-        </Table>
+        <List>
+          <ListItem>
+            <Link href={`https://${tenant.host}`}>{tenant.host}</Link>
+          </ListItem>
+          {tenant.identifier !== tenant.host && (
+            <ListItem>
+              <Link href={`https://${tenant.identifier}`}>
+                {tenant.identifier}
+              </Link>
+            </ListItem>
+          )}
+        </List>
       </AdminPageSection>
 
       <AdminPageSection bottomToolbar>

@@ -49,7 +49,7 @@ defmodule SystemConfig do
 
   defp default("POOL_SIZE", _), do: "10"
   defp default("APP_ENVIRONMENT", _), do: "development"
-  defp default("BASE_URI_HOST", :dev), do: "lotta.schule,local.lotta.schule,lotta.lvh.me"
+  defp default("BASE_URI_HOST", :dev), do: "local.lotta.schule,lotta.lvh.me,lotta.schule"
   defp default("BASE_URI_HOST", _), do: "lotta.schule"
   defp default("BASE_URI_PORT", :dev), do: "3000"
   defp default("BASE_URI_PORT", _), do: nil
