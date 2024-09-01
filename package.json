@@ -9,6 +9,7 @@
     "test": "nx run-many --target=test --parallel",
     "lint": "nx run-many --target=lint --parallel",
     "typecheck": "nx run-many --target=typecheck --parallel",
+    "release:prepare": "./scripts/release.sh",
     "nx": "nx"
   },
   "devDependencies": {

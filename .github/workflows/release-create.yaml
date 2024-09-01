@@ -1,0 +1,60 @@
+---
+name: 'Update version and create tag'
+on:
+  workflow_dispatch:
+    inputs:
+      release_level:
+        description: 'Wether to release a major, minor or patch version'
+        required: true
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+jobs:
+  create-release:
+    name: 'Create release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Find Tag
+        id: tagger
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: 'v*'
+          commit-ish: 'HEAD~'
+
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Prepare next version
+        id: bump
+        run: |
+          LAST_TAG=$(echo ${{ steps.tagger.outputs.tag }} | cut -c 2-)
+          NEXT_VERSION=$(pnpm dlx semver -i ${{ inputs.release_level }} $LAST_TAG)
+          pnpm release:prepare $NEXT_VERSION
+          echo ::set-output name=version::$NEXT_VERSION
+
+      - name: Push Git Tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git tag ${{ steps.bump.outputs.version }}
+          git push origin ${{ steps.bump.outputs.version }}
+
+  deploy-release:
+    name: 'Deploy Release'
+    uses: ./.github/workflows/release-push.yaml
+    with:
+      tag: ${{ steps.bump.outputs.version }}

@@ -1,0 +1,58 @@
+---
+name: 'Push a new release to production'
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'the tag to release'
+        required: true
+        type: string
+
+jobs:
+  publish-docker-images:
+    name: ${{ matrix.image.name }} images
+    strategy:
+      matrix:
+        image:
+          - name: web
+            dockerfile: apps/webapp/Dockerfile
+            working-directory: .
+          - name: core
+            dockerfile: Dockerfile
+            working-directory: apps/core-api
+    uses: ./.github/workflows/__deploy_dockerfile.yaml
+    with:
+      name: lotta-schule/${{ matrix.image.name }}
+      tags: ${{ format('["{0}", "{1}"]', github.sha, inputs.tag) }}
+      working-directory: ${{ matrix.image.working-directory }}
+      dockerfile: ${{ matrix.image.dockerfile }}
+      checkout-ref: ${{ github.ref }}
+    secrets:
+      password: ${{ secrets.GITHUB_TOKEN }}
+      sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      sentry_dsn: ${{ secrets.SENTRY_DSN }}
+
+  create-sentry-release:
+    name: |
+      Sentry Release: ${{ matrix.project }}
+    needs:
+      - publish-docker-images
+    strategy:
+      matrix:
+        project: ['core', 'web']
+    runs-on: ubuntu-latest
+    steps:
+      # Sentry does need a repository it seems
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+      - uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ matrix.project }}
+        with:
+          environment: ${{ matrix.environment }}
+          version: ${{ inputs.tag }}

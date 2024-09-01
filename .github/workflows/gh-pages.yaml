@@ -1,0 +1,41 @@
+---
+name: Publish Storybook Page as Github Page
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish-storybook-page:
+    name: Publish Hubert Storybook as Github Page
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install npm dependencies
+        run: pnpm install
+
+      - name: Build storybook
+        run: pnpm nx build storybook-hubert
+
+      # Maybe think of deploying statically to S3 or so?
+      - name: 'Deploy Storybook as github page'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: ./apps/storybook-hubert/storybook-static
