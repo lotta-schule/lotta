@@ -14,11 +14,15 @@
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "@next/eslint-plugin-next": "^14.2.5",
+    "@nx/js": "19.5.3",
     "@nx/workspace": "19.5.3",
     "@react-types/checkbox": "^3.8.3",
     "@react-types/progress": "^3.5.6",
     "@react-types/shared": "^3.24.1",
     "@rollup/plugin-graphql": "^2.0.4",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
@@ -77,5 +81,6 @@
     "patchedDependencies": {
       "next@15.0.0-canary.130": "patches/next@15.0.0-canary.130.patch"
     }
-  }
+  },
+  "dependencies": {}
 }
