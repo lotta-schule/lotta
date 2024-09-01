@@ -72,7 +72,7 @@ export const CalendarView = React.memo(
         })
       );
       return events.flat();
-    }, [activeCalendarIds]);
+    }, [activeCalendarIds, fetchEvents, from, latest]);
 
     React.useEffect(() => {
       const observers = activeCalendarIds.map((calendarId) => {
@@ -98,7 +98,7 @@ export const CalendarView = React.memo(
       return () => {
         observers.forEach((o) => o.unsubscribe());
       };
-    }, [activeCalendarIds]);
+    }, [activeCalendarIds, client, from, latest]);
 
     React.useEffect(() => {
       let mounted = true;

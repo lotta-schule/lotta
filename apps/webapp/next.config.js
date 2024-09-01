@@ -1,7 +1,7 @@
 // @ts-check
 
 import { resolve } from 'node:path';
-import { env, version } from 'node:process';
+import { env } from 'node:process';
 import { URL } from 'node:url';
 import { withSentryConfig } from '@sentry/nextjs';
 

@@ -260,7 +260,6 @@ export const UserNavigation = React.memo(() => {
     unpublishedBadgeNumber,
     createArticleModalIsOpen,
     registerModalIsOpen,
-    loginModalIsOpen,
     onAction,
     router,
   ]);

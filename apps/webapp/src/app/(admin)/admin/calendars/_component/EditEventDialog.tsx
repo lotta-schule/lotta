@@ -55,7 +55,7 @@ export const EditEventDialog = React.memo(
 
     const isMultipleDays = React.useMemo(
       () => eventData && !isSameDay(eventData.start, eventData.end),
-      [eventData?.start, eventData?.end]
+      [eventData]
     );
 
     React.useEffect(() => {

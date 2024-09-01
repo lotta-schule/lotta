@@ -44,7 +44,7 @@ export const CreateEventDialog = React.memo(
         isFullDay: true,
         recurrence: null as FragmentOf<typeof RECURRENCE_FRAGMENT> | null,
       }),
-      []
+      [calendars]
     );
 
     const { t } = useTranslation();
@@ -79,7 +79,7 @@ export const CreateEventDialog = React.memo(
       } else {
         setEventData(EMPTY_EVENT);
       }
-    }, [isOpen]);
+    }, [EMPTY_EVENT, isOpen]);
 
     return (
       <Dialog open={isOpen} onRequestClose={onClose} title={t('create event')}>

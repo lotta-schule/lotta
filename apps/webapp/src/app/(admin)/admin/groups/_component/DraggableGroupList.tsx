@@ -46,9 +46,12 @@ export const DraggableGroupList = () => {
     }
   }, [highlightedGroups]);
 
-  const onSelect = React.useCallback((group: UserGroupModel) => {
-    router.push(`/admin/groups/${group.id}`);
-  }, []);
+  const onSelect = React.useCallback(
+    (group: UserGroupModel) => {
+      router.push(`/admin/groups/${group.id}`);
+    },
+    [router]
+  );
 
   const [updateGroup] = useMutation<
     { group: UserGroupModel },

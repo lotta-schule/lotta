@@ -60,7 +60,14 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
       return true;
     }
     return false;
-  }, [editedGroup]);
+  }, [
+    editedGroup.canReadFullName,
+    editedGroup.enrollmentTokens,
+    editedGroup.name,
+    group.canReadFullName,
+    group.enrollmentTokens,
+    group.name,
+  ]);
 
   return (
     <>
