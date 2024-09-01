@@ -1,0 +1,3 @@
+import{k as s}from"./HubertProvider-22Y4FWNu.js";import"./jsx-runtime-BjG_zV1W.js";import"./index-CbIUIaG1.js";import"./index-DsJRWNrc.js";import"./isObjectLike-DExiV3nx.js";import"./index-D3ylJrlI.js";import"./_commonjsHelpers-BosuxZz1.js";import"./debounce-DSapFuzV.js";import"./isSymbol-Ba4JPt5E.js";const D={title:"layout/Divider",component:s,argTypes:{}},r={args:{}};var o,t,e;r.parameters={...r.parameters,docs:{...(o=r.parameters)==null?void 0:o.docs,source:{originalSource:`{
+  args: {}
+}`,...(e=(t=r.parameters)==null?void 0:t.docs)==null?void 0:e.source}}};const f=["Default"];export{r as Default,f as __namedExportsOrder,D as default};
