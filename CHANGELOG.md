@@ -1,3 +1,76 @@
+# 5.0.0 (2024-09-01)
+
+
+### 🚀 Features
+
+- Add X-Lotta-Originary-Host, takes precedence when rec tenant ([55c24cf4](https://github.com/lotta-schule/lotta/commit/55c24cf4))
+- Add Feedbacks ([22ac7274](https://github.com/lotta-schule/lotta/commit/22ac7274))
+- Add possibility to react to articles ([#274](https://github.com/lotta-schule/lotta/pull/274))
+- **core:** Add Push notification support for android ([2418036a](https://github.com/lotta-schule/lotta/commit/2418036a))
+- **core:** Reorganize project configuration ([#23](https://github.com/lotta-schule/lotta/pull/23))
+- **core:** Add endpoints returning tenant analytics data ([#24](https://github.com/lotta-schule/lotta/pull/24))
+- **core:** Automatically unpublish articles of single just-deleted group ([#26](https://github.com/lotta-schule/lotta/pull/26))
+- **core:** find users with *no group* via admin user search ([#27](https://github.com/lotta-schule/lotta/pull/27))
+- **hubert:** use native html dialogs ([#251](https://github.com/lotta-schule/lotta/pull/251))
+- **hubert:** Create Pill button ([#280](https://github.com/lotta-schule/lotta/pull/280))
+- **hubert:** Allow confirming combobox input on other keys than ENTER ([#298](https://github.com/lotta-schule/lotta/pull/298))
+- **search:** Remove Elasticsearch, execute search via postgres ([8ac3f018](https://github.com/lotta-schule/lotta/commit/8ac3f018))
+- **webapp:** Add new media browser ([#214](https://github.com/lotta-schule/lotta/pull/214))
+- **webapp:** User App Router for admin section ([#250](https://github.com/lotta-schule/lotta/pull/250))
+- **webapp:** drag-drop library replacement ([#262](https://github.com/lotta-schule/lotta/pull/262))
+- **webapp:** Limit height of images in IMAGE ContentModule to roughly screen height, with option to disable ([#259](https://github.com/lotta-schule/lotta/pull/259))
+- **webapp:** Do not show multimedia modules if no file is set ([#269](https://github.com/lotta-schule/lotta/pull/269))
+- **webapp:** Messaging: Compose message should not have autofocus ([#268](https://github.com/lotta-schule/lotta/pull/268))
+- **webapp:** ArticlesByTag - break long words (tags) ([#270](https://github.com/lotta-schule/lotta/pull/270))
+- **webapp:** ArticlePreview: Added gradient to AvatarGroup for transition with preview text ([#271](https://github.com/lotta-schule/lotta/pull/271))
+- **webapp:** Do not autoclose config of image + title contentmodules ([#272](https://github.com/lotta-schule/lotta/pull/272))
+- **webapp:** Add additional fonts ([#273](https://github.com/lotta-schule/lotta/pull/273))
+- **webapp:** Analytics: Add '30d' and property breakdown views ([#293](https://github.com/lotta-schule/lotta/pull/293))
+- **webapp:** Optimize admin/analytics page for mobile ([57dfc52b](https://github.com/lotta-schule/lotta/commit/57dfc52b))
+- **webapp:** Add list of all article's users to UserArticlesDialog ([#295](https://github.com/lotta-schule/lotta/pull/295))
+- **webapp:** Add Search to FileExplorer ([#296](https://github.com/lotta-schule/lotta/pull/296))
+- **webapp:** Use LoadingButton in ProfilePage ([#341](https://github.com/lotta-schule/lotta/pull/341))
+- **webapp:** Make Loadingbutton fail when login fails ([#344](https://github.com/lotta-schule/lotta/pull/344))
+- **webapp:** Add LoadingButton to UserEditPermissionsDialog ([#345](https://github.com/lotta-schule/lotta/pull/345))
+
+### 🩹 Fixes
+
+- Fix wrong usage of Enum#slice (which MUST have an upper border ([6803bf3e](https://github.com/lotta-schule/lotta/commit/6803bf3e))
+- Feedback mails: Set feedback_sender as from ([5f28655a](https://github.com/lotta-schule/lotta/commit/5f28655a))
+- **core:** Fix otel bug with wrong var pinning ([52be4546](https://github.com/lotta-schule/lotta/commit/52be4546))
+- **core:** Remove doubled code ([015cb836](https://github.com/lotta-schule/lotta/commit/015cb836))
+- **core:** Make PushNotification schedule call async ([afad54b7](https://github.com/lotta-schule/lotta/commit/afad54b7))
+- **core:** Make pushnotifications be sent activly instead of being triggered ([24a13cfd](https://github.com/lotta-schule/lotta/commit/24a13cfd))
+- **core-api:** Database: Make UserGroup.is_admin_group non-nullable ([#319](https://github.com/lotta-schule/lotta/pull/319))
+- **core-api:** DB: Make sortkey of usergroup non-nullable ([#320](https://github.com/lotta-schule/lotta/pull/320))
+- **core-api:** Allow authInfo to return null fields ([#327](https://github.com/lotta-schule/lotta/pull/327))
+- **hubert:** correctly center LoadingButton icon ( ([#215](https://github.com/lotta-schule/lotta/pull/215))
+- **hubert:** Adjust CircularProgress textLength ([#238](https://github.com/lotta-schule/lotta/pull/238))
+- **hubert:** Move @epic-web/invariant dep from workspace root to hubert ([eaec8e9d](https://github.com/lotta-schule/lotta/commit/eaec8e9d))
+- **hubert:** Fix autogrowing textareas not having correct size ([#287](https://github.com/lotta-schule/lotta/pull/287))
+- **hubert:** Fix File Explorer not being visible when in dialog on safari ([#289](https://github.com/lotta-schule/lotta/pull/289))
+- **hubert:** Reset Styling of GroupedButtons in and with dialogs ([#308](https://github.com/lotta-schule/lotta/pull/308))
+- **hubert:** Set correct circular progress size ([#310](https://github.com/lotta-schule/lotta/pull/310))
+- **hubert:** Listbox would throw error when it should be focused ([#321](https://github.com/lotta-schule/lotta/pull/321))
+- **hubert:** Limit the height of Select listboxes ([#335](https://github.com/lotta-schule/lotta/pull/335))
+- **hubert:** Stop propagation of onClose event in dialogs ([#343](https://github.com/lotta-schule/lotta/pull/343))
+- **webapp:** SplitView is too broad on mobile devices so view can be outscrolled ([#242](https://github.com/lotta-schule/lotta/pull/242))
+- **webapp:** Fix Link to categories in admin page ([#256](https://github.com/lotta-schule/lotta/pull/256))
+- **webapp:** Fix problem where opening the admin page of a group could crash app ([#263](https://github.com/lotta-schule/lotta/pull/263))
+- **webapp:** Fix problem not showing image contentmodule in editmode ([#288](https://github.com/lotta-schule/lotta/pull/288))
+- **webapp:** Rename color themes ([#297](https://github.com/lotta-schule/lotta/pull/297))
+- **webapp:** Admin-Section: General: Stop logo from overlapping description on mobile devices ([#307](https://github.com/lotta-schule/lotta/pull/307))
+- **webapp:** Fix selecting files in admin routes ([#318](https://github.com/lotta-schule/lotta/pull/318))
+- **webapp:** CreateArticleDialog did not open correctly in UserNavigation ([#323](https://github.com/lotta-schule/lotta/pull/323))
+- **webapp:** set correct multipart header ([#334](https://github.com/lotta-schule/lotta/pull/334))
+- **webapp:** AdminSection / Users: Make Popovers on Safari not overflow ([#339](https://github.com/lotta-schule/lotta/pull/339))
+- **webapp:** AdminPage: Make AdminPage scrollable again ([#347](https://github.com/lotta-schule/lotta/pull/347))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+- Billy
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
