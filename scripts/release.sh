@@ -26,4 +26,4 @@ done
 
 # Update changelog
 
-pnpm nx release changelog
+pnpm nx release changelog $NEW_VERSION

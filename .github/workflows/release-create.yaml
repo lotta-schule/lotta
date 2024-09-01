@@ -16,6 +16,8 @@ jobs:
   create-release:
     name: 'Create release'
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -32,11 +34,19 @@ jobs:
         with:
           version: 8
 
+      - name: Install node dependencies
+        run: pnpm install
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
+
+      - name: Push Git Tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@users.noreply.github.com"
 
       - name: Prepare next version
         id: bump
@@ -50,11 +60,11 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "github-actions@users.noreply.github.com"
-          git tag ${{ steps.bump.outputs.version }}
-          git push origin ${{ steps.bump.outputs.version }}
+          git push origin tag v${{ steps.bump.outputs.version }}
 
   deploy-release:
     name: 'Deploy Release'
+    needs: create-release
     uses: ./.github/workflows/release-push.yaml
     with:
-      tag: ${{ steps.bump.outputs.version }}
+      tag: ${{ needs.create-release.outputs.version }}
