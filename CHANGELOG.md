@@ -1,3 +1,19 @@
+## 5.0.2 (2024-09-01)
+
+
+### 🚀 Features
+
+- Provide an identifier for tenants to have uniform recognizable addresses ([1c70a32f](https://github.com/lotta-schule/lotta/commit/1c70a32f))
+
+### 🩹 Fixes
+
+- **webapp:** Stop ArticleReaction dialog from disappearing from mobile viewport ([#348](https://github.com/lotta-schule/lotta/pull/348))
+- **webapp:** Stop UserArticlesDialog from scrolling everywhere ([#349](https://github.com/lotta-schule/lotta/pull/349))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.1 (2024-09-01)
 
 This was a version bump only, there were no code changes.
