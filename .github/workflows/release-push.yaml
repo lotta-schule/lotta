@@ -1,7 +1,7 @@
 ---
 name: 'Push a new release to production'
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       tag:
         description: 'the tag to release'

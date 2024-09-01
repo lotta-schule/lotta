@@ -1,5 +1,5 @@
 ---
-name: 'Update version and create tag'
+name: 'Release: Create new version'
 on:
   workflow_dispatch:
     inputs:
