@@ -1,3 +1,14 @@
+## 5.0.5 (2024-09-01)
+
+
+### 🩹 Fixes
+
+- **core-api:** Apply SQL.Sandbox pooling for ecto only in test env ([d879ed4f](https://github.com/lotta-schule/lotta/commit/d879ed4f))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni
+
 ## 5.0.4 (2024-09-01)
 
 
