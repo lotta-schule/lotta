@@ -231,22 +231,24 @@ export const ArticlePreview = React.memo(
               </div>
             )}
           </div>
-          <div className={styles.tagsGridItem}>
-            {!!onUpdateArticle && (
-              <TagsSelect
-                value={article.tags ?? []}
-                onChange={(tags) => {
-                  onUpdateArticle({ ...article, tags });
-                }}
-              />
-            )}
-            {!onUpdateArticle &&
-              article.tags?.map((tag) => (
-                <Tag key={tag} onClick={() => setSelectedTag(tag)}>
-                  {tag}
-                </Tag>
-              ))}
-          </div>
+          {layout !== '2-columns' && (
+            <div className={styles.tagsGridItem}>
+              {!!onUpdateArticle && (
+                <TagsSelect
+                  value={article.tags ?? []}
+                  onChange={(tags) => {
+                    onUpdateArticle({ ...article, tags });
+                  }}
+                />
+              )}
+              {!onUpdateArticle &&
+                article.tags?.map((tag) => (
+                  <Tag key={tag} onClick={() => setSelectedTag(tag)}>
+                    {tag}
+                  </Tag>
+                ))}
+            </div>
+          )}
           <div className={styles.dateGridItem}>
             <time
               className={clsx(styles.date, 'dt-updated')}
@@ -350,13 +352,13 @@ export const ArticlePreview = React.memo(
             )}
           </div>
         </div>
-        {TagDetailsDialog && (
+        {layout !== '2-columns' && selectedTag && (
           <TagDetailsDialog
             tag={selectedTag}
             onRequestClose={() => setSelectedTag(null)}
           />
         )}
-        {UserArticlesDialog && (
+        {selectedUsers && (
           <UserArticlesDialog
             users={selectedUsers}
             onRequestClose={() => setSelectedUser(null)}

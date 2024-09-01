@@ -1,5 +1,22 @@
 .root {
-  display: flex;
+  .content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: 100%;
+  }
+
+  .tabbar {
+    flex: 0 0 min-content;
+    & > button {
+      margin-bottom: 0;
+    }
+  }
+
+  .tabbar ~ * {
+    flex: 1 1 auto;
+    overflow: auto;
+  }
 
   .tabbarAvatar {
     margin-right: var(--lotta-spacing);

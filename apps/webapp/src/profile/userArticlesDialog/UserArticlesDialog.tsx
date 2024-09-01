@@ -54,10 +54,11 @@ export const UserArticlesDialog = React.memo(
         })}
         onRequestClose={onRequestClose}
       >
-        <DialogContent>
+        <DialogContent className={styles.content}>
           {!!users && (
             <>
               <Tabbar
+                className={styles.tabbar}
                 value={selectedUser?.id}
                 onChange={(userId) => {
                   const newSelectedUser = users.find(({ id }) => userId === id);
