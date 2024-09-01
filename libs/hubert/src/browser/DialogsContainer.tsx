@@ -10,7 +10,10 @@ import {
 export const DialogsContainer = React.memo(() => {
   const { currentAction, setCurrentAction } = useBrowserState();
 
-  const resetAction = React.useCallback(() => setCurrentAction(null), []);
+  const resetAction = React.useCallback(
+    () => setCurrentAction(null),
+    [setCurrentAction]
+  );
 
   return (
     <>

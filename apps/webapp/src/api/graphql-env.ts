@@ -5285,6 +5285,15 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "identifier",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
             "name": "insertedAt",
             "type": {
               "kind": "SCALAR",

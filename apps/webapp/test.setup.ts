@@ -31,7 +31,6 @@ declare global {
       options?: BlobPropertyBag
     ) => Blob & { readonly inputData: BlobPart[] };
   }
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   interface Blob {
     new (
       content: BlobPart[],
@@ -133,6 +132,7 @@ beforeAll(() => {
   });
 
   vi.mock('next/head', () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const ReactDOMServer = require('react-dom/server');
     return {
       __esModule: true,

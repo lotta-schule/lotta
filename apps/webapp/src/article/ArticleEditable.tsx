@@ -64,7 +64,7 @@ export const ArticleEditable = React.memo(
           ),
         }));
       },
-      [article, onUpdateArticle]
+      [onUpdateArticle]
     );
     const createOnRemoveContentModule = React.useCallback(
       (contentModule: ContentModuleModel) => () =>

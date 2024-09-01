@@ -18,7 +18,7 @@ export const useElementFullWindowHeight = (
 
       setHeight(height);
     }
-  }, []);
+  }, [elementRef]);
 
   React.useLayoutEffect(() => {
     if (typeof window.IntersectionObserver === 'undefined') {
@@ -37,7 +37,7 @@ export const useElementFullWindowHeight = (
     if (elementRef.current) {
       observer.observe(elementRef.current);
     }
-  }, [updateHeight]);
+  }, [elementRef, updateHeight]);
 
   React.useEffect(() => {
     window.addEventListener('resize', updateHeight);

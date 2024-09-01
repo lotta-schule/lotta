@@ -5,24 +5,29 @@ import react from 'eslint-plugin-react';
 import reactJsx from 'eslint-plugin-react/configs/jsx-runtime.js';
 import reactRecommended from 'eslint-plugin-react/configs/recommended.js';
 import reactHooks from 'eslint-plugin-react-hooks';
+import testingLibrary from 'eslint-plugin-testing-library';
 import reactCompiler from 'eslint-plugin-react-compiler';
-
+import { fixupConfigRules, fixupPluginRules } from '@eslint/compat';
 import ts from 'typescript-eslint';
 import vitest from 'eslint-plugin-vitest';
 
 /** @type {import('eslint').Linter['getConfigForFile']} */
 const config = [
+  { ignores: ['.next/**/*'] },
   js.configs.recommended,
-  prettierRecommended,
+  {
+    ...prettierRecommended,
+    rules: { ...prettierRecommended.rules, 'prettier/prettier': 'warn' },
+  },
   ...ts.configs.recommended,
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     ...reactRecommended,
     plugins: {
       react,
-      'react-hooks': reactHooks,
-      'react-compiler': reactCompiler,
       ...reactRecommended.plugins,
+      'react-hooks': fixupPluginRules(reactHooks),
+      'react-compiler': reactCompiler,
     },
     languageOptions: {
       ...reactRecommended.languageOptions,
@@ -68,7 +73,8 @@ const config = [
           varsIgnorePattern: '^_',
         },
       ],
-      'react-hooks/rules-of-hooks': 'warn',
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
     },
   },
   {
@@ -80,8 +86,14 @@ const config = [
       '**/test/util.tsx',
     ],
     ...vitest.configs.recommended,
+    ...testingLibrary.configs['flat/react'],
+    plugins: {
+      ...vitest.configs.recommended.plugins,
+      ...fixupPluginRules(testingLibrary.configs['flat/react'].plugins),
+    },
     rules: {
       ...vitest.configs.recommended.rules,
+      ...fixupConfigRules(testingLibrary.configs['flat/react']).rules,
       'react-compiler/react-compiler': 'off',
     },
   },

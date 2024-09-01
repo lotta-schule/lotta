@@ -86,7 +86,7 @@ export const CategoryNavigation = React.memo(() => {
         router.push(`/admin/categories/${category.id}`);
       }
     },
-    [router]
+    [router, selectedCategory?.id]
   );
 
   const onChangeCategories = React.useCallback(
@@ -124,7 +124,7 @@ export const CategoryNavigation = React.memo(() => {
           });
         });
     },
-    []
+    [categories, updateCategory]
   );
 
   return (

@@ -8,8 +8,6 @@ const config = [
     plugins: {
       '@next/next': next,
     },
-  },
-  {
     files: ['**/*.@(mjs|cjs|js|jsx|mts|cts|ts|tsx)'],
     rules: {
       ...next.configs.recommended.rules,

@@ -20,7 +20,7 @@ vi.mock('shared/browser', async (importOriginal) => {
     UserBrowser: ({ onSelect }: UserBrowserProps) => {
       React.useEffect(() => {
         onSelect?.([mockImageFile as any]);
-      }, []);
+      }, [onSelect]);
       return null;
     },
   };

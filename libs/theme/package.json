@@ -6,7 +6,7 @@
   "author": "Alexis Rinaldoni <alexis@rinaldoni.net>",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
+    "lint": "pnpm dlx eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit"
   },
   "type": "module",

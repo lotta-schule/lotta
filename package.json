@@ -13,6 +13,7 @@
     "nx": "nx"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.1.1",
     "@eslint/js": "^9.8.0",
     "@next/eslint-plugin-next": "^14.2.5",
     "@nx/js": "19.5.3",
@@ -50,8 +51,10 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-promise": "^7.0.0",
     "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-compiler": "0.0.0-experimental-9ed098e-20240725",
+    "eslint-plugin-react-compiler": "0.0.0-experimental-17e519c-20240806",
+    "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-storybook": "^0.8.0",
+    "eslint-plugin-testing-library": "^6.3.0",
     "eslint-plugin-vitest": "0.5.4",
     "graphql-tag": "^2.12.6",
     "http-server": "^14.1.1",
@@ -82,6 +85,5 @@
     "patchedDependencies": {
       "next@15.0.0-canary.130": "patches/next@15.0.0-canary.130.patch"
     }
-  },
-  "dependencies": {}
+  }
 }

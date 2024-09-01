@@ -45,7 +45,7 @@ export const DirectorySelector = React.memo(
         .finally(() => {
           setIsLoading(false);
         });
-    }, [currentNode, getNodesForParent, filter]);
+    }, [currentNode, getNodesForParent, filter, value]);
 
     return (
       <div>

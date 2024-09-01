@@ -39,7 +39,7 @@ export const MoveNodesDialog = React.memo(() => {
         currentAction?.paths.at(0)?.slice(0, -1).filter(isDirectoryNode) ?? []
       );
     }
-  }, [currentAction?.type]);
+  }, [currentAction]);
 
   const nodeFilter = React.useCallback(
     (nodePath: BrowserPath<'directory'>) =>

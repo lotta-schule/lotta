@@ -52,7 +52,7 @@ export const Presentation = React.memo(
         { title: 'Bildungseinrichtung', theme: defaultTheme },
         ...additionalThemes,
       ],
-      []
+      [additionalThemes]
     );
 
     const [customTheme, setCustomTheme] = React.useState<

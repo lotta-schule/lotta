@@ -63,15 +63,18 @@ export const NodeListItem = React.memo(
 
     const isUploadAllowed = React.useMemo(
       () => isDirectoryNode(node) && canEdit(nodePath),
-      [canEdit]
+      [canEdit, node, nodePath]
     );
 
-    const onDropAccepted = React.useCallback((files: File[]) => {
-      onNavigate(nodePath as BrowserPath<'directory'>);
-      for (const file of files) {
-        uploadClient?.addFile?.(file, node as BrowserNode<'directory'>);
-      }
-    }, []);
+    const onDropAccepted = React.useCallback(
+      (files: File[]) => {
+        onNavigate(nodePath as BrowserPath<'directory'>);
+        for (const file of files) {
+          uploadClient?.addFile?.(file, node as BrowserNode<'directory'>);
+        }
+      },
+      [node, nodePath, onNavigate, uploadClient]
+    );
     const { getRootProps, isDragAccept, isDragActive, isDragReject, rootRef } =
       useDropzone({
         multiple: true,
@@ -94,7 +97,7 @@ export const NodeListItem = React.memo(
     const isOpen = React.useMemo(
       () =>
         node.type === 'directory' && currentPath.some((n) => n.id === node.id),
-      [currentPath, node.id]
+      [currentPath, node.id, node.type]
     );
 
     const isRenaming = React.useMemo(
@@ -121,7 +124,7 @@ export const NodeListItem = React.memo(
       }
 
       return <FileIcon mimeType={node.meta.mimeType} />;
-    }, [node, isOpen, onRequestNodeIcon]);
+    }, [onRequestNodeIcon, node, isSelected, isOpen]);
 
     React.useEffect(() => {
       if (isSelected && rootRef.current) {
@@ -130,7 +133,7 @@ export const NodeListItem = React.memo(
           behavior: 'smooth',
         });
       }
-    }, [isSelected]);
+    }, [isSelected, rootRef]);
 
     const dropzoneProps = getRootProps({
       role: 'option',

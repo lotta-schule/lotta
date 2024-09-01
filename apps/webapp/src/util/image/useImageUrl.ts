@@ -68,7 +68,7 @@ export const useUrlCreator = (src: string) => {
         format,
       });
     },
-    [url]
+    [src, url]
   );
 };
 

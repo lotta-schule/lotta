@@ -7,7 +7,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "test": "vitest --coverage",
-    "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
+    "lint": "pnpm dlx eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit"
   },
   "type": "module",

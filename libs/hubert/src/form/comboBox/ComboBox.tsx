@@ -151,6 +151,7 @@ export const ComboBox = React.memo(
         .finally(() => {
           setIsLoading(false);
         });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchText]);
 
     const state = useComboBoxState({
@@ -204,6 +205,7 @@ export const ComboBox = React.memo(
       if (item) {
         state.selectionManager.setFocusedKey(item.key as string | number);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.inputValue]);
 
     const buttonRef = React.useRef<HTMLButtonElement>(null);

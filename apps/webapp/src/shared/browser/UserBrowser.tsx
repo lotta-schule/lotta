@@ -79,7 +79,7 @@ export const UserBrowser = React.memo(
 
           return makeBrowserNodes(result.data) ?? [];
         },
-        [fetchDirectoriesAndFiles, makeBrowserNodes, baseUrl]
+        [fetchDirectoriesAndFiles]
       );
 
     const canEdit: BrowserProps['canEdit'] = React.useMemo(
@@ -124,31 +124,28 @@ export const UserBrowser = React.memo(
       [baseUrl]
     );
 
-    const getMetadata = React.useCallback(
-      (node: BrowserNode) => {
-        const base = {
-          'Erstellt am': format(new Date(node.meta.insertedAt), 'Pp', {
-            locale: de,
-          }),
-        };
+    const getMetadata = React.useCallback((node: BrowserNode) => {
+      const base = {
+        'Erstellt am': format(new Date(node.meta.insertedAt), 'Pp', {
+          locale: de,
+        }),
+      };
 
-        if (isFileNode(node)) {
-          return {
-            ...base,
-            Größe: new FileSize(node.meta.filesize).humanize(),
-            typ: node.meta.mimeType,
-            Formate: node.meta.fileConversions?.length ?? 0,
-            Nutzung: <FileUsageOverview file={node.meta} />,
-          };
-        } else if (isDirectoryNode(node)) {
-          return {
-            ...base,
-            ...(node.meta.user === null ? { Sichtbarkeit: 'Öffentlich' } : {}),
-          };
-        }
-      },
-      [baseUrl]
-    );
+      if (isFileNode(node)) {
+        return {
+          ...base,
+          Größe: new FileSize(node.meta.filesize).humanize(),
+          typ: node.meta.mimeType,
+          Formate: node.meta.fileConversions?.length ?? 0,
+          Nutzung: <FileUsageOverview file={node.meta} />,
+        };
+      } else if (isDirectoryNode(node)) {
+        return {
+          ...base,
+          ...(node.meta.user === null ? { Sichtbarkeit: 'Öffentlich' } : {}),
+        };
+      }
+    }, []);
 
     const mode: BrowserMode = React.useMemo(() => {
       if (onSelect) {
@@ -159,9 +156,12 @@ export const UserBrowser = React.memo(
 
     return (
       <Browser
-        onSelect={React.useCallback((nodes: BrowserNode[]) => {
-          onSelect?.(nodes.filter(isFileNode).map((n) => n.meta));
-        }, [])}
+        onSelect={React.useCallback(
+          (nodes: BrowserNode[]) => {
+            onSelect?.(nodes.filter(isFileNode).map((n) => n.meta));
+          },
+          [onSelect]
+        )}
         onRequestChildNodes={onRequestChildNodes}
         renderNodeList={RenderNodeList}
         getPreviewUrl={getPreviewUrl}

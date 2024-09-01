@@ -8,7 +8,7 @@
     "start:prod": "next start",
     "build": "next build",
     "test": "vitest",
-    "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
+    "lint": "pnpm dlx eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit",
     "schema:download": "pnpm dlx get-graphql-schema http://127.0.0.1:4000/api > .tmp/schema.graphql",
     "translations:collect": "pnpm i18next"

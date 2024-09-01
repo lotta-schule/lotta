@@ -75,7 +75,7 @@ export const SearchResultNodeList = React.memo(
           onSelect?.([nextSearchResults]);
         }
       },
-      [onSelect, onNavigate, selected]
+      [results, onSelect, selectedIds]
     );
 
     React.useEffect(() => {

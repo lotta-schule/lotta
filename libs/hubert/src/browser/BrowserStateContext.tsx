@@ -175,7 +175,7 @@ export const useBrowserState = () => {
   const context = React.useContext(BrowserStateContext);
   const resetAction = React.useCallback(
     () => context?.setCurrentAction(null),
-    [context?.setCurrentAction]
+    [context]
   );
   if (!context) {
     throw new Error(

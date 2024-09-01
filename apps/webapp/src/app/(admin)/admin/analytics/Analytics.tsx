@@ -54,7 +54,7 @@ export const Analytics = React.memo(() => {
         label: format(date, 'MMMM yyyy', { locale: de }),
       })),
     ],
-    [t, availableMonths]
+    [THIRTYDAYS_PERIOD, t, availableMonths]
   );
 
   const [currentPeriod, setCurrentPeriod] = React.useState(possiblePeriods[0]);

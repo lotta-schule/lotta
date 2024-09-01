@@ -80,7 +80,7 @@ export const MetricsChart = React.memo(
             })) ?? [],
         },
       ],
-      [metrics]
+      [metric, metrics, t]
     );
 
     return (
