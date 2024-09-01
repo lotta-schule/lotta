@@ -49,7 +49,7 @@ export const FilePreview = React.memo(({ className }: FilePreviewProps) => {
   const meta = React.useMemo(() => {
     const node = nodePath?.at(-1);
     return node && (getMetadata?.(node) || node.meta);
-  }, [nodePath]);
+  }, [getMetadata, nodePath]);
 
   React.useEffect(() => {
     if (previewSectionRef.current && wrapperRef.current) {

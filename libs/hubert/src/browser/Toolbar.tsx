@@ -23,7 +23,6 @@ export type ToolbarProps = {
 export const Toolbar = React.memo(({ className }: ToolbarProps) => {
   const {
     currentPath,
-    selected,
     currentSearchResults,
     onNavigate,
     onSelect,
@@ -44,7 +43,7 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
     () =>
       [...currentPath].reverse().find((node) => node.type === 'directory')
         ?.name ?? <Home />,
-    [selected, currentPath]
+    [currentPath]
   );
 
   const isUploadAllowed = React.useMemo(() => {

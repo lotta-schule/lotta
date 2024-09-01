@@ -63,7 +63,7 @@ export const FileIcon = React.memo(({ mimeType, ...props }: FileIconProps) => {
       default:
         return <File {...props} />;
     }
-  }, [type]);
+  }, [props, type]);
 
   return Icon;
 });

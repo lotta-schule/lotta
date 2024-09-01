@@ -13,13 +13,18 @@ export const Textarea = ({ maxHeight, ref, ...props }: TextareaProps) => {
   const [textareaHeight, setTextareaHeight] = React.useState('auto');
   const [parentHeight, setParentHeight] = React.useState('auto');
 
-  const setInputHeight = (elem: HTMLTextAreaElement) => {
-    const height = `min(${elem.scrollHeight}px, ${
-      typeof maxHeight === 'number' ? `${maxHeight}px` : (maxHeight ?? '100vh')
-    })`;
-    setParentHeight(height);
-    setTextareaHeight(`calc(calc(0.5 * var(--lotta-spacing)) + ${height})`);
-  };
+  const setInputHeight = React.useCallback(
+    (elem: HTMLTextAreaElement) => {
+      const height = `min(${elem.scrollHeight}px, ${
+        typeof maxHeight === 'number'
+          ? `${maxHeight}px`
+          : (maxHeight ?? '100vh')
+      })`;
+      setParentHeight(height);
+      setTextareaHeight(`calc(calc(0.5 * var(--lotta-spacing)) + ${height})`);
+    },
+    [maxHeight]
+  );
 
   React.useEffect(() => {
     if (props.value === '' || !elem) {
@@ -29,7 +34,7 @@ export const Textarea = ({ maxHeight, ref, ...props }: TextareaProps) => {
     }
 
     setInputHeight(elem);
-  }, [props.value, maxHeight, elem]);
+  }, [props.value, maxHeight, elem, setInputHeight]);
 
   const onChange = React.useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -49,7 +54,7 @@ export const Textarea = ({ maxHeight, ref, ...props }: TextareaProps) => {
         setInputHeight(elem);
       }
     },
-    [elem, props.onChange]
+    [elem, props, setInputHeight]
   );
 
   return (

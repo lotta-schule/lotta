@@ -15,7 +15,10 @@ import vitest from 'eslint-plugin-vitest';
 const config = [
   { ignores: ['.next/**/*'] },
   js.configs.recommended,
-  prettierRecommended,
+  {
+    ...prettierRecommended,
+    rules: { ...prettierRecommended.rules, 'prettier/prettier': 'warn' },
+  },
   ...ts.configs.recommended,
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],

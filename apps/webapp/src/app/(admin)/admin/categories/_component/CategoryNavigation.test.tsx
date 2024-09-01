@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { render, waitFor, within } from 'test/util';
-import { SplitViewProvider } from '@lotta-schule/hubert';
 import { useParams, useRouter } from 'next/navigation';
 import {
   allCategories,
@@ -14,10 +13,6 @@ import userEvent from '@testing-library/user-event';
 import { MockRouter } from 'test/mocks';
 import { MockedFunction } from 'vitest';
 
-const renderWithContext: typeof render = (children, ...other) => {
-  return render(<SplitViewProvider>{children}</SplitViewProvider>, ...other);
-};
-
 describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNavigation', () => {
   const topLevelCategories = allCategories.filter((c) => !c.category);
   const router: MockRouter = useRouter() as any;
@@ -27,7 +22,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
   });
 
   it('should render all top-level-categories', async () => {
-    const screen = renderWithContext(<CategoryNavigation />, {});
+    const screen = render(<CategoryNavigation />, {});
     await waitFor(() => {
       expect([
         ...screen
@@ -44,7 +39,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
     describe('select category', () => {
       it('should select a start category on click', async () => {
         const fireEvent = userEvent.setup();
-        const screen = renderWithContext(<CategoryNavigation />, {});
+        const screen = render(<CategoryNavigation />, {});
         await waitFor(() => {
           expect(
             screen.getByRole('listitem', { name: /start/i })
@@ -62,7 +57,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
 
       it('should select a common category on click', async () => {
         const fireEvent = userEvent.setup();
-        const screen = renderWithContext(<CategoryNavigation />, {});
+        const screen = render(<CategoryNavigation />, {});
         await waitFor(() => {
           expect(
             screen.getByRole('listitem', { name: /fächer/i })
@@ -82,7 +77,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
 
       it('should select a subcategory on click', async () => {
         const fireEvent = userEvent.setup();
-        const screen = renderWithContext(<CategoryNavigation />, {});
+        const screen = render(<CategoryNavigation />, {});
         await waitFor(() => {
           expect(
             screen.getByRole('listitem', { name: /fächer/i })
@@ -117,7 +112,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
 
       it('should select a sidenav-category on click', async () => {
         const fireEvent = userEvent.setup();
-        const screen = renderWithContext(<CategoryNavigation />, {});
+        const screen = render(<CategoryNavigation />, {});
         await waitFor(() => {
           expect(
             screen.getByRole('listitem', { name: /datenschutz/i })
@@ -137,7 +132,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
     });
 
     it('should show subtree when parent-tree is selected', async () => {
-      const screen = renderWithContext(<CategoryNavigation />, {});
+      const screen = render(<CategoryNavigation />, {});
       (useParams as MockedFunction<typeof useParams>).mockReturnValue({
         categoryId: FaecherCategory.id,
       });
@@ -151,7 +146,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
     });
 
     it('should show sibblings and parent subtree is selected', async () => {
-      const screen = renderWithContext(<CategoryNavigation />, {});
+      const screen = render(<CategoryNavigation />, {});
       (useParams as MockedFunction<typeof useParams>).mockReturnValue({
         categoryId: MatheCategory.id,
       });

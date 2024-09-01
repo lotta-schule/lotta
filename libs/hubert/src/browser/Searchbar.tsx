@@ -38,7 +38,13 @@ export const Searchbar = React.memo(({ className }: SearchbarProps) => {
     return () => {
       isCancelled = true;
     };
-  }, [debouncedSearchtext]);
+  }, [
+    debouncedSearchtext,
+    searchNodes,
+    searchtext,
+    setCurrentSearchResults,
+    setIsFilePreviewVisible,
+  ]);
 
   React.useEffect(() => {
     if (currentSearchResults === null) {

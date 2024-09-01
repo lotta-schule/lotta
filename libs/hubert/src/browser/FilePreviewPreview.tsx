@@ -25,7 +25,7 @@ export const FilePreviewPreview = ({ className }: FilePreviewPreviewProps) => {
       .map((s) => getPreviewUrl?.(s.at(-1)!) ?? null)
       .filter(Boolean)
       .slice(0, 5) as string[];
-  }, [selected]);
+  }, [getPreviewUrl, selected]);
 
   const nodeIcon = React.useMemo(() => {
     if (selected.length !== 1) {

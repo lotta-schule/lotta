@@ -157,7 +157,7 @@ export const LoadingButton = ({
         form.removeEventListener('submit', callback);
       };
     }
-  }, [executeHandler]);
+  }, [executeHandler, props.type, ref]);
 
   const currentIcon = React.useMemo(() => {
     switch (currentState) {
@@ -170,7 +170,7 @@ export const LoadingButton = ({
       default:
         return icon;
     }
-  }, [currentState]);
+  }, [currentState, icon]);
 
   const animatedIcon = React.useMemo(
     () => (
@@ -190,7 +190,7 @@ export const LoadingButton = ({
         {currentIcon}
       </motion.div>
     ),
-    [currentState, currentIcon]
+    [currentState, successIcon, errorIcon, currentIcon]
   );
   return (
     <Button

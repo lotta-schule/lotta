@@ -105,11 +105,7 @@ export const CalendarView = React.memo(
       fetchAllEvents().then((events) => {
         if (mounted) {
           setEvents(
-            events.map((ev) => ({
-              ...ev,
-              start: ev.start,
-              end: ev.end,
-            }))
+            events.map((ev) => ({ ...ev, start: ev.start, end: ev.end }))
           );
         }
       });

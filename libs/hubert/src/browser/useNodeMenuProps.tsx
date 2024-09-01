@@ -5,9 +5,14 @@ import { BrowserPath, useBrowserState } from './BrowserStateContext';
 import { isDirectoryNode, isFileNode } from './utils';
 
 export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
-  const nodePaths = Array.isArray(nodePath.at(0))
-    ? (nodePath as BrowserPath[])
-    : [nodePath as BrowserPath];
+  const nodePaths = React.useMemo(
+    () =>
+      Array.isArray(nodePath.at(0))
+        ? (nodePath as BrowserPath[])
+        : [nodePath as BrowserPath],
+    [nodePath]
+  );
+
   const {
     setCurrentAction,
     setIsFilePreviewVisible,
@@ -54,7 +59,7 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
           </Item>
         ),
     ].filter(Boolean) as React.ReactElement[];
-  }, [nodePaths]);
+  }, [deleteNode, downloadUrl, moveNode, nodePaths, renameNode]);
 
   const onAction = React.useCallback(
     (action: React.Key) => {
@@ -96,7 +101,7 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
         }
       }
     },
-    [downloadUrl, nodePaths, setCurrentAction]
+    [downloadUrl, nodePaths, setCurrentAction, setIsFilePreviewVisible]
   );
 
   return React.useMemo(

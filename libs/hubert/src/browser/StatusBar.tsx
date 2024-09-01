@@ -32,7 +32,7 @@ export const StatusBar = React.memo(({ className }: StatusBarProps) => {
         onSelect(path.length ? [path] : []);
       }
     },
-    [onNavigate]
+    [currentPath, onNavigate, onSelect, setCurrentSearchResults]
   );
 
   const searchDirectoriesCount = React.useMemo(

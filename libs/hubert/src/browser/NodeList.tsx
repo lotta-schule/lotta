@@ -184,7 +184,17 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
         );
       }
     },
-    [nodes, sortedSelected, onSelect]
+    [
+      sortedSelected,
+      path,
+      nodes,
+      onSelect,
+      mode,
+      currentPath,
+      onNavigate,
+      selected,
+      isNodeDisabled,
+    ]
   );
 
   React.useEffect(() => {
@@ -211,7 +221,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
         );
       }
     }
-  }, [nodes]);
+  }, [nodes, onSelect, path, selected]);
 
   const isUploadAllowed = React.useMemo(() => {
     if (path.length === 0) {
@@ -219,7 +229,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
     }
 
     return canEdit(currentPath);
-  }, [currentPath, canEdit]);
+  }, [path.length, canEdit, currentPath]);
 
   const { getRootProps, isDragAccept, isDragActive, isDragReject, rootRef } =
     useDropzone({
@@ -247,7 +257,7 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
         behavior: 'smooth',
       });
     }
-  }, [path.length, currentPath.length, isMobile, isMounted]);
+  }, [path.length, currentPath.length, isMobile, isMounted, rootRef]);
 
   if (!nodes?.length) {
     return (
