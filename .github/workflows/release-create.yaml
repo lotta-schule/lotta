@@ -19,8 +19,17 @@ jobs:
     outputs:
       version: ${{ steps.bump.outputs.version }}
     steps:
+      - uses: actions/create-github-app-token@v1
+        name: Create GitHub App Token to bypass restricions on committing to a protected branch
+        id: app-token
+        with:
+          app-id: ${{ vars.GH_RELEASE_APP_ID }}
+          private-key: ${{ secrets.GH_RELEASE_APP_PRIVKEY }}
+
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Find Tag
         id: tagger
@@ -43,7 +52,7 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      - name: Push Git Tag
+      - name: Setup Git User
         run: |
           git config user.name "GitHub Actions"
           git config user.email "github-actions@users.noreply.github.com"
@@ -58,8 +67,6 @@ jobs:
 
       - name: Push Git Tag
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "github-actions@users.noreply.github.com"
           git push origin $(git branch --show-current)
           git push origin tag v${{ steps.bump.outputs.version }}
 
