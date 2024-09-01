@@ -76,3 +76,4 @@ jobs:
     uses: ./.github/workflows/release-push.yaml
     with:
       tag: ${{ needs.create-release.outputs.version }}
+    secrets: inherit
