@@ -175,12 +175,7 @@ config :lotta,
        password: SystemConfig.get("POSTGRES_PASSWORD"),
        database: SystemConfig.get("POSTGRES_DB"),
        hostname: SystemConfig.get("POSTGRES_HOST"),
-       pool_size: SystemConfig.get("POSTGRES_POOL_SIZE", cast: :integer),
-       pool:
-         (case config_env() do
-            :test -> Ecto.Adapters.SQL.Sandbox
-            _ -> Ecto.Adapters.Postgres
-          end)
+       pool_size: SystemConfig.get("POSTGRES_POOL_SIZE", cast: :integer)
 
 config :lotta, :rabbitmq,
   url:
