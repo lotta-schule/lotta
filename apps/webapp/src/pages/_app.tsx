@@ -35,7 +35,7 @@ const LottaWebApp = ({
     return <TenantNotFoundErrorPage />;
   }
 
-  const baseHost = process.env.NEXT_PUBLIC_BASE_HOST;
+  const allHost = `all.${process.env.NEXT_PUBLIC_BASE_HOST}`;
   const identifier = `${tenant.slug}.${process.env.NEXT_PUBLIC_BASE_HOST}`;
   const origin =
     requestBaseUrl ??
@@ -60,7 +60,7 @@ const LottaWebApp = ({
           ></script>
           <script
             defer
-            data-domain={baseHost}
+            data-domain={allHost}
             data-api="/p/e"
             src="/p/script.js"
           ></script>
