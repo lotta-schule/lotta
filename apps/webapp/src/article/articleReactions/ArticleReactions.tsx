@@ -27,6 +27,7 @@ export type ArticleReactionsProps = {
 
 export const ArticleReactions = React.memo(
   ({ article }: ArticleReactionsProps) => {
+    const ref = React.useRef<HTMLDivElement>(null);
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const typeButtonRef = React.useRef<HTMLButtonElement | null>(null);
     const [isReactionSelectorOpen, setIsReactionSelectorOpen] =
@@ -65,8 +66,25 @@ export const ArticleReactions = React.memo(
       [selectedReactionType, reactionCounts]
     );
 
+    const popperModifiers = React.useMemo(() => {
+      const boundary = ref.current?.parentElement;
+
+      if (!boundary) {
+        return undefined;
+      }
+
+      return [
+        {
+          name: 'preventOverflow',
+          options: {
+            boundary,
+          },
+        },
+      ];
+    }, []);
+
     return (
-      <div data-testid="ArticleReactions" className={styles.root}>
+      <div data-testid="ArticleReactions" className={styles.root} ref={ref}>
         <ReactionSelector
           trigger={buttonRef.current!}
           isOpen={isReactionSelectorOpen}
@@ -98,7 +116,8 @@ export const ArticleReactions = React.memo(
         <Popover
           isOpen={!!selectedReactionType}
           trigger={typeButtonRef.current!}
-          placement={'top'}
+          placement={'top-start'}
+          modifiers={popperModifiers}
           onClose={() => setSelectedReactionType(null)}
         >
           <Overlay>

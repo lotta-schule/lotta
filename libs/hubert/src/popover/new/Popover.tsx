@@ -2,13 +2,14 @@
 
 import * as React from 'react';
 import { mergeProps, DismissButton, FocusScope, useOverlay } from 'react-aria';
-import { PopperProps, usePopper } from 'react-popper';
+import { Modifier, PopperProps, usePopper } from 'react-popper';
 import { VirtualElement } from '@popperjs/core';
 
 export type PopoverProps = {
   children: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
+  modifiers?: Modifier<unknown, object>[];
   placement?: PopperProps<unknown>['placement'];
   trigger: Element | VirtualElement | null;
 } & Pick<React.HTMLProps<HTMLDivElement>, 'ref'>;
@@ -18,6 +19,7 @@ export const Popover = ({
   isOpen,
   onClose,
   placement,
+  modifiers,
   trigger,
   ref,
 }: PopoverProps) => {
@@ -44,6 +46,7 @@ export const Popover = ({
     {
       placement,
       strategy: 'fixed',
+      modifiers,
     }
   );
 
