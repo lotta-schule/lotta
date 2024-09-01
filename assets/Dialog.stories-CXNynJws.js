@@ -1,6 +1,0 @@
-import{j as e}from"./jsx-runtime-BjG_zV1W.js";import{H as n,b as p}from"./HubertProvider-BnbjTwn9.js";import"./index-CbIUIaG1.js";import"./index-DsJRWNrc.js";import"./isObjectLike-DExiV3nx.js";import{a as d}from"./chunk-454WOBUV-GZs1KFdJ.js";import"./index-D3ylJrlI.js";import"./_commonjsHelpers-BosuxZz1.js";import"./debounce-DSapFuzV.js";import"./isSymbol-Ba4JPt5E.js";import"./v4-CQkTLCs1.js";const{useArgs:c}=__STORYBOOK_MODULE_PREVIEW_API__,C={title:"overlays/Dialog",component:n,args:{open:!1,onRequestClose:d("onRequestClose")},render:t=>{const[,r]=c();return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:"body { background-color: red; }"}),e.jsx(p,{onClick:()=>r({open:!0}),children:"Dialog öffnen"}),e.jsx(n,{...t,onRequestClose:()=>{var s;(s=t.onRequestClose)==null||s.call(t),r({open:!1})}})]})}},o={args:{title:"Das ist der Titel",children:e.jsx("p",{children:"Hier steht bedeutender Dialog Inhalt"})}};var i,a,l;o.parameters={...o.parameters,docs:{...(i=o.parameters)==null?void 0:i.docs,source:{originalSource:`{
-  args: {
-    title: 'Das ist der Titel',
-    children: <p>Hier steht bedeutender Dialog Inhalt</p>
-  }
-}`,...(l=(a=o.parameters)==null?void 0:a.docs)==null?void 0:l.source}}};const E=["Default"];export{o as Default,E as __namedExportsOrder,C as default};
