@@ -6,7 +6,7 @@ FROM node:${NODE_VERSION}-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV SENTRY_RELEASE=${RELEASE_NAME}
-ENV RELEASE_NAME=${RELEASE_NAME}
+ENV NEXT_PUBLIC_RELEASE_NAME=${RELEASE_NAME}
 
 RUN corepack enable
 WORKDIR /app
@@ -29,6 +29,7 @@ RUN --mount=type=secret,id=sentry_auth_token \
   SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token) \
   NODE_ENV=production \
   NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN} \
+  NEXT_PUBLIC_RELEASE_NAME=${RELEASE_NAME} \
   pnpm --filter ./apps/webapp run build
 RUN cat apps/webapp/next.config.js | sed -z 's/transpileModules: \[[^;]*\],\n//' > apps/webapp/next.config.js
 

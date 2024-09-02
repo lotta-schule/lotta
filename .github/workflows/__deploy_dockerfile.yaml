@@ -69,11 +69,11 @@ jobs:
       - name: Build docker image
         id: build
         run: |
-          tag=$(echo "${{ fromJSON(inputs.tags)[0] }}")
-          base_image="$IMAGE_NAME:$tag"
+          RELEASE_NAME=$(echo "${{ fromJSON(inputs.tags)[0] }}")
+          base_image="$IMAGE_NAME:$RELEASE_NAME"
           docker build \
             --build-arg IMAGE_NAME \
-            --build-arg RELEASE_NAME="$tag" \
+            --build-arg RELEASE_NAME \
             --build-arg SENTRY_DSN \
             --secret id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
             -f "${{ format('{0}/{1}', inputs.working-directory, (inputs.dockerfile || 'Dockerfile')) }}" \

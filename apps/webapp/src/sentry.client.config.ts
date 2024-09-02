@@ -1,7 +1,8 @@
 import * as Sentry from '@sentry/nextjs';
 
-Sentry.init({
+const options: Sentry.BrowserOptions = {
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  release: process.env.NEXT_PUBLIC_RELEASE_NAME,
   // Replay may only be enabled for the client-side
   integrations: [Sentry.replayIntegration()],
 
@@ -14,4 +15,8 @@ Sentry.init({
   // plus for 100% of sessions with an error
   replaysSessionSampleRate: 0.01,
   replaysOnErrorSampleRate: 1.0,
-});
+};
+
+console.log('sentry.client.config.ts: Sentry options', options);
+
+Sentry.init(options);

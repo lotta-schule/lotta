@@ -88,6 +88,8 @@ const nextConfig = {
       '@lotta-schule/hubert/*': resolve(__dirname, '../../libs/hubert/src/*'),
     };
 
+    config.optimization.minimize = false;
+
     return config;
   },
   publicRuntimeConfig: {
@@ -105,6 +107,7 @@ export default withSentryConfig(nextConfig, {
 
   disableLogger: false,
 
+  release: { name: env.NEXT_PUBLIC_RELEASE_NAME },
   org: 'lotta',
   project: 'web',
   widenClientFileUpload: true,

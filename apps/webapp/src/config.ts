@@ -23,4 +23,10 @@ export const appConfig = createConfig({
   APP_ENVIRONMENT: {
     fallback: process.env.NODE_ENV ?? 'development',
   },
+  NEXT_PUBLIC_RELEASE_NAME: {
+    fallback: '',
+  },
+  SERVICE_NAME: {
+    fallback: 'web',
+  },
 });
