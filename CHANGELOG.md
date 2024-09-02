@@ -1,3 +1,19 @@
+## 5.0.6 (2024-09-02)
+
+
+### 🚀 Features
+
+- **webapp:** Enable sentry back in prod ([70dac006](https://github.com/lotta-schule/lotta/commit/70dac006))
+
+### 🩹 Fixes
+
+- **core-api:** Correctly handle bad response from analytics tool ([#359](https://github.com/lotta-schule/lotta/pull/359))
+- **core-api:** Send 404 when file has not been found, check id format ([#360](https://github.com/lotta-schule/lotta/pull/360))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.5 (2024-09-01)
 
 
