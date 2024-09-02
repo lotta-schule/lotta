@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import styles from './error.module.scss';
 
-export type FullErrorPageProps = PropsWithChildren<{
+export type FullErrorPageProps = React.PropsWithChildren<{
   title: string;
   imageUrl?: string;
 }>;

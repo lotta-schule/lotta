@@ -21,7 +21,15 @@ exports[`ServerDownErrorPage > should render the ServerDownErrorPage component 1
         Es tut uns leid für die Unannehmlichkeiten, hoffentlich funktioniert alles in ein paar Minuten wieder.
       </p>
       <p>
-        Upsi
+        <strong>
+          <span>
+            Error
+            : 
+          </span>
+          <em>
+            Upsi
+          </em>
+        </strong>
       </p>
     </div>
   </section>

@@ -44,12 +44,7 @@ const LottaWebApp = ({
       : `https://${tenant.host}`);
 
   return (
-    <AppContextProviders
-      tenant={tenant}
-      categories={categories}
-      currentUser={currentUser}
-      requestBaseUrl={origin}
-    >
+    <>
       {process.env.NODE_ENV !== 'development' && (
         <>
           <script
@@ -66,10 +61,17 @@ const LottaWebApp = ({
           ></script>
         </>
       )}
-      <TranslationsProvider>
-        <Component {...componentProps} />
-      </TranslationsProvider>
-    </AppContextProviders>
+      <AppContextProviders
+        tenant={tenant}
+        categories={categories}
+        currentUser={currentUser}
+        requestBaseUrl={origin}
+      >
+        <TranslationsProvider>
+          <Component {...componentProps} />
+        </TranslationsProvider>
+      </AppContextProviders>
+    </>
   );
 };
 

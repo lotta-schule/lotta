@@ -2,9 +2,13 @@
 
 import * as React from 'react';
 import * as Sentry from '@sentry/nextjs';
-import NextError from 'next/error';
+import { t } from 'i18next';
+import { ServerDownErrorPage } from 'layout/error/ServerDownErrorPage';
+import clsx from 'clsx';
 
-export default function GlobalError({
+import styles from './_component/AdminPage.module.scss';
+
+export default function Error({
   error,
 }: {
   error: Error & { digest?: string };
@@ -14,10 +18,13 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html>
-      <body>
-        <NextError statusCode={undefined as any} />
-      </body>
-    </html>
+    <div className={clsx(styles.root, styles.isRootPage)}>
+      <nav>
+        <h2>{t('An unexpected error occured')}</h2>
+      </nav>
+      <div className={clsx(styles.contentSection, styles.takesFullSpace)}>
+        <ServerDownErrorPage error={error} />
+      </div>
+    </div>
   );
 }

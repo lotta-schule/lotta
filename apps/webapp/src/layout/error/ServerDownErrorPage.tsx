@@ -21,7 +21,12 @@ export const ServerDownErrorPage = React.memo(
           Es tut uns leid für die Unannehmlichkeiten, hoffentlich funktioniert
           alles in ein paar Minuten wieder.
         </p>
-        <p>{error.message}</p>
+        <p>
+          <strong>
+            {error.name && <span>{error.name}: </span>}
+            <em>{error.message}</em>
+          </strong>
+        </p>
       </FullErrorPage>
     );
   }

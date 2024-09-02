@@ -83,9 +83,14 @@ export async function middleware(request: NextRequest) {
   } else if (authHeader) {
     console.warn('User does not have a refresh token');
     const accessToken = authHeader.slice(7);
-    const accessTokenJwt = JWT.parse(accessToken);
+    let accessTokenJwt = null;
+    try {
+      accessTokenJwt = JWT.parse(accessToken);
+    } catch (e) {
+      console.error('Error parsing access token', e);
+    }
 
-    if (accessTokenJwt.isValid() && !accessTokenJwt.isExpired(0)) {
+    if (accessTokenJwt?.isValid() && !accessTokenJwt.isExpired(0)) {
       authInfo.accessToken = accessToken;
     }
   }
