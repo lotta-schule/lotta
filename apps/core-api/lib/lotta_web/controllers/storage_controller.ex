@@ -4,16 +4,17 @@ defmodule LottaWeb.StorageController do
   use Phoenix.Controller
 
   import Plug.Conn
+  import Lotta.Guard
 
   alias Lotta.Storage
 
-  def get_file(%{private: %{lotta_tenant: _tenant}} = conn, %{"id" => id} = params) do
+  def get_file(%{private: %{lotta_tenant: tenant}} = conn, %{"id" => id} = params)
+      when not is_nil(tenant) and is_uuid(id) do
     file = Storage.get_file(id)
 
     if is_nil(file) do
       conn
       |> put_status(404)
-      |> put_view(LottaWeb.ErrorView)
       |> render(:"404")
     else
       conn
@@ -29,14 +30,17 @@ defmodule LottaWeb.StorageController do
     end
   end
 
-  def get_file_conversion(%{private: %{lotta_tenant: _tenant}} = conn, %{"id" => id} = params) do
+  def get_file(conn, _params), do: send_resp(conn, 404, "")
+
+  def get_file_conversion(%{private: %{lotta_tenant: tenant}} = conn, %{"id" => id} = params)
+      when not is_nil(tenant) and is_uuid(id) do
     file_conversion = Storage.get_file_conversion(id)
 
     if is_nil(file_conversion) do
       conn
       |> put_status(404)
       |> put_view(LottaWeb.ErrorView)
-      |> render(:"404")
+      |> send_resp()
     else
       conn
       |> put_resp_header("cache-control", "max-age=604800")
@@ -50,6 +54,8 @@ defmodule LottaWeb.StorageController do
       )
     end
   end
+
+  def get_file_conversion(conn, _params), do: send_resp(conn, 404, "")
 
   defp build_processing_options(params) do
     processing_options =
