@@ -88,8 +88,6 @@ const nextConfig = {
       '@lotta-schule/hubert/*': resolve(__dirname, '../../libs/hubert/src/*'),
     };
 
-    config.optimization.minimize = false;
-
     return config;
   },
   publicRuntimeConfig: {
@@ -103,9 +101,9 @@ const nextConfig = {
 
 // sentry should be last, wrapping the rest
 export default withSentryConfig(nextConfig, {
-  silent: false,
+  silent: true,
 
-  disableLogger: false,
+  disableLogger: true,
 
   release: { name: env.NEXT_PUBLIC_RELEASE_NAME },
   org: 'lotta',

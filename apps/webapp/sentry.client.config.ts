@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/nextjs';
 
-const options: Sentry.BrowserOptions = {
+Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   release: process.env.NEXT_PUBLIC_RELEASE_NAME,
   // Replay may only be enabled for the client-side
@@ -9,14 +9,10 @@ const options: Sentry.BrowserOptions = {
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
-  tracesSampleRate: 0.1,
+  tracesSampleRate: 0.15,
 
   // Capture Replay for 10% of all sessions,
   // plus for 100% of sessions with an error
   replaysSessionSampleRate: 0.01,
   replaysOnErrorSampleRate: 1.0,
-};
-
-console.log('sentry.client.config.ts: Sentry options', options);
-
-Sentry.init(options);
+});

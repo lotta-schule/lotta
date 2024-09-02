@@ -58,6 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: '${{ inputs.registry }}/${{ inputs.name }}'
+      RELEASE_NAME: '${{ fromJSON(inputs.tags)[0] }}'
       SENTRY_DSN: '${{ secrets.sentry_dsn }}'
       SENTRY_AUTH_TOKEN: '${{ secrets.sentry_auth_token }}'
     steps:
@@ -69,17 +70,16 @@ jobs:
       - name: Build docker image
         id: build
         run: |
-          RELEASE_NAME=$(echo "${{ fromJSON(inputs.tags)[0] }}")
-          base_image="$IMAGE_NAME:$RELEASE_NAME"
+          BASE_IMAGE="$IMAGE_NAME:$RELEASE_NAME"
           docker build \
             --build-arg IMAGE_NAME \
             --build-arg RELEASE_NAME \
             --build-arg SENTRY_DSN \
             --secret id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
             -f "${{ format('{0}/{1}', inputs.working-directory, (inputs.dockerfile || 'Dockerfile')) }}" \
-            -t $base_image "${{ inputs.working-directory }}"
-          echo "base-image=$base_image" >> $GITHUB_OUTPUT
-          echo "Base image $base_image written to github output"
+            -t $BASE_IMAGE "${{ inputs.working-directory }}"
+          echo "base-image=$BASE_IMAGE" >> $GITHUB_OUTPUT
+          echo "Base image $BASE_IMAGE written to github output"
 
       - name: docker login
         uses: docker/login-action@v1.10.0
