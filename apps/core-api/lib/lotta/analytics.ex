@@ -7,6 +7,8 @@ defmodule Lotta.Analytics do
 
   use Tesla
 
+  require Logger
+
   @doc """
   Get the number of currently active users in (more or less) realtime
 
@@ -18,15 +20,16 @@ defmodule Lotta.Analytics do
     identifier = Urls.get_tenant_identifier(tenant)
 
     with client when not is_nil(client) <- create_client(identifier),
-         {:ok, %{body: body}} <-
+         {:ok, %{body: body, status: status}} when status < 400 <-
            get(client, "/realtime/visitors") do
       {:ok, body}
     else
       nil ->
         {:error, "Analytics is not enabled"}
 
-      {:error, %{status_code: status_code, body: body}} ->
-        {:error, "Failed to get realtime users: #{status_code} - #{body}"}
+      {_, %{status: status, body: body}} ->
+        Logger.error("Failed to get realtime user metrics: (#{status}) #{inspect(body)}")
+        {:error, "Failed to get realtime user metrics: #{status}"}
 
       _ ->
         {:error, "Unknown error"}
@@ -45,7 +48,7 @@ defmodule Lotta.Analytics do
     identifier = Urls.get_tenant_identifier(tenant)
 
     with client when not is_nil(client) <- create_client(identifier),
-         {:ok, %{body: %{"results" => results}}} <-
+         {:ok, %{body: %{"results" => results}, status: status}} when status < 400 <-
            get(client, "/aggregate",
              query: [
                period: period,
@@ -72,8 +75,9 @@ defmodule Lotta.Analytics do
       nil ->
         {:error, "Analytics is not enabled"}
 
-      {:error, %{status_code: status_code, body: body}} ->
-        {:error, "Failed to get realtime users: #{status_code} - #{body}"}
+      {_, %{status: status, body: body}} ->
+        Logger.error("Failed to get aggregation metrics: (#{status}) #{inspect(body)}")
+        {:error, "Failed to get aggregation metrics: #{status}"}
 
       _ ->
         {:error, "Unknown error"}
@@ -95,7 +99,7 @@ defmodule Lotta.Analytics do
     identifier = Urls.get_tenant_identifier(tenant)
 
     with client when not is_nil(client) <- create_client(identifier),
-         {:ok, %{body: %{"results" => results}}} <-
+         {:ok, %{body: %{"results" => results}, status: status}} when status < 400 <-
            get(client, "/timeseries",
              query: [
                period: period,
@@ -111,8 +115,9 @@ defmodule Lotta.Analytics do
       nil ->
         {:error, "Analytics is not enabled"}
 
-      {:error, %{status_code: status_code, body: body}} ->
-        {:error, "Failed to get realtime users: #{status_code} - #{body}"}
+      {_, %{status: status, body: body}} ->
+        Logger.error("Failed to get timeseries metrics: (#{status}) #{inspect(body)}")
+        {:error, "Failed to get timeseries metrics: #{status}"}
 
       _ ->
         {:error, "Unknown error"}
@@ -145,7 +150,7 @@ defmodule Lotta.Analytics do
 
     with client when not is_nil(client) <- create_client(identifier),
          {:ok, [category: prop_category, name: prop_name]} <- parse_property(property_string),
-         {:ok, %{body: %{"results" => results}}} <-
+         {:ok, %{body: %{"results" => results}, status: status}} when status < 400 <-
            get(client, "/breakdown",
              query: [
                period: period,
@@ -171,8 +176,9 @@ defmodule Lotta.Analytics do
       nil ->
         {:error, "Analytics is not enabled"}
 
-      {:error, %{status_code: status_code, body: body}} ->
-        {:error, "Failed to get realtime users: #{status_code} - #{body}"}
+      {_, %{status: status, body: body}} ->
+        Logger.error("Failed to get breakdown metrics: (#{status}) #{inspect(body)}")
+        {:error, "Failed to get breakdown metrics: (#{status})"}
 
       {:error, _error} = error ->
         error
