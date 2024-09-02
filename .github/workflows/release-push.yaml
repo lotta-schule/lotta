@@ -23,7 +23,7 @@ jobs:
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: lotta-schule/${{ matrix.image.name }}
-      tags: ${{ format('["{0}", "{1}"]', github.sha, inputs.tag) }}
+      tags: ${{ format('["{0}", "{1}"]', inputs.tag, github.sha) }}
       working-directory: ${{ matrix.image.working-directory }}
       dockerfile: ${{ matrix.image.dockerfile }}
       checkout-ref: ${{ github.ref }}
