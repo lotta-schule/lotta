@@ -103,7 +103,7 @@ const nextConfig = {
 export default withSentryConfig(nextConfig, {
   silent: false,
 
-  disableLogger: true,
+  disableLogger: false,
 
   org: 'lotta',
   project: 'web',
