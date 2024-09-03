@@ -5,23 +5,32 @@ defmodule LottaWeb.CalendarController do
   use LottaWeb, :controller
 
   import Plug.Conn
+  import Lotta.Guard
 
   alias Lotta.{Calendar, Repo}
 
-  def get(conn, %{"id" => id}) do
+  def get(conn, %{"id" => id}) when is_uuid(id) do
     calendar =
       Calendar.get_calendar(id)
       |> Repo.preload(:events)
 
-    if is_nil(calendar) || !calendar.is_publicly_visible do
-      conn
-      |> put_status(404)
-      |> put_view(LottaWeb.ErrorView)
-      |> render(:"404")
-    else
-      conn
-      |> put_resp_header("content-type", "text/calendar")
-      |> send_resp(200, Calendar.Renderer.to_ics(calendar))
+    case calendar do
+      %Calendar.Calendar{is_publicly_available: true} = calendar ->
+        conn
+        |> put_resp_header("content-type", "text/calendar")
+        |> send_resp(200, Calendar.Renderer.to_ics(calendar))
+
+      _ ->
+        conn
+        |> respond_with(:not_found)
     end
   end
+
+  def get(conn, _params), do: respond_with(conn, :not_found)
+
+  defp respond_with(conn, :not_found),
+    do:
+      conn
+      |> resp(404, "")
+      |> send_resp()
 end

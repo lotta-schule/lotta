@@ -46,8 +46,11 @@ defmodule LottaWeb.ConnCase do
     |> Plug.Conn.put_req_header("authorization", "Bearer #{jwt}")
   end
 
-  def build_tenant_conn(prefix \\ "test") do
+  @doc """
+  Creates a Phoenix ConnTest object with the tenant header set.
+  """
+  def build_tenant_conn([slug: slug] \\ [slug: "test"]) do
     Phoenix.ConnTest.build_conn()
-    |> Plug.Conn.put_req_header("tenant", "slug:#{prefix}")
+    |> Plug.Conn.put_req_header("tenant", "slug:#{slug}")
   end
 end
