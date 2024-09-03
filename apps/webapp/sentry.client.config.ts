@@ -15,4 +15,11 @@ Sentry.init({
   // plus for 100% of sessions with an error
   replaysSessionSampleRate: 0.01,
   replaysOnErrorSampleRate: 1.0,
+
+  ignoreErrors: [
+    // we should remove this when we have finally moved on
+    /Du bist nicht angemeldet/,
+    /Du musst angemeldet sein um das zu tun./,
+    /Du hast nicht die Rechte dir diesen Beitrag anzusehen./,
+  ],
 });
