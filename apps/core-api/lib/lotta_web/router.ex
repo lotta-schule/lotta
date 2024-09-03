@@ -81,7 +81,14 @@ defmodule LottaWeb.Router do
   scope "/admin" do
     pipe_through([:admin_auth])
 
-    live_dashboard("/dashboard")
+    live_dashboard("/live", metrics: LottaWeb.Telemetry)
+
+    scope "/api" do
+      pipe_through(:json_api)
+
+      post("/create-test", LottaWeb.TenantController, :create_test)
+      post("/delete-tenant", LottaWeb.TenantController, :delete_tenant)
+    end
   end
 
   scope "/_debug" do
