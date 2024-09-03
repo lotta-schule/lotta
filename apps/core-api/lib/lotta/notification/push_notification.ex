@@ -93,7 +93,13 @@ defmodule Lotta.Notification.PushNotification do
           :telemetry.execute(
             [:lotta, :push_notification, :message_sent, :sent],
             %{system_time: System.system_time()},
-            %{tenant: tenant, user: user, message: message, conversation: conversation, notification: notification}
+            %{
+              tenant: tenant,
+              user: user,
+              message: message,
+              conversation: conversation,
+              notification: notification
+            }
           )
         end)
       end)
