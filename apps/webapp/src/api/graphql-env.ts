@@ -5287,8 +5287,11 @@ const introspection = {
           {
             "name": "identifier",
             "type": {
-              "kind": "SCALAR",
-              "name": "String"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false

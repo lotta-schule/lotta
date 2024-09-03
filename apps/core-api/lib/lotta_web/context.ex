@@ -84,19 +84,22 @@ defmodule LottaWeb.Context do
             nil
         end
 
-      user =
-        conn
-        |> LottaWeb.Auth.AccessToken.Plug.current_resource()
+      case LottaWeb.Auth.AccessToken.Plug.current_resource(conn) do
+        nil ->
+          context
 
-      user =
-        unless is_nil(user) do
-          user
-          |> set_virtual_user_fields()
-          |> Map.put(:access_level, access_level)
-        end
+        user ->
+          Sentry.Context.set_user_context(user)
+          OpenTelemetry.Tracer.set_attributes(%{"user.id" => user.id})
 
-      context
-      |> Map.put(:current_user, user)
+          user =
+            user
+            |> set_virtual_user_fields()
+            |> Map.put(:access_level, access_level)
+
+          context
+          |> Map.put(:current_user, user)
+      end
     else
       context
     end

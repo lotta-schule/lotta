@@ -10,17 +10,22 @@ defmodule LottaWeb.ArticleResolver do
   alias Lotta.{Accounts, Content, Repo}
 
   def get(%{id: id}, %{context: %Context{current_user: current_user}}) do
-    article = Content.get_article(String.to_integer(id))
-
-    cond do
-      is_nil(article) ->
+    with {id, _} <- Integer.parse(id, 10),
+         article when not is_nil(article) <- Content.get_article(id),
+         true <- can_read?(current_user, article) do
+      {:ok, article}
+    else
+      :error ->
         {:error, "Beitrag nicht gefunden."}
 
-      not can_read?(current_user, article) ->
+      nil ->
+        {:error, "Beitrag nicht gefunden."}
+
+      false ->
         {:error, "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}
 
-      true ->
-        {:ok, article}
+      error ->
+        error
     end
   end
 
@@ -31,11 +36,18 @@ defmodule LottaWeb.ArticleResolver do
   end
 
   def all(args, %{context: %Context{current_user: current_user}}) do
+    category_id =
+      with category_id when not is_nil(category_id) <- args[:category_id],
+           {category_id, _} <- Integer.parse(category_id) do
+        category_id
+      else
+        :error -> {:error, "Beitrag nicht gefunden."}
+        nil -> nil
+      end
+
     {:ok,
      Content.list_articles(
-       if args[:category_id] do
-         String.to_integer(args[:category_id])
-       end,
+       category_id,
        current_user,
        args[:filter]
      )}

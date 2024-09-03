@@ -298,7 +298,7 @@ defmodule Lotta.Accounts do
   Request a password reset.
   If a user exists for the given email address,
   this creates a reset token with 6 hours validity and sends it to the user.
-  If a user does not exist, {:error, :nouser} is returned.
+  If a user does not exist, {:error, :not_found} is returned.
   If a user exists, {:ok, User} is returned.
   Any error from redis is related.
   """
@@ -312,7 +312,7 @@ defmodule Lotta.Accounts do
       )
 
     if is_nil(user) do
-      {:error, :nouser}
+      {:error, :not_found}
     else
       token =
         :crypto.strong_rand_bytes(32)

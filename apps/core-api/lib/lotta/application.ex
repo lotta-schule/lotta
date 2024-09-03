@@ -6,6 +6,7 @@ defmodule Lotta.Application do
   use Application
 
   def start(_type, _args) do
+    :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
     environment = Application.fetch_env!(:lotta, :environment)
     cluster_topologies = Application.get_env(:libcluster, :topologies, [])
 
