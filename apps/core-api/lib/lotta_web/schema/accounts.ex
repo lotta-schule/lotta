@@ -78,12 +78,14 @@ defmodule LottaWeb.Schema.Accounts do
     end
 
     field(:search_files, non_null(list_of(non_null(:file)))) do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
       arg(:searchterm, :string)
 
       resolve(&LottaWeb.FileResolver.search_files/2)
     end
 
     field(:search_directories, non_null(list_of(non_null(:directory)))) do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
       arg(:searchterm, :string)
 
       resolve(&LottaWeb.FileResolver.search_directories/2)
@@ -113,9 +115,9 @@ defmodule LottaWeb.Schema.Accounts do
     end
 
     field(:request_hisec_token, type: :string) do
-      arg(:password, :string)
-
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      arg(:password, :string)
 
       resolve(&LottaWeb.UserResolver.request_hisec_token/2)
     end
