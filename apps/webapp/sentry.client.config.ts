@@ -14,7 +14,7 @@ Sentry.init({
   // Capture Replay for 10% of all sessions,
   // plus for 100% of sessions with an error
   replaysSessionSampleRate: 0.01,
-  replaysOnErrorSampleRate: 1.0,
+  replaysOnErrorSampleRate: 0.05,
 
   ignoreErrors: [
     // we should remove this when we have finally moved on
@@ -22,5 +22,6 @@ Sentry.init({
     /Du bist nicht angemeldet/,
     /Du musst angemeldet sein um das zu tun./,
     /Du hast nicht die Rechte dir diesen Beitrag anzusehen./,
+    /Request failed with status code 401/,
   ],
 });
