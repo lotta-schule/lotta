@@ -91,7 +91,7 @@ defmodule LottaWeb.FileResolver do
       Storage.get_file(id)
       |> Repo.preload(:parent_directory)
 
-    if can_read?(current_user, file.parent_directory) do
+    if not is_nil(file) and can_read?(current_user, file.parent_directory) do
       {:ok, file}
     else
       {:error, "Du hast nicht die Rechte, diese Datei zu lesen."}
