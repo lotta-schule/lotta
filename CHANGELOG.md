@@ -1,3 +1,15 @@
+## 5.0.7 (2024-09-03)
+
+
+### 🩹 Fixes
+
+- **core-api:** articles: Better error handling on string -> int conversion  d4027c ([#361](https://github.com/lotta-schule/lotta/pull/361))
+- **core-api:** file search: Return error instead of crashing for unauthenticated users ([#362](https://github.com/lotta-schule/lotta/pull/362))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.6 (2024-09-02)
 
 
