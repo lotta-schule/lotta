@@ -18,6 +18,7 @@ Sentry.init({
 
   ignoreErrors: [
     // we should remove this when we have finally moved on
+    /Network Error/,
     /Du bist nicht angemeldet/,
     /Du musst angemeldet sein um das zu tun./,
     /Du hast nicht die Rechte dir diesen Beitrag anzusehen./,
