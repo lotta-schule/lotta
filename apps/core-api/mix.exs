@@ -118,7 +118,10 @@ defmodule Lotta.MixProject do
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
-      # OpenTelemetry
+      # Telemetry & OpenTelemetry
+      {:telemetry_metrics, "~> 1.0"},
+      {:telemetry_metrics_prometheus, "~> 1.1.0"},
+      {:telemetry_poller, "~> 1.1"},
       {:opentelemetry, "~> 1.2"},
       {:opentelemetry_api, "~> 1.3"},
       {:opentelemetry_absinthe, "~> 2.0"},

@@ -21,6 +21,7 @@ defmodule Lotta.Application do
       [
         {Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]},
         {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
+        LottaWeb.Telemetry,
         Lotta.Repo,
         LottaWeb.Endpoint,
         {Absinthe.Subscription, LottaWeb.Endpoint},

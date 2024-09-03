@@ -7,6 +7,8 @@ defmodule LottaWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :lotta
   use Absinthe.Phoenix.Endpoint
 
+  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+
   socket "/api/user-socket", LottaWeb.UserSocket,
     websocket: [check_origin: false],
     longpoll: [check_origin: false]
@@ -15,7 +17,9 @@ defmodule LottaWeb.Endpoint do
     websocket: [check_origin: false],
     longpoll: [check_origin: false]
 
-  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+  socket "/live", Phoenix.LiveView.Socket,
+    websocket: [check_origin: false],
+    longpoll: [check_origin: false]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -71,8 +75,4 @@ defmodule LottaWeb.Endpoint do
     allow_credentials: true
 
   plug LottaWeb.Router
-
-  socket "/live", Phoenix.LiveView.Socket,
-    websocket: [check_origin: false],
-    longpoll: [check_origin: false]
 end
