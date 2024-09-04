@@ -1,3 +1,18 @@
+## 5.0.8 (2024-09-04)
+
+
+### 🚀 Features
+
+- **core-api:** Basic :telemetry support ([#365](https://github.com/lotta-schule/lotta/pull/365))
+
+### 🩹 Fixes
+
+- **core-api:** Make subscription of calendars work again ([#364](https://github.com/lotta-schule/lotta/pull/364))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.7 (2024-09-03)
 
 
