@@ -20,7 +20,7 @@ export const ReactionUserList = React.memo(
       variables: { id: articleId, reaction },
     });
     return (
-      <Overlay>
+      <Overlay data-testid="ReactionUserList">
         {header || null}
         <List>
           {users.map((user) => (
