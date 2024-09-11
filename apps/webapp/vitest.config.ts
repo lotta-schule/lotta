@@ -38,5 +38,9 @@ export default defineConfig({
         '**/*.svg',
       ],
     },
+
+    env: {
+      TZ: 'Europe/Berlin',
+    },
   },
 });
