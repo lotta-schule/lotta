@@ -5,7 +5,7 @@ button.button.root:not(body):is(.root) {
   padding-right: var(--lotta-spacing);
   padding-left: calc(0.5 * var(--lotta-spacing));
 
-  &:hover {
+  &:not(:disabled):hover {
     border: 1px solid rgb(var(--lotta-primary-color));
   }
 }

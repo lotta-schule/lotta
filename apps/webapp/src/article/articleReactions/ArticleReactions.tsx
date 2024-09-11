@@ -11,15 +11,18 @@ import {
 import { useMutation, useSuspenseQuery } from '@apollo/client';
 import { ArticleModel, ArticleReactionType } from 'model';
 import { Icon } from 'shared/Icon';
-import { ReactionSelector } from './ReactionSelector';
+import { useCurrentUser } from 'util/user';
 import { ReactionCountButtons } from './ReactionCountButtons';
 import { iconForReactionType } from './supportedReactionIcons';
 import { ReactionUserList } from './RactionUserList';
+import dynamic from 'next/dynamic';
 
 import styles from './ArticleReactions.module.scss';
 
 import GetArticleReactionCounts from 'api/query/GetArticleReactionCounts.graphql';
 import ReactToArticleMutation from 'api/mutation/ReactToArticleMutation.graphql';
+
+const DynamicReactionSelector = dynamic(() => import('./ReactionSelector'));
 
 export type ArticleReactionsProps = {
   article: ArticleModel;
@@ -27,6 +30,7 @@ export type ArticleReactionsProps = {
 
 export const ArticleReactions = React.memo(
   ({ article }: ArticleReactionsProps) => {
+    const currentUser = useCurrentUser();
     const ref = React.useRef<HTMLDivElement>(null);
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const typeButtonRef = React.useRef<HTMLButtonElement | null>(null);
@@ -85,71 +89,56 @@ export const ArticleReactions = React.memo(
 
     return (
       <div data-testid="ArticleReactions" className={styles.root} ref={ref}>
-        <ReactionSelector
-          trigger={buttonRef.current!}
-          isOpen={isReactionSelectorOpen}
-          onSelect={(reaction) => {
-            if (reaction) {
-              reactToArticle({
-                variables: {
-                  id: article.id,
-                  reaction: reaction.toUpperCase(),
-                },
-              });
-            }
-            setIsReactionSelectorOpen(false);
-          }}
-        />
-        <Button
-          ref={buttonRef}
-          title={`Auf "${article.title}" reagieren`}
-          icon={<Icon icon={faHeart} />}
-          onClick={() => setIsReactionSelectorOpen(true)}
-        />
+        {currentUser && (
+          <>
+            <DynamicReactionSelector
+              trigger={buttonRef.current!}
+              isOpen={isReactionSelectorOpen}
+              onSelect={(reaction) => {
+                if (reaction) {
+                  reactToArticle({
+                    variables: {
+                      id: article.id,
+                      reaction: reaction.toUpperCase(),
+                    },
+                  });
+                }
+                setIsReactionSelectorOpen(false);
+              }}
+            />
+            <Button
+              ref={buttonRef}
+              title={`Auf "${article.title}" reagieren`}
+              disabled={!currentUser}
+              icon={<Icon icon={faHeart} />}
+              onClick={() => setIsReactionSelectorOpen(true)}
+            />
+          </>
+        )}
         <ReactionCountButtons
           reactions={reactionCounts}
-          onSelect={(type, el) => {
-            typeButtonRef.current = el;
-            setSelectedReactionType(type);
-          }}
+          onSelect={
+            currentUser
+              ? (type, el) => {
+                  typeButtonRef.current = el;
+                  setSelectedReactionType(type);
+                }
+              : undefined
+          }
         />
-        <Popover
-          isOpen={!!selectedReactionType}
-          trigger={typeButtonRef.current!}
-          placement={'top-start'}
-          modifiers={popperModifiers}
-          onClose={() => setSelectedReactionType(null)}
-        >
-          <Overlay>
-            <React.Suspense
-              fallback={
-                <List>
-                  {selectedReactionTypeIcon && (
-                    <ListItem
-                      isHeader
-                      leftSection={
-                        <Icon
-                          icon={
-                            iconForReactionType(selectedReactionType!)!.icon
-                          }
-                        />
-                      }
-                    >
-                      {selectedReactionTypeCount}
-                    </ListItem>
-                  )}
-                  <ListItem>
-                    <LinearProgress isIndeterminate />
-                  </ListItem>
-                </List>
-              }
-            >
-              {selectedReactionType && (
-                <ReactionUserList
-                  articleId={article.id}
-                  reaction={selectedReactionType}
-                  header={
-                    selectedReactionTypeIcon && (
+        {currentUser && (
+          <Popover
+            isOpen={!!selectedReactionType}
+            trigger={typeButtonRef.current!}
+            placement={'top-start'}
+            modifiers={popperModifiers}
+            onClose={() => setSelectedReactionType(null)}
+          >
+            <Overlay>
+              <React.Suspense
+                fallback={
+                  <List>
+                    {selectedReactionTypeIcon && (
                       <ListItem
                         isHeader
                         leftSection={
@@ -162,13 +151,39 @@ export const ArticleReactions = React.memo(
                       >
                         {selectedReactionTypeCount}
                       </ListItem>
-                    )
-                  }
-                />
-              )}
-            </React.Suspense>
-          </Overlay>
-        </Popover>
+                    )}
+                    <ListItem>
+                      <LinearProgress isIndeterminate />
+                    </ListItem>
+                  </List>
+                }
+              >
+                {selectedReactionType && (
+                  <ReactionUserList
+                    articleId={article.id}
+                    reaction={selectedReactionType}
+                    header={
+                      selectedReactionTypeIcon && (
+                        <ListItem
+                          isHeader
+                          leftSection={
+                            <Icon
+                              icon={
+                                iconForReactionType(selectedReactionType!)!.icon
+                              }
+                            />
+                          }
+                        >
+                          {selectedReactionTypeCount}
+                        </ListItem>
+                      )
+                    }
+                  />
+                )}
+              </React.Suspense>
+            </Overlay>
+          </Popover>
+        )}
       </div>
     );
   }

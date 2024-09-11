@@ -1,12 +1,12 @@
-import { Button, Popover } from '@lotta-schule/hubert';
 import * as React from 'react';
+import { Button, Popover } from '@lotta-schule/hubert';
 import { Icon } from 'shared/Icon';
-
-import styles from './ReactionSelector.module.scss';
 import {
   supportedReactionIconNames,
   supportedReactionIcons,
 } from './supportedReactionIcons';
+
+import styles from './ReactionSelector.module.scss';
 
 export type ReactionSelectorProps = {
   trigger: HTMLElement;
@@ -14,7 +14,7 @@ export type ReactionSelectorProps = {
   onSelect: (iconName?: string) => void;
 };
 
-export const ReactionSelector = React.memo(
+const ReactionSelector = React.memo(
   ({ isOpen, trigger, onSelect }: ReactionSelectorProps) => {
     return (
       <Popover
@@ -38,3 +38,5 @@ export const ReactionSelector = React.memo(
   }
 );
 ReactionSelector.displayName = 'ReactionSelector';
+
+export default ReactionSelector;

@@ -25,6 +25,7 @@ export const ReactionCountButtons = ({
         key={type}
         className={styles.button}
         icon={<Icon icon={icon!.icon} />}
+        disabled={!count || !onSelect}
         onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
           onSelect?.(type, e.currentTarget)
         }
