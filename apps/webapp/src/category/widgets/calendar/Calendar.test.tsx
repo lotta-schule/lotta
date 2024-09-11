@@ -15,7 +15,11 @@ describe('shared/widgets/Calendar', () => {
     },
   ];
 
-  describe('single calendar', () => {
+  beforeAll(() => {
+    expect(new Date(2024, 8, 1).getTimezoneOffset()).toEqual(-120);
+  });
+
+  describe('calendar with external events', () => {
     it('should show the correct number of entries', async () => {
       const screen = render(
         <Calendar widget={CalendarKlassenarbeiten} />,
@@ -52,6 +56,121 @@ describe('shared/widgets/Calendar', () => {
       })[0];
       expect(row).toBeVisible();
       expect(row).toHaveTextContent(/18.01.2021 - 23.01.2021/);
+    });
+
+    it('should show the correct description', async () => {
+      const screen = render(
+        <Calendar widget={CalendarKlassenarbeiten} />,
+        {},
+        { additionalMocks: mocks }
+      );
+      expect(await screen.findByText(/Raum E 10/)).toBeVisible();
+    });
+  });
+
+  describe('calendar with internal events', () => {
+    const CalendarWidgetInternalEvents = {
+      ...CalendarKlassenarbeiten,
+      configuration: {
+        ...CalendarKlassenarbeiten.configuration,
+        calendars: [
+          {
+            type: 'internal',
+            calendarId: '1',
+            color: 'yellow',
+            name: 'Interner Kalender',
+            days: 14,
+          } as const,
+        ],
+      },
+      calendarEvents: [
+        {
+          id: '1-1',
+          start:
+            'Thu Apr 15 2021 08:30:00 GMT+0200 (Central European Summer Time)',
+          end: 'Sun Apr 18 2021 23:59:59 GMT+0200 (Central European Summer Time)',
+          summary: 'Berufsorientierung',
+          description: 'Raum E 10',
+          isFullDay: true,
+          calendar: { id: '1' },
+          recurrence: null,
+        },
+        {
+          id: '1-2',
+          start:
+            'Sun Apr 18 2021 00:00:00 GMT+0200 (Central European Summer Time)',
+          end: 'Sun Apr 18 2021 23:59:59 GMT+0200 (Central European Summer Time)',
+          summary: 'Stichtag',
+          description: null,
+          isFullDay: true,
+          calendar: { id: '1' },
+          recurrence: null,
+        },
+        {
+          id: '1-3',
+          start:
+            'Sun Apr 18 2021 11:30:00 GMT+0200 (Central European Summer Time)',
+          end: 'Sun Apr 18 2021 13:00:00 GMT+0200 (Central European Summer Time)',
+          summary: 'Mittag',
+          description: null,
+          isFullDay: false,
+          calendar: { id: '1' },
+          recurrence: null,
+        },
+      ],
+    };
+    it('should show the correct number of entries', async () => {
+      const screen = render(
+        <Calendar widget={CalendarWidgetInternalEvents} />,
+        {},
+        { additionalMocks: mocks }
+      );
+      expect(await screen.findAllByRole('listitem')).toHaveLength(3 + 1);
+    });
+
+    it('should show the correct date and time for single-day event', async () => {
+      const screen = render(
+        <Calendar widget={CalendarWidgetInternalEvents} />,
+        {},
+        { additionalMocks: mocks }
+      );
+      expect(await screen.findAllByRole('listitem')).not.toHaveLength(0);
+      const row = screen.getByRole('listitem', {
+        name: /mittag/i,
+      });
+      expect(row).toBeVisible();
+      expect(row).toHaveTextContent(/18.04.2021/);
+      expect(row.querySelector('time')).toHaveTextContent(/11:30 - 13:00/);
+    });
+
+    it('should show the correct date without time for a full-day event', async () => {
+      const screen = render(
+        <Calendar widget={CalendarWidgetInternalEvents} />,
+        {},
+        { additionalMocks: mocks }
+      );
+      expect(await screen.findAllByRole('listitem')).not.toHaveLength(0);
+      const row = screen.getByRole('listitem', {
+        name: /stichtag/i,
+      });
+      expect(row).toBeVisible();
+      expect(row).toHaveTextContent(/18.04.2021/);
+      expect(row.querySelector('time')).toBeNull();
+    });
+
+    it('should show the correct date for multi-day event', async () => {
+      const screen = render(
+        <Calendar widget={CalendarWidgetInternalEvents} />,
+        {},
+        { additionalMocks: mocks }
+      );
+      expect(await screen.findAllByRole('listitem')).not.toHaveLength(0);
+      const row = screen.getAllByRole('listitem', {
+        name: /berufsorientierung/i,
+      })[0];
+      expect(row).toBeVisible();
+      expect(row).toHaveTextContent(/15.04.2021 - 18.04.2021/);
+      expect(row.querySelector('time')).toBeNull();
     });
 
     it('should show the correct description', async () => {

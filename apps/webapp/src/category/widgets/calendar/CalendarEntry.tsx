@@ -45,6 +45,10 @@ export const CalendarEntry = React.memo(
       start,
       end: new Date(end.getTime() - 1),
     });
+    const isFullDay =
+      'isFullDay' in event
+        ? event.isFullDay
+        : start.getUTCHours() === 0 && end.getUTCHours() === 0;
     const isMultipleDays =
       (duration.days && duration.days >= 1) ||
       (duration.months && duration.months > 0) ||
@@ -87,7 +91,7 @@ export const CalendarEntry = React.memo(
                   </>
                 )}
               </div>
-              {!(start.getUTCHours() === 0 || end.getUTCHours() === 0) && (
+              {!isFullDay && (
                 <time className={styles.time}>
                   {format(start, 'p', {
                     locale: de,
