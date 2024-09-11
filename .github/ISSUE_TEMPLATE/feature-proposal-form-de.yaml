@@ -1,12 +1,10 @@
 name: Feature-Vorschlag
 description: |
   Vorschläge für kleine und große Veränderungen, die die Nutzung von Lotta vereinfachen oder verbessern sollen.
-title: "[Feature]: "
-assignees:
-  - BillyTheKing
+title: '[Feature]: '
 labels:
-  - "proposal"
-  - "Triage"
+  - 'proposal'
+  - '❓ Triage'
 body:
   - type: markdown
     attributes:
