@@ -32,23 +32,23 @@ export const DraggableListItem = ({
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props.id, disabled: !isDraggable });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
   return (
     <div
       {...attributes}
       {...props}
       ref={setNodeRef}
+      style={{
+        ...props.style,
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
       aria-current={selected ? 'page' : undefined}
       className={clsx(className, styles.root, {
         [styles.selected]: selected,
         [styles.isClickable]: onClick,
       })}
     >
-      <li title={title} style={style} onClick={onClick}>
+      <li title={title} onClick={onClick}>
         {isDraggable && (
           <div
             className={styles.dragHandle}
