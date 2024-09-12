@@ -4,7 +4,11 @@ Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   release: process.env.NEXT_PUBLIC_RELEASE_NAME,
   // Replay may only be enabled for the client-side
-  integrations: [Sentry.replayIntegration()],
+  integrations: [
+    Sentry.extraErrorDataIntegration(),
+    Sentry.sessionTimingIntegration(),
+    Sentry.replayIntegration(),
+  ],
 
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
@@ -22,6 +26,5 @@ Sentry.init({
     /Du bist nicht angemeldet/,
     /Du musst angemeldet sein um das zu tun./,
     /Du hast nicht die Rechte dir diesen Beitrag anzusehen./,
-    /Request failed with status code 401/,
   ],
 });

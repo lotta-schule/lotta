@@ -3,7 +3,7 @@ import { Observable, ObservableSubscription } from '@apollo/client/utilities';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 import { isBrowser } from 'util/isBrowser';
 
-const REFRESH_TOKEN_BUFFER = 60 * 5; // 5 minutes
+const REFRESH_TOKEN_BUFFER = 5 * 60; // 5 minutes
 
 type AuthLinkParams = {
   initialToken?: string;
@@ -36,9 +36,11 @@ export const createAuthLink = ({
             const now = Date.now() / 1000;
             const expires = decoded.exp;
 
+            console.log('expires', expires, now);
+
             if (
               expires &&
-              expires < now - REFRESH_TOKEN_BUFFER &&
+              expires - REFRESH_TOKEN_BUFFER <= now &&
               sendRefreshTokenRequest
             ) {
               const newToken = await sendRefreshTokenRequest();
