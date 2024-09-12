@@ -39,6 +39,7 @@ describe('middleware', () => {
     const expirationTime = new Date(Date.now() + 4 * 60 * 1000); // 4 minutes in the future
     const mockRefreshTokenJwt = {
       isValid: vi.fn().mockReturnValue(true),
+      isExpired: vi.fn().mockReturnValue(false),
       body: {
         expires: expirationTime,
       },
@@ -71,7 +72,7 @@ describe('middleware', () => {
     );
   });
 
-  it('should not update tokens if refresh token is missing or invalid', async () => {
+  it('should reset refresh token cookie if refresh token is missing or invalid', async () => {
     const mockRequest = createMockRequest(
       { SignInRefreshToken: 'invalidRefreshToken' },
       { Authorization: 'Bearer validAccessToken' }
@@ -93,7 +94,9 @@ describe('middleware', () => {
 
     const response = await middleware(mockRequest);
 
-    expect(response.cookies.has('SignInRefreshToken')).toEqual(false);
+    const refreshTokenExpiration =
+      response.cookies.get('SignInRefreshToken')?.expires;
+    expect((refreshTokenExpiration as Date).getTime()).toEqual(0);
     expect(response.cookies.has('SignInAccessToken')).toEqual(false);
   });
 

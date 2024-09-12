@@ -1,8 +1,10 @@
+import * as Sentry from '@sentry/nextjs';
 import { sendRefreshRequest } from 'api/auth';
 import { serialize } from 'cookie-es';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import { JWT } from 'util/auth/jwt';
+
+import type { NextRequest } from 'next/server';
 
 export const config = {
   matcher: ['/((?!_next/static|_next/image|font|favicon.ico|favicon|p/).*)'],
@@ -52,13 +54,11 @@ export async function middleware(request: NextRequest) {
       console.error('Error parsing refresh token', e);
     }
 
-    // TODO: It will be better refreshing the token just on page load,
-    // as currently it is refreshed multiple times in the same time due tue multiple requests
-    // coming in at the same time
-    // This is a temporary solution to avoid the user being logged out
-    // when the token expires
     if (
       refreshTokenJwt?.isValid() &&
+      // we do not need to check if the refresh token is expired (or will expire in the next seconds)
+      !refreshTokenJwt.isExpired(0) &&
+      // refresh the token if it expires in the next 5 minutes or if the access token is not set
       (refreshTokenJwt.body.expires.getTime() - Date.now() < 1000 * 60 * 5 ||
         !authInfo.accessToken)
     ) {
@@ -131,9 +131,19 @@ export async function middleware(request: NextRequest) {
         });
       }
     } catch (e) {
-      // TODO: Maybe send a sentry event here
+      Sentry.captureException(e);
       console.error('Error parsing new token', e);
     }
+  } else {
+    // user has no valid refresh token
+    // remove the refresh token cookie
+    response.cookies.delete({
+      name: 'SignInRefreshToken',
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    });
   }
 
   return response;
