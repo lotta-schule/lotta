@@ -115,18 +115,27 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
     };
   }
 
-  const { data: userData } = await getApolloClient().query({
-    query: GetCurrentUserQuery,
-    context: {
-      headers,
-    },
-  });
-  const { data: categoriesData } = await getApolloClient().query({
-    query: GetCategoriesQuery,
-    context: {
-      headers,
-    },
-  });
+  const { data: userData } = await trace
+    .getTracer('lotta-web')
+    .startActiveSpan('getcurrentUser', async () =>
+      getApolloClient().query({
+        query: GetCurrentUserQuery,
+        context: {
+          headers,
+        },
+      })
+    );
+
+  const { data: categoriesData } = await trace
+    .getTracer('lotta-web')
+    .startActiveSpan('getcurrentUser', async () =>
+      getApolloClient().query({
+        query: GetCategoriesQuery,
+        context: {
+          headers,
+        },
+      })
+    );
 
   return {
     pageProps: {

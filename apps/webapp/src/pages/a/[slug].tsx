@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { trace } from '@opentelemetry/api';
 import { getApolloClient } from 'api/legacyClient';
 import { Main, Sidebar } from 'layout';
 import { ArticleModel, ID } from 'model';
@@ -49,16 +50,17 @@ export const getServerSideProps = async ({
       notFound: true,
     };
   }
-  const { data, error: loadArticleError } = await getApolloClient().query<
-    { article: ArticleModel },
-    { id: ID }
-  >({
-    query: GetArticleQuery,
-    variables: { id: articleId },
-    context: {
-      headers: req?.headers,
-    },
-  });
+  const { data, error: loadArticleError } = await trace
+    .getTracer('lotta-web')
+    .startActiveSpan(`fetchCurrentArticle::${articleId}`, async () =>
+      getApolloClient().query<{ article: ArticleModel }, { id: ID }>({
+        query: GetArticleQuery,
+        variables: { id: articleId },
+        context: {
+          headers: req?.headers,
+        },
+      })
+    );
 
   return {
     props: {

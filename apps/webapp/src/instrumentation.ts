@@ -22,4 +22,9 @@ export async function register() {
 // Register OpenTelemetry.
 registerOTel({
   serviceName: appConfig.get('SERVICE_NAME'),
+  attributes: {
+    env: appConfig.get('APP_ENVIRONMENT'),
+    'service.name': appConfig.get('SERVICE_NAME'),
+    'node.env': appConfig.get('NODE_ENV'),
+  },
 });

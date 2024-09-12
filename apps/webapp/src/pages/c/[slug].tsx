@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { trace } from '@opentelemetry/api';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { ArticleModel, ArticleFilter, ID } from 'model';
 import { getApolloClient } from 'api/legacyClient';
@@ -40,19 +41,25 @@ export const getServerSideProps = async ({
   const {
     data: { articles },
     error,
-  } = await getApolloClient().query<
-    { articles: ArticleModel[] },
-    { categoryId: ID | null; filter: ArticleFilter }
-  >({
-    query: GetArticlesQuery,
-    variables: {
-      categoryId: categoryId ?? null,
-      filter: { first: PREFETCH_COUNT },
-    },
-    context: {
-      headers: req?.headers,
-    },
-  });
+  } = await trace
+    .getTracer('lotta-web')
+    .startActiveSpan(
+      `fetchCurrentCategoryPages::${categoryId ?? 'homepage'}`,
+      async () =>
+        getApolloClient().query<
+          { articles: ArticleModel[] },
+          { categoryId: ID | null; filter: ArticleFilter }
+        >({
+          query: GetArticlesQuery,
+          variables: {
+            categoryId: categoryId ?? null,
+            filter: { first: PREFETCH_COUNT },
+          },
+          context: {
+            headers: req?.headers,
+          },
+        })
+    );
 
   return {
     props: {
