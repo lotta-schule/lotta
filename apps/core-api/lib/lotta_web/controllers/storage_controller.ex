@@ -14,8 +14,7 @@ defmodule LottaWeb.StorageController do
 
     if is_nil(file) do
       conn
-      |> put_status(404)
-      |> render(:"404")
+      |> respond_with(:not_found)
     else
       conn
       |> put_resp_header("cache-control", "max-age=604800")
@@ -30,7 +29,7 @@ defmodule LottaWeb.StorageController do
     end
   end
 
-  def get_file(conn, _params), do: send_resp(conn, 404, "")
+  def get_file(conn, _params), do: respond_with(conn, :not_found)
 
   def get_file_conversion(%{private: %{lotta_tenant: tenant}} = conn, %{"id" => id} = params)
       when not is_nil(tenant) and is_uuid(id) do
@@ -38,9 +37,7 @@ defmodule LottaWeb.StorageController do
 
     if is_nil(file_conversion) do
       conn
-      |> put_status(404)
-      |> put_view(LottaWeb.ErrorView)
-      |> send_resp()
+      |> respond_with(:not_found)
     else
       conn
       |> put_resp_header("cache-control", "max-age=604800")
@@ -55,7 +52,7 @@ defmodule LottaWeb.StorageController do
     end
   end
 
-  def get_file_conversion(conn, _params), do: send_resp(conn, 404, "")
+  def get_file_conversion(conn, _params), do: respond_with(conn, :not_found)
 
   defp build_processing_options(params) do
     processing_options =
@@ -75,4 +72,10 @@ defmodule LottaWeb.StorageController do
 
     processing_options
   end
+
+  defp respond_with(conn, :not_found),
+    do:
+      conn
+      |> resp(404, "")
+      |> send_resp()
 end
