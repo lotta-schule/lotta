@@ -1,3 +1,4 @@
+import { act } from 'react';
 import { MockedResponse } from '@apollo/client/testing';
 import { render, fireEvent, waitFor } from 'test/util';
 import { CreateEventDialog } from './CreateEventDialog';
@@ -186,6 +187,9 @@ describe('CreateEventDialog', () => {
 
       const dateInput = await screen.findByLabelText('Enddatum');
       fireEvent.change(dateInput, { target: { value: '2024-08-15' } });
+      await act(async () => void 0);
+      fireEvent.blur(dateInput);
+      await act(async () => void 0);
       expect(dateInput).toHaveValue('2024-08-15');
 
       expect(screen.getByLabelText('Datum')).toHaveValue('2024-08-14');
@@ -207,6 +211,10 @@ describe('CreateEventDialog', () => {
       fireEvent.change(endDateInput, { target: { value: '2024-08-20' } });
       expect(endDateInput).toHaveValue('2024-08-20');
       fireEvent.change(startDateInput, { target: { value: '2024-08-21' } });
+      await act(async () => void 0);
+      fireEvent.blur(startDateInput);
+      await act(async () => void 0);
+
       expect(startDateInput).toHaveValue('2024-08-21');
 
       expect(endDateInput).toHaveValue('2024-08-22');
@@ -276,7 +284,7 @@ describe('CreateEventDialog', () => {
         initialSelectionStart: 0,
         initialSelectionEnd: 5,
       });
-      await user.click(screen.container.querySelector('form')!); // blur input
+      await user.tab();
       expect(endTimeInput).toHaveValue('10:00');
 
       expect(startTimeInput).toHaveValue('09:00');
@@ -300,6 +308,7 @@ describe('CreateEventDialog', () => {
         initialSelectionStart: 0,
         initialSelectionEnd: 5,
       });
+      await user.tab();
       expect(startTimeInput).toHaveValue('15:00');
 
       expect(endTimeInput).toHaveValue('16:00');

@@ -8,7 +8,13 @@ import {
   LoadingButton,
   ErrorMessage,
 } from '@lotta-schule/hubert';
-import { addHours, isAfter, isSameDay, startOfHour } from 'date-fns';
+import {
+  addHours,
+  isAfter,
+  isSameDay,
+  startOfHour,
+  subMilliseconds,
+} from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import {
   CREATE_CALENDAR_EVENT,
@@ -34,18 +40,17 @@ export const CreateEventDialog = React.memo(
       fetchPolicy: 'cache-first',
     });
 
-    const EMPTY_EVENT = React.useMemo<EditEventInput>(
-      () => ({
+    const EMPTY_EVENT = React.useMemo<EditEventInput>(() => {
+      return {
         summary: '',
         description: '',
         calendarId: calendars.at(0)?.id ?? '',
         start: startOfHour(new Date()),
-        end: addHours(startOfHour(new Date()), 1),
+        end: subMilliseconds(addHours(startOfHour(new Date()), 1), 1),
         isFullDay: true,
         recurrence: null as FragmentOf<typeof RECURRENCE_FRAGMENT> | null,
-      }),
-      [calendars]
-    );
+      };
+    }, [calendars]);
 
     const { t } = useTranslation();
     const [eventData, setEventData] = React.useState(EMPTY_EVENT);

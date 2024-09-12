@@ -54,7 +54,7 @@
       }
 
       &:not(:has(.mayBeInvisible.isVisible)) {
-        grid-template: 1fr 0 / auto 0;
+        grid-template: 1fr 0 / 0;
       }
     }
   }

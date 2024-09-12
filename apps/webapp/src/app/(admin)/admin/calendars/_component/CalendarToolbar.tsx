@@ -5,10 +5,12 @@ import {
   Item,
   MenuButton,
   Toolbar,
+  useIsMobile,
 } from '@lotta-schule/hubert';
 import {
   faAdd,
   faCalendar,
+  faCalendarDays,
   faCheck,
   faCircle,
   faGear,
@@ -17,6 +19,8 @@ import { useTranslation } from 'react-i18next';
 import { ToolbarProps } from 'react-big-calendar';
 import { useQuery } from '@apollo/client';
 import { Icon } from 'shared/Icon';
+import { de } from 'date-fns/locale';
+import { format } from 'date-fns';
 import { CreateEventDialog } from './CreateEventDialog';
 import { ManageCalendarsDialog } from './ManageCalendarsDialog';
 import { CalendarContext } from './CalendarContext';
@@ -26,14 +30,35 @@ import clsx from 'clsx';
 import styles from './CalendarToolbar.module.scss';
 
 export const CalendarToolbar = React.memo(
-  ({ label, localizer, onNavigate }: ToolbarProps) => {
+  ({ onNavigate }: Pick<ToolbarProps, 'onNavigate'>) => {
     const { t } = useTranslation();
-    const { isCalendarActive, toggleCalendar } = React.use(CalendarContext);
+    const isMobile = useIsMobile();
+    const {
+      currentView,
+      currentDate,
+      setCurrentView,
+      isCalendarActive,
+      toggleCalendar,
+    } = React.use(CalendarContext);
 
     const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] =
       React.useState(false);
     const [isManageCalendarsDialogOpen, setIsManageCalendarsDialogOpen] =
       React.useState(false);
+
+    const label = React.useMemo(() => {
+      if (currentView === 'month') {
+        return format(currentDate, isMobile ? 'MMM yy' : 'MMMM yyyy', {
+          locale: de,
+        });
+      }
+      if (currentView === 'day') {
+        return format(currentDate, isMobile ? 'EEEEEE PP' : 'PPPP', {
+          locale: de,
+        });
+      }
+      return t('today');
+    }, [currentDate, currentView, isMobile, t]);
 
     const { data } = useQuery(GET_CALENDARS);
 
@@ -76,8 +101,12 @@ export const CalendarToolbar = React.memo(
             >
               &lt;
             </Button>
-            <Button title={t('today')} onClick={() => onNavigate('TODAY')}>
-              {localizer.messages.today}
+            <Button
+              className={styles.todayButton}
+              title={t('today')}
+              onClick={() => onNavigate('TODAY')}
+            >
+              {isMobile ? label : t('today')}
             </Button>
             <Button
               onClick={() => {
@@ -88,11 +117,19 @@ export const CalendarToolbar = React.memo(
               &gt;
             </Button>
           </ButtonGroup>
+          {currentView === 'day' && (
+            <Button
+              onClick={() => setCurrentView('month')}
+              title={t('month view')}
+            >
+              <Icon icon={faCalendarDays} />
+            </Button>
+          )}
         </section>
-        <section>{label}</section>
+        <span>{!isMobile && label}</span>
         <section>
           <MenuButton
-            title={t('calendars')}
+            title={t('manage calendars')}
             onAction={(key) => {
               if (key === 'manage_calendars') {
                 setIsManageCalendarsDialogOpen(true);
@@ -104,6 +141,7 @@ export const CalendarToolbar = React.memo(
             placement="bottom"
             buttonProps={{
               icon: <Icon icon={faCalendar} />,
+              title: t('manage calendars'),
             }}
           >
             {calendarMenuItems}

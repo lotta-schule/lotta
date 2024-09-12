@@ -13,9 +13,16 @@ import {
   addHours,
   endOfDay,
   format,
+  getHours,
   isAfter,
   isBefore,
   isSameDay,
+  isValid,
+  parse,
+  startOfDay,
+  subDays,
+  subHours,
+  min,
 } from 'date-fns';
 import { invariant } from '@epic-web/invariant';
 import { useTranslation } from 'react-i18next';
@@ -55,6 +62,18 @@ export const EditEventFormContent = React.memo(
     const isMultipleDays = React.useMemo(
       () => !isSameDay(event.start, event.end),
       [event.start, event.end]
+    );
+
+    const composeNewDate = React.useCallback(
+      ({ date, time }: { date: Date; time: Date }) => {
+        const newDate = new Date(time);
+        newDate.setFullYear(date.getFullYear());
+        newDate.setMonth(date.getMonth());
+        newDate.setDate(date.getDate());
+
+        return newDate;
+      },
+      []
     );
 
     return (
@@ -153,7 +172,14 @@ export const EditEventFormContent = React.memo(
                 onUpdate({
                   ...event,
                   isFullDay: isSelected,
-                  ...(!isSelected ? { end: addHours(event.start, 1) } : {}),
+                  ...(!isSelected
+                    ? {
+                        end: min([
+                          endOfDay(event.start),
+                          addHours(event.start, 1),
+                        ]),
+                      }
+                    : {}),
                 });
               }}
             >
@@ -168,7 +194,7 @@ export const EditEventFormContent = React.memo(
                   ...event,
                   end: selected
                     ? endOfDay(addDays(event.start, 1))
-                    : addHours(event.start, 1),
+                    : min([endOfDay(event.start), addHours(event.start, 1)]),
                 });
               }}
               className={clsx(styles.mayBeInvisible, {
@@ -185,37 +211,55 @@ export const EditEventFormContent = React.memo(
             <Input
               type="date"
               id="startdate"
-              value={event.start.toISOString().split('T')[0]}
+              value={format(event.start, 'yyyy-MM-dd')}
               onChange={(e) => {
-                const [year, month, day] = e.currentTarget.value
-                  .split('-')
-                  .map((v) => parseInt(v, 10));
-                invariant(year !== undefined && month && day, 'Invalid date');
-                const newDate = new Date(event.start);
-                newDate.setFullYear(year);
-                newDate.setMonth(month - 1);
-                newDate.setDate(day);
+                const value = parse(
+                  e.currentTarget.value,
+                  'yyyy-MM-dd',
+                  new Date()
+                );
+                invariant(isValid(value), 'Invalid date');
+
+                const newEnd = composeNewDate({ date: value, time: event.end });
 
                 onUpdate({
                   ...event,
-                  start: newDate,
+                  start: value,
+                  end: isMultipleDays
+                    ? event.end
+                    : event.isFullDay
+                      ? endOfDay(value)
+                      : min([addHours(newEnd, 1), endOfDay(value)]),
+                });
+              }}
+              onBlur={() => {
+                const { start: newDate } = event;
+                onUpdate({
+                  ...event,
                   end: (() => {
                     if (isMultipleDays) {
                       if (isAfter(endOfDay(newDate), endOfDay(event.end))) {
-                        return addDays(newDate, 1);
+                        return endOfDay(addDays(newDate, 1));
+                      } else {
+                        return event.end;
                       }
                     } else if (event.isFullDay) {
-                      return addHours(newDate, 1);
+                      return endOfDay(newDate);
                     } else {
                       const newEndDate = new Date(event.end);
                       newEndDate.setFullYear(newDate.getFullYear());
                       newEndDate.setMonth(newDate.getMonth());
                       newEndDate.setDate(newDate.getDate());
 
-                      return newEndDate;
-                    }
+                      if (isBefore(newEndDate, event.start)) {
+                        return min([
+                          endOfDay(newEndDate),
+                          addHours(newEndDate, 1),
+                        ]);
+                      }
 
-                    return event.end;
+                      return event.end;
+                    }
                   })(),
                 });
               }}
@@ -235,21 +279,23 @@ export const EditEventFormContent = React.memo(
               disabled={disabled}
               value={format(event.start, 'HH:mm')}
               onChange={(e) => {
-                const [hours = 0, minutes = 0, seconds = 0] =
-                  e.currentTarget.value.split(':').map((v) => parseInt(v, 10));
-                invariant(
-                  hours !== undefined && minutes !== undefined,
-                  'Hours and minutes are required'
-                );
-                const newDate = new Date(event.start);
-                newDate.setHours(hours);
-                newDate.setMinutes(minutes);
-                newDate.setSeconds(seconds);
+                const value = parse(e.currentTarget.value, 'HH:mm', new Date());
+
+                if (!isValid(value)) {
+                  return;
+                }
+
                 onUpdate({
                   ...event,
-                  start: newDate,
+                  start: composeNewDate({ date: event.start, time: value }),
+                });
+              }}
+              onBlur={() => {
+                const { start: newDate } = event;
+                onUpdate({
+                  ...event,
                   end: isAfter(newDate, event.end)
-                    ? addHours(newDate, 1)
+                    ? min([endOfDay(newDate), addHours(newDate, 1)])
                     : event.end,
                 });
               }}
@@ -268,27 +314,27 @@ export const EditEventFormContent = React.memo(
               disabled={disabled}
               value={event.end ? format(event.end, 'HH:mm') : ''}
               onChange={(e) => {
-                const [hours = 0, minutes = 0, seconds = 0] =
-                  e.currentTarget.value.split(':').map((v) => parseInt(v, 10));
-                invariant(
-                  hours !== undefined && minutes !== undefined,
-                  'Hours and minutes are required'
-                );
-                const newDate = new Date(event.start);
-                newDate.setHours(hours);
-                newDate.setMinutes(minutes);
-                newDate.setSeconds(seconds);
+                const value = parse(e.currentTarget.value, 'HH:mm', new Date());
+
+                if (!isValid(value)) {
+                  return;
+                }
 
                 onUpdate({
                   ...event,
-                  end: newDate,
+                  end: composeNewDate({
+                    date: event.end,
+                    time: value,
+                  }),
                 });
               }}
               onBlur={() => {
                 onUpdate({
                   ...event,
                   start: isBefore(event.end, event.start)
-                    ? addHours(event.end, -1)
+                    ? getHours(event.end) < 1
+                      ? startOfDay(event.end)
+                      : subHours(event.end, 1)
                     : event.start,
                 });
               }}
@@ -304,14 +350,21 @@ export const EditEventFormContent = React.memo(
                 id="enddate"
                 value={event.end.toISOString().split('T')[0]}
                 onChange={(e) => {
-                  invariant(e.currentTarget.valueAsDate, 'Invalid date');
-                  const newDate = endOfDay(e.currentTarget.valueAsDate);
+                  if (isValid(e.currentTarget.valueAsDate)) {
+                    const newDate = endOfDay(e.currentTarget.valueAsDate!);
+                    onUpdate({
+                      ...event,
+                      end: newDate,
+                    });
+                  }
+                }}
+                onBlur={() => {
+                  const { end: newDate } = event;
                   onUpdate({
                     ...event,
                     start: isBefore(newDate, event.start)
-                      ? addDays(newDate, -1)
+                      ? subDays(newDate, 1)
                       : event.start,
-                    end: newDate,
                   });
                 }}
                 disabled={disabled}
