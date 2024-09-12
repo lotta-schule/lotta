@@ -1,3 +1,28 @@
+## 5.0.9 (2024-09-12)
+
+
+### 🚀 Features
+
+- **hubert:** Update icon for draggable list element handle ([#379](https://github.com/lotta-schule/lotta/pull/379))
+- **webapp:** Add a daily view to calendar ([#374](https://github.com/lotta-schule/lotta/pull/374))
+- **webapp:** Article EditMode: Add a background color to editable modules ([#378](https://github.com/lotta-schule/lotta/pull/378))
+
+### 🩹 Fixes
+
+- **core-api:** Return 404 when file or file_converstion is not found ([#376](https://github.com/lotta-schule/lotta/pull/376))
+- **hubert:** SortableDraggableList: Apply dragging styles to children ([#372](https://github.com/lotta-schule/lotta/pull/372))
+- **hubert:** Correctly center icons in icon-only buttons on Chromium ([#377](https://github.com/lotta-schule/lotta/pull/377))
+- **webapp:** CalendarWidget: Internal Events: Stop showing times for full-day events ([#371](https://github.com/lotta-schule/lotta/pull/371))
+- **webapp:** Articles: Anon users: Disable "reacting" & "show reactions" buttons ([#373](https://github.com/lotta-schule/lotta/pull/373))
+- **webapp:** Correctly check access token expiration on client side ([#375](https://github.com/lotta-schule/lotta/pull/375))
+- **webapp:** Corrected two column view for article preview in user/tag article list ([#380](https://github.com/lotta-schule/lotta/pull/380))
+- **webapp:** Fix EditMode GridList overlapping page layout ([#381](https://github.com/lotta-schule/lotta/pull/381))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+- Billy
+
 ## 5.0.8 (2024-09-04)
 
 
