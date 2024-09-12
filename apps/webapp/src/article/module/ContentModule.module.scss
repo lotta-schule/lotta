@@ -7,6 +7,9 @@
   padding-bottom: var(--lotta-spacing);
   &.isEditModeEnabled {
     border-width: 1px;
+    background-color: rgba(var(--lotta-primary-color), 0.1);
+    border-radius: var(--lotta-border-radius);
+    margin-bottom: var(--lotta-spacing);
   }
   &:hover,
   &:focus-within {
