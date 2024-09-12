@@ -10,6 +10,7 @@ import {
   startOfMonth,
   endOfMonth,
   formatISO,
+  endOfWeek,
 } from 'date-fns';
 import { de } from 'date-fns/locale';
 import {
@@ -17,6 +18,7 @@ import {
   dateFnsLocalizer,
   EventWrapperProps,
 } from 'react-big-calendar';
+import { invariant } from '@epic-web/invariant';
 import { useTranslation } from 'react-i18next';
 import { CalendarToolbar } from './CalendarToolbar';
 import { useLazyQuery, useApolloClient } from '@apollo/client';
@@ -37,16 +39,25 @@ export const CalendarView = React.memo(
   }) => {
     const { t } = useTranslation();
     const client = useApolloClient();
-    const { activeCalendarIds, editingEvent, setEditingEvent } =
-      React.use(CalendarContext);
-    const [currentDate, setCurrentDate] = React.useState(new Date());
+    const {
+      activeCalendarIds,
+      editingEvent,
+      currentView,
+      currentDate,
+      setCurrentView,
+      setCurrentDate,
+      setEditingEvent,
+    } = React.use(CalendarContext);
     const [currentRange, setCurrentRange] = React.useState(() => ({
       start: startOfMonth(currentDate),
       end: endOfMonth(currentDate),
     }));
 
     const [from, latest] = React.useMemo(
-      () => [currentRange.start, currentRange.end],
+      () => [
+        startOfWeek(currentRange.start, { weekStartsOn: 1 }),
+        endOfWeek(currentRange.end, { weekStartsOn: 1 }),
+      ],
       [currentRange]
     );
 
@@ -134,20 +145,37 @@ export const CalendarView = React.memo(
             locales: { de_DE: de },
           })}
           date={currentDate}
-          onNavigate={(date) => setCurrentDate(date)}
-          onRangeChange={(range) => {
-            if (Array.isArray(range) || !range) {
-              throw new Error('Invalid range');
-            }
-            setCurrentRange(range);
+          onNavigate={(date, fromView, action) => {
+            console.log('onNavigate', { date, fromView, action });
+            setCurrentDate(date);
           }}
-          view="month"
+          onRangeChange={(range, view) => {
+            console.log('onRangeChange', { range, view });
+            if (view === 'day' || (!view && currentView === 'day')) {
+              invariant(Array.isArray(range), 'Invalid range');
+              const day = range[0];
+              setCurrentRange({
+                start: startOfWeek(startOfMonth(day)),
+                end: endOfWeek(endOfMonth(day)),
+              });
+            }
+
+            if (view === 'month' || (!view && currentView === 'month')) {
+              invariant('start' in range && 'end' in range, 'Invalid range');
+              setCurrentRange(range);
+            }
+
+            if (view && ['day', 'month'].includes(view)) {
+              setCurrentView(view as 'day' | 'month');
+            }
+          }}
+          view={currentView}
           views={{
             month: true,
             week: false,
             work_week: false,
             agenda: false,
-            day: false,
+            day: true,
           }}
           culture="de_DE"
           onSelectEvent={(event) => {
@@ -164,7 +192,7 @@ export const CalendarView = React.memo(
             event: t('event'),
             today: t('today'),
             allDay: t('all-day'),
-            showMore: (count: number) => t('show {count} more', { count }),
+            showMore: (count: number) => t('{count} more', { count }),
             time: t('time'),
             yesterday: t('yesterday'),
             tomorrow: t('tomorrow'),
@@ -206,6 +234,7 @@ export const CalendarView = React.memo(
               return children;
             },
           }}
+          doShowMoreDrillDown
         />
         <EditEventDialog
           eventToBeEdited={editingEvent}

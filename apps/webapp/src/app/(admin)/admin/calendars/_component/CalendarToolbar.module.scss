@@ -1,11 +1,27 @@
+@import "breakpoints";
+
 .root {
   justify-content: space-between;
   align-items: baseline;
   z-index: 100;
 
-  & > section:last-child {
+  & > section {
     display: flex;
     align-items: center;
+    gap: var(--lotta-spacing);
+
+    &:last-child {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  button.todayButton {
+    @media screen and (max-width: $max-xs) {
+      // barely enough to fit most short dates into the button
+      // so it does not "jump" when the day changes
+      min-width: 12em;
+    }
   }
 
   .calendarSelectionListItemContent {

@@ -8,14 +8,22 @@ export const CalendarContext = React.createContext<{
   editingEvent:
     | ResultOf<typeof GET_CALENDAR_EVENTS>['calendarEvents'][number]
     | null;
+  currentView: 'month' | 'day';
+  currentDate: Date;
   setEditingEvent: (
     event: ResultOf<typeof GET_CALENDAR_EVENTS>['calendarEvents'][number] | null
   ) => void;
+  setCurrentView: (view: 'month' | 'day') => void;
+  setCurrentDate: (date: Date) => void;
   isCalendarActive: (calendarId: string) => boolean;
   toggleCalendar: (calendarId: string) => void;
 }>({
   activeCalendarIds: [],
   editingEvent: null,
+  currentView: 'month',
+  currentDate: new Date(),
+  setCurrentDate: () => {},
+  setCurrentView: () => {},
   setEditingEvent: () => {},
   isCalendarActive: () => false,
   toggleCalendar: () => {},
@@ -34,6 +42,10 @@ export const CalendarProvider = ({
     React.useState<React.ContextType<typeof CalendarContext>['editingEvent']>(
       null
     );
+  const [currentView, setCurrentView] = React.useState<'month' | 'day'>(
+    'month'
+  );
+  const [currentDate, setCurrentDate] = React.useState(() => new Date());
 
   const isCalendarActive = React.useCallback(
     (calendarId: string) => activeCalendarIds.includes(calendarId),
@@ -53,6 +65,10 @@ export const CalendarProvider = ({
     () => ({
       activeCalendarIds,
       editingEvent,
+      currentView,
+      currentDate,
+      setCurrentView,
+      setCurrentDate,
       setEditingEvent,
       isCalendarActive,
       toggleCalendar,
@@ -60,6 +76,10 @@ export const CalendarProvider = ({
     [
       activeCalendarIds,
       editingEvent,
+      currentView,
+      currentDate,
+      setCurrentView,
+      setCurrentDate,
       setEditingEvent,
       isCalendarActive,
       toggleCalendar,
