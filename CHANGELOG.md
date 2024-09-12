@@ -1,3 +1,15 @@
+## 5.0.10 (2024-09-12)
+
+
+### 🩹 Fixes
+
+- **core-api:** Remove expired refreshtoken cookies to avoid failing refresh ([#382](https://github.com/lotta-schule/lotta/pull/382))
+- **webapp:** Remove white background from text contentModule edittoolbar ([#383](https://github.com/lotta-schule/lotta/pull/383))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.9 (2024-09-12)
 
 
