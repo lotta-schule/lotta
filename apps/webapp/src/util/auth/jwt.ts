@@ -50,7 +50,7 @@ export class JWT {
   isExpired(buffer = 30_000): boolean {
     const now = new Date().getTime() - buffer;
 
-    return now <= this.body.expires.getTime();
+    return now >= this.body.expires.getTime();
   }
 
   isValid(): boolean {
