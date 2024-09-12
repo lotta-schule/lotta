@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { DragHandle } from '../icon/DragHandle';
+import { MoveArrow } from '../icon';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import clsx from 'clsx';
@@ -59,7 +59,7 @@ export const DraggableListItem = ({
               e.stopPropagation();
             }}
           >
-            <DragHandle className={styles.moveCategoryHandlerIcon} />
+            <MoveArrow className={styles.moveCategoryHandlerIcon} />
           </div>
         )}
         <div className={styles.titleWrapper}>{title}</div>

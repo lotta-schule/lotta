@@ -21,6 +21,9 @@
   &.onlyIcon {
     .icon {
       margin: 0px;
+      & > * {
+        padding: 0px;
+      }
     }
     &:not(.grouped) {
       padding: 0;
