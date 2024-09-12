@@ -1,3 +1,14 @@
+## 5.0.11 (2024-09-12)
+
+
+### 🩹 Fixes
+
+- **webapp:** Fix wrong token expiration comparison ([#384](https://github.com/lotta-schule/lotta/pull/384))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.10 (2024-09-12)
 
 
