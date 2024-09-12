@@ -68,6 +68,7 @@ export const ArticlesByUser = React.memo(({ user }: ArticlesByUserProps) => {
             article={article}
             limitedHeight
             disableEdit
+            isEmbedded
           />
         </motion.div>
       ))}

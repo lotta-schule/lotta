@@ -42,10 +42,12 @@ export const ArticlesByTag = React.memo(
       hidden: {
         opacity: 0,
         scaleX: 0,
+        className: styles.root,
       },
       visible: {
         opacity: 1,
         scaleX: 1,
+        className: styles.root,
       },
     };
 
@@ -64,7 +66,6 @@ export const ArticlesByTag = React.memo(
         initial={'hidden'}
         animate={'visible'}
         variants={containerVariants}
-        className={styles.root}
       >
         {!hideTitle && (
           <h6 className={styles.header}>
@@ -79,6 +80,7 @@ export const ArticlesByTag = React.memo(
                 article={article}
                 limitedHeight
                 disableEdit
+                isEmbedded
               />
             )}
           </motion.div>
