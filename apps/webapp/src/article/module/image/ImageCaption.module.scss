@@ -9,7 +9,7 @@
   border: none;
   border-bottom: 1px solid rgb(var(--lotta-text-color));
   width: 50%;
-  min-width: 25em;
+  min-width: min(25em, 100%);
   max-width: 100%;
   &[contenteditable] {
     width: 100%;
