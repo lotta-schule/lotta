@@ -54,7 +54,6 @@ export class JWT {
   }
 
   isValid(): boolean {
-    const now = new Date();
-    return now <= this.body.expires && now >= this.body.notBefore;
+    return new Date() >= this.body.notBefore;
   }
 }
