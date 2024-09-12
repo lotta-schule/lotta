@@ -2,7 +2,6 @@
   border-collapse: collapse;
   width: 100%;
   list-style: none;
-  background-color: rgb(var(--lotta-box-background-color));
   padding: var(--lotta-spacing) 0;
 }
 
@@ -10,7 +9,6 @@
   display: flex;
   align-items: center;
   padding: var(--lotta-spacing);
-
   transition: background-color 0.2s ease-in-out;
 
   .mainSection {

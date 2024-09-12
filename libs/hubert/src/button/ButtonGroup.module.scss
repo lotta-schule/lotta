@@ -4,7 +4,7 @@
   justify-content: stretch;
   button.grouped {
     color: rgba(var(--lotta-primary-color), 1);
-    background-color: #fff;
+
     display: inline-block;
     min-width: 3em;
     &:not(button:first-of-type:last-of-type) {

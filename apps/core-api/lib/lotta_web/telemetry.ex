@@ -6,8 +6,6 @@ defmodule LottaWeb.Telemetry do
 
   import Telemetry.Metrics
 
-  alias Lotta.Administration
-
   def start_link(arg) do
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
@@ -19,7 +17,11 @@ defmodule LottaWeb.Telemetry do
        period: :timer.hours(1),
        init_delay: :timer.minutes(5),
        name: :lotta_lotta_telemetry_poller},
-      {TelemetryMetricsPrometheus, metrics: metrics(), port: 9568, name: :lotta_prometheus}
+      {TelemetryMetricsPrometheus,
+       Keyword.merge(
+         [metrics: metrics(), port: 9568, name: :lotta_prometheus],
+         get_config(:prometheus_config)
+       )}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -103,5 +105,13 @@ defmodule LottaWeb.Telemetry do
       [:lotta, :tenant_count],
       %{count: Lotta.Administration.Measurements.count_tenants()}
     )
+  end
+
+  defp get_config(key) do
+    Keyword.get(config(), key, [])
+  end
+
+  defp config() do
+    Application.get_env(:lotta, __MODULE__, [])
   end
 end
