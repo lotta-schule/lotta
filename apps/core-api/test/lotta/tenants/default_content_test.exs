@@ -24,7 +24,8 @@ defmodule Lotta.Tenants.DefaultContentTest do
         },
         tenant: %{
           slug: "default-content-test",
-          title: "Default Content Test"
+          title: "Default Content Test",
+          prefix: "default_content_test"
         }
       )
 

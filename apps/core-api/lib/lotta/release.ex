@@ -10,7 +10,7 @@ defmodule Lotta.Release do
   alias Lotta.Storage
   alias Lotta.Repo
   alias Lotta.Storage.RemoteStorage
-  alias Lotta.Tenants.{Tenant, TenantSelector}
+  alias Lotta.Tenants.{Tenant, TenantDbManager}
   alias Ecto.Migrator
 
   @app :lotta
@@ -29,7 +29,7 @@ defmodule Lotta.Release do
     on_each_tenant_repo(fn tenant, pid ->
       Logger.notice("Customer #{tenant.title} with schema #{tenant.prefix} is being migrated ...")
 
-      TenantSelector.run_migrations(prefix: tenant.prefix, dynamic_repo: pid)
+      TenantDbManager.run_migrations(prefix: tenant.prefix, dynamic_repo: pid)
     end)
   end
 
@@ -45,7 +45,7 @@ defmodule Lotta.Release do
         "Customer #{tenant.title} with schema #{tenant.prefix} is being rolled back ..."
       )
 
-      TenantSelector.rollback_migrations(
+      TenantDbManager.rollback_migrations(
         Keyword.merge([prefix: tenant.prefix, dynamic_repo: pid], opts)
       )
     end)

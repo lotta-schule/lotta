@@ -16,11 +16,11 @@ export interface TenantModel {
   title: string;
   host: string;
   identifier?: string;
+  logoImageFile?: FileModel | null;
+  backgroundImageFile?: FileModel | null;
   configuration: {
     userMaxStorageConfig: string;
     customTheme?: any;
-    logoImageFile?: FileModel | null;
-    backgroundImageFile?: FileModel | null;
   };
   stats?: TenantStatsModel;
 }

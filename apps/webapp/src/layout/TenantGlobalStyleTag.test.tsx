@@ -26,9 +26,8 @@ describe('TenantGlobalStyleTag', () => {
 
   it('renders null when there is no background image', async () => {
     const tenant: TenantModel = {
-      configuration: {
-        backgroundImageFile: null,
-      },
+      configuration: {},
+      backgroundImageFile: null,
     } as TenantModel;
 
     (getBaseUrl as Mock).mockResolvedValue('https://example.com');
@@ -40,9 +39,8 @@ describe('TenantGlobalStyleTag', () => {
 
   it('renders correct style tag when there is a background image', async () => {
     const tenant: TenantModel = {
-      configuration: {
-        backgroundImageFile: { id: 'bg-image-id' },
-      },
+      configuration: {},
+      backgroundImageFile: { id: 'bg-image-id' },
     } as TenantModel;
 
     (getBaseUrl as Mock).mockResolvedValue('https://example.com');

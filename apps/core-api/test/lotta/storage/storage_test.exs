@@ -8,7 +8,7 @@ defmodule Lotta.StorageTest do
 
   alias ExAws.S3
   alias Lotta.Accounts.User
-  alias Lotta.{Fixtures, Repo, Storage}
+  alias Lotta.{Fixtures, Repo, Storage, Tenants}
   alias Lotta.Storage.{Directory, File, RemoteStorage, RemoteStorageEntity}
 
   @prefix "tenant_test"
@@ -122,6 +122,28 @@ defmodule Lotta.StorageTest do
       assert_raise Ecto.NoResultsError, fn ->
         Repo.get!(File, file.id, prefix: @prefix)
       end
+    end
+
+    test "delete_file/1 should remove the corresponding tenant's logo_image_file_id, if set" do
+      tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+      user = Fixtures.fixture(:registered_user)
+      file = Fixtures.fixture(:file, user)
+
+      tenant =
+        tenant
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_change(:logo_image_file_id, file.id)
+        |> Repo.update!(prefix: "public")
+        |> Repo.reload!()
+
+      assert tenant.logo_image_file_id == file.id
+
+      Storage.delete_file(file)
+
+      tenant = Repo.reload!(tenant)
+
+      assert tenant.logo_image_file_id == nil
     end
 
     test "should list an unused RemoteStorageEntity in list_unused_remote_storage_entities/0" do

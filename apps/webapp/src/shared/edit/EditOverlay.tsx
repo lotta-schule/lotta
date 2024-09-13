@@ -14,8 +14,15 @@ interface EditOverlayProps {
   children?: any;
 }
 
-export const EditOverlay = React.memo<EditOverlayProps>(
-  ({ children, label, description, onClickRemove, style, onClick }) => {
+export const EditOverlay = React.memo(
+  ({
+    children,
+    label,
+    description,
+    style,
+    onClickRemove,
+    onClick,
+  }: EditOverlayProps) => {
     return (
       <div className={styles.root} style={style} data-testid={'EditOverlay'}>
         <div className={styles.overlay}>

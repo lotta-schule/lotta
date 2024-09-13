@@ -31,7 +31,7 @@ defmodule Lotta.Calendar do
   def get_calendar_event(id), do: Repo.get(CalendarEvent, id, prefix: Repo.get_prefix())
 
   @spec create_calendar(data :: map()) ::
-          {:ok, Calendar} | {:error, Ecto.Changeset.t(Calendar.t())}
+          {:ok, Calendar.t()} | {:error, Ecto.Changeset.t(Calendar.t())}
   def create_calendar(data) do
     data
     |> Calendar.changeset()

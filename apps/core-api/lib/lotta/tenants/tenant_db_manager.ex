@@ -1,4 +1,4 @@
-defmodule Lotta.Tenants.TenantSelector do
+defmodule Lotta.Tenants.TenantDbManager do
   @moduledoc """
   Utilities that help with managing tenant's prefixed databases.
   """
@@ -106,21 +106,19 @@ defmodule Lotta.Tenants.TenantSelector do
 
   @spec create_tenant_database_schema(Tenant.t()) :: {:ok, [integer()]}
   def create_tenant_database_schema(tenant) do
-    prefix = tenant.prefix
-
     config =
       Application.get_env(:lotta, Repo)
       |> Keyword.put(:name, nil)
       |> Keyword.put(:pool_size, 2)
-      |> Keyword.put(:migration_default_prefix, prefix)
-      |> Keyword.put(:prefix, prefix)
+      |> Keyword.put(:migration_default_prefix, tenant.prefix)
+      |> Keyword.put(:prefix, tenant.prefix)
       |> Keyword.delete(:pool)
 
     {:ok, pid} = Repo.start_link(config)
     Repo.put_dynamic_repo(pid)
 
     query = """
-    CREATE SCHEMA IF NOT EXISTS "#{prefix}"
+    CREATE SCHEMA IF NOT EXISTS "#{tenant.prefix}"
     """
 
     Repo.query!(query)
@@ -129,7 +127,7 @@ defmodule Lotta.Tenants.TenantSelector do
 
     migrations =
       run_migrations(
-        prefix: prefix,
+        prefix: tenant.prefix,
         dynamic_repo: pid
       )
 

@@ -8,7 +8,7 @@ defmodule Lotta.Tenants do
 
   alias LottaWeb.Schema.Tenants.Tenant
   alias Ecto.Multi
-  alias Lotta.{Email, Mailer, Repo, Storage, TenantSelector}
+  alias Lotta.{Email, Mailer, Repo, Storage}
   alias Lotta.Accounts.User
   alias Lotta.Content.Article
   alias Lotta.Storage.File
@@ -16,11 +16,10 @@ defmodule Lotta.Tenants do
   alias Lotta.Tenants.{
     Category,
     CustomDomain,
-    Configuration,
     DefaultContent,
     Feedback,
     Tenant,
-    TenantSelector,
+    TenantDbManager,
     Usage,
     Widget
   }
@@ -75,7 +74,7 @@ defmodule Lotta.Tenants do
       Tenant.create_changeset(tenant, %{prefix: tenant.prefix || "tenant_#{tenant.id}"})
     end)
     |> Multi.run(:migrations, fn _repo, %{tenant: tenant} ->
-      TenantSelector.create_tenant_database_schema(tenant)
+      TenantDbManager.create_tenant_database_schema(tenant)
     end)
     |> Multi.merge(&DefaultContent.create_default_content/1)
     |> Repo.transaction(timeout: 120_000)
@@ -111,7 +110,7 @@ defmodule Lotta.Tenants do
 
     result = Repo.delete(tenant, prefix: "public")
 
-    TenantSelector.delete_tenant_schema(tenant)
+    TenantDbManager.delete_tenant_schema(tenant)
 
     result
   end
@@ -176,12 +175,7 @@ defmodule Lotta.Tenants do
   end
 
   @doc """
-  Update a tenant. Does *only* update the tenant data
-  in the public schema. Does not update the configuration.
-  This will effectively only change the title.
-  The configuration will have to be updated separatly.
-  For more information, see `Lotta.Tenants.update_configuration`
-  and `Lotta.Tenant.update_changeset`.
+  Update a tenant.
   """
   @doc since: "2.6.0"
   @spec update_tenant(Tenant.t(), map()) ::
@@ -216,150 +210,6 @@ defmodule Lotta.Tenants do
       file_count: Repo.aggregate(File, :count, prefix: prefix)
     }
   end
-
-  @doc """
-  Gets system configuration from the tenant's schema.
-  Always returns an object.
-
-  If no configuration is passed, the process's current
-  tenant is used to determine the correct prefix.
-  ## Examples
-
-    iex> get_configuration()
-    %{title: "Meine Schule"}
-
-    iex> get_configuration(tenant)
-    %{title: "Meine Schule"}
-  """
-  @doc since: "2.0.0"
-
-  @spec get_configuration(Tenant.t() | nil) :: Tenant.configuration()
-
-  def get_configuration(tenant \\ nil)
-
-  def get_configuration(%Tenant{configuration: configuration}) when not is_nil(configuration) do
-    configuration
-  end
-
-  def get_configuration(tenant) do
-    from(c in Configuration)
-    |> Tenant.put_query_prefix(tenant)
-    |> Repo.all()
-    |> Repo.preload(:file_value)
-    |> Enum.reduce(
-      %{},
-      &Map.put(
-        &2,
-        ensure_atom(&1.name),
-        &1.file_value || &1.string_value || &1.json_value
-      )
-    )
-  end
-
-  @doc """
-  Update the tenant configuration.
-  This function expects a map and will construct the
-  configuration lines accordingly and update the database.
-  """
-  @doc since: "2.0.0"
-  @spec update_configuration(Tenant.t(), Tenant.configuration()) ::
-          {:ok, %{__struct__: Tenant, configuration: Tenant.configuration()}}
-          | {:error, Ecto.Changeset.t()}
-  def update_configuration(tenant, configuration) do
-    Enum.reduce(configuration, Multi.new(), fn {key, value}, multi ->
-      key = to_string(key)
-
-      if Enum.member?(Configuration.possible_keys(), key) do
-        configline = make_configuration_line(key, value)
-
-        Multi.insert(
-          multi,
-          String.to_atom(key),
-          Configuration.changeset(configline),
-          conflict_target: :name,
-          on_conflict: [
-            set: [
-              string_value: configline[:string_value],
-              json_value: configline[:json_value],
-              file_value_id: configline[:file_value_id]
-            ]
-          ],
-          prefix: tenant.prefix
-        )
-      else
-        multi
-      end
-    end)
-    |> Repo.transaction()
-    |> case do
-      {:ok, changes} ->
-        config =
-          changes
-          |> Map.values()
-          |> Repo.preload(:file_value)
-          |> Enum.reduce(
-            %{},
-            &Map.put(
-              &2,
-              ensure_atom(&1.name),
-              &1.file_value || &1.string_value || &1.json_value
-            )
-          )
-
-        {:ok, Map.put(tenant, :configuration, config)}
-
-      {:error, changeset, _} ->
-        {:error, changeset}
-    end
-  end
-
-  @spec make_configuration_line(String.t(), Configuration.value()) :: map()
-
-  defp make_configuration_line(name, nil) do
-    %{
-      name: name,
-      string_value: nil,
-      json_value: nil,
-      file_value_id: nil
-    }
-  end
-
-  defp make_configuration_line(name, %File{} = file) do
-    %{
-      name: name,
-      file_value: file,
-      file_value_id: Map.get(file, :id)
-    }
-  end
-
-  defp make_configuration_line(name, %{id: id})
-       when binary_part(name, byte_size(name), -4) == "file" do
-    %{
-      name: name,
-      file_value: Repo.get(File, id),
-      file_value_id: id
-    }
-  end
-
-  defp make_configuration_line(name, map) when is_map(map) do
-    %{name: to_string(name), json_value: map}
-  end
-
-  defp make_configuration_line(name, string) when is_binary(string) do
-    %{name: to_string(name), string_value: string}
-  end
-
-  defp make_configuration_line(name, number) when is_number(number) do
-    %{
-      name: name,
-      string_value: Integer.to_string(number)
-    }
-  end
-
-  @doc false
-  @spec ensure_atom(String.t() | atom()) :: atom()
-  defp ensure_atom(value) when is_atom(value), do: value
-  defp ensure_atom(value) when is_binary(value), do: String.to_atom(value)
 
   @doc """
   Get media and storage usage for a given tenant.
@@ -680,7 +530,8 @@ defmodule Lotta.Tenants do
         :ok
 
       {:error, error} ->
-        Sentry.capture_message("Error sending feedback to lotta team: #{inspect(error)}")
+        Logger.error("Error sending feedback to lotta team:", %{sentry: %{error: error}})
+
         :error
     end
   end

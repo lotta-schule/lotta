@@ -376,7 +376,7 @@ defmodule LottaWeb.FeedbackResolverTest do
                "data" => nil,
                "errors" => [
                  %{
-                   "message" => "Feedback mit der id 0 nicht gefunden.",
+                   "message" => "Feedback nicht gefunden.",
                    "path" => ["feedback"]
                  }
                ]

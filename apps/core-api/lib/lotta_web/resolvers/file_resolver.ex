@@ -9,7 +9,6 @@ defmodule LottaWeb.FileResolver do
 
   alias Ecto.Adapter.Storage
   alias LottaWeb.Context
-  alias Lotta.Tenants
   alias Lotta.Tenants.Category
   alias Lotta.Accounts.{FileManagment, User}
   alias Lotta.Content.{Article, ContentModule}
@@ -168,11 +167,9 @@ defmodule LottaWeb.FileResolver do
     %{size: filesize} = File.stat!(file.path)
 
     size_limit =
-      tenant
-      |> Tenants.get_configuration()
-      |> Map.get(:user_max_storage_config, "-1")
-
-    size_limit = if is_nil(size_limit), do: -1, else: String.to_integer(size_limit)
+      tenant.configuration
+      |> Map.get(:user_max_storage_config)
+      |> then(&String.to_integer(&1 || "-1"))
 
     cond do
       size_limit > -1 &&

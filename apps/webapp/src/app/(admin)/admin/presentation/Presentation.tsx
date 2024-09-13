@@ -73,7 +73,7 @@ export const Presentation = React.memo(
     );
 
     const [backgroundImage, setBackgroundImage] = React.useState(
-      tenant.configuration.backgroundImageFile
+      tenant.backgroundImageFile
     );
 
     const [updateSystem, { loading: isLoading, error }] =
@@ -373,12 +373,10 @@ export const Presentation = React.memo(
               await updateSystem({
                 variables: {
                   tenant: {
+                    backgroundImageFileId: backgroundImage?.id,
                     configuration: {
                       ...tenant.configuration,
                       customTheme,
-                      backgroundImageFile: backgroundImage && {
-                        id: backgroundImage.id,
-                      },
                     },
                   },
                 },

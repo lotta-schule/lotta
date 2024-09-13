@@ -11,6 +11,7 @@ defmodule Lotta.Accounts do
   alias Lotta.{Content, Email, Mailer, Repo, Storage}
   alias Lotta.Accounts.{User, UserDevice, UserGroup}
   alias Lotta.Storage.File
+  alias Lotta.Tenants.Tenant
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)

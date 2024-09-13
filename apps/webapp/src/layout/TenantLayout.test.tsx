@@ -6,11 +6,8 @@ import { TenantModel } from 'model';
 
 const tenantMock: TenantModel = {
   ...tenant,
-  configuration: {
-    ...tenant.configuration,
-    backgroundImageFile: imageFile,
-    logoImageFile: imageFile,
-  },
+  backgroundImageFile: imageFile,
+  logoImageFile: imageFile,
 };
 
 describe('TenantLayout', () => {

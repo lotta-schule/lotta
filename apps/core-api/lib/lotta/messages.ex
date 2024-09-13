@@ -179,7 +179,10 @@ defmodule Lotta.Messages do
       :ok
     rescue
       e ->
-        Logger.error(Exception.format(:error, e, __STACKTRACE__))
+        Logger.error("Could not insert into the conversation_user_last_seen table.", %{
+          sentry: %{error: e}
+        })
+
         Sentry.capture_exception(e)
         :error
     end

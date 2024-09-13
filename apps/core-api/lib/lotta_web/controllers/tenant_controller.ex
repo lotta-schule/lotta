@@ -4,6 +4,7 @@ defmodule LottaWeb.TenantController do
   import Plug.Conn
 
   import Ecto.Query
+  import Absinthe.Utils, only: [camelize: 2]
 
   alias Ecto.Changeset
   alias Lotta.{Tenants, Repo}
@@ -52,25 +53,16 @@ defmodule LottaWeb.TenantController do
       |> Repo.exists?(prefix: prefix)
     end)
     |> Enum.map(fn tenant ->
-      configuration = Tenants.get_configuration(tenant)
-      logo_image_file = Map.get(configuration, :logo_image_file)
-      background_image_file = Map.get(configuration, :background_image_file)
+      tenant
+      |> Map.keys()
+      |> Enum.reduce(%{}, fn
+        key, acc
+        when key in [:id, :slug, :title, :logo_image_file_id, :background_image_file_id] ->
+          Map.put(acc, camelize(to_string(key), lower: true), Map.get(tenant, key))
 
-      %{
-        id: tenant.id,
-        title: tenant.title,
-        slug: tenant.slug,
-        logoImageFileId:
-          if(logo_image_file != nil,
-            do: Map.get(logo_image_file, :id),
-            else: nil
-          ),
-        backgroundImageFileId:
-          if(background_image_file != nil,
-            do: Map.get(background_image_file, :id),
-            else: nil
-          )
-      }
+        _, acc ->
+          acc
+      end)
     end)
     |> then(fn tenants ->
       json(conn, %{

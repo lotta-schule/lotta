@@ -39,14 +39,7 @@ defmodule LottaWeb.EmailViewTest do
           prefix: t.prefix
         )
 
-      config =
-        Map.put(
-          Tenants.get_configuration(t),
-          :logo_image_file,
-          file
-        )
-
-      {:ok, tenant} = Tenants.update_configuration(t, config)
+      {:ok, tenant} = Tenants.update_tenant(t, %{logo_image_file_id: file.id})
       assert EmailView.logo_url(tenant) =~ ~r/http:\/\/(minio|localhost|127\.0\.0\.1)/
     end
   end

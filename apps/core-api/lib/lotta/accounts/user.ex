@@ -199,8 +199,7 @@ defmodule Lotta.Accounts.User do
 
           %{id: id} ->
             UserGroup
-            |> Ecto.Query.put_query_prefix(Ecto.get_meta(user, :prefix))
-            |> Repo.get(String.to_integer(id))
+            |> Repo.get(String.to_integer(id), prefix: Ecto.get_meta(user, :prefix))
         end
       end)
       |> Enum.filter(&(!is_nil(&1)))

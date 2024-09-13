@@ -10,6 +10,7 @@ import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 
 const mockTenant: TenantModel = {
   ...tenant,
+  backgroundImageFile: imageFile,
   configuration: {
     userMaxStorageConfig: '100',
 
@@ -33,7 +34,6 @@ const mockTenant: TenantModel = {
       titleFontFamily: 'Arial',
       textFontFamily: 'Verdana',
     },
-    backgroundImageFile: imageFile,
   },
 };
 

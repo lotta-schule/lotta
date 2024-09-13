@@ -33,15 +33,12 @@ export const TenantLayout = async ({
     >
       <header className={styles.header}>
         <div className={styles.logoGridItem}>
-          {tenant.configuration.logoImageFile && (
+          {tenant.logoImageFile && (
             <Link href={'/'} title={'Startseite'}>
               <ResponsiveImage
                 resize={'inside'}
                 height={80}
-                src={File.getFileRemoteLocation(
-                  baseUrl,
-                  tenant.configuration.logoImageFile
-                )}
+                src={File.getFileRemoteLocation(baseUrl, tenant.logoImageFile)}
                 alt={`Logo ${tenant.title}`}
               />
             </Link>

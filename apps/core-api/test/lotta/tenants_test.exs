@@ -42,10 +42,10 @@ defmodule Lotta.TenantsTest do
       assert {:ok, tenant} =
                Tenants.create_tenant(
                  user_params: %{name: "Salvador Allende", email: "salvador.allende@einsa.net"},
-                 tenant: %{title: "Chile Lotta", slug: "chile"}
+                 tenant: %{title: "Chile Lotta", slug: "chile", prefix: "chile"}
                )
 
-      assert %{title: "Chile Lotta", slug: "chile"} = tenant
+      assert %{title: "Chile Lotta", slug: "chile", prefix: "chile"} = tenant
 
       assert [%{name: "Salvador Allende", email: "salvador.allende@einsa.net"}] =
                Lotta.Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
@@ -58,7 +58,7 @@ defmodule Lotta.TenantsTest do
       assert {:ok, tenant} =
                Tenants.create_tenant(
                  user_params: %{name: "Salvador Allende", email: "salvador.allende@einsa.net"},
-                 tenant: %{title: "Chile Lotta", slug: "chile"}
+                 tenant: %{title: "Chile Lotta", slug: "chile", prefix: "chile"}
                )
 
       assert {:ok, _tenant} = Tenants.delete_tenant(tenant)

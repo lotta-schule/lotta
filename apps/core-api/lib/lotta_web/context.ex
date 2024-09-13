@@ -8,7 +8,6 @@ defmodule LottaWeb.Context do
 
   alias Lotta.Repo
   alias Lotta.Accounts
-  alias Lotta.Tenants
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
 
@@ -56,14 +55,6 @@ defmodule LottaWeb.Context do
     user
     |> Map.put(:all_groups, groups)
     |> Map.put(:is_admin?, Enum.any?(groups, & &1.is_admin_group))
-  end
-
-  @doc """
-  Set the virtual tenant fields (configuration) for the current tenant
-  """
-  @spec set_virtual_tenant_fields(Tenant.t()) :: Tenant.t()
-  def set_virtual_tenant_fields(%Tenant{} = tenant) do
-    Map.put(tenant, :configuration, Tenants.get_configuration(tenant))
   end
 
   @impl true

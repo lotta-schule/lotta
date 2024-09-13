@@ -71,10 +71,12 @@ defmodule LottaWeb.WidgetResolver do
             []
 
           calendar ->
-            Calendar.list_calendar_events(calendar, [
-              {:from, DateTime.utc_now()},
-              {:latest, DateTime.add(DateTime.utc_now(), days, :day)}
-            ])
+            now = DateTime.utc_now()
+
+            Calendar.list_calendar_events(calendar,
+              from: now,
+              latest: DateTime.add(now, days, :day)
+            )
         end
 
       _ ->
@@ -84,7 +86,7 @@ defmodule LottaWeb.WidgetResolver do
     |> then(&{:ok, &1})
   end
 
-  def resolve_calendar_events(_args, info) do
+  def resolve_calendar_events(_args, _info) do
     {:ok, nil}
   end
 end

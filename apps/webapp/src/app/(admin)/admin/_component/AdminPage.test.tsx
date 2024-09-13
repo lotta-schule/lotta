@@ -35,9 +35,8 @@ const FileGetFileRemoteLocationMock = vi.spyOn(File, 'getFileRemoteLocation');
 describe('AdminPage', () => {
   beforeEach(() => {
     loadTenantMock.mockResolvedValue({
-      configuration: {
-        logoImageFile: 'logo.png',
-      },
+      configuration: {},
+      logoImageFile: 'logo.png',
       title: 'Tenant Title',
     } as any);
     getBaseUrlMock.mockResolvedValue('http://localhost');

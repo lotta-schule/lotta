@@ -15,8 +15,7 @@ defmodule Lotta.Repo.TenantMigrations.AddHasChangedDefaultPasswordToUsers do
     flush()
 
     from("users")
-    |> put_query_prefix(prefix())
-    |> Repo.update_all(set: [has_changed_default_password: true])
+    |> Repo.update_all([set: [has_changed_default_password: true]], prefix: prefix())
   end
 
   def down do

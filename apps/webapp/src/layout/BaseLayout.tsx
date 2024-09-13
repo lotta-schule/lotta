@@ -19,11 +19,8 @@ export const BaseLayout = React.memo(({ children }: BaseLayoutProps) => {
   const { baseUrl } = useServerData();
 
   const backgroundImageUrl =
-    tenant.configuration.backgroundImageFile &&
-    File.getFileRemoteLocation(
-      baseUrl,
-      tenant.configuration.backgroundImageFile
-    );
+    tenant.backgroundImageFile &&
+    File.getFileRemoteLocation(baseUrl, tenant.backgroundImageFile);
   const { url: imageUrlSimple } = useImageUrl(backgroundImageUrl, {
     width: 1250,
     format: 'webp',
@@ -34,7 +31,7 @@ export const BaseLayout = React.memo(({ children }: BaseLayoutProps) => {
   });
   return (
     <Box className={styles.root}>
-      {tenant.configuration.backgroundImageFile && (
+      {tenant.backgroundImageFile && (
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -50,15 +47,12 @@ export const BaseLayout = React.memo(({ children }: BaseLayoutProps) => {
       )}
       <header className={styles.header}>
         <div className={styles.logoGridItem}>
-          {tenant.configuration.logoImageFile && (
+          {tenant.logoImageFile && (
             <Link href={'/'} passHref title={'Startseite'}>
               <ResponsiveImage
                 resize={'inside'}
                 height={80}
-                src={File.getFileRemoteLocation(
-                  baseUrl,
-                  tenant.configuration.logoImageFile
-                )}
+                src={File.getFileRemoteLocation(baseUrl, tenant.logoImageFile)}
                 alt={`Logo ${tenant.title}`}
               />
             </Link>

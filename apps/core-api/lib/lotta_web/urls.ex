@@ -8,6 +8,8 @@ defmodule LottaWeb.Urls do
   for example.
   """
   alias Lotta.{Slugifier, Tenants}
+  alias Lotta.Accounts.User
+  alias Lotta.Content.Article
   alias Lotta.Tenants.Tenant
 
   @type url_options() :: [skip_protocol: boolean()]

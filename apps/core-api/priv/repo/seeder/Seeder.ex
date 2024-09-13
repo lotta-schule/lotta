@@ -7,7 +7,7 @@ defmodule Lotta.Repo.Seeder do
   alias Lotta.Storage.{Directory, File}
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Messages.{Conversation, Message}
-  alias Lotta.Tenants.{Category, Tenant, TenantSelector, Widget}
+  alias Lotta.Tenants.{Category, Tenant, TenantDbManager, Widget}
 
   def seed do
 
@@ -17,7 +17,15 @@ defmodule Lotta.Repo.Seeder do
       Repo.insert!(%Tenant{
         title: "Test Lotta",
         slug: "test",
-        prefix: "tenant_test"
+        prefix: "tenant_test",
+        configuration: %{
+          custom_theme: %{
+            "palette" => %{
+              "primary" => %{"main" => "red"},
+              "secondary" => %{"main" => "green"}
+            }
+          }
+        }
       })
 
     tenant_2 =
@@ -30,16 +38,7 @@ defmodule Lotta.Repo.Seeder do
     all_tenants = [tenant, tenant_2]
 
     all_tenants
-    |> Enum.each(&TenantSelector.create_tenant_database_schema(&1))
-
-    Tenants.update_configuration(tenant, %{
-      custom_theme: %{
-        "palette" => %{
-          "primary" => %{"main" => "red"},
-          "secondary" => %{"main" => "green"}
-        }
-      }
-    })
+    |> Enum.each(&TenantDbManager.create_tenant_database_schema(&1))
 
     admin_group =
       all_tenants

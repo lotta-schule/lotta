@@ -930,9 +930,11 @@ defmodule LottaWeb.FileResolverTest do
       user2_jwt: user2_jwt,
       tenant: t
     } do
-      Tenants.update_configuration(
+      Tenants.update_tenant(
         t,
-        Map.put(Tenants.get_configuration(t), :user_max_storage_config, "0")
+        %{
+          configuration: Map.put(t.configuration, :user_max_storage_config, "0")
+        }
       )
 
       res =

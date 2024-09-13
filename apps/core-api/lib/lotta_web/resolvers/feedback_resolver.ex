@@ -1,6 +1,7 @@
 defmodule LottaWeb.FeedbackResolver do
   @moduledoc false
   import LottaWeb.ErrorHelpers
+  import Lotta.Guard
 
   alias Lotta.{Repo, Tenants}
 
@@ -25,7 +26,8 @@ defmodule LottaWeb.FeedbackResolver do
     end
   end
 
-  def send_to_lotta(%{id: id} = args, %{context: %{current_user: current_user}}) do
+  def send_to_lotta(%{id: id} = args, %{context: %{current_user: current_user}})
+      when is_uuid(id) do
     case Tenants.get_feedback(id) do
       nil ->
         {:error, "Feedback nicht gefunden."}
@@ -35,9 +37,12 @@ defmodule LottaWeb.FeedbackResolver do
     end
   end
 
+  def send_to_lotta(_, _), do: {:error, "Feedback nicht gefunden."}
+
   def respond(%{id: id, subject: subject, message: message}, %{
         context: %{current_user: current_user}
-      }) do
+      })
+      when is_uuid(id) do
     case Tenants.get_feedback(id) do
       nil ->
         {:error, "Feedback nicht gefunden."}
@@ -49,13 +54,17 @@ defmodule LottaWeb.FeedbackResolver do
     end
   end
 
-  def delete(%{id: id}, _context) do
+  def respond(_, _), do: {:error, "Feedback nicht gefunden."}
+
+  def delete(%{id: id}, _context) when is_uuid(id) do
     case Tenants.get_feedback(id) do
       nil ->
-        {:error, "Feedback mit der id #{id} nicht gefunden."}
+        {:error, "Feedback nicht gefunden."}
 
       feedback ->
         Tenants.delete_feedback(feedback)
     end
   end
+
+  def delete(_, _), do: {:error, "Feedback nicht gefunden."}
 end

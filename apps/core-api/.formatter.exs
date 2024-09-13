@@ -9,6 +9,7 @@
   inputs: [
     "*.{heex,ex,exs}",
     "priv/*/seeds.exs",
+    "priv/repo/migrations/*.exs",
     "{config,lib,test}/**/*.{heex,ex,exs}",
     "**/*.md"
   ]

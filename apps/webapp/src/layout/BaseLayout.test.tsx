@@ -8,9 +8,9 @@ const tenantMock: TenantModel = {
   ...tenant,
   configuration: {
     ...tenant.configuration,
-    backgroundImageFile: imageFile,
-    logoImageFile: imageFile,
   },
+  backgroundImageFile: imageFile,
+  logoImageFile: imageFile,
 };
 
 describe('BaseLayout', () => {

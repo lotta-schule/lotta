@@ -4,13 +4,13 @@ mutation UpdateTenant($tenant: TenantInput!) {
     title
     slug
     host
+    backgroundImageFile {
+      id
+    }
+    logoImageFile {
+      id
+    }
     configuration {
-      backgroundImageFile {
-        id
-      }
-      logoImageFile {
-        id
-      }
       customTheme
       userMaxStorageConfig
     }

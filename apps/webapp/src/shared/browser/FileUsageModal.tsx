@@ -102,13 +102,13 @@ export const FileUsageModal = React.memo(
                         })}
                       />
                     )}
-                    {usage.tenant?.configuration.logoImageFile && (
+                    {usage.tenant?.logoImageFile && (
                       <ResponsiveImage
                         resize={'inside'}
                         height={75}
                         src={File.getFileRemoteLocation(
                           baseUrl,
-                          usage.tenant.configuration.logoImageFile
+                          usage.tenant.logoImageFile
                         )}
                         alt={t('Logo of {{title}}', {
                           title: usage.tenant.title,

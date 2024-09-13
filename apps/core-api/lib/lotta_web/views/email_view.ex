@@ -6,7 +6,7 @@ defmodule LottaWeb.EmailView do
 
   use LottaWeb, :view
 
-  alias Lotta.{Repo, Storage, Tenants}
+  alias Lotta.{Repo, Storage}
   alias Lotta.Tenants.Tenant
   alias Lotta.Content.Article
 
@@ -21,17 +21,10 @@ defmodule LottaWeb.EmailView do
   """
   @doc since: "2.2.0"
   @spec theme_prop(Tenant.t(), String.t(), String.t()) :: String.t() | number()
-  def theme_prop(nil, _prop_name, fallback), do: fallback
+  def theme_prop(%Tenant{configuration: %{custom_theme: theme}}, prop_name, fallback),
+    do: get_in(theme, String.split(prop_name, ".")) || fallback
 
-  def theme_prop(tenant, prop_name, fallback) do
-    value =
-      tenant
-      |> Tenants.get_configuration()
-      |> Map.get(:custom_theme, %{})
-      |> get_in(String.split(prop_name, "."))
-
-    value || fallback
-  end
+  def theme_prop(_tenant, _prop_name, fallback), do: fallback
 
   @doc """
   Returns the complete usable URL to the logo image.
@@ -41,20 +34,15 @@ defmodule LottaWeb.EmailView do
   """
   @doc since: "2.2.0"
   @spec logo_url(Tenant.t()) :: String.t()
-  def logo_url(nil), do: default_logo_data_url()
 
-  def logo_url(tenant) do
-    image_file =
-      tenant
-      |> Tenants.get_configuration()
-      |> Map.get(:logo_image_file, nil)
-
-    if is_nil(image_file) do
-      default_logo_data_url()
-    else
-      Storage.get_http_url(image_file)
+  def logo_url(%Tenant{logo_image_file_id: id}) when not is_nil(id) do
+    case Storage.get_file(id) do
+      nil -> default_logo_data_url()
+      image_file -> Storage.get_http_url(image_file)
     end
   end
+
+  def logo_url(_), do: default_logo_data_url()
 
   @doc """
   Returns the tenant title

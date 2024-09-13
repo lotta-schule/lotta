@@ -15,8 +15,7 @@ defmodule Lotta.Repo.TenantMigrations.AddPublishedToArticles do
     flush()
 
     from(a in "articles", where: not is_nil(a.category_id))
-    |> put_query_prefix(prefix())
-    |> Repo.update_all(set: [published: true])
+    |> Repo.update_all([set: [published: true]], prefix: prefix())
   end
 
   def down do

@@ -4,13 +4,14 @@ query GetTenantWithStats {
     title
     slug
     host
+    identifier
+    backgroundImageFile {
+      id
+    }
+    logoImageFile {
+      id
+    }
     configuration {
-      backgroundImageFile {
-        id
-      }
-      logoImageFile {
-        id
-      }
       customTheme
       userMaxStorageConfig
     }

@@ -36,7 +36,7 @@ defmodule Lotta.MixProject do
         logo: "priv/static/logo.png",
         extras: ["README.md"]
       ],
-      dialyzer: [plt_add_deps: :transitive]
+      dialyzer: []
     ]
   end
 
@@ -116,7 +116,7 @@ defmodule Lotta.MixProject do
       {:mock, "~> 0.3", only: :test},
       # Development
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
       # Telemetry & OpenTelemetry
       {:telemetry_metrics, "~> 1.0"},

@@ -50,15 +50,12 @@ export const AdminPage = async ({
         <h2>
           {icon && <FontAwesomeIcon icon={icon} />} {title}
         </h2>
-        {tenant.configuration.logoImageFile && (
+        {tenant.logoImageFile && (
           <Link href={'/'} title={'Startseite'} className={styles.logoLink}>
             <ResponsiveImage
               resize={'inside'}
               height={30}
-              src={File.getFileRemoteLocation(
-                baseUrl,
-                tenant.configuration.logoImageFile
-              )}
+              src={File.getFileRemoteLocation(baseUrl, tenant.logoImageFile)}
               alt={`Logo ${tenant.title}`}
             />
           </Link>
@@ -68,7 +65,7 @@ export const AdminPage = async ({
           component={Link}
           href={'/'}
           className={clsx(styles.logoLinkClose, {
-            [styles.forceLogoLinkClose]: !tenant.configuration.logoImageFile,
+            [styles.forceLogoLinkClose]: !tenant.logoImageFile,
           })}
         />
       </nav>

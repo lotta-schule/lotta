@@ -24,8 +24,8 @@ export const CategoryHead = React.memo<CategoryHeadProps>(({ category }) => {
     : `${category.title} bei ${tenant.title}`;
 
   const { url: logoImageUrl } = useImageUrl(
-    tenant.configuration.logoImageFile &&
-      File.getFileRemoteLocation(baseUrl, tenant.configuration.logoImageFile),
+    tenant.logoImageFile &&
+      File.getFileRemoteLocation(baseUrl, tenant.logoImageFile),
     { width: 320 }
   );
   const { url: bannerImageUrl } = useImageUrl(

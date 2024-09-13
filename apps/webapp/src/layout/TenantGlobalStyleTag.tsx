@@ -28,14 +28,11 @@ export const TenantGlobalStyleTag = async ({
 }: TenantGlobalStyleTagProps) => {
   const baseUrl = await getBaseUrl();
   const backgroundImageUrl =
-    tenant.configuration.backgroundImageFile &&
-    File.getFileRemoteLocation(
-      baseUrl,
-      tenant.configuration.backgroundImageFile
-    );
+    tenant.backgroundImageFile &&
+    File.getFileRemoteLocation(baseUrl, tenant.backgroundImageFile);
 
   const [imageUrlSimple, imageUrlRetina] = getImageUrls(backgroundImageUrl);
-  if (!tenant.configuration.backgroundImageFile) {
+  if (!tenant.backgroundImageFile) {
     return null;
   }
 

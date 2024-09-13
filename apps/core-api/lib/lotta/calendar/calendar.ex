@@ -27,8 +27,10 @@ defmodule Lotta.Calendar.Calendar do
   end
 
   @spec changeset(data :: map()) :: Ecto.Changeset.t(t())
+  def changeset(data), do: changeset(%__MODULE__{}, data)
+
   @spec changeset(t(), data :: map()) :: Ecto.Changeset.t(t())
-  def changeset(struct \\ %__MODULE__{}, data) do
+  def changeset(struct, data) do
     struct
     |> cast(data, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)

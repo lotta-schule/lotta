@@ -3,21 +3,20 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
 
   use Absinthe.Schema.Notation
 
-  alias LottaWeb.{TenantResolver, Urls}
+  alias LottaWeb.TenantResolver
 
   object :tenant do
     field(:id, :id)
     field(:title, :string)
     field(:slug, :string)
-    field(:configuration, :tenant_configuration, resolve: &TenantResolver.resolve_configuration/2)
-    field(:inserted_at, :datetime)
-    field(:host, :string, resolve: &TenantResolver.host/2)
+    field(:host, :string, resolve: &TenantResolver.resolve_host/3)
+    field(:configuration, :tenant_configuration)
+    field(:logo_image_file, :file, resolve: &TenantResolver.resolve_logo_image_file/3)
+    field(:background_image_file, :file, resolve: &TenantResolver.resolve_background_image_file/3)
 
-    field(:identifier, non_null(:string),
-      resolve: fn tenant, _, _ ->
-        {:ok, Urls.get_tenant_identifier(tenant)}
-      end
-    )
+    field(:inserted_at, :datetime)
+
+    field(:identifier, non_null(:string), resolve: &TenantResolver.resolve_identifier/3)
 
     field(:stats, :tenant_stats) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
@@ -25,7 +24,9 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
       resolve(&TenantResolver.get_stats/2)
     end
 
-    field(:custom_domains, list_of(:custom_domain), resolve: &TenantResolver.custom_domains/2)
+    field(:custom_domains, list_of(:custom_domain),
+      resolve: &TenantResolver.resolve_custom_domains/3
+    )
   end
 
   object :custom_domain do
@@ -52,12 +53,12 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
 
   input_object :tenant_input do
     field(:title, :string)
+    field(:background_image_file_id, :id)
+    field(:logo_image_file_id, :id)
     field(:configuration, :tenant_configuration_input)
   end
 
   input_object :tenant_configuration_input do
-    field(:background_image_file, :select_file_input)
-    field(:logo_image_file, :select_file_input)
     field(:custom_theme, :json)
     field(:user_max_storage_config, :string)
   end

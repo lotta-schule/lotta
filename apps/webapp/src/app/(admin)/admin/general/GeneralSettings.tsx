@@ -32,7 +32,7 @@ export type GeneralSettingsProps = {
 export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
   const router = useRouter();
   const [title, setTitle] = React.useState(tenant.title);
-  const [logo, setLogo] = React.useState(tenant.configuration.logoImageFile);
+  const [logo, setLogo] = React.useState(tenant.logoImageFile);
 
   const [updateTenant, { error }] = useMutation(UpdateTenantMutation);
 
@@ -99,12 +99,7 @@ export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
               variables: {
                 tenant: {
                   title,
-                  configuration: {
-                    ...tenant.configuration,
-                    logoImageFile: logo && {
-                      id: logo.id,
-                    },
-                  },
+                  logoImageFileId: logo?.id,
                 },
               },
             });

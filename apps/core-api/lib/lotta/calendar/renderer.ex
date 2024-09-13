@@ -55,7 +55,7 @@ defmodule Lotta.Calendar.Renderer do
   defp calendar_event(do: block), do: entity("VEVENT", block)
 
   defp string_val(value) when is_list(value), do: Enum.join(value, ",")
-  defp string_val(value) when is_struct(DateTime), do: to_ics_date(value)
+  defp string_val(value) when is_struct(value, DateTime), do: to_ics_date(value)
   defp string_val(value), do: to_string(value)
 
   defp maybe_append(acc, field, value, opts \\ [])

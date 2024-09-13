@@ -18,3 +18,9 @@ config :logger, :console,
   level: level,
   metadata: [:request_id],
   backends: [:console, Sentry.LoggerBackend]
+
+config :logger, Sentry.LoggerBackend,
+  level: :error,
+  excluded_domains: [],
+  metadata: [:sentry],
+  capture_log_messages: true

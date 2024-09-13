@@ -38,7 +38,7 @@ defmodule Lotta.MessagesTest do
       user2 = Fixtures.fixture(:registered_user, %{email: "new@mymail.com"})
       conversation = Fixtures.fixture(:create_conversation_users, [user1, user2])
 
-      datetime = ~N[2023-07-09 03:58:07.000000]
+      datetime = ~N[2023-07-09 03:58:07]
       assert :ok = Messages.set_user_has_last_seen_conversation(user1, conversation, datetime)
 
       assert(

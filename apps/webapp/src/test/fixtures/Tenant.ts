@@ -14,10 +14,10 @@ export const tenant = {
   insertedAt: '2014-03-08 12:00',
   updatedAt: '2014-03-08 12:00',
   host: 'info.lotta.schule',
+  logoImageFile: null,
+  backgroundImageFile: null,
   configuration: {
     userMaxStorageConfig: '20971520',
-    logoImageFile: null,
-    backgroundImageFile: null,
     customTheme: {},
   },
 } as TenantModel;

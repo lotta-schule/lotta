@@ -6,6 +6,7 @@ defmodule Lotta.Storage do
 
   import Ecto.Query
 
+  alias Lotta.Tenants
   alias Plug.Upload
   alias Ecto.Multi
   alias Ecto.Changeset
@@ -312,8 +313,8 @@ defmodule Lotta.Storage do
 
   """
   @doc since: "2.5.0"
-  @spec get_file(Lotta.Storage.File.id()) :: Lotta.Storage.File.t() | nil
-  def get_file(id), do: Repo.get(Lotta.Storage.File, id)
+  @spec get_file(Lotta.Storage.File.id(), opts :: keyword() | nil) :: Lotta.Storage.File.t() | nil
+  def get_file(id, opts \\ []), do: Repo.get(Lotta.Storage.File, id, opts)
 
   @doc """
   Gets a single file_conversion.
@@ -352,6 +353,9 @@ defmodule Lotta.Storage do
   @doc """
   Deletes a File AND all its dependend conversions
 
+  If the file is referenced by its tenant's logo_image_file_id or background_image_file_id,
+  the corresponding field will be set to nil.
+
   ## Examples
 
       iex> delete_file(file)
@@ -369,7 +373,9 @@ defmodule Lotta.Storage do
       file
       |> Repo.preload([:file_conversions, :remote_storage_entity])
 
-    Enum.each(file.file_conversions, fn file_conversion ->
+    file.file_conversions
+    |> Repo.preload(:remote_storage_entity)
+    |> Enum.each(fn file_conversion ->
       file_conversion =
         file_conversion
         |> Repo.preload(:remote_storage_entity)
@@ -383,6 +389,16 @@ defmodule Lotta.Storage do
 
     if file.remote_storage_entity do
       RemoteStorage.delete(file.remote_storage_entity)
+    end
+
+    tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(file, :prefix))
+
+    if tenant.logo_image_file_id == file.id do
+      Tenants.update_tenant(tenant, %{logo_image_file_id: nil})
+    end
+
+    if tenant.background_image_file_id == file.id do
+      Tenants.update_tenant(tenant, %{background_image_file_id: nil})
     end
 
     Repo.delete(file)
