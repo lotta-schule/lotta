@@ -58,6 +58,7 @@ defmodule SystemConfig do
   defp default("RELEASE_NAME", _), do: "lotta"
   defp default("IMAGE_NAME", _), do: ""
   defp default("SERVICE_NAME", _), do: "core"
+  defp default("HEADLESS_SERVICE_NAME", _), do: nil
   defp default("NAMESPACE", _), do: nil
   defp default("SERVER", :test), do: "false"
   defp default("SERVER", _), do: "true"
@@ -263,7 +264,7 @@ config :sentry,
 config :lotta, Lotta.Storage.ImageProcessingUrl,
   cloudimage_token: SystemConfig.get("CLOUDIMAGE_TOKEN")
 
-if config_env() == :prod do
+if SystemConfig.get("HEADLESS_SERVICE_NAME") do
   config :libcluster,
     topologies: [
       k8s: [

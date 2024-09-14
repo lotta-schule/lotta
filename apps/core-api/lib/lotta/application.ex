@@ -8,7 +8,6 @@ defmodule Lotta.Application do
   def start(_type, _args) do
     :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
     environment = Application.fetch_env!(:lotta, :environment)
-    cluster_topologies = Application.get_env(:libcluster, :topologies, [])
 
     :opentelemetry_cowboy.setup()
     OpentelemetryPhoenix.setup(adapter: :cowboy2)
@@ -18,27 +17,33 @@ defmodule Lotta.Application do
 
     # List all child processes to be supervised
     children =
-      [
-        {Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]},
-        {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
-        LottaWeb.Telemetry,
-        Lotta.Repo,
-        LottaWeb.Endpoint,
-        {Absinthe.Subscription, LottaWeb.Endpoint},
-        {Redix, Application.fetch_env!(:lotta, :redis_connection)},
-        Lotta.Queue.MediaConversionRequestPublisher,
-        Lotta.Queue.MediaConversionConsumer,
-        Lotta.Notification.PushNotification,
-        {ConCache,
-         name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
-      ] ++ appended_apps(environment)
+      prepended_apps() ++
+        [
+          {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
+          LottaWeb.Telemetry,
+          Lotta.Repo,
+          LottaWeb.Endpoint,
+          {Absinthe.Subscription, LottaWeb.Endpoint},
+          {Redix, Application.fetch_env!(:lotta, :redis_connection)},
+          Lotta.Queue.MediaConversionRequestPublisher,
+          Lotta.Queue.MediaConversionConsumer,
+          Lotta.Notification.PushNotification,
+          {ConCache,
+           name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
+        ] ++ appended_apps(environment)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     Supervisor.start_link(children, strategy: :one_for_one, name: Lotta.Supervisor)
   end
 
-  defp appended_apps(:test), do: []
+  defp prepended_apps() do
+    cluster_topologies = Application.get_env(:libcluster, :topologies, nil)
+
+    if not is_nil(cluster_topologies),
+      do: {Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]},
+      else: []
+  end
 
   defp appended_apps(_) do
     []
