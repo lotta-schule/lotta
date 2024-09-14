@@ -43,7 +43,7 @@ defmodule Lotta.Application do
         []
 
       cluster_topologies ->
-        {Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]}
+        [{Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]}]
     end
   end
 
