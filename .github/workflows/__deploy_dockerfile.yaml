@@ -11,22 +11,23 @@ on:
         default: ${{ github.repository }}
       tags:
         description: |
-          A stringified json string array of tags to be given to
-          the image. For example '["latest"]' or '["latest", "1.0.0"]'
-          Defaults to '["$\{\{ github.sha \}\}"]'
+          A newline-separated list of tags to apply to the image.
+          Defaults to '$\{\{ github.repository \}\}:latest'
         type: string
         required: false
-        default: '["${{ github.sha }}"]'
-      checkout-ref:
-        description: Ref to checkout the repository at
+        default: |
+          ${{ github.repository }}:lastest
+      releaseName:
+        description: |
+          The release name to use.
         type: string
-        required: false
+        required: true
       registry:
         description: The docker registry to use. Defaults to ghcr.io
         type: string
         required: false
         default: ghcr.io
-      working-directory:
+      context:
         description: The directory that will be used as build context for the docker build
         type: string
         required: false
@@ -34,6 +35,19 @@ on:
       dockerfile:
         type: string
         required: false
+      platforms:
+        description: |
+          The platform(s) to build the image for. Defaults to empty (auto-detect),
+          and thus – here on GitHub – very probably linux/amd64
+          Multiple platforms can be specified as a newline-separated list (one per line)
+        type: string
+        required: false
+      push:
+        description: |
+          Whether to push the image to the registry. Defaults to true
+        type: boolean
+        required: false
+        default: true
     secrets:
       username:
         description: |
@@ -58,44 +72,44 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: '${{ inputs.registry }}/${{ inputs.name }}'
-      RELEASE_NAME: '${{ fromJSON(inputs.tags)[0] }}'
+      RELEASE_NAME: '${{ inputs.releaseName }}'
       SENTRY_DSN: '${{ secrets.sentry_dsn }}'
       SENTRY_AUTH_TOKEN: '${{ secrets.sentry_auth_token }}'
     steps:
+      - name: Set up QEMU
+        if: inputs.platforms
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        if: inputs.platforms
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to remote registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ secrets.username || github.actor }}
+          password: ${{ secrets.password }}
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
           ref: ${{ inputs.checkout-ref }}
 
-      - name: Build docker image
+      - name: Build and publish image
         id: build
-        run: |
-          BASE_IMAGE="$IMAGE_NAME:$RELEASE_NAME"
-          docker build \
-            --build-arg IMAGE_NAME \
-            --build-arg RELEASE_NAME \
-            --build-arg SENTRY_DSN \
-            --secret id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
-            -f "${{ format('{0}/{1}', inputs.working-directory, (inputs.dockerfile || 'Dockerfile')) }}" \
-            -t $BASE_IMAGE "${{ inputs.working-directory }}"
-          echo "base-image=$BASE_IMAGE" >> $GITHUB_OUTPUT
-          echo "Base image $BASE_IMAGE written to github output"
-
-      - name: docker login
-        uses: docker/login-action@v1.10.0
+        uses: docker/build-push-action@v2
         with:
-          registry: ${{ inputs.registry }}
-          username: ${{ secrets.username || github.actor }}
-          password: ${{ secrets.password }}
-          working-directory: ${{ inputs.working-directory }}
-
-      - name: push image to registry
-        run: |
-          secondaryTags=$(echo '${{ inputs.tags }}' | jq -r '.[1:][]')
-
-          docker push ${{ steps.build.outputs.base-image }}
-          for tag in $secondaryTags
-          do
-            docker tag ${{ steps.build.outputs.base-image }} $IMAGE_NAME:$tag
-            docker push $IMAGE_NAME:$tag
-          done
+          context: ${{ inputs.context }}
+          file: ${{ format('{0}/{1}', inputs.context, (inputs.dockerfile || 'Dockerfile')) }}
+          tags: ${{ inputs.tags }}
+          platforms: ${{ inputs.platforms }}
+          build-args: |
+            IMAGE_NAME=$IMAGE_NAME
+            RELEASE_NAME=$RELEASE_NAME
+            SENTRY_DSN=$SENTRY_DSN
+          secret-envs: |
+            sentry_auth_token=SENTRY_AUTH_TOKEN
+          push: ${{ inputs.push }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

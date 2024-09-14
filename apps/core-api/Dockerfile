@@ -12,8 +12,7 @@ WORKDIR /app
 RUN apk update && \
     apk upgrade --no-cache && \
     apk add --no-cache \
-    git \
-    build-base
+    git build-base
 
 # install hex + rebar
 RUN mix local.hex --force && \
