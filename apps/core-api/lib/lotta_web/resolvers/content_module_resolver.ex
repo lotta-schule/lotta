@@ -91,26 +91,23 @@ defmodule LottaWeb.ContentModuleResolver do
 
       "lotta-file-id://" <> file_description ->
         with {:ok, %{"id" => file_id}} <- Jason.decode(file_description),
-             %{
-               id: file_id,
-               mime_type: mime_type,
-               filename: filename
-             } = file
-             when not is_nil(file) <- Storage.get_file(file_id),
+             file when not is_nil(file) <- Storage.get_file(file_id),
              true <- can_read?(user, file),
-             {:ok, %HTTPoison.Response{body: data}} <-
-               file
-               |> Storage.get_http_url()
-               |> HTTPoison.get() do
-          {filename,
+             {:ok, status, _headers, client_ref} when status < 400 <-
+               :hackney.get(Storage.get_http_url(file)),
+             {:ok, data} <- :hackney.body(client_ref) do
+          {file.filename,
            %Attachment{
              content_id: file_id,
-             content_type: mime_type,
+             content_type: file.mime_type,
              data: data,
-             filename: filename
+             filename: file.filename
            }}
         else
-          _res ->
+          nil ->
+            {"(Datei nicht gefunden)", nil}
+
+          _error ->
             {"(Datei nicht gültig)", nil}
         end
 
