@@ -108,8 +108,8 @@ jobs:
             IMAGE_NAME=$IMAGE_NAME
             RELEASE_NAME=$RELEASE_NAME
             SENTRY_DSN=$SENTRY_DSN
-          secret-envs: |
-            sentry_auth_token=SENTRY_AUTH_TOKEN
+          secrets: |
+            sentry_auth_token=${{ secrets.sentry_auth_token }}
           push: ${{ inputs.push }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
