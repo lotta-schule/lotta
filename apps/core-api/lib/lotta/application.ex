@@ -38,11 +38,13 @@ defmodule Lotta.Application do
   end
 
   defp prepended_apps() do
-    cluster_topologies = Application.get_env(:libcluster, :topologies, nil)
+    case Application.get_env(:libcluster, :topologies) do
+      nil ->
+        []
 
-    if not is_nil(cluster_topologies),
-      do: {Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]},
-      else: []
+      cluster_topologies ->
+        {Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]}
+    end
   end
 
   defp appended_apps(_) do
