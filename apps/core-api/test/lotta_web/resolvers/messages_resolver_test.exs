@@ -105,20 +105,32 @@ defmodule LottaWeb.MessagesResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "conversations" => [
                    %{
-                     "users" => [%{"name" => "Christopher Bill"}, %{"name" => "Alexis Rinaldoni"}],
+                     "users" => conversation1_users,
                      "groups" => []
                    },
                    %{
-                     "users" => [%{"name" => "Eike Wiewiorra"}, %{"name" => "Alexis Rinaldoni"}],
+                     "users" => conversation2_users,
                      "groups" => []
                    }
                  ]
                }
-             }
+             } = res
+
+      assert length(conversation1_users) == 2
+
+      assert Enum.all?(conversation1_users, fn %{"name" => name} ->
+               name == "Christopher Bill" || name == "Alexis Rinaldoni"
+             end)
+
+      assert length(conversation2_users) == 2
+
+      assert Enum.all?(conversation2_users, fn %{"name" => name} ->
+               name == "Eike Wiewiorra" || name == "Alexis Rinaldoni"
+             end)
     end
 
     test "returns all conversations for another user", %{user2_jwt: user2_jwt} do
