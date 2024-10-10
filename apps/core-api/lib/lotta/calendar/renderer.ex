@@ -97,7 +97,7 @@ defmodule Lotta.Calendar.Renderer do
 
   defp render_date_or_dt(event, property_name),
     do:
-      ";" <>
+      ":" <>
         (event
          |> Map.fetch!(property_name)
          |> to_ics_date())
