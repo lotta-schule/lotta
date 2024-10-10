@@ -9,8 +9,8 @@ defmodule Lotta.Calendar.Renderer do
   def to_ics(%CalendarEvent{} = event) do
     calendar_event do
       """
-      DTSTART:#{render_date_or_dt(event, :start)}
-      DTEND:#{render_date_or_dt(event, :end)}
+      DTSTART#{render_date_or_dt(event, :start)}
+      DTEND#{render_date_or_dt(event, :end)}
       LOCATION:#{event.location_name}
       SUMMARY;LANGUAGE=DE:#{event.summary}
       UID:#{event.calendar_id}-#{event.id}
@@ -35,7 +35,6 @@ defmodule Lotta.Calendar.Renderer do
       NAME:#{calendar.name}
       COLOR:#{calendar.color}
       DTSTAMP:#{to_ics_date(calendar.updated_at)}
-
       #{Enum.map_join(calendar.events, "\n", &to_ics/1)}
       """
     end
@@ -88,7 +87,7 @@ defmodule Lotta.Calendar.Renderer do
   end
 
   defp render_date_or_dt(%{is_full_day: true} = event, property_name) do
-    "VALUE=DATE;" <>
+    ";VALUE=DATE:" <>
       (event
        |> Map.fetch!(property_name)
        |> DateTime.to_iso8601()
@@ -98,7 +97,8 @@ defmodule Lotta.Calendar.Renderer do
 
   defp render_date_or_dt(event, property_name),
     do:
-      event
-      |> Map.fetch!(property_name)
-      |> to_ics_date()
+      ";" <>
+        (event
+         |> Map.fetch!(property_name)
+         |> to_ics_date())
 end
