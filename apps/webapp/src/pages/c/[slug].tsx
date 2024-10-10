@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Sentry from '@sentry/nextjs';
 import { trace } from '@opentelemetry/api';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { ArticleModel, ArticleFilter, ID } from 'model';
@@ -32,11 +33,19 @@ export const getServerSideProps = async ({
   params,
   req,
 }: GetServerSidePropsContext) => {
+  Sentry.addBreadcrumb({
+    type: '/c/[slug] getServerSideProps',
+    data: { params, req },
+  });
+  console.dir(req, { depth: 1 });
+
   if ((req as any).tenant === null) {
-    return { props: {} };
+    throw new Error('Tenant not found');
   }
   const rawCategoryId = (params?.slug as string)?.replace(/^(\d+).*/, '$1');
   const categoryId = rawCategoryId === '0' ? null : (rawCategoryId ?? null);
+
+  console.log({ categoryId, rawCategoryId });
 
   const {
     data: { articles },
@@ -60,6 +69,14 @@ export const getServerSideProps = async ({
           },
         })
     );
+  Sentry.addBreadcrumb({
+    type: 'gotArticles',
+    data: { reqHeaders: req?.headers, articles, categoryId, error },
+  });
+
+  if (error) {
+    Sentry.captureException(error);
+  }
 
   return {
     props: {

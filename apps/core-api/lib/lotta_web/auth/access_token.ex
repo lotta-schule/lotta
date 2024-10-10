@@ -100,7 +100,10 @@ defmodule LottaWeb.Auth.AccessToken do
           {:ok, claims}
 
         false ->
-          Logger.error("Invalid token type: #{inspect(claims)}")
+          Logger.error("Invalid token type: #{inspect(claims)}", %{
+            sentry: %{error: {:error, :invalid_token_type, claims}}
+          })
+
           {:error, :invalid_token}
       end
     else

@@ -10,6 +10,11 @@ export const config = {
   matcher: ['/((?!_next/static|_next/image|font|favicon.ico|favicon|p/).*)'],
 };
 
+const l = <T>(obj: T): T => {
+  // console.dir(obj, { depth: 5 });
+  return obj;
+};
+
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
   if (
@@ -25,6 +30,8 @@ export async function middleware(request: NextRequest) {
     accessToken: request.cookies.get('SignInAccessToken')?.value ?? null,
   };
 
+  l({ authInfo });
+
   const incomingRefreshToken = request.cookies.get('SignInRefreshToken')?.value;
   const authHeader = request.headers.get('Authorization');
 
@@ -38,6 +45,8 @@ export async function middleware(request: NextRequest) {
       console.error('Error parsing access token', e);
     }
 
+    l({ accessTokenJwt });
+
     if (!accessTokenJwt?.isValid()) {
       console.warn('Access token is not valid!', accessTokenJwt);
     } else if (accessTokenJwt.isExpired(0)) {
@@ -47,6 +56,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  l({ authInfoX1: authInfo });
+
   if (incomingRefreshToken) {
     let refreshTokenJwt = null;
     try {
@@ -54,6 +65,8 @@ export async function middleware(request: NextRequest) {
     } catch (e) {
       console.error('Error parsing refresh token', e);
     }
+
+    l({ refreshTokenJwt });
 
     if (
       refreshTokenJwt?.isValid() &&
@@ -75,15 +88,20 @@ export async function middleware(request: NextRequest) {
           }),
         });
 
+        l({ updateRefreshTokenResult });
+
         if (updateRefreshTokenResult) {
           const { accessToken, refreshToken: updatedRefreshToken } =
             updateRefreshTokenResult;
 
           authInfo.refreshToken = updatedRefreshToken;
           authInfo.accessToken = accessToken;
+
+          l({ authInfoX2: authInfo });
         }
       } else {
         authInfo.refreshToken = incomingRefreshToken;
+        l({ authInfoX3: authInfo });
       }
     } else if (authHeader) {
       console.warn('User does not have a refresh token');
@@ -95,18 +113,28 @@ export async function middleware(request: NextRequest) {
         console.error('Error parsing access token', e);
       }
 
+      l({ accessTokenJwt });
+
       if (accessTokenJwt?.isValid() && !accessTokenJwt.isExpired(0)) {
         authInfo.accessToken = accessToken;
       }
+      l({ authInfoX4: authInfo });
     }
   }
+
+  l({ authInfoX5: authInfo });
 
   const requestHeaders = new Headers(request.headers);
   if (authInfo.accessToken) {
     requestHeaders.set('Authorization', `Bearer ${authInfo.accessToken}`);
+    l({ requestHeaderSet: requestHeaders });
   }
 
+  l({ requestHeaders });
+
   const response = NextResponse.next({ request: { headers: requestHeaders } });
+
+  l({ authInfoX6: authInfo });
   if (authInfo.refreshToken) {
     try {
       const parsedRefreshToken = JWT.parse(authInfo.refreshToken);
@@ -117,6 +145,8 @@ export async function middleware(request: NextRequest) {
         expires: parsedRefreshToken.body.expires,
         path: '/',
       });
+
+      l({ responseCookies: response.cookies });
 
       // TODO:
       // I do not think saving the access token in a cookie is a good idea
@@ -135,6 +165,7 @@ export async function middleware(request: NextRequest) {
           expires: parsedAccessToken.body.expires,
           path: '/',
         });
+        l({ responseCookies2: response.cookies });
       }
     } catch (e) {
       Sentry.captureException(e);
@@ -150,6 +181,7 @@ export async function middleware(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       path: '/',
     });
+    l({ responseCookies3: response.cookies });
   }
 
   return response;

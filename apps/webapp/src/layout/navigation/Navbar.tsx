@@ -65,7 +65,7 @@ export const Navbar = React.memo(() => {
         <div>
           <nav className={styles.navbar}>
             {homepageCategory && (
-              <Link href={'/'} passHref legacyBehavior>
+              <Link href={'/'} shallow passHref legacyBehavior>
                 <NavigationButton
                   key={'home'}
                   selected={isHomepage}
@@ -87,6 +87,7 @@ export const Navbar = React.memo(() => {
                 }
                 passHref
                 legacyBehavior
+                shallow
               >
                 <NavigationButton
                   selected={categoriesHierarchy.indexOf(category.id) > -1}
@@ -121,6 +122,7 @@ export const Navbar = React.memo(() => {
                   ? category.redirect
                   : Category.getPath(category)
               }
+              shallow
               passHref
               legacyBehavior
             >

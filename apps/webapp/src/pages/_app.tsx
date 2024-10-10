@@ -1,6 +1,7 @@
 import '../styles/globals.scss';
 
 import * as React from 'react';
+import * as Sentry from '@sentry/nextjs';
 import { trace } from '@opentelemetry/api';
 import { AppContext, AppProps } from 'next/app';
 import { config as faConfig } from '@fortawesome/fontawesome-svg-core';
@@ -102,11 +103,22 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
         },
       });
     });
+
+  Sentry.addBreadcrumb({
+    type: 'fetchedTenant',
+    data: { request: { headers }, result: { data: data?.tenant, error } },
+  });
+
   const tenant = data?.tenant ?? null;
+
   if (context.ctx.req) {
     (context.ctx.req as any).tenant = tenant;
   }
+
   if (!tenant) {
+    Sentry.captureMessage('Tenant not found', {
+      extra: { requestBaseUrl: url },
+    });
     return {
       pageProps: {
         tenant: null,
@@ -125,6 +137,10 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
         },
       })
     );
+  Sentry.addBreadcrumb({
+    type: 'gotCurrentUser',
+    data: { data: userData, requestHeaders: headers },
+  });
 
   const { data: categoriesData } = await trace
     .getTracer('lotta-web')
@@ -136,6 +152,10 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
         },
       })
     );
+  Sentry.addBreadcrumb({
+    type: 'gotCategoriesData',
+    data: { data: categoriesData, requestHeaders: headers },
+  });
 
   return {
     pageProps: {

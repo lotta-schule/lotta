@@ -11,6 +11,15 @@ defmodule LottaWeb.Auth.ErrorHandler do
   @impl Guardian.Plug.ErrorHandler
 
   def auth_error(conn, {type, reason}, opts) do
+    Logger.warning("Auth-Header:", get_req_header(conn, "authorization"))
+    Logger.warning("Cookies-Header", get_req_header(conn, "cookies"))
+
+    Logger.error("Guardian error: #{inspect(type)}: #{inspect(reason)}", %{
+      sentry: %{error: {type, reason}}
+    })
+
+    Logger.debug("Guardian opts: #{inspect(opts)}")
+
     Sentry.capture_message("Guardian error",
       extra: %{
         "guardian_error" => to_string(type),
