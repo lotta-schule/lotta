@@ -87,7 +87,7 @@ defmodule Lotta.Messages do
   @doc since: "4.1.3"
   @spec list_conversation_users(Conversation.t()) :: [User.t()]
   def list_conversation_users(conversation) do
-    case Repo.preload(conversation, [:users, :groups]) do
+    case Repo.preload(conversation, users: from(u in User, order_by: u.id), groups: []) do
       %Conversation{groups: [], users: users} ->
         users
 
