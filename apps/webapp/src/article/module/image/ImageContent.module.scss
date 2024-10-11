@@ -1,6 +1,8 @@
 @import "breakpoints";
 
 .root {
+  max-width: 100%;
+
   &:not(.isUsingFullHeight) {
     max-height: 80vh;
   }
