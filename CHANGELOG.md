@@ -1,3 +1,16 @@
+## 5.0.12 (2024-10-11)
+
+
+### 🩹 Fixes
+
+- **core-api:** Make day-long events compatible with apple calendar ([#394](https://github.com/lotta-schule/lotta/pull/394))
+- **webapp:** Image ContentModule: Set image max-width to 100% ([#396](https://github.com/lotta-schule/lotta/pull/396))
+- **webapp:** Make admin/users page scrollable again ([#397](https://github.com/lotta-schule/lotta/pull/397))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.11 (2024-09-12)
 
 
