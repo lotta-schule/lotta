@@ -51,10 +51,9 @@ jobs:
       - name: Typecheck
         run: pnpm nx affected -t typecheck
 
-  test:
+  tests:
     name: Run tests
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:latest
@@ -173,6 +172,7 @@ jobs:
   check-build:
     name: Check the projects build
     runs-on: ubuntu-latest
+    if: github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview')
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -211,24 +211,33 @@ jobs:
 
   publish-docker-images:
     name: ${{ matrix.image.name }} (${{ matrix.environment }}) Docker images
+    needs:
+      - check-build
+      - tests
+      - lint
     strategy:
       matrix:
         environment: ['preview', 'staging']
         image:
           - name: web
             dockerfile: apps/webapp/Dockerfile
-            working-directory: .
+            context: .
           - name: core
             dockerfile: Dockerfile
-            working-directory: apps/core-api
+            context: apps/core-api
         exclude:
           - environment: ${{ github.ref_name == 'main' && 'preview' || 'staging' }}
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
-      name: lotta-schule/${{ matrix.image.name }}
-      tags: ${{ format(matrix.environment == 'preview' && '["{0}"]' || '["{0}", "canary-{0}"]', github.sha) }}
-      working-directory: ${{ matrix.image.working-directory }}
+      name: ${{ matrix.image.name }}
+      tags: ${{ format(matrix.environment == 'preview' && '{1}:{0}' || '{1}:staging,{1}:{0},{1}:canary-{0}', github.sha, matrix.image.name) }}
+      releaseName: ${{ github.sha }}
+      context: ${{ matrix.image.context }}
       dockerfile: ${{ matrix.image.dockerfile }}
+      platforms: |
+        linux/amd64
+        linux/arm64
+      push: ${{ contains(github.event.pull_request.labels.*.name, 'preview') || github.ref_name == 'main' }}
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -237,9 +246,9 @@ jobs:
   create-sentry-release:
     name: |
       Sentry Rel.: ${{ matrix.project }} (${{ matrix.environment }})
+    if: contains(github.event.pull_request.labels.*.name, 'preview') || github.ref_name == 'main'
     needs:
       - publish-docker-images
-    if: contains(github.event.pull_request.labels.*.name, 'preview') || github.ref_name == 'main'
     strategy:
       matrix:
         environment: ['preview', 'staging']
