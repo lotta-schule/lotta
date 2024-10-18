@@ -18,8 +18,8 @@ defmodule Lotta.Calendar.Renderer do
       CLASS:PUBLIC
       """
       |> String.trim()
-      |> maybe_append("DESCRIPTION;LANGUAGE=DE", event.description)
-      |> maybe_append("RRULE", render_rrule(event))
+      |> maybe_append("DESCRIPTION;LANGUAGE=DE", event.description, glue_char: ":")
+      |> maybe_append("RRULE", render_rrule(event), glue_char: ":")
     end
   end
 
@@ -63,7 +63,8 @@ defmodule Lotta.Calendar.Renderer do
   defp maybe_append(acc, _f, [], _opts), do: acc
 
   defp maybe_append(acc, field, value, opts),
-    do: acc <> (opts[:glue_char] || "\n") <> field <> "=" <> string_val(value)
+    do:
+      acc <> (opts[:init_char] || "\n") <> field <> (opts[:glue_char] || "=") <> string_val(value)
 
   defp render_rrule(%CalendarEvent{} = event) do
     case event.recurrence_frequency do
@@ -71,12 +72,12 @@ defmodule Lotta.Calendar.Renderer do
         ""
 
       frequency ->
-        "RRULE:FREQ=#{String.upcase(frequency)}"
-        |> maybe_append("INTERVAL", event.recurrence_interval, glue_char: ";")
-        |> maybe_append("BYDAY", event.recurrence_byday, glue_char: ";")
-        |> maybe_append("BYMONTHDAY", event.recurrence_bymonthday, glue_char: ";")
-        |> maybe_append("UNTIL", event.recurrence_until, glue_char: ";")
-        |> maybe_append("COUNT", event.recurrence_count, glue_char: ";")
+        "FREQ=#{String.upcase(frequency)}"
+        |> maybe_append("INTERVAL", event.recurrence_interval, init_char: ";")
+        |> maybe_append("BYDAY", event.recurrence_byday, init_char: ";")
+        |> maybe_append("BYMONTHDAY", event.recurrence_bymonthday, init_char: ";")
+        |> maybe_append("UNTIL", event.recurrence_until, init_char: ";")
+        |> maybe_append("COUNT", event.recurrence_count, init_char: ";")
     end
   end
 
