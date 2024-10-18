@@ -1,3 +1,14 @@
+## 5.0.13 (2024-10-18)
+
+
+### 🩹 Fixes
+
+- **core-api:** Calendars: Fix ICS for recurring events and events with descriptions ([07c86a42](https://github.com/lotta-schule/lotta/commit/07c86a42))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni
+
 ## 5.0.12 (2024-10-11)
 
 
