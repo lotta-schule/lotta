@@ -8,7 +8,6 @@ defmodule LottaWeb.FileResolver do
   import LottaWeb.ErrorHelpers
 
   alias Ecto.Adapter.Storage
-  alias LottaWeb.Context
   alias Lotta.Tenants
   alias Lotta.Tenants.Category
   alias Lotta.Accounts.{FileManagment, User}
@@ -18,7 +17,7 @@ defmodule LottaWeb.FileResolver do
   alias UUID
 
   def resolve_file_usage(%{parent_directory_id: parent_directory_id, id: id}, _args, %{
-        context: %Context{current_user: current_user}
+        context: %{current_user: current_user}
       })
       when not is_nil(parent_directory_id) do
     parent_directory = Storage.get_directory(parent_directory_id)
@@ -72,7 +71,7 @@ defmodule LottaWeb.FileResolver do
   end
 
   def resolve_path(file_or_directory, _args, %{
-        context: %Context{current_user: user}
+        context: %{current_user: user}
       }) do
     {:ok, Storage.get_path(file_or_directory, user)}
   end
@@ -86,7 +85,7 @@ defmodule LottaWeb.FileResolver do
     {:ok, Storage.get_http_url(Storage.get_file(id))}
   end
 
-  def file(%{id: id}, %{context: %Context{current_user: current_user}}) do
+  def file(%{id: id}, %{context: %{current_user: current_user}}) do
     file =
       Storage.get_file(id)
       |> Repo.preload(:parent_directory)
@@ -99,7 +98,7 @@ defmodule LottaWeb.FileResolver do
   end
 
   def files(%{parent_directory_id: parent_directory_id}, %{
-        context: %Context{current_user: current_user}
+        context: %{current_user: current_user}
       })
       when not is_nil(parent_directory_id) do
     parent_directory = Storage.get_directory(parent_directory_id)
@@ -126,7 +125,7 @@ defmodule LottaWeb.FileResolver do
     {:ok, Storage.search_directories(user, term)}
   end
 
-  def relevant_files_in_usage(_args, %{context: %Context{current_user: current_user}}) do
+  def relevant_files_in_usage(_args, %{context: %{current_user: current_user}}) do
     category_files =
       from(f in Storage.File,
         join: c in Category,
@@ -162,7 +161,7 @@ defmodule LottaWeb.FileResolver do
   end
 
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
-        context: %Context{current_user: current_user, tenant: tenant}
+        context: %{current_user: current_user, tenant: tenant}
       }) do
     directory = Storage.get_directory(parent_directory_id)
     %{size: filesize} = File.stat!(file.path)
@@ -194,7 +193,7 @@ defmodule LottaWeb.FileResolver do
     end
   end
 
-  def update(%{id: id} = args, %{context: %Context{current_user: current_user}}) do
+  def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
     file =
       Storage.get_file(id)
       |> Repo.preload([:parent_directory])
@@ -224,7 +223,7 @@ defmodule LottaWeb.FileResolver do
     end
   end
 
-  def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
+  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
     file =
       Storage.get_file(id)
       |> Repo.preload([:parent_directory])

@@ -6,13 +6,12 @@ defmodule LottaWeb.UserResolver do
   import Lotta.Accounts.Authentication
   import LottaWeb.ErrorHelpers
 
-  alias LottaWeb.Context
   alias LottaWeb.Auth.AccessToken
   alias Lotta.Accounts.User
   alias Lotta.{Accounts, Repo, Mailer, Messages, Storage}
 
   def resolve_name(%User{} = user, _args, %{
-        context: %Context{current_user: current_user}
+        context: %{current_user: current_user}
       })
       when not is_nil(current_user) do
     cond do
@@ -35,7 +34,7 @@ defmodule LottaWeb.UserResolver do
 
   def resolve_name(_user, _args, _info), do: {:ok, nil}
 
-  def resolve_email(user, _args, %{context: %Context{current_user: current_user}}) do
+  def resolve_email(user, _args, %{context: %{current_user: current_user}}) do
     cond do
       current_user.id == user.id ->
         {:ok, user.email}
@@ -50,7 +49,7 @@ defmodule LottaWeb.UserResolver do
 
   def resolve_email(_user, _args, _info), do: {:error, "Die Email des Nutzers ist geheim."}
 
-  def resolve_last_seen(user, _args, %{context: %Context{current_user: current_user}}) do
+  def resolve_last_seen(user, _args, %{context: %{current_user: current_user}}) do
     cond do
       current_user.id == user.id ->
         {:ok, user.last_seen}
@@ -66,7 +65,7 @@ defmodule LottaWeb.UserResolver do
   def resolve_last_seen(_user, _args, _info),
     do: {:error, "Der Online-Status des Nutzers ist geheim."}
 
-  def resolve_unread_messages(user, _args, %{context: %Context{current_user: current_user}})
+  def resolve_unread_messages(user, _args, %{context: %{current_user: current_user}})
       when user.id == current_user.id do
     {:ok, Messages.count_unread_messages(user)}
   end
@@ -74,7 +73,7 @@ defmodule LottaWeb.UserResolver do
   def resolve_unread_messages(_user, _args, _info),
     do: {:error, "Die Nachrichten des Nutzers sind geheim."}
 
-  def get_current(_args, %{context: %Context{current_user: current_user}}) do
+  def get_current(_args, %{context: %{current_user: current_user}}) do
     if current_user do
       Task.start(Accounts, :see_user, [current_user])
     end
@@ -96,7 +95,7 @@ defmodule LottaWeb.UserResolver do
     {:ok, user.groups}
   end
 
-  def resolve_enrollment_tokens(user, _args, %{context: %Context{current_user: current_user}}) do
+  def resolve_enrollment_tokens(user, _args, %{context: %{current_user: current_user}}) do
     tokens =
       if user.id == current_user.id do
         user.enrollment_tokens
@@ -207,7 +206,7 @@ defmodule LottaWeb.UserResolver do
     end
   end
 
-  def request_hisec_token(%{password: password}, %{context: %Context{current_user: current_user}}) do
+  def request_hisec_token(%{password: password}, %{context: %{current_user: current_user}}) do
     with true <- verify_user_pass(current_user, password),
          {:ok, hisec_token, _claims} <-
            AccessToken.encode_and_sign(current_user, %{}, token_type: "hisec") do
@@ -252,7 +251,7 @@ defmodule LottaWeb.UserResolver do
     end
   end
 
-  def destroy_account(%{user_id: user_id} = args, %{context: %Context{current_user: current_user}}) do
+  def destroy_account(%{user_id: user_id} = args, %{context: %{current_user: current_user}}) do
     if user_id != to_string(current_user.id) && !current_user.is_admin? do
       {:error, "Du darfst das nicht tun."}
     else
@@ -277,14 +276,14 @@ defmodule LottaWeb.UserResolver do
     end
   end
 
-  def update_profile(%{user: user_params}, %{context: %Context{current_user: current_user}}) do
+  def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
     current_user
     |> Accounts.update_profile(user_params)
     |> format_errors("Speichern fehlgeschlagen.")
   end
 
   def update_password(%{new_password: new_password}, %{
-        context: %Context{current_user: user}
+        context: %{current_user: user}
       }) do
     user
     |> Accounts.update_password(new_password)
@@ -292,7 +291,7 @@ defmodule LottaWeb.UserResolver do
   end
 
   def update_email(%{new_email: new_email}, %{
-        context: %Context{current_user: user}
+        context: %{current_user: user}
       }) do
     user
     |> Accounts.update_email(new_email)

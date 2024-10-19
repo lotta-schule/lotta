@@ -3,11 +3,11 @@ defmodule LottaWeb.WidgetResolver do
 
   import LottaWeb.ErrorHelpers
 
-  alias LottaWeb.{CalendarResolver, Context}
+  alias LottaWeb.CalendarResolver
   alias Lotta.{Calendar, Tenants}
 
   def all(%{category_id: category_id}, %{
-        context: %Context{current_user: current_user}
+        context: %{current_user: current_user}
       }) do
     category = Tenants.get_category(category_id)
 
@@ -22,7 +22,7 @@ defmodule LottaWeb.WidgetResolver do
     end
   end
 
-  def all(_args, %{context: %Context{current_user: current_user}}) do
+  def all(_args, %{context: %{current_user: current_user}}) do
     {:ok, Tenants.list_widgets(current_user)}
   end
 

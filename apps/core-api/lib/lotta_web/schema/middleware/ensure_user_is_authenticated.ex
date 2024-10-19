@@ -3,12 +3,10 @@ defmodule LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated do
 
   @behaviour Absinthe.Middleware
 
-  alias LottaWeb.Context
-
   @doc false
 
   def call(
-        %{context: %Context{current_user: %{id: _id}}} = resolution,
+        %{context: %{current_user: %{id: _id}}} = resolution,
         _config
       ),
       do: resolution

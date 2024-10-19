@@ -19,7 +19,6 @@ defmodule LottaWeb.Context do
           :current_user => User.t(),
           :tenant => Tenant.t()
         }
-  defstruct [:current_user, :tenant]
 
   @impl true
   def init(opts), do: opts
@@ -27,7 +26,7 @@ defmodule LottaWeb.Context do
   @impl true
   def call(conn, _blueprint) do
     context =
-      %__MODULE__{}
+      __MODULE__.new()
       |> maybe_put_tenant(conn)
       |> maybe_put_user(conn)
 
@@ -35,10 +34,10 @@ defmodule LottaWeb.Context do
   end
 
   @impl true
-  def fetch(%__MODULE__{} = context, key), do: Map.fetch(context, key)
+  def fetch(%{} = context, key), do: Map.fetch(context, key)
 
   @impl true
-  def get_and_update(%__MODULE__{} = context, key, func),
+  def get_and_update(%{} = context, key, func),
     do: Map.get_and_update(context, key, func)
 
   @doc """
@@ -71,7 +70,19 @@ defmodule LottaWeb.Context do
     Map.pop(data, key)
   end
 
-  defp maybe_put_user(%__MODULE__{tenant: %{id: tid}} = context, conn) do
+  @doc """
+  Create a new context map"
+  """
+  @doc since: "5.0.12"
+  @spec new(current_user: User.t() | nil, tenant: Tenant.t() | nil) :: t()
+  def new(opts \\ []) do
+    %{
+      current_user: Keyword.get(opts, :current_user, nil),
+      tenant: Keyword.get(opts, :tenant, nil)
+    }
+  end
+
+  defp maybe_put_user(%{tenant: %{id: tid}} = context, conn) do
     claims = LottaWeb.Auth.AccessToken.Plug.current_claims(conn)
 
     if to_string(claims["tid"]) == to_string(tid) do

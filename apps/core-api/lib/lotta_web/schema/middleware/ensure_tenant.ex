@@ -4,12 +4,11 @@ defmodule LottaWeb.Schema.Middleware.EnsureTenant do
   @behaviour Absinthe.Middleware
 
   alias Lotta.Tenants.Tenant
-  alias LottaWeb.Context
 
   @doc false
 
   def call(
-        %{context: %Context{tenant: %Tenant{id: _id}}} = resolution,
+        %{context: %{tenant: %Tenant{id: _id}}} = resolution,
         _config
       ),
       do: resolution

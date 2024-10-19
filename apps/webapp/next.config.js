@@ -94,7 +94,6 @@ const nextConfig = {
     appEnvironment: env.APP_ENVIRONMENT || env.NODE_ENV || 'development',
     imageName: env.IMAGE_NAME || 'test',
     sentryDsn: env.NEXT_PUBLIC_SENTRY_DSN,
-    socketUrl: env.API_SOCKET_URL,
     tenantSlugOverwrite: env.FORCE_TENANT_SLUG,
   },
 };

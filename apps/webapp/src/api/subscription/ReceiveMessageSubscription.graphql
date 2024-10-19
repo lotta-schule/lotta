@@ -12,6 +12,12 @@ subscription ReceiveMessage {
         id
       }
     }
+    files {
+      id
+      filename
+      fileType
+      filesize
+    }
     conversation {
       id
       updatedAt

@@ -57,7 +57,6 @@ defmodule Lotta.Calendar.Renderer do
   defp string_val(value) when is_struct(DateTime), do: to_ics_date(value)
   defp string_val(value), do: to_string(value)
 
-  defp maybe_append(acc, field, value, opts \\ [])
   defp maybe_append(acc, _f, nil, _opts), do: acc
   defp maybe_append(acc, _f, "", _opts), do: acc
   defp maybe_append(acc, _f, [], _opts), do: acc
