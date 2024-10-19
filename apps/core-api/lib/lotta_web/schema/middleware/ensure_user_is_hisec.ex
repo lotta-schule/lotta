@@ -3,12 +3,9 @@ defmodule LottaWeb.Schema.Middleware.EnsureUserIsHisec do
 
   @behaviour Absinthe.Middleware
 
-  alias LottaWeb.Context
-
   @doc false
-
   def call(
-        %{context: %Context{current_user: %{id: _id, access_level: "hisec"}}} = resolution,
+        %{context: %{current_user: %{id: _id, access_level: "hisec"}}} = resolution,
         _config
       ),
       do: resolution

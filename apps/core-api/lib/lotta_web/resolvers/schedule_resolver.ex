@@ -4,11 +4,10 @@ defmodule LottaWeb.ScheduleResolver do
     Is routed to schedule-provider microservice.
   """
 
-  alias LottaWeb.Context
   alias Lotta.Tenants
   alias Lotta.Services.ScheduleProvider
 
-  def get(%{widget_id: widget_id} = args, %{context: %Context{current_user: %{class: class}}}) do
+  def get(%{widget_id: widget_id} = args, %{context: %{current_user: %{class: class}}}) do
     widget = Tenants.get_widget(widget_id)
 
     case widget.configuration do
@@ -28,7 +27,7 @@ defmodule LottaWeb.ScheduleResolver do
     end
   end
 
-  def get(%{widget_id: _}, %{context: %Context{current_user: user}}) when not is_nil(user) do
+  def get(%{widget_id: _}, %{context: %{current_user: user}}) when not is_nil(user) do
     {:error, "Du hast keine Klasse eingestellt"}
   end
 

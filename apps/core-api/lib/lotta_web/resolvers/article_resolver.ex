@@ -6,10 +6,9 @@ defmodule LottaWeb.ArticleResolver do
   import Lotta.Accounts.Permissions
   import LottaWeb.ErrorHelpers
 
-  alias LottaWeb.Context
   alias Lotta.{Accounts, Content, Repo}
 
-  def get(%{id: id}, %{context: %Context{current_user: current_user}}) do
+  def get(%{id: id}, %{context: %{current_user: current_user}}) do
     with {id, _} <- Integer.parse(id, 10),
          article when not is_nil(article) <- Content.get_article(id),
          true <- can_read?(current_user, article) do
@@ -31,11 +30,11 @@ defmodule LottaWeb.ArticleResolver do
 
   def get(_args, _info), do: {:error, "Beitrag nicht gefunden."}
 
-  def get_all_tags(_args, %{context: %Context{current_user: current_user}}) do
+  def get_all_tags(_args, %{context: %{current_user: current_user}}) do
     {:ok, Content.list_all_tags(current_user)}
   end
 
-  def all(args, %{context: %Context{current_user: current_user}}) do
+  def all(args, %{context: %{current_user: current_user}}) do
     category_id =
       with category_id when not is_nil(category_id) <- args[:category_id],
            {category_id, _} <- Integer.parse(category_id) do
@@ -73,7 +72,7 @@ defmodule LottaWeb.ArticleResolver do
     end
   end
 
-  def own(_args, %{context: %Context{current_user: current_user}}) do
+  def own(_args, %{context: %{current_user: current_user}}) do
     {:ok, Content.list_user_articles(current_user)}
   end
 
@@ -91,13 +90,13 @@ defmodule LottaWeb.ArticleResolver do
     end
   end
 
-  def create(%{article: article_params}, %{context: %Context{current_user: user}}) do
+  def create(%{article: article_params}, %{context: %{current_user: user}}) do
     article_params
     |> Content.create_article(user)
     |> format_errors("Erstellen des Beitrags fehlgeschlagen.")
   end
 
-  def update(%{id: id, article: article_params}, %{context: %Context{current_user: current_user}}) do
+  def update(%{id: id, article: article_params}, %{context: %{current_user: current_user}}) do
     article = Content.get_article(String.to_integer(id))
 
     cond do
@@ -114,7 +113,7 @@ defmodule LottaWeb.ArticleResolver do
     end
   end
 
-  def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
+  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
     article = Content.get_article(String.to_integer(id))
 
     cond do
@@ -144,7 +143,7 @@ defmodule LottaWeb.ArticleResolver do
   end
 
   def article_is_updated_config(%{id: id}, %{
-        context: %Context{current_user: current_user, tenant: %{id: tid} = tenant}
+        context: %{current_user: current_user, tenant: %{id: tid} = tenant}
       }) do
     Repo.put_prefix(tenant.prefix)
 

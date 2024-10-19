@@ -26,10 +26,10 @@ defmodule LottaWeb.GraphQLSocket do
             )
 
           {:ok,
-           %{
+           Context.new(
              tenant_id: tenant.id,
              current_user_id: user.id
-           }, socket}
+           ), socket}
 
         e ->
           Logger.error(inspect(e))

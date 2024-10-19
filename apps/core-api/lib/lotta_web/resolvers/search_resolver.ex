@@ -1,13 +1,12 @@
 defmodule LottaWeb.SearchResolver do
   @moduledoc false
 
-  alias LottaWeb.Context
   alias Lotta.Search
   alias Lotta.Content.Article
   alias Lotta.Repo
 
   def search(%{search_text: searchtext} = args, %{
-        context: %Context{current_user: current_user}
+        context: %{current_user: current_user}
       }) do
     filter_options =
       args

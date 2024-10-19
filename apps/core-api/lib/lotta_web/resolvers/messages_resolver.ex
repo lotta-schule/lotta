@@ -4,7 +4,6 @@ defmodule LottaWeb.MessagesResolver do
   import LottaWeb.ErrorHelpers
   import Lotta.Accounts.Permissions
 
-  alias LottaWeb.Context
   alias Lotta.{Accounts, Messages}
   alias Lotta.Messages.Conversation
   alias Lotta.Notification.PushNotification
@@ -16,12 +15,12 @@ defmodule LottaWeb.MessagesResolver do
     {:ok, Messages.count_unread_messages(user, conversation)}
   end
 
-  def list_conversations(_args, %{context: %Context{current_user: current_user}}) do
+  def list_conversations(_args, %{context: %{current_user: current_user}}) do
     {:ok, Messages.list_active_conversations(current_user)}
   end
 
   def get_conversation(%{id: id} = args, %{
-        context: %Context{tenant: tenant, current_user: current_user}
+        context: %{tenant: tenant, current_user: current_user}
       }) do
     conversation = Messages.get_conversation(id)
 
@@ -47,7 +46,7 @@ defmodule LottaWeb.MessagesResolver do
     end
   end
 
-  def create(%{message: message}, %{context: %Context{current_user: current_user}}) do
+  def create(%{message: message}, %{context: %{current_user: current_user}}) do
     {recipient_user, recipient_group} = get_message_recipient(message)
 
     error =
@@ -97,7 +96,7 @@ defmodule LottaWeb.MessagesResolver do
     {user, group}
   end
 
-  def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
+  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
     message = Messages.get_message(id)
 
     cond do
