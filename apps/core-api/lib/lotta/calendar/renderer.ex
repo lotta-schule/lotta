@@ -87,9 +87,14 @@ defmodule Lotta.Calendar.Renderer do
   end
 
   defp render_date_or_dt(%{is_full_day: true} = event, property_name) do
+    date =
+      case property_name do
+        :start -> event.start
+        :end -> DateTime.add(event.end, 1, :day)
+      end
+
     ";VALUE=DATE:" <>
-      (event
-       |> Map.fetch!(property_name)
+      (date
        |> DateTime.to_iso8601()
        |> String.replace(~r/-|/, "")
        |> String.replace(~r/T.*/, ""))
