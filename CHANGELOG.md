@@ -1,3 +1,15 @@
+## 5.0.14 (2024-10-20)
+
+
+### 🩹 Fixes
+
+- **core-api:** Use full-day dtend exclusivly in ics renderer ([407e79d7](https://github.com/lotta-schule/lotta/commit/407e79d7))
+- **webapp:** Use correct websocket endpoint ([40488a95](https://github.com/lotta-schule/lotta/commit/40488a95))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni
+
 ## 5.0.13 (2024-10-18)
 
 
