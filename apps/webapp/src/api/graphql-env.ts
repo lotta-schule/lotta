@@ -914,6 +914,13 @@ const introspection = {
                 "name": "String"
               }
             }
+          },
+          {
+            "name": "timezone",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
+            }
           }
         ],
         "isOneOf": false
@@ -4371,6 +4378,13 @@ const introspection = {
                   "kind": "SCALAR",
                   "name": "Int"
                 }
+              },
+              {
+                "name": "timezone",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String"
+                }
               }
             ],
             "isDeprecated": false
@@ -5246,6 +5260,15 @@ const introspection = {
         "name": "Tenant",
         "fields": [
           {
+            "name": "backgroundImageFile",
+            "type": {
+              "kind": "OBJECT",
+              "name": "File"
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
             "name": "configuration",
             "type": {
               "kind": "OBJECT",
@@ -5301,6 +5324,15 @@ const introspection = {
             "type": {
               "kind": "SCALAR",
               "name": "DateTime"
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "logoImageFile",
+            "type": {
+              "kind": "OBJECT",
+              "name": "File"
             },
             "args": [],
             "isDeprecated": false
@@ -5383,24 +5415,10 @@ const introspection = {
         "name": "TenantConfigurationInput",
         "inputFields": [
           {
-            "name": "backgroundImageFile",
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "SelectFileInput"
-            }
-          },
-          {
             "name": "customTheme",
             "type": {
               "kind": "SCALAR",
               "name": "Json"
-            }
-          },
-          {
-            "name": "logoImageFile",
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "SelectFileInput"
             }
           },
           {
@@ -5418,10 +5436,24 @@ const introspection = {
         "name": "TenantInput",
         "inputFields": [
           {
+            "name": "backgroundImageFileId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID"
+            }
+          },
+          {
             "name": "configuration",
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "TenantConfigurationInput"
+            }
+          },
+          {
+            "name": "logoImageFileId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID"
             }
           },
           {
