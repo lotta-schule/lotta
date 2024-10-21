@@ -4,6 +4,8 @@ defmodule Lotta.Calendar.Renderer do
   for an event.
   """
 
+  require Logger
+
   alias Lotta.Calendar.{Calendar, CalendarEvent}
 
   def to_ics(%CalendarEvent{} = event) do
