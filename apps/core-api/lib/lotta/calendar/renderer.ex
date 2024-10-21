@@ -86,12 +86,13 @@ defmodule Lotta.Calendar.Renderer do
     |> String.replace(~r/-|:/, "")
   end
 
-  defp render_date_or_dt(%{is_full_day: true} = event, property_name) do
+  defp render_date_or_dt(%{is_full_day: true, timezone: tz} = event, property_name) do
     date =
       case property_name do
         :start -> event.start
         :end -> DateTime.add(event.end, 1, :day)
       end
+      |> shift_to_tz(tz)
 
     ";VALUE=DATE:" <>
       (date
@@ -106,4 +107,14 @@ defmodule Lotta.Calendar.Renderer do
         (event
          |> Map.fetch!(property_name)
          |> to_ics_date())
+
+  defp shift_to_tz(date, tz) when is_nil(tz), do: date
+
+  defp shift_to_tz(date, tz) do
+    DateTime.shift_zone!(date, tz)
+  rescue
+    error ->
+      Logger.error("Could not shift date to timezone '#{tz}': #{inspect(error)}")
+      date
+  end
 end
