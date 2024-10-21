@@ -97,7 +97,8 @@ defmodule Lotta.Tenants.TenantDbManager do
     {20_240_712_194_738, Lotta.Repo.TenantMigrations.CreateArticleReactions},
     {20_240_803_115_041, Lotta.Repo.TenantMigrations.CreateCalendarAndEvents},
     {20_240_826_060_632, Lotta.Repo.TenantMigrations.MakeUserGroupIsAdminGroupNotNull},
-    {20_240_826_093_644, Lotta.Repo.TenantMigrations.MakeUserGroupCanReadFullNameNotNull}
+    {20_240_826_093_644, Lotta.Repo.TenantMigrations.MakeUserGroupCanReadFullNameNotNull},
+    {20_241_021_202_316, Lotta.Repo.TenantMigrations.AddTimezoneToEvents}
   ]
 
   alias Ecto.Migration.SchemaMigration

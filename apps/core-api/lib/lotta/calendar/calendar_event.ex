@@ -28,6 +28,7 @@ defmodule Lotta.Calendar.CalendarEvent do
     :description,
     :end,
     :is_full_day,
+    :timezone,
     :recurrence_frequency,
     :recurrence_interval,
     :recurrence_byday,
@@ -47,6 +48,7 @@ defmodule Lotta.Calendar.CalendarEvent do
     field :start, :utc_datetime
     field :end, :utc_datetime
     field :is_full_day, :boolean
+    field :timezone, :string
 
     field :recurrence_frequency, :string
     field :recurrence_interval, :integer
@@ -69,6 +71,17 @@ defmodule Lotta.Calendar.CalendarEvent do
     |> cast(data, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_frequency()
+    |> put_timezone()
+  end
+
+  defp put_timezone(changeset) do
+    with nil <- get_change(changeset, :timezone),
+         %DateTime{time_zone: timezone} = datetime <- get_change(changeset, :start) do
+      put_change(changeset, :timezone, timezone)
+    else
+      _ ->
+        changeset
+    end
   end
 
   defp validate_frequency(changeset) do
