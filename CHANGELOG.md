@@ -1,3 +1,14 @@
+## 5.0.15 (2024-10-21)
+
+
+### 🚀 Features
+
+- **core-api:** Add timezone to calendar events ([#400](https://github.com/lotta-schule/lotta/pull/400))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.14 (2024-10-20)
 
 
