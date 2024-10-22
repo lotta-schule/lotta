@@ -17,6 +17,7 @@ defmodule LottaWeb.Schema.Calendar do
       arg(:from, non_null(:datetime))
       arg(:latest, :datetime)
       arg(:limit, :integer)
+      arg(:timezone, :string)
 
       resolve(&LottaWeb.CalendarResolver.list_calendar_events/2)
     end
@@ -87,6 +88,7 @@ defmodule LottaWeb.Schema.Calendar do
     field(:start, non_null(:datetime))
     field(:end, non_null(:datetime))
     field(:is_full_day, non_null(:boolean))
+    field(:timezone, :string)
 
     field(:recurrence, :recurrence_input)
   end

@@ -11,6 +11,8 @@ defmodule LottaWeb.Auth.AccessToken do
       "hisec" => {2, :minutes}
     }
 
+  require Logger
+
   alias Lotta.{Accounts, Repo, Tenants}
   alias Lotta.Accounts.User
   alias LottaWeb.Urls
@@ -98,6 +100,7 @@ defmodule LottaWeb.Auth.AccessToken do
           {:ok, claims}
 
         false ->
+          Logger.error("Invalid token type: #{inspect(claims)}")
           {:error, :invalid_token}
       end
     else

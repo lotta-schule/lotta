@@ -64,6 +64,7 @@ export const CreateEventDialog = React.memo(
             description: eventData.description,
             start: eventData.start.toISOString(),
             end: eventData.end.toISOString(),
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             isFullDay: eventData.isFullDay,
             recurrence: eventData.recurrence,
             calendarId: eventData.calendarId ?? null!,

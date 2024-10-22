@@ -35,11 +35,13 @@ defmodule LottaWeb.UserSocket do
       case AccessToken.resource_from_token(token) do
         {:ok, user, _claims} ->
           socket =
-            Socket.put_options(socket,
-              context: %Context{
-                current_user: Context.set_virtual_user_fields(user),
-                tenant: tenant
-              }
+            socket
+            |> Socket.put_options(
+              context:
+                Context.new(
+                  current_user: Context.set_virtual_user_fields(user),
+                  tenant: tenant
+                )
             )
 
           {:ok, socket}
@@ -61,9 +63,7 @@ defmodule LottaWeb.UserSocket do
 
       socket =
         Socket.put_options(socket,
-          context: %Context{
-            tenant: tenant
-          }
+          context: Context.new(tenant: tenant)
         )
 
       {:ok, socket}

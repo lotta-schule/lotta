@@ -3,7 +3,6 @@ defmodule LottaWeb.UserGroupResolver do
 
   import LottaWeb.ErrorHelpers
 
-  alias LottaWeb.Context
   alias Lotta.Repo
   alias Lotta.Accounts
   alias Lotta.Accounts.User
@@ -20,18 +19,18 @@ defmodule LottaWeb.UserGroupResolver do
   end
 
   def resolve_enrollment_tokens(_user_group, _args, %{
-        context: %Context{current_user: %User{is_admin?: false}}
+        context: %{current_user: %User{is_admin?: false}}
       }),
       do: []
 
   def resolve_enrollment_tokens(user_group, _args, %{
-        context: %Context{current_user: %User{is_admin?: true}}
+        context: %{current_user: %User{is_admin?: true}}
       }) do
     {:ok, user_group.enrollment_tokens}
   end
 
   def all(_args, %{
-        context: %Context{current_user: %User{is_admin?: is_admin, all_groups: user_groups}}
+        context: %{current_user: %User{is_admin?: is_admin, all_groups: user_groups}}
       }) do
     if is_admin do
       {:ok, Accounts.list_user_groups()}

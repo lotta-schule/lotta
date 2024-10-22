@@ -3,12 +3,11 @@ defmodule LottaWeb.Schema.Middleware.EnsureUserIsAdministrator do
 
   @behaviour Absinthe.Middleware
 
-  alias LottaWeb.Context
   alias Lotta.Accounts.User
 
   @doc false
 
-  def call(%{context: %Context{current_user: %User{is_admin?: true}}} = resolution, _config),
+  def call(%{context: %{current_user: %User{is_admin?: true}}} = resolution, _config),
     do: resolution
 
   def call(resolution, _config) do

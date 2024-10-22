@@ -23,6 +23,7 @@ const LottaWebApp = ({
     currentUser,
     error,
     requestBaseUrl,
+    socketUrl,
     tenant,
     ...componentProps
   },
@@ -63,6 +64,7 @@ const LottaWebApp = ({
       )}
       <AppContextProviders
         tenant={tenant}
+        socketUrl={socketUrl}
         categories={categories}
         currentUser={currentUser}
         requestBaseUrl={origin}
@@ -144,6 +146,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
       categories: categoriesData?.categories ?? null,
       error: error ?? null,
       requestBaseUrl: url,
+      socketUrl: process.env.API_SOCKET_URL,
     },
   };
 };

@@ -23,6 +23,7 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
   const requestBaseUrl = await getBaseUrlString();
   const accessToken = getAuthTokenFromHeader();
 
+  // TODO: Better than showing the tenant not found page, we should show a real error page
   const tenant = await loadTenant().catch(() => null);
 
   const origin =
