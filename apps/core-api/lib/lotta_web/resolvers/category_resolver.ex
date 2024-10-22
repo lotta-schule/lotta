@@ -4,14 +4,13 @@ defmodule LottaWeb.CategoryResolver do
   import Ecto.Query
   import LottaWeb.ErrorHelpers
 
-  alias LottaWeb.Context
   alias Lotta.Repo
   alias Lotta.Tenants
   alias Lotta.Accounts.User
   alias Lotta.Tenants.{Category, Widget}
 
   def resolve_widgets(_args, %{
-        context: %Context{current_user: %User{all_groups: groups, is_admin?: is_admin}},
+        context: %{current_user: %User{all_groups: groups, is_admin?: is_admin}},
         source: %Category{} = category
       }) do
     widgets =
@@ -30,7 +29,7 @@ defmodule LottaWeb.CategoryResolver do
     {:ok, widgets}
   end
 
-  def all(_args, %{context: %Context{current_user: current_user}}) do
+  def all(_args, %{context: %{current_user: current_user}}) do
     {:ok, Tenants.list_categories(current_user)}
   end
 

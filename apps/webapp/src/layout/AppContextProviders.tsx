@@ -29,8 +29,9 @@ const defaultTheme = DefaultThemes.standard;
 export interface AppContextProvidersProps {
   categories: CategoryModel[] | null;
   currentUser: UserModel | null;
-  requestBaseUrl: string;
   tenant: TenantModel;
+  requestBaseUrl: string;
+  socketUrl?: string;
   children?: React.ReactNode;
 }
 
@@ -65,11 +66,12 @@ export const AppContextProviders = ({
   categories,
   currentUser,
   requestBaseUrl,
+  socketUrl,
   children,
 }: AppContextProvidersProps) => {
   const firstBrowserInit = React.useRef(false);
 
-  const client = getApolloClient({ tenant });
+  const client = getApolloClient({ tenant, socketUrl });
   if (!firstBrowserInit.current) {
     client.writeQuery({
       query: GetTenantQuery,

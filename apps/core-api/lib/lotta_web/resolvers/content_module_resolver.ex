@@ -4,12 +4,11 @@ defmodule LottaWeb.ContentModuleResolver do
   import Lotta.Accounts.Permissions
 
   alias Lotta.{Content, Email, Mailer, Repo, Storage}
-  alias LottaWeb.Context
   alias Bamboo.Attachment
 
   def send_form_response(
         %{content_module_id: content_module_id, response: response},
-        %{context: %Context{current_user: current_user}}
+        %{context: %{current_user: current_user}}
       ) do
     content_module = Content.get_content_module(content_module_id)
 
@@ -117,7 +116,7 @@ defmodule LottaWeb.ContentModuleResolver do
   end
 
   def get_responses(%{content_module_id: content_module_id}, %{
-        context: %Context{current_user: current_user}
+        context: %{current_user: current_user}
       }) do
     case Content.get_content_module(content_module_id) do
       nil ->

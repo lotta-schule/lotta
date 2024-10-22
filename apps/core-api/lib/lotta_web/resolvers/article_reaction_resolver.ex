@@ -4,7 +4,6 @@ defmodule LottaWeb.ArticleReactionResolver do
   import Ecto.Query
 
   alias Lotta.Content
-  alias LottaWeb.Context
   alias Lotta.Accounts.User
   alias Lotta.Content.{Article, ArticleReaction}
   alias Lotta.Repo
@@ -23,7 +22,7 @@ defmodule LottaWeb.ArticleReactionResolver do
   end
 
   def react_to_article(%{article_id: article_id, type: type}, %{
-        context: %Context{current_user: current_user}
+        context: %{current_user: current_user}
       }) do
     article = Content.get_article(article_id)
 

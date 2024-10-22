@@ -4,12 +4,11 @@ defmodule LottaWeb.DirectoryResolver do
   import LottaWeb.ErrorHelpers
   import Lotta.Accounts.Permissions
 
-  alias LottaWeb.Context
   alias Lotta.Accounts.User
   alias Lotta.{Repo, Storage}
 
   def list(%{parent_directory_id: parent_directory_id}, %{
-        context: %Context{current_user: current_user}
+        context: %{current_user: current_user}
       })
       when not is_nil(parent_directory_id) and bit_size(parent_directory_id) > 0 do
     parent_directory = Storage.get_directory(parent_directory_id)
@@ -26,11 +25,11 @@ defmodule LottaWeb.DirectoryResolver do
     end
   end
 
-  def list(_, %{context: %Context{current_user: current_user}}) do
+  def list(_, %{context: %{current_user: current_user}}) do
     {:ok, Storage.list_root_directories(current_user)}
   end
 
-  def get(%{id: id}, %{context: %Context{current_user: current_user}}) do
+  def get(%{id: id}, %{context: %{current_user: current_user}}) do
     directory = Storage.get_directory(id)
 
     cond do
@@ -50,7 +49,7 @@ defmodule LottaWeb.DirectoryResolver do
   end
 
   def create(%{name: name, parent_directory_id: parent_directory_id}, %{
-        context: %Context{current_user: current_user}
+        context: %{current_user: current_user}
       })
       when not is_nil(parent_directory_id) do
     parent_directory = Storage.get_directory(parent_directory_id)
@@ -73,7 +72,7 @@ defmodule LottaWeb.DirectoryResolver do
   end
 
   def create(%{name: name, is_public: true}, %{
-        context: %Context{current_user: %User{is_admin?: true}}
+        context: %{current_user: %User{is_admin?: true}}
       }) do
     Storage.create_directory(%{
       name: name,
@@ -83,12 +82,12 @@ defmodule LottaWeb.DirectoryResolver do
   end
 
   def create(%{name: _name, is_public: true}, %{
-        context: %Context{current_user: %User{is_admin?: false}}
+        context: %{current_user: %User{is_admin?: false}}
       }) do
     {:error, "Du hast nicht die Rechte, diesen Ordner zu beschreiben."}
   end
 
-  def create(%{name: name}, %{context: %Context{current_user: %{id: user_id}}}) do
+  def create(%{name: name}, %{context: %{current_user: %{id: user_id}}}) do
     Storage.create_directory(%{
       name: name,
       user_id: user_id
@@ -101,7 +100,7 @@ defmodule LottaWeb.DirectoryResolver do
     {:error, "Du kannst diesen Ordner nicht hierher verschieben."}
   end
 
-  def update(%{id: id} = args, %{context: %Context{current_user: current_user}}) do
+  def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
     directory = Storage.get_directory(id)
 
     if directory do
@@ -138,7 +137,7 @@ defmodule LottaWeb.DirectoryResolver do
     end
   end
 
-  def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
+  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
     directory = Storage.get_directory(id)
 
     cond do

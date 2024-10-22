@@ -79,16 +79,14 @@ defmodule LottaWeb.Telemetry do
                          tenant: tenant,
                          user: user,
                          message: message,
-                         conversation: conversation,
-                         notification: notification
+                         conversation: conversation
                        } ->
           %{
             tenant_id: tenant.id,
             tenant_slug: tenant.slug,
             user_id: user.id,
             message_id: message.id,
-            conversation_id: conversation.id,
-            notification_id: notification.id
+            conversation_id: conversation.id
           }
         end
       )

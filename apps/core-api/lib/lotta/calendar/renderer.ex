@@ -4,13 +4,15 @@ defmodule Lotta.Calendar.Renderer do
   for an event.
   """
 
+  require Logger
+
   alias Lotta.Calendar.{Calendar, CalendarEvent}
 
   def to_ics(%CalendarEvent{} = event) do
     calendar_event do
       """
-      DTSTART:#{render_date_or_dt(event, :start)}
-      DTEND:#{render_date_or_dt(event, :end)}
+      DTSTART#{render_date_or_dt(event, :start)}
+      DTEND#{render_date_or_dt(event, :end)}
       LOCATION:#{event.location_name}
       SUMMARY;LANGUAGE=DE:#{event.summary}
       UID:#{event.calendar_id}-#{event.id}
@@ -18,8 +20,8 @@ defmodule Lotta.Calendar.Renderer do
       CLASS:PUBLIC
       """
       |> String.trim()
-      |> maybe_append("DESCRIPTION;LANGUAGE=DE", event.description)
-      |> maybe_append("RRULE", render_rrule(event))
+      |> maybe_append("DESCRIPTION;LANGUAGE=DE", event.description, glue_char: ":")
+      |> maybe_append("RRULE", render_rrule(event), glue_char: ":")
     end
   end
 
@@ -35,7 +37,6 @@ defmodule Lotta.Calendar.Renderer do
       NAME:#{calendar.name}
       COLOR:#{calendar.color}
       DTSTAMP:#{to_ics_date(calendar.updated_at)}
-
       #{Enum.map_join(calendar.events, "\n", &to_ics/1)}
       """
     end
@@ -58,13 +59,13 @@ defmodule Lotta.Calendar.Renderer do
   defp string_val(value) when is_struct(value, DateTime), do: to_ics_date(value)
   defp string_val(value), do: to_string(value)
 
-  defp maybe_append(acc, field, value, opts \\ [])
   defp maybe_append(acc, _f, nil, _opts), do: acc
   defp maybe_append(acc, _f, "", _opts), do: acc
   defp maybe_append(acc, _f, [], _opts), do: acc
 
   defp maybe_append(acc, field, value, opts),
-    do: acc <> (opts[:glue_char] || "\n") <> field <> "=" <> string_val(value)
+    do:
+      acc <> (opts[:init_char] || "\n") <> field <> (opts[:glue_char] || "=") <> string_val(value)
 
   defp render_rrule(%CalendarEvent{} = event) do
     case event.recurrence_frequency do
@@ -72,12 +73,12 @@ defmodule Lotta.Calendar.Renderer do
         ""
 
       frequency ->
-        "RRULE:FREQ=#{String.upcase(frequency)}"
-        |> maybe_append("INTERVAL", event.recurrence_interval, glue_char: ";")
-        |> maybe_append("BYDAY", event.recurrence_byday, glue_char: ";")
-        |> maybe_append("BYMONTHDAY", event.recurrence_bymonthday, glue_char: ";")
-        |> maybe_append("UNTIL", event.recurrence_until, glue_char: ";")
-        |> maybe_append("COUNT", event.recurrence_count, glue_char: ";")
+        "FREQ=#{String.upcase(frequency)}"
+        |> maybe_append("INTERVAL", event.recurrence_interval, init_char: ";")
+        |> maybe_append("BYDAY", event.recurrence_byday, init_char: ";")
+        |> maybe_append("BYMONTHDAY", event.recurrence_bymonthday, init_char: ";")
+        |> maybe_append("UNTIL", event.recurrence_until, init_char: ";")
+        |> maybe_append("COUNT", event.recurrence_count, init_char: ";")
     end
   end
 
@@ -87,10 +88,16 @@ defmodule Lotta.Calendar.Renderer do
     |> String.replace(~r/-|:/, "")
   end
 
-  defp render_date_or_dt(%{is_full_day: true} = event, property_name) do
-    "VALUE=DATE;" <>
-      (event
-       |> Map.fetch!(property_name)
+  defp render_date_or_dt(%{is_full_day: true, timezone: tz} = event, property_name) do
+    date =
+      case property_name do
+        :start -> event.start
+        :end -> DateTime.add(event.end, 1, :day)
+      end
+      |> shift_to_tz(tz)
+
+    ";VALUE=DATE:" <>
+      (date
        |> DateTime.to_iso8601()
        |> String.replace(~r/-|/, "")
        |> String.replace(~r/T.*/, ""))
@@ -98,7 +105,18 @@ defmodule Lotta.Calendar.Renderer do
 
   defp render_date_or_dt(event, property_name),
     do:
-      event
-      |> Map.fetch!(property_name)
-      |> to_ics_date()
+      ":" <>
+        (event
+         |> Map.fetch!(property_name)
+         |> to_ics_date())
+
+  defp shift_to_tz(date, tz) when is_nil(tz), do: date
+
+  defp shift_to_tz(date, tz) do
+    DateTime.shift_zone!(date, tz)
+  rescue
+    error ->
+      Logger.error("Could not shift date to timezone '#{tz}': #{inspect(error)}")
+      date
+  end
 end

@@ -23,7 +23,7 @@ import getConfig from 'next/config';
 const ALLOWED_HEADERS = ['accept', 'content-type', 'authorization'] as const;
 
 const {
-  publicRuntimeConfig: { socketUrl, tenantSlugOverwrite },
+  publicRuntimeConfig: { tenantSlugOverwrite },
 } = getConfig();
 
 const createHeaders = (headers?: any) => {
@@ -94,11 +94,17 @@ if (isBrowser()) {
 }
 
 let cachedApolloClient: ApolloClient<NormalizedCacheObject> | null = null;
-export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
+export const getApolloClient = ({
+  tenant,
+  socketUrl,
+}: { tenant?: TenantModel; socketUrl?: string } = {}) => {
   if (isBrowser()) {
     if (cachedApolloClient !== null) {
       return cachedApolloClient;
     }
+    console.info('cachedApolloClient is null. Creating new ApolloClient', {
+      socketUrl,
+    });
   }
   const customFetch = async (url: string, options: any) => {
     const { headers, body, method, ...miscOptions } = options;

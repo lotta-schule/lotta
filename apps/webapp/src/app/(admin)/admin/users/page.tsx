@@ -11,12 +11,7 @@ async function UserListPage() {
   ]);
 
   return (
-    <AdminPage
-      icon={faCircleUser}
-      title={'Benutzer'}
-      hasHomeLink
-      takesFullSpace
-    >
+    <AdminPage icon={faCircleUser} title={'Benutzer'} hasHomeLink>
       <UserList tenant={tenant} currentUser={currentUser!} />
     </AdminPage>
   );
