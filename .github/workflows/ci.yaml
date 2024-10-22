@@ -237,7 +237,7 @@ jobs:
       platforms: |
         linux/amd64
         linux/arm64
-      push: contains(github.event.pull_request.labels.*.name, 'preview') || github.ref_name == 'main'
+      push: ${{ contains(github.event.pull_request.labels.*.name, 'preview') || github.ref_name == 'main' }}
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
