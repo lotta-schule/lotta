@@ -42,12 +42,10 @@ export const ArticlesByTag = React.memo(
       hidden: {
         opacity: 0,
         scaleX: 0,
-        className: styles.root,
       },
       visible: {
         opacity: 1,
         scaleX: 1,
-        className: styles.root,
       },
     };
 
