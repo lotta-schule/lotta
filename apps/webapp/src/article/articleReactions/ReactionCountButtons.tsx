@@ -30,7 +30,7 @@ export const ReactionCountButtons = ({
           onSelect?.(type, e.currentTarget)
         }
       >
-        {count}
+        <div className={styles.count}>{count}</div>
       </PillButton>
     ));
 };
