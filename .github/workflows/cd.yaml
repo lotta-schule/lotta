@@ -30,7 +30,7 @@ jobs:
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}
-      tags: ${{ format(matrix.environment == 'preview' && '{1}:{0}' || '{1}:staging,{1}:{0},{1}:canary-{0}', github.sha, matrix.image.name) }}
+      tags: ${{ format(matrix.environment == 'preview' && '{2}/{1}:{0}' || '{2}/{1}:latest,{2}{1}:{0},{2}/{1}:canary-{0}', github.sha, matrix.image.name, 'ghcr.io/lotta-schule') }}
       registry: ghcr.io/lotta-schule
       releaseName: ${{ github.sha }}
       context: ${{ matrix.image.context }}
