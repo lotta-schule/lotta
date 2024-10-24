@@ -15,10 +15,6 @@ env:
 jobs:
   publish-docker-images:
     name: ${{ matrix.image.name }} (${{ matrix.environment }}) Docker images
-    needs:
-      - check-build
-      - tests
-      - lint
     strategy:
       matrix:
         environment: ['preview', 'staging']
