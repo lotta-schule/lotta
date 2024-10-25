@@ -264,20 +264,28 @@ config :sentry,
 config :lotta, Lotta.Storage.ImageProcessingUrl,
   cloudimage_token: SystemConfig.get("CLOUDIMAGE_TOKEN")
 
-if is_binary(SystemConfig.get("HEADLESS_SERVICE_NAME")) &&
-     String.length(SystemConfig.get("HEADLESS_SERVICE_NAME")) do
-  config :libcluster,
-    topologies: [
-      k8s: [
-        strategy: Cluster.Strategy.Kubernetes.DNS,
-        config: [
-          service: SystemConfig.get("HEADLESS_SERVICE_NAME"),
-          application_name: SystemConfig.get("RELEASE_NAME"),
-          polling_interval: 5000
+licluster_topologies =
+  case SystemConfig.get("HEADLESS_SERVICE_NAME") do
+    "" ->
+      []
+
+    nil ->
+      []
+
+    name ->
+      [
+        k8s: [
+          strategy: Cluster.Strategy.Kubernetes.DNS,
+          config: [
+            service: SystemConfig.get("HEADLESS_SERVICE_NAME"),
+            application_name: SystemConfig.get("RELEASE_NAME"),
+            polling_interval: 5000
+          ]
         ]
       ]
-    ]
-end
+  end
+
+config :libcluster, topologies: libcluster_topologies
 
 config :lotta, Lotta.Notification.Provider.APNS,
   adapter:

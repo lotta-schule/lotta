@@ -5,10 +5,10 @@ defmodule Lotta.Application do
 
   use Application
 
+  require Logger
+
   def start(_type, _args) do
     :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
-    environment = Application.fetch_env!(:lotta, :environment)
-
     :opentelemetry_cowboy.setup()
     OpentelemetryPhoenix.setup(adapter: :cowboy2)
     OpentelemetryAbsinthe.setup()
@@ -30,7 +30,7 @@ defmodule Lotta.Application do
           Lotta.Notification.PushNotification,
           {ConCache,
            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
-        ] ++ appended_apps(environment)
+        ] ++ appended_apps()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -38,6 +38,9 @@ defmodule Lotta.Application do
   end
 
   defp prepended_apps() do
+    topologies = Application.get_env(:libcluster, :topologies)
+    Logger.info("Topologies: #{inspect(topologies)}")
+
     case Application.get_env(:libcluster, :topologies) do
       nil ->
         []
@@ -47,7 +50,7 @@ defmodule Lotta.Application do
     end
   end
 
-  defp appended_apps(_) do
+  defp appended_apps() do
     []
     |> then(fn apps ->
       if Keyword.get(Application.get_env(:lotta, Lotta.Notification.Provider.APNS), :key),
