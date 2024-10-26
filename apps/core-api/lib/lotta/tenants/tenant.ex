@@ -59,7 +59,7 @@ defmodule Lotta.Tenants.Tenant do
   def create_changeset(tenant, attrs) do
     tenant
     |> cast(attrs, [:title, :slug, :prefix])
-    |> validate_required([:title, :slug, :prefix])
+    |> validate_required([:title, :slug])
     |> unique_constraint(:slug)
   end
 
