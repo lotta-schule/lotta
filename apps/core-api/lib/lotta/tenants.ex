@@ -69,7 +69,10 @@ defmodule Lotta.Tenants do
 
     Multi.new()
     |> Multi.put(:user_params, user_params)
-    |> Multi.insert(:new_tenant, Tenant.create_changeset(%Tenant{}, tenant_params))
+    |> Multi.insert(:new_tenant_without_prefix, Tenant.create_changeset(tenant_params))
+    |> Multi.update(:new_tenant, fn %{new_tenant_without_prefix: tenant} ->
+      Ecto.Changeset.change(tenant, prefix: "tenant_#{tenant.id}")
+    end)
     |> Multi.update(:tenant, fn %{new_tenant: tenant} ->
       Tenant.update_changeset(tenant, %{prefix: tenant.prefix || "tenant_#{tenant.id}"})
     end)
