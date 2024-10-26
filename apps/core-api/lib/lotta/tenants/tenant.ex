@@ -57,7 +57,7 @@ defmodule Lotta.Tenants.Tenant do
   @doc since: "2.6.0"
   @spec create_changeset(map()) :: Ecto.Changeset.t()
   def create_changeset(attrs) do
-    tenant
+    %__MODULE__{}
     |> cast(attrs, [:title, :slug])
     |> validate_required([:title, :slug])
     |> unique_constraint(:slug)
