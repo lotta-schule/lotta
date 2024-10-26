@@ -14,6 +14,9 @@ defmodule LottaWeb.TenantController do
     tenant_params = atomize_keys(tenant_params)
     user_params = atomize_keys(user_params)
 
+    IO.inspect(tenant_params, label: "tenant_params")
+    IO.inspect(user_params, label: "user_params")
+
     case Tenants.create_tenant(user_params: user_params, tenant: tenant_params) do
       {:ok, _tenant} ->
         send_resp(conn, :ok, Jason.encode!(%{success: true}))
