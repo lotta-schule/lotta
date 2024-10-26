@@ -45,7 +45,8 @@ defmodule Lotta.TenantsTest do
                  tenant: %{title: "Chile Lotta", slug: "chile"}
                )
 
-      assert %{title: "Chile Lotta", slug: "chile", prefix: "tenant_#{tenant.id}"} = tenant
+      assert %{title: "Chile Lotta", slug: "chile", prefix: prefix} = tenant
+      assert prefix == "tenant_#{tenant_id}"
 
       assert [%{name: "Salvador Allende", email: "salvador.allende@einsa.net"}] =
                Lotta.Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
