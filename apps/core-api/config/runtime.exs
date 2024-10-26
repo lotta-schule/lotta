@@ -264,7 +264,7 @@ config :sentry,
 config :lotta, Lotta.Storage.ImageProcessingUrl,
   cloudimage_token: SystemConfig.get("CLOUDIMAGE_TOKEN")
 
-licluster_topologies =
+libcluster_topologies =
   case SystemConfig.get("HEADLESS_SERVICE_NAME") do
     "" ->
       []
@@ -272,12 +272,12 @@ licluster_topologies =
     nil ->
       []
 
-    name ->
+    service_name ->
       [
         k8s: [
           strategy: Cluster.Strategy.Kubernetes.DNS,
           config: [
-            service: SystemConfig.get("HEADLESS_SERVICE_NAME"),
+            service: service_name,
             application_name: SystemConfig.get("RELEASE_NAME"),
             polling_interval: 5000
           ]
