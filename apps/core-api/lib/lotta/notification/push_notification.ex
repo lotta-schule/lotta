@@ -109,6 +109,7 @@ defmodule Lotta.Notification.PushNotification do
   defp process_notification({:conversation_read, tenant, user, conversation}) do
     OpenTelemetry.Tracer.with_span :push_notification_process_conversation_read do
       PushNotificationRequest.new(tenant)
+      |> Map.put(:push_type, :background)
       |> PushNotificationRequest.put_category("read_conversation")
       |> PushNotificationRequest.put_data(%{
         "user_id" => user.id,
@@ -143,14 +144,12 @@ defmodule Lotta.Notification.PushNotification do
         "apns" ->
           notification
           |> PushNotificationRequest.create_apns_notification(token)
-          |> Lotta.Notification.Provider.APNS.push()
-          |> tap(&log_notification/1)
+          |> Lotta.Notification.Provider.APNS.push(on_response: &log_notification/1)
 
         "fcm" ->
           notification
           |> PushNotificationRequest.create_fcm_notification({:token, token})
-          |> Lotta.Notification.Provider.FCM.push()
-          |> tap(&log_notification/1)
+          |> Lotta.Notification.Provider.FCM.push(on_response: &log_notification/1)
 
         _ ->
           Logger.error("Error sending notification: Unknown token type #{type}")

@@ -91,7 +91,7 @@ defmodule Lotta.Notification.PushNotificationRequest do
   @doc since: "4.1.3"
   def create_apns_notification(notification, target) do
     Pigeon.APNS.Notification.new(
-      "",
+      nil,
       target,
       get_topic()
     )
@@ -108,25 +108,16 @@ defmodule Lotta.Notification.PushNotificationRequest do
         |> Pigeon.APNS.Notification.put_sound("default")
       else
         apns_notification
+        |> Map.put(:push_type, :background)
       end
     end)
     |> then(fn apns_notification ->
-      default_data = %{
-        title: notification.title
-      }
-
       if map_size(Map.get(notification, :data)) > 0 do
         apns_notification
         |> Pigeon.APNS.Notification.put_content_available()
-        |> Pigeon.APNS.Notification.put_custom(
-          Map.merge(
-            default_data,
-            notification.data
-          )
-        )
+        |> Pigeon.APNS.Notification.put_custom(notification.data)
       else
         apns_notification
-        |> Pigeon.APNS.Notification.put_custom(default_data)
       end
     end)
     |> Pigeon.APNS.Notification.put_category(notification.category)
