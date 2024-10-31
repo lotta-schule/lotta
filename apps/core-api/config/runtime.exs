@@ -244,32 +244,32 @@ config :lotta, :admin_api_key,
 
 config :lotta,
        Lotta.Mailer,
-       (case SystemConfig.get("MAILER_ADAPTER") do
-          "mailgun" ->
-            [
-              adapter: Bamboo.MailgunAdapter,
-              api_key: SystemConfig.get("MAILGUN_API_KEY"),
-              domain: SystemConfig.get("MAILGUN_DOMAIN"),
-              default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
-              feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER"),
-              base_uri: SystemConfig.get("MAILGUN_BASE_URI")
-            ]
+       case(SystemConfig.get("MAILER_ADAPTER")) do
+  "mailgun" ->
+    [
+      adapter: Bamboo.MailgunAdapter,
+      api_key: SystemConfig.get("MAILGUN_API_KEY"),
+      domain: SystemConfig.get("MAILGUN_DOMAIN"),
+      default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
+      feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER"),
+      base_uri: SystemConfig.get("MAILGUN_BASE_URI")
+    ]
 
-          "test" ->
-            [adapter: Bamboo.TestAdapter]
+  "test" ->
+    [adapter: Bamboo.TestAdapter]
 
-          "local" ->
-            [adapter: Bamboo.LocalAdapter]
+  "local" ->
+    [adapter: Bamboo.LocalAdapter]
 
-          "smtp" ->
-            [
-              adapter: Bamboo.SMTPAdapter,
-              server: SystemConfig.get("SMTP_SERVER"),
-              port: SystemConfig.get("SMTP_PORT", cast: :integer, default: "587"),
-              username: SystemConfig.get("SMTP_USERNAME"),
-              password: SystemConfig.get("SMTP_PASSWORD")
-            ]
-        end)
+  "smtp" ->
+    [
+      adapter: Bamboo.SMTPAdapter,
+      server: SystemConfig.get("SMTP_SERVER"),
+      port: SystemConfig.get("SMTP_PORT", cast: :integer, default: "587"),
+      username: SystemConfig.get("SMTP_USERNAME"),
+      password: SystemConfig.get("SMTP_PASSWORD")
+    ]
+end
 
 config :sentry,
   dsn: SystemConfig.get("SENTRY_DSN"),
