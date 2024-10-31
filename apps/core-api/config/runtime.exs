@@ -249,10 +249,18 @@ config :lotta,
             ]
 
           "test" ->
-            [adapter: Bamboo.TestAdapter]
+            [
+              adapter: Bamboo.TestAdapter,
+              default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
+              feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER")
+            ]
 
           "local" ->
-            [adapter: Bamboo.LocalAdapter]
+            [
+              adapter: Bamboo.LocalAdapter,
+              default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
+              feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER")
+            ]
         end)
 
 config :sentry,
