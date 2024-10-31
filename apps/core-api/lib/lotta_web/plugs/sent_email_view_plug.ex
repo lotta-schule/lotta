@@ -11,7 +11,7 @@ defmodule LottaWeb.SentEmailViewPlug do
     if local_adapter?() do
       Bamboo.SentEmailViewerPlug.call(conn, [])
     else
-      send_resp(conn, 404, "Not Found")
+      Plug.Conn.send_resp(conn, 404, "Not found")
     end
   end
 
