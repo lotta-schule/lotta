@@ -98,7 +98,7 @@ defmodule LottaWeb.Router do
     forward("/mails", LottaWeb.SentEmailViewPlug)
   end
 
-  defp absinthe_before_send(conn, %{execution: %{context: %{refresh_token: token}}}) do
+  def absinthe_before_send(conn, %{execution: %{context: %{refresh_token: token}}}) do
     if is_nil(token) do
       delete_resp_cookie(conn, "SignInRefreshToken", http_only: true, same_site: "Lax")
     else
@@ -110,7 +110,7 @@ defmodule LottaWeb.Router do
     end
   end
 
-  defp absinthe_before_send(conn, _blueprint), do: conn
+  def absinthe_before_send(conn, _blueprint), do: conn
 
   defp admin_auth(conn, _opts) do
     Plug.BasicAuth.basic_auth(conn, Application.get_env(:lotta, :admin_api_key))
