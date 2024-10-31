@@ -95,7 +95,17 @@ defmodule LottaWeb.Router do
     # health endpoint
     forward("/health", LottaWeb.HealthPlug)
 
-    forward("/mails", LottaWeb.SentEmailViewPlug)
+    scope "/mails" do
+      forward(
+        "/view",
+        LottaWeb.SentEmailViewPlug
+      )
+
+      forward(
+        "/api",
+        LottaWeb.SentEmailApiPlug
+      )
+    end
   end
 
   def absinthe_before_send(conn, %{execution: %{context: %{refresh_token: token}}}) do
