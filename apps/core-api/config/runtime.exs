@@ -36,14 +36,6 @@ defmodule SystemConfig do
 
       :url_scheme ->
         value && URI.parse(value).scheme
-
-      :bamboo_adapter ->
-        case value do
-          "mailgun" -> Bamboo.MailgunAdapter
-          "local" -> Bamboo.LocalAdapter
-          "test" -> Bamboo.TestAdapter
-          _ -> raise "Invalid mail adapter: #{value}"
-        end
     end
   end
 
@@ -102,9 +94,8 @@ defmodule SystemConfig do
   defp default("REMOTE_STORAGE_MINIO_ENDPOINT", _), do: "http://localhost:9000/lotta-dev-ugc"
   defp default("REMOTE_STORAGE_MINIO_BUCKET", _), do: "lotta-dev-ugc"
 
-  defp default("MAILER_ADAPTER", :dev), do: "local"
   defp default("MAILER_ADAPTER", :test), do: "test"
-  defp default("MAILER_ADAPTER", _), do: "mailgun"
+  defp default("MAILER_ADAPTER", _), do: "local"
   defp default("MAILGUN_BASE_URI", _), do: "https://api.eu.mailgun.net/v3"
   defp default("MAILGUN_API_KEY", _), do: nil
   defp default("MAILGUN_DOMAIN", _), do: nil
@@ -246,12 +237,23 @@ config :lotta, :admin_api_key,
 
 config :lotta,
        Lotta.Mailer,
-       adapter: SystemConfig.get("MAILER_ADAPTER", cast: :bamboo_adapter),
-       api_key: SystemConfig.get("MAILGUN_API_KEY"),
-       domain: SystemConfig.get("MAILGUN_DOMAIN"),
-       default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
-       feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER"),
-       base_uri: SystemConfig.get("MAILGUN_BASE_URI")
+       case(SystemConfig.get("MAILER_ADAPTER")) do
+  "mailgun" ->
+    [
+      adapter: Bamboo.MailgunAdapter,
+      api_key: SystemConfig.get("MAILGUN_API_KEY"),
+      domain: SystemConfig.get("MAILGUN_DOMAIN"),
+      default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
+      feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER"),
+      base_uri: SystemConfig.get("MAILGUN_BASE_URI")
+    ]
+
+  "test" ->
+    [adapter: Bamboo.TestAdapter]
+
+  "local" ->
+    [adapter: Bamboo.LocalAdapter]
+end
 
 config :sentry,
   dsn: SystemConfig.get("SENTRY_DSN"),
