@@ -43,7 +43,7 @@ defmodule Lotta.Notification.PushNotificationRequestTest do
                device_token: "token",
                payload: %{
                  "aps" => %{
-                   "alert" => "",
+                   "alert" => nil,
                    "category" => "category",
                    "content-available" => 1,
                    "thread-id" => nil
