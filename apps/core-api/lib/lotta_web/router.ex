@@ -95,13 +95,18 @@ defmodule LottaWeb.Router do
     # health endpoint
     forward("/health", LottaWeb.HealthPlug)
 
-    if Keyword.get(Application.fetch_env(Lotta.Mailer), :adapter) == {:ok, Bamboo.LocalAdapter} do
+    if get_config(Lotta.Mailer, :adapter) == {:ok, Bamboo.LocalAdapter} do
       # If using Phoenix
       forward("/mails", Bamboo.SentEmailViewerPlug)
     end
   end
 
-  def absinthe_before_send(conn, %{execution: %{context: %{refresh_token: token}}}) do
+  defp get_config(namespace, key) do
+    Application.fetch_env(:lotta, namespace)
+    |> Keyword.get(key)
+  end
+
+  defp absinthe_before_send(conn, %{execution: %{context: %{refresh_token: token}}}) do
     if is_nil(token) do
       delete_resp_cookie(conn, "SignInRefreshToken", http_only: true, same_site: "Lax")
     else
@@ -113,7 +118,7 @@ defmodule LottaWeb.Router do
     end
   end
 
-  def absinthe_before_send(conn, _blueprint), do: conn
+  defp absinthe_before_send(conn, _blueprint), do: conn
 
   defp admin_auth(conn, _opts) do
     Plug.BasicAuth.basic_auth(conn, Application.get_env(:lotta, :admin_api_key))
