@@ -95,7 +95,7 @@ defmodule LottaWeb.Router do
     # health endpoint
     forward("/health", LottaWeb.HealthPlug)
 
-    if Keyword.get(Application.fetch_env(Lotta.Mailer, :adapter)) == {:ok, Bamboo.LocalAdapter} do
+    if Keyword.get(Application.fetch_env(Lotta.Mailer), :adapter) == {:ok, Bamboo.LocalAdapter} do
       # If using Phoenix
       forward("/mails", Bamboo.SentEmailViewerPlug)
     end
