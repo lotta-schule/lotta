@@ -1,3 +1,14 @@
+## 5.0.16 (2024-10-31)
+
+
+### 🩹 Fixes
+
+- **core:** Send background push notifications as such for "read_conversation" event ([#408](https://github.com/lotta-schule/lotta/pull/408))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.15 (2024-10-21)
 
 
