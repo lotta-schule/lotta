@@ -5,22 +5,21 @@ defmodule LottaWeb.SentEmailViewPlug do
   """
   @behaviour Plug
 
-  import Plug
-
   def init(opts), do: opts
 
-  def call(%Conn{} = conn, _) do
-    if is_local_adapter?() do
+  def call(%Plug.Conn{} = conn, _) do
+    if local_adapter?() do
       Bamboo.SentEmailViewerPlug.call(conn, [])
     else
       send_resp(conn, 404, "Not Found")
     end
   end
 
-  defp is_local_adapter?() do
-    adapter =
-      Application.fetch_env!(:lotta, Lotta.Mailer)[:adapter]
+  defp local_adapter?() do
+    mailer_config()[:adapter] == Bamboo.LocalAdapter
+  end
 
-    adapter == Bamboo.LocalAdapter
+  defp mailer_config() do
+    Application.fetch_env!(:lotta, Lotta.Mailer)
   end
 end
