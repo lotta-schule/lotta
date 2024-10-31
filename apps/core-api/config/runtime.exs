@@ -3,7 +3,7 @@ import Config
 defmodule SystemConfig do
   @allowed_environments ~w(test development staging production)
   def get(envvar, opts \\ []) do
-    value = System.get_env(envvar) || default(envvar, config_env(), opts[:default])
+    value = System.get_env(envvar) || default(envvar, config_env())
 
     case Keyword.get(opts, :cast) do
       nil ->
@@ -38,7 +38,12 @@ defmodule SystemConfig do
         value && URI.parse(value).scheme
 
       :bamboo_adapter ->
-        nil
+        case value do
+          "mailgun" -> Bamboo.MailgunAdapter
+          "local" -> Bamboo.LocalAdapter
+          "test" -> Bamboo.TestAdapter
+          _ -> raise "Invalid mail adapter: #{value}"
+        end
     end
   end
 
@@ -134,10 +139,7 @@ defmodule SystemConfig do
 
   defp default("ANALYTICS_API_KEY", _), do: nil
 
-  defp default(key, _, default) when not is_nil(default),
-    do: default
-
-  defp default(key, env, _),
+  defp default(key, env),
     do: raise("environment variable #{key} not set and no default for #{inspect(env)}")
 end
 
@@ -244,32 +246,12 @@ config :lotta, :admin_api_key,
 
 config :lotta,
        Lotta.Mailer,
-       case(SystemConfig.get("MAILER_ADAPTER")) do
-  "mailgun" ->
-    [
-      adapter: Bamboo.MailgunAdapter,
-      api_key: SystemConfig.get("MAILGUN_API_KEY"),
-      domain: SystemConfig.get("MAILGUN_DOMAIN"),
-      default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
-      feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER"),
-      base_uri: SystemConfig.get("MAILGUN_BASE_URI")
-    ]
-
-  "test" ->
-    [adapter: Bamboo.TestAdapter]
-
-  "local" ->
-    [adapter: Bamboo.LocalAdapter]
-
-  "smtp" ->
-    [
-      adapter: Bamboo.SMTPAdapter,
-      server: SystemConfig.get("SMTP_SERVER"),
-      port: SystemConfig.get("SMTP_PORT", cast: :integer, default: "587"),
-      username: SystemConfig.get("SMTP_USERNAME"),
-      password: SystemConfig.get("SMTP_PASSWORD")
-    ]
-end
+       adapter: SystemConfig.get("MAILER_ADAPTER", cast: :bamboo_adapter),
+       api_key: SystemConfig.get("MAILGUN_API_KEY"),
+       domain: SystemConfig.get("MAILGUN_DOMAIN"),
+       default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
+       feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER"),
+       base_uri: SystemConfig.get("MAILGUN_BASE_URI")
 
 config :sentry,
   dsn: SystemConfig.get("SENTRY_DSN"),
