@@ -95,15 +95,7 @@ defmodule LottaWeb.Router do
     # health endpoint
     forward("/health", LottaWeb.HealthPlug)
 
-    if get_config(Lotta.Mailer, :adapter) == {:ok, Bamboo.LocalAdapter} do
-      # If using Phoenix
-      forward("/mails", Bamboo.SentEmailViewerPlug)
-    end
-  end
-
-  defp get_config(namespace, key) do
-    Application.fetch_env(:lotta, namespace)
-    |> Keyword.get(key)
+    forward("/mails", LottaWeb.SentEmailViewPlug)
   end
 
   defp absinthe_before_send(conn, %{execution: %{context: %{refresh_token: token}}}) do
