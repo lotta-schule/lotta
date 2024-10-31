@@ -237,23 +237,23 @@ config :lotta, :admin_api_key,
 
 config :lotta,
        Lotta.Mailer,
-       case(SystemConfig.get("MAILER_ADAPTER")) do
-  "mailgun" ->
-    [
-      adapter: Bamboo.MailgunAdapter,
-      api_key: SystemConfig.get("MAILGUN_API_KEY"),
-      domain: SystemConfig.get("MAILGUN_DOMAIN"),
-      default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
-      feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER"),
-      base_uri: SystemConfig.get("MAILGUN_BASE_URI")
-    ]
+       (case SystemConfig.get("MAILER_ADAPTER") do
+          "mailgun" ->
+            [
+              adapter: Bamboo.MailgunAdapter,
+              api_key: SystemConfig.get("MAILGUN_API_KEY"),
+              domain: SystemConfig.get("MAILGUN_DOMAIN"),
+              default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
+              feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER"),
+              base_uri: SystemConfig.get("MAILGUN_BASE_URI")
+            ]
 
-  "test" ->
-    [adapter: Bamboo.TestAdapter]
+          "test" ->
+            [adapter: Bamboo.TestAdapter]
 
-  "local" ->
-    [adapter: Bamboo.LocalAdapter]
-end
+          "local" ->
+            [adapter: Bamboo.LocalAdapter]
+        end)
 
 config :sentry,
   dsn: SystemConfig.get("SENTRY_DSN"),
