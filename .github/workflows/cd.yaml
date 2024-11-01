@@ -1,5 +1,4 @@
 ---
-# TODO: Commit when there is Ruhe
 name: 'CD'
 on:
   push:
