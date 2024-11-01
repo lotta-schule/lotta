@@ -1,5 +1,5 @@
 {
-  "name": "e2e",
+  "name": "playwright",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
