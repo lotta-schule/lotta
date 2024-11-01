@@ -61,6 +61,16 @@ jobs:
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
       sentry_dsn: ${{ secrets.SENTRY_DSN }}
 
+  run-e2e-tests:
+    name: Run end-to-end tests
+    if: github.ref_name == 'main' || startsWith(github.ref_name, 'release/') || contains(github.event.pull_request.labels.*.name, 'preview')
+    needs:
+      - publish-docker-images
+      - get-commit-sha
+    uses: ./.github/workflows/e2e.yaml
+    with:
+      image_tag: ${{ needs.get-commit-sha.outputs.commit_sha }}
+
   create-sentry-release:
     runs-on: ubuntu-latest
     name: |
