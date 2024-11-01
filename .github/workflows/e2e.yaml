@@ -1,0 +1,52 @@
+name: Playwright Tests
+on:
+  workflow_call:
+    inputs:
+      image_tag:
+        description: The image tag to use for the lotta service
+        type: string
+        required: true
+
+jobs:
+  test:
+    name: Run Playwright tests
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install node dependencies
+        run: pnpm install
+        working-directory: apps/e2e
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
+        working-directory: apps/e2e
+
+      - name: Run lotta as a service from docker-compose.yml
+        uses: hoverkraft-tech/compose-action@v0.0.0
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+
+      - name: Run Playwright tests
+        run: pnpm playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
