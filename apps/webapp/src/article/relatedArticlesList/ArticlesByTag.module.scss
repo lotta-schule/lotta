@@ -1,12 +1,10 @@
-.root {
-  .header {
-    margin-block: var(--lotta-spacing);
-    padding: calc(2 * var(--lotta-spacing));
-    word-wrap: break-word;
-    hyphens: auto;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    background-color: rgba(var(--lotta-box-background-color), 1);
-    color: rgb(var(--lotta-text-color));
-  }
+.header {
+  margin-block: var(--lotta-spacing);
+  padding: calc(2 * var(--lotta-spacing));
+  word-wrap: break-word;
+  hyphens: auto;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  background-color: rgba(var(--lotta-box-background-color), 1);
+  color: rgb(var(--lotta-text-color));
 }

@@ -1,11 +1,11 @@
 name: Playwright Tests
 on:
-  workflow_run:
-    workflows: ['CD']
-    types:
-      - completed
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      image_tag:
+        description: The image tag to use for the lotta service
+        type: string
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -34,14 +34,19 @@ jobs:
 
       - name: Install node dependencies
         run: pnpm install
+        working-directory: apps/e2e
 
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
+        working-directory: apps/e2e
 
-      - uses: hoverkraft-tech/compose-action@v0.0.0
+      - name: Run lotta as a service from docker-compose.yml
+        uses: hoverkraft-tech/compose-action@v0.0.0
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
 
       - name: Run Playwright tests
-        run: ./scripts/test.sh
+        run: pnpm playwright test
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

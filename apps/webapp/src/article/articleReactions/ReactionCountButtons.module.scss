@@ -1,3 +1,7 @@
 .button:not(:last-child) {
   margin: 0 var(--lotta-spacing) var(--lotta-spacing);
 }
+
+.count {
+  padding-left: var(--lotta-spacing);
+}
