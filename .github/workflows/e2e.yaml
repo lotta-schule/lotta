@@ -41,12 +41,16 @@ jobs:
         working-directory: apps/e2e
 
       - name: Run lotta as a service from docker-compose.yml
-        uses: hoverkraft-tech/compose-action@v0.0.0
+        uses: hoverkraft-tech/compose-action@v2.0.2
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
+        with:
+          compose-file: docker-compose.yaml
+          cwd: ${{ github.workspace }}/apps/e2e
 
       - name: Run Playwright tests
-        run: pnpm playwright test
+        run: ./scripts/test.sh
+        working-directory: apps/e2e
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
