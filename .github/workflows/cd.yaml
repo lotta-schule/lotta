@@ -1,4 +1,5 @@
 ---
+# TODO: Commit when there is Ruhe
 name: 'CD'
 on:
   push:
@@ -13,7 +14,20 @@ env:
   GITHUB_ACTIONS: true
 
 jobs:
+  get-commit-sha:
+    name: Get commit SHA
+    runs-on: ubuntu-latest
+    outputs:
+      commit_sha: ${{ steps.get_commit_sha.outputs.commit_sha }}
+    env:
+      COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Get commit SHA
+        id: get_commit_sha
+        run: echo "::set-output name=commit_sha::$COMMIT_SHA"
   publish-docker-images:
+    needs:
+      - get-commit-sha
     name: ${{ matrix.image.name }} (${{ matrix.environment }}) Docker images
     strategy:
       matrix:
@@ -30,9 +44,9 @@ jobs:
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}
-      tags: ${{ format(matrix.environment == 'preview' && '{2}/{1}:{0}' || '{2}/{1}:latest,{2}{1}:{0},{2}/{1}:canary-{0}', github.sha, matrix.image.name, 'ghcr.io/lotta-schule') }}
+      tags: ${{ format(matrix.environment == 'preview' && '{2}/{1}:{0}' || '{2}/{1}:latest,{2}{1}:{0},{2}/{1}:canary-{0}', needs.get-commit-sha.outputs.commit_sha, matrix.image.name, 'ghcr.io/lotta-schule') }}
       registry: ghcr.io/lotta-schule
-      releaseName: ${{ github.sha }}
+      releaseName: ${{ needs.get-commit-sha.outputs.commit_sha }}
       context: ${{ matrix.image.context }}
       dockerfile: ${{ matrix.image.dockerfile }}
       platforms: |
@@ -45,18 +59,19 @@ jobs:
       sentry_dsn: ${{ secrets.SENTRY_DSN }}
 
   create-sentry-release:
+    runs-on: ubuntu-latest
     name: |
       Sentry Rel.: ${{ matrix.project }} (${{ matrix.environment }})
     if: github.ref_name == 'main' || startsWith(github.ref_name, 'release/') || contains(github.event.pull_request.labels.*.name, 'preview')
     needs:
       - publish-docker-images
+      - get-commit-sha
     strategy:
       matrix:
         environment: ['preview', 'staging']
         project: ['core', 'web']
         exclude:
           - environment: ${{ (github.ref_name == 'main' || startsWith(github.ref_name, 'release/')) && 'preview' || 'staging' }}
-    runs-on: ubuntu-latest
     steps:
       # Sentry does need a repository it seems
       - name: Checkout Repo
@@ -70,4 +85,4 @@ jobs:
           SENTRY_PROJECT: ${{ matrix.project }}
         with:
           environment: ${{ matrix.environment }}
-          version: ${{ github.sha }}
+          version: ${{ needs.get-commit-sha.outputs.commit_sha }}
