@@ -1,10 +1,14 @@
-import { test as baseTest, expect, Page } from '@playwright/test';
-import { createTenant, deleteTenant } from './helper/admin';
-import { getSentMails, resetSentMails } from './helper/mail';
+import { test as base, expect, Page } from '@playwright/test';
+import {
+  createTenant,
+  deleteTenant,
+  getSentMails,
+  resetSentMails,
+} from './helper';
 
 export * from '@playwright/test';
 
-export const test = baseTest.extend<
+export const test = base.extend<
   { baseURL: string },
   {
     tenant: { name: string; slug: string; id: string };
