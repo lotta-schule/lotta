@@ -1,3 +1,7 @@
+require Protocol
+
+Protocol.derive(Jason.Encoder, Bamboo.Attachment, only: [:filename, :content_type, :path])
+
 defmodule LottaWeb.SentEmailApiPlug do
   @moduledoc """
   Plug forwarding to Bamboo.SentEmailViewerPlug only if Bamboo.LocalAdapter is used.
