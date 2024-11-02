@@ -15,8 +15,21 @@ defmodule LottaWeb.TenantController do
     user_params = atomize_keys(user_params)
 
     case Tenants.create_tenant(user_params: user_params, tenant: tenant_params) do
-      {:ok, _tenant} ->
-        send_resp(conn, :ok, Jason.encode!(%{success: true}))
+      {:ok, tenant} ->
+        send_resp(
+          conn,
+          :ok,
+          Jason.encode!(%{
+            success: true,
+            tenant: %{
+              id: tenant.id,
+              slug: tenant.slug,
+              title: tenant.title,
+              inserted_at: tenant.inserted_at,
+              updated_at: tenant.updated_at
+            }
+          })
+        )
 
       {:error, _phase, %Changeset{} = changeset} ->
         send_resp(

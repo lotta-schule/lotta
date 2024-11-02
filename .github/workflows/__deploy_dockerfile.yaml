@@ -45,9 +45,9 @@ on:
       push:
         description: |
           Whether to push the image to the registry. Defaults to true
-        type: boolean
+        type: string
         required: false
-        default: true
+        default: 'true'
     secrets:
       username:
         description: |
@@ -110,6 +110,6 @@ jobs:
             SENTRY_DSN=$SENTRY_DSN
           secrets: |
             sentry_auth_token=${{ secrets.sentry_auth_token }}
-          push: ${{ inputs.push }}
+          push: ${{ inputs.push == 'true' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

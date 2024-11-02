@@ -68,8 +68,8 @@ defmodule Lotta.Repo.TenantMigrations.AddMetadataToFilesAndFileConversions do
   end
 
   defp fetch_file_size(id, remote_location) do
-    case HTTPoison.head(remote_location) do
-      {:ok, %{headers: headers}} ->
+    case :hackney.request(:head, remote_location) do
+      {:ok, status_code, %{headers: headers}} when status_code < 400 ->
         {_key, filesize} = List.keyfind(headers, "Content-Length", 0)
         Logger.info("Content-Length found on id #{id}: #{filesize}")
 

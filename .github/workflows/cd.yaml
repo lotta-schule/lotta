@@ -1,0 +1,101 @@
+---
+name: 'CD'
+on:
+  push:
+    branches:
+      - main
+      - release/*
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_NO_CLOUD: ${{ vars.NX_NO_CLOUD }}
+  GITHUB_ACTIONS: true
+
+jobs:
+  get-commit-sha:
+    name: Get commit SHA
+    runs-on: ubuntu-latest
+    outputs:
+      commit_sha: ${{ steps.get_commit_sha.outputs.commit_sha }}
+    env:
+      COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Get commit SHA
+        id: get_commit_sha
+        run: echo "::set-output name=commit_sha::$COMMIT_SHA"
+  publish-docker-images:
+    needs:
+      - get-commit-sha
+    name: ${{ matrix.image.name }} (${{ matrix.environment }}) Docker images
+    strategy:
+      matrix:
+        environment: ['preview', 'staging']
+        image:
+          - name: web
+            dockerfile: apps/webapp/Dockerfile
+            context: .
+          - name: core
+            dockerfile: Dockerfile
+            context: apps/core-api
+        exclude:
+          - environment: ${{ (github.ref_name == 'main' || startsWith(github.ref_name, 'release/')) && 'preview' || 'staging' }}
+    uses: ./.github/workflows/__deploy_dockerfile.yaml
+    with:
+      name: ${{ matrix.image.name }}
+      tags: ${{ format(matrix.environment == 'preview' && '{2}/{1}:{0}' || '{2}/{1}:latest,{2}{1}:{0},{2}/{1}:canary-{0}', needs.get-commit-sha.outputs.commit_sha, matrix.image.name, 'ghcr.io/lotta-schule') }}
+      registry: ghcr.io/lotta-schule
+      releaseName: ${{ needs.get-commit-sha.outputs.commit_sha }}
+      context: ${{ matrix.image.context }}
+      dockerfile: ${{ matrix.image.dockerfile }}
+      platforms: |
+        linux/amd64
+        linux/arm64
+      push: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') || contains(github.event.pull_request.labels.*.name, 'preview') }}
+    secrets:
+      password: ${{ secrets.GITHUB_TOKEN }}
+      sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      sentry_dsn: ${{ secrets.SENTRY_DSN }}
+
+  run-e2e-tests:
+    name: Run end-to-end tests
+    if: github.ref_name == 'main' || startsWith(github.ref_name, 'release/') || contains(github.event.pull_request.labels.*.name, 'preview')
+    needs:
+      - publish-docker-images
+      - get-commit-sha
+    uses: ./.github/workflows/e2e.yaml
+    with:
+      image_tag: ${{ needs.get-commit-sha.outputs.commit_sha }}
+
+  create-sentry-release:
+    runs-on: ubuntu-latest
+    name: |
+      Sentry Rel.: ${{ matrix.project }} (${{ matrix.environment }})
+    if: github.ref_name == 'main' || startsWith(github.ref_name, 'release/') || contains(github.event.pull_request.labels.*.name, 'preview')
+    needs:
+      - publish-docker-images
+      - get-commit-sha
+    strategy:
+      matrix:
+        environment: ['preview', 'staging']
+        project: ['core', 'web']
+        exclude:
+          - environment: ${{ (github.ref_name == 'main' || startsWith(github.ref_name, 'release/')) && 'preview' || 'staging' }}
+    steps:
+      # Sentry does need a repository it seems
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ matrix.project }}
+        with:
+          environment: ${{ matrix.environment }}
+          version: ${{ needs.get-commit-sha.outputs.commit_sha }}

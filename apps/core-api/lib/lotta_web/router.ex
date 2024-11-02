@@ -95,9 +95,16 @@ defmodule LottaWeb.Router do
     # health endpoint
     forward("/health", LottaWeb.HealthPlug)
 
-    if Mix.env() == :dev do
-      # If using Phoenix
-      forward("/mails", Bamboo.SentEmailViewerPlug)
+    scope "/mails" do
+      forward(
+        "/view",
+        LottaWeb.SentEmailViewPlug
+      )
+
+      forward(
+        "/api",
+        LottaWeb.SentEmailApiPlug
+      )
     end
   end
 
