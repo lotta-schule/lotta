@@ -8,6 +8,7 @@ import {
   differenceInWeeks,
   differenceInYears,
   format,
+  isAfter,
   isBefore,
 } from 'date-fns';
 
@@ -82,13 +83,15 @@ export const useUnfoldedEvents = <
             recurrence: _recurrence,
             ...copyEventData
           } = event;
-          result.push({
-            id: `${eventId}-${format(current, 'yyyy-MM-dd')}`,
-            ...copyEventData,
-            start: current,
-            end: add(current, { seconds: eventDuration }),
-            originalEvent: event,
-          });
+          if (isAfter(current, rangeStart)) {
+            result.push({
+              id: `${eventId}-${format(current, 'yyyy-MM-dd')}`,
+              ...copyEventData,
+              start: current,
+              end: add(current, { seconds: eventDuration }),
+              originalEvent: event,
+            });
+          }
           current = add(current, { [diffProp]: event.recurrence.interval });
         }
         return result;
