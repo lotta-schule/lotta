@@ -121,7 +121,6 @@ jobs:
           alias-secret-key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
       - run: |
-          mc rm -r --force minio/lotta-dev-ugc
           mc mb minio/lotta-dev-ugc
           mc anonymous set download minio/lotta-dev-ugc
 
