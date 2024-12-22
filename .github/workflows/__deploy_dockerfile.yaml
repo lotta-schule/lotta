@@ -69,7 +69,7 @@ on:
 jobs:
   build-image:
     name: 'Build image from Dockerfile'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       IMAGE_NAME: '${{ inputs.name }}'
       RELEASE_NAME: '${{ inputs.releaseName }}'
