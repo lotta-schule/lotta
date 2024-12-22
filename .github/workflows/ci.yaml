@@ -72,6 +72,16 @@ jobs:
           - 6379:6379
         options: >-
           -e REDIS_PASSWORD=lotta
+      minio:
+        image: lazybit/minio
+        ports:
+          - 9000:9000
+        env:
+          MINIO_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
+          MINIO_SECRET_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+        options: >-
+          --name minio
+          --health-cmd "curl http://localhost:9000/minio/health/live"
 
     steps:
       - name: Checkout Repo
