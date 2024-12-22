@@ -1,3 +1,14 @@
+## 5.0.17 (2024-12-22)
+
+
+### 🩹 Fixes
+
+- **webapp:** Stop showing past recurring events in Calendar widget ([c766814a](https://github.com/lotta-schule/lotta/commit/c766814a))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni
+
 ## 5.0.16 (2024-10-31)
 
 
