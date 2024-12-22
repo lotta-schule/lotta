@@ -19,7 +19,7 @@ env:
 jobs:
   get-commit-sha:
     name: Get commit SHA
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       commit_sha: ${{ steps.get_commit_sha.outputs.commit_sha }}
     env:
@@ -72,7 +72,7 @@ jobs:
       image_tag: ${{ needs.get-commit-sha.outputs.commit_sha }}
 
   create-sentry-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: |
       Sentry Rel.: ${{ matrix.project }} (${{ matrix.environment }})
     if: github.ref_name == 'main' || startsWith(github.ref_name, 'release/') || contains(github.event.pull_request.labels.*.name, 'preview')
