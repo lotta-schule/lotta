@@ -224,10 +224,10 @@ jobs:
       matrix:
         environment: ['preview', 'staging']
         image:
-          - name: web
+          - name: ghcr.io/lotta-schule/web
             dockerfile: apps/webapp/Dockerfile
             context: .
-          - name: core
+          - name: ghcr.io/lotta-schule/core
             dockerfile: Dockerfile
             context: apps/core-api
         exclude:

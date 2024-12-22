@@ -4,19 +4,6 @@ name: 'Deploy Dockerfile'
 on:
   workflow_call:
     inputs:
-      name:
-        description: The image name. Defaults to the name of the repository
-        type: string
-        required: false
-        default: ${{ github.repository }}
-      tags:
-        description: |
-          A newline-separated list of tags to apply to the image.
-          Defaults to '$\{\{ github.repository \}\}:latest'
-        type: string
-        required: false
-        default: |
-          ${{ github.repository }}:lastest
       releaseName:
         description: |
           The release name to use.
@@ -26,7 +13,20 @@ on:
         description: The docker registry to use. Defaults to ghcr.io
         type: string
         required: false
-        default: ghcr.io/lotta
+        default: ghcr.io
+      name:
+        description: The image name. Defaults to the name of the registry + the repository
+        type: string
+        required: false
+        default: '${{ inputs.registry }}/${{ github.repository }}'
+      tags:
+        description: |
+          A newline-separated list of tags to apply to the image.
+          Defaults to '$\{\{ inputs.name \}\}:latest'
+        type: string
+        required: false
+        default: |
+          '${{ inputs.name }}:latest'
       context:
         description: The directory that will be used as build context for the docker build
         type: string
@@ -71,7 +71,7 @@ jobs:
     name: 'Build image from Dockerfile'
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: '${{ inputs.registry }}/${{ inputs.name }}'
+      IMAGE_NAME: '${{ inputs.name }}'
       RELEASE_NAME: '${{ inputs.releaseName }}'
       SENTRY_DSN: '${{ secrets.sentry_dsn }}'
       SENTRY_AUTH_TOKEN: '${{ secrets.sentry_auth_token }}'
