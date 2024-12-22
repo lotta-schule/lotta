@@ -113,6 +113,18 @@ jobs:
           otp-version: '26.2.2'
           elixir-version: '1.16.1'
 
+      - uses: hostwithquantum/setup-mc@main
+        with:
+          alias-name: minio
+          alias-url: http://localhost:9000
+          alias-access-key: AKIAIOSFODNN7EXAMPLE
+          alias-secret-key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+      - run: |
+          mc rm -r --force minio/lotta-dev-ugc
+          mc mb minio/lotta-dev-ugc
+          mc anonymous set download minio/lotta-dev-ugc
+
       - name: Install npm dependencies
         run: pnpm install
 
