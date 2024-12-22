@@ -40,7 +40,7 @@ jobs:
     strategy:
       matrix:
         project: ['core', 'web']
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       # Sentry does need a repository it seems
       - name: Checkout Repo

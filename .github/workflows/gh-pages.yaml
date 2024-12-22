@@ -9,7 +9,7 @@ on:
 jobs:
   publish-storybook-page:
     name: Publish Hubert Storybook as Github Page
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
