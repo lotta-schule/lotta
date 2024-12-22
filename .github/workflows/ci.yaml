@@ -11,7 +11,7 @@ env:
 jobs:
   lint:
     name: Lint Code
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -53,7 +53,7 @@ jobs:
 
   tests:
     name: Run tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:latest
@@ -171,7 +171,7 @@ jobs:
 
   check-build:
     name: Check the projects build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -260,7 +260,7 @@ jobs:
         project: ['core', 'web']
         exclude:
           - environment: ${{ github.ref_name == 'main' && 'preview' || 'staging' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       # Sentry does need a repository it seems
       - name: Checkout Repo
