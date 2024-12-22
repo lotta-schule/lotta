@@ -172,7 +172,6 @@ jobs:
   check-build:
     name: Check the projects build
     runs-on: ubuntu-latest
-    if: github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview')
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -185,28 +184,34 @@ jobs:
 
       - name: Setup NX
         uses: nrwl/nx-set-shas@v3
+        if: github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview')
 
       - name: Setup PNPM package manager
         uses: pnpm/action-setup@v3
+        if: github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview')
         with:
           version: 8
 
       - name: Setup Node.js
+        if: github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview')
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
 
       - name: Setup the BEAM and Elixir
+        if: github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview')
         uses: erlef/setup-beam@v1
         with:
           otp-version: '26.2.2'
           elixir-version: '1.16.1'
 
       - name: Install npm dependencies
+        if: github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview')
         run: pnpm install
 
       - name: Run build task
+        if: github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview')
         run: pnpm nx affected -t build
 
   publish-docker-images:
