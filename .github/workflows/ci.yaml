@@ -2,6 +2,11 @@
 name: 'CI'
 on:
   push:
+    branches:
+      - main
+      - release/*
+  pull_request:
+    types: [opened, synchronize, labeled]
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
@@ -235,8 +240,8 @@ jobs:
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}
-      tags: ${{ format(matrix.environment == 'preview' && '{1}:{0}' || '{1}:staging,{1}:{0},{1}:canary-{0}', github.sha, matrix.image.name) }}
-      releaseName: ${{ github.sha }}
+      tags: ${{ format(matrix.environment == 'preview' && '{1}:{0}' || '{1}:staging,{1}:{0},{1}:canary-{0}', github.event.pull_request.head.sha || github.sha, matrix.image.name) }}
+      releaseName: ${{ github.event.pull_request.head.sha || github.sha }}
       context: ${{ matrix.image.context }}
       dockerfile: ${{ matrix.image.dockerfile }}
       platforms: |
@@ -274,4 +279,4 @@ jobs:
           SENTRY_PROJECT: ${{ matrix.project }}
         with:
           environment: ${{ matrix.environment }}
-          version: ${{ github.sha }}
+          version: ${{ github.event.pull_request.head.sha || github.sha }}
