@@ -52,6 +52,7 @@ jobs:
         with:
           compose-file: docker-compose.yaml
           cwd: ${{ github.workspace }}/apps/e2e
+          up-flags: --force-recreate --wait --abort-on-container-failure
 
       - name: Run Playwright tests
         env:
