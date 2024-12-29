@@ -36,7 +36,7 @@
     },
     "e2e": {
       "dependsOn": ["^e2e"],
-      "outputs": ["{projectRoot}/coverage", "{projectRoot}/playwright-report"],
+      "outputs": ["{projectRoot}/coverage"],
       "cache": true
     },
     "dependencies": {
