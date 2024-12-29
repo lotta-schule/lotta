@@ -44,18 +44,15 @@ jobs:
           - name: core
             dockerfile: Dockerfile
             context: apps/core-api
-        platform:
-          - linux/amd64
-          - linux/arm64
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}
-      tags: ${{ format(needs.env_calculator.outputs.env_name == 'preview' && '{2}/{1}:{0}' || '{2}/{1}:latest,{2}/{1}:{0},{2}/{1}:canary-{0}', inputs.image_tag, matrix.image.name, 'ghcr.io/lotta-schule') }}
+      tags: ${{ format(needs.env_calculator.outputs.env_name == 'preview' && '{0}' || '{0},latest,canary-{0}', inputs.image_tag) }}
       registry: ghcr.io
       releaseName: ${{ inputs.image_tag }}
       context: ${{ matrix.image.context }}
       dockerfile: ${{ matrix.image.dockerfile }}
-      platforms: ${{ matrix.platform }}
+      platforms: '["linux/amd64","linux/arm64"]'
       push: true
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
