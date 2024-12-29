@@ -6,6 +6,7 @@ on:
       - main
       - release/*
   pull_request:
+    types: [opened, synchronize, labeled]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -28,6 +29,7 @@ jobs:
       - name: Get commit SHA
         id: get_commit_sha
         run: echo "::set-output name=commit_sha::$COMMIT_SHA"
+
   publish-docker-images:
     needs:
       - get-commit-sha
