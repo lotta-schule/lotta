@@ -222,3 +222,13 @@ jobs:
       - name: Run build task
         if: github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview')
         run: pnpm nx affected -t build
+
+  cd:
+    name: Build & Deploy Docker images
+    needs:
+      - lint
+      - tests
+    uses: ./.github/workflows/cd.yaml
+    if: github.ref_name == 'main' || startsWith(github.ref_name, 'release/') || contains(github.event.pull_request.labels.*.name, 'preview')
+    with:
+      image_tag: ${{ github.event.pull_request.head.sha || github.sha }}

@@ -57,8 +57,7 @@ jobs:
         env:
           SHARD: ${{ matrix.shard }}
         run: |
-          export SHARD_FRACTION=echo $SHARD | tr '_' '/'
-          ./scripts/test.sh --project ${{ matrix.project }} --shard $SHARD_FRACTION
+          ./scripts/test.sh --project ${{ matrix.project }} --shard $(echo $SHARD | tr '_' '/')
         working-directory: apps/e2e
 
       - uses: actions/upload-artifact@v4

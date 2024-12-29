@@ -1,16 +1,12 @@
 ---
 name: 'CD'
 on:
-  push:
-    branches:
-      - main
-      - release/*
-  pull_request:
-    types: [opened, synchronize, labeled]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  workflow_call:
+    inputs:
+      image_tag:
+        description: 'the tag to release'
+        required: true
+        type: string
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
@@ -18,26 +14,28 @@ env:
   GITHUB_ACTIONS: true
 
 jobs:
-  get-commit-sha:
-    name: Get commit SHA
+  get-env-name:
+    name: Get Environment Name
     runs-on: ubuntu-24.04
-    if: github.ref_name == 'main' || startsWith(github.ref_name, 'release/') || contains(github.event.pull_request.labels.*.name, 'preview')
     outputs:
-      commit_sha: ${{ steps.get_commit_sha.outputs.commit_sha }}
-    env:
-      COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      environment: ${{ steps.get_env_name.outputs.environment }}
     steps:
-      - name: Get commit SHA
-        id: get_commit_sha
-        run: echo "::set-output name=commit_sha::$COMMIT_SHA"
+      - name: Read env name
+        id: get_env_name
+        run: |
+          if [[ "${{ github.ref_name }}" == 'main' || "${{ github.ref_name }}" == release/* ]]; then
+            echo "::set-output name=environment::staging"
+          else
+            echo "::set-output name=environment::preview"
+          fi
 
   publish-docker-images:
     needs:
-      - get-commit-sha
+      - get-env-name
     name: ${{ matrix.image.name }} (${{ matrix.environment }}) Docker images
     strategy:
       matrix:
-        environment: ['preview', 'staging']
+        environment: [needs.get-env-name.outputs.environment]
         image:
           - name: web
             dockerfile: apps/webapp/Dockerfile
@@ -45,20 +43,20 @@ jobs:
           - name: core
             dockerfile: Dockerfile
             context: apps/core-api
-        exclude:
-          - environment: ${{ (github.ref_name == 'main' || startsWith(github.ref_name, 'release/')) && 'preview' || 'staging' }}
+        platform:
+          - linux/amd64
+          - linux/arm64
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}
-      tags: ${{ format(matrix.environment == 'preview' && '{2}/{1}:{0}' || '{2}/{1}:latest,{2}{1}:{0},{2}/{1}:canary-{0}', needs.get-commit-sha.outputs.commit_sha, matrix.image.name, 'ghcr.io/lotta-schule') }}
-      registry: ghcr.io/lotta-schule
-      releaseName: ${{ needs.get-commit-sha.outputs.commit_sha }}
+      tags: ${{ format(matrix.environment == 'preview' && '{2}/{1}:{0}' || '{2}/{1}:latest,{2}/{1}:{0},{2}/{1}:canary-{0}', inputs.image_tag, matrix.image.name, 'ghcr.io/lotta-schule') }}
+      registry: ghcr.io
+      releaseName: ${{ inputs.image_tag }}
       context: ${{ matrix.image.context }}
       dockerfile: ${{ matrix.image.dockerfile }}
       platforms: |
-        linux/amd64
-        linux/arm64
-      push: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') || contains(github.event.pull_request.labels.*.name, 'preview') }}
+        ${{ matrix.platform }}
+      push: true
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -68,24 +66,21 @@ jobs:
     name: Run end-to-end tests
     needs:
       - publish-docker-images
-      - get-commit-sha
+      - get-env-name
     uses: ./.github/workflows/e2e.yaml
     with:
-      image_tag: ${{ needs.get-commit-sha.outputs.commit_sha }}
+      image_tag: ${{ inputs.image_tag }}
 
   create-sentry-release:
     runs-on: ubuntu-24.04
     name: |
-      Sentry Rel.: ${{ matrix.project }} (${{ matrix.environment }})
+      Sentry Rel.: ${{ matrix.project }} (${{ needs.get-env-name.outputs.environment }})
     needs:
       - publish-docker-images
-      - get-commit-sha
+      - get-env-name
     strategy:
       matrix:
-        environment: ['preview', 'staging']
         project: ['core', 'web']
-        exclude:
-          - environment: ${{ (github.ref_name == 'main' || startsWith(github.ref_name, 'release/')) && 'preview' || 'staging' }}
     steps:
       # Sentry does need a repository it seems
       - name: Checkout Repo
@@ -98,5 +93,5 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ matrix.project }}
         with:
-          environment: ${{ matrix.environment }}
-          version: ${{ needs.get-commit-sha.outputs.commit_sha }}
+          environment: ${{ needs.get-env-name.outputs.environment }}
+          version: ${{ inputs.image_tag }}
