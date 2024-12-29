@@ -11,8 +11,8 @@ env:
   GITHUB_ACTIONS: true
 
 concurrency:
-  group: ${{ github.head_ref || github.sha }}
-  cancel-in-progress: ${{ github.event_name != 'pull_request' && github.ref_name != 'main' }}
+  group: ${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'push' && github.ref_name != 'refs/head/main' }}
 
 jobs:
   run_checks:
