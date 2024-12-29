@@ -18,24 +18,25 @@ jobs:
     name: Get Environment Name
     runs-on: ubuntu-24.04
     outputs:
-      environment: ${{ steps.get_env_name.outputs.environment }}
+      env_name: ${{ steps.get_env_name.outputs.env_name }}
     steps:
       - name: Read env name
         id: get_env_name
         run: |
           if [[ "${{ github.ref_name }}" == 'main' || "${{ github.ref_name }}" == release/* ]]; then
-            echo "::set-output name=environment::staging"
+            echo "env_name=staging" >> "$GITHUB_OUTPUT"
           else
-            echo "::set-output name=environment::preview"
+            echo "env_name=preview" >> "$GITHUB_OUTPUT"
           fi
 
   publish-docker-images:
     needs:
       - get-env-name
-    name: ${{ matrix.image.name }} (${{ matrix.environment }}) Docker images
+    name: ${{ matrix.image.name }} (${{ matrix.env_name }}) Docker images
     strategy:
       matrix:
-        environment: [needs.get-env-name.outputs.environment]
+        env_name:
+          - ${{ needs.get-env-name.outputs.env_name }}
         image:
           - name: web
             dockerfile: apps/webapp/Dockerfile
@@ -49,7 +50,7 @@ jobs:
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}
-      tags: ${{ format(matrix.environment == 'preview' && '{2}/{1}:{0}' || '{2}/{1}:latest,{2}/{1}:{0},{2}/{1}:canary-{0}', inputs.image_tag, matrix.image.name, 'ghcr.io/lotta-schule') }}
+      tags: ${{ format(matrix.env_name == 'preview' && '{2}/{1}:{0}' || '{2}/{1}:latest,{2}/{1}:{0},{2}/{1}:canary-{0}', inputs.image_tag, matrix.image.name, 'ghcr.io/lotta-schule') }}
       registry: ghcr.io
       releaseName: ${{ inputs.image_tag }}
       context: ${{ matrix.image.context }}
@@ -70,11 +71,12 @@ jobs:
     uses: ./.github/workflows/e2e.yaml
     with:
       image_tag: ${{ inputs.image_tag }}
+    secrets: inherit
 
   create-sentry-release:
     runs-on: ubuntu-24.04
     name: |
-      Sentry Rel.: ${{ matrix.project }} (${{ needs.get-env-name.outputs.environment }})
+      Sentry Rel.: ${{ matrix.project }} (${{ needs.get-env-name.outputs.env_name }})
     needs:
       - publish-docker-images
       - get-env-name
@@ -93,5 +95,5 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ matrix.project }}
         with:
-          environment: ${{ needs.get-env-name.outputs.environment }}
+          environment: ${{ needs.get-env-name.outputs.env_name }}
           version: ${{ inputs.image_tag }}
