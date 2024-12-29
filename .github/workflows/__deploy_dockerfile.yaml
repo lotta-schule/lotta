@@ -73,8 +73,8 @@ jobs:
     env:
       IMAGE_NAME: '${{ inputs.name }}'
       RELEASE_NAME: '${{ inputs.releaseName }}'
-      SENTRY_DSN: '${{ secrets.sentry_dsn }}'
-      SENTRY_AUTH_TOKEN: '${{ secrets.sentry_auth_token }}'
+      SENTRY_DSN: '${{ secrets.Sentry_dsn }}'
+      SENTRY_AUTH_TOKEN: '${{ secrets.SENTRY_AUTH_TOKEN }}'
     steps:
       - name: Set up QEMU
         if: inputs.platforms
