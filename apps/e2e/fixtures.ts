@@ -68,7 +68,7 @@ export const test = base.extend<
       await deleteTenant(tenant.id); // make sure to clean up, or else restarting the test will fail
       await resetSentMails();
     },
-    { scope: 'worker', timeout: 10_000 },
+    { scope: 'worker' },
   ],
   baseURL: [
     async ({ tenant }, use: (t: string) => Promise<void>) => {

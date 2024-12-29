@@ -23,6 +23,9 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+
+  timeout: 60_000,
+
   reporter: process.env.CI
     ? [['github'], ['html', { outputFolder: 'playwright-report' }]]
     : [['list']],
@@ -47,10 +50,10 @@ export default defineConfig({
       dependencies: ['setup tenant'],
     },
 
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
 
     // {
     //   name: 'webkit',
@@ -63,7 +66,7 @@ export default defineConfig({
     //   use: { ...devices['Pixel 5'] },
     // },
     {
-      name: 'Mobile Safari',
+      name: 'MobileSafari',
       use: { ...devices['iPhone 12'] },
       dependencies: ['setup tenant'],
     },
