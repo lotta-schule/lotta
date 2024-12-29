@@ -13,13 +13,12 @@ concurrency:
 
 jobs:
   test:
-    name: 'E2E-Testing ${{ matrix.project }} (${{ matrix.shard}} )'
+    name: 'E2E-Testing ${{ matrix.project }}'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         project: [chromium, firefox, MobileSafari]
-        shard: ['1_3', '2_3', '3_3']
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -52,18 +51,18 @@ jobs:
         with:
           compose-file: docker-compose.yaml
           cwd: ${{ github.workspace }}/apps/e2e
-          up-flags: --force-recreate --wait --abort-on-container-failure
+          up-flags: --force-recreate --wait
 
       - name: Run Playwright tests
         env:
-          SHARD: ${{ matrix.shard }}
+          CI: true
         run: |
-          ./scripts/test.sh --project ${{ matrix.project }} --shard $(echo $SHARD | tr '_' '/')
+          ./scripts/test.sh --project ${{ matrix.project }}
         working-directory: apps/e2e
 
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: playwright-report-${{ matrix.shard }}
+          name: playwright-report-${{ matrix.project }}
           path: app/e2e/playwright-report/
           retention-days: 30
