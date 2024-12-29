@@ -1,3 +1,14 @@
+## 5.0.18 (2024-12-29)
+
+
+### 🚀 Features
+
+- **core:** Send feedback to cockpit by default instead of sending mail ([#413](https://github.com/lotta-schule/lotta/pull/413))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni
+
 ## 5.0.17 (2024-12-22)
 
 
