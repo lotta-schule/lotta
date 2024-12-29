@@ -6,6 +6,7 @@ defmodule Lotta.Tenants do
 
   import Ecto.Query
 
+  alias Lotta.Administration.Cockpit
   alias LottaWeb.Schema.Tenants.Tenant
   alias Ecto.Multi
   alias Lotta.{Email, Mailer, Repo, Storage}
@@ -505,9 +506,17 @@ defmodule Lotta.Tenants do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:feedback, Ecto.Changeset.change(feedback, is_forwarded: true))
     |> Ecto.Multi.run(:send_feedback, fn _repo, %{feedback: feedback} ->
-      feedback
-      |> Email.send_feedback_to_lotta_mail(user, message)
-      |> Mailer.deliver_now()
+      case Cockpit.send_feedback(feedback) do
+        :ok ->
+          {:ok, feedback}
+
+        {:error, error} ->
+          Logger.error("Error sending feedback to lotta team:", %{sentry: %{error: error}})
+
+          feedback
+          |> Email.send_feedback_to_lotta_mail(user, message)
+          |> Mailer.deliver_now()
+      end
     end)
     |> Repo.transaction()
     |> then(fn
@@ -526,16 +535,23 @@ defmodule Lotta.Tenants do
   @spec create_feedback_for_lotta(binary(), binary() | nil, User.t()) ::
           :ok | :error
   def create_feedback_for_lotta(subject, message, user) do
-    Email.create_feedback_for_lotta(subject, message, user)
-    |> Mailer.deliver_now()
-    |> case do
-      {:ok, _} ->
+    case Cockpit.send_message(user, subject, message) do
+      :ok ->
         :ok
 
       {:error, error} ->
         Logger.error("Error sending feedback to lotta team:", %{sentry: %{error: error}})
 
-        :error
+        Email.create_feedback_for_lotta(subject, message, user)
+        |> Mailer.deliver_now()
+        |> case do
+          {:ok, _} ->
+            :ok
+
+          {:error, error} ->
+            Logger.error("Error sending feedback to lotta team:", %{sentry: %{error: error}})
+            :error
+        end
     end
   end
 

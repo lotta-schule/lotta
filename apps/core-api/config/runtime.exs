@@ -116,6 +116,7 @@ defmodule SystemConfig do
 
   defp default("COCKPIT_ADMIN_API_USERNAME", _), do: "admin"
   defp default("COCKPIT_ADMIN_API_KEY", env) when env in [:dev, :test], do: "test123"
+  defp default("COCKPIT_ENDPOINT", _), do: "http://localhost:4040"
 
   defp default("SENTRY_DSN", _), do: nil
   defp default("CLOUDIMAGE_TOKEN", env) when env in [:dev, :test], do: "123"
@@ -231,7 +232,8 @@ config :lotta, LottaWeb.Auth.AccessToken,
   secret_key: SystemConfig.get("SECRET_KEY_JWT"),
   issuer: "lotta"
 
-config :lotta, :admin_api_key,
+config :lotta, :cockpit,
+  endpoint: SystemConfig.get("COCKPIT_ENDPOINT"),
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
 

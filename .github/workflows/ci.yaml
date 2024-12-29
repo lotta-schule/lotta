@@ -2,6 +2,8 @@
 name: 'CI'
 on:
   push: {}
+  pull_request:
+    types: [opened, synchronize, labeled]
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
@@ -175,6 +177,8 @@ jobs:
           verbose: true
 
   check-build:
+    # We do not need to check the build for environments that are
+    # to be deployed to a preview (or staging) environment shortly
     name: Check the projects build
     runs-on: ubuntu-24.04
     steps:

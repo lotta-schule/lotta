@@ -157,11 +157,56 @@ defmodule LottaWeb.FeedbackResolverTest do
       }
     }
     """
-    test "Sends a feedback to lotta when id and message are set", %{
+    test "Sends a feedback to lotta via cockpit when id and message are set", %{
+      admin_jwt: admin_jwt,
+      feedbacks: [feedback | _]
+    } do
+      Tesla.Mock.mock(fn
+        %Tesla.Env{
+          method: :post,
+          url: "http://localhost:4040/api/feedback"
+        } ->
+          {:ok, %Tesla.Env{status: 200}}
+      end)
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{
+            "id" => feedback.id,
+            "message" => "Hier hast du deine Antwort"
+          }
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "feedback" => %{
+                   "id" => _id,
+                   "isForwarded" => true
+                 }
+               }
+             } = res
+
+      assert_no_emails_delivered()
+    end
+
+    test "Sends a feedback to lotta via email if cockpit fails", %{
       admin: admin,
       admin_jwt: admin_jwt,
       feedbacks: [feedback | _]
     } do
+      Tesla.Mock.mock(fn
+        %Tesla.Env{
+          method: :post,
+          url: "http://localhost:4040/api/feedback"
+        } ->
+          {:ok, %Tesla.Env{status: 400}}
+      end)
+
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -292,16 +337,55 @@ defmodule LottaWeb.FeedbackResolverTest do
     end
   end
 
-  describe "Send Lotta-Feedback to lotta admins via mail" do
+  describe "Send Lotta-Feedback to lotta admins" do
     @query """
     mutation CreateLottaFeedback($subject: String, $message: String!) {
       feedback: createLottaFeedback(subject: $subject, message: $message)
     }
     """
-    test "Sends a feedback to lotta", %{
+    test "Sends a feedback to lotta via cockpit", %{
+      admin_jwt: admin_jwt
+    } do
+      Tesla.Mock.mock(fn
+        %Tesla.Env{
+          method: :post,
+          url: "http://localhost:4040/api/feedback"
+        } ->
+          {:ok, %Tesla.Env{status: 200}}
+      end)
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{
+            "subject" => "Ich finde lotta toll",
+            "message" => "Lotta ist toll weil Alexis so ein toller Mensch ist"
+          }
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"feedback" => true}
+             } = res
+
+      assert_no_emails_delivered()
+    end
+
+    test "Sends a feedback to lotta via mail when cockpit fails", %{
       admin: admin,
       admin_jwt: admin_jwt
     } do
+      Tesla.Mock.mock(fn
+        %Tesla.Env{
+          method: :post,
+          url: "http://localhost:4040/api/feedback"
+        } ->
+          {:ok, %Tesla.Env{status: 400}}
+      end)
+
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")

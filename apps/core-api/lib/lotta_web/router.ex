@@ -123,6 +123,10 @@ defmodule LottaWeb.Router do
   def absinthe_before_send(conn, _blueprint), do: conn
 
   defp admin_auth(conn, _opts) do
-    Plug.BasicAuth.basic_auth(conn, Application.get_env(:lotta, :admin_api_key))
+    conn
+    |> Plug.BasicAuth.basic_auth(
+      Application.get_env(:lotta, :cockpit)
+      |> Keyword.take([:username, :password])
+    )
   end
 end
