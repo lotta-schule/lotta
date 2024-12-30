@@ -26,9 +26,7 @@ export default defineConfig({
 
   timeout: 60_000,
 
-  reporter: process.env.CI
-    ? [['github'], ['html', { outputFolder: 'playwright-report' }]]
-    : [['list']],
+  reporter: process.env.CI ? [['github'], ['blob']] : [['list']],
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {

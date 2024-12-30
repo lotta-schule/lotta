@@ -18,8 +18,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project: [chromium, firefox, MobileSafari]
-        shard: ['1_3', '2_3', '3_3']
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -52,18 +52,60 @@ jobs:
         with:
           compose-file: docker-compose.yaml
           cwd: ${{ github.workspace }}/apps/e2e
-          up-flags: --force-recreate --wait --abort-on-container-failure
+          up-flags: --force-recreate --wait
 
       - name: Run Playwright tests
-        env:
-          SHARD: ${{ matrix.shard }}
         run: |
-          ./scripts/test.sh --project ${{ matrix.project }} --shard $(echo $SHARD | tr '_' '/')
+          ./scripts/test.sh --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         working-directory: apps/e2e
 
       - uses: actions/upload-artifact@v4
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         with:
-          name: playwright-report-${{ matrix.shard }}
-          path: app/e2e/playwright-report/
-          retention-days: 30
+          name: blob-report-${{ matrix.shardIndex }}
+          path: apps/e2e/blob-report
+          retention-days: 1
+
+  merge-reports:
+    runs-on: ubuntu-latest
+    if: ${{ !cancelled() }}
+    needs:
+      - test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install node dependencies
+        run: pnpm install
+        working-directory: apps/e2e
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          working-directory: apps/e2e
+          path: apps/e2e/all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        working-directory: apps/e2e
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report--attempt-${{ github.run_attempt }}
+          path: apps/e2e/playwright-report
+          retention-days: 14
