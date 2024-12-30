@@ -109,3 +109,23 @@ jobs:
           name: html-report--attempt-${{ github.run_attempt }}
           path: apps/e2e/playwright-report
           retention-days: 14
+
+  upload-report:
+    runs-on: ubuntu-latest
+    if: ${{ !cancelled() && secrets.AWS_ACCESS_KEY_ID && secrets.AWS_SECRET_ACCESS_KEY }}
+    needs:
+      - merge-reports
+    steps:
+      - name: Get current date
+        id: get_date
+        run: |
+          echo "date=$$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - uses: shallwefootball/s3-upload-action@master
+        with:
+          source_dir: apps/e2e/playwright-report
+          destination_dir: playwright-reports/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}
+          aws_key_id: ${{ secrets.PUBLIC_BUCKET_AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.PUBLIC_BUCKET_AWS_SECRET_ACCESS_KEY }}
+          aws_bucket: public-lotta-assets
+          endpoint: ${{ secrets.PUBLIC_BUCKET_ENDPOINT }}
