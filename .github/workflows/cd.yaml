@@ -67,7 +67,10 @@ jobs:
     uses: ./.github/workflows/e2e.yaml
     with:
       image_tag: ${{ inputs.image_tag }}
-    secrets: inherit
+    secrets:
+      aws_key_id: '${{ secrets.PUBLIC_BUCKET_AWS_ACCESS_KEY_ID }}'
+      aws_secret_access_key: '${{ secrets.PUBLIC_BUCKET_AWS_SECRET_ACCESS_KEY }}'
+      endpoint: '${{ secrets.PUBLIC_BUCKET_ENDPOINT }}'
 
   create-sentry-release:
     runs-on: ubuntu-24.04
