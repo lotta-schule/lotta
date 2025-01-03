@@ -124,6 +124,14 @@ jobs:
     needs:
       - merge-reports
     steps:
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@v1.9.0
+        with:
+          provider: scaleway
+          region: 'nl-ams'
+          access_key: ${{ secrets.aws_key_id }}
+          secret_key: ${{ secrets.aws_secret_access_key }}
+
       - name: Download HTML report
         uses: actions/download-artifact@v4
         with:
@@ -135,11 +143,12 @@ jobs:
         run: |
           echo "date=$$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-      - uses: shallwefootball/s3-upload-action@master
-        with:
-          source_dir: /tmp/playwright-report
-          destination_dir: playwright-reports/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}
-          aws_key_id: ${{ secrets.aws_key_id }}
-          aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
-          endpoint: ${{ secrets.endpoint }}
-          aws_bucket: public-lotta-assets
+      - name: Upload HTML report to S3
+        env:
+          DEST_PATH: playwright-reports/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}/
+        run: |
+          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
+            /tmp/playwright-report/ \
+            s3://public-lotta-assets/${{ env.DEST_PATH }}
+          echo '### Test summary' >> $GITHUB_STEP_SUMMARY
+          echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
