@@ -113,7 +113,7 @@ jobs:
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
-          name: html-report--attempt-${{ github.run_attempt }}
+          name: playwright-html-report
           path: apps/e2e/playwright-report
           retention-days: 14
 
@@ -124,6 +124,12 @@ jobs:
     needs:
       - merge-reports
     steps:
+      - name: Download HTML report
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-html-report
+          path: /tmp/playwright-report
+
       - name: Get current date
         id: get_date
         run: |
@@ -131,7 +137,7 @@ jobs:
 
       - uses: shallwefootball/s3-upload-action@master
         with:
-          source_dir: apps/e2e/playwright-report
+          source_dir: /tmp/playwright-report
           destination_dir: playwright-reports/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}
           aws_key_id: ${{ secrets.aws_key_id }}
           aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
