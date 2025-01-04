@@ -20,7 +20,7 @@ export const test = base.extend<
   admin: [
     {
       name: 'Bilbo Baggins',
-      email: 'bilbo.baggins@shite.me',
+      email: 'bilbo.baggins@shire.me',
       password: 'prec10us',
     },
     { scope: 'worker', option: true },
