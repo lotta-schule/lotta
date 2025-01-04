@@ -152,13 +152,13 @@ jobs:
 
       - name: Upload HTML report to S3
         env:
-          DEST_PATH: playwright-reports/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}/
+          REPORTS_DEST_PATH: playwright-reports/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}/
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/playwright-report/ \
-            s3://public-lotta-assets/${{ env.DEST_PATH }}
+            s3://public-lotta-assets/${{ env.REPORTS_DEST_PATH }}
           echo '### Test summary' >> $GITHUB_STEP_SUMMARY
-          echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
+          echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.REPORTS_DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
 
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
@@ -169,10 +169,17 @@ jobs:
 
       - name: Upload screenshots to S3
         env:
-          DEST_PATH: screenshots/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}/
+          SCREENSHOTS_DEST_PATH: screenshots/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}/
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/screenshot/ \
-            s3://public-lotta-assets/${{ env.DEST_PATH }}
+            s3://public-lotta-assets/${{ env.SCREENSHOTS_DEST_PATH }}
           echo '### Test summary' >> $GITHUB_STEP_SUMMARY
-          echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
+          echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.SCREENSHOTS_DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
+
+      - name: Create Job summary
+        run: |
+          echo '### Test summary' >> $GITHUB_STEP_SUMMARY
+          echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.REPORTS_DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
+          echo '### Screenshots' >> $GITHUB_STEP_SUMMARY
+          echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.SCREENSHOTS_DEST_PATH }}' >> $GITHUB_STEP_SUMMARY

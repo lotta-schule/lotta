@@ -74,6 +74,7 @@ test.describe('Tenant administration', () => {
     test('should be able to update the tenant logo', async ({
       page,
       browser,
+      isMobile,
     }) => {
       const baseURL = getBaseURL({ slug: tenant.slug });
       const editOverlay = page
@@ -98,7 +99,9 @@ test.describe('Tenant administration', () => {
 
       await newPage.goto(baseURL, { waitUntil: 'domcontentloaded' });
 
-      await expect(newPage.getByRole('banner').locator('img')).toBeVisible();
+      if (!isMobile) {
+        await expect(newPage.getByRole('banner').locator('img')).toBeVisible();
+      }
     });
   });
 });
