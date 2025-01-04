@@ -163,8 +163,7 @@ jobs:
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
-          working-directory: /tmp
-          path: screenshot
+          path: /tmp/screenshot
           pattern: screenshot-*
           merge-multiple: true
 
@@ -173,7 +172,7 @@ jobs:
           DEST_PATH: screenshots/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}/
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
-            /tmp/screenshots \
+            /tmp/screenshot \
             s3://public-lotta-assets/${{ env.DEST_PATH }}
           echo '### Test summary' >> $GITHUB_STEP_SUMMARY
           echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
