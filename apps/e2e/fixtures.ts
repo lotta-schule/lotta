@@ -9,11 +9,12 @@ export const test = base.extend<
     admin: { name: string; email: string; password: string };
   }
 >({
-  takeScreenshot: async ({ browserName, page }, use) => {
+  takeScreenshot: async ({ browserName, isMobile, page }, use) => {
+    const fullBrowserName = isMobile ? `${browserName}-mobile` : browserName;
     await use(
       async (name: string, target: Page | Locator | undefined = page) => {
         const screenshot = await target.screenshot();
-        await saveScreenshot(screenshot, name, browserName);
+        await saveScreenshot(screenshot, name, fullBrowserName);
       }
     );
   },

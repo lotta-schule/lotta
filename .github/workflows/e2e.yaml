@@ -145,18 +145,18 @@ jobs:
           name: playwright-html-report
           path: /tmp/playwright-report
 
-      - name: Get current date
-        id: get_date
-        run: |
-          echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
       - name: Upload HTML report to S3
         env:
-          REPORTS_DEST_PATH: playwright-reports/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}/
+          REPORTS_DEST_PATH: playwright-reports/${{ github.run_number }}/
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/playwright-report/ \
             s3://public-lotta-assets/${{ env.REPORTS_DEST_PATH }}
+
+          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
+            /tmp/playwright-report/ \
+            s3://public-lotta-assets/playwright-reports/${{ github.ref_name }}/
+
           echo '### Test summary' >> $GITHUB_STEP_SUMMARY
           echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.REPORTS_DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
 
@@ -169,11 +169,16 @@ jobs:
 
       - name: Upload screenshots to S3
         env:
-          SCREENSHOTS_DEST_PATH: screenshots/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}/
+          SCREENSHOTS_DEST_PATH: screenshots/${{ github.run_number }}/
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/screenshot/ \
             s3://public-lotta-assets/${{ env.SCREENSHOTS_DEST_PATH }}
+
+          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
+            /tmp/screenshot/ \
+            s3://public-lotta-assets/screenshots/${{ github.ref_name }}/
+
           echo '### Test summary' >> $GITHUB_STEP_SUMMARY
           echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.SCREENSHOTS_DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
 
