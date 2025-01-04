@@ -73,6 +73,13 @@ jobs:
           path: apps/e2e/blob-report
           retention-days: 1
 
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: screenshot-${{ matrix.shardIndex }}
+          path: apps/e2e/screenshot
+          retention-days: 14
+
   merge-reports:
     runs-on: ubuntu-latest
     if: ${{ !cancelled() }}
@@ -141,14 +148,32 @@ jobs:
       - name: Get current date
         id: get_date
         run: |
-          echo "date=$$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - name: Upload HTML report to S3
         env:
           DEST_PATH: playwright-reports/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}/
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
-            /tmp/playwright-report/* \
+            /tmp/playwright-report/ \
+            s3://public-lotta-assets/${{ env.DEST_PATH }}
+          echo '### Test summary' >> $GITHUB_STEP_SUMMARY
+          echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          working-directory: /tmp
+          path: screenshot
+          pattern: screenshot-*
+          merge-multiple: true
+
+      - name: Upload screenshots to S3
+        env:
+          DEST_PATH: screenshots/${{ needs.get_date.outputs.date }}_run-${{ github.run_number }}/
+        run: |
+          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
+            /tmp/screenshots \
             s3://public-lotta-assets/${{ env.DEST_PATH }}
           echo '### Test summary' >> $GITHUB_STEP_SUMMARY
           echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
