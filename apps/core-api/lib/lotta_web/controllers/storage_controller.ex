@@ -10,22 +10,20 @@ defmodule LottaWeb.StorageController do
 
   def get_file(%{private: %{lotta_tenant: tenant}} = conn, %{"id" => id} = params)
       when not is_nil(tenant) and is_uuid(id) do
-    file = Storage.get_file(id)
-
-    if is_nil(file) do
-      conn
-      |> respond_with(:not_found)
-    else
+    with file when not is_nil(file) <- Storage.get_file(id),
+         http_url when not is_nil(http_url) <-
+           Storage.get_http_url(
+             file,
+             download: !is_nil(params["download"]),
+             processing: build_processing_options(params)
+           ) do
       conn
       |> put_resp_header("cache-control", "max-age=604800")
-      |> redirect(
-        external:
-          Storage.get_http_url(
-            file,
-            download: !is_nil(params["download"]),
-            processing: build_processing_options(params)
-          )
-      )
+      |> redirect(external: http_url)
+    else
+      _ ->
+        conn
+        |> respond_with(:not_found)
     end
   end
 

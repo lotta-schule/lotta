@@ -6,12 +6,28 @@ on:
         description: The image tag to use for the lotta service
         type: string
         required: true
+    secrets:
+      aws_key_id:
+        required: false
+      aws_secret_access_key:
+        required: false
+      endpoint:
+        required: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
-    name: Run Playwright tests
-    timeout-minutes: 60
+    name: 'E2E-Testing ( ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} )'
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,16 +53,157 @@ jobs:
         working-directory: apps/e2e
 
       - name: Run lotta as a service from docker-compose.yml
-        uses: hoverkraft-tech/compose-action@v0.0.0
+        uses: hoverkraft-tech/compose-action@v2.0.2
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
+        with:
+          compose-file: docker-compose.yaml
+          cwd: ${{ github.workspace }}/apps/e2e
+          up-flags: --force-recreate --wait
 
       - name: Run Playwright tests
-        run: pnpm playwright test
+        run: |
+          ./scripts/test.sh --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        working-directory: apps/e2e
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+          name: blob-report-${{ matrix.shardIndex }}
+          path: apps/e2e/blob-report
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: screenshot-${{ matrix.shardIndex }}
+          path: apps/e2e/screenshot
+          retention-days: 14
+
+  merge-reports:
+    runs-on: ubuntu-24.04
+    if: ${{ !cancelled() }}
+    needs:
+      - test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install node dependencies
+        run: pnpm install
+        working-directory: apps/e2e
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          working-directory: apps/e2e
+          path: apps/e2e/all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        working-directory: apps/e2e
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: apps/e2e/playwright-report
+          retention-days: 14
+
+  upload-report:
+    runs-on: ubuntu-24.04
+    if: ${{ always() }}
+    continue-on-error: true
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    needs:
+      - merge-reports
+    steps:
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@v1.9.0
+        with:
+          provider: scaleway
+          region: 'nl-ams'
+          access_key: ${{ secrets.aws_key_id }}
+          secret_key: ${{ secrets.aws_secret_access_key }}
+
+      - name: Download HTML report
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-html-report
+          path: /tmp/playwright-report
+
+      - name: Upload HTML report to S3
+        id: upload-report
+        run: |
+          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
+            /tmp/playwright-report/ \
+            s3://public-lotta-assets/playwright-reports/${{ github.run_number }}/
+
+          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
+            /tmp/playwright-report/ \
+            s3://public-lotta-assets/playwright-reports/${{ github.base_ref || github.ref_name }}/
+
+          echo 'run_report_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/playwright-reports/${{ github.run_number }}/index.html' >> $GITHUB_OUTPUT
+          echo 'ref_report_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/playwright-reports/${{ github.base_ref || github.ref_name }}/index.html' >> $GITHUB_OUTPUT
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/screenshot
+          pattern: screenshot-*
+          merge-multiple: true
+
+      - name: Upload screenshots to S3
+        id: upload-screenshots
+        run: |
+          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
+            /tmp/screenshot/ \
+            s3://public-lotta-assets/screenshots/${{ github.run_number }}/
+
+          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
+            /tmp/screenshot/ \
+            s3://public-lotta-assets/screenshots/${{ github.base_ref || github.ref_name }}/
+
+          echo 'run_screenshots_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/screenshots/${{ github.run_number }}/index.html' >> $GITHUB_OUTPUT
+          echo 'ref_screenshots_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/screenshots/${{ github.base_ref || github.ref_name }}/index.html' >> $GITHUB_OUTPUT
+
+      - name: Comment PR with execution number
+        uses: thollander/actions-comment-pull-request@v3
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          message: |
+            ### Test summary
+            See [Playwright Report](${{ steps.upload-report.outputs.run_report_url }})
+
+            ### Screenshots
+            See [Screenshots](${{ steps.upload-screenshots.outputs.run_screenshots_url }})
+          comment-tag: playwright-report
+
+      - name: Create commit comment
+        uses: peter-evans/commit-comment@v3
+        if: ${{ github.event_name == 'push' }}
+        with:
+          body: |
+            ### Test summary
+            See [Playwright Report](${{ steps.upload-report.outputs.run_report_url }})
+
+            ### Screenshots
+            See [Screenshots](${{ steps.upload-screenshots.outputs.run_screenshots_url }})

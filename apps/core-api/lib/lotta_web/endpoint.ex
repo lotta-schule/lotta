@@ -48,7 +48,7 @@ defmodule LottaWeb.Endpoint do
     parsers: [:urlencoded, :multipart, :json, Absinthe.Plug.Parser],
     pass: ["*/*"],
     length: trunc(1.5 * 1024 * 1024 * 1024),
-    json_decoder: Poison
+    json_decoder: Jason
 
   plug Sentry.PlugContext
 

@@ -9,13 +9,18 @@ import { Button } from '../button';
 
 import styles from './Drawer.module.scss';
 
-export interface DrawerProps {
+export type DrawerProps = {
   children?: React.ReactNode;
   isOpen?: boolean;
   onClose?(): void;
-}
+} & Omit<React.HTMLAttributes<HTMLDivElement>, 'ref'>;
 
-export const Drawer = ({ children, isOpen, onClose }: DrawerProps) => {
+export const Drawer = ({
+  children,
+  isOpen,
+  onClose,
+  ...otherProps
+}: DrawerProps) => {
   const ref = React.useRef<HTMLDivElement>(null);
   usePreventScroll({ isDisabled: !isOpen });
   const { overlayProps } = useOverlay(
@@ -45,7 +50,7 @@ export const Drawer = ({ children, isOpen, onClose }: DrawerProps) => {
     return undefined;
   }, [isOpen, onClose]);
 
-  const props = mergeProps(overlayProps, modalProps) as any;
+  const props = mergeProps(overlayProps, modalProps, otherProps) as any;
 
   return (
     <motion.div

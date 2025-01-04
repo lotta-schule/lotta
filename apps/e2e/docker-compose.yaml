@@ -1,0 +1,36 @@
+include:
+  - path: ../core-api/docker-compose.services.base.yaml
+
+services:
+  web:
+    image: ${LOTTA_WEB_IMAGE:-ghcr.io/lotta-schule/web:${LOTTA_WEB_VERSION:-${IMAGE_TAG:-latest}}}
+    ports:
+      - '3000:3000'
+    depends_on:
+      core:
+        condition: service_healthy
+    env_file: env-file
+
+  core:
+    image: ${LOTTA_CORE_IMAGE:-ghcr.io/lotta-schule/core:${LOTTA_CORE_VERSION:-${IMAGE_TAG:-latest}}}
+    ports:
+      - 4000:4000
+    entrypoint: /app/core_entrypoint.sh
+    command: start
+    volumes:
+      - ./core_entrypoint.sh:/app/core_entrypoint.sh
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:4000/_debug/health']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    env_file: env-file

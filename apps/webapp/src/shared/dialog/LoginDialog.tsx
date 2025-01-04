@@ -45,10 +45,11 @@ export const LoginDialog = React.memo<LoginDialogProps>(
         // TODO: Proper handling when no data is returned
         if (data.login) {
           localStorage.setItem('id', data.login.accessToken);
-          await apolloClient.resetStore();
+          await apolloClient.reFetchObservableQueries();
           const { data: userData } = await apolloClient.query<{
             currentUser: UserModel;
           }>({ query: GetCurrentUserQuery });
+          console.log(userData?.currentUser?.hasChangedDefaultPassword);
           if (userData?.currentUser?.hasChangedDefaultPassword === false) {
             setIsShowUpdatePasswordDialog(true);
           } else {
