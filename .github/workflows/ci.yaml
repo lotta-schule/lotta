@@ -10,10 +10,6 @@ env:
   NX_NO_CLOUD: ${{ vars.NX_NO_CLOUD }}
   GITHUB_ACTIONS: true
 
-concurrency:
-  group: ${{ github.event.pull_request.head.sha || github.sha }}
-  cancel-in-progress: ${{ github.event_name == 'push' }}
-
 jobs:
   run_checks:
     name: Run code checks
