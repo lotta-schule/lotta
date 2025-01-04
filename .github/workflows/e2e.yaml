@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   test:
-    name: 'E2E-Testing ${{ matrix.project }} (${{ matrix.shard}} )'
+    name: 'E2E-Testing ( ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} )'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false

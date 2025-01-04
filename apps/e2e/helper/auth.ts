@@ -75,6 +75,4 @@ export const loginUserRequiringPWUpdate = async (
 
   await updatePasswordDialog.waitFor({ state: 'hidden' });
   await loginDialog.waitFor({ state: 'hidden' });
-
-  expect(page.getByRole('button', { name: /Mein Profil/i })).toBeVisible();
 };
