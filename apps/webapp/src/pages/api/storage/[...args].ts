@@ -6,6 +6,7 @@ export default createProxyMiddleware({
   changeOrigin: true,
   pathRewrite: { '^/api/storage': '/storage' },
   xfwd: true,
+  logLevel: 'debug',
 });
 
 export const config = {

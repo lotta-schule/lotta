@@ -19,34 +19,42 @@ const nextConfig = {
     resolve(__dirname, '../../apps/hubert/src/index.ts'),
   ],
   async rewrites() {
-    return [
-      {
-        source: '/',
-        destination: '/c/0',
-      },
-      {
-        source: '/auth/:path*',
-        destination: '/api/auth/:path*',
-      },
-      {
-        source: '/storage/:path*',
-        destination: '/api/storage/:path*',
-      },
-      // web manifest
-      {
-        source: '/manifest.json',
-        destination: '/api/manifest',
-      },
-      // Plausible Analytics
-      {
-        source: '/p/script.js',
-        destination: 'https://plausible.intern.lotta.schule/js/script.js',
-      },
-      {
-        source: '/p/e',
-        destination: 'https://plausible.intern.lotta.schule/api/event',
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: '/',
+          destination: '/c/0',
+        },
+        {
+          source: '/auth/:path*',
+          destination: '/api/auth/:path*',
+        },
+        {
+          source: '/storage/:path*',
+          destination: '/api/storage/:path*',
+        },
+        {
+          source: '/api',
+          destination: '/api/backend',
+        },
+        // web manifest
+        {
+          source: '/manifest.json',
+          destination: '/api/manifest',
+        },
+        // Plausible Analytics
+        {
+          source: '/p/script.js',
+          destination: 'https://plausible.intern.lotta.schule/js/script.js',
+        },
+        {
+          source: '/p/e',
+          destination: 'https://plausible.intern.lotta.schule/api/event',
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
   },
   async redirects() {
     return [

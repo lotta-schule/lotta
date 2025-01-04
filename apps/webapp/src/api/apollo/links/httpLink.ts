@@ -12,7 +12,7 @@ export const createHttpLink = ({
 } = {}) => {
   const opts = {
     uri: isBrowser()
-      ? '/api/backend'
+      ? '/api'
       : (() => {
           const url = new URL(API_URL);
           url.pathname = '/api';

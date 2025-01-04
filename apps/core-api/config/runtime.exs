@@ -119,7 +119,8 @@ defmodule SystemConfig do
   defp default("COCKPIT_ENDPOINT", _), do: "http://localhost:4040"
 
   defp default("SENTRY_DSN", _), do: nil
-  defp default("CLOUDIMAGE_TOKEN", env) when env in [:dev, :test], do: "123"
+  defp default("CLOUDIMAGE_TOKEN", :dev), do: nil
+  defp default("CLOUDIMAGE_TOKEN", :test), do: "123"
 
   defp default("SCHEDULE_PROVIDER_URL", env) when env in [:dev, :test],
     do: "http://localhost:3111"

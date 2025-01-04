@@ -12,9 +12,12 @@ export const config = {
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
+  console.log(request.nextUrl.pathname);
   if (
-    /\.(png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot)$/.test(request.url) ||
-    /\/(api|backend)\/?$/.test(request.url)
+    /\.(png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot)$/.test(
+      request.nextUrl.pathname
+    ) ||
+    /^\/(api|backend|auth|storage)/.test(request.nextUrl.pathname)
   ) {
     // do not execute on static files
     return NextResponse.next({ request });
