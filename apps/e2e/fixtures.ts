@@ -1,14 +1,22 @@
-import { test as base } from '@playwright/test';
-import { createTenantFixture } from './helper';
+import { test as base, Locator, Page } from '@playwright/test';
+import { createTenantFixture, saveScreenshot } from './helper';
 
 export * from '@playwright/test';
 
 export const test = base.extend<
-  object,
+  { takeScreenshot: (name: string, target?: Page | Locator) => Promise<void> },
   {
     admin: { name: string; email: string; password: string };
   }
 >({
+  takeScreenshot: async ({ browserName, page }, use) => {
+    await use(
+      async (name: string, target: Page | Locator | undefined = page) => {
+        const screenshot = await target.screenshot();
+        await saveScreenshot(screenshot, name, browserName);
+      }
+    );
+  },
   admin: [
     {
       name: 'Bilbo Baggins',

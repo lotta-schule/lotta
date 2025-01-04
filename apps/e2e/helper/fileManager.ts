@@ -1,6 +1,5 @@
 import { basename } from 'node:path';
 import { Page } from '@playwright/test';
-import { screenSave } from '../screenSave';
 
 export const uploadAndSelect = async (
   { page }: { page: Page },
@@ -36,8 +35,6 @@ export const uploadAndSelect = async (
     .getByRole('option', { name: basename(file) });
 
   await newFileOption.waitFor({ state: 'visible' });
-
-  screenSave(await browserDialog.screenshot(), 'file-manager-upload');
 
   await newFileOption.click();
 

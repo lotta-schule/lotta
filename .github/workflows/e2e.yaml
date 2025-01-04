@@ -126,7 +126,7 @@ jobs:
 
   upload-report:
     runs-on: ubuntu-latest
-    if: ${{ !cancelled() }}
+    if: ${{ always() }}
     continue-on-error: true
     needs:
       - merge-reports

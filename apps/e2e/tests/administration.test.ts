@@ -1,7 +1,6 @@
 import { expect, test } from '../fixtures';
 import { createTenantSetup, loginUser, TenantDescriptor } from '../helper';
 import { uploadAndSelect } from '../helper/fileManager';
-import { screenSave } from '../screenSave';
 
 const getBaseURL = ({ slug }: { slug: string }) =>
   `http://${slug}.local.lotta.schule:3000`;
@@ -22,7 +21,7 @@ test.describe('Tenant administration', () => {
       tenant = t;
     });
 
-    test.beforeEach(async ({ page, isMobile, admin }) => {
+    test.beforeEach(async ({ page, isMobile, admin, takeScreenshot }) => {
       const baseURL = getBaseURL({ slug: tenant.slug });
       const { loginDialog } = await loginUser(
         { page, baseURL: baseURL!, isMobile },
@@ -32,14 +31,14 @@ test.describe('Tenant administration', () => {
 
       await page.goto(`${baseURL}/admin`, { waitUntil: 'domcontentloaded' });
 
-      await screenSave(await page.screenshot(), 'admin-settings');
+      await takeScreenshot('admin-settings');
 
       await page.getByRole('button', { name: /grundeinstellungen/i }).click();
       await page.waitForURL(`${baseURL}/admin/general`, {
         waitUntil: 'domcontentloaded',
       });
 
-      await screenSave(await page.screenshot(), 'admin-settings-general');
+      await takeScreenshot('admin-settings-general');
     });
 
     test('should be able to update the tenant name', async ({
