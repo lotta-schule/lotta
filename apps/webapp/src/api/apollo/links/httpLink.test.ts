@@ -51,7 +51,7 @@ describe('createHttpLink', () => {
       requestExtraHeaders: requestExtraHeadersMock,
     });
 
-    const expectedUrl = '/api/backend'.toString();
+    const expectedUrl = '/api'.toString();
 
     expect(mockCreateCustomFetch).toHaveBeenCalledWith({
       requestExtraHeaders: requestExtraHeadersMock,
@@ -75,7 +75,7 @@ describe('createHttpLink', () => {
       requestExtraHeaders: expect.any(Function),
     });
     expect(mockCreateLink).toHaveBeenCalledWith({
-      uri: '/api/backend',
+      uri: '/api',
       fetch: customFetchMock,
     });
     expect(result).toBe(mockCreateLink.mock.results[0].value);

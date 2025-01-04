@@ -1,0 +1,98 @@
+---
+name: 'CD'
+on:
+  workflow_call:
+    inputs:
+      image_tag:
+        description: 'the tag to release'
+        required: true
+        type: string
+
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_NO_CLOUD: ${{ vars.NX_NO_CLOUD }}
+  GITHUB_ACTIONS: true
+
+jobs:
+  env_calculator:
+    name: Get Environment Name
+    runs-on: ubuntu-24.04
+    outputs:
+      env_name: '${{ steps.get_env_name.outputs.env_name }}'
+    steps:
+      - name: Read env name
+        id: get_env_name
+        run: |
+          if [[ "${{ github.ref_name }}" == 'main' || "${{ github.ref_name }}" == release/* ]]; then
+            env_name="staging"
+          else
+            env_name="preview"
+          fi
+          echo "::notice title=ENV_NAME::$env_name"
+          echo "env_name=$env_name" >> $GITHUB_OUTPUT
+
+  publish-docker-images:
+    needs:
+      - env_calculator
+    name: ${{ matrix.image.name }} (${{ needs.env_calculator.outputs.env_name }}) Docker images
+    strategy:
+      matrix:
+        image:
+          - name: web
+            dockerfile: apps/webapp/Dockerfile
+            context: .
+          - name: core
+            dockerfile: Dockerfile
+            context: apps/core-api
+    uses: ./.github/workflows/__deploy_dockerfile.yaml
+    with:
+      name: ${{ matrix.image.name }}
+      tags: ${{ format(needs.env_calculator.outputs.env_name == 'preview' && '{0}' || '{0},latest,canary-{0}', inputs.image_tag) }}
+      registry: ghcr.io
+      releaseName: ${{ inputs.image_tag }}
+      context: ${{ matrix.image.context }}
+      dockerfile: ${{ matrix.image.dockerfile }}
+      platforms: '["linux/amd64","linux/arm64"]'
+      push: true
+    secrets:
+      password: ${{ secrets.GITHUB_TOKEN }}
+      sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      sentry_dsn: ${{ secrets.SENTRY_DSN }}
+
+  run-e2e-tests:
+    name: Run end-to-end tests
+    needs:
+      - publish-docker-images
+      - env_calculator
+    uses: ./.github/workflows/e2e.yaml
+    with:
+      image_tag: ${{ inputs.image_tag }}
+    secrets:
+      aws_key_id: '${{ secrets.PUBLIC_BUCKET_AWS_ACCESS_KEY_ID }}'
+      aws_secret_access_key: '${{ secrets.PUBLIC_BUCKET_AWS_SECRET_ACCESS_KEY }}'
+      endpoint: '${{ secrets.PUBLIC_BUCKET_ENDPOINT }}'
+
+  create-sentry-release:
+    runs-on: ubuntu-24.04
+    name: |
+      Sentry Rel.: ${{ matrix.project }} (${{ needs.env_calculator.outputs.env_name }})
+    needs:
+      - publish-docker-images
+      - env_calculator
+    strategy:
+      matrix:
+        project: ['core', 'web']
+    steps:
+      # Sentry does need a repository it seems
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ matrix.project }}
+        with:
+          environment: ${{ needs.env_calculator.outputs.env_name }}
+          version: ${{ inputs.image_tag }}

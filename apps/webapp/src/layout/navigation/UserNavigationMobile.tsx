@@ -54,205 +54,203 @@ export const UserNavigationMobile = React.memo(() => {
   const [createArticleModalIsOpen, setCreateArticleModalIsOpen] =
     React.useState(false);
 
-  React.useEffect(() => {
-    if (
-      loginModalIsOpen ||
-      registerModalIsOpen ||
-      createArticleModalIsOpen ||
-      feedbackModalIsOpen
-    ) {
-      isMobileDrawerOpenVar(false);
-    }
-  }, [
-    createArticleModalIsOpen,
-    loginModalIsOpen,
-    registerModalIsOpen,
-    feedbackModalIsOpen,
-  ]);
-
-  if (currentUser) {
-    return (
-      <>
-        <nav className={styles.root}>
-          <BaseButton
-            variant={'borderless'}
-            className={styles.button}
-            onClick={() => {
-              onLogout();
-            }}
-            data-testid="LogoutButton"
-          >
-            <Icon icon={faArrowRightFromBracket} size="xl" />
-            <span className={styles.label}>Abmelden</span>
-          </BaseButton>
-          <BaseButton
-            variant={'borderless'}
-            className={styles.button}
-            onClick={() => {
-              setCreateArticleModalIsOpen(true);
-            }}
-            data-testid="CreateArticleButton"
-          >
-            <Icon icon={faCirclePlus} size="lg" />
-            <span className={styles.label}>Beitrag</span>
-          </BaseButton>
-          <Link href={'/search'} passHref legacyBehavior>
-            <BaseButton
-              variant={'borderless'}
-              className={styles.button}
-              data-testid="SearchButton"
-            >
-              <Icon icon={faMagnifyingGlass} size="xl" />
-              <span className={styles.label}>Suche</span>
-            </BaseButton>
-          </Link>
-          <Link href={'/profile'} passHref legacyBehavior>
-            <BaseButton
-              variant={'borderless'}
-              className={styles.button}
-              data-testid="ProfileButton"
-            >
-              <Icon icon={faUser} size="xl" />
-              <span className={styles.label}>Profil</span>
-            </BaseButton>
-          </Link>
-          <Link href={'/profile/files'} passHref legacyBehavior>
-            <BaseButton
-              variant={'borderless'}
-              className={styles.button}
-              data-testid="ProfileFilesButton"
-            >
-              <Icon icon={faFolder} size="xl" />
-              <span className={styles.label}>Dateien</span>
-            </BaseButton>
-          </Link>
-          <Link href={'/profile/articles'} passHref legacyBehavior>
-            <BaseButton
-              variant={'borderless'}
-              className={styles.button}
-              data-testid="OwnArticlesButton"
-            >
-              <Icon icon={faClipboardList} size="xl" />
-              <span className={styles.label}>Meine Beiträge</span>
-            </BaseButton>
-          </Link>
-          <BaseButton
-            variant={'borderless'}
-            className={styles.button}
-            data-testid="FeedbackButton"
-            onClick={() => setFeedbackModalIsOpen(true)}
-          >
-            <Icon icon={faCommentDots} size="xl" />
-            <span className={styles.label}>Feedback</span>
-          </BaseButton>
-          <Link href={'/messaging'} passHref legacyBehavior>
-            <BaseButton
-              variant={'borderless'}
-              className={styles.button}
-              data-testid="MessagingButton"
-            >
-              <Icon icon={faComments} size={'lg'} />
-              <span className={styles.label}>
-                Nachrichten{' '}
-                <Badge
-                  value={newMessagesBadgeNumber}
-                  className={styles.badge}
-                />
-              </span>
-            </BaseButton>
-          </Link>
-          {User.isAdmin(currentUser) && (
-            <>
-              <Link href={'/admin'} passHref legacyBehavior>
-                <BaseButton
-                  variant={'borderless'}
-                  className={styles.button}
-                  data-testid="AdminButton"
-                >
-                  <Icon icon={faShieldHalved} size="xl" />
-                  <span className={styles.label}>
-                    Admin
-                    <Badge
-                      value={newFeedbackBadgeNumber}
-                      data-testid="FeedbackBadge"
-                    />
-                  </span>
-                </BaseButton>
-              </Link>
-              <Link href={'/unpublished'} passHref legacyBehavior>
-                <BaseButton variant={'borderless'} className={styles.button}>
-                  <Icon icon={faClipboardList} size="xl" />
-                  <span className={styles.label}>
-                    Beiträge freigeben
-                    <Badge
-                      value={unpublishedBadgeNumber}
-                      className={styles.badge}
-                      data-testid="UnpublishedArticlesButton"
-                    />
-                  </span>
-                </BaseButton>
-              </Link>
-            </>
-          )}
-          {!User.isAdmin(currentUser) && (
-            <>
-              <div />
-              <div />
-            </>
-          )}
-          <div />
-        </nav>
-        <CreateArticleDialog
-          isOpen={createArticleModalIsOpen}
-          onAbort={() => setCreateArticleModalIsOpen(false)}
-          onConfirm={(article) => {
-            router.push(Article.getPath(article, { edit: true }));
-          }}
-        />
-        <FeedbackDialog
-          isOpen={feedbackModalIsOpen}
-          onRequestClose={() => {
-            setFeedbackModalIsOpen(false);
-          }}
-        />
-      </>
-    );
-  }
   return (
     <>
-      <div>
-        <Button
-          fullWidth
-          variant={'borderless'}
-          onClick={() => setLoginModalIsOpen(true)}
-          data-testid="LoginButton"
-        >
-          Anmelden
-        </Button>
-        <Button
-          variant={'borderless'}
-          fullWidth
-          onClick={() => setRegisterModalIsOpen(true)}
-          data-testid="RegisterButton"
-        >
-          Registrieren
-        </Button>
-        <Link href={'/search'} passHref legacyBehavior>
-          <Button fullWidth data-testid="SearchButton" variant={'borderless'}>
-            Suche
-          </Button>
-        </Link>
-      </div>
+      {!!currentUser && (
+        <>
+          <nav className={styles.root}>
+            <BaseButton
+              variant={'borderless'}
+              className={styles.button}
+              onClick={() => {
+                onLogout();
+              }}
+              data-testid="LogoutButton"
+            >
+              <Icon icon={faArrowRightFromBracket} size="xl" />
+              <span className={styles.label}>Abmelden</span>
+            </BaseButton>
+            <BaseButton
+              variant={'borderless'}
+              className={styles.button}
+              onClick={() => {
+                setCreateArticleModalIsOpen(true);
+              }}
+              data-testid="CreateArticleButton"
+            >
+              <Icon icon={faCirclePlus} size="lg" />
+              <span className={styles.label}>Beitrag</span>
+            </BaseButton>
+            <Link href={'/search'} passHref legacyBehavior>
+              <BaseButton
+                variant={'borderless'}
+                className={styles.button}
+                data-testid="SearchButton"
+              >
+                <Icon icon={faMagnifyingGlass} size="xl" />
+                <span className={styles.label}>Suche</span>
+              </BaseButton>
+            </Link>
+            <Link href={'/profile'} passHref legacyBehavior>
+              <BaseButton
+                variant={'borderless'}
+                className={styles.button}
+                data-testid="ProfileButton"
+              >
+                <Icon icon={faUser} size="xl" />
+                <span className={styles.label}>Profil</span>
+              </BaseButton>
+            </Link>
+            <Link href={'/profile/files'} passHref legacyBehavior>
+              <BaseButton
+                variant={'borderless'}
+                className={styles.button}
+                data-testid="ProfileFilesButton"
+              >
+                <Icon icon={faFolder} size="xl" />
+                <span className={styles.label}>Dateien</span>
+              </BaseButton>
+            </Link>
+            <Link href={'/profile/articles'} passHref legacyBehavior>
+              <BaseButton
+                variant={'borderless'}
+                className={styles.button}
+                data-testid="OwnArticlesButton"
+              >
+                <Icon icon={faClipboardList} size="xl" />
+                <span className={styles.label}>Meine Beiträge</span>
+              </BaseButton>
+            </Link>
+            <BaseButton
+              variant={'borderless'}
+              className={styles.button}
+              data-testid="FeedbackButton"
+              onClick={() => setFeedbackModalIsOpen(true)}
+            >
+              <Icon icon={faCommentDots} size="xl" />
+              <span className={styles.label}>Feedback</span>
+            </BaseButton>
+            <Link href={'/messaging'} passHref legacyBehavior>
+              <BaseButton
+                variant={'borderless'}
+                className={styles.button}
+                data-testid="MessagingButton"
+              >
+                <Icon icon={faComments} size={'lg'} />
+                <span className={styles.label}>
+                  Nachrichten{' '}
+                  <Badge
+                    value={newMessagesBadgeNumber}
+                    className={styles.badge}
+                  />
+                </span>
+              </BaseButton>
+            </Link>
+            {User.isAdmin(currentUser) && (
+              <>
+                <Link href={'/admin'} passHref legacyBehavior>
+                  <BaseButton
+                    variant={'borderless'}
+                    className={styles.button}
+                    data-testid="AdminButton"
+                  >
+                    <Icon icon={faShieldHalved} size="xl" />
+                    <span className={styles.label}>
+                      Admin
+                      <Badge
+                        value={newFeedbackBadgeNumber}
+                        data-testid="FeedbackBadge"
+                      />
+                    </span>
+                  </BaseButton>
+                </Link>
+                <Link href={'/unpublished'} passHref legacyBehavior>
+                  <BaseButton variant={'borderless'} className={styles.button}>
+                    <Icon icon={faClipboardList} size="xl" />
+                    <span className={styles.label}>
+                      Beiträge freigeben
+                      <Badge
+                        value={unpublishedBadgeNumber}
+                        className={styles.badge}
+                        data-testid="UnpublishedArticlesButton"
+                      />
+                    </span>
+                  </BaseButton>
+                </Link>
+              </>
+            )}
+            {!User.isAdmin(currentUser) && (
+              <>
+                <div />
+                <div />
+              </>
+            )}
+            <div />
+          </nav>
+          <CreateArticleDialog
+            isOpen={createArticleModalIsOpen}
+            onAbort={() => setCreateArticleModalIsOpen(false)}
+            onConfirm={(article) => {
+              router.push(Article.getPath(article, { edit: true }));
+            }}
+          />
+          <FeedbackDialog
+            isOpen={feedbackModalIsOpen}
+            onRequestClose={() => {
+              setFeedbackModalIsOpen(false);
+            }}
+          />
+        </>
+      )}
+      {!currentUser && (
+        <>
+          <div>
+            <Button
+              fullWidth
+              variant={'borderless'}
+              onClick={() => setLoginModalIsOpen(true)}
+              data-testid="LoginButton"
+            >
+              Anmelden
+            </Button>
+            <Button
+              variant={'borderless'}
+              fullWidth
+              onClick={() => setRegisterModalIsOpen(true)}
+              data-testid="RegisterButton"
+            >
+              Registrieren
+            </Button>
+            <Link href={'/search'} passHref legacyBehavior>
+              <Button
+                fullWidth
+                data-testid="SearchButton"
+                variant={'borderless'}
+              >
+                Suche
+              </Button>
+            </Link>
+          </div>
+        </>
+      )}
+      {/*
+        There are situations where we do not want the modal to just vanish
+        when the user changes state to login, such as changing the password
+        first time. So we need to handle these outside of any currentUser
+        conditional
+      */}
       <LoginDialog
         isOpen={loginModalIsOpen}
         onRequestClose={() => {
           setLoginModalIsOpen(false);
+          isMobileDrawerOpenVar(false);
         }}
       />
       <RegisterDialog
         isOpen={registerModalIsOpen}
         onRequestClose={() => {
           setRegisterModalIsOpen(false);
+          isMobileDrawerOpenVar(false);
         }}
       />
     </>

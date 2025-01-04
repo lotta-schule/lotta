@@ -207,7 +207,7 @@ export const getApolloClient = ({
 
   const httpLink = createLink({
     uri: isBrowser()
-      ? '/api/backend'
+      ? '/api'
       : (() => {
           const url = new URL(appConfig.get('API_URL'));
           url.pathname = '/api';

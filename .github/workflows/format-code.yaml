@@ -4,8 +4,13 @@ on:
     branches-ignore:
       - main
 
+concurrency:
+  group: ${{ github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
+
 jobs:
   format-code:
     uses: lotta-schule/github-actions/.github/workflows/run-formatter.yaml@main

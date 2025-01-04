@@ -2,15 +2,11 @@
   "$schema": "https://raw.githubusercontent.com/nrwl/nx/master/packages/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "dev": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "inputs": [
         "default",
         "^production",
@@ -28,34 +24,19 @@
       "cache": true
     },
     "typecheck": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "default"
-      ],
+      "dependsOn": ["^build"],
+      "inputs": ["default"],
       "cache": true
     },
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "{projectRoot}/dist"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ],
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"],
+      "inputs": ["production", "^production"],
       "cache": true
     },
     "e2e": {
-      "dependsOn": [
-        "^e2e"
-      ],
-      "outputs": [
-        "{projectRoot}/coverage"
-      ],
+      "dependsOn": ["^e2e"],
+      "outputs": ["{projectRoot}/coverage"],
       "cache": true
     },
     "dependencies": {
@@ -63,10 +44,7 @@
     }
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?",

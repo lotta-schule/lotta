@@ -1,0 +1,85 @@
+# Web
+CLOUDIMG_TOKEN='afdptjdxen'
+NEXT_PUBLIC_BASE_HOST='local.lotta.schule'
+API_SOCKET_URL='ws://localhost:4000/api/user-socket'
+API_URL='http://core:4000'
+PUBLIC_API_URL='http://local.lotta.schule:4000'
+APP_ENVIRONMENT='test'
+
+# Core
+POD_IP='127.0.0.1'
+SECRET_KEY_BASE='JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D'
+SECRET_KEY_JWT='jKFhbZQjn4qAZG67UZkQSUTJDaNXV+4Fh18GO+f9wE4Ed/8nmwss'
+ISSUER_JWT='lotta-e2e'
+BASE_URI_HOST='local.lotta.schule'
+BASE_URI_SCHEME='http'
+BASE_URI_PORT='3000'
+LIVE_VIEW_USERNAME='admin'
+UGC_COMPAT_S3_PORT='9000'
+UGC_S3_COMPAT_ENDPOINT='http://minio'
+UGC_S3_COMPAT_REGION='us-east-1'
+AWS_SECRET_ACCESS_KEY='wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+AWS_ACCESS_KEY_ID='AKIAIOSFODNN7EXAMPLE'
+REMOTE_STORAGE_STORES='minio'
+REMOTE_STORAGE_DEFAULT_STORE='minio'
+REMOTE_STORAGE_PREFIX=''
+REMOTE_STORAGE_MINIO_BUCKET='lotta-dev-ugc'
+REMOTE_STORAGE_MINIO_ENDPOINT="$UGC_S3_COMPAT_ENDPOINT:$UGC_COMPAT_S3_PORT/$REMOTE_STORAGE_MINIO_BUCKET"
+CLOUDIMAGE_TOKEN='afdptjdxen'
+MAILER_ADAPTER='local'
+MAILER_DEFAULT_SENDER='e2e@lotta.schule'
+SCHEDULE_PROVIDER_URL='schedule-provider-service'
+ANALYTICS_ENDPOINT='https://analytics'
+ANALYTICS_API_KEY='topsecretapikey'
+POSTGRES_POOL_SIZE='5'
+POSTGRES_USER='lotta'
+POSTGRES_DB='lotta'
+POSTGRES_HOST='postgres'
+POSTGRES_PASSWORD='lotta'
+REDIS_HOST='redis'
+REDIS_PASSWORD='lotta'
+RABBITMQ_HOST='rabbitmq'
+RABBITMQ_USER='guest'
+RABBITMQ_PASSWORD='guest'
+RABBITMQ_PREFIX='test'
+PIGEON_USE_SANDBOX='true'
+APNS_KEY='-----BEGIN RSA PRIVATE KEY-----
+  MIIBOgIBAAJBANgqvOH7xQ1/JbiLNPiu/HYjaFEK4X1IencmnBEIo9VEOJSSItLW
+  J6H/T8UKbLaR2SaK3bGAZ5OBEFv6nWKNEA0CAwEAAQJARTap89Ghbojfkw8/jsC4
+  pTsBE7HgMTUbwTrjjbCuhIIUm77dbP6k1Y8X3plfOekE4vB+hrhqNq0jL+JLkozv
+  AQIhAPifbanDivV19iRyXIKcqSIFMNeawDIV/oZ0Mtir1JqlAiEA3pTFTOX1xnhP
+  Rq25Ki7jwKWIEn5QvY2fHLq4gD0Ca0kCIH6IVT2TIYOvV2hRM7fdl06TKbpxLePP
+  wcwYE1CmkvtpAiAovrkja5FDRLDWcmTMCQteL68qG39yQ6OV4cR2jTSNKQIhAOAh
+  Q1E79YVw2GaNeO49mp305XvQfOy7MiyH7JqJLKt1
+  -----END RSA PRIVATE KEY-----'
+APNS_KEY_ID='ABCDE12345'
+APNS_TEAM_ID='ABCDE12345'
+APNS_TOPIC='net.einsa.schule'
+APNS_USE_PRODUCTION='false'
+FCM_PROJECT_ID='myproject'
+# Has to be valid
+FCM_SERVICE_ACCOUNT_JSON='"{
+    \"type\"=\"service_account\",
+    \"project_id\"=\"meinlotta\",
+    \"private_key_id\"=\"ABCDE12345\",
+    \"private_key\"=\"
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIBOgIBAAJBANgqvOH7xQ1/JbiLNPiu/HYjaFEK4X1IencmnBEIo9VEOJSSItLW
+      J6H/T8UKbLaR2SaK3bGAZ5OBEFv6nWKNEA0CAwEAAQJARTap89Ghbojfkw8/jsC4
+      pTsBE7HgMTUbwTrjjbCuhIIUm77dbP6k1Y8X3plfOekE4vB+hrhqNq0jL+JLkozv
+      AQIhAPifbanDivV19iRyXIKcqSIFMNeawDIV/oZ0Mtir1JqlAiEA3pTFTOX1xnhP
+      Rq25Ki7jwKWIEn5QvY2fHLq4gD0Ca0kCIH6IVT2TIYOvV2hRM7fdl06TKbpxLePP
+      wcwYE1CmkvtpAiAovrkja5FDRLDWcmTMCQteL68qG39yQ6OV4cR2jTSNKQIhAOAh
+      Q1E79YVw2GaNeO49mp305XvQfOy7MiyH7JqJLKt1
+      -----END RSA PRIVATE KEY-----
+    \",
+    \"client_email\"=\"firebase-adminsdk-asdf2@jajajajahastduwohlged.achtle\",
+    \"client_id\"=\"1234567890\",
+    \"auth_uri\"=\"https://accounts.google.com/o/oauth2/auth\",
+    \"token_uri\"=\"https://oauth2.googleapis.com/token\",
+    \"auth_provider_x509_cert_url\"=\"https://www.googleapis.com/oauth2/v1/certs\",
+    \"client_x509_cert_url\"=\"https://www.googleapis.com/robot/v1/metadata/x509/firebase-admidassageicheuchdochnichtjetztschautdochnichtso.gserviceaccount.com\"
+    \"universe_domain\"=\"googleapis.com\"
+  }"'
+COCKPIT_ADMIN_API_USERNAME='admin'
+COCKPIT_ADMIN_API_KEY='secretapikey'

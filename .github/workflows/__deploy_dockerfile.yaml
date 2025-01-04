@@ -22,11 +22,11 @@ on:
       tags:
         description: |
           A newline-separated list of tags to apply to the image.
-          Defaults to '$\{\{ inputs.name \}\}:latest'
+          Defaults to 'latest'
         type: string
         required: false
         default: |
-          '${{ inputs.name }}:latest'
+          latest
       context:
         description: The directory that will be used as build context for the docker build
         type: string
@@ -37,17 +37,17 @@ on:
         required: false
       platforms:
         description: |
-          The platform(s) to build the image for. Defaults to empty (auto-detect),
+          The platforms to build the image for. Defaults to empty (auto-detect),
           and thus – here on GitHub – very probably linux/amd64
-          Multiple platforms can be specified as a newline-separated list (one per line)
+          Please provide a valid JSON array of platforms! (yeah, I know, it's a bit awkward)
         type: string
         required: false
       push:
         description: |
           Whether to push the image to the registry. Defaults to true
-        type: boolean
+        type: string
         required: false
-        default: true
+        default: 'true'
     secrets:
       username:
         description: |
@@ -69,19 +69,40 @@ on:
 jobs:
   build-image:
     name: 'Build image from Dockerfile'
-    runs-on: ubuntu-24.04
+    runs-on: ${{ contains(matrix.platform, 'arm64') && 'warp-ubuntu-2204-arm64-4x' || 'ubuntu-24.04' }}
     env:
       IMAGE_NAME: '${{ inputs.name }}'
+      LONG_IMAGE_NAME: 'ghcr.io/lotta-schule/${{ inputs.name }}'
+      FULL_IMAGE_NAME: 'ghcr.io/lotta-schule/${{ inputs.name }}:${{ inputs.releaseName }}'
       RELEASE_NAME: '${{ inputs.releaseName }}'
       SENTRY_DSN: '${{ secrets.sentry_dsn }}'
       SENTRY_AUTH_TOKEN: '${{ secrets.sentry_auth_token }}'
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: ${{ fromJSON(inputs.platforms) }}
     steps:
-      - name: Set up QEMU
-        if: inputs.platforms
-        uses: docker/setup-qemu-action@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          ref: ${{ inputs.checkout-ref }}
+
+      - name: Parse platform to platform pair
+        env:
+          platform: ${{ matrix.platform }}
+        run: |
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+
+      - name: Get docker image metadata
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.LONG_IMAGE_NAME }}
+          tags: |
+            ${{ inputs.tags }}
 
       - name: Set up Docker Buildx
-        if: inputs.platforms
         uses: docker/setup-buildx-action@v3
 
       - name: Login to remote registry
@@ -89,27 +110,92 @@ jobs:
         with:
           registry: ${{ inputs.registry }}
           username: ${{ secrets.username || github.actor }}
-          password: ${{ secrets.password }}
+          password: ${{ secrets.password || github.token }}
 
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-          ref: ${{ inputs.checkout-ref }}
-
-      - name: Build and publish image
+      - name: Build and push *by digest*
         id: build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.context }}
           file: ${{ format('{0}/{1}', inputs.context, (inputs.dockerfile || 'Dockerfile')) }}
-          tags: ${{ inputs.tags }}
-          platforms: ${{ inputs.platforms }}
+          platforms: ${{ matrix.platform }}
           build-args: |
             IMAGE_NAME=$IMAGE_NAME
             RELEASE_NAME=$RELEASE_NAME
             SENTRY_DSN=$SENTRY_DSN
           secrets: |
             sentry_auth_token=${{ secrets.sentry_auth_token }}
-          push: ${{ inputs.push }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: 'type=gha,scope=buildkit-${{ env.IMAGE_NAME }}-${{ matrix.platform }}'
+          cache-to: 'type=gha,mode=max,scope=buildkit-${{ env.IMAGE_NAME }}-${{ matrix.platform }}'
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,"name=${{ env.LONG_IMAGE_NAME }}",push-by-digest=true,name-canonical=true,push=true
+
+      - name: Export image digest
+        run: |
+          mkdir -p /tmp/docker-digest
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/docker-digest/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-${{ env.IMAGE_NAME }}-${{ env.PLATFORM_PAIR }}
+          path: /tmp/docker-digest/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge_digests:
+    name: Merge docker platform digests
+    runs-on: ubuntu-24.04
+    needs:
+      - build-image
+    env:
+      IMAGE_NAME: '${{ inputs.name }}'
+      LONG_IMAGE_NAME: 'ghcr.io/lotta-schule/${{ inputs.name }}'
+      FULL_IMAGE_NAME: 'ghcr.io/lotta-schule/${{ inputs.name }}:${{ inputs.releaseName }}'
+      RELEASE_NAME: '${{ inputs.releaseName }}'
+      TAGS: ${{ inputs.tags }}
+    steps:
+      - name: Create tag-list
+        id: taglist
+        run: |
+          taglist=$(echo "${{ inputs.tags }}" | tr ',' '\n')
+          echo "taglist<<EOF" >> $GITHUB_OUTPUT
+          echo $taglist >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          pattern: digest-${{ env.IMAGE_NAME }}-*
+          path: /tmp/docker-digest/
+          merge-multiple: true
+
+      - name: Login to remote registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ secrets.username || github.actor }}
+          password: ${{ secrets.password || github.token }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.LONG_IMAGE_NAME }}
+          tags: ${{ steps.taglist.outputs.taglist }}
+
+      - name: Create manifest list and push
+        working-directory: /tmp/docker-digest
+        run: |
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.LONG_IMAGE_NAME }}@sha256:%s ' *)
+
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ${{ env.LONG_IMAGE_NAME }}:${{ steps.meta.outputs.version }}

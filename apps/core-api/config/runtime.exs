@@ -36,14 +36,6 @@ defmodule SystemConfig do
 
       :url_scheme ->
         value && URI.parse(value).scheme
-
-      :bamboo_adapter ->
-        case value do
-          "mailgun" -> Bamboo.MailgunAdapter
-          "local" -> Bamboo.LocalAdapter
-          "test" -> Bamboo.TestAdapter
-          _ -> raise "Invalid mail adapter: #{value}"
-        end
     end
   end
 
@@ -58,6 +50,7 @@ defmodule SystemConfig do
   defp default("RELEASE_NAME", _), do: "lotta"
   defp default("IMAGE_NAME", _), do: ""
   defp default("SERVICE_NAME", _), do: "core"
+  defp default("HEADLESS_SERVICE_NAME", _), do: ""
   defp default("NAMESPACE", _), do: nil
   defp default("SERVER", :test), do: "false"
   defp default("SERVER", _), do: "true"
@@ -101,9 +94,8 @@ defmodule SystemConfig do
   defp default("REMOTE_STORAGE_MINIO_ENDPOINT", _), do: "http://localhost:9000/lotta-dev-ugc"
   defp default("REMOTE_STORAGE_MINIO_BUCKET", _), do: "lotta-dev-ugc"
 
-  defp default("MAILER_ADAPTER", :dev), do: "local"
   defp default("MAILER_ADAPTER", :test), do: "test"
-  defp default("MAILER_ADAPTER", _), do: "mailgun"
+  defp default("MAILER_ADAPTER", _), do: "local"
   defp default("MAILGUN_BASE_URI", _), do: "https://api.eu.mailgun.net/v3"
   defp default("MAILGUN_API_KEY", _), do: nil
   defp default("MAILGUN_DOMAIN", _), do: nil
@@ -127,7 +119,8 @@ defmodule SystemConfig do
   defp default("COCKPIT_ENDPOINT", _), do: "http://localhost:4040"
 
   defp default("SENTRY_DSN", _), do: nil
-  defp default("CLOUDIMAGE_TOKEN", env) when env in [:dev, :test], do: "123"
+  defp default("CLOUDIMAGE_TOKEN", :dev), do: nil
+  defp default("CLOUDIMAGE_TOKEN", :test), do: "123"
 
   defp default("SCHEDULE_PROVIDER_URL", env) when env in [:dev, :test],
     do: "http://localhost:3111"
@@ -247,12 +240,31 @@ config :lotta, :cockpit,
 
 config :lotta,
        Lotta.Mailer,
-       adapter: SystemConfig.get("MAILER_ADAPTER", cast: :bamboo_adapter),
-       api_key: SystemConfig.get("MAILGUN_API_KEY"),
-       domain: SystemConfig.get("MAILGUN_DOMAIN"),
-       default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
-       feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER"),
-       base_uri: SystemConfig.get("MAILGUN_BASE_URI")
+       (case SystemConfig.get("MAILER_ADAPTER") do
+          "mailgun" ->
+            [
+              adapter: Bamboo.MailgunAdapter,
+              api_key: SystemConfig.get("MAILGUN_API_KEY"),
+              domain: SystemConfig.get("MAILGUN_DOMAIN"),
+              default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
+              feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER"),
+              base_uri: SystemConfig.get("MAILGUN_BASE_URI")
+            ]
+
+          "test" ->
+            [
+              adapter: Bamboo.TestAdapter,
+              default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
+              feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER")
+            ]
+
+          "local" ->
+            [
+              adapter: Bamboo.LocalAdapter,
+              default_sender: SystemConfig.get("MAILER_DEFAULT_SENDER"),
+              feedback_sender: SystemConfig.get("MAILER_FEEDBACK_SENDER")
+            ]
+        end)
 
 config :sentry,
   dsn: SystemConfig.get("SENTRY_DSN"),
@@ -265,19 +277,28 @@ config :sentry,
 config :lotta, Lotta.Storage.ImageProcessingUrl,
   cloudimage_token: SystemConfig.get("CLOUDIMAGE_TOKEN")
 
-if config_env() == :prod do
-  config :libcluster,
-    topologies: [
-      k8s: [
-        strategy: Cluster.Strategy.Kubernetes.DNS,
-        config: [
-          service: SystemConfig.get("HEADLESS_SERVICE_NAME"),
-          application_name: SystemConfig.get("RELEASE_NAME"),
-          polling_interval: 5000
+libcluster_topologies =
+  case SystemConfig.get("HEADLESS_SERVICE_NAME") do
+    "" ->
+      []
+
+    nil ->
+      []
+
+    service_name ->
+      [
+        k8s: [
+          strategy: Cluster.Strategy.Kubernetes.DNS,
+          config: [
+            service: service_name,
+            application_name: SystemConfig.get("RELEASE_NAME"),
+            polling_interval: 5000
+          ]
         ]
       ]
-    ]
-end
+  end
+
+config :libcluster, topologies: libcluster_topologies
 
 config :lotta, Lotta.Notification.Provider.APNS,
   adapter:

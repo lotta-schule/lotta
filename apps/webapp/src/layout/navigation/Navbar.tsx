@@ -104,6 +104,7 @@ export const Navbar = React.memo(() => {
         <div className={styles.mobileBurgerMenuButton}>
           <Button
             data-testid={'MobileMenuButton'}
+            title="Nutzermenü öffnen"
             className={styles.iconButton}
             onClick={() => openDrawer()}
             style={{ margin: '0 auto' }}

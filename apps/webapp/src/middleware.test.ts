@@ -1,4 +1,5 @@
 import { Mocked, MockedFunction } from 'vitest';
+import { parse } from 'node:url';
 import { sendRefreshRequest } from 'api/auth';
 import { type NextRequest } from 'next/server';
 import { serialize } from 'cookie-es';
@@ -19,6 +20,7 @@ describe('middleware', () => {
   });
 
   const createMockRequest = (
+    url: string,
     cookies: Record<string, string> = {},
     headers: Record<string, string> = {}
   ) =>
@@ -29,10 +31,13 @@ describe('middleware', () => {
       headers: {
         get: (key: string) => headers[key],
       },
+      url,
+      nextUrl: parse(url)
     }) as unknown as NextRequest;
 
   it('should update tokens if refresh token is valid and close to expiration', async () => {
     const mockRequest = createMockRequest(
+      'http://test.lotta.schule/',
       { SignInRefreshToken: 'mockRefreshToken' },
       { host: 'mockHost' }
     );
@@ -74,6 +79,7 @@ describe('middleware', () => {
 
   it('should reset refresh token cookie if refresh token is missing or invalid', async () => {
     const mockRequest = createMockRequest(
+      'http://test.lotta.schule/',
       { SignInRefreshToken: 'invalidRefreshToken' },
       { Authorization: 'Bearer validAccessToken' }
     );
@@ -102,6 +108,7 @@ describe('middleware', () => {
 
   it('should handle expired access token', async () => {
     const mockRequest = createMockRequest(
+      'http://test.lotta.schule/',
       {},
       { Authorization: 'Bearer expiredAccessToken' }
     );
