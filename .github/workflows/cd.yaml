@@ -13,6 +13,7 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_NO_CLOUD: ${{ vars.NX_NO_CLOUD }}
   GITHUB_ACTIONS: true
+  IMAGE_TAG: '${{ github.event.pull_request.head.sha || github.sha }}'
 
 jobs:
   enforce-all-checks:
@@ -52,9 +53,9 @@ jobs:
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
   publish-docker-images:
+    name: ${{ matrix.image.name }} (${{ needs.env_calculator.outputs.env_name }}) Docker images
     needs:
       - env_calculator
-    name: ${{ matrix.image.name }} (${{ needs.env_calculator.outputs.env_name }}) Docker images
     strategy:
       matrix:
         image:
