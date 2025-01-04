@@ -128,6 +128,11 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ always() }}
     continue-on-error: true
+
+    permissions:
+      contents: write
+      pull-requests: write
+
     needs:
       - merge-reports
     steps:
@@ -146,19 +151,18 @@ jobs:
           path: /tmp/playwright-report
 
       - name: Upload HTML report to S3
-        env:
-          REPORTS_DEST_PATH: playwright-reports/${{ github.run_number }}/
+        id: upload-report
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/playwright-report/ \
-            s3://public-lotta-assets/${{ env.REPORTS_DEST_PATH }}
+            s3://public-lotta-assets/playwright-reports/${{ github.run_number }}/
 
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/playwright-report/ \
             s3://public-lotta-assets/playwright-reports/${{ github.base_ref || github.ref_name }}/
 
-          echo '### Test summary' >> $GITHUB_STEP_SUMMARY
-          echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.REPORTS_DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
+          echo 'run_report_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/playwright-reports/${{ github.run_number }}/index.html' >> $GITHUB_OUTPUT
+          echo 'ref_report_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/playwright-reports/${{ github.base_ref || github.ref_name }}/index.html' >> $GITHUB_OUTPUT
 
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
@@ -168,31 +172,38 @@ jobs:
           merge-multiple: true
 
       - name: Upload screenshots to S3
-        env:
-          SCREENSHOTS_DEST_PATH: screenshots/${{ github.run_number }}/
+        id: upload-screenshots
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/screenshot/ \
-            s3://public-lotta-assets/${{ env.SCREENSHOTS_DEST_PATH }}
+            s3://public-lotta-assets/screenshots/${{ github.run_number }}/
 
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/screenshot/ \
             s3://public-lotta-assets/screenshots/${{ github.base_ref || github.ref_name }}/
 
-          echo '### Test summary' >> $GITHUB_STEP_SUMMARY
-          echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.SCREENSHOTS_DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
+          echo 'run_screenshots_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/screenshots/${{ github.run_number }}/index.html' >> $GITHUB_OUTPUT
+          echo 'ref_screenshots_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/screenshots/${{ github.base_ref || github.ref_name }}/index.html' >> $GITHUB_OUTPUT
 
-      - name: Create Job summary
-        uses: actions/github-script@v7
+      - name: Comment PR with execution number
+        uses: thollander/actions-comment-pull-request@v3
+        if: ${{ github.event_name == 'pull_request' }}
         with:
-          script: |
-            core.setOutput(
-              'summary',
-              `
-                ### Test summary
-                See [Playwright Report](https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${process.env.REPORTS_DEST_PATH})
+          message: |
+            ### Test summary
+            See [Playwright Report](${{ steps.upload-report.outputs.run_report_url }})
 
-                ### Screenshots
-                See [Screenshots](https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${process.env.SCREENSHOTS_DEST_PATH})
-              `
-            );
+            ### Screenshots
+            See [Screenshots](${{ steps.upload-screenshots.outputs.run_screenshots_url }})
+          comment-tag: playwright-report
+
+      - name: Create commit comment
+        uses: peter-evans/commit-comment@v3
+        if: ${{ github.event_name == 'push' }}
+        with:
+          body: |
+            ### Test summary
+            See [Playwright Report](${{ steps.upload-report.outputs.run_report_url }})
+
+            ### Screenshots
+            See [Screenshots](${{ steps.upload-screenshots.outputs.run_screenshots_url }})
