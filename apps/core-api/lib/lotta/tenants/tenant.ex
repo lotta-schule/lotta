@@ -55,11 +55,11 @@ defmodule Lotta.Tenants.Tenant do
   Changeset to be used for tenant creation.
   """
   @doc since: "2.6.0"
-  @spec create_changeset(%__MODULE__{}, map()) :: Ecto.Changeset.t()
-  def create_changeset(tenant, attrs) do
-    tenant
-    |> cast(attrs, [:title, :slug, :prefix])
-    |> validate_required([:title, :slug, :prefix])
+  @spec create_changeset(map()) :: Ecto.Changeset.t()
+  def create_changeset(attrs) do
+    %__MODULE__{}
+    |> cast(attrs, [:title, :slug])
+    |> validate_required([:title, :slug])
     |> unique_constraint(:slug)
   end
 

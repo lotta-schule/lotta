@@ -13,9 +13,9 @@ defmodule Lotta.Release do
   alias Lotta.Tenants.{Tenant, TenantDbManager}
   alias Ecto.Migrator
 
-  @app :lotta
-
   def migrate do
+    start_app()
+
     for repo <- repos() do
       Logger.notice("Migrating public schema ...")
 
@@ -34,12 +34,16 @@ defmodule Lotta.Release do
   end
 
   def drop do
+    start_app()
+
     for repo <- repos() do
       {:ok, _, _} = Migrator.with_repo(repo, & &1.__adapter__.storage_down(&1.config))
     end
   end
 
   def rollback(opts \\ [step: 1]) do
+    start_app()
+
     on_each_tenant_repo(fn tenant, pid ->
       Logger.notice(
         "Customer #{tenant.title} with schema #{tenant.prefix} is being rolled back ..."
@@ -52,6 +56,8 @@ defmodule Lotta.Release do
   end
 
   def cleanup_storage do
+    start_app()
+
     on_each_tenant_repo(fn tenant, _ ->
       Logger.notice(
         "Customer #{tenant.title} with schema #{tenant.prefix} is being cleaned up ..."
@@ -72,6 +78,8 @@ defmodule Lotta.Release do
   end
 
   def migrate_to_default_store(tenant) do
+    start_app()
+
     default_store = RemoteStorage.default_store()
 
     Logger.notice(
@@ -119,6 +127,8 @@ defmodule Lotta.Release do
   end
 
   def remove_unused_storage_entities(tenant) do
+    start_app()
+
     unused = Lotta.Storage.list_unused_remote_storage_entities(tenant.prefix)
 
     if Enum.empty?(unused) do
@@ -160,5 +170,7 @@ defmodule Lotta.Release do
     end)
   end
 
-  defp repos, do: Application.fetch_env!(@app, :ecto_repos)
+  defp repos, do: Application.fetch_env!(:lotta, :ecto_repos)
+
+  defp start_app(), do: Application.ensure_all_started(:lotta)
 end

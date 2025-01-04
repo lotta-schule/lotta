@@ -28,6 +28,10 @@ const nextConfig = {
         source: '/auth/:path*',
         destination: '/api/auth/:path*',
       },
+      {
+        source: '/storage/:path*',
+        destination: '/api/storage/:path*',
+      },
       // web manifest
       {
         source: '/manifest.json',
