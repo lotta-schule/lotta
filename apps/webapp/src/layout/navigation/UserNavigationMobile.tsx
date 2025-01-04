@@ -54,22 +54,6 @@ export const UserNavigationMobile = React.memo(() => {
   const [createArticleModalIsOpen, setCreateArticleModalIsOpen] =
     React.useState(false);
 
-  React.useEffect(() => {
-    if (
-      loginModalIsOpen ||
-      registerModalIsOpen ||
-      createArticleModalIsOpen ||
-      feedbackModalIsOpen
-    ) {
-      isMobileDrawerOpenVar(false);
-    }
-  }, [
-    createArticleModalIsOpen,
-    loginModalIsOpen,
-    registerModalIsOpen,
-    feedbackModalIsOpen,
-  ]);
-
   if (currentUser) {
     return (
       <>
@@ -247,12 +231,14 @@ export const UserNavigationMobile = React.memo(() => {
         isOpen={loginModalIsOpen}
         onRequestClose={() => {
           setLoginModalIsOpen(false);
+          isMobileDrawerOpenVar(false);
         }}
       />
       <RegisterDialog
         isOpen={registerModalIsOpen}
         onRequestClose={() => {
           setRegisterModalIsOpen(false);
+          isMobileDrawerOpenVar(false);
         }}
       />
     </>
