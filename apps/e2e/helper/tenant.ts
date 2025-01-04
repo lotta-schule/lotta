@@ -1,4 +1,4 @@
-import { getSentMails, resetSentMails } from './mail';
+import { getSentMails } from './mail';
 import { loginUserRequiringPWUpdate } from './auth';
 import { Browser, expect } from '@playwright/test';
 

@@ -81,7 +81,7 @@ jobs:
           retention-days: 14
 
   merge-reports:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ !cancelled() }}
     needs:
       - test
@@ -125,7 +125,7 @@ jobs:
           retention-days: 14
 
   upload-report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ always() }}
     continue-on-error: true
     needs:
@@ -155,7 +155,7 @@ jobs:
 
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/playwright-report/ \
-            s3://public-lotta-assets/playwright-reports/${{ github.ref_name }}/
+            s3://public-lotta-assets/playwright-reports/${{ github.base_ref || github.ref_name }}/
 
           echo '### Test summary' >> $GITHUB_STEP_SUMMARY
           echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.REPORTS_DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
@@ -177,7 +177,7 @@ jobs:
 
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/screenshot/ \
-            s3://public-lotta-assets/screenshots/${{ github.ref_name }}/
+            s3://public-lotta-assets/screenshots/${{ github.base_ref || github.ref_name }}/
 
           echo '### Test summary' >> $GITHUB_STEP_SUMMARY
           echo 'See https://public-lotta-assets.s3-website.nl-ams.scw.cloud/${{ env.SCREENSHOTS_DEST_PATH }}' >> $GITHUB_STEP_SUMMARY
