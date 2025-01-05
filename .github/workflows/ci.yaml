@@ -70,10 +70,10 @@ jobs:
         run: pnpm install
 
       - name: Lint
-        run: pnpm nx run-many -t lint
+        run: pnpm nx affected -t lint
 
       - name: Typecheck
-        run: pnpm nx run-many -t typecheck
+        run: pnpm nx affected -t typecheck
 
   tests:
     name: Run tests
@@ -152,7 +152,7 @@ jobs:
         run: pnpm install
 
       - name: Run Unit / Component tests
-        run: pnpm nx run-many -t test --configuration=coverage
+        run: pnpm nx affected -t test --configuration=coverage
         env:
           NODE_ENV: test
           MIX_ENV: test
@@ -160,7 +160,7 @@ jobs:
       - name: Run end-to-end tests
         run: |
           pnpm exec playwright install --with-deps chromium
-          pnpm nx run-many -t e2e --configuration=ci
+          pnpm nx affected -t e2e --configuration=ci
 
       - name: Upload Tests for storybook-addon-theme
         uses: codecov/codecov-action@v4
@@ -247,4 +247,4 @@ jobs:
 
       - name: Run build task
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
-        run: pnpm nx run-many -t build
+        run: pnpm nx affected -t build
