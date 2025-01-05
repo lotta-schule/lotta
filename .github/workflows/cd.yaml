@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-      - release/*
-    tags: ['*']
   pull_request:
     types: [opened, synchronize, labeled]
 
@@ -13,11 +11,10 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_NO_CLOUD: ${{ vars.NX_NO_CLOUD }}
   GITHUB_ACTIONS: true
-  IMAGE_TAG: '${{ github.event.pull_request.head.sha || github.sha }}'
 
 jobs:
   enforce-all-checks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       checks: read
     steps:
@@ -31,26 +28,22 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       env_name: '${{ steps.get_env_name.outputs.env_name }}'
-      image_tag: '${{ steps.get_image_name.outputs.image_tag }}'
     if: github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'preview')
+    needs:
+      - enforce-all-checks
     steps:
       - name: Read env name
         id: get_env_name
         run: |
-          if [[ "${{ github.ref_name }}" == 'main' || "${{ github.ref_name }}" == release/* ]]; then
+          if [[ "${{ github.ref_type }}" == 'tag' ]]; then
+            env_name="production"
+          elif [[ "${{ github.ref_name }}" == 'main' ]]; then
             env_name="staging"
           else
             env_name="preview"
           fi
           echo "::notice title=ENV_NAME::$env_name"
           echo "env_name=$env_name" >> $GITHUB_OUTPUT
-      - name: get image_name
-        id: get_image_name
-        env:
-          IMAGE_TAG: '${{ github.event.pull_request.head.sha || github.sha }}'
-        run: |
-          echo "::notice title=IMAGE_TAG::$IMAGE_TAG"
-          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
   publish-docker-images:
     name: ${{ matrix.image.name }} (${{ needs.env_calculator.outputs.env_name }}) Docker images
@@ -68,9 +61,7 @@ jobs:
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}
-      tags: ${{ format(needs.env_calculator.outputs.env_name == 'preview' && '{0}' || '{0},latest,canary-{0}', needs.env_calculator.outputs.image_tag) }}
       registry: ghcr.io
-      releaseName: ${{ needs.env_calculator.outputs.image_tag }}
       context: ${{ matrix.image.context }}
       dockerfile: ${{ matrix.image.dockerfile }}
       platforms: '["linux/amd64","linux/arm64"]'
@@ -87,7 +78,7 @@ jobs:
       - env_calculator
     uses: ./.github/workflows/e2e.yaml
     with:
-      image_tag: ${{ needs.env_calculator.outputs.image_tag }}
+      image_tag: ${{ needs.publish-docker-images.outputs.release_name }}
     secrets:
       aws_key_id: '${{ secrets.PUBLIC_BUCKET_AWS_ACCESS_KEY_ID }}'
       aws_secret_access_key: '${{ secrets.PUBLIC_BUCKET_AWS_SECRET_ACCESS_KEY }}'
@@ -116,4 +107,4 @@ jobs:
           SENTRY_PROJECT: ${{ matrix.project }}
         with:
           environment: ${{ needs.env_calculator.outputs.env_name }}
-          version: ${{ needs.env_calculator.outputs.image_tag }}
+          version: ${{ needs.publish-docker-images.outputs.release_name }}
