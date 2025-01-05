@@ -1,12 +1,11 @@
 ---
 name: 'CD'
 on:
-  workflow_call:
-    inputs:
-      image_tag:
-        description: 'the tag to release'
-        required: true
-        type: string
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, labeled]
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
@@ -14,16 +13,31 @@ env:
   GITHUB_ACTIONS: true
 
 jobs:
+  enforce-all-checks:
+    runs-on: ubuntu-24.04
+    permissions:
+      checks: read
+    steps:
+      - name: GitHub Checks
+        uses: poseidon/wait-for-status-checks@v0.6.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
   env_calculator:
     name: Get Environment Name
     runs-on: ubuntu-24.04
     outputs:
       env_name: '${{ steps.get_env_name.outputs.env_name }}'
+    if: github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'preview')
+    needs:
+      - enforce-all-checks
     steps:
       - name: Read env name
         id: get_env_name
         run: |
-          if [[ "${{ github.ref_name }}" == 'main' || "${{ github.ref_name }}" == release/* ]]; then
+          if [[ "${{ github.ref_type }}" == 'tag' ]]; then
+            env_name="production"
+          elif [[ "${{ github.ref_name }}" == 'main' ]]; then
             env_name="staging"
           else
             env_name="preview"
@@ -32,9 +46,9 @@ jobs:
           echo "env_name=$env_name" >> $GITHUB_OUTPUT
 
   publish-docker-images:
+    name: ${{ matrix.image.name }} (${{ needs.env_calculator.outputs.env_name }}) Docker images
     needs:
       - env_calculator
-    name: ${{ matrix.image.name }} (${{ needs.env_calculator.outputs.env_name }}) Docker images
     strategy:
       matrix:
         image:
@@ -47,9 +61,7 @@ jobs:
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}
-      tags: ${{ format(needs.env_calculator.outputs.env_name == 'preview' && '{0}' || '{0},latest,canary-{0}', inputs.image_tag) }}
       registry: ghcr.io
-      releaseName: ${{ inputs.image_tag }}
       context: ${{ matrix.image.context }}
       dockerfile: ${{ matrix.image.dockerfile }}
       platforms: '["linux/amd64","linux/arm64"]'
@@ -66,7 +78,7 @@ jobs:
       - env_calculator
     uses: ./.github/workflows/e2e.yaml
     with:
-      image_tag: ${{ inputs.image_tag }}
+      image_tag: ${{ needs.publish-docker-images.outputs.release_name }}
     secrets:
       aws_key_id: '${{ secrets.PUBLIC_BUCKET_AWS_ACCESS_KEY_ID }}'
       aws_secret_access_key: '${{ secrets.PUBLIC_BUCKET_AWS_SECRET_ACCESS_KEY }}'
@@ -95,4 +107,4 @@ jobs:
           SENTRY_PROJECT: ${{ matrix.project }}
         with:
           environment: ${{ needs.env_calculator.outputs.env_name }}
-          version: ${{ inputs.image_tag }}
+          version: ${{ needs.publish-docker-images.outputs.release_name }}
