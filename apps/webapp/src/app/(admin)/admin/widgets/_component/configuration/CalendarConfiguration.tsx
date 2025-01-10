@@ -31,8 +31,14 @@ export const CalendarConfiguration = React.memo(
           <Select
             title={t('Calendar Type')}
             value={configuration.type || 'external'}
+            disabled={
+              configuration.type !== 'internal' && data?.calendars.length === 0
+            }
             onChange={(type) => {
-              alert(type);
+              onChange({
+                ...configuration,
+                type,
+              } as CalendarWidgetCalendarConfig);
             }}
           >
             <Option value="internal">{t('Lotta Calendar')}</Option>
