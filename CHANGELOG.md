@@ -1,3 +1,14 @@
+## 5.0.19 (2025-01-10)
+
+
+### 🩹 Fixes
+
+- **webapp:** Allow to set an external calendar ([#416](https://github.com/lotta-schule/lotta/pull/416))
+
+### ❤️  Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 5.0.18 (2024-12-29)
 
 

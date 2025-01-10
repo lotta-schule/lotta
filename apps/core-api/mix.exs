@@ -4,7 +4,7 @@ defmodule Lotta.MixProject do
   def project do
     [
       app: :lotta,
-      version: "5.0.18",
+      version: "5.0.19",
       name: "Lotta API Server",
       source_url: "https://github.com/lotta-schule/core",
       homepage_url: "https://lotta.schule",
