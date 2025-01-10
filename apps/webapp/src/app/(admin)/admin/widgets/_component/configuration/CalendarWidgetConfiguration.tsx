@@ -19,17 +19,23 @@ export const CalendarWidgetConfiguration = React.memo(
 
     const { data, loading: isLoading, error } = useQuery(GET_CALENDARS);
 
-    const createNewCalendarConfiguration = React.useCallback(() => {
-      if (!data?.calendars.length) {
-        return { type: 'external', url: '' } as const;
-      }
-      return {
-        type: 'internal',
-        calendarId: data.calendars[0].id,
-        name: data.calendars[0].name,
-        color: data.calendars[0].color,
-      } as const;
-    }, [data]);
+    const createNewCalendarConfiguration = React.useCallback(
+      (calendarType?: 'external' | 'internal') => {
+        if (calendarType === 'internal' && !data?.calendars.length) {
+          alert('Keine Kalender Verfügbar!');
+        }
+        if (calendarType === 'external' || !data?.calendars.length) {
+          return { type: 'external', url: '' } as const;
+        }
+        return {
+          type: 'internal',
+          calendarId: data.calendars[0].id,
+          name: data.calendars[0].name,
+          color: data.calendars[0].color,
+        } as const;
+      },
+      [data]
+    );
 
     const calendarConfigurations = React.useMemo(
       () => configuration.calendars ?? [],
@@ -58,6 +64,12 @@ export const CalendarWidgetConfiguration = React.memo(
                 configuration={calendar}
                 isOneOfMany={calendarConfigurations.length > 1}
                 onChange={(config) => {
+                  if (calendar.type !== config.type) {
+                    updateCalendarConfiguration(
+                      index,
+                      createNewCalendarConfiguration(config.type)
+                    );
+                  }
                   updateCalendarConfiguration(index, config);
                 }}
                 onDelete={() =>
