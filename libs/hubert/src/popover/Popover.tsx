@@ -1,75 +1,51 @@
 'use client';
 
 import * as React from 'react';
-import { useButton, useOverlayTrigger } from 'react-aria';
-import { useOverlayTriggerState } from 'react-stately';
-import { usePopper } from 'react-popper';
-import { Button, ButtonProps } from '../button';
-import { PopoverOverlay } from './PopoverOverlay';
+import { PopoverProps, usePopover } from './usePopover';
+import { ReferenceElement } from '@floating-ui/react';
 
-export interface PopoverProps extends React.HTMLAttributes<HTMLDivElement> {
-  buttonProps?: ButtonProps;
-  style?: React.CSSProperties;
-  className?: string;
-  children?: React.ReactNode;
-}
+type ContextType =
+  | (ReturnType<typeof usePopover> & {
+      setLabelId: React.Dispatch<React.SetStateAction<string | undefined>>;
+      setDescriptionId: React.Dispatch<
+        React.SetStateAction<string | undefined>
+      >;
+    })
+  | null;
+
+const PopoverContext = React.createContext<ContextType>(null);
+
+export const usePopoverContext = () => {
+  const context = React.useContext(PopoverContext);
+
+  if (context == null) {
+    throw new Error('Popover components must be wrapped in <Popover />');
+  }
+
+  return context as Exclude<ContextType, null>;
+};
 
 export const Popover = ({
-  buttonProps,
-  style,
   children,
-  ...divProps
-}: PopoverProps) => {
-  const state = useOverlayTriggerState({});
+  modal = false,
+  reference,
+  ...restOptions
+}: {
+  children: React.ReactNode;
+} & PopoverProps & { reference?: ReferenceElement | null }) => {
+  // This can accept any props as options, e.g. `placement`,
+  // or other positioning options.
+  const popover = usePopover({ modal, ...restOptions });
 
-  const triggerRef = React.useRef<HTMLButtonElement>(null!);
-  const overlayRef = React.useRef<HTMLDivElement>(null);
-
-  const { styles: popperStyles, attributes: popperAttributes } = usePopper(
-    triggerRef.current,
-    overlayRef.current,
-    { placement: 'auto', strategy: 'fixed' }
-  );
-
-  const {
-    triggerProps: { onPress: _onOverlayPress, ...triggerProps },
-    overlayProps,
-  } = useOverlayTrigger({ type: 'dialog' }, state, triggerRef);
-
-  const { buttonProps: buttonAttributes } = useButton(
-    {
-      onPress: () => state.open(),
-    },
-    triggerRef
-  );
-
-  const triggerElement = React.useMemo(
-    () =>
-      React.createElement(Button, {
-        ...triggerProps,
-        ...buttonAttributes,
-        ...buttonProps,
-        ref: triggerRef,
-      }),
-    [buttonAttributes, buttonProps, triggerProps]
-  );
+  React.useEffect(() => {
+    if (reference) {
+      popover.refs.setPositionReference(reference);
+    }
+  }, [popover.refs, reference]);
 
   return (
-    <>
-      {triggerElement}
-      {state.isOpen && (
-        <PopoverOverlay
-          {...overlayProps}
-          {...popperAttributes.popper}
-          {...divProps}
-          style={{ ...popperStyles.popper, ...style }}
-          ref={overlayRef}
-          isOpen={state.isOpen}
-          onClose={state.close}
-        >
-          {children}
-        </PopoverOverlay>
-      )}
-    </>
+    <PopoverContext.Provider value={popover}>
+      {children}
+    </PopoverContext.Provider>
   );
 };

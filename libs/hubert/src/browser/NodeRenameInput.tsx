@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BrowserPath, useBrowserState } from './BrowserStateContext';
 import { Input } from '../form';
 import { CircularProgress } from '../progress';
-import { Popover } from '../popover/new/Popover';
+import { Popover, PopoverContent } from '../popover';
 import { ErrorMessage } from '../message';
 
 import styles from './NodeRenameInput.module.scss';
@@ -14,7 +14,8 @@ export type NodeRenameInputProps = {
 
 export const NodeRenameInput = React.memo(
   ({ path, onRequestClose }: NodeRenameInputProps) => {
-    const renamingInputRef = React.useRef<HTMLInputElement>(null);
+    const [renamingInput, setRenamingInput] =
+      React.useState<HTMLInputElement | null>(null);
     const node = path.at(-1);
 
     const [newNodeName, setNewNodeName] = React.useState(node?.name || '');
@@ -24,10 +25,10 @@ export const NodeRenameInput = React.memo(
     const { renameNode } = useBrowserState();
 
     React.useEffect(() => {
-      if (renamingInputRef.current) {
-        renamingInputRef.current.focus();
+      if (renamingInput) {
+        renamingInput.focus();
       }
-    }, []);
+    }, [renamingInput]);
 
     React.useEffect(() => {
       setErrorMessage(null);
@@ -38,51 +39,53 @@ export const NodeRenameInput = React.memo(
     }
 
     return (
-      <form
-        className={styles.root}
-        onSubmit={async (e) => {
-          e.preventDefault();
-          if (newNodeName.length > 0) {
-            setIsLoading(true);
-            try {
-              await renameNode?.(node, newNodeName);
-              onRequestClose();
-            } catch (e: any) {
-              setErrorMessage(
-                e.message || 'Fehler beim Umbenennen des Ordners.'
-              );
-            } finally {
-              setIsLoading(false);
-            }
-          }
-        }}
+      <Popover
+        open={!!errorMessage}
+        placement={'bottom'}
+        onOpenChange={(open) => open || setErrorMessage(null)}
+        reference={renamingInput}
       >
-        <Input
-          autoFocus
-          title={`${node.name} umbenennen`}
-          ref={renamingInputRef}
-          readOnly={isLoading}
-          value={newNodeName}
-          onBlur={onRequestClose}
-          onChange={(e) => setNewNodeName(e.currentTarget.value)}
-        />
-        <Popover
-          isOpen={!!errorMessage}
-          placement={'bottom'}
-          trigger={renamingInputRef.current!}
-          onClose={() => setErrorMessage(null)}
+        <form
+          className={styles.root}
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (newNodeName.length > 0) {
+              setIsLoading(true);
+              try {
+                await renameNode?.(node, newNodeName);
+                onRequestClose();
+              } catch (e: any) {
+                setErrorMessage(
+                  e.message || 'Fehler beim Umbenennen des Ordners.'
+                );
+              } finally {
+                setIsLoading(false);
+              }
+            }
+          }}
         >
-          <ErrorMessage error={errorMessage} />
-        </Popover>
-        {isLoading && (
-          <CircularProgress
-            className={styles.progress}
-            size={'1em'}
-            aria-label={'Datei wird umbenannt'}
-            isIndeterminate
+          <Input
+            autoFocus
+            title={`${node.name} umbenennen`}
+            ref={setRenamingInput}
+            readOnly={isLoading}
+            value={newNodeName}
+            onBlur={onRequestClose}
+            onChange={(e) => setNewNodeName(e.currentTarget.value)}
           />
-        )}
-      </form>
+          <PopoverContent style={{ width: renamingInput?.clientWidth }}>
+            <ErrorMessage error={errorMessage} />
+          </PopoverContent>
+          {isLoading && (
+            <CircularProgress
+              className={styles.progress}
+              size={'1em'}
+              aria-label={'Datei wird umbenannt'}
+              isIndeterminate
+            />
+          )}
+        </form>
+      </Popover>
     );
   }
 );

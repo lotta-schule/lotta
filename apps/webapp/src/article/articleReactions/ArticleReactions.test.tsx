@@ -105,7 +105,9 @@ describe('ArticleReactions Component', () => {
       const pepperReactionButton = screen.getByTestId('reaction-PEPPER');
       await user.click(pepperReactionButton);
 
-      await waitFor(() => expect(pepperReactionButton).not.toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByTestId('ReactionSelector')).not.toBeVisible()
+      );
     });
 
     it('should not show the reaction button when the user is not logged in', async () => {

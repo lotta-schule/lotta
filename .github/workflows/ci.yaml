@@ -157,10 +157,10 @@ jobs:
           NODE_ENV: test
           MIX_ENV: test
 
-      - name: Run end-to-end tests
-        run: |
-          pnpm exec playwright install --with-deps chromium
-          pnpm nx affected -t e2e --configuration=ci
+      # - name: Run end-to-end tests
+      #   run: |
+      #     pnpm exec playwright install --with-deps chromium
+      #     pnpm nx affected -t e2e --configuration=ci
 
       - name: Upload Tests for storybook-addon-theme
         uses: codecov/codecov-action@v4

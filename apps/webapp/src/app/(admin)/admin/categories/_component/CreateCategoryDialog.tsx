@@ -35,6 +35,8 @@ export interface CreateCategoryDialogProps {
 
 export const CreateCategoryDialog = React.memo(
   ({ isOpen, onAbort, onConfirm }: CreateCategoryDialogProps) => {
+    const firstInputRef = React.useRef<HTMLInputElement>(null);
+
     const [title, setTitle] = React.useState('');
     const [categoryPosition, setCategoryPosition] = React.useState(
       CategoryPosition.Main
@@ -72,6 +74,9 @@ export const CreateCategoryDialog = React.memo(
 
     React.useEffect(() => {
       resetForm();
+      if (isOpen) {
+        setTimeout(() => firstInputRef.current?.focus(), 100);
+      }
     }, [isOpen]);
 
     return (
@@ -87,10 +92,10 @@ export const CreateCategoryDialog = React.memo(
               <Input
                 id="title"
                 value={title}
+                ref={firstInputRef}
                 onChange={({ currentTarget }) => setTitle(currentTarget.value)}
                 disabled={isLoading}
                 placeholder="Meine neue Kategorie"
-                autoFocus
                 required
               />
             </Label>
@@ -120,7 +125,7 @@ export const CreateCategoryDialog = React.memo(
                     className={styles.categorySelect}
                     label={'Übergeordnete Kategorie'}
                     disabled={
-                      categoryPosition !== CategoryPosition.Sub && !isLoading
+                      categoryPosition !== CategoryPosition.Sub || isLoading
                     }
                     selectedCategory={parentCategory}
                     onSelectCategory={setParentCategory}

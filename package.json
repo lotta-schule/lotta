@@ -83,7 +83,7 @@
       "react-dom": "19.0.0-rc-b57d2823-20240822"
     },
     "patchedDependencies": {
-      "next@15.0.0-canary.130": "patches/next@15.0.0-canary.130.patch"
+      "next@15.1.4": "patches/next@15.1.4.patch"
     }
   }
 }

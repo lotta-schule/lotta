@@ -4,9 +4,9 @@ import * as React from 'react';
 import { useListBox, AriaListBoxOptions } from 'react-aria';
 import { ComboBoxState, SelectState } from 'react-stately';
 import { List, ListProps } from '../list';
-import { ListBoxOption } from './ListBoxOption';
+import { ListBoxOption, ListBoxOptionProps } from './ListBoxOption';
 import { ListItemPreliminaryItem } from '../list/ListItemFactory';
-import { Overlay } from '../popover';
+import { useMergeRefs } from '@floating-ui/react';
 
 export type ListBoxProps = ListProps &
   (
@@ -25,7 +25,9 @@ export const ListBox = ({
   ref: propRef,
   ...props
 }: ListBoxProps) => {
-  const internalRef = React.useRef<HTMLUListElement>(null);
+  const internalRef = React.useRef<HTMLUListElement | null>(null);
+
+  const ref = useMergeRefs([internalRef, propRef]);
 
   const { listBoxProps, labelProps } = useListBox(
     props as any,
@@ -34,36 +36,21 @@ export const ListBox = ({
   );
 
   return (
-    <Overlay aria-label={(labelProps.children as any) ?? 'Vorschläge'}>
-      <List
-        className={className}
-        {...listBoxProps}
-        ref={(node) => {
-          internalRef.current = node;
-          if (propRef) {
-            if ('current' in propRef) {
-              propRef.current = node;
-            } else {
-              propRef(node);
-            }
-          }
-          return () => {
-            internalRef.current = null;
-            if (propRef) {
-              if ('current' in propRef) {
-                propRef.current = null;
-              } else {
-                propRef(null);
-              }
-            }
-          };
-        }}
-      >
-        {Array.from(state.collection).map((item) => (
-          <ListBoxOption key={item.key} item={item} state={state} />
-        ))}
-      </List>
-    </Overlay>
+    <List
+      className={className}
+      aria-label={(labelProps.children as any) ?? 'Vorschläge'}
+      {...props}
+      {...listBoxProps}
+      ref={ref}
+    >
+      {Array.from(state.collection).map((item) => (
+        <ListBoxOption
+          key={item.key}
+          item={item as ListBoxOptionProps['item']}
+          state={state}
+        />
+      ))}
+    </List>
   );
 };
 ListBox.displayName = 'ListBox';

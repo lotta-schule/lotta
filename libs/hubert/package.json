@@ -14,24 +14,23 @@
   "source": "src/index.ts",
   "main": "dist/index.js",
   "dependencies": {
-    "@dnd-kit/core": "^6.1.0",
-    "@dnd-kit/sortable": "^8.0.0",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@epic-web/invariant": "^1.0.0",
-    "@popperjs/core": "^2.11.8",
+    "@floating-ui/react": "^0.27.2",
     "clsx": "^2.1.1",
     "colorjs.io": "^0.5.2",
     "lodash": "^4.17.21",
-    "react-aria": "^3.34.1",
-    "react-dropzone": "^14.2.3",
-    "react-popper": "^2.3.0",
-    "react-stately": "^3.32.1",
-    "react-use": "^17.5.1"
+    "react-aria": "^3.36.0",
+    "react-dropzone": "^14.3.5",
+    "react-stately": "^3.34.0",
+    "react-use": "^17.6.0"
   },
   "peerDependencies": {
     "framer-motion": ">= 6.3.0",
-    "react": "19.0.0-rc-6d3110b4d9-20240531",
-    "react-dom": "19.0.0-rc-6d3110b4d9-20240531",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "sass": "^1.54.3"
   }
 }

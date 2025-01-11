@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { VirtualElement } from '@popperjs/core';
 import { useDropzone } from 'react-dropzone';
-import { Overlay } from '../popover';
+import { PopoverContent } from '../popover';
 import { Menu } from '../menu';
 import { Folder, FolderOpen } from '../icon';
 import { Checkbox } from '../form';
-import { Popover } from '../popover/new/Popover';
+import { Popover, VirtualTrigger } from '../popover';
 import { useIsMobile } from '../util';
 import { FileIcon } from './FileIcon';
 import {
@@ -17,6 +16,7 @@ import { NodeRenameInput } from './NodeRenameInput';
 import { NodeMenuButton } from './NodeMenuButton';
 import { isDirectoryNode } from './utils';
 import { useNodeMenuProps } from './useNodeMenuProps';
+import { type ClientRectObject } from '@floating-ui/react';
 import clsx from 'clsx';
 
 import styles from './NodeListItem.module.scss';
@@ -84,9 +84,20 @@ export const NodeListItem = React.memo(
         onDropAccepted,
       });
 
-    const mouseRef = React.useRef<VirtualElement>({
-      getBoundingClientRect: () => rootRef.current!.getBoundingClientRect(),
-    });
+    const [contextMenuPosition, setContextMenuPosition] =
+      React.useState<ClientRectObject>(
+        rootRef.current?.getBoundingClientRect() ?? {
+          x: 0,
+          y: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 0,
+          width: 0,
+        }
+      );
+
     const [isContextMenuOpen, setIsContextMenuOpen] = React.useState(false);
     const closeContextMenu = React.useCallback(() => {
       setIsContextMenuOpen(false);
@@ -152,7 +163,11 @@ export const NodeListItem = React.memo(
     });
 
     return (
-      <>
+      <Popover
+        open={isContextMenuOpen}
+        onOpenChange={setIsContextMenuOpen}
+        placement="bottom-start"
+      >
         <li
           {...dropzoneProps}
           onContextMenu={(e) => {
@@ -166,18 +181,16 @@ export const NodeListItem = React.memo(
             }
             setIsContextMenuOpen(true);
             currentContextMenuCloseFn = closeContextMenu;
-            mouseRef.current = {
-              getBoundingClientRect: () => {
-                return {
-                  top: e.clientY + 20,
-                  left: e.clientX,
-                  right: e.clientX,
-                  bottom: e.clientY + 20,
-                  height: 0,
-                  width: 0,
-                } as ClientRect;
-              },
-            };
+            setContextMenuPosition({
+              x: e.clientX,
+              y: e.clientY,
+              top: e.clientY + 20,
+              left: e.clientX,
+              right: e.clientX,
+              bottom: e.clientY + 20,
+              height: 0,
+              width: 0,
+            });
           }}
           onClick={isDisabled || isRenaming ? undefined : (e) => onClick?.(e)}
         >
@@ -217,24 +230,18 @@ export const NodeListItem = React.memo(
             )}
           </div>
         </li>
-        <Popover
-          isOpen={isContextMenuOpen}
-          onClose={() => setIsContextMenuOpen(false)}
-          trigger={mouseRef.current}
-          placement="bottom-start"
-        >
-          <Overlay>
-            <Menu
-              {...menuProps}
-              onAction={(key) => {
-                setIsContextMenuOpen(false);
-                return menuProps.onAction(key);
-              }}
-              aria-label="Kontextmenü"
-            />
-          </Overlay>
-        </Popover>
-      </>
+        <VirtualTrigger {...contextMenuPosition} />
+        <PopoverContent>
+          <Menu
+            {...menuProps}
+            onAction={(key) => {
+              setIsContextMenuOpen(false);
+              return menuProps.onAction(key);
+            }}
+            aria-label="Kontextmenü"
+          />
+        </PopoverContent>
+      </Popover>
     );
   }
 );

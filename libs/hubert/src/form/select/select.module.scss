@@ -6,14 +6,10 @@
     width: 100%;
   }
 
-  .listbox {
-    overflow: auto;
-    max-height: min(300px, 50vh);
-  }
-
   .inputWrapper {
     position: relative;
     display: flex;
+
     .value {
       flex: 1 1 auto;
       border-top-left-radius: var(--lotta-border-radius);
@@ -28,11 +24,13 @@
       cursor: pointer;
       display: flex;
       align-items: center;
+
       &[disabled] {
         border-color: rgb(var(--lotta-disabled-color));
         color: rgb(var(--lotta-disabled-color));
       }
     }
+
     .triggerButton {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
@@ -42,4 +40,10 @@
       padding: calc(0.5 * var(--lotta-spacing));
     }
   }
+}
+
+.listbox {
+  overflow: auto;
+  max-height: min(300px, 50vh);
+  min-width: max-content;
 }

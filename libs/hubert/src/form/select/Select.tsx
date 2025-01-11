@@ -7,9 +7,8 @@ import {
   ListItemFactory,
   ListItemPreliminaryItem,
 } from '../../list/ListItemFactory';
-import { Button } from '../../button';
 import { ExpandMore } from '../../icon';
-import { Popover } from '../../popover/new/Popover';
+import { Popover, PopoverContent, PopoverTrigger } from '../../popover';
 import { ListBox } from '../../menu/ListBox';
 import { Label } from '../../label/Label';
 import clsx from 'clsx';
@@ -17,7 +16,7 @@ import clsx from 'clsx';
 import styles from './select.module.scss';
 
 export type SelectProps = React.AriaAttributes &
-  Omit<React.HTMLProps<HTMLDivElement>, 'onChange'> & {
+  Omit<React.HTMLProps<HTMLDivElement>, 'onChange' | 'ref'> & {
     className?: string;
 
     style?: React.CSSProperties;
@@ -38,7 +37,7 @@ export type SelectProps = React.AriaAttributes &
 
     onChange?: (_value: string) => void;
 
-    children?: any;
+    children: React.ReactNode | React.ReactNode[];
   };
 
 export type OptionProps = {
@@ -89,17 +88,15 @@ export const Select = ({
   });
 
   const internalRef = React.useRef<HTMLDivElement>(null);
+  const inputWrapperRef = React.useRef<HTMLDivElement>(null);
 
   const triggerRef = React.useRef<HTMLButtonElement>(null);
-  const popoverRef = React.useRef<HTMLDivElement>(null);
-
   const {
     labelProps,
     triggerProps: {
-      isDisabled,
       onPress: _onPress,
       onPressStart: _onPressStart,
-      ...otherTriggerProps
+      ...triggerProps
     },
     valueProps,
     menuProps,
@@ -113,77 +110,52 @@ export const Select = ({
     state,
     internalRef
   );
-  const triggerProps = { disabled: isDisabled, ...otherTriggerProps };
 
   return (
-    <Label
-      {...labelProps}
-      label={title || 'Bitte wählen ...'}
-      className={clsx(className, styles.root, {
-        [styles.isFullWidth]: fullWidth,
-      })}
-      {...props}
-      ref={(node) => {
-        if (props.ref) {
-          if ('current' in props.ref) {
-            props.ref.current = node;
-          } else {
-            props.ref(node);
-          }
-        }
-        internalRef.current = node;
-        return () => {
-          if (props.ref) {
-            if ('current' in props.ref) {
-              props.ref.current = null;
-            } else {
-              props.ref(null);
-            }
-          }
-          internalRef.current = null;
-        };
-      }}
-      onClick={() => state.toggle()}
+    <Popover
+      open={state.isOpen}
+      onOpenChange={state.setOpen}
+      placement="bottom-end"
     >
-      <div>
-        <HiddenSelect
-          isDisabled={disabled}
-          state={state}
-          triggerRef={triggerRef}
-          label={title}
-          name={name}
-        />
-        <div className={styles.inputWrapper}>
+      <Label
+        {...labelProps}
+        label={title || 'Bitte wählen ...'}
+        className={clsx(className, styles.root, {
+          [styles.isFullWidth]: fullWidth,
+        })}
+        {...props}
+        ref={internalRef}
+        onClick={() => state.toggle()}
+      >
+        <div className={styles.inputWrapper} ref={inputWrapperRef}>
+          <HiddenSelect
+            isDisabled={disabled}
+            state={state}
+            triggerRef={triggerRef}
+            label={title}
+            name={name}
+          />
           <div {...valueProps} className={styles.value}>
             {state.selectedItem
               ? state.selectedItem.rendered
               : 'Bitte wählen ...'}
           </div>
-          <Button
-            {...triggerProps}
-            className={styles.triggerButton}
-            ref={triggerRef}
-          >
+          <PopoverTrigger {...triggerProps} className={styles.triggerButton}>
             <ExpandMore />
-          </Button>
+          </PopoverTrigger>
         </div>
-        <Popover
-          trigger={triggerRef.current}
-          ref={popoverRef}
-          isOpen={state.isOpen}
-          onClose={state.close}
-          placement={'bottom-end'}
-        >
-          <ListBox
-            className={styles.listbox}
-            aria-label={title}
-            {...(menuProps as any)}
-            label={title}
-            state={state}
-          />
-        </Popover>
-      </div>
-    </Label>
+      </Label>
+      <PopoverContent>
+        <ListBox
+          className={styles.listbox}
+          style={{ width: inputWrapperRef.current?.clientWidth }}
+          aria-label={title}
+          {...(menuProps as any)}
+          label={title}
+          state={state}
+        />
+      </PopoverContent>
+    </Popover>
   );
 };
 Select.displayName = 'Select';

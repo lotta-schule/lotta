@@ -145,12 +145,10 @@ export const CalendarView = React.memo(
             locales: { de_DE: de },
           })}
           date={currentDate}
-          onNavigate={(date, fromView, action) => {
-            console.log('onNavigate', { date, fromView, action });
+          onNavigate={(date, _fromView, _action) => {
             setCurrentDate(date);
           }}
           onRangeChange={(range, view) => {
-            console.log('onRangeChange', { range, view });
             if (view === 'day' || (!view && currentView === 'day')) {
               invariant(Array.isArray(range), 'Invalid range');
               const day = range[0];

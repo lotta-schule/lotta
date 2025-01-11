@@ -93,6 +93,10 @@ beforeAll(() => {
     this.open = false;
   });
 
+  HTMLElement.prototype.showPopover = vitest.fn();
+  HTMLElement.prototype.hidePopover = vitest.fn();
+  HTMLElement.prototype.togglePopover = vitest.fn();
+
   // create setup document
   Object.assign(global, { TextDecoder, TextEncoder });
 

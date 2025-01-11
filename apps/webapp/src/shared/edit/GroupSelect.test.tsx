@@ -284,7 +284,7 @@ describe('shared/editor/GroupSelect', () => {
       expect(selection).toHaveTextContent(/AdministratorLehrerSchüler/i);
     });
 
-    it('should show a placeholder if no group is selected and clear the input after the selection has been done', async () => {
+    it('should show a placeholder if no group is selected', async () => {
       const fireEvent = userEvent.setup();
 
       const onSelectGroups = vi.fn();
@@ -337,14 +337,6 @@ describe('shared/editor/GroupSelect', () => {
         expect(screen.getByTestId('GroupSelectSelection')).toHaveTextContent(
           'Administrator'
         );
-      });
-
-      await waitFor(() => {
-        expect(screen.queryByRole('listbox')).toBeNull();
-      });
-
-      await waitFor(() => {
-        expect(combobox).toHaveValue('');
       });
     });
   });

@@ -36,8 +36,6 @@ export const createAuthLink = ({
             const now = Date.now() / 1000;
             const expires = decoded.exp;
 
-            console.log('expires', expires, now);
-
             if (
               expires &&
               expires - REFRESH_TOKEN_BUFFER <= now &&

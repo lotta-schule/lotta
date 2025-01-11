@@ -10,6 +10,7 @@ import { Widget } from 'util/model';
 import { Icon } from 'shared/Icon';
 
 import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';
+import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 
 export const CreateWidgetButton = React.memo(() => {
   const router = useRouter();
@@ -17,6 +18,7 @@ export const CreateWidgetButton = React.memo(() => {
     { widget: WidgetModel },
     { title: string; type: WidgetModelType }
   >(CreateWidgetMutation, {
+    refetchQueries: [GetWidgetsQuery],
     onCompleted: ({ widget }) => {
       router.push(`/admin/widgets/${widget.id}`);
     },

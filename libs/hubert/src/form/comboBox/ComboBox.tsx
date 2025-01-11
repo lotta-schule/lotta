@@ -2,17 +2,16 @@
 
 import * as React from 'react';
 import { useComboBoxState } from 'react-stately';
-import { useButton, useComboBox } from 'react-aria';
+import { useComboBox } from 'react-aria';
 import { useDebounce } from 'react-use';
 import {
   ListItemFactory,
   ListItemPreliminaryItem,
 } from '../../list/ListItemFactory';
 import { Input } from '../input';
-import { Button } from '../../button';
 import { Label } from '../../label';
 import { ListBox } from '../../menu/ListBox';
-import { Popover } from '../../popover/new/Popover';
+import { Popover, PopoverContent, PopoverTrigger } from '../../popover';
 import { CircularProgress } from '../../progress';
 import { ExpandMore } from '../../icon';
 import clsx from 'clsx';
@@ -54,12 +53,6 @@ export type ComboBoxProps = {
    **/
   additionalConfirmChars?: string[];
 
-  /**
-   * If set, the input text field will be reset to an empty string after an item has been selected
-   * This is useful for search fields that should be cleared after a selection has been made
-   **/
-  resetOnSelect?: boolean;
-
   items?:
     | ListItemPreliminaryItem[]
     | ((_value: string) => Promise<ListItemPreliminaryItem[]>);
@@ -79,23 +72,20 @@ export const ComboBox = React.memo(
     items,
     title,
     allowsCustomValue,
-    resetOnSelect,
     additionalConfirmChars = [],
     onSelect,
   }: ComboBoxProps) => {
-    const ref = React.useRef<HTMLDivElement>(null);
+    const inputWrapperRef = React.useRef<HTMLDivElement>(null);
+
     const [calculatedItems, setCalculatedItems] = React.useState<
       ListItemPreliminaryItem[]
     >([]);
-    const [searchText, setSearchText] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
 
-    const allItems = React.useMemo(() => {
-      if (typeof items === 'function') {
-        return calculatedItems ?? [];
-      }
-      return items ?? [];
-    }, [calculatedItems, items]);
+    const allItems = React.useMemo(
+      () => (typeof items === 'function' ? calculatedItems : items) ?? [],
+      [calculatedItems, items]
+    );
 
     const findItem = React.useCallback(
       (
@@ -131,29 +121,6 @@ export const ComboBox = React.memo(
       [allItems]
     );
 
-    React.useEffect(() => {
-      if (searchText?.length < 1) {
-        return;
-      }
-
-      if (typeof items !== 'function') {
-        return;
-      }
-
-      setIsLoading(true);
-      items(searchText)
-        .then((newItems) => {
-          setCalculatedItems(newItems);
-          if (newItems.length) {
-            state.setOpen(true);
-          }
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchText]);
-
     const state = useComboBoxState({
       children: ListItemFactory.createItem,
       items: allItems,
@@ -161,8 +128,8 @@ export const ComboBox = React.memo(
       autoFocus,
       label: title,
       onOpenChange: (isOpen) => {
-        if (!isOpen) {
-          setSearchText('');
+        if (!isOpen && !state.isFocused) {
+          state.setInputValue('');
           cancelDebounce();
         }
       },
@@ -170,31 +137,33 @@ export const ComboBox = React.memo(
         if (value) {
           onSelect?.(value);
         }
-        setSearchText('');
+        state.setInputValue('');
         cancelDebounce();
-
-        if (typeof items !== 'function') {
-          state.selectionManager.clearSelection();
-
-          setTimeout(() => {
-            if (resetOnSelect) {
-              state.setInputValue('');
-              state.setFocused(false);
-            }
-            if (state.isOpen) {
-              state.close();
-            }
-          }, 50);
-        }
       },
       allowsCustomValue,
     });
 
     const [, cancelDebounce] = useDebounce(
       () => {
-        if (state.isFocused) {
-          setSearchText(state.inputValue);
+        if (state.inputValue?.length < 1) {
+          return;
         }
+
+        if (typeof items !== 'function') {
+          return;
+        }
+
+        setIsLoading(true);
+        items(state.inputValue)
+          .then((newItems) => {
+            setCalculatedItems(newItems);
+            if (newItems.length) {
+              state.setOpen(true);
+            }
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
       },
       500,
       [state.inputValue, state.isFocused]
@@ -208,21 +177,20 @@ export const ComboBox = React.memo(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.inputValue]);
 
-    const buttonRef = React.useRef<HTMLButtonElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
+    const buttonRef = React.useRef<HTMLButtonElement>(null);
     const listBoxRef = React.useRef<HTMLUListElement>(null);
     const popoverRef = React.useRef<HTMLDivElement>(null);
 
     const {
-      buttonProps: triggerProps,
+      labelProps,
+      buttonProps: buttonProps,
       inputProps,
       listBoxProps,
-      labelProps,
     } = useComboBox(
       {
         autoFocus,
         inputRef,
-        buttonRef,
         listBoxRef,
         popoverRef,
         isDisabled: disabled,
@@ -262,13 +230,13 @@ export const ComboBox = React.memo(
 
           event.continuePropagation();
         },
+        onFocusChange: (isFocused) => {
+          if (!isFocused) {
+            state.setInputValue('');
+          }
+        },
       },
       state
-    );
-
-    const { buttonProps } = useButton(
-      { ...triggerProps, ['aria-label']: 'Vorschläge anzeigen' },
-      buttonRef
     );
 
     const inputAriaLabelProps = hideLabel
@@ -276,28 +244,47 @@ export const ComboBox = React.memo(
       : {};
 
     return (
-      <div
-        ref={ref}
-        className={clsx(styles.root, className, {
-          [styles.isFullWidth]: fullWidth,
-        })}
-        style={style}
+      <Popover
+        open={state.isOpen}
+        onOpenChange={state.setOpen}
+        placement={'bottom-end'}
       >
-        <Label {...labelProps} label={title} hide={hideLabel}>
+        <Label
+          {...labelProps}
+          className={clsx(styles.root, className, {
+            [styles.isFullWidth]: fullWidth,
+          })}
+          style={style}
+          label={title}
+          hide={hideLabel}
+        >
           <div
+            ref={inputWrapperRef}
             className={clsx(styles.inputWrapper, {
               [styles.withoutButton]: typeof items === 'function',
             })}
           >
             <Input {...inputProps} {...inputAriaLabelProps} ref={inputRef} />
             {typeof items !== 'function' && (
-              <Button
-                {...buttonProps}
-                ref={buttonRef}
+              <PopoverTrigger
                 className={styles.triggerButton}
+                onClick={() => {
+                  if (state.isOpen) {
+                    state.close();
+                    state.setFocused(false);
+                    state.setInputValue('');
+                  } else {
+                    state.open();
+                    state.setFocused(true);
+                  }
+                }}
+                disabled={disabled}
+                {...buttonProps}
+                aria-label={'Vorschläge anzeigen'}
+                ref={buttonRef}
               >
                 <ExpandMore />
-              </Button>
+              </PopoverTrigger>
             )}
             {isLoading && (
               <CircularProgress
@@ -307,23 +294,20 @@ export const ComboBox = React.memo(
                 label={'Vorschläge werden geladen'}
               />
             )}
-            <Popover
-              trigger={inputRef.current!}
-              ref={popoverRef}
-              isOpen={state.isOpen}
-              onClose={state.close}
-              placement={'bottom-end'}
-            >
-              <ListBox
-                {...listBoxProps}
-                className={styles.listbox}
-                ref={listBoxRef}
-                state={state}
-              />
-            </Popover>
           </div>
         </Label>
-      </div>
+        <PopoverContent ref={popoverRef}>
+          <ListBox
+            className={styles.listbox}
+            style={{ width: inputWrapperRef.current?.clientWidth }}
+            aria-label={title}
+            {...(listBoxProps as any)}
+            ref={listBoxRef}
+            label={title}
+            state={state}
+          />
+        </PopoverContent>
+      </Popover>
     );
   }
 );

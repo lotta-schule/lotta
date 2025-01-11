@@ -66,6 +66,10 @@ HTMLDialogElement.prototype.close = vi.fn(function mock(
   this.open = false;
 });
 
+HTMLElement.prototype.showPopover = vitest.fn();
+HTMLElement.prototype.hidePopover = vitest.fn();
+HTMLElement.prototype.togglePopover = vitest.fn();
+
 global.TextEncoder = TextEncoder;
 
 const originalError = console.error;
