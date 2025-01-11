@@ -16,7 +16,7 @@ import { NodeRenameInput } from './NodeRenameInput';
 import { NodeMenuButton } from './NodeMenuButton';
 import { isDirectoryNode } from './utils';
 import { useNodeMenuProps } from './useNodeMenuProps';
-import { ClientRectObject } from '@floating-ui/react';
+import { type ClientRectObject } from '@floating-ui/react';
 import clsx from 'clsx';
 
 import styles from './NodeListItem.module.scss';
