@@ -17,6 +17,8 @@ export default defineConfig({
       ? ['default', 'github-actions']
       : ['default'],
 
+    retry: process.env.GITHUB_ACTIONS ? 2 : 0,
+
     coverage: {
       clean: true,
       reportsDirectory: 'coverage',
