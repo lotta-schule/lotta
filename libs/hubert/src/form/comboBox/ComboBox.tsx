@@ -251,6 +251,11 @@ export const ComboBox = React.memo(
 
           event.continuePropagation();
         },
+        onFocusChange: (isFocused) => {
+          if (!isFocused) {
+            state.setInputValue('');
+          }
+        },
       },
       state
     );
