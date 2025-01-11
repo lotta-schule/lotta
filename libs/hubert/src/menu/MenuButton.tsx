@@ -4,8 +4,13 @@ import * as React from 'react';
 import { CollectionChildren } from '@react-types/shared';
 import { useMenuTriggerState } from 'react-stately';
 import { mergeProps, useButton, useMenuTrigger } from 'react-aria';
-import { Button, ButtonProps } from '../button/Button';
-import { Popover, PopoverProps, Overlay } from '../popover';
+import { ButtonProps } from '../button/Button';
+import {
+  Popover,
+  PopoverProps,
+  PopoverContent,
+  PopoverTrigger,
+} from '../popover';
 import { Menu, WithDescription } from './Menu';
 
 import styles from './MenuButton.module.scss';
@@ -23,7 +28,7 @@ export const MenuButton = ({
   buttonProps,
   onOpenChange,
   closeOnAction,
-  placement,
+  // placement,
   onAction,
   ...props
 }: MenuButtonProps) => {
@@ -49,33 +54,26 @@ export const MenuButton = ({
   const { buttonProps: ariaButtonProps } = useButton(menuTriggerProps, ref);
 
   return (
-    <>
-      <Button ref={ref} {...buttonProps} {...ariaButtonProps} />
-      <Popover
-        isOpen={state.isOpen}
-        onClose={state.close}
-        placement={placement}
-        trigger={ref.current}
-      >
-        <Overlay>
-          <Menu
-            {...mergeProps(
-              {
-                ...menuProps,
-                autoFocus: !!menuProps.autoFocus,
-              },
-              props
-            )}
-            onAction={onAction}
-            closeOnAction={closeOnAction}
-            className={styles.menu}
-            onClose={state.close}
-          >
-            {props.children as any}
-          </Menu>
-        </Overlay>
-      </Popover>
-    </>
+    <Popover>
+      <PopoverTrigger {...buttonProps} {...ariaButtonProps} />
+      <PopoverContent>
+        <Menu
+          {...mergeProps(
+            {
+              ...menuProps,
+              autoFocus: !!menuProps.autoFocus,
+            },
+            props
+          )}
+          onAction={onAction}
+          closeOnAction={closeOnAction}
+          className={styles.menu}
+          onClose={state.close}
+        >
+          {props.children as any}
+        </Menu>
+      </PopoverContent>
+    </Popover>
   );
 };
 MenuButton.displayName = 'MenuButton';

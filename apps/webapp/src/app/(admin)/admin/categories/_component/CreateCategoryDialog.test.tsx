@@ -59,7 +59,9 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
     await waitFor(() => {
       expect(screen.queryByRole('textbox')).toBeVisible();
     });
-    expect(screen.queryByRole('textbox')).toHaveFocus();
+    await waitFor(() => {
+      expect(screen.queryByRole('textbox')).toHaveFocus();
+    });
   });
 
   it('should start with a disabled submit button, but should enable the button when text has been entered', async () => {

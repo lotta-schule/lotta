@@ -15,7 +15,7 @@ const defaultItems = [
 
 describe('Combobox', () => {
   it('should render an input and a button', () => {
-    const screen = render(<ComboBox title={'Chose something'} />);
+    const screen = render(<ComboBox title={'Choose something'} />);
     expect(screen.getByRole('combobox')).toBeVisible();
     expect(screen.getByRole('button')).toBeVisible();
   });
@@ -25,7 +25,7 @@ describe('Combobox', () => {
       const user = userEvent.setup();
 
       const screen = render(
-        <ComboBox title={'Chose something'} items={defaultItems} />
+        <ComboBox title={'Choose something'} items={defaultItems} />
       );
 
       expect(screen.getByRole('combobox')).toBeVisible();
@@ -40,7 +40,7 @@ describe('Combobox', () => {
       const user = userEvent.setup();
 
       const screen = render(
-        <ComboBox title={'Chose something'} items={defaultItems} />
+        <ComboBox title={'Choose something'} items={defaultItems} />
       );
 
       await user.type(screen.getByRole('combobox'), 'Do');
@@ -61,7 +61,7 @@ describe('Combobox', () => {
       const onItems = vi.fn(async () => [{ key: 'A', label: 'A' }]);
 
       const screen = render(
-        <ComboBox title={'Chose something'} items={onItems} />
+        <ComboBox title={'Choose something'} items={onItems} />
       );
 
       expect(screen.queryByRole('button')).toBeNull();
@@ -73,7 +73,7 @@ describe('Combobox', () => {
       const user = userEvent.setup();
 
       const screen = render(
-        <ComboBox title={'Chose something'} items={onItems} />
+        <ComboBox title={'Choose something'} items={onItems} />
       );
 
       await user.type(screen.getByRole('combobox'), 'D');
@@ -97,7 +97,7 @@ describe('Combobox', () => {
       const screen = render(
         <ComboBox
           resetOnSelect
-          title={'Chose something'}
+          title={'Choose something'}
           items={defaultItems}
           allowsCustomValue
         />
@@ -117,7 +117,7 @@ describe('Combobox', () => {
 
       const screen = render(
         <ComboBox
-          title={'Chose something'}
+          title={'Choose something'}
           allowsCustomValue
           onSelect={onSelect}
         />
@@ -132,7 +132,7 @@ describe('Combobox', () => {
 
       const screen = render(
         <ComboBox
-          title={'Chose something'}
+          title={'Choose something'}
           items={defaultItems}
           onSelect={onSelect}
         />
@@ -153,7 +153,7 @@ describe('Combobox', () => {
 
       const screen = render(
         <ComboBox
-          title={'Chose something'}
+          title={'Choose something'}
           items={defaultItems}
           onSelect={onSelect}
         />
@@ -171,7 +171,7 @@ describe('Combobox', () => {
 
       const screen = render(
         <ComboBox
-          title={'Chose something'}
+          title={'Choose something'}
           items={defaultItems}
           onSelect={onSelect}
           additionalConfirmChars={['#']}
@@ -190,7 +190,7 @@ describe('Combobox', () => {
 
       const screen = render(
         <ComboBox
-          title={'Chose something'}
+          title={'Choose something'}
           items={defaultItems}
           onSelect={onSelect}
         />
@@ -208,7 +208,7 @@ describe('Combobox', () => {
         const screen = render(
           <ComboBox
             allowsCustomValue
-            title={'Chose something'}
+            title={'Choose something'}
             items={defaultItems}
             onSelect={onSelect}
           />
@@ -229,7 +229,7 @@ describe('Combobox', () => {
 
         const screen = render(
           <ComboBox
-            title={'Chose something'}
+            title={'Choose something'}
             items={defaultItems}
             onSelect={onSelect}
           />
@@ -254,14 +254,14 @@ describe('Combobox', () => {
   });
 
   it('should render as disabled when disabled is set', () => {
-    const screen = render(<ComboBox title={'Chose something'} disabled />);
+    const screen = render(<ComboBox title={'Choose something'} disabled />);
     expect(screen.getByRole('combobox')).toBeDisabled();
     expect(screen.getByRole('button')).toBeDisabled();
   });
 
   it('should correctly set placeholder', () => {
     const screen = render(
-      <ComboBox title={'Chose something'} placeholder={'Nothing chosen'} />
+      <ComboBox title={'Choose something'} placeholder={'Nothing chosen'} />
     );
     expect(screen.getByRole('combobox')).toHaveAttribute(
       'placeholder',
@@ -270,16 +270,16 @@ describe('Combobox', () => {
   });
 
   it('should correctly hide label', () => {
-    const screen = render(<ComboBox title={'Chose something'} hideLabel />);
+    const screen = render(<ComboBox title={'Choose something'} hideLabel />);
     expect(screen.queryByRole('label')).toBeNull();
     expect(screen.getByRole('combobox')).toHaveAttribute(
       'placeholder',
-      'Chose something'
+      'Choose something'
     );
   });
 
   it('should add fullWidth class', () => {
-    const screen = render(<ComboBox fullWidth title={'Chose something'} />);
+    const screen = render(<ComboBox fullWidth title={'Choose something'} />);
     expect(screen.baseElement.querySelector(`.${styles.root}`)).toHaveClass(
       styles.isFullWidth
     );

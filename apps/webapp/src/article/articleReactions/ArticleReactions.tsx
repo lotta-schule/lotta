@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { faHeart } from '@fortawesome/free-regular-svg-icons';
 import {
-  Button,
   LinearProgress,
   List,
   ListItem,
-  Overlay,
   Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from '@lotta-schule/hubert';
 import { useMutation, useSuspenseQuery } from '@apollo/client';
 import { ArticleModel, ArticleReactionType } from 'model';
@@ -32,8 +32,6 @@ export const ArticleReactions = React.memo(
   ({ article }: ArticleReactionsProps) => {
     const currentUser = useCurrentUser();
     const ref = React.useRef<HTMLDivElement>(null);
-    const buttonRef = React.useRef<HTMLButtonElement>(null);
-    const typeButtonRef = React.useRef<HTMLButtonElement | null>(null);
     const [isReactionSelectorOpen, setIsReactionSelectorOpen] =
       React.useState(false);
     const [selectedReactionType, setSelectedReactionType] =
@@ -70,30 +68,15 @@ export const ArticleReactions = React.memo(
       [selectedReactionType, reactionCounts]
     );
 
-    const popperModifiers = React.useMemo(() => {
-      const boundary = ref.current?.parentElement;
-
-      if (!boundary) {
-        return undefined;
-      }
-
-      return [
-        {
-          name: 'preventOverflow',
-          options: {
-            boundary,
-          },
-        },
-      ];
-    }, []);
-
     return (
       <div data-testid="ArticleReactions" className={styles.root} ref={ref}>
         {currentUser && (
-          <>
+          <Popover
+            open={isReactionSelectorOpen}
+            onOpenChange={setIsReactionSelectorOpen}
+            placement={'top'}
+          >
             <DynamicReactionSelector
-              trigger={buttonRef.current!}
-              isOpen={isReactionSelectorOpen}
               onSelect={(reaction) => {
                 if (reaction) {
                   reactToArticle({
@@ -106,35 +89,30 @@ export const ArticleReactions = React.memo(
                 setIsReactionSelectorOpen(false);
               }}
             />
-            <Button
-              ref={buttonRef}
+            <PopoverTrigger
               title={`Auf "${article.title}" reagieren`}
               disabled={!currentUser}
               icon={<Icon icon={faHeart} />}
               onClick={() => setIsReactionSelectorOpen(true)}
             />
-          </>
+          </Popover>
         )}
-        <ReactionCountButtons
-          reactions={reactionCounts}
-          onSelect={
-            currentUser
-              ? (type, el) => {
-                  typeButtonRef.current = el;
-                  setSelectedReactionType(type);
-                }
-              : undefined
-          }
-        />
-        {currentUser && (
-          <Popover
-            isOpen={!!selectedReactionType}
-            trigger={typeButtonRef.current!}
-            placement={'top-start'}
-            modifiers={popperModifiers}
-            onClose={() => setSelectedReactionType(null)}
-          >
-            <Overlay>
+        <Popover
+          open={!!selectedReactionType}
+          placement={'top-start'}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSelectedReactionType(null);
+            }
+          }}
+        >
+          <ReactionCountButtons
+            asPopoverTrigger
+            reactions={reactionCounts}
+            onSelect={currentUser ? setSelectedReactionType : undefined}
+          />
+          {currentUser && (
+            <PopoverContent>
               <React.Suspense
                 fallback={
                   <List>
@@ -153,7 +131,10 @@ export const ArticleReactions = React.memo(
                       </ListItem>
                     )}
                     <ListItem>
-                      <LinearProgress isIndeterminate />
+                      <LinearProgress
+                        isIndeterminate
+                        aria-label="Reaaktionen werden geladen"
+                      />
                     </ListItem>
                   </List>
                 }
@@ -181,9 +162,9 @@ export const ArticleReactions = React.memo(
                   />
                 )}
               </React.Suspense>
-            </Overlay>
-          </Popover>
-        )}
+            </PopoverContent>
+          )}
+        </Popover>
       </div>
     );
   }

@@ -49,7 +49,6 @@ export const LoginDialog = React.memo<LoginDialogProps>(
           const { data: userData } = await apolloClient.query<{
             currentUser: UserModel;
           }>({ query: GetCurrentUserQuery });
-          console.log(userData?.currentUser?.hasChangedDefaultPassword);
           if (userData?.currentUser?.hasChangedDefaultPassword === false) {
             setIsShowUpdatePasswordDialog(true);
           } else {

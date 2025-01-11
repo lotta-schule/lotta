@@ -71,7 +71,6 @@ export const Menu = ({
           item={item as any}
           closeOnSelect={closeOnAction}
           state={state}
-          onAction={onAction}
           onClose={onClose}
         />
       ))}

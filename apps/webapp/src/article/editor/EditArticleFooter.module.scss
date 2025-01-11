@@ -17,10 +17,12 @@ div.root {
     flex-direction: column;
     justify-content: flex-start;
     flex-grow: 1;
-    & > :nth-child(2) {
+
+    &> :nth-child(2) {
       flex-grow: 1;
       padding: var(--lotta-spacing);
     }
+
     @media screen and (max-width: $max-md) {
       width: 100%;
       margin-top: calc(2 * var(--lotta-spacing));
@@ -65,9 +67,5 @@ div.root {
     flex-direction: row;
     justify-content: space-between;
     margin-top: var(--lotta-spacing);
-  }
-
-  .popper {
-    z-index: 1;
   }
 }
