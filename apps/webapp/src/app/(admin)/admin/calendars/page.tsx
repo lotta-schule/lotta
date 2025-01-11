@@ -6,10 +6,7 @@ import { CircularProgress } from '@lotta-schule/hubert';
 import { t } from 'i18next';
 
 const DynamicCalendarView = dynamic(
-  () => import('./_component/CalendarWrapper'),
-  {
-    ssr: false,
-  }
+  () => import('./_component/CalendarWrapper')
 );
 
 async function CalendarPage() {

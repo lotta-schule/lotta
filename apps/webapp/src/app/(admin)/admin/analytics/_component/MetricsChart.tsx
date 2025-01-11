@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { useSuspenseQuery } from '@apollo/client';
 import { Box } from '@lotta-schule/hubert';
