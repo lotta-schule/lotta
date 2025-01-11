@@ -53,12 +53,6 @@ export type ComboBoxProps = {
    **/
   additionalConfirmChars?: string[];
 
-  /**
-   * If set, the input text field will be reset to an empty string after an item has been selected
-   * This is useful for search fields that should be cleared after a selection has been made
-   **/
-  resetOnSelect?: boolean;
-
   items?:
     | ListItemPreliminaryItem[]
     | ((_value: string) => Promise<ListItemPreliminaryItem[]>);
@@ -78,7 +72,6 @@ export const ComboBox = React.memo(
     items,
     title,
     allowsCustomValue,
-    resetOnSelect,
     additionalConfirmChars = [],
     onSelect,
   }: ComboBoxProps) => {
@@ -146,20 +139,6 @@ export const ComboBox = React.memo(
         }
         state.setInputValue('');
         cancelDebounce();
-
-        if (typeof items !== 'function') {
-          state.selectionManager.clearSelection();
-
-          setTimeout(() => {
-            if (resetOnSelect) {
-              state.setInputValue('');
-              state.setFocused(false);
-            }
-            if (state.isOpen) {
-              state.close();
-            }
-          }, 50);
-        }
       },
       allowsCustomValue,
     });

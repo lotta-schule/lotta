@@ -96,7 +96,6 @@ describe('Combobox', () => {
 
       const screen = render(
         <ComboBox
-          resetOnSelect
           title={'Choose something'}
           items={defaultItems}
           allowsCustomValue

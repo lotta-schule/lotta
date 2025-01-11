@@ -153,7 +153,6 @@ export const GroupSelect = React.memo(
         <div className={clsx(styles.root, className)} data-testid="GroupSelect">
           <ComboBox
             fullWidth
-            resetOnSelect
             disabled={disabled || !groups.length}
             title={label}
             items={groups.map((group) => ({
