@@ -10,6 +10,11 @@ defmodule Lotta.Storage.RemoteStorageEntity do
 
   @timestamps_opts [type: :utc_datetime]
 
+  @type t :: %__MODULE__{
+          store_name: String.t(),
+          path: String.t()
+        }
+
   schema "remote_storage_entities" do
     field(:store_name, :string)
     field(:path, :string)

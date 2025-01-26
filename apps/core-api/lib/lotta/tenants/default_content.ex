@@ -10,7 +10,7 @@ defmodule Lotta.Tenants.DefaultContent do
   alias Ecto.Multi
   alias Lotta.{Accounts, Email, Mailer, Repo, Storage}
   alias Lotta.Tenants.Category
-  alias Lotta.Storage.{Directory, RemoteStorage}
+  alias Lotta.Storage.{Directory, FileData, RemoteStorage}
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Content.{Article, ContentModule}
 
@@ -106,13 +106,11 @@ defmodule Lotta.Tenants.DefaultContent do
      |> Enum.map(fn {{filename, type}, _index} ->
        fullpath = Application.app_dir(:lotta, "priv/default_content/files/#{filename}")
 
+       {:ok, file_data} = FileData.from_path(fullpath, content_type: type)
+
        {:ok, file} =
          Storage.create_stored_file_from_upload(
-           %Plug.Upload{
-             path: fullpath,
-             content_type: type,
-             filename: filename
-           },
+           file_data,
            dir,
            user
          )

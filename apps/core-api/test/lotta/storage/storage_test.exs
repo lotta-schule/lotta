@@ -9,7 +9,7 @@ defmodule Lotta.StorageTest do
   alias ExAws.S3
   alias Lotta.Accounts.User
   alias Lotta.{Fixtures, Repo, Storage, Tenants}
-  alias Lotta.Storage.{Directory, File, RemoteStorage, RemoteStorageEntity}
+  alias Lotta.Storage.{Directory, File, FileData, RemoteStorage, RemoteStorageEntity}
 
   @prefix "tenant_test"
 
@@ -49,15 +49,12 @@ defmodule Lotta.StorageTest do
       user_directory: directory,
       user: user
     } do
-      upload_obj = %Plug.Upload{
-        filename: "image_file.png",
-        content_type: "image/png",
-        path: "test/support/fixtures/image_file.png"
-      }
+      {:ok, file_data} =
+        FileData.from_path("test/support/fixtures/image_file.png", content_type: "image/png")
 
       res =
         Storage.create_stored_file_from_upload(
-          upload_obj,
+          file_data,
           directory,
           user
         )
@@ -150,13 +147,11 @@ defmodule Lotta.StorageTest do
       tmp_path = Path.join(System.tmp_dir!(), "test.txt")
       Elixir.File.write!(tmp_path, "test")
 
+      {:ok, file_data} = FileData.from_path(tmp_path, content_type: "text/plain")
+
       %RemoteStorageEntity{id: id} =
         RemoteStorage.create(
-          %Plug.Upload{
-            filename: "test.txt",
-            content_type: "text/plain",
-            path: tmp_path
-          },
+          file_data,
           "unused/minio"
         )
         |> elem(1)

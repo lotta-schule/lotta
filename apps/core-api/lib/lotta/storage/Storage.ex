@@ -7,13 +7,22 @@ defmodule Lotta.Storage do
   import Ecto.Query
 
   alias Lotta.Tenants
-  alias Plug.Upload
   alias Ecto.Multi
   alias Ecto.Changeset
   alias Lotta.Repo
-  alias Lotta.Accounts.User
+  alias Lotta.Accounts.{FileManagment, User}
   alias Lotta.Queue.MediaConversionRequestPublisher
-  alias Lotta.Storage.{Directory, ImageProcessingUrl, RemoteStorage, RemoteStorageEntity}
+
+  alias Lotta.Storage.{
+    Directory,
+    File,
+    FileConversion,
+    FileData,
+    ImageProcessingUrl,
+    ConversionManager,
+    RemoteStorage,
+    RemoteStorageEntity
+  }
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -25,40 +34,34 @@ defmodule Lotta.Storage do
 
   @doc """
   Upload a file to a given directory for a given user.
-  Creates the file object in the database and stores the data in the
+  Creates the `Lotta.Storage.File` object in the database and stores the data in the
   default RemoteStorage.
   """
   @doc since: "2.5.0"
-  @spec create_stored_file_from_upload(Upload.t(), Directory.t(), User.t()) ::
-          {:ok, Lotta.Storage.File.t()} | {:error, term()}
+  @spec create_stored_file_from_upload(FileData.t(), Directory.t(), User.t()) ::
+          {:ok, File.t()} | {:error, term()}
   def create_stored_file_from_upload(
-        %Upload{} = upload,
+        %FileData{
+          metadata: metadata
+        } = file_data,
         %Directory{} = directory,
         %User{} = user
       ) do
-    %{
-      filename: filename,
-      content_type: content_type,
-      path: localfilepath
-    } = upload
-
-    %{size: filesize} = File.stat!(localfilepath)
-
     file =
       directory
       |> Repo.build_prefixed_assoc(:files, %{
         user_id: user.id,
-        filename: filename,
-        filesize: filesize,
-        file_type: filetype_from(content_type),
-        mime_type: content_type
+        filename: Keyword.get(metadata, :filename),
+        filesize: Keyword.get(metadata, :size),
+        file_type: filetype_from(Keyword.get(metadata, :content_type)),
+        mime_type: Keyword.get(metadata, :content_type)
       })
 
     Multi.new()
     |> Multi.insert(:file, file)
     |> Multi.run(:entity_data, fn _repo, %{file: file} ->
       prefix = Ecto.get_meta(file, :prefix)
-      RemoteStorage.create(upload, "#{prefix}/#{file.id}")
+      RemoteStorage.create(file_data, "#{prefix}/#{file.id}/original")
     end)
     |> Multi.insert(:remote_storage_entity, fn %{entity_data: entity_data} ->
       Repo.build_prefixed_assoc(file, :remote_storage_entity, entity_data)
@@ -72,8 +75,64 @@ defmodule Lotta.Storage do
     |> Repo.transaction()
     |> case do
       {:ok, %{complete_file: file}} ->
-        MediaConversionRequestPublisher.send_conversion_request(file)
-        {:ok, file}
+        ConversionManager.convert_immediate_formats(file_data)
+        |> Enum.map(fn
+          {:ok, {variant_name, file_data}} ->
+            create_file_conversion(file, to_string(variant_name), file_data)
+
+          {:error, reason} ->
+            {:error, reason}
+        end)
+
+        {:ok, Repo.reload(file)}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  @doc """
+  Upload a variant of a file (e.g. a thumbnail) that is locally available.
+  Creates the  `Lotta.Storage.FileConversion` object (assigned to the file)
+  in the database and stores the data in the default RemoteStorage.
+  """
+  @doc since: "5.1.0"
+  @spec create_file_conversion(File.t(), variant_name :: String.t(), data :: FileData.t()) ::
+          {:ok, FileConversion.t()} | {:error, term()}
+  def create_file_conversion(
+        %File{} = file,
+        variant_name,
+        %FileData{
+          metadata: metadata
+        } = file_data
+      ) do
+    prefix = Ecto.get_meta(file, :prefix)
+
+    file_conversion =
+      file
+      |> Repo.preload(:file_conversions)
+      |> Repo.build_prefixed_assoc(:file_conversions, %{
+        format: variant_name,
+        filesize: Keyword.get(metadata, :size),
+        mime_type: Keyword.get(metadata, :content_type),
+        file_type: filetype_from(Keyword.get(metadata, :content_type))
+      })
+
+    {:ok, entity_data} = RemoteStorage.create(file_data, "#{prefix}/#{file.id}/#{variant_name}")
+
+    Multi.new()
+    |> Multi.insert(
+      :remote_storage_entity,
+      entity_data,
+      prefix: prefix
+    )
+    |> Multi.insert(:file_conversion, fn %{remote_storage_entity: remote_storage_entity} ->
+      %{file_conversion | remote_storage_entity_id: remote_storage_entity.id}
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, file_conversion} ->
+        {:ok, file_conversion}
 
       {:error, reason} ->
         {:error, reason}
@@ -86,8 +145,8 @@ defmodule Lotta.Storage do
   The old RemoteStorage entity will be kept, as the file itself is not changed.
   """
   @doc since: "2.5.0"
-  @spec copy_to_remote_storage(Api.Storage.File.t() | Api.Storage.FileConversion.t(), String.t()) ::
-          {:ok, Api.Storage.File.t()} | {:error, Changeset.t()} | {:error, atom()}
+  @spec copy_to_remote_storage(File.t() | FileConversion.t(), String.t()) ::
+          {:ok, File.t()} | {:error, Changeset.t()} | {:error, atom()}
   def copy_to_remote_storage(file, store_name) when is_binary(store_name) do
     file_or_file_conversion = Repo.preload(file, :remote_storage_entity)
 
@@ -101,20 +160,11 @@ defmodule Lotta.Storage do
 
     with {:ok, :saved_to_file} <-
            :httpc.request(:get, {file_url, []}, [], stream: String.to_charlist(filepath)),
+         {:ok, file_data} <-
+           FileData.from_path(filepath, filename: file.filename, content_type: file.mime_type),
          {:ok, entity} <-
            RemoteStorage.create(
-             %Upload{
-               filename:
-                 case file_or_file_conversion do
-                   %{filename: filename} ->
-                     filename
-
-                   _ ->
-                     ""
-                 end,
-               content_type: file.mime_type,
-               path: filepath
-             },
+             file_data,
              "#{Ecto.get_meta(file, :prefix)}/" <>
                case file_or_file_conversion do
                  %{file_id: fileid, id: id} ->
@@ -124,7 +174,7 @@ defmodule Lotta.Storage do
                    id
                end
            ) do
-      File.rm(filepath)
+      Elixir.File.rm(filepath)
 
       file
       |> Repo.preload(:remote_storage_entity)
@@ -156,12 +206,12 @@ defmodule Lotta.Storage do
       as: :remote_storage_entity,
       where:
         not exists(
-          from(f in Lotta.Storage.File,
+          from(f in File,
             where: parent_as(:remote_storage_entity).id == f.remote_storage_entity_id
           )
         ) and
           not exists(
-            from(fc in Lotta.Storage.FileConversion,
+            from(fc in FileConversion,
               where: parent_as(:remote_storage_entity).id == fc.remote_storage_entity_id
             )
           ),
@@ -292,7 +342,7 @@ defmodule Lotta.Storage do
   @doc since: "2.5.0"
   @spec list_files(Directory.t()) :: [Directory.t()]
   def list_files(%Directory{} = parent_directory) do
-    from(f in Lotta.Storage.File,
+    from(f in File,
       where: f.parent_directory_id == ^parent_directory.id,
       order_by: [:filename]
     )
@@ -313,8 +363,8 @@ defmodule Lotta.Storage do
 
   """
   @doc since: "2.5.0"
-  @spec get_file(Lotta.Storage.File.id(), opts :: keyword() | nil) :: Lotta.Storage.File.t() | nil
-  def get_file(id, opts \\ []), do: Repo.get(Lotta.Storage.File, id, opts)
+  @spec get_file(File.id(), opts :: keyword() | nil) :: File.t() | nil
+  def get_file(id, opts \\ []), do: Repo.get(File, id, opts)
 
   @doc """
   Gets a single file_conversion.
@@ -330,9 +380,9 @@ defmodule Lotta.Storage do
 
   """
   @doc since: "2.5.0"
-  @spec get_file_conversion(Lotta.Storage.FileConversion.id()) ::
-          Lotta.Storage.FileConversion.t() | nil
-  def get_file_conversion(id), do: Repo.get(Lotta.Storage.FileConversion, id)
+  @spec get_file_conversion(FileConversion.id()) ::
+          FileConversion.t() | nil
+  def get_file_conversion(id), do: Repo.get(FileConversion, id)
 
   @doc """
   Updates a file.
@@ -344,9 +394,9 @@ defmodule Lotta.Storage do
 
   """
   @doc since: "2.5.0"
-  def update_file(%Lotta.Storage.File{} = file, attrs) do
+  def update_file(%File{} = file, attrs) do
     file
-    |> Lotta.Storage.File.changeset(attrs)
+    |> File.changeset(attrs)
     |> Repo.update()
   end
 
@@ -366,9 +416,9 @@ defmodule Lotta.Storage do
 
   """
   @doc since: "2.5.0"
-  @spec delete_file(Lotta.Storage.File.t()) ::
-          {:ok, Lotta.Storage.File.t()} | {:error, Ecto.Changeset.t()}
-  def delete_file(%Lotta.Storage.File{} = file) do
+  @spec delete_file(File.t()) ::
+          {:ok, File.t()} | {:error, Ecto.Changeset.t()}
+  def delete_file(%File{} = file) do
     file =
       file
       |> Repo.preload([:file_conversions, :remote_storage_entity])
@@ -413,14 +463,14 @@ defmodule Lotta.Storage do
   """
   @doc since: "5.0.0"
   @spec search_files(user :: User.t(), searchterm :: String.t()) ::
-          list(Lotta.Storage.File.t())
+          list(File.t())
   def search_files(user, searchterm) do
     matching_searchtext =
       searchterm
       |> String.replace(~r/_|%/, &"\\#{&1}")
       |> then(&"%#{&1}%")
 
-    from(f in Lotta.Storage.File,
+    from(f in File,
       where:
         (f.user_id == ^user.id or is_nil(f.user_id)) and ilike(f.filename, ^matching_searchtext),
       order_by: [:filename]
@@ -468,10 +518,10 @@ defmodule Lotta.Storage do
   """
   @doc since: "2.5.0"
   @spec get_http_url(
-          Lotta.Storage.File.t() | Lotta.Storage.FileConversion.t() | nil,
+          File.t() | FileConversion.t() | nil,
           RemoteStorage.get_http_url_options()
         ) :: String.t() | nil
-  @spec get_http_url(Lotta.Storage.File.t() | Lotta.Storage.FileConversion.t() | nil) ::
+  @spec get_http_url(File.t() | FileConversion.t() | nil) ::
           String.t() | nil
   def get_http_url(file, opts \\ [])
 
@@ -496,9 +546,9 @@ defmodule Lotta.Storage do
   / archive / <current_year> / <user_id> / <filename>.ext
   """
   @doc since: "2.5.0"
-  @spec archive_user_files_by_ids([pos_integer()], User.t()) :: [Lotta.Storage.File.t()]
+  @spec archive_user_files_by_ids([pos_integer()], User.t()) :: [File.t()]
   def archive_user_files_by_ids(file_ids, %User{id: user_id}) do
-    from(f in Lotta.Storage.File,
+    from(f in File,
       where: f.user_id == ^user_id and f.id in ^file_ids
     )
     |> Repo.all()
@@ -528,6 +578,42 @@ defmodule Lotta.Storage do
   @doc since: "5.0.0"
   @spec get_path(Directory.t() | File.t(), User.t()) :: [Directory.t()]
   def get_path(file_or_directory, user), do: get_path(file_or_directory, user, [])
+
+  @doc """
+  Checks if a directory has a minimum of `required_space` bytes available.
+  Returns `:ok` if the directory has enough space, otherwise `{:error, :not_enough_space}`.
+  """
+  @doc since: "5.1.0"
+  @spec check_directory_space(Directory.t(), required_space :: pos_integer()) ::
+          :ok | {:error, :not_enough_space}
+  def check_directory_space(%Directory{user_id: nil}, _), do: :ok
+
+  def check_directory_space(%Directory{user_id: user_id} = directory, required_space) do
+    tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(directory, :prefix))
+    user = Repo.get(User, user_id)
+
+    if is_nil(tenant) do
+      raise "Tenant not found for directory #{directory.id}"
+    end
+
+    size_limit =
+      tenant.configuration
+      |> Map.get(:user_max_storage_config)
+      |> then(&String.to_integer(&1 || "-1"))
+
+    free_space = if size_limit == -1, do: -1, else: size_limit
+
+    case size_limit - FileManagment.total_user_files_size(user) do
+      _ when free_space == -1 ->
+        :ok
+
+      free_space when free_space >= required_space ->
+        :ok
+
+      _ ->
+        {:error, :not_enough_space}
+    end
+  end
 
   defp get_path(%{parent_directory_id: nil}, _user, current_path), do: current_path
 

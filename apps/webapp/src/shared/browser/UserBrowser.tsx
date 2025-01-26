@@ -112,17 +112,12 @@ export const UserBrowser = React.memo(
       [baseUrl]
     );
 
-    const getPreviewUrl = React.useCallback(
-      (node: BrowserNode) => {
-        if (isFileNode(node)) {
-          return File.getPreviewImageLocation(baseUrl, node.meta, {
-            width: (devicePixelRatio || 1) * 200,
-            resize: 'contain',
-          });
-        }
-      },
-      [baseUrl]
-    );
+    const getPreviewUrl = React.useCallback((node: BrowserNode) => {
+      if (isFileNode(node)) {
+        const formatName = devicePixelRatio < 2 ? 'PREVIEW_200' : 'PREVIEW_400';
+        return node.meta.urls.find((u) => u.format === formatName)?.url ?? null;
+      }
+    }, []);
 
     const getMetadata = React.useCallback((node: BrowserNode) => {
       const base = {

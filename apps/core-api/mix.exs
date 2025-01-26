@@ -109,6 +109,8 @@ defmodule Lotta.MixProject do
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},
       {:libcluster, "~> 3.2"},
+      {:file_type, "~> 0.1"},
+      {:image, "~> 0.55"},
       # Test
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.14", only: :test},

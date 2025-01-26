@@ -7,11 +7,11 @@ defmodule LottaWeb.FileResolver do
   import Lotta.Accounts.Permissions
   import LottaWeb.ErrorHelpers
 
-  alias Ecto.Adapter.Storage
-  alias Lotta.Tenants.Category
-  alias Lotta.Accounts.{FileManagment, User}
-  alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Storage
+  alias Lotta.Tenants.Category
+  alias Lotta.Accounts.User
+  alias Lotta.Content.{Article, ContentModule}
+  alias Lotta.Storage.{ConversionManager, Directory, FileData}
   alias Lotta.Repo
   alias UUID
 
@@ -75,13 +75,38 @@ defmodule LottaWeb.FileResolver do
     {:ok, Storage.get_path(file_or_directory, user)}
   end
 
-  def resolve_remote_location(%Storage.File{} = file, _args, _info)
-      when is_struct(file, Storage.File) or is_struct(file, Storage.FileConversion) do
-    {:ok, Storage.get_http_url(file)}
+  def resolve_urls(file, %{formats: formats}, _info) do
+    conversions =
+      file
+      |> Repo.preload(:file_conversions)
+      |> Map.get(:file_conversions, [])
+
+    formats
+    |> Enum.map(fn format ->
+      %{
+        format: format,
+        url:
+          if conversion = Enum.find(conversions, &(&1.format == format)) do
+            Storage.get_http_url(conversion)
+          end
+      }
+    end)
+    |> then(&{:ok, &1})
   end
 
-  def resolve_remote_location(%{id: id}, _args, _info) do
-    {:ok, Storage.get_http_url(Storage.get_file(id))}
+  def resolve_remote_location(file, _args, _info)
+      when is_struct(file, Storage.File) or is_struct(file, Storage.FileConversion) do
+    case Storage.get_http_url(file) do
+      nil ->
+        {:error, "Datei nicht gefunden."}
+
+      url ->
+        {:ok, url}
+    end
+  end
+
+  def resolve_remote_location(file, _args, _info) do
+    {:error, "Ungültige Datei."}
   end
 
   def file(%{id: id}, %{context: %{current_user: current_user}}) do
@@ -160,33 +185,25 @@ defmodule LottaWeb.FileResolver do
   end
 
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
-        context: %{current_user: current_user, tenant: tenant}
+        context: %{current_user: current_user}
       }) do
-    directory = Storage.get_directory(parent_directory_id)
-    %{size: filesize} = File.stat!(file.path)
-
-    size_limit =
-      tenant.configuration
-      |> Map.get(:user_max_storage_config)
-      |> then(&String.to_integer(&1 || "-1"))
-
-    cond do
-      size_limit > -1 &&
-          FileManagment.total_user_files_size(current_user) + filesize >= size_limit ->
-        {:error, "Kein freier Speicher mehr."}
-
-      is_nil(directory) ->
+    with {:ok, %{size: filesize}} <- Elixir.File.stat(file.path),
+         %Directory{} = directory <- Storage.get_directory(parent_directory_id),
+         :ok <- Storage.check_directory_space(directory, filesize),
+         true <- can_write?(current_user, directory),
+         {:ok, file_data} <- FileData.from_path(file.path, filename: file.filename),
+         {:ok, stored_file} <-
+           Storage.create_stored_file_from_upload(file_data, directory, current_user) do
+      {:ok, stored_file}
+    else
+      nil ->
         {:error, "Der Ordner mit der id #{parent_directory_id} wurde nicht gefunden."}
 
-      not can_write?(current_user, directory) ->
-        {:error, "Du darfst diesen Ordner hier nicht erstellen."}
+      false ->
+        {:error, "Du hast nicht die Rechte, diesen Ordner zu beschreiben."}
 
-      true ->
-        Storage.create_stored_file_from_upload(
-          file,
-          directory,
-          current_user
-        )
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 

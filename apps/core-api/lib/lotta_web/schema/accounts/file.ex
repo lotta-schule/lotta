@@ -61,9 +61,11 @@ defmodule LottaWeb.Schema.Accounts.File do
       resolve: &LottaWeb.FileResolver.resolve_path/3
     )
 
-    field(:usage, non_null(list_of(non_null(:file_usage_location))),
-      resolve: &LottaWeb.FileResolver.resolve_file_usage/3
-    )
+    field(:urls, non_null(list_of(non_null(:url)))) do
+      arg(:formats, non_null(list_of(non_null(:conversion_format))))
+
+      resolve(&LottaWeb.FileResolver.resolve_urls/3)
+    end
   end
 
   object :file_conversion do
@@ -76,6 +78,26 @@ defmodule LottaWeb.Schema.Accounts.File do
     field(:remote_location, non_null(:string),
       resolve: &LottaWeb.FileResolver.resolve_remote_location/3
     )
+  end
+
+  object :url do
+    field(:format, non_null(:conversion_format))
+    field(:url, :string)
+  end
+
+  enum :conversion_format do
+    value(:original, as: "original")
+    value(:preview_200, as: "preview_200")
+    value(:preview_400, as: "preview_400")
+    value(:avatar_50, as: "avatar_50")
+    value(:avatar_100, as: "avatar_100")
+    value(:avatar_250, as: "avatar_250")
+    value(:avatar_500, as: "avatar_500")
+    value(:avatar_1000, as: "avatar_1000")
+    value(:webm_720p, as: "webm_720p")
+    value(:webm_1080p, as: "webm_1080p")
+    value(:h264_720p, as: "h264_720p")
+    value(:h264_1080p, as: "h264_1080p")
   end
 
   enum :file_type do
