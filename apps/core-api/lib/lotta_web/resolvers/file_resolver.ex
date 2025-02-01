@@ -7,11 +7,13 @@ defmodule LottaWeb.FileResolver do
   import Lotta.Accounts.Permissions
   import LottaWeb.ErrorHelpers
 
+  alias LottaWeb.Urls
   alias Lotta.Storage
   alias Lotta.Tenants.Category
   alias Lotta.Accounts.User
   alias Lotta.Content.{Article, ContentModule}
-  alias Lotta.Storage.{ConversionManager, Directory, FileData}
+  alias Lotta.Storage.{Directory, FileData}
+  alias Lotta.Storage.Conversion.AvailableFormats
   alias Lotta.Repo
   alias UUID
 
@@ -75,23 +77,36 @@ defmodule LottaWeb.FileResolver do
     {:ok, Storage.get_path(file_or_directory, user)}
   end
 
-  def resolve_urls(file, %{formats: formats}, _info) do
+  def resolve_available_formats(file, _args, _info) do
     conversions =
       file
       |> Repo.preload(:file_conversions)
       |> Map.get(:file_conversions, [])
+      |> Enum.map(fn file_conversion ->
+        %{
+          name: file_conversion.format,
+          type: file_conversion.file_type,
+          url: Urls.get_file_url(file_conversion),
+          status: "ready"
+        }
+      end)
 
-    formats
-    |> Enum.map(fn format ->
-      %{
-        format: format,
-        url:
-          if conversion = Enum.find(conversions, &(&1.format == format)) do
-            Storage.get_http_url(conversion)
-          end
-      }
-    end)
-    |> then(&{:ok, &1})
+    available_formats =
+      file
+      |> AvailableFormats.available_formats_with_config()
+      |> IO.inspect(label: "available_formats")
+      |> Enum.filter(fn {format, _} -> not Enum.any?(conversions, & &1.name == format) end)
+      |> Enum.map(fn {format, {_processor, args}} ->
+      format = to_string(format)
+        %{
+          name: format,
+          type: to_string(Keyword.get(args, :type, :binary)),
+          url: Urls.get_file_url(file, format),
+          status: "available"
+        }
+      end)
+
+    {:ok, conversions ++ available_formats}
   end
 
   def resolve_remote_location(file, _args, _info)
@@ -105,7 +120,7 @@ defmodule LottaWeb.FileResolver do
     end
   end
 
-  def resolve_remote_location(file, _args, _info) do
+  def resolve_remote_location(_file, _args, _info) do
     {:error, "Ungültige Datei."}
   end
 
@@ -191,10 +206,8 @@ defmodule LottaWeb.FileResolver do
          %Directory{} = directory <- Storage.get_directory(parent_directory_id),
          :ok <- Storage.check_directory_space(directory, filesize),
          true <- can_write?(current_user, directory),
-         {:ok, file_data} <- FileData.from_path(file.path, filename: file.filename),
-         {:ok, stored_file} <-
-           Storage.create_stored_file_from_upload(file_data, directory, current_user) do
-      {:ok, stored_file}
+         {:ok, file_data} <- FileData.from_path(file.path, filename: file.filename) do
+      Storage.create_file(file_data, directory, current_user)
     else
       nil ->
         {:error, "Der Ordner mit der id #{parent_directory_id} wurde nicht gefunden."}

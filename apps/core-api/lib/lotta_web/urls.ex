@@ -10,6 +10,7 @@ defmodule LottaWeb.Urls do
   alias Lotta.{Slugifier, Tenants}
   alias Lotta.Accounts.User
   alias Lotta.Content.Article
+  alias Lotta.Storage.{File, FileConversion}
   alias Lotta.Tenants.Tenant
 
   @type url_options() :: [skip_protocol: boolean()]
@@ -38,6 +39,54 @@ defmodule LottaWeb.Urls do
   @spec get_tenant_url(Tenant.t() | nil) :: String.t()
   def get_tenant_url(tenant \\ Tenants.current()) do
     URI.to_string(get_tenant_uri(tenant))
+  end
+
+  @doc """
+  Returns the URI for a given file or file conversion.
+
+  Returns an URI object. For a string representation,
+  see `LottaWeb.Urls.get_file_url/1`.
+  """
+  @doc since: "5.0.0"
+  @spec get_file_uri(FileConversion.t()) :: URI.t()
+  @spec get_file_uri(File.t()) :: URI.t()
+  @spec get_file_uri(File.t(), String.t()) :: URI.t()
+  def get_file_uri(file_or_conversion, format \\ "original") do
+    tenant =
+      file_or_conversion
+      |> Ecto.get_meta(:prefix)
+      |> Tenants.get_tenant_by_prefix()
+
+    Map.put(get_tenant_uri(tenant), :path, get_file_path(file_or_conversion, format))
+  end
+
+  @doc """
+  Like `LottaWeb.Urls.get_file_uri/1`, but returns
+  an URL string.
+  """
+  @doc since: "5.0.0"
+  @spec get_file_url(FileConversion.t()) :: String.t()
+  @spec get_file_url(File.t()) :: String.t()
+  @spec get_file_url(File.t(), String.t()) :: String.t()
+  def get_file_url(file_or_conversion, format \\ "original") do
+    URI.to_string(get_file_uri(file_or_conversion, format))
+  end
+
+  @doc """
+  Returns the path to the given file.
+  """
+  @doc since: "5.0.0"
+  @spec get_file_path(FileConversion.t()) :: String.t()
+  @spec get_file_path(File.t()) :: String.t()
+  @spec get_file_path(File.t(), String.t()) :: String.t()
+  def get_file_path(file_or_conversion, format \\ "original") do
+    case file_or_conversion do
+      %File{} ->
+        "/data/storage/f/#{file_or_conversion.id}/#{format}"
+
+      %FileConversion{} ->
+        "/data/storage/f/#{file_or_conversion.file_id}/#{file_or_conversion.format}"
+    end
   end
 
   @doc """

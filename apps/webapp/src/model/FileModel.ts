@@ -37,7 +37,12 @@ export interface FileModel {
   fileType: FileModelType;
   parentDirectory: Partial<DirectoryModel>;
   fileConversions: FileConversionModel[];
-  urls: { format: string; url: string }[];
+  formats: {
+    name: string;
+    url: string;
+    type: string;
+    status: 'ready' | 'available' | 'requestable';
+  }[];
   usage?: FileModelUsageLocation[];
 }
 

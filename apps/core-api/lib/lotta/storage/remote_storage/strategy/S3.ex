@@ -9,12 +9,11 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
   alias ExAws.S3
 
   def create(%FileData{} = file_data, path, config) do
-    file_data
-    |> FileData.stream()
+    FileData.stream!(file_data)
     |> S3.upload(
       config[:config][:bucket],
       path,
-      content_type: Keyword.get(file_data.metadata, :content_type)
+      content_type: Keyword.get(file_data.metadata, :mime_type)
     )
     |> ExAws.request()
     |> case do

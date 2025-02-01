@@ -59,12 +59,9 @@ export const CategoryArticleRedirectSelection = React.memo(
                 textValue: article.title,
                 leftSection: article.previewImageFile && (
                   <ResponsiveImage
-                    src={File.getFileRemoteLocation(
-                      baseUrl,
-                      article.previewImageFile
-                    )}
+                    file={article.previewImageFile}
+                    format={'article_preview'}
                     alt={`Vorschaubild zum Beitrag "${article.title}"`}
-                    aspectRatio={'3:2'}
                     width={80}
                     style={{ width: '80px' }}
                   />

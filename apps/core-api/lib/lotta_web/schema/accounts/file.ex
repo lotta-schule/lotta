@@ -61,10 +61,8 @@ defmodule LottaWeb.Schema.Accounts.File do
       resolve: &LottaWeb.FileResolver.resolve_path/3
     )
 
-    field(:urls, non_null(list_of(non_null(:url)))) do
-      arg(:formats, non_null(list_of(non_null(:conversion_format))))
-
-      resolve(&LottaWeb.FileResolver.resolve_urls/3)
+    field(:formats, non_null(list_of(non_null(:available_format)))) do
+      resolve(&LottaWeb.FileResolver.resolve_available_formats/3)
     end
   end
 
@@ -80,9 +78,17 @@ defmodule LottaWeb.Schema.Accounts.File do
     )
   end
 
-  object :url do
-    field(:format, non_null(:conversion_format))
-    field(:url, :string)
+  object :available_format do
+    field(:name, non_null(:conversion_format))
+    field(:url, non_null(:string))
+    field(:type, non_null(:file_type))
+    field(:status, non_null(:format_status))
+  end
+
+  enum :format_status do
+    value(:ready, as: "ready")
+    value(:available, as: "available")
+    value(:requestable, as: "requestable")
   end
 
   enum :conversion_format do
@@ -94,6 +100,14 @@ defmodule LottaWeb.Schema.Accounts.File do
     value(:avatar_250, as: "avatar_250")
     value(:avatar_500, as: "avatar_500")
     value(:avatar_1000, as: "avatar_1000")
+    value(:logo_300, as: "logo_300")
+    value(:logo_600, as: "logo_600")
+    value(:banner_660, as: "banner_660")
+    value(:banner_1320, as: "banner_1320")
+    value(:article_preview_300, as: "article_preview_300")
+    value(:article_preview_420, as: "article_preview_420")
+    value(:article_preview_600, as: "article_preview_600")
+    value(:article_preview_840, as: "article_preview_840")
     value(:webm_720p, as: "webm_720p")
     value(:webm_1080p, as: "webm_1080p")
     value(:h264_720p, as: "h264_720p")
@@ -105,7 +119,7 @@ defmodule LottaWeb.Schema.Accounts.File do
     value(:audio, as: "audio")
     value(:video, as: "video")
     value(:pdf, as: "pdf")
-    value(:misc, as: "misc")
+    value(:binary, as: "binary")
   end
 
   union :file_usage_location do

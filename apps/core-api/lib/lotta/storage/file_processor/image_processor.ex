@@ -5,19 +5,81 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
 
   alias Lotta.Storage.FileData
 
-  @spec process(FileData.t(), Keyword.t()) :: {:ok, FileData.t()} | {:error, String.t()}
+  @spec read_metadata(FileData.t()) :: {:ok, map()} | {:error, String.t()}
+  def read_metadata(%FileData{} = file_data) do
+    case Image.open(FileData.stream!(file_data)) do
+      {:ok, image} ->
+        dhash =
+          case Image.dhash(image) do
+            {:ok, dhash} ->
+              dhash
+              |> :binary.bin_to_list()
+              |> Enum.map(fn value ->
+                value
+                |> Integer.to_string(16)
+                |> String.pad_leading(2, "0")
+              end)
+              |> Enum.join("")
+
+            _error ->
+              nil
+          end
+
+        exif =
+          case Image.exif(image) do
+            {:ok, exif} -> exif
+            _error -> nil
+          end
+
+        dominant_color =
+          case Image.dominant_color(image) do
+            {:ok, color} ->
+              "#" <>
+                (color
+                 |> Enum.map(fn value ->
+                   value
+                   |> Integer.to_string(16)
+                   |> String.pad_leading(2, "0")
+                 end)
+                 |> Enum.join(""))
+
+            _error ->
+              nil
+          end
+
+        {width, height, channels} = Image.shape(image)
+
+        {:ok,
+         %{
+           dhash: dhash,
+           exif: exif,
+           dominant_color: dominant_color,
+           pages: Image.pages(image),
+           width: width,
+           height: height,
+           channels: channels
+         }}
+
+      error ->
+        error
+    end
+  catch
+    :error, reason ->
+      {:error, reason}
+  end
+
+  @spec process(Enumerable.t(), Keyword.t()) :: {:ok, FileData.t()} | {:error, String.t()}
   def process(%FileData{} = file_data, args) do
     {size_string, vips_args} = parse_args(args)
 
-    with {:ok, image} <- Image.open(FileData.stream(file_data)),
-         {:ok, image} <- Image.thumbnail(image, size_string, vips_args),
-         {:ok, raw_image_data} <-
-           Image.write(image, :memory,
-             strip_metadata: true,
-             minimize_file_size: true,
-             suffix: ".webp"
-           ) do
-      FileData.from_data(raw_image_data, "image.webp", content_type: "image/webp")
+    with {:ok, image} <- Image.open(FileData.stream!(file_data)),
+         {:ok, image} <- Image.thumbnail(image, size_string, vips_args) do
+      Image.stream!(image,
+        strip_metadata: true,
+        minimize_file_size: true,
+        suffix: ".webp"
+      )
+      |> FileData.from_stream("image.webp", mime_type: "image/webp")
     else
       error ->
         error

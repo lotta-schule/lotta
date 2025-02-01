@@ -106,10 +106,10 @@ defmodule Lotta.Tenants.DefaultContent do
      |> Enum.map(fn {{filename, type}, _index} ->
        fullpath = Application.app_dir(:lotta, "priv/default_content/files/#{filename}")
 
-       {:ok, file_data} = FileData.from_path(fullpath, content_type: type)
+       {:ok, file_data} = FileData.from_path(fullpath, mime_type: type)
 
        {:ok, file} =
-         Storage.create_stored_file_from_upload(
+         Storage.create_file(
            file_data,
            dir,
            user

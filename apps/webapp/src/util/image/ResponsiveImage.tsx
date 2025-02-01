@@ -1,53 +1,88 @@
 import * as React from 'react';
-import { ProcessingOptions, useImageUrl } from './useImageUrl';
+import { FileModel } from 'model';
 
 export type ResponsiveImageProps = {
-  src: string;
+  file?: FileModel;
+  src?: string;
   alt: string;
   width?: number;
   height?: number;
-  maxDisplayWidth?: number;
+  format?: string;
 } & Omit<
   React.DetailedHTMLProps<
     React.ImgHTMLAttributes<HTMLImageElement>,
     HTMLImageElement
   >,
   'src' | 'alt' | 'width'
-> &
-  Omit<ProcessingOptions, 'width' | 'height'>;
+>;
 
 export const ResponsiveImage = React.memo(
   ({
-    src,
+    file,
+    format,
     alt,
     style,
     className,
     width,
     height,
-    aspectRatio,
-    resize,
     sizes,
-    maxDisplayWidth,
     ...imgProps
   }: ResponsiveImageProps) => {
-    const { customStyle, sizeMap } = useImageUrl(
-      src,
-      {
-        width,
-        height,
-        aspectRatio,
-        resize,
-      },
-      { maxDisplayWidth }
+    const formats = file?.formats
+      .filter(
+        (availableFormat) =>
+          (console.log({
+            availableFormat,
+            includes: ['ready', 'available'].includes(
+              availableFormat.status.toLowerCase()
+            ),
+            startsWith:
+              !format ||
+              availableFormat.name
+                .toLowerCase()
+                .startsWith(format.toLowerCase()),
+          }) as unknown) ||
+          (['ready', 'available'].includes(
+            availableFormat.status.toLowerCase()
+          ) &&
+            (!format ||
+              availableFormat.name
+                .toLowerCase()
+                .startsWith(format.toLowerCase())))
+      )
+      .map((format) => {
+        const formatMatch = format.name.match(
+          /_(?:(?<width>\d+))(?:x(?<height>\d+))?/
+        );
+        if (!formatMatch) {
+          return null;
+        }
+        const width =
+          formatMatch.groups?.width && parseInt(formatMatch.groups.width, 10);
+        const height =
+          formatMatch.groups?.height && parseInt(formatMatch.groups.height, 10);
+
+        return {
+          ...format,
+          width: width,
+          height,
+        };
+      })
+      .filter((f) => f !== null);
+
+    const sizeMap = formats?.reduce(
+      (acc, { url, width }) => acc + `, ${url} ${width}w`,
+      ''
     );
+
     return (
       <img
         className={className}
-        srcSet={Object.entries(sizeMap)
-          .map(([size, src]) => `${src} ${size}`)
-          .join(', ')}
+        srcSet={sizeMap}
         alt={alt}
-        style={{ ...customStyle, ...style }}
+        width={width}
+        height={height}
+        style={{ ...style }}
         sizes={sizes}
         {...imgProps}
       />

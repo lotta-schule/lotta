@@ -50,10 +50,10 @@ defmodule Lotta.StorageTest do
       user: user
     } do
       {:ok, file_data} =
-        FileData.from_path("test/support/fixtures/image_file.png", content_type: "image/png")
+        FileData.from_path("test/support/fixtures/image_file.png", mime_type: "image/png")
 
       res =
-        Storage.create_stored_file_from_upload(
+        Storage.create_file(
           file_data,
           directory,
           user
@@ -147,7 +147,7 @@ defmodule Lotta.StorageTest do
       tmp_path = Path.join(System.tmp_dir!(), "test.txt")
       Elixir.File.write!(tmp_path, "test")
 
-      {:ok, file_data} = FileData.from_path(tmp_path, content_type: "text/plain")
+      {:ok, file_data} = FileData.from_path(tmp_path, mime_type: "text/plain")
 
       %RemoteStorageEntity{id: id} =
         RemoteStorage.create(

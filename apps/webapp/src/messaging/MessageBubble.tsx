@@ -72,10 +72,8 @@ export const MessageBubble = React.memo(
                         <ResponsiveImage
                           alt={'Bildvorschau'}
                           width={400}
-                          resize={'inside'}
-                          sizes={'150px'}
-                          style={{}}
-                          src={File.getFileRemoteLocation(baseUrl, file)}
+                          format={'preview'}
+                          file={file}
                         />
                       </div>
                     )}

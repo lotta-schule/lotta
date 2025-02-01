@@ -7,9 +7,11 @@ defmodule Lotta.Storage.File do
 
   import Ecto.Changeset
 
+  alias Lotta.Storage.RemoteStorage
+  alias Lotta.Repo
   alias Lotta.Accounts.User
   alias Lotta.Content.ContentModule
-  alias Lotta.Storage.{Directory, FileConversion, RemoteStorageEntity}
+  alias Lotta.Storage.{Directory, FileData, FileConversion, RemoteStorageEntity}
 
   @type id() :: binary()
 
@@ -66,5 +68,32 @@ defmodule Lotta.Storage.File do
       :parent_directory_id,
       :user_id
     ])
+  end
+
+  def to_file_data(
+        %__MODULE__{filename: filename, filesize: filesize, mime_type: mime_type} = file
+      ) do
+    file = Repo.preload(file, :remote_storage_entity)
+    url = RemoteStorage.get_http_url(file.remote_storage_entity)
+
+    Tesla.get(
+      Tesla.client([{Tesla.Middleware.SSE, only: :data}]),
+      url,
+      opts: [adapter: [response: :stream]]
+    )
+    |> case do
+      {:ok, env} ->
+        {:ok, %FileData{
+          stream: env.body,
+          metadata: %{
+            filename: filename,
+            filesize: filesize,
+            mime_type: mime_type
+          }
+        }}
+
+      {:error, _reason} ->
+        {:error, "Failed to download file"}
+    end
   end
 end

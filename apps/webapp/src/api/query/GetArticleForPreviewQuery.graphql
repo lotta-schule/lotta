@@ -12,6 +12,12 @@ query GetArticleForPreview($id: ID!) {
       id
       mimeType
       fileType
+      formats {
+        name
+        url
+        type
+        status
+      }
     }
     users {
       id

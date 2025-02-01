@@ -28,6 +28,7 @@ defmodule Lotta.Application do
           Lotta.Queue.MediaConversionRequestPublisher,
           Lotta.Queue.MediaConversionConsumer,
           Lotta.Notification.PushNotification,
+          {Oban, Application.fetch_env!(:lotta, Oban)},
           {ConCache,
            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
         ] ++ appended_apps()

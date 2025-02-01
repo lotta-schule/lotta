@@ -131,12 +131,9 @@ export const ArticlePreview = React.memo(
                   {article.previewImageFile ? (
                     <ResponsiveImage
                       className={styles.previewImage}
+                      file={article.previewImageFile}
+                      format="article_preview"
                       width={150}
-                      aspectRatio={'3:2'}
-                      src={File.getFileRemoteLocation(
-                        baseUrl,
-                        article.previewImageFile
-                      )}
                       alt={`Vorschaubild zu ${article.title}`}
                       maxDisplayWidth={400}
                     />
@@ -150,13 +147,9 @@ export const ArticlePreview = React.memo(
                   article.previewImageFile && (
                     <ResponsiveImage
                       className={styles.previewImage}
+                      file={article.previewImageFile}
+                      format="article_preview"
                       width={150}
-                      aspectRatio={'3:2'}
-                      sizes={'(max-width: 599px) 20vw, 200px'}
-                      src={File.getFileRemoteLocation(
-                        baseUrl,
-                        article.previewImageFile
-                      )}
                       alt={`Vorschaubild zu ${article.title}`}
                       maxDisplayWidth={400}
                     />

@@ -13,6 +13,12 @@ subscription ArticleIsUpdated($id: ID!) {
       id
       mimeType
       fileType
+      formats {
+        format
+        url
+        type
+        status
+      }
     }
     contentModules {
       id

@@ -171,12 +171,7 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
     <>
       <CategoryHead category={category} />
       <Main>
-        <LegacyHeader
-          bannerImageUrl={
-            category.bannerImageFile &&
-            File.getFileRemoteLocation(baseUrl, category.bannerImageFile)
-          }
-        >
+        <LegacyHeader bannerImageUrl={category.bannerImageFile}>
           <h2 data-testid="title">{category.title}</h2>
         </LegacyHeader>
         <div className={styles.articles}>

@@ -111,6 +111,8 @@ defmodule Lotta.MixProject do
       {:libcluster, "~> 3.2"},
       {:file_type, "~> 0.1"},
       {:image, "~> 0.55"},
+      {:oban, "~> 2.19"},
+      {:oban_web, "~> 2.11"},
       # Test
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.14", only: :test},

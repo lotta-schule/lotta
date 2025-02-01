@@ -53,9 +53,9 @@ export const AdminPage = async ({
         {tenant.logoImageFile && (
           <Link href={'/'} title={'Startseite'} className={styles.logoLink}>
             <ResponsiveImage
-              resize={'inside'}
+              format={'logo'}
               height={30}
-              src={File.getFileRemoteLocation(baseUrl, tenant.logoImageFile)}
+              file={tenant.logoImageFile}
               alt={`Logo ${tenant.title}`}
             />
           </Link>

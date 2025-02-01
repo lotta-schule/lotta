@@ -14,6 +14,12 @@ query GetArticlesByUser($userId: ID!) {
       fileType
       filename
       filesize
+      formats {
+        name
+        url
+        type
+        status
+      }
     }
     groups {
       id

@@ -16,6 +16,12 @@ mutation UpdateArticle($id: ID!, $article: ArticleInput!) {
       fileType
       filename
       filesize
+      formats {
+        format
+        url
+        type
+        status
+      }
     }
     contentModules {
       id

@@ -115,7 +115,9 @@ export const UserBrowser = React.memo(
     const getPreviewUrl = React.useCallback((node: BrowserNode) => {
       if (isFileNode(node)) {
         const formatName = devicePixelRatio < 2 ? 'PREVIEW_200' : 'PREVIEW_400';
-        return node.meta.urls.find((u) => u.format === formatName)?.url ?? null;
+        return (
+          node.meta.formats.find((f) => f.name === formatName)?.url ?? null
+        );
       }
     }, []);
 

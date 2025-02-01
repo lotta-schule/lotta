@@ -11,6 +11,12 @@ query GetArticles($categoryId: ID, $filter: ArticleFilter) {
     isPinnedToTop
     previewImageFile {
       id
+      formats {
+        name
+        url
+        type
+        status
+      }
     }
     category {
       id
