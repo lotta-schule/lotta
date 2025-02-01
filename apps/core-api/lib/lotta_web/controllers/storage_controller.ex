@@ -14,7 +14,8 @@ defmodule LottaWeb.StorageController do
       )
       when not is_nil(tenant) and is_uuid(id) do
     with file when not is_nil(file) <- IO.inspect(Storage.get_file(id), label: "get_file"),
-         http_url when not is_nil(http_url) <- IO.inspect(Storage.get_http_url(file), label: "get_http_url"),
+         http_url when not is_nil(http_url) <-
+           IO.inspect(Storage.get_http_url(file), label: "get_http_url"),
          {:ok, env} <-
            Tesla.get(
              Tesla.client([{Tesla.Middleware.SSE, only: :data}]),
@@ -44,8 +45,10 @@ defmodule LottaWeb.StorageController do
       )
       when not is_nil(tenant) and is_uuid(id) do
     with file when not is_nil(file) <- IO.inspect(Storage.get_file(id), label: "get_file"),
-         {:ok, file_conversion} <- IO.inspect(Storage.get_file_conversion(file, format), label: "get_file_conversion"),
-         http_url when not is_nil(http_url) <- IO.inspect(Storage.get_http_url(file_conversion), label: "get_http_url"),
+         {:ok, file_conversion} <-
+           IO.inspect(Storage.get_file_conversion(file, format), label: "get_file_conversion"),
+         http_url when not is_nil(http_url) <-
+           IO.inspect(Storage.get_http_url(file_conversion), label: "get_http_url"),
          {:ok, env} <-
            Tesla.get(
              Tesla.client([{Tesla.Middleware.SSE, only: :data}]),
@@ -150,7 +153,7 @@ defmodule LottaWeb.StorageController do
   end
 
   defp copy_header(conn, header_list, key) do
-    case Enum.find(header_list, & elem(&1, 0) == key) do
+    case Enum.find(header_list, &(elem(&1, 0) == key)) do
       nil -> conn
       {_, value} -> put_resp_header(conn, key, value)
     end

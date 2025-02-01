@@ -23,10 +23,10 @@ defmodule Lotta.Storage.FileProcessor do
 
   @spec convert_immediate_formats(FileData.t()) :: [{:ok, FileData.t()}] | [{:error, String.t()}]
   def convert_immediate_formats(%FileData{} = file_data) do
-      file_data
-      |> AvailableFormats.get_immediate_formats()
-      |> Task.async_stream(&process_file(file_data, &1))
-      |> Enum.to_list()
+    file_data
+    |> AvailableFormats.get_immediate_formats()
+    |> Task.async_stream(&process_file(file_data, &1))
+    |> Enum.to_list()
     |> Enum.map(fn
       {:ok, result} ->
         result
@@ -56,5 +56,4 @@ defmodule Lotta.Storage.FileProcessor do
         error
     end
   end
-
 end

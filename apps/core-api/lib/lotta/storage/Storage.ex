@@ -389,10 +389,17 @@ defmodule Lotta.Storage do
   @spec get_file_conversion(File.t(), atom() | String.t()) ::
           {:ok, FileConversion.t()} | {:error, String.t()}
   def get_file_conversion(%File{id: file_id} = file, format) do
-  IO.inspect(file)
-  IO.inspect(format)
-    with nil <- IO.inspect(Repo.get_by(FileConversion, file_id: file_id, format: format), label: "find FileConv1"),
-         {:ok, job} <- IO.inspect(ConversionWorker.get_or_create_conversion_job(file, format), label: "getorcreateconversionjob"),
+    IO.inspect(file)
+    IO.inspect(format)
+
+    with nil <-
+           IO.inspect(Repo.get_by(FileConversion, file_id: file_id, format: format),
+             label: "find FileConv1"
+           ),
+         {:ok, job} <-
+           IO.inspect(ConversionWorker.get_or_create_conversion_job(file, format),
+             label: "getorcreateconversionjob"
+           ),
          {:ok, _} <- ConversionWorker.await_conversion(job),
          file_conversion when not is_nil(file_conversion) <-
            Repo.get_by(FileConversion, file_id: file_id, format: format) do

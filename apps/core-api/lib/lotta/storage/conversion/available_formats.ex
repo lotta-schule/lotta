@@ -28,13 +28,17 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
       {Lotta.Storage.FileProcessor.ImageProcessor,
        cover: [width: 1000, height: 1000], type: :image},
     logo_300:
-      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 300, height: 200], type: :image},
+      {Lotta.Storage.FileProcessor.ImageProcessor,
+       contain: [width: 300, height: 200], type: :image},
     logo_600:
-      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 600, height: 400], type: :image},
+      {Lotta.Storage.FileProcessor.ImageProcessor,
+       contain: [width: 600, height: 400], type: :image},
     banner_660:
-      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 660, height: 110], type: :image},
+      {Lotta.Storage.FileProcessor.ImageProcessor,
+       contain: [width: 660, height: 110], type: :image},
     banner_1320:
-      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 1320, height: 220], type: :image},
+      {Lotta.Storage.FileProcessor.ImageProcessor,
+       contain: [width: 1320, height: 220], type: :image},
     article_preview_300:
       {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 300, height: 200], type: :image},
     article_preview_420:

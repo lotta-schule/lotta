@@ -52,7 +52,7 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
       from(
         j in Oban.Job,
         where:
-            fragment("?->>? = ?", j.args, "prefix", ^prefix) and
+          fragment("?->>? = ?", j.args, "prefix", ^prefix) and
             fragment("?->>? = ?", j.args, "file_id", ^file_id) and
             fragment("?->>? = ?", j.args, "format", ^format)
       )
@@ -63,13 +63,15 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
           {:ok, Oban.Job.t()} | {:error, String.t()}
   def get_or_create_conversion_job(%{id: file_id} = file, format) do
     case get_conversion_job(file, format) do
-    %Oban.Job{state: state} = job when state in ["scheduled", "executing"] ->
-      {:ok, job}
-    %Oban.Job{} ->
-      {:error, "Conversion job already completed"}
-    nil ->
-      new(%{prefix: Ecto.get_meta(file, :prefix), file_id: file.id, format: format})
-      |> Oban.insert()
+      %Oban.Job{state: state} = job when state in ["scheduled", "executing"] ->
+        {:ok, job}
+
+      %Oban.Job{} ->
+        {:error, "Conversion job already completed"}
+
+      nil ->
+        new(%{prefix: Ecto.get_meta(file, :prefix), file_id: file.id, format: format})
+        |> Oban.insert()
     end
   end
 

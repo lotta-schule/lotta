@@ -83,14 +83,15 @@ defmodule Lotta.Storage.File do
     )
     |> case do
       {:ok, env} ->
-        {:ok, %FileData{
-          stream: env.body,
-          metadata: %{
-            filename: filename,
-            filesize: filesize,
-            mime_type: mime_type
-          }
-        }}
+        {:ok,
+         %FileData{
+           stream: env.body,
+           metadata: %{
+             filename: filename,
+             filesize: filesize,
+             mime_type: mime_type
+           }
+         }}
 
       {:error, _reason} ->
         {:error, "Failed to download file"}

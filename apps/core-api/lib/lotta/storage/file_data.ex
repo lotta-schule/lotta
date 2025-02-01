@@ -78,8 +78,8 @@ defmodule Lotta.Storage.FileData do
           {:ok, t()} | {:error, String.t()}
 
   def from_path(local_path, opts \\ []) do
-      mime_type = opts[:mime_type] || get_mime_type(:path, local_path)
-      type = Storage.filetype_from(mime_type)
+    mime_type = opts[:mime_type] || get_mime_type(:path, local_path)
+    type = Storage.filetype_from(mime_type)
 
     case File.stat(local_path) do
       {:ok, %File.Stat{size: size}} ->
