@@ -56,7 +56,7 @@ defmodule Lotta.Storage.ImageProcessingUrl do
   defp cloudimage_url() do
     token = cloudimage_token()
 
-    unless is_nil(token) do
+    unless is_nil(token) || String.length(token) == 0 do
       URI.parse("https://#{cloudimage_token()}.cloudimg.io/v7")
     end
   end
