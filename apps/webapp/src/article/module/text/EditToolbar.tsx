@@ -26,7 +26,6 @@ export const EditToolbar = React.memo(() => {
 
   const [navbarHeight, setNavbarHeight] = React.useState(104);
   React.useEffect(() => {
-    console.log(navbarStyles.root);
     const navbarEl = document.getElementsByClassName(navbarStyles.root)?.[0];
     if (navbarEl) {
       setNavbarHeight(navbarEl.clientHeight);
