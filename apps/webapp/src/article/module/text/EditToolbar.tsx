@@ -11,29 +11,29 @@ import {
 import { ButtonGroup, Toolbar } from '@lotta-schule/hubert';
 import { useFocused } from 'slate-react';
 import { motion } from 'framer-motion';
-import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
-import { useCategory } from 'util/categories/useCategory';
-import { useCategories } from 'util/categories/useCategories';
 import { EditToolbarMarkButton } from './EditToolbarMarkButton';
 import { EditToolbarLinkButton } from './EditToolbarLinkButton';
 import { EditToolbarBlockButton } from './EditToolbarBlockButton';
 import { EditToolbarImageButton } from './EditToolbarImageButton';
 
 import styles from './EditToolbar.module.scss';
+import navbarStyles from '../../../layout/navigation/Navbar.module.scss';
 
 export const EditToolbar = React.memo(() => {
-  const currentCategoryId = useCurrentCategoryId();
-  const [allCategories] = useCategories();
-  const currentCategory = useCategory(currentCategoryId ?? undefined);
   const isFocused = useFocused();
 
   const animate = isFocused ? 'visible' : 'hidden';
 
-  const top =
-    currentCategory?.category ||
-    allCategories.filter((c) => c.category?.id === currentCategoryId).length
-      ? 104
-      : 64;
+  const [navbarHeight, setNavbarHeight] = React.useState(104);
+  React.useEffect(() => {
+    console.log(navbarStyles.root);
+    const navbarEl = document.getElementsByClassName(navbarStyles.root)?.[0];
+    if (navbarEl) {
+      setNavbarHeight(navbarEl.clientHeight);
+    }
+  }, []);
+
+  const top = navbarHeight;
 
   const variants = {
     visible: {
