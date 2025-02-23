@@ -14,7 +14,7 @@ import { fonts } from 'styles/fonts';
 import { getApolloClient } from 'api/legacyClient';
 import { BaseLayout } from './BaseLayout';
 import { GET_TENANT_QUERY, Tenant, useTenant } from 'util/tenant';
-import { CurrentUser, GET_CURRENT_USER } from 'util/user';
+import { CurrentUser, GET_CURRENT_USER } from 'util/user/useCurrentUser';
 import dynamic from 'next/dynamic';
 
 const DynamicAuthentication = dynamic(() => import('shared/Authentication'), {

@@ -10,7 +10,7 @@ import { getApolloClient } from 'api/legacyClient';
 import { AppContextProviders } from 'layout/AppContextProviders';
 import { TranslationsProvider } from 'i18n/client';
 import { GET_TENANT_QUERY } from 'util/tenant';
-import { GET_CURRENT_USER } from 'util/user';
+import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 

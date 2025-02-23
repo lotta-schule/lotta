@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { DirectoryModel, FileModel } from 'model';
 import { File, User } from 'util/model';
-import { useCurrentUser } from 'util/user';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 import { FileSize } from '@lotta-schule/hubert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';

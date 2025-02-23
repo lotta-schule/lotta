@@ -11,7 +11,7 @@ import {
 import { useMutation, useSuspenseQuery } from '@apollo/client';
 import { ArticleModel, ArticleReactionType } from 'model';
 import { Icon } from 'shared/Icon';
-import { useCurrentUser } from 'util/user';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ReactionCountButtons } from './ReactionCountButtons';
 import { iconForReactionType } from './supportedReactionIcons';
 import { ReactionUserList } from './RactionUserList';

@@ -12,7 +12,7 @@ import {
 } from '@lotta-schule/hubert';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
 import Link from 'next/link';
-import { GET_CURRENT_USER } from 'util/user';
+import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
 
 import LoginMutation from 'api/mutation/LoginMutation.graphql';
 

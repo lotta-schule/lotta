@@ -2,13 +2,13 @@ import { tenant, allCategories, userGroups } from 'test/fixtures';
 import { CategoryModel, UserGroupModel } from 'model';
 import { InMemoryCache } from '@apollo/client';
 import { identity } from 'lodash';
+import { GET_TENANT_QUERY, Tenant } from 'util/tenant';
+import { GET_CURRENT_USER, CurrentUser } from 'util/user/useCurrentUser';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
 import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
-import { GET_TENANT_QUERY, Tenant } from 'util/tenant';
-import { GET_CURRENT_USER, CurrentUser } from 'util/user';
 
 export interface ApolloMocksOptions {
   currentUser?: CurrentUser;

@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/client';
 import { Main, Sidebar } from 'layout';
 import { EditArticlePageProps } from 'article/EditArticlePage';
 import { Article, User } from 'util/model';
-import { useCurrentUser } from 'util/user';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
