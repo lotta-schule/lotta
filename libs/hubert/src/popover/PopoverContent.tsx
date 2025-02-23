@@ -43,6 +43,7 @@ export const PopoverContent = ({
           ...context.floatingStyles,
           maxHeight: `min(${maxHeight}, 50vh)`,
           overflow: 'auto',
+          color: 'inherit',
           ...style,
         }}
         hidden={!open}
