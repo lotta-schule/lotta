@@ -81,7 +81,6 @@ defmodule Lotta.Storage.File do
       url,
       opts: [adapter: [response: :stream]]
     )
-    |> dbg()
     |> case do
       {:ok, %{body: body}} when is_binary(body) ->
         FileData.from_data(body, filename, mime_type: mime_type)

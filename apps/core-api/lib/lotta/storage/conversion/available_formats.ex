@@ -153,6 +153,6 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
       |> Enum.map(&{&1, Keyword.get(@formats, &1)})
       |> Enum.filter(&is_tuple/1)
 
-  @spec is_format_available?(File.t(), atom()) :: boolean()
-  def is_format_available?(file, format), do: Enum.member?(available_formats(file), format)
+  @spec format_available?(File.t(), atom()) :: boolean()
+  def format_available?(file, format), do: Enum.member?(available_formats(file), format)
 end

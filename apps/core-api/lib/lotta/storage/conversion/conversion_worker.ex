@@ -31,7 +31,7 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
 
   @spec convert_file(File.t(), atom() | String.t()) :: {:ok, Oban.Job.t()} | {:error, String.t()}
   def convert_file(%File{id: file_id} = file, format) when is_atom(format) do
-    if AvailableFormats.is_format_available?(file, format) do
+    if AvailableFormats.format_available?(file, format) do
       new(%{file_id: file_id, format: format})
       |> Oban.insert()
     else

@@ -5,6 +5,12 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
 
   alias Lotta.Storage.FileData
 
+  defp to_hex_color(value) when is_list(value) do
+    "#" <> Enum.reduce(value, "", fn value, acc ->
+      acc <> String.pad_leading(Integer.to_string(value, 16), 2, "0")
+    end)
+  end
+
   @spec read_metadata(FileData.t()) :: {:ok, map()} | {:error, String.t()}
   def read_metadata(%FileData{} = file_data) do
     case Image.open(FileData.stream!(file_data)) do
@@ -14,12 +20,7 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
             {:ok, dhash} ->
               dhash
               |> :binary.bin_to_list()
-              |> Enum.map(fn value ->
-                value
-                |> Integer.to_string(16)
-                |> String.pad_leading(2, "0")
-              end)
-              |> Enum.join("")
+              |> to_hex_color()
 
             _error ->
               nil
@@ -34,14 +35,7 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
         dominant_color =
           case Image.dominant_color(image) do
             {:ok, color} ->
-              "#" <>
-                (color
-                 |> Enum.map(fn value ->
-                   value
-                   |> Integer.to_string(16)
-                   |> String.pad_leading(2, "0")
-                 end)
-                 |> Enum.join(""))
+              to_hex_color(color)
 
             _error ->
               nil

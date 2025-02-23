@@ -84,10 +84,9 @@ defmodule Lotta.Storage do
     |> Repo.transaction()
     |> case do
       {:ok, %{complete_file: file}} ->
-        FileProcessor.convert_immediate_formats(file_data)
-        |> Enum.map(fn {variant_name, file_data} ->
+        for {variant_name, file_data} <- FileProcessor.convert_immediate_formats(file_data) do
           create_file_conversion(file, to_string(variant_name), file_data)
-        end)
+        end
 
         {:ok, Repo.reload(file)}
 
@@ -718,9 +717,10 @@ defmodule Lotta.Storage do
   def filetype_from("video/" <> _format), do: "video"
 
   def filetype_from(format) do
-    cond do
-      String.ends_with?(format, "/pdf") -> "pdf"
-      true -> "binary"
+    if String.ends_with?(format, "/pdf") do
+      "pdf"
+    else
+      "binary"
     end
   end
 end

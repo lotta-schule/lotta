@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
 import { TenantGlobalStyleTag } from './TenantGlobalStyleTag';
-import { File } from 'util/model';
 import { Tenant } from 'util/tenant';
 import { imageFile, tenant } from 'test/fixtures';
 

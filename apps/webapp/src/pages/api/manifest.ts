@@ -1,5 +1,4 @@
 import { NextApiHandler, MetadataRoute } from 'next';
-import { TenantModel } from 'model';
 import { getApolloClient } from 'api/legacyClient';
 import { GET_TENANT_QUERY } from 'util/tenant';
 

@@ -2,8 +2,6 @@ import { render, screen, within } from 'test/util';
 import { AdminPage } from './AdminPage';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import { loadTenant } from 'loader';
-import { getBaseUrl } from 'helper';
-import { File } from 'util/model';
 import { MockedFunction } from 'vitest';
 
 vi.mock('loader', async () => ({

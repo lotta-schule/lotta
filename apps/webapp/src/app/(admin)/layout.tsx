@@ -55,9 +55,7 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
       </head>
       <body>
         <HubertProvider>
-          <ServerDataContextProvider
-            tenant={tenant}
-          >
+          <ServerDataContextProvider tenant={tenant}>
             <TranslationsProvider>
               {tenant && (
                 <ApolloProvider
