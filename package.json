@@ -75,7 +75,7 @@
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^2.0.4"
   },
-  "packageManager": "pnpm@8.15.5",
+  "packageManager": "pnpm@10.4.1",
   "pnpm": {
     "overrides": {
       "@types/react": "npm:types-react@rc",
@@ -85,6 +85,14 @@
     },
     "patchedDependencies": {
       "next@15.1.4": "patches/next@15.1.4.patch"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@sentry/cli",
+      "@swc/core",
+      "esbuild",
+      "nx",
+      "sharp"
+    ]
   }
 }
