@@ -86,7 +86,7 @@ defmodule LottaWeb.FileResolver do
         %{
           name: file_conversion.format,
           type: file_conversion.file_type,
-          url: Urls.get_file_url(file_conversion),
+          url: Urls.get_file_path(file_conversion),
           status: "ready"
         }
       end)
@@ -101,7 +101,7 @@ defmodule LottaWeb.FileResolver do
         %{
           name: format,
           type: to_string(Keyword.get(args, :type, :binary)),
-          url: Urls.get_file_url(file, format),
+          url: Urls.get_file_path(file, format),
           status: "available"
         }
       end)
