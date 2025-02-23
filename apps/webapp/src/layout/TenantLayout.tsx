@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { File } from 'util/model';
 import { Box, NoSsr, ScrollToTopButton } from '@lotta-schule/hubert';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { loadTenant } from '../loader';
-import { getBaseUrl } from '../helper';
 import Link from 'next/link';
 import clsx from 'clsx';
 
@@ -23,7 +21,6 @@ export const TenantLayout = async ({
   fullSizeScrollable,
 }: TenantLayoutProps) => {
   const tenant = await loadTenant();
-  const baseUrl = await getBaseUrl();
 
   return (
     <Box
@@ -36,9 +33,8 @@ export const TenantLayout = async ({
           {tenant.logoImageFile && (
             <Link href={'/'} title={'Startseite'}>
               <ResponsiveImage
-                resize={'inside'}
-                height={80}
-                src={File.getFileRemoteLocation(baseUrl, tenant.logoImageFile)}
+                format={'logo'}
+                file={tenant.logoImageFile}
                 alt={`Logo ${tenant.title}`}
               />
             </Link>

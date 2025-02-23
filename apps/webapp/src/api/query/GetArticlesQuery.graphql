@@ -28,6 +28,12 @@ query GetArticles($categoryId: ID, $filter: ArticleFilter) {
       name
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
   }

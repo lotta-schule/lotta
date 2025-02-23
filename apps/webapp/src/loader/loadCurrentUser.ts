@@ -1,8 +1,6 @@
 import { cache } from 'react';
 import { getClient } from 'api/client';
-import { UserModel } from 'model';
-
-import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
+import { GET_CURRENT_USER } from 'util/user';
 
 export class UnauthenticatedError extends Error {
   name = 'UnauthenticatedError';
@@ -19,8 +17,8 @@ export type LoadCurrentUserParams = {
 export const loadCurrentUser = cache(
   ({ forceAuthenticated = false }: LoadCurrentUserParams = {}) =>
     getClient()
-      .query<{ currentUser: UserModel | null }>({
-        query: GetCurrentUserQuery,
+      .query({
+        query: GET_CURRENT_USER,
       })
       .then(({ data }) => {
         const user = data?.currentUser ?? null;

@@ -3,8 +3,6 @@ import { CategoryModel } from 'model';
 import { Category, File } from 'util/model';
 import { Tenant } from 'util/model/Tenant';
 import { useTenant } from 'util/tenant/useTenant';
-import { useServerData } from 'shared/ServerDataContext';
-import { useImageUrl } from 'util/image/useImageUrl';
 import Head from 'next/head';
 
 export interface CategoryHeadProps {
@@ -12,7 +10,6 @@ export interface CategoryHeadProps {
 }
 
 export const CategoryHead = React.memo<CategoryHeadProps>(({ category }) => {
-  const { baseUrl } = useServerData();
   const tenant = useTenant();
 
   const title = category.isHomepage
@@ -23,16 +20,12 @@ export const CategoryHead = React.memo<CategoryHeadProps>(({ category }) => {
     ? tenant.title
     : `${category.title} bei ${tenant.title}`;
 
-  const { url: logoImageUrl } = useImageUrl(
+  const logoImageUrl =
     tenant.logoImageFile &&
-      File.getFileRemoteLocation(baseUrl, tenant.logoImageFile),
-    { width: 320 }
-  );
-  const { url: bannerImageUrl } = useImageUrl(
+    File.getRemoteUrl(tenant.logoImageFile, 'logo', 320);
+  const bannerImageUrl =
     category.bannerImageFile &&
-      File.getFileRemoteLocation(baseUrl, category.bannerImageFile),
-    { width: 900, height: 150, resize: 'cover' }
-  );
+    File.getRemoteUrl(category.bannerImageFile, 'banner', 900);
 
   const image = React.useMemo<
     [url: string, width: number, height: number | null] | null

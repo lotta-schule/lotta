@@ -25,6 +25,12 @@ query GetArticleForPreview($id: ID!) {
       name
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
   }

@@ -273,9 +273,6 @@ config :sentry,
   root_source_code_paths: [File.cwd!()],
   filter: Lotta.SentryFilter
 
-config :lotta, Lotta.Storage.ImageProcessingUrl,
-  cloudimage_token: SystemConfig.get("CLOUDIMAGE_TOKEN")
-
 libcluster_topologies =
   case SystemConfig.get("HEADLESS_SERVICE_NAME") do
     "" ->

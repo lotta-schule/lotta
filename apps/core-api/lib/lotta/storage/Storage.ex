@@ -19,7 +19,6 @@ defmodule Lotta.Storage do
     File,
     FileConversion,
     FileData,
-    ImageProcessingUrl,
     RemoteStorage,
     RemoteStorageEntity
   }
@@ -590,7 +589,6 @@ defmodule Lotta.Storage do
     if entity do
       entity
       |> RemoteStorage.get_http_url(opts)
-      |> ImageProcessingUrl.get_url(opts[:processing])
     end
   end
 

@@ -22,7 +22,12 @@ export const Header = React.memo(
       >
         <div data-testid="HeaderContent" className={styles.subheader}>
           {bannerImage && (
-            <ResponsiveImage file={bannerImage} alt="" width={700} />
+            <ResponsiveImage
+              file={bannerImage}
+              format="banner"
+              alt=""
+              width={700}
+            />
           )}
           {bannerImageUrl && <img src={bannerImageUrl} alt="" width={700} />}
           <div className={styles.headerContent}>{children}</div>

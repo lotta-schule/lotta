@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Table } from '@lotta-schule/hubert';
 import { ArticleModel } from 'model';
-import { User, Article, Category, File } from 'util/model';
+import { User, Article, Category } from 'util/model';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { useServerData } from 'shared/ServerDataContext';
 import Link from 'next/link';
 
 import styles from './ArticlesList.module.scss';
@@ -17,8 +16,6 @@ export interface ArticlesListProps {
 }
 
 export const ArticlesList = React.memo(({ articles }: ArticlesListProps) => {
-  const { baseUrl } = useServerData();
-
   const articleSorter = React.useCallback(
     (article1: ArticleModel, article2: ArticleModel) =>
       new Date(article2.updatedAt).getTime() -

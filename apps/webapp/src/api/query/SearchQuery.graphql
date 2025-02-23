@@ -30,6 +30,12 @@ query SearchQuery($searchText: String!, $options: SearchOptions) {
       name
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
   }

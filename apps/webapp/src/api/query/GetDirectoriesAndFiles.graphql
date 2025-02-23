@@ -21,7 +21,7 @@ query GetDirectoriesAndFiles($parentDirectoryId: ID) {
     fileType
     userId
     formats {
-      format
+      name
       url
       type
       status

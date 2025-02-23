@@ -32,7 +32,6 @@ const defaultTheme = DefaultThemes.standard;
 
 export type PresentationProps = {
   tenant: TenantModel;
-  baseUrl: string;
   additionalThemes: {
     title: string;
     theme: Partial<ReturnType<typeof useTheme>>;
@@ -40,7 +39,7 @@ export type PresentationProps = {
 };
 
 export const Presentation = React.memo(
-  ({ tenant, baseUrl, additionalThemes }: PresentationProps) => {
+  ({ tenant, additionalThemes }: PresentationProps) => {
     const router = useRouter();
     const theme = {
       ...defaultTheme,
@@ -286,11 +285,9 @@ export const Presentation = React.memo(
                 >
                   {backgroundImage ? (
                     <ResponsiveImage
-                      resize={'cover'}
-                      width={400}
-                      aspectRatio={'4:3'}
+                      format={'pagebg'}
                       style={{ width: '100%' }}
-                      src={File.getFileRemoteLocation(baseUrl, backgroundImage)}
+                      file={backgroundImage}
                       alt={'Hintergrundbild der Seite'}
                     />
                   ) : (

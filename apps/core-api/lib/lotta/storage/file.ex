@@ -81,11 +81,15 @@ defmodule Lotta.Storage.File do
       url,
       opts: [adapter: [response: :stream]]
     )
+    |> dbg()
     |> case do
-      {:ok, env} ->
+      {:ok, %{body: body}} when is_binary(body) ->
+        FileData.from_data(body, filename, mime_type: mime_type)
+
+      {:ok, %{body: body}} ->
         {:ok,
          %FileData{
-           stream: env.body,
+           stream: body,
            metadata: %{
              filename: filename,
              filesize: filesize,

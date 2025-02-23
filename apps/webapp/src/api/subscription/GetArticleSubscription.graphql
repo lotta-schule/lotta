@@ -14,7 +14,7 @@ subscription ArticleIsUpdated($id: ID!) {
       mimeType
       fileType
       formats {
-        format
+        name
         url
         type
         status
@@ -35,10 +35,11 @@ subscription ArticleIsUpdated($id: ID!) {
         filename
         filesize
         insertedAt
-        fileConversions {
-          id
-          format
-          mimeType
+        formats {
+          name
+          url
+          type
+          status
         }
       }
     }
@@ -58,6 +59,12 @@ subscription ArticleIsUpdated($id: ID!) {
       name
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
   }

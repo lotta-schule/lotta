@@ -119,6 +119,49 @@ export const schulweitDirectory = {
  *
  */
 
+export const createFormats = (
+  path: string,
+  formats = [
+    'preview_200',
+    'preview_400',
+    'preview_800',
+    'preview_1200',
+    'preview_1600',
+    'preview_2400',
+    'preview_3200',
+    'avatar_50',
+    'avatar_100',
+    'avatar_250',
+    'avatar_500',
+    'avatar_1000',
+    'logo_300',
+    'logo_600',
+    'banner_330',
+    'banner_660',
+    'banner_990',
+    'banner_1320',
+    'article_preview_300',
+    'article_preview_420',
+    'article_preview_600',
+    'article_preview_840',
+    'pagebg_1024',
+    'pagebg_1280',
+    'pagebg_1920',
+    'pagebg_2560',
+    'icon_64',
+    'icon_128',
+    'icon_256',
+  ]
+) =>
+  formats.map((f) => {
+    return {
+      name: f,
+      url: `https://example.com/${path}/${f}.webp`,
+      type: f.startsWith('webm') || f.startsWith('h264') ? 'video' : 'image',
+      status: 'READY',
+    };
+  });
+
 export const imageFile = {
   __typename: 'File',
   id: '123',
@@ -128,7 +171,7 @@ export const imageFile = {
   mimeType: 'image/jpg',
   insertedAt: '2001-01-01 14:15',
   updatedAt: '2001-01-01 14:15',
-  fileConversions: [],
+  formats: createFormats('123'),
   usage: [],
 } as Partial<FileModel> as FileModel;
 
@@ -141,7 +184,7 @@ export const otherImageFile = {
   mimeType: 'image/gif',
   insertedAt: '2001-01-01 14:15',
   updatedAt: '2001-01-01 14:15',
-  fileConversions: [],
+  formats: createFormats('Animiert.gif'),
   usage: [],
 } as Partial<FileModel> as FileModel;
 
@@ -154,7 +197,7 @@ export const documentFile = {
   mimeType: 'application/pdf',
   insertedAt: '1848-02-21 00:00',
   updatedAt: '1848-02-21 00:00',
-  fileConversions: [],
+  formats: createFormats('5445'),
   usage: [],
 } as Partial<FileModel> as FileModel;
 
@@ -168,35 +211,7 @@ export const convertedDocumentFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
-  fileConversions: [
-    {
-      __typename: 'FileConversion',
-      id: '55451',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-      fileType: FileModelType.Image,
-      format: 'jpg:200',
-      mimeType: 'image/jpg',
-    },
-    {
-      __typename: 'FileConversion',
-      id: '55452',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-      fileType: FileModelType.Audio,
-      format: 'texttospeech:mp3',
-      mimeType: 'audio/mp3',
-    },
-    {
-      __typename: 'FileConversion',
-      id: '55453',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-      fileType: FileModelType.Misc,
-      format: 'ocr:txt',
-      mimeType: 'plain/text',
-    },
-  ],
+  formats: createFormats('Bilderbuch.pdf'),
 } as Partial<FileModel> as FileModel;
 
 export const podcastTextFile = {
@@ -209,7 +224,7 @@ export const podcastTextFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
-  fileConversions: [],
+  formats: createFormats('5546'),
 } as Partial<FileModel> as FileModel;
 
 export const movieFile = {
@@ -222,71 +237,7 @@ export const movieFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
-  fileConversions: [
-    {
-      __typename: 'FileConversion',
-      id: '75001',
-      fileType: FileModelType.Image,
-      format: 'gif:300',
-      mimeType: 'image/gif',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-    },
-    {
-      __typename: 'FileConversion',
-      id: '75002',
-      fileType: FileModelType.Image,
-      format: 'storyboard:800',
-      mimeType: 'image/jpg',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-    },
-    {
-      __typename: 'FileConversion',
-      id: '75003',
-      fileType: FileModelType.Video,
-      format: 'webm:1080',
-      mimeType: 'video/webm',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-    },
-    {
-      __typename: 'FileConversion',
-      id: '75004',
-      fileType: FileModelType.Video,
-      format: 'webm:768',
-      mimeType: 'video/webm',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-    },
-    {
-      __typename: 'FileConversion',
-      id: '75005',
-      fileType: FileModelType.Video,
-      format: 'mp4:1080',
-      mimeType: 'video/mp4',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-    },
-    {
-      __typename: 'FileConversion',
-      id: '75006',
-      fileType: FileModelType.Video,
-      format: 'mp4:768',
-      mimeType: 'video/mp4',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-    },
-    {
-      __typename: 'FileConversion',
-      id: '75007',
-      fileType: FileModelType.Audio,
-      format: 'mp3:std',
-      mimeType: 'audio/mp3',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-    },
-  ],
+  formats: createFormats('Amelie.mp4'),
 } as Partial<FileModel> as FileModel;
 
 export const audioFile = {
@@ -299,26 +250,7 @@ export const audioFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
-  fileConversions: [
-    {
-      __typename: 'FileConversion',
-      id: '99001',
-      fileType: FileModelType.Audio,
-      format: 'hifi:flac',
-      mimeType: 'audio/flac',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-    },
-    {
-      __typename: 'FileConversion',
-      id: '99002',
-      fileType: FileModelType.Audio,
-      format: 'lofi:mp3',
-      mimeType: 'audio/mp3',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-    },
-  ],
+  formats: [],
 } as Partial<FileModel> as FileModel;
 
 export const powerpointFile = {
@@ -331,17 +263,7 @@ export const powerpointFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
-  fileConversions: [
-    {
-      __typename: 'FileConversion',
-      id: '21',
-      fileType: FileModelType.Misc,
-      format: 'thumbnail:jpg',
-      mimeType: 'image/jpg',
-      insertedAt: '2001-01-21 00:00',
-      updatedAt: '2001-01-21 00:00',
-    },
-  ],
+  formats: createFormats('20'),
 } as Partial<FileModel> as FileModel;
 
 /*

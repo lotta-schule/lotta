@@ -10,6 +10,12 @@ subscription ReceiveMessage {
       nickname
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
     files {
@@ -31,6 +37,12 @@ subscription ReceiveMessage {
         nickname
         avatarImageFile {
           id
+          formats {
+            name
+            url
+            type
+            status
+          }
         }
       }
     }

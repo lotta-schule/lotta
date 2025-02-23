@@ -6,8 +6,8 @@ import {
   VPSchuelerWidget,
 } from 'test/fixtures';
 import { render, waitFor } from 'test/util';
-import { MockRouter } from 'test/mocks';
 import { WidgetsNavigation } from './WidgetsNavigation';
+import { MockRouter } from 'test/mocks';
 import userEvent from '@testing-library/user-event';
 
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
@@ -45,8 +45,8 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetsNavigation', () =
   it('should select a widget', async () => {
     const user = userEvent.setup();
     const mockRouter = await vi
-      .importMock<{ useRouter: () => MockRouter }>('next/navigation')
-      .then((module) => module.useRouter());
+      .importMock<{ mockRouter: MockRouter }>('next/navigation')
+      .then((m) => m.mockRouter);
     const screen = render(<WidgetsNavigation />, {}, { additionalMocks });
 
     await waitFor(() => {

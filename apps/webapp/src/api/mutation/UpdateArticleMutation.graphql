@@ -17,7 +17,7 @@ mutation UpdateArticle($id: ID!, $article: ArticleInput!) {
       filename
       filesize
       formats {
-        format
+        name
         url
         type
         status
@@ -36,10 +36,11 @@ mutation UpdateArticle($id: ID!, $article: ArticleInput!) {
         filename
         filesize
         insertedAt
-        fileConversions {
-          id
-          format
-          mimeType
+        formats {
+          name
+          url
+          type
+          status
         }
       }
     }

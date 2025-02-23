@@ -22,7 +22,6 @@ import { File, User } from 'util/model';
 import { FileModelType, UserModel, FileModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useGetFieldError } from 'util/useGetFieldError';
-import { useServerData } from 'shared/ServerDataContext';
 import { LegacyHeader, Main } from 'layout';
 import Link from 'next/link';
 
@@ -31,7 +30,6 @@ import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
 import styles from './ProfilePage.module.scss';
 
 export const ProfilePage = () => {
-  const { baseUrl } = useServerData();
   const currentUser = useCurrentUser()!;
 
   const [classOrShortName, setClassOrShortName] = React.useState(
@@ -43,7 +41,7 @@ export const ProfilePage = () => {
     currentUser.hideFullName
   );
   const [avatarImageFile, setAvatarImageFile] = React.useState<
-    { id: string } | null | undefined
+    { id: string; formats: any[] } | null | undefined
   >(currentUser.avatarImageFile);
   const [enrollmentTokens, setEnrollmentTokens] = React.useState<string[]>(
     currentUser.enrollmentTokens ?? []
@@ -77,9 +75,9 @@ export const ProfilePage = () => {
             >
               <Avatar
                 src={
-                  avatarImageFile
-                    ? File.getFileRemoteLocation(baseUrl, avatarImageFile)
-                    : User.getDefaultAvatarUrl(currentUser)
+                  (avatarImageFile
+                    ? File.getRemoteUrl(avatarImageFile, 'avatar', 150)
+                    : User.getDefaultAvatarUrl(currentUser)) ?? ''
                 }
                 style={{ width: 150, height: 150 }}
                 title={User.getNickname(currentUser)}

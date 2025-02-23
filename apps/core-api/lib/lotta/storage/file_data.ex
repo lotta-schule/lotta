@@ -24,25 +24,19 @@ defmodule Lotta.Storage.FileData do
   @spec from_data(data :: binary(), filename :: String.t(), opts :: [mime_type: String.t()]) ::
           {:ok, t()} | {:error, String.t()}
   def from_data(data, filename, opts \\ []) do
-    case StringIO.open(data) do
-      {:ok, pid} ->
-        mime_type = opts[:mime_type] || get_mime_type(:data, data)
-        type = Storage.filetype_from(mime_type)
+    mime_type = opts[:mime_type] || get_mime_type(:data, data)
+    type = Storage.filetype_from(mime_type)
 
-        {:ok,
-         %__MODULE__{
-           stream: IO.each_binstream(pid, 5 * 1024 * 1024),
-           metadata: [
-             filename: filename,
-             size: byte_size(data),
-             mime_type: mime_type,
-             type: type
-           ]
-         }}
-
-      error ->
-        error
-    end
+    {:ok,
+     %__MODULE__{
+       stream: :binary.bin_to_list(data) |> Stream.chunk_every(5 * 1024 * 1024),
+       metadata: [
+         filename: filename,
+         size: byte_size(data),
+         mime_type: mime_type,
+         type: type
+       ]
+     }}
   end
 
   @spec from_stream(

@@ -6,15 +6,15 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
   alias LottaWeb.TenantResolver
 
   object :tenant do
-    field(:id, :id)
-    field(:title, :string)
-    field(:slug, :string)
-    field(:host, :string, resolve: &TenantResolver.resolve_host/3)
-    field(:configuration, :tenant_configuration)
+    field(:id, non_null(:id))
+    field(:title, non_null(:string))
+    field(:slug, non_null(:string))
+    field(:host, non_null(:string), resolve: &TenantResolver.resolve_host/3)
+    field(:configuration, non_null(:tenant_configuration))
     field(:logo_image_file, :file, resolve: &TenantResolver.resolve_logo_image_file/3)
     field(:background_image_file, :file, resolve: &TenantResolver.resolve_background_image_file/3)
 
-    field(:inserted_at, :datetime)
+    field(:inserted_at, non_null(:datetime))
 
     field(:identifier, non_null(:string), resolve: &TenantResolver.resolve_identifier/3)
 
@@ -24,7 +24,7 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
       resolve(&TenantResolver.get_stats/2)
     end
 
-    field(:custom_domains, list_of(:custom_domain),
+    field(:custom_domains, non_null(list_of(non_null(:custom_domain))),
       resolve: &TenantResolver.resolve_custom_domains/3
     )
   end

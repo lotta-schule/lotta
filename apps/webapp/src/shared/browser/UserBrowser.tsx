@@ -19,7 +19,6 @@ import { FileSize } from '@lotta-schule/hubert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
-import { useServerData } from 'shared/ServerDataContext';
 import {
   useCreateDirectory,
   useDeleteNode,
@@ -46,12 +45,11 @@ export type UserBrowserProps = {
   style?: React.CSSProperties;
   multiple?: boolean;
   isNodeDisabled?: (node: BrowserNode) => boolean;
-  onSelect?: (file: FileModel[]) => void; // TODO: Must be implemented
+  onSelect?: (file: FileModel[]) => void;
 };
 
 export const UserBrowser = React.memo(
   ({ style, multiple, isNodeDisabled, onSelect }: UserBrowserProps) => {
-    const { baseUrl } = useServerData();
     const currentUser = useCurrentUser();
 
     const createDirectory = useCreateDirectory();
@@ -102,15 +100,12 @@ export const UserBrowser = React.memo(
 
     const getDownloadUrl = React.useCallback<
       Exclude<BrowserProps['getDownloadUrl'], undefined>
-    >(
-      (node) => {
-        if (isFileNode(node)) {
-          return File.getFileRemoteLocation(baseUrl, node.meta);
-        }
-        return null;
-      },
-      [baseUrl]
-    );
+    >((node) => {
+      if (isFileNode(node)) {
+        return File.getRemoteUrl(node.meta, 'original');
+      }
+      return null;
+    }, []);
 
     const getPreviewUrl = React.useCallback((node: BrowserNode) => {
       if (isFileNode(node)) {

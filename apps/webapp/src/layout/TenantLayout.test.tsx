@@ -2,13 +2,13 @@ import * as React from 'react';
 import { render } from 'test/util';
 import { BaseLayout } from './BaseLayout';
 import { imageFile, tenant } from 'test/fixtures';
-import { TenantModel } from 'model';
+import { Tenant } from 'util/tenant';
 
-const tenantMock: TenantModel = {
+const tenantMock = {
   ...tenant,
   backgroundImageFile: imageFile,
   logoImageFile: imageFile,
-};
+} as Tenant;
 
 describe('TenantLayout', () => {
   it('should render title, logo and child', () => {
@@ -36,9 +36,18 @@ describe('TenantLayout', () => {
 
     const styleTag = screen.container.querySelector('style');
     expect(styleTag).not.toBeNull();
-    expect(styleTag).toHaveTextContent(
-      /background-image: url\(https:\/\/example.com\/storage\/f\/123\?width=1250&fn=cover&format=webp\)/
-    );
+    expect(styleTag!.innerHTML).toMatchInlineSnapshot(`
+      "@media screen and (min-width: 600px) {
+            body::after {
+              background-image: image-set(url(https://example.com/123/pagebg_1024.webp) 1x,url(https://example.com/123/pagebg_1920.webp) 2x);
+            }
+        }
+        @media screen and (min-width: 1280px) {
+            body::after {
+              background-image: image-set(url(https://example.com/123/pagebg_1280.webp) 1x,url(https://example.com/123/pagebg_2560.webp) 2x);
+            }
+        }"
+    `);
   });
 
   it('should render ScrollToTopButton in NoSsr wrapper', () => {

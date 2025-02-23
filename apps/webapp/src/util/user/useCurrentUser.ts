@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Sentry from '@sentry/nextjs';
 import { useQuery } from '@apollo/client';
-import { graphql } from 'api/graphql';
+import { graphql, ResultOf } from 'api/graphql';
 
 export const GET_CURRENT_USER = graphql(`
   query GetCurrentUser {
@@ -20,6 +20,11 @@ export const GET_CURRENT_USER = graphql(`
       hasChangedDefaultPassword
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          status
+        }
       }
       groups {
         id
@@ -29,6 +34,10 @@ export const GET_CURRENT_USER = graphql(`
     }
   }
 `);
+
+export type CurrentUser = NonNullable<
+  ResultOf<typeof GET_CURRENT_USER>['currentUser']
+>;
 
 export const useCurrentUser = () => {
   const { data } = useQuery(GET_CURRENT_USER);

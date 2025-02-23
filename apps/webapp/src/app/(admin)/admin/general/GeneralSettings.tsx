@@ -14,7 +14,6 @@ import {
 import { TenantModel } from 'model';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { File } from 'util/model/File';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import { AdminPageSection } from '../_component/AdminPageSection';
 import { useRouter } from 'next/navigation';
@@ -26,10 +25,9 @@ import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 
 export type GeneralSettingsProps = {
   tenant: TenantModel;
-  baseUrl: string;
 };
 
-export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
+export const GeneralSettings = ({ tenant }: GeneralSettingsProps) => {
   const router = useRouter();
   const [title, setTitle] = React.useState(tenant.title);
   const [logo, setLogo] = React.useState(tenant.logoImageFile);
@@ -58,9 +56,8 @@ export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
               >
                 {logo ? (
                   <ResponsiveImage
-                    resize={'inside'}
-                    height={80}
-                    src={File.getFileRemoteLocation(baseUrl, logo)}
+                    file={logo}
+                    format={'logo'}
                     alt={`Logo ${title}`}
                   />
                 ) : (

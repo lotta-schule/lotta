@@ -2,16 +2,13 @@ import * as React from 'react';
 import { render } from 'test/util';
 import { BaseLayout } from './BaseLayout';
 import { imageFile, tenant } from 'test/fixtures';
-import { TenantModel } from 'model';
+import { Tenant } from 'util/tenant';
 
-const tenantMock: TenantModel = {
+const tenantMock = {
   ...tenant,
-  configuration: {
-    ...tenant.configuration,
-  },
   backgroundImageFile: imageFile,
   logoImageFile: imageFile,
-};
+} as Tenant;
 
 describe('BaseLayout', () => {
   it('should render title, logo and child', () => {
@@ -40,7 +37,7 @@ describe('BaseLayout', () => {
     const styleTag = screen.container.querySelector('style');
     expect(styleTag).not.toBeNull();
     expect(styleTag).toHaveTextContent(
-      /background-image: url\(https:\/\/example.com\/storage\/f\/123\?width=1250&fn=cover&format=webp\)/
+      /url\(https:\/\/example\.com\/123\/pagebg_1024\.webp\) 1x/
     );
   });
 

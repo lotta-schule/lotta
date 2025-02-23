@@ -15,7 +15,7 @@ mutation ToggleArticlePin($id: ID!) {
       filename
       filesize
       formats {
-        format
+        name
         url
         type
         status
@@ -33,10 +33,11 @@ mutation ToggleArticlePin($id: ID!) {
         fileType
         filename
         filesize
-        fileConversions {
-          id
-          format
-          mimeType
+        formats {
+          name
+          url
+          type
+          status
         }
       }
     }

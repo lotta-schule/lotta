@@ -8,7 +8,6 @@ import { FileModel, FileModelType, MessageModel } from 'model';
 import { File, User } from 'util/model';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { Icon } from 'shared/Icon';
-import { useServerData } from 'shared/ServerDataContext';
 import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 
@@ -23,7 +22,6 @@ export interface MessageBubbleProps {
 
 export const MessageBubble = React.memo(
   ({ active, message }: MessageBubbleProps) => {
-    const { baseUrl } = useServerData();
     const [deleteMessage] = useMutation(DeleteMessageMutation, {
       variables: { id: message.id },
       update: (client, { data }) => {
@@ -80,11 +78,8 @@ export const MessageBubble = React.memo(
                     <span className={styles.filename}>{file.filename}</span>
                     <div className={styles.downloadButton}>
                       <Button
-                        href={File.getFileRemoteLocation(
-                          baseUrl,
-                          file,
-                          'download'
-                        )}
+                        href={File.getRemoteUrl(file, 'original')}
+                        download
                         small
                         target={'_blank'}
                         icon={

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Stepper, SwipeableViews } from '@lotta-schule/hubert';
-import { File } from 'util/model';
 import { ContentModuleModel, FileModel } from 'model';
-import { useServerData } from 'shared/ServerDataContext';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { FileSorter } from '../Config';
 
@@ -14,7 +12,6 @@ export interface ImageCarouselProps {
 
 export const ImageCarousel = React.memo<ImageCarouselProps>(
   ({ contentModule }) => {
-    const { baseUrl } = useServerData();
     const [activeStep, setActiveStep] = React.useState(0);
     const filesConfiguration: {
       [id: string]: { caption?: string; sortKey?: number };
@@ -65,15 +62,9 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
               )}
               {Math.abs(activeStep - index) <= 2 ? (
                 <ResponsiveImage
-                  width={1200}
-                  sizes={'(max-width: 600px) 100vw, 80vw'}
-                  aspectRatio={'16:9'}
-                  resize={'contain'}
-                  src={File.getFileRemoteLocation(baseUrl, file)}
-                  alt={
-                    getConfiguration(file).caption ||
-                    File.getFileRemoteLocation(baseUrl, file)
-                  }
+                  file={file}
+                  format="preview"
+                  alt={getConfiguration(file).caption || ''}
                 />
               ) : null}
             </div>

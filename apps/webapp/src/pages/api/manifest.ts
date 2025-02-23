@@ -1,20 +1,20 @@
 import { NextApiHandler, MetadataRoute } from 'next';
 import { TenantModel } from 'model';
 import { getApolloClient } from 'api/legacyClient';
-
-import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
+import { GET_TENANT_QUERY } from 'util/tenant';
 
 const handler: NextApiHandler = async (req, res) => {
   const headers = req.headers ?? {};
 
-  const { data, error } = await getApolloClient().query({
-    query: GetTenantQuery,
+  const {
+    data: { tenant },
+    error,
+  } = await getApolloClient().query({
+    query: GET_TENANT_QUERY,
     context: {
       headers,
     },
   });
-
-  const tenant: TenantModel = data?.tenant ?? null;
 
   if (error || !tenant) {
     res.status(404).json({
@@ -41,7 +41,8 @@ const handler: NextApiHandler = async (req, res) => {
       },
     ],
     theme_color:
-      tenant.configuration?.customTheme?.pageBackgroundColor ?? '#ffffff',
+      (tenant.configuration?.customTheme as any)?.pageBackgroundColor ??
+      '#ffffff',
     display: 'standalone',
   };
 

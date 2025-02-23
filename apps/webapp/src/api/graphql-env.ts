@@ -1617,6 +1617,22 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "BANNER_1320",
+            "isDeprecated": false
+          },
+          {
+            "name": "BANNER_330",
+            "isDeprecated": false
+          },
+          {
+            "name": "BANNER_660",
+            "isDeprecated": false
+          },
+          {
+            "name": "BANNER_990",
+            "isDeprecated": false
+          },
+          {
             "name": "H264_1080P",
             "isDeprecated": false
           },
@@ -1625,7 +1641,51 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "ICON_128",
+            "isDeprecated": false
+          },
+          {
+            "name": "ICON_256",
+            "isDeprecated": false
+          },
+          {
+            "name": "ICON_64",
+            "isDeprecated": false
+          },
+          {
+            "name": "LOGO_300",
+            "isDeprecated": false
+          },
+          {
+            "name": "LOGO_600",
+            "isDeprecated": false
+          },
+          {
             "name": "ORIGINAL",
+            "isDeprecated": false
+          },
+          {
+            "name": "PAGEBG_1024",
+            "isDeprecated": false
+          },
+          {
+            "name": "PAGEBG_1280",
+            "isDeprecated": false
+          },
+          {
+            "name": "PAGEBG_1920",
+            "isDeprecated": false
+          },
+          {
+            "name": "PAGEBG_2560",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_1200",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_1600",
             "isDeprecated": false
           },
           {
@@ -1633,7 +1693,19 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "PREVIEW_2400",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_3200",
+            "isDeprecated": false
+          },
+          {
             "name": "PREVIEW_400",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_800",
             "isDeprecated": false
           },
           {
@@ -5233,8 +5305,11 @@ const introspection = {
           {
             "name": "configuration",
             "type": {
-              "kind": "OBJECT",
-              "name": "TenantConfiguration"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "TenantConfiguration"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -5242,10 +5317,16 @@ const introspection = {
           {
             "name": "customDomains",
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "ofType": {
-                "kind": "OBJECT",
-                "name": "CustomDomain"
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "CustomDomain"
+                  }
+                }
               }
             },
             "args": [],
@@ -5254,8 +5335,11 @@ const introspection = {
           {
             "name": "host",
             "type": {
-              "kind": "SCALAR",
-              "name": "String"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -5263,8 +5347,11 @@ const introspection = {
           {
             "name": "id",
             "type": {
-              "kind": "SCALAR",
-              "name": "ID"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -5284,8 +5371,11 @@ const introspection = {
           {
             "name": "insertedAt",
             "type": {
-              "kind": "SCALAR",
-              "name": "DateTime"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -5302,8 +5392,11 @@ const introspection = {
           {
             "name": "slug",
             "type": {
-              "kind": "SCALAR",
-              "name": "String"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -5320,8 +5413,11 @@ const introspection = {
           {
             "name": "title",
             "type": {
-              "kind": "SCALAR",
-              "name": "String"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false

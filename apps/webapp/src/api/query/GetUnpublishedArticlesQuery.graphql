@@ -16,7 +16,7 @@ query GetUnpublishedArticles {
       filename
       filesize
       formats {
-        format
+        name
         url
         type
         status
@@ -35,10 +35,11 @@ query GetUnpublishedArticles {
         filename
         filesize
         insertedAt
-        fileConversions {
-          id
-          format
-          mimeType
+        formats {
+          name
+          url
+          type
+          status
         }
       }
     }

@@ -16,8 +16,18 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   ]
 
   @image_formats [
+    preview_800:
+      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 800, height: 800], type: :image},
+    preview_1200:
+      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 1200, height: 1200], type: :image},
+    preview_1600:
+      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 1600, height: 1600], type: :image},
+    preview_2400:
+      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 2400, height: 2400], type: :image},
+    preview_3200:
+      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 3200, height: 3200], type: :image},
     avatar_50:
-      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 50, height: 50], type: :image},
+      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 50, height: 50], type: :image},
     avatar_100:
       {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 100, height: 100], type: :image},
     avatar_250:
@@ -33,12 +43,18 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     logo_600:
       {Lotta.Storage.FileProcessor.ImageProcessor,
        contain: [width: 600, height: 400], type: :image},
+    banner_330:
+      {Lotta.Storage.FileProcessor.ImageProcessor,
+       cover: [width: 330, height: 55], type: :image},
     banner_660:
       {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 660, height: 110], type: :image},
+       cover: [width: 660, height: 110], type: :image},
+    banner_990:
+      {Lotta.Storage.FileProcessor.ImageProcessor,
+       cover: [width: 990, height: 165], type: :image},
     banner_1320:
       {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 1320, height: 220], type: :image},
+       cover: [width: 1320, height: 220], type: :image},
     article_preview_300:
       {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 300, height: 200], type: :image},
     article_preview_420:
@@ -46,7 +62,21 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     article_preview_600:
       {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 600, height: 400], type: :image},
     article_preview_840:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 840, height: 560], type: :image}
+      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 840, height: 560], type: :image},
+    pagebg_1024:
+      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 1024, height: 768], type: :image},
+    pagebg_1280:
+      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 1280, height: 960], type: :image},
+    pagebg_1920:
+      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 1920, height: 1440], type: :image},
+    pagebg_2560:
+      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 2560, height: 1920], type: :image},
+    icon_64:
+      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 64, height: 64], type: :image},
+    icon_128:
+      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 128, height: 128], type: :image},
+    icon_256:
+      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 256, height: 256], type: :image},
   ]
 
   @video_formats [

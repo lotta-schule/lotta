@@ -36,10 +36,11 @@ query GetArticle($id: ID!) {
         filename
         filesize
         insertedAt
-        fileConversions {
-          id
-          format
-          mimeType
+        formats {
+          name
+          url
+          type
+          status
         }
       }
     }
@@ -63,6 +64,12 @@ query GetArticle($id: ID!) {
       name
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
   }
