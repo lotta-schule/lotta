@@ -22,13 +22,13 @@ defmodule LottaWeb.StorageController do
              http_url,
              opts: [adapter: [response: :stream]]
            ) do
-        conn
-        |> copy_header(env.headers, "content-type")
-        |> copy_header(env.headers, "content-length")
-        |> copy_header(env.headers, "etag")
-        |> copy_header(env.headers, "last-modified")
-        |> put_resp_header("cache-control", "max-age=604800")
-        |> send_resp(200, env.body)
+      conn
+      |> copy_header(env.headers, "content-type")
+      |> copy_header(env.headers, "content-length")
+      |> copy_header(env.headers, "etag")
+      |> copy_header(env.headers, "last-modified")
+      |> put_resp_header("cache-control", "max-age=604800")
+      |> send_resp(200, env.body)
     else
       error ->
         Logger.error("Failed to download file: #{inspect(error)}")
@@ -54,14 +54,13 @@ defmodule LottaWeb.StorageController do
              http_url,
              opts: [adapter: [response: :stream]]
            ) do
-
-        conn
-        |> copy_header(env.headers, "content-type")
-        |> copy_header(env.headers, "content-length")
-        |> copy_header(env.headers, "etag")
-        |> copy_header(env.headers, "last-modified")
-        |> put_resp_header("cache-control", "max-age=604800")
-        |> send_resp(200, env.body)
+      conn
+      |> copy_header(env.headers, "content-type")
+      |> copy_header(env.headers, "content-length")
+      |> copy_header(env.headers, "etag")
+      |> copy_header(env.headers, "last-modified")
+      |> put_resp_header("cache-control", "max-age=604800")
+      |> send_resp(200, env.body)
     else
       nil ->
         conn
