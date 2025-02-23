@@ -124,4 +124,8 @@ export default withSentryConfig(nextConfig, {
   org: 'lotta',
   project: 'web',
   widenClientFileUpload: true,
+
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: false,
+  },
 });
