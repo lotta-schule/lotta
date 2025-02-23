@@ -76,7 +76,7 @@ defmodule Lotta.Calendar.CalendarEvent do
 
   defp put_timezone(changeset) do
     with nil <- get_change(changeset, :timezone),
-         %DateTime{time_zone: timezone} = datetime <- get_change(changeset, :start) do
+         %DateTime{time_zone: timezone} <- get_change(changeset, :start) do
       put_change(changeset, :timezone, timezone)
     else
       _ ->

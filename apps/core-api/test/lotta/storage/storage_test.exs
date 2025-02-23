@@ -72,7 +72,7 @@ defmodule Lotta.StorageTest do
                body: %{contents: contents}
              } = res
 
-      assert Enum.any?(contents, &(&1.key == "tenant_test/#{uploaded_file.id}"))
+      assert Enum.any?(contents, &(&1.key == "tenant_test/#{uploaded_file.id}/original"))
     end
 
     test "copy_to_remote_storage/2 should reupload a file to new location", %{

@@ -9,7 +9,7 @@ defmodule Lotta.Storage.FileProcessor do
 
   require Logger
 
-  alias Lotta.Storage.{FileData, File, FileConversion}
+  alias Lotta.Storage.FileData
   alias Lotta.Storage.Conversion.AvailableFormats
   alias Lotta.Storage.FileProcessor.ImageProcessor
 

@@ -61,7 +61,7 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
 
   @spec get_or_create_conversion_job(File.t(), atom() | String.t()) ::
           {:ok, Oban.Job.t()} | {:error, String.t()}
-  def get_or_create_conversion_job(%{id: file_id} = file, format) do
+  def get_or_create_conversion_job(%{id: _id} = file, format) do
     case get_conversion_job(file, format) do
       %Oban.Job{state: state} = job when state in ["scheduled", "executing"] ->
         {:ok, job}

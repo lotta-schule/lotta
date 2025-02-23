@@ -13,16 +13,15 @@ defmodule LottaWeb.StorageController do
         %{"id" => id, "format" => "original"}
       )
       when not is_nil(tenant) and is_uuid(id) do
-    with file when not is_nil(file) <- IO.inspect(Storage.get_file(id), label: "get_file"),
+    with file when not is_nil(file) <- Storage.get_file(id),
          http_url when not is_nil(http_url) <-
-           IO.inspect(Storage.get_http_url(file), label: "get_http_url"),
+           Storage.get_http_url(file),
          {:ok, env} <-
            Tesla.get(
              Tesla.client([{Tesla.Middleware.SSE, only: :data}]),
              http_url,
              opts: [adapter: [response: :stream]]
            ) do
-      conn =
         conn
         |> copy_header(env.headers, "content-type")
         |> copy_header(env.headers, "content-length")
@@ -44,18 +43,18 @@ defmodule LottaWeb.StorageController do
         %{"id" => id, "format" => format}
       )
       when not is_nil(tenant) and is_uuid(id) do
-    with file when not is_nil(file) <- IO.inspect(Storage.get_file(id), label: "get_file"),
+    with file when not is_nil(file) <- Storage.get_file(id),
          {:ok, file_conversion} <-
-           IO.inspect(Storage.get_file_conversion(file, format), label: "get_file_conversion"),
+           Storage.get_file_conversion(file, format),
          http_url when not is_nil(http_url) <-
-           IO.inspect(Storage.get_http_url(file_conversion), label: "get_http_url"),
+           Storage.get_http_url(file_conversion),
          {:ok, env} <-
            Tesla.get(
              Tesla.client([{Tesla.Middleware.SSE, only: :data}]),
              http_url,
              opts: [adapter: [response: :stream]]
            ) do
-      conn =
+
         conn
         |> copy_header(env.headers, "content-type")
         |> copy_header(env.headers, "content-length")
@@ -63,17 +62,6 @@ defmodule LottaWeb.StorageController do
         |> copy_header(env.headers, "last-modified")
         |> put_resp_header("cache-control", "max-age=604800")
         |> send_resp(200, env.body)
-
-      # env.body
-      # |> Enum.chunk_every(1024)
-      # |> Stream.transform(conn, fn chunk, conn ->
-      # IO.inspect(chunk, label: "chunk")
-      #   case Plug.Conn.chunk(conn, chunk) do
-      #     {:ok, conn} -> conn
-      #     {:error, _reason} -> {:halt, conn}
-      #   end
-      # end)
-      # |> Stream.run()
     else
       nil ->
         conn

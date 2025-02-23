@@ -64,6 +64,10 @@ defmodule LottaWeb.Schema.Accounts.File do
     field(:formats, non_null(list_of(non_null(:available_format)))) do
       resolve(&LottaWeb.FileResolver.resolve_available_formats/3)
     end
+
+    field(:usage, non_null(list_of(non_null(:file_usage_location))),
+      resolve: &LottaWeb.FileResolver.resolve_file_usage/3
+    )
   end
 
   object :file_conversion do
