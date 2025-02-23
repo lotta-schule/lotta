@@ -6,9 +6,10 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
   alias Lotta.Storage.FileData
 
   defp to_hex_color(value) when is_list(value) do
-    "#" <> Enum.reduce(value, "", fn value, acc ->
-      acc <> String.pad_leading(Integer.to_string(value, 16), 2, "0")
-    end)
+    "#" <>
+      Enum.reduce(value, "", fn value, acc ->
+        acc <> String.pad_leading(Integer.to_string(value, 16), 2, "0")
+      end)
   end
 
   @spec read_metadata(FileData.t()) :: {:ok, map()} | {:error, String.t()}
