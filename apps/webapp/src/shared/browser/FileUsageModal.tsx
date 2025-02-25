@@ -14,9 +14,8 @@ import { useTranslation } from 'react-i18next';
 import { FileModel, ID, FileModelUsageLocation } from 'model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Article, Category, File, User } from 'util/model';
+import { Article, Category, User } from 'util/model';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { useServerData } from 'shared/ServerDataContext';
 import { useTenant } from 'util/tenant/useTenant';
 
 import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
@@ -31,7 +30,6 @@ export type FileUsageModalProps = {
 
 export const FileUsageModal = React.memo(
   ({ file, isOpen, onRequestClose }: FileUsageModalProps) => {
-    const { baseUrl } = useServerData();
     const { t } = useTranslation();
     const tenant = useTenant();
     const currentUser = useCurrentUser();
@@ -90,13 +88,9 @@ export const FileUsageModal = React.memo(
                   <div className={styles.listItemPreviewImage}>
                     {usage.article?.previewImageFile && (
                       <ResponsiveImage
-                        resize={'contain'}
+                        format="article_preview"
                         width={100}
-                        aspectRatio={'3:2'}
-                        src={File.getFileRemoteLocation(
-                          baseUrl,
-                          usage.article.previewImageFile
-                        )}
+                        file={usage.article.previewImageFile}
                         alt={t('preview image of {{title}}', {
                           title: usage.article.title,
                         })}
@@ -104,12 +98,9 @@ export const FileUsageModal = React.memo(
                     )}
                     {usage.tenant?.logoImageFile && (
                       <ResponsiveImage
-                        resize={'inside'}
-                        height={75}
-                        src={File.getFileRemoteLocation(
-                          baseUrl,
-                          usage.tenant.logoImageFile
-                        )}
+                        format="preview"
+                        width={100}
+                        file={usage.tenant.logoImageFile}
                         alt={t('Logo of {{title}}', {
                           title: usage.tenant.title,
                         })}
