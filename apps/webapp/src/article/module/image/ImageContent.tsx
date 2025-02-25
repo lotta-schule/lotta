@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { File } from 'util/model';
 import { FileModel } from 'model';
 import {
   ResponsiveImage,
   ResponsiveImageProps,
 } from 'util/image/ResponsiveImage';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { useServerData } from 'shared/ServerDataContext';
 import clsx from 'clsx';
 
 import styles from './ImageContent.module.scss';
@@ -19,13 +17,10 @@ export type ImageContentProps = {
 
 export const ImageContent = React.memo(
   ({ file, isUsingFullHeight, className, ...props }: ImageContentProps) => {
-    const { baseUrl } = useServerData();
-    const imageSource = file ? File.getFileRemoteLocation(baseUrl, file) : null;
-    return imageSource ? (
+    return (
       <ResponsiveImage
-        src={imageSource}
-        width={400}
-        sizes={'(max-width: 960px) 80vw, 80vw'}
+        file={file}
+        format="preview"
         {...props}
         className={clsx(
           {
@@ -35,9 +30,8 @@ export const ImageContent = React.memo(
           styles.root,
           className
         )}
+        fallback={<PlaceholderImage height={350} />}
       />
-    ) : (
-      <PlaceholderImage height={350} />
     );
   }
 );

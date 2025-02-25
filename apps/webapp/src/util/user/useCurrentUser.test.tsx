@@ -2,11 +2,9 @@ import * as React from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
 import { UserModel } from 'model';
-import { useCurrentUser } from './useCurrentUser';
+import { useCurrentUser, GET_CURRENT_USER } from './useCurrentUser';
 import { SomeUser } from 'test/fixtures';
 import pick from 'lodash/pick';
-
-import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 
 describe('util/userAvatar/useCurrentUser', () => {
   const createWrapperForUser = (currentUser: UserModel | null = null) => {
@@ -14,7 +12,7 @@ describe('util/userAvatar/useCurrentUser', () => {
       <MockedProvider
         mocks={[
           {
-            request: { query: GetCurrentUserQuery },
+            request: { query: GET_CURRENT_USER },
             result: { data: { currentUser } },
           },
         ]}

@@ -12,13 +12,13 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
 import { Socket as PhoenixSocket } from 'phoenix';
 import { JWT } from 'util/auth/jwt';
-import { TenantModel } from 'model';
 import { appConfig } from 'config';
 import { isAfter, sub } from 'date-fns';
 import { createCache } from './apollo/cache';
 import { isBrowser } from 'util/isBrowser';
 import axios, { AxiosRequestConfig } from 'axios';
 import getConfig from 'next/config';
+import { Tenant } from 'util/tenant';
 
 const ALLOWED_HEADERS = ['accept', 'content-type', 'authorization'] as const;
 
@@ -97,7 +97,7 @@ let cachedApolloClient: ApolloClient<NormalizedCacheObject> | null = null;
 export const getApolloClient = ({
   tenant,
   socketUrl,
-}: { tenant?: TenantModel; socketUrl?: string } = {}) => {
+}: { tenant?: Tenant; socketUrl?: string } = {}) => {
   if (isBrowser()) {
     if (cachedApolloClient !== null) {
       return cachedApolloClient;

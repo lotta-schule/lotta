@@ -12,7 +12,7 @@ import { loadTenant } from 'loader';
 import { TenantLayout } from '../../layout/TenantLayout';
 import { ApolloProvider } from '../../component/provider/ApolloProvider';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
-import { getBaseUrl, getBaseUrlString } from 'helper';
+import { getBaseUrlString } from 'helper';
 import { appConfig } from 'config';
 import { getAuthTokenFromHeader } from 'api/apollo/client-rsc';
 import { TranslationsProvider } from 'i18n/client';
@@ -55,10 +55,7 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
       </head>
       <body>
         <HubertProvider>
-          <ServerDataContextProvider
-            baseUrl={await getBaseUrl()}
-            tenant={tenant}
-          >
+          <ServerDataContextProvider tenant={tenant}>
             <TranslationsProvider>
               {tenant && (
                 <ApolloProvider

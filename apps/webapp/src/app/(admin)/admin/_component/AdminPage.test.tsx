@@ -2,8 +2,6 @@ import { render, screen, within } from 'test/util';
 import { AdminPage } from './AdminPage';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import { loadTenant } from 'loader';
-import { getBaseUrl } from 'helper';
-import { File } from 'util/model';
 import { MockedFunction } from 'vitest';
 
 vi.mock('loader', async () => ({
@@ -28,9 +26,6 @@ vi.mock('next/link', () => ({
 }));
 
 const loadTenantMock = loadTenant as MockedFunction<typeof loadTenant>;
-const getBaseUrlMock = getBaseUrl as MockedFunction<typeof getBaseUrl>;
-
-const FileGetFileRemoteLocationMock = vi.spyOn(File, 'getFileRemoteLocation');
 
 describe('AdminPage', () => {
   beforeEach(() => {
@@ -39,8 +34,6 @@ describe('AdminPage', () => {
       logoImageFile: 'logo.png',
       title: 'Tenant Title',
     } as any);
-    getBaseUrlMock.mockResolvedValue('http://localhost');
-    FileGetFileRemoteLocationMock.mockReturnValue('http://localhost/logo.png');
   });
 
   it('renders title with icon', async () => {

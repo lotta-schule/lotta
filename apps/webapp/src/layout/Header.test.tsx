@@ -1,5 +1,6 @@
 import { render } from 'test/util';
 import { Header } from './Header';
+import { imageFile } from 'test/fixtures';
 
 describe('Header', () => {
   it('renders the header content correctly', () => {
@@ -12,6 +13,16 @@ describe('Header', () => {
     expect(childrenContent).toBeInTheDocument();
   });
 
+  it('renders the banner image when bannerImage is provided', () => {
+    const screen = render(
+      <Header bannerImage={imageFile}>Test Header Content</Header>
+    );
+
+    const imageElement = screen.getByRole('presentation');
+    expect(imageElement).toBeInTheDocument();
+    expect(imageElement.getAttribute('srcset')).toContain('/banner_660.webp');
+  });
+
   it('renders the banner image when bannerImageUrl is provided', () => {
     const bannerImageUrl = 'https://example.com/banner.jpg';
     const screen = render(
@@ -20,6 +31,6 @@ describe('Header', () => {
 
     const imageElement = screen.getByRole('presentation');
     expect(imageElement).toBeInTheDocument();
-    expect(imageElement.getAttribute('srcset')).toContain(bannerImageUrl);
+    expect(imageElement.getAttribute('src')).toEqual(bannerImageUrl);
   });
 });

@@ -10,13 +10,13 @@ WORKDIR /app
 
 # This step installs all the build tools we'll need
 RUN apk update && \
-    apk upgrade --no-cache && \
-    apk add --no-cache \
-    git build-base
+  apk upgrade --no-cache && \
+  apk add --no-cache \
+  git build-base
 
 # install hex + rebar
 RUN mix local.hex --force && \
-    mix local.rebar --force
+  mix local.rebar --force
 
 # set build ENV
 ENV MIX_ENV=prod
@@ -52,12 +52,14 @@ EXPOSE 4000
 ENV LANG=C.UTF-8
 
 RUN apk update && \
-    apk add --no-cache \
-    bash \
-    curl \
-    openssl-dev \
-    libssl3 \
-    libstdc++
+  apk add --no-cache \
+  bash \
+  curl \
+  openssl-dev \
+  libssl3 \
+  libstdc++ \
+  vips \
+  vips-heif
 
 RUN mkdir -p /app
 WORKDIR /app

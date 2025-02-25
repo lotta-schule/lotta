@@ -325,7 +325,7 @@ describe('shared/article/module/form/FormElement', () => {
         'lotta-file-id://' +
           '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15",' +
           '"filename":"Dateiname.jpg","filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
-          '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}'
+          '"userId":"1","parentDirectory":{"id":"8743"}}'
       );
     });
 
@@ -342,7 +342,7 @@ describe('shared/article/module/form/FormElement', () => {
             'lotta-file-id://' +
             '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15","filename":"Dateiname.jpg",' +
             '"filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
-            '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}'
+            '"userId":"1","parentDirectory":{"id":"8743"}}'
           }
           onSetValue={setValueFn}
         />

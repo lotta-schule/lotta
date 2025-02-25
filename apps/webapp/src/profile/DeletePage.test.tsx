@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { describe, expect, it, vi } from 'vitest';
 import { DirectoryModel, FileModel } from 'model';
-import { MockRouter, render, waitFor } from 'test/util';
+import { MockRouter } from 'test/mocks';
+import { render, waitFor } from 'test/util';
 import {
   ComputerExperten,
   VivaLaRevolucion,
@@ -11,14 +11,13 @@ import {
   SomeUser,
   getPrivateAndPublicFiles,
 } from 'test/fixtures';
-import { DeletePage } from './DeletePage';
+import { DeletePage, GET_RELEVANT_FILES_IN_USAGE } from './DeletePage';
 import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
 import userEvent from '@testing-library/user-event';
 
 import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
-import GetRelevantFilesInUsageQuery from 'api/query/GetRelevantFilesInUsage.graphql';
 
 describe('shared/layouts/profileLayout/ProfileDelete', () => {
   const filesAndDirs = getPrivateAndPublicFiles(SomeUser);
@@ -87,7 +86,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
         currentUser: SomeUser,
         additionalMocks: [
           {
-            request: { query: GetRelevantFilesInUsageQuery },
+            request: { query: GET_RELEVANT_FILES_IN_USAGE },
             result: { data: { files } },
           },
           {
@@ -140,7 +139,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
         currentUser: SomeUser,
         additionalMocks: [
           {
-            request: { query: GetRelevantFilesInUsageQuery },
+            request: { query: GET_RELEVANT_FILES_IN_USAGE },
             result: { data: { files: [] } },
           },
           {
@@ -221,7 +220,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
             },
           },
           {
-            request: { query: GetRelevantFilesInUsageQuery },
+            request: { query: GET_RELEVANT_FILES_IN_USAGE },
             result: { data: { files: [] } },
           },
           {

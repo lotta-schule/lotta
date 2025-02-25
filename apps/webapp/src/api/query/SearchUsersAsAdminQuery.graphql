@@ -23,6 +23,12 @@ query SearchUsersAsAdmin(
     }
     avatarImageFile {
       id
+      formats {
+        name
+        url
+        type
+        status
+      }
     }
   }
 }

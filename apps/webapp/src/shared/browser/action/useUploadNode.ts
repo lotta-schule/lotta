@@ -2,14 +2,38 @@ import * as React from 'react';
 import { useMutation, ApolloCache } from '@apollo/client';
 import { BrowserNode, BrowserProps } from '@lotta-schule/hubert';
 import { DirectoryModel, FileModel } from 'model';
+import { graphql, ResultOf } from 'api/graphql';
 
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import UploadFileMutation from 'api/mutation/UploadFileMutation.graphql';
+
+export const UPLOAD_FILE_MUTATION = graphql(`
+  mutation UploadFile($file: Upload!, $parentDirectoryId: ID!) {
+    file: uploadFile(file: $file, parentDirectoryId: $parentDirectoryId) {
+      id
+      insertedAt
+      updatedAt
+      filename
+      filesize
+      mimeType
+      fileType
+      userId
+      parentDirectory {
+        id
+      }
+      formats {
+        name
+        url
+        type
+        status
+      }
+    }
+  }
+`);
 
 const updateCache = (
   client: ApolloCache<any>,
   parentNode: BrowserNode<'directory'>,
-  file: FileModel
+  file: NonNullable<ResultOf<typeof UPLOAD_FILE_MUTATION>['file']>
 ) => {
   const cache = client.readQuery<{
     files: FileModel[];
@@ -33,9 +57,7 @@ const updateCache = (
 };
 
 export const useUploadNode = () => {
-  const [uploadFile] = useMutation<{
-    file: FileModel;
-  }>(UploadFileMutation);
+  const [uploadFile] = useMutation(UPLOAD_FILE_MUTATION);
 
   return React.useCallback<Required<BrowserProps>['uploadNode']>(
     (upload, parent, update) => {

@@ -4,8 +4,7 @@ import { ArticleModel, WidgetModel, ID, ArticleFilter } from 'model';
 import { LegacyHeader, Main, Sidebar } from 'layout';
 import { ErrorMessage, NoSsr, useScrollEvent } from '@lotta-schule/hubert';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { File, User } from 'util/model';
-import { useServerData } from 'shared/ServerDataContext';
+import { User } from 'util/model';
 import { WidgetsList } from './widgetsList/WidgetsList';
 import { ArticlePreview } from 'article/preview';
 import { useCategory } from 'util/categories/useCategory';
@@ -23,7 +22,6 @@ export interface CategoryPageProps {
 }
 
 export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
-  const { baseUrl } = useServerData();
   const user = useCurrentUser();
   const category = useCategory(categoryId);
   const twoColumnsLayout = category?.layoutName === '2-columns';
@@ -171,12 +169,7 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
     <>
       <CategoryHead category={category} />
       <Main>
-        <LegacyHeader
-          bannerImageUrl={
-            category.bannerImageFile &&
-            File.getFileRemoteLocation(baseUrl, category.bannerImageFile)
-          }
-        >
+        <LegacyHeader bannerImage={category.bannerImageFile || undefined}>
           <h2 data-testid="title">{category.title}</h2>
         </LegacyHeader>
         <div className={styles.articles}>

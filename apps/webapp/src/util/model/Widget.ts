@@ -1,12 +1,14 @@
 import { WidgetModel, WidgetModelType } from 'model';
-import { File } from 'util/model';
 import * as React from 'react';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 
 export const Widget = {
   getIcon(widget: WidgetModel) {
     return widget.iconImageFile
-      ? React.createElement('img', {
-          src: File.getFileRemoteLocation('/', widget.iconImageFile),
+      ? React.createElement(ResponsiveImage, {
+          file: widget.iconImageFile,
+          alt: '',
+          format: 'icon',
           style: { width: '1.5rem', height: '1.5rem' },
         })
       : Widget.getIconForType(widget.type);

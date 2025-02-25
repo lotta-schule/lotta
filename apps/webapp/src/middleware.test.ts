@@ -32,7 +32,7 @@ describe('middleware', () => {
         get: (key: string) => headers[key],
       },
       url,
-      nextUrl: parse(url)
+      nextUrl: parse(url),
     }) as unknown as NextRequest;
 
   it('should update tokens if refresh token is valid and close to expiration', async () => {

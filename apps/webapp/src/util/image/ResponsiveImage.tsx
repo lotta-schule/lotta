@@ -1,57 +1,43 @@
 import * as React from 'react';
-import { ProcessingOptions, useImageUrl } from './useImageUrl';
+import { FileModel } from 'model';
+import { File } from 'util/model';
 
 export type ResponsiveImageProps = {
-  src: string;
+  file: Pick<FileModel, '__typename' | 'formats'> | null | undefined;
   alt: string;
-  width?: number;
-  height?: number;
-  maxDisplayWidth?: number;
+  format: string;
+  fallback?: React.ReactNode | null;
 } & Omit<
   React.DetailedHTMLProps<
     React.ImgHTMLAttributes<HTMLImageElement>,
     HTMLImageElement
   >,
-  'src' | 'alt' | 'width'
-> &
-  Omit<ProcessingOptions, 'width' | 'height'>;
+  'alt' | 'srcSet'
+>;
 
 export const ResponsiveImage = React.memo(
   ({
-    src,
-    alt,
-    style,
+    file,
+    format,
     className,
-    width,
-    height,
-    aspectRatio,
-    resize,
-    sizes,
-    maxDisplayWidth,
+    fallback = null,
     ...imgProps
   }: ResponsiveImageProps) => {
-    const { customStyle, sizeMap } = useImageUrl(
-      src,
-      {
-        width,
-        height,
-        aspectRatio,
-        resize,
-      },
-      { maxDisplayWidth }
-    );
-    return (
-      <img
-        className={className}
-        srcSet={Object.entries(sizeMap)
-          .map(([size, src]) => `${src} ${size}`)
-          .join(', ')}
-        alt={alt}
-        style={{ ...customStyle, ...style }}
-        sizes={sizes}
-        {...imgProps}
-      />
-    );
+    const formats = file && File.getAvailableFormats(file, format);
+
+    const sizeMap = formats
+      ?.reduce((acc, { url, width }) => acc + `, ${url} ${width}w`, '')
+      ?.replace(/^, /, '');
+
+    if (formats?.length) {
+      return <img className={className} srcSet={sizeMap} {...imgProps} />;
+    }
+
+    if (imgProps.src) {
+      return <img className={className} {...imgProps} />;
+    }
+
+    return fallback;
   }
 );
 ResponsiveImage.displayName = 'ResponsiveImage';

@@ -197,7 +197,14 @@ export const FormElement = React.memo<FormElementProps>(
                         } MB groß sein.`
                       );
                     } else {
-                      onSetValue(`lotta-file-id://${JSON.stringify(file)}`);
+                      const fileWithoutFormats = Object.fromEntries(
+                        Object.entries(file).filter(
+                          ([key]) => key !== 'formats'
+                        )
+                      );
+                      onSetValue(
+                        `lotta-file-id://${JSON.stringify(fileWithoutFormats)}`
+                      );
                     }
                   }}
                 />

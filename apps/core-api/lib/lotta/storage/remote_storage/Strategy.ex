@@ -1,11 +1,10 @@
 defprotocol Lotta.Storage.RemoteStorage.Strategy do
-  alias Lotta.Storage.RemoteStorageEntity
-  alias Lotta.Storage.RemoteStorage
+  alias Lotta.Storage.{FileData, RemoteStorage, RemoteStorageEntity}
 
   @doc """
   Create a file on the remote storage given an elixir file object
   """
-  @spec create(Plug.Upload.t(), String.t(), RemoteStorage.config()) ::
+  @spec create(FileData.t(), String.t(), RemoteStorage.config()) ::
           {:ok, RemoteStorageEntity} | {:error, term()}
   def create(file, path, config)
 

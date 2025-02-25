@@ -5,17 +5,15 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
   """
   require Logger
 
-  alias Lotta.Storage.RemoteStorageEntity
-  alias Plug.Upload
+  alias Lotta.Storage.{FileData, RemoteStorageEntity}
   alias ExAws.S3
 
-  def create(%Upload{path: filepath, content_type: content_type}, path, config) do
-    filepath
-    |> S3.Upload.stream_file()
+  def create(%FileData{} = file_data, path, config) do
+    FileData.stream!(file_data)
     |> S3.upload(
       config[:config][:bucket],
       path,
-      content_type: content_type
+      content_type: Keyword.get(file_data.metadata, :mime_type)
     )
     |> ExAws.request()
     |> case do

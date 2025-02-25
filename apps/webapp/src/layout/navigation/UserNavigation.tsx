@@ -30,7 +30,7 @@ import { Article, User } from 'util/model';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
-import { useOnLogout } from 'util/user';
+import { useOnLogout } from 'util/user/useOnLogout';
 import { useNewFeedbackCount } from 'util/feedback';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';

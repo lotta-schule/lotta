@@ -34,6 +34,10 @@ const nextConfig = {
           destination: '/api/storage/:path*',
         },
         {
+          source: '/data/:path*',
+          destination: 'http://localhost:4000/data/:path*',
+        },
+        {
           source: '/api',
           destination: '/api/backend',
         },
@@ -120,4 +124,8 @@ export default withSentryConfig(nextConfig, {
   org: 'lotta',
   project: 'web',
   widenClientFileUpload: true,
+
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: false,
+  },
 });

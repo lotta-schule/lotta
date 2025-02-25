@@ -39,7 +39,6 @@ defmodule SystemConfig do
     end
   end
 
-  defp default("POOL_SIZE", _), do: "10"
   defp default("APP_ENVIRONMENT", _), do: "development"
   defp default("BASE_URI_HOST", :dev), do: "local.lotta.schule,lotta.lvh.me,lotta.schule"
   defp default("BASE_URI_HOST", _), do: "lotta.schule"
@@ -273,9 +272,6 @@ config :sentry,
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()],
   filter: Lotta.SentryFilter
-
-config :lotta, Lotta.Storage.ImageProcessingUrl,
-  cloudimage_token: SystemConfig.get("CLOUDIMAGE_TOKEN")
 
 libcluster_topologies =
   case SystemConfig.get("HEADLESS_SERVICE_NAME") do

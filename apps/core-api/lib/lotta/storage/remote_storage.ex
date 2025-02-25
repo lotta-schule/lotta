@@ -3,7 +3,7 @@ defmodule Lotta.Storage.RemoteStorage do
   Handle remote storage for user-generated content.
   Manges writing and reading to different stores.
   """
-  alias Lotta.Storage.RemoteStorageEntity
+  alias Lotta.Storage.{FileData, RemoteStorageEntity}
 
   @type config :: %{
           name: String.t(),
@@ -72,16 +72,16 @@ defmodule Lotta.Storage.RemoteStorage do
   end
 
   @doc """
-  Create a file on the remote storage given an elixir Upload struct.
+  Create a file on the remote storage given a `Lotta.Storage.FileData` struct.
   Returns an (unsaved[!]) RemoteStorageEntity in a result tuple.
 
   !!! WARNING !!!
   This does not create an entry in the database.
   Call Repo.save! on the returned RemoteStorageEntity to persist it.
   """
-  @spec create(Upload.t(), path :: String.t()) ::
+  @spec create(FileData.t(), path :: String.t()) ::
           {:ok, RemoteStorageEntity.t()} | {:error, term()}
-  def create(%Plug.Upload{} = file, path) do
+  def create(%FileData{} = file, path) do
     with {:ok, strategy} <- get_strategy(),
          {:ok, config} <- config_for_store(default_store()) do
       strategy.create(file, path, config)

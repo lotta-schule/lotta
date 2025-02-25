@@ -1,4 +1,5 @@
-import { TenantModel, WidgetModel, WidgetModelType } from 'model';
+import { WidgetModel, WidgetModelType } from 'model';
+import { Tenant } from 'util/tenant';
 
 /**
  *
@@ -20,7 +21,7 @@ export const tenant = {
     userMaxStorageConfig: '20971520',
     customTheme: {},
   },
-} as TenantModel;
+} as Tenant;
 
 /**
  *

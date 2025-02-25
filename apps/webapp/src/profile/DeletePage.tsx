@@ -7,7 +7,7 @@ import {
   faAngleRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { useQuery, useApolloClient, useMutation } from '@apollo/client';
-import { ArticleModel, FileModel } from 'model';
+import { ArticleModel } from 'model';
 import {
   Button,
   Box,
@@ -27,11 +27,58 @@ import { ProfileDeleteFileSelection } from './component/ProfileDeleteFileSelecti
 import { useRouter } from 'next/router';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { UserBrowser } from 'shared/browser';
+import { graphql, ResultOf } from 'api/graphql';
 import clsx from 'clsx';
 
 import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
 import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
-import GetRelevantFilesInUsageQuery from 'api/query/GetRelevantFilesInUsage.graphql';
+
+export const GET_RELEVANT_FILES_IN_USAGE = graphql(`
+  query GetRelevantFilesInUsage {
+    files: relevantFilesInUsage {
+      id
+      insertedAt
+      updatedAt
+      filename
+      filesize
+      mimeType
+      fileType
+      userId
+      formats {
+        name
+        url
+        type
+        status
+      }
+      usage {
+        ... on FileCategoryUsageLocation {
+          usage
+          category {
+            id
+            title
+          }
+        }
+        ... on FileArticleUsageLocation {
+          usage
+          article {
+            id
+            title
+            previewImageFile {
+              id
+            }
+          }
+        }
+      }
+      parentDirectory {
+        id
+        name
+      }
+    }
+  }
+`);
+export type RelevantFilesInUsage = NonNullable<
+  ResultOf<typeof GET_RELEVANT_FILES_IN_USAGE>['files']
+>;
 
 import styles from './DeletePage.module.scss';
 
@@ -49,7 +96,7 @@ export const DeletePage = React.memo(() => {
   const tenant = useTenant();
   const currentUser = useCurrentUser();
   const [selectedFilesToTransfer, setSelectedFilesToTransfer] = React.useState<
-    FileModel[]
+    NonNullable<ResultOf<typeof GET_RELEVANT_FILES_IN_USAGE>['files']>
   >([]);
 
   const [currentStep, setCurrentStep] = React.useState<ProfileDeleteStep>(
@@ -81,17 +128,17 @@ export const DeletePage = React.memo(() => {
     data: relevantFilesData,
     loading: isLoadingRelevantFiles,
     error: relevantFilesError,
-  } = useQuery<{ files: FileModel[] }>(GetRelevantFilesInUsageQuery, {
+  } = useQuery(GET_RELEVANT_FILES_IN_USAGE, {
     skip: currentStep !== ProfileDeleteStep.ReviewFiles,
-    fetchPolicy: 'network-only',
+    initialFetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
     onCompleted: (data) => {
       if (data) {
-        if (!data.files.length) {
+        if (!data.files?.length) {
           // userAvatar has no files used in public articles or categories. Just show him his own files
           setSelectedFilesTab(1);
         } else {
-          setSelectedFilesToTransfer([...data.files]);
+          setSelectedFilesToTransfer(data.files);
         }
       }
     },
@@ -265,7 +312,7 @@ export const DeletePage = React.memo(() => {
             }
             data-testid={'ProfileDeleteStep3Box'}
           >
-            {relevantFilesData && relevantFilesData.files.length > 1 && (
+            {!!relevantFilesData?.files?.length && (
               <Tabbar
                 value={selectedFilesTab}
                 onChange={(val) => setSelectedFilesTab(val as number)}
