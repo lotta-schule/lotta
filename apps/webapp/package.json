@@ -59,5 +59,11 @@
   "devDependencies": {
     "i18next-parser": "^9.0.1"
   },
-  "packageManager": "pnpm@10.5.2"
+  "packageManager": "pnpm@10.5.2",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@sentry/cli",
+      "sharp"
+    ]
+  }
 }
