@@ -45,4 +45,12 @@ export default defineConfig({
       TZ: 'Europe/Berlin',
     },
   },
+
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+      },
+    },
+  },
 });
