@@ -77,7 +77,7 @@ describe('shared/article/CategoryLayout', () => {
       const image = headerContent.querySelector('img');
       expect(image).toBeVisible();
       const imageUrl = new URL(image!.srcset.split(' ')[0]);
-      expect(imageUrl.pathname).toEqual('/123/banner_330.webp');
+      expect(imageUrl.pathname).toEqual('/123/banner_330');
     });
 
     it('should render an ArticlePreview', async () => {

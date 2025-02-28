@@ -39,12 +39,12 @@ describe('TenantLayout', () => {
     expect(styleTag!.innerHTML).toMatchInlineSnapshot(`
       "@media screen and (min-width: 600px) {
             body::after {
-              background-image: image-set(url(https://example.com/123/pagebg_1024.webp) 1x,url(https://example.com/123/pagebg_1920.webp) 2x);
+              background-image: image-set(url(https://example.com/123/pagebg_1024) 1x,url(https://example.com/123/pagebg_1920) 2x);
             }
         }
         @media screen and (min-width: 1280px) {
             body::after {
-              background-image: image-set(url(https://example.com/123/pagebg_1280.webp) 1x,url(https://example.com/123/pagebg_2560.webp) 2x);
+              background-image: image-set(url(https://example.com/123/pagebg_1280) 1x,url(https://example.com/123/pagebg_2560) 2x);
             }
         }"
     `);

@@ -37,7 +37,7 @@ describe('BaseLayout', () => {
     const styleTag = screen.container.querySelector('style');
     expect(styleTag).not.toBeNull();
     expect(styleTag).toHaveTextContent(
-      /url\(https:\/\/example\.com\/123\/pagebg_1024\.webp\) 1x/
+      /url\(https:\/\/example\.com\/123\/pagebg_1024\) 1x/
     );
   });
 

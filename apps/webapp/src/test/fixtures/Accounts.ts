@@ -119,44 +119,64 @@ export const schulweitDirectory = {
  *
  */
 
+const commonFormats = [
+  'preview_200',
+  'preview_400',
+  'preview_800',
+  'preview_1200',
+  'preview_1600',
+  'preview_2400',
+  'preview_3200',
+];
+export const getDefaultFormats = (type: 'image' | 'video' | 'misc') => {
+  if (type === 'image') {
+    return [
+      ...commonFormats,
+      'avatar_50',
+      'avatar_100',
+      'avatar_250',
+      'avatar_500',
+      'avatar_1000',
+      'logo_300',
+      'logo_600',
+      'banner_330',
+      'banner_660',
+      'banner_990',
+      'banner_1320',
+      'article_preview_300',
+      'article_preview_420',
+      'article_preview_600',
+      'article_preview_840',
+      'pagebg_1024',
+      'pagebg_1280',
+      'pagebg_1920',
+      'pagebg_2560',
+      'icon_64',
+      'icon_128',
+      'icon_256',
+    ];
+  }
+  if (type === 'video') {
+    return [
+      ...commonFormats,
+      'webm_480',
+      'webm_720',
+      'webm_1080',
+      'h264_480',
+      'h264_720',
+      'h265_1080',
+    ];
+  }
+  return [];
+};
 export const createFormats = (
   path: string,
-  formats = [
-    'preview_200',
-    'preview_400',
-    'preview_800',
-    'preview_1200',
-    'preview_1600',
-    'preview_2400',
-    'preview_3200',
-    'avatar_50',
-    'avatar_100',
-    'avatar_250',
-    'avatar_500',
-    'avatar_1000',
-    'logo_300',
-    'logo_600',
-    'banner_330',
-    'banner_660',
-    'banner_990',
-    'banner_1320',
-    'article_preview_300',
-    'article_preview_420',
-    'article_preview_600',
-    'article_preview_840',
-    'pagebg_1024',
-    'pagebg_1280',
-    'pagebg_1920',
-    'pagebg_2560',
-    'icon_64',
-    'icon_128',
-    'icon_256',
-  ]
+  filetype: 'image' | 'video' | 'misc'
 ) =>
-  formats.map((f) => {
+  getDefaultFormats(filetype).map((f) => {
     return {
       name: f,
-      url: `https://example.com/${path}/${f}.webp`,
+      url: `https://example.com/${path}/${f}`,
       type: f.startsWith('webm') || f.startsWith('h264') ? 'video' : 'image',
       status: 'READY',
     };
@@ -171,7 +191,7 @@ export const imageFile = {
   mimeType: 'image/jpg',
   insertedAt: '2001-01-01 14:15',
   updatedAt: '2001-01-01 14:15',
-  formats: createFormats('123'),
+  formats: createFormats('123', 'image'),
   usage: [],
 } as Partial<FileModel> as FileModel;
 
@@ -184,7 +204,7 @@ export const otherImageFile = {
   mimeType: 'image/gif',
   insertedAt: '2001-01-01 14:15',
   updatedAt: '2001-01-01 14:15',
-  formats: createFormats('Animiert.gif'),
+  formats: createFormats('245', 'image'),
   usage: [],
 } as Partial<FileModel> as FileModel;
 
@@ -197,7 +217,7 @@ export const documentFile = {
   mimeType: 'application/pdf',
   insertedAt: '1848-02-21 00:00',
   updatedAt: '1848-02-21 00:00',
-  formats: createFormats('5445'),
+  formats: createFormats('5445', 'misc'),
   usage: [],
 } as Partial<FileModel> as FileModel;
 
@@ -211,7 +231,7 @@ export const convertedDocumentFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
-  formats: createFormats('Bilderbuch.pdf'),
+  formats: createFormats('5545', 'misc'),
 } as Partial<FileModel> as FileModel;
 
 export const podcastTextFile = {
@@ -224,7 +244,7 @@ export const podcastTextFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
-  formats: createFormats('5546'),
+  formats: createFormats('5546', 'misc'),
 } as Partial<FileModel> as FileModel;
 
 export const movieFile = {
@@ -237,7 +257,7 @@ export const movieFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
-  formats: createFormats('Amelie.mp4'),
+  formats: createFormats('75000', 'video'),
 } as Partial<FileModel> as FileModel;
 
 export const audioFile = {
@@ -250,7 +270,7 @@ export const audioFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
-  formats: [],
+  formats: createFormats('99000', 'misc'),
 } as Partial<FileModel> as FileModel;
 
 export const powerpointFile = {
@@ -263,7 +283,7 @@ export const powerpointFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
-  formats: createFormats('20'),
+  formats: createFormats('20', 'misc'),
 } as Partial<FileModel> as FileModel;
 
 /*

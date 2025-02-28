@@ -21,7 +21,7 @@ describe('Image ContentModule', () => {
               {
                 id: '1',
                 mimeType: 'image/jpeg',
-                formats: createFormats('image.jpg'),
+                formats: createFormats('1', 'image'),
               } as any,
             ],
           } as any

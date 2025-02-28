@@ -20,7 +20,7 @@ describe('Header', () => {
 
     const imageElement = screen.getByRole('presentation');
     expect(imageElement).toBeInTheDocument();
-    expect(imageElement.getAttribute('srcset')).toContain('/banner_660.webp');
+    expect(imageElement.getAttribute('srcset')).toContain('/banner_660');
   });
 
   it('renders the banner image when bannerImageUrl is provided', () => {
