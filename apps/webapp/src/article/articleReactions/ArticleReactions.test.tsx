@@ -147,7 +147,11 @@ describe('ArticleReactions Component', () => {
       const reactionButton = screen.getByRole('button', { name: /5/ });
       await user.click(reactionButton);
 
-      expect(await screen.findByTestId('ReactionUserList')).toBeVisible();
+      screen.rerender(<ArticleReactions article={Weihnachtsmarkt} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('ReactionUserList')).toBeVisible();
+      });
     });
 
     it('should disable the reaction button when the user is not logged in', async () => {
