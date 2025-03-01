@@ -36,6 +36,8 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetsNavigation', () =
   it('should list the widgets', async () => {
     const screen = render(<WidgetsNavigation />, {}, { additionalMocks });
 
+    screen.rerender(<WidgetsNavigation />); // rerender to trigger the query
+
     await waitFor(() => {
       expect(screen.getByRole('list')).toBeVisible();
     });
@@ -48,6 +50,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetsNavigation', () =
       .importMock<{ mockRouter: MockRouter }>('next/navigation')
       .then((m) => m.mockRouter);
     const screen = render(<WidgetsNavigation />, {}, { additionalMocks });
+    screen.rerender(<WidgetsNavigation />); // rerender to trigger the query
 
     await waitFor(() => {
       expect(

@@ -46,6 +46,7 @@ describe('MetricsOverview', () => {
       {},
       { additionalMocks: mocks }
     );
+    screen.rerender(<MetricsOverview period={monthPeriod} />); // rerender for Suspense to kick in
 
     await waitFor(() => {
       expect(screen.queryByLabelText('loading')).toBeNull();
@@ -53,26 +54,27 @@ describe('MetricsOverview', () => {
   });
 
   it('renders metrics when data is fetched', async () => {
-    const { getByText } = render(
+    const screen = render(
       <MetricsOverview period={monthPeriod} />,
       {},
       { additionalMocks: mocks }
     );
+    screen.rerender(<MetricsOverview period={monthPeriod} />); // rerender for Suspense to kick in
 
     // Wait for loading state to disappear
     await waitFor(() => {
-      expect(getByText('Besuche:')).toBeInTheDocument();
-      expect(getByText('100')).toBeInTheDocument();
-      expect(getByText('Besucher:')).toBeInTheDocument();
-      expect(getByText('50')).toBeInTheDocument();
-      expect(getByText('Seitenaufrufe:')).toBeInTheDocument();
-      expect(getByText('200')).toBeInTheDocument();
-      expect(getByText('Absprungrate:')).toBeInTheDocument();
-      expect(getByText('30%')).toBeInTheDocument();
-      expect(getByText('⌀ Besuchsdauer:')).toBeInTheDocument();
-      expect(getByText('30m 0s')).toBeInTheDocument();
-      expect(getByText('Seiten pro Besuch:')).toBeInTheDocument();
-      expect(getByText('3')).toBeInTheDocument();
+      expect(screen.getByText('Besuche:')).toBeInTheDocument();
+      expect(screen.getByText('100')).toBeInTheDocument();
+      expect(screen.getByText('Besucher:')).toBeInTheDocument();
+      expect(screen.getByText('50')).toBeInTheDocument();
+      expect(screen.getByText('Seitenaufrufe:')).toBeInTheDocument();
+      expect(screen.getByText('200')).toBeInTheDocument();
+      expect(screen.getByText('Absprungrate:')).toBeInTheDocument();
+      expect(screen.getByText('30%')).toBeInTheDocument();
+      expect(screen.getByText('⌀ Besuchsdauer:')).toBeInTheDocument();
+      expect(screen.getByText('30m 0s')).toBeInTheDocument();
+      expect(screen.getByText('Seiten pro Besuch:')).toBeInTheDocument();
+      expect(screen.getByText('3')).toBeInTheDocument();
     });
   });
 });

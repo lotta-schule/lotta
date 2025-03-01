@@ -44,6 +44,9 @@ describe('EditEventDialog', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(
+        <EditEventDialog eventToBeEdited={eventToBeEdited} onClose={vi.fn()} />
+      ); // rerender for Suspense to kick in
 
       await waitFor(() => {
         expect(
@@ -145,6 +148,10 @@ describe('EditEventDialog', () => {
         {},
         { additionalMocks: [...additionalMocks, mock] }
       );
+
+      screen.rerender(
+        <EditEventDialog eventToBeEdited={eventToBeEdited} onClose={vi.fn()} />
+      ); // rerender for Suspense to kick in
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeVisible();

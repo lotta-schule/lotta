@@ -31,7 +31,7 @@ export const Analytics = React.memo(() => {
   );
 
   const availableMonths = React.useMemo(() => {
-    const months = [new Date('2024-03-01')];
+    const months = [new Date('2024-03-01T12:00:00+01:00')];
     while (
       !isSameMonth(new Date(), months.slice(-1)[0] ?? new Date()) &&
       months.length < 120

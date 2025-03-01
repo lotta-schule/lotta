@@ -41,6 +41,7 @@ describe('MetricsChart', () => {
       {},
       { additionalMocks: mocks }
     );
+    screen.rerender(<MetricsChart period={monthPeriod} metric="visits" />); // rerender for Suspense to kick in
 
     // Wait for loading state to disappear
     await waitFor(() => {

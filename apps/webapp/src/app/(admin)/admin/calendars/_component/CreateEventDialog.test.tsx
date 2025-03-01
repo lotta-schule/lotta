@@ -43,6 +43,7 @@ describe('CreateEventDialog', () => {
       {},
       { additionalMocks }
     );
+    screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
     await waitFor(() => {
       expect(
@@ -61,6 +62,7 @@ describe('CreateEventDialog', () => {
       {},
       { additionalMocks }
     );
+    screen.rerender(<CreateEventDialog isOpen={false} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
     await waitFor(() => {
       expect(screen.container.querySelector<'dialog'>('dialog')).not.toBeNull();
@@ -76,6 +78,7 @@ describe('CreateEventDialog', () => {
       {},
       { additionalMocks }
     );
+    screen.rerender(<CreateEventDialog isOpen={true} onClose={handleClose} />); // Re-render to trigger Suspense
 
     await waitFor(() => {
       expect(screen.getByRole('dialog')).toBeVisible();
@@ -93,6 +96,7 @@ describe('CreateEventDialog', () => {
       {},
       { additionalMocks }
     );
+    screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
     const saveButton = await screen.findByRole('button', { name: 'speichern' });
     expect(saveButton).toBeDisabled();
@@ -107,6 +111,7 @@ describe('CreateEventDialog', () => {
       {},
       { additionalMocks }
     );
+    screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
     const selectElement = await screen.findByRole('combobox', {
       name: 'Kalender',
@@ -124,6 +129,7 @@ describe('CreateEventDialog', () => {
       {},
       { additionalMocks }
     );
+    screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
     const allDayCheckbox = await screen.findByLabelText('ganztägig');
 
@@ -141,6 +147,7 @@ describe('CreateEventDialog', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
       const allDayCheckbox = await screen.findByLabelText('ganztägig');
       const multidayCheckbox = await screen.findByLabelText('mehrtägig');
@@ -164,6 +171,7 @@ describe('CreateEventDialog', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
       await user.click(await screen.findByLabelText('ganztägig'));
       await user.click(await screen.findByLabelText('mehrtägig'));
@@ -181,6 +189,7 @@ describe('CreateEventDialog', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
       await user.click(await screen.findByLabelText('ganztägig'));
       await user.click(await screen.findByLabelText('mehrtägig'));
@@ -202,6 +211,7 @@ describe('CreateEventDialog', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Susp
 
       await user.click(await screen.findByLabelText('ganztägig'));
       await user.click(await screen.findByLabelText('mehrtägig'));
@@ -229,6 +239,7 @@ describe('CreateEventDialog', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
       await user.click(await screen.findByLabelText('ganztägig'));
 
@@ -251,6 +262,7 @@ describe('CreateEventDialog', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Susp
 
       await user.click(await screen.findByLabelText('ganztägig'));
 
@@ -273,6 +285,7 @@ describe('CreateEventDialog', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
       await user.click(await screen.findByLabelText('ganztägig'));
 
@@ -297,6 +310,7 @@ describe('CreateEventDialog', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Susp
 
       await user.click(await screen.findByLabelText('ganztägig'));
 

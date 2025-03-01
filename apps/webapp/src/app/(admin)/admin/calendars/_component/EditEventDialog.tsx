@@ -28,7 +28,18 @@ export const EditEventDialog = React.memo(
     const formRef = React.useRef<React.ComponentRef<'input'>>(null);
 
     const [eventData, setEventData] = React.useState<EditEventInput | null>(
-      null
+      () => {
+        if (eventToBeEdited) {
+          const { id: _id, calendar, ...eventData } = eventToBeEdited;
+          return {
+            ...eventData,
+            start: new Date(eventData.start),
+            end: new Date(eventData.end),
+            calendarId: calendar.id,
+          };
+        }
+        return null;
+      }
     );
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 

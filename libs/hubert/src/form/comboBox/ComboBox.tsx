@@ -182,12 +182,7 @@ export const ComboBox = React.memo(
     const listBoxRef = React.useRef<HTMLUListElement>(null);
     const popoverRef = React.useRef<HTMLDivElement>(null);
 
-    const {
-      labelProps,
-      buttonProps: buttonProps,
-      inputProps,
-      listBoxProps,
-    } = useComboBox(
+    const { labelProps, buttonProps, inputProps, listBoxProps } = useComboBox(
       {
         autoFocus,
         inputRef,
@@ -301,7 +296,8 @@ export const ComboBox = React.memo(
             className={styles.listbox}
             style={{ width: inputWrapperRef.current?.clientWidth }}
             aria-label={title}
-            {...(listBoxProps as any)}
+            {...listBoxProps}
+            autoFocus={!!listBoxProps.autoFocus}
             ref={listBoxRef}
             label={title}
             state={state}

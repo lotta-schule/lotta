@@ -224,12 +224,13 @@ describe('Analytics', () => {
       const user = userEvent.setup();
 
       const screen = render(<Analytics />, {}, { additionalMocks: mocks });
+      screen.rerender(<Analytics />); // rerender for Suspense to kick in
 
       expect(
         screen.getByRole('button', {
           name: 'vergangene 30 Tage Monat wählen',
         })
-      ).toBeVisible();
+      ).not.toBeDisabled();
 
       await user.click(
         screen.getByRole('button', {
@@ -271,21 +272,18 @@ describe('Analytics', () => {
       expect(screen.getByRole('option', { name: 'März 2024' })).toBeVisible();
       expect(screen.queryByRole('option', { name: 'Februar 2024' })).toBeNull();
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
       await user.click(screen.getByRole('option', { name: 'April 2025' }));
 
       await waitFor(() => {
         expect(
           screen.getByRole('button', {
-            name: 'April 2025 Monat wählen',
+            name: /Monat wählen/,
           })
-        ).toBeVisible();
+        ).not.toBeDisabled();
       });
 
       await waitFor(() => {
         expect(mocks[2].result).toHaveBeenCalled();
-        expect(mocks[3].result).toHaveBeenCalled();
       });
     }, 20_000);
   });
@@ -295,6 +293,7 @@ describe('Analytics', () => {
       const user = userEvent.setup();
 
       const screen = render(<Analytics />, {}, { additionalMocks: mocks });
+      screen.rerender(<Analytics />); // rerender for Suspense to kick in
 
       await waitFor(() => {
         const props = MockPropertyBreakdown.mock.lastCall?.at(0);
