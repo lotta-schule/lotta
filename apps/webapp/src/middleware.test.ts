@@ -128,7 +128,7 @@ describe('middleware', () => {
 describe('config', () => {
   it('should have the correct matcher', () => {
     expect(config.matcher).toEqual([
-      '/((?!_next/static|_next/image|font|favicon.ico|favicon|p/).*)',
+      '/((?!_next/static|_next/image|font|favicon.ico|favicon|p/|stry/).*)',
     ]);
   });
 });
