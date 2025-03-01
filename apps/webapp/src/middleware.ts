@@ -7,7 +7,7 @@ import { JWT } from 'util/auth/jwt';
 import type { NextRequest } from 'next/server';
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|font|favicon.ico|favicon|p/).*)'],
+  matcher: ['/((?!_next/static|_next/image|font|favicon.ico|favicon|p/|stry/).*)'],
 };
 
 // This function can be marked `async` if using `await` inside

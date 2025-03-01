@@ -125,6 +125,8 @@ export default withSentryConfig(nextConfig, {
   project: 'web',
   widenClientFileUpload: true,
 
+  tunnelRoute: '/stry',
+
   sourcemaps: {
     deleteSourcemapsAfterUpload: false,
   },
