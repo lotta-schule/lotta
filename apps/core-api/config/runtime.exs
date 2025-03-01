@@ -69,12 +69,6 @@ defmodule SystemConfig do
   defp default("POSTGRES_HOST", _), do: "localhost"
   defp default("POSTGRES_POOL_SIZE", _), do: "10"
 
-  defp default("RABBITMQ_HOST", _), do: "localhost"
-  defp default("RABBITMQ_USER", _), do: "guest"
-  defp default("RABBITMQ_PASSWORD", _), do: "guest"
-  defp default("RABBITMQ_PREFIX", :test), do: "test"
-  defp default("RABBITMQ_PREFIX", _), do: nil
-
   defp default("REDIS_HOST", env) when env in [:dev, :test], do: "localhost"
   defp default("REDIS_PASSWORD", env) when env in [:dev, :test], do: "lotta"
 
@@ -175,17 +169,6 @@ config :lotta,
        database: SystemConfig.get("POSTGRES_DB"),
        hostname: SystemConfig.get("POSTGRES_HOST"),
        pool_size: SystemConfig.get("POSTGRES_POOL_SIZE", cast: :integer)
-
-config :lotta, :rabbitmq,
-  url:
-    %URI{
-      host: SystemConfig.get("RABBITMQ_HOST"),
-      scheme: "amqp",
-      userinfo:
-        SystemConfig.get("RABBITMQ_USER", cast: :url_encode) <>
-          ":" <> SystemConfig.get("RABBITMQ_PASSWORD", cast: :url_encode)
-    }
-    |> URI.to_string()
 
 config :lotta, :redis_connection,
   host: SystemConfig.get("REDIS_HOST"),

@@ -22,18 +22,6 @@ services:
       timeout: 10s
       retries: 7
 
-  rabbitmq:
-    image: rabbitmq:3.12-management
-    hostname: rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    healthcheck:
-      test: ['CMD-SHELL', 'rabbitmqctl status']
-      interval: 20s
-      timeout: 10s
-      retries: 7
-
   minio:
     image: bitnami/minio:2024
     ports:

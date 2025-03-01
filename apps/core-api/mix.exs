@@ -49,7 +49,6 @@ defmodule Lotta.MixProject do
       extra_applications: [
         :logger,
         :runtime_tools,
-        :amqp,
         :crypto,
         :ssl,
         :inets,
@@ -101,7 +100,6 @@ defmodule Lotta.MixProject do
       {:uuid, "~> 1.1.8"},
       {:bamboo, "~> 2.0"},
       {:bamboo_phoenix, "~> 1.0"},
-      {:gen_rmq, "~> 4.0"},
       {:ex_ical, "~> 0.2.0"},
       {:pigeon, github: "codedge-llc/pigeon"},
       {:timex, "~> 3.7"},

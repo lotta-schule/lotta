@@ -25,8 +25,6 @@ defmodule Lotta.Application do
           LottaWeb.Endpoint,
           {Absinthe.Subscription, LottaWeb.Endpoint},
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
-          Lotta.Queue.MediaConversionRequestPublisher,
-          Lotta.Queue.MediaConversionConsumer,
           Lotta.Notification.PushNotification,
           {Oban, Application.fetch_env!(:lotta, Oban)},
           {ConCache,
