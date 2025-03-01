@@ -84,6 +84,7 @@ export const checkExpiredToken = async () => {
         await sendRefreshRequest();
       }
     } catch (e) {
+      console.error('could not refresh token: ', e);
       localStorage.clear();
     }
   }

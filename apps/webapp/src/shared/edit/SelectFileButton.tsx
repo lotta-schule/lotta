@@ -20,7 +20,7 @@ interface SelectFileButtonProps<Multiple extends boolean> {
   onChangeFileExplorerVisibility?(isFileExplorerVisible: boolean): void;
 }
 
-const _SelectFileButton = <Multiple extends boolean | undefined>({
+export const UnmemoedSelectFileButton = <Multiple extends boolean | undefined>({
   label,
   fileFilter,
   multiple,
@@ -97,6 +97,6 @@ const _SelectFileButton = <Multiple extends boolean | undefined>({
     </>
   );
 };
-_SelectFileButton.displayName = 'SelectFileButton';
+UnmemoedSelectFileButton.displayName = 'SelectFileButton';
 
-export const SelectFileButton = React.memo(_SelectFileButton);
+export const SelectFileButton = React.memo(UnmemoedSelectFileButton);

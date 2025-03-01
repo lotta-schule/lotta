@@ -37,7 +37,9 @@ import { FileUsageOverview } from './FileUsageOverview';
 import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
 
 declare module '@lotta-schule/hubert' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface DefaultFileMetadata extends FileModel {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface DefaultDirectoryMetadata extends DirectoryModel {}
 }
 

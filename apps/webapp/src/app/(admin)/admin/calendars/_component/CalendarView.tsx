@@ -13,11 +13,7 @@ import {
   endOfWeek,
 } from 'date-fns';
 import { de } from 'date-fns/locale';
-import {
-  Calendar,
-  dateFnsLocalizer,
-  EventWrapperProps,
-} from 'react-big-calendar';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { invariant } from '@epic-web/invariant';
 import { useTranslation } from 'react-i18next';
 import { CalendarToolbar } from './CalendarToolbar';
@@ -26,6 +22,7 @@ import { CalendarContext } from './CalendarContext';
 import { useUnfoldedEvents } from '../_hook';
 import { ResultOf } from 'api/graphql';
 import { EditEventDialog } from './EditEventDialog';
+import { CalendarEventWrapper } from './CalendarEventWrapper';
 
 import { GET_CALENDAR_EVENTS, GET_CALENDARS } from '../_graphql';
 
@@ -218,19 +215,7 @@ export const CalendarView = React.memo(
           }))}
           components={{
             toolbar: CalendarToolbar,
-            eventWrapper: ({
-              event,
-              children,
-            }: React.PropsWithChildren<
-              EventWrapperProps<(typeof unfoldedEvents)[number]>
-            >) => {
-              const { isCalendarActive } = React.use(CalendarContext);
-              if (!isCalendarActive(event.calendar.id)) {
-                return null;
-              }
-
-              return children;
-            },
+            eventWrapper: CalendarEventWrapper<(typeof unfoldedEvents)[number]>,
           }}
           doShowMoreDrillDown
         />
