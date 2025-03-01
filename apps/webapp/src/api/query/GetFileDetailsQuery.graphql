@@ -70,12 +70,11 @@ query GetFileDetailsQuery($id: ID) {
         }
       }
     }
-    fileConversions {
-      id
-      insertedAt
-      updatedAt
-      format
-      mimeType
+    formats {
+      name
+      url
+      type
+      status
     }
     parentDirectory {
       id

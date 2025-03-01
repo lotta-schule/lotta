@@ -89,6 +89,7 @@ export const ComputerExperten: ArticleModel = {
   tags: [],
   category: null,
   published: true,
+  reactionCounts: [],
 };
 
 export const VivaLaRevolucion: ArticleModel = {
@@ -177,6 +178,7 @@ export const VivaLaRevolucion: ArticleModel = {
   tags: [],
   category: null,
   published: false,
+  reactionCounts: [],
 };
 
 export const Schulfest: ArticleModel = {
@@ -291,6 +293,7 @@ export const Schulfest: ArticleModel = {
   tags: ['La Revolucion'],
   category: null,
   published: false,
+  reactionCounts: [],
 };
 
 export const Weihnachtsmarkt: ArticleModel = {
@@ -405,6 +408,7 @@ export const Weihnachtsmarkt: ArticleModel = {
   tags: ['La Revolucion'],
   category: null,
   published: false,
+  reactionCounts: [],
 };
 
 export const Klausurenplan: ArticleModel = {
@@ -445,6 +449,7 @@ export const Klausurenplan: ArticleModel = {
   tags: ['La Revolucion'],
   category: null,
   published: false,
+  reactionCounts: [],
 };
 
 export const LehrerListe: ArticleModel = {
@@ -485,4 +490,5 @@ export const LehrerListe: ArticleModel = {
   tags: [],
   category: null,
   published: false,
+  reactionCounts: [],
 };

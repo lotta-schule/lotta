@@ -5,6 +5,7 @@ import { imageFile, logosDirectory, SomeUser } from 'test/fixtures';
 import userEvent from '@testing-library/user-event';
 
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
+import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
 
 describe('shared/article/module/form/FormElement', () => {
   describe('input element', () => {
@@ -220,6 +221,25 @@ describe('shared/article/module/form/FormElement', () => {
             },
           };
         },
+      },
+      {
+        request: {
+          query: GetFileDetailsQuery,
+          variables: { id: imageFile.id },
+        },
+        result: () => ({
+          data: {
+            file: {
+              ...imageFile,
+              user,
+              parentDirectory: {
+                ...logosDirectory,
+                user,
+                parentDirectory: null,
+              },
+            },
+          },
+        }),
       },
     ];
 
