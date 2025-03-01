@@ -167,6 +167,7 @@ export const VivaLaRevolucion: ArticleModel = {
   groups: [],
   insertedAt: '2016-06-01T16:00:00.000Z',
   updatedAt: '2016-05-03T04:00:00.000Z',
+  isReactionsEnabled: false,
   isPinnedToTop: false,
   readyToPublish: true,
   previewImageFile: null,
@@ -281,6 +282,7 @@ export const Schulfest: ArticleModel = {
   insertedAt: '2017-09-11T16:00:00.000Z',
   updatedAt: '2017-10-11T04:00:00.000Z',
   isPinnedToTop: false,
+  isReactionsEnabled: false,
   readyToPublish: true,
   previewImageFile: null,
   title: 'Schulfest',
@@ -394,6 +396,7 @@ export const Weihnachtsmarkt: ArticleModel = {
   insertedAt: '2019-06-01T16:00:00.000Z',
   updatedAt: '2020-10-11T04:00:00.000Z',
   isPinnedToTop: false,
+  isReactionsEnabled: false,
   readyToPublish: true,
   title: 'Weihnachtsmarkt',
   preview:
@@ -433,6 +436,7 @@ export const Klausurenplan: ArticleModel = {
   insertedAt: '2020-06-01T16:00:00.000Z',
   updatedAt: '2020-07-11T04:00:00.000Z',
   isPinnedToTop: false,
+  isReactionsEnabled: false,
   readyToPublish: true,
   title: 'Klausurenplan',
   preview:
@@ -473,6 +477,7 @@ export const LehrerListe: ArticleModel = {
   updatedAt: '2020-07-11T20:00:00.000Z',
   isPinnedToTop: false,
   readyToPublish: true,
+  isReactionsEnabled: false,
   title: 'Lehrerliste',
   preview:
     'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
