@@ -1,5 +1,6 @@
 # The version of Alpine to use for the final image
 ARG ALPINE_VERSION=3.19
+ARG VIPS_VERSION=8.16.0
 
 FROM elixir:1.17.1-otp-26-alpine AS builder
 
@@ -49,17 +50,72 @@ LABEL org.opencontainers.image.url="https://lotta.schule"
 
 EXPOSE 4000
 
+ARG VIPS_VERSION
 ENV LANG=C.UTF-8
+
+RUN apk update
+
+ENV VIPSHOME="/tmp/vips-${VIPS_VERSION}"
 
 RUN apk update && \
   apk add --no-cache \
-  bash \
-  curl \
+  xz meson
+
+RUN wget https://github.com/libvips/libvips/releases/download/v${VIPS_VERSION}/vips-${VIPS_VERSION}.tar.xz \
+  && tar -xf vips-${VIPS_VERSION}.tar.xz \
+  && mv vips-${VIPS_VERSION} /tmp
+
+RUN apk add --no-cache \
   openssl-dev \
   libssl3 \
   libstdc++ \
-  vips \
-  vips-heif
+  # For meson
+  build-base \
+  gobject-introspection-dev \
+  # For libvips
+  vips-dev \
+  fftw-dev \
+  libheif-dev \
+  openexr-dev \
+  libgsf-dev \
+  glib-dev \
+  tiff-dev \
+  libspng-dev \
+  cgif-dev \
+  libaio-dev \
+  libwebp-dev \
+  libjpeg-turbo-dev \
+  openjpeg-dev \
+  libjxl-dev \
+  expat-dev expat \
+  libexif-dev \
+  tiff-dev \
+  librsvg-dev \
+  pango-dev pango \
+  libimagequant-dev \
+  highway-dev
+
+RUN wget https://github.com/bblanchon/pdfium-binaries/releases/latest/download/pdfium-linux-musl-arm64.tgz && \
+  tar xf pdfium-linux-musl-arm64.tgz
+
+COPY <<EOF $VIPSHOME/lib/pkgconfig/pdfium.pc
+prefix=$VIPSHOME
+exec_prefix=\${prefix}
+libdir=\${exec_prefix}/lib
+includedir=\${prefix}/include
+Name: pdfium
+Description: pdfium
+Version: 4290
+Requires:
+Libs: -L\${libdir} -lpdfium
+Cflags: -I\${includedir}
+EOF
+
+RUN cd /tmp/vips-${VIPS_VERSION} \
+  && meson setup build-dir \
+  && cd build-dir \
+  && meson compile \
+  && meson install
 
 RUN mkdir -p /app
 WORKDIR /app
