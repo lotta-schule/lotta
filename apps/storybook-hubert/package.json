@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "build": "storybook build"
   },
+  "type": "module",
   "devDependencies": {
     "@lotta-schule/storybook-addon-theme": "../../libs/storybook-addon-theme",
     "@storybook/addon-a11y": "^8.6.3",
