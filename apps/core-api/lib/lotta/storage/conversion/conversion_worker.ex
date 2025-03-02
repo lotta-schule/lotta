@@ -6,7 +6,6 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
     queue: :file_conversion,
     max_attempts: 5
 
-
   import Ecto.Query
 
   alias Lotta.{Repo, Storage}
