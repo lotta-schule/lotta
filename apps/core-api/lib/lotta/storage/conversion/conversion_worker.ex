@@ -2,7 +2,10 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
   @moduledoc """
   Conversion worker that converts a file to a different format.
   """
-  use Oban.Worker, queue: :file_conversion
+  use Oban.Worker,
+    queue: :file_conversion,
+    max_attempts: 5
+
 
   import Ecto.Query
 
@@ -28,6 +31,9 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
         error
     end
   end
+
+  @impl Oban.Worker
+  def timeout(_job), do: :timer.minutes(2.5)
 
   @spec convert_file(File.t(), atom() | String.t()) :: {:ok, Oban.Job.t()} | {:error, String.t()}
   def convert_file(%File{id: file_id} = file, format) when is_atom(format) do
