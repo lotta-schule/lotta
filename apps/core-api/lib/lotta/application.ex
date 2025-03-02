@@ -25,11 +25,11 @@ defmodule Lotta.Application do
           LottaWeb.Endpoint,
           {Absinthe.Subscription, LottaWeb.Endpoint},
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
-          Lotta.Notification.PushNotification,
+          Lotta.PushNotification,
           {Oban, Application.fetch_env!(:lotta, Oban)},
           {ConCache,
            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
-        ] ++ appended_apps()
+        ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -47,23 +47,6 @@ defmodule Lotta.Application do
       cluster_topologies ->
         [{Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]}]
     end
-  end
-
-  defp appended_apps() do
-    []
-    |> then(fn apps ->
-      if Keyword.get(Application.get_env(:lotta, Lotta.Notification.Provider.APNS), :key),
-        do: apps ++ [Lotta.Notification.Provider.APNS],
-        else: apps
-    end)
-    |> then(fn apps ->
-      if Keyword.get(
-           Application.get_env(:lotta, Lotta.Notification.Provider.FCM),
-           :service_account_json
-         ),
-         do: apps ++ [Lotta.Notification.Provider.FCM],
-         else: apps
-    end)
   end
 
   # Tell Phoenix to update the endpoint configuration

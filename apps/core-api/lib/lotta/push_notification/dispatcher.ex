@@ -1,4 +1,4 @@
-defmodule Lotta.Notification.PushNotification do
+defmodule Lotta.PushNotification.Dispatcher do
   @moduledoc """
   This module is responsible for sending push notifications to users.
   It provides functions to send notifications for different events and
@@ -10,8 +10,7 @@ defmodule Lotta.Notification.PushNotification do
   require Logger
   require OpenTelemetry.Tracer
 
-  alias Lotta.{Messages, Repo}
-  alias Lotta.Notification.PushNotificationRequest
+  alias Lotta.{Messages, PushNotification, Repo}
 
   def create_new_message_notifications(tenant, message, conversation) do
     GenServer.cast(__MODULE__, {:schedule, {:message_sent, tenant, message, conversation}})
@@ -53,16 +52,16 @@ defmodule Lotta.Notification.PushNotification do
       message
       |> list_recipients_for_message(conversation)
       |> Enum.each(fn user ->
-        PushNotificationRequest.new(tenant)
-        |> PushNotificationRequest.put_title(message.user.name)
-        |> PushNotificationRequest.put_subtitle(
+        PushNotification.Request.new(tenant)
+        |> PushNotification.Request.put_title(message.user.name)
+        |> PushNotification.Request.put_subtitle(
           if Enum.count(conversation.groups) == 1,
             do: "in #{List.first(conversation.groups).name}"
         )
-        |> PushNotificationRequest.put_body(message.content)
-        |> PushNotificationRequest.put_thread_id("#{tenant.slug}/#{conversation.id}")
-        |> PushNotificationRequest.put_category("receive_message")
-        |> PushNotificationRequest.put_data(%{
+        |> PushNotification.Request.put_body(message.content)
+        |> PushNotification.Request.put_thread_id("#{tenant.slug}/#{conversation.id}")
+        |> PushNotification.Request.put_category("receive_message")
+        |> PushNotification.Request.put_data(%{
           "user_id" => user.id,
           "tenant_id" => tenant.id,
           "conversation_id" => conversation.id,
@@ -88,10 +87,10 @@ defmodule Lotta.Notification.PushNotification do
 
   defp process_notification({:conversation_read, tenant, user, conversation}) do
     OpenTelemetry.Tracer.with_span :push_notification_process_conversation_read do
-      PushNotificationRequest.new(tenant)
+      PushNotification.Request.new(tenant)
       |> Map.put(:push_type, :background)
-      |> PushNotificationRequest.put_category("read_conversation")
-      |> PushNotificationRequest.put_data(%{
+      |> PushNotification.Request.put_category("read_conversation")
+      |> PushNotification.Request.put_data(%{
         "user_id" => user.id,
         "tenant_id" => tenant.id,
         "conversation_id" => conversation.id
@@ -119,21 +118,25 @@ defmodule Lotta.Notification.PushNotification do
   end
 
   defp push_to_device(notification, device) do
-    with [type, token] <- String.split(device.push_token, "/") do
+    with [type, token] <- String.split(device.push_token, "/"),
+         true <- PushNotification.enabled?(type) do
       case type do
         "apns" ->
           notification
-          |> PushNotificationRequest.create_apns_notification(token)
-          |> Lotta.Notification.Provider.APNS.push(on_response: &log_notification/1)
+          |> PushNotification.Request.create_apns_notification(token)
+          |> push(:apns)
 
         "fcm" ->
           notification
-          |> PushNotificationRequest.create_fcm_notification({:token, token})
-          |> Lotta.Notification.Provider.FCM.push(on_response: &log_notification/1)
+          |> PushNotification.Request.create_fcm_notification({:token, token})
+          |> push(:fcm)
 
         _ ->
           Logger.error("Error sending notification: Unknown token type #{type}")
       end
+    else
+      _ ->
+        Logger.error("Error sending notification: Push notification provider not enabled")
     end
   end
 
@@ -146,6 +149,12 @@ defmodule Lotta.Notification.PushNotification do
     |> tap(fn _ ->
       OpenTelemetry.Tracer.end_span(otel_ctx)
     end)
+  end
+
+  defp push(provider, notification) do
+    provider
+    |> PushNotification.provider_name()
+    |> Pigeon.push(notification, on_response: &log_notification/1)
   end
 
   defp log_notification(notification),

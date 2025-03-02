@@ -257,11 +257,8 @@ config :sentry,
   filter: Lotta.SentryFilter
 
 libcluster_topologies =
-  case SystemConfig.get("HEADLESS_SERVICE_NAME") do
+  case to_string(SystemConfig.get("HEADLESS_SERVICE_NAME")) do
     "" ->
-      []
-
-    nil ->
       []
 
     service_name ->
@@ -279,23 +276,16 @@ libcluster_topologies =
 
 config :libcluster, topologies: libcluster_topologies
 
-config :lotta, Lotta.Notification.Provider.APNS,
-  adapter:
-    if(SystemConfig.get("PIGEON_USE_SANDBOX", cast: :boolean),
-      do: Pigeon.Sandbox,
-      else: Pigeon.APNS
-    ),
-  key: SystemConfig.get("APNS_KEY"),
-  key_identifier: SystemConfig.get("APNS_KEY_ID"),
-  team_id: SystemConfig.get("APNS_TEAM_ID"),
-  topic: SystemConfig.get("APNS_TOPIC"),
-  mode: if(SystemConfig.get("APNS_USE_PRODUCTION", cast: :boolean), do: :prod, else: :dev)
-
-config :lotta, Lotta.Notification.Provider.FCM,
-  adapter:
-    if(SystemConfig.get("PIGEON_USE_SANDBOX", cast: :boolean),
-      do: Pigeon.Sandbox,
-      else: Pigeon.FCM
-    ),
-  project_id: SystemConfig.get("FCM_PROJECT_ID"),
-  service_account_json: SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON")
+config :lotta, Lotta.PushNotification,
+  fcm: [
+    project_id: SystemConfig.get("FCM_PROJECT_ID"),
+    service_account_json: SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON")
+  ],
+  apns: [
+    key: SystemConfig.get("APNS_KEY"),
+    key_identifier: SystemConfig.get("APNS_KEY_ID"),
+    team_id: SystemConfig.get("APNS_TEAM_ID"),
+    topic: SystemConfig.get("APNS_TOPIC"),
+    prod?: SystemConfig.get("APNS_USE_PRODUCTION", cast: :boolean)
+  ],
+  sandbox?: SystemConfig.get("PIGEON_USE_SANDBOX", cast: :boolean)
