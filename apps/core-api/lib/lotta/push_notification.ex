@@ -1,14 +1,36 @@
 defmodule Lotta.PushNotification do
+  @moduledoc """
+  Handles push notifications for the Lotta application.
+  This module provides the API surface for sending push notifications to users.
+  It is also being a supervisor and manages the necessary processs
+  """
   use Supervisor
 
   alias Lotta.PushNotification
+  alias Lotta.Accounts.User
+  alias Lotta.Messages.{Conversation, Message}
+  alias Lotta.Tenants.Tenant
 
+  @doc """
+  Create a message notifying a device about the changed read status of a message.
+  """
+  @spec create_conversation_read_notification(Tenant.t(), Message.t(), Conversation.t()) :: :ok
   defdelegate create_conversation_read_notification(tenant, message, conversation),
     to: PushNotification.Dispatcher
 
+  @doc """
+  Create a message notifying a device about a new message in a conversation.
+  """
+  @spec create_new_message_notifications(Tenant.t(), User.t(), Conversation.t()) :: :ok
   defdelegate create_new_message_notifications(tenant, user, conversation),
     to: PushNotification.Dispatcher
 
+  @doc """
+  Wether push notifications can be sent to a given provider.
+  Supported providers are `:fcm` and `:apns`.
+  """
+  @spec enabled?(provider :: atom() | binary()) :: boolean()
+  def enabled?(provider)
   def enabled?(:goth), do: enabled?(:fcm)
 
   def enabled?(provider) when is_atom(provider) do
@@ -25,14 +47,27 @@ defmodule Lotta.PushNotification do
     _ -> false
   end
 
+  @doc """
+  Returns the configuration for a given provider.
+
+  ## Examples
+
+      iex> PushNotification.get_config(:fcm)
+      [service_account_json: "{}", project_id: "123456"]
+
+      iex> PushNotification.get_config(:no)
+      nil
+  """
   def get_config(provider) do
     Keyword.get(Application.get_env(:lotta, Lotta.PushNotification), provider, [])
   end
 
+  @doc false
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
 
+  @doc false
   def init(_args) do
     children =
       [
@@ -42,6 +77,9 @@ defmodule Lotta.PushNotification do
 
     Supervisor.init(children, strategy: :one_for_one, name: __MODULE__)
   end
+
+  @doc false
+  def provider_name(provider)
 
   def provider_name(:goth),
     do: {:via, Registry, {Registry.Lotta.PushNotification, Lotta.PushNotification.Goth}}
