@@ -26,8 +26,9 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
       nil ->
         {:error, "File not found"}
 
-      error ->
-        error
+      {:error, error} ->
+        Logger.error("Error converting file: #{inspect(error)}")
+        {:error, "Error converting file: #{error}"}
     end
   end
 
