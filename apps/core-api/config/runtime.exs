@@ -109,7 +109,7 @@ defmodule SystemConfig do
   defp default("APNS_USE_PRODUCTION", :prod), do: "true"
   defp default("APNS_USE_PRODUCTION", _), do: false
   defp default("FCM_PROJECT_ID", _), do: nil
-  defp default("FCM_SERVICE_ACCOUNT_JSON_B64", ""), do: nil
+  defp default("FCM_SERVICE_ACCOUNT_JSON_B64", _), do: ""
   defp default("FCM_SERVICE_ACCOUNT_JSON", _), do: nil
 
   defp default("COCKPIT_ADMIN_API_USERNAME", _), do: "admin"
@@ -284,9 +284,7 @@ config :libcluster, topologies: libcluster_topologies
 config :lotta, Lotta.PushNotification,
   fcm: [
     project_id: SystemConfig.get("FCM_PROJECT_ID"),
-    service_account_json:
-      SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON_B64", cast: :base64) ||
-        SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON")
+    service_account_json: SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON_B64", cast: :base64) || SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON")
   ],
   apns: [
     key: SystemConfig.get("APNS_KEY_B64", cast: :base64) || SystemConfig.get("APNS_KEY"),
