@@ -463,6 +463,10 @@ importers:
         version: 1.85.0
 
   libs/storybook-addon-theme:
+    dependencies:
+      storybook:
+        specifier: ^8.6.3
+        version: 8.6.3(prettier@3.5.2)
     devDependencies:
       '@storybook/blocks':
         specifier: ^8.6.2
@@ -494,9 +498,6 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
-      storybook:
-        specifier: ^8.6.3
-        version: 8.6.3(prettier@3.5.2)
       tsup:
         specifier: ^8.4.0
         version: 8.4.0(@microsoft/api-extractor@7.51.0(@types/node@22.13.5))(@swc/core@1.11.5(@swc/helpers@0.5.15))(postcss@8.5.3)(typescript@5.8.2)(yaml@2.7.0)
