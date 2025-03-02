@@ -6,17 +6,17 @@
   .downloadItemWrapper {
     margin: calc(2 * var(--lotta-spacing)) 0;
 
-    @media screen and (min-width: $min-md) {
-      margin-left: 16.6%;
-      margin-right: 16.6%;
-    }
-
     background-color: rgba(var(--lotta-primary-color), 0.1);
     padding: var(--lotta-spacing);
 
     display: flex;
     align-items: stretch;
     overflow: auto;
+
+    @media screen and (min-width: $min-md) {
+      margin-left: 16.6%;
+      margin-right: 16.6%;
+    }
 
     @media print {
       &::before {

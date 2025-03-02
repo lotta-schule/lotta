@@ -851,7 +851,7 @@ describe('shared/editor/GroupSelect', () => {
           expect(onSelectGroups).toHaveBeenCalledWith([null, lehrerGroup]);
         });
       },
-      { timeout: 10000 }
+      10_000
     );
   });
 });

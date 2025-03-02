@@ -79,6 +79,7 @@ const nextConfig = {
       resolve(__dirname, './src/styles/util'),
       resolve(__dirname, '../../libs/hubert/src/theme'),
     ],
+    quietDeps: true,
   },
   eslint: {
     dirs: ['src'],

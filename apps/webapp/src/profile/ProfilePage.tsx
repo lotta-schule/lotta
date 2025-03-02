@@ -19,7 +19,7 @@ import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { UpdateEmailDialog } from 'shared/dialog/UpdateEmailDialog';
 import { UpdatePasswordDialog } from 'shared/dialog/UpdatePasswordDialog';
 import { File, User } from 'util/model';
-import { FileModelType, UserModel, FileModel } from 'model';
+import { UserModel, FileModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { LegacyHeader, Main } from 'layout';
@@ -90,7 +90,7 @@ export const ProfilePage = () => {
                 size: 'small',
                 disabled: isLoading,
               }}
-              fileFilter={(f) => f.fileType === FileModelType.Image}
+              fileFilter={(f) => f.fileType === 'IMAGE'}
               label={'Profilbild ändern'}
               onSelect={(file: FileModel) => setAvatarImageFile(file)}
             />

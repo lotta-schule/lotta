@@ -4,7 +4,7 @@ import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { format } from 'date-fns';
 import { faCloudArrowDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
-import { FileModel, FileModelType, MessageModel } from 'model';
+import { FileModel, MessageModel } from 'model';
 import { File, User } from 'util/model';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { Icon } from 'shared/Icon';
@@ -44,7 +44,7 @@ export const MessageBubble = React.memo(
     });
 
     const hasPreviewImage = (file: FileModel) => {
-      if (file.fileType === FileModelType.Image) {
+      if (file.fileType === 'IMAGE') {
         return true;
       }
       return false;

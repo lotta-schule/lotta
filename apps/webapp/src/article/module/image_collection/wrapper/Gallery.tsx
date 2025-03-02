@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, GridList, GridListItem } from '@lotta-schule/hubert';
 import { Icon } from 'shared/Icon';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { ContentModuleModel, FileModel, FileModelType } from 'model';
+import { ContentModuleModel, FileModel } from 'model';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { FileSorter } from '../Config';
 import { ImageImage } from '../../image/ImageImage';
@@ -119,7 +119,7 @@ export const Gallery = React.memo<GalleryProps>(
           <SelectFileButton
             multiple
             label={'Bild hinzufügen'}
-            fileFilter={(f) => f.fileType === FileModelType.Image}
+            fileFilter={(f) => f.fileType === 'IMAGE'}
             onSelect={(f: FileModel[]) => {
               onUpdateModule({
                 ...contentModule,

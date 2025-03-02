@@ -51,13 +51,7 @@ export type AvailableFormat =
   | 'H264_720P'
   | 'H264_1080P';
 
-export const enum FileModelType {
-  Pdf = 'PDF',
-  Image = 'IMAGE',
-  Video = 'VIDEO',
-  Audio = 'AUDIO',
-  Misc = 'BINARY',
-}
+export type FileModelType = 'PDF' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'BINARY';
 
 export interface FileModel {
   __typename?: 'File';
@@ -75,7 +69,7 @@ export interface FileModel {
   formats: {
     name: AvailableFormat;
     url: string;
-    type: string;
+    type: FileModelType;
     status: 'READY' | 'AVAILABLE' | 'REQUESTABLE';
   }[];
   usage?: FileModelUsageLocation[];

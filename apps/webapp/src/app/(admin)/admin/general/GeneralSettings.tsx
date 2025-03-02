@@ -11,7 +11,7 @@ import {
   ListItem,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { TenantModel } from 'model';
+import { Tenant } from 'util/tenant';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
@@ -24,7 +24,7 @@ import styles from './GeneralSettings.module.scss';
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 
 export type GeneralSettingsProps = {
-  tenant: TenantModel;
+  tenant: Tenant;
 };
 
 export const GeneralSettings = ({ tenant }: GeneralSettingsProps) => {
@@ -51,7 +51,11 @@ export const GeneralSettings = ({ tenant }: GeneralSettingsProps) => {
             <Box className={styles.gridItem} style={{ flex: '1 1' }}>
               <SelectFileOverlay
                 label={'Logo ändern'}
-                onSelectFile={(logo) => setLogo(logo)}
+                onSelectFile={(logo) => {
+                  if (logo) {
+                    setLogo(logo);
+                  }
+                }}
                 allowDeletion
               >
                 {logo ? (

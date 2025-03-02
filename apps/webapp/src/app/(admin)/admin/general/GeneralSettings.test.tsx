@@ -42,7 +42,7 @@ describe('GeneralSettings', () => {
     {
       request: { query: UpdateTenantMutation },
       variableMatcher: (_var) => true,
-      result: { data: { updateTenant: { ...tenant, name: 'A new Name' } } },
+      result: { data: { tenant: { ...tenant, title: 'A new Name' } } },
     },
   ];
 

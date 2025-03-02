@@ -37,7 +37,7 @@ declare global {
     ): Blob & { readonly inputData: BlobPart[] };
   }
 }
-declare module globalThis {
+declare namespace globalThis {
   var mockRouter: MockRouter;
   var Blob: typeof BlobPolyfill;
 }
@@ -61,7 +61,7 @@ beforeAll(() => {
     };
   };
 
-  window.location = {
+  window.location = Object.assign('http://test.lotta.schule', {
     hash: '',
     host: 'test.lotta.schule',
     hostname: 'test.lotta.schule',
@@ -69,13 +69,13 @@ beforeAll(() => {
     href: 'http://test.lotta.schule',
     port: '',
     pathname: '/',
-    search: '',
+    search: '' as any,
     protocol: 'http:',
     ancestorOrigins: [] as any,
     reload: () => {},
-    replace: () => {},
-    assign: (url) => Object.assign(window.location, { url: url }),
-  };
+    replace: () => '',
+    assign: (url: string) => Object.assign(window.location, { url: url }),
+  });
 
   HTMLDialogElement.prototype.show = vi.fn(function mock(
     this: HTMLDialogElement
@@ -122,6 +122,15 @@ beforeAll(() => {
     value: vi.fn(() => ({
       observe: vi.fn(),
       unobserve: vi.fn(),
+    })),
+  });
+
+  Object.defineProperty(window, 'ResizeObserver', {
+    writable: false,
+    value: vi.fn(() => ({
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
     })),
   });
 

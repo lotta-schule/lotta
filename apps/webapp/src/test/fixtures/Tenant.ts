@@ -12,8 +12,6 @@ export const tenant = {
   title: 'DerEineVonHier',
   slug: 'derdiedas',
   identifier: 'derdiedas.lotta.schule',
-  insertedAt: '2014-03-08 12:00',
-  updatedAt: '2014-03-08 12:00',
   host: 'info.lotta.schule',
   logoImageFile: null,
   backgroundImageFile: null,
@@ -21,7 +19,7 @@ export const tenant = {
     userMaxStorageConfig: '20971520',
     customTheme: {},
   },
-} as Tenant;
+} satisfies Tenant;
 
 /**
  *
