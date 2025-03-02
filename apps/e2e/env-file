@@ -39,43 +39,25 @@ POSTGRES_PASSWORD='lotta'
 REDIS_HOST='redis'
 REDIS_PASSWORD='lotta'
 PIGEON_USE_SANDBOX='true'
-APNS_KEY='-----BEGIN RSA PRIVATE KEY-----
-  MIIBOgIBAAJBANgqvOH7xQ1/JbiLNPiu/HYjaFEK4X1IencmnBEIo9VEOJSSItLW
-  J6H/T8UKbLaR2SaK3bGAZ5OBEFv6nWKNEA0CAwEAAQJARTap89Ghbojfkw8/jsC4
-  pTsBE7HgMTUbwTrjjbCuhIIUm77dbP6k1Y8X3plfOekE4vB+hrhqNq0jL+JLkozv
-  AQIhAPifbanDivV19iRyXIKcqSIFMNeawDIV/oZ0Mtir1JqlAiEA3pTFTOX1xnhP
-  Rq25Ki7jwKWIEn5QvY2fHLq4gD0Ca0kCIH6IVT2TIYOvV2hRM7fdl06TKbpxLePP
-  wcwYE1CmkvtpAiAovrkja5FDRLDWcmTMCQteL68qG39yQ6OV4cR2jTSNKQIhAOAh
-  Q1E79YVw2GaNeO49mp305XvQfOy7MiyH7JqJLKt1
-  -----END RSA PRIVATE KEY-----'
+APNS_KEY='-----BEGIN RSA PRIVATE KEY-----\nMIIBOgIBAAJBANgqvOH7xQ1/\n-----END RSA PRIVATE KEY-----'
 APNS_KEY_ID='ABCDE12345'
 APNS_TEAM_ID='ABCDE12345'
 APNS_TOPIC='net.einsa.schule'
 APNS_USE_PRODUCTION='false'
 FCM_PROJECT_ID='myproject'
 # Has to be valid
-FCM_SERVICE_ACCOUNT_JSON='"{
-    \"type\"=\"service_account\",
-    \"project_id\"=\"meinlotta\",
-    \"private_key_id\"=\"ABCDE12345\",
-    \"private_key\"=\"
-      -----BEGIN RSA PRIVATE KEY-----
-      MIIBOgIBAAJBANgqvOH7xQ1/JbiLNPiu/HYjaFEK4X1IencmnBEIo9VEOJSSItLW
-      J6H/T8UKbLaR2SaK3bGAZ5OBEFv6nWKNEA0CAwEAAQJARTap89Ghbojfkw8/jsC4
-      pTsBE7HgMTUbwTrjjbCuhIIUm77dbP6k1Y8X3plfOekE4vB+hrhqNq0jL+JLkozv
-      AQIhAPifbanDivV19iRyXIKcqSIFMNeawDIV/oZ0Mtir1JqlAiEA3pTFTOX1xnhP
-      Rq25Ki7jwKWIEn5QvY2fHLq4gD0Ca0kCIH6IVT2TIYOvV2hRM7fdl06TKbpxLePP
-      wcwYE1CmkvtpAiAovrkja5FDRLDWcmTMCQteL68qG39yQ6OV4cR2jTSNKQIhAOAh
-      Q1E79YVw2GaNeO49mp305XvQfOy7MiyH7JqJLKt1
-      -----END RSA PRIVATE KEY-----
-    \",
-    \"client_email\"=\"firebase-adminsdk-asdf2@jajajajahastduwohlged.achtle\",
-    \"client_id\"=\"1234567890\",
-    \"auth_uri\"=\"https://accounts.google.com/o/oauth2/auth\",
-    \"token_uri\"=\"https://oauth2.googleapis.com/token\",
-    \"auth_provider_x509_cert_url\"=\"https://www.googleapis.com/oauth2/v1/certs\",
-    \"client_x509_cert_url\"=\"https://www.googleapis.com/robot/v1/metadata/x509/firebase-admidassageicheuchdochnichtjetztschautdochnichtso.gserviceaccount.com\"
-    \"universe_domain\"=\"googleapis.com\"
-  }"'
+FCM_SERVICE_ACCOUNT_JSON='{
+    \"type\": \"service_account\",
+    \"project_id\": \"meinlotta\",
+    \"private_key_id\": \"ABCDE12345\",
+    \"private_key\": \"-----BEGIN RSA PRIVATE KEY-----\nAAJBANgqvOH7xQ1nAAQQ\n-----END RSA PRIVATE KEY-----\",
+    \"client_email\": \"firebase-adminsdk-asdf2@jajajajahastduwohlged.achtle\",
+    \"client_id\": \"1234567890\",
+    \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",
+    \"token_uri\": \"https://oauth2.googleapis.com/token\",
+    \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",
+    \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/firebase-admidassageicheuchdochnichtjetztschautdochnichtso.gserviceaccount.com\",
+    \"universe_domain\": \"googleapis.com\"
+}'
 COCKPIT_ADMIN_API_USERNAME='admin'
 COCKPIT_ADMIN_API_KEY='secretapikey'
