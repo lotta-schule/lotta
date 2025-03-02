@@ -29,4 +29,4 @@ export const ServerDataContextProvider = ({
   );
 };
 
-export const useServerData = () => React.useContext(ServerDataContext);
+export const useServerData = () => React.use(ServerDataContext);

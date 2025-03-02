@@ -15,18 +15,17 @@ export type LoadCurrentUserParams = {
 };
 
 export const loadCurrentUser = cache(
-  ({ forceAuthenticated = false }: LoadCurrentUserParams = {}) =>
-    getClient()
-      .query({
-        query: GET_CURRENT_USER,
-      })
-      .then(({ data }) => {
-        const user = data?.currentUser ?? null;
+  async ({ forceAuthenticated = false }: LoadCurrentUserParams = {}) => {
+    const client = await getClient();
+    const { data } = await client.query({
+      query: GET_CURRENT_USER,
+    });
+    const user = data?.currentUser ?? null;
 
-        if (!user && forceAuthenticated) {
-          throw new UnauthenticatedError();
-        }
+    if (!user && forceAuthenticated) {
+      throw new UnauthenticatedError();
+    }
 
-        return user;
-      })
+    return user;
+  }
 );

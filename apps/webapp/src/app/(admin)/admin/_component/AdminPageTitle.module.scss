@@ -1,13 +1,14 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
-  & > h3 {
+  &>h3 {
     display: flex;
     align-items: center;
   }
 
   .backButton {
     display: none;
+
     @media screen and (max-width: $max-xs) {
       display: inline-flex;
     }

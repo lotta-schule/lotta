@@ -17,11 +17,13 @@ import { appConfig } from 'config';
 import { getAuthTokenFromHeader } from 'api/apollo/client-rsc';
 import { TranslationsProvider } from 'i18n/client';
 import { TenantGlobalStyleTag } from 'layout/TenantGlobalStyleTag';
+import { headers } from 'next/headers';
 
 export default async function AppLayout({ children }: React.PropsWithChildren) {
   const socketUrl = appConfig.get('API_SOCKET_URL');
+  const headerValues = await headers();
   const requestBaseUrl = await getBaseUrlString();
-  const accessToken = getAuthTokenFromHeader();
+  const accessToken = getAuthTokenFromHeader(headerValues);
 
   // TODO: Better than showing the tenant not found page, we should show a real error page
   const tenant = await loadTenant().catch(() => null);
@@ -32,7 +34,9 @@ export default async function AppLayout({ children }: React.PropsWithChildren) {
       ? globalThis.location.origin
       : `https://${tenant?.host}`);
 
-  const customTheme = tenant?.configuration.customTheme;
+  const customTheme = tenant?.configuration.customTheme as
+    | Record<string, any>
+    | undefined;
 
   const theme = {
     ...DefaultThemes.standard,

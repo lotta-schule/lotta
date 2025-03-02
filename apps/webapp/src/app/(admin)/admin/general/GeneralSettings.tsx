@@ -48,7 +48,7 @@ export const GeneralSettings = ({ tenant }: GeneralSettingsProps) => {
 
         <Label label={'Logo der Seite'}>
           <div className={styles.gridContainer}>
-            <Box className={styles.gridItem}>
+            <Box className={styles.gridItem} style={{ flex: '1 1' }}>
               <SelectFileOverlay
                 label={'Logo ändern'}
                 onSelectFile={(logo) => setLogo(logo)}
@@ -57,11 +57,12 @@ export const GeneralSettings = ({ tenant }: GeneralSettingsProps) => {
                 {logo ? (
                   <ResponsiveImage
                     file={logo}
+                    width={320}
                     format={'logo'}
                     alt={`Logo ${title}`}
                   />
                 ) : (
-                  <PlaceholderImage width={160} height={80} />
+                  <PlaceholderImage width={320} height={160} />
                 )}
               </SelectFileOverlay>
             </Box>

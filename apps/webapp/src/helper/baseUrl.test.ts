@@ -5,11 +5,11 @@ import { getBaseUrlString, getBaseUrl } from './baseUrl';
 
 vi.mock('next/headers', () => {
   const headers = new Map();
-  const getHeaders = vi.fn(() => headers);
+  const getHeaders = vi.fn(() => Promise.resolve(headers));
 
   return {
     headers: getHeaders,
-    default: getHeaders,
+    default: () => headers,
   };
 });
 vi.mock('../loader', () => ({

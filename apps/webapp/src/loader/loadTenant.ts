@@ -49,7 +49,8 @@ export type LoadTenantParams = {
 
 export const loadTenant = cache(
   async ({ includeStats = false }: LoadTenantParams = {}) => {
-    return await getClient()
+    const client = await getClient();
+    return await client
       .query({
         query: includeStats ? GET_TENANT_WITH_STATS_QUERY : GET_TENANT_QUERY,
       })

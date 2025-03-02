@@ -2373,6 +2373,24 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "usage",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "UNION",
+                    "name": "FileUsageLocation"
+                  }
+                }
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
             "name": "user",
             "type": {
               "kind": "OBJECT",
@@ -2386,6 +2404,111 @@ const introspection = {
             "type": {
               "kind": "SCALAR",
               "name": "ID"
+            },
+            "args": [],
+            "isDeprecated": false
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "FileArticleUsageLocation",
+        "fields": [
+          {
+            "name": "article",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Article"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "usage",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "FileCategoryUsageLocation",
+        "fields": [
+          {
+            "name": "category",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Category"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "usage",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "FileContentModuleUsageLocation",
+        "fields": [
+          {
+            "name": "article",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Article"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "contentModule",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ContentModule"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "usage",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -2473,6 +2596,25 @@ const introspection = {
         "interfaces": []
       },
       {
+        "kind": "OBJECT",
+        "name": "FileSystemUsageLocation",
+        "fields": [
+          {
+            "name": "usage",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          }
+        ],
+        "interfaces": []
+      },
+      {
         "kind": "ENUM",
         "name": "FileType",
         "enumValues": [
@@ -2497,6 +2639,63 @@ const introspection = {
             "isDeprecated": false
           }
         ]
+      },
+      {
+        "kind": "UNION",
+        "name": "FileUsageLocation",
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "FileArticleUsageLocation"
+          },
+          {
+            "kind": "OBJECT",
+            "name": "FileCategoryUsageLocation"
+          },
+          {
+            "kind": "OBJECT",
+            "name": "FileContentModuleUsageLocation"
+          },
+          {
+            "kind": "OBJECT",
+            "name": "FileSystemUsageLocation"
+          },
+          {
+            "kind": "OBJECT",
+            "name": "FileUserUsageLocation"
+          }
+        ]
+      },
+      {
+        "kind": "OBJECT",
+        "name": "FileUserUsageLocation",
+        "fields": [
+          {
+            "name": "usage",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "user",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "User"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          }
+        ],
+        "interfaces": []
       },
       {
         "kind": "SCALAR",

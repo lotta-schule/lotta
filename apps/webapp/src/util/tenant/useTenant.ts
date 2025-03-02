@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as Sentry from '@sentry/nextjs';
+import { useServerData } from 'shared/ServerDataContext';
 import { useQuery } from '@apollo/client';
 import { graphql, ResultOf } from 'api/graphql';
 
@@ -40,15 +41,7 @@ export const GET_TENANT_QUERY = graphql(`
 export type Tenant = NonNullable<ResultOf<typeof GET_TENANT_QUERY>['tenant']>;
 
 export const useTenant = () => {
-  const { data, error } = useQuery(GET_TENANT_QUERY, {
-    fetchPolicy: 'cache-first',
-  });
-
-  const tenant = data?.tenant;
-
-  if (!tenant) {
-    throw error ?? new Error('Tenant could not be retrieved');
-  }
+  const { tenant } = useServerData();
 
   React.useEffect(() => {
     if (tenant) {
