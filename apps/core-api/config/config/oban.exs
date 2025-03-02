@@ -4,6 +4,7 @@ config :lotta, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.PG,
   repo: Lotta.Repo,
+  prefix: "oban",
   queues: [
     file_conversion: [limit: 5],
     file_conversion_lazy: [limit: 1]
