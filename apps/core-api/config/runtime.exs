@@ -284,7 +284,9 @@ config :libcluster, topologies: libcluster_topologies
 config :lotta, Lotta.PushNotification,
   fcm: [
     project_id: SystemConfig.get("FCM_PROJECT_ID"),
-    service_account_json: SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON_B64", cast: :base64) || SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON")
+    service_account_json:
+      SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON_B64", cast: :base64) ||
+        SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON")
   ],
   apns: [
     key: SystemConfig.get("APNS_KEY_B64", cast: :base64) || SystemConfig.get("APNS_KEY"),
