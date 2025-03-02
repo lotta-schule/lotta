@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as Sentry from '@sentry/nextjs';
 import { useServerData } from 'shared/ServerDataContext';
-import { useQuery } from '@apollo/client';
 import { graphql, ResultOf } from 'api/graphql';
 
 export const GET_TENANT_QUERY = graphql(`

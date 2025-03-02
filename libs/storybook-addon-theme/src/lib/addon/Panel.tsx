@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useGlobals } from '@storybook/manager-api';
 import { AddonPanel } from '@storybook/components';
 import { PureArgsTable } from '@storybook/blocks';
@@ -13,7 +13,7 @@ export const Panel = ({ active, key }: any) => {
     font-weight: ${({ theme }) => theme.typography.weight.bold};
   `;
 
-  const [globals, setGlobals] = useGlobals();
+  const [globals, updateGlobals] = useGlobals();
   const themeName = 'standard';
 
   const theme = {
@@ -21,23 +21,29 @@ export const Panel = ({ active, key }: any) => {
     ...globals.hubertTheme,
   };
 
+  const updateTheme = (updated: Record<string, any>) => {
+    updateGlobals({
+      hubertTheme: {
+        ...globals.hubertTheme,
+        ...updated,
+      },
+    });
+  };
+
   const rows = generateArgsTableRows(schema);
 
   return (
     <AddonPanel active={!!active} key={key}>
-      <StyledHeader>Edit the current theme</StyledHeader>
-      <PureArgsTable
-        rows={rows}
-        args={theme}
-        updateArgs={(args) => {
-          setGlobals({
-            hubertTheme: {
-              ...globals.hubertTheme,
-              ...args,
-            },
-          });
-        }}
-      />
+      <div>
+        <StyledHeader>Edit the current theme</StyledHeader>
+        <PureArgsTable
+          rows={rows}
+          args={theme}
+          updateArgs={(args) => {
+            updateTheme(args);
+          }}
+        />
+      </div>
     </AddonPanel>
   );
 };
