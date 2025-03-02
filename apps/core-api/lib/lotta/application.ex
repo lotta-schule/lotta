@@ -22,18 +22,23 @@ defmodule Lotta.Application do
           {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
           LottaWeb.Telemetry,
           Lotta.Repo,
+          {Oban, Application.fetch_env!(:lotta, Oban)},
+          Lotta.PushNotification,
           LottaWeb.Endpoint,
           {Absinthe.Subscription, LottaWeb.Endpoint},
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
-          Lotta.PushNotification,
-          {Oban, Application.fetch_env!(:lotta, Oban)},
           {ConCache,
            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
         ]
 
+    Logger.add_handlers(:lotta)
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    Supervisor.start_link(children, strategy: :one_for_one, name: Lotta.Supervisor)
+    Supervisor.start_link(children,
+      strategy: :one_for_one,
+      name: Lotta.Supervisor
+    )
   end
 
   defp prepended_apps() do
