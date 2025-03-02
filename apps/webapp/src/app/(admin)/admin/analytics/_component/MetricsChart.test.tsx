@@ -36,12 +36,13 @@ const monthPeriod: Period = {
 
 describe('MetricsChart', () => {
   it('renders chart when data is fetched', async () => {
-    const screen = render(
-      <MetricsChart period={monthPeriod} metric="visits" />,
-      {},
-      { additionalMocks: mocks }
+    const screen = await React.act(() =>
+      render(
+        <MetricsChart period={monthPeriod} metric="visits" />,
+        {},
+        { additionalMocks: mocks }
+      )
     );
-    screen.rerender(<MetricsChart period={monthPeriod} metric="visits" />); // rerender for Suspense to kick in
 
     // Wait for loading state to disappear
     await waitFor(() => {

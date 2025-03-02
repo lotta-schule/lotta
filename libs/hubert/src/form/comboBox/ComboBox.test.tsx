@@ -137,7 +137,9 @@ describe('Combobox', () => {
         />
       );
 
-      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+      await user.click(
+        screen.getByRole('button', { name: /Choose something/i })
+      );
       await waitFor(() => {
         expect(screen.getByRole('option', { name: /apple/i })).toBeVisible();
       });
@@ -234,7 +236,7 @@ describe('Combobox', () => {
           />
         );
 
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+        await user.click(screen.getByRole('button', { name: /Choose something/ }));
         await waitFor(() => {
           expect(screen.getByRole('option', { name: /apple/i })).toBeVisible();
         });

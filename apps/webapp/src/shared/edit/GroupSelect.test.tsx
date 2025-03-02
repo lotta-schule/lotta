@@ -304,7 +304,7 @@ describe('shared/editor/GroupSelect', () => {
       expect(combobox).toHaveValue('');
 
       await fireEvent.click(
-        screen.getByRole('button', { name: /vorschläge/i })
+        screen.getByRole('button', { name: /suggestions/i })
       );
 
       await waitFor(() => {
@@ -382,7 +382,7 @@ describe('shared/editor/GroupSelect', () => {
         expect(screen.getByRole('combobox')).toBeVisible();
       });
 
-      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+      await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
       await waitFor(() => {
         expect(
@@ -438,7 +438,7 @@ describe('shared/editor/GroupSelect', () => {
         expect(screen.getByRole('combobox')).toBeVisible();
       });
 
-      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+      await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
       const selectedOption = screen.getByRole('option', {
         name: 'Lehrer',
@@ -484,7 +484,7 @@ describe('shared/editor/GroupSelect', () => {
           expect(screen.getByRole('checkbox')).toBeVisible();
         });
 
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+        await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
@@ -525,7 +525,7 @@ describe('shared/editor/GroupSelect', () => {
         });
 
         await fireEvent.click(
-          screen.getByRole('button', { name: /vorschläge/i })
+          screen.getByRole('button', { name: /suggestions/i })
         );
 
         await waitFor(() => {
@@ -565,7 +565,7 @@ describe('shared/editor/GroupSelect', () => {
           expect(screen.getByRole('combobox')).toBeVisible();
         });
 
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+        await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
@@ -602,7 +602,7 @@ describe('shared/editor/GroupSelect', () => {
           expect(screen.getByRole('combobox')).toBeVisible();
         });
 
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+        await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
@@ -644,7 +644,7 @@ describe('shared/editor/GroupSelect', () => {
             expect(screen.getByRole('combobox')).toBeVisible();
           });
 
-          await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+          await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
           await waitFor(() => {
             expect(screen.getByRole('listbox')).toBeVisible();
@@ -683,7 +683,7 @@ describe('shared/editor/GroupSelect', () => {
             expect(screen.getByRole('combobox')).toBeVisible();
           });
 
-          await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+          await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
           await waitFor(() => {
             expect(screen.getByRole('listbox')).toBeVisible();
@@ -722,7 +722,7 @@ describe('shared/editor/GroupSelect', () => {
         expect(screen.getByRole('combobox')).toBeVisible();
       });
 
-      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+      await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
       await waitFor(() => {
         expect(screen.getByRole('listbox')).toBeVisible();
@@ -790,7 +790,7 @@ describe('shared/editor/GroupSelect', () => {
           expect(screen.getByRole('combobox')).toBeVisible();
         });
 
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+        await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
@@ -826,7 +826,7 @@ describe('shared/editor/GroupSelect', () => {
 
         await waitFor(() => new Promise((resolve) => setTimeout(resolve, 300))); // wait for it to settle
 
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+        await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
         await waitFor(
           () => {

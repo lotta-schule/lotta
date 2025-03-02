@@ -1,3 +1,4 @@
+import React from 'react';
 import { MockedResponse } from '@apollo/client/testing';
 import { fireEvent, render, waitFor } from 'test/util';
 import { GET_CALENDARS, UPDATE_CALENDAR_EVENT } from '../_graphql';
@@ -39,14 +40,16 @@ const eventToBeEdited = createEventFixture(calendars[1]);
 describe('EditEventDialog', () => {
   describe('show / hide with eventToBeEdited prop', () => {
     it('should show the dialog when event is passed', async () => {
-      const screen = render(
-        <EditEventDialog eventToBeEdited={eventToBeEdited} onClose={vi.fn()} />,
-        {},
-        { additionalMocks }
+      const screen = await React.act(() =>
+        render(
+          <EditEventDialog
+            eventToBeEdited={eventToBeEdited}
+            onClose={vi.fn()}
+          />,
+          {},
+          { additionalMocks }
+        )
       );
-      screen.rerender(
-        <EditEventDialog eventToBeEdited={eventToBeEdited} onClose={vi.fn()} />
-      ); // rerender for Suspense to kick in
 
       await waitFor(() => {
         expect(
@@ -143,15 +146,16 @@ describe('EditEventDialog', () => {
         result: resultFn,
       };
 
-      const screen = render(
-        <EditEventDialog eventToBeEdited={eventToBeEdited} onClose={vi.fn()} />,
-        {},
-        { additionalMocks: [...additionalMocks, mock] }
+      const screen = await React.act(() =>
+        render(
+          <EditEventDialog
+            eventToBeEdited={eventToBeEdited}
+            onClose={vi.fn()}
+          />,
+          {},
+          { additionalMocks: [...additionalMocks, mock] }
+        )
       );
-
-      screen.rerender(
-        <EditEventDialog eventToBeEdited={eventToBeEdited} onClose={vi.fn()} />
-      ); // rerender for Suspense to kick in
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeVisible();

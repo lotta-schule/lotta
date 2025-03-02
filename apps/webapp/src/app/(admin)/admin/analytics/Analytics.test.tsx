@@ -9,7 +9,6 @@ import {
   GET_TENANT_TIMESERIES_ANALYTICS,
 } from './_graphql';
 import userEvent from '@testing-library/user-event';
-
 vi.useFakeTimers({
   shouldAdvanceTime: true,
   now: new Date('2025-08-16T12:00:00.000Z'),
@@ -223,18 +222,17 @@ describe('Analytics', () => {
     it('shows the correct amount of months in the selection', async () => {
       const user = userEvent.setup();
 
-      const screen = render(<Analytics />, {}, { additionalMocks: mocks });
-      screen.rerender(<Analytics />); // rerender for Suspense to kick in
+      const screen = await React.act(() => render(<Analytics />, {}, { additionalMocks: mocks }));
 
       expect(
         screen.getByRole('button', {
-          name: 'vergangene 30 Tage Monat wählen',
+          name: 'vergangene 30 Tage Zeitraum wählen',
         })
       ).not.toBeDisabled();
 
       await user.click(
         screen.getByRole('button', {
-          name: 'vergangene 30 Tage Monat wählen',
+          name: 'vergangene 30 Tage Zeitraum wählen',
         })
       );
 
@@ -243,6 +241,7 @@ describe('Analytics', () => {
           screen.getByRole('option', { name: 'August 2025' })
         ).toBeVisible();
       });
+
       expect(screen.getByRole('option', { name: 'Juli 2025' })).toBeVisible();
       expect(screen.getByRole('option', { name: 'Juni 2025' })).toBeVisible();
       expect(screen.getByRole('option', { name: 'Mai 2025' })).toBeVisible();
@@ -272,18 +271,26 @@ describe('Analytics', () => {
       expect(screen.getByRole('option', { name: 'März 2024' })).toBeVisible();
       expect(screen.queryByRole('option', { name: 'Februar 2024' })).toBeNull();
 
-      await user.click(screen.getByRole('option', { name: 'April 2025' }));
+      await React.act(() =>
+        user.click(screen.getByRole('option', { name: 'April 2025' }))
+      );
+
+      await waitFor(() => {
+        expect(mocks[2].result).toHaveBeenCalled();
+      });
+
 
       await waitFor(() => {
         expect(
           screen.getByRole('button', {
-            name: /Monat wählen/,
+            name: /Zeitraum wählen/,
           })
-        ).not.toBeDisabled();
+        ).toHaveAccessibleName(/April 2025/);
       });
 
       await waitFor(() => {
         expect(mocks[2].result).toHaveBeenCalled();
+        expect(mocks[3].result).toHaveBeenCalled();
       });
     }, 20_000);
   });
@@ -293,7 +300,6 @@ describe('Analytics', () => {
       const user = userEvent.setup();
 
       const screen = render(<Analytics />, {}, { additionalMocks: mocks });
-      screen.rerender(<Analytics />); // rerender for Suspense to kick in
 
       await waitFor(() => {
         const props = MockPropertyBreakdown.mock.lastCall?.at(0);

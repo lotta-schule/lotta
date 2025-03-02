@@ -1,4 +1,4 @@
-import { act } from 'react';
+import React from 'react';
 import { MockedResponse } from '@apollo/client/testing';
 import { render, fireEvent, waitFor } from 'test/util';
 import { CreateEventDialog } from './CreateEventDialog';
@@ -38,12 +38,13 @@ describe('CreateEventDialog', () => {
   });
 
   it('renders the dialog when isOpen is true', async () => {
-    const screen = render(
-      <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-      {},
-      { additionalMocks }
+    const screen = await React.act(() =>
+      render(
+        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+        {},
+        { additionalMocks }
+      )
     );
-    screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
     await waitFor(() => {
       expect(
@@ -57,12 +58,13 @@ describe('CreateEventDialog', () => {
   });
 
   it('does not render the dialog when isOpen is false', async () => {
-    const screen = render(
-      <CreateEventDialog isOpen={false} onClose={vi.fn()} />,
-      {},
-      { additionalMocks }
+    const screen = await React.act(() =>
+      render(
+        <CreateEventDialog isOpen={false} onClose={vi.fn()} />,
+        {},
+        { additionalMocks }
+      )
     );
-    screen.rerender(<CreateEventDialog isOpen={false} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
     await waitFor(() => {
       expect(screen.container.querySelector<'dialog'>('dialog')).not.toBeNull();
@@ -73,12 +75,13 @@ describe('CreateEventDialog', () => {
   it('calls onClose when the close button is clicked', async () => {
     const user = userEvent.setup();
     const handleClose = vi.fn();
-    const screen = render(
-      <CreateEventDialog isOpen={true} onClose={handleClose} />,
-      {},
-      { additionalMocks }
+    const screen = await React.act(() =>
+      render(
+        <CreateEventDialog isOpen={true} onClose={handleClose} />,
+        {},
+        { additionalMocks }
+      )
     );
-    screen.rerender(<CreateEventDialog isOpen={true} onClose={handleClose} />); // Re-render to trigger Suspense
 
     await waitFor(() => {
       expect(screen.getByRole('dialog')).toBeVisible();
@@ -91,12 +94,13 @@ describe('CreateEventDialog', () => {
   it('should have a disabled "save" button when no name is entered', async () => {
     const user = userEvent.setup();
 
-    const screen = render(
-      <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-      {},
-      { additionalMocks }
+    const screen = await React.act(() =>
+      render(
+        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+        {},
+        { additionalMocks }
+      )
     );
-    screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
     const saveButton = await screen.findByRole('button', { name: 'speichern' });
     expect(saveButton).toBeDisabled();
@@ -106,12 +110,13 @@ describe('CreateEventDialog', () => {
   });
 
   it('changes the calendar selection', async () => {
-    const screen = render(
-      <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-      {},
-      { additionalMocks }
+    const screen = await React.act(() =>
+      render(
+        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+        {},
+        { additionalMocks }
+      )
     );
-    screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
     const selectElement = await screen.findByRole('combobox', {
       name: 'Kalender',
@@ -124,30 +129,32 @@ describe('CreateEventDialog', () => {
 
   it('handles all-day checkbox', async () => {
     const user = userEvent.setup();
-    const screen = render(
-      <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-      {},
-      { additionalMocks }
+    const screen = await React.act(() =>
+      render(
+        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+        {},
+        { additionalMocks }
+      )
     );
-    screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
     const allDayCheckbox = await screen.findByLabelText('ganztägig');
 
     expect(allDayCheckbox).toBeChecked();
 
-    await user.click(allDayCheckbox);
+    await React.act(() => user.click(allDayCheckbox));
 
     expect(allDayCheckbox).not.toBeChecked();
   });
 
   describe('date change', () => {
     it('changes start date', async () => {
-      const screen = render(
-        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-        {},
-        { additionalMocks }
+      const screen = await React.act(() =>
+        render(
+          <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+          {},
+          { additionalMocks }
+        )
       );
-      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
       const allDayCheckbox = await screen.findByLabelText('ganztägig');
       const multidayCheckbox = await screen.findByLabelText('mehrtägig');
@@ -166,39 +173,45 @@ describe('CreateEventDialog', () => {
 
     it('changes end date', async () => {
       const user = userEvent.setup();
-      const screen = render(
-        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-        {},
-        { additionalMocks }
+      const screen = await React.act(() =>
+        render(
+          <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+          {},
+          { additionalMocks }
+        )
       );
-      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
       await user.click(await screen.findByLabelText('ganztägig'));
       await user.click(await screen.findByLabelText('mehrtägig'));
 
       const dateInput = await screen.findByLabelText('Enddatum');
-      fireEvent.change(dateInput, { target: { value: '2024-08-17' } });
+      await React.act(async () => {
+        fireEvent.change(dateInput, { target: { value: '2024-08-17' } });
+      });
 
       expect(dateInput).toHaveValue('2024-08-17');
     });
 
     it('changes start date to one day before end date when end date is changed to BEFORE start date', async () => {
       const user = userEvent.setup();
-      const screen = render(
-        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-        {},
-        { additionalMocks }
+      const screen = await React.act(() =>
+        render(
+          <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+          {},
+          { additionalMocks }
+        )
       );
-      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
       await user.click(await screen.findByLabelText('ganztägig'));
       await user.click(await screen.findByLabelText('mehrtägig'));
 
       const dateInput = await screen.findByLabelText('Enddatum');
-      fireEvent.change(dateInput, { target: { value: '2024-08-15' } });
-      await act(async () => void 0);
-      fireEvent.blur(dateInput);
-      await act(async () => void 0);
+      await React.act(async () => {
+        fireEvent.change(dateInput, { target: { value: '2024-08-15' } });
+      });
+      await React.act(async () => {
+        fireEvent.blur(dateInput);
+      });
       expect(dateInput).toHaveValue('2024-08-15');
 
       expect(screen.getByLabelText('Datum')).toHaveValue('2024-08-14');
@@ -206,24 +219,33 @@ describe('CreateEventDialog', () => {
 
     it('changes end date to one day after start date when start date is changed to AFTER end date', async () => {
       const user = userEvent.setup();
-      const screen = render(
-        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-        {},
-        { additionalMocks }
+      const screen = await React.act(() =>
+        render(
+          <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+          {},
+          { additionalMocks }
+        )
       );
-      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Susp
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Suspense/)).toBeNull();
+      });
 
       await user.click(await screen.findByLabelText('ganztägig'));
       await user.click(await screen.findByLabelText('mehrtägig'));
 
       const startDateInput = await screen.findByLabelText('Datum');
       const endDateInput = await screen.findByLabelText('Enddatum');
-      fireEvent.change(endDateInput, { target: { value: '2024-08-20' } });
+      await React.act(async () => {
+        fireEvent.change(endDateInput, { target: { value: '2024-08-20' } });
+      });
       expect(endDateInput).toHaveValue('2024-08-20');
-      fireEvent.change(startDateInput, { target: { value: '2024-08-21' } });
-      await act(async () => void 0);
-      fireEvent.blur(startDateInput);
-      await act(async () => void 0);
+      await React.act(async () => {
+        fireEvent.change(startDateInput, { target: { value: '2024-08-21' } });
+      });
+      await React.act(async () => {
+        fireEvent.blur(startDateInput);
+      });
 
       expect(startDateInput).toHaveValue('2024-08-21');
 
@@ -234,12 +256,13 @@ describe('CreateEventDialog', () => {
   describe('time change', () => {
     it('changes start time', async () => {
       const user = userEvent.setup();
-      const screen = render(
-        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-        {},
-        { additionalMocks }
+      const screen = await React.act(() =>
+        render(
+          <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+          {},
+          { additionalMocks }
+        )
       );
-      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
       await user.click(await screen.findByLabelText('ganztägig'));
 
@@ -257,12 +280,13 @@ describe('CreateEventDialog', () => {
 
     it('changes end time', async () => {
       const user = userEvent.setup();
-      const screen = render(
-        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-        {},
-        { additionalMocks }
+      const screen = await React.act(() =>
+        render(
+          <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+          {},
+          { additionalMocks }
+        )
       );
-      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Susp
 
       await user.click(await screen.findByLabelText('ganztägig'));
 
@@ -280,12 +304,13 @@ describe('CreateEventDialog', () => {
 
     it('changes start time to one hour before end time when end time is changed to BEFORE start time', async () => {
       const user = userEvent.setup();
-      const screen = render(
-        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-        {},
-        { additionalMocks }
+      const screen = await React.act(() =>
+        render(
+          <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+          {},
+          { additionalMocks }
+        )
       );
-      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Suspense
 
       await user.click(await screen.findByLabelText('ganztägig'));
 
@@ -305,12 +330,13 @@ describe('CreateEventDialog', () => {
 
     it('changes end time to one hour after start time when start time is changed to AFTER end time', async () => {
       const user = userEvent.setup();
-      const screen = render(
-        <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
-        {},
-        { additionalMocks }
+      const screen = await React.act(() =>
+        render(
+          <CreateEventDialog isOpen={true} onClose={vi.fn()} />,
+          {},
+          { additionalMocks }
+        )
       );
-      screen.rerender(<CreateEventDialog isOpen={true} onClose={vi.fn()} />); // Re-render to trigger Susp
 
       await user.click(await screen.findByLabelText('ganztägig'));
 

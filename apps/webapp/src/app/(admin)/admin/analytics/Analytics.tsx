@@ -70,14 +70,14 @@ export const Analytics = React.memo(() => {
         });
       }
     },
-    [possiblePeriods]
+    [possiblePeriods, startTransition]
   );
 
   return (
     <div className={styles.root}>
       <Toolbar hasScrollableParent className={styles.toolbar}>
         <Select
-          title="Monat wählen"
+          title={t('Select period')}
           value={currentPeriod.period.key}
           disabled={isPending}
           onChange={changePeriod}
