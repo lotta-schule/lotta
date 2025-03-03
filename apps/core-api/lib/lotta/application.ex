@@ -19,12 +19,12 @@ defmodule Lotta.Application do
     children =
       prepended_apps() ++
         [
-          {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
           LottaWeb.Telemetry,
           Lotta.Repo,
           {Oban, Application.fetch_env!(:lotta, Oban)},
           Lotta.PushNotification,
           LottaWeb.Endpoint,
+          {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
           {Absinthe.Subscription, LottaWeb.Endpoint},
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
           {ConCache,
