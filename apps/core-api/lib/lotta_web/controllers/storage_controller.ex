@@ -66,6 +66,10 @@ defmodule LottaWeb.StorageController do
         conn
         |> respond_with(:not_found)
 
+      {:error, "Conversion job timed out"} ->
+        conn
+        |> respond_with(:service_unavailable)
+
       error ->
         Logger.error("Failed to download file: #{inspect(error)}")
 
@@ -146,9 +150,18 @@ defmodule LottaWeb.StorageController do
     end
   end
 
-  defp respond_with(conn, :not_found),
+  defp respond_with(conn, status_code) when is_integer(status_code),
     do:
       conn
-      |> resp(404, "")
+      |> resp(status_code, "")
       |> send_resp()
+
+  defp respond_with(conn, :not_found),
+    do: respond_with(conn, 404)
+
+  defp respond_with(conn, :service_unavailable),
+    do: respond_with(conn, 503)
+
+  defp respond_with(conn, :internal_server_error),
+    do: respond_with(conn, 500)
 end

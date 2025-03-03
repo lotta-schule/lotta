@@ -90,10 +90,10 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
         {:notification, :conversion_jobs, %{"complete" => ^job_id}} ->
           {:ok, job}
       after
-        7500 ->
+        25000 ->
           {:error, "Conversion job timed out"}
       end
     end)
-    |> Task.await(8000)
+    |> Task.await(30000)
   end
 end
