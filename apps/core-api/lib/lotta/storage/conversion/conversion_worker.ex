@@ -33,7 +33,7 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
   end
 
   @impl Oban.Worker
-  def timeout(_job), do: :timer.minutes(2.5)
+  def timeout(_job), do: :timer.minutes(2)
 
   @spec convert_file(File.t(), atom() | String.t()) :: {:ok, Oban.Job.t()} | {:error, String.t()}
   def convert_file(%File{id: file_id} = file, format) when is_atom(format) do
