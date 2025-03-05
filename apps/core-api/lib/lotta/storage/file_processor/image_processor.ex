@@ -3,6 +3,8 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
   Module for processing image files.
   """
 
+  require Logger
+
   alias Lotta.Storage.FileData
 
   defp to_hex_color(value) when is_list(value) do
@@ -16,6 +18,15 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
   def read_metadata(%FileData{} = file_data) do
     case Image.open(FileData.stream!(file_data)) do
       {:ok, image} ->
+        blurhash = nil
+        # case Image.Blurhash.encode(image) do
+        #   {:ok, blurhash} ->
+        #     blurhash
+
+        #   _error ->
+        #     nil
+        # end
+
         dhash =
           case Image.dhash(image) do
             {:ok, dhash} ->
@@ -47,6 +58,7 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
         {:ok,
          %{
            dhash: dhash,
+           blurhash: blurhash,
            exif: exif,
            dominant_color: dominant_color,
            pages: Image.pages(image),
@@ -63,22 +75,44 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
       {:error, reason}
   end
 
-  @spec process(Enumerable.t(), Keyword.t()) :: {:ok, FileData.t()} | {:error, String.t()}
-  def process(%FileData{} = file_data, args) do
-    {size_string, vips_args} = parse_args(args)
-
-    with {:ok, image} <- Image.open(FileData.stream!(file_data)),
-         {:ok, image} <- Image.thumbnail(image, size_string, vips_args) do
-      Image.stream!(image,
-        strip_metadata: true,
-        minimize_file_size: true,
-        suffix: ".webp"
-      )
-      |> FileData.from_stream("image.webp", mime_type: "image/webp")
-    else
-      error ->
-        error
+  @spec process(FileData.t(), Keyword.t()) ::
+          {:ok, keyword(FileData.t())} | {:error, String.t()}
+  def process(%FileData{} = file_data, formats_args) do
+    with {:ok, image} <- Image.open(FileData.stream!(file_data)) do
+      formats_args
+      |> Enum.map(fn {format, args} ->
+        {size_string, vips_args} = parse_args(args)
+        create_thumbnail_stream(format, image, size_string, vips_args)
+      end)
+      |> Enum.filter(&(not is_nil(&1)))
+      |> then(&{:ok, &1})
     end
+  end
+
+  defp create_thumbnail_stream(format, image, size_string, vips_args) do
+    Image.thumbnail(image, size_string, vips_args)
+    |> then(fn
+      {:ok, image} ->
+        Image.stream!(image,
+          buffer_size: 8 * 1024 * 1024,
+          strip_metadata: true,
+          minimize_file_size: true,
+          suffix: ".webp"
+        )
+        |> FileData.from_stream("image.webp", mime_type: "image/webp")
+        |> case do
+          {:ok, file_data} ->
+            {format, file_data}
+
+          {:error, error} ->
+            Logger.error("Failed to process image: #{inspect(error)}")
+            nil
+        end
+
+      {:error, error} ->
+        Logger.error("Failed to process image: #{inspect(error)}")
+        nil
+    end)
   end
 
   defp parse_args(args) do

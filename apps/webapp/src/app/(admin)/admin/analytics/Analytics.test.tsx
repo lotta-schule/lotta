@@ -222,7 +222,9 @@ describe('Analytics', () => {
     it('shows the correct amount of months in the selection', async () => {
       const user = userEvent.setup();
 
-      const screen = await React.act(() => render(<Analytics />, {}, { additionalMocks: mocks }));
+      const screen = await React.act(() =>
+        render(<Analytics />, {}, { additionalMocks: mocks })
+      );
 
       expect(
         screen.getByRole('button', {
@@ -278,7 +280,6 @@ describe('Analytics', () => {
       await waitFor(() => {
         expect(mocks[2].result).toHaveBeenCalled();
       });
-
 
       await waitFor(() => {
         expect(

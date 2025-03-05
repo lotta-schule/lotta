@@ -41,11 +41,13 @@ const monthPeriod: Period = {
 
 describe('MetricsOverview', () => {
   it('renders loading state initially', async () => {
-    const screen = await React.act(() => render(
-      <MetricsOverview period={monthPeriod} />,
-      {},
-      { additionalMocks: mocks }
-    ));
+    const screen = await React.act(() =>
+      render(
+        <MetricsOverview period={monthPeriod} />,
+        {},
+        { additionalMocks: mocks }
+      )
+    );
 
     await waitFor(() => {
       expect(screen.queryByLabelText('loading')).toBeNull();
@@ -53,11 +55,13 @@ describe('MetricsOverview', () => {
   });
 
   it('renders metrics when data is fetched', async () => {
-    const screen = await React.act(() => render(
-      <MetricsOverview period={monthPeriod} />,
-      {},
-      { additionalMocks: mocks }
-    ));
+    const screen = await React.act(() =>
+      render(
+        <MetricsOverview period={monthPeriod} />,
+        {},
+        { additionalMocks: mocks }
+      )
+    );
 
     // Wait for loading state to disappear
     await waitFor(() => {

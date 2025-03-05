@@ -167,7 +167,7 @@ defmodule LottaWeb.TenantResolverTest do
                      "userCount" => 8,
                      "articleCount" => 65,
                      "categoryCount" => 16,
-                     "fileCount" => 25
+                     "fileCount" => 27
                    }
                  }
                }
@@ -217,8 +217,8 @@ defmodule LottaWeb.TenantResolverTest do
                  "mediaFilesTotalDuration" => 480.9
                },
                "storage" => %{
-                 "filesTotal" => 25,
-                 "usedTotal" => 295_625
+                 "filesTotal" => 27,
+                 "usedTotal" => 17_076_953
                }
              } = current_usage
     end

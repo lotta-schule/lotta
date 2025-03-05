@@ -42,6 +42,10 @@ export type Tenant = NonNullable<ResultOf<typeof GET_TENANT_QUERY>['tenant']>;
 export const useTenant = () => {
   const { tenant } = useServerData();
 
+  if (!tenant) {
+    throw new Error('Tenant not found');
+  }
+
   React.useEffect(() => {
     if (tenant) {
       Sentry.setContext('tenant', tenant);

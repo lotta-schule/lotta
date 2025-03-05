@@ -158,7 +158,7 @@ describe('shared/article/ArticlePreview', () => {
         screen.getByRole('img', { name: /vorschaubild/i })
       ).toHaveAttribute(
         'srcset',
-        expect.stringContaining('/article_preview_600')
+        expect.stringContaining('/articlepreview_600')
       );
     });
 

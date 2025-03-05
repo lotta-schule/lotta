@@ -91,12 +91,7 @@ export const Select = ({
   const inputWrapperRef = React.useRef<HTMLDivElement>(null);
 
   const triggerRef = React.useRef<HTMLButtonElement>(null);
-  const {
-    labelProps,
-    triggerProps,
-    valueProps,
-    menuProps,
-  } = useSelect(
+  const { labelProps, triggerProps, valueProps, menuProps } = useSelect(
     {
       items,
       isRequired: required,

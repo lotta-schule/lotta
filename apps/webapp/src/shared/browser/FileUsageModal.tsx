@@ -88,7 +88,7 @@ export const FileUsageModal = React.memo(
                   <div className={styles.listItemPreviewImage}>
                     {usage.article?.previewImageFile && (
                       <ResponsiveImage
-                        format="article_preview"
+                        format="articlepreview"
                         width={100}
                         file={usage.article.previewImageFile}
                         alt={t('preview image of {{title}}', {

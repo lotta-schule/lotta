@@ -1,4 +1,3 @@
-/* eslint-disable */
 /* prettier-ignore */
 
 /** An IntrospectionQuery representation of your schema.
@@ -1581,19 +1580,19 @@ const introspection = {
         "name": "ConversionFormat",
         "enumValues": [
           {
-            "name": "ARTICLE_PREVIEW_300",
+            "name": "ARTICLEPREVIEW_300",
             "isDeprecated": false
           },
           {
-            "name": "ARTICLE_PREVIEW_420",
+            "name": "ARTICLEPREVIEW_420",
             "isDeprecated": false
           },
           {
-            "name": "ARTICLE_PREVIEW_600",
+            "name": "ARTICLEPREVIEW_600",
             "isDeprecated": false
           },
           {
-            "name": "ARTICLE_PREVIEW_840",
+            "name": "ARTICLEPREVIEW_840",
             "isDeprecated": false
           },
           {

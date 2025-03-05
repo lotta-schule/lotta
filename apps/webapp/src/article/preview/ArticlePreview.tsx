@@ -129,7 +129,7 @@ export const ArticlePreview = React.memo(
                     <ResponsiveImage
                       className={styles.previewImage}
                       file={article?.previewImageFile ?? undefined}
-                      format="article_preview"
+                      format="articlepreview"
                       alt={`Vorschaubild zu ${article.title}`}
                       fallback={
                         <PlaceholderImage aspectRatio={3 / 2} width={'100%'} />
@@ -143,7 +143,7 @@ export const ArticlePreview = React.memo(
                   <ResponsiveImage
                     className={styles.previewImage}
                     file={article.previewImageFile ?? undefined}
-                    format="article_preview"
+                    format="articlepreview"
                     alt={`Vorschaubild zu ${article.title}`}
                   />
                 )}

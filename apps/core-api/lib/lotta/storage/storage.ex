@@ -84,15 +84,27 @@ defmodule Lotta.Storage do
     |> Repo.transaction()
     |> case do
       {:ok, %{complete_file: file}} ->
-        for {variant_name, file_data} <- FileProcessor.convert_immediate_formats(file_data) do
-          create_file_conversion(file, to_string(variant_name), file_data)
-        end
+        create_initial_file_conversions(file, file_data)
 
         {:ok, Repo.reload(file)}
 
       {:error, reason} ->
         {:error, reason}
     end
+  end
+
+  @spec create_initial_file_conversions(File.t(), FileData.t()) :: :ok | :error
+  defp create_initial_file_conversions(file, file_data) do
+    file
+    |> FileProcessor.cache_file(file_data)
+    |> case do
+      {:ok, file_data} -> file_data
+      {:error, _} -> file_data
+    end
+    |> FileProcessor.convert_immediate_formats()
+    |> Enum.map(fn {variant_name, file_data} ->
+      create_file_conversion(file, to_string(variant_name), file_data)
+    end)
   end
 
   @doc """
@@ -122,24 +134,25 @@ defmodule Lotta.Storage do
         file_type: filetype_from(Keyword.get(metadata, :mime_type))
       })
 
-    {:ok, entity_data} = RemoteStorage.create(file_data, "#{prefix}/#{file.id}/#{variant_name}")
+    with {:ok, entity_data} <-
+           RemoteStorage.create(file_data, "#{prefix}/#{file.id}/#{variant_name}") do
+      Multi.new()
+      |> Multi.insert(
+        :remote_storage_entity,
+        entity_data,
+        prefix: prefix
+      )
+      |> Multi.insert(:file_conversion, fn %{remote_storage_entity: remote_storage_entity} ->
+        %{file_conversion | remote_storage_entity_id: remote_storage_entity.id}
+      end)
+      |> Repo.transaction()
+      |> case do
+        {:ok, file_conversion} ->
+          {:ok, file_conversion}
 
-    Multi.new()
-    |> Multi.insert(
-      :remote_storage_entity,
-      entity_data,
-      prefix: prefix
-    )
-    |> Multi.insert(:file_conversion, fn %{remote_storage_entity: remote_storage_entity} ->
-      %{file_conversion | remote_storage_entity_id: remote_storage_entity.id}
-    end)
-    |> Repo.transaction()
-    |> case do
-      {:ok, file_conversion} ->
-        {:ok, file_conversion}
-
-      {:error, reason} ->
-        {:error, reason}
+        {:error, reason} ->
+          {:error, reason}
+      end
     end
   end
 

@@ -11,7 +11,7 @@ defmodule Lotta.Storage.File do
   alias Lotta.Repo
   alias Lotta.Accounts.User
   alias Lotta.Content.ContentModule
-  alias Lotta.Storage.{Directory, FileData, FileConversion, RemoteStorageEntity}
+  alias Lotta.Storage.{Directory, FileData, FileConversion, FileProcessor, RemoteStorageEntity}
 
   @type id() :: binary()
 
@@ -38,10 +38,10 @@ defmodule Lotta.Storage.File do
     field(:metadata, :map)
     field(:media_duration, :float)
 
-    has_many :file_conversions, FileConversion
-    belongs_to :remote_storage_entity, RemoteStorageEntity, type: :binary_id, on_replace: :nilify
-    belongs_to :user, User
-    belongs_to :parent_directory, Directory, type: :binary_id
+    has_many(:file_conversions, FileConversion)
+    belongs_to(:remote_storage_entity, RemoteStorageEntity, type: :binary_id, on_replace: :nilify)
+    belongs_to(:user, User)
+    belongs_to(:parent_directory, Directory, type: :binary_id)
 
     many_to_many(
       :content_modules,
@@ -70,7 +70,21 @@ defmodule Lotta.Storage.File do
     ])
   end
 
+  @doc """
+  Create a file_data struct from a file database entry.
+  If the file is locally cached, the cached version will be used.
+  If not, the file will be downloaded from the remote storage.
+  """
+  @spec to_file_data(File.t()) :: {:ok, FileData.t()} | {:error, String.t()}
   def to_file_data(
+        %__MODULE__{} = file
+      ) do
+    if file_data = FileProcessor.get_cached(file),
+      do: {:ok, file_data},
+      else: to_remote_file_data(file)
+  end
+
+  defp to_remote_file_data(
         %__MODULE__{filename: filename, filesize: filesize, mime_type: mime_type} = file
       ) do
     file = Repo.preload(file, :remote_storage_entity)

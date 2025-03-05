@@ -8,20 +8,28 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
 
   import Ecto.Query
 
+  require Logger
+
   alias Lotta.{Repo, Storage}
   alias Lotta.Storage.{File, FileProcessor}
   alias Lotta.Storage.Conversion.AvailableFormats
 
   @impl Oban.Worker
-  def perform(%{id: job_id, args: %{"prefix" => prefix, "file_id" => file_id, "format" => format}}) do
-    with {:ok, format} <- AvailableFormats.to_atom(format),
+  def perform(%{
+        id: job_id,
+        args: %{"prefix" => prefix, "file_id" => file_id, "format_category" => format_category}
+      }) do
+    with {:ok, format_category} <- AvailableFormats.to_atom(format_category),
          file when not is_nil(file) <- Repo.get(File, file_id, prefix: prefix),
          {:ok, file_data} <- File.to_file_data(file),
-         {:ok, {_format, processed_file_data}} <- FileProcessor.process_file(file_data, format),
-         {:ok, file_conversion} <-
-           Storage.create_file_conversion(file, to_string(format), processed_file_data) do
+         {:ok, results} <- FileProcessor.process_file(file_data, format_category) do
+      file_conversions =
+        for({format, processed_file_data} <- results) do
+          Storage.create_file_conversion(file, to_string(format), processed_file_data)
+        end
+
       Oban.Notifier.notify(Oban, :conversion_jobs, %{"complete" => job_id})
-      {:ok, file_conversion}
+      {:ok, file_conversions}
     else
       nil ->
         {:error, "File not found"}
@@ -35,21 +43,9 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
   @impl Oban.Worker
   def timeout(_job), do: :timer.minutes(2)
 
-  @spec convert_file(File.t(), atom() | String.t()) :: {:ok, Oban.Job.t()} | {:error, String.t()}
-  def convert_file(%File{id: file_id} = file, format) when is_atom(format) do
-    if AvailableFormats.format_available?(file, format) do
-      new(%{file_id: file_id, format: format})
-      |> Oban.insert()
-    else
-      {:error, "Invalid format"}
-    end
-  end
-
-  def convert_file(file, format), do: convert_file(file, String.to_existing_atom(format))
-
   @spec get_conversion_job(File.t(), atom() | String.t()) :: Oban.Job.t() | nil
   def get_conversion_job(%{id: file_id} = file, format) do
-    format = to_string(format)
+    format_category = to_string(AvailableFormats.get_category(format))
     prefix = Ecto.get_meta(file, :prefix)
 
     Oban
@@ -60,7 +56,7 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
         where:
           fragment("?->>? = ?", j.args, "prefix", ^prefix) and
             fragment("?->>? = ?", j.args, "file_id", ^file_id) and
-            fragment("?->>? = ?", j.args, "format", ^format)
+            fragment("?->>? = ?", j.args, "format_category", ^format_category)
       )
     )
   end
@@ -72,11 +68,15 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
       %Oban.Job{state: state} = job when state in ["scheduled", "executing"] ->
         {:ok, job}
 
-      %Oban.Job{} ->
-        {:error, "Conversion job already completed"}
+      %Oban.Job{state: state} ->
+        {:error, "Conversion job state is: #{state}"}
 
       nil ->
-        new(%{prefix: Ecto.get_meta(file, :prefix), file_id: file.id, format: format})
+        new(%{
+          prefix: Ecto.get_meta(file, :prefix),
+          file_id: file.id,
+          format_category: AvailableFormats.get_category(format)
+        })
         |> Oban.insert()
     end
   end

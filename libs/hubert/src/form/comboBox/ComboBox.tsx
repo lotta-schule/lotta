@@ -226,9 +226,9 @@ export const ComboBox = React.memo(
           event.continuePropagation();
         },
         onOpenChange: (isOpen) => {
-                  if (!isOpen) {
-                    state.setInputValue('');
-                  }
+          if (!isOpen) {
+            state.setInputValue('');
+          }
         },
         onFocusChange: (isFocused) => {
           if (!isFocused) {
@@ -239,7 +239,7 @@ export const ComboBox = React.memo(
       state
     );
 
-    const { buttonProps: buttonElProps  } = useButton(buttonProps, buttonRef);
+    const { buttonProps: buttonElProps } = useButton(buttonProps, buttonRef);
 
     const inputAriaLabelProps = hideLabel
       ? { 'aria-label': title, 'aria-labelledby': '' }

@@ -67,7 +67,7 @@ defmodule Lotta.Storage.FileData do
 
   @spec from_path(
           local_path :: String.t(),
-          opts :: [filename: String.t(), mime_type: String.t()]
+          opts :: [filename: String.t(), mime_type: String.t(), file: File.t()]
         ) ::
           {:ok, t()} | {:error, String.t()}
 
@@ -99,7 +99,7 @@ defmodule Lotta.Storage.FileData do
 
   @spec stream!(t()) :: Enumerable.t()
   def stream!(%__MODULE__{_path: path}) when not is_nil(path) do
-    File.stream!(path, 5 * 1024 * 1024)
+    File.stream!(path, 8 * 1024 * 1024)
   end
 
   def stream!(%__MODULE__{stream: stream}) when not is_nil(stream), do: stream
@@ -125,6 +125,21 @@ defmodule Lotta.Storage.FileData do
         Logger.error("Failed to determine content type for file: #{inspect(error)}")
 
         "application/octet-stream"
+    end
+  end
+end
+
+defimpl String.Chars, for: Lotta.Storage.FileData do
+  def to_string(%__MODULE__{} = file_data) do
+    case file_data do
+      %Lotta.Storage.FileData{_path: path, metadata: metadata} when not is_nil(path) ->
+        "FileData<#{inspect(path)}>(#{inspect(metadata)})"
+
+      %Lotta.Storage.FileData{stream: stream, metadata: metadata} when not is_nil(stream) ->
+        "FileData<stream>(#{inspect(metadata)}"
+
+      _ ->
+        "FileData<unknown>"
     end
   end
 end

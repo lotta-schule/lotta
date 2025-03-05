@@ -67,7 +67,7 @@ export const ArticlesList = React.memo(({ articles }: ArticlesListProps) => {
                   <ResponsiveImage
                     className={styles.previewImage}
                     width={60}
-                    format={'article_preview'}
+                    format={'articlepreview'}
                     file={article.previewImageFile}
                     alt={`Vorschaubild zum Beitrag "${article.title}"`}
                   />

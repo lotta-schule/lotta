@@ -25,6 +25,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
          }}
 
       {:error, reason} ->
+        Logger.error("S3.upload of #{file_data} failed with error #{inspect(reason)}")
         {:error, reason}
     end
   end
