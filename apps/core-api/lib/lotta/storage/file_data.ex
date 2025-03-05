@@ -130,7 +130,7 @@ defmodule Lotta.Storage.FileData do
 end
 
 defimpl String.Chars, for: Lotta.Storage.FileData do
-  def to_string(%__MODULE__{} = file_data) do
+  def to_string(file_data) do
     case file_data do
       %Lotta.Storage.FileData{_path: path, metadata: metadata} when not is_nil(path) ->
         "FileData<#{inspect(path)}>(#{inspect(metadata)})"
