@@ -76,17 +76,15 @@ defmodule Lotta.Storage.File do
   If not, the file will be downloaded from the remote storage.
   """
   @spec to_file_data(File.t()) :: {:ok, FileData.t()} | {:error, String.t()}
-  def to_file_data(
-        %__MODULE__{} = file
-      ) do
+  def to_file_data(%__MODULE__{} = file) do
     if file_data = FileProcessor.get_cached(file),
       do: {:ok, file_data},
       else: to_remote_file_data(file)
   end
 
   defp to_remote_file_data(
-        %__MODULE__{filename: filename, filesize: filesize, mime_type: mime_type} = file
-      ) do
+         %__MODULE__{filename: filename, filesize: filesize, mime_type: mime_type} = file
+       ) do
     file = Repo.preload(file, :remote_storage_entity)
     url = RemoteStorage.get_http_url(file.remote_storage_entity)
 
