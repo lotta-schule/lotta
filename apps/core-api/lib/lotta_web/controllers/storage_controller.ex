@@ -18,17 +18,28 @@ defmodule LottaWeb.StorageController do
            Storage.get_http_url(file),
          {:ok, env} <-
            Tesla.get(
-             Tesla.client([{Tesla.Middleware.SSE, only: :data}]),
              http_url,
              opts: [adapter: [response: :stream]]
            ) do
-      conn
-      |> copy_header(env.headers, "content-type")
-      |> copy_header(env.headers, "content-length")
-      |> copy_header(env.headers, "etag")
-      |> copy_header(env.headers, "last-modified")
-      |> put_resp_header("cache-control", "max-age=604800")
-      |> send_resp(200, env.body)
+      conn =
+        conn
+        |> copy_header(env.headers, "content-type")
+        |> copy_header(env.headers, "content-length")
+        |> copy_header(env.headers, "etag")
+        |> copy_header(env.headers, "last-modified")
+        |> put_resp_header("cache-control", "max-age=604800")
+        |> send_chunked(200)
+
+      Enum.reduce_while(env.body, conn, fn chunk, conn ->
+        case chunk(conn, chunk) do
+          {:ok, conn} ->
+            {:cont, conn}
+
+          {:error, reason} ->
+            Logger.error("Failed to stream file to user: #{inspect(reason)}")
+            {:halt, conn}
+        end
+      end)
     else
       error ->
         Logger.error("Failed to download file: #{inspect(error)}")
@@ -50,17 +61,28 @@ defmodule LottaWeb.StorageController do
            Storage.get_http_url(file_conversion),
          {:ok, env} <-
            Tesla.get(
-             Tesla.client([{Tesla.Middleware.SSE, only: :data}]),
              http_url,
              opts: [adapter: [response: :stream]]
            ) do
-      conn
-      |> copy_header(env.headers, "content-type")
-      |> copy_header(env.headers, "content-length")
-      |> copy_header(env.headers, "etag")
-      |> copy_header(env.headers, "last-modified")
-      |> put_resp_header("cache-control", "max-age=604800")
-      |> send_resp(200, env.body)
+      conn =
+        conn
+        |> copy_header(env.headers, "content-type")
+        |> copy_header(env.headers, "content-length")
+        |> copy_header(env.headers, "etag")
+        |> copy_header(env.headers, "last-modified")
+        |> put_resp_header("cache-control", "max-age=604800")
+        |> send_chunked(200)
+
+      Enum.reduce_while(env.body, conn, fn chunk, conn ->
+        case chunk(conn, chunk) do
+          {:ok, conn} ->
+            {:cont, conn}
+
+          {:error, reason} ->
+            Logger.error("Failed to stream file to user: #{inspect(reason)}")
+            {:halt, conn}
+        end
+      end)
     else
       nil ->
         conn

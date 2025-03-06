@@ -104,6 +104,30 @@ defmodule Lotta.Storage.FileData do
 
   def stream!(%__MODULE__{stream: stream}) when not is_nil(stream), do: stream
 
+  @doc """
+  Copy the current file data to a file on disk, returning the newly created file data.
+  """
+  @spec copy_to_file(t(), path :: String.t()) :: {:ok, t()} | {:error, String.t()}
+  def copy_to_file(%__MODULE__{stream: stream} = file_data, path) when not is_nil(stream) do
+    stream
+    |> Stream.into(File.stream!(path))
+    |> Stream.run()
+    |> then(fn :ok ->
+      from_path(path, file_data.metadata)
+    end)
+  end
+
+  def copy_to_file(%__MODULE__{_path: path} = file_data, new_path) when not is_nil(path) do
+    case File.cp(path, new_path) do
+      :ok ->
+        {:ok, %__MODULE__{file_data | _path: new_path}}
+
+      error ->
+        Logger.error("Failed to copy file: #{inspect(error)}")
+        {:error, "Failed to copy file"}
+    end
+  end
+
   defp get_mime_type(:data, data) do
     with {:ok, pid} <- StringIO.open(data),
          {:ok, {_, mime_type}} <- FileType.from_io(pid) do

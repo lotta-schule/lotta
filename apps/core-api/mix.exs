@@ -93,7 +93,7 @@ defmodule Lotta.MixProject do
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.1"},
       {:hackney, "~> 1.20"},
-      {:httpoison, "~> 2.1"},
+      {:finch, "~> 0.19"},
       {:tesla, "~> 1.5"},
       {:sweet_xml, "~> 0.7"},
       {:poison, "~> 6.0"},

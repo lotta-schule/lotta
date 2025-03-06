@@ -92,26 +92,19 @@ defmodule Lotta.Storage.FileProcessor do
   Caches a given file object to disk, to be used for later conversion
   """
   @spec cache_file(File.t(), FileData.t()) :: {:ok, FileData.t()} | {:error, String.t()}
-  def cache_file(%File{id: id, mime_type: mime_type}, %FileData{_path: file_path}) do
-    with tmp_path <- System.tmp_dir() || {:error, "Failed to get tmp path"},
-         local_file_path <-
-           Path.join(tmp_path, "file-cache-#{id}"),
-         false <-
-           Elixir.File.exists?(local_file_path) and
-             FileData.from_path(local_file_path, mime_type: mime_type),
-         :ok <- Elixir.File.cp(file_path, local_file_path) do
-      FileData.from_path(local_file_path, mime_type: mime_type)
+  def cache_file(%File{} = file, %FileData{} = file_data) do
+    if local_file_path = cache_path(file) do
+      FileData.copy_to_file(file_data, local_file_path)
     else
-      :error ->
-        Logger.error("Failed to get valid cache path for file: #{inspect(id)}")
-        {:error, "Failed to get valid cache path for file"}
-
-      error ->
-        error
+      {:error, "Failed to get tmp path"}
     end
   end
 
-  def cache_file(_, %FileData{}), do: {:error, "Only local files can be cached"}
+  defp cache_path(%File{id: id}) do
+    with tmp_path <- System.tmp_dir() do
+      Path.join(tmp_path, "file-cache-#{id}")
+    end
+  end
 
   @doc """
   Retrieves a cached file object from disk. If the file is not found, it will return nil

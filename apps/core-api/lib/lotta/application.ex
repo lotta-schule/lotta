@@ -20,6 +20,7 @@ defmodule Lotta.Application do
       prepended_apps() ++
         [
           LottaWeb.Telemetry,
+          {Finch, name: Lotta.Finch},
           Lotta.Repo,
           {Oban, Application.fetch_env!(:lotta, Oban)},
           Lotta.PushNotification,

@@ -86,30 +86,25 @@ defmodule Lotta.Storage.File do
          %__MODULE__{filename: filename, filesize: filesize, mime_type: mime_type} = file
        ) do
     file = Repo.preload(file, :remote_storage_entity)
-    url = RemoteStorage.get_http_url(file.remote_storage_entity)
 
-    Tesla.get(
-      Tesla.client([{Tesla.Middleware.SSE, only: :data}]),
-      url,
-      opts: [adapter: [response: :stream]]
-    )
-    |> case do
-      {:ok, %{body: body}} when is_binary(body) ->
-        FileData.from_data(body, filename, mime_type: mime_type)
+    url =
+      RemoteStorage.get_http_url(file.remote_storage_entity)
 
-      {:ok, %{body: body}} ->
-        {:ok,
-         %FileData{
-           stream: body,
-           metadata: %{
-             filename: filename,
-             filesize: filesize,
+    with {:ok, env} <-
+           Tesla.get(
+             url,
+             opts: [adapter: [response: :stream]]
+           ),
+         {:ok, file_data} <-
+           FileData.from_stream(
+             env.body,
+             filename,
              mime_type: mime_type
-           }
-         }}
-
-      {:error, _reason} ->
-        {:error, "Failed to download file"}
+           ) do
+      FileProcessor.cache_file(
+        file,
+        file_data
+      )
     end
   end
 end

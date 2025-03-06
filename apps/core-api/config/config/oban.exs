@@ -6,7 +6,7 @@ config :lotta, Oban,
   repo: Lotta.Repo,
   prefix: "oban",
   queues: [
-    file_conversion: [limit: 2]
+    file_conversion: [limit: 4]
   ]
 
 if Mix.env() == :test do

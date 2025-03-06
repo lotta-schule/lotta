@@ -4,7 +4,15 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
   """
   use Oban.Worker,
     queue: :file_conversion,
-    max_attempts: 5
+    max_attempts: 5,
+    # 0-9, 0 is highest
+    priority: 1,
+    unique: [
+      period: :timer.hours(24),
+      timestamp: :scheduled_at,
+      states: Oban.Job.states(),
+      fields: [:worker, :args]
+    ]
 
   import Ecto.Query
 
@@ -22,7 +30,8 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
     with {:ok, format_category} <- AvailableFormats.to_atom(format_category),
          file when not is_nil(file) <- Repo.get(File, file_id, prefix: prefix),
          {:ok, file_data} <- File.to_file_data(file),
-         {:ok, results} <- FileProcessor.process_file(file_data, format_category) do
+         {:ok, results} <-
+           FileProcessor.process_file(file_data, format_category) do
       file_conversions =
         for({format, processed_file_data} <- results) do
           Storage.create_file_conversion(file, to_string(format), processed_file_data)
