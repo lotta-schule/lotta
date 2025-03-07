@@ -28,12 +28,8 @@ defmodule Lotta.Storage.FileData do
         ) ::
           {:ok, t()} | {:error, String.t()}
   def from_stream(stream, filename, opts \\ []) do
-    {type, mime_type} =
-      if mime_type = opts[:mime_type] do
-        {Storage.filetype_from(mime_type), mime_type}
-      else
-        {"binary", "application/octet-stream"}
-      end
+    mime_type = opts[:mime_type] || guess_mime_type(:path, filename)
+    type = Storage.filetype_from(mime_type)
 
     {:ok,
      %__MODULE__{
@@ -54,7 +50,7 @@ defmodule Lotta.Storage.FileData do
           {:ok, t()} | {:error, String.t()}
 
   def from_path(local_path, opts \\ []) do
-    mime_type = opts[:mime_type] || get_mime_type(:path, local_path)
+    mime_type = opts[:mime_type] || guess_mime_type(:path, local_path)
     type = Storage.filetype_from(mime_type)
 
     case File.stat(local_path) do
@@ -110,27 +106,12 @@ defmodule Lotta.Storage.FileData do
     end
   end
 
-  defp get_mime_type(:data, data) do
-    with {:ok, pid} <- StringIO.open(data),
-         {:ok, {_, mime_type}} <- FileType.from_io(pid) do
-      mime_type
-    else
-      error ->
-        Logger.error("Failed to determine content type for file: #{inspect(error)}")
-
-        "application/octet-stream"
-    end
-  end
-
-  defp get_mime_type(:path, path) do
+  defp guess_mime_type(:path, path) do
     case FileType.from_path(path) do
       {:ok, {_, mime_type}} ->
         mime_type
-
-      error ->
-        Logger.error("Failed to determine content type for file: #{inspect(error)}")
-
-        "application/octet-stream"
+      _ ->
+        MIME.from_path(path)
     end
   end
 end
