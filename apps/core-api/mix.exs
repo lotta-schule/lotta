@@ -133,7 +133,7 @@ defmodule Lotta.MixProject do
       {:opentelemetry_phoenix, "~> 2.0"},
       {:opentelemetry_redix, "~> 0.1"},
       {:opentelemetry_tesla,
-       git: "git@github.com:ShapovalovaIrina/opentelemetry-erlang-contrib.git",
+       git: "https://github.com/ShapovalovaIrina/opentelemetry-erlang-contrib",
        sparse: "instrumentation/opentelemetry_tesla",
        ref: "update-tesla-to-1.27-semantics"}
     ]
