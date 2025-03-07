@@ -7,11 +7,6 @@ defmodule Lotta.TenantsTest do
 
   @prefix "tenant_test"
 
-  setup do
-    Code.put_compiler_option(:ignore_module_conflict, true)
-
-    :ok
-  end
 
   describe "Tenants" do
     test "should get tenant by prefix" do
@@ -37,7 +32,6 @@ defmodule Lotta.TenantsTest do
 
     @tag creates_tenant: true
     test "should create a new tenant" do
-      Code.purge_compiler_modules()
 
       assert {:ok, tenant} =
                Tenants.create_tenant(
@@ -54,7 +48,6 @@ defmodule Lotta.TenantsTest do
 
     @tag creates_tenant: true
     test "should delete a given tenant" do
-      Code.purge_compiler_modules()
 
       assert {:ok, tenant} =
                Tenants.create_tenant(

@@ -14,8 +14,6 @@ defmodule Lotta.Tenants.DefaultContentTest do
   alias Lotta.Accounts.Authentication
 
   setup do
-    Code.purge_compiler_modules()
-
     {:ok, tenant} =
       Tenants.create_tenant(
         user_params: %{
