@@ -74,7 +74,7 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
           {:ok, Oban.Job.t()} | {:error, String.t()}
   def get_or_create_conversion_job(%{id: _id} = file, format) do
     case get_conversion_job(file, format) do
-      %Oban.Job{state: state} = job when state in ["scheduled", "executing"] ->
+      %Oban.Job{state: state} = job when state in ["scheduled", "executing", "completed"] ->
         {:ok, job}
 
       %Oban.Job{state: state} ->
@@ -90,7 +90,13 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
     end
   end
 
+  @doc """
+  Awaits the completion of a conversion job.
+  Returns {:ok, job} if the job completed successfully, or {:error, reason} if the job failed or timed out.
+  """
   @spec await_conversion(Oban.Job.t()) :: {:ok, Oban.Job.t()} | {:error, String.t()}
+  def await_conversion(%Oban.Job{state: "completed"} = job), do: {:ok, job}
+
   def await_conversion(%Oban.Job{id: job_id} = job) do
     Task.async(fn ->
       :ok = Oban.Notifier.listen(Oban, [:conversion_jobs])
@@ -99,10 +105,10 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
         {:notification, :conversion_jobs, %{"complete" => ^job_id}} ->
           {:ok, job}
       after
-        25_000 ->
+        60_000 ->
           {:error, "Conversion job timed out"}
       end
     end)
-    |> Task.await(30_000)
+    |> Task.await(60_000)
   end
 end

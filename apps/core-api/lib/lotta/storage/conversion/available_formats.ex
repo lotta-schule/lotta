@@ -4,6 +4,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   Holds information about available formats and which formats to use for immediate processing.
   """
 
+  alias Lotta.Storage
   alias Lotta.Storage.{FileData, File}
 
   @preview_formats [
@@ -191,21 +192,11 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   def get_immediate_formats(%File{mime_type: mime_type}), do: get_immediate_formats(mime_type)
 
   def get_immediate_formats(mime_type) when is_binary(mime_type) do
-    cond do
-      String.starts_with?(mime_type, "image/") ->
-        @preview_formats
-
-      String.ends_with?(mime_type, "/svg") ->
-        @preview_formats
-
-      String.starts_with?(mime_type, "video/") ->
-        @preview_formats
-
-      String.ends_with?(mime_type, "/pdf") ->
-        @preview_formats
-
-      true ->
-        []
+    case Storage.filetype_from(mime_type) do
+      "image" -> @preview_formats ++ @image_formats
+      "video" -> @preview_formats ++ @video_formats
+      "pdf" -> @preview_formats
+      _ -> []
     end
     |> Enum.map(&elem(&1, 0))
   end
@@ -219,6 +210,9 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
 
   def available_formats(%File{file_type: "video"}),
     do: Enum.map(@preview_formats ++ @video_formats, &elem(&1, 0))
+
+  def available_formats(%File{file_type: "pdf"}),
+    do: Enum.map(@preview_formats, &elem(&1, 0))
 
   def available_formats(_), do: []
 
