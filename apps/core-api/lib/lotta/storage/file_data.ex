@@ -45,7 +45,7 @@ defmodule Lotta.Storage.FileData do
 
   @spec from_path(
           local_path :: String.t(),
-          opts :: [filename: String.t(), mime_type: String.t(), file: File.t()]
+          opts :: [filename: String.t(), mime_type: String.t(), file: Storage.File.t()]
         ) ::
           {:ok, t()} | {:error, String.t()}
 
@@ -113,6 +113,73 @@ defmodule Lotta.Storage.FileData do
 
       _ ->
         MIME.from_path(path)
+    end
+  end
+
+  @doc """
+  Caches a given file object to disk, to be used for later conversion
+  """
+  @spec cache(t(), [{:for, Storage.File.t()}]) :: {:ok, t()} | {:error, String.t()}
+  def cache(%__MODULE__{} = file_data, [{:for, %Storage.File{} = file}]) do
+    if local_path = cache_path(file) do
+      copy_to_file(file_data, local_path)
+    else
+      {:error, "Failed to get cache path"}
+    end
+  end
+
+  @doc """
+  Caches a given file object to disk, to be used for later conversion
+  """
+  @spec caching(t(), [{:for, Storage.File.t()}]) :: Storage.File.t()
+  def caching(%__MODULE__{} = file_data, [{:for, %Storage.File{} = file}]) do
+    case cache(file_data, [{:for, file}]) do
+      {:ok, cached} -> cached
+      {:error, _} -> file
+    end
+  end
+
+  @doc """
+  Retrieves a cached file object from disk. If the file is not found, it will return nil
+  """
+  @spec get_cached([{:for, Storage.File.t()}]) :: t() | nil
+  def get_cached([{:for, %Storage.File{} = file}]) do
+    with local_path when is_binary(local_path) <- cache_path(file),
+         {:ok, file_data} <- from_path(local_path, mime_type: file.mime_type) do
+      file_data
+    else
+      _ -> nil
+    end
+  end
+
+  @doc """
+  Deletes a cached file object from disk, if it exists
+  """
+  @spec clear(t() | [{:for, Storage.File.t()}]) :: :ok | {:error, File.posix()}
+  def clear(%__MODULE__{_path: path}) when is_binary(path), do: File.rm(path)
+  def clear(%__MODULE__{}), do: :ok
+
+  def clear({:for, %Storage.File{} = file}) do
+    if local_path = cache_path(file),
+      do: File.rm(local_path),
+      else: :ok
+  end
+
+  def create_cache_dir(), do: File.mkdir_p!(Path.join(System.tmp_dir(), "ugc"))
+
+  defp cache_path(%Storage.File{} = file) do
+    if tmp_path = System.tmp_dir() do
+      filename =
+        Enum.join(
+          [
+            Ecto.get_meta(file, :prefix),
+            file.id,
+            "original"
+          ],
+          "_"
+        )
+
+      Path.join([tmp_path, "ugc", filename])
     end
   end
 end

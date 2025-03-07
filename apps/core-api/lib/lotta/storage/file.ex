@@ -11,7 +11,7 @@ defmodule Lotta.Storage.File do
   alias Lotta.Repo
   alias Lotta.Accounts.User
   alias Lotta.Content.ContentModule
-  alias Lotta.Storage.{Directory, FileData, FileConversion, FileProcessor, RemoteStorageEntity}
+  alias Lotta.Storage.{Directory, FileData, FileConversion, RemoteStorageEntity}
 
   @type id() :: binary()
 
@@ -77,7 +77,7 @@ defmodule Lotta.Storage.File do
   """
   @spec to_file_data(File.t()) :: {:ok, FileData.t()} | {:error, String.t()}
   def to_file_data(%__MODULE__{} = file) do
-    if file_data = FileProcessor.get_cached(file),
+    if file_data = FileData.get_cached(for: file),
       do: {:ok, file_data},
       else: to_remote_file_data(file)
   end
@@ -93,13 +93,10 @@ defmodule Lotta.Storage.File do
          {:ok, file_data} <-
            FileData.from_stream(
              env.body,
-             filename: file.filename,
+             file.filename,
              mime_type: file.mime_type
            ) do
-      FileProcessor.cache_file(
-        file,
-        file_data
-      )
+      FileData.cache(file_data, for: file)
     end
   end
 end

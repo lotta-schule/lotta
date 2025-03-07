@@ -241,14 +241,6 @@ export const PrivacyPage = () => {
               rel="noopener noreferrer"
             >
               keycdn
-            </a>{' '}
-            sowie dem französischen Unternehmen
-            <a
-              href="https://legal.scaleflex.com/privacy/global-privacy-policy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Cloudimage
             </a>
             bei Bedarf zwischengespeichert, verarbeitet und ausgeliefert.
           </p>

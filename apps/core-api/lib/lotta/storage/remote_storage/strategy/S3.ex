@@ -17,7 +17,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
     )
     |> ExAws.request()
     |> case do
-      {:ok, _status} ->
+      {:ok, _response} ->
         {:ok,
          %RemoteStorageEntity{
            path: path,

@@ -7,52 +7,14 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
 
   alias Lotta.Storage.FileData
 
-  defp to_hex_color(value) when is_list(value) do
-    "#" <>
-      Enum.reduce(value, "", fn value, acc ->
-        acc <> String.pad_leading(Integer.to_string(value, 16), 2, "0")
-      end)
-  end
-
   @spec read_metadata(FileData.t()) :: {:ok, map()} | {:error, String.t()}
   def read_metadata(%FileData{} = file_data) do
     case Image.open(FileData.stream!(file_data)) do
       {:ok, image} ->
-        blurhash = nil
-        # case Image.Blurhash.encode(image) do
-        #   {:ok, blurhash} ->
-        #     blurhash
-
-        #   _error ->
-        #     nil
-        # end
-
-        dhash =
-          case Image.dhash(image) do
-            {:ok, dhash} ->
-              dhash
-              |> :binary.bin_to_list()
-              |> to_hex_color()
-
-            _error ->
-              nil
-          end
-
-        exif =
-          case Image.exif(image) do
-            {:ok, exif} -> exif
-            _error -> nil
-          end
-
-        dominant_color =
-          case Image.dominant_color(image) do
-            {:ok, color} ->
-              to_hex_color(color)
-
-            _error ->
-              nil
-          end
-
+        blurhash = generate_blurhash(image)
+        dhash = generate_dhash(image)
+        exif = extract_exif(image)
+        dominant_color = extract_dominant_color(image)
         {width, height, channels} = Image.shape(image)
 
         {:ok,
@@ -115,6 +77,13 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
     end)
   end
 
+  defp to_hex_color(value) when is_list(value) do
+    "#" <>
+      Enum.reduce(value, "", fn value, acc ->
+        acc <> String.pad_leading(Integer.to_string(value, 16), 2, "0")
+      end)
+  end
+
   defp parse_args(args) do
     [:contain, :cover]
     |> Enum.find(&Keyword.has_key?(args, &1))
@@ -125,6 +94,45 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
 
       fit_arg ->
         {create_size_string(args[fit_arg]), create_vips_args(fit: fit_arg)}
+    end
+  end
+
+  defp generate_blurhash(image) do
+    case Image.Blurhash.encode(image) do
+      {:ok, blurhash} ->
+        blurhash
+
+      _error ->
+        nil
+    end
+  end
+
+  defp generate_dhash(image) do
+    case Image.dhash(image) do
+      {:ok, dhash} ->
+        dhash
+        |> :binary.bin_to_list()
+        |> to_hex_color()
+
+      _error ->
+        nil
+    end
+  end
+
+  defp extract_exif(image) do
+    case Image.exif(image) do
+      {:ok, exif} -> exif
+      _error -> nil
+    end
+  end
+
+  defp extract_dominant_color(image) do
+    case Image.dominant_color(image) do
+      {:ok, color} ->
+        to_hex_color(color)
+
+      _error ->
+        nil
     end
   end
 

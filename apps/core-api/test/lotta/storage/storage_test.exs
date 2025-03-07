@@ -1,14 +1,12 @@
 defmodule Lotta.StorageTest do
   @moduledoc false
 
-  alias Lotta.Storage.RemoteStorageEntity
-  use Lotta.DataCase, async: true
-
-  import Ecto.Query
+  use Lotta.WorkerCase, async: true
 
   alias Lotta.Accounts.User
   alias Lotta.{Fixtures, Repo, Storage, Tenants}
   alias Lotta.Storage.{Directory, File, FileData, RemoteStorage, RemoteStorageEntity}
+  alias Lotta.Storage.Conversion.ConversionWorker
 
   @prefix "tenant_test"
 
@@ -61,11 +59,23 @@ defmodule Lotta.StorageTest do
       assert uploaded_file =
                %File{
                  remote_storage_entity: _remote_storage_entity,
-                 file_conversions: file_conversions
+                 file_conversions: _file_conversions
                } = Repo.preload(uploaded_file, [:file_conversions, :remote_storage_entity])
 
-      assert Enum.count(file_conversions) > 0
-      assert Enum.all?(file_conversions, &String.starts_with?(&1.format, "preview"))
+      Repo.preload(uploaded_file, [:file_conversions, :remote_storage_entity])
+
+      assert_enqueued(
+        worker: ConversionWorker,
+        queue: :file_conversion,
+        priority: 2,
+        args: %{
+          prefix: Ecto.get_meta(uploaded_file, :prefix),
+          file_id: uploaded_file.id,
+          format_category: :preview
+        }
+      )
+
+      assert %{success: 1, failure: 0} = Oban.drain_queue(queue: :file_conversion)
 
       res =
         ExAws.S3.get_object("lotta-dev-ugc", uploaded_file.remote_storage_entity.path)
@@ -75,8 +85,15 @@ defmodule Lotta.StorageTest do
                status_code: 200
              } = res
 
+      %{file_conversions: file_conversions} =
+        uploaded_file
+        |> Repo.reload()
+        |> Repo.preload(:file_conversions)
+
       assert uploaded_file.remote_storage_entity.path ==
                "tenant_test/#{uploaded_file.id}/original"
+
+      assert Enum.count(file_conversions) > 0
     end
 
     test "copy_to_remote_storage/2 should reupload a file to new location", %{

@@ -7,11 +7,10 @@ defmodule Lotta.Storage do
   import Ecto.Query
 
   alias Lotta.Tenants
-  alias Ecto.Multi
   alias Ecto.Changeset
   alias Lotta.Repo
   alias Lotta.Accounts.{FileManagment, User}
-  alias Lotta.Storage.Conversion.ConversionWorker
+  alias Lotta.Storage.Conversion.{AvailableFormats, ConversionWorker}
 
   alias Lotta.Storage.{
     Directory,
@@ -21,8 +20,6 @@ defmodule Lotta.Storage do
     RemoteStorage,
     RemoteStorageEntity
   }
-
-  alias Lotta.Storage.FileProcessor
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -43,68 +40,38 @@ defmodule Lotta.Storage do
   @spec create_file(FileData.t(), Directory.t(), User.t()) ::
           {:ok, File.t()} | {:error, term()}
   def create_file(
-        %FileData{
-          metadata: metadata
-        } = file_data,
+        %FileData{} = file_data,
         %Directory{} = directory,
         %User{} = user
       ) do
-    additional_metadata =
-      case FileProcessor.read_metadata(file_data) do
-        {:ok, metadata} -> metadata
-        {:error, _} -> nil
-      end
+    with {:ok, file} <-
+           directory
+           |> Repo.build_prefixed_assoc(:files, %{
+             user_id: user.id,
+             filename: Keyword.get(file_data.metadata, :filename),
+             filesize: Keyword.get(file_data.metadata, :size),
+             file_type: Keyword.get(file_data.metadata, :type),
+             mime_type: Keyword.get(file_data.metadata, :mime_type)
+           })
+           |> Repo.insert(),
+         {:ok, file} <-
+           upload_filedata_for_file_or_conversion(file_data, file) do
+      FileData.cache(file_data, for: file)
 
-    file =
-      directory
-      |> Repo.build_prefixed_assoc(:files, %{
-        user_id: user.id,
-        filename: Keyword.get(metadata, :filename),
-        filesize: Keyword.get(metadata, :size),
-        file_type: filetype_from(Keyword.get(metadata, :mime_type)),
-        mime_type: Keyword.get(metadata, :mime_type),
-        metadata: additional_metadata
-      })
-
-    Multi.new()
-    |> Multi.insert(:file, file)
-    |> Multi.run(:entity_data, fn _repo, %{file: file} ->
-      prefix = Ecto.get_meta(file, :prefix)
-      RemoteStorage.create(file_data, "#{prefix}/#{file.id}/original")
-    end)
-    |> Multi.insert(:remote_storage_entity, fn %{entity_data: entity_data} ->
-      Repo.build_prefixed_assoc(file, :remote_storage_entity, entity_data)
-    end)
-    |> Multi.update(:complete_file, fn %{file: file, remote_storage_entity: remote_storage_entity} ->
       file
-      |> Repo.preload(:remote_storage_entity)
-      |> Changeset.change()
-      |> Changeset.put_assoc(:remote_storage_entity, remote_storage_entity)
-    end)
-    |> Repo.transaction()
-    |> case do
-      {:ok, %{complete_file: file}} ->
-        create_initial_file_conversions(file, file_data)
-
+      |> AvailableFormats.get_immediate_formats()
+      # A good place for a metadata job
+      |> Enum.map(&ConversionWorker.get_or_create_conversion_job(file, &1))
+      |> then(fn _jobs ->
         {:ok, Repo.reload(file)}
+      end)
+    else
+      error ->
+        Logger.error("Error creating file: #{inspect(error)}")
+        FileData.clear(file_data)
 
-      {:error, reason} ->
-        {:error, reason}
+        error
     end
-  end
-
-  @spec create_initial_file_conversions(File.t(), FileData.t()) :: :ok | :error
-  defp create_initial_file_conversions(file, file_data) do
-    file
-    |> FileProcessor.cache_file(file_data)
-    |> case do
-      {:ok, file_data} -> file_data
-      {:error, _} -> file_data
-    end
-    |> FileProcessor.convert_immediate_formats()
-    |> Enum.map(fn {variant_name, file_data} ->
-      create_file_conversion(file, to_string(variant_name), file_data)
-    end)
   end
 
   @doc """
@@ -113,46 +80,63 @@ defmodule Lotta.Storage do
   in the database and stores the data in the default RemoteStorage.
   """
   @doc since: "5.1.0"
-  @spec create_file_conversion(File.t(), variant_name :: String.t(), data :: FileData.t()) ::
+  @spec create_file_conversion(FileData.t(), File.t(), variant_name :: String.t()) ::
           {:ok, FileConversion.t()} | {:error, term()}
   def create_file_conversion(
+        %FileData{} = file_data,
         %File{} = file,
-        variant_name,
-        %FileData{
-          metadata: metadata
-        } = file_data
+        variant_name
       ) do
-    prefix = Ecto.get_meta(file, :prefix)
+    with {:ok, file_conversion} <-
+           file
+           |> Repo.preload(:file_conversions)
+           |> Repo.build_prefixed_assoc(:file_conversions, %{
+             format: variant_name,
+             filesize: Keyword.get(file_data.metadata, :size),
+             mime_type: Keyword.get(file_data.metadata, :mime_type),
+             file_type: filetype_from(Keyword.get(file_data.metadata, :mime_type))
+           })
+           |> Repo.insert() do
+      upload_filedata_for_file_or_conversion(file_data, file_conversion)
+    end
+  end
 
-    file_conversion =
-      file
-      |> Repo.preload(:file_conversions)
-      |> Repo.build_prefixed_assoc(:file_conversions, %{
-        format: variant_name,
-        filesize: Keyword.get(metadata, :size),
-        mime_type: Keyword.get(metadata, :mime_type),
-        file_type: filetype_from(Keyword.get(metadata, :mime_type))
-      })
+  @spec upload_filedata_for_file_or_conversion(FileData.t(), File.t() | FileConversion.t()) ::
+          {:ok, File.t() | FileConversion.t()} | {:error, term()}
+  defp upload_filedata_for_file_or_conversion(%FileData{} = file_data, foc)
+       when is_struct(foc, File) or is_struct(foc, FileConversion) do
+    prefix = Ecto.get_meta(foc, :prefix)
 
-    with {:ok, entity_data} <-
-           RemoteStorage.create(file_data, "#{prefix}/#{file.id}/#{variant_name}") do
-      Multi.new()
-      |> Multi.insert(
-        :remote_storage_entity,
-        entity_data,
-        prefix: prefix
-      )
-      |> Multi.insert(:file_conversion, fn %{remote_storage_entity: remote_storage_entity} ->
-        %{file_conversion | remote_storage_entity_id: remote_storage_entity.id}
-      end)
-      |> Repo.transaction()
-      |> case do
-        {:ok, file_conversion} ->
-          {:ok, file_conversion}
-
-        {:error, reason} ->
-          {:error, reason}
+    file_id =
+      case foc do
+        %File{id: id} -> id
+        %FileConversion{file_id: id} -> id
       end
+
+    variant_name =
+      case foc do
+        %FileConversion{format: format} -> format
+        _ -> "original"
+      end
+
+    case RemoteStorage.create(file_data, "#{prefix}/#{file_id}/#{variant_name}") do
+      {:ok, entity_data} ->
+        foc
+        |> Repo.preload(:remote_storage_entity)
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_assoc(
+          :remote_storage_entity,
+          entity_data
+        )
+        |> Repo.update()
+
+      error ->
+        Logger.error("Error uploading file data: #{inspect(error)}")
+
+        RemoteStorage.delete("#{prefix}/#{file_id}/#{variant_name}")
+
+        Repo.delete(foc, prefix: prefix)
+        error
     end
   end
 
@@ -402,7 +386,7 @@ defmodule Lotta.Storage do
     with nil <-
            Repo.get_by(FileConversion, file_id: file_id, format: format),
          {:ok, job} <-
-           ConversionWorker.get_or_create_conversion_job(file, format),
+           ConversionWorker.get_or_create_conversion_job(file, format, priority: 2),
          {:ok, _} <- ConversionWorker.await_conversion(job),
          file_conversion when not is_nil(file_conversion) <-
            Repo.get_by(FileConversion, file_id: file_id, format: format) do

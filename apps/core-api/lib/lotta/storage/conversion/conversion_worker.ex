@@ -6,7 +6,7 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
     queue: :file_conversion,
     max_attempts: 5,
     # 0-9, 0 is highest
-    priority: 1,
+    priority: 2,
     unique: [
       period: :timer.hours(24),
       timestamp: :scheduled_at,
@@ -33,9 +33,14 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
          {:ok, results} <-
            FileProcessor.process_file(file_data, format_category) do
       file_conversions =
-        for({format, processed_file_data} <- results) do
-          Storage.create_file_conversion(file, to_string(format), processed_file_data)
-        end
+        results
+        |> Enum.map(fn {format, processed_file_data} ->
+          Storage.create_file_conversion(
+            processed_file_data,
+            file,
+            to_string(format)
+          )
+        end)
 
       Oban.Notifier.notify(Oban, :conversion_jobs, %{"complete" => job_id})
       {:ok, file_conversions}
@@ -70,9 +75,9 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
     )
   end
 
-  @spec get_or_create_conversion_job(File.t(), atom() | String.t()) ::
+  @spec get_or_create_conversion_job(File.t(), atom() | String.t(), keyword() | nil) ::
           {:ok, Oban.Job.t()} | {:error, String.t()}
-  def get_or_create_conversion_job(%{id: _id} = file, format) do
+  def get_or_create_conversion_job(%{id: _id} = file, format, job_args \\ []) do
     case get_conversion_job(file, format) do
       %Oban.Job{state: state} = job when state in ["scheduled", "executing", "completed"] ->
         {:ok, job}
@@ -81,11 +86,12 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
         {:error, "Conversion job state is: #{state}"}
 
       nil ->
-        new(%{
+        %{
           prefix: Ecto.get_meta(file, :prefix),
           file_id: file.id,
           format_category: AvailableFormats.get_category(format)
-        })
+        }
+        |> __MODULE__.new(job_args)
         |> Oban.insert()
     end
   end
@@ -105,7 +111,7 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
         {:notification, :conversion_jobs, %{"complete" => ^job_id}} ->
           {:ok, job}
       after
-        60_000 ->
+        120_000 ->
           {:error, "Conversion job timed out"}
       end
     end)

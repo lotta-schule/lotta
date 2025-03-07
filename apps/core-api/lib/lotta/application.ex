@@ -16,7 +16,7 @@ defmodule Lotta.Application do
     OpentelemetryRedix.setup()
 
     # Create cache dir for file processor
-    Lotta.Storage.FileProcessor.create_cache_dir()
+    Lotta.Storage.FileData.create_cache_dir()
 
     # List all child processes to be supervised
     children =
