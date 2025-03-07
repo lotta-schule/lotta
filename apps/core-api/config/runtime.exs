@@ -54,8 +54,8 @@ defmodule SystemConfig do
   defp default("SERVICE_NAME", _), do: "core"
   defp default("HEADLESS_SERVICE_NAME", _), do: ""
   defp default("NAMESPACE", _), do: nil
-  defp default("SERVER", :test), do: "false"
-  defp default("SERVER", _), do: "true"
+  defp default("PHX_SERVER", :dev), do: "true"
+  defp default("PHX_SERVER", _), do: "false"
   defp default("SECRET_KEY_BASE", env) when env in [:dev, :test], do: "123"
 
   defp default("SECRET_KEY_JWT", env) when env in [:dev, :test],
@@ -145,7 +145,9 @@ config :lotta, :base_uri,
   port: SystemConfig.get("BASE_URI_PORT", cast: :integer)
 
 # The secret key base is used to sign/encrypt cookies and other secrets.
-config :lotta, LottaWeb.Endpoint, secret_key_base: SystemConfig.get("SECRET_KEY_BASE")
+config :lotta, LottaWeb.Endpoint,
+  secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
+  server: SystemConfig.get("PHX_SERVER", cast: :boolean)
 
 config :opentelemetry, :resource,
   service: %{

@@ -250,7 +250,4 @@ COPY --from=builder /app/_build/prod/rel/lotta ./
 RUN chown -R nobody: /app
 USER nobody
 
-
-ENTRYPOINT ["bin/lotta"]
-
-CMD ["start"]
+CMD ["sh", "-c", "/app/bin/migrate && /app/bin/server"]
