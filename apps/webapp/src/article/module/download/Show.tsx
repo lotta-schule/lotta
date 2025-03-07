@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { Button, FileSize } from '@lotta-schule/hubert';
-import { ContentModuleModel, FileModel, FileModelType } from 'model';
-import { useServerData } from 'shared/ServerDataContext';
+import { ContentModuleModel, FileModel } from 'model';
 import { File } from 'util/model';
 import { Icon } from 'shared/Icon';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
@@ -14,7 +13,6 @@ export interface ShowProps {
 }
 
 export const Show = React.memo<ShowProps>(({ contentModule }) => {
-  const { baseUrl } = useServerData();
   const getConfiguration = (file: FileModel) => {
     if (
       contentModule.configuration &&
@@ -34,12 +32,9 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
     }
   };
 
-  const hasPreviewImage = (file: FileModel) => {
-    if (file.fileType === FileModelType.Image) {
-      return true;
-    }
-    return false;
-  };
+  const hasPreviewImage = React.useCallback((file: FileModel) => {
+    return file.formats.some((f) => f.name.startsWith('preview'));
+  }, []);
 
   return (
     <div className={styles.root}>
@@ -52,10 +47,11 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
           <div key={file.id} className={styles.downloadItemWrapper}>
             <section className={styles.buttonWrapper}>
               <Button
-                href={File.getFileRemoteLocation(baseUrl, file, 'download')}
+                href={File.getRemoteUrl(file, 'original')}
                 target={'_blank'}
                 icon={<Icon icon={faCloudArrowDown} size={'lg'} />}
                 role={'link'}
+                download
               >
                 download
               </Button>
@@ -65,14 +61,12 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                 <div className={styles.previewWrapper}>
                   <ResponsiveImage
                     alt={'Bildvorschau'}
-                    width={400}
-                    resize={'inside'}
-                    sizes={'150px'}
+                    format="preview"
                     style={{
                       width: '30%',
                       borderRadius: 4,
                     }}
-                    src={File.getFileRemoteLocation(baseUrl, file)}
+                    file={file}
                   />
                 </div>
               )}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContentModuleModel, FileModelType } from 'model';
+import { ContentModuleModel } from 'model';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { AudioAudio } from './AudioAudio';
 
@@ -19,7 +19,7 @@ export const Edit = React.memo<EditProps>(
       <figure>
         <SelectFileOverlay
           label={'Audiodatei auswechseln'}
-          fileFilter={(f) => f.fileType === FileModelType.Audio}
+          fileFilter={(f) => f.fileType === 'AUDIO'}
           onSelectFile={(file) =>
             onUpdateModule({
               ...contentModule,

@@ -92,7 +92,8 @@ defmodule Lotta.Accounts.Authentication do
     if not is_nil(user.password_hash) and not is_nil(user.password_hash_format) and
          user.password_hash_format < newest_password_hashing_format do
       user
-      |> Ecto.Changeset.change(Argon2.add_hash(password))
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_change(:password_hash, Argon2.hash_pwd_salt(password))
       |> Ecto.Changeset.put_change(:password_hash_format, 1)
       |> Repo.update()
     else

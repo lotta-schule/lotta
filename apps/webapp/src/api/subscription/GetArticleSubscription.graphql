@@ -13,6 +13,12 @@ subscription ArticleIsUpdated($id: ID!) {
       id
       mimeType
       fileType
+      formats {
+        name
+        url
+        type
+        status
+      }
     }
     contentModules {
       id
@@ -29,10 +35,11 @@ subscription ArticleIsUpdated($id: ID!) {
         filename
         filesize
         insertedAt
-        fileConversions {
-          id
-          format
-          mimeType
+        formats {
+          name
+          url
+          type
+          status
         }
       }
     }
@@ -52,6 +59,12 @@ subscription ArticleIsUpdated($id: ID!) {
       name
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
   }

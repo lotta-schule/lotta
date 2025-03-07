@@ -10,6 +10,17 @@ services:
       core:
         condition: service_healthy
     env_file: env-file
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          'require("http").get("http://localhost:3000/dbg/health", { timeout: 5000 }, res => process.exit(res.statusCode === 200 ? 0 : 1)).on("error", () => process.exit(1))',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   core:
     image: ${LOTTA_CORE_IMAGE:-ghcr.io/lotta-schule/core:${LOTTA_CORE_VERSION:-${IMAGE_TAG:-latest}}}
@@ -24,12 +35,18 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
       minio:
         condition: service_healthy
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:4000/_debug/health']
+      test:
+        [
+          'CMD',
+          'wget',
+          '--no-verbose',
+          '--tries=1',
+          '--spider',
+          'http://localhost:4000/_debug/health',
+        ]
       interval: 30s
       timeout: 10s
       retries: 5

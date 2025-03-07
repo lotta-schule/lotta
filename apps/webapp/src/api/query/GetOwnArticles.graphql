@@ -25,10 +25,11 @@ query GetOwnArticles {
         filename
         filesize
         insertedAt
-        fileConversions {
-          id
-          format
-          mimeType
+        formats {
+          name
+          url
+          type
+          status
         }
       }
     }

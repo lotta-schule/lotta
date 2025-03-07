@@ -34,6 +34,10 @@ const nextConfig = {
           destination: '/api/storage/:path*',
         },
         {
+          source: '/data/:path*',
+          destination: 'http://localhost:4000/data/:path*',
+        },
+        {
           source: '/api',
           destination: '/api/backend',
         },
@@ -75,6 +79,7 @@ const nextConfig = {
       resolve(__dirname, './src/styles/util'),
       resolve(__dirname, '../../libs/hubert/src/theme'),
     ],
+    quietDeps: true,
   },
   eslint: {
     dirs: ['src'],
@@ -120,4 +125,10 @@ export default withSentryConfig(nextConfig, {
   org: 'lotta',
   project: 'web',
   widenClientFileUpload: true,
+
+  tunnelRoute: '/stry',
+
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: false,
+  },
 });

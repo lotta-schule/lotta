@@ -19,8 +19,14 @@ config :logger, :console,
   metadata: [:request_id],
   backends: [:console, Sentry.LoggerBackend]
 
-config :logger, Sentry.LoggerBackend,
-  level: :error,
-  excluded_domains: [],
-  metadata: [:sentry],
-  capture_log_messages: true
+config :lotta, :logger, [
+  {:handler, :sentry, Sentry.LoggerHandler,
+   %{
+     config: %{
+       metadata: [:file, :line],
+       rate_limiting: [max_events: 10, interval: _1_second = 1_000],
+       capture_log_messages: true,
+       level: :error
+     }
+   }}
+]

@@ -3,13 +3,14 @@ import { createRSCClient } from './client-rsc';
 
 describe('Apollo RSC Client', () => {
   vi.mock('next/headers', () => ({
-    headers: () => ({
-      get: vi.fn().mockReturnValue('Bearer test-token'),
-    }),
+    headers: () =>
+      Promise.resolve({
+        get: vi.fn().mockReturnValue('Bearer test-token'),
+      }),
   }));
 
-  it('should create an ApolloClient', () => {
-    const client = createRSCClient();
+  it('should create an ApolloClient', async () => {
+    const client = await createRSCClient();
 
     expect(client).toBeInstanceOf(ApolloClient);
   });

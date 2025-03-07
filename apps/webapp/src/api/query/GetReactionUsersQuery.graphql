@@ -5,6 +5,12 @@ query GetReactionUsersQuery($id: ID!, $reaction: ArticleReactionType!) {
     name
     avatarImageFile {
       id
+      formats {
+        name
+        url
+        type
+        status
+      }
     }
   }
 }

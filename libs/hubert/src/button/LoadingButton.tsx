@@ -60,7 +60,7 @@ export type LoadingButtonProps<T = void> = Omit<
   };
 };
 
-const AnimatedCircularProgress = motion(CircularProgress);
+const AnimatedCircularProgress = motion.create(CircularProgress);
 
 /**
  * A button that can show a loading spinner, a success or an error icon

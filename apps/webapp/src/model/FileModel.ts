@@ -15,14 +15,43 @@ export interface DirectoryModel {
   parentDirectory?: Partial<DirectoryModel> | null;
 }
 
-export enum FileModelType {
-  Pdf = 'PDF',
-  Image = 'IMAGE',
-  Video = 'VIDEO',
-  Audio = 'AUDIO',
-  Misc = 'MISC',
-  Directory = 'DIRECTORY',
-}
+export type AvailableFormat =
+  | 'ORIGINAL'
+  | 'PREVIEW_200'
+  | 'PREVIEW_400'
+  | 'PREVIEW_800'
+  | 'PREVIEW_1200'
+  | 'PREVIEW_1600'
+  | 'PREVIEW_2400'
+  | 'PREVIEW_3200'
+  | 'AVATAR_50'
+  | 'AVATAR_100'
+  | 'AVATAR_250'
+  | 'AVATAR_500'
+  | 'AVATAR_1000'
+  | 'LOGO_300'
+  | 'LOGO_600'
+  | 'BANNER_330'
+  | 'BANNER_660'
+  | 'BANNER_990'
+  | 'BANNER_1320'
+  | 'ARTICLEPREVIEW_300'
+  | 'ARTICLEPREVIEW_420'
+  | 'ARTICLEPREVIEW_600'
+  | 'ARTICLEPREVIEW_840'
+  | 'PAGEBG_1024'
+  | 'PAGEBG_1280'
+  | 'PAGEBG_1920'
+  | 'PAGEBG_2560'
+  | 'ICON_64'
+  | 'ICON_128'
+  | 'ICON_256'
+  | 'WEBM_720P'
+  | 'WEBM_1080P'
+  | 'H264_720P'
+  | 'H264_1080P';
+
+export type FileModelType = 'PDF' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'BINARY';
 
 export interface FileModel {
   __typename?: 'File';
@@ -37,6 +66,12 @@ export interface FileModel {
   fileType: FileModelType;
   parentDirectory: Partial<DirectoryModel>;
   fileConversions: FileConversionModel[];
+  formats: {
+    name: AvailableFormat;
+    url: string;
+    type: FileModelType;
+    status: 'READY' | 'AVAILABLE' | 'REQUESTABLE';
+  }[];
   usage?: FileModelUsageLocation[];
 }
 

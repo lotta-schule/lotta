@@ -75,7 +75,7 @@ export const WidgetsList = ({ widgets, children }: WidgetsListProps) => {
       }
     },
     200,
-    [wrapperRef.current, widgets.length]
+    [widgets.length]
   );
 
   if (currentTabIndex === null) {

@@ -4,14 +4,14 @@ defmodule Lotta.Repo.Seeder do
   alias Lotta.Accounts
   alias Lotta.Tenants
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Storage.{Directory, File}
+  alias Lotta.Storage.{Directory, File, FileData}
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Tenants.{Category, Tenant, TenantDbManager, Widget}
 
   def seed do
-
     # Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
+    FileData.create_cache_dir()
 
     tenant =
       Repo.insert!(%Tenant{
@@ -42,8 +42,8 @@ defmodule Lotta.Repo.Seeder do
 
     admin_group =
       all_tenants
-      |> Enum.map(&(
-        Repo.insert!(
+      |> Enum.map(
+        &Repo.insert!(
           %UserGroup{
             name: "Administration",
             is_admin_group: true,
@@ -51,7 +51,7 @@ defmodule Lotta.Repo.Seeder do
           },
           prefix: &1.prefix
         )
-      ))
+      )
       |> List.first()
 
     verwaltung_group =
@@ -59,7 +59,12 @@ defmodule Lotta.Repo.Seeder do
 
     lehrer_group =
       Repo.insert!(
-        %UserGroup{name: "Lehrer", sort_key: 600, can_read_full_name: true, enrollment_tokens: ["LEb0815Hp!1969"]},
+        %UserGroup{
+          name: "Lehrer",
+          sort_key: 600,
+          can_read_full_name: true,
+          enrollment_tokens: ["LEb0815Hp!1969"]
+        },
         prefix: tenant.prefix
       )
 
@@ -343,6 +348,13 @@ defmodule Lotta.Repo.Seeder do
           media_duration: 259.3,
           file_type: "video",
           mime_type: "video/m4v"
+        },
+        %File{
+          parent_directory_id: irgendwas_directory.id,
+          filename: "secrets.zip",
+          filesize: 4096,
+          file_type: "binary",
+          mime_type: "application/zip"
         }
       ]
       |> Enum.map(fn file ->
@@ -419,6 +431,13 @@ defmodule Lotta.Repo.Seeder do
           filesize: 12288,
           file_type: "video",
           mime_type: "video/m4v"
+        },
+        %File{
+          parent_directory_id: podcast_directory.id,
+          filename: "wettbewerb.pdf",
+          filesize: 16_777_232,
+          file_type: "binary",
+          mime_type: "application/pdf"
         }
       ]
       |> Enum.map(fn file ->
@@ -1278,5 +1297,4 @@ defmodule Lotta.Repo.Seeder do
     })
     |> Repo.update!()
   end
-
 end

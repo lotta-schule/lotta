@@ -1,3 +1,4 @@
+import React from 'react';
 import { MockedResponse } from '@apollo/client/testing';
 import { fireEvent, render, waitFor } from 'test/util';
 import { GET_CALENDARS, UPDATE_CALENDAR_EVENT } from '../_graphql';
@@ -39,10 +40,15 @@ const eventToBeEdited = createEventFixture(calendars[1]);
 describe('EditEventDialog', () => {
   describe('show / hide with eventToBeEdited prop', () => {
     it('should show the dialog when event is passed', async () => {
-      const screen = render(
-        <EditEventDialog eventToBeEdited={eventToBeEdited} onClose={vi.fn()} />,
-        {},
-        { additionalMocks }
+      const screen = await React.act(() =>
+        render(
+          <EditEventDialog
+            eventToBeEdited={eventToBeEdited}
+            onClose={vi.fn()}
+          />,
+          {},
+          { additionalMocks }
+        )
       );
 
       await waitFor(() => {
@@ -140,10 +146,15 @@ describe('EditEventDialog', () => {
         result: resultFn,
       };
 
-      const screen = render(
-        <EditEventDialog eventToBeEdited={eventToBeEdited} onClose={vi.fn()} />,
-        {},
-        { additionalMocks: [...additionalMocks, mock] }
+      const screen = await React.act(() =>
+        render(
+          <EditEventDialog
+            eventToBeEdited={eventToBeEdited}
+            onClose={vi.fn()}
+          />,
+          {},
+          { additionalMocks: [...additionalMocks, mock] }
+        )
       );
 
       await waitFor(() => {

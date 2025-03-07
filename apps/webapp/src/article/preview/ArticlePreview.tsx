@@ -9,7 +9,7 @@ import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ArticleModel, ID, UserModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Article, File, User } from 'util/model';
+import { Article, User } from 'util/model';
 import { useMutation } from '@apollo/client';
 import { Article as ArticleUtil } from 'util/model/Article';
 import {
@@ -23,7 +23,6 @@ import {
 } from '@lotta-schule/hubert';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { useServerData } from 'shared/ServerDataContext';
 import { TagsSelect } from '../editor/TagsSelect';
 import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
@@ -57,8 +56,6 @@ export const ArticlePreview = React.memo(
     layout,
     onUpdateArticle,
   }: ArticlePreviewProps) => {
-    const { baseUrl } = useServerData();
-
     const currentUser = useCurrentUser();
 
     const [selectedTag, setSelectedTag] = React.useState<string | null>(null);
@@ -128,39 +125,27 @@ export const ArticlePreview = React.memo(
                     })
                   }
                 >
-                  {article.previewImageFile ? (
+                  {
                     <ResponsiveImage
                       className={styles.previewImage}
-                      width={150}
-                      aspectRatio={'3:2'}
-                      src={File.getFileRemoteLocation(
-                        baseUrl,
-                        article.previewImageFile
-                      )}
+                      file={article?.previewImageFile ?? undefined}
+                      format="articlepreview"
                       alt={`Vorschaubild zu ${article.title}`}
-                      maxDisplayWidth={400}
+                      fallback={
+                        <PlaceholderImage aspectRatio={3 / 2} width={'100%'} />
+                      }
                     />
-                  ) : (
-                    <PlaceholderImage aspectRatio={3 / 2} width={'100%'} />
-                  )}
+                  }
                 </SelectFileOverlay>
               )}
               {!onUpdateArticle &&
                 maybeLinked(
-                  article.previewImageFile && (
-                    <ResponsiveImage
-                      className={styles.previewImage}
-                      width={150}
-                      aspectRatio={'3:2'}
-                      sizes={'(max-width: 599px) 20vw, 200px'}
-                      src={File.getFileRemoteLocation(
-                        baseUrl,
-                        article.previewImageFile
-                      )}
-                      alt={`Vorschaubild zu ${article.title}`}
-                      maxDisplayWidth={400}
-                    />
-                  )
+                  <ResponsiveImage
+                    className={styles.previewImage}
+                    file={article.previewImageFile ?? undefined}
+                    format="articlepreview"
+                    alt={`Vorschaubild zu ${article.title}`}
+                  />
                 )}
             </div>
             <div className={styles.titleGridItem}>

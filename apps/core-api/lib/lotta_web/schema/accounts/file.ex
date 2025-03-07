@@ -61,6 +61,10 @@ defmodule LottaWeb.Schema.Accounts.File do
       resolve: &LottaWeb.FileResolver.resolve_path/3
     )
 
+    field(:formats, non_null(list_of(non_null(:available_format)))) do
+      resolve(&LottaWeb.FileResolver.resolve_available_formats/3)
+    end
+
     field(:usage, non_null(list_of(non_null(:file_usage_location))),
       resolve: &LottaWeb.FileResolver.resolve_file_usage/3
     )
@@ -78,12 +82,63 @@ defmodule LottaWeb.Schema.Accounts.File do
     )
   end
 
+  object :available_format do
+    field(:name, non_null(:conversion_format))
+    field(:url, non_null(:string))
+    field(:type, non_null(:file_type))
+    field(:status, non_null(:format_status))
+  end
+
+  enum :format_status do
+    value(:ready, as: "ready")
+    value(:available, as: "available")
+    value(:requestable, as: "requestable")
+  end
+
+  enum :conversion_format do
+    value(:original, as: "original")
+    value(:preview_200, as: "preview_200")
+    value(:preview_400, as: "preview_400")
+    value(:preview_800, as: "preview_800")
+    value(:preview_1200, as: "preview_1200")
+    value(:preview_1600, as: "preview_1600")
+    value(:preview_2400, as: "preview_2400")
+    value(:preview_3200, as: "preview_3200")
+    value(:avatar_50, as: "avatar_50")
+    value(:avatar_100, as: "avatar_100")
+    value(:avatar_250, as: "avatar_250")
+    value(:avatar_500, as: "avatar_500")
+    value(:avatar_1000, as: "avatar_1000")
+    value(:logo_300, as: "logo_300")
+    value(:logo_600, as: "logo_600")
+    value(:banner_330, as: "banner_330")
+    value(:banner_660, as: "banner_660")
+    value(:banner_990, as: "banner_990")
+    value(:banner_1320, as: "banner_1320")
+    value(:articlepreview_300, as: "articlepreview_300")
+    value(:articlepreview_420, as: "articlepreview_420")
+    value(:articlepreview_600, as: "articlepreview_600")
+    value(:articlepreview_840, as: "articlepreview_840")
+    value(:pagebg_1024, as: "pagebg_1024")
+    value(:pagebg_1280, as: "pagebg_1280")
+    value(:pagebg_1920, as: "pagebg_1920")
+    value(:pagebg_2560, as: "pagebg_2560")
+    value(:icon_64, as: "icon_64")
+    value(:icon_128, as: "icon_128")
+    value(:icon_256, as: "icon_256")
+    value(:webm_720p, as: "webm_720p")
+    value(:webm_1080p, as: "webm_1080p")
+    value(:h264_720p, as: "h264_720p")
+    value(:h264_1080p, as: "h264_1080p")
+  end
+
   enum :file_type do
     value(:image, as: "image")
     value(:audio, as: "audio")
     value(:video, as: "video")
     value(:pdf, as: "pdf")
     value(:misc, as: "misc")
+    value(:binary, as: "binary")
   end
 
   union :file_usage_location do

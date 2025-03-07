@@ -5,6 +5,7 @@ export interface DefaultFileMetadata {
   mimeType: string;
   size: number;
 }
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface DefaultDirectoryMetadata extends Record<string, any> {}
 
 export type BrowserNodeMetadata<Type extends 'file' | 'directory'> =

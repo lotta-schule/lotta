@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useSelectState } from 'react-stately';
-import { HiddenSelect, useSelect } from 'react-aria';
+import { HiddenSelect, useButton, useSelect } from 'react-aria';
 import {
   ListItemFactory,
   ListItemPreliminaryItem,
@@ -91,16 +91,7 @@ export const Select = ({
   const inputWrapperRef = React.useRef<HTMLDivElement>(null);
 
   const triggerRef = React.useRef<HTMLButtonElement>(null);
-  const {
-    labelProps,
-    triggerProps: {
-      onPress: _onPress,
-      onPressStart: _onPressStart,
-      ...triggerProps
-    },
-    valueProps,
-    menuProps,
-  } = useSelect(
+  const { labelProps, triggerProps, valueProps, menuProps } = useSelect(
     {
       items,
       isRequired: required,
@@ -110,6 +101,8 @@ export const Select = ({
     state,
     internalRef
   );
+
+  const { buttonProps } = useButton(triggerProps, triggerRef);
 
   return (
     <Popover
@@ -140,7 +133,7 @@ export const Select = ({
               ? state.selectedItem.rendered
               : 'Bitte wählen ...'}
           </div>
-          <PopoverTrigger {...triggerProps} className={styles.triggerButton}>
+          <PopoverTrigger {...buttonProps} className={styles.triggerButton}>
             <ExpandMore />
           </PopoverTrigger>
         </div>

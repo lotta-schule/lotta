@@ -628,6 +628,61 @@ const introspection = {
         "interfaces": []
       },
       {
+        "kind": "OBJECT",
+        "name": "AvailableFormat",
+        "fields": [
+          {
+            "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "ENUM",
+                "name": "ConversionFormat"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "status",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "ENUM",
+                "name": "FormatStatus"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "ENUM",
+                "name": "FileType"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "url",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          }
+        ],
+        "interfaces": []
+      },
+      {
         "kind": "SCALAR",
         "name": "Boolean"
       },
@@ -1522,6 +1577,148 @@ const introspection = {
         "interfaces": []
       },
       {
+        "kind": "ENUM",
+        "name": "ConversionFormat",
+        "enumValues": [
+          {
+            "name": "ARTICLEPREVIEW_300",
+            "isDeprecated": false
+          },
+          {
+            "name": "ARTICLEPREVIEW_420",
+            "isDeprecated": false
+          },
+          {
+            "name": "ARTICLEPREVIEW_600",
+            "isDeprecated": false
+          },
+          {
+            "name": "ARTICLEPREVIEW_840",
+            "isDeprecated": false
+          },
+          {
+            "name": "AVATAR_100",
+            "isDeprecated": false
+          },
+          {
+            "name": "AVATAR_1000",
+            "isDeprecated": false
+          },
+          {
+            "name": "AVATAR_250",
+            "isDeprecated": false
+          },
+          {
+            "name": "AVATAR_50",
+            "isDeprecated": false
+          },
+          {
+            "name": "AVATAR_500",
+            "isDeprecated": false
+          },
+          {
+            "name": "BANNER_1320",
+            "isDeprecated": false
+          },
+          {
+            "name": "BANNER_330",
+            "isDeprecated": false
+          },
+          {
+            "name": "BANNER_660",
+            "isDeprecated": false
+          },
+          {
+            "name": "BANNER_990",
+            "isDeprecated": false
+          },
+          {
+            "name": "H264_1080P",
+            "isDeprecated": false
+          },
+          {
+            "name": "H264_720P",
+            "isDeprecated": false
+          },
+          {
+            "name": "ICON_128",
+            "isDeprecated": false
+          },
+          {
+            "name": "ICON_256",
+            "isDeprecated": false
+          },
+          {
+            "name": "ICON_64",
+            "isDeprecated": false
+          },
+          {
+            "name": "LOGO_300",
+            "isDeprecated": false
+          },
+          {
+            "name": "LOGO_600",
+            "isDeprecated": false
+          },
+          {
+            "name": "ORIGINAL",
+            "isDeprecated": false
+          },
+          {
+            "name": "PAGEBG_1024",
+            "isDeprecated": false
+          },
+          {
+            "name": "PAGEBG_1280",
+            "isDeprecated": false
+          },
+          {
+            "name": "PAGEBG_1920",
+            "isDeprecated": false
+          },
+          {
+            "name": "PAGEBG_2560",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_1200",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_1600",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_200",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_2400",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_3200",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_400",
+            "isDeprecated": false
+          },
+          {
+            "name": "PREVIEW_800",
+            "isDeprecated": false
+          },
+          {
+            "name": "WEBM_1080P",
+            "isDeprecated": false
+          },
+          {
+            "name": "WEBM_720P",
+            "isDeprecated": false
+          }
+        ]
+      },
+      {
         "kind": "INPUT_OBJECT",
         "name": "CreateCategoryInput",
         "inputFields": [
@@ -2071,6 +2268,24 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "formats",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "AvailableFormat"
+                  }
+                }
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
             "name": "id",
             "type": {
               "kind": "NON_NULL",
@@ -2408,11 +2623,11 @@ const introspection = {
             "isDeprecated": false
           },
           {
-            "name": "IMAGE",
+            "name": "BINARY",
             "isDeprecated": false
           },
           {
-            "name": "MISC",
+            "name": "IMAGE",
             "isDeprecated": false
           },
           {
@@ -2485,6 +2700,24 @@ const introspection = {
       {
         "kind": "SCALAR",
         "name": "Float"
+      },
+      {
+        "kind": "ENUM",
+        "name": "FormatStatus",
+        "enumValues": [
+          {
+            "name": "AVAILABLE",
+            "isDeprecated": false
+          },
+          {
+            "name": "READY",
+            "isDeprecated": false
+          },
+          {
+            "name": "REQUESTABLE",
+            "isDeprecated": false
+          }
+        ]
       },
       {
         "kind": "SCALAR",
@@ -5271,8 +5504,11 @@ const introspection = {
           {
             "name": "configuration",
             "type": {
-              "kind": "OBJECT",
-              "name": "TenantConfiguration"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "TenantConfiguration"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -5280,10 +5516,16 @@ const introspection = {
           {
             "name": "customDomains",
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "ofType": {
-                "kind": "OBJECT",
-                "name": "CustomDomain"
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "CustomDomain"
+                  }
+                }
               }
             },
             "args": [],
@@ -5292,8 +5534,11 @@ const introspection = {
           {
             "name": "host",
             "type": {
-              "kind": "SCALAR",
-              "name": "String"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -5301,8 +5546,11 @@ const introspection = {
           {
             "name": "id",
             "type": {
-              "kind": "SCALAR",
-              "name": "ID"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -5322,8 +5570,11 @@ const introspection = {
           {
             "name": "insertedAt",
             "type": {
-              "kind": "SCALAR",
-              "name": "DateTime"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -5340,8 +5591,11 @@ const introspection = {
           {
             "name": "slug",
             "type": {
-              "kind": "SCALAR",
-              "name": "String"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -5358,8 +5612,11 @@ const introspection = {
           {
             "name": "title",
             "type": {
-              "kind": "SCALAR",
-              "name": "String"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false

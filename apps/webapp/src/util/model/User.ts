@@ -1,5 +1,4 @@
-import { UserModel, ArticleModel } from 'model';
-import { createImageUrl } from 'util/image/useImageUrl';
+import { ArticleModel, FileModel } from 'model';
 import { File } from './File';
 
 export const User = {
@@ -26,13 +25,19 @@ export const User = {
     return user?.nickname || user?.name || '';
   },
 
-  getAvatarUrl(baseUrl: string, user?: UserModel | null, size = 100) {
-    return user?.avatarImageFile
-      ? createImageUrl(
-          File.getFileRemoteLocation(baseUrl, user.avatarImageFile),
-          { width: size, aspectRatio: '1:1', resize: 'cover' }
-        )
-      : User.getDefaultAvatarUrl(user);
+  getAvatarUrl(
+    user?: {
+      __typename?: 'User';
+      nickname?: string | null;
+      name?: string | null;
+      avatarImageFile?: Pick<FileModel, '__typename' | 'formats'> | null;
+    } | null,
+    size = 100
+  ) {
+    const avatarUrl =
+      user?.avatarImageFile &&
+      File.getRemoteUrl(user?.avatarImageFile, 'avatar', size);
+    return avatarUrl || User.getDefaultAvatarUrl(user);
   },
 
   getDefaultAvatarUrl(

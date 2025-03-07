@@ -15,6 +15,7 @@ exports[`Stepper > should render a stepper 1`] = `
     data-variant="default"
     disabled=""
     role="button"
+    style="color: rgba(var(--lotta-text-color), 1);"
     type="button"
   >
     <span
@@ -50,6 +51,7 @@ exports[`Stepper > should render a stepper 1`] = `
     class="_root_0977c5 _root_3de4f3 _root_70a42a _small_3de4f3"
     data-variant="default"
     role="button"
+    style="color: rgba(var(--lotta-text-color), 1);"
     type="button"
   >
     <span

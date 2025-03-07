@@ -13,6 +13,12 @@ query GetFileDetailsQuery($id: ID) {
       nickname
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
     usage {
@@ -54,16 +60,21 @@ query GetFileDetailsQuery($id: ID) {
           nickname
           avatarImageFile {
             id
+            formats {
+              name
+              url
+              type
+              status
+            }
           }
         }
       }
     }
-    fileConversions {
-      id
-      insertedAt
-      updatedAt
-      format
-      mimeType
+    formats {
+      name
+      url
+      type
+      status
     }
     parentDirectory {
       id

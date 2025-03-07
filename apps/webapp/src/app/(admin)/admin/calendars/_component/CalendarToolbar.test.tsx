@@ -35,16 +35,24 @@ describe('CalendarToolbar', () => {
 
   const onNavigateMock = vi.fn();
 
-  const renderComponent = ({ calendars = defaultCalendars } = {}) =>
-    render(
+  const renderComponent = ({ calendars = defaultCalendars } = {}) => {
+    const createContent = () => (
       <CalendarProvider activeCalendars={calendars}>
         <CalendarToolbar onNavigate={onNavigateMock} />
-      </CalendarProvider>,
+      </CalendarProvider>
+    );
+    const screen = render(
+      createContent(),
       {},
       {
         additionalMocks: createAdditionalMocks({ calendars }),
       }
     );
+
+    screen.rerender(createContent());
+
+    return screen;
+  };
 
   it('should render the toolbar buttons correctly', async () => {
     const screen = renderComponent();
@@ -114,7 +122,7 @@ describe('CalendarToolbar', () => {
   it('should toggle a calendar when a calendar is clicked from the menu', async () => {
     const toggleCalendarMock = vi.fn();
 
-    const screen = render(
+    const createContent = () => (
       <CalendarContext.Provider
         value={{
           currentView: 'month',
@@ -129,12 +137,18 @@ describe('CalendarToolbar', () => {
         }}
       >
         <CalendarToolbar onNavigate={onNavigateMock} />
-      </CalendarContext.Provider>,
+      </CalendarContext.Provider>
+    );
+
+    const screen = render(
+      createContent(),
       {},
       {
         additionalMocks: createAdditionalMocks({ calendars: defaultCalendars }),
       }
     );
+
+    screen.rerender(createContent());
 
     const calendarMenuButton = await screen.findByRole('button', {
       name: /kalender/i,

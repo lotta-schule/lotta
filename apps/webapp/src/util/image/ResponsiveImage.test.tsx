@@ -1,25 +1,55 @@
 import { render } from 'test/util';
+import { imageFile } from 'test/fixtures';
 import { ResponsiveImage } from './ResponsiveImage';
 
 describe('ResponsiveImage', () => {
-  it('should render', () => {
-    const { getByRole } = render(
+  it('should render a file', () => {
+    const screen = render(
       <ResponsiveImage
-        src="https://via.placeholder.com/300"
+        file={imageFile}
+        format="preview"
         alt="Test"
-        width={300}
         style={{ border: '1px solid red' }}
-        sizes="(max-width: 600px) 100vw, 600px"
-        aspectRatio="16:9"
       />
     );
-    expect(getByRole('img')).toMatchInlineSnapshot(`
+    expect(screen.getByRole('img')).toMatchInlineSnapshot(`
       <img
         alt="Test"
-        sizes="(max-width: 600px) 100vw, 600px"
-        srcset="https://via.placeholder.com/300?width=150&height=84&fn=cover 150w, https://via.placeholder.com/300?width=300&height=168&fn=cover 300w, https://via.placeholder.com/300?width=600&height=337&fn=cover 600w, https://via.placeholder.com/300?width=900&height=506&fn=cover 900w"
-        style="aspect-ratio: 1.7777777777777777; border: 1px solid red;"
+        srcset="https://example.com/123/preview_200 200w, https://example.com/123/preview_400 400w, https://example.com/123/preview_800 800w, https://example.com/123/preview_1200 1200w, https://example.com/123/preview_1600 1600w, https://example.com/123/preview_2400 2400w, https://example.com/123/preview_3200 3200w"
+        style="border: 1px solid red;"
       />
     `);
+  });
+
+  it('should render an explicit src', () => {
+    const screen = render(
+      <ResponsiveImage
+        file={null}
+        src="https://via.placeholder.com/300"
+        format="preview"
+        alt="Test"
+        style={{ border: '1px solid red' }}
+      />
+    );
+    expect(screen.getByRole('img')).toMatchInlineSnapshot(`
+      <img
+        alt="Test"
+        src="https://via.placeholder.com/300"
+        style="border: 1px solid red;"
+      />
+    `);
+  });
+
+  it('should render a fallback if the file has no formats', () => {
+    const screen = render(
+      <ResponsiveImage
+        file={{ ...imageFile, formats: [] }}
+        format="preview"
+        alt="Test"
+        style={{ border: '1px solid red' }}
+        fallback={<div>Test</div>}
+      />
+    );
+    expect(screen.getByText('Test')).toBeVisible();
   });
 });

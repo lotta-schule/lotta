@@ -5,7 +5,8 @@ import { WidgetModel } from 'model';
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 
 export const loadWidgets = cache(async () => {
-  return await getClient()
+  const client = await getClient();
+  return await client
     .query<{ widgets: WidgetModel[] }>({
       query: GetWidgetsQuery,
     })
