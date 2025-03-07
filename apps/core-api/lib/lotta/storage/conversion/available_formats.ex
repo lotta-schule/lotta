@@ -193,8 +193,8 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
 
   def get_immediate_formats(mime_type) when is_binary(mime_type) do
     case Storage.filetype_from(mime_type) do
-      "image" -> @preview_formats ++ @image_formats
-      "video" -> @preview_formats ++ @video_formats
+      "image" -> @preview_formats
+      "video" -> @preview_formats
       "pdf" -> @preview_formats
       _ -> []
     end

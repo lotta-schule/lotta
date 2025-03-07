@@ -24,7 +24,6 @@ defmodule LottaWeb.StorageController do
       conn =
         conn
         |> copy_header(env.headers, "content-type")
-        |> copy_header(env.headers, "content-length")
         |> copy_header(env.headers, "etag")
         |> copy_header(env.headers, "last-modified")
         |> put_resp_header("cache-control", "max-age=604800")
@@ -67,7 +66,6 @@ defmodule LottaWeb.StorageController do
       conn =
         conn
         |> copy_header(env.headers, "content-type")
-        |> copy_header(env.headers, "content-length")
         |> copy_header(env.headers, "etag")
         |> copy_header(env.headers, "last-modified")
         |> put_resp_header("cache-control", "max-age=604800")

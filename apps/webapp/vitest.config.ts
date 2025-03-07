@@ -22,6 +22,7 @@ export default defineConfig({
     coverage: {
       clean: true,
       reportsDirectory: 'coverage',
+      enabled: !process.env.CI,
       provider: 'istanbul',
       reporter: ['json'],
       include: ['src/**/*'],

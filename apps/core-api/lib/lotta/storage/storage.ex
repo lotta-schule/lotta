@@ -726,6 +726,7 @@ defmodule Lotta.Storage do
   end
 
   def filetype_from("image/" <> _format), do: "image"
+  def filetype_from("application/svg"), do: "image"
   def filetype_from("audio/" <> _format), do: "audio"
   def filetype_from("video/" <> _format), do: "video"
 
