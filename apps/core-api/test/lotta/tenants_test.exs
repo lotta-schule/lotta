@@ -7,7 +7,6 @@ defmodule Lotta.TenantsTest do
 
   @prefix "tenant_test"
 
-
   describe "Tenants" do
     test "should get tenant by prefix" do
       assert %Tenant{prefix: @prefix} = Tenants.get_tenant_by_prefix(@prefix)
@@ -32,7 +31,6 @@ defmodule Lotta.TenantsTest do
 
     @tag creates_tenant: true
     test "should create a new tenant" do
-
       assert {:ok, tenant} =
                Tenants.create_tenant(
                  user_params: %{name: "Salvador Allende", email: "salvador.allende@einsa.net"},
@@ -48,7 +46,6 @@ defmodule Lotta.TenantsTest do
 
     @tag creates_tenant: true
     test "should delete a given tenant" do
-
       assert {:ok, tenant} =
                Tenants.create_tenant(
                  user_params: %{name: "Salvador Allende", email: "salvador.allende@einsa.net"},
