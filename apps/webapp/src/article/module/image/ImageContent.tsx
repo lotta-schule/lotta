@@ -16,11 +16,17 @@ export type ImageContentProps = {
 } & Omit<ResponsiveImageProps, 'src' | 'alt' | 'ref'>;
 
 export const ImageContent = React.memo(
-  ({ file, isUsingFullHeight, className, ...props }: ImageContentProps) => {
+  ({
+    file,
+    isUsingFullHeight,
+    className,
+    format,
+    ...props
+  }: ImageContentProps) => {
     return (
       <ResponsiveImage
         file={file}
-        format="preview"
+        format={format || 'preview'}
         {...props}
         className={clsx(
           {

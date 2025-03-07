@@ -82,24 +82,19 @@ defmodule Lotta.Storage.File do
       else: to_remote_file_data(file)
   end
 
-  defp to_remote_file_data(
-         %__MODULE__{filename: filename, filesize: filesize, mime_type: mime_type} = file
-       ) do
+  defp to_remote_file_data(%__MODULE__{} = file) do
     file = Repo.preload(file, :remote_storage_entity)
-
-    url =
-      RemoteStorage.get_http_url(file.remote_storage_entity)
 
     with {:ok, env} <-
            Tesla.get(
-             url,
+             RemoteStorage.get_http_url(file.remote_storage_entity),
              opts: [adapter: [response: :stream]]
            ),
          {:ok, file_data} <-
            FileData.from_stream(
              env.body,
-             filename,
-             mime_type: mime_type
+             filename: file.filename,
+             mime_type: file.mime_type
            ) do
       FileProcessor.cache_file(
         file,
