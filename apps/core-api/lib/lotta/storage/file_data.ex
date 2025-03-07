@@ -110,6 +110,7 @@ defmodule Lotta.Storage.FileData do
     case FileType.from_path(path) do
       {:ok, {_, mime_type}} ->
         mime_type
+
       _ ->
         MIME.from_path(path)
     end
