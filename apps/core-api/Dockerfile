@@ -16,7 +16,7 @@ ENV G_DEBUG=fatal-criticals
 # Output possible memory leaks
 ENV VIPS_LEAK=true
 # Use custom libvips
-ENV PLATFORM_PROVIDED_LIBVIPS=1
+ENV VIX_COMPILATION_MODE=PLATFORM_PROVIDED_LIBVIPS
 
 RUN apk update
 
@@ -244,6 +244,7 @@ EXPOSE 4000
 RUN mkdir -p /app
 WORKDIR /app
 ENV HOME=/app
+ENV VIX_COMPILATION_MODE=PLATFORM_PROVIDED_LIBVIPS
 
 COPY --from=builder /app/_build/prod/rel/lotta ./
 RUN chown -R nobody: /app

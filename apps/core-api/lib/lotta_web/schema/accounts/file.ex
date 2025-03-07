@@ -137,6 +137,7 @@ defmodule LottaWeb.Schema.Accounts.File do
     value(:audio, as: "audio")
     value(:video, as: "video")
     value(:pdf, as: "pdf")
+    value(:misc, as: "misc")
     value(:binary, as: "binary")
   end
 
