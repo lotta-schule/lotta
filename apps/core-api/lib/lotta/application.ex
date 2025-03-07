@@ -8,12 +8,8 @@ defmodule Lotta.Application do
   require Logger
 
   def start(_type, _args) do
-    :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
-    OpentelemetryBandit.setup()
-    OpentelemetryPhoenix.setup(adapter: :bandit)
-    OpentelemetryAbsinthe.setup()
-    OpentelemetryEcto.setup([:lotta, :repo])
-    OpentelemetryRedix.setup()
+    setup_logger()
+    setup_telemetry()
 
     # Create cache dir for file processor
     Lotta.Storage.FileData.create_cache_dir()
@@ -43,6 +39,18 @@ defmodule Lotta.Application do
       strategy: :one_for_one,
       name: Lotta.Supervisor
     )
+  end
+
+  defp setup_telemetry() do
+    OpentelemetryBandit.setup()
+    OpentelemetryPhoenix.setup(adapter: :bandit)
+    OpentelemetryAbsinthe.setup()
+    OpentelemetryEcto.setup([:lotta, :repo])
+    OpentelemetryRedix.setup()
+  end
+
+  defp setup_logger() do
+    :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
   end
 
   defp prepended_apps() do
