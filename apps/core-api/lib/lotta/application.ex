@@ -9,8 +9,8 @@ defmodule Lotta.Application do
 
   def start(_type, _args) do
     :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
-    :opentelemetry_cowboy.setup()
-    OpentelemetryPhoenix.setup(adapter: :cowboy2)
+    OpentelemetryBandit.setup()
+    OpentelemetryPhoenix.setup(adapter: :bandit)
     OpentelemetryAbsinthe.setup()
     OpentelemetryEcto.setup([:lotta, :repo])
     OpentelemetryRedix.setup()

@@ -14,6 +14,7 @@ server =
   end
 
 config :lotta, LottaWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   http: [ip: ip, port: port],
   server: server,
   url: [host: "localhost"],

@@ -83,10 +83,9 @@ defmodule Lotta.MixProject do
       {:dataloader, "~> 2.0"},
       {:corsica, "~> 2.1.2"},
       {:postgrex, ">= 0.0.0"},
-      {:gettext, "~> 0.24.0"},
+      {:gettext, "~> 0.26.0"},
       {:jason, "~> 1.4.0"},
-      {:plug_cowboy, "~> 2.7"},
-      {:comeonin, "~> 5.4.0"},
+      {:bandit, "~> 1.0"},
       {:argon2_elixir, "~> 4.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:guardian, "~> 2.2"},
@@ -128,12 +127,15 @@ defmodule Lotta.MixProject do
       {:opentelemetry, "~> 1.2"},
       {:opentelemetry_api, "~> 1.3"},
       {:opentelemetry_absinthe, "~> 2.0"},
-      {:opentelemetry_cowboy, "~> 0.1"},
+      {:opentelemetry_bandit, "~> 0.2"},
       {:opentelemetry_ecto, "~> 1.1"},
       {:opentelemetry_exporter, "~> 1.6"},
-      {:opentelemetry_phoenix, "~> 1.1"},
+      {:opentelemetry_phoenix, "~> 2.0"},
       {:opentelemetry_redix, "~> 0.1"},
-      {:opentelemetry_tesla, "~> 2.2"}
+      {:opentelemetry_tesla,
+       git: "git@github.com:ShapovalovaIrina/opentelemetry-erlang-contrib.git",
+       sparse: "instrumentation/opentelemetry_tesla",
+       ref: "update-tesla-to-1.27-semantics"}
     ]
   end
 

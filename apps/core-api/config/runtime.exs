@@ -259,7 +259,15 @@ config :sentry,
   release: SystemConfig.get("IMAGE_NAME", cast: :docker_image_tag),
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()],
-  filter: Lotta.SentryFilter
+  filter: Lotta.SentryFilter,
+  integrations: [
+    oban: [
+      # Capture errors:
+      capture_errors: true,
+      # Monitor cron jobs:
+      cron: [enabled: true]
+    ]
+  ]
 
 libcluster_topologies =
   case to_string(SystemConfig.get("HEADLESS_SERVICE_NAME")) do
