@@ -63,8 +63,8 @@ jobs:
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '26.2.2'
-          elixir-version: '1.16.1'
+          otp-version: '26.2.5.6'
+          elixir-version: '1.17.3'
 
       - name: Install node dependencies
         run: pnpm install
@@ -134,8 +134,8 @@ jobs:
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '26.2.2'
-          elixir-version: '1.16.1'
+          otp-version: '26.2.5.6'
+          elixir-version: '1.17.3'
 
       - uses: hostwithquantum/setup-mc@main
         with:
@@ -238,8 +238,8 @@ jobs:
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '26.2.2'
-          elixir-version: '1.16.1'
+          otp-version: '26.2.5.6'
+          elixir-version: '1.17.3'
 
       - name: Install npm dependencies
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
