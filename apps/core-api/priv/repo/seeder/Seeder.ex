@@ -4,13 +4,14 @@ defmodule Lotta.Repo.Seeder do
   alias Lotta.Accounts
   alias Lotta.Tenants
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Storage.{Directory, File}
+  alias Lotta.Storage.{Directory, File, FileProcessor}
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Tenants.{Category, Tenant, TenantDbManager, Widget}
 
   def seed do
     # Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
+    FileProcessor.create_cache_dir()
 
     tenant =
       Repo.insert!(%Tenant{

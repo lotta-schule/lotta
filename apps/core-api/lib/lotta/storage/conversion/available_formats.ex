@@ -7,6 +7,8 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   alias Lotta.Storage
   alias Lotta.Storage.{FileData, File}
 
+  @preview_categories [:preview]
+
   @preview_formats [
     preview_200:
       {Lotta.Storage.FileProcessor.ImageProcessor,
@@ -193,12 +195,10 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
 
   def get_immediate_formats(mime_type) when is_binary(mime_type) do
     case Storage.filetype_from(mime_type) do
-      "image" -> @preview_formats
-      "video" -> @preview_formats
-      "pdf" -> @preview_formats
+      "image" -> @preview_categories
+      "pdf" -> @preview_categories
       _ -> []
     end
-    |> Enum.map(&elem(&1, 0))
   end
 
   @doc """

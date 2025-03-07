@@ -6,7 +6,6 @@ defmodule Lotta.StorageTest do
 
   import Ecto.Query
 
-  alias ExAws.S3
   alias Lotta.Accounts.User
   alias Lotta.{Fixtures, Repo, Storage, Tenants}
   alias Lotta.Storage.{Directory, File, FileData, RemoteStorage, RemoteStorageEntity}
@@ -52,27 +51,32 @@ defmodule Lotta.StorageTest do
       {:ok, file_data} =
         FileData.from_path("test/support/fixtures/image_file.png", mime_type: "image/png")
 
-      res =
+      {:ok, uploaded_file} =
         Storage.create_file(
           file_data,
           directory,
           user
         )
 
-      assert {:ok, uploaded_file} = res
+      assert uploaded_file =
+               %File{
+                 remote_storage_entity: _remote_storage_entity,
+                 file_conversions: file_conversions
+               } = Repo.preload(uploaded_file, [:file_conversions, :remote_storage_entity])
 
-      assert %File{
-               remote_storage_entity: _remote_storage_entity
-             } = uploaded_file
+      assert Enum.count(file_conversions) > 0
+      assert Enum.all?(file_conversions, &String.starts_with?(&1.format, "preview"))
 
-      res = ExAws.request!(S3.list_objects("lotta-dev-ugc", prefix: "tenant_test"))
+      res =
+        ExAws.S3.get_object("lotta-dev-ugc", uploaded_file.remote_storage_entity.path)
+        |> ExAws.request!()
 
       assert %{
-               status_code: 200,
-               body: %{contents: contents}
+               status_code: 200
              } = res
 
-      assert Enum.any?(contents, &(&1.key == "tenant_test/#{uploaded_file.id}/original"))
+      assert uploaded_file.remote_storage_entity.path ==
+               "tenant_test/#{uploaded_file.id}/original"
     end
 
     test "copy_to_remote_storage/2 should reupload a file to new location", %{

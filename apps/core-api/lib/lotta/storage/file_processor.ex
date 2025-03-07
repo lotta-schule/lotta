@@ -35,20 +35,16 @@ defmodule Lotta.Storage.FileProcessor do
     file_data
     |> AvailableFormats.get_immediate_formats()
     |> Task.async_stream(&process_file(file_data, &1))
-    |> Enum.to_list()
-    |> Enum.map(fn
-      {:ok, result} ->
-        result
-
-      {:error, error} ->
-        Logger.error("Failed to process file: #{inspect(error)}")
-        {:error, error}
+    |> Stream.flat_map(fn
+      {:ok, result} -> [result]
+      {:error, _} -> []
     end)
+    |> Enum.to_list()
     |> Enum.filter(fn
       {:ok, _} -> true
       _ -> false
     end)
-    |> Enum.map(&elem(&1, 1))
+    |> Enum.flat_map(&elem(&1, 1))
   end
 
   @doc """
@@ -93,16 +89,10 @@ defmodule Lotta.Storage.FileProcessor do
   """
   @spec cache_file(File.t(), FileData.t()) :: {:ok, FileData.t()} | {:error, String.t()}
   def cache_file(%File{} = file, %FileData{} = file_data) do
-    if local_file_path = cache_path(file) do
-      FileData.copy_to_file(file_data, local_file_path)
+    if local_path = cache_path(file) do
+      FileData.copy_to_file(file_data, local_path)
     else
-      {:error, "Failed to get tmp path"}
-    end
-  end
-
-  defp cache_path(%File{id: id}) do
-    with tmp_path <- System.tmp_dir() do
-      Path.join(tmp_path, "file-cache-#{id}")
+      {:error, "Failed to get cache path"}
     end
   end
 
@@ -110,20 +100,27 @@ defmodule Lotta.Storage.FileProcessor do
   Retrieves a cached file object from disk. If the file is not found, it will return nil
   """
   @spec get_cached(File.t()) :: FileData.t() | nil
-  def get_cached(%File{id: id, mime_type: mime_type}) do
-    with tmp_path <- System.tmp_dir() || {:error, "Failed to get tmp path"},
-         local_file_path <-
-           Path.join(tmp_path, "file-cache-#{id}"),
-         true <- Elixir.File.exists?(local_file_path) || nil,
-         {:ok, cached_file_data} <- FileData.from_path(local_file_path, mime_type: mime_type) do
-      cached_file_data
-    else
-      {:error, error} ->
-        Logger.error("Failed to get cached file: #{inspect(error)}")
-        nil
+  def get_cached(%File{} = file) do
+    with local_path <- cache_path(file) || {:error, "Failed to get cache path"} do
+      FileData.from_path(local_path, mime_type: file.mime_type)
+    end
+  end
 
-      _ ->
-        nil
+  def create_cache_dir(), do: Elixir.File.mkdir_p!(Path.join(System.tmp_dir(), "ugc"))
+
+  defp cache_path(%File{} = file) do
+    if tmp_path = System.tmp_dir() do
+      filename =
+        Enum.join(
+          [
+            Ecto.get_meta(file, :prefix),
+            file.id,
+            "original"
+          ],
+          "_"
+        )
+
+      Path.join([tmp_path, "ugc", filename])
     end
   end
 end
