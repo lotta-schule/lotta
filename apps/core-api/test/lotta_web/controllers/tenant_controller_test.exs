@@ -8,24 +8,25 @@ defmodule LottaWeb.TenantControllerTest do
   alias Lotta.{Accounts, Tenants, Repo}
   alias Lotta.Tenants.Tenant
 
-  setup_all do
-    tenant =
+  setup do
+    new_tenant =
       Repo.insert!(%Tenant{
         title: "Test Lotta 2",
         slug: "test2",
         prefix: "tenant_test2"
       })
 
+    Lotta.Tenants.TenantDbManager.create_tenant_database_schema(new_tenant)
+
+    email = "alexis.rinaldoni@einsa.net"
+
     {:ok, _, _pw} =
-      Accounts.register_user(tenant, %{
+      Accounts.register_user(new_tenant, %{
         name: "Alexis Rinaldoni",
-        email: "alexis.rinaldoni@einsa.net",
+        email: email,
         password: "test123"
       })
-  end
 
-  setup do
-    email = "alexis.rinaldoni@einsa.net"
     tenants = Tenants.list_tenants()
 
     %{email: email, tenants: tenants}
