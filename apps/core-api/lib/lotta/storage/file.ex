@@ -89,12 +89,14 @@ defmodule Lotta.Storage.File do
            Tesla.get(
              RemoteStorage.get_http_url(file.remote_storage_entity),
              opts: [adapter: [response: :stream]]
+           ),
+         {:ok, file_data} <-
+           FileData.from_stream(
+             env.body,
+             file.filename,
+             mime_type: file.mime_type
            ) do
-      FileData.from_stream(
-        env.body,
-        file.filename,
-        mime_type: file.mime_type
-      )
+      FileData.cache(file_data, for: file)
     end
   end
 end
