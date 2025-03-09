@@ -6,11 +6,10 @@ defmodule Lotta.Storage do
 
   import Ecto.Query
 
-  alias Lotta.Tenants
   alias Ecto.Changeset
-  alias Lotta.Repo
+  alias Lotta.{MetadataWorker, Repo, Tenants, ConversionWorker}
   alias Lotta.Accounts.{FileManagment, User}
-  alias Lotta.Storage.Conversion.{AvailableFormats, ConversionWorker}
+  alias Lotta.Storage.Conversion.AvailableFormats
 
   alias Lotta.Storage.{
     Directory,
@@ -58,13 +57,29 @@ defmodule Lotta.Storage do
            upload_filedata_for_file_or_conversion(file_data, file) do
       FileData.cache(file_data, for: file)
 
+      await_metadata_task =
+        case MetadataWorker.create_metadata_job(file) do
+          {:ok, metadata_job} -> MetadataWorker.await_completion_task(metadata_job)
+          {:error, _} -> nil
+        end
+
       file
       |> AvailableFormats.get_immediate_formats()
       # A good place for a metadata job
       |> Enum.map(&ConversionWorker.get_or_create_conversion_job(file, &1))
-      |> then(fn _jobs ->
-        {:ok, Repo.reload(file)}
+      |> Enum.filter(&(elem(&1, 0) == :ok))
+      |> Enum.map(&ConversionWorker.await_completion_task(elem(&1, 1)))
+      # they their own timeout
+      |> then(fn await_conversion_tasks ->
+        if await_metadata_task do
+          [await_metadata_task | await_conversion_tasks]
+        else
+          await_conversion_tasks
+        end
+        |> Task.await_many(:timer.minutes(1))
       end)
+
+      {:ok, Repo.reload(file)}
     else
       error ->
         Logger.error("Error creating file: #{inspect(error)}")
@@ -386,8 +401,8 @@ defmodule Lotta.Storage do
     with nil <-
            Repo.get_by(FileConversion, file_id: file_id, format: format),
          {:ok, job} <-
-           ConversionWorker.get_or_create_conversion_job(file, format, priority: 2),
-         {:ok, _} <- ConversionWorker.await_conversion(job),
+           ConversionWorker.get_or_create_conversion_job(file, format),
+         {:ok, _} <- Task.await(ConversionWorker.await_completion(job)),
          file_conversion when not is_nil(file_conversion) <-
            Repo.get_by(FileConversion, file_id: file_id, format: format) do
       {:ok, file_conversion}

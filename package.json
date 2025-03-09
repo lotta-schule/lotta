@@ -10,7 +10,8 @@
     "lint": "nx run-many --target=lint --parallel",
     "typecheck": "nx run-many --target=typecheck --parallel",
     "release:prepare": "./scripts/release.sh",
-    "nx": "nx"
+    "nx": "nx",
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "@eslint/compat": "^1.1.1",
@@ -90,6 +91,28 @@
       "esbuild",
       "nx",
       "sharp"
+    ]
+  },
+  "lint-staged": {
+    "$schema": "https://json.schemastore.org/lint-staged",
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.{graphql,gql}": [
+      "prettier --write"
+    ],
+    "*.{html,xml}": [
+      "prettier --write"
+    ],
+    "*.{ex,exs,eex,heex}": [
+      "mix format"
     ]
   }
 }

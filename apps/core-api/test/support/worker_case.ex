@@ -19,7 +19,7 @@ defmodule Lotta.WorkerCase do
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Lotta.Repo)
 
-    unless tags[:async] do
+    if tags[:async] != true do
       Ecto.Adapters.SQL.Sandbox.mode(Lotta.Repo, {:shared, self()})
     end
 

@@ -26,10 +26,6 @@ services:
     image: ${LOTTA_CORE_IMAGE:-ghcr.io/lotta-schule/core:${LOTTA_CORE_VERSION:-${IMAGE_TAG:-latest}}}
     ports:
       - 4000:4000
-    entrypoint: /app/core_entrypoint.sh
-    command: start
-    volumes:
-      - ./core_entrypoint.sh:/app/core_entrypoint.sh
     depends_on:
       postgres:
         condition: service_healthy

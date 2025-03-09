@@ -5,7 +5,7 @@ defmodule Lotta.Storage.FileProcessorTest do
 
   import Mock
 
-  alias Lotta.Storage.{File, FileData, FileProcessor}
+  alias Lotta.Storage.{FileData, FileProcessor}
   alias Lotta.Storage.FileProcessor.ImageProcessor
 
   describe "FileProcessor" do
@@ -13,7 +13,7 @@ defmodule Lotta.Storage.FileProcessorTest do
       get_file_data =
         &elem(
           FileData.from_stream(
-            Elixir.File.stream!("test/support/fixtures/#{&1}"),
+            File.stream!("test/support/fixtures/#{&1}"),
             &1
           ),
           1

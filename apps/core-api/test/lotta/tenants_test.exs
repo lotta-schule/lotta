@@ -1,8 +1,9 @@
 defmodule Lotta.TenantsTest do
   @moduledoc false
 
-  use Lotta.DataCase, async: true
-  alias Lotta.Tenants
+  use Lotta.WorkerCase, async: false
+
+  alias Lotta.{Tenants, Repo}
   alias Lotta.Tenants.{CustomDomain, Tenant}
 
   @prefix "tenant_test"
@@ -41,7 +42,7 @@ defmodule Lotta.TenantsTest do
       assert prefix == "tenant_#{tenant.id}"
 
       assert [%{name: "Salvador Allende", email: "salvador.allende@einsa.net"}] =
-               Lotta.Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
+               Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
     end
 
     @tag creates_tenant: true
@@ -55,7 +56,7 @@ defmodule Lotta.TenantsTest do
       assert {:ok, _tenant} = Tenants.delete_tenant(tenant)
 
       assert_raise Postgrex.Error, fn ->
-        Lotta.Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
+        Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
       end
 
       assert is_nil(Tenants.get_tenant(tenant.id))

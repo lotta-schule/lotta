@@ -1,4 +1,4 @@
-defmodule Lotta.Storage.Conversion.ConversionWorker do
+defmodule Lotta.ConversionWorker do
   @moduledoc """
   Conversion worker that converts a file to a different format.
   """
@@ -49,13 +49,14 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
         {:error, "File not found"}
 
       {:error, error} ->
+        Oban.Notifier.notify(Oban, :conversion_jobs, %{"error" => job_id})
         Logger.error("Error converting file: #{inspect(error)}")
         {:error, "Error converting file: #{error}"}
     end
   end
 
   @impl Oban.Worker
-  def timeout(_job), do: :timer.minutes(2)
+  def timeout(_job), do: :timer.minutes(5)
 
   @spec get_conversion_job(File.t(), atom() | String.t()) :: Oban.Job.t() | nil
   def get_conversion_job(%{id: file_id} = file, format) do
@@ -75,9 +76,9 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
     )
   end
 
-  @spec get_or_create_conversion_job(File.t(), atom() | String.t(), keyword() | nil) ::
+  @spec get_or_create_conversion_job(File.t(), atom() | String.t()) ::
           {:ok, Oban.Job.t()} | {:error, String.t()}
-  def get_or_create_conversion_job(%{id: _id} = file, format, job_args \\ []) do
+  def get_or_create_conversion_job(%{id: _id} = file, format) do
     case get_conversion_job(file, format) do
       %Oban.Job{state: state} = job when state in ["scheduled", "executing", "completed"] ->
         {:ok, job}
@@ -91,7 +92,7 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
           file_id: file.id,
           format_category: AvailableFormats.get_category(format)
         }
-        |> __MODULE__.new(job_args)
+        |> __MODULE__.new()
         |> Oban.insert()
     end
   end
@@ -100,21 +101,32 @@ defmodule Lotta.Storage.Conversion.ConversionWorker do
   Awaits the completion of a conversion job.
   Returns {:ok, job} if the job completed successfully, or {:error, reason} if the job failed or timed out.
   """
-  @spec await_conversion(Oban.Job.t()) :: {:ok, Oban.Job.t()} | {:error, String.t()}
-  def await_conversion(%Oban.Job{state: "completed"} = job), do: {:ok, job}
+  @spec await_completion_task(Oban.Job.t()) :: {:ok, Oban.Job.t()} | {:error, String.t()}
 
-  def await_conversion(%Oban.Job{id: job_id} = job) do
+  def await_completion_task(%Oban.Job{state: "completed"} = job),
+    do: Task.async(fn -> {:ok, job} end)
+
+  def await_completion_task(%Oban.Job{id: job_id, state: state} = job)
+      when state in ["executable", "available", "scheduled"] do
     Task.async(fn ->
       :ok = Oban.Notifier.listen(Oban, [:conversion_jobs])
 
       receive do
         {:notification, :conversion_jobs, %{"complete" => ^job_id}} ->
           {:ok, job}
+
+        {:notification, :conversion_jobs, %{"error" => ^job_id}} ->
+          {:error, "Conversion job errored"}
       after
-        120_000 ->
+        55_000 ->
           {:error, "Conversion job timed out"}
       end
     end)
-    |> Task.await(60_000)
   end
+
+  def await_completion_task(%Oban.Job{state: state}),
+    do: Task.async(fn -> {:error, state} end)
+
+  def await_completion(%Oban.Job{} = job),
+    do: Task.await(await_completion_task(job), :timer.minutes(1))
 end

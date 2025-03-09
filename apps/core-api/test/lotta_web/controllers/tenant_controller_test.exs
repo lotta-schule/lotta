@@ -1,11 +1,28 @@
 defmodule LottaWeb.TenantControllerTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase, async: true
+  use LottaWeb.ConnCase
 
   import Phoenix.ConnTest
 
-  alias Lotta.Tenants
+  alias Lotta.{Accounts, Tenants, Repo}
+  alias Lotta.Tenants.Tenant
+
+  setup_all do
+    tenant =
+      Repo.insert!(%Tenant{
+        title: "Test Lotta 2",
+        slug: "test2",
+        prefix: "tenant_test2"
+      })
+
+    {:ok, _, _pw} =
+      Accounts.register_user(tenant, %{
+        name: "Alexis Rinaldoni",
+        email: "alexis.rinaldoni@einsa.net",
+        password: "test123"
+      })
+  end
 
   setup do
     email = "alexis.rinaldoni@einsa.net"

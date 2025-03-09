@@ -6,7 +6,6 @@ defmodule Lotta.StorageTest do
   alias Lotta.Accounts.User
   alias Lotta.{Fixtures, Repo, Storage, Tenants}
   alias Lotta.Storage.{Directory, File, FileData, RemoteStorage, RemoteStorageEntity}
-  alias Lotta.Storage.Conversion.ConversionWorker
 
   @prefix "tenant_test"
 
@@ -61,21 +60,6 @@ defmodule Lotta.StorageTest do
                  remote_storage_entity: _remote_storage_entity,
                  file_conversions: _file_conversions
                } = Repo.preload(uploaded_file, [:file_conversions, :remote_storage_entity])
-
-      Repo.preload(uploaded_file, [:file_conversions, :remote_storage_entity])
-
-      assert_enqueued(
-        worker: ConversionWorker,
-        queue: :file_conversion,
-        priority: 2,
-        args: %{
-          prefix: Ecto.get_meta(uploaded_file, :prefix),
-          file_id: uploaded_file.id,
-          format_category: :preview
-        }
-      )
-
-      assert %{success: 1, failure: 0} = Oban.drain_queue(queue: :file_conversion)
 
       res =
         ExAws.S3.get_object("lotta-dev-ugc", uploaded_file.remote_storage_entity.path)
