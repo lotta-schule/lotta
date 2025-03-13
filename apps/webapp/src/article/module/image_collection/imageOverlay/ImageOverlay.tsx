@@ -85,6 +85,7 @@ export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> =
             src={selectedUrl || undefined}
             alt={caption ?? ''}
             className={styles.image}
+            sizes={['(max-width: 960px) 100vw', '80vw']}
             format="preview"
           />
           {caption && <div className={styles.subtitles}>{caption}</div>}

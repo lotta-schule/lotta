@@ -35,7 +35,7 @@ const nextConfig = {
         },
         {
           source: '/data/:path*',
-          destination: 'http://localhost:4000/data/:path*',
+          destination: `${process.env.API_URL}/data/:path*`,
         },
         {
           source: '/api',

@@ -131,6 +131,10 @@ export const ArticlePreview = React.memo(
                       file={article?.previewImageFile ?? undefined}
                       format="articlepreview"
                       alt={`Vorschaubild zu ${article.title}`}
+                      sizes={[
+                        '(max-width: 1199px) 10vw',
+                        '(min-width: 500px) 20vw',
+                        '25vw']}
                       fallback={
                         <PlaceholderImage aspectRatio={3 / 2} width={'100%'} />
                       }
