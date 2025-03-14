@@ -9,6 +9,7 @@ defmodule Lotta.WorkerCase do
     quote do
       use Oban.Testing, repo: Lotta.Repo, prefix: "oban"
 
+      import Oban.Testing, only: [with_testing_mode: 2]
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
