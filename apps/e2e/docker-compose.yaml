@@ -43,7 +43,7 @@ services:
           '--spider',
           'http://localhost:4000/_debug/health',
         ]
-      interval: 30s
+      interval: 90s
       timeout: 10s
-      retries: 5
+      retries: 3
     env_file: env-file
