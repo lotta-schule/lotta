@@ -36,12 +36,13 @@ defmodule Lotta.Storage do
   If there are conversions to be made immediately, they will be triggered.
   """
   @doc since: "5.0.0"
-  @spec create_file(FileData.t(), Directory.t(), User.t()) ::
+  @spec create_file(FileData.t(), Directory.t(), User.t(), opts :: keyword() | nil) ::
           {:ok, File.t()} | {:error, term()}
   def create_file(
         %FileData{} = file_data,
         %Directory{} = directory,
-        %User{} = user
+        %User{} = user,
+        opts \\ []
       ) do
     with {:ok, file} <-
            directory
@@ -57,27 +58,35 @@ defmodule Lotta.Storage do
            upload_filedata_for_file_or_conversion(file_data, file) do
       FileData.cache(file_data, for: file)
 
-      await_metadata_task =
+      metadata_job =
         case MetadataWorker.create_metadata_job(file) do
-          {:ok, metadata_job} -> MetadataWorker.await_completion_task(metadata_job)
+          {:ok, metadata_job} -> metadata_job
           {:error, _} -> nil
         end
+
+      await_metadata_tasks =
+        if metadata_job && not Keyword.get(opts, :skip_wait, false),
+          do: [MetadataWorker.await_completion_task(metadata_job)],
+          else: []
 
       file
       |> AvailableFormats.get_immediate_formats()
       # A good place for a metadata job
       |> Enum.map(&ConversionWorker.get_or_create_conversion_job(file, &1))
       |> Enum.filter(&(elem(&1, 0) == :ok))
-      |> Enum.map(&ConversionWorker.await_completion_task(elem(&1, 1)))
       # they their own timeout
       |> then(fn await_conversion_tasks ->
-        if await_metadata_task do
-          [await_metadata_task | await_conversion_tasks]
-        else
-          await_conversion_tasks
-        end
-        |> Task.await_many(:timer.minutes(1))
+        await_conversion_tasks =
+          if Keyword.get(opts, :skip_wait, false) do
+            []
+          else
+            await_conversion_tasks
+            |> Enum.map(&ConversionWorker.await_completion_task(elem(&1, 1)))
+          end
+
+        await_conversion_tasks ++ await_metadata_tasks
       end)
+      |> Task.await_many(:timer.seconds(30))
 
       {:ok, Repo.reload(file)}
     else

@@ -107,7 +107,7 @@ defmodule Lotta.Tenants.DefaultContent do
        Application.app_dir(:lotta, "priv/default_content/files/#{filename}")
        |> FileData.from_path(mime_type: type)
        |> then(fn {:ok, file_data} ->
-         Storage.create_file(file_data, dir, user)
+         Storage.create_file(file_data, dir, user, skip_wait: true)
        end)
        |> then(fn {:ok, file} -> file end)
      end)}
