@@ -27,12 +27,16 @@ services:
     ports:
       - 9000:9000
     environment:
-      MINIO_SERVER_URL: http://localhost:9000
+      MINIO_SERVER_URL: http://127.0.0.1:9000
       MINIO_ROOT_USER: AKIAIOSFODNN7EXAMPLE
       MINIO_ROOT_PASSWORD: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
       MINIO_DEFAULT_BUCKETS: 'lotta-dev-ugc:s3:*'
     healthcheck:
-      test: ['CMD', 'curl -f http://localhost:9000/minio/health/live']
+      test:
+        [
+          'CMD-SHELL',
+          'curl -sf http://127.0.0.1:9000/minio/health/live || exit 1',
+        ]
       interval: 60s
       timeout: 5s
       retries: 4
