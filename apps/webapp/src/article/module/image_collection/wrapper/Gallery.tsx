@@ -75,7 +75,8 @@ export const Gallery = React.memo<GalleryProps>(
                 isEditModeEnabled={isEditModeEnabled}
                 file={file}
                 caption={getConfiguration(file).caption}
-                format="articlepreview"
+                format="avatar"
+                sizes={[250, 500]}
                 onUpdateFile={(newFile) =>
                   onUpdateModule?.({
                     ...contentModule,

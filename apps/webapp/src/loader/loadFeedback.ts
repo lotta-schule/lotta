@@ -6,7 +6,7 @@ import GetFeedbackQuery from 'api/query/GetFeedbackQuery.graphql';
 
 export const loadFeedback = cache(async () => {
   const client = await getClient();
-  return client
+  return await client
     .query<{ feedbacks: FeedbackModel[] }>({
       query: GetFeedbackQuery,
     })

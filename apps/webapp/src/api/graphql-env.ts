@@ -1581,19 +1581,11 @@ const introspection = {
         "name": "ConversionFormat",
         "enumValues": [
           {
-            "name": "ARTICLEPREVIEW_300",
+            "name": "ARTICLEPREVIEW_330",
             "isDeprecated": false
           },
           {
-            "name": "ARTICLEPREVIEW_420",
-            "isDeprecated": false
-          },
-          {
-            "name": "ARTICLEPREVIEW_600",
-            "isDeprecated": false
-          },
-          {
-            "name": "ARTICLEPREVIEW_840",
+            "name": "ARTICLEPREVIEW_660",
             "isDeprecated": false
           },
           {
@@ -2628,6 +2620,10 @@ const introspection = {
           },
           {
             "name": "IMAGE",
+            "isDeprecated": false
+          },
+          {
+            "name": "MISC",
             "isDeprecated": false
           },
           {

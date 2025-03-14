@@ -5,7 +5,7 @@ import { File } from 'util/model';
 export type ResponsiveImageProps = {
   file: Pick<FileModel, '__typename' | 'formats'> | null | undefined;
   alt: string;
-  sizes?: string[] | string;
+  sizes?: string[] | [number, number] | string;
   format: string;
   fallback?: React.ReactNode | null;
 } & Omit<
@@ -16,33 +16,89 @@ export type ResponsiveImageProps = {
   'alt' | 'srcSet' | 'sizes'
 >;
 
-const createSizemap = (formats: ReturnType<typeof File.getAvailableFormats>, usePixelDensity = false) => {
-  if (usePixelDensity) {
-  return [formats.at(0), formats.at(-1)]
-    .filter(f => f !== undefined).map(({url}, i) => `${url} ${i + 1}x`)
-    .join(',');
-  }
+export const useResponsiveProps = (
+  file: Pick<FileModel, '__typename' | 'formats'> | null | undefined,
+  format: string,
+  sizesAttr?: string[] | [number, number] | string
+) => {
+  const usePixelDensity = React.useMemo(
+    () =>
+      Array.isArray(sizesAttr) &&
+      sizesAttr.length === 2 &&
+      typeof sizesAttr[0] === 'number' &&
+      typeof sizesAttr[1] === 'number',
+    [sizesAttr]
+  );
 
-  return formats
-  ?.reduce((acc, { url, width }) => acc + `, ${url} ${width}w`, '')
-  ?.replace(/^, /, '');
+  const formats = React.useMemo(
+    () =>
+      file
+        ? File.getAvailableFormats(file, format).filter((f) => {
+            if (usePixelDensity && f.width) {
+              return (sizesAttr as [number, number]).includes(f.width);
+            }
+            return true;
+          })
+        : undefined,
+    [file, format, sizesAttr, usePixelDensity]
+  );
+
+  const sizes = React.useMemo(() => {
+    if (Array.isArray(sizesAttr)) {
+      if (usePixelDensity) {
+        return undefined;
+      }
+      return sizesAttr.join(', ');
+    }
+    return sizesAttr;
+  }, [sizesAttr]);
+
+  const srcSet = React.useMemo(() => {
+    if (!formats) {
+      return undefined;
+    }
+    if (usePixelDensity) {
+      return [formats.at(0), formats.at(-1)]
+        .sort((a, b) => (a?.width ?? 0) - (b?.width ?? 0))
+        .filter((f) => f !== undefined)
+        .map(({ url }, i) => `${url} ${i + 1}x`)
+        .join(',');
+    }
+
+    return (
+      formats
+        ?.reduce((acc, { url, width }) => acc + `, ${url} ${width}w`, '')
+        ?.replace(/^, /, '') || undefined
+    );
+  }, [formats, usePixelDensity]);
+
+  return React.useMemo(
+    () =>
+      ({
+        srcSet,
+        formats,
+        sizes,
+      }) as const,
+    [srcSet, formats, sizes]
+  );
 };
 
 export const ResponsiveImage = React.memo(
   ({
     file,
-    format,
     className,
-    sizes,
     fallback = null,
+    sizes,
+    format,
     ...imgProps
   }: ResponsiveImageProps) => {
-    const formats = file && File.getAvailableFormats(file, format);
-
-    const sizeMap = formats && createSizemap(formats, !sizes);
-
+    const { formats, ...responsiveProps } = useResponsiveProps(
+      file,
+      format,
+      sizes
+    );
     if (formats?.length) {
-      return <img className={className}  sizes={Array.isArray(sizes) ? sizes.join(',') : sizes} srcSet={sizeMap} {...imgProps} />;
+      return <img className={className} {...imgProps} {...responsiveProps} />;
     }
 
     if (imgProps.src) {

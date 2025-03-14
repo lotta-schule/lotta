@@ -402,7 +402,7 @@ defmodule Lotta.Storage do
            Repo.get_by(FileConversion, file_id: file_id, format: format),
          {:ok, job} <-
            ConversionWorker.get_or_create_conversion_job(file, format),
-         {:ok, _} <- Task.await(ConversionWorker.await_completion(job)),
+         {:ok, _} <- ConversionWorker.await_completion(job),
          file_conversion when not is_nil(file_conversion) <-
            Repo.get_by(FileConversion, file_id: file_id, format: format) do
       {:ok, file_conversion}

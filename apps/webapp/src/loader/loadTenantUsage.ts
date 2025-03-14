@@ -5,7 +5,8 @@ import { getClient } from 'api/client';
 import GetUsageQuery from 'api/query/GetUsageQuery.graphql';
 
 export const loadTenantUsage = cache(async () => {
-  return await getClient()
+  const client = await getClient();
+  return await client
     .query<{ usage: TenantUsageModel[] }>({
       query: GetUsageQuery,
     })

@@ -52,11 +52,12 @@ export const File = {
           if (!formatMatch) {
             return null;
           }
-          const width =
-            formatMatch.groups?.width && parseInt(formatMatch.groups.width, 10);
-          const height =
-            formatMatch.groups?.height &&
-            parseInt(formatMatch.groups.height, 10);
+          const width = formatMatch.groups?.width
+            ? parseInt(formatMatch.groups.width, 10)
+            : undefined;
+          const height = formatMatch.groups?.height
+            ? parseInt(formatMatch.groups.height, 10)
+            : undefined;
 
           return {
             ...format,

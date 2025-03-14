@@ -60,14 +60,10 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     banner_1320:
       {Lotta.Storage.FileProcessor.ImageProcessor,
        cover: [width: 1320, height: 220], type: :image},
-    articlepreview_300:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 300, height: 200], type: :image},
-    articlepreview_420:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 420, height: 280], type: :image},
-    articlepreview_600:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 600, height: 400], type: :image},
-    articlepreview_840:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 840, height: 560], type: :image},
+    articlepreview_330:
+      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 330, height: 220], type: :image},
+    articlepreview_660:
+      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 660, height: 440], type: :image},
     pagebg_1024:
       {Lotta.Storage.FileProcessor.ImageProcessor,
        cover: [width: 1024, height: 768], type: :image},

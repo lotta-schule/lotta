@@ -94,7 +94,9 @@ defmodule LottaWeb.FileResolver do
     available_formats =
       file
       |> AvailableFormats.available_formats_with_config()
-      |> Enum.filter(fn {format, _} -> not Enum.any?(conversions, &(&1.name == format)) end)
+      |> Enum.filter(fn {format, _} ->
+        not Enum.any?(conversions, &(&1.name == to_string(format)))
+      end)
       |> Enum.map(fn {format, {_processor, args}} ->
         format = to_string(format)
 
