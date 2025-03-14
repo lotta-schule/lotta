@@ -24,6 +24,7 @@ export const BaseLayout = React.memo(({ children }: BaseLayoutProps) => {
               <ResponsiveImage
                 file={tenant.logoImageFile}
                 format={'logo'}
+                sizes={[300, 600]}
                 alt={`Logo ${tenant.title}`}
               />
             </Link>

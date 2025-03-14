@@ -29,9 +29,12 @@ defmodule Lotta.ConversionWorker do
       }) do
     with {:ok, format_category} <- AvailableFormats.to_atom(format_category),
          file when not is_nil(file) <- Repo.get(File, file_id, prefix: prefix),
+         file <- Repo.preload(file, [:file_conversions]),
          {:ok, file_data} <- File.to_file_data(file),
          {:ok, results} <-
-           FileProcessor.process_file(file_data, format_category) do
+           FileProcessor.process_file(file_data, format_category,
+             skip: Enum.map(file.file_conversions, & &1.format)
+           ) do
       file_conversions =
         results
         |> Enum.map(fn {format, processed_file_data} ->
@@ -41,6 +44,7 @@ defmodule Lotta.ConversionWorker do
             to_string(format)
           )
         end)
+        |> Enum.concat(file.file_conversions)
 
       Oban.Notifier.notify(Oban, :conversion_jobs, %{"complete" => job_id})
       {:ok, file_conversions}

@@ -49,7 +49,13 @@ export type AvailableFormat =
   | 'H264_720P'
   | 'H264_1080P';
 
-export type FileModelType = 'PDF' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'BINARY';
+export type FileModelType =
+  | 'PDF'
+  | 'IMAGE'
+  | 'VIDEO'
+  | 'AUDIO'
+  | 'BINARY'
+  | 'MISC';
 
 export interface FileModel {
   __typename?: 'File';

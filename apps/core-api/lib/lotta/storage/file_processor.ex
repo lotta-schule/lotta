@@ -30,10 +30,14 @@ defmodule Lotta.Storage.FileProcessor do
   Processes a file with a given format_category and returns the processed file data.
   Will return the file data, which will still need to be uploaded and persisted to the database.
   """
-  @spec process_file(FileData.t(), format_category :: atom()) ::
+  @spec process_file(FileData.t(), format_category :: atom(), options :: keyword() | nil) ::
           {:ok, keyword(FileData.t())} | {:error, String.t()}
-  def process_file(file_data, format_category) when is_valid_category?(format_category) do
+  def process_file(file_data, format_category, options \\ [])
+
+  def process_file(file_data, format_category, options)
+      when is_valid_category?(format_category) do
     AvailableFormats.list(format_category)
+    |> Enum.filter(fn {format, _} -> not Enum.member?(options[:skip] || [], to_string(format)) end)
     |> Enum.reduce({:ok, nil}, fn
       _, {:error, _} = error ->
         error
@@ -61,5 +65,5 @@ defmodule Lotta.Storage.FileProcessor do
     end
   end
 
-  def process_file(_, format), do: {:error, "Invalid format category #{format}"}
+  def process_file(_, format, _), do: {:error, "Invalid format category #{format}"}
 end

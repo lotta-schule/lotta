@@ -35,7 +35,7 @@ const nextConfig = {
         },
         {
           source: '/data/:path*',
-          destination: `${process.env.API_URL}/data/:path*`,
+          destination: `${env.API_URL || ''}/data/:path*`,
         },
         {
           source: '/api',
