@@ -32,7 +32,7 @@ services:
       MINIO_ROOT_PASSWORD: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
       MINIO_DEFAULT_BUCKETS: 'lotta-dev-ugc:s3:*'
     healthcheck:
-      test: ['CMD', 'curl -f http://127.0.0.1:9000/minio/health/live']
+      test: ['CMD', 'curl -f http://localhost:9000/minio/health/live']
       interval: 60s
       timeout: 5s
       retries: 4
