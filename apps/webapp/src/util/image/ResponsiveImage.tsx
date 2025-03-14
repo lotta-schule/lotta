@@ -51,7 +51,7 @@ export const useResponsiveProps = (
       return sizesAttr.join(', ');
     }
     return sizesAttr;
-  }, [sizesAttr]);
+  }, [sizesAttr, usePixelDensity]);
 
   const srcSet = React.useMemo(() => {
     if (!formats) {
