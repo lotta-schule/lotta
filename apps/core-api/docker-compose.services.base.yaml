@@ -37,6 +37,6 @@ services:
           'CMD-SHELL',
           'curl -sf http://127.0.0.1:9000/minio/health/live || exit 1',
         ]
-      interval: 60s
+      interval: 20s
       timeout: 5s
-      retries: 4
+      retries: 7
