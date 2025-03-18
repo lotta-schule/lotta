@@ -55,6 +55,8 @@ test.describe('Tenant administration', () => {
         .fill('Example Lotta Schule');
       await page.getByRole('button', { name: /speichern/i }).click();
 
+      await page.waitForURL(baseURL, { waitUntil: 'domcontentloaded' });
+
       await page.reload();
       await expect(
         page.getByRole('textbox', { name: 'Name der Seite' })

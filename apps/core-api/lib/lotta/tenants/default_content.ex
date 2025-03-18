@@ -7,9 +7,8 @@ defmodule Lotta.Tenants.DefaultContent do
 
   import Ecto.Changeset
 
-  alias Ecto.Multi
   alias Lotta.{Accounts, Email, Mailer, Repo, Storage}
-  alias Lotta.Tenants.Category
+  alias Lotta.Tenants.{Category, Tenant}
   alias Lotta.Storage.{Directory, FileData, RemoteStorage}
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Content.{Article, ContentModule}
@@ -18,106 +17,139 @@ defmodule Lotta.Tenants.DefaultContent do
   Creates the default content for a new tenant.
   The tenant should already have been created, the user should be eligible to be administrator
   """
-  @spec create_default_content(map()) :: Multi.t()
-  def create_default_content(%{tenant: tenant, user_params: user_params}) do
-    opts = [prefix: tenant.prefix]
-
-    Multi.new()
-    |> Multi.put(:stage2_locals, %{tenant: tenant, user_params: user_params})
-    |> Multi.run(:user, &create_admin_user/2)
-    |> Multi.insert(:admin_group, &create_admin_group/1, opts)
-    |> Multi.update(:assigned_admin_group, &assign_admin_group/1, opts)
-    |> Multi.append(create_default_groups_multi(opts))
-    |> Multi.insert(:homepage_category, &create_homepage_category_changeset/1, opts)
-    |> Multi.insert(:content_category, &create_content_category_changeset/1, opts)
-    |> Multi.insert(:shared_dir, &create_shared_dir/1, opts)
-    |> Multi.run(:default_files, &create_default_files/2)
-    |> Multi.insert(:first_step_1_article, &create_first_step_1_article_changeset/1, opts)
-    |> Multi.insert(:first_step_2_article, &create_first_step_2_article_changeset/1, opts)
-    |> Multi.insert(:welcome_article, &create_welcome_article_changeset/1, opts)
-    |> Multi.run(:confirmation_mail, &send_ready_email/2)
+  @spec create_default_content(Tenant.t(), map()) :: :ok | {:error, any()}
+  def create_default_content(tenant, user_params) do
+    with {:ok, admin_user} <- create_admin_user(tenant, user_params),
+         {:ok, _default_groups} <- create_default_groups(tenant),
+         {:ok, [_homepage, content_category]} <- create_categories(tenant),
+         {:ok, files} <- create_files(tenant, admin_user),
+         {:ok, _articles} <- create_articles(admin_user, content_category, files),
+         {:ok, _mail} <- send_ready_email(tenant, admin_user),
+         do: :ok
   end
 
-  defp create_admin_user(_repo, %{stage2_locals: %{tenant: tenant, user_params: user_params}}) do
-    case Accounts.register_user(tenant, user_params) do
-      {:ok, user, password} ->
-        {:ok, Map.put(user, :password, password)}
-
-      error ->
-        error
+  defp create_admin_user(tenant, user_params) do
+    with {:ok, user, password} <- Accounts.register_user(tenant, user_params) do
+      user
+      |> Map.put(:password, password)
+      |> User.update_changeset(%{
+        groups: [
+          %UserGroup{
+            name: "Administrator",
+            sort_key: 0,
+            is_admin_group: true
+          }
+        ]
+      })
+      |> Repo.update(prefix: tenant.prefix)
     end
   end
 
-  defp create_admin_group(%{stage2_locals: %{tenant: tenant}}) do
-    %UserGroup{
-      name: "Administrator",
-      sort_key: 0,
-      is_admin_group: true
-    }
-    |> Ecto.put_meta(prefix: tenant.prefix)
+  defp create_default_groups(tenant) do
+    now = DateTime.utc_now(:second)
+
+    groups = [
+      [name: "Lehrer", sort_key: 10, inserted_at: now, updated_at: now],
+      [name: "Schüler", sort_key: 20, inserted_at: now, updated_at: now]
+    ]
+
+    count = length(groups)
+
+    case Repo.insert_all(UserGroup, groups, prefix: tenant.prefix, returning: true) do
+      {^count, groups} -> {:ok, groups}
+      _ -> {:error, "Error creating default groups"}
+    end
   end
 
-  defp assign_admin_group(%{user: user, admin_group: group}) do
-    User.update_changeset(user, %{groups: [group]})
+  defp create_categories(tenant) do
+    now = DateTime.utc_now(:second)
+
+    categories = [
+      [
+        title: "Startseite",
+        sort_key: 0,
+        is_sidenav: false,
+        is_homepage: true,
+        inserted_at: now,
+        updated_at: now
+      ],
+      [
+        title: "Über lotta",
+        sort_key: 10,
+        is_sidenav: false,
+        is_homepage: false,
+        inserted_at: now,
+        updated_at: now
+      ]
+    ]
+
+    count = length(categories)
+
+    case Repo.insert_all(
+           Category,
+           categories,
+           prefix: tenant.prefix,
+           returning: true
+         ) do
+      {^count, categories} -> {:ok, categories}
+      _ -> {:error, "Error creating categories"}
+    end
   end
 
-  defp create_default_groups_multi(opts) do
-    ["Lehrer", "Schüler"]
-    |> Enum.with_index()
-    |> Enum.reduce(Multi.new(), fn {name, i}, multi ->
-      Multi.insert(
-        multi,
-        String.downcase(name) <> "_group",
-        %UserGroup{
-          name: name,
-          sort_key: 10 + i * 10
-        },
-        opts
-      )
+  defp create_files(tenant, user) do
+    with {:ok, shared_dir} <-
+           Repo.insert(%Directory{name: "Öffentliche Dateien"}, prefix: tenant.prefix) do
+      create_default_files(shared_dir, user)
+    end
+  end
+
+  defp create_default_files(shared_dir, user) do
+    available_assets()
+    |> Enum.reduce_while({:ok, []}, fn {filename, type, path}, {:ok, files} ->
+      with {:ok, file_data} <- FileData.from_path(path, mime_type: type),
+           {:ok, file} <- Storage.create_file(file_data, shared_dir, user, skip_wait: true) do
+        {:cont, {:ok, [file | files]}}
+      else
+        error ->
+          Logger.error("Error creating file #{filename}: #{inspect(error)}")
+          {:halt, error}
+      end
     end)
   end
 
-  defp create_homepage_category_changeset(_changes) do
-    %Category{
-      title: "Startseite",
-      sort_key: 0,
-      is_sidenav: false,
-      is_homepage: true
+  defp create_articles(user, content_category, files) do
+    context = %{
+      user: user,
+      content_category: content_category,
+      default_files: files,
+      prefix: Ecto.get_meta(user, :prefix)
     }
+
+    [
+      :create_first_step_1_article_changeset,
+      :create_first_step_2_article_changeset,
+      :create_welcome_article_changeset
+    ]
+    |> Enum.reduce_while({:ok, []}, fn fn_name, {:ok, articles} ->
+      changeset = apply(__MODULE__, fn_name, [context])
+
+      case Repo.insert(changeset, prefix: context.prefix) do
+        {:ok, article} ->
+          {:cont, {:ok, [article | articles]}}
+
+        error ->
+          Logger.error("Error creating article #{fn_name}: #{inspect(error)}")
+          {:halt, error}
+      end
+    end)
   end
 
-  defp create_content_category_changeset(_changes) do
-    %Category{
-      title: "Über lotta",
-      sort_key: 10,
-      is_sidenav: false,
-      is_homepage: false
-    }
-  end
-
-  defp create_shared_dir(%{stage2_locals: %{tenant: tenant}}) do
-    Ecto.put_meta(%Directory{name: "Öffentliche Dateien"}, prefix: tenant.prefix)
-  end
-
-  defp create_default_files(_repo, %{user: user, shared_dir: dir}) do
-    {:ok,
-     available_assets()
-     |> Enum.with_index()
-     |> Enum.map(fn {{filename, type}, _index} ->
-       Application.app_dir(:lotta, "priv/default_content/files/#{filename}")
-       |> FileData.from_path(mime_type: type)
-       |> then(fn {:ok, file_data} ->
-         Storage.create_file(file_data, dir, user, skip_wait: true)
-       end)
-       |> then(fn {:ok, file} -> file end)
-     end)}
-  end
-
-  defp create_first_step_1_article_changeset(%{
-         user: user,
-         content_category: category,
-         default_files: files
-       }) do
+  @doc false
+  def create_first_step_1_article_changeset(%{
+        user: user,
+        content_category: category,
+        default_files: files
+      }) do
     %Article{
       title: "Erste Schritte mit Lotta",
       is_pinned_to_top: false,
@@ -199,11 +231,12 @@ defmodule Lotta.Tenants.DefaultContent do
     ])
   end
 
-  defp create_first_step_2_article_changeset(%{
-         user: user,
-         content_category: category,
-         default_files: files
-       }) do
+  @doc false
+  def create_first_step_2_article_changeset(%{
+        user: user,
+        content_category: category,
+        default_files: files
+      }) do
     %Article{
       title: "Erste Schritte mit Lotta",
       is_pinned_to_top: false,
@@ -299,11 +332,12 @@ defmodule Lotta.Tenants.DefaultContent do
     ])
   end
 
-  defp create_welcome_article_changeset(%{
-         user: user,
-         content_category: category,
-         default_files: files
-       }) do
+  @doc false
+  def create_welcome_article_changeset(%{
+        user: user,
+        content_category: category,
+        default_files: files
+      }) do
     %Article{
       title: "Willkommen",
       is_pinned_to_top: true,
@@ -328,7 +362,7 @@ defmodule Lotta.Tenants.DefaultContent do
     ])
   end
 
-  defp send_ready_email(_repo, %{stage2_locals: %{tenant: tenant}, user: user}) do
+  defp send_ready_email(tenant, user) do
     user
     |> Email.lotta_ready_mail(tenant: tenant)
     |> Mailer.deliver_later()
@@ -354,6 +388,10 @@ defmodule Lotta.Tenants.DefaultContent do
       {"erste-schritte-gruppen-anlegen-s2.png", "image/png"},
       {"erste-schritte-nutzergruppen.pdf", "application/pdf"}
     ]
+    |> Enum.map(fn {filename, type} ->
+      path = Application.app_dir(:lotta, "priv/default_content/files/#{filename}")
+      {filename, type, path}
+    end)
   end
 
   defp read_json(files, filename) do

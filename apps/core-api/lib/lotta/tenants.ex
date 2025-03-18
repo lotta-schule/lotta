@@ -68,6 +68,19 @@ defmodule Lotta.Tenants do
     user_params = Keyword.get(params, :user_params)
     tenant_params = Keyword.get(params, :tenant)
 
+    with {:ok, tenant} <- setup_tenant(user_params, tenant_params) do
+      if DefaultContent.create_default_content(tenant, user_params) == :ok do
+        {:ok, tenant}
+      else
+        delete_tenant(tenant)
+        {:error, "Error creating default content"}
+      end
+    end
+  end
+
+  @spec setup_tenant(user_params :: map(), tenant_params :: map()) ::
+          {:ok, Tenant.t()} | {:error, term()}
+  defp setup_tenant(user_params, tenant_params) do
     Multi.new()
     |> Multi.put(:user_params, user_params)
     |> Multi.insert(:new_tenant_without_prefix, Tenant.create_changeset(tenant_params))
@@ -80,8 +93,7 @@ defmodule Lotta.Tenants do
     |> Multi.run(:migrations, fn _repo, %{tenant: tenant} ->
       TenantDbManager.create_tenant_database_schema(tenant)
     end)
-    |> Multi.merge(&DefaultContent.create_default_content/1)
-    |> Repo.transaction(timeout: 120_000)
+    |> Repo.transaction()
     |> case do
       {:ok, %{tenant: tenant}} ->
         {:ok, tenant}
@@ -94,7 +106,7 @@ defmodule Lotta.Tenants do
 
         Sentry.capture_message(msg)
 
-        {:error, failed_operation, failed_value}
+        {:error, "#{failed_operation}: #{failed_value}"}
     end
   end
 

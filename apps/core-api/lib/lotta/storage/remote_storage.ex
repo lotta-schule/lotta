@@ -25,8 +25,8 @@ defmodule Lotta.Storage.RemoteStorage do
   {:error, :unknown_store}
   """
   @doc since: "2.5.0"
-  @spec config_for_store(String.t()) :: {:ok, config()} | {:error, :unknown_store}
-  def config_for_store(store_name) do
+  @spec config_for_store(String.t() | nil) :: {:ok, config()} | {:error, :unknown_store}
+  def config_for_store(store_name \\ default_store()) do
     Application.fetch_env!(:lotta, __MODULE__)
     |> Keyword.get(:storages)
     |> case do
