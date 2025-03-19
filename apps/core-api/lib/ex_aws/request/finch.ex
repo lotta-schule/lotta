@@ -2,9 +2,9 @@ defmodule ExAws.Request.Finch do
   @behaviour ExAws.Request.HttpClient
 
   @moduledoc """
-  Configuration for `m:Req`.
+  Configuration for `m:Finch`.
 
-  Options can be set for `m:Req` with the following config:
+  Options can be set for `m:Finch` with the following config:
 
       config :ex_aws, :req_opts,
         receive_timeout: 30_000
@@ -22,10 +22,16 @@ defmodule ExAws.Request.Finch do
     |> Finch.request(Lotta.Finch)
     |> case do
       {:ok, %{status: status, headers: headers, body: body}} ->
-        {:ok, %{status_code: status, headers: headers, body: body}}
+        {:ok, %{status_code: status, headers: lowercase_headers(headers), body: body}}
 
       {:error, reason} ->
         {:error, %{reason: reason}}
     end
   end
+
+  defp lowercase_headers(headers) when is_map(headers) do
+    Enum.map(headers, fn {k, v} -> {String.downcase(k), v} end)
+  end
+
+  defp lowercase_headers(headers), do: headers
 end

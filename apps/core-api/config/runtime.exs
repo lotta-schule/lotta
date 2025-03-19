@@ -186,7 +186,7 @@ config :lotta, :redis_connection,
   name: :redix
 
 config :ex_aws, :s3,
-  http_client: ExAws.Request.Hackney,
+  http_client: ExAws.Request.Finch,
   access_key_id: SystemConfig.get("AWS_ACCESS_KEY_ID"),
   secret_access_key: SystemConfig.get("AWS_SECRET_ACCESS_KEY"),
   host: SystemConfig.get("UGC_S3_COMPAT_ENDPOINT", cast: :url_host),

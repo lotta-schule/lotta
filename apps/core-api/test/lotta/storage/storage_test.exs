@@ -90,7 +90,7 @@ defmodule Lotta.StorageTest do
         |> ExAws.request!()
         |> Map.fetch!(:headers)
         |> Enum.find_value(fn {key, val} ->
-          if key == "Date", do: val
+          if key == "date", do: val
         end)
         |> Timex.parse!("{RFC1123}")
 
@@ -108,7 +108,7 @@ defmodule Lotta.StorageTest do
         |> ExAws.request!()
         |> Map.fetch!(:headers)
         |> Enum.find_value(fn {key, val} ->
-          if key == "Date", do: val
+          if key == "date", do: val
         end)
         |> Timex.parse!("{RFC1123}")
 
