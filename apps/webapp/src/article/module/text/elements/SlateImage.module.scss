@@ -6,13 +6,21 @@
   border: none;
   max-width: 100%;
   max-height: 100%;
+
   img {
     width: 100%;
   }
 
   &.isEditing {
     cursor: pointer;
+
+    .buttonGroup:first-of-type {
+      justify-content: end;
+      margin-block: '.2em';
+      margin-inline-end: '.2em';
+    }
   }
+
   &.isSelected {
     border: 1px solid rgba(var(--lotta-primary-color), 1);
   }

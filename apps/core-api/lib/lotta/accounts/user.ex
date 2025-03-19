@@ -160,7 +160,7 @@ defmodule Lotta.Accounts.User do
     case changeset do
       %Changeset{valid?: true, changes: %{password: password}} ->
         changeset
-        |> change(Argon2.add_hash(password))
+        |> put_change(:password_hash, Argon2.hash_pwd_salt(password))
         |> put_change(:password_hash_format, 1)
 
       _ ->

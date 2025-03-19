@@ -1,4 +1,4 @@
-@import "../theme/breakpoints";
+@use "../theme/breakpoints" as *;
 
 .root {
   flex: 0 1 25em;
@@ -13,7 +13,7 @@
     flex-grow: 8;
     flex-basis: 100%;
 
-    ~ .rightContainer {
+    ~.rightContainer {
       flex: 1 0 0%;
     }
   }

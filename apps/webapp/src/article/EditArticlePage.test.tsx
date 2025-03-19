@@ -143,6 +143,7 @@ describe('article/EditArticlePage', () => {
           groups: [],
           insertedAt: Weihnachtsmarkt.insertedAt,
           readyToPublish: true,
+          isReactionsEnabled: false,
           published: false,
           title: 'Weihnachtsmarkt',
           preview: Weihnachtsmarkt.preview,
@@ -152,7 +153,7 @@ describe('article/EditArticlePage', () => {
         },
       };
       const onSave = createOnSave(Weihnachtsmarkt, variables.article, {
-        updatedAt: date,
+        updatedAt: date.toString(),
       });
       const screen = render(
         <EditArticlePage article={Weihnachtsmarkt} />,
@@ -213,6 +214,7 @@ describe('article/EditArticlePage', () => {
           insertedAt: Weihnachtsmarkt.insertedAt,
           // updatedAt: date.toISOString(),
           readyToPublish: true,
+          isReactionsEnabled: false,
           published: false,
           title: 'Weihnachtsmarkt',
           preview: Weihnachtsmarkt.preview,

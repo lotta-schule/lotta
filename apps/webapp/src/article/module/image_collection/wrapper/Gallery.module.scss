@@ -1,11 +1,10 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   .img {
     img {
       max-width: 100%;
       object-fit: cover;
-      aspect-ratio: 4 / 3;
     }
   }
 

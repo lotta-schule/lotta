@@ -7,7 +7,7 @@ defmodule Lotta.Messages do
 
   require Logger
 
-  alias Lotta.{Accounts, Repo, Tenants}
+  alias Lotta.{Accounts, PushNotification, Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Storage.File
@@ -220,7 +220,7 @@ defmodule Lotta.Messages do
       message = Repo.preload(message, [:user, :files])
       conversation = Repo.preload(conversation, [:users, :groups])
 
-      Lotta.Notification.PushNotification.create_new_message_notifications(
+      PushNotification.create_new_message_notifications(
         Tenants.current(),
         message,
         conversation

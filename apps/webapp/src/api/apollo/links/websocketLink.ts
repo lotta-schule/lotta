@@ -17,7 +17,7 @@ const createAbsoluteSocketUrl = (urlString: string) => {
 };
 
 export const createWebsocketLink = (
-  tenant: TenantModel,
+  tenant: Pick<TenantModel, 'id'>,
   socketUrl?: string | null,
   accessToken?: string | null
 ) => {

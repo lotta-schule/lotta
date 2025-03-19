@@ -5,9 +5,10 @@ import { createAuthLink } from './links/authLink';
 import { createHttpLink } from './links/httpLink';
 import { headers } from 'next/headers';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
+import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 
-export const getAuthTokenFromHeader = () => {
-  const authHeader = headers().get('authorization');
+export const getAuthTokenFromHeader = (headerValues: ReadonlyHeaders) => {
+  const authHeader = headerValues.get('authorization');
   if (authHeader?.startsWith('Bearer ')) {
     return authHeader.slice(7);
   }
@@ -15,18 +16,19 @@ export const getAuthTokenFromHeader = () => {
   return null;
 };
 
-export const createRSCClient = () => {
+export const createRSCClient = async () => {
+  const headerValues = await headers();
   return new ApolloClient({
     cache: createCache(),
     link: ApolloLink.from([
       createErrorLink(),
       createAuthLink({
-        initialToken: getAuthTokenFromHeader() ?? undefined,
+        initialToken: getAuthTokenFromHeader(headerValues) ?? undefined,
       }),
       createVariableInputMutationsLink(),
       createHttpLink({
         requestExtraHeaders: () => ({
-          'x-lotta-originary-host': headers().get('host'),
+          'x-lotta-originary-host': headerValues.get('host'),
           'user-agent': [
             process.env.npm_package_name,
             process.env.npm_package_version,

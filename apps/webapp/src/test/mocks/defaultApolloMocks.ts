@@ -1,18 +1,18 @@
 import { tenant, allCategories, userGroups } from 'test/fixtures';
-import { CategoryModel, TenantModel, UserGroupModel, UserModel } from 'model';
+import { CategoryModel, UserGroupModel } from 'model';
 import { InMemoryCache } from '@apollo/client';
 import { identity } from 'lodash';
+import { GET_TENANT_QUERY, Tenant } from 'util/tenant';
+import { GET_CURRENT_USER, CurrentUser } from 'util/user/useCurrentUser';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
-import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
-import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
 import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
 
 export interface ApolloMocksOptions {
-  currentUser?: UserModel;
-  tenant?: TenantModel;
+  currentUser?: CurrentUser;
+  tenant?: Tenant;
   userGroups?: UserGroupModel[];
   tags?: string[];
   categories?: (categories: CategoryModel[]) => CategoryModel[];
@@ -20,7 +20,7 @@ export interface ApolloMocksOptions {
 export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
   const mocks = [
     {
-      request: { query: GetTenantQuery },
+      request: { query: GET_TENANT_QUERY },
       result: {
         data: { tenant: { ...(options.tenant ?? tenant), id: 1 } },
       },
@@ -34,7 +34,7 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
       },
     },
     {
-      request: { query: GetCurrentUserQuery },
+      request: { query: GET_CURRENT_USER },
       result: { data: { currentUser: options.currentUser ?? null } },
     },
     {
@@ -62,7 +62,7 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
     addTypename: false,
   });
   cache.writeQuery({
-    query: GetTenantQuery,
+    query: GET_TENANT_QUERY,
     data: { tenant: options.tenant ?? tenant },
   });
   cache.writeQuery({
@@ -71,7 +71,7 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
   });
   if (options.currentUser) {
     cache.writeQuery({
-      query: GetCurrentUserQuery,
+      query: GET_CURRENT_USER,
       data: { currentUser: options.currentUser },
     });
   }

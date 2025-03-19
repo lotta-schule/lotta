@@ -1,40 +1,22 @@
 import * as React from 'react';
-import { File } from 'util/model';
 import { ContentModuleModel } from 'model';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { useServerData } from 'shared/ServerDataContext';
 import styles from './VideoVideo.module.scss';
 
-interface VideoVideoProps {
+type VideoVideoProps = {
   contentModule: ContentModuleModel;
-}
+};
 
-export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
-  const { baseUrl } = useServerData();
-  const file =
-    contentModule.files &&
-    contentModule.files.length > 0 &&
-    contentModule.files[0];
-  const videoFiles =
-    file &&
-    file.fileConversions &&
-    contentModule.files[0].fileConversions.filter((f) =>
-      /^video/.test(f.mimeType)
-    );
-  const posterFile = contentModule.files?.[0]?.fileConversions
-    ?.filter((fc) => /^image/.test(fc.mimeType))
-    .sort(
-      (a, b) =>
-        Number(!(b.mimeType.includes('gif') && b.format.includes('anim'))) -
-        Number(!(a.mimeType.includes('gif') && a.format.includes('anim')))
-    )[0];
+export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
+  const file = contentModule.files.at(0);
 
-  const posterFileLocation =
-    posterFile && File.getFileConversionRemoteLocation(baseUrl, posterFile);
+  const posterFileUrl = file?.formats?.find((f) => f.type === 'image')?.url;
+  const videoFiles = file?.formats?.filter((f) => f.type === 'video');
+
   if (!file) {
     return <PlaceholderImage height={350} icon={'video'} />;
   }
-  if (!videoFiles || !videoFiles.length) {
+  if (!videoFiles?.length) {
     return (
       <PlaceholderImage
         height={350}
@@ -56,15 +38,11 @@ export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
       data-testid="video"
       playsInline
       controls
-      poster={posterFileLocation || undefined}
+      poster={posterFileUrl}
       className={styles.Video}
     >
       {videoFiles.map((vf) => (
-        <source
-          key={File.getFileConversionRemoteLocation(baseUrl, vf)}
-          src={File.getFileConversionRemoteLocation(baseUrl, vf)}
-          type={vf.mimeType}
-        />
+        <source key={vf.name} src={vf.url} />
       ))}
     </video>
   );

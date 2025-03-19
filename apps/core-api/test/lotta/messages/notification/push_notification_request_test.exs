@@ -1,5 +1,5 @@
-defmodule Lotta.Notification.PushNotificationRequestTest do
-  alias Lotta.Notification.PushNotificationRequest
+defmodule Lotta.PushNotification.RequestTest do
+  alias Lotta.PushNotification.Request
 
   use Lotta.DataCase
 
@@ -13,15 +13,15 @@ defmodule Lotta.Notification.PushNotificationRequestTest do
     {:ok, %{tenant: tenant}}
   end
 
-  describe "PushNotificationRequest" do
+  describe "Request" do
     test "new/1", %{tenant: tenant} do
-      assert %PushNotificationRequest{
+      assert %Request{
                tenant: ^tenant
-             } = PushNotificationRequest.new(tenant)
+             } = Request.new(tenant)
     end
 
     test "put_XX/2", %{tenant: tenant} do
-      assert %PushNotificationRequest{
+      assert %Request{
                title: "title",
                subtitle: "subtitle",
                body: "body",
@@ -29,13 +29,13 @@ defmodule Lotta.Notification.PushNotificationRequestTest do
                thread_id: "thread_id",
                data: %{"key" => "val"}
              } =
-               PushNotificationRequest.new(tenant)
-               |> PushNotificationRequest.put_title("title")
-               |> PushNotificationRequest.put_subtitle("subtitle")
-               |> PushNotificationRequest.put_body("body")
-               |> PushNotificationRequest.put_category("category")
-               |> PushNotificationRequest.put_thread_id("thread_id")
-               |> PushNotificationRequest.put_data(%{"key" => "val"})
+               Request.new(tenant)
+               |> Request.put_title("title")
+               |> Request.put_subtitle("subtitle")
+               |> Request.put_body("body")
+               |> Request.put_category("category")
+               |> Request.put_thread_id("thread_id")
+               |> Request.put_data(%{"key" => "val"})
     end
 
     test "create_apns_notification", %{tenant: tenant} do
@@ -51,10 +51,10 @@ defmodule Lotta.Notification.PushNotificationRequestTest do
                  "key" => "val"
                }
              } =
-               PushNotificationRequest.new(tenant)
-               |> PushNotificationRequest.put_category("category")
-               |> PushNotificationRequest.put_data(%{"key" => "val"})
-               |> PushNotificationRequest.create_apns_notification("token")
+               Request.new(tenant)
+               |> Request.put_category("category")
+               |> Request.put_data(%{"key" => "val"})
+               |> Request.create_apns_notification("token")
 
       assert %Pigeon.APNS.Notification{
                device_token: "token",
@@ -72,14 +72,14 @@ defmodule Lotta.Notification.PushNotificationRequestTest do
                  "key" => "val"
                }
              } =
-               PushNotificationRequest.new(tenant)
-               |> PushNotificationRequest.put_title("title")
-               |> PushNotificationRequest.put_subtitle("subtitle")
-               |> PushNotificationRequest.put_body("body")
-               |> PushNotificationRequest.put_category("category")
-               |> PushNotificationRequest.put_thread_id("thread_id")
-               |> PushNotificationRequest.put_data(%{"key" => "val"})
-               |> PushNotificationRequest.create_apns_notification("token")
+               Request.new(tenant)
+               |> Request.put_title("title")
+               |> Request.put_subtitle("subtitle")
+               |> Request.put_body("body")
+               |> Request.put_category("category")
+               |> Request.put_thread_id("thread_id")
+               |> Request.put_data(%{"key" => "val"})
+               |> Request.create_apns_notification("token")
     end
 
     test "create_fcm_notification", %{tenant: tenant} do
@@ -90,10 +90,10 @@ defmodule Lotta.Notification.PushNotificationRequestTest do
                  "key" => "val"
                }
              } =
-               PushNotificationRequest.new(tenant)
-               |> PushNotificationRequest.put_category("category")
-               |> PushNotificationRequest.put_data(%{"key" => "val"})
-               |> PushNotificationRequest.create_fcm_notification({:token, "token"})
+               Request.new(tenant)
+               |> Request.put_category("category")
+               |> Request.put_data(%{"key" => "val"})
+               |> Request.create_fcm_notification({:token, "token"})
 
       assert %Pigeon.FCM.Notification{
                target: {:token, "token"},
@@ -105,14 +105,14 @@ defmodule Lotta.Notification.PushNotificationRequestTest do
                  "key" => "val"
                }
              } =
-               PushNotificationRequest.new(tenant)
-               |> PushNotificationRequest.put_title("title")
-               |> PushNotificationRequest.put_subtitle("subtitle")
-               |> PushNotificationRequest.put_body("body")
-               |> PushNotificationRequest.put_category("category")
-               |> PushNotificationRequest.put_thread_id("thread_id")
-               |> PushNotificationRequest.put_data(%{"key" => "val"})
-               |> PushNotificationRequest.create_fcm_notification({:token, "token"})
+               Request.new(tenant)
+               |> Request.put_title("title")
+               |> Request.put_subtitle("subtitle")
+               |> Request.put_body("body")
+               |> Request.put_category("category")
+               |> Request.put_thread_id("thread_id")
+               |> Request.put_data(%{"key" => "val"})
+               |> Request.create_fcm_notification({:token, "token"})
     end
   end
 end

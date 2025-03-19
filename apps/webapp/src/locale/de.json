@@ -102,6 +102,7 @@
   "select files_many": "{{count}} Dateien auswählen",
   "select files_other": "{{count}} Dateien auswählen",
   "Select metric": "Metrik wählen",
+  "Select period": "Zeitraum wählen",
   "source of visit": "Besucherherkunft",
   "start time": "Startzeit",
   "This action cannot be undone.": "Diese Aktion kann nicht rückgängig gemacht werden.",

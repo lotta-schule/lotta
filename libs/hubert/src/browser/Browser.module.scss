@@ -1,4 +1,4 @@
-@import "../theme/breakpoints";
+@use "../theme/breakpoints" as *;
 
 .root {
   border-radius: var(--lotta-border-radius);
@@ -8,14 +8,14 @@
   height: 600px;
   max-height: 100%;
 
+  display: flex;
+  flex-direction: column;
+
   @media screen and (max-width: $max-xs) {
     &:is(:global(.HubertDialogContent) > .root) {
       height: stretch;
     }
   }
-
-  display: flex;
-  flex-direction: column;
 
   .mainView {
     flex: 1 1 auto;

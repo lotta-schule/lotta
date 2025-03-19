@@ -3,8 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Button, Close } from '@lotta-schule/hubert';
-import { File } from 'util/model';
-import { getBaseUrl } from 'helper';
 import { loadTenant } from 'loader';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import Link from 'next/link';
@@ -29,7 +27,6 @@ export const AdminPage = async ({
   children,
 }: AdminPageProps) => {
   const tenant = await loadTenant();
-  const baseUrl = await getBaseUrl();
 
   return (
     <div
@@ -53,9 +50,9 @@ export const AdminPage = async ({
         {tenant.logoImageFile && (
           <Link href={'/'} title={'Startseite'} className={styles.logoLink}>
             <ResponsiveImage
-              resize={'inside'}
+              format={'logo'}
               height={30}
-              src={File.getFileRemoteLocation(baseUrl, tenant.logoImageFile)}
+              file={tenant.logoImageFile}
               alt={`Logo ${tenant.title}`}
             />
           </Link>

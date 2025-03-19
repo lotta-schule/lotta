@@ -5,7 +5,7 @@ defmodule Lotta.RemoteStorageTest do
 
   import Mock
 
-  alias Lotta.Storage.{RemoteStorage, RemoteStorageEntity}
+  alias Lotta.Storage.{FileData, RemoteStorage, RemoteStorageEntity}
 
   describe "RemoteStorage" do
     test "config_for_store/1 should return the config for the given store" do
@@ -48,7 +48,7 @@ defmodule Lotta.RemoteStorageTest do
              store_name: config[:name]
            }}
         end do
-        RemoteStorage.create(%Plug.Upload{}, "/")
+        RemoteStorage.create(%FileData{}, "/")
 
         assert called(
                  RemoteStorage.Strategy.S3.create(:_, :_, %{

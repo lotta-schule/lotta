@@ -31,14 +31,14 @@ defmodule LottaWeb.TenantController do
           })
         )
 
-      {:error, _phase, %Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         send_resp(
           conn,
           :bad_request,
           Jason.encode!(%{error: LottaWeb.ErrorHelpers.extract_error_details(changeset)})
         )
 
-      {:error, _phase, reason} ->
+      {:error, reason} ->
         send_resp(conn, :internal_server_error, Jason.encode!(inspect(reason)))
     end
   end

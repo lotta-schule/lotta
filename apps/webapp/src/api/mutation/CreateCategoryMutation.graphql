@@ -10,6 +10,12 @@ mutation CreateCategory($category: CreateCategoryInput!) {
     layoutName
     bannerImageFile {
       id
+      formats {
+        name
+        status
+        url
+        type
+      }
     }
     groups {
       id

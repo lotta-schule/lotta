@@ -1,4 +1,4 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   flex-grow: 0;
@@ -15,8 +15,10 @@
     /* text input wrapper */
     flex-grow: 1;
   }
+
   .textField {
     resize: none;
+
     @media screen and (max-width: $max-xs) {
       margin-left: var(--lotta-spacing);
       margin-right: var(--lotta-spacing);

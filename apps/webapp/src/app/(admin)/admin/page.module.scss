@@ -1,4 +1,4 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   padding: var(--lotta-spacing);
@@ -23,6 +23,7 @@
     &:not(:last-child) {
       border-bottom: 1px solid rgba(var(--lotta-divider-color), 1);
     }
+
     &:last-child {
       display: flex;
       padding-top: var(--lotta-spacing);
@@ -41,19 +42,24 @@
     align-items: center;
     width: 14em;
     text-align: center;
+
     @media screen and (max-width: $max-xs) {
       font-size: 0.65rem;
     }
+
     span:first-child {
       margin: calc(2 * var(--lotta-spacing));
     }
+
     svg {
       font-size: 50px;
       transition: transform ease-out 0.2s;
+
       @media screen and (max-width: $max-xs) {
         font-size: 35px;
       }
     }
+
     &:hover svg {
       transform: scale(1.21) translateY(-0.05em);
     }

@@ -99,14 +99,18 @@ export const useMoveNode = () => {
         await moveFile({
           variables: { id: node.id, parentDirectoryId: newParent?.id ?? null },
           update: (client, { data }) => {
-            data && updateCache(client, node.meta, data);
+            if (data) {
+              updateCache(client, node.meta, data);
+            }
           },
         });
       } else {
         await moveDirectory({
           variables: { id: node.id, parentDirectoryId: newParent?.id ?? null },
           update: (client, { data }) => {
-            data && updateCache(client, node.meta, data);
+            if (data) {
+              updateCache(client, node.meta, data);
+            }
           },
         });
       }

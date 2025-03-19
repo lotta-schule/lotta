@@ -8,9 +8,10 @@ export const getBaseUrlString = cache(async () => {
   if (forcedBaseUrl) {
     return forcedBaseUrl;
   }
+  const headerValues = await headers();
   const tenant = await loadTenant();
-  const host = headers().get('host') || tenant.host;
-  const protocol = headers().get('x-forwarded-proto') || 'https';
+  const host = headerValues.get('host') || tenant.host;
+  const protocol = headerValues.get('x-forwarded-proto') || 'https';
 
   return [protocol, '://', host].join('');
 });

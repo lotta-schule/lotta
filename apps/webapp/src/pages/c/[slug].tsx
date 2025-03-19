@@ -14,6 +14,7 @@ const CategoryRoute = ({
   categoryId,
 }: Required<InferGetServerSidePropsType<typeof getServerSideProps>>) => {
   const didReadFromSSRCache = React.useRef(false);
+  // eslint-disable-next-line react-compiler/react-compiler
   if (typeof window !== 'undefined' && didReadFromSSRCache.current === false) {
     getApolloClient().writeQuery({
       query: GetArticlesQuery,
@@ -23,6 +24,7 @@ const CategoryRoute = ({
       },
       data: { articles },
     });
+    // eslint-disable-next-line react-compiler/react-compiler
     didReadFromSSRCache.current = true;
   }
   return <CategoryPage categoryId={categoryId} />;

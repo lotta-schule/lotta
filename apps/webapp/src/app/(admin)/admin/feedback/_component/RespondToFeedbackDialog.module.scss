@@ -1,10 +1,11 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   @media screen and (min-width: $max-xs) {
     .userInformation {
       display: inline-flex;
     }
+
     .userMail {
       min-width: 300px;
     }

@@ -14,6 +14,12 @@ query GetFeedbackQuery {
       email
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
     insertedAt

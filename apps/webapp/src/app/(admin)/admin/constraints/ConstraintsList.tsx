@@ -34,6 +34,9 @@ export const ConstraintList = ({ tenant }: ConstraintListProps) => {
 
   const isLimitSet = value >= 0;
 
+  // eslint-disable-next-line react-compiler/react-compiler
+  const valueOrDefault = isLimitSet ? value : lastSetLimitRef.current;
+
   React.useEffect(() => {
     if (isLimitSet) {
       lastSetLimitRef.current = value;
@@ -116,7 +119,7 @@ export const ConstraintList = ({ tenant }: ConstraintListProps) => {
             <div>
               <Label label={'Begrenzung in MB'}>
                 <Input
-                  value={isLimitSet ? value : lastSetLimitRef.current}
+                  value={valueOrDefault}
                   onChange={({ currentTarget }) => {
                     if (currentTarget.value) {
                       setValue(parseInt(currentTarget.value));

@@ -953,7 +953,7 @@ defmodule LottaWeb.FileResolverTest do
       assert res["errors"] == [
                %{
                  "locations" => [%{"column" => 3, "line" => 2}],
-                 "message" => "Kein freier Speicher mehr.",
+                 "message" => "not_enough_space",
                  "path" => ["uploadFile"]
                }
              ]
@@ -1007,7 +1007,7 @@ defmodule LottaWeb.FileResolverTest do
       assert res["errors"] == [
                %{
                  "locations" => [%{"column" => 3, "line" => 2}],
-                 "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                 "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                  "path" => ["uploadFile"]
                }
              ]
@@ -1059,7 +1059,7 @@ defmodule LottaWeb.FileResolverTest do
       assert res["errors"] == [
                %{
                  "locations" => [%{"column" => 3, "line" => 2}],
-                 "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                 "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                  "path" => ["uploadFile"]
                }
              ]
@@ -1086,7 +1086,7 @@ defmodule LottaWeb.FileResolverTest do
       assert res["errors"] == [
                %{
                  "locations" => [%{"column" => 3, "line" => 2}],
-                 "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                 "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                  "path" => ["uploadFile"]
                }
              ]

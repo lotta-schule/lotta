@@ -62,6 +62,7 @@ describe('ArticleReactions Component', () => {
         currentUser: SomeUser,
       }
     );
+    screen.rerender(<ArticleReactions article={Weihnachtsmarkt} />);
 
     // Verify the component renders with initial data
     await waitFor(() => {
@@ -77,6 +78,7 @@ describe('ArticleReactions Component', () => {
         {},
         { additionalMocks, currentUser: SomeUser }
       );
+      screen.rerender(<ArticleReactions article={Weihnachtsmarkt} />);
 
       const reactionButton = await screen.findByTitle(
         `Auf "${Weihnachtsmarkt.title}" reagieren`
@@ -96,6 +98,7 @@ describe('ArticleReactions Component', () => {
         {},
         { additionalMocks, currentUser: SomeUser }
       );
+      screen.rerender(<ArticleReactions article={Weihnachtsmarkt} />);
 
       const reactionButton = await screen.findByTitle(
         `Auf "${Weihnachtsmarkt.title}" reagieren`
@@ -116,6 +119,7 @@ describe('ArticleReactions Component', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(<ArticleReactions article={Weihnachtsmarkt} />);
 
       await screen.findByTestId('ArticleReactions');
 
@@ -133,6 +137,7 @@ describe('ArticleReactions Component', () => {
         {},
         { additionalMocks, currentUser: SomeUser }
       );
+      screen.rerender(<ArticleReactions article={Weihnachtsmarkt} />);
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: /5/ })).toBeInTheDocument();
@@ -142,7 +147,11 @@ describe('ArticleReactions Component', () => {
       const reactionButton = screen.getByRole('button', { name: /5/ });
       await user.click(reactionButton);
 
-      expect(await screen.findByTestId('ReactionUserList')).toBeVisible();
+      screen.rerender(<ArticleReactions article={Weihnachtsmarkt} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('ReactionUserList')).toBeVisible();
+      });
     });
 
     it('should disable the reaction button when the user is not logged in', async () => {
@@ -151,6 +160,7 @@ describe('ArticleReactions Component', () => {
         {},
         { additionalMocks }
       );
+      screen.rerender(<ArticleReactions article={Weihnachtsmarkt} />);
 
       await screen.findByTestId('ArticleReactions');
 

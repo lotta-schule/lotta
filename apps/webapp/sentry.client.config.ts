@@ -6,7 +6,6 @@ Sentry.init({
   // Replay may only be enabled for the client-side
   integrations: [
     Sentry.extraErrorDataIntegration(),
-    Sentry.sessionTimingIntegration(),
     Sentry.replayIntegration(),
   ],
 

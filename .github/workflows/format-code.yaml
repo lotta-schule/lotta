@@ -4,6 +4,9 @@ on:
     branches-ignore:
       - main
 
+env:
+  HUSKY: 0
+
 concurrency:
   group: ${{ github.sha }}-${{ github.workflow }}
   cancel-in-progress: true

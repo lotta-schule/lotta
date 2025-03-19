@@ -104,7 +104,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           additionalMocks: [
             allWidgetsMock,
             getCategoryWidgetsMock(StartseiteCategory.id),
-            getArticlesMock(FaecherCategory.id),
+            getArticlesMock(StartseiteCategory.id),
           ],
         }
       );
@@ -144,6 +144,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
           additionalMocks: [
             allWidgetsMock,
             getCategoryWidgetsMock(StartseiteCategory.id),
+            getArticlesMock(StartseiteCategory.id),
           ],
         }
       );

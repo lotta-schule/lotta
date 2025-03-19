@@ -1,4 +1,5 @@
 import { render } from 'test/util';
+import { createFormats } from 'test/fixtures';
 import { Image } from './Image';
 
 describe('Image ContentModule', () => {
@@ -20,6 +21,7 @@ describe('Image ContentModule', () => {
               {
                 id: '1',
                 mimeType: 'image/jpeg',
+                formats: createFormats('1', 'image'),
               } as any,
             ],
           } as any

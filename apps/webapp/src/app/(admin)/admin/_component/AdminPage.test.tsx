@@ -1,9 +1,7 @@
-import { render, screen, within } from 'test/util';
+import { render, within } from 'test/util';
 import { AdminPage } from './AdminPage';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import { loadTenant } from 'loader';
-import { getBaseUrl } from 'helper';
-import { File } from 'util/model';
 import { MockedFunction } from 'vitest';
 
 vi.mock('loader', async () => ({
@@ -28,9 +26,6 @@ vi.mock('next/link', () => ({
 }));
 
 const loadTenantMock = loadTenant as MockedFunction<typeof loadTenant>;
-const getBaseUrlMock = getBaseUrl as MockedFunction<typeof getBaseUrl>;
-
-const FileGetFileRemoteLocationMock = vi.spyOn(File, 'getFileRemoteLocation');
 
 describe('AdminPage', () => {
   beforeEach(() => {
@@ -39,12 +34,15 @@ describe('AdminPage', () => {
       logoImageFile: 'logo.png',
       title: 'Tenant Title',
     } as any);
-    getBaseUrlMock.mockResolvedValue('http://localhost');
-    FileGetFileRemoteLocationMock.mockReturnValue('http://localhost/logo.png');
   });
 
   it('renders title with icon', async () => {
-    render(
+    const screen = render(
+      <AdminPage title="Test Title" icon={faHome}>
+        <div>Child content</div>
+      </AdminPage>
+    );
+    screen.rerender(
       <AdminPage title="Test Title" icon={faHome}>
         <div>Child content</div>
       </AdminPage>
@@ -58,7 +56,12 @@ describe('AdminPage', () => {
   });
 
   it('renders home link when hasHomeLink is true', async () => {
-    render(
+    const screen = render(
+      <AdminPage title="Test Title" hasHomeLink>
+        <div>Child content</div>
+      </AdminPage>
+    );
+    screen.rerender(
       <AdminPage title="Test Title" hasHomeLink>
         <div>Child content</div>
       </AdminPage>
@@ -69,7 +72,12 @@ describe('AdminPage', () => {
   });
 
   it('renders logo link if logoImageFile is present', async () => {
-    render(
+    const screen = render(
+      <AdminPage title="Test Title">
+        <div>Child content</div>
+      </AdminPage>
+    );
+    screen.rerender(
       <AdminPage title="Test Title">
         <div>Child content</div>
       </AdminPage>
@@ -78,7 +86,12 @@ describe('AdminPage', () => {
   });
 
   it('renders children content', async () => {
-    render(
+    const screen = render(
+      <AdminPage title="Test Title">
+        <div>Child content</div>
+      </AdminPage>
+    );
+    screen.rerender(
       <AdminPage title="Test Title">
         <div>Child content</div>
       </AdminPage>
@@ -87,7 +100,12 @@ describe('AdminPage', () => {
   });
 
   it('renders Close button link', async () => {
-    render(
+    const screen = render(
+      <AdminPage title="Test Title">
+        <div>Child content</div>
+      </AdminPage>
+    );
+    screen.rerender(
       <AdminPage title="Test Title">
         <div>Child content</div>
       </AdminPage>

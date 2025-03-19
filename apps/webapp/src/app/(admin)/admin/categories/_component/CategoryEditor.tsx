@@ -24,9 +24,8 @@ import { useCategories } from 'util/categories/useCategories';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { useServerData } from 'shared/ServerDataContext';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
-import { Category, File, RedirectType } from 'util/model';
+import { Category, RedirectType } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
 import { AdminPageSection } from '../../_component/AdminPageSection';
@@ -42,7 +41,6 @@ export interface CategoryEditorProps {
 export const CategoryEditor = React.memo(
   ({ category }: CategoryEditorProps) => {
     const router = useRouter();
-    const { baseUrl } = useServerData();
 
     const [categories] = useCategories();
 
@@ -150,13 +148,8 @@ export const CategoryEditor = React.memo(
                 <ResponsiveImage
                   style={{ width: '100%' }}
                   alt={`Banner für ${categoryOptions.title}`}
-                  width={900}
-                  aspectRatio={'6:1'}
-                  sizes={'80vw'}
-                  src={File.getFileRemoteLocation(
-                    baseUrl,
-                    categoryOptions.bannerImageFile
-                  )}
+                  format="banner"
+                  file={categoryOptions.bannerImageFile}
                 />
               ) : (
                 <PlaceholderImage width={'100%'} height={75} />

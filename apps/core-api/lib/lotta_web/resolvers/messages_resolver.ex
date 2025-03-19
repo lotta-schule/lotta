@@ -4,9 +4,8 @@ defmodule LottaWeb.MessagesResolver do
   import LottaWeb.ErrorHelpers
   import Lotta.Accounts.Permissions
 
-  alias Lotta.{Accounts, Messages}
+  alias Lotta.{Accounts, Messages, PushNotification}
   alias Lotta.Messages.Conversation
-  alias Lotta.Notification.PushNotification
 
   def resolve_conversation_unread_messages(_args, %{
         context: %{current_user: user},

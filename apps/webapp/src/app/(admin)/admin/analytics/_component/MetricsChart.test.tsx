@@ -36,10 +36,12 @@ const monthPeriod: Period = {
 
 describe('MetricsChart', () => {
   it('renders chart when data is fetched', async () => {
-    const screen = render(
-      <MetricsChart period={monthPeriod} metric="visits" />,
-      {},
-      { additionalMocks: mocks }
+    const screen = await React.act(() =>
+      render(
+        <MetricsChart period={monthPeriod} metric="visits" />,
+        {},
+        { additionalMocks: mocks }
+      )
     );
 
     // Wait for loading state to disappear

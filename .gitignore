@@ -6,6 +6,7 @@ npm-debug.log*
 
 # testing
 coverage/
+.auth/
 
 # caches
 .eslintcache
@@ -15,6 +16,7 @@ coverage/
 # build artifacts
 /build
 dist/
+storybook-static
 
 # OS
 .DS_Store
@@ -25,8 +27,6 @@ dist/
 .env.development.local
 .env.test.local
 .env.production.local
-.nx
-nx-cloud.env
 
 #cache
 .eslintcache
@@ -42,10 +42,13 @@ test-report.html
 # Sentry
 .sentryclirc
 
+# lsp
+next-ls.log
 
+# nx
 .nx/cache
-
-storybook-static
+.nx
+nx-cloud.env
 
 # Next.js
 .next

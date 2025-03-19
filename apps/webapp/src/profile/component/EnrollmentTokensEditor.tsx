@@ -13,7 +13,7 @@ export interface EnrollmentTokensEditorProps {
   setTokens(tokens: string[]): void;
 }
 
-const AnimatedTag = motion(Tag);
+const AnimatedTag = motion.create(Tag);
 
 export const EnrollmentTokensEditor = React.memo<EnrollmentTokensEditorProps>(
   ({ disabled, tokens, setTokens }) => {

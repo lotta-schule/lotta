@@ -1,17 +1,12 @@
 defmodule Lotta.TenantsTest do
   @moduledoc false
 
-  use Lotta.DataCase, async: true
-  alias Lotta.Tenants
+  use Lotta.WorkerCase, async: false
+
+  alias Lotta.{Tenants, Repo}
   alias Lotta.Tenants.{CustomDomain, Tenant}
 
   @prefix "tenant_test"
-
-  setup do
-    Code.put_compiler_option(:ignore_module_conflict, true)
-
-    :ok
-  end
 
   describe "Tenants" do
     test "should get tenant by prefix" do
@@ -37,8 +32,6 @@ defmodule Lotta.TenantsTest do
 
     @tag creates_tenant: true
     test "should create a new tenant" do
-      Code.purge_compiler_modules()
-
       assert {:ok, tenant} =
                Tenants.create_tenant(
                  user_params: %{name: "Salvador Allende", email: "salvador.allende@einsa.net"},
@@ -49,13 +42,11 @@ defmodule Lotta.TenantsTest do
       assert prefix == "tenant_#{tenant.id}"
 
       assert [%{name: "Salvador Allende", email: "salvador.allende@einsa.net"}] =
-               Lotta.Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
+               Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
     end
 
     @tag creates_tenant: true
     test "should delete a given tenant" do
-      Code.purge_compiler_modules()
-
       assert {:ok, tenant} =
                Tenants.create_tenant(
                  user_params: %{name: "Salvador Allende", email: "salvador.allende@einsa.net"},
@@ -65,7 +56,7 @@ defmodule Lotta.TenantsTest do
       assert {:ok, _tenant} = Tenants.delete_tenant(tenant)
 
       assert_raise Postgrex.Error, fn ->
-        Lotta.Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
+        Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
       end
 
       assert is_nil(Tenants.get_tenant(tenant.id))

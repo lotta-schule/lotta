@@ -20,12 +20,11 @@ query GetDirectoriesAndFiles($parentDirectoryId: ID) {
     mimeType
     fileType
     userId
-    fileConversions {
-      id
-      insertedAt
-      updatedAt
-      format
-      mimeType
+    formats {
+      name
+      url
+      type
+      status
     }
     parentDirectory {
       id

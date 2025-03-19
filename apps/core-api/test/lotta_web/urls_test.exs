@@ -1,7 +1,7 @@
 defmodule LottaWeb.UrlsTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   import Ecto.Query
 

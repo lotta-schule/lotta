@@ -48,6 +48,14 @@ export default defineConfig({
     },
   },
 
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+      },
+    },
+  },
+
   test: {
     globals: true,
     environment: 'jsdom',
@@ -57,6 +65,7 @@ export default defineConfig({
       : ['default'],
     setupFiles: ['./test.setup.ts'],
     coverage: {
+      enabled: !!process.env.CI,
       clean: true,
       reportsDirectory: 'coverage',
       provider: 'istanbul',

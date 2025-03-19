@@ -5,6 +5,7 @@ defmodule LottaWeb.Router do
   use LottaWeb, :router
 
   import Phoenix.LiveDashboard.Router
+  import Oban.Web.Router
 
   pipeline :tenant do
     plug(LottaWeb.TenantPlug)
@@ -48,6 +49,10 @@ defmodule LottaWeb.Router do
   scope "/data" do
     pipe_through([:tenant, :auth])
 
+    scope "/storage" do
+      get("/f/:id/:format", LottaWeb.StorageController, :get_file_format)
+    end
+
     scope "/calendar" do
       pipe_through([:ics])
       get("/:id/ics", LottaWeb.CalendarController, :get, as: :calendar_ics)
@@ -82,6 +87,7 @@ defmodule LottaWeb.Router do
     pipe_through([:admin_auth])
 
     live_dashboard("/live", metrics: LottaWeb.Telemetry)
+    oban_dashboard("/oban")
 
     scope "/api" do
       pipe_through(:json_api)

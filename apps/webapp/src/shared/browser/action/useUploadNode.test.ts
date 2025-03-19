@@ -3,10 +3,9 @@ import { currentApolloCache, renderHook, waitFor } from 'test/util';
 import { SomeUser, logosDirectory } from 'test/fixtures';
 import { DirectoryModel, FileModel } from 'model';
 import { BrowserNode, Upload } from '@lotta-schule/hubert';
-import { useUploadNode } from './useUploadNode';
+import { useUploadNode, UPLOAD_FILE_MUTATION } from './useUploadNode';
 
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import UploadFileMutation from 'api/mutation/UploadFileMutation.graphql';
 
 const parentDirectoryNode = {
   id: logosDirectory.id,
@@ -19,7 +18,7 @@ const parentDirectoryNode = {
 export const additionalMocks: MockedResponse[] = [
   {
     request: {
-      query: UploadFileMutation,
+      query: UPLOAD_FILE_MUTATION,
     },
     variableMatcher: (variables: any) =>
       variables.file instanceof File &&
@@ -36,7 +35,7 @@ export const additionalMocks: MockedResponse[] = [
           fileType: 'MISC',
           userId: SomeUser.id,
           parentDirectory: logosDirectory,
-          fileConversions: [],
+          formats: [],
         },
       },
     }),

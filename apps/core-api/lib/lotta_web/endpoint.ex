@@ -57,7 +57,7 @@ defmodule LottaWeb.Endpoint do
 
   plug Corsica,
     max_age: 7200,
-    origins: {LottaWeb.Cors, :allow_origin},
+    origins: "*",
     allow_headers: [
       "Authorization",
       "Content-Type",
@@ -70,7 +70,8 @@ defmodule LottaWeb.Endpoint do
       "Keep-Alive",
       "X-Requested-With",
       "If-Modified-Since",
-      "X-CSRF-Token"
+      "X-CSRF-Token",
+      "tenant"
     ],
     allow_credentials: true
 

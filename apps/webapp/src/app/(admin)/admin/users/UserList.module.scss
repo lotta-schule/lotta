@@ -1,7 +1,8 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   flex: 1;
+
   .toolbar {
     display: flex;
     flex-direction: row;

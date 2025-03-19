@@ -1,14 +1,16 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   padding: 1em;
   margin: var(--lotta-spacing) 0 0 0;
   background-color: rgba(var(--lotta-box-background-color), 1);
+
   .buttonList {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+
     button {
       margin: var(--lotta-spacing);
       width: 8em;

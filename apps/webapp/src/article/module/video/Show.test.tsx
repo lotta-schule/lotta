@@ -1,6 +1,7 @@
 import { render } from 'test/util';
 import { Show as ShowVideo } from './Show';
-import { ContentModuleType, FileModelType } from 'model';
+import { ContentModuleType } from 'model';
+import { movieFile } from 'test/fixtures';
 
 describe('Video ContentModule (non-editable)', () => {
   it('should render a video with caption when a file is set', () => {
@@ -18,20 +19,7 @@ describe('Video ContentModule (non-editable)', () => {
           configuration: {
             isUsingFullHeight: true,
           },
-          files: [
-            {
-              id: '1',
-              mimeType: 'video/mp4',
-              fileConversions: [
-                {
-                  id: '1001',
-                  mimeType: 'video/mp4',
-                  format: 'video/mp4',
-                  fileType: FileModelType.Video,
-                } as any,
-              ],
-            },
-          ] as any,
+          files: [movieFile],
         }}
       />
     );

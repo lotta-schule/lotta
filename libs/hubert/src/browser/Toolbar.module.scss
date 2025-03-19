@@ -1,4 +1,4 @@
-@import "../theme/breakpoints";
+@use "../theme/breakpoints" as *;
 
 .root {
   display: flex;
@@ -24,9 +24,11 @@
       flex-shrink 0.5s ease-in,
       max-width 0.5s ease-in,
       flex-basis 0.5s ease-in;
+
     &:has(~ .searchField:focus-within) {
       flex: 1 0 0%;
-      & ~ .rightContainer {
+
+      &~.rightContainer {
         flex: 1 0 0%;
       }
     }
@@ -37,19 +39,21 @@
       transition:
         max-width 0.3s ease-in,
         opacity 0.3s ease-in;
-      & ~ span {
+
+      &~span {
         transition:
           max-width 0.3s ease-in,
           opacity 0.3s ease-in;
         opacity: 1;
       }
     }
+
     @media screen and (max-width: $max-sm) {
       .mobileSearchBackButton {
         max-width: 30px;
         opacity: 1;
 
-        & ~ span {
+        &~span {
           opacity: 0;
         }
       }
@@ -67,7 +71,7 @@
       flex-shrink 0.5s ease-in,
       flex-basis 0.5s ease-in;
 
-    & > *:not(:last-child) {
+    &>*:not(:last-child) {
       margin-right: var(--lotta-spacing);
     }
   }
@@ -75,10 +79,12 @@
   &.isShowingSearchResults {
     .leftContainer {
       flex: 1 0 0%;
+
       @media screen and (max-width: $max-sm) {
         flex: 1 0 calc(24px + calc(0.5 * var(--lotta-spacing)));
       }
     }
+
     .rightContainer {
       flex: 1 0 0%;
     }
@@ -86,6 +92,7 @@
 
   .uploadButton {
     position: relative;
+
     input[type="file"] {
       display: none;
     }

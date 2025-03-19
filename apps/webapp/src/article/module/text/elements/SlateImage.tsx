@@ -10,10 +10,11 @@ import { Icon } from 'shared/Icon';
 import { faAlignLeft, faAlignRight } from '@fortawesome/free-solid-svg-icons';
 import { Element, Transforms } from 'slate';
 import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
-import { useImageUrl } from 'util/image/useImageUrl';
 import { Image } from '../SlateCustomTypes';
 import { File } from 'util/model';
-import { useServerData } from 'shared/ServerDataContext';
+import { graphql } from 'api/graphql';
+import { useQuery } from '@apollo/client';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import clsx from 'clsx';
 
 import styles from './SlateImage.module.scss';
@@ -22,18 +23,40 @@ export type SlateImageProps = Omit<RenderElementProps, 'children'> & {
   children: any;
 };
 
+export const GET_FILE_FORMATS = graphql(`
+  query GET_FILE($id: ID!) {
+    file(id: $id) {
+      id
+      formats {
+        name
+        type
+        url
+        status
+      }
+    }
+  }
+`);
+
 export const SlateImage = React.memo(
   ({ element, attributes, children }: SlateImageProps) => {
     const imageElement = element as Image;
     const isEditing = !useReadOnly();
     const editor = useSlateStatic();
     const isSelected = useSelected();
-    const { baseUrl } = useServerData();
     const [showOverlay, setShowOverlay] = React.useState(false);
+
+    const { data } = useQuery(GET_FILE_FORMATS, {
+      variables: {
+        id: imageElement.fileId as string,
+      },
+      fetchPolicy: 'cache-first',
+      nextFetchPolicy: 'cache-only',
+      skip: !imageElement.fileId,
+    });
 
     const src =
       imageElement.src ??
-      File.getFileRemoteLocation(baseUrl, {
+      File.getFileRemoteLocation('', {
         id: imageElement.fileId,
       } as any);
 
@@ -48,11 +71,6 @@ export const SlateImage = React.memo(
           return 300;
       }
     }, [imageElement.size]);
-
-    const { url: imageUrl } = useImageUrl(src, {
-      width: 400,
-      resize: 'inside',
-    });
 
     const setElementOptions = React.useCallback(
       (options: Partial<Image>) => {
@@ -81,9 +99,11 @@ export const SlateImage = React.memo(
         {...attributes}
       >
         <span contentEditable={false}>
-          <img
-            src={imageUrl ?? ''}
+          <ResponsiveImage
+            src={imageElement.fileId ? undefined : imageElement.src}
+            file={data?.file}
             alt={src}
+            format="preview"
             onClick={isEditing ? undefined : () => setShowOverlay(true)}
           />
           {showOverlay && (
@@ -97,13 +117,13 @@ export const SlateImage = React.memo(
           <div
             style={{
               position: 'absolute',
-              right: 0,
-              top: 0,
+              right: '.15em',
+              top: '.15em',
               display: 'flex',
               flexDirection: 'column',
             }}
           >
-            <ButtonGroup>
+            <ButtonGroup className={styles.buttonGroup}>
               <Button
                 small
                 selected={imageElement.alignment === 'left'}

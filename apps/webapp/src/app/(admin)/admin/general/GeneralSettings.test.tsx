@@ -42,7 +42,7 @@ describe('GeneralSettings', () => {
     {
       request: { query: UpdateTenantMutation },
       variableMatcher: (_var) => true,
-      result: { data: { updateTenant: { ...tenant, name: 'A new Name' } } },
+      result: { data: { tenant: { ...tenant, title: 'A new Name' } } },
     },
   ];
 
@@ -58,11 +58,9 @@ describe('GeneralSettings', () => {
     vi.clearAllMocks();
   });
 
-  const baseUrl = 'https://example.com';
-
   it('renders tenant details correctly', () => {
     const screen = render(
-      <GeneralSettings tenant={tenant} baseUrl={baseUrl} />,
+      <GeneralSettings tenant={tenant} />,
       {},
       { additionalMocks }
     );
@@ -76,7 +74,7 @@ describe('GeneralSettings', () => {
   it('calls updateTenant mutation and refreshes the page on save', async () => {
     const user = userEvent.setup();
     const screen = render(
-      <GeneralSettings tenant={tenant} baseUrl={baseUrl} />,
+      <GeneralSettings tenant={tenant} />,
       {},
       { additionalMocks, tenant }
     );

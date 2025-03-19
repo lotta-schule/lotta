@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: lotta
       POSTGRES_DB: lotta
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U user']
+      test: ['CMD-SHELL', 'pg_isready -U lotta']
       interval: 20s
       timeout: 10s
       retries: 7
@@ -22,24 +22,12 @@ services:
       timeout: 10s
       retries: 7
 
-  rabbitmq:
-    image: rabbitmq:3.12-management
-    hostname: rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    healthcheck:
-      test: ['CMD-SHELL', 'rabbitmqctl status']
-      interval: 20s
-      timeout: 10s
-      retries: 7
-
   minio:
     image: bitnami/minio:2024
     ports:
       - 9000:9000
     environment:
-      MINIO_SERVER_URL: http://localhost:9000
+      MINIO_SERVER_URL: http://127.0.0.1:9000
       MINIO_ROOT_USER: AKIAIOSFODNN7EXAMPLE
       MINIO_ROOT_PASSWORD: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
       MINIO_DEFAULT_BUCKETS: 'lotta-dev-ugc:s3:*'
@@ -47,8 +35,8 @@ services:
       test:
         [
           'CMD-SHELL',
-          'curl -sSf http://127.0.0.1:9000/minio/health/live > /dev/null',
+          'curl -sf http://127.0.0.1:9000/minio/health/live || exit 1',
         ]
       interval: 20s
-      timeout: 10s
+      timeout: 5s
       retries: 7

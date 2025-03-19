@@ -31,7 +31,7 @@ export const Checkbox = React.forwardRef<HTMLLabelElement, CheckboxProps>(
         '--control-indicator-color': featureColor.join(', '),
       } as React.CSSProperties);
 
-    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
     const state = useToggleState(props);
     const { inputProps } = useCheckbox(props, state, inputRef);
     const { isFocusVisible, focusProps } = useFocusRing();

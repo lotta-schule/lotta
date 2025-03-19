@@ -66,7 +66,7 @@ For monorepo managing, we use [nx](https://nx.dev/).
   Take care to have the same version of [OTP](https://en.wikipedia.org/wiki/Open_Telecom_Platform) installed as well.
 - This is a monorepo taking advantage of [pnpm workspaces](https://pnpm.io/workspaces).
   You will have to have [pnpm installed](https://pnpm.io/installation) on your machine.
-- Either have a local postgres database, redis cache, and a RabbitMQ broker running,
+- Either have a local postgres database and redis cache running,
   or just have a docker daemon running.
   The services you'll need are defined in `apps/core-api/docker-compose.services.yml`.
 

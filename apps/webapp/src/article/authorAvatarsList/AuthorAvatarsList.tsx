@@ -33,14 +33,8 @@ export const AuthorAvatarsList = React.memo(
             <Tooltip label={User.getNickname(user)}>
               <UserAvatar
                 user={user}
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: '50%',
-                }}
-                title={`Profilbild von ${User.getNickname(user)}`}
                 onClick={() => onClick?.(user)}
-                size={25}
+                size={30}
               />
             </Tooltip>
           </Deletable>

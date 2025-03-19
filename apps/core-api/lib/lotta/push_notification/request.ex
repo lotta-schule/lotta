@@ -1,8 +1,9 @@
-defmodule Lotta.Notification.PushNotificationRequest do
+defmodule Lotta.PushNotification.Request do
   @moduledoc """
   Struct to hold all the information needed to create a push notification.
   It is used to create the actual notification for the different providers.
   """
+  alias Lotta.PushNotification
 
   defstruct tenant: nil,
             title: nil,
@@ -17,8 +18,8 @@ defmodule Lotta.Notification.PushNotificationRequest do
 
   ## Examples
 
-      iex> PushNotificationRequest.new(tenant)
-      %PushNotificationRequest{
+      iex> PushNotification.Request.new(tenant)
+      %Request{
         body: nil,
         category: nil,
         data: %{},
@@ -29,7 +30,7 @@ defmodule Lotta.Notification.PushNotificationRequest do
       }
   """
   @doc since: "4.1.3"
-  @spec new(Tenant.t()) :: PushNotificationRequest.t()
+  @spec new(Tenant.t()) :: Request.t()
   def new(tenant) do
     %__MODULE__{
       tenant: tenant
@@ -40,21 +41,21 @@ defmodule Lotta.Notification.PushNotificationRequest do
   Sets the title of the push notification.
   """
   @doc since: "4.1.3"
-  @spec put_title(PushNotificationRequest.t(), String.t() | nil) :: PushNotificationRequest.t()
+  @spec put_title(Request.t(), String.t() | nil) :: Request.t()
   def put_title(notification, title), do: put(notification, :title, title)
 
   @doc """
   Sets the subtitle of the push notification.
   """
   @doc since: "4.1.3"
-  @spec put_subtitle(PushNotificationRequest.t(), String.t() | nil) :: PushNotificationRequest.t()
+  @spec put_subtitle(Request.t(), String.t() | nil) :: Request.t()
   def put_subtitle(notification, subtitle), do: put(notification, :subtitle, subtitle)
 
   @doc """
   Sets the body of the push notification.
   """
   @doc since: "4.1.3"
-  @spec put_body(PushNotificationRequest.t(), String.t() | nil) :: PushNotificationRequest.t()
+  @spec put_body(Request.t(), String.t() | nil) :: Request.t()
   def put_body(notification, body), do: put(notification, :body, body)
 
   @doc """
@@ -62,7 +63,7 @@ defmodule Lotta.Notification.PushNotificationRequest do
   Only supported by the APNS provider. Other providers will add this to the data.
   """
   @doc since: "4.1.3"
-  @spec put_category(PushNotificationRequest.t(), String.t() | nil) :: PushNotificationRequest.t()
+  @spec put_category(Request.t(), String.t() | nil) :: Request.t()
   def put_category(notification, category), do: put(notification, :category, category)
 
   @doc """
@@ -70,22 +71,22 @@ defmodule Lotta.Notification.PushNotificationRequest do
   Only supported by the APNS provider. Other providers will add this to the data.
   """
   @doc since: "4.1.3"
-  @spec put_thread_id(PushNotificationRequest.t(), String.t() | nil) ::
-          PushNotificationRequest.t()
+  @spec put_thread_id(Request.t(), String.t() | nil) ::
+          Request.t()
   def put_thread_id(notification, thread_id), do: put(notification, :thread_id, thread_id)
 
   @doc """
   Sets arbitrary data of the push notification.
   """
   @doc since: "4.1.3"
-  @spec put_data(PushNotificationRequest.t(), map() | nil) :: PushNotificationRequest.t()
+  @spec put_data(Request.t(), map() | nil) :: Request.t()
   def put_data(notification, nil), do: notification
 
   def put_data(notification, data),
     do: Map.put(notification, :data, Map.merge(notification.data, data))
 
   @doc """
-  Creates a `Pigeon.APNS.Notification` from a given `Lotta.Notification.PushNotificationRequest`,
+  Creates a `Pigeon.APNS.Notification` from a given `Lotta.PushNotification.Request`,
   which can be used to send the notification to the APNS provider.
   """
   @doc since: "4.1.3"
@@ -125,7 +126,7 @@ defmodule Lotta.Notification.PushNotificationRequest do
   end
 
   @doc """
-  Creates a `Pigeon.FCM.Notification` from a given `Lotta.Notification.PushNotificationRequest`,
+  Creates a `Pigeon.FCM.Notification` from a given `Lotta.PushNotification.Request`,
   which can be used to send the notification to the FCM provider.
   """
   @doc since: "4.1.3"
@@ -169,7 +170,6 @@ defmodule Lotta.Notification.PushNotificationRequest do
   end
 
   defp get_topic() do
-    Application.get_env(:lotta, Lotta.Notification.Provider.APNS)
-    |> Keyword.get(:topic, "net.einsa.lotta")
+    PushNotification.get_config(:apns)[:topic] || ""
   end
 end

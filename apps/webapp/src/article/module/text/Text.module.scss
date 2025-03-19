@@ -1,20 +1,24 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   padding: var(--lotta-spacing);
+
   @media screen and (min-width: $min-md) {
     margin-left: 16.6%;
     margin-right: 16.6%;
   }
+
   a {
     text-decoration: none;
     color: rgba(var(--lotta-primary-color), 1);
   }
+
   p,
   ul,
   ol {
     margin: var(--lotta-spacing);
   }
+
   ul,
   ol {
     font-family: inherit;

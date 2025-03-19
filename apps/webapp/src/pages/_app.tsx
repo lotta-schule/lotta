@@ -9,10 +9,10 @@ import { TenantNotFoundErrorPage } from 'layout/error/TenantNotFoundErrorPage';
 import { getApolloClient } from 'api/legacyClient';
 import { AppContextProviders } from 'layout/AppContextProviders';
 import { TranslationsProvider } from 'i18n/client';
+import { GET_TENANT_QUERY } from 'util/tenant';
+import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
-import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
-import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 faConfig.autoAddCss = false;
 
@@ -98,7 +98,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
     .getTracer('lotta-web')
     .startActiveSpan('fetchTenant', async () => {
       return await getApolloClient().query({
-        query: GetTenantQuery,
+        query: GET_TENANT_QUERY,
         context: {
           headers,
         },
@@ -121,7 +121,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
     .getTracer('lotta-web')
     .startActiveSpan('getcurrentUser', async () =>
       getApolloClient().query({
-        query: GetCurrentUserQuery,
+        query: GET_CURRENT_USER,
         context: {
           headers,
         },

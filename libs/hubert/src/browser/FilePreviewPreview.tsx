@@ -8,9 +8,9 @@ import clsx from 'clsx';
 
 import styles from './FilePreviewPreview.module.scss';
 
-const AnimatedFolder = motion(Folder);
-const AnimatedFolderOpen = motion(FolderOpen);
-const AnimatedFileIcon = motion(FileIcon);
+const AnimatedFolder = motion.create(Folder);
+const AnimatedFolderOpen = motion.create(FolderOpen);
+const AnimatedFileIcon = motion.create(FileIcon);
 
 export type FilePreviewPreviewProps = {
   className?: string;

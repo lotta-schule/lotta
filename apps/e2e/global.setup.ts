@@ -4,7 +4,7 @@ setup(
   'The first user should be able to login with his new password',
   async ({ page, isMobile, admin, baseURL }) => {
     // This is the baseURL from the fixtures. Just call it now so the fixture chain gets called once
-    await page.goto(baseURL);
+    await page.goto(baseURL!);
 
     if (isMobile) {
       page.getByRole('button', { name: /menü öffnen/i }).tap();
@@ -48,7 +48,7 @@ setup(
     // await page.keyboard.press('Enter');
 
     // await updatePasswordDialog.waitFor({ state: 'hidden' });
-    await loginDialog.waitFor({ state: 'hidden' });
+    await loginDialog.waitFor({ state: 'hidden', timeout: 15_000 });
 
     expect(page.getByRole('button', { name: /Mein Profil/i })).toBeVisible();
   }

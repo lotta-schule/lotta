@@ -1,4 +1,4 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   .toolbar {
@@ -7,7 +7,8 @@
 
     @media screen and (max-width: $max-xs) {
       flex-wrap: wrap;
-      & > div:last-child {
+
+      &>div:last-child {
         width: 100%;
       }
     }
@@ -19,6 +20,7 @@
     align-items: baseline;
     column-gap: calc(6 * var(--lotta-spacing));
     row-gap: calc(6 * var(--lotta-spacing));
+
     @media screen and (max-width: $max-md) {
       column-grap: var(--lotta-spacing);
     }

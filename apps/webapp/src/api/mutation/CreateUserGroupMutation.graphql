@@ -3,6 +3,7 @@ mutation CreateUserGroup($group: UserGroupInput!) {
     id
     name
     isAdminGroup
+    canReadFullName
     sortKey
     enrollmentTokens
   }

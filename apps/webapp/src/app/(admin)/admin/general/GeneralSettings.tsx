@@ -11,10 +11,9 @@ import {
   ListItem,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { TenantModel } from 'model';
+import { Tenant } from 'util/tenant';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { File } from 'util/model/File';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import { AdminPageSection } from '../_component/AdminPageSection';
 import { useRouter } from 'next/navigation';
@@ -25,11 +24,10 @@ import styles from './GeneralSettings.module.scss';
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 
 export type GeneralSettingsProps = {
-  tenant: TenantModel;
-  baseUrl: string;
+  tenant: Tenant;
 };
 
-export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
+export const GeneralSettings = ({ tenant }: GeneralSettingsProps) => {
   const router = useRouter();
   const [title, setTitle] = React.useState(tenant.title);
   const [logo, setLogo] = React.useState(tenant.logoImageFile);
@@ -50,21 +48,25 @@ export const GeneralSettings = ({ tenant, baseUrl }: GeneralSettingsProps) => {
 
         <Label label={'Logo der Seite'}>
           <div className={styles.gridContainer}>
-            <Box className={styles.gridItem}>
+            <Box className={styles.gridItem} style={{ flex: '1 1' }}>
               <SelectFileOverlay
                 label={'Logo ändern'}
-                onSelectFile={(logo) => setLogo(logo)}
+                onSelectFile={(logo) => {
+                  if (logo) {
+                    setLogo(logo);
+                  }
+                }}
                 allowDeletion
               >
                 {logo ? (
                   <ResponsiveImage
-                    resize={'inside'}
-                    height={80}
-                    src={File.getFileRemoteLocation(baseUrl, logo)}
+                    file={logo}
+                    width={320}
+                    format={'logo'}
                     alt={`Logo ${title}`}
                   />
                 ) : (
-                  <PlaceholderImage width={160} height={80} />
+                  <PlaceholderImage width={320} height={160} />
                 )}
               </SelectFileOverlay>
             </Box>

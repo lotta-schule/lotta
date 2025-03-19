@@ -2,26 +2,23 @@
 
 import * as React from 'react';
 import * as Sentry from '@sentry/nextjs';
-import { TenantModel } from 'model';
+import { Tenant } from 'util/tenant';
 
 const ServerDataContext = React.createContext({
-  baseUrl: null! as string,
-  tenant: null as TenantModel | null,
+  tenant: null as Tenant | null,
 });
 
 export type ServerDataContextProviderProps = React.PropsWithChildren<{
-  baseUrl: string;
-  tenant: TenantModel | null;
+  tenant: Tenant | null;
 }>;
 export const ServerDataContextProvider = ({
-  baseUrl,
   tenant,
   children,
 }: ServerDataContextProviderProps) => {
-  const value = React.useMemo(() => ({ baseUrl, tenant }), [baseUrl, tenant]);
+  const value = React.useMemo(() => ({ tenant }), [tenant]);
 
   React.useEffect(() => {
-    Sentry.setContext('tenant', tenant);
+    Sentry.setContext('tenant', tenant as any);
     Sentry.setTags({ 'tenant.slug': tenant?.slug, 'tenant.id': tenant?.id });
   }, [tenant]);
 
@@ -32,4 +29,4 @@ export const ServerDataContextProvider = ({
   );
 };
 
-export const useServerData = () => React.useContext(ServerDataContext);
+export const useServerData = () => React.use(ServerDataContext);

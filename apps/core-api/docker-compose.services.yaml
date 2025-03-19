@@ -18,14 +18,6 @@ services:
     ports:
       - '6379:6379'
 
-  rabbitmq:
-    extends:
-      file: './docker-compose.services.base.yaml'
-      service: rabbitmq
-    ports:
-      - '5672:5672'
-      - '15672:15672'
-
   minio:
     extends:
       file: './docker-compose.services.base.yaml'

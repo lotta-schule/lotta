@@ -1,4 +1,4 @@
-ARG NODE_VERSION=22.2
+ARG NODE_VERSION=23.9
 
 ARG RELEASE_NAME
 ARG SENTRY_DSN
@@ -68,6 +68,9 @@ COPY --from=prod-deps /app/package.json /app/package.json
 RUN chown nextjs:nodejs /app
 
 USER nextjs
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/dbg/health || exit 1
 
 EXPOSE 3000
 

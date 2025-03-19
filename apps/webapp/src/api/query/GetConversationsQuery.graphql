@@ -13,6 +13,12 @@ query GetConversationsQuery {
       nickname
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
     messages {

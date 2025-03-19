@@ -147,7 +147,7 @@ describe('shared/article/ArticlePreview', () => {
         <ArticlePreview
           article={{
             ...Weihnachtsmarkt,
-            previewImageFile: imageFile as any,
+            previewImageFile: imageFile,
           }}
         />,
         {},
@@ -156,7 +156,10 @@ describe('shared/article/ArticlePreview', () => {
       expect(screen.getByRole('img', { name: /vorschaubild/i })).toBeVisible();
       expect(
         screen.getByRole('img', { name: /vorschaubild/i })
-      ).toHaveAttribute('srcset', expect.stringContaining('/storage/f/123'));
+      ).toHaveAttribute(
+        'srcset',
+        expect.stringContaining('/articlepreview_660')
+      );
     });
 
     describe('EditMode', () => {

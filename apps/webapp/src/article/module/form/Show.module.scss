@@ -1,7 +1,8 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
+
   @media screen and (min-width: $max-md) {
     margin: 0 16.6%;
   }

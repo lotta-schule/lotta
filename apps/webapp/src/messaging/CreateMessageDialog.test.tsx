@@ -136,7 +136,7 @@ describe('CreateMessageDialog', () => {
         ).toBeVisible();
       });
       await fireEvent.click(
-        screen.getByRole('button', { name: /vorschläge/i })
+        screen.getByRole('button', { name: /suggestions/i })
       );
       expect(screen.getAllByRole('option')).toHaveLength(1);
 

@@ -12,6 +12,12 @@ query GetConversationQuery($id: ID!) {
       nickname
       avatarImageFile {
         id
+        formats {
+          name
+          url
+          type
+          status
+        }
       }
     }
     messages {
@@ -31,6 +37,12 @@ query GetConversationQuery($id: ID!) {
         nickname
         avatarImageFile {
           id
+          formats {
+            name
+            url
+            type
+            status
+          }
         }
       }
     }

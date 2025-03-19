@@ -1,4 +1,4 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   position: sticky;
@@ -7,13 +7,16 @@
 
   .gridContainer {
     display: flex;
-    & > div:first-child {
+
+    &>div:first-child {
       min-width: 100%;
+
       @media screen and (max-width: $max-sm) {
         // I am not sure why 4px but I think its because of the shadow maybe?
         padding-right: calc(3rem - 4px);
       }
     }
+
     .mobileBurgerMenuButton {
       position: absolute;
       right: 0;
@@ -23,6 +26,7 @@
       display: none;
       height: 100%;
       z-index: 2001;
+
       @media screen and (max-width: $max-sm) {
         display: flex;
         width: 3rem;
@@ -36,6 +40,7 @@
     margin-right: calc(var(--lotta-spacing) * 2);
     flex-grow: 1;
   }
+
   .navbar {
     min-height: 64px;
     display: flex;
@@ -44,6 +49,7 @@
     align-items: center;
     overflow: auto;
     background-color: rgba(var(--lotta-navigation-background-color), 1);
+
     @media screen and (max-width: $max-sm) {
       min-height: 48px;
     }
@@ -65,6 +71,7 @@
     flex-grow: 1;
     flex-shrink: 0;
     color: rgba(var(--lotta-text-color), 1);
+
     &.selected {
       color: rgba(var(--lotta-primary-color), 1);
     }
@@ -80,6 +87,7 @@
     border: none;
     background-color: inherit;
     cursor: inherit;
+
     @media screen and (max-width: $max-sm) {
       min-width: 1px;
       padding: 0;
