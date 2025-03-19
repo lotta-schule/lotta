@@ -48,7 +48,7 @@ setup(
     // await page.keyboard.press('Enter');
 
     // await updatePasswordDialog.waitFor({ state: 'hidden' });
-    await loginDialog.waitFor({ state: 'hidden' });
+    await loginDialog.waitFor({ state: 'hidden', timeout: 15_000 });
 
     expect(page.getByRole('button', { name: /Mein Profil/i })).toBeVisible();
   }
