@@ -129,7 +129,12 @@ defmodule SystemConfig do
   defp default("ANALYTICS_API_KEY", _), do: nil
 
   defp default(key, env),
-    do: raise("environment variable #{key} not set and no default for #{inspect(env)}")
+    do:
+      raise("""
+        environment variable #{key} not set and no default for #{inspect(env)}.
+        See here for a list of available environment variables:
+        #{inspect(System.get_env())}
+      """)
 end
 
 config :lotta, :environment, SystemConfig.get("APP_ENVIRONMENT", cast: :environment)
