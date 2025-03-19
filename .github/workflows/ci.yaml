@@ -173,7 +173,7 @@ jobs:
       #     pnpm nx affected -t e2e --configuration=ci
 
       - name: Upload Tests for storybook-addon-theme
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: ${{ !cancelled() }}
         with:
           directory: libs/storybook-addon-theme/coverage/
@@ -182,7 +182,7 @@ jobs:
           verbose: true
 
       - name: Upload Tests for hubert
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: ${{ !cancelled() }}
         with:
           directory: libs/hubert/coverage/
@@ -191,7 +191,7 @@ jobs:
           verbose: true
 
       - name: Upload Tests for Webapp
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: ${{ !cancelled() }}
         with:
           directory: apps/webapp/coverage/
@@ -200,7 +200,7 @@ jobs:
           verbose: true
 
       - name: Upload Tests for CoreApi
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: ${{ !cancelled() }}
         with:
           directory: apps/core-api/cover/
