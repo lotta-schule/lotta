@@ -30,7 +30,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
     end
   end
 
-  def delete(%RemoteStorageEntity{path: path} = entity, config) do
+  def delete(path, config) do
     S3.delete_object(config[:config][:bucket], path)
     |> ExAws.request()
     |> case do
@@ -38,7 +38,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
         {:error, error}
 
       {:ok, _result} ->
-        entity
+        :ok
     end
   end
 

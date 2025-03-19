@@ -106,7 +106,12 @@ defmodule Lotta.Tenants do
 
         Sentry.capture_message(msg)
 
-        {:error, "#{failed_operation}: #{failed_value}"}
+        message =
+          if is_struct(failed_value, Ecto.Changeset),
+            do: failed_value,
+            else: "#{failed_operation}: #{failed_value}"
+
+        {:error, message}
     end
   end
 

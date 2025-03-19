@@ -157,7 +157,10 @@ defmodule Lotta.Storage do
       error ->
         Logger.error("Error uploading file data: #{inspect(error)}")
 
-        RemoteStorage.delete("#{prefix}/#{file_id}/#{variant_name}")
+        with {:ok, strategy} <- RemoteStorage.get_strategy(),
+             {:ok, config} <- RemoteStorage.config_for_store() do
+          strategy.delete("#{prefix}/#{file_id}/#{variant_name}", config)
+        end
 
         Repo.delete(foc, prefix: prefix)
         error
