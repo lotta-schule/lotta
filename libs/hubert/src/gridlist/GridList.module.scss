@@ -3,8 +3,11 @@
 .root {
   width: 100%;
   display: grid;
-  gap: 15px;
+  gap: calc(var(--lotta-spacing) * 2);
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  @media screen and (max-width: $max-xs) {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
 
   li {
     overflow: auto;
