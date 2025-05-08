@@ -14,7 +14,7 @@ declare module 'vitest' {
 import { beforeAll, vi } from 'vitest';
 import { TextEncoder, TextDecoder } from 'util';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
-import { MockRouter, BlobPolyfill } from 'test/mocks';
+import { MockRouter, BlobPolyfill, ResizeObserverPolyfill } from 'test/mocks';
 import { NEXT_DATA } from 'next/dist/shared/lib/utils';
 import { DirectoryModel, FileModel } from 'model';
 
@@ -44,6 +44,7 @@ self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ };
 const mockRouter = new MockRouter();
 
 globalThis.Blob = BlobPolyfill as any;
+globalThis.ResizeObserver = ResizeObserverPolyfill as any;
 
 beforeAll(() => {
   loadDevMessages();
