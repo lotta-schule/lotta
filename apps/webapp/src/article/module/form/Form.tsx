@@ -53,8 +53,7 @@ export const Form = React.memo(
               onClick={() => setIsFormResultsDialogOpen(true)}
               icon={<Icon icon={faInbox} size={'lg'} />}
               style={{
-                marginLeft: 'auto',
-                marginRight: 'calc(var(--lotta-spacing) + 16.6%)',
+                margin: '0 auto',
               }}
             >
               Formulareinsendungen sehen

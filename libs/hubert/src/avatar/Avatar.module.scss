@@ -8,4 +8,9 @@
   box-shadow: 1px 1px 7px #0000002e; /* TODO: Property */
   height: 2em; /* TODO: Property */
   width: 2em; /* TODO: Property */
+
+  &.clickable:hover {
+    border-color: rgba(var(--lotta-primary-color), 1);
+    box-shadow: 0px 0px 7px rgba(var(--lotta-primary-color), 0.6);
+  }
 }

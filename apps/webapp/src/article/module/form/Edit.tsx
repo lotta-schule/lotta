@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsUpDown, faCircleExclamation, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import {
   Button,
@@ -58,6 +58,7 @@ export const Edit = React.memo(
             },
             children: (
               <div className={styles.inputWrapper}>
+                <div className={styles.iconWrapper}> <Icon icon={faArrowsUpDown} size={'lg'} /></div>
                 <div>
                   <FormElement
                     element={element}
@@ -66,8 +67,9 @@ export const Edit = React.memo(
                     onSetValue={() => {}}
                   />
                 </div>
-                <div>
-                  <FormElementConfiguration
+                <div className={styles.iconWrapper}>
+                  <div><Icon icon={faCircleExclamation} size={'lg'} /> <Icon icon={faTrash} size={'lg'} /></div>
+                  {/* <FormElementConfiguration
                     element={element}
                     updateElement={(updatedElementOptions) =>
                       updateConfiguration({
@@ -82,7 +84,7 @@ export const Edit = React.memo(
                         }),
                       })
                     }
-                  />
+                  /> */}
                 </div>
               </div>
             ),
@@ -144,7 +146,8 @@ export const Edit = React.memo(
           </div>
         </div>
         <Button
-          style={{ float: 'right' }}
+          style={{ margin: '0 auto' }}
+          variant={'fill'}
           icon={<Icon icon={faPlus} size={'lg'} />}
           onClick={() =>
             updateConfiguration({
