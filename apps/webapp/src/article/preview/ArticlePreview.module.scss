@@ -177,6 +177,9 @@
         width: 25px;
         height: 25px;
         min-height: 25px;
+        svg {
+          color: rgba(var(--lotta-primary-color), 0.5);
+        }
         &.active {
           svg {
             color: rgb(var(--lotta-primary-color));
@@ -297,7 +300,6 @@
       grid-row: 1;
       grid-column-start: 1;
       grid-column-end: 4;
-
 
       .previewImage {
         height: auto;
