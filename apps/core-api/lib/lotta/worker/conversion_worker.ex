@@ -102,7 +102,7 @@ defmodule Lotta.ConversionWorker do
               do: :media_conversion,
               else: :file_conversion
             ),
-          unique: [period: :timer.hours(24), fields: [:args]]
+          unique: [period: :timer.hours(4), fields: [:args]]
         )
         |> Oban.insert()
     end

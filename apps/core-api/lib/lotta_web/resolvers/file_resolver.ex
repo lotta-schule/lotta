@@ -101,16 +101,16 @@ defmodule LottaWeb.FileResolver do
         |> Enum.filter(fn {format, _} ->
           not Enum.any?(conversions, &(&1.name == to_string(format)))
         end)
-        |> Enum.map(&map_possible_format_to_available_format/1)
+        |> Enum.map(&map_possible_format_to_available_format(file, &1))
         |> Enum.filter(fn
           _ when is_nil(availability_filter) ->
             true
 
-          "available" when format.availability in ["ready", "available"] ->
+          %{availability: %{status: ^availability_filter}} ->
             true
 
-          avail ->
-            format.availability == avail
+          _ ->
+            false
         end)
 
     {:ok, conversions ++ available_formats}
@@ -129,9 +129,9 @@ defmodule LottaWeb.FileResolver do
     }
   end
 
-  defp map_possible_format_to_available_format({format_name, args}) do
-    format = to_string(format)
-    availability = AvailableFormats.get_default_availability(format)
+  defp map_possible_format_to_available_format(file, {format_name, args}) do
+    format = to_string(format_name)
+    availability = AvailableFormats.get_default_availability(format_name)
 
     %{
       name: format,

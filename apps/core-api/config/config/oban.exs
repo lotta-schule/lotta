@@ -7,7 +7,7 @@ config :lotta, Oban,
   prefix: "oban",
   queues: [
     file_conversion: [limit: 3],
-    media_conversion: [limit: 1, max_attempts: 3, priority: 5],
+    media_conversion: [limit: 1],
     file_metadata: [limit: 1]
   ]
 
