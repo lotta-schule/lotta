@@ -81,68 +81,71 @@ defmodule LottaWeb.FileResolver do
 
   def resolve_available_formats(file, args, _info) do
     category_filter = args[:category]
+    availability_filter = args[:availability]
 
     conversions =
       file
       |> Repo.preload(:file_conversions)
       |> Map.get(:file_conversions, [])
       |> Enum.filter(fn file_conversion ->
-        if args[:category],
-          do:
-            AvailableFormats.get_category(file_conversion.format) ==
-              String.to_atom(args[:category]),
-          else: true
+        !category_filter ||
+          AvailableFormats.get_category(file_conversion.format) ==
+            String.to_atom(category_filter)
       end)
-      |> Enum.map(fn file_conversion ->
-        %{
-          name: file_conversion.format,
-          type: file_conversion.file_type,
-          mime_type: file_conversion.mime_type,
-          url: Urls.get_file_path(file_conversion),
-          availability: %{
-            status: "ready",
-            progress: 100
-          }
-        }
-      end)
+      |> Enum.map(&map_file_conversion_to_available_format/1)
 
     available_formats =
-      if args[:availability] == "ready",
-        do: [],
-        else:
-          file
-          |> AvailableFormats.available_formats_with_config(for_category: category_filter)
-          |> Enum.filter(fn {format, _} ->
-            not Enum.any?(conversions, &(&1.name == to_string(format)))
-          end)
-          |> Enum.map(fn {format, args} ->
-            format = to_string(format)
-            availability = AvailableFormats.get_default_availability(format)
+      (availability_filter == "ready" && []) ||
+        file
+        |> AvailableFormats.available_formats_with_config(for_category: category_filter)
+        |> Enum.filter(fn {format, _} ->
+          not Enum.any?(conversions, &(&1.name == to_string(format)))
+        end)
+        |> Enum.map(&map_possible_format_to_available_format/1)
+        |> Enum.filter(fn
+          _ when is_nil(availability_filter) ->
+            true
 
-            %{
-              name: format,
-              type: to_string(Keyword.get(args, :type, :binary)),
-              url:
-                if(availability == "available",
-                  do: Urls.get_file_path(file, format),
-                  else: ""
-                ),
-              availability: %{
-                status: availability,
-                progress: 0
-              }
-            }
-          end)
-          |> Enum.filter(fn format ->
-            case args[:availability] do
-              nil -> true
-              "ready" -> format.availability == "ready"
-              "available" -> format.availability in ["ready", "available"]
-              _ -> false
-            end
-          end)
+          "available" when format.availability in ["ready", "available"] ->
+            true
+
+          avail ->
+            format.availability == avail
+        end)
 
     {:ok, conversions ++ available_formats}
+  end
+
+  defp map_file_conversion_to_available_format(file_conversion) do
+    %{
+      name: file_conversion.format,
+      type: file_conversion.file_type,
+      mime_type: file_conversion.mime_type,
+      url: Urls.get_file_path(file_conversion),
+      availability: %{
+        status: "ready",
+        progress: 100
+      }
+    }
+  end
+
+  defp map_possible_format_to_available_format({format_name, args}) do
+    format = to_string(format)
+    availability = AvailableFormats.get_default_availability(format)
+
+    %{
+      name: format,
+      type: to_string(Keyword.get(args, :type, :binary)),
+      url:
+        if(availability == "available",
+          do: Urls.get_file_path(file, format),
+          else: ""
+        ),
+      availability: %{
+        status: availability,
+        progress: 0
+      }
+    }
   end
 
   def resolve_remote_location(file, _args, _info)

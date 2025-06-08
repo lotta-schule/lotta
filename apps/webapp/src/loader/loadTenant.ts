@@ -19,8 +19,6 @@ export const GET_TENANT_WITH_STATS_QUERY = graphql(`
         formats(category: "LOGO") {
           name
           url
-          type
-          availability
         }
       }
       configuration {

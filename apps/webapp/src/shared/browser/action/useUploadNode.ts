@@ -24,7 +24,6 @@ export const UPLOAD_FILE_MUTATION = graphql(`
         name
         url
         type
-        availability
       }
     }
   }

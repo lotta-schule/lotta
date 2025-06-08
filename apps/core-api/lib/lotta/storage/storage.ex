@@ -86,7 +86,7 @@ defmodule Lotta.Storage do
 
         await_conversion_tasks ++ await_metadata_tasks
       end)
-      |> Task.await_many(:timer.seconds(30))
+      |> Task.await_many(:timer.seconds(90))
 
       {:ok, Repo.reload(file)}
     else

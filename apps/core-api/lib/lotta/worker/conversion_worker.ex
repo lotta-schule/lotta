@@ -96,7 +96,14 @@ defmodule Lotta.ConversionWorker do
           file_id: file.id,
           format_category: AvailableFormats.get_category(format)
         }
-        |> __MODULE__.new()
+        |> __MODULE__.new(
+          queue:
+            if(file.file_type in ["video", "audio"],
+              do: :media_conversion,
+              else: :file_conversion
+            ),
+          unique: [period: :timer.hours(24), fields: [:args]]
+        )
         |> Oban.insert()
     end
   end

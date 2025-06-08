@@ -18,6 +18,7 @@ defmodule Lotta.Storage.File do
   @type t() :: %__MODULE__{
           id: id(),
           mime_type: String.t(),
+          file_type: String.t(),
           filename: String.t(),
           filesize: pos_integer(),
           full_metadata: map(),

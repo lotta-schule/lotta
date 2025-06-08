@@ -6,7 +6,8 @@ config :lotta, Oban,
   repo: Lotta.Repo,
   prefix: "oban",
   queues: [
-    file_conversion: [limit: 2],
+    file_conversion: [limit: 3],
+    media_conversion: [limit: 1, max_attempts: 3, priority: 5],
     file_metadata: [limit: 1]
   ]
 
