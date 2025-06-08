@@ -12,8 +12,8 @@ interface EditProps {
   ): void;
 }
 
-export const Edit = React.memo<EditProps>(
-  ({ contentModule, onUpdateModule }) => {
+export const Edit = React.memo(
+  ({ contentModule, onUpdateModule }: EditProps) => {
     const captions: string[] =
       contentModule.content?.captions ?? ([] as string[]);
     return (

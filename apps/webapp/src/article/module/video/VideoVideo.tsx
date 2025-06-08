@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ContentModuleModel } from 'model';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import styles from './VideoVideo.module.scss';
@@ -9,6 +10,7 @@ type VideoVideoProps = {
 
 export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
   const file = contentModule.files.at(0);
+  const { t } = useTranslation('contentModule');
 
   const getSourceMediaQuery = React.useCallback((resolution: number) => {
     if (isNaN(resolution)) {
@@ -28,13 +30,16 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
     file?.formats?.find((f) => f.name.startsWith('POSTER'))?.url ||
     file?.formats?.find((f) => f.type === 'IMAGE')?.url;
 
-  const videoFiles = React.useMemo(
+  const videoFormats = React.useMemo(
+    () => file?.formats?.filter((f) => f.type === 'VIDEO') ?? [],
+    [file?.formats]
+  );
+
+  const validVideoFiles = React.useMemo(
     () =>
-      file?.formats
-        ?.filter(
-          (f) =>
-            f.type === 'VIDEO' &&
-            !['PROCESSING', 'FAILED'].includes(f.availability.status)
+      videoFormats
+        .filter(
+          (f) => !['processing', 'failed'].includes(f.availability.status)
         )
         .map((f) => {
           const resolution = Number(
@@ -54,25 +59,33 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
           return b.mimeType.localeCompare(a.mimeType);
         })
         .filter((f) => f.resolution > 200),
-    [file?.formats, getSourceMediaQuery]
+    [videoFormats, getSourceMediaQuery]
+  );
+
+  const processingFormats = React.useMemo(
+    () => videoFormats.filter((f) => f.availability.status === 'processing'),
+    [videoFormats]
   );
 
   if (!file) {
     return <PlaceholderImage height={350} icon={'video'} />;
   }
 
-  if (!videoFiles?.length) {
+  if (processingFormats.length > 0) {
     return (
       <PlaceholderImage
         height={350}
         icon={'video'}
         description={
           <div>
-            Ihr Video wird nun umgewandelt und für verschiedene Endgeräte
-            optimiert. Der Prozess kann einige Minuten dauern und läuft im
-            Hintergrund.
+            {t(
+              'The video is being processed in order to offer the best-possible experience on every device.'
+            )}
+            {t('This process can take a while, and runs in the background.')}
             <br />
-            Sie können den Beitrag nun speichern.
+            {t(
+              'You can safely save the article or close the page without interrupting the process.'
+            )}
           </div>
         }
       />
@@ -86,7 +99,7 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
       poster={posterFileUrl}
       className={styles.Video}
     >
-      {videoFiles.map((vf) => (
+      {validVideoFiles.map((vf) => (
         <source
           key={vf.name}
           src={vf.url}

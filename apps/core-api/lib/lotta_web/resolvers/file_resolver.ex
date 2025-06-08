@@ -108,11 +108,8 @@ defmodule LottaWeb.FileResolver do
       if args[:availability] == "ready",
         do: [],
         else:
-          if(is_binary(category_filter),
-            do:
-              AvailableFormats.available_formats_with_config(file, for_category: category_filter),
-            else: AvailableFormats.available_formats(file)
-          )
+          file
+          |> AvailableFormats.available_formats_with_config(for_category: category_filter)
           |> Enum.filter(fn {format, _} ->
             not Enum.any?(conversions, &(&1.name == to_string(format)))
           end)
