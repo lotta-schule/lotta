@@ -153,12 +153,15 @@ export const getDefaultFormats = (type: 'image' | 'video' | 'misc') => {
   if (type === 'video') {
     return [
       ...commonFormats,
-      'webm_480',
-      'webm_720',
-      'webm_1080',
-      'h264_480',
-      'h264_720',
-      'h265_1080',
+      'poster_1080p',
+      'videoplay_200p_webm',
+      'videoplay_480p_webm',
+      'videoplay_720p_webm',
+      'videoplay_1080p_webm',
+      'videoplay_200p_mp4',
+      'videoplay_480p_mp4',
+      'videoplay_720p_mp4',
+      'videoplay_1080p_mp4',
     ];
   }
   return [];
@@ -172,7 +175,12 @@ export const createFormats = (
       name: f,
       url: `https://example.com/${path}/${f}`,
       type: f.startsWith('webm') || f.startsWith('h264') ? 'video' : 'image',
-      status: 'READY',
+      mimeType: `${filetype}/${f.split('.').at(-1) || f.split('_').at(-1)}`,
+      availability: {
+        status: 'ready',
+        progress: 100,
+        error: undefined,
+      },
     };
   });
 
