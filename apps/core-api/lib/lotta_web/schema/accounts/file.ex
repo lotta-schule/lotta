@@ -62,6 +62,12 @@ defmodule LottaWeb.Schema.Accounts.File do
     )
 
     field(:formats, non_null(list_of(non_null(:available_format)))) do
+      arg(:category, :string, description: "Return only formats for this category")
+
+      arg(:availability, :format_availability_status,
+        description: "Return only formats with this availability status"
+      )
+
       resolve(&LottaWeb.FileResolver.resolve_available_formats/3)
     end
 
@@ -87,10 +93,18 @@ defmodule LottaWeb.Schema.Accounts.File do
     field(:url, non_null(:string))
     field(:type, non_null(:file_type))
     field(:mime_type, :string)
-    field(:status, non_null(:format_status))
+
+    field(:availability, non_null(:format_availability))
   end
 
-  enum :format_status do
+  object :format_availability do
+    field(:status, non_null(:format_availability_status))
+
+    field(:progress, :integer)
+    field(:error, :string)
+  end
+
+  enum :format_availability_status do
     value(:ready, as: "ready")
     value(:available, as: "available")
     value(:requestable, as: "requestable")

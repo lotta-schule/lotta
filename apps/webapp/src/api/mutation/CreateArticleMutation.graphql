@@ -16,11 +16,13 @@ mutation CreateArticle($article: ArticleInput!) {
       fileType
       filename
       filesize
-      formats {
+      formats(category: "ARTICLEPREVIEW") {
         type
         url
         type
-        status
+        availability {
+          status
+        }
       }
     }
     contentModules {

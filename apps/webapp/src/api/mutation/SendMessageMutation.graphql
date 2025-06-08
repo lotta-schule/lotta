@@ -10,11 +10,13 @@ mutation SendMessage($message: MessageInput!) {
       nickname
       avatarImageFile {
         id
-        formats {
+        formats(category: "AVATAR") {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
     }
@@ -34,11 +36,13 @@ mutation SendMessage($message: MessageInput!) {
         nickname
         avatarImageFile {
           id
-          formats {
+          formats(category: "AVATAR") {
             name
             url
             type
-            status
+            availability {
+              status
+            }
           }
         }
       }

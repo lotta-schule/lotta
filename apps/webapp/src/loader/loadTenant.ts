@@ -16,11 +16,11 @@ export const GET_TENANT_WITH_STATS_QUERY = graphql(`
       }
       logoImageFile {
         id
-        formats {
+        formats(category: "LOGO") {
           name
           url
           type
-          status
+          availability
         }
       }
       configuration {

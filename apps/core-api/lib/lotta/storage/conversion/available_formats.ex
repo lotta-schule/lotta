@@ -219,26 +219,40 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @doc """
   Returns all available and providable formats for a given file.
   """
-  @spec available_formats(File.t()) :: [atom()]
-  def available_formats(%File{file_type: "image"}),
-    do: Enum.map(@preview_formats ++ @image_formats, &elem(&1, 0))
+  @spec available_formats(File.t(), for_category: String.t()) :: [atom()]
+  def available_formats(file, opts \\ [])
 
-  def available_formats(%File{file_type: "video"}),
-    do: Enum.map(@preview_formats ++ @video_formats, &elem(&1, 0))
+  def available_formats(%File{file_type: "image"}, opts),
+    do:
+      (@preview_formats ++ @image_formats)
+      |> filter_for_category(opts[:for_category])
+      |> Enum.map(&elem(&1, 0))
 
-  def available_formats(%File{file_type: "audio"}),
-    do: Enum.map(@preview_formats ++ @audio_formats, &elem(&1, 0))
+  def available_formats(%File{file_type: "video"}, opts),
+    do:
+      (@preview_formats ++ @video_formats)
+      |> filter_for_category(opts[:for_category])
+      |> Enum.map(&elem(&1, 0))
 
-  def available_formats(%File{file_type: "pdf"}),
-    do: Enum.map(@preview_formats, &elem(&1, 0))
+  def available_formats(%File{file_type: "audio"}, opts),
+    do:
+      (@preview_formats ++ @audio_formats)
+      |> filter_for_category(opts[:for_category])
+      |> Enum.map(&elem(&1, 0))
 
-  def available_formats(_), do: []
+  def available_formats(%File{file_type: "pdf"}, opts),
+    do:
+      @preview_formats
+      |> filter_for_category(opts[:for_category])
+      |> Enum.map(@preview_formats, &elem(&1, 0))
 
-  @spec available_formats_with_config(File.t()) :: [{atom(), map()}]
-  def available_formats_with_config(file),
+  def available_formats(_, _), do: []
+
+  @spec available_formats_with_config(File.t(), for_category: String.t()) :: [{atom(), map()}]
+  def available_formats_with_config(file, opts \\ []),
     do:
       file
-      |> available_formats()
+      |> available_formats(opts)
       |> Enum.map(&{&1, Keyword.get(@formats, &1)})
       |> Enum.filter(&is_tuple/1)
 
@@ -247,6 +261,39 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   """
   @spec format_available?(File.t(), atom()) :: boolean()
   def format_available?(file, format), do: Enum.member?(available_formats(file), format)
+
+  @doc """
+  Returns the default format availability for a given format. This is a theoretical value, and in
+  any case, checking on the actual file is necessary to determine if a format may already be ready.
+
+  available -> the format can be accessed via its URL and will be generated on the fly
+  requestable -> the format is not available yet, but can be requested and will be generated
+  """
+  @spec get_default_availability(format :: String.t() | atom()) ::
+          String.t()
+  def get_default_availability(format) when is_atom(format) do
+    # for now: Every image is available, every other format is requestable
+    if Keyword.get(@formats, format)[:type] == :image do
+      "available"
+    else
+      "requestable"
+    end
+  end
+
+  def get_default_availability(format),
+    do: get_default_availability(String.to_existing_atom(format))
+
+  defp filter_for_category(formats, nil),
+    do: formats
+
+  defp filter_for_category(formats, category) when is_atom(category),
+    do: filter_for_category(formats, to_string(category))
+
+  defp filter_for_category(formats, category) when is_binary(category) do
+    Enum.filter(formats, fn {name, _} ->
+      String.starts_with?("#{name}_", String.downcase(to_string(category)) <> "_")
+    end)
+  end
 
   @doc """
   Checks if a given category name is valid (= exists in the list of available categories)

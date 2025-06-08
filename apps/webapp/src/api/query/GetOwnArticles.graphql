@@ -29,7 +29,9 @@ query GetOwnArticles {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
     }

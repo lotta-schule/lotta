@@ -14,11 +14,13 @@ query GetArticle($id: ID!) {
       id
       mimeType
       fileType
-      formats {
+      formats(category: "ARTICLEPREVIEW") {
         name
         url
         type
-        status
+        availability {
+          status
+        }
       }
     }
     contentModules {
@@ -41,7 +43,9 @@ query GetArticle($id: ID!) {
           url
           type
           mimeType
-          status
+          availability {
+            status
+          }
         }
       }
     }
@@ -65,11 +69,13 @@ query GetArticle($id: ID!) {
       name
       avatarImageFile {
         id
-        formats {
+        formats(category: "AVATAR") {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
     }

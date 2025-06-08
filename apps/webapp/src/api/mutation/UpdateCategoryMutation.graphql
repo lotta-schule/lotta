@@ -8,11 +8,13 @@ mutation UpdateCategory($id: ID!, $category: UpdateCategoryInput!) {
     layoutName
     bannerImageFile {
       id
-      formats {
+      formats(category: "BANNER") {
         name
-        status
         url
         type
+        availability {
+          status
+        }
       }
     }
     groups {

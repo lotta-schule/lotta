@@ -82,7 +82,11 @@ export interface FileModel {
     url: string;
     type: FileModelType;
     mimeType: string;
-    status: 'READY' | 'AVAILABLE' | 'REQUESTABLE' | 'PROCESSING' | 'FAILED';
+    availability: {
+      status: 'ready' | 'available' | 'requestable' | 'processing' | 'error';
+      progress?: number;
+      error?: string;
+    };
   }[];
   usage?: FileModelUsageLocation[];
 }

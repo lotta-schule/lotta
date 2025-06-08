@@ -33,7 +33,8 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
       file?.formats
         ?.filter(
           (f) =>
-            f.type === 'VIDEO' && !['PROCESSING', 'FAILED'].includes(f.status)
+            f.type === 'VIDEO' &&
+            !['PROCESSING', 'FAILED'].includes(f.availability.status)
         )
         .map((f) => {
           const resolution = Number(

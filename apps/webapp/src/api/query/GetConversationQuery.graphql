@@ -12,11 +12,13 @@ query GetConversationQuery($id: ID!) {
       nickname
       avatarImageFile {
         id
-        formats {
+        formats(category: "AVATAR") {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
     }
@@ -37,11 +39,13 @@ query GetConversationQuery($id: ID!) {
         nickname
         avatarImageFile {
           id
-          formats {
+          formats(category: "AVATAR") {
             name
             url
             type
-            status
+            availability {
+              status
+            }
           }
         }
       }

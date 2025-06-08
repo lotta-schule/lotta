@@ -13,20 +13,24 @@ export const GET_TENANT_QUERY = graphql(`
       identifier
       backgroundImageFile {
         id
-        formats {
+        formats(category: "BACKGROUND") {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
       logoImageFile {
         id
-        formats {
+        formats(category: "LOGO") {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
       configuration {

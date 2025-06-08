@@ -13,11 +13,10 @@ query GetConversationsQuery {
       nickname
       avatarImageFile {
         id
-        formats {
+        formats(category: "avatar") {
           name
           url
           type
-          status
         }
       }
     }

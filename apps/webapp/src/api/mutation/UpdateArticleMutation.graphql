@@ -16,11 +16,13 @@ mutation UpdateArticle($id: ID!, $article: ArticleInput!) {
       fileType
       filename
       filesize
-      formats {
+      formats(category: "ARTICLEPREVIEW") {
         name
         url
         type
-        status
+        availability {
+          status
+        }
       }
     }
     contentModules {
@@ -40,7 +42,9 @@ mutation UpdateArticle($id: ID!, $article: ArticleInput!) {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
     }

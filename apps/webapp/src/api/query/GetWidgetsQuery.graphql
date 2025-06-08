@@ -6,11 +6,13 @@ query widgets {
     configuration
     iconImageFile {
       id
-      formats {
+      formats(category: "ICON") {
         name
         url
         type
-        status
+        availability {
+          status
+        }
       }
     }
     groups {

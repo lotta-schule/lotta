@@ -14,11 +14,13 @@ query GetArticlesForTag($tag: String!) {
       fileType
       filename
       filesize
-      formats {
+      formats(category: "ARTICLEPREVIEW") {
         name
         url
         type
-        status
+        availability {
+          status
+        }
       }
     }
     groups {

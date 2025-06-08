@@ -632,24 +632,33 @@ const introspection = {
         "name": "AvailableFormat",
         "fields": [
           {
-            "name": "name",
+            "name": "availability",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
-                "kind": "ENUM",
-                "name": "ConversionFormat"
+                "kind": "OBJECT",
+                "name": "FormatAvailability"
               }
             },
             "args": [],
             "isDeprecated": false
           },
           {
-            "name": "status",
+            "name": "mimeType",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "name",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "ENUM",
-                "name": "FormatStatus"
+                "name": "ConversionFormat"
               }
             },
             "args": [],
@@ -1589,6 +1598,14 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "AUDIOPLAY_AAC",
+            "isDeprecated": false
+          },
+          {
+            "name": "AUDIOPLAY_OGG",
+            "isDeprecated": false
+          },
+          {
             "name": "AVATAR_100",
             "isDeprecated": false
           },
@@ -1622,14 +1639,6 @@ const introspection = {
           },
           {
             "name": "BANNER_990",
-            "isDeprecated": false
-          },
-          {
-            "name": "H264_1080P",
-            "isDeprecated": false
-          },
-          {
-            "name": "H264_720P",
             "isDeprecated": false
           },
           {
@@ -1673,23 +1682,27 @@ const introspection = {
             "isDeprecated": false
           },
           {
-            "name": "PREVIEW_1200",
+            "name": "POSTER_1080P",
             "isDeprecated": false
           },
           {
-            "name": "PREVIEW_1600",
+            "name": "PRESENT_1200",
+            "isDeprecated": false
+          },
+          {
+            "name": "PRESENT_1600",
+            "isDeprecated": false
+          },
+          {
+            "name": "PRESENT_2400",
+            "isDeprecated": false
+          },
+          {
+            "name": "PRESENT_3200",
             "isDeprecated": false
           },
           {
             "name": "PREVIEW_200",
-            "isDeprecated": false
-          },
-          {
-            "name": "PREVIEW_2400",
-            "isDeprecated": false
-          },
-          {
-            "name": "PREVIEW_3200",
             "isDeprecated": false
           },
           {
@@ -1730,14 +1743,6 @@ const introspection = {
           },
           {
             "name": "VIDEOPLAY_720P_WEBM",
-            "isDeprecated": false
-          },
-          {
-            "name": "WEBM_1080P",
-            "isDeprecated": false
-          },
-          {
-            "name": "WEBM_720P",
             "isDeprecated": false
           }
         ]
@@ -2306,7 +2311,22 @@ const introspection = {
                 }
               }
             },
-            "args": [],
+            "args": [
+              {
+                "name": "availability",
+                "type": {
+                  "kind": "ENUM",
+                  "name": "FormatAvailabilityStatus"
+                }
+              },
+              {
+                "name": "category",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String"
+                }
+              }
+            ],
             "isDeprecated": false
           },
           {
@@ -2730,11 +2750,56 @@ const introspection = {
         "name": "Float"
       },
       {
+        "kind": "OBJECT",
+        "name": "FormatAvailability",
+        "fields": [
+          {
+            "name": "error",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "progress",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int"
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "status",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "ENUM",
+                "name": "FormatAvailabilityStatus"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          }
+        ],
+        "interfaces": []
+      },
+      {
         "kind": "ENUM",
-        "name": "FormatStatus",
+        "name": "FormatAvailabilityStatus",
         "enumValues": [
           {
             "name": "AVAILABLE",
+            "isDeprecated": false
+          },
+          {
+            "name": "FAILED",
+            "isDeprecated": false
+          },
+          {
+            "name": "PROCESSING",
             "isDeprecated": false
           },
           {

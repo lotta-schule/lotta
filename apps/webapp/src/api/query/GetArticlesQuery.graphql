@@ -11,11 +11,13 @@ query GetArticles($categoryId: ID, $filter: ArticleFilter) {
     isPinnedToTop
     previewImageFile {
       id
-      formats {
+      formats(category: "ARTICLEPREVIEW") {
         name
         url
         type
-        status
+        availability {
+          status
+        }
       }
     }
     category {
@@ -28,11 +30,13 @@ query GetArticles($categoryId: ID, $filter: ArticleFilter) {
       name
       avatarImageFile {
         id
-        formats {
+        formats(category: "AVATAR") {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
     }

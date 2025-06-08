@@ -24,7 +24,9 @@ query GetDirectoriesAndFiles($parentDirectoryId: ID) {
       name
       url
       type
-      status
+      availability {
+        status
+      }
     }
     parentDirectory {
       id

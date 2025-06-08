@@ -13,11 +13,13 @@ subscription ArticleIsUpdated($id: ID!) {
       id
       mimeType
       fileType
-      formats {
+      formats(category: "ARTICLEPREVIEW") {
         name
         url
         type
-        status
+        availability {
+          status
+        }
       }
     }
     contentModules {
@@ -39,7 +41,9 @@ subscription ArticleIsUpdated($id: ID!) {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
     }
@@ -59,11 +63,13 @@ subscription ArticleIsUpdated($id: ID!) {
       name
       avatarImageFile {
         id
-        formats {
+        formats(category: "USERAVATAR") {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
     }

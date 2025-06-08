@@ -15,11 +15,13 @@ query GetUnpublishedArticles {
       fileType
       filename
       filesize
-      formats {
+      formats(category: "ARTICLEPREVIEW") {
         name
         url
         type
-        status
+        availability {
+          status
+        }
       }
     }
     contentModules {
@@ -39,7 +41,9 @@ query GetUnpublishedArticles {
           name
           url
           type
-          status
+          availability {
+            status
+          }
         }
       }
     }

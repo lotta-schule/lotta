@@ -38,7 +38,7 @@ export const File = {
         ?.filter(
           (availableFormat) =>
             ['ready', 'available'].includes(
-              availableFormat.status.toLowerCase()
+              availableFormat.availability.status.toLowerCase()
             ) &&
             (!format ||
               availableFormat.name

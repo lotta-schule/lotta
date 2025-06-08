@@ -20,10 +20,12 @@ export const GET_CURRENT_USER = graphql(`
       hasChangedDefaultPassword
       avatarImageFile {
         id
-        formats {
+        formats(category: "avatar") {
           name
           url
-          status
+          availability {
+            status
+          }
         }
       }
       groups {

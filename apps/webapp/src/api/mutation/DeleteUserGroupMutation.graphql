@@ -37,7 +37,9 @@ mutation DeleteUserGroup($id: ID!) {
             name
             url
             type
-            status
+            availability {
+              status
+            }
           }
         }
       }
