@@ -10,7 +10,7 @@ defmodule Lotta.MixProject do
       homepage_url: "https://lotta.schule",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: Mix.compilers(),
+      compilers: Mix.compilers() ++ [:rambo],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
@@ -109,6 +109,8 @@ defmodule Lotta.MixProject do
       {:libcluster, "~> 3.2"},
       {:file_type, "~> 0.1"},
       {:image, "~> 0.55"},
+      {:exile, "~> 0.12.0"},
+      {:ffmpex, "~> 0.11"},
       {:oban, "~> 2.19"},
       {:oban_web, "~> 2.11"},
       # Test

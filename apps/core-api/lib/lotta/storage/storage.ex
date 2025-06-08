@@ -139,7 +139,7 @@ defmodule Lotta.Storage do
 
     variant_name =
       case foc do
-        %FileConversion{format: format} -> format
+        %FileConversion{format: format} -> "0_#{format}"
         _ -> "original"
       end
 

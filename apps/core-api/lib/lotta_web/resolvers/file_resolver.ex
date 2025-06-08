@@ -86,6 +86,7 @@ defmodule LottaWeb.FileResolver do
         %{
           name: file_conversion.format,
           type: file_conversion.file_type,
+          mime_type: file_conversion.mime_type,
           url: Urls.get_file_path(file_conversion),
           status: "ready"
         }
@@ -97,7 +98,7 @@ defmodule LottaWeb.FileResolver do
       |> Enum.filter(fn {format, _} ->
         not Enum.any?(conversions, &(&1.name == to_string(format)))
       end)
-      |> Enum.map(fn {format, {_processor, args}} ->
+      |> Enum.map(fn {format, args} ->
         format = to_string(format)
 
         %{

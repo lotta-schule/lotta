@@ -40,6 +40,7 @@ query GetArticle($id: ID!) {
           name
           url
           type
+          mimeType
           status
         }
       }

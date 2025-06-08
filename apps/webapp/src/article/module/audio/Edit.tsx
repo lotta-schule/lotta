@@ -19,6 +19,7 @@ export const Edit = React.memo<EditProps>(
       <figure>
         <SelectFileOverlay
           label={'Audiodatei auswechseln'}
+          style={{ width: '100%' }}
           fileFilter={(f) => f.fileType === 'AUDIO'}
           onSelectFile={(file) =>
             onUpdateModule({

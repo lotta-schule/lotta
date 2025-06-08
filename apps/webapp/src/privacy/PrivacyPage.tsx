@@ -245,19 +245,6 @@ export const PrivacyPage = () => {
             bei Bedarf zwischengespeichert, verarbeitet und ausgeliefert.
           </p>
           <p>
-            Alle von Nutzern hochgeladenen Video und Audiodateien werden zum
-            Unternehmen
-            <a
-              href="https://coconut.co/about"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Coconut
-            </a>
-            zur Umwandlung hochgeladen. Sie werden aber bei scaleway auf Servern
-            innerhalb der EU gespeichert.
-          </p>
-          <p>
             Zum Auffinden von Fehlern nutzen wir die Cloud-Software
             <a
               href="https://sentry.io/security/"
@@ -467,12 +454,6 @@ export const PrivacyPage = () => {
                 <strong>KeyCDN:</strong> CDN; Dienstanbieter: proinity LLC,
                 Reichenauweg 11, 8272 Ermatingen, Schweiz; Datenschutzerklärung:
                 https://www.keycdn.com/privacy
-              </li>
-              <li>
-                <strong>Coconut:</strong> Medienumwandlung (Video+Audio);
-                Dienstanbieter: PARTICLES S.A.R.L, Siret N°: 49195540700011, 148
-                Rue Breteuil 13006 MARSEILLE, Frankreich ; VAT Number :
-                FR78491955407 ; Datenschutz: https://www.coconut.co/tos
               </li>
               <li>
                 <strong>Sentry:</strong> Exception Logging Dienstanbieter:

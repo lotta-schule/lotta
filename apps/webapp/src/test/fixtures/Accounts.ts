@@ -119,19 +119,15 @@ export const schulweitDirectory = {
  *
  */
 
-const commonFormats = [
-  'preview_200',
-  'preview_400',
-  'preview_800',
-  'preview_1200',
-  'preview_1600',
-  'preview_2400',
-  'preview_3200',
-];
+const commonFormats = ['preview_200', 'preview_400', 'preview_800'];
 export const getDefaultFormats = (type: 'image' | 'video' | 'misc') => {
   if (type === 'image') {
     return [
       ...commonFormats,
+      'present_1200',
+      'present_1600',
+      'present_2400',
+      'present_3200',
       'avatar_50',
       'avatar_100',
       'avatar_250',

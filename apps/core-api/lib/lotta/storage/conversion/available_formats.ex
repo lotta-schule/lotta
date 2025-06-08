@@ -7,101 +7,119 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   alias Lotta.Storage
   alias Lotta.Storage.{FileData, File}
 
-  @preview_categories [:preview]
+  @preview_categories [:preview, :poster]
 
   @preview_formats [
-    preview_200:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 200, height: 200], type: :image},
-    preview_400:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 400, height: 400], type: :image},
-    preview_800:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 800, height: 800], type: :image},
-    preview_1200:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 1200, height: 1200], type: :image},
-    preview_1600:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 1600, height: 1600], type: :image},
-    preview_2400:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 2400, height: 2400], type: :image},
-    preview_3200:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 3200, height: 3200], type: :image}
+    preview_200: [contain: [width: 200, height: 200], format: :webp, type: :image],
+    preview_400: [contain: [width: 400, height: 400], format: :webp, type: :image],
+    preview_800: [
+      contain: [width: 800, height: 800],
+      format: :webp,
+      type: :image
+    ]
   ]
 
   @image_formats [
-    avatar_50:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 50, height: 50], type: :image},
-    avatar_100:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 100, height: 100], type: :image},
-    avatar_250:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 250, height: 250], type: :image},
-    avatar_500:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 500, height: 500], type: :image},
-    avatar_1000:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       cover: [width: 1000, height: 1000], type: :image},
-    logo_300:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 300, height: 200], type: :image},
-    logo_600:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 600, height: 400], type: :image},
-    banner_330:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 330, height: 55], type: :image},
-    banner_660:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 660, height: 110], type: :image},
-    banner_990:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 990, height: 165], type: :image},
-    banner_1320:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       cover: [width: 1320, height: 220], type: :image},
-    articlepreview_330:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 330, height: 220], type: :image},
-    articlepreview_660:
-      {Lotta.Storage.FileProcessor.ImageProcessor, cover: [width: 660, height: 440], type: :image},
-    pagebg_1024:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       cover: [width: 1024, height: 768], type: :image},
-    pagebg_1280:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       cover: [width: 1280, height: 960], type: :image},
-    pagebg_1920:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       cover: [width: 1920, height: 1440], type: :image},
-    pagebg_2560:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       cover: [width: 2560, height: 1920], type: :image},
-    icon_64:
-      {Lotta.Storage.FileProcessor.ImageProcessor, contain: [width: 64, height: 64], type: :image},
-    icon_128:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 128, height: 128], type: :image},
-    icon_256:
-      {Lotta.Storage.FileProcessor.ImageProcessor,
-       contain: [width: 256, height: 256], type: :image}
+    present_1200: [contain: [width: 1200, height: 1200], format: :webp, type: :image],
+    present_1600: [contain: [width: 1600, height: 1600], format: :webp, type: :image],
+    present_2400: [contain: [width: 2400, height: 2400], format: :webp, type: :image],
+    present_3200: [contain: [width: 3200, height: 3200], format: :webp, type: :image],
+    avatar_50: [cover: [width: 50, height: 50], format: :webp, type: :image],
+    avatar_100: [cover: [width: 100, height: 100], format: :webp, type: :image],
+    avatar_250: [cover: [width: 250, height: 250], format: :webp, type: :image],
+    avatar_500: [cover: [width: 500, height: 500], format: :webp, type: :image],
+    avatar_1000: [cover: [width: 1000, height: 1000], format: :webp, type: :image],
+    logo_300: [contain: [width: 300, height: 200], format: :webp, type: :image],
+    logo_600: [contain: [width: 600, height: 400], format: :webp, type: :image],
+    banner_330: [cover: [width: 330, height: 55], format: :webp, type: :image],
+    banner_660: [cover: [width: 660, height: 110], format: :webp, type: :image],
+    banner_990: [cover: [width: 990, height: 165], format: :webp, type: :image],
+    banner_1320: [cover: [width: 1320, height: 220], format: :webp, type: :image],
+    articlepreview_330: [cover: [width: 330, height: 220], format: :webp, type: :image],
+    articlepreview_660: [cover: [width: 660, height: 440], format: :webp, type: :image],
+    pagebg_1024: [cover: [width: 1024, height: 768], format: :webp, type: :image],
+    pagebg_1280: [cover: [width: 1280, height: 960], format: :webp, type: :image],
+    pagebg_1920: [cover: [width: 1920, height: 1440], format: :webp, type: :image],
+    pagebg_2560: [cover: [width: 2560, height: 1920], format: :webp, type: :image],
+    icon_64: [contain: [width: 64, height: 64], format: :webp, type: :image],
+    icon_128: [contain: [width: 128, height: 128], format: :webp, type: :image],
+    icon_256: [
+      contain: [width: 256, height: 256],
+      format: :webp,
+      type: :image
+    ]
   ]
 
   @video_formats [
-    webm_720p:
-      {Lotta.Storage.FileProcessor.VideoProcessor,
-       resize: [width: 1280, height: 720], format: :webm, type: :video},
-    webm_1080p:
-      {Lotta.Storage.FileProcessor.VideoProcessor,
-       resize: [width: 1920, height: 1080], format: :webm, type: :video},
-    h264_720p:
-      {Lotta.Storage.FileProcessor.VideoProcessor,
-       resize: [width: 1280, height: 720], format: :h264, type: :video},
-    h264_1080p:
-      {Lotta.Storage.FileProcessor.VideoProcessor,
-       resize: [width: 1920, height: 1080], format: :h264, type: :video}
+    poster_1080p: [resize: [height: 1080], content: :poster, format: :webp, type: :image],
+    "videoplay_200p-webm": [
+      resize: [height: 200],
+      format: :webm,
+      video_bitrate: "200k",
+      audio_bitrate: "64k",
+      type: :video
+    ],
+    "videoplay_480p-webm": [
+      resize: [height: 480],
+      format: :webm,
+      video_bitrate: "500k",
+      audio_bitrate: "96k",
+      type: :video
+    ],
+    "videoplay_720p-webm": [
+      resize: [height: 720],
+      format: :webm,
+      video_bitrate: "1M",
+      audio_bitrate: "128k",
+      type: :video
+    ],
+    "videoplay_1080p-webm": [
+      resize: [height: 1080],
+      format: :webm,
+      video_bitrate: "2M",
+      audio_bitrate: "192k",
+      type: :video
+    ],
+    "videoplay_200p-mp4": [
+      resize: [width: "-2", height: 200],
+      format: :mp4,
+      preset: :veryfast,
+      crf: 28,
+      audio_bitrate: "64k",
+      type: :video
+    ],
+    "videoplay_480p-mp4": [
+      resize: [width: "-2", height: 480],
+      format: :mp4,
+      preset: :veryfast,
+      crf: 28,
+      audio_bitrate: "96k",
+      type: :video
+    ],
+    "videoplay_720p-mp4": [
+      resize: [width: "-2", height: 720],
+      format: :mp4,
+      preset: :fast,
+      crf: 23,
+      audio_bitrate: "128k",
+      type: :video
+    ],
+    "videoplay_1080p-mp4": [
+      resize: [width: "-2", height: 1080],
+      format: :mp4,
+      preset: :slow,
+      crf: 20,
+      audio_bitrate: "192k",
+      type: :video
+    ]
   ]
 
-  @formats @preview_formats ++ @image_formats ++ @video_formats
+  @audio_formats [
+    audioplay_aac: [format: :aac, audio_bitrate: "192k", type: :audio],
+    audioplay_ogg: [format: :ogg, audio_bitrate: "128k", type: :audio]
+  ]
+
+  @formats @preview_formats ++ @image_formats ++ @video_formats ++ @audio_formats
 
   @format_categories @formats
                      |> Enum.map(fn {name, _} ->
@@ -174,7 +192,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @spec get_formats_for(atom()) :: [atom()]
   def get_formats_for(category) when is_atom(category) do
     @formats
-    |> Enum.filter(fn {name, _} -> String.starts_with?(name, to_string(category)) end)
+    |> Enum.filter(fn {name, _} -> String.starts_with?(to_string(name), to_string(category)) end)
     |> Enum.map(&elem(&1, 0))
   end
 
@@ -192,6 +210,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   def get_immediate_formats(mime_type) when is_binary(mime_type) do
     case Storage.filetype_from(mime_type) do
       "image" -> @preview_categories
+      "video" -> @preview_categories
       "pdf" -> @preview_categories
       _ -> []
     end
@@ -206,6 +225,9 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
 
   def available_formats(%File{file_type: "video"}),
     do: Enum.map(@preview_formats ++ @video_formats, &elem(&1, 0))
+
+  def available_formats(%File{file_type: "audio"}),
+    do: Enum.map(@preview_formats ++ @audio_formats, &elem(&1, 0))
 
   def available_formats(%File{file_type: "pdf"}),
     do: Enum.map(@preview_formats, &elem(&1, 0))

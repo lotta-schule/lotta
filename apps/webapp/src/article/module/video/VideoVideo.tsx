@@ -10,12 +10,56 @@ type VideoVideoProps = {
 export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
   const file = contentModule.files.at(0);
 
-  const posterFileUrl = file?.formats?.find((f) => f.type === 'image')?.url;
-  const videoFiles = file?.formats?.filter((f) => f.type === 'video');
+  const getSourceMediaQuery = React.useCallback((resolution: number) => {
+    if (isNaN(resolution)) {
+      return undefined;
+    }
+
+    if (resolution >= 1080) {
+      return '(min-height: 1080px)';
+    }
+    if (resolution >= 720) {
+      return '(min-height: 720px)';
+    }
+    return 'all';
+  }, []);
+
+  const posterFileUrl =
+    file?.formats?.find((f) => f.name.startsWith('POSTER'))?.url ||
+    file?.formats?.find((f) => f.type === 'IMAGE')?.url;
+
+  const videoFiles = React.useMemo(
+    () =>
+      file?.formats
+        ?.filter(
+          (f) =>
+            f.type === 'VIDEO' && !['PROCESSING', 'FAILED'].includes(f.status)
+        )
+        .map((f) => {
+          const resolution = Number(
+            f.name.split('_')[1].replace(/[^0-9]/g, '')
+          );
+
+          return {
+            ...f,
+            resolution,
+            media: getSourceMediaQuery(resolution),
+          };
+        })
+        .sort((a, b) => {
+          if (a.mimeType === b.mimeType) {
+            return b.resolution - a.resolution;
+          }
+          return b.mimeType.localeCompare(a.mimeType);
+        })
+        .filter((f) => f.resolution > 200),
+    [file?.formats, getSourceMediaQuery]
+  );
 
   if (!file) {
     return <PlaceholderImage height={350} icon={'video'} />;
   }
+
   if (!videoFiles?.length) {
     return (
       <PlaceholderImage
@@ -42,7 +86,12 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
       className={styles.Video}
     >
       {videoFiles.map((vf) => (
-        <source key={vf.name} src={vf.url} />
+        <source
+          key={vf.name}
+          src={vf.url}
+          type={vf.mimeType}
+          media={vf.media}
+        />
       ))}
     </video>
   );

@@ -33,9 +33,9 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
       {:error, reason}
   end
 
-  @spec process(FileData.t(), Keyword.t()) ::
+  @spec process_multiple(FileData.t(), Keyword.t()) ::
           {:ok, keyword(FileData.t())} | {:error, String.t()}
-  def process(%FileData{} = file_data, formats_args) do
+  def process_multiple(%FileData{} = file_data, formats_args) do
     with {:ok, image} <- Image.open(FileData.stream!(file_data)) do
       formats_args
       |> Enum.map(fn {format, args} ->

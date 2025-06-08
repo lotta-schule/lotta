@@ -86,6 +86,7 @@ defmodule LottaWeb.Schema.Accounts.File do
     field(:name, non_null(:conversion_format))
     field(:url, non_null(:string))
     field(:type, non_null(:file_type))
+    field(:mime_type, :string)
     field(:status, non_null(:format_status))
   end
 
@@ -93,6 +94,8 @@ defmodule LottaWeb.Schema.Accounts.File do
     value(:ready, as: "ready")
     value(:available, as: "available")
     value(:requestable, as: "requestable")
+    value(:processing, as: "processing")
+    value(:failed, as: "failed")
   end
 
   enum :conversion_format do
@@ -100,10 +103,11 @@ defmodule LottaWeb.Schema.Accounts.File do
     value(:preview_200, as: "preview_200")
     value(:preview_400, as: "preview_400")
     value(:preview_800, as: "preview_800")
-    value(:preview_1200, as: "preview_1200")
-    value(:preview_1600, as: "preview_1600")
-    value(:preview_2400, as: "preview_2400")
-    value(:preview_3200, as: "preview_3200")
+
+    value(:present_1200, as: "present_1200")
+    value(:present_1600, as: "present_1600")
+    value(:present_2400, as: "present_2400")
+    value(:present_3200, as: "present_3200")
     value(:avatar_50, as: "avatar_50")
     value(:avatar_100, as: "avatar_100")
     value(:avatar_250, as: "avatar_250")
@@ -124,10 +128,19 @@ defmodule LottaWeb.Schema.Accounts.File do
     value(:icon_64, as: "icon_64")
     value(:icon_128, as: "icon_128")
     value(:icon_256, as: "icon_256")
-    value(:webm_720p, as: "webm_720p")
-    value(:webm_1080p, as: "webm_1080p")
-    value(:h264_720p, as: "h264_720p")
-    value(:h264_1080p, as: "h264_1080p")
+
+    value(:poster_1080p, as: "poster_1080p")
+    value(:videoplay_200p_webm, as: "videoplay_200p-webm")
+    value(:videoplay_480p_webm, as: "videoplay_480p-webm")
+    value(:videoplay_720p_webm, as: "videoplay_720p-webm")
+    value(:videoplay_1080p_webm, as: "videoplay_1080p-webm")
+    value(:videoplay_200p_mp4, as: "videoplay_200p-mp4")
+    value(:videoplay_480p_mp4, as: "videoplay_480p-mp4")
+    value(:videoplay_720p_mp4, as: "videoplay_720p-mp4")
+    value(:videoplay_1080p_mp4, as: "videoplay_1080p-mp4")
+
+    value(:audioplay_aac, as: "audioplay_aac")
+    value(:audioplay_ogg, as: "audioplay_ogg")
   end
 
   enum :file_type do

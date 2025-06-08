@@ -15,11 +15,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
   @preview_formats [
     :preview_200,
     :preview_400,
-    :preview_800,
-    :preview_1200,
-    :preview_1600,
-    :preview_2400,
-    :preview_3200
+    :preview_800
   ]
 
   @image_format_categories [

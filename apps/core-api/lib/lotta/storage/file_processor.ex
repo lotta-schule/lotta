@@ -13,18 +13,14 @@ defmodule Lotta.Storage.FileProcessor do
 
   alias Lotta.Storage.FileData
   alias Lotta.Storage.Conversion.AvailableFormats
-  alias Lotta.Storage.FileProcessor.ImageProcessor
+  alias Lotta.Storage.FileProcessor.{ImageProcessor, VideoProcessor}
 
   @doc """
   Reads custom metadata from a file.
   """
   @spec read_metadata(FileData.t()) :: {:ok, map()} | {:error, String.t()}
-  def read_metadata(%FileData{metadata: metadata} = file_data) do
-    case Keyword.get(metadata, :type) do
-      "image" -> ImageProcessor.read_metadata(file_data)
-      _ -> {:error, "Unsupported file type"}
-    end
-  end
+  def read_metadata(%FileData{} = file_data),
+    do: get_processor_module(file_data).read_metadata(file_data)
 
   @doc """
   Processes a file with a given format_category and returns the processed file data.
@@ -36,34 +32,27 @@ defmodule Lotta.Storage.FileProcessor do
 
   def process_file(file_data, format_category, options)
       when is_valid_category?(format_category) do
-    AvailableFormats.list(format_category)
-    |> Enum.filter(fn {format, _} -> not Enum.member?(options[:skip] || [], to_string(format)) end)
-    |> Enum.reduce({:ok, nil}, fn
-      _, {:error, _} = error ->
-        error
+    target_formats =
+      AvailableFormats.list(format_category)
+      |> Enum.filter(fn {format, _} ->
+        not Enum.member?(options[:skip] || [], to_string(format))
+      end)
+      |> Enum.into([])
 
-      {format, {next_processor_module, args}}, {:ok, nil} ->
-        {:ok, {next_processor_module, [{format, args}]}}
-
-      {format, {next_processor_module, args}}, {:ok, {processor_module, format_list}}
-      when next_processor_module == processor_module ->
-        {:ok, {next_processor_module, [{format, args} | format_list]}}
-
-      {format, {next_processor_module, _}}, _ ->
-        {:error,
-         "Invalid format: #{format} for category: #{format_category}. #{next_processor_module} is not allowed"}
-    end)
-    |> case do
-      {:ok, nil} ->
-        {:error, "No formats found for category: #{format_category}"}
-
-      {:ok, {next_processor_module, format_list}} ->
-        next_processor_module.process(file_data, format_list)
-
-      {:error, error} ->
-        {:error, error}
+    if target_formats == [] do
+      {:error, "No formats available for category: #{format_category}"}
+    else
+      get_processor_module(file_data).process_multiple(file_data, target_formats)
     end
   end
 
   def process_file(_, format, _), do: {:error, "Invalid format category #{format}"}
+
+  defp get_processor_module(%FileData{metadata: metadata}),
+    do: get_processor_module_for_filetype(metadata[:type])
+
+  defp get_processor_module_for_filetype("video"), do: VideoProcessor
+  defp get_processor_module_for_filetype("audio"), do: VideoProcessor
+  defp get_processor_module_for_filetype("image"), do: ImageProcessor
+  defp get_processor_module_for_filetype(_), do: ImageProcessor
 end

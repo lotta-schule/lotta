@@ -17,7 +17,7 @@ mutation CreateArticle($article: ArticleInput!) {
       filename
       filesize
       formats {
-        format
+        type
         url
         type
         status

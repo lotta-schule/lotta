@@ -20,10 +20,10 @@ export type AvailableFormat =
   | 'PREVIEW_200'
   | 'PREVIEW_400'
   | 'PREVIEW_800'
-  | 'PREVIEW_1200'
-  | 'PREVIEW_1600'
-  | 'PREVIEW_2400'
-  | 'PREVIEW_3200'
+  | 'PRESENT_1200'
+  | 'PRESENT_1600'
+  | 'PRESENT_2400'
+  | 'PRESENT_3200'
   | 'AVATAR_50'
   | 'AVATAR_100'
   | 'AVATAR_250'
@@ -44,10 +44,17 @@ export type AvailableFormat =
   | 'ICON_64'
   | 'ICON_128'
   | 'ICON_256'
-  | 'WEBM_720P'
-  | 'WEBM_1080P'
-  | 'H264_720P'
-  | 'H264_1080P';
+  | 'POSTER_1080P'
+  | 'VIDEOPLAY_200P_WEBM'
+  | 'VIDEOPLAY_480P_WEBM'
+  | 'VIDEOPLAY_720P_WEBM'
+  | 'VIDEOPLAY_1080P_WEBM'
+  | 'VIDEOPLAY_200P_MP4'
+  | 'VIDEOPLAY_480P_MP4'
+  | 'VIDEOPLAY_720P_MP4'
+  | 'VIDEOPLAY_1080P_MP4'
+  | 'AUDIOPLAY_AAC'
+  | 'AUDIOPLAY_OGG';
 
 export type FileModelType =
   | 'PDF'
@@ -74,7 +81,8 @@ export interface FileModel {
     name: AvailableFormat;
     url: string;
     type: FileModelType;
-    status: 'READY' | 'AVAILABLE' | 'REQUESTABLE';
+    mimeType: string;
+    status: 'READY' | 'AVAILABLE' | 'REQUESTABLE' | 'PROCESSING' | 'FAILED';
   }[];
   usage?: FileModelUsageLocation[];
 }

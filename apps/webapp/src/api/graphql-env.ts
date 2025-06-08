@@ -1701,6 +1701,38 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "VIDEOPLAY_1080P_MP4",
+            "isDeprecated": false
+          },
+          {
+            "name": "VIDEOPLAY_1080P_WEBM",
+            "isDeprecated": false
+          },
+          {
+            "name": "VIDEOPLAY_200P_MP4",
+            "isDeprecated": false
+          },
+          {
+            "name": "VIDEOPLAY_200P_WEBM",
+            "isDeprecated": false
+          },
+          {
+            "name": "VIDEOPLAY_480P_MP4",
+            "isDeprecated": false
+          },
+          {
+            "name": "VIDEOPLAY_480P_WEBM",
+            "isDeprecated": false
+          },
+          {
+            "name": "VIDEOPLAY_720P_MP4",
+            "isDeprecated": false
+          },
+          {
+            "name": "VIDEOPLAY_720P_WEBM",
+            "isDeprecated": false
+          },
+          {
             "name": "WEBM_1080P",
             "isDeprecated": false
           },

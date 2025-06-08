@@ -75,6 +75,16 @@ defmodule Lotta.Storage.FileData do
       {:error, "Failed to read file"}
   end
 
+  @spec stream!(t(), integer()) :: Enumerable.t()
+  def stream!(%__MODULE__{_path: path}, chunk_size) when is_binary(path) do
+    File.stream!(path, [], chunk_size)
+  end
+
+  def stream!(%__MODULE__{stream: stream}, chunk_size) when not is_nil(stream) do
+    Stream.chunk_every(stream, chunk_size)
+    |> Stream.map(&IO.iodata_to_binary/1)
+  end
+
   @spec stream!(t()) :: Enumerable.t()
   def stream!(%__MODULE__{_path: path}) when not is_nil(path) do
     File.stream!(path, 8 * 1024 * 1024)
