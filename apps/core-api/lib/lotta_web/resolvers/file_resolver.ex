@@ -5,6 +5,7 @@ defmodule LottaWeb.FileResolver do
 
   import Ecto.Query
   import Lotta.Accounts.Permissions
+  import Lotta.Storage.Conversion.AvailableFormats, only: [is_valid_category?: 1]
   import LottaWeb.ErrorHelpers
 
   alias LottaWeb.Urls
@@ -14,6 +15,7 @@ defmodule LottaWeb.FileResolver do
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Storage.{Directory, FileData}
   alias Lotta.Storage.Conversion.AvailableFormats
+  alias Lotta.Storage.Worker.ConversionWorker
   alias Lotta.Repo
   alias UUID
 
@@ -299,6 +301,27 @@ defmodule LottaWeb.FileResolver do
       true ->
         Storage.delete_file(file)
         |> format_errors("Fehler beim Löschen der Datei.")
+    end
+  end
+
+  def request_conversion(%{category: category}, _) when not is_valid_category?(category),
+    do: {:error, "Ungültige Kategorie: #{category}"}
+
+  def request_conversion(%{id: id, category: category}, %{context: %{current_user: current_user}}) do
+    file = Storage.get_file(id)
+
+    with true <-
+           can_write?(current_user, file) ||
+             {:error, "Du hast nicht die Rechte, diese Datei zu bearbeiten."},
+         {:ok, job} <-
+           ConversionWorker.get_or_create_conversion_job(
+             file,
+             category
+           ) do
+      {:ok, file}
+    else
+      {:error, reason} ->
+        {:error, "Fehler beim Anfordern der Konvertierung: #{reason}"}
     end
   end
 end

@@ -134,10 +134,8 @@ defmodule Lotta.MixProject do
       {:opentelemetry_exporter, "~> 1.6"},
       {:opentelemetry_phoenix, "~> 2.0"},
       {:opentelemetry_redix, "~> 0.1"},
-      {:opentelemetry_tesla,
-       git: "https://github.com/ShapovalovaIrina/opentelemetry-erlang-contrib",
-       sparse: "instrumentation/opentelemetry_tesla",
-       ref: "update-tesla-to-1.27-semantics"}
+      {:opentelemetry_tesla, "~> 2.4.0"},
+      {:opentelemetry_semantic_conventions, "~> 1.27", override: true}
     ]
   end
 
