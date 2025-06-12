@@ -27,12 +27,35 @@ defmodule Lotta.Worker.MediaConversion do
   @impl Oban.Worker
   def perform(%{
         id: job_id,
-        args:
-          %{
-            "prefix" => prefix,
-            "file_id" => file_id
-          } = args
+        args: args
       }) do
+    case check_args(args) do
+      {:ok, file, format_name, _} when not is_nil(format_name) ->
+        process_single_format(
+          job_id,
+          file,
+          format_name
+        )
+
+        Oban.Notifier.notify(Oban, :media_conversion, %{
+          "complete" => job_id
+        })
+
+      {:ok, file, _, format_names} ->
+        silent_process_multiple(job_id, file, format_names)
+
+        Oban.Notifier.notify(Oban, :media_conversion, %{
+          "complete" => job_id
+        })
+
+      {:error, reason} ->
+        Logger.error("Error processing conversion job #{job_id}: #{inspect(reason)}")
+        Oban.Notifier.notify(Oban, :media_conversion, %{"error" => job_id})
+        {:error, reason}
+    end
+  end
+
+  defp check_args(%{"prefix" => prefix, "file_id" => file_id} = args) do
     format_name = args["format_name"]
     format_names = args["format_names"]
 
@@ -49,38 +72,25 @@ defmodule Lotta.Worker.MediaConversion do
       not is_nil(format_name) and not is_nil(format_names) ->
         {:error, "Both 'format_name' and 'format_names' provided. Only one should be specified."}
 
-      not is_nil(format_name) ->
-        process_single_format(
-          job_id,
-          file,
-          format_name
-        )
-
-      format_names ->
-        format_names
-        |> Enum.map(fn format_name ->
-          case process_single_format(job_id, file, format_name) do
-            {:ok, result} ->
-              {format_name, result}
-
-            {:error, error} ->
-              Logger.error("Error processing format #{format_name}: #{inspect(error)}")
-              {}
-          end
-        end)
-        |> Enum.filter(&tuple_size/1)
-        |> then(&{:ok, &1})
+      true ->
+        {:ok, file, format_name, format_names}
     end
-    |> tap(fn
-      {:ok, _result_or_results} ->
-        Oban.Notifier.notify(Oban, :media_conversion, %{
-          "complete" => job_id
-        })
+  end
 
-      {:error, reason} ->
-        Logger.error("Error processing conversion job #{job_id}: #{inspect(reason)}")
-        Oban.Notifier.notify(Oban, :media_conversion, %{"error" => job_id})
+  defp silent_process_multiple(job_id, file, format_names) do
+    format_names
+    |> Enum.map(fn format_name ->
+      case process_single_format(job_id, file, format_name) do
+        {:ok, result} ->
+          {format_name, result}
+
+        {:error, error} ->
+          Logger.error("Error processing format #{format_name}: #{inspect(error)}")
+          {}
+      end
     end)
+    |> Enum.filter(&tuple_size/1)
+    |> then(&{:ok, &1})
   end
 
   defp process_single_format(_job_id, file, format_name) do

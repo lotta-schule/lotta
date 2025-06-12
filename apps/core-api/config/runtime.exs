@@ -35,10 +35,10 @@ defmodule SystemConfig do
         value && String.split(value, ":") |> List.last()
 
       :url_host ->
-        IO.inspect(value && URI.parse(value).host, label: "URL_HOST")
+        value && URI.parse(value).host
 
       :url_scheme ->
-        IO.inspect(value && URI.parse(value).scheme, label: "URL_SCHEME")
+        value && URI.parse(value).scheme
     end
   end
 

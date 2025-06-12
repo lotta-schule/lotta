@@ -33,11 +33,7 @@ defmodule Lotta.Worker.Conversion do
          file when not is_nil(file) <- Repo.get(File, file_id, prefix: prefix),
          file <- Repo.preload(file, [:file_conversions]),
          {:ok, file_conversions} <-
-           IO.inspect(
-             process_file(file, format_category,
-               skip: Enum.map(file.file_conversions, & &1.format)
-             )
-           ) do
+           process_file(file, format_category, skip: Enum.map(file.file_conversions, & &1.format)) do
       Oban.Notifier.notify(Oban, :conversion_jobs, %{"complete" => job_id})
 
       {:ok, file_conversions}

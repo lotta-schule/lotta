@@ -73,7 +73,6 @@ defmodule Lotta.Storage do
       file
       |> AvailableFormats.get_immediate_formats()
       # A good place for a metadata job
-      |> IO.inspect(label: "immediate formats")
       |> Enum.map(&Conversion.get_or_create_conversion_job(file, &1))
       |> Enum.filter(&(elem(&1, 0) == :ok))
       # they their own timeout
@@ -164,7 +163,7 @@ defmodule Lotta.Storage do
           strategy.delete("#{prefix}/#{file_id}/#{variant_name}", config)
         end
 
-        IO.inspect(Repo.delete(foc, prefix: prefix), label: "should delete empty file conversion")
+        Repo.delete(foc, prefix: prefix)
         error
     end
   end

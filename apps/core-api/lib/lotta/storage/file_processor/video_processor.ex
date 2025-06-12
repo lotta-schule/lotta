@@ -68,9 +68,7 @@ defmodule Lotta.Storage.FileProcessor.VideoProcessor do
       |> Oban.insert()
       |> case do
         {:ok, job} ->
-          IO.inspect(job,
-            label: "Created media conversion job for file #{file.id} to format #{format}"
-          )
+          job
           |> MediaConversion.await_completion()
           |> then(&Map.put(acc, format, &1))
 
