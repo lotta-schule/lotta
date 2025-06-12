@@ -5,7 +5,8 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
 
   require Logger
 
-  alias Lotta.Storage.FileData
+  alias Lotta.Storage
+  alias Lotta.Storage.{File, FileData}
 
   @spec read_metadata(FileData.t()) :: {:ok, map()} | {:error, String.t()}
   def read_metadata(%FileData{} = file_data) do
@@ -33,14 +34,32 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
       {:error, reason}
   end
 
-  @spec process_multiple(FileData.t(), Keyword.t()) ::
+  @spec process_multiple(File.t(), Keyword.t()) ::
           {:ok, keyword(FileData.t())} | {:error, String.t()}
-  def process_multiple(%FileData{} = file_data, formats_args) do
+  def process_multiple(%File{} = file, formats_args) do
+    with {:ok, file_data} <- File.to_file_data(file) do
+      process_multiple(file_data, file, formats_args)
+    end
+  end
+
+  @spec process_multiple(FileData.t(), File.t(), Keyword.t()) ::
+          {:ok, keyword(FileData.t())} | {:error, String.t()}
+  def process_multiple(%FileData{} = file_data, %File{} = file, formats_args) do
     with {:ok, image} <- Image.open(FileData.stream!(file_data)) do
       formats_args
       |> Enum.map(fn {format, args} ->
         {size_string, vips_args} = parse_args(args)
-        create_thumbnail_stream(format, image, size_string, vips_args)
+
+        with {format, file_data} <-
+               create_thumbnail_stream(format, image, size_string, vips_args),
+             {:ok, file_conversion} <-
+               Storage.create_file_conversion(file_data, file, to_string(format)) do
+          {format, file_conversion}
+        else
+          {:error, error} ->
+            Logger.error("Failed to process image: #{inspect(error)}")
+            nil
+        end
       end)
       |> Enum.filter(&(not is_nil(&1)))
       |> then(&{:ok, &1})

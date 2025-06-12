@@ -78,9 +78,10 @@ defmodule Lotta.Storage.File do
   """
   @spec to_file_data(File.t()) :: {:ok, FileData.t()} | {:error, String.t()}
   def to_file_data(%__MODULE__{} = file) do
+    # to_remote_file_data(file)
     if file_data = FileData.get_cached(for: file),
-      do: {:ok, file_data},
-      else: to_remote_file_data(file)
+      do: {:ok, IO.inspect(file_data, label: "Cached FileData")},
+      else: IO.inspect(to_remote_file_data(file), label: "Remote FileData")
   end
 
   defp to_remote_file_data(%__MODULE__{} = file) do
@@ -100,6 +101,7 @@ defmodule Lotta.Storage.File do
              mime_type: file.mime_type
            ) do
       FileData.cache(file_data, for: file)
+      |> IO.inspect(label: "Cached FileData from remote")
     end
   end
 end

@@ -21,6 +21,11 @@ export const UPLOAD_FILE_MUTATION = graphql(`
         id
       }
       formats {
+        availability {
+          status
+          progress
+          error
+        }
         name
         url
         type

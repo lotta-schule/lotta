@@ -1,4 +1,4 @@
-defmodule Lotta.ConversionWorker do
+defmodule Lotta.Worker.Conversion do
   @moduledoc """
   Conversion worker that converts a file to a different format.
   """
@@ -15,12 +15,14 @@ defmodule Lotta.ConversionWorker do
     ]
 
   import Ecto.Query
+  import Lotta.Storage.Conversion.AvailableFormats, only: [is_valid_category?: 1]
 
   require Logger
 
-  alias Lotta.{Repo, Storage}
-  alias Lotta.Storage.{File, FileProcessor}
+  alias Lotta.Repo
+  alias Lotta.Storage.{File, FileConversion, FileData}
   alias Lotta.Storage.Conversion.AvailableFormats
+  alias Lotta.Storage.FileProcessor.{ImageProcessor, VideoProcessor}
 
   @impl Oban.Worker
   def perform(%{
@@ -30,23 +32,14 @@ defmodule Lotta.ConversionWorker do
     with {:ok, format_category} <- AvailableFormats.to_atom(format_category),
          file when not is_nil(file) <- Repo.get(File, file_id, prefix: prefix),
          file <- Repo.preload(file, [:file_conversions]),
-         {:ok, file_data} <- File.to_file_data(file),
-         {:ok, results} <-
-           FileProcessor.process_file(file_data, format_category,
-             skip: Enum.map(file.file_conversions, & &1.format)
+         {:ok, file_conversions} <-
+           IO.inspect(
+             process_file(file, format_category,
+               skip: Enum.map(file.file_conversions, & &1.format)
+             )
            ) do
-      file_conversions =
-        results
-        |> Enum.map(fn {format, processed_file_data} ->
-          Storage.create_file_conversion(
-            processed_file_data,
-            file,
-            to_string(format)
-          )
-        end)
-        |> Enum.concat(file.file_conversions)
-
       Oban.Notifier.notify(Oban, :conversion_jobs, %{"complete" => job_id})
+
       {:ok, file_conversions}
     else
       nil ->
@@ -59,8 +52,70 @@ defmodule Lotta.ConversionWorker do
     end
   end
 
+  @doc """
+  Reads custom metadata from a file.
+  """
+  @spec read_metadata(FileData.t()) :: {:ok, map()} | {:error, String.t()}
+  def read_metadata(%FileData{} = file_data),
+    do: get_processor_module(file_data).read_metadata(file_data)
+
+  @doc """
+  Processes a file with a given format_category and returns the processed file data.
+  Will return the file data, which will still need to be uploaded and persisted to the database.
+  """
+  @spec process_file(File.t(), format_category :: atom(), options :: keyword() | nil) ::
+          {:ok, keyword(FileConversion.t())} | {:error, String.t()}
+  def process_file(file, format_category, options \\ [])
+
+  def process_file(file, format_category, options)
+      when is_valid_category?(format_category) do
+    target_formats =
+      AvailableFormats.list(format_category)
+      |> Enum.filter(fn {format, _} ->
+        not Enum.member?(options[:skip] || [], to_string(format))
+      end)
+      |> Enum.into([])
+
+    processor = get_processor_module(file)
+
+    cond do
+      is_nil(processor) ->
+        {:error, "No processor available for file type #{file.file_type}"}
+
+      target_formats == [] ->
+        {:error, "No target formats available for category #{format_category}"}
+
+      true ->
+        processor.process_multiple(file, target_formats)
+    end
+  end
+
+  def process_file(_, format, _), do: {:error, "Invalid format category #{format}"}
+
+  def get_processor_module(%FileData{metadata: metadata}),
+    do: get_processor_module_for_filetype(metadata[:type])
+
+  def get_processor_module(%File{file_type: file_type}),
+    do: get_processor_module_for_filetype(file_type)
+
+  def get_processor_module(%Oban.Job{args: %{"prefix" => prefix, "file_id" => file_id}}) do
+    if file = Repo.get(File, file_id, prefix: prefix),
+      do: get_processor_module(file),
+      else: ImageProcessor
+  end
+
+  def get_processor_module_for_filetype("video"), do: VideoProcessor
+  def get_processor_module_for_filetype("audio"), do: VideoProcessor
+  def get_processor_module_for_filetype("image"), do: ImageProcessor
+  def get_processor_module_for_filetype(_), do: ImageProcessor
+
   @impl Oban.Worker
-  def timeout(_job), do: :timer.minutes(5)
+  def timeout(job) do
+    case get_processor_module(job) do
+      VideoProcessor -> :timer.hours(2)
+      _ -> :timer.minutes(10)
+    end
+  end
 
   @spec get_conversion_job(File.t(), atom() | String.t()) :: Oban.Job.t() | nil
   def get_conversion_job(%{id: file_id} = file, format) do
@@ -96,14 +151,7 @@ defmodule Lotta.ConversionWorker do
           file_id: file.id,
           format_category: AvailableFormats.get_category(format)
         }
-        |> __MODULE__.new(
-          queue:
-            if(file.file_type in ["video", "audio"],
-              do: :media_conversion,
-              else: :file_conversion
-            ),
-          unique: [period: :timer.hours(4), fields: [:args]]
-        )
+        |> __MODULE__.new()
         |> Oban.insert()
     end
   end
@@ -138,6 +186,7 @@ defmodule Lotta.ConversionWorker do
   def await_completion_task(%Oban.Job{state: state}),
     do: Task.async(fn -> {:error, state} end)
 
-  def await_completion(%Oban.Job{} = job),
-    do: Task.await(await_completion_task(job), :timer.minutes(1))
+  def await_completion(%Oban.Job{} = job) do
+    Task.await(await_completion_task(job), timeout(job))
+  end
 end

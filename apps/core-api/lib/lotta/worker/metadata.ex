@@ -1,4 +1,4 @@
-defmodule Lotta.MetadataWorker do
+defmodule Lotta.Worker.Metadata do
   @moduledoc """
   Worker for fetching a files metadata.
   """
@@ -17,17 +17,18 @@ defmodule Lotta.MetadataWorker do
   require Logger
 
   alias Lotta.Repo
-  alias Lotta.Storage.{File, FileProcessor}
+  alias Lotta.Storage.{File, FileData}
+  alias Lotta.Storage.FileProcessor.{ImageProcessor, VideoProcessor}
 
   @impl Oban.Worker
   def perform(%{
         id: job_id,
         args: %{"prefix" => prefix, "file_id" => file_id}
       }) do
-    with file when not is_nil(file) <- Repo.get(File, file_id, prefix: prefix),
+    with file when is_struct(file) <-
+           Repo.get(File, file_id, prefix: prefix) || {:error, "File not found"},
          {:ok, file_data} <- File.to_file_data(file),
-         {:ok, results} <-
-           FileProcessor.read_metadata(file_data),
+         {:ok, results} <- read_metadata(file_data, file.file_type),
          {:ok, file} <-
            file
            |> Ecto.Changeset.change(metadata: results)
@@ -35,18 +36,26 @@ defmodule Lotta.MetadataWorker do
       Oban.Notifier.notify(Oban, :metadata_jobs, %{"complete" => job_id})
       {:ok, file}
     else
-      nil ->
-        {:error, "File not found"}
-
-      {:error, error} ->
+      {:error, reason} = error ->
         Oban.Notifier.notify(Oban, :metadata_jobs, %{"error" => job_id})
-        Logger.error("Error generating metadata for file: #{inspect(error)}")
-        {:error, "Error generating metadata for file: #{error}"}
+        Logger.error("Error updating file metadata: #{inspect(reason)}")
+        error
     end
   end
 
+  defp read_metadata(%FileData{} = file_data, "video"),
+    do: VideoProcessor.read_metadata(file_data)
+
+  defp read_metadata(%FileData{} = file_data, "audio"),
+    do: VideoProcessor.read_metadata(file_data)
+
+  defp read_metadata(%FileData{} = file_data, "image"),
+    do: ImageProcessor.read_metadata(file_data)
+
+  defp read_metadata(_, _), do: {:error, "Unsupported file type for metadata extraction"}
+
   @impl Oban.Worker
-  def timeout(_job), do: :timer.seconds(30)
+  def timeout(_job), do: :timer.minutes(2)
 
   @spec create_metadata_job(File.t()) ::
           {:ok, Oban.Job.t()} | {:error, String.t()}
@@ -79,7 +88,7 @@ defmodule Lotta.MetadataWorker do
         {:notification, :metadata_jobs, %{"error" => ^job_id}} ->
           {:error, "Metadata job errored"}
       after
-        20_000 ->
+        :timer.minutes(2) ->
           {:error, :timeout}
       end
     end)

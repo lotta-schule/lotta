@@ -7,7 +7,8 @@ defmodule Lotta.Storage do
   import Ecto.Query
 
   alias Ecto.Changeset
-  alias Lotta.{MetadataWorker, Repo, Tenants, ConversionWorker}
+  alias Lotta.{Repo, Tenants}
+  alias Lotta.Worker.{Metadata, Conversion}
   alias Lotta.Accounts.{FileManagment, User}
   alias Lotta.Storage.Conversion.AvailableFormats
 
@@ -59,20 +60,21 @@ defmodule Lotta.Storage do
       FileData.cache(file_data, for: file)
 
       metadata_job =
-        case MetadataWorker.create_metadata_job(file) do
+        case Metadata.create_metadata_job(file) do
           {:ok, metadata_job} -> metadata_job
           {:error, _} -> nil
         end
 
       await_metadata_tasks =
         if metadata_job && not Keyword.get(opts, :skip_wait, false),
-          do: [MetadataWorker.await_completion_task(metadata_job)],
+          do: [Metadata.await_completion_task(metadata_job)],
           else: []
 
       file
       |> AvailableFormats.get_immediate_formats()
       # A good place for a metadata job
-      |> Enum.map(&ConversionWorker.get_or_create_conversion_job(file, &1))
+      |> IO.inspect(label: "immediate formats")
+      |> Enum.map(&Conversion.get_or_create_conversion_job(file, &1))
       |> Enum.filter(&(elem(&1, 0) == :ok))
       # they their own timeout
       |> then(fn await_conversion_tasks ->
@@ -81,7 +83,7 @@ defmodule Lotta.Storage do
             []
           else
             await_conversion_tasks
-            |> Enum.map(&ConversionWorker.await_completion_task(elem(&1, 1)))
+            |> Enum.map(&Conversion.await_completion_task(elem(&1, 1)))
           end
 
         await_conversion_tasks ++ await_metadata_tasks
@@ -162,7 +164,7 @@ defmodule Lotta.Storage do
           strategy.delete("#{prefix}/#{file_id}/#{variant_name}", config)
         end
 
-        Repo.delete(foc, prefix: prefix)
+        IO.inspect(Repo.delete(foc, prefix: prefix), label: "should delete empty file conversion")
         error
     end
   end
@@ -413,8 +415,8 @@ defmodule Lotta.Storage do
     with nil <-
            Repo.get_by(FileConversion, file_id: file_id, format: format),
          {:ok, job} <-
-           ConversionWorker.get_or_create_conversion_job(file, format),
-         {:ok, _} <- ConversionWorker.await_completion(job),
+           Conversion.get_or_create_conversion_job(file, format),
+         {:ok, _} <- Conversion.await_completion(job),
          file_conversion when not is_nil(file_conversion) <-
            Repo.get_by(FileConversion, file_id: file_id, format: format) do
       {:ok, file_conversion}

@@ -15,7 +15,7 @@ defmodule LottaWeb.FileResolver do
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Storage.{Directory, FileData}
   alias Lotta.Storage.Conversion.AvailableFormats
-  alias Lotta.Storage.Worker.ConversionWorker
+  alias Lotta.Worker.Conversion
   alias Lotta.Repo
   alias UUID
 
@@ -316,8 +316,8 @@ defmodule LottaWeb.FileResolver do
     with true <-
            can_write?(current_user, file) ||
              {:error, "Du hast nicht die Rechte, diese Datei zu bearbeiten."},
-         {:ok, job} <-
-           ConversionWorker.get_or_create_conversion_job(
+         {:ok, _job} <-
+           Conversion.get_or_create_conversion_job(
              file,
              category
            ) do

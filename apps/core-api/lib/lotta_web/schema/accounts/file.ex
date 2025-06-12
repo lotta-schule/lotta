@@ -39,7 +39,7 @@ defmodule LottaWeb.Schema.Accounts.File do
     field(:updated_at, non_null(:datetime))
     field(:filename, non_null(:string))
     field(:filesize, non_null(:integer))
-    field(:mime_type, non_null(:string))
+    field(:mime_type, :string)
 
     field(:remote_location, non_null(:string),
       resolve: &LottaWeb.FileResolver.resolve_remote_location/3

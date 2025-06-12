@@ -11,7 +11,7 @@ defmodule Lotta.Storage.FileProcessor do
 
   import Lotta.Storage.Conversion.AvailableFormats, only: [is_valid_category?: 1]
 
-  alias Lotta.Storage.FileData
+  alias Lotta.Storage.{File, FileData}
   alias Lotta.Storage.Conversion.AvailableFormats
   alias Lotta.Storage.FileProcessor.{ImageProcessor, VideoProcessor}
 
@@ -26,11 +26,11 @@ defmodule Lotta.Storage.FileProcessor do
   Processes a file with a given format_category and returns the processed file data.
   Will return the file data, which will still need to be uploaded and persisted to the database.
   """
-  @spec process_file(FileData.t(), format_category :: atom(), options :: keyword() | nil) ::
+  @spec process_file(File.t(), format_category :: atom(), options :: keyword() | nil) ::
           {:ok, keyword(FileData.t())} | {:error, String.t()}
-  def process_file(file_data, format_category, options \\ [])
+  def process_file(file, format_category, options \\ [])
 
-  def process_file(file_data, format_category, options)
+  def process_file(file, format_category, options)
       when is_valid_category?(format_category) do
     target_formats =
       AvailableFormats.list(format_category)
@@ -40,9 +40,9 @@ defmodule Lotta.Storage.FileProcessor do
       |> Enum.into([])
 
     if target_formats == [] do
-      {:error, "No formats available for category: #{format_category}"}
+      {:error, "No target formats available for category #{format_category}"}
     else
-      get_processor_module(file_data).process_multiple(file_data, target_formats)
+      get_processor_module(file).process_multiple(file, target_formats)
     end
   end
 
@@ -50,6 +50,9 @@ defmodule Lotta.Storage.FileProcessor do
 
   defp get_processor_module(%FileData{metadata: metadata}),
     do: get_processor_module_for_filetype(metadata[:type])
+
+  defp get_processor_module(%File{file_type: file_type}),
+    do: get_processor_module_for_filetype(file_type)
 
   defp get_processor_module_for_filetype("video"), do: VideoProcessor
   defp get_processor_module_for_filetype("audio"), do: VideoProcessor

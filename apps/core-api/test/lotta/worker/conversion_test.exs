@@ -1,7 +1,8 @@
-defmodule Lotta.ConversionWorkerTest do
+defmodule Lotta.Worker.ConversionTest do
   use Lotta.WorkerCase, async: true
 
-  alias Lotta.{ConversionWorker, Fixtures}
+  alias Lotta.Fixtures
+  alias Lotta.Worker.Conversion
 
   setup do
     Tesla.Mock.mock(fn
@@ -16,12 +17,12 @@ defmodule Lotta.ConversionWorkerTest do
     end)
   end
 
-  describe "ConversionWorker" do
+  describe "Worker.Conversion" do
     test "Create a new image conversion" do
       file = Fixtures.fixture(:real_image_file, Fixtures.fixture(:admin_user))
 
       {:ok, conversions} =
-        perform_job(ConversionWorker, %{
+        perform_job(Conversion, %{
           "prefix" => "tenant_test",
           "file_id" => file.id,
           "format_category" => "preview"
@@ -35,11 +36,11 @@ defmodule Lotta.ConversionWorkerTest do
         file = Fixtures.fixture(:real_image_file, Fixtures.fixture(:admin_user))
 
         assert {:ok, _job} =
-                 ConversionWorker.get_or_create_conversion_job(file, "preview")
+                 Conversion.get_or_create_conversion_job(file, "preview")
 
-        assert jobs = all_enqueued(worker: ConversionWorker)
-        ConversionWorker.get_or_create_conversion_job(file, "preview")
-        assert jobs == all_enqueued(worker: ConversionWorker)
+        assert jobs = all_enqueued(worker: Conversion)
+        Conversion.get_or_create_conversion_job(file, "preview")
+        assert jobs == all_enqueued(worker: Conversion)
 
         assert_enqueued(
           queue: :file_conversion,

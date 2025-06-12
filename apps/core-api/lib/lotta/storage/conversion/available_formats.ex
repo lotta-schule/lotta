@@ -7,8 +7,6 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   alias Lotta.Storage
   alias Lotta.Storage.{FileData, File}
 
-  @preview_categories [:preview, :poster]
-
   @preview_formats [
     preview_200: [contain: [width: 200, height: 200], format: :webp, type: :image],
     preview_400: [contain: [width: 400, height: 400], format: :webp, type: :image],
@@ -209,9 +207,9 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
 
   def get_immediate_formats(mime_type) when is_binary(mime_type) do
     case Storage.filetype_from(mime_type) do
-      "image" -> @preview_categories
-      "video" -> @preview_categories
-      "pdf" -> @preview_categories
+      "image" -> [:preview]
+      "video" -> [:preview, :poster]
+      "pdf" -> [:preview]
       _ -> []
     end
   end
@@ -244,7 +242,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     do:
       @preview_formats
       |> filter_for_category(opts[:for_category])
-      |> Enum.map(@preview_formats, &elem(&1, 0))
+      |> Enum.map(&elem(&1, 0))
 
   def available_formats(_, _), do: []
 
@@ -255,6 +253,20 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
       |> available_formats(opts)
       |> Enum.map(&{&1, Keyword.get(@formats, &1)})
       |> Enum.filter(&is_tuple/1)
+
+  @doc """
+  Returns a result tuple with the configuration for a given format and file.
+  """
+  @spec get_format_config(File.t(), atom()) :: {:ok, keyword()} | {:error, String.t()}
+  def get_format_config(file, format_name) do
+    file
+    |> available_formats_with_config()
+    |> Enum.find(fn {name, _} -> name == format_name end)
+    |> case do
+      nil -> {:error, "Format #{format_name} not available for file #{file.id}"}
+      {_, config} -> {:ok, config}
+    end
+  end
 
   @doc """
   Checks if a given format is available for a given file.
