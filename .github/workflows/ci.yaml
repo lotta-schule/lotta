@@ -133,8 +133,6 @@ jobs:
             deps
             _build
           key: ${{ runner.os }}-elixir-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-elixir-mix-
 
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
@@ -155,11 +153,6 @@ jobs:
 
       - name: Install npm dependencies
         run: pnpm install
-
-      - name: Compile Elixir
-        run: mix loadpaths
-        env:
-          MIX_ENV: test
 
       - name: Run Unit / Component tests
         run: pnpm nx affected -t test --configuration=coverage
