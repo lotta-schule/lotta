@@ -205,7 +205,7 @@ RUN set -xe && \
   apk upgrade --no-cache && \
   apk add --no-cache --virtual .build-deps \
   git \
-  rust \
+  rust cargo \
   build-base
 
 # install hex + rebar
