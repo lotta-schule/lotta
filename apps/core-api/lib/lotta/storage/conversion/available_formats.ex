@@ -209,6 +209,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     case Storage.filetype_from(mime_type) do
       "image" -> [:preview]
       "video" -> [:preview, :poster]
+      "audio" -> [:preview]
       "pdf" -> [:preview]
       _ -> []
     end

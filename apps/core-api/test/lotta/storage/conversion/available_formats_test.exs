@@ -4,8 +4,9 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
   use Lotta.DataCase
 
   import Ecto.Query
+  import Lotta.Storage.Conversion.AvailableFormats, only: [is_valid_category?: 1]
 
-  alias Lotta.Storage.File
+  alias Lotta.Storage.{File, FileData}
   alias Lotta.Storage.Conversion.AvailableFormats
 
   @prefix "tenant_test"
@@ -31,6 +32,10 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
     :videoplay
   ]
 
+  @audio_format_categories [
+    :audioplay
+  ]
+
   setup do
     Repo.put_prefix(@prefix)
 
@@ -39,6 +44,9 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
 
     video_file =
       Repo.one!(from(f in File, where: f.filename == ^"podcast5.mp4"))
+
+    audio_file =
+      Repo.one!(from(f in File, where: f.filename == ^"eoa2.mp3"))
 
     pdf_file =
       Repo.one!(from(f in File, where: f.filename == ^"wettbewerb.pdf"))
@@ -51,7 +59,8 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
        image_file: image_file,
        binary_file: binary_file,
        pdf_file: pdf_file,
-       video_file: video_file
+       video_file: video_file,
+       audio_file: audio_file
      }}
   end
 
@@ -64,14 +73,40 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
       assert @preview_formats == Keyword.keys(AvailableFormats.list(:preview))
     end
 
-    test "get_immediate_format/1 should return all preview formats for an image file", %{
+    test "is_valid_category?/1 should return if category exists" do
+      assert match?(category when is_valid_category?(category), :preview)
+    end
+
+    test "get_immediate_format/1 should return all preview formats for a file", %{
       image_file: image_file,
-      binary_file: binary_file,
+      audio_file: audio_file,
       video_file: video_file
     } do
       assert AvailableFormats.get_immediate_formats(image_file) == [:preview]
       assert AvailableFormats.get_immediate_formats(video_file) == [:preview, :poster]
-      assert AvailableFormats.get_immediate_formats(binary_file) == []
+      assert AvailableFormats.get_immediate_formats(audio_file) == [:preview]
+    end
+
+    test "get_immediate_format/1 should return all preview formats for a file data" do
+      {:ok, image_file_data} =
+        FileData.from_path("test/support/fixtures/image_file.png", mime_type: "image/png")
+
+      {:ok, video_file_data} =
+        FileData.from_path("test/support/fixtures/podcast1.mp4", mime_type: "video/mp4")
+
+      {:ok, audio_file_data} =
+        FileData.from_path("test/support/fixtures/eoa2.mp3", mime_type: "audio/mpeg")
+
+      assert AvailableFormats.get_immediate_formats(image_file_data) == [
+               :preview
+             ]
+
+      assert AvailableFormats.get_immediate_formats(video_file_data) == [
+               :preview,
+               :poster
+             ]
+
+      assert AvailableFormats.get_immediate_formats(audio_file_data) == [:preview]
     end
 
     test "get_immediate_formats/1 should return all preview formats for a given mime type" do
@@ -128,6 +163,26 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
              end)
     end
 
+    test "audio file: available_formats/1 should return preview formats and audio formats", %{
+      audio_file: audio_file
+    } do
+      audio_formats = AvailableFormats.available_formats(audio_file)
+      assert Enum.all?(audio_formats, &is_atom/1)
+
+      audio_formats = Enum.map(audio_formats, &to_string/1)
+
+      assert audio_formats
+             |> Enum.map(&String.to_existing_atom(List.first(String.split(&1, "_"))))
+             |> Enum.all?(&Enum.member?([:preview | @audio_format_categories], &1))
+
+      assert Enum.all?(@audio_format_categories, fn cat_name ->
+               Enum.any?(
+                 audio_formats,
+                 &String.starts_with?(&1, to_string(cat_name))
+               )
+             end)
+    end
+
     test "pdf file: available_formats/1 should return only preview formats", %{
       pdf_file: pdf_file
     } do
@@ -141,6 +196,30 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
       binary_file: binary_file
     } do
       assert AvailableFormats.available_formats(binary_file) == []
+    end
+
+    test "get_formats_for/1" do
+      assert AvailableFormats.get_formats_for(:preview) == @preview_formats
+      assert AvailableFormats.get_formats_for("preview") == @preview_formats
+    end
+  end
+
+  describe "valid_category?/1" do
+    test "valid categories should return true" do
+      assert AvailableFormats.valid_category?(:preview)
+      assert AvailableFormats.valid_category?(:present)
+      assert AvailableFormats.valid_category?(:avatar)
+      assert AvailableFormats.valid_category?(:logo)
+      assert AvailableFormats.valid_category?(:banner)
+      assert AvailableFormats.valid_category?(:articlepreview)
+      assert AvailableFormats.valid_category?(:pagebg)
+      assert AvailableFormats.valid_category?(:icon)
+      assert AvailableFormats.valid_category?(:videoplay)
+    end
+
+    test "invalid categories should return false" do
+      refute AvailableFormats.valid_category?(:unknown)
+      refute AvailableFormats.valid_category?("preview")
     end
   end
 end
