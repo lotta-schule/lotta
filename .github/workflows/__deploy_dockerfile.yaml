@@ -110,7 +110,7 @@ jobs:
           build-args: |
             IMAGE_NAME=$IMAGE_NAME
             RELEASE_NAME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
-            SENTRY_DSN=${{ inputs.sentry_dsn} }
+            SENTRY_DSN=${{ inputs.sentry_dsn }}
           secrets: |
             sentry_auth_token=${{ secrets.sentry_auth_token }}
           cache-from: 'type=gha,scope=buildkit-${{ env.IMAGE_NAME }}-${{ matrix.platform }}'
