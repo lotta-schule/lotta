@@ -68,18 +68,22 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
 
   defp create_thumbnail_stream(format, image, size_string, vips_args) do
     with {:ok, image} <- Image.thumbnail(image, size_string, vips_args),
-         {:ok, stream} <-
+         stream when not is_nil(stream) <-
            Image.stream!(image,
              buffer_size: 8 * 1024 * 1024,
              strip_metadata: true,
              minimize_file_size: true,
              suffix: ".webp"
            ),
-         {:ok, file_data} <- FileData.from_stream(stream, mime_type: "image/webp") do
+         {:ok, file_data} <- FileData.from_stream(stream, "image.webp", mime_type: "image/webp") do
       {format, file_data}
     else
       {:error, error} ->
         Logger.error("Failed to create thumbnail: #{inspect(error)}")
+        nil
+
+      nil ->
+        Logger.error("Failed to create thumbnail: image processing returned without result")
         nil
     end
   end
