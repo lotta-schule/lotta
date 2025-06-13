@@ -1,10 +1,10 @@
 # The version of Alpine to use for the final image
-ARG ALPINE_VERSION="3.19"
-ARG ELIXIR_VERSION="v1.17.3"
-ARG OTP_VERSION="26.2.5.6"
+ARG ALPINE_VERSION="3.21"
+ARG ELIXIR_VERSION="v1.18.4"
+ARG OTP_VERSION="27.3.4"
 ARG REBAR3_VERSION="3.24.0"
 ARG PDFIUM_VERSION="chromium%2F7047"
-ARG VIPS_VERSION="8.16.0"
+ARG VIPS_VERSION="8.16.1"
 
 FROM alpine:${ALPINE_VERSION} AS base
 
@@ -101,7 +101,7 @@ ARG REBAR3_VERSION
 
 RUN set -xe \
   && OTP_DOWNLOAD_URL="https://github.com/erlang/otp/archive/OTP-${OTP_VERSION}.tar.gz" \
-  && OTP_DOWNLOAD_SHA256="371e59b98de59822e45fdbe50c18c8d8dd4c872990e7aaaba8a819e167186d03" \
+  && OTP_DOWNLOAD_SHA256="a05fa5c952fdf1718121d4ca3fd0c96fcb8b54ed61e37862417478d7b6c89232" \
   && apk add --no-cache --virtual .fetch-deps \
   curl \
   ca-certificates \
@@ -169,7 +169,7 @@ ENV MIX_ENV=prod
 # Install elixir
 RUN set -xe \
   && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/${ELIXIR_VERSION}.tar.gz" \
-  && ELIXIR_DOWNLOAD_SHA256="6116c14d5e61ec301240cebeacbf9e97125a4d45cd9071e65e0b958d5ebf3890" \
+  && ELIXIR_DOWNLOAD_SHA256="8e136c0a92160cdad8daa74560e0e9c6810486bd232fbce1709d40fcc426b5e0" \
   && buildDeps=' \
   ca-certificates \
   curl \
