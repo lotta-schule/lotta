@@ -3,8 +3,6 @@ defmodule Lotta.Services.ScheduleProvider do
   HTTP Client to get schedule data
   """
 
-  use Tesla
-
   @spec client(
           type :: String.t(),
           username :: String.t(),

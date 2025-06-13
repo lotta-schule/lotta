@@ -2,8 +2,6 @@ defmodule Lotta.Administration.Cockpit do
   @moduledoc """
   Interact with Cockpit for the administration of Lotta.
   """
-  use Tesla
-
   alias Lotta.Accounts.User
   alias LottaWeb.Urls
   alias Lotta.Tenants.Feedback
@@ -24,7 +22,7 @@ defmodule Lotta.Administration.Cockpit do
       |> Tenants.get_tenant_by_prefix()
 
     create_client()
-    |> post("/api/feedback", %{
+    |> Tesla.post("/api/feedback", %{
       feedback: %{
         tenant_id: tenant.id,
         name: feedback.user.name,
@@ -66,7 +64,7 @@ defmodule Lotta.Administration.Cockpit do
     tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(user, :prefix))
 
     create_client()
-    |> post("/api/feedback", %{
+    |> Tesla.post("/api/feedback", %{
       feedback: %{
         tenant_id: tenant.id,
         name: user.name,
