@@ -14,10 +14,7 @@ const nextConfig = {
   experimental: {
     externalDir: true,
   },
-  transpileModules: [
-    '@lotta-schule/hubert',
-    resolve(__dirname, '../../apps/hubert/src/index.ts'),
-  ],
+  transpilePackages: ['@lotta-schule/hubert'],
   async rewrites() {
     return {
       beforeFiles: [
