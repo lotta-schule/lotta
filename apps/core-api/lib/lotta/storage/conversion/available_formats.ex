@@ -132,13 +132,13 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @doc """
   Returns the list of available formats.
   """
-  @spec list() :: [{atom(), {module(), keyword()}}]
+  @spec list() :: [{atom(), keyword()}]
   def list(), do: @formats
 
   @doc """
   Returns the list of available formats for a given category name
   """
-  @spec list(category_name :: atom()) :: [{atom(), {module(), keyword()}}]
+  @spec list(category_name :: atom()) :: [{atom(), keyword()}]
   def list(category_name),
     do:
       @formats

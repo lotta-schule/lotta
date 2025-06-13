@@ -28,7 +28,7 @@ defmodule Lotta.Worker.ConversionTest do
           "format_category" => "preview"
         })
 
-      assert Enum.count(conversions) == 7
+      assert Enum.count(conversions) == 3
     end
 
     test "should get an existing job after calling get_or_create_conversion_job with args of existing job" do

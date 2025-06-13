@@ -10,8 +10,6 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
 
   @prefix "tenant_test"
 
-  @preview_categories [:preview]
-
   @preview_formats [
     :preview_200,
     :preview_400,
@@ -20,6 +18,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
 
   @image_format_categories [
     :preview,
+    :present,
     :avatar,
     :logo,
     :banner,
@@ -29,8 +28,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
   ]
 
   @video_format_categories [
-    :webm,
-    :h264
+    :videoplay
   ]
 
   setup do
@@ -71,20 +69,20 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
       binary_file: binary_file,
       video_file: video_file
     } do
-      assert AvailableFormats.get_immediate_formats(image_file) == @preview_categories
-      assert AvailableFormats.get_immediate_formats(video_file) == []
+      assert AvailableFormats.get_immediate_formats(image_file) == [:preview]
+      assert AvailableFormats.get_immediate_formats(video_file) == [:preview, :poster]
       assert AvailableFormats.get_immediate_formats(binary_file) == []
     end
 
     test "get_immediate_formats/1 should return all preview formats for a given mime type" do
-      assert AvailableFormats.get_immediate_formats("image/jpg") == @preview_categories
-      assert AvailableFormats.get_immediate_formats("image/png") == @preview_categories
-      assert AvailableFormats.get_immediate_formats("application/svg") == @preview_categories
+      assert AvailableFormats.get_immediate_formats("image/jpg") == [:preview]
+      assert AvailableFormats.get_immediate_formats("image/png") == [:preview]
+      assert AvailableFormats.get_immediate_formats("application/svg") == [:preview]
 
-      assert AvailableFormats.get_immediate_formats("video/mp4") == []
-      assert AvailableFormats.get_immediate_formats("video/webm") == []
+      assert AvailableFormats.get_immediate_formats("video/mp4") == [:preview, :poster]
+      assert AvailableFormats.get_immediate_formats("video/webm") == [:preview, :poster]
 
-      assert AvailableFormats.get_immediate_formats("application/pdf") == @preview_categories
+      assert AvailableFormats.get_immediate_formats("application/pdf") == [:preview]
       assert AvailableFormats.get_immediate_formats("application/zip") == []
     end
   end
@@ -120,7 +118,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
 
       assert video_formats
              |> Enum.map(&String.to_existing_atom(List.first(String.split(&1, "_"))))
-             |> Enum.all?(&Enum.member?([:preview | @video_format_categories], &1))
+             |> Enum.all?(&Enum.member?([:preview, :poster | @video_format_categories], &1))
 
       assert Enum.all?(@video_format_categories, fn cat_name ->
                Enum.any?(
