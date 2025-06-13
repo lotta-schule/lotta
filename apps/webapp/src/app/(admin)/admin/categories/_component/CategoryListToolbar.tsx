@@ -12,11 +12,11 @@ export const CategoryListToolbar = () => {
   const [isCreateCategoryDialogOpen, setIsCreateCategoryDialogOpen] =
     React.useState(false);
   return (
-    <Toolbar hasScrollableParent withPadding>
+    <Toolbar hasScrollableParent>
       <Button
-        style={{ marginLeft: 'auto' }}
         onClick={() => setIsCreateCategoryDialogOpen(true)}
         icon={<Icon icon={faCirclePlus} />}
+        fullWidth
       >
         Kategorie erstellen
       </Button>

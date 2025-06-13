@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-namespace */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import '@testing-library/jest-dom/vitest';
 import * as React from 'react';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
@@ -13,7 +15,7 @@ declare module 'vitest' {
 }
 import { TextEncoder, TextDecoder } from 'util';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
-import { BlobPolyfill, MockRouter } from 'test/mocks';
+import { MockRouter, BlobPolyfill, ResizeObserverPolyfill } from 'test/mocks';
 import { NEXT_DATA } from 'next/dist/shared/lib/utils';
 import { DirectoryModel, FileModel } from 'model';
 
@@ -38,14 +40,17 @@ declare global {
   }
 }
 declare namespace globalThis {
-  var mockRouter: MockRouter;
-  var Blob: typeof BlobPolyfill;
+  let mockRouter: MockRouter;
+  let Blob: typeof BlobPolyfill;
 }
 
 self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ };
 
 globalThis.Blob = BlobPolyfill;
 globalThis.mockRouter = new MockRouter();
+
+globalThis.Blob = BlobPolyfill as any;
+(globalThis as any).ResizeObserver = ResizeObserverPolyfill as any;
 
 beforeAll(() => {
   loadDevMessages();
@@ -147,7 +152,7 @@ beforeAll(() => {
   });
 
   vi.mock('next/head', () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const ReactDOMServer = require('react-dom/server');
     return {
       __esModule: true,
