@@ -8,7 +8,7 @@ defmodule Lotta.MixProject do
       name: "Lotta API Server",
       source_url: "https://github.com/lotta-schule/core",
       homepage_url: "https://lotta.schule",
-      elixir: "~> 1.17",
+      elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers() ++ [:rambo],
       start_permanent: Mix.env() == :prod,
