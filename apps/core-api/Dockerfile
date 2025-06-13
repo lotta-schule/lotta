@@ -32,6 +32,8 @@ RUN set -xe && \
   libssl3 \
   libstdc++ \
   build-base \
+  # ffmpeg
+  ffmpeg \
   # For libvips
   fftw-dev \
   libheif-dev \
