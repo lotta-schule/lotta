@@ -33,8 +33,7 @@ ENV NEXT_PUBLIC_RELEASE_NAME=$RELEASE_NAME
 ENV NEXT_PUBLIC_SENTRY_DSN=$SENTRY_DSN
 
 RUN apt-get update && apt-get install -y ca-certificates
-RUN --mount=type=secret,id=sentry_auth_token \
-  SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token) \
+RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
   pnpm --filter ./apps/webapp run build
 RUN cat apps/webapp/next.config.js | sed -z 's/transpileModules: \[[^;]*\],\n//' > apps/webapp/next.config.js
 

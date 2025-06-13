@@ -5,6 +5,7 @@ ARG OTP_VERSION="27.3.4"
 ARG REBAR3_VERSION="3.24.0"
 ARG PDFIUM_VERSION="chromium%2F7047"
 ARG VIPS_VERSION="8.16.1"
+ARG SENTRY_DSN
 
 FROM alpine:${ALPINE_VERSION} AS base
 
@@ -193,6 +194,7 @@ RUN set -xe \
 # We need the libraries installed in base for the NIF
 # to compile correctly
 FROM elixir AS builder
+ARG SENTRY_DSN
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -212,6 +214,7 @@ RUN mix local.hex --force && \
 # set build ENV
 ENV MIX_ENV=prod
 ENV ERL_AFLAGS="+JPperf true"
+ENV SENTRY_DSN=$SENTRY_DSN
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
@@ -220,7 +223,8 @@ RUN mix deps.get --only prod && \
   mix deps.compile
 
 # Compress source code for sentry
-RUN mix sentry.package_source_code
+RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
+  mix sentry.package_source_code
 
 # build project
 COPY priv priv
