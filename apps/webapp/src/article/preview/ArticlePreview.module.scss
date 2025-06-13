@@ -318,13 +318,14 @@
 
   &.twoColumns {
     .containerGrid {
-      grid-template: 1fr auto auto auto auto / 65% 15% 15%;
+      grid-template: auto auto auto auto / 1fr auto auto;
     }
 
-    .imageSection {
-      width: 65%;
-      grid-row-start: 1;
-      grid-row-end: 5;
+    .imageGridItem {
+      width: 100%;
+      grid-row: 1;
+      grid-column-start: 1;
+      grid-column-end: 4;
 
       .previewImage {
         height: auto;
@@ -332,10 +333,10 @@
     }
 
     .titleGridItem {
-      grid-column-start: 2;
+      grid-column-start: 1;
       grid-column-end: 4;
-      grid-row: 1;
 
+      grid-row: 2;
       .title {
         padding: var(--lotta-spacing) 0;
       }
@@ -346,31 +347,20 @@
     }
 
     .dateGridItem {
-      grid-column: 2;
-      grid-row: 3;
-
-      @media screen and (max-width: $max-md) {
-        grid-column-start: 2;
-        grid-column-end: 4;
-      }
+      grid-column-start: 1;
+      grid-column-end: 2;
+      grid-row: 4;
     }
-
-    .previewSection {
-      grid-column-start: 2;
+    .previewGridItem {
+      grid-row: 3;
+      grid-column-start: 1;
       grid-column-end: 4;
-      grid-row: 2;
-
-      @media screen and (max-width: $max-md) {
-        grid-column-start: 1;
-        grid-column-end: 2;
-        grid-row: 5;
-      }
     }
 
     .editGridItem {
       grid-row: 4;
-      grid-column: 3;
-
+      grid-column-start: 3;
+      grid-column-end: 3;
       .buttonSection {
         display: flex;
       }
