@@ -242,7 +242,7 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           otp-version: '27.3.4'
-          elixir-version: '1.18.3'
+          elixir-version: '1.18.4'
 
       - name: Install npm dependencies
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
