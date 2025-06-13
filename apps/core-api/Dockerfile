@@ -232,7 +232,6 @@ COPY rel rel
 RUN mix compile
 
 # Compress source code for sentry
-RUN mix app.config
 RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
   mix sentry.package_source_code
 
