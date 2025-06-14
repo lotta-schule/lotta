@@ -646,8 +646,11 @@ const introspection = {
           {
             "name": "mimeType",
             "type": {
-              "kind": "SCALAR",
-              "name": "String"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -2356,11 +2359,8 @@ const introspection = {
           {
             "name": "mimeType",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String"
-              }
+              "kind": "SCALAR",
+              "name": "String"
             },
             "args": [],
             "isDeprecated": false
@@ -3786,6 +3786,36 @@ const introspection = {
                   "ofType": {
                     "kind": "INPUT_OBJECT",
                     "name": "RegisterDeviceInput"
+                  }
+                }
+              }
+            ],
+            "isDeprecated": false
+          },
+          {
+            "name": "requestFileConversion",
+            "type": {
+              "kind": "OBJECT",
+              "name": "File"
+            },
+            "args": [
+              {
+                "name": "category",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                }
+              },
+              {
+                "name": "id",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID"
                   }
                 }
               }

@@ -61,9 +61,9 @@ defmodule Lotta.Storage.FileProcessor.VideoProcessor do
     format_args
     |> Enum.reduce(%{}, fn {format, _}, acc ->
       MediaConversion.new(%{
-        prefix: Ecto.get_meta(file, :prefix),
-        file_id: file.id,
-        format_name: format
+        "prefix" => Ecto.get_meta(file, :prefix),
+        "file_id" => file.id,
+        "format_name" => format
       })
       |> Oban.insert()
       |> case do

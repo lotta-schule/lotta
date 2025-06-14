@@ -44,7 +44,7 @@ defmodule Lotta.Worker.ConversionTest do
 
         assert_enqueued(
           queue: :file_conversion,
-          args: %{file_id: file.id, format_category: "preview"}
+          args: %{"file_id" => file.id, "format_category" => "preview"}
         )
 
         assert %{success: 1} =

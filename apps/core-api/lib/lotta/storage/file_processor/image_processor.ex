@@ -50,7 +50,7 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
       |> Enum.map(fn {format, args} ->
         {size_string, vips_args} = parse_args(args)
 
-        with {format, file_data} <-
+        with {format, file_data} when format != :error <-
                create_thumbnail_stream(format, image, size_string, vips_args),
              {:ok, file_conversion} <-
                Storage.create_file_conversion(file_data, file, to_string(format)) do
@@ -79,12 +79,10 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
       {format, file_data}
     else
       {:error, error} ->
-        Logger.error("Failed to create thumbnail: #{inspect(error)}")
-        nil
+        {:error, "Failed to create thumbnail: #{inspect(error)}"}
 
       nil ->
-        Logger.error("Failed to create thumbnail: image processing returned without result")
-        nil
+        {:error, "Failed to create thumbnail: image processing returned without result"}
     end
   end
 

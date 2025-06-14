@@ -61,8 +61,8 @@ defmodule Lotta.Worker.Metadata do
           {:ok, Oban.Job.t()} | {:error, String.t()}
   def create_metadata_job(%{id: _id} = file) do
     %{
-      prefix: Ecto.get_meta(file, :prefix),
-      file_id: file.id
+      "prefix" => Ecto.get_meta(file, :prefix),
+      "file_id" => file.id
     }
     |> __MODULE__.new()
     |> Oban.insert()

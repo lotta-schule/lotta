@@ -143,9 +143,9 @@ defmodule Lotta.Worker.Conversion do
 
       nil ->
         %{
-          prefix: Ecto.get_meta(file, :prefix),
-          file_id: file.id,
-          format_category: AvailableFormats.get_category(format)
+          "prefix" => Ecto.get_meta(file, :prefix),
+          "file_id" => file.id,
+          "format_category" => AvailableFormats.get_category(format)
         }
         |> __MODULE__.new()
         |> Oban.insert()
@@ -173,7 +173,7 @@ defmodule Lotta.Worker.Conversion do
         {:notification, :conversion_jobs, %{"error" => ^job_id}} ->
           {:error, "Conversion job errored"}
       after
-        55_000 ->
+        timeout(job) ->
           {:error, "Conversion job timed out"}
       end
     end)
@@ -183,6 +183,9 @@ defmodule Lotta.Worker.Conversion do
     do: Task.async(fn -> {:error, state} end)
 
   def await_completion(%Oban.Job{} = job) do
-    Task.await(await_completion_task(job), timeout(job))
+    Task.await(
+      await_completion_task(job),
+      timeout(job)
+    )
   end
 end

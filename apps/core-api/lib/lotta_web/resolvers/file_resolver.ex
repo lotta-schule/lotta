@@ -132,12 +132,12 @@ defmodule LottaWeb.FileResolver do
   defp map_possible_format_to_available_format(file, {format_name, args}) do
     format = to_string(format_name)
     availability = AvailableFormats.get_default_availability(format_name)
-    possible_mime_type = args[:mime_type] || "#{args[:type] || :application}/#{format}"
+    possible_mime_type = args[:mime_type] || "#{args[:type] || "application"}/#{format}"
 
     %{
       name: format,
       type: to_string(Keyword.get(args, :type, :binary)),
-      mime_type: Keyword.get(args, :mime_type, "application/octet-stream"),
+      mime_type: possible_mime_type,
       url:
         if(availability == "available",
           do: Urls.get_file_path(file, format),

@@ -126,6 +126,20 @@ defmodule Lotta.Storage do
     end
   end
 
+  @spec get_default_path(File.t() | FileConversion.t()) :: String.t()
+  @doc """
+  Get the default path for a file or file conversion in the remote storage.
+  The path is constructed as follows:
+  - For a `File`, it is `<prefix>/<file_id>/original`
+  - For a `FileConversion`, it is `<prefix>/<file_id>/<conversion_id>`
+  """
+  @doc since: "5.0.0"
+  def get_default_path(%File{id: file_id} = file),
+    do: "#{Ecto.get_meta(file, :prefix)}/#{file_id}/original"
+
+  def get_default_path(%FileConversion{id: conversion_id, file_id: file_id} = file_conversion),
+    do: "#{Ecto.get_meta(file_conversion, :prefix)}/#{file_id}/#{conversion_id}"
+
   @spec upload_filedata_for_file_or_conversion(FileData.t(), File.t() | FileConversion.t()) ::
           {:ok, File.t() | FileConversion.t()} | {:error, term()}
   defp upload_filedata_for_file_or_conversion(%FileData{} = file_data, foc)
@@ -176,52 +190,38 @@ defmodule Lotta.Storage do
   @doc since: "2.5.0"
   @spec copy_to_remote_storage(File.t() | FileConversion.t(), String.t()) ::
           {:ok, File.t()} | {:error, Changeset.t()} | {:error, atom()}
-  def copy_to_remote_storage(file, store_name) when is_binary(store_name) do
-    file_or_file_conversion = Repo.preload(file, :remote_storage_entity)
+  def copy_to_remote_storage(file_or_file_conversion, store_name) when is_binary(store_name) do
+    file_or_file_conversion = Repo.preload(file_or_file_conversion, :remote_storage_entity)
 
-    filepath = Path.join(System.tmp_dir(), file.id)
+    tesla_client =
+      Tesla.client([
+        Tesla.Middleware.OpenTelemetry,
+        Tesla.Middleware.FollowRedirects,
+        Tesla.Middleware.Logger
+      ])
 
-    # first fetch the file data
-    file_url =
-      file_or_file_conversion.remote_storage_entity
-      |> RemoteStorage.get_http_url()
-      |> String.to_charlist()
-
-    with {:ok, :saved_to_file} <-
-           :httpc.request(:get, {file_url, []}, [], stream: String.to_charlist(filepath)),
+    with {:ok, env} <-
+           Tesla.get(
+             tesla_client,
+             RemoteStorage.get_http_url(file_or_file_conversion.remote_storage_entity),
+             opts: [adapter: [response: :stream]]
+           ),
          {:ok, file_data} <-
-           FileData.from_path(filepath, filename: file.filename, mime_type: file.mime_type),
+           FileData.from_stream(
+             env.body,
+             file_or_file_conversion.filename,
+             mime_type: file_or_file_conversion.mime_type
+           ),
          {:ok, entity} <-
            RemoteStorage.create(
              file_data,
-             "#{Ecto.get_meta(file, :prefix)}/" <>
-               case file_or_file_conversion do
-                 %{file_id: fileid, id: id} ->
-                   Path.join(fileid <> "-conversion", id)
-
-                 %{id: id} ->
-                   id
-               end
+             get_default_path(file_or_file_conversion)
            ) do
-      Elixir.File.rm(filepath)
-
-      file
+      file_or_file_conversion
       |> Repo.preload(:remote_storage_entity)
       |> Ecto.Changeset.change()
-      |> Ecto.Changeset.put_assoc(:remote_storage_entity, entity)
+      |> Ecto.Changeset.put_assoc(:remote_storage_entity, entity, on_replace: :update)
       |> Repo.update()
-    else
-      {:ok, {{_, _status_code, status_text}, _headers, body}} ->
-        Logger.error(body)
-
-        {:error,
-         status_text
-         |> IO.chardata_to_string()
-         |> String.downcase()
-         |> String.to_atom()}
-
-      error ->
-        error
     end
   end
 
@@ -415,7 +415,8 @@ defmodule Lotta.Storage do
            Repo.get_by(FileConversion, file_id: file_id, format: format),
          {:ok, job} <-
            Conversion.get_or_create_conversion_job(file, format),
-         {:ok, _} <- Conversion.await_completion(job),
+         {:ok, _} <-
+           Conversion.await_completion(job),
          file_conversion when not is_nil(file_conversion) <-
            Repo.get_by(FileConversion, file_id: file_id, format: format) do
       {:ok, file_conversion}
@@ -430,8 +431,9 @@ defmodule Lotta.Storage do
         error
     end
   catch
-    :error, reason ->
-      Logger.error("Failed to get file conversion: #{inspect(reason)}")
+    error ->
+      Sentry.capture_exception(error)
+      Logger.error("Failed to get file conversion: #{inspect(error)}")
       {:error, "An unexpected error occurred"}
   end
 
