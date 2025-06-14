@@ -83,6 +83,11 @@ defmodule Lotta.StorageTest do
     test "copy_to_remote_storage/2 should reupload a file to new location", %{
       user_file: user_file
     } do
+      Tesla.Mock.mock(fn
+        %{method: :get} ->
+          %Tesla.Env{status: 200, body: Elixir.File.stream!("test/support/fixtures/eoa3.mp3")}
+      end)
+
       user_file = Repo.preload(user_file, :remote_storage_entity)
 
       current_file_datetime =
@@ -94,7 +99,7 @@ defmodule Lotta.StorageTest do
         end)
         |> Timex.parse!("{RFC1123}")
 
-      # wait 2 seconds in order to enforce new DateTime
+      # wait 1 seconds in order to enforce new DateTime
       :timer.sleep(1000)
 
       {:ok, user_file} =
