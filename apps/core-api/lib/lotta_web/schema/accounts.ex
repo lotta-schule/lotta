@@ -294,7 +294,7 @@ defmodule LottaWeb.Schema.Accounts do
       resolve(&LottaWeb.FileResolver.update/2)
     end
 
-    field(:request_file_conversion, type: :file) do
+    field(:request_file_conversion, type: :boolean) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:id, non_null(:id))

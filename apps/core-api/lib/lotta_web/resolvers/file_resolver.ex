@@ -316,17 +316,14 @@ defmodule LottaWeb.FileResolver do
     file = Storage.get_file(id)
 
     with true <-
-           can_write?(current_user, file) ||
-             {:error, "Du hast nicht die Rechte, diese Datei zu bearbeiten."},
+           can_read?(current_user, file) ||
+             {:error, "Du hast nicht die Rechte, diese Datei zu lesen."},
          {:ok, _job} <-
            Conversion.get_or_create_conversion_job(
              file,
              category
            ) do
-      {:ok, file}
-    else
-      {:error, reason} ->
-        {:error, "Fehler beim Anfordern der Konvertierung: #{reason}"}
+      {:ok, true}
     end
   end
 end

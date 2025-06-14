@@ -41,7 +41,7 @@ defmodule Lotta.RemoteStorageTest do
 
     test "create/1 should call corresponding strategy" do
       with_mock RemoteStorage.Strategy.S3,
-        create: fn _, path, config ->
+        create: fn _, path, config, _metadata ->
           {:ok,
            %RemoteStorageEntity{
              path: path,
@@ -51,9 +51,14 @@ defmodule Lotta.RemoteStorageTest do
         RemoteStorage.create(%FileData{}, "/")
 
         assert called(
-                 RemoteStorage.Strategy.S3.create(:_, :_, %{
-                   type: RemoteStorage.Strategy.S3
-                 })
+                 RemoteStorage.Strategy.S3.create(
+                   :_,
+                   :_,
+                   %{
+                     type: RemoteStorage.Strategy.S3
+                   },
+                   []
+                 )
                )
       end
     end

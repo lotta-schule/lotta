@@ -120,7 +120,8 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @formats @preview_formats ++ @image_formats ++ @video_formats ++ @audio_formats
 
   @format_categories @formats
-                     |> Enum.map(fn {name, _} ->
+                     |> Keyword.keys()
+                     |> Enum.map(fn name ->
                        name
                        |> to_string()
                        |> String.split("_")
@@ -128,6 +129,9 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
                        |> String.to_atom()
                      end)
                      |> Enum.uniq()
+
+  @format_category_strings @format_categories
+                           |> Enum.map(&to_string/1)
 
   @doc """
   Returns the list of available formats.
@@ -313,5 +317,6 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   """
   @spec is_valid_category?(any()) :: boolean()
   defguard is_valid_category?(category_name)
-           when is_atom(category_name) and category_name in @format_categories
+           when (is_atom(category_name) and category_name in @format_categories) or
+                  (is_binary(category_name) and category_name in @format_category_strings)
 end

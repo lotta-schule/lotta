@@ -18,10 +18,20 @@ defmodule Lotta.WorkerCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Lotta.Repo)
+    case Ecto.Adapters.SQL.Sandbox.checkout(Lotta.Repo) do
+      :ok ->
+        if tags[:async] != true do
+          Ecto.Adapters.SQL.Sandbox.mode(Lotta.Repo, {:shared, self()})
+        end
 
-    if tags[:async] != true do
-      Ecto.Adapters.SQL.Sandbox.mode(Lotta.Repo, {:shared, self()})
+        :ok
+
+      {:already, _} ->
+        # If the sandbox is already checked out, we can continue without changing the mode
+        :ok
+
+      error ->
+        error
     end
 
     :ok

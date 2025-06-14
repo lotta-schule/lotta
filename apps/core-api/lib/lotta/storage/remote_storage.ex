@@ -79,12 +79,12 @@ defmodule Lotta.Storage.RemoteStorage do
   This does not create an entry in the database.
   Call Repo.save! on the returned RemoteStorageEntity to persist it.
   """
-  @spec create(FileData.t(), path :: String.t()) ::
+  @spec create(FileData.t(), path :: String.t(), metadata :: keyword()) ::
           {:ok, RemoteStorageEntity.t()} | {:error, term()}
-  def create(%FileData{} = file, path) do
+  def create(%FileData{} = file, path, meta \\ []) do
     with {:ok, strategy} <- get_strategy(),
          {:ok, config} <- config_for_store(default_store()) do
-      strategy.create(file, path, config)
+      strategy.create(file, path, config, meta)
     end
   end
 
@@ -125,7 +125,7 @@ defmodule Lotta.Storage.RemoteStorage do
   def get_http_url(%RemoteStorageEntity{} = remote_storage_entity, opts \\ []) do
     with {:ok, strategy} <- get_strategy(remote_storage_entity.store_name),
          {:ok, config} <- config_for_store(remote_storage_entity.store_name) do
-      strategy.get_http_url(remote_storage_entity, opts, config)
+      strategy.get_http_url(remote_storage_entity, config, opts)
     else
       _ ->
         nil

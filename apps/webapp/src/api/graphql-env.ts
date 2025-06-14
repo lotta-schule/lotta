@@ -3795,8 +3795,8 @@ const introspection = {
           {
             "name": "requestFileConversion",
             "type": {
-              "kind": "OBJECT",
-              "name": "File"
+              "kind": "SCALAR",
+              "name": "Boolean"
             },
             "args": [
               {

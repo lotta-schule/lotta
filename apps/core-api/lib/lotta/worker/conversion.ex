@@ -162,7 +162,7 @@ defmodule Lotta.Worker.Conversion do
     do: Task.async(fn -> {:ok, job} end)
 
   def await_completion_task(%Oban.Job{id: job_id, state: state} = job)
-      when state in ["executable", "available", "scheduled"] do
+      when state in ["executing", "available", "scheduled", "retryable"] do
     Task.async(fn ->
       :ok = Oban.Notifier.listen(Oban, [:conversion_jobs])
 

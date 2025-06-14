@@ -2,12 +2,14 @@ defmodule LottaWeb.FileResolverTest do
   @moduledoc false
 
   use LottaWeb.ConnCase
+  use Lotta.WorkerCase
 
   import Ecto.Query
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.User
+  alias Lotta.Worker.Conversion
   alias Lotta.Storage.{File, Directory}
 
   @prefix "tenant_test"
@@ -1193,6 +1195,59 @@ defmodule LottaWeb.FileResolverTest do
                  %{
                    "message" => "Du hast nicht die Rechte, diesen Ordner zu bearbeiten.",
                    "path" => ["deleteFile"]
+                 }
+               ]
+             } = res
+    end
+  end
+
+  describe "request_conversion query" do
+    @query """
+    mutation requestFileConversion($id: ID!, $category: String!) {
+      requestFileConversion(id: $id, category: $category)
+    }
+    """
+
+    test "should start the conversion when the file has been requested", %{
+      admin_jwt: admin_jwt,
+      admin_file: admin_file
+    } do
+      with_testing_mode(:manual, fn ->
+        res =
+          build_conn()
+          |> put_req_header("tenant", "slug:test")
+          |> put_req_header("authorization", "Bearer #{admin_jwt}")
+          |> post("/api", query: @query, variables: %{id: admin_file.id, category: "videoplay"})
+          |> json_response(200)
+
+        assert res == %{
+                 "data" => %{"requestFileConversion" => true}
+               }
+
+        assert_enqueued(
+          worker: Conversion,
+          args: %{"file_id" => admin_file.id, "format_category" => "videoplay"}
+        )
+      end)
+    end
+
+    test "returns error when user is not owner of private directory and user is not admin", %{
+      user_jwt: user_jwt,
+      user2_file: user2_file
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query, variables: %{id: user2_file.id, category: "videoplay"})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"requestFileConversion" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du hast nicht die Rechte, diese Datei zu lesen.",
+                   "path" => ["requestFileConversion"]
                  }
                ]
              } = res
