@@ -1,16 +1,15 @@
 defmodule Lotta.Worker.MediaConversionTest do
   use Lotta.WorkerCase, async: true
 
+  import Mock
+
   alias Lotta.Fixtures
   alias Lotta.Worker.MediaConversion
 
-  alias Lotta.Storage.File
+  alias Lotta.Repo
+  alias Lotta.Storage.{File, FileConversion}
 
   @prefix "tenant_test"
-
-  defmodule DummyStorage do
-    def create_file_conversion(_file_data, _file, _format_name), do: {:ok, :conversion}
-  end
 
   describe "check_args/1" do
     test "returns error if file not found" do
@@ -72,8 +71,89 @@ defmodule Lotta.Worker.MediaConversionTest do
     end
   end
 
-  # describe "perform/1" do
-  # end
+  describe "Worker.Conversion" do
+    defp create_file_stream(file_path),
+      do:
+        file_path
+        |> Elixir.File.open!()
+        |> IO.binstream(5 * 1024 * 1024)
+
+    setup do
+      Tesla.Mock.mock(fn
+        %{method: :get} = env ->
+          %Tesla.Env{
+            status: 200,
+            body: create_file_stream("test/support/fixtures/eoa2.mp3")
+          }
+      end)
+    end
+
+    test "Create a single new audio conversion" do
+      user = Fixtures.fixture(:admin_user)
+      file = Fixtures.fixture(:real_audio_file, user)
+
+      with_mock(
+        Exile,
+        stream!: fn cmd, _opts ->
+          create_file_stream("test/support/fixtures/eoa2.mp3")
+          |> Stream.map(&{:stdout, &1})
+        end
+      ) do
+        :ok =
+          perform_job(MediaConversion, %{
+            "prefix" => @prefix,
+            "file_id" => file.id,
+            "format_name" => "audioplay_aac"
+          })
+
+        assert Mock.called(Exile.stream!(:_, :_))
+
+        assert [%FileConversion{format: "audioplay_aac", file_type: "audio"} = file_conversion] =
+                 file
+                 |> Repo.reload()
+                 |> Repo.preload(:file_conversions)
+                 |> Map.get(:file_conversions)
+      end
+    end
+
+    test "Create multiple new audio conversions" do
+      user = Fixtures.fixture(:admin_user)
+      file = Fixtures.fixture(:real_audio_file, user)
+
+      with_mock(
+        Exile,
+        stream!: fn cmd, _opts ->
+          create_file_stream("test/support/fixtures/eoa2.mp3")
+          |> Stream.map(&{:stdout, &1})
+        end
+      ) do
+        :ok =
+          perform_job(MediaConversion, %{
+            "prefix" => @prefix,
+            "file_id" => file.id,
+            "format_names" => ["audioplay_aac", "audioplay_ogg"]
+          })
+
+        Mock.assert_called_exactly(Exile.stream!(:_, :_), 2)
+
+        file_conversions =
+          file
+          |> Repo.reload()
+          |> Repo.preload(:file_conversions)
+          |> Map.get(:file_conversions)
+
+        assert Enum.count(file_conversions) == 2
+
+        assert Enum.any?(file_conversions, fn fc ->
+                 fc.format == "audioplay_aac" and fc.file_type == "audio"
+               end)
+
+        assert Enum.any?(file_conversions, fn fc ->
+                 fc.format == "audioplay_ogg" and fc.file_type == "audio"
+               end)
+      end
+    end
+  end
 
   describe "await_completion_task/1" do
     test "immediately returns completed job" do
