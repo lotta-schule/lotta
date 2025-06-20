@@ -31,7 +31,7 @@ defmodule Lotta.Worker.MediaConversion do
         args: args
       }) do
     case check_args(args) do
-      {:ok, file, format_name, _} when not is_nil(format_name) ->
+      {:ok, file, :format_name, format_name} ->
         process_single_format(
           job_id,
           file,
@@ -42,7 +42,7 @@ defmodule Lotta.Worker.MediaConversion do
           "complete" => job_id
         })
 
-      {:ok, file, _, format_names} ->
+      {:ok, file, :format_names, format_names} ->
         silent_process_multiple(job_id, file, format_names)
 
         Oban.Notifier.notify(Oban, :media_conversion, %{
@@ -56,7 +56,17 @@ defmodule Lotta.Worker.MediaConversion do
     end
   end
 
-  defp check_args(%{"prefix" => prefix, "file_id" => file_id} = args) do
+  @doc """
+  Checks the arguments for the conversion job.
+  Returns `{:ok, file, format_name, format_names}` if valid,
+  or `{:error, reason}` if invalid.
+  """
+  @doc since: "6.0.0"
+  @spec check_args(map()) ::
+          {:ok, File.t(), :format_name, String.t()}
+          | {:ok, File.t(), :format_names, list(String.t())}
+          | {:error, String.t()}
+  def check_args(%{"prefix" => prefix, "file_id" => file_id} = args) do
     format_name = args["format_name"]
     format_names = args["format_names"]
 
@@ -73,8 +83,11 @@ defmodule Lotta.Worker.MediaConversion do
       not is_nil(format_name) and not is_nil(format_names) ->
         {:error, "Both 'format_name' and 'format_names' provided. Only one should be specified."}
 
+      is_nil(format_name) ->
+        {:ok, file, :format_names, format_names}
+
       true ->
-        {:ok, file, format_name, format_names}
+        {:ok, file, :format_name, format_name}
     end
   end
 
