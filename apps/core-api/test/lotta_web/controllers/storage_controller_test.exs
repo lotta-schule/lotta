@@ -80,32 +80,32 @@ defmodule LottaWeb.StorageControllerTest do
       assert response(conn, 404)
     end
 
-    # test "Should respond with a 404 if the format does not exist" do
-    #   user = Fixtures.fixture(:admin_user)
-    #   file = Fixtures.fixture(:real_image_file, user)
+    test "Should respond with a 404 if the format does not exist" do
+      user = Fixtures.fixture(:admin_user)
+      file = Fixtures.fixture(:real_image_file, user)
 
-    #   conn =
-    #     build_tenant_conn()
-    #     |> get("/data/storage/f/#{file.id}/this-format-does-not-exist")
+      conn =
+        build_tenant_conn()
+        |> get("/data/storage/f/#{file.id}/this-format-does-not-exist")
 
-    #   assert response(conn, 404)
+      assert response(conn, 404)
 
-    #   conn =
-    #     build_tenant_conn()
-    #     |> get("/data/storage/f/#{file.id}/audioplay_aac")
+      conn =
+        build_tenant_conn()
+        |> get("/data/storage/f/#{file.id}/audioplay_aac")
 
-    #   assert response(conn, 404)
-    # end
+      assert response(conn, 404)
+    end
 
-    # test "Should respond with a 428 if a format neither ready nor available is requested" do
-    #   user = Fixtures.fixture(:admin_user)
-    #   file = Fixtures.fixture(:real_audio_file, user)
+    test "Should respond with a 428 if a format neither ready nor available is requested" do
+      user = Fixtures.fixture(:admin_user)
+      file = Fixtures.fixture(:real_audio_file, user)
 
-    #   conn =
-    #     build_tenant_conn()
-    #     |> get("/data/storage/f/#{file.id}/audioplay_aac")
+      conn =
+        build_tenant_conn()
+        |> get("/data/storage/f/#{file.id}/audioplay_aac")
 
-    #   assert response(conn, 428)
-    # end
+      assert response(conn, 428)
+    end
   end
 end

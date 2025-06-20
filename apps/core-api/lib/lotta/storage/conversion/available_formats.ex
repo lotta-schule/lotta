@@ -153,12 +153,12 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @doc """
   Returns the given format as an atom
   """
-  @spec to_atom(String.t()) :: {:ok, atom()} | {:error, String.t()}
+  @spec to_atom(String.t() | atom()) :: {:ok, atom()} | {:error, :invalid_format_name}
   def to_atom(format) when is_binary(format) do
     try do
       {:ok, String.to_existing_atom(format)}
     rescue
-      ArgumentError -> {:error, "Invalid format name"}
+      ArgumentError -> {:error, :invalid_format_name}
     end
   end
 
@@ -167,7 +167,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   end
 
   def to_atom(_) do
-    {:error, "Invalid format name"}
+    {:error, :invalid_format_name}
   end
 
   @doc """
@@ -178,7 +178,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
       iex> AvailableFormats.get_category(:articlepreview_840)
       :articlepreview
   """
-  @spec get_category(atom()) :: {:ok, atom()} | nil
+  @spec get_category(atom()) :: atom() | nil
   def get_category(format) when is_atom(format) do
     format
     |> to_string()
@@ -232,9 +232,18 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   end
 
   @doc """
+  Returns Wether a given transformation is an easy process, and can be done on the fly without
+  failing the request.
+  """
+  @spec easy?(source :: File.t() | FileData.t() | String.t(), target_format :: atom()) ::
+          boolean()
+  def easy?(_source, target_format),
+    do: Keyword.get(@formats, target_format, [])[:type] == :image
+
+  @doc """
   Returns all available and providable formats for a given file.
   """
-  @spec available_formats(File.t(), for_category: String.t()) :: [atom()]
+  @spec available_formats(File.t(), for_category: String.t() | atom()) :: [atom()]
   def available_formats(file, opts \\ [])
 
   def available_formats(%File{file_type: "image"}, opts),
@@ -263,7 +272,9 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
 
   def available_formats(_, _), do: []
 
-  @spec available_formats_with_config(File.t(), for_category: String.t()) :: [{atom(), map()}]
+  @spec available_formats_with_config(File.t(), for_category: String.t() | atom()) :: [
+          {atom(), map()}
+        ]
   def available_formats_with_config(file, opts \\ []),
     do:
       file
@@ -282,6 +293,43 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     |> case do
       nil -> {:error, "Format #{format_name} not available for file #{file.id}"}
       {_, config} -> {:ok, config}
+    end
+  end
+
+  @doc """
+  Validates if the requested format is a valid format for the given file.
+  """
+  @spec validate_requested_format(File.t(), atom() | String.t(), [
+          {:validate_easy, boolean()}
+        ]) :: {:ok, atom()} | {:error, any()}
+  def validate_requested_format(file, format, opts \\ []) do
+    with {:ok, format} <- to_atom(format),
+         true <- Enum.member?(available_formats(file), format) do
+      if Keyword.get(opts, :validate_easy, false) do
+        validate_easy_format(file, format)
+      else
+        {:ok, format}
+      end
+    else
+      false ->
+        {:error, :invalid_format}
+
+      error ->
+        error
+    end
+  end
+
+  @doc """
+  Validates if the requested format is an easy format for the given file.
+  This means that the format can be transcoded on the fly and a request for it will not fail.
+  """
+  @spec validate_easy_format(File.t(), atom()) ::
+          {:ok, atom()} | {:error, :not_easy_format}
+  def validate_easy_format(file, format) do
+    if easy?(file, format) do
+      {:ok, format}
+    else
+      {:error, :not_easy_format}
     end
   end
 

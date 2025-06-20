@@ -176,13 +176,25 @@ defmodule Lotta.Worker.Conversion do
         {:error, "Conversion job state is: #{state}"}
 
       nil ->
-        %{
-          "prefix" => Ecto.get_meta(file, :prefix),
-          "file_id" => file.id,
-          "format_category" => AvailableFormats.get_category(format)
-        }
-        |> __MODULE__.new()
-        |> Oban.insert()
+        create_conversion_job(file, format)
+    end
+  end
+
+  @spec create_conversion_job(File.t(), atom() | String.t()) ::
+          {:ok, Oban.Job.t()} | {:error, String.t()}
+  defp create_conversion_job(file, format) do
+    category_name = AvailableFormats.get_category(format)
+
+    if AvailableFormats.is_valid_category?(category_name) do
+      %{
+        "prefix" => Ecto.get_meta(file, :prefix),
+        "file_id" => file.id,
+        "format_category" => category_name
+      }
+      |> __MODULE__.new()
+      |> Oban.insert()
+    else
+      {:error, "Invalid format: #{format} is not a valid category name."}
     end
   end
 

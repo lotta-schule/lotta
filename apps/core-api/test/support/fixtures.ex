@@ -216,6 +216,27 @@ defmodule Lotta.Fixtures do
     |> Repo.update!()
   end
 
+  def fixture(:real_video_file, user) when is_struct(user),
+    do: fixture(:real_video_file, {user, []})
+
+  def fixture(:real_video_file, {user, attrs}) do
+    file =
+      fixture(:file, {user, Keyword.merge([file_type: "video", mime_type: "video/mp4"], attrs)})
+
+    {:ok, file_data} = FileData.from_path("test/support/fixtures/pc3.m4v")
+    path = Enum.join([Repo.get_prefix(), file.id, "original"], "/")
+    {:ok, entity_data} = Lotta.Storage.RemoteStorage.create(file_data, path)
+
+    file
+    |> Repo.preload(:remote_storage_entity)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(
+      :remote_storage_entity,
+      entity_data
+    )
+    |> Repo.update!()
+  end
+
   # Content
 
   def fixture(:valid_article_attrs, _) do
