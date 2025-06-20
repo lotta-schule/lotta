@@ -79,13 +79,14 @@ export const ConversionProgress = React.memo(
         <CircularProgress
           className={styles.progress}
           size={'1em'}
+          label="Datei wird umgewandelt"
           value={progress === 0 ? undefined : progress}
           isIndeterminate={progress === 0}
         />
         <span>
-          Datei wird aktuell umgewandelt. Zwischenzeitlich kommt es vermutlich
-          zu Problemen bei der Anzeige. Umwandlung wird auch nach dem Schließen
-          der Seite fortgesetzt.
+          Datei wird umgewandelt. In der Zwischenzeit kann es zu Problemen beim
+          Abspielen kommen. Umwandlung wird auch nach dem Schließen der Seite im
+          Hintergrund fortgesetzt.
         </span>
       </div>
     );

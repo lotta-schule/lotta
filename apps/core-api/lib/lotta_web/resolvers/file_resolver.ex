@@ -128,27 +128,7 @@ defmodule LottaWeb.FileResolver do
           _ ->
             true
         end)
-        |> Enum.map(fn {job, formats} ->
-          Enum.map(formats, fn {format_name, args} ->
-            possible_mime_type =
-              args[:mime_type] || "#{args[:type] || "application"}/#{format_name}"
-
-            %{
-              name: to_string(format_name),
-              type: to_string(args[:type] || "binary"),
-              mime_type: possible_mime_type,
-              url: "",
-              availability: %{
-                status:
-                  case job.state do
-                    :discarded -> "failed"
-                    _ -> "processing"
-                  end,
-                progress: 0
-              }
-            }
-          end)
-        end)
+        |> Enum.map(&map_job_to_available_format/1)
         |> List.flatten()
       else
         []
@@ -164,6 +144,28 @@ defmodule LottaWeb.FileResolver do
       |> Enum.map(&map_possible_format_to_available_format(file, &1))
 
     {:ok, conversions ++ available_formats ++ processing_formats}
+  end
+
+  defp map_job_to_available_format({job, formats}) do
+    Enum.map(formats, fn {format_name, args} ->
+      possible_mime_type =
+        args[:mime_type] || "#{args[:type] || "application"}/#{format_name}"
+
+      %{
+        name: to_string(format_name),
+        type: to_string(args[:type] || "binary"),
+        mime_type: possible_mime_type,
+        url: "",
+        availability: %{
+          status:
+            case job.state do
+              :discarded -> "failed"
+              _ -> "processing"
+            end,
+          progress: 0
+        }
+      }
+    end)
   end
 
   defp map_file_conversion_to_available_format(file_conversion) do

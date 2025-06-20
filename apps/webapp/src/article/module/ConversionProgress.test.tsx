@@ -1,4 +1,4 @@
-import { render, waitFor } from 'test/util';
+import { render } from 'test/util';
 import {
   ConversionProgress,
   GET_FILE_FORMATS_QUERY,
@@ -104,16 +104,11 @@ describe('ConversionProgress', () => {
     );
 
     // Wait for the query to resolve and component to render
-    let progressBar: HTMLElement | null = null;
-    await waitFor(() => {
-      progressBar = screen.getByRole('progressbar');
-    });
+    const progressBar = await screen.findByRole('progressbar');
     expect(progressBar).toBeInTheDocument();
     expect(progressBar).toHaveValue(25);
 
-    expect(
-      screen.getByText(/Datei wird aktuell umgewandelt/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Datei wird umgewandelt/i)).toBeVisible();
   });
 
   it('renders with isIndeterminate true when progress is 0', async () => {
