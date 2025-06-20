@@ -16,8 +16,10 @@ export interface ApolloMocksOptions {
   userGroups?: UserGroupModel[];
   tags?: string[];
   categories?: (categories: CategoryModel[]) => CategoryModel[];
+  withCache?: (cache: InMemoryCache) => InMemoryCache;
 }
 export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
+  const withCache = options.withCache || ((cache: InMemoryCache) => cache);
   const mocks = [
     {
       request: { query: GET_TENANT_QUERY },
@@ -75,5 +77,5 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
       data: { currentUser: options.currentUser },
     });
   }
-  return { cache, mocks };
+  return { cache: withCache(cache), mocks };
 };

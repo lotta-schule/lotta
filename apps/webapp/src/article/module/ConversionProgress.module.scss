@@ -1,0 +1,13 @@
+.root {
+  display: flex;
+  align-items: stretch;
+  align-items: center;
+
+  .progress {
+    margin-inline: var(--lotta-spacing);
+    flex: 0 0 1em;
+    justify-content: center;
+    margin-right: var(--lotta-spacing);
+    display: inline-block;
+  }
+}

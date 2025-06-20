@@ -20,6 +20,7 @@ defmodule Lotta.Worker.Conversion do
   require Logger
 
   alias Lotta.Repo
+  alias Lotta.Tenants
   alias Lotta.Storage.{File, FileConversion, FileData}
   alias Lotta.Storage.Conversion.AvailableFormats
   alias Lotta.Storage.FileProcessor.{ImageProcessor, VideoProcessor}
@@ -105,12 +106,45 @@ defmodule Lotta.Worker.Conversion do
   def get_processor_module_for_filetype("image"), do: ImageProcessor
   def get_processor_module_for_filetype(_), do: ImageProcessor
 
+  def report_progress(file, file_conversion) do
+    tenant_prefix = Ecto.get_meta(file, :prefix)
+    tenant = Tenants.get_tenant_by_prefix(tenant_prefix)
+    channel_name = "#{tenant.id}:files:#{file.id}:conversion"
+
+    Absinthe.Subscription.publish(
+      LottaWeb.Endpoint,
+      %{
+        file: file,
+        file_conversion: file_conversion
+      },
+      conversion_progress: channel_name
+    )
+  end
+
   @impl Oban.Worker
   def timeout(job) do
     case get_processor_module(job) do
       VideoProcessor -> :timer.hours(2)
       _ -> :timer.minutes(10)
     end
+  end
+
+  @spec get_current_jobs(File.t()) :: Oban.Job.t() | nil
+  def get_current_jobs(%{id: file_id} = file) do
+    prefix = Ecto.get_meta(file, :prefix)
+
+    Oban
+    |> Oban.config()
+    |> Oban.Repo.all(
+      from(
+        j in Oban.Job,
+        where:
+          j.worker == ^Oban.Worker.to_string(__MODULE__) and
+            j.state not in ["completed", "cancelled"] and
+            fragment("?->>? = ?", j.args, "prefix", ^prefix) and
+            fragment("?->>? = ?", j.args, "file_id", ^file_id)
+      )
+    )
   end
 
   @spec get_conversion_job(File.t(), atom() | String.t()) :: Oban.Job.t() | nil

@@ -3,6 +3,7 @@ import { ContentModuleModel } from 'model';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { AudioAudio } from './AudioAudio';
 import { useRequestConversion } from '../useRequestConversion';
+import { ConversionProgress } from '../ConversionProgress';
 
 import styles from './AudioAudio.module.scss';
 
@@ -16,7 +17,7 @@ interface EditProps {
 export const Edit = React.memo<EditProps>(
   ({ contentModule, onUpdateModule }) => {
     const captions: string[] = contentModule.content?.captions ?? [];
-    const [requestFileConversion] = useRequestConversion(
+    const requestFileConversion = useRequestConversion(
       'audioplay',
       contentModule.files?.[0]
     );
@@ -53,6 +54,11 @@ export const Edit = React.memo<EditProps>(
             }}
           />
         </figcaption>
+        <ConversionProgress
+          key={contentModule.files?.[0]?.id}
+          fileId={contentModule.files?.[0]?.id}
+          category={'audioplay'}
+        />
       </figure>
     );
   }

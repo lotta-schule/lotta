@@ -1,11 +1,29 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation, useSubscription } from '@apollo/client';
 import { graphql } from 'api/graphql';
 import { FileModel } from 'model';
 
 export const REQUEST_FILE_CONVERSION = graphql(`
-  mutation RequestFileConversion($id: ID!, $category: String!) {
+  mutation requestFileConversion($id: ID!, $category: String!) {
     requestFileConversion(id: $id, category: $category)
+  }
+`);
+
+export const CONVERSION_PROGRESS = graphql(`
+  subscription conversionProgress($fileId: ID!) {
+    conversionProgress(fileId: $fileId) {
+      id
+      formats {
+        availability {
+          status
+          progress
+          error
+        }
+        name
+        url
+        type
+      }
+    }
   }
 `);
 
@@ -13,20 +31,18 @@ export const useRequestConversion = (
   category: string,
   currentFile?: FileModel | null
 ) => {
-  const [sendMutation, { loading: isLoading, called }] = useMutation(
+  const [sendMutation, { loading: isLoading }] = useMutation(
     REQUEST_FILE_CONVERSION
   );
 
-  const currentRequest = React.useMemo(() => {
-    if (called) {
-      return {
-        progress: 0,
-        formats: [],
-      };
-    }
-  }, [called]);
+  useSubscription(CONVERSION_PROGRESS, {
+    variables: {
+      fileId: currentFile?.id || '',
+    },
+    skip: !currentFile?.id,
+  });
 
-  const makeRequest = React.useCallback(
+  return React.useCallback(
     (file: FileModel) => {
       if (!file?.id) {
         throw new Error('File ID is required to request conversion');
@@ -47,10 +63,5 @@ export const useRequestConversion = (
       });
     },
     [currentFile?.id, isLoading, sendMutation, category]
-  );
-
-  return React.useMemo(
-    () => [makeRequest, currentRequest] as const,
-    [makeRequest, currentRequest]
   );
 };

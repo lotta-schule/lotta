@@ -3,6 +3,10 @@ defmodule LottaWeb.Schema.Accounts do
 
   use Absinthe.Schema.Notation
 
+  import Lotta.Accounts.Permissions
+
+  alias Lotta.Storage
+
   object :accounts_queries do
     field(:current_user, :user) do
       resolve(&LottaWeb.UserResolver.get_current/2)
@@ -301,6 +305,40 @@ defmodule LottaWeb.Schema.Accounts do
       arg(:category, non_null(:string))
 
       resolve(&LottaWeb.FileResolver.request_conversion/2)
+    end
+  end
+
+  object :accounts_subscriptions do
+    field(:conversion_progress, :file) do
+      arg(:file_id, non_null(:id))
+
+      config(fn
+        %{file_id: file_id},
+        %{
+          context: %{current_user: current_user, tenant: %{id: tid, prefix: prefix}}
+        } ->
+          Lotta.Repo.put_prefix(prefix)
+
+          with file when not is_nil(file) <- Storage.get_file(file_id),
+               parent_directory when not is_nil(parent_directory) <-
+                 Storage.get_directory(file.parent_directory_id),
+               true <- can_read?(current_user, file) do
+            {:ok, topic: "#{tid}:files:#{file_id}:conversion"}
+          else
+            nil ->
+              {:error, "file not valid"}
+
+            false ->
+              {:error, "unauthorized"}
+          end
+
+        _args, _context ->
+          {:error, "unauthorized"}
+      end)
+
+      resolve(fn %{file: file}, _, _ ->
+        {:ok, file}
+      end)
     end
   end
 end

@@ -81,39 +81,89 @@ defmodule LottaWeb.FileResolver do
 
   def resolve_available_formats(file, args, _info) do
     category_filter = args[:category]
-    availability_filter = args[:availability]
+
+    category_filter_fn = fn format_name ->
+      is_nil(category_filter) ||
+        AvailableFormats.get_category(format_name) == String.to_atom(category_filter)
+    end
+
+    all_possible_formats =
+      AvailableFormats.available_formats_with_config(file)
+      |> Enum.filter(fn {format_name, _format_config} ->
+        category_filter_fn.(format_name)
+      end)
 
     conversions =
       file
       |> Repo.preload(:file_conversions)
       |> Map.get(:file_conversions, [])
       |> Enum.filter(fn file_conversion ->
-        !category_filter ||
-          AvailableFormats.get_category(file_conversion.format) ==
-            String.to_atom(category_filter)
+        category_filter_fn.(file_conversion.format)
       end)
       |> Enum.map(&map_file_conversion_to_available_format/1)
 
-    available_formats =
-      (availability_filter == "ready" && []) ||
-        file
-        |> AvailableFormats.available_formats_with_config(for_category: category_filter)
-        |> Enum.filter(fn {format, _} ->
-          not Enum.any?(conversions, &(&1.name == to_string(format)))
-        end)
-        |> Enum.map(&map_possible_format_to_available_format(file, &1))
-        |> Enum.filter(fn
-          _ when is_nil(availability_filter) ->
-            true
+    requestable_formats =
+      all_possible_formats
+      |> Enum.filter(fn {format_name, _} ->
+        AvailableFormats.get_default_availability(format_name) == "requestable" and
+          not Enum.any?(conversions, &(&1.name == to_string(format_name)))
+      end)
 
-          %{availability: %{status: ^availability_filter}} ->
-            true
+    processing_formats =
+      if length(requestable_formats) > 0 &&
+           Enum.any?(requestable_formats, fn {format_name, _} ->
+             Enum.all?(conversions, &(&1.name != to_string(format_name)))
+           end) do
+        Conversion.get_current_jobs(file)
+        |> Enum.map(fn job ->
+          {job,
+           Enum.filter(requestable_formats, fn {format_name, _} ->
+             to_string(AvailableFormats.get_category(format_name)) == job.args["format_category"]
+           end)}
+        end)
+        |> Enum.filter(fn
+          {_job, []} ->
+            false
 
           _ ->
-            false
+            true
         end)
+        |> Enum.map(fn {job, formats} ->
+          Enum.map(formats, fn {format_name, args} ->
+            possible_mime_type =
+              args[:mime_type] || "#{args[:type] || "application"}/#{format_name}"
 
-    {:ok, conversions ++ available_formats}
+            %{
+              name: to_string(format_name),
+              type: to_string(args[:type] || "binary"),
+              mime_type: possible_mime_type,
+              url: "",
+              availability: %{
+                status:
+                  case job.state do
+                    :discarded -> "failed"
+                    _ -> "processing"
+                  end,
+                progress: 0
+              }
+            }
+          end)
+        end)
+        |> List.flatten()
+      else
+        []
+      end
+
+    available_formats =
+      file
+      |> AvailableFormats.available_formats_with_config(for_category: category_filter)
+      |> Enum.filter(fn {format, _} ->
+        not Enum.any?(conversions, &(&1.name == to_string(format))) and
+          not Enum.any?(processing_formats, &(&1.name == to_string(format)))
+      end)
+      |> Enum.map(&map_possible_format_to_available_format(file, &1))
+
+    {:ok, conversions ++ available_formats ++ processing_formats}
   end
 
   defp map_file_conversion_to_available_format(file_conversion) do

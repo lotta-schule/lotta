@@ -3,6 +3,7 @@ import { ContentModuleModel } from 'model';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { VideoVideo } from './VideoVideo';
 import { useRequestConversion } from '../useRequestConversion';
+import { ConversionProgress } from '../ConversionProgress';
 
 import styles from './Video.module.scss';
 
@@ -17,7 +18,7 @@ export const Edit = React.memo(
   ({ contentModule, onUpdateModule }: EditProps) => {
     const captions: string[] =
       contentModule.content?.captions ?? ([] as string[]);
-    const [requestFileConversion] = useRequestConversion(
+    const requestFileConversion = useRequestConversion(
       'videoplay',
       contentModule.files?.[0]
     );
@@ -48,12 +49,17 @@ export const Edit = React.memo(
               onUpdateModule({
                 ...contentModule,
                 content: {
-                  captions: [(e.target as HTMLInputElement).value],
+                  captions: [e.currentTarget.value],
                 },
               });
             }}
           />
         </figcaption>
+        <ConversionProgress
+          key={contentModule.files?.[0]?.id}
+          fileId={contentModule.files?.[0]?.id}
+          category={'videoplay'}
+        />
       </figure>
     );
   }

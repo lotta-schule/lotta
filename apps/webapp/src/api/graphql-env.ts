@@ -5475,6 +5475,26 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "conversionProgress",
+            "type": {
+              "kind": "OBJECT",
+              "name": "File"
+            },
+            "args": [
+              {
+                "name": "fileId",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                }
+              }
+            ],
+            "isDeprecated": false
+          },
+          {
             "name": "receiveMessage",
             "type": {
               "kind": "OBJECT",

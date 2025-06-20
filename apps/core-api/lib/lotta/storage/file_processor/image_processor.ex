@@ -6,6 +6,7 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
   require Logger
 
   alias Lotta.Storage
+  alias Lotta.Worker.Conversion
   alias Lotta.Storage.{File, FileData}
 
   @spec read_metadata(FileData.t()) :: {:ok, map()} | {:error, String.t()}
@@ -34,15 +35,15 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
       {:error, reason}
   end
 
-  @spec process_multiple(File.t(), Keyword.t()) ::
+  @spec process_multiple(File.t(), formats :: Keyword.t()) ::
           {:ok, keyword(FileData.t())} | {:error, String.t()}
-  def process_multiple(%File{} = file, formats_args) do
+  def process_multiple(%File{} = file, formats_args \\ []) do
     with {:ok, file_data} <- File.to_file_data(file) do
       process_multiple(file_data, file, formats_args)
     end
   end
 
-  @spec process_multiple(FileData.t(), File.t(), Keyword.t()) ::
+  @spec process_multiple(FileData.t(), File.t(), formats :: Keyword.t()) ::
           {:ok, keyword(FileData.t())} | {:error, String.t()}
   def process_multiple(%FileData{} = file_data, %File{} = file, formats_args) do
     with {:ok, image} <- Image.open(FileData.stream!(file_data)) do
@@ -54,6 +55,8 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
                create_thumbnail_stream(format, image, size_string, vips_args),
              {:ok, file_conversion} <-
                Storage.create_file_conversion(file_data, file, to_string(format)) do
+          Conversion.report_progress(file, file_conversion)
+
           {format, file_conversion}
         else
           {:error, error} ->

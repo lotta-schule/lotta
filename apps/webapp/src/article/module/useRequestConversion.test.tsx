@@ -25,7 +25,7 @@ describe('util/userAvatar/useCurrentUser', () => {
         ],
       }
     );
-    const [requestFileConversion] = screen.result.current;
+    const requestFileConversion = screen.result.current;
 
     expect(onRequestResult).not.toHaveBeenCalled();
 

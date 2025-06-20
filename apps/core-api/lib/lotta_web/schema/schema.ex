@@ -40,6 +40,7 @@ defmodule LottaWeb.Schema do
   subscription do
     import_fields(:messages_subscriptions)
     import_fields(:contents_subscriptions)
+    import_fields(:accounts_subscriptions)
   end
 
   def context(ctx) do

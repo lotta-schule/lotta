@@ -32,6 +32,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
         'categories',
         'userGroups',
         'tags',
+        'withCache',
       ])
     );
 

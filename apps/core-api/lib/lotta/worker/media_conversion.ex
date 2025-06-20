@@ -22,6 +22,7 @@ defmodule Lotta.Worker.MediaConversion do
 
   alias Lotta.{Repo, Storage}
   alias Lotta.Storage.{File, FileData}
+  alias Lotta.Worker.Conversion
   alias Lotta.Storage.Conversion.AvailableFormats
 
   @impl Oban.Worker
@@ -94,11 +95,16 @@ defmodule Lotta.Worker.MediaConversion do
   end
 
   defp process_single_format(_job_id, file, format_name) do
+    Conversion.report_progress(file, nil)
+
     with {:ok, format} <- AvailableFormats.to_atom(format_name),
          {:ok, args} <- AvailableFormats.get_format_config(file, format),
          {:ok, file_data} <- File.to_file_data(file),
-         {:ok, processed_file_data} <- process(file_data, args) do
-      Storage.create_file_conversion(processed_file_data, file, format_name)
+         {:ok, processed_file_data} <- process(file_data, args),
+         {:ok, file_conversion} <-
+           Storage.create_file_conversion(processed_file_data, file, format_name) do
+      Conversion.report_progress(file, file_conversion)
+      {:ok, file_conversion}
     end
   end
 
