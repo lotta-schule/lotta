@@ -131,6 +131,13 @@ defmodule Lotta.Fixtures do
     })
   end
 
+  def fixture(:valid_directory_attrs, attrs) do
+    attrs
+    |> Enum.into(%{
+      name: "some directory"
+    })
+  end
+
   def fixture(:invalid_file_attrs, attrs) do
     attrs
     |> Enum.into(%{
@@ -207,11 +214,15 @@ defmodule Lotta.Fixtures do
     {:ok, entity_data} = Lotta.Storage.RemoteStorage.create(file_data, path)
 
     file
-    |> Repo.preload(:remote_storage_entity)
+    |> Repo.preload([:remote_storage_entity, :parent_directory])
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(
       :remote_storage_entity,
       entity_data
+    )
+    |> Ecto.Changeset.put_assoc(
+      :parent_directory,
+      %{name: "Audios", parent_directory_id: nil, user_id: user.id}
     )
     |> Repo.update!()
   end
@@ -228,11 +239,15 @@ defmodule Lotta.Fixtures do
     {:ok, entity_data} = Lotta.Storage.RemoteStorage.create(file_data, path)
 
     file
-    |> Repo.preload(:remote_storage_entity)
+    |> Repo.preload([:remote_storage_entity, :parent_directory])
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(
       :remote_storage_entity,
       entity_data
+    )
+    |> Ecto.Changeset.put_assoc(
+      :parent_directory,
+      %{name: "Videos", parent_directory_id: nil, user_id: user.id}
     )
     |> Repo.update!()
   end

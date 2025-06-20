@@ -412,13 +412,17 @@ defmodule Lotta.Storage do
           {:ok, FileConversion.t()} | {:error, String.t()}
   def get_file_conversion(%File{id: file_id} = file, format) do
     with nil <-
-           Repo.get_by(FileConversion, file_id: file_id, format: format),
+           Repo.get_by(FileConversion, [file_id: file_id, format: format],
+             prefix: Ecto.get_meta(file, :prefix)
+           ),
          {:ok, job} <-
            Conversion.get_or_create_conversion_job(file, format),
          {:ok, _} <-
            Conversion.await_completion(job),
          file_conversion when not is_nil(file_conversion) <-
-           Repo.get_by(FileConversion, file_id: file_id, format: format) do
+           Repo.get_by(FileConversion, [file_id: file_id, format: format],
+             prefix: Ecto.get_meta(file, :prefix)
+           ) do
       {:ok, file_conversion}
     else
       %FileConversion{} = file_conversion ->
