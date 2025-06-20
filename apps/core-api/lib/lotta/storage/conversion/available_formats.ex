@@ -162,6 +162,14 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     end
   end
 
+  def to_atom(format) when is_atom(format) do
+    {:ok, format}
+  end
+
+  def to_atom(_) do
+    {:error, "Invalid format name"}
+  end
+
   @doc """
   Returns the category of a format.
 
@@ -179,7 +187,11 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     |> String.to_existing_atom()
   end
 
-  def get_category(format), do: get_category(String.to_existing_atom(format))
+  def get_category(format) do
+    get_category(String.to_existing_atom(format))
+  rescue
+    ArgumentError -> nil
+  end
 
   def valid_category?(format), do: Enum.member?(@format_categories, format)
 

@@ -48,7 +48,9 @@ export const GET_RELEVANT_FILES_IN_USAGE = graphql(`
         name
         url
         type
-        status
+        availability {
+          status
+        }
       }
       usage {
         ... on FileCategoryUsageLocation {

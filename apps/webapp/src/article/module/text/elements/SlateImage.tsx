@@ -27,11 +27,10 @@ export const GET_FILE_FORMATS = graphql(`
   query GET_FILE($id: ID!) {
     file(id: $id) {
       id
-      formats {
+      formats(category: "preview") {
         name
         type
         url
-        status
       }
     }
   }
