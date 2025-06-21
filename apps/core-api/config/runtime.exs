@@ -1,7 +1,7 @@
 import Config
 
 defmodule SystemConfig do
-  @allowed_environments ~w(test development staging production)
+  @allowed_environments ~w(test development preview staging production)
   def get(envvar, opts \\ []) do
     value = System.get_env(envvar) || default(envvar, config_env())
 
