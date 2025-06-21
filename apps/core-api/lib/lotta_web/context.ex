@@ -91,7 +91,13 @@ defmodule LottaWeb.Context do
           context
 
         user ->
-          Sentry.Context.set_user_context(user)
+          Sentry.Context.set_user_context(%{
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            tenant_id: context.tenant.id
+          })
+
           OpenTelemetry.Tracer.set_attributes(%{"user.id" => user.id})
 
           user =
