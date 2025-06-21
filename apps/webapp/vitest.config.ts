@@ -14,8 +14,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./test.setup.ts'],
     reporters: process.env.GITHUB_ACTIONS
-      ? ['default', 'github-actions']
+      ? ['default', 'junit', 'github-actions']
       : ['default'],
+    outputFile: 'coverage/junit.xml',
 
     retry: process.env.GITHUB_ACTIONS ? 2 : 0,
 
