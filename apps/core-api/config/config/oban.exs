@@ -8,7 +8,7 @@ config :lotta, Oban,
   queues: [
     file_conversion: [limit: 3],
     media_conversion: [limit: 1],
-    preview_generation: [limit: 4],
+    preview_generation: [limit: 2],
     file_metadata: [limit: 1]
   ]
 
