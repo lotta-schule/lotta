@@ -226,6 +226,9 @@ defmodule Lotta.Release do
         modules
         |> Enum.flat_map(& &1.files)
         |> ensure_formats(:audioplay_aac)
+
+      {type, modules} ->
+        Logger.notice("No conversion for #{Enum.count(modules)} #{type} content modules ...")
     end)
   end
 
