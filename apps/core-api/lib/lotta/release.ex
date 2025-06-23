@@ -183,16 +183,20 @@ defmodule Lotta.Release do
     |> Repo.preload(:preview_image_file)
     |> Enum.map(& &1.preview_image_file)
     |> Enum.reject(&is_nil/1)
+    |> tap(fn files ->
+      Logger.notice("Converting #{Enum.count(files)} article preview images ...")
+    end)
     |> ensure_formats(:articlepreview_330)
-    |> IO.inspect(label: "Converted article previews")
 
     Accounts.User
     |> Repo.all(prefix: tenant.prefix)
     |> Repo.preload(:avatar_image_file)
     |> Enum.map(& &1.avatar_image_file)
     |> Enum.reject(&is_nil/1)
+    |> tap(fn files ->
+      Logger.notice("Converting #{Enum.count(files)} article preview images ...")
+    end)
     |> ensure_formats(:avatar_50)
-    |> IO.inspect(label: "Converted user avatars")
 
     Content.ContentModule
     |> Repo.all(prefix: tenant.prefix)
