@@ -26,4 +26,25 @@
     clear: right;
   }
 }
+.settingsWrapper {
+    display: flex;
+    border: 1px solid rgb(var(--lotta-primary-color));
+    border-radius: var(--lotta-border-radius);
+    background-color: rgba(var(--lotta-box-background-color), 1);
+    padding: var(--lotta-spacing);
+    margin: calc( 2 * var(--lotta-spacing)) auto 0 auto;
+    width: 60%;
+    flex: 0 0 80%;
+
+      & > :first-child {
+        flex-basis: 20%;
+        margin: auto 0;
+        justify-content: center;
+        display: flex;
+        color: rgb(var(--lotta-accent-grey-color));
+      }
+      & > :last-child {
+        flex-basis: 80%;
+      }
+  }
 }

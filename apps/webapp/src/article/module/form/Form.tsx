@@ -55,6 +55,7 @@ export const Form = React.memo(
               style={{
                 margin: '0 auto',
               }}
+              variant={'fill'}
             >
               Formulareinsendungen sehen
             </Button>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
-import { faArrowsUpDown, faCircleExclamation, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsUpDown, faCircleExclamation, faPlus, faTrash, faGear } from '@fortawesome/free-solid-svg-icons';
 
 import {
   Button,
@@ -90,21 +90,37 @@ export const Edit = React.memo(
             ),
           }))}
         />
-        <div className={styles.inputWrapper}>
+        <Button
+          style={{ margin: '0 auto' }}
+          variant={'fill'}
+          icon={<Icon icon={faPlus} size={'lg'} />}
+          onClick={() =>
+            updateConfiguration({
+              elements: [
+                ...configuration.elements,
+                {
+                  name: `feld${configuration.elements.length + 1}`,
+                  element: 'input',
+                  type: 'text',
+                },
+              ],
+            })
+          }
+        >
+          Feld hinzufügen
+        </Button>
+        <div className={styles.settingsWrapper}>
+          <div><Icon icon={faGear} size={'xl'} /></div>
           <div>
-            <Button type={'submit'} disabled>
-              Senden
-            </Button>
-          </div>
-          <div>
-            <Checkbox
+         <h3>Formular Einstellungen</h3>
+          <Checkbox
               isSelected={configuration.destination !== undefined}
               onChange={(isSelected) =>
                 updateConfiguration({
                   destination: isSelected ? '' : undefined,
                 })
               }
-            >
+          >
               Formulardaten per Email versenden
             </Checkbox>
             <Label label={'Formular an folgende Email senden:'}>
@@ -119,7 +135,6 @@ export const Edit = React.memo(
                 }
               />
             </Label>
-            <Divider />
             <Checkbox
               isSelected={configuration.save_internally === true}
               onChange={(isSelected) =>
@@ -145,25 +160,6 @@ export const Edit = React.memo(
             </Checkbox>
           </div>
         </div>
-        <Button
-          style={{ margin: '0 auto' }}
-          variant={'fill'}
-          icon={<Icon icon={faPlus} size={'lg'} />}
-          onClick={() =>
-            updateConfiguration({
-              elements: [
-                ...configuration.elements,
-                {
-                  name: `feld${configuration.elements.length + 1}`,
-                  element: 'input',
-                  type: 'text',
-                },
-              ],
-            })
-          }
-        >
-          Feld hinzufügen
-        </Button>
         <p className={styles.clear}></p>
       </div>
     );
