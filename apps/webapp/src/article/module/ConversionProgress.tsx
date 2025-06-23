@@ -4,6 +4,7 @@ import { graphql } from 'api/graphql';
 import * as React from 'react';
 
 import styles from './ConversionProgress.module.scss';
+import { useTranslation } from 'react-i18next';
 
 export const GET_FILE_FORMATS_QUERY = graphql(`
   query file($id: ID!) {
@@ -27,6 +28,7 @@ export const ConversionProgress = React.memo(
       fetchPolicy: 'cache-only',
       ssr: false,
     });
+    const { t } = useTranslation();
 
     const categoryFormats = React.useMemo(
       () =>
@@ -84,9 +86,9 @@ export const ConversionProgress = React.memo(
           isIndeterminate={progress === 0}
         />
         <span id={`conversion-progress-text-${fileId}`}>
-          Datei wird umgewandelt. In der Zwischenzeit kann es zu Problemen beim
-          Abspielen kommen. Umwandlung wird auch nach dem Schließen der Seite im
-          Hintergrund fortgesetzt.
+          {t(
+            'The file is being converted. In the meantime, there may be issues with playback. The conversion will continue in the background even after closing the page.'
+          )}
         </span>
       </div>
     );

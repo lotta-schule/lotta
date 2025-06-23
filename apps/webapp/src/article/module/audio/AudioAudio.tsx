@@ -13,11 +13,7 @@ export const AudioAudio = React.memo(({ contentModule }: AudioAudioProps) => {
   );
 
   const validAudioFiles = React.useMemo(
-    () =>
-      audioFormats.filter(
-        (f) =>
-          !['PROCESSING', 'FAILED'].includes(f.availability.status) && !!f.url
-      ),
+    () => audioFormats.filter((f) => f.availability.status === 'READY'),
     [audioFormats]
   );
 

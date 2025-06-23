@@ -60,7 +60,7 @@ export const CreateMessageDialog = React.memo(
                 }}
               >
                 <Tab value={'user'} label={'Nutzer'} />
-                {currentUser!.groups.length > 0 && (
+                {!!currentUser?.groups.length && (
                   <Tab key={'group'} value={'group'} label={'Gruppe'} />
                 )}
               </Tabbar>

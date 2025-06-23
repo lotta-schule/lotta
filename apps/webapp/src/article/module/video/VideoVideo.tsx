@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { ContentModuleModel } from 'model';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import styles from './VideoVideo.module.scss';
@@ -10,7 +9,6 @@ type VideoVideoProps = {
 
 export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
   const file = contentModule.files.at(0);
-  const { t } = useTranslation('contentModule');
 
   const getSourceMediaQuery = React.useCallback((resolution: number) => {
     if (isNaN(resolution)) {
@@ -38,10 +36,7 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
   const validVideoFiles = React.useMemo(
     () =>
       videoFormats
-        .filter(
-          (f) =>
-            !['PROCESSING', 'FAILED'].includes(f.availability.status) && !!f.url
-        )
+        .filter((f) => f.availability.status === 'READY')
         .map((f) => {
           const resolution = Number(
             f.name.split('_')[1].replace(/[^0-9]/g, '')
@@ -63,35 +58,10 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
     [videoFormats, getSourceMediaQuery]
   );
 
-  const processingFormats = React.useMemo(
-    () => videoFormats.filter((f) => f.availability.status === 'processing'),
-    [videoFormats]
-  );
-
   if (!file) {
     return <PlaceholderImage height={350} icon={'video'} />;
   }
 
-  if (processingFormats.length > 0) {
-    return (
-      <PlaceholderImage
-        height={350}
-        icon={'video'}
-        description={
-          <div>
-            {t(
-              'The video is being processed in order to offer the best-possible experience on every device.'
-            )}
-            {t('This process can take a while, and runs in the background.')}
-            <br />
-            {t(
-              'You can safely save the article or close the page without interrupting the process.'
-            )}
-          </div>
-        }
-      />
-    );
-  }
   return (
     <video
       data-testid="video"

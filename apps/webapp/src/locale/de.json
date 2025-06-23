@@ -30,6 +30,7 @@
   "currently online": "aktuell online",
   "daily": "täglich",
   "date": "Datum",
+  "The file is being converted. In the meantime, there may be issues with playback. The conversion will continue in the background even after closing the page.": "Datei wird umgewandelt. In der Zwischenzeit kann es zu Problemen beim Abspielen kommen. Umwandlung wird auch nach dem Schließen der Seite im Hintergrund fortgesetzt.",
   "day": "Tag",
   "definitivly delete event": "Ereignis endgültig löschen",
   "delete event": "Ereignis löschen",
