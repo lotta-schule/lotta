@@ -176,6 +176,9 @@ defmodule Lotta.Release do
 
     # Create previews
     Repo.all(Storage.File, prefix: tenant.prefix)
+    |> tap(fn files ->
+      Logger.notice("Converting #{Enum.count(files)} preview files ...")
+    end)
     |> ensure_formats(:preview_200)
 
     Content.Article
@@ -194,7 +197,7 @@ defmodule Lotta.Release do
     |> Enum.map(& &1.avatar_image_file)
     |> Enum.reject(&is_nil/1)
     |> tap(fn files ->
-      Logger.notice("Converting #{Enum.count(files)} article preview images ...")
+      Logger.notice("Converting #{Enum.count(files)} avatar preview images ...")
     end)
     |> ensure_formats(:avatar_50)
 

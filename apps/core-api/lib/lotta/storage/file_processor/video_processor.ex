@@ -6,6 +6,7 @@ defmodule Lotta.Storage.FileProcessor.VideoProcessor do
   require Logger
 
   alias Lotta.Storage.{File, FileData}
+  alias Lotta.Storage.Conversion.AvailableFormats
   alias Lotta.Worker.MediaConversion
 
   @spec read_metadata(FileData.t()) :: {:ok, map()} | {:error, String.t()}
@@ -87,7 +88,7 @@ defmodule Lotta.Storage.FileProcessor.VideoProcessor do
         file_id: file.id,
         format_names: Enum.map(formats_args, &elem(&1, 0))
       },
-      queue: :preview_generation
+      queue: get_queue(formats_args)
     )
     |> Oban.insert()
     |> case do
@@ -98,5 +99,13 @@ defmodule Lotta.Storage.FileProcessor.VideoProcessor do
         Logger.error("Failed to create media conversion job: #{inspect(error)}")
         {:error, "Failed to create media conversion job"}
     end
+  end
+
+  defp get_queue(formats_args) do
+    if Enum.any?(formats_args, fn {format_name, _args} ->
+         AvailableFormats.get_category(format_name) == :preview
+       end),
+       do: :preview_generation,
+       else: :media_conversion
   end
 end
