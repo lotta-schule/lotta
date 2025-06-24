@@ -14,6 +14,12 @@ defmodule Lotta.WorkerCase do
       import Ecto.Changeset
       import Ecto.Query
       import Lotta.DataCase
+
+      defp create_file_stream(file_path),
+        do:
+          file_path
+          |> Elixir.File.open!()
+          |> IO.binstream(5 * 1024 * 1024)
     end
   end
 

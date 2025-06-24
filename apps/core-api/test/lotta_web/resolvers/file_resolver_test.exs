@@ -108,12 +108,6 @@ defmodule LottaWeb.FileResolverTest do
       }
     """
 
-    defp create_file_stream(file_path),
-      do:
-        file_path
-        |> Elixir.File.open!()
-        |> IO.binstream(5 * 1024 * 1024)
-
     test "returns file with correct immediatly available files for images", %{
       admin_account: admin_account,
       admin_file: admin_file

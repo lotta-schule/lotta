@@ -72,12 +72,6 @@ defmodule Lotta.Worker.MediaConversionTest do
   end
 
   describe "Worker.Conversion" do
-    defp create_file_stream(file_path),
-      do:
-        file_path
-        |> Elixir.File.open!()
-        |> IO.binstream(5 * 1024 * 1024)
-
     setup do
       Tesla.Mock.mock(fn
         %{method: :get} ->

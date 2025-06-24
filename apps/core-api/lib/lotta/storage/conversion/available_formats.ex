@@ -299,17 +299,12 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @doc """
   Validates if the requested format is a valid format for the given file.
   """
-  @spec validate_requested_format(File.t(), atom() | String.t(), [
-          {:validate_easy, boolean()}
-        ]) :: {:ok, atom()} | {:error, any()}
-  def validate_requested_format(file, format, opts \\ []) do
+  @spec validate_requested_format(File.t(), atom() | String.t()) ::
+          {:ok, atom()} | {:error, any()}
+  def validate_requested_format(file, format) do
     with {:ok, format} <- to_atom(format),
          true <- Enum.member?(available_formats(file), format) do
-      if Keyword.get(opts, :validate_easy, false) do
-        validate_easy_format(file, format)
-      else
-        {:ok, format}
-      end
+      {:ok, format}
     else
       false ->
         {:error, :invalid_format}
@@ -323,13 +318,18 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   Validates if the requested format is an easy format for the given file.
   This means that the format can be transcoded on the fly and a request for it will not fail.
   """
-  @spec validate_easy_format(File.t(), atom()) ::
+  @spec validate_easy_format(File.t(), atom() | String.t()) ::
           {:ok, atom()} | {:error, :not_easy_format}
   def validate_easy_format(file, format) do
-    if easy?(file, format) do
+    with {:ok, format} <- to_atom(format),
+         true <- easy?(file, format) do
       {:ok, format}
     else
-      {:error, :not_easy_format}
+      false ->
+        {:error, :not_easy_format}
+
+      error ->
+        error
     end
   end
 

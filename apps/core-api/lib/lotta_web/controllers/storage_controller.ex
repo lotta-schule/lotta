@@ -56,9 +56,9 @@ defmodule LottaWeb.StorageController do
       when not is_nil(tenant) and is_uuid(id) do
     with file when not is_nil(file) <- Storage.get_file(id),
          {:ok, _format} <-
-           AvailableFormats.validate_requested_format(file, format, validate_easy: true),
+           AvailableFormats.validate_requested_format(file, format),
          {:ok, file_conversion} <-
-           Storage.get_file_conversion(file, format),
+           Storage.get_file_conversion(file, format, create: :easy_format),
          http_url when not is_nil(http_url) <-
            Storage.get_http_url(file_conversion),
          {:ok, env} <-

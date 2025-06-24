@@ -5,6 +5,7 @@ defmodule LottaWeb.StorageControllerTest do
   use Lotta.WorkerCase
 
   import Phoenix.ConnTest
+  import Mock
 
   alias Lotta.Fixtures
 
@@ -13,10 +14,7 @@ defmodule LottaWeb.StorageControllerTest do
       %{method: :get} ->
         %Tesla.Env{
           status: 200,
-          body:
-            "test/support/fixtures/image_file.png"
-            |> File.open!()
-            |> IO.binstream(5 * 1024 * 1024)
+          body: create_file_stream("test/support/fixtures/image_file.png")
         }
     end)
   end
@@ -44,7 +42,7 @@ defmodule LottaWeb.StorageControllerTest do
       assert response(conn, 302)
     end
 
-    test "Should respond with the correct format if requested" do
+    test "Should respond with the correct format generated if requested" do
       user = Fixtures.fixture(:admin_user)
       file = Fixtures.fixture(:real_image_file, user)
 
@@ -53,6 +51,35 @@ defmodule LottaWeb.StorageControllerTest do
         |> get("/data/storage/f/#{file.id}/preview_200")
 
       assert response(conn, 200)
+    end
+
+    test "Should respond with the correct existing file_conversion generated if requested" do
+      user = Fixtures.fixture(:admin_user)
+      file = Fixtures.fixture(:real_audio_file, user)
+
+      with_mock(
+        Exile,
+        stream!: fn _cmd, _opts ->
+          create_file_stream("test/support/fixtures/eoa2.mp3")
+          |> Stream.map(&{:stdout, &1})
+        end
+      ) do
+        assert {:ok, conversion} =
+                 file
+                 |> Lotta.Storage.get_file_conversion("audioplay_aac")
+
+        conversion =
+          Lotta.Repo.preload(conversion, :remote_storage_entity)
+
+        assert not is_nil(conversion)
+        assert not is_nil(conversion.remote_storage_entity)
+
+        conn =
+          build_tenant_conn()
+          |> get("/data/storage/f/#{file.id}/audioplay_aac")
+
+        assert response(conn, 200)
+      end
     end
 
     test "Should respond with the original format if requested" do

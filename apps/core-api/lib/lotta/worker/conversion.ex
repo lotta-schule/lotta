@@ -30,7 +30,8 @@ defmodule Lotta.Worker.Conversion do
         id: job_id,
         args: %{"prefix" => prefix, "file_id" => file_id, "format_category" => format_category}
       }) do
-    with {:ok, format_category} <- AvailableFormats.to_atom(format_category),
+    with {:ok, format_category} <-
+           AvailableFormats.to_atom(format_category),
          file when not is_nil(file) <- Repo.get(File, file_id, prefix: prefix),
          file <- Repo.preload(file, [:file_conversions]),
          {:ok, file_conversions} <-
@@ -165,18 +166,34 @@ defmodule Lotta.Worker.Conversion do
     )
   end
 
-  @spec get_or_create_conversion_job(File.t(), atom() | String.t()) ::
+  @spec get_or_create_conversion_job(
+          File.t(),
+          atom() | String.t(),
+          opts :: [create: :easy_format]
+        ) ::
           {:ok, Oban.Job.t()} | {:error, String.t()}
-  def get_or_create_conversion_job(%{id: _id} = file, format) do
+  def get_or_create_conversion_job(%{id: _id} = file, format, opts \\ []) do
     case get_conversion_job(file, format) do
-      %Oban.Job{state: state} = job when state in ["scheduled", "executing", "completed"] ->
+      %Oban.Job{state: state} = job
+      when state in ["available", "scheduled", "executing", "completed"] ->
         {:ok, job}
 
       %Oban.Job{state: state} ->
         {:error, "Conversion job state is: #{state}"}
 
       nil ->
-        create_conversion_job(file, format)
+        case Keyword.get(opts, :create) == :easy_format and
+               AvailableFormats.validate_easy_format(file, format) do
+          false ->
+            create_conversion_job(file, format)
+
+          {:ok, _} ->
+            # If the format is valid and creation is allowed, create the job
+            create_conversion_job(file, format)
+
+          error ->
+            error
+        end
     end
   end
 
