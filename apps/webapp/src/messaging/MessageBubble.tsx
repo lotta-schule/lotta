@@ -68,6 +68,8 @@ export const MessageBubble = React.memo(
                     {hasPreviewImage(file) && (
                       <div className={styles.previewWrapper}>
                         <ResponsiveImage
+                          lazy
+                          sizes="auto"
                           alt={'Bildvorschau'}
                           width={400}
                           format={'preview'}

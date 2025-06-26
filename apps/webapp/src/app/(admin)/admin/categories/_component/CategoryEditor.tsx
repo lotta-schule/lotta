@@ -142,10 +142,13 @@ export const CategoryEditor = React.memo(
               onSelectFile={(bannerImageFile) =>
                 setCategoryOptions({ ...categoryOptions, bannerImageFile })
               }
+              style={{ width: '100%' }}
               allowDeletion
             >
               {categoryOptions.bannerImageFile ? (
                 <ResponsiveImage
+                  lazy
+                  sizes="auto"
                   style={{ width: '100%' }}
                   alt={`Banner für ${categoryOptions.title}`}
                   format="banner"

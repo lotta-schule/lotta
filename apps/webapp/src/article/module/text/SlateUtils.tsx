@@ -10,71 +10,74 @@ import { BlockElement, CustomText, Image, Link } from './SlateCustomTypes';
 import { FileModel } from 'model';
 import isUrl from 'is-url';
 
-export const renderElement = ({
-  attributes,
-  children,
-  element,
-}: RenderElementProps) => {
-  switch (element.type) {
-    case 'unordered-list':
-      return (
-        <ul {...attributes} style={{ listStyle: 'disc', paddingLeft: '1em' }}>
-          {children}
-        </ul>
-      );
-    case 'ordered-list':
-      return (
-        <ol
-          {...attributes}
-          style={{ listStyle: 'decimal', paddingLeft: '1em' }}
-        >
-          {children}
-        </ol>
-      );
-    case 'list-item':
-      return (
-        <li {...attributes} style={{ paddingLeft: '.5em' }}>
-          {children}
-        </li>
-      );
-    case 'image': {
-      return (
-        <SlateImage element={element} attributes={attributes}>
-          {children}
-        </SlateImage>
-      );
-    }
-    case 'paragraph':
-      return (
-        <p style={{ overflow: 'auto' }} {...attributes}>
-          {children}
-        </p>
-      );
-    case 'link': {
-      const href = element.href;
-      let isSameHost = false;
-      try {
-        const url = new URL(href);
-        isSameHost = window.location.host === url.host;
-      } catch {
-        console.warn('Invalid URL:', href);
+export const renderElement =
+  ({ editing }: { editing?: boolean } = {}) =>
+  // eslint-disable-next-line react/display-name
+  ({ attributes, children, element }: RenderElementProps) => {
+    switch (element.type) {
+      case 'unordered-list':
+        return (
+          <ul {...attributes} style={{ listStyle: 'disc', paddingLeft: '1em' }}>
+            {children}
+          </ul>
+        );
+      case 'ordered-list':
+        return (
+          <ol
+            {...attributes}
+            style={{ listStyle: 'decimal', paddingLeft: '1em' }}
+          >
+            {children}
+          </ol>
+        );
+      case 'list-item':
+        return (
+          <li {...attributes} style={{ paddingLeft: '.5em' }}>
+            {children}
+          </li>
+        );
+      case 'image': {
+        return (
+          <SlateImage element={element} attributes={attributes}>
+            {children}
+          </SlateImage>
+        );
       }
-      return (
-        <a
-          {...attributes}
-          href={href}
-          title={href}
-          target={isSameHost ? '_self' : '_blank'}
-          rel="noopener noreferrer"
-        >
-          {children}
-        </a>
-      );
+      case 'paragraph':
+        return editing ? (
+          <div className="paragraph" {...attributes}>
+            {children}
+          </div>
+        ) : (
+          <p style={{ overflow: 'auto' }} {...attributes}>
+            {children}
+          </p>
+        );
+      case 'link': {
+        const href = element.href;
+        let isSameHost = false;
+        try {
+          const url = new URL(href);
+          isSameHost = window.location.host === url.host;
+        } catch {
+          console.warn('Invalid URL:', href);
+        }
+        return (
+          <a
+            {...attributes}
+            href={href}
+            title={href}
+            target={isSameHost ? '_self' : '_blank'}
+            rel="noopener noreferrer"
+          >
+            {children}
+          </a>
+        );
+      }
+      default:
+        return <div {...attributes}>{children}</div>;
     }
-    default:
-      return <div {...attributes}>{children}</div>;
-  }
-};
+  };
 
 export const renderLeaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   const customStyles: React.CSSProperties = {

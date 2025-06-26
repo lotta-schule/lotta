@@ -16,12 +16,12 @@ export type ResponsiveImageProps = {
   fallback?: React.ReactNode | null;
 } & (
   | {
-      sizes: string[] | [number, number] | Exclude<string, 'auto'>;
+      sizes: string[] | [number, number] | 'auto' | (string & {});
       lazy?: false;
     }
   | {
       lazy: true;
-      sizes?: string[] | [number, number] | Exclude<string, 'auto'> | 'auto';
+      sizes?: string[] | [number, number] | 'auto' | (string & {});
     }
 ) &
   Omit<

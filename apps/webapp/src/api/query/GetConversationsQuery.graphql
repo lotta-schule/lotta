@@ -14,6 +14,9 @@ query GetConversationsQuery {
       avatarImageFile {
         id
         formats(category: "avatar") {
+          availability {
+            status
+          }
           name
           url
           type

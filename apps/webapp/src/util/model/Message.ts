@@ -7,7 +7,7 @@ export const Message = {
   },
   conversationAsDestination(
     conversation: ConversationModel,
-    currentUser: UserModel
+    currentUser: Pick<UserModel, '__typename' | 'id'>
   ) {
     return {
       user: conversation.users.find((u) => u.id !== currentUser?.id),
