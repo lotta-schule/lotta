@@ -2,8 +2,15 @@ import * as React from 'react';
 import { FileModel } from 'model';
 import { File } from 'util/model';
 
+type FileInput = Pick<FileModel, '__typename'> & {
+  formats: Pick<
+    FileModel['formats'][number],
+    'name' | 'availability' | 'url'
+  >[];
+};
+
 export type ResponsiveImageProps = {
-  file: Pick<FileModel, '__typename' | 'formats'> | null | undefined;
+  file: FileInput | null | undefined;
   alt: string;
   format: string;
   fallback?: React.ReactNode | null;
@@ -26,7 +33,7 @@ export type ResponsiveImageProps = {
   >;
 
 export const useResponsiveProps = (
-  file: Pick<FileModel, '__typename' | 'formats'> | null | undefined,
+  file: FileInput | null | undefined,
   format: string,
   sizesAttr?: string[] | [number, number] | string
 ) => {

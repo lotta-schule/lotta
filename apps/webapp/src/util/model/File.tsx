@@ -30,7 +30,9 @@ export const File = {
   },
 
   getAvailableFormats(
-    file: Pick<FileModel, '__typename' | 'formats'>,
+    file: Pick<FileModel, '__typename'> & {
+      formats: Pick<FileModel['formats'][number], 'name' | 'availability'>[];
+    },
     format?: string
   ) {
     return (

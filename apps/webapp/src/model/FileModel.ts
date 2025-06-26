@@ -83,7 +83,7 @@ export interface FileModel {
     type: FileModelType;
     mimeType: string;
     availability: {
-      status: 'READY' | 'AVAILABLE' | 'REQUESTABLE' | 'PROCESSING' | 'ERROR';
+      status: 'READY' | 'AVAILABLE' | 'REQUESTABLE' | 'PROCESSING' | 'FAILED';
       progress?: number;
       error?: string;
     };
