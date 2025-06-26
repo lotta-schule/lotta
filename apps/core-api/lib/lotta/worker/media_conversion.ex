@@ -38,12 +38,16 @@ defmodule Lotta.Worker.MediaConversion do
           format_name
         )
 
+        FileData.clear({:for, file})
+
         Oban.Notifier.notify(Oban, :media_conversion, %{
           "complete" => job_id
         })
 
       {:ok, file, :format_names, format_names} ->
         silent_process_multiple(job_id, file, format_names)
+
+        FileData.clear({:for, file})
 
         Oban.Notifier.notify(Oban, :media_conversion, %{
           "complete" => job_id
