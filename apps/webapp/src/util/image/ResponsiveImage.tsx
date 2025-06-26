@@ -5,16 +5,25 @@ import { File } from 'util/model';
 export type ResponsiveImageProps = {
   file: Pick<FileModel, '__typename' | 'formats'> | null | undefined;
   alt: string;
-  sizes?: string[] | [number, number] | string;
   format: string;
   fallback?: React.ReactNode | null;
-} & Omit<
-  React.DetailedHTMLProps<
-    React.ImgHTMLAttributes<HTMLImageElement>,
-    HTMLImageElement
-  >,
-  'alt' | 'srcSet' | 'sizes'
->;
+} & (
+  | {
+      sizes: string[] | [number, number] | Exclude<string, 'auto'>;
+      lazy?: false;
+    }
+  | {
+      lazy: true;
+      sizes?: string[] | [number, number] | Exclude<string, 'auto'> | 'auto';
+    }
+) &
+  Omit<
+    React.DetailedHTMLProps<
+      React.ImgHTMLAttributes<HTMLImageElement>,
+      HTMLImageElement
+    >,
+    'alt' | 'srcSet' | 'sizes'
+  >;
 
 export const useResponsiveProps = (
   file: Pick<FileModel, '__typename' | 'formats'> | null | undefined,
@@ -90,6 +99,7 @@ export const ResponsiveImage = React.memo(
     fallback = null,
     sizes,
     format,
+    lazy,
     ...imgProps
   }: ResponsiveImageProps) => {
     const { formats, ...responsiveProps } = useResponsiveProps(
@@ -98,11 +108,24 @@ export const ResponsiveImage = React.memo(
       sizes
     );
     if (formats?.length) {
-      return <img className={className} {...imgProps} {...responsiveProps} />;
+      return (
+        <img
+          loading={lazy ? 'lazy' : undefined}
+          className={className}
+          {...imgProps}
+          {...responsiveProps}
+        />
+      );
     }
 
     if (imgProps.src) {
-      return <img className={className} {...imgProps} />;
+      return (
+        <img
+          className={className}
+          loading={lazy ? 'lazy' : undefined}
+          {...imgProps}
+        />
+      );
     }
 
     return fallback;

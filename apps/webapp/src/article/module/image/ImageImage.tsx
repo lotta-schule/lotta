@@ -6,7 +6,8 @@ import { ImageCaption } from './ImageCaption';
 
 import styles from './ImageImage.module.scss';
 
-interface ImageImageProps extends Omit<ImageContentProps, 'onClick' | 'alt'> {
+interface ImageImageProps
+  extends Omit<ImageContentProps, 'onClick' | 'alt' | 'file'> {
   isEditModeEnabled: boolean;
   file?: FileModel | null;
   caption: string;

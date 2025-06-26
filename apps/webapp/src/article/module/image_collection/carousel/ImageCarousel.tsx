@@ -6,12 +6,12 @@ import { FileSorter } from '../Config';
 
 import styles from './ImageCarousel.module.scss';
 
-export interface ImageCarouselProps {
+export type ImageCarouselProps = {
   contentModule: ContentModuleModel;
-}
+};
 
-export const ImageCarousel = React.memo<ImageCarouselProps>(
-  ({ contentModule }) => {
+export const ImageCarousel = React.memo(
+  ({ contentModule }: ImageCarouselProps) => {
     const [activeStep, setActiveStep] = React.useState(0);
     const filesConfiguration: {
       [id: string]: { caption?: string; sortKey?: number };
@@ -62,8 +62,10 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
               )}
               {Math.abs(activeStep - index) <= 2 ? (
                 <ResponsiveImage
+                  lazy
+                  sizes={['(min-width: 1500px) 1500px', '80vw']}
                   file={file}
-                  format="preview"
+                  format="present"
                   alt={getConfiguration(file).caption || ''}
                 />
               ) : null}
