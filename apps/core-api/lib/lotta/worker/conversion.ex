@@ -81,7 +81,7 @@ defmodule Lotta.Worker.Conversion do
         {:error, "No processor available for file type #{file.file_type}"}
 
       target_formats == [] ->
-        :ok
+        {:ok, []}
 
       true ->
         processor.process_multiple(file, target_formats)
