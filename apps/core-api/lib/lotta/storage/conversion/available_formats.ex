@@ -134,15 +134,26 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
                            |> Enum.map(&to_string/1)
 
   @doc """
+  Checks if a given category name is valid (= exists in the list of available categories)
+  """
+  @doc since: "6.0.0"
+  @spec is_valid_category?(any()) :: boolean()
+  defguard is_valid_category?(category_name)
+           when (is_atom(category_name) and category_name in @format_categories) or
+                  (is_binary(category_name) and category_name in @format_category_strings)
+
+  @doc """
   Returns the list of available formats.
   """
   @spec list() :: [{atom(), keyword()}]
+  @doc since: "6.0.0"
   def list(), do: @formats
 
   @doc """
   Returns the list of available formats for a given category name
   """
   @spec list(category_name :: atom()) :: [{atom(), keyword()}]
+  @doc since: "6.0.0"
   def list(category_name),
     do:
       @formats
@@ -154,6 +165,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   Returns the given format as an atom
   """
   @spec to_atom(String.t() | atom()) :: {:ok, atom()} | {:error, :invalid_format_name}
+  @doc since: "6.0.0"
   def to_atom(format) when is_binary(format) do
     try do
       {:ok, String.to_existing_atom(format)}
@@ -177,22 +189,43 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
 
       iex> AvailableFormats.get_category(:articlepreview_840)
       :articlepreview
+
+      iex> AvailableFormats.get_category("AVATAR_420")
+      :avatar
   """
-  @spec get_category(atom()) :: atom() | nil
-  def get_category(format) when is_atom(format) do
+  @doc since: "6.0.0"
+  @spec get_category(atom() | String.t()) :: atom() | nil
+  def get_category(format) do
     format
     |> to_string()
     |> String.split("_")
     |> Enum.at(0)
+    |> String.downcase()
     |> String.to_existing_atom()
-  end
+    |> case do
+      category when is_valid_category?(category) ->
+        category
 
-  def get_category(format) do
-    get_category(String.to_existing_atom(format))
+      _ ->
+        nil
+    end
   rescue
     ArgumentError -> nil
   end
 
+  @doc """
+  Checks if a given format is a valid format category.
+
+  ## Examples
+
+      iex> AvailableFormats.valid_category?(:articlepreview)
+      true
+
+      iex> AvailableFormats.valid_category?(:unknown)
+      false
+  """
+  @doc since: "6.0.0"
+  @spec valid_category?(atom() | String.t()) :: boolean()
   def valid_category?(format), do: Enum.member?(@format_categories, format)
 
   @doc """
@@ -204,6 +237,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
       [:articlepreview_840, :articlepreview_420, :articlepreview_600, :articlepreview_300]
   """
   @spec get_formats_for(atom()) :: [atom()]
+  @doc since: "6.0.0"
   def get_formats_for(category) when is_atom(category) do
     @formats
     |> Enum.filter(fn {name, _} -> String.starts_with?(to_string(name), to_string(category)) end)
@@ -215,6 +249,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @doc """
   Returns all the formats that should be immediatly available (= directly after upload) for a given file.
   """
+  @doc since: "6.0.0"
   @spec get_immediate_formats(FileData.t() | String.t()) :: [atom()]
   def get_immediate_formats(%FileData{metadata: metadata}),
     do: get_immediate_formats(Keyword.get(metadata, :mime_type))
@@ -235,6 +270,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   Returns Wether a given transformation is an easy process, and can be done on the fly without
   failing the request.
   """
+  @doc since: "6.0.0"
   @spec easy?(source :: File.t() | FileData.t() | String.t(), target_format :: atom()) ::
           boolean()
   def easy?(_source, target_format),
@@ -243,6 +279,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @doc """
   Returns all available and providable formats for a given file.
   """
+  @doc since: "6.0.0"
   @spec available_formats(File.t(), for_category: String.t() | atom()) :: [atom()]
   def available_formats(file, opts \\ [])
 
@@ -272,6 +309,11 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
 
   def available_formats(_, _), do: []
 
+  @doc """
+  Returns all available formats for a given file, including their configuration.
+  This is useful to get the configuration for a specific format.
+  """
+  @doc since: "6.0.0"
   @spec available_formats_with_config(File.t(), for_category: String.t() | atom()) :: [
           {atom(), map()}
         ]
@@ -285,6 +327,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @doc """
   Returns a result tuple with the configuration for a given format and file.
   """
+  @doc since: "6.0.0"
   @spec get_format_config(File.t(), atom()) :: {:ok, keyword()} | {:error, String.t()}
   def get_format_config(file, format_name) do
     file
@@ -299,6 +342,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @doc """
   Validates if the requested format is a valid format for the given file.
   """
+  @doc since: "6.0.0"
   @spec validate_requested_format(File.t(), atom() | String.t()) ::
           {:ok, atom()} | {:error, any()}
   def validate_requested_format(file, format) do
@@ -318,6 +362,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   Validates if the requested format is an easy format for the given file.
   This means that the format can be transcoded on the fly and a request for it will not fail.
   """
+  @doc since: "6.0.0"
   @spec validate_easy_format(File.t(), atom() | String.t()) ::
           {:ok, atom()} | {:error, :not_easy_format}
   def validate_easy_format(file, format) do
@@ -336,6 +381,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   @doc """
   Checks if a given format is available for a given file.
   """
+  @doc since: "6.0.0"
   @spec format_available?(File.t(), atom()) :: boolean()
   def format_available?(file, format), do: Enum.member?(available_formats(file), format)
 
@@ -346,6 +392,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
   available -> the format can be accessed via its URL and will be generated on the fly
   requestable -> the format is not available yet, but can be requested and will be generated
   """
+  @doc since: "6.0.0"
   @spec get_default_availability(format :: String.t() | atom()) ::
           String.t()
   def get_default_availability(format) when is_atom(format) do
@@ -371,12 +418,4 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
       String.starts_with?("#{name}_", String.downcase(to_string(category)) <> "_")
     end)
   end
-
-  @doc """
-  Checks if a given category name is valid (= exists in the list of available categories)
-  """
-  @spec is_valid_category?(any()) :: boolean()
-  defguard is_valid_category?(category_name)
-           when (is_atom(category_name) and category_name in @format_categories) or
-                  (is_binary(category_name) and category_name in @format_category_strings)
 end

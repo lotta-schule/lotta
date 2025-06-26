@@ -222,4 +222,22 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
       refute AvailableFormats.valid_category?("preview")
     end
   end
+
+  describe "get_category/1" do
+    test "return the categories of formats or an error" do
+      assert :preview == AvailableFormats.get_category(:preview)
+      assert :preview == AvailableFormats.get_category(:preview_800)
+      assert :preview == AvailableFormats.get_category("preview_800")
+      assert :preview == AvailableFormats.get_category("PREVIEW_800")
+
+      assert :videoplay == AvailableFormats.get_category(:videoplay)
+      assert :videoplay == AvailableFormats.get_category(:"videoplay_200p-webm")
+      assert :videoplay == AvailableFormats.get_category("videoplay_200p-webm")
+      assert :videoplay == AvailableFormats.get_category("VIDEOPLAY_200P-WEBM")
+
+      assert nil == AvailableFormats.get_category(:unknown)
+      assert nil == AvailableFormats.get_category(:why_not)
+      assert nil == AvailableFormats.get_category("unknown")
+    end
+  end
 end

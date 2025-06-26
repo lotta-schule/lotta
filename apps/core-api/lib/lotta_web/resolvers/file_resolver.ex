@@ -84,7 +84,8 @@ defmodule LottaWeb.FileResolver do
 
     category_filter_fn = fn format_name ->
       is_nil(category_filter) ||
-        AvailableFormats.get_category(format_name) == String.to_atom(category_filter)
+        AvailableFormats.get_category(format_name) ==
+          AvailableFormats.get_category(category_filter)
     end
 
     all_possible_formats =
@@ -173,7 +174,7 @@ defmodule LottaWeb.FileResolver do
       name: file_conversion.format,
       type: file_conversion.file_type,
       mime_type: file_conversion.mime_type,
-      url: Urls.get_file_path(file_conversion),
+      url: Storage.get_http_url(file_conversion),
       availability: %{
         status: "ready",
         progress: 100
