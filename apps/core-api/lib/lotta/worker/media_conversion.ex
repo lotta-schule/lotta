@@ -139,7 +139,7 @@ defmodule Lotta.Worker.MediaConversion do
     |> Tuple.to_list()
     |> List.flatten()
     |> tap(fn commandlist ->
-      Logger.info("Running FFmpeg command: #{inspect(commandlist)}")
+      Logger.warning("Running FFmpeg command: #{inspect(commandlist)}")
     end)
     |> Exile.stream!(stderr: :consume)
     |> Stream.map(fn
