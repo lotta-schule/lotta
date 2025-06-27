@@ -4,6 +4,7 @@ import { Upload, useUploadClient } from './upload/useUploadClient';
 export interface DefaultFileMetadata {
   mimeType: string;
   size: number;
+  metadata: Record<string, any>;
 }
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface DefaultDirectoryMetadata extends Record<string, any> {}

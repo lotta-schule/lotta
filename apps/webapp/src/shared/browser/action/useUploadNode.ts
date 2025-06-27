@@ -17,6 +17,7 @@ export const UPLOAD_FILE_MUTATION = graphql(`
       mimeType
       fileType
       userId
+      metadata
       parentDirectory {
         id
       }

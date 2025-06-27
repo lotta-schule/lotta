@@ -35,7 +35,13 @@ defmodule Lotta.Worker.Metadata do
          {:ok, file} <-
            file
            |> Ecto.Changeset.change(metadata: results)
-           |> Ecto.Changeset.put_change(:media_duration, results[:duration])
+           |> Ecto.Changeset.put_change(
+             :media_duration,
+             case Float.parse(results[:duration]) do
+               {duration, _} -> duration
+               :error -> nil
+             end
+           )
            |> Ecto.Changeset.put_change(:page_count, results[:pages])
            |> Repo.update() do
       Oban.Notifier.notify(Oban, :metadata_jobs, %{"complete" => job_id})
