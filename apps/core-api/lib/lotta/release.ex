@@ -211,7 +211,10 @@ defmodule Lotta.Release do
 
         modules
         |> Enum.flat_map(& &1.files)
-        |> ensure_formats(:present_1200)
+        |> tap(fn files ->
+          ensure_formats(files, :present_1200)
+          ensure_formats(files, :avatar_500)
+        end)
 
       {"video", modules} ->
         Logger.notice("converting #{Enum.count(modules)} video content modules ...")
