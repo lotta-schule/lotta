@@ -35,6 +35,7 @@ export const additionalMocks: MockedResponse[] = [
           fileType: 'MISC',
           userId: SomeUser.id,
           parentDirectory: logosDirectory,
+          metadata: {},
           formats: [],
         },
       },
@@ -94,7 +95,7 @@ describe('useUploadNode', () => {
       variables: { parentDirectoryId: parentDirectoryNode.id },
     });
 
-    const cachedFile = cached!.files.find(
+    const cachedFile = cached?.files.find(
       (directory) => directory.id === 'new-id'
     );
 

@@ -37,7 +37,7 @@ defmodule Lotta.Worker.Metadata do
            |> Ecto.Changeset.change(metadata: results)
            |> Ecto.Changeset.put_change(
              :media_duration,
-             case Float.parse(results[:duration]) do
+             case Float.parse(Map.get(results, :duration, "")) do
                {duration, _} -> duration
                :error -> nil
              end

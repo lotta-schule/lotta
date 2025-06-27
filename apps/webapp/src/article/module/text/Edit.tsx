@@ -46,7 +46,7 @@ export const Edit = React.memo<EditProps>(
         <EditToolbar />
         <Editable
           onKeyDown={onKeyDown}
-          renderElement={renderElement({ editable: true })}
+          renderElement={renderElement({ editing: true })}
           renderLeaf={renderLeaf}
         />
       </Slate>

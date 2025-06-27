@@ -194,6 +194,11 @@ export const imageFile = {
   insertedAt: '2001-01-01 14:15',
   updatedAt: '2001-01-01 14:15',
   formats: createFormats('123', 'image'),
+  metadata: {
+    pages: 1,
+    width: 1920,
+    height: 1080,
+  },
   usage: [],
 } as Partial<FileModel> as FileModel;
 
@@ -207,6 +212,11 @@ export const otherImageFile = {
   insertedAt: '2001-01-01 14:15',
   updatedAt: '2001-01-01 14:15',
   formats: createFormats('245', 'image'),
+  metadata: {
+    pages: 1,
+    width: 1080,
+    height: 1080,
+  },
   usage: [],
 } as Partial<FileModel> as FileModel;
 
@@ -233,6 +243,9 @@ export const convertedDocumentFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
+  metadata: {
+    pages: 1,
+  },
   formats: createFormats('5545', 'misc'),
 } as Partial<FileModel> as FileModel;
 
@@ -247,6 +260,7 @@ export const podcastTextFile = {
   updatedAt: '2001-01-21 00:00',
   usage: [],
   formats: createFormats('5546', 'misc'),
+  metadata: {},
 } as Partial<FileModel> as FileModel;
 
 export const movieFile = {
@@ -259,6 +273,11 @@ export const movieFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
+  metadata: {
+    duration: 123456,
+    width: 1920,
+    height: 1080,
+  },
   formats: createFormats('75000', 'video'),
 } as Partial<FileModel> as FileModel;
 
@@ -272,6 +291,9 @@ export const audioFile = {
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
   usage: [],
+  metadata: {
+    duration: 987654,
+  },
   formats: createFormats('99000', 'misc'),
 } as Partial<FileModel> as FileModel;
 
@@ -284,6 +306,7 @@ export const powerpointFile = {
   mimeType: 'application/mspowerpoint',
   insertedAt: '2001-01-21 00:00',
   updatedAt: '2001-01-21 00:00',
+  metadata: {},
   usage: [],
   formats: createFormats('20', 'misc'),
 } as Partial<FileModel> as FileModel;
