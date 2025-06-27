@@ -22,6 +22,9 @@ defmodule SystemConfig do
       :boolean ->
         value in ["1", "true", "TRUE", true]
 
+      :url_with_scheme ->
+        value and value |> String.replace(~r/^(?:http(s)?:\/\/)?/, "http\\1://")
+
       :url_encode ->
         value && URI.encode_www_form(value)
 
@@ -70,7 +73,7 @@ defmodule SystemConfig do
   defp default("POSTGRES_DB", :test), do: "api_test"
   defp default("POSTGRES_DB", :dev), do: "lotta"
   defp default("POSTGRES_HOST", _), do: "localhost"
-  defp default("POSTGRES_POOL_SIZE", _), do: "10"
+  defp default("POSTGRES_POOL_SIZE", _), do: "50"
 
   defp default("REDIS_HOST", env) when env in [:dev, :test], do: "localhost"
   defp default("REDIS_PASSWORD", env) when env in [:dev, :test], do: "lotta"
@@ -215,7 +218,9 @@ config :lotta, Lotta.Storage.RemoteStorage,
       end)
     end)
 
-config :lotta, :schedule_provider_url, SystemConfig.get("SCHEDULE_PROVIDER_URL")
+config :lotta,
+       :schedule_provider_url,
+       SystemConfig.get("SCHEDULE_PROVIDER_URL", cast: :url_with_scheme)
 
 config :lotta, :analytics,
   endpoint: SystemConfig.get("ANALYTICS_ENDPOINT"),
