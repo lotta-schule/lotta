@@ -69,7 +69,12 @@ export const UserArticlesDialog = React.memo(
               >
                 {users.map((user) => (
                   <Tab key={user.id} value={user.id}>
-                    <UserAvatar user={user} className={styles.tabbarAvatar} />{' '}
+                    <UserAvatar
+                      user={user}
+                      className={styles.tabbarAvatar}
+                      size={50}
+                      style={{ width: '2em', height: '2em' }}
+                    />{' '}
                     {user.name}
                   </Tab>
                 ))}

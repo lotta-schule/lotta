@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 import styles from './Avatar.module.scss';
 
-export interface AvatarProps extends React.DetailedHTMLProps<HTMLImageElement> {
+export interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   /**
    * The title of the avatar
    */
