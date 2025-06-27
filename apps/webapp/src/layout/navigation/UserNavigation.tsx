@@ -103,7 +103,7 @@ export const UserNavigation = React.memo(() => {
       return (
         <div className={styles.loggedInContainer}>
           <div className={styles.avatarContainer}>
-            <CurrentUserAvatar size={100} style={{ width: 100, height: 100 }} />
+            <CurrentUserAvatar size={100} />
           </div>
           <nav>
             <NavigationButton

@@ -34,6 +34,7 @@ export const TenantLayout = async ({
             <Link href={'/'} title={'Startseite'}>
               <ResponsiveImage
                 format={'logo'}
+                sizes={[300, 600]}
                 file={tenant.logoImageFile}
                 alt={`Logo ${tenant.title}`}
               />

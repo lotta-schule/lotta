@@ -27,10 +27,7 @@ export const LegacyHeader = React.memo(
               file={bannerImage}
               alt=""
               format="banner"
-              sizes={[
-                '(min-width: 960px) 60vw',
-                '100vw'
-              ]}
+              sizes={['(min-width: 960px) 60vw', '100vw']}
             />
           )}
           {bannerImageUrl && <img src={bannerImageUrl} alt="" width={700} />}

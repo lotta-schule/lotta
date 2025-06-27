@@ -1,5 +1,4 @@
-import { ArticleModel, FileModel } from 'model';
-import { File } from './File';
+import { ArticleModel } from 'model';
 
 export const User = {
   getName(
@@ -23,21 +22,6 @@ export const User = {
     } | null
   ) {
     return user?.nickname || user?.name || '';
-  },
-
-  getAvatarUrl(
-    user?: {
-      __typename?: 'User';
-      nickname?: string | null;
-      name?: string | null;
-      avatarImageFile?: Pick<FileModel, '__typename' | 'formats'> | null;
-    } | null,
-    size = 100
-  ) {
-    const avatarUrl =
-      user?.avatarImageFile &&
-      File.getRemoteUrl(user?.avatarImageFile, 'avatar', size);
-    return avatarUrl || User.getDefaultAvatarUrl(user);
   },
 
   getDefaultAvatarUrl(

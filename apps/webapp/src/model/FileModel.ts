@@ -67,21 +67,20 @@ export type FileModelType =
 export interface FileModel {
   __typename?: 'File';
   id: ID;
-  userId: ID;
+  userId?: ID;
   user?: UserModel;
-  insertedAt: string;
-  updatedAt: string;
-  filename: string;
-  filesize: number;
-  mimeType: string;
-  fileType: FileModelType;
-  parentDirectory: Partial<DirectoryModel>;
-  fileConversions: FileConversionModel[];
+  insertedAt?: string;
+  updatedAt?: string;
+  filename?: string;
+  filesize?: number;
+  mimeType?: string;
+  fileType?: FileModelType;
+  parentDirectory?: Partial<DirectoryModel>;
   formats: {
     name: AvailableFormat;
     url: string;
-    type: FileModelType;
-    mimeType: string;
+    type?: FileModelType;
+    mimeType?: string;
     availability: {
       status: 'READY' | 'AVAILABLE' | 'REQUESTABLE' | 'PROCESSING' | 'FAILED';
       progress?: number;

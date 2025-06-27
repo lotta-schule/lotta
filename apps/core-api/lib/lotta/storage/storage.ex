@@ -25,9 +25,17 @@ defmodule Lotta.Storage do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
-  def query(queryable, _params) do
-    queryable
-  end
+  def query(File, _params),
+    do:
+      File
+      |> preload([:remote_storage_entity, :file_conversions])
+
+  def query(FileConversion, _params),
+    do:
+      File
+      |> preload([:remote_storage_entity])
+
+  def query(queryable, _params), do: queryable
 
   @doc """
   Upload a file to a given directory for a given user.

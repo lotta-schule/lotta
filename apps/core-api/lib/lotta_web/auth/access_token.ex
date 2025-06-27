@@ -6,9 +6,9 @@ defmodule LottaWeb.Auth.AccessToken do
   use Guardian,
     otp_app: :lotta,
     token_ttl: %{
-      "access" => {20, :minutes},
-      "refresh" => {3, :weeks},
-      "hisec" => {2, :minutes}
+      "access" => {60, :minutes},
+      "refresh" => {4, :weeks},
+      "hisec" => {5, :minutes}
     }
 
   require Logger
