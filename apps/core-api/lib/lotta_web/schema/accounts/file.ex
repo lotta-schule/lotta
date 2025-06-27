@@ -49,10 +49,6 @@ defmodule LottaWeb.Schema.Accounts.File do
     field(:user_id, :id)
     field(:user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts))
 
-    field(:file_conversions, non_null(list_of(non_null(:file_conversion))),
-      resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Storage)
-    )
-
     field(:parent_directory, :directory,
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Storage)
     )
@@ -70,6 +66,8 @@ defmodule LottaWeb.Schema.Accounts.File do
 
       resolve(&LottaWeb.FileResolver.resolve_available_formats/3)
     end
+
+    field(:metadata, :json)
 
     field(:usage, non_null(list_of(non_null(:file_usage_location))),
       resolve: &LottaWeb.FileResolver.resolve_file_usage/3

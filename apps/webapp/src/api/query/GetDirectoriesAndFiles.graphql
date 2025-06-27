@@ -17,6 +17,7 @@ query GetDirectoriesAndFiles($parentDirectoryId: ID) {
     updatedAt
     filename
     filesize
+    metadata
     mimeType
     fileType
     userId

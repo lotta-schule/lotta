@@ -13,22 +13,36 @@ defmodule Lotta.Storage.FileProcessor.VideoProcessor do
   def read_metadata(%FileData{} = file_data) do
     with %{_path: path} when not is_nil(path) <- file_data,
          {:ok, format_map} <- FFprobe.format(path) do
+      streams =
+        FFprobe.streams(path)
+        |> case do
+          {:ok, streams} when is_list(streams) ->
+            streams
+
+          error ->
+            Logger.warning("Failed to read video streams: #{inspect(error)}")
+            []
+        end
+
+      width =
+        streams
+        |> Enum.find(fn stream -> stream["codec_type"] == "video" end)
+        |> Map.get("width", nil)
+
+      height =
+        streams
+        |> Enum.find(fn stream -> stream["codec_type"] == "video" end)
+        |> Map.get("width", nil)
+
       {:ok,
        %{
          format: format_map["format_name"],
          duration: format_map["duration"],
          size: format_map["size"],
          bitrate: format_map["bit_rate"],
-         streams:
-           FFprobe.streams(path)
-           |> case do
-             {:ok, streams} when is_list(streams) ->
-               streams
-
-             error ->
-               Logger.warning("Failed to read video streams: #{inspect(error)}")
-               nil
-           end
+         streams: streams,
+         width: width,
+         height: height
        }}
     else
       error ->

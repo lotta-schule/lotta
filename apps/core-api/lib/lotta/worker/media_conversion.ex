@@ -8,7 +8,7 @@ defmodule Lotta.Worker.MediaConversion do
     # 0-9, 0 is highest
     priority: 5,
     unique: [
-      period: :timer.hours(4),
+      period: :infinity,
       timestamp: :scheduled_at,
       states: Oban.Job.states(),
       fields: [:worker, :args]

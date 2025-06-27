@@ -8,7 +8,7 @@ defmodule Lotta.Worker.Conversion do
     # 0-9, 0 is highest
     priority: 2,
     unique: [
-      period: :timer.hours(24),
+      period: :infinity,
       timestamp: :scheduled_at,
       states: Oban.Job.states(),
       fields: [:worker, :args]

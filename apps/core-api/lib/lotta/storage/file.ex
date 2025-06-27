@@ -21,9 +21,9 @@ defmodule Lotta.Storage.File do
           file_type: String.t(),
           filename: String.t(),
           filesize: pos_integer(),
-          full_metadata: map(),
           metadata: map(),
-          media_duration: float()
+          page_count: integer() | nil,
+          media_duration: float() | nil
         }
 
   @primary_key {:id, :binary_id, read_after_writes: true}
@@ -35,9 +35,10 @@ defmodule Lotta.Storage.File do
     field(:file_type, :string)
     field(:filename, :string)
     field(:filesize, :integer)
-    field(:full_metadata, :map)
     field(:metadata, :map)
-    field(:media_duration, :float)
+
+    field(:page_count, :integer, default: nil)
+    field(:media_duration, :float, default: nil)
 
     has_many(:file_conversions, FileConversion)
     belongs_to(:remote_storage_entity, RemoteStorageEntity, type: :binary_id, on_replace: :nilify)

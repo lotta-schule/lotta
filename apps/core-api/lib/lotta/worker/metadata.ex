@@ -1,3 +1,6 @@
+require Protocol
+Protocol.derive(Jason.Encoder, Image.Exif.Gps)
+
 defmodule Lotta.Worker.Metadata do
   @moduledoc """
   Worker for fetching a files metadata.
@@ -8,7 +11,7 @@ defmodule Lotta.Worker.Metadata do
     # 0-9, 0 is highest
     priority: 1,
     unique: [
-      period: :timer.minutes(15),
+      period: :infinity,
       timestamp: :scheduled_at,
       states: Oban.Job.states(),
       fields: [:worker, :args]
@@ -32,6 +35,8 @@ defmodule Lotta.Worker.Metadata do
          {:ok, file} <-
            file
            |> Ecto.Changeset.change(metadata: results)
+           |> Ecto.Changeset.put_change(:media_duration, results[:duration])
+           |> Ecto.Changeset.put_change(:page_count, results[:pages])
            |> Repo.update() do
       Oban.Notifier.notify(Oban, :metadata_jobs, %{"complete" => job_id})
       {:ok, file}
