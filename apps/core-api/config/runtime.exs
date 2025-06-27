@@ -23,7 +23,7 @@ defmodule SystemConfig do
         value in ["1", "true", "TRUE", true]
 
       :url_with_scheme ->
-        value and value |> String.replace(~r/^(?:http(s)?:\/\/)?/, "http\\1://")
+        value && value |> String.replace(~r/^(?:http(s)?:\/\/)?/, "http\\1://")
 
       :url_encode ->
         value && URI.encode_www_form(value)
