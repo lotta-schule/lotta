@@ -127,7 +127,7 @@ defmodule LottaWeb.FileResolverTest do
                }
              } = res
 
-      assert Enum.count(formats) == 27
+      assert Enum.count(formats) == 30
 
       assert Enum.all?(formats, fn format ->
                format["type"] == "IMAGE" and
@@ -193,14 +193,14 @@ defmodule LottaWeb.FileResolverTest do
                }
              } = res
 
-      assert Enum.count(formats) == 27
+      assert Enum.count(formats) == 30
 
       ready_formats =
         Enum.filter(formats, fn format ->
           format["availability"]["status"] == "READY"
         end)
 
-      assert Enum.count(ready_formats) == 2
+      assert Enum.count(ready_formats) == 5
 
       assert Enum.all?(ready_formats, fn format ->
                format["type"] == "IMAGE" and
