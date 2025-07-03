@@ -12,6 +12,14 @@ query GetConversationQuery($id: ID!) {
       nickname
       avatarImageFile {
         id
+        formats(category: "AVATAR") {
+          name
+          url
+          type
+          availability {
+            status
+          }
+        }
       }
     }
     messages {
@@ -24,6 +32,14 @@ query GetConversationQuery($id: ID!) {
         filename
         fileType
         filesize
+        formats(category: "PREVIEW") {
+          name
+          url
+          type
+          availability {
+            status
+          }
+        }
       }
       user {
         id
@@ -31,6 +47,14 @@ query GetConversationQuery($id: ID!) {
         nickname
         avatarImageFile {
           id
+          formats(category: "AVATAR") {
+            name
+            url
+            type
+            availability {
+              status
+            }
+          }
         }
       }
     }

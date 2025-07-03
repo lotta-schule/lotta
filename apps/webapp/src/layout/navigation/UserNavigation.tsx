@@ -30,7 +30,7 @@ import { Article, User } from 'util/model';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
-import { useOnLogout } from 'util/user';
+import { useOnLogout } from 'util/user/useOnLogout';
 import { useNewFeedbackCount } from 'util/feedback';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
@@ -103,7 +103,7 @@ export const UserNavigation = React.memo(() => {
       return (
         <div className={styles.loggedInContainer}>
           <div className={styles.avatarContainer}>
-            <CurrentUserAvatar size={100} style={{ width: 100, height: 100 }} />
+            <CurrentUserAvatar size={100} />
           </div>
           <nav>
             <NavigationButton

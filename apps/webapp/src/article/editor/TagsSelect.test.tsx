@@ -35,9 +35,7 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
       {},
       { tags: ['tag', 'noch ein tag', 'wieder-tag'] }
     );
-    await fireEvent.click(
-      screen.getByRole('button', { name: /vorschläge anzeigen/i })
-    );
+    await fireEvent.click(screen.getByRole('button', { name: /suggestions/i }));
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });
@@ -59,9 +57,7 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
       {},
       { tags: ['tag', 'noch ein tag', 'wieder-tag'] }
     );
-    await fireEvent.click(
-      screen.getByRole('button', { name: /vorschläge anzeigen/i })
-    );
+    await fireEvent.click(screen.getByRole('button', { name: /suggestions/i }));
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });
@@ -83,9 +79,7 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
       { tags: ['tag', 'noch ein tag', 'wieder-tag'] }
     );
     await new Promise((resolve) => setTimeout(resolve, 50));
-    await fireEvent.click(
-      screen.getByRole('button', { name: /vorschläge anzeigen/i })
-    );
+    await fireEvent.click(screen.getByRole('button', { name: /suggestions/i }));
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });

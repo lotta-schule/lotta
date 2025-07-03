@@ -9,6 +9,14 @@ mutation UpdateTenant($tenant: TenantInput!) {
     }
     logoImageFile {
       id
+      formats(category: "LOGO") {
+        name
+        url
+        type
+        availability {
+          status
+        }
+      }
     }
     configuration {
       customTheme

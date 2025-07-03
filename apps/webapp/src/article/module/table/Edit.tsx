@@ -174,9 +174,9 @@ export const Edit = React.memo<EditProps>(
                       convertedRows[rowI - relativePastePosition.row]?.[
                         colI - relativePastePosition.column
                       ];
-                    const contentCellAtPosition = contentRows[rowI]?.[colI] as
-                      | TableCellInterface
-                      | undefined;
+                    const contentCellAtPosition = contentRows[rowI]?.[
+                      colI
+                    ] as Partial<TableCellInterface>;
                     if (convertedCellAtPosition) {
                       return convertedCellAtPosition;
                     } else {

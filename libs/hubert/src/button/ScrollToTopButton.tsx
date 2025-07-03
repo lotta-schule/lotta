@@ -8,7 +8,7 @@ import { useScrollEvent, useWindowSize } from '../util';
 
 import styles from './ScrollToTopButton.module.scss';
 
-const AnimatedButton = motion(Button);
+const AnimatedButton = motion.create(Button);
 
 export const ScrollToTopButton = React.memo(() => {
   const [isShown, setIsShown] = React.useState(false);

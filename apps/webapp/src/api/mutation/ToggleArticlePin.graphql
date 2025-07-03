@@ -14,6 +14,14 @@ mutation ToggleArticlePin($id: ID!) {
       fileType
       filename
       filesize
+      formats(category: "ARTICLEPREVIEW") {
+        name
+        url
+        type
+        availability {
+          status
+        }
+      }
     }
     contentModules {
       id
@@ -27,10 +35,13 @@ mutation ToggleArticlePin($id: ID!) {
         fileType
         filename
         filesize
-        fileConversions {
-          id
-          format
-          mimeType
+        formats {
+          name
+          url
+          type
+          availability {
+            status
+          }
         }
       }
     }

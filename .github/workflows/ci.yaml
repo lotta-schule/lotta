@@ -21,12 +21,12 @@ jobs:
       - name: Setup PNPM package manager
         uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 23
           cache: 'pnpm'
 
       - name: Install npm dependencies
@@ -52,19 +52,19 @@ jobs:
       - name: Setup PNPM package manager
         uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 23
           cache: 'pnpm'
 
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '26.2.2'
-          elixir-version: '1.16.1'
+          otp-version: '27.3.4'
+          elixir-version: '1.18.4'
 
       - name: Install node dependencies
         run: pnpm install
@@ -87,10 +87,6 @@ jobs:
         options: >-
           -e POSTGRES_USER=lotta
           -e POSTGRES_PASSWORD=lotta
-      rabbitmq:
-        image: rabbitmq:latest
-        ports:
-          - 5672:5672
       redis:
         image: bitnami/redis:latest
         ports:
@@ -123,19 +119,26 @@ jobs:
       - name: Setup PNPM package manager
         uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 23
           cache: 'pnpm'
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-elixir-mix-${{ hashFiles('**/mix.lock') }}
 
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '26.2.2'
-          elixir-version: '1.16.1'
+          otp-version: '27.3.4'
+          elixir-version: '1.18.4'
 
       - uses: hostwithquantum/setup-mc@main
         with:
@@ -163,7 +166,7 @@ jobs:
       #     pnpm nx affected -t e2e --configuration=ci
 
       - name: Upload Tests for storybook-addon-theme
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: ${{ !cancelled() }}
         with:
           directory: libs/storybook-addon-theme/coverage/
@@ -172,7 +175,7 @@ jobs:
           verbose: true
 
       - name: Upload Tests for hubert
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: ${{ !cancelled() }}
         with:
           directory: libs/hubert/coverage/
@@ -181,7 +184,7 @@ jobs:
           verbose: true
 
       - name: Upload Tests for Webapp
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: ${{ !cancelled() }}
         with:
           directory: apps/webapp/coverage/
@@ -190,7 +193,7 @@ jobs:
           verbose: true
 
       - name: Upload Tests for CoreApi
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: ${{ !cancelled() }}
         with:
           directory: apps/core-api/cover/
@@ -225,21 +228,21 @@ jobs:
         uses: pnpm/action-setup@v3
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
         with:
-          version: 8
+          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
         with:
-          node-version: 20
+          node-version: 23
           cache: 'pnpm'
 
       - name: Setup the BEAM and Elixir
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '26.2.2'
-          elixir-version: '1.16.1'
+          otp-version: '27.3.4'
+          elixir-version: '1.18.4'
 
       - name: Install npm dependencies
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}

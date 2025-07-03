@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-namespace */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import '@testing-library/jest-dom/vitest';
 import * as React from 'react';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
@@ -11,7 +13,6 @@ declare module 'vitest' {
   interface AsymmetricMatchersContaining
     extends TestingLibraryMatchers<unknown, unknown> {}
 }
-import { beforeAll, vi } from 'vitest';
 import { TextEncoder, TextDecoder } from 'util';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
 import { MockRouter, BlobPolyfill, ResizeObserverPolyfill } from 'test/mocks';
@@ -38,13 +39,18 @@ declare global {
     ): Blob & { readonly inputData: BlobPart[] };
   }
 }
+declare namespace globalThis {
+  let mockRouter: MockRouter;
+  let Blob: typeof BlobPolyfill;
+}
 
 self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ };
 
-const mockRouter = new MockRouter();
+globalThis.Blob = BlobPolyfill;
+globalThis.mockRouter = new MockRouter();
 
 globalThis.Blob = BlobPolyfill as any;
-globalThis.ResizeObserver = ResizeObserverPolyfill as any;
+(globalThis as any).ResizeObserver = ResizeObserverPolyfill as any;
 
 beforeAll(() => {
   loadDevMessages();
@@ -60,7 +66,7 @@ beforeAll(() => {
     };
   };
 
-  window.location = {
+  window.location = Object.assign('http://test.lotta.schule', {
     hash: '',
     host: 'test.lotta.schule',
     hostname: 'test.lotta.schule',
@@ -68,13 +74,13 @@ beforeAll(() => {
     href: 'http://test.lotta.schule',
     port: '',
     pathname: '/',
-    search: '',
+    search: '' as any,
     protocol: 'http:',
     ancestorOrigins: [] as any,
     reload: () => {},
-    replace: () => {},
-    assign: (url) => Object.assign(window.location, { url: url }),
-  };
+    replace: () => '',
+    assign: (url: string) => Object.assign(window.location, { url: url }),
+  });
 
   HTMLDialogElement.prototype.show = vi.fn(function mock(
     this: HTMLDialogElement
@@ -94,9 +100,9 @@ beforeAll(() => {
     this.open = false;
   });
 
-  HTMLElement.prototype.showPopover = vitest.fn();
-  HTMLElement.prototype.hidePopover = vitest.fn();
-  HTMLElement.prototype.togglePopover = vitest.fn();
+  HTMLElement.prototype.showPopover = vi.fn();
+  HTMLElement.prototype.hidePopover = vi.fn();
+  HTMLElement.prototype.togglePopover = vi.fn();
 
   // create setup document
   Object.assign(global, { TextDecoder, TextEncoder });
@@ -124,6 +130,15 @@ beforeAll(() => {
     })),
   });
 
+  Object.defineProperty(window, 'ResizeObserver', {
+    writable: false,
+    value: vi.fn(() => ({
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
+    })),
+  });
+
   Element.prototype.scroll = vi.fn(() => {});
   Object.defineProperty(window, 'scrollTo', {
     writable: false,
@@ -137,7 +152,7 @@ beforeAll(() => {
   });
 
   vi.mock('next/head', () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const ReactDOMServer = require('react-dom/server');
     return {
       __esModule: true,
@@ -167,21 +182,25 @@ beforeAll(() => {
     }),
   }));
 
-  vi.mock('next/router', () => {
+  vi.mock('next/router', async () => {
+    const { MockRouter } = await import('test/mocks/MockRouter');
+    globalThis.mockRouter ||= new MockRouter();
     return {
       __esModule: true,
-      mockRouter: mockRouter,
-      useRouter: () => mockRouter,
+      mockRouter: globalThis.mockRouter,
+      useRouter: () => globalThis.mockRouter,
     };
   });
 
-  vi.mock('next/navigation', () => {
+  vi.mock('next/navigation', async () => {
+    const { MockRouter } = await import('test/mocks/MockRouter');
     const mockParams = {};
+    globalThis.mockRouter ||= new MockRouter();
     return {
       __esModule: true,
-      mockRouter: mockRouter,
-      useRouter: vi.fn().mockReturnValue(mockRouter),
-      useParams: vi.fn().mockReturnValue(mockParams),
+      mockRouter: globalThis.mockRouter,
+      useRouter: vi.fn(() => globalThis.mockRouter),
+      useParams: vi.fn(() => mockParams),
     };
   });
 

@@ -18,14 +18,18 @@ const additionalMocks = [
 describe('shared/article/ArticleLayout', () => {
   it('should show the correct title', async () => {
     const screen = render(
-      <ArticlePage article={Schulfest} title={Schulfest.title} />
+      <ArticlePage article={Schulfest} title={Schulfest.title} />,
+      {},
+      { additionalMocks }
     );
     expect(screen.getByRole('heading', { name: 'Schulfest' })).toBeVisible();
   });
 
   it('should show the article component', async () => {
     const screen = render(
-      <ArticlePage article={Schulfest} title={Schulfest.title} />
+      <ArticlePage article={Schulfest} title={Schulfest.title} />,
+      {},
+      { additionalMocks }
     );
     expect(screen.getByTestId('Article')).toBeVisible();
   });

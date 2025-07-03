@@ -53,7 +53,11 @@ test.describe('Tenant administration', () => {
       await page
         .getByRole('textbox', { name: 'Name der Seite' })
         .fill('Example Lotta Schule');
-      await page.getByRole('button', { name: /speichern/i }).click();
+      const saveButton = page.getByRole('button', { name: /speichern/i });
+      await saveButton.click();
+      await expect(saveButton).toBeDisabled();
+
+      await expect(saveButton).not.toBeDisabled();
 
       await page.reload();
       await expect(

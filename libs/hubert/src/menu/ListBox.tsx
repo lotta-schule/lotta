@@ -29,8 +29,8 @@ export const ListBox = ({
 
   const ref = useMergeRefs([internalRef, propRef]);
 
-  const { listBoxProps, labelProps } = useListBox(
-    props as any,
+  const { listBoxProps } = useListBox(
+    props as AriaListBoxOptions<ListItemPreliminaryItem>,
     state,
     internalRef
   );
@@ -38,8 +38,7 @@ export const ListBox = ({
   return (
     <List
       className={className}
-      aria-label={(labelProps.children as any) ?? 'Vorschläge'}
-      {...props}
+      aria-label={props.label ?? 'Vorschläge'}
       {...listBoxProps}
       ref={ref}
     >

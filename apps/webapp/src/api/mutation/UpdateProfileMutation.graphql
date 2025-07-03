@@ -10,6 +10,14 @@ mutation UpdateProfile($user: UpdateUserParams!) {
     enrollmentTokens
     avatarImageFile {
       id
+      formats(category: "AVATAR") {
+        name
+        url
+        type
+        availability {
+          status
+        }
+      }
     }
     groups {
       id

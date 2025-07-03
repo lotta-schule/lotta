@@ -1,4 +1,4 @@
-@import "../theme/breakpoints";
+@use "../theme/breakpoints" as *;
 
 .root {
   width: 100%;
@@ -11,6 +11,7 @@
 
   li {
     overflow: auto;
+
     img {
       width: 100%;
       height: auto;

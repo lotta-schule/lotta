@@ -9,6 +9,21 @@ defmodule Lotta.Storage.FileConversion do
 
   alias Lotta.Storage.{File, RemoteStorageEntity}
 
+  @type t :: %__MODULE__{
+          id: binary(),
+          file_type: String.t(),
+          filesize: integer(),
+          format: String.t(),
+          mime_type: String.t(),
+          full_metadata: map(),
+          metadata: map(),
+          media_duration: float(),
+          file: File.t(),
+          remote_storage_entity: RemoteStorageEntity.t(),
+          inserted_at: NaiveDateTime.t(),
+          updated_at: NaiveDateTime.t()
+        }
+
   @primary_key {:id, :binary_id, read_after_writes: true}
 
   @timestamps_opts [type: :utc_datetime]

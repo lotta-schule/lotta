@@ -23,6 +23,7 @@ jobs:
         uses: poseidon/wait-for-status-checks@v0.6.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          ignore_pattern: 'codecov\/.*|CodeQL'
 
   env_calculator:
     name: Get Environment Name
@@ -55,9 +56,11 @@ jobs:
           - name: web
             dockerfile: apps/webapp/Dockerfile
             context: .
+            sentry_dsn: ${{ vars.WEB_SENTRY_DSN }}
           - name: core
             dockerfile: Dockerfile
             context: apps/core-api
+            sentry_dsn: ${{ vars.CORE_SENTRY_DSN }}
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}
@@ -66,10 +69,10 @@ jobs:
       dockerfile: ${{ matrix.image.dockerfile }}
       platforms: '["linux/amd64","linux/arm64"]'
       push: true
+      sentry_dsn: ${{ matrix.image.sentry_dsn }}
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      sentry_dsn: ${{ secrets.SENTRY_DSN }}
 
   run-e2e-tests:
     name: Run end-to-end tests

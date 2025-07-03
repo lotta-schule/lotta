@@ -48,15 +48,25 @@ export default defineConfig({
     },
   },
 
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+      },
+    },
+  },
+
   test: {
     globals: true,
     environment: 'jsdom',
     include: ['src/**/*.test.{ts,tsx}'],
     reporters: process.env.GITHUB_ACTIONS
-      ? ['default', 'github-actions']
+      ? ['default', 'junit', 'github-actions']
       : ['default'],
+    outputFile: 'coverage/junit.xml',
     setupFiles: ['./test.setup.ts'],
     coverage: {
+      enabled: !!process.env.CI,
       clean: true,
       reportsDirectory: 'coverage',
       provider: 'istanbul',

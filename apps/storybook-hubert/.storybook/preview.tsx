@@ -36,6 +36,7 @@ const preview: Preview = {
       );
     },
   ],
+
   parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
@@ -48,6 +49,7 @@ const preview: Preview = {
       viewports: INITIAL_VIEWPORTS,
     },
   },
+
   globalTypes: {
     hubertTheme: {
       name: 'Theme',
@@ -56,6 +58,8 @@ const preview: Preview = {
       defaultValue: DefaultThemes['standard'],
     },
   },
+
+  tags: ['autodocs']
 };
 
 export default preview;

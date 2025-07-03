@@ -1,36 +1,30 @@
 import * as React from 'react';
 import { ContentModuleModel } from 'model';
-import { File } from 'util/model';
-import { useServerData } from 'shared/ServerDataContext';
 
-interface AudioAudioProps {
+type AudioAudioProps = {
   contentModule: ContentModuleModel;
-}
+};
 
-export const AudioAudio = React.memo<AudioAudioProps>(({ contentModule }) => {
-  const { baseUrl } = useServerData();
-  const file =
-    contentModule.files &&
-    contentModule.files.length > 0 &&
-    contentModule.files[0];
-  const audioFiles =
-    file &&
-    file.fileConversions &&
-    contentModule.files[0].fileConversions.filter((f) =>
-      /^audio/.test(f.mimeType)
-    );
+export const AudioAudio = React.memo(({ contentModule }: AudioAudioProps) => {
+  const file = contentModule.files.at(0);
+  const audioFormats = React.useMemo(
+    () => file?.formats?.filter((f) => f.type === 'AUDIO') ?? [],
+    [file?.formats]
+  );
+
+  const validAudioFiles = React.useMemo(
+    () => audioFormats.filter((f) => f.availability.status === 'READY'),
+    [audioFormats]
+  );
+
   return (
     <audio
       controls
       style={{ height: '2em', display: 'block', width: '100%' }}
       data-testid="audio"
     >
-      {(audioFiles || []).map((af) => (
-        <source
-          key={File.getFileConversionRemoteLocation(baseUrl, af)}
-          src={File.getFileConversionRemoteLocation(baseUrl, af)}
-          type={af.mimeType}
-        />
+      {validAudioFiles?.map((af) => (
+        <source key={af.name} src={af.url} type={af.mimeType} />
       ))}
     </audio>
   );

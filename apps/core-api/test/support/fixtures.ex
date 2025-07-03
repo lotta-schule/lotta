@@ -6,7 +6,7 @@ defmodule Lotta.Fixtures do
   alias Lotta.Repo
   alias Lotta.Tenants.Category
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Storage.File
+  alias Lotta.Storage.{File, FileData}
   alias Lotta.Content.{Article}
   alias Lotta.Messages.{Conversation, Message}
 
@@ -121,32 +121,135 @@ defmodule Lotta.Fixtures do
     Repo.get(User, user.id, prefix: @prefix)
   end
 
-  def fixture(:valid_file_attrs, _) do
-    %{
+  def fixture(:valid_file_attrs, attrs) do
+    attrs
+    |> Enum.into(%{
       file_type: "some_file_type",
       filename: "some_filename",
       filesize: 42,
       mime_type: "some_mime_type"
-    }
+    })
   end
 
-  def fixture(:invalid_file_attrs, _) do
-    %{
+  def fixture(:valid_directory_attrs, attrs) do
+    attrs
+    |> Enum.into(%{
+      name: "some directory"
+    })
+  end
+
+  def fixture(:invalid_file_attrs, attrs) do
+    attrs
+    |> Enum.into(%{
       file_type: nil,
       filename: nil,
       filesize: 0
-    }
+    })
   end
 
-  def fixture(:file, user) do
+  def fixture(:file, user) when is_struct(user), do: fixture(:file, {user, []})
+
+  def fixture(:file, {user, attrs}) do
     {:ok, file} =
       File
-      |> struct(fixture(:valid_file_attrs))
+      |> struct(fixture(:valid_file_attrs, attrs))
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_assoc(:user, user)
       |> Repo.insert(prefix: @prefix)
 
     Repo.get!(File, file.id, prefix: @prefix)
+  end
+
+  def fixture(:real_file, user) when is_struct(user),
+    do: fixture(:real_file, {user, []})
+
+  def fixture(:real_file, {user, attrs}) do
+    file =
+      fixture(:file, {user, attrs})
+
+    {:ok, file_data} = FileData.from_path("test/support/fixtures/secrets.zip")
+    path = Enum.join([Repo.get_prefix(), file.id, "original"], "/")
+    {:ok, entity_data} = Lotta.Storage.RemoteStorage.create(file_data, path)
+
+    file
+    |> Repo.preload(:remote_storage_entity)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(
+      :remote_storage_entity,
+      entity_data
+    )
+    |> Repo.update!()
+  end
+
+  def fixture(:real_image_file, user) when is_struct(user),
+    do: fixture(:real_image_file, {user, []})
+
+  def fixture(:real_image_file, {user, attrs}) do
+    file =
+      fixture(:file, {user, Keyword.merge([file_type: "image", mime_type: "image/jpeg"], attrs)})
+
+    {:ok, file_data} = FileData.from_path("test/support/fixtures/image_file.png")
+    path = Enum.join([Repo.get_prefix(), file.id, "original"], "/")
+    {:ok, entity_data} = Lotta.Storage.RemoteStorage.create(file_data, path)
+
+    file
+    |> Repo.preload(:remote_storage_entity)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(
+      :remote_storage_entity,
+      entity_data
+    )
+    |> Repo.update!()
+  end
+
+  def fixture(:real_audio_file, user) when is_struct(user),
+    do: fixture(:real_audio_file, {user, []})
+
+  def fixture(:real_audio_file, {user, attrs}) do
+    file =
+      fixture(:file, {user, Keyword.merge([file_type: "audio", mime_type: "audio/mp3"], attrs)})
+
+    {:ok, file_data} = FileData.from_path("test/support/fixtures/eoa2.mp3")
+    path = Enum.join([Repo.get_prefix(), file.id, "original"], "/")
+    {:ok, entity_data} = Lotta.Storage.RemoteStorage.create(file_data, path)
+
+    file
+    |> Repo.preload([:remote_storage_entity, :parent_directory])
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(
+      :remote_storage_entity,
+      entity_data
+    )
+    |> Ecto.Changeset.put_assoc(
+      :parent_directory,
+      %{name: "Audios", parent_directory_id: nil, user_id: user.id}
+    )
+    |> Repo.update!()
+  end
+
+  def fixture(:real_video_file, user) when is_struct(user),
+    do: fixture(:real_video_file, {user, []})
+
+  def fixture(:real_video_file, {user, attrs}) do
+    file =
+      fixture(:file, {user, Keyword.merge([file_type: "video", mime_type: "video/mp4"], attrs)})
+
+    {:ok, file_data} = FileData.from_path("test/support/fixtures/pc3.m4v")
+    path = Enum.join([Repo.get_prefix(), file.id, "original"], "/")
+    {:ok, entity_data} = Lotta.Storage.RemoteStorage.create(file_data, path)
+
+    file
+    |> Repo.preload([:remote_storage_entity, :parent_directory])
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(
+      :remote_storage_entity,
+      entity_data
+    )
+    |> Ecto.Changeset.put_assoc(
+      :parent_directory,
+      %{name: "Videos", parent_directory_id: nil, user_id: user.id}
+    )
+    |> Repo.update!()
   end
 
   # Content

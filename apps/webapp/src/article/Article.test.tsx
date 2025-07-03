@@ -7,15 +7,42 @@ import GetArticleReactionCounts from 'api/query/GetArticleReactionCounts.graphql
 const articleWithReactionsEnabled = ComputerExperten;
 const articoleWithoutReactionsEnabled = VivaLaRevolucion;
 
+const additionalMocks = [
+  {
+    request: {
+      query: GetArticleReactionCounts,
+      variables: { id: articleWithReactionsEnabled.id },
+    },
+    result: {
+      data: {
+        article: {
+          id: articleWithReactionsEnabled.id,
+          reactionCounts: [],
+        },
+      },
+    },
+  },
+];
+
 describe('Article', () => {
   it("should show the article's title", () => {
-    const screen = render(<Article article={ComputerExperten} />);
+    const screen = render(
+      <Article article={ComputerExperten} />,
+      {},
+      { additionalMocks }
+    );
 
     expect(screen.getByText(ComputerExperten.title)).toBeVisible();
   });
 
   it("should show the article's contentmodules", () => {
-    const screen = render(<Article article={ComputerExperten} />);
+    const screen = render(
+      <Article article={ComputerExperten} />,
+      {},
+      {
+        additionalMocks,
+      }
+    );
 
     expect(screen.queryAllByTestId('ContentModule')).toHaveLength(
       ComputerExperten.contentModules.length
@@ -28,22 +55,7 @@ describe('Article', () => {
         <Article article={articleWithReactionsEnabled} />,
         {},
         {
-          additionalMocks: [
-            {
-              request: {
-                query: GetArticleReactionCounts,
-                variables: { id: articleWithReactionsEnabled.id },
-              },
-              result: {
-                data: {
-                  article: {
-                    id: articleWithReactionsEnabled.id,
-                    reactionCounts: [],
-                  },
-                },
-              },
-            },
-          ],
+          additionalMocks,
         }
       );
 

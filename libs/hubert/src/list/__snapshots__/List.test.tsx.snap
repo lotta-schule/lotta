@@ -51,10 +51,8 @@ exports[`List > should render with subsection left 1`] = `
     class="_li_5a05a4"
   >
     <div>
-      <div
+      <img
         class="_root_d51396"
-        role="img"
-        style="background-image: url();"
       />
     </div>
     <div
@@ -67,10 +65,8 @@ exports[`List > should render with subsection left 1`] = `
     class="_li_5a05a4"
   >
     <div>
-      <div
+      <img
         class="_root_d51396"
-        role="img"
-        style="background-image: url();"
       />
     </div>
     <div
@@ -83,10 +79,8 @@ exports[`List > should render with subsection left 1`] = `
     class="_li_5a05a4"
   >
     <div>
-      <div
+      <img
         class="_root_d51396"
-        role="img"
-        style="background-image: url();"
       />
     </div>
     <div
@@ -99,10 +93,8 @@ exports[`List > should render with subsection left 1`] = `
     class="_li_5a05a4"
   >
     <div>
-      <div
+      <img
         class="_root_d51396"
-        role="img"
-        style="background-image: url();"
       />
     </div>
     <div
@@ -122,10 +114,8 @@ exports[`List > should render with subsection right 1`] = `
     class="_li_5a05a4"
   >
     <div>
-      <div
+      <img
         class="_root_d51396"
-        role="img"
-        style="background-image: url();"
       />
     </div>
     <div

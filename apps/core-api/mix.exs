@@ -8,9 +8,9 @@ defmodule Lotta.MixProject do
       name: "Lotta API Server",
       source_url: "https://github.com/lotta-schule/core",
       homepage_url: "https://lotta.schule",
-      elixir: "~> 1.16",
+      elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: Mix.compilers(),
+      compilers: Mix.compilers() ++ [:rambo],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
@@ -49,7 +49,6 @@ defmodule Lotta.MixProject do
       extra_applications: [
         :logger,
         :runtime_tools,
-        :amqp,
         :crypto,
         :ssl,
         :inets,
@@ -62,7 +61,7 @@ defmodule Lotta.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "priv/repo/seeder", "test/support"]
-  defp elixirc_paths(_), do: ["lib", "priv/repo/seeder"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
   #
@@ -84,31 +83,36 @@ defmodule Lotta.MixProject do
       {:dataloader, "~> 2.0"},
       {:corsica, "~> 2.1.2"},
       {:postgrex, ">= 0.0.0"},
-      {:gettext, "~> 0.24.0"},
+      {:gettext, "~> 0.26.0"},
       {:jason, "~> 1.4.0"},
-      {:plug_cowboy, "~> 2.7"},
-      {:comeonin, "~> 5.4.0"},
+      {:bandit, "~> 1.0"},
       {:argon2_elixir, "~> 4.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:guardian, "~> 2.2"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.1"},
       {:hackney, "~> 1.20"},
-      {:httpoison, "~> 2.1"},
+      {:finch, "~> 0.19"},
       {:tesla, "~> 1.5"},
       {:sweet_xml, "~> 0.7"},
       {:poison, "~> 6.0"},
       {:uuid, "~> 1.1.8"},
       {:bamboo, "~> 2.0"},
       {:bamboo_phoenix, "~> 1.0"},
-      {:gen_rmq, "~> 4.0"},
       {:ex_ical, "~> 0.2.0"},
-      {:pigeon, github: "codedge-llc/pigeon"},
+      {:pigeon, "~> 2.0.0"},
+      {:goth, "~> 1.4.3"},
       {:timex, "~> 3.7"},
       {:sentry, "~> 10.1"},
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},
       {:libcluster, "~> 3.2"},
+      {:file_type, "~> 0.1"},
+      {:image, "~> 0.55"},
+      {:exile, "~> 0.12.0"},
+      {:ffmpex, "~> 0.11"},
+      {:oban, "~> 2.19"},
+      {:oban_web, "~> 2.11"},
       # Test
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.14", only: :test},
@@ -125,12 +129,13 @@ defmodule Lotta.MixProject do
       {:opentelemetry, "~> 1.2"},
       {:opentelemetry_api, "~> 1.3"},
       {:opentelemetry_absinthe, "~> 2.0"},
-      {:opentelemetry_cowboy, "~> 0.1"},
+      {:opentelemetry_bandit, "~> 0.2"},
       {:opentelemetry_ecto, "~> 1.1"},
       {:opentelemetry_exporter, "~> 1.6"},
-      {:opentelemetry_phoenix, "~> 1.1"},
+      {:opentelemetry_phoenix, "~> 2.0"},
       {:opentelemetry_redix, "~> 0.1"},
-      {:opentelemetry_tesla, "~> 2.2"}
+      {:opentelemetry_tesla, "~> 2.4.0"},
+      {:opentelemetry_semantic_conventions, "~> 1.27", override: true}
     ]
   end
 

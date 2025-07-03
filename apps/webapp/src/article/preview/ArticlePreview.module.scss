@@ -1,4 +1,4 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   position: relative;
@@ -24,9 +24,11 @@
     display: grid;
     grid-template: auto 1fr auto auto / 15% 20% 57% 5%;
     grid-column-gap: var(--lotta-spacing);
+
     @media screen and (max-width: $max-sm) {
       grid-template: auto 1fr auto auto / 20% 30% 38% 10%;
     }
+
     @media screen and (max-width: $max-xs) {
       grid-template: auto 1fr auto auto / 30% 30% 35% 0%;
     }
@@ -35,11 +37,15 @@
       grid-column: 1;
       grid-row-start: 1;
       grid-row-end: 5;
+
       @media print {
         width: 30%;
       }
+
       .previewImage {
         width: 100%;
+
+        aspect-ratio: 3 / 2;
       }
     }
 
@@ -47,11 +53,13 @@
       grid-column-start: 2;
       grid-column-end: 4;
       grid-row: 1;
+
       .title {
         font-family: var(--lotta-title-font-family);
         font-size: 1.4rem;
         word-break: break-word;
         hyphens: auto;
+
         @media screen and (max-width: $max-sm) {
           font-size: 1.2rem;
           line-height: 1.05;
@@ -69,12 +77,15 @@
       text-overflow: ellipsis;
       font-size: 0.8rem;
       font-weight: lighter;
+
       @media screen and (max-width: $max-xs) {
         padding: calc(0.5 * var(--lotta-spacing));
       }
+
       @media screen and (max-width: $max-sm) {
         display: flex;
         line-height: 1.5;
+
         span:last-child {
           text-align: right;
         }
@@ -98,13 +109,16 @@
       display: flex;
       align-items: baseline;
       align-self: end;
+
       @media screen and (max-width: $max-xs) {
         grid-column: 1;
         grid-row: 5;
       }
+
       .date {
         padding-top: var(--lotta-spacing);
         margin-right: calc(2 * var(--lotta-spacing));
+
         @media screen and (max-width: $max-xs) {
           padding: calc(0.5 * var(--lotta-spacing));
           font-size: 0.8em;
@@ -113,11 +127,13 @@
         }
       }
     }
+
     .tagsGridItem {
       grid-column-start: 2;
       grid-column-end: 4;
       grid-row: 3;
       margin-bottom: 0px;
+
       @media screen and (max-width: $max-xs) {
         grid-row: 5;
       }
@@ -131,10 +147,12 @@
       justify-self: end;
       flex-shrink: 0;
       width: 10em;
+
       .authorAvatarsList {
         padding: 0px;
         justify-content: flex-end;
       }
+
       @media screen and (max-width: $max-xs) {
         grid-column-start: 2;
         grid-column-end: 4;
@@ -159,6 +177,7 @@
       .buttonSection {
         text-align: right;
         padding-top: var(--lotta-spacing);
+
         @media screen and (max-width: $max-xs) {
           padding: calc(0.5 * var(--lotta-spacing));
           grid-column: 4;
@@ -177,6 +196,7 @@
         width: 25px;
         height: 25px;
         min-height: 25px;
+
         &.active {
           svg {
             color: rgb(var(--lotta-primary-color));
@@ -201,6 +221,7 @@
       display: grid;
       grid-template: 2.4em 1fr / 15% auto 7em;
       grid-column-gap: var(--lotta-spacing);
+
       @media screen and (max-width: $max-xs) {
         grid-template: 2em 1fr / 20% 60% 15%;
       }
@@ -209,10 +230,12 @@
         grid-column: 1;
         grid-row-start: 1;
         grid-row-end: 3;
+
         .previewImage {
           width: 100%;
           height: auto;
           max-height: 100%;
+
           @media screen and (max-width: $max-md) {
             object-fit: contain;
           }
@@ -222,9 +245,11 @@
       .titleGridItem {
         grid-column-start: 2;
         grid-row: 1;
+
         .title {
           font-family: var(--lotta-title-font-family);
           font-size: 1.1rem;
+
           @media screen and (max-width: $max-sm) {
             font-size: 1rem;
             line-height: 1;
@@ -235,6 +260,7 @@
       .previewGridItem {
         grid-column: 2;
         grid-row: 2;
+
         @media screen and (max-width: $max-sm) {
           grid-column-start: 2;
           grid-column-end: 4;
@@ -244,6 +270,7 @@
       .dateGridItem {
         display: none;
       }
+
       .tagsGridItem {
         display: none;
       }
@@ -254,10 +281,12 @@
         align-self: end;
         padding-right: var(--lotta-spacing);
       }
+
       .buttonSection {
         padding-top: 0px;
         padding-right: var(--lotta-spacing);
       }
+
       .editGridItem {
         grid-column: 3;
         grid-row-start: 1;
@@ -271,6 +300,7 @@
         @media screen and (max-width: $max-xs) {
           display: none;
         }
+
         .pinButton {
           display: none;
         }
@@ -287,9 +317,10 @@
       }
     }
   }
+
   &.twoColumns {
     .containerGrid {
-      grid-template: auto auto auto auto /1fr auto auto;
+      grid-template: auto auto auto auto / 1fr auto auto;
     }
 
     .imageGridItem {
@@ -298,45 +329,54 @@
       grid-column-start: 1;
       grid-column-end: 4;
 
-
       .previewImage {
         height: auto;
       }
     }
+
     .titleGridItem {
       grid-column-start: 1;
       grid-column-end: 4;
+
       grid-row: 2;
+
       .title {
         padding: var(--lotta-spacing) 0;
       }
     }
+
     .mainSection {
       width: 35%;
     }
+
     .dateGridItem {
       grid-column-start: 1;
       grid-column-end: 2;
       grid-row: 4;
     }
+
     .previewGridItem {
       grid-row: 3;
       grid-column-start: 1;
       grid-column-end: 4;
     }
+
     .editGridItem {
       grid-row: 4;
       grid-column-start: 3;
       grid-column-end: 3;
+
       .buttonSection {
         display: flex;
       }
     }
+
     .authorsGridItem {
       grid-column: 2;
       grid-row: 4;
       justify-self: start;
       padding-left: var(--lotta-spacing, 1);
+
       .authorAvatarsList {
         justify-content: start;
       }

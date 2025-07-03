@@ -1,4 +1,4 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .form {
   p {
@@ -8,11 +8,14 @@
 
   .gridContainer {
     display: flex;
+
     @media screen and (max-width: $max-xs) {
       flex-wrap: wrap;
     }
-    & > div {
+
+    &>div {
       flex: 1;
+
       @media screen and (max-width: $max-xs) {
         width: 100%;
         flex: none;

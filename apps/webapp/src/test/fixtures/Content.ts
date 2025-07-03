@@ -89,6 +89,7 @@ export const ComputerExperten: ArticleModel = {
   tags: [],
   category: null,
   published: true,
+  reactionCounts: [],
 };
 
 export const VivaLaRevolucion: ArticleModel = {
@@ -167,6 +168,7 @@ export const VivaLaRevolucion: ArticleModel = {
   groups: [],
   insertedAt: '2016-06-01T16:00:00.000Z',
   updatedAt: '2016-05-03T04:00:00.000Z',
+  isReactionsEnabled: false,
   isPinnedToTop: false,
   readyToPublish: true,
   previewImageFile: null,
@@ -176,6 +178,7 @@ export const VivaLaRevolucion: ArticleModel = {
   tags: [],
   category: null,
   published: false,
+  reactionCounts: [],
 };
 
 export const Schulfest: ArticleModel = {
@@ -281,6 +284,7 @@ export const Schulfest: ArticleModel = {
   insertedAt: '2017-09-11T16:00:00.000Z',
   updatedAt: '2017-10-11T04:00:00.000Z',
   isPinnedToTop: false,
+  isReactionsEnabled: false,
   readyToPublish: true,
   previewImageFile: null,
   title: 'Schulfest',
@@ -289,6 +293,7 @@ export const Schulfest: ArticleModel = {
   tags: ['La Revolucion'],
   category: null,
   published: false,
+  reactionCounts: [],
 };
 
 export const Weihnachtsmarkt: ArticleModel = {
@@ -394,6 +399,7 @@ export const Weihnachtsmarkt: ArticleModel = {
   insertedAt: '2019-06-01T16:00:00.000Z',
   updatedAt: '2020-10-11T04:00:00.000Z',
   isPinnedToTop: false,
+  isReactionsEnabled: false,
   readyToPublish: true,
   title: 'Weihnachtsmarkt',
   preview:
@@ -402,6 +408,7 @@ export const Weihnachtsmarkt: ArticleModel = {
   tags: ['La Revolucion'],
   category: null,
   published: false,
+  reactionCounts: [],
 };
 
 export const Klausurenplan: ArticleModel = {
@@ -433,6 +440,7 @@ export const Klausurenplan: ArticleModel = {
   insertedAt: '2020-06-01T16:00:00.000Z',
   updatedAt: '2020-07-11T04:00:00.000Z',
   isPinnedToTop: false,
+  isReactionsEnabled: false,
   readyToPublish: true,
   title: 'Klausurenplan',
   preview:
@@ -441,6 +449,7 @@ export const Klausurenplan: ArticleModel = {
   tags: ['La Revolucion'],
   category: null,
   published: false,
+  reactionCounts: [],
 };
 
 export const LehrerListe: ArticleModel = {
@@ -473,6 +482,7 @@ export const LehrerListe: ArticleModel = {
   updatedAt: '2020-07-11T20:00:00.000Z',
   isPinnedToTop: false,
   readyToPublish: true,
+  isReactionsEnabled: false,
   title: 'Lehrerliste',
   preview:
     'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
@@ -480,4 +490,5 @@ export const LehrerListe: ArticleModel = {
   tags: [],
   category: null,
   published: false,
+  reactionCounts: [],
 };

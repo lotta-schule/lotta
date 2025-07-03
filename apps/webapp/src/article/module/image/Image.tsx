@@ -20,10 +20,13 @@ export const Image = React.memo(
     return (
       <div data-testid="ImageContentModule">
         <ImageImage
+          lazy
+          sizes={'(max-width: 600px) 100vw, 80vw'}
           isEditModeEnabled={!!isEditModeEnabled}
           isUsingFullHeight={!!contentModule.configuration?.isUsingFullHeight}
           caption={imageCaption ?? ''}
           file={contentModule.files ? contentModule.files[0] : null}
+          format="present"
           onUpdateFile={(newFile) =>
             onUpdateModule?.({ ...contentModule, files: [newFile] })
           }

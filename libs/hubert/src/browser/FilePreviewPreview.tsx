@@ -8,9 +8,9 @@ import clsx from 'clsx';
 
 import styles from './FilePreviewPreview.module.scss';
 
-const AnimatedFolder = motion(Folder);
-const AnimatedFolderOpen = motion(FolderOpen);
-const AnimatedFileIcon = motion(FileIcon);
+const AnimatedFolder = motion.create(Folder);
+const AnimatedFolderOpen = motion.create(FolderOpen);
+const AnimatedFileIcon = motion.create(FileIcon);
 
 export type FilePreviewPreviewProps = {
   className?: string;
@@ -22,9 +22,16 @@ export const FilePreviewPreview = ({ className }: FilePreviewPreviewProps) => {
 
   const validFilePreviewUrls = React.useMemo(() => {
     return selected
-      .map((s) => getPreviewUrl?.(s.at(-1)!) ?? null)
-      .filter(Boolean)
-      .slice(0, 5) as string[];
+      .map((s) => {
+        const node = s.at(-1)!;
+        const previewUrl = getPreviewUrl?.(node) ?? null;
+        if (!previewUrl) {
+          return null;
+        }
+        return [previewUrl, node] as const;
+      })
+      .filter((item) => item !== null)
+      .slice(0, 5);
   }, [getPreviewUrl, selected]);
 
   const nodeIcon = React.useMemo(() => {
@@ -71,10 +78,16 @@ export const FilePreviewPreview = ({ className }: FilePreviewPreviewProps) => {
     <motion.div className={clsx(className, styles.root)}>
       {validFilePreviewUrls.length > 0 ? (
         <AnimatePresence>
-          {validFilePreviewUrls.map((previewUrl, i) => (
+          {validFilePreviewUrls.map(([previewUrl, node], i) => (
             <motion.img
               key={previewUrl}
               src={previewUrl}
+              alt={node.name}
+              data-type={
+                isFileNode(node)
+                  ? node.meta.mimeType.split('/')[0]
+                  : 'directory'
+              }
               initial={{ opacity: 0, rotate: 0, zIndex: -i }}
               animate={{
                 animationDelay: `${i * 0.1}s`,

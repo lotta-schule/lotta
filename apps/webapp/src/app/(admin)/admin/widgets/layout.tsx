@@ -10,7 +10,7 @@ import { CreateWidgetButton, WidgetsNavigation } from './_component';
 
 async function WidgetsLayout({
   children,
-}: React.PropsWithChildren<{ params: { groupId?: string } }>) {
+}: React.PropsWithChildren<{ params: Promise<{ groupId?: string }> }>) {
   return (
     <AdminPage
       icon={faSquareCaretRight}

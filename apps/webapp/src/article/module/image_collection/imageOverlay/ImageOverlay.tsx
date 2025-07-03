@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { Button, useWindowSize } from '@lotta-schule/hubert';
+import { Button } from '@lotta-schule/hubert';
 import {
   faChevronLeft,
   faChevronRight,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { FileModel } from 'model';
-import { File } from 'util/model';
-import { useIsRetina } from 'util/useIsRetina';
 import { useLockBodyScroll } from 'util/useLockBodyScroll';
-import { useServerData } from 'shared/ServerDataContext';
 import { Icon } from 'shared/Icon';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 
@@ -34,12 +31,6 @@ export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> =
   React.memo(
     ({ selectedFile, selectedUrl, caption, onPrevious, onNext, onClose }) => {
       useLockBodyScroll();
-      const { baseUrl } = useServerData();
-      const { innerHeight, innerWidth } = useWindowSize();
-      const retinaMultiplier = useIsRetina() ? 2 : 1;
-      const [width, height] = [innerWidth, innerHeight].map((px) =>
-        Math.floor(px * 0.8 * retinaMultiplier)
-      );
 
       const onKeyDown: React.KeyboardEventHandler<Window> = React.useCallback(
         (event) => {
@@ -90,17 +81,12 @@ export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> =
             />
           )}
           <ResponsiveImage
-            src={
-              (selectedFile
-                ? File.getFileRemoteLocation(baseUrl, selectedFile)
-                : selectedUrl)!
-            }
+            file={selectedFile || undefined}
+            src={selectedUrl || undefined}
             alt={caption ?? ''}
-            width={width}
-            height={height}
             className={styles.image}
-            resize={'inside'}
-            sizes={'80vw'}
+            sizes={['(max-width: 960px) 100vw', '80vw']}
+            format="present"
           />
           {caption && <div className={styles.subtitles}>{caption}</div>}
         </div>

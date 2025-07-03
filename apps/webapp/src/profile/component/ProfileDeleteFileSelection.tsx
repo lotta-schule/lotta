@@ -1,20 +1,19 @@
 import * as React from 'react';
 import { Checkbox, Table, Tooltip } from '@lotta-schule/hubert';
-import { FileModel } from 'model';
-import { Article, Category, File } from 'util/model';
-import { useServerData } from 'shared/ServerDataContext';
+import { Article, Category } from 'util/model';
 import Link from 'next/link';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
+import { RelevantFilesInUsage } from '../DeletePage';
 
 export interface ProfileDeleteFileSelectionProps {
-  files: FileModel[];
-  selectedFiles: FileModel[];
-  onSelectFiles(files: FileModel[]): void;
+  files: RelevantFilesInUsage;
+  selectedFiles: RelevantFilesInUsage;
+  onSelectFiles(files: RelevantFilesInUsage): void;
 }
 
 export const ProfileDeleteFileSelection =
   React.memo<ProfileDeleteFileSelectionProps>(
     ({ files, selectedFiles, onSelectFiles }) => {
-      const { baseUrl } = useServerData();
       if (!files?.length) {
         return null;
       }
@@ -47,13 +46,8 @@ export const ProfileDeleteFileSelection =
           </thead>
           <tbody>
             {files.map((file) => {
-              const previewImageUrl = File.getPreviewImageLocation(
-                baseUrl,
-                file
-              );
-
               const nameTableCell = (() => {
-                if (previewImageUrl) {
+                if (file.formats.some((f) => f.name.startsWith('preview'))) {
                   return (
                     <td scope="row" id={`file-${file.id}-filename`}>
                       <Tooltip
@@ -61,7 +55,11 @@ export const ProfileDeleteFileSelection =
                           backgroundColor: 'transparent',
                         }}
                         label={
-                          <img src={previewImageUrl} alt={file.filename} />
+                          <ResponsiveImage
+                            file={file}
+                            alt={file.filename}
+                            format="preview"
+                          />
                         }
                       >
                         <span>{file.filename}</span>
@@ -125,7 +123,7 @@ export const ProfileDeleteFileSelection =
                       }}
                     />
                   </td>
-                  <td>{file.parentDirectory.name}</td>
+                  <td>{file.parentDirectory?.name}</td>
                   {nameTableCell}
                   {fileUsageCell}
                 </tr>

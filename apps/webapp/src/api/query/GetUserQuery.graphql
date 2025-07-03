@@ -19,6 +19,14 @@ query GetUser($id: ID!) {
     }
     avatarImageFile {
       id
+      formats(category: "AVATAR") {
+        name
+        url
+        type
+        availability {
+          status
+        }
+      }
     }
   }
 }

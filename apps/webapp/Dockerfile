@@ -1,7 +1,7 @@
-ARG NODE_VERSION=22.2
+ARG NODE_VERSION=23.9
 
 ARG RELEASE_NAME
-ARG SENTRY_DSN
+ARG SENTRY_DSN=""
 
 FROM node:${NODE_VERSION}-slim AS base
 ENV PNPM_HOME="/pnpm"
@@ -30,13 +30,12 @@ ARG SENTRY_DSN
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_RELEASE_NAME=$RELEASE_NAME
+ENV SENTRY_DSN=$SENTRY_DSN
 ENV NEXT_PUBLIC_SENTRY_DSN=$SENTRY_DSN
 
 RUN apt-get update && apt-get install -y ca-certificates
-RUN --mount=type=secret,id=sentry_auth_token \
-  SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token) \
+RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
   pnpm --filter ./apps/webapp run build
-RUN cat apps/webapp/next.config.js | sed -z 's/transpileModules: \[[^;]*\],\n//' > apps/webapp/next.config.js
 
 FROM node:${NODE_VERSION}-alpine AS runner
 
@@ -68,6 +67,9 @@ COPY --from=prod-deps /app/package.json /app/package.json
 RUN chown nextjs:nodejs /app
 
 USER nextjs
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/dbg/health || exit 1
 
 EXPOSE 3000
 

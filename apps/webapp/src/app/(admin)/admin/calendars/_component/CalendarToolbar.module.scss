@@ -1,11 +1,11 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   justify-content: space-between;
   align-items: baseline;
   z-index: 100;
 
-  & > section {
+  &>section {
     display: flex;
     align-items: center;
     gap: var(--lotta-spacing);
@@ -31,6 +31,7 @@
 
   .checkmark {
     color: rgba(var(--lotta-disabled-color), 0.25);
+
     &.isActive {
       color: rgb(var(--lotta-primary-color));
     }

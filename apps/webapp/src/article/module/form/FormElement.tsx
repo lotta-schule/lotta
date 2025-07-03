@@ -190,14 +190,21 @@ export const FormElement = React.memo<FormElementProps>(
                     color: 'primary',
                   }}
                   onSelect={(file: FileModel) => {
-                    if (file.filesize > maxSize) {
+                    if (!file.filesize || file.filesize > maxSize) {
                       alert(
                         `Die Datei ist zu groß. Die Datei darf höchstens ${
                           maxSize / 1024
                         } MB groß sein.`
                       );
                     } else {
-                      onSetValue(`lotta-file-id://${JSON.stringify(file)}`);
+                      const fileWithoutFormatsAndMetadata = Object.fromEntries(
+                        Object.entries(file).filter(
+                          ([key]) => !['formats', 'metadata'].includes(key)
+                        )
+                      );
+                      onSetValue(
+                        `lotta-file-id://${JSON.stringify(fileWithoutFormatsAndMetadata)}`
+                      );
                     }
                   }}
                 />

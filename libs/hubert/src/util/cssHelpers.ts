@@ -22,7 +22,7 @@ export const toCSSVariableValue = (
     const color = new Color(originalValue);
     const { r, g, b } = color.srgb;
     return [r, g, b].map((c) => (c * 255).toFixed(0)).join(', ');
-  } catch (e) {
+  } catch {
     return originalValue;
   }
 };

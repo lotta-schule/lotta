@@ -42,7 +42,6 @@ export class MockRouter {
       this._pathname = _pathname;
       this._as = _as;
       this._history.add(_pathname);
-      window.dispatchEvent(new Event('beforeunload'));
       this._emitter.emit('routeChangeStart', _pathname);
       this._emitter.emit('routeChangeComplete', _pathname);
       this._emitter.emit('routeChangeEnd', _pathname);

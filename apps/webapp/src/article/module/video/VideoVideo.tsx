@@ -1,69 +1,81 @@
 import * as React from 'react';
-import { File } from 'util/model';
 import { ContentModuleModel } from 'model';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { useServerData } from 'shared/ServerDataContext';
 import styles from './VideoVideo.module.scss';
 
-interface VideoVideoProps {
+type VideoVideoProps = {
   contentModule: ContentModuleModel;
-}
+};
 
-export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
-  const { baseUrl } = useServerData();
-  const file =
-    contentModule.files &&
-    contentModule.files.length > 0 &&
-    contentModule.files[0];
-  const videoFiles =
-    file &&
-    file.fileConversions &&
-    contentModule.files[0].fileConversions.filter((f) =>
-      /^video/.test(f.mimeType)
-    );
-  const posterFile = contentModule.files?.[0]?.fileConversions
-    ?.filter((fc) => /^image/.test(fc.mimeType))
-    .sort(
-      (a, b) =>
-        Number(!(b.mimeType.includes('gif') && b.format.includes('anim'))) -
-        Number(!(a.mimeType.includes('gif') && a.format.includes('anim')))
-    )[0];
+export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
+  const file = contentModule.files.at(0);
 
-  const posterFileLocation =
-    posterFile && File.getFileConversionRemoteLocation(baseUrl, posterFile);
+  const getSourceMediaQuery = React.useCallback((resolution: number) => {
+    if (isNaN(resolution)) {
+      return undefined;
+    }
+
+    if (resolution >= 1080) {
+      return '(min-height: 1080px)';
+    }
+    if (resolution >= 720) {
+      return '(min-height: 720px)';
+    }
+    return 'all';
+  }, []);
+
+  const posterFileUrl =
+    file?.formats?.find((f) => f.name.startsWith('POSTER'))?.url ||
+    file?.formats?.find((f) => f.type === 'IMAGE')?.url;
+
+  const videoFormats = React.useMemo(
+    () => file?.formats?.filter((f) => f.type === 'VIDEO') ?? [],
+    [file?.formats]
+  );
+
+  const validVideoFiles = React.useMemo(
+    () =>
+      videoFormats
+        .filter((f) => f.availability.status === 'READY')
+        .map((f) => {
+          const resolution = Number(
+            f.name.split('_')[1].replace(/[^0-9]/g, '')
+          );
+
+          return {
+            ...f,
+            resolution,
+            media: getSourceMediaQuery(resolution),
+          };
+        })
+        .sort((a, b) => {
+          if (a.mimeType === b.mimeType) {
+            return b.resolution - a.resolution;
+          }
+          return b.mimeType.localeCompare(a.mimeType);
+        })
+        .filter((f) => f.resolution > 200),
+    [videoFormats, getSourceMediaQuery]
+  );
+
   if (!file) {
     return <PlaceholderImage height={350} icon={'video'} />;
   }
-  if (!videoFiles || !videoFiles.length) {
-    return (
-      <PlaceholderImage
-        height={350}
-        icon={'video'}
-        description={
-          <div>
-            Ihr Video wird nun umgewandelt und für verschiedene Endgeräte
-            optimiert. Der Prozess kann einige Minuten dauern und läuft im
-            Hintergrund.
-            <br />
-            Sie können den Beitrag nun speichern.
-          </div>
-        }
-      />
-    );
-  }
+
   return (
     <video
       data-testid="video"
       playsInline
       controls
-      poster={posterFileLocation || undefined}
+      poster={posterFileUrl}
       className={styles.Video}
     >
-      {videoFiles.map((vf) => (
+      {validVideoFiles.map((vf) => (
         <source
-          key={File.getFileConversionRemoteLocation(baseUrl, vf)}
-          src={File.getFileConversionRemoteLocation(baseUrl, vf)}
+          key={vf.name}
+          src={vf.url}
           type={vf.mimeType}
+          media={vf.media}
         />
       ))}
     </video>

@@ -1,55 +1,7 @@
-import { FileModelType, DirectoryModel } from 'model';
-import { ProcessingOptions, createImageUrl } from 'util/image/useImageUrl';
+import { DirectoryModel, FileModel } from 'model';
 import { User } from './User';
 
 export const File = {
-  getPreviewImageLocation(
-    baseUrl: string,
-    file?: {
-      __typename?: 'File';
-      fileType: FileModelType;
-      fileConversions?: {
-        __typename?: 'FileConversion';
-        format: string;
-        id: string;
-      }[];
-      id: string;
-    },
-    sizeOrResizeOptions: number | ProcessingOptions = 200
-  ) {
-    if (file) {
-      if (file.fileType === FileModelType.Image) {
-        return createImageUrl(
-          new URL(File.getFileRemoteLocation(baseUrl, file)),
-          typeof sizeOrResizeOptions === 'number'
-            ? {
-                width: sizeOrResizeOptions,
-                aspectRatio: '4:3',
-                resize: 'cover',
-              }
-            : sizeOrResizeOptions
-        );
-      } else {
-        const imageConversionFile = file.fileConversions?.find((fc) =>
-          /^gif/.test(fc.format)
-        );
-        if (imageConversionFile) {
-          return createImageUrl(
-            File.getFileConversionRemoteLocation(baseUrl, imageConversionFile),
-            typeof sizeOrResizeOptions === 'number'
-              ? {
-                  width: sizeOrResizeOptions,
-                  aspectRatio: '4:3',
-                  resize: 'cover',
-                }
-              : sizeOrResizeOptions
-          );
-        }
-      }
-    }
-    return null;
-  },
-
   canEditDirectory(
     directory: DirectoryModel,
     user:
@@ -75,6 +27,61 @@ export const File = {
       return true; // Is a root directory
     }
     return this.canEditDirectory(directory, user);
+  },
+
+  getAvailableFormats(
+    file: Pick<FileModel, '__typename'> & {
+      formats: Pick<
+        FileModel['formats'][number],
+        'name' | 'url' | 'availability'
+      >[];
+    },
+    format?: string
+  ) {
+    return (
+      file?.formats
+        ?.filter(
+          (availableFormat) =>
+            ['ready', 'available'].includes(
+              availableFormat.availability.status.toLowerCase()
+            ) &&
+            (!format ||
+              availableFormat.name
+                .toLowerCase()
+                .startsWith(format.toLowerCase()))
+        )
+        .map((format) => {
+          const formatMatch = format.name.match(
+            /_(?:(?<width>\d+))(?:x(?<height>\d+))?/
+          );
+          if (!formatMatch) {
+            return null;
+          }
+          const width = formatMatch.groups?.width
+            ? parseInt(formatMatch.groups.width, 10)
+            : undefined;
+          const height = formatMatch.groups?.height
+            ? parseInt(formatMatch.groups.height, 10)
+            : undefined;
+
+          return {
+            ...format,
+            width: width,
+            height,
+          };
+        })
+        .filter((f) => f !== null) ?? []
+    );
+  },
+
+  getRemoteUrl(
+    file: Pick<FileModel, '__typename' | 'formats'>,
+    format?: string,
+    width?: number
+  ) {
+    return File.getAvailableFormats(file, format).findLast(
+      ({ width: w }, i) => !width || !w || width >= w || i === 0
+    )?.url;
   },
 
   getFileRemoteLocation(

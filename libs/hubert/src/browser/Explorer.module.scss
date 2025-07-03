@@ -1,4 +1,4 @@
-@import "../theme/breakpoints.scss";
+@use "../theme/breakpoints.scss" as *;
 
 .root {
   background-color: rgb(var(--lotta-box-background-color));

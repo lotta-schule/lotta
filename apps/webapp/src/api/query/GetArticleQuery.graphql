@@ -14,6 +14,14 @@ query GetArticle($id: ID!) {
       id
       mimeType
       fileType
+      formats(category: "ARTICLEPREVIEW") {
+        name
+        url
+        type
+        availability {
+          status
+        }
+      }
     }
     contentModules {
       id
@@ -30,10 +38,14 @@ query GetArticle($id: ID!) {
         filename
         filesize
         insertedAt
-        fileConversions {
-          id
-          format
+        formats {
+          name
+          url
+          type
           mimeType
+          availability {
+            status
+          }
         }
       }
     }
@@ -57,6 +69,14 @@ query GetArticle($id: ID!) {
       name
       avatarImageFile {
         id
+        formats(category: "AVATAR") {
+          name
+          url
+          type
+          availability {
+            status
+          }
+        }
       }
     }
   }
