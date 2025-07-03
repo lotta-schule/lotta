@@ -13,7 +13,7 @@ export const GET_TENANT_QUERY = graphql(`
       identifier
       backgroundImageFile {
         id
-        formats(category: "BACKGROUND") {
+        formats(category: "PAGEBG") {
           name
           url
           type

@@ -284,6 +284,7 @@ export const Presentation = React.memo(
                 >
                   {backgroundImage ? (
                     <ResponsiveImage
+                      lazy
                       format={'pagebg'}
                       style={{ width: '100%' }}
                       file={backgroundImage}
