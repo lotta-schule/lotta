@@ -323,7 +323,7 @@ defmodule LottaWeb.FileResolverTest do
                }
              } = res
 
-      assert Enum.count(formats) == 12
+      assert Enum.count(formats) == 10
 
       image_formats =
         Enum.filter(formats, &(&1["type"] == "IMAGE"))
@@ -338,7 +338,7 @@ defmodule LottaWeb.FileResolverTest do
       video_formats =
         Enum.filter(formats, &(&1["type"] == "VIDEO"))
 
-      assert Enum.count(video_formats) == 8
+      assert Enum.count(video_formats) == 6
 
       assert Enum.all?(video_formats, fn format ->
                format["availability"]["status"] == "REQUESTABLE" and
@@ -384,12 +384,12 @@ defmodule LottaWeb.FileResolverTest do
                }
              } = res
 
-      assert Enum.count(formats) == 12
+      assert Enum.count(formats) == 10
 
       video_formats =
         Enum.filter(formats, &(&1["type"] == "VIDEO"))
 
-      assert Enum.count(video_formats) == 8
+      assert Enum.count(video_formats) == 6
 
       assert Enum.all?(video_formats, fn format ->
                format["availability"]["status"] == "READY" and
