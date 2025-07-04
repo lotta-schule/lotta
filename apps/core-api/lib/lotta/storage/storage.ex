@@ -137,7 +137,10 @@ defmodule Lotta.Storage do
              mime_type: Keyword.get(file_data.metadata, :mime_type),
              file_type: filetype_from(Keyword.get(file_data.metadata, :mime_type))
            })
-           |> Repo.insert(on_conflict: :nothing) do
+           |> Repo.insert(
+             on_conflict: [set: [format: variant_name]],
+             conflict_target: [:file_id, :format]
+           ) do
       upload_filedata_for_file_or_conversion(file_data, file_conversion)
     end
   end
