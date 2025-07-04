@@ -7,15 +7,23 @@ defmodule LottaWeb.UserGroupResolver do
   alias Lotta.Accounts
   alias Lotta.Accounts.User
 
-  def resolve_model_groups(_args, %{source: model}) do
-    groups =
-      model
-      |> Repo.preload(:groups)
-      |> Map.fetch!(:groups)
-      |> Enum.sort_by(& &1.sort_key)
-      |> Enum.reverse()
+  def resolve_model_groups(
+        model,
+        _args,
+        %{
+          context: %{current_user: user}
+        }
+      ) do
+    group_ids = if user, do: Enum.map(user.all_groups, & &1.id), else: []
+    is_admin = user && user.is_admin?
 
-    {:ok, groups}
+    model
+    |> Repo.preload(:groups)
+    |> Map.fetch!(:groups)
+    |> Enum.sort_by(& &1.sort_key)
+    |> Enum.reverse()
+    |> Enum.filter(&(is_admin || &1.id in group_ids))
+    |> then(&{:ok, &1})
   end
 
   def resolve_enrollment_tokens(_user_group, _args, %{

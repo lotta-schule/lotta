@@ -14,7 +14,7 @@ defmodule LottaWeb.StorageController do
         %{"id" => id, "format" => "original"}
       )
       when not is_nil(tenant) and is_uuid(id) do
-    with file when not is_nil(file) <- Storage.get_file(id),
+    with file when not is_nil(file) <- Storage.get_file(id, preload: [:remote_storage_entity]),
          http_url when not is_nil(http_url) <-
            Storage.get_http_url(file),
          {:ok, env} <-

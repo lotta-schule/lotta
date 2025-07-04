@@ -80,10 +80,6 @@ defmodule LottaWeb.Schema.Accounts.File do
     field(:updated_at, non_null(:datetime))
     field(:format, non_null(:string))
     field(:mime_type, non_null(:string))
-
-    field(:remote_location, non_null(:string),
-      resolve: &LottaWeb.FileResolver.resolve_remote_location/3
-    )
   end
 
   object :available_format do

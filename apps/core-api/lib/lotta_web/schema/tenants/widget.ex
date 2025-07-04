@@ -23,7 +23,7 @@ defmodule LottaWeb.Schema.Tenants.Widget do
     )
 
     field(:groups, list_of(:user_group),
-      resolve: &LottaWeb.UserGroupResolver.resolve_model_groups/2
+      resolve: &LottaWeb.UserGroupResolver.resolve_model_groups/3
     )
   end
 

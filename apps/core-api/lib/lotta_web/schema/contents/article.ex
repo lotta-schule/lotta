@@ -54,7 +54,7 @@ defmodule LottaWeb.Schema.Contents.Article do
     )
 
     field(:groups, list_of(:user_group),
-      resolve: &LottaWeb.UserGroupResolver.resolve_model_groups/2
+      resolve: &LottaWeb.UserGroupResolver.resolve_model_groups/3
     )
 
     field(:content_modules, list_of(:content_module),

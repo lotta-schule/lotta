@@ -11,7 +11,6 @@ import { faAlignLeft, faAlignRight } from '@fortawesome/free-solid-svg-icons';
 import { Element, Transforms } from 'slate';
 import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
 import { Image } from '../SlateCustomTypes';
-import { File } from 'util/model';
 import { graphql } from 'api/graphql';
 import { useQuery } from '@apollo/client';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
@@ -27,7 +26,7 @@ export const GET_FILE_FORMATS = graphql(`
   query GET_FILE($id: ID!) {
     file(id: $id) {
       id
-      formats(category: "preview") {
+      formats(category: "PREVIEW") {
         availability {
           status
         }
@@ -55,12 +54,6 @@ export const SlateImage = React.memo(
       nextFetchPolicy: 'cache-only',
       skip: !imageElement.fileId,
     });
-
-    const src =
-      imageElement.src ??
-      File.getFileRemoteLocation('', {
-        id: imageElement.fileId,
-      } as any);
 
     const imageWidth = React.useMemo(() => {
       switch (imageElement.size) {
@@ -102,15 +95,16 @@ export const SlateImage = React.memo(
       >
         <span contentEditable={false}>
           <ResponsiveImage
+            lazy
             src={imageElement.fileId ? undefined : imageElement.src}
-            file={data?.file}
-            alt={src}
+            file={data?.file as any}
+            alt={''}
             format="preview"
             onClick={isEditing ? undefined : () => setShowOverlay(true)}
           />
           {showOverlay && (
             <ImageOverlay
-              selectedUrl={showOverlay ? src : null}
+              selectedFile={showOverlay ? data?.file : null}
               onClose={() => setShowOverlay(false)}
             />
           )}

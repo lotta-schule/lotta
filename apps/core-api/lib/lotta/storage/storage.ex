@@ -25,17 +25,19 @@ defmodule Lotta.Storage do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
-  def query(File, _params),
-    do:
-      File
-      |> preload([:remote_storage_entity, :file_conversions])
+  def query(File, _params) do
+    File
+    |> preload([:remote_storage_entity, file_conversions: :remote_storage_entity])
+  end
 
-  def query(FileConversion, _params),
-    do:
-      File
-      |> preload([:remote_storage_entity])
+  def query(FileConversion, _params) do
+    File
+    |> preload([:remote_storage_entity])
+  end
 
-  def query(queryable, _params), do: queryable
+  def query(queryable, _params) do
+    queryable
+  end
 
   @doc """
   Upload a file to a given directory for a given user.
@@ -412,10 +414,13 @@ defmodule Lotta.Storage do
   """
   @doc since: "2.5.0"
   @spec get_file(File.id(), opts :: keyword() | nil) :: File.t() | nil
-  def get_file(id, opts \\ []), do: Repo.get(File, id, opts)
+  def get_file(id, opts \\ []),
+    do:
+      from(f in File, where: f.id == ^id, preload: ^Keyword.get(opts, :preload, []))
+      |> Repo.one(opts)
 
   @doc """
-  Gets a `Lotta.Storage.FilgeConversion` with a given name from a given file.
+  Gets a `Lotta.Storage.FileConversion` with a given name from a given file.
 
   ## Examples
 

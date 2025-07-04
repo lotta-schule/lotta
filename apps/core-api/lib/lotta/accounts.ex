@@ -17,6 +17,11 @@ defmodule Lotta.Accounts do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
+  def query(Category, _params) do
+    Category
+    |> preload([:groups, :category])
+  end
+
   def query(queryable, _params) do
     queryable
   end

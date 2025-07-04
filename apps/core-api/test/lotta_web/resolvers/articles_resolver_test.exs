@@ -343,9 +343,7 @@ defmodule LottaWeb.ArticleResolverTest do
                  "articles" => [
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -354,7 +352,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -363,9 +361,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -374,7 +370,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -383,9 +379,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -394,7 +388,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -403,9 +397,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -414,7 +406,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -423,9 +415,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -434,7 +424,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -443,9 +433,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -454,7 +442,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -463,9 +451,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -474,7 +460,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -483,9 +469,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -494,7 +478,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -503,9 +487,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -514,7 +496,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -523,9 +505,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -534,7 +514,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -543,9 +523,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -554,7 +532,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -563,9 +541,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -574,7 +550,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -583,9 +559,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -594,7 +568,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -603,9 +577,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -614,7 +586,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -623,9 +595,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -634,7 +604,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -643,9 +613,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -654,7 +622,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -663,9 +631,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -674,7 +640,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -683,9 +649,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -694,7 +658,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -703,9 +667,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -714,7 +676,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -723,9 +685,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -734,7 +694,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -743,9 +703,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -754,7 +712,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -763,9 +721,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -774,7 +730,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -783,9 +739,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -794,7 +748,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -803,9 +757,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -814,7 +766,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -823,9 +775,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -834,7 +784,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -843,9 +793,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -854,7 +802,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -863,9 +811,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -874,7 +820,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
@@ -915,7 +861,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "tags" => nil
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "isPinnedToTop" => false,
                      "preview" =>
                        "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
@@ -925,9 +871,7 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "isPinnedToTop" => false,
                      "preview" =>
@@ -977,8 +921,6 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "title" => "Beitrag Projekt 30 - nur für Schüler"
@@ -989,8 +931,6 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "title" => "Beitrag Projekt 29 - nur für Schüler"
@@ -1000,8 +940,6 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -1012,8 +950,6 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -1024,8 +960,6 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "preview" => "Lorem ipsum dolor sit amet.",
@@ -1033,8 +967,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1045,8 +977,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1057,8 +987,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1069,8 +997,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1081,8 +1007,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1093,8 +1017,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1105,8 +1027,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1117,8 +1037,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1129,8 +1047,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1141,8 +1057,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1153,8 +1067,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1165,8 +1077,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1177,8 +1087,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1189,8 +1097,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1201,8 +1107,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1213,8 +1117,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1225,8 +1127,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1237,8 +1137,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1249,8 +1147,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1261,8 +1157,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1273,8 +1167,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1285,8 +1177,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1330,8 +1220,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -1499,9 +1387,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "title" => "Beitrag Projekt 30 - nur für Schüler"
@@ -1511,7 +1397,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 30 - nur für Lehrer"
                    },
                    %{
@@ -1520,9 +1406,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 29 - nur für Schüler"
                    },
@@ -1531,7 +1415,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 29 - nur für Lehrer"
                    },
                    %{
@@ -1540,9 +1424,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 28 - nur für Schüler"
                    },
@@ -1551,7 +1433,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 28 - nur für Lehrer"
                    },
                    %{
@@ -1560,9 +1442,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 27 - nur für Schüler"
                    },
@@ -1571,7 +1451,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 27 - nur für Lehrer"
                    },
                    %{
@@ -1580,9 +1460,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 26 - nur für Schüler"
                    },
@@ -1591,7 +1469,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 26 - nur für Lehrer"
                    },
                    %{
@@ -1600,9 +1478,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 25 - nur für Schüler"
                    },
@@ -1611,7 +1487,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 25 - nur für Lehrer"
                    },
                    %{
@@ -1620,9 +1496,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 24 - nur für Schüler"
                    },
@@ -1631,7 +1505,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 24 - nur für Lehrer"
                    },
                    %{
@@ -1640,9 +1514,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 23 - nur für Schüler"
                    },
@@ -1651,7 +1523,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 23 - nur für Lehrer"
                    },
                    %{
@@ -1660,9 +1532,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 22 - nur für Schüler"
                    },
@@ -1671,7 +1541,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 22 - nur für Lehrer"
                    },
                    %{
@@ -1680,9 +1550,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 21 - nur für Schüler"
                    },
@@ -1691,7 +1559,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 21 - nur für Lehrer"
                    },
                    %{
@@ -1700,9 +1568,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 20 - nur für Schüler"
                    },
@@ -1711,7 +1577,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 20 - nur für Lehrer"
                    },
                    %{
@@ -1720,9 +1586,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 19 - nur für Schüler"
                    },
@@ -1731,7 +1595,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 19 - nur für Lehrer"
                    },
                    %{
@@ -1740,9 +1604,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 18 - nur für Schüler"
                    },
@@ -1751,7 +1613,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 18 - nur für Lehrer"
                    },
                    %{
@@ -1760,9 +1622,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 17 - nur für Schüler"
                    },
@@ -1771,7 +1631,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 17 - nur für Lehrer"
                    },
                    %{
@@ -1780,9 +1640,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 16 - nur für Schüler"
                    },
@@ -1791,7 +1649,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 16 - nur für Lehrer"
                    },
                    %{
@@ -1800,9 +1658,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 15 - nur für Schüler"
                    },
@@ -1811,7 +1667,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 15 - nur für Lehrer"
                    },
                    %{
@@ -1820,9 +1676,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 14 - nur für Schüler"
                    },
@@ -1831,7 +1685,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 14 - nur für Lehrer"
                    },
                    %{
@@ -1840,9 +1694,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 13 - nur für Schüler"
                    },
@@ -1851,7 +1703,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 13 - nur für Lehrer"
                    },
                    %{
@@ -1860,9 +1712,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 12 - nur für Schüler"
                    },
@@ -1871,7 +1721,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 12 - nur für Lehrer"
                    },
                    %{
@@ -1880,9 +1730,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 11 - nur für Schüler"
                    },
@@ -1891,7 +1739,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 11 - nur für Lehrer"
                    },
                    %{
@@ -1900,9 +1748,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 10 - nur für Schüler"
                    },
@@ -1911,7 +1757,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 10 - nur für Lehrer"
                    },
                    %{
@@ -1920,9 +1766,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 9 - nur für Schüler"
                    },
@@ -1931,7 +1775,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 9 - nur für Lehrer"
                    },
                    %{
@@ -1940,9 +1784,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 8 - nur für Schüler"
                    },
@@ -1951,7 +1793,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 8 - nur für Lehrer"
                    },
                    %{
@@ -1960,9 +1802,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 7 - nur für Schüler"
                    },
@@ -1971,7 +1811,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 7 - nur für Lehrer"
                    },
                    %{
@@ -1980,9 +1820,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 6 - nur für Schüler"
                    },
@@ -1991,7 +1829,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 6 - nur für Lehrer"
                    },
                    %{
@@ -2000,9 +1838,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 5 - nur für Schüler"
                    },
@@ -2011,7 +1847,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 5 - nur für Lehrer"
                    },
                    %{
@@ -2020,9 +1856,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => false,
                      "tags" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "title" => "Beitrag Projekt 4 - nur für Schüler"
                    },
@@ -2031,7 +1865,7 @@ defmodule LottaWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "tags" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 4 - nur für Lehrer"
                    },
                    %{
@@ -2088,8 +1922,6 @@ defmodule LottaWeb.ArticleResolverTest do
                  "articles" => [
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2100,8 +1932,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2112,8 +1942,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2124,8 +1952,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2136,8 +1962,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2148,8 +1972,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2160,8 +1982,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2172,8 +1992,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2184,8 +2002,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2196,8 +2012,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2208,8 +2022,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2220,8 +2032,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2232,8 +2042,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2244,8 +2052,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2256,8 +2062,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2268,8 +2072,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2280,8 +2082,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2292,8 +2092,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2304,8 +2102,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2316,8 +2112,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2328,8 +2122,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2340,8 +2132,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2352,8 +2142,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2364,8 +2152,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2376,8 +2162,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2388,8 +2172,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,
@@ -2400,8 +2182,6 @@ defmodule LottaWeb.ArticleResolverTest do
                    },
                    %{
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "isPinnedToTop" => false,

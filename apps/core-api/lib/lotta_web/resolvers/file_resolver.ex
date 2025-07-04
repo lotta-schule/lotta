@@ -221,8 +221,7 @@ defmodule LottaWeb.FileResolver do
 
   def file(%{id: id}, %{context: %{current_user: current_user}}) do
     file =
-      Storage.get_file(id)
-      |> Repo.preload(:parent_directory)
+      Storage.get_file(id, preload: [:parent_directory])
 
     if not is_nil(file) and can_read?(current_user, file.parent_directory) do
       {:ok, file}
