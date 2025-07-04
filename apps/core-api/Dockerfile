@@ -43,7 +43,12 @@ RUN set -xe && \
   libheif-tools \
   libde265 \
   libde265-dev \
-  x265-dev \
+  dav1d \
+  dav1d-dev \
+  x265 \
+  aom-dev \
+  aom-libs \
+  aom \
   openexr-dev \
   libgsf-dev \
   glib-dev \
@@ -261,6 +266,8 @@ RUN mkdir -p /app
 WORKDIR /app
 ENV HOME=/app
 ENV VIX_COMPILATION_MODE=PLATFORM_PROVIDED_LIBVIPS
+
+RUN unset VIPS_HOME # Make or break !!!
 
 COPY --from=builder /app/_build/prod/rel/lotta ./
 RUN chown -R nobody: /app
