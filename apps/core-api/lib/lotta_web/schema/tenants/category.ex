@@ -22,7 +22,7 @@ defmodule LottaWeb.Schema.Tenants.Category do
     field(:category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Tenants))
 
     field(:groups, list_of(:user_group),
-      resolve: &LottaWeb.UserGroupResolver.resolve_model_groups/2
+      resolve: &LottaWeb.UserGroupResolver.resolve_model_groups/3
     )
 
     field(:widgets, list_of(:widget), resolve: &LottaWeb.CategoryResolver.resolve_widgets/2)

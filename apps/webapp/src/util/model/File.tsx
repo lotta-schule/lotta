@@ -83,21 +83,4 @@ export const File = {
       ({ width: w }, i) => !width || !w || width >= w || i === 0
     )?.url;
   },
-
-  getFileRemoteLocation(
-    baseUrl: string | URL,
-    file: { __typename?: 'File'; id: string },
-    qs = ''
-  ) {
-    return [baseUrl.toString(), 'storage', 'f', file.id]
-      .join('/')
-      .concat(qs ? `?${qs}` : '');
-  },
-
-  getFileConversionRemoteLocation(
-    baseUrl: string,
-    fileConversion: { __typename?: 'FileConversion'; id: string }
-  ) {
-    return [baseUrl, 'storage', 'fc', fileConversion.id].join('/');
-  },
 };

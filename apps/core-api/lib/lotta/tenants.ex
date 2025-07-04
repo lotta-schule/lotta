@@ -250,15 +250,17 @@ defmodule Lotta.Tenants do
   @doc since: "1.0.0"
   @spec list_categories(User.t() | nil) :: list(Category.t())
   def list_categories(user) do
-    groups = if user, do: user.all_groups, else: []
+    group_ids = if user, do: Enum.map(user.all_groups, & &1.id), else: []
     is_admin = if user, do: user.is_admin?, else: false
 
     from(c in Category,
-      left_join: cug in "categories_user_groups",
-      on: cug.category_id == c.id,
-      where: cug.group_id in ^Enum.map(groups, & &1.id) or is_nil(cug.group_id) or ^is_admin,
-      order_by: [asc: :sort_key, asc: :category_id],
-      distinct: true
+      left_join: g in assoc(c, :groups),
+      where:
+        ^is_admin or
+          is_nil(g.id) or
+          g.id in ^group_ids,
+      order_by: [asc: c.sort_key, asc: c.category_id],
+      preload: [groups: g]
     )
     |> Repo.all()
   end
