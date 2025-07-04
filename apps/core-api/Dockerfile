@@ -4,7 +4,7 @@ ARG ELIXIR_VERSION="v1.18.4"
 ARG OTP_VERSION="27.3.4"
 ARG REBAR3_VERSION="3.24.0"
 ARG PDFIUM_VERSION="chromium%2F7047"
-ARG VIPS_VERSION="8.16.1"
+ARG VIPS_VERSION="8.17.0"
 
 ARG SENTRY_DSN=""
 
@@ -38,9 +38,12 @@ RUN set -xe && \
   ffmpeg \
   # For libvips
   fftw-dev \
+  libheif \
   libheif-dev \
   libheif-tools \
   libde265 \
+  libde265-dev \
+  x265-dev \
   openexr-dev \
   libgsf-dev \
   glib-dev \
