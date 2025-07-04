@@ -39,6 +39,8 @@ RUN set -xe && \
   # For libvips
   fftw-dev \
   libheif-dev \
+  libheif-tools \
+  libde265 \
   openexr-dev \
   libgsf-dev \
   glib-dev \
