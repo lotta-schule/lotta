@@ -53,21 +53,6 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
 
   @video_formats [
     poster_1080p: [resize: [height: 1080], content: :poster, format: :webp, type: :image],
-    "videoplay_200p-webm": [
-      resize: [height: 200],
-      format: :webm,
-      video_bitrate: "200k",
-      audio_bitrate: "64k",
-      type: :video
-    ],
-    "videoplay_200p-mp4": [
-      resize: [width: "-2", height: 200],
-      format: :mp4,
-      preset: :veryfast,
-      crf: 28,
-      audio_bitrate: "64k",
-      type: :video
-    ],
     "videoplay_480p-webm": [
       resize: [height: 480],
       format: :webm,

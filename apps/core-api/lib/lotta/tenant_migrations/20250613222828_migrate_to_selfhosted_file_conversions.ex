@@ -23,7 +23,7 @@ defmodule Lotta.Repo.TenantMigrations.MigrateToSelfhostedFileConversions do
       on: fc.remote_storage_entity_id == rse.id,
       select: {fc, rse}
     )
-    |> Repo.stream(max_rows: 250, prefix: prefix())
+    |> Repo.stream(max_rows: 500, prefix: prefix())
     |> Stream.each(fn {file_conversion, remote_storage_entity} ->
       case file_conversion.format do
         "storyboard:1200px" ->
