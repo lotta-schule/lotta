@@ -267,8 +267,6 @@ WORKDIR /app
 ENV HOME=/app
 ENV VIX_COMPILATION_MODE=PLATFORM_PROVIDED_LIBVIPS
 
-RUN unset VIPSHOME
-
 COPY --from=builder /app/_build/prod/rel/lotta ./
 RUN chown -R nobody: /app
 USER nobody
