@@ -174,7 +174,7 @@ defmodule Lotta.Worker.MediaConversion do
         |> apply_audio_args(args)
 
       {:video, :image} ->
-        frame_count = if args[:content] == :poster, do: 1, else: 90
+        frame_count = if args[:content] == :poster, do: 1, else: 30
 
         command
         |> apply_video_args(args)
@@ -236,7 +236,7 @@ defmodule Lotta.Worker.MediaConversion do
             "thumbnail=50,#{get_scale_value(resize_symbol, resize_opts)}"
 
           {:image, _} ->
-            "setpts=0.05*PTS,framerate=3,#{get_scale_value(resize_symbol, resize_opts)}"
+            "setpts=0.05*PTS,framerate=2,#{get_scale_value(resize_symbol, resize_opts)}"
 
           {_, _} ->
             get_scale_value(resize_symbol, resize_opts)

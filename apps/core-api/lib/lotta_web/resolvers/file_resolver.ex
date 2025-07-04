@@ -99,7 +99,8 @@ defmodule LottaWeb.FileResolver do
       |> Repo.preload(:file_conversions)
       |> Map.get(:file_conversions, [])
       |> Enum.filter(fn file_conversion ->
-        category_filter_fn.(file_conversion.format)
+        category_filter_fn.(file_conversion.format) &&
+          file_conversion.remote_storage_entity_id != nil
       end)
       |> Enum.map(&map_file_conversion_to_available_format/1)
 
