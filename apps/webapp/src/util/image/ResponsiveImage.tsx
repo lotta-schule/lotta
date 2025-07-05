@@ -2,6 +2,9 @@ import * as React from 'react';
 import { FileModel } from 'model';
 import { File } from 'util/model';
 
+import styles from './ResponsiveImage.module.scss';
+import clsx from 'clsx';
+
 type FileInput = Pick<FileModel, '__typename'> & {
   formats: Pick<
     FileModel['formats'][number],
@@ -14,23 +17,16 @@ export type ResponsiveImageProps = {
   alt: string;
   format: string;
   fallback?: React.ReactNode | null;
-} & (
-  | {
-      sizes: string[] | [number, number] | 'auto' | (string & {});
-      lazy?: false;
-    }
-  | {
-      lazy: true;
-      sizes?: string[] | [number, number] | 'auto' | (string & {});
-    }
-) &
-  Omit<
-    React.DetailedHTMLProps<
-      React.ImgHTMLAttributes<HTMLImageElement>,
-      HTMLImageElement
-    >,
-    'alt' | 'srcSet' | 'sizes'
-  >;
+  lazy?: boolean;
+  sizes?: string[] | [number, number] | 'auto' | (string & {});
+  animateOnLoad?: boolean;
+} & Omit<
+  React.DetailedHTMLProps<
+    React.ImgHTMLAttributes<HTMLImageElement>,
+    HTMLImageElement
+  >,
+  'alt' | 'srcSet' | 'sizes'
+>;
 
 export const useResponsiveProps = (
   file: FileInput | null | undefined,
@@ -107,6 +103,9 @@ export const ResponsiveImage = React.memo(
     sizes,
     format,
     lazy,
+    animateOnLoad,
+    onLoad: onLoadProp,
+    loading: loadingProp,
     ...imgProps
   }: ResponsiveImageProps) => {
     const { formats, ...responsiveProps } = useResponsiveProps(
@@ -114,11 +113,28 @@ export const ResponsiveImage = React.memo(
       format,
       sizes
     );
+    const [isLoaded, setIsLoaded] = React.useState(!lazy);
+
+    const onLoad = React.useCallback(
+      (e: React.SyntheticEvent<HTMLImageElement>) => {
+        onLoadProp?.(e);
+        if (lazy && animateOnLoad) {
+          setIsLoaded(true);
+        }
+      },
+      [animateOnLoad, lazy, onLoadProp]
+    );
+
     if (formats?.length) {
       return (
         <img
-          loading={lazy ? 'lazy' : undefined}
-          className={className}
+          loading={lazy ? 'lazy' : loadingProp}
+          onLoad={lazy ? onLoad : onLoadProp}
+          className={clsx(className, styles.image, {
+            [styles.lazy]: lazy,
+            [styles.loaded]: isLoaded,
+            [styles.animateOnLoad]: animateOnLoad,
+          })}
           {...imgProps}
           {...responsiveProps}
         />
@@ -128,8 +144,13 @@ export const ResponsiveImage = React.memo(
     if (imgProps.src) {
       return (
         <img
-          className={className}
-          loading={lazy ? 'lazy' : undefined}
+          className={clsx(className, styles.image, {
+            [styles.lazy]: lazy,
+            [styles.loaded]: isLoaded,
+            [styles.animateOnLoad]: animateOnLoad,
+          })}
+          loading={lazy ? 'lazy' : loadingProp}
+          onLoad={lazy ? onLoad : onLoadProp}
           {...imgProps}
         />
       );

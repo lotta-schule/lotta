@@ -1,6 +1,8 @@
-import { render } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { imageFile } from 'test/fixtures';
 import { ResponsiveImage } from './ResponsiveImage';
+
+import styles from './ResponsiveImage.module.scss';
 
 describe('ResponsiveImage', () => {
   describe('should render a file', () => {
@@ -16,6 +18,7 @@ describe('ResponsiveImage', () => {
       expect(screen.getByRole('img')).toMatchInlineSnapshot(`
         <img
           alt="Test"
+          class="_image_549896 _loaded_549896"
           srcset="https://example.com/123/preview_200 200w, https://example.com/123/preview_400 400w, https://example.com/123/preview_800 800w"
           style="border: 1px solid red;"
         />
@@ -34,6 +37,7 @@ describe('ResponsiveImage', () => {
       expect(screen.getByRole('img')).toMatchInlineSnapshot(`
         <img
           alt="image"
+          class="_image_549896 _loaded_549896"
           sizes="(max-width: 1024px) 100vw, 50vw"
           srcset="https://example.com/123/preview_200 200w, https://example.com/123/preview_400 400w, https://example.com/123/preview_800 800w"
         />
@@ -52,6 +56,7 @@ describe('ResponsiveImage', () => {
       expect(screen.getByRole('img')).toMatchInlineSnapshot(`
         <img
           alt="image"
+          class="_image_549896 _loaded_549896"
           sizes="(max-width: 1024px) 100vw, 50vw"
           srcset="https://example.com/123/preview_200 200w, https://example.com/123/preview_400 400w, https://example.com/123/preview_800 800w"
         />
@@ -70,6 +75,7 @@ describe('ResponsiveImage', () => {
       expect(screen.getByRole('img')).toMatchInlineSnapshot(`
         <img
           alt="image"
+          class="_image_549896 _loaded_549896"
           srcset="https://example.com/123/preview_200 1x,https://example.com/123/preview_400 2x"
         />
       `);
@@ -89,10 +95,34 @@ describe('ResponsiveImage', () => {
     expect(screen.getByRole('img')).toMatchInlineSnapshot(`
       <img
         alt="Test"
+        class="_image_549896 _loaded_549896"
         src="https://via.placeholder.com/300"
         style="border: 1px solid red;"
       />
     `);
+  });
+
+  it('should start without the loaded class and have it assigned later when animateOnLoad is set', async () => {
+    const screen = render(
+      <ResponsiveImage
+        lazy
+        animateOnLoad
+        file={null}
+        src={'https://via.placeholder.com/300'}
+        format="preview"
+        alt="Test"
+        style={{ border: '1px solid red' }}
+      />
+    );
+    expect(screen.getByRole('img')).toHaveClass(
+      styles.lazy,
+      styles.animateOnLoad
+    );
+    expect(screen.getByRole('img')).not.toHaveClass(styles.loaded);
+    screen.getByRole('img').dispatchEvent(new Event('load'));
+    await waitFor(() => {
+      expect(screen.getByRole('img')).toHaveClass(styles.loaded);
+    });
   });
 
   it('should render a fallback if the file has no formats', () => {

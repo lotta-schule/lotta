@@ -72,6 +72,8 @@ export const Gallery = React.memo<GalleryProps>(
                 />
               )}
               <ImageImage
+                lazy
+                animateOnLoad
                 isEditModeEnabled={isEditModeEnabled}
                 file={file}
                 caption={getConfiguration(file).caption}

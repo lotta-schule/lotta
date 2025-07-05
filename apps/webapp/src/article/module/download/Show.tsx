@@ -78,7 +78,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
               )}
               <div className={styles.filename}>{file.filename}</div>
               <div className={styles.secondaryHeading}>
-                {new FileSize(file.filesize).humanize()}
+                {new FileSize(file.filesize || 0).humanize()}
               </div>
             </div>
           </div>

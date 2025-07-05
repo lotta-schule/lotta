@@ -128,6 +128,7 @@ export const ArticlePreview = React.memo(
                   {
                     <ResponsiveImage
                       lazy
+                      animateOnLoad
                       sizes="auto"
                       className={styles.previewImage}
                       file={article?.previewImageFile ?? undefined}
@@ -147,6 +148,7 @@ export const ArticlePreview = React.memo(
                     file={article.previewImageFile ?? undefined}
                     format="articlepreview"
                     lazy
+                    animateOnLoad
                     sizes="auto"
                     alt={`Vorschaubild zu ${article.title}`}
                   />
