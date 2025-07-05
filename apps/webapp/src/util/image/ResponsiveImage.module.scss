@@ -1,0 +1,16 @@
+.image {
+  &.lazy {
+    @media ((scripting: enabled) and (prefers-reduced-motion: no-preference)) {
+      &.animateOnLoad {
+        transition: opacity 0.3s ease-in-out;
+        opacity: 0;
+        filter: blur(10px);
+      }
+    }
+
+    &.loaded {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+}

@@ -8,6 +8,7 @@ import styles from './ImageImage.module.scss';
 
 interface ImageImageProps
   extends Omit<ImageContentProps, 'onClick' | 'alt' | 'file'> {
+  animateOnLoad?: boolean;
   isEditModeEnabled: boolean;
   file?: FileModel | null;
   caption: string;
