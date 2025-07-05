@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
 ---
 name: 'CI'
 on:
@@ -155,7 +156,7 @@ jobs:
         run: pnpm install
 
       - name: Run Unit / Component tests
-        run: pnpm nx affected -t test --configuration=coverage
+        run: pnpm nx run-many -t test --configuration=coverage
         env:
           NODE_ENV: test
           MIX_ENV: test
