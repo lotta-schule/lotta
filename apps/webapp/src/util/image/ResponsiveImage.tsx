@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { FileModel } from 'model';
 import { File } from 'util/model';
