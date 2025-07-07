@@ -48,9 +48,13 @@ defmodule Lotta.Worker.Metadata do
       {:ok, file}
     else
       {:error, reason} = error ->
-        Oban.Notifier.notify(Oban, :metadata_jobs, %{"error" => job_id})
-        Logger.error("Error updating file metadata: #{inspect(reason)}")
-        error
+        if String.contains?(inspect(reason), "Unsupported file type") do
+          {:cancel, reason}
+        else
+          Oban.Notifier.notify(Oban, :metadata_jobs, %{"error" => job_id})
+          Logger.error("Error updating file metadata: #{inspect(reason)}")
+          error
+        end
     end
   end
 
@@ -63,7 +67,8 @@ defmodule Lotta.Worker.Metadata do
   defp read_metadata(%FileData{} = file_data, "image"),
     do: ImageProcessor.read_metadata(file_data)
 
-  defp read_metadata(_, _), do: {:error, "Unsupported file type for metadata extraction"}
+  defp read_metadata(_, filetype),
+    do: {:error, "Unsupported file type for metadata extraction: #{filetype}"}
 
   @impl Oban.Worker
   def timeout(_job), do: :timer.minutes(2)

@@ -100,9 +100,9 @@ defmodule Lotta.Storage do
       |> then(fn tasks ->
         try do
           Task.await_many(tasks, :timer.seconds(120))
-        rescue
-          error ->
-            Logger.warning("Error awaiting conversion tasks: #{inspect(error)}")
+        catch
+          :exit, error ->
+            Logger.warning("Error awaiting conversion / metadata tasks: #{inspect(error)}")
             []
         end
       end)
