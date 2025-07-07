@@ -1,3 +1,4 @@
+/* eslint-disable react-compiler/react-compiler */
 'use client';
 
 import * as React from 'react';
@@ -104,6 +105,8 @@ export const Select = ({
 
   const { buttonProps } = useButton(triggerProps, triggerRef);
 
+  const minWidth = inputWrapperRef.current?.clientWidth || 0;
+
   return (
     <Popover
       open={state.isOpen}
@@ -138,10 +141,9 @@ export const Select = ({
           </PopoverTrigger>
         </div>
       </Label>
-      <PopoverContent>
+      <PopoverContent style={{ minWidth }}>
         <ListBox
           className={styles.listbox}
-          style={{ width: inputWrapperRef.current?.clientWidth }}
           aria-label={title}
           {...(menuProps as any)}
           label={title}
