@@ -1,3 +1,4 @@
+/* eslint-disable react-compiler/react-compiler */
 'use client';
 
 import * as React from 'react';
@@ -245,6 +246,9 @@ export const ComboBox = React.memo(
       ? { 'aria-label': title, 'aria-labelledby': '' }
       : {};
 
+    // eslint-dsable-next-line react-compiler/react-compiler
+    const minWidth = inputWrapperRef.current?.clientWidth || 0;
+
     return (
       <Popover
         open={state.isOpen}
@@ -286,10 +290,9 @@ export const ComboBox = React.memo(
             )}
           </div>
         </Label>
-        <PopoverContent ref={popoverRef}>
+        <PopoverContent ref={popoverRef} style={{ minWidth }}>
           <ListBox
             className={styles.listbox}
-            style={{ width: inputWrapperRef.current?.clientWidth }}
             aria-label={title}
             {...listBoxProps}
             autoFocus={!!listBoxProps.autoFocus}

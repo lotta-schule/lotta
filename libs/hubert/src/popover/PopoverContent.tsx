@@ -41,7 +41,7 @@ export const PopoverContent = ({
         style={{
           minWidth: 'max-content',
           ...context.floatingStyles,
-          maxHeight: `min(${maxHeight}, 50vh)`,
+          maxHeight: `min(${maxHeight}px, 50vh)`,
           overflow: 'auto',
           color: 'inherit',
           ...style,
