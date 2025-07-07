@@ -185,7 +185,7 @@ export const CategoryNavigation = React.memo(() => {
                   onClick: () => onSelectCategory(subcategory),
                   selected: selectedCategory?.id === subcategory.id,
                 }))}
-                onChange={() => {}}
+                onChange={onChangeCategories}
               />
             </Collapse>
           ),
