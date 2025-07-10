@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* prettier-ignore */
 
 /** An IntrospectionQuery representation of your schema.
@@ -1592,11 +1593,23 @@ const introspection = {
         "name": "ConversionFormat",
         "enumValues": [
           {
+            "name": "ARTICLEPREVIEW_165",
+            "isDeprecated": false
+          },
+          {
             "name": "ARTICLEPREVIEW_330",
             "isDeprecated": false
           },
           {
             "name": "ARTICLEPREVIEW_660",
+            "isDeprecated": false
+          },
+          {
+            "name": "ARTICLEPREVIEW_99",
+            "isDeprecated": false
+          },
+          {
+            "name": "ARTICLEPREVIEW_990",
             "isDeprecated": false
           },
           {
@@ -2245,24 +2258,6 @@ const introspection = {
         "name": "File",
         "fields": [
           {
-            "name": "fileConversions",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "FileConversion"
-                  }
-                }
-              }
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
             "name": "fileType",
             "type": {
               "kind": "NON_NULL",
@@ -2351,6 +2346,15 @@ const introspection = {
                 "kind": "SCALAR",
                 "name": "DateTime"
               }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "metadata",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Json"
             },
             "args": [],
             "isDeprecated": false
@@ -2551,85 +2555,6 @@ const introspection = {
               "ofType": {
                 "kind": "SCALAR",
                 "name": "String"
-              }
-            },
-            "args": [],
-            "isDeprecated": false
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "FileConversion",
-        "fields": [
-          {
-            "name": "format",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String"
-              }
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
-            "name": "id",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID"
-              }
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
-            "name": "insertedAt",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime"
-              }
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
-            "name": "mimeType",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String"
-              }
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
-            "name": "remoteLocation",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String"
-              }
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
-            "name": "updatedAt",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime"
               }
             },
             "args": [],
