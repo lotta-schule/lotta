@@ -98,10 +98,12 @@ defmodule LottaWeb.UserResolver do
   def resolve_enrollment_tokens(user, _args, %{context: %{current_user: current_user}}) do
     tokens =
       if user.id == current_user.id do
-        user.enrollment_tokens
+        Map.get(user, :enrollment_tokens, [])
       else
         []
       end
+
+    Logger.info("User #{user.id} requested enrollment tokens. Returning: #{inspect(tokens)}")
 
     {:ok, tokens}
   end
