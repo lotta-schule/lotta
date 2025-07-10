@@ -1,4 +1,4 @@
-defmodule Lotta.Repo.TenantMigrations.MakeUsergroupEnrolmenttokensArrayNonNull do
+defmodule Lotta.Repo.TenantMigrations.MakeUsergroupEnrollmenttokensArrayNonNull do
   @moduledoc false
 
   use Ecto.Migration

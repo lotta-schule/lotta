@@ -106,7 +106,7 @@ defmodule Lotta.Tenants.TenantDbManager do
     {20_250_613_222_828, Lotta.Repo.TenantMigrations.MigrateToSelfhostedFileConversions},
     {20_250_627_065_517, Lotta.Repo.TenantMigrations.AddPagesToFileAndRemoveFullMetadata},
     {20_250_629_003_832, Lotta.Repo.TenantMigrations.MakeConversionFormatsUnique},
-    {20_250_711_004_039, Lotta.Repo.TenantMigrations.MakeUsergroupEnrolmenttokensArrayNonNull}
+    {20_250_711_004_039, Lotta.Repo.TenantMigrations.MakeUsergroupEnrollmenttokensArrayNonNull}
   ]
 
   @spec create_tenant_database_schema(Tenant.t()) :: {:ok, [integer()]}
