@@ -2,8 +2,10 @@
 
 .root {
   width: fit-content;
+  min-width: 18em;
   min-height: 6em;
   border: 2px solid var(--lotta-color-secondary);
+  margin: 0 auto;
   position: relative;
 
   .overlay {
