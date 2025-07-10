@@ -11,6 +11,7 @@ import {
 import { ArticleModel, CategoryModel } from 'model';
 import { MockedResponse } from '@apollo/client/testing';
 import { CategoryPage } from './CategoryPage';
+import { PREFETCH_COUNT } from 'pages/c/[slug]';
 
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
@@ -23,7 +24,10 @@ describe('shared/article/CategoryLayout', () => {
     {
       request: {
         query: GetArticlesQuery,
-        variables: { categoryId: category.id, filter: { first: 3 } },
+        variables: {
+          categoryId: category.id,
+          filter: { first: PREFETCH_COUNT },
+        },
       },
       result: { data: { articles } },
     },
