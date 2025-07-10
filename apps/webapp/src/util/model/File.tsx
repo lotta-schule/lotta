@@ -75,12 +75,17 @@ export const File = {
   },
 
   getRemoteUrl(
-    file: Pick<FileModel, '__typename' | 'formats'>,
+    file: Pick<FileModel, '__typename' | 'id' | 'formats'>,
     format?: string,
     width?: number
   ) {
-    return File.getAvailableFormats(file, format).findLast(
-      ({ width: w }, i) => !width || !w || width >= w || i === 0
-    )?.url;
+    if (format === 'original') {
+      return `/data/storage/f/${file.id}/original`;
+    }
+    return (
+      File.getAvailableFormats(file, format).findLast(
+        ({ width: w }, i) => !width || !w || width >= w || i === 0
+      )?.url ?? `/data/storage/f/${file.id}/${format}`
+    );
   },
 };
