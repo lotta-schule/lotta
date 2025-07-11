@@ -8,9 +8,6 @@ defmodule Lotta.Application do
   require Logger
 
   def start(_type, _args) do
-    setup_logger()
-    setup_telemetry()
-
     # Create cache dir for file processor
     Lotta.Storage.FileData.create_cache_dir()
 
@@ -18,8 +15,8 @@ defmodule Lotta.Application do
     children =
       prepended_apps() ++
         [
-          {Finch, name: Lotta.Finch},
           LottaWeb.Telemetry,
+          {Finch, name: Lotta.Finch},
           Lotta.Repo,
           {Oban, Application.fetch_env!(:lotta, Oban)},
           Lotta.PushNotification,
@@ -31,14 +28,16 @@ defmodule Lotta.Application do
            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
         ]
 
-    Logger.add_handlers(:lotta)
-
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     Supervisor.start_link(children,
       strategy: :one_for_one,
       name: Lotta.Supervisor
     )
+
+    setup_logger()
+    setup_telemetry()
+    Logger.add_handlers(:lotta)
   end
 
   defp setup_telemetry() do
@@ -47,13 +46,13 @@ defmodule Lotta.Application do
     OpentelemetryAbsinthe.setup()
     OpentelemetryEcto.setup([:lotta, :repo])
     OpentelemetryRedix.setup()
-
-    Lotta.ObanReporter.attach()
   end
 
   defp setup_logger() do
     :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
     Oban.Telemetry.attach_default_logger()
+
+    Lotta.ObanReporter.attach()
   end
 
   defp prepended_apps() do

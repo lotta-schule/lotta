@@ -337,4 +337,3 @@ config :lotta, Oban,
     |> Enum.filter(fn {k, _} ->
       to_string(k) not in SystemConfig.get("OBAN_EXCLUDE_QUEUES", cast: :string_list)
     end)
-    |> IO.inspect(label: "Oban queues")
