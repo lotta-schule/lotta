@@ -230,9 +230,9 @@ defmodule Lotta.Storage do
          {:ok, file_data} <-
            FileData.from_stream(
              env.body,
-             file_or_file_conversion[:filename] ||
-               "file.#{get_ext_from_mimetype(file_or_file_conversion[:mime_type] || "bin")}",
-             mime_type: file_or_file_conversion[:mime_type]
+             Map.get(file_or_file_conversion, :filename) ||
+               "file.#{get_ext_from_mimetype(Map.get(file_or_file_conversion, :mime_type, "bin"))}",
+             mime_type: file_or_file_conversion.mime_type
            ),
          {:ok, entity} <-
            RemoteStorage.create(

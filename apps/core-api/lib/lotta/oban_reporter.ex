@@ -6,14 +6,12 @@ defmodule Lotta.ObanReporter do
     :telemetry.attach("oban-errors", [:oban, :job, :exception], &__MODULE__.handle_event/4, [])
   end
 
-  def handle_event([:oban, :job, :exception], _measure, _meta, _) do
-    # TODO: LAter
-    #
-    # extra =
-    #   meta.job
-    #   |> Map.take([:id, :args, :meta, :queue, :worker])
-    #   |> Map.merge(measure)
+  def handle_event([:oban, :job, :exception], measure, meta, _) do
+    extra =
+      meta.job
+      |> Map.take([:id, :args, :meta, :queue, :worker])
+      |> Map.merge(measure)
 
-    # Sentry.capture_exception(meta.reason, stacktrace: meta.stacktrace, extra: extra)
+    Sentry.capture_exception(meta.reason, stacktrace: meta.stacktrace, extra: extra)
   end
 end
