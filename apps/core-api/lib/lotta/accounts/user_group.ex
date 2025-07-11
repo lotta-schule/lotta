@@ -29,10 +29,12 @@ defmodule Lotta.Accounts.UserGroup do
 
     field(:enrollment_tokens, {:array, :string}, default: [])
 
-    many_to_many :users,
-                 User,
-                 join_through: "user_user_group",
-                 on_replace: :delete
+    many_to_many(
+      :users,
+      User,
+      join_through: "user_user_group",
+      on_replace: :delete
+    )
 
     timestamps()
   end
@@ -41,7 +43,7 @@ defmodule Lotta.Accounts.UserGroup do
   def changeset(%UserGroup{} = user_group, attrs) do
     user_group
     |> cast(attrs, [:name, :sort_key, :is_admin_group, :can_read_full_name, :enrollment_tokens])
-    |> validate_required([:name, :sort_key])
+    |> validate_required([:name, :sort_key, :enrollment_tokens])
   end
 
   def get_max_sort_key() do

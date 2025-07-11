@@ -1,11 +1,13 @@
 import { render, waitFor } from 'test/util';
-import { CreateUserGroupDialog } from './CreateUserGroupDialog';
+import {
+  CREATE_USER_GROUP,
+  CreateUserGroupDialog,
+} from './CreateUserGroupDialog';
 import userEvent from '@testing-library/user-event';
-
-import CreateUserGroupMutation from 'api/mutation/CreateUserGroupMutation.graphql';
-import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import { MockedResponse } from '@apollo/client/testing';
 import { lehrerGroup } from 'test/fixtures';
+
+import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 
 const userGroupMock = {
   ...lehrerGroup,
@@ -16,9 +18,9 @@ const userGroupMock = {
 const additionalMocks: MockedResponse[] = [
   {
     request: {
-      query: CreateUserGroupMutation,
+      query: CREATE_USER_GROUP,
       variables: {
-        group: { name: 'Test Group' },
+        group: { name: 'Test Group', enrollmentTokens: [] },
       },
     },
     result: {

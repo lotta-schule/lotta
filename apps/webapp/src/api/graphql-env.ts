@@ -5996,8 +5996,11 @@ const introspection = {
             "type": {
               "kind": "LIST",
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String"
+                "kind": "NON_NULL",
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String"
+                }
               }
             }
           },
@@ -6394,12 +6397,15 @@ const introspection = {
           {
             "name": "enrollmentTokens",
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "ofType": {
-                "kind": "NON_NULL",
+                "kind": "LIST",
                 "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String"
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
                 }
               }
             }
