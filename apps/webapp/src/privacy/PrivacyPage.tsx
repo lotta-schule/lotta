@@ -232,19 +232,6 @@ export const PrivacyPage = () => {
             gespeichert.
           </p>
           <p>
-            Zusätzlich werden die von Nutzern hochgeladenen Inhalte zum
-            schnelleren Abruf auf einem sogenannten CDN ("Centent Delivery
-            Network") vom schweizer Unternehmen
-            <a
-              href="https://www.keycdn.com/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              keycdn
-            </a>
-            bei Bedarf zwischengespeichert, verarbeitet und ausgeliefert.
-          </p>
-          <p>
             Zum Auffinden von Fehlern nutzen wir die Cloud-Software
             <a
               href="https://sentry.io/security/"
@@ -443,17 +430,6 @@ export const PrivacyPage = () => {
                 Bermingham Hosted by: SCALEWAY SAS BP 438 75366 PARIS CEDEX 08
                 FRANCE; Website: https://scaleway.org; Datenschutzerklärung:
                 https://www.scaleway.com/en/privacy-policy/;
-              </li>
-              <li>
-                <strong>Cloudimage:</strong> CDN; Dienstanbieter: Scaleflex SAS,
-                Attn: Copyright Agent / Legal Team – Privacy; 53 Chemin de
-                Beauregard, 38330 Saint-Nazaire-Les-Eymes, France
-                https://legal.scaleflex.com/privacy/global-privacy-policy
-              </li>
-              <li>
-                <strong>KeyCDN:</strong> CDN; Dienstanbieter: proinity LLC,
-                Reichenauweg 11, 8272 Ermatingen, Schweiz; Datenschutzerklärung:
-                https://www.keycdn.com/privacy
               </li>
               <li>
                 <strong>Sentry:</strong> Exception Logging Dienstanbieter:
