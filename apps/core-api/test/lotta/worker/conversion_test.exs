@@ -1,5 +1,5 @@
 defmodule Lotta.Worker.ConversionTest do
-  use Lotta.WorkerCase, async: true
+  use Lotta.WorkerCase, async: false
 
   import Mock
 

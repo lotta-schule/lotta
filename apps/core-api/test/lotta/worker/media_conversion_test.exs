@@ -1,5 +1,5 @@
 defmodule Lotta.Worker.MediaConversionTest do
-  use Lotta.WorkerCase, async: true
+  use Lotta.WorkerCase, async: false
 
   import Mock
 
