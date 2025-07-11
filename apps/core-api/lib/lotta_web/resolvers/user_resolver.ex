@@ -103,8 +103,6 @@ defmodule LottaWeb.UserResolver do
         []
       end
 
-    Logger.info("User #{user.id} requested enrollment tokens. Returning: #{inspect(tokens)}")
-
     {:ok, tokens}
   end
 
