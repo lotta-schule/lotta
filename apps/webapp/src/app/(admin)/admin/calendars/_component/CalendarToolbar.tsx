@@ -166,7 +166,7 @@ export const CalendarToolbar = React.memo(
               if (newEvent) {
                 const nextDate = new Date(newEvent.start);
                 if (!Number.isNaN(nextDate.getTime())) {
-                  setCurrentDate(new Date(newEvent.start));
+                  setCurrentDate(nextDate);
                 }
               }
             }}

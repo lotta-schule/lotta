@@ -85,6 +85,7 @@ export const LoadingButton = ({
   ref: propRef,
   ...props
 }: LoadingButtonProps) => {
+  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const defaultRef = React.useRef<React.ComponentRef<'button'>>(null);
   const ref = propRef || defaultRef;
 
@@ -132,7 +133,10 @@ export const LoadingButton = ({
         onError?.(e);
       } finally {
         if (resetState !== false) {
-          setTimeout(() => {
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
+          timeoutRef.current = setTimeout(() => {
             setCurrentState('idle');
             if (didSucceed) {
               onComplete?.(result);
@@ -143,6 +147,14 @@ export const LoadingButton = ({
     },
     [onAction, onClick, onComplete, onError, resetState, state, isDisabled]
   );
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   React.useEffect(() => {
     if (state) {

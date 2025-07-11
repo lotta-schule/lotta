@@ -219,7 +219,7 @@ describe('LoadingButton', () => {
           expect(screen.getByTestId('SuccessIcon')).toBeVisible();
         });
 
-        await act(() => vi.advanceTimersByTimeAsync(5000));
+        await act(() => vi.advanceTimersByTimeAsync(2000));
 
         expect(
           screen.getByRole('button', { name: /Click Me/i })
@@ -249,7 +249,7 @@ describe('LoadingButton', () => {
           expect(screen.getByTestId('SuccessIcon')).toBeVisible();
         });
 
-        await act(() => vi.advanceTimersByTimeAsync(5000));
+        await act(() => vi.advanceTimersByTimeAsync(2000));
 
         expect(screen.getByTestId('SuccessIcon')).toBeVisible();
       });
