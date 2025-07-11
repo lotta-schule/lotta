@@ -38,8 +38,7 @@ jobs:
     if: always()
     steps:
       - name: fail if enforce-all-checks failed
-        if: ${{ needs.enforce-all-checks.result == 'failure' }}
-        run: exit 1
+        run: exit ${{ needs.enforce-all-checks.result == 'failure' && '1' || '0' }}
       - name: Read env name
         id: get_env_name
         run: |
