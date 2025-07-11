@@ -52,10 +52,14 @@ describe('GeneralSettings', () => {
 
   beforeEach(() => {
     (useRouter as Mock).mockReturnValue(mockRouter);
+
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+
+    vi.useRealTimers();
   });
 
   it('renders tenant details correctly', () => {
@@ -81,6 +85,8 @@ describe('GeneralSettings', () => {
 
     const saveButton = screen.getByText('speichern');
     await user.click(saveButton);
+
+    vi.advanceTimersByTime(2000);
 
     await waitFor(() => {
       expect(mockRouter.refresh).toHaveBeenCalled();
