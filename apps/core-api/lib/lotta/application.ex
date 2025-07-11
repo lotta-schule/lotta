@@ -47,10 +47,13 @@ defmodule Lotta.Application do
     OpentelemetryAbsinthe.setup()
     OpentelemetryEcto.setup([:lotta, :repo])
     OpentelemetryRedix.setup()
+
+    Lotta.ObanReporter.attach()
   end
 
   defp setup_logger() do
     :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
+    Oban.Telemetry.attach_default_logger()
   end
 
   defp prepended_apps() do
