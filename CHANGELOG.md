@@ -1,3 +1,13 @@
+## 6.0.7 (2025-07-11)
+
+### 🩹 Fixes
+
+- **core:** set correct file name when migrating storage to new paths ([3b80a37d](https://github.com/lotta-schule/lotta/commit/3b80a37d))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.0.6 (2025-07-11)
 
 This was a version bump only, there were no code changes.
