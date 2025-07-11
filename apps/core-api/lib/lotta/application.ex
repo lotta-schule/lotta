@@ -11,12 +11,14 @@ defmodule Lotta.Application do
     # Create cache dir for file processor
     Lotta.Storage.FileData.create_cache_dir()
 
+    Logger.add_handlers(:lotta)
+
     # List all child processes to be supervised
     children =
       prepended_apps() ++
         [
-          LottaWeb.Telemetry,
           {Finch, name: Lotta.Finch},
+          LottaWeb.Telemetry,
           Lotta.Repo,
           {Oban, Application.fetch_env!(:lotta, Oban)},
           Lotta.PushNotification,
@@ -28,32 +30,24 @@ defmodule Lotta.Application do
            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
         ]
 
+    # Oban.Telemetry.attach_default_logger()
+    # setup_telemetry()
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     Supervisor.start_link(children,
       strategy: :one_for_one,
       name: Lotta.Supervisor
     )
-
-    setup_logger()
-    setup_telemetry()
-    Logger.add_handlers(:lotta)
   end
 
-  defp setup_telemetry() do
-    OpentelemetryBandit.setup()
-    OpentelemetryPhoenix.setup(adapter: :bandit)
-    OpentelemetryAbsinthe.setup()
-    OpentelemetryEcto.setup([:lotta, :repo])
-    OpentelemetryRedix.setup()
-  end
-
-  defp setup_logger() do
-    :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
-    Oban.Telemetry.attach_default_logger()
-
-    Lotta.ObanReporter.attach()
-  end
+  # defp setup_telemetry() do
+  #   OpentelemetryBandit.setup()
+  #   OpentelemetryPhoenix.setup(adapter: :bandit)
+  #   OpentelemetryAbsinthe.setup()
+  #   OpentelemetryEcto.setup([:lotta, :repo])
+  #   OpentelemetryRedix.setup()
+  # end
 
   defp prepended_apps() do
     topologies = Application.get_env(:libcluster, :topologies)
