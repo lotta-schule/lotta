@@ -32,7 +32,7 @@ defmodule SystemConfig do
         value && Base.decode64!(value)
 
       :string_list ->
-        value && String.split(value, ",")
+        value && Enum.filter(String.split(value, ","), &(String.length(&1) > 0))
 
       :docker_image_tag ->
         value && String.split(value, ":") |> List.last()
@@ -130,6 +130,8 @@ defmodule SystemConfig do
   defp default("ANALYTICS_API_KEY", :test), do: "test"
 
   defp default("ANALYTICS_API_KEY", _), do: nil
+
+  defp default("OBAN_EXCLUDE_QUEUES", _), do: ""
 
   defp default(key, env),
     do:
@@ -314,3 +316,25 @@ config :lotta, Lotta.PushNotification,
     prod?: SystemConfig.get("APNS_USE_PRODUCTION", cast: :boolean)
   ],
   sandbox?: SystemConfig.get("PIGEON_USE_SANDBOX", cast: :boolean)
+
+config :lotta, Oban,
+  engine: Oban.Engines.Basic,
+  notifier: Oban.Notifiers.PG,
+  repo: Lotta.Repo,
+  prefix: "oban",
+  plugins: [
+    {Oban.Plugins.Lifeline, []},
+    {Oban.Plugins.Pruner, interval: :timer.minutes(5), max_age: :timer.hours(12)},
+    {Oban.Plugins.Reindexer, schedule: "@weekly"}
+  ],
+  queues:
+    [
+      file_conversion: [limit: 3],
+      media_conversion: [limit: 1],
+      preview_generation: [limit: 1],
+      file_metadata: [limit: 1]
+    ]
+    |> Enum.filter(fn {k, _} ->
+      to_string(k) not in SystemConfig.get("OBAN_EXCLUDE_QUEUES", cast: :string_list)
+    end)
+    |> IO.inspect(label: "Oban queues")
