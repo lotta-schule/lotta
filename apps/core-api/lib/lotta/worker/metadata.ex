@@ -67,8 +67,11 @@ defmodule Lotta.Worker.Metadata do
   defp read_metadata(%FileData{} = file_data, "image"),
     do: ImageProcessor.read_metadata(file_data)
 
-  defp read_metadata(_, filetype),
-    do: {:error, "Unsupported file type for metadata extraction: #{filetype}"}
+  defp read_metadata(%FileData{} = file_data, "pdf"),
+    do: ImageProcessor.read_metadata(file_data)
+
+  defp read_metadata(_, _filetype),
+    do: {:ok, %{}}
 
   @impl Oban.Worker
   def timeout(_job), do: :timer.minutes(2)
