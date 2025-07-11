@@ -230,8 +230,9 @@ defmodule Lotta.Storage do
          {:ok, file_data} <-
            FileData.from_stream(
              env.body,
-             file_or_file_conversion.filename,
-             mime_type: file_or_file_conversion.mime_type
+             file_or_file_conversion[:filename] ||
+               "file.#{get_ext_from_mimetype(file_or_file_conversion[:mime_type] || "bin")}",
+             mime_type: file_or_file_conversion[:mime_type]
            ),
          {:ok, entity} <-
            RemoteStorage.create(
@@ -245,6 +246,12 @@ defmodule Lotta.Storage do
       |> Repo.update()
     end
   end
+
+  defp get_ext_from_mimetype(mime_type) when is_bitstring(mime_type),
+    do:
+      mime_type
+      |> String.split("/")
+      |> List.last()
 
   @doc """
   List all RemoteStorageEntity records that are not referenced by any File or FileConversion
