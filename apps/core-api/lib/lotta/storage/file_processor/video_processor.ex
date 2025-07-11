@@ -26,12 +26,12 @@ defmodule Lotta.Storage.FileProcessor.VideoProcessor do
 
       width =
         streams
-        |> Enum.find(fn stream -> stream["codec_type"] == "video" end)
+        |> Enum.find(%{}, fn stream -> stream["codec_type"] == "video" end)
         |> Map.get("width", nil)
 
       height =
         streams
-        |> Enum.find(fn stream -> stream["codec_type"] == "video" end)
+        |> Enum.find(%{}, fn stream -> stream["codec_type"] == "video" end)
         |> Map.get("width", nil)
 
       {:ok,
@@ -49,6 +49,10 @@ defmodule Lotta.Storage.FileProcessor.VideoProcessor do
         Logger.error("Failed to read video metadata: #{inspect(error)}")
         {:error, "Failed to read video metadata"}
     end
+  rescue
+    e in RuntimeError ->
+      Logger.error("Runtime error while reading video metadata: #{inspect(e)}")
+      {:error, "Failed to read video metadata"}
   end
 
   @spec process_multiple(File.t(), keyword(keyword())) ::

@@ -7,7 +7,7 @@ defmodule Lotta.Worker.Metadata do
   """
   use Oban.Worker,
     queue: :file_metadata,
-    max_attempts: 3,
+    max_attempts: 2,
     # 0-9, 0 is highest
     priority: 1,
     unique: [
@@ -74,7 +74,7 @@ defmodule Lotta.Worker.Metadata do
     do: {:ok, %{}}
 
   @impl Oban.Worker
-  def timeout(_job), do: :timer.minutes(2)
+  def timeout(_job), do: :timer.seconds(30)
 
   @spec create_metadata_job(File.t()) ::
           {:ok, Oban.Job.t()} | {:error, String.t()}
@@ -107,7 +107,7 @@ defmodule Lotta.Worker.Metadata do
         {:notification, :metadata_jobs, %{"error" => ^job_id}} ->
           {:error, "Metadata job errored"}
       after
-        :timer.minutes(2) ->
+        :timer.seconds(30) ->
           {:error, :timeout}
       end
     end)
