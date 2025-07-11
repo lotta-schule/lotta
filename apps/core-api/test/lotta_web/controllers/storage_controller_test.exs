@@ -1,7 +1,7 @@
 defmodule LottaWeb.StorageControllerTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase, async: true
+  use LottaWeb.ConnCase, async: false
   use Lotta.WorkerCase
 
   import Phoenix.ConnTest
