@@ -39,6 +39,7 @@ export const CalendarToolbar = React.memo(
       setCurrentView,
       isCalendarActive,
       toggleCalendar,
+      setCurrentDate,
     } = React.use(CalendarContext);
 
     const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] =
@@ -160,7 +161,15 @@ export const CalendarToolbar = React.memo(
           />
           <CreateEventDialog
             isOpen={isCreateEventDialogOpen}
-            onClose={() => setIsCreateEventDialogOpen(false)}
+            onClose={(newEvent) => {
+              setIsCreateEventDialogOpen(false);
+              if (newEvent) {
+                const nextDate = new Date(newEvent.start);
+                if (!Number.isNaN(nextDate.getTime())) {
+                  setCurrentDate(new Date(newEvent.start));
+                }
+              }
+            }}
           />
         </section>
       </Toolbar>

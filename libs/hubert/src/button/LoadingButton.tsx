@@ -11,7 +11,7 @@ import styles from './LoadingButton.module.scss';
 
 export type LoadingButtonState = 'idle' | 'loading' | 'success' | 'error';
 
-export type LoadingButtonProps<T = void> = Omit<
+export type LoadingButtonProps<T> = Omit<
   ButtonProps,
   'onlyIcon' | 'classes'
 > & {
@@ -116,11 +116,17 @@ export const LoadingButton = ({
       e.preventDefault();
       e.stopPropagation();
 
+      let result: any;
+      let didSucceed = false;
+
       try {
         setCurrentState('loading');
-        await onAction?.(e);
+        result = await onAction?.(e);
+        didSucceed = true;
+        if (resetState === false) {
+          onComplete?.(result);
+        }
         setCurrentState('success');
-        onComplete?.();
       } catch (e) {
         setCurrentState('error');
         onError?.(e);
@@ -128,7 +134,10 @@ export const LoadingButton = ({
         if (resetState !== false) {
           setTimeout(() => {
             setCurrentState('idle');
-          }, 4000);
+            if (didSucceed) {
+              onComplete?.(result);
+            }
+          }, 2000);
         }
       }
     },
