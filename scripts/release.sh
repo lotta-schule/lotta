@@ -26,4 +26,5 @@ done
 
 # Update changelog
 
+export HUSKY_SKIP_HOOKS=true
 pnpm nx release changelog $NEW_VERSION
