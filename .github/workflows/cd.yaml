@@ -18,7 +18,7 @@ env:
 jobs:
   enforce-all-checks:
     runs-on: ubuntu-24.04
-    if: github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'preview')
+    if: (github.event_name == 'push' && github.ref_type != 'tag') || contains(github.event.pull_request.labels.*.name, 'preview')
     permissions:
       checks: read
     steps:
@@ -35,7 +35,11 @@ jobs:
       env_name: '${{ steps.get_env_name.outputs.env_name }}'
     needs:
       - enforce-all-checks
+    if: always()
     steps:
+      - name: fail if enforce-all-checks failed
+        if: ${{ needs.enforce-all-checks.result == 'failure' }}
+        run: exit 1
       - name: Read env name
         id: get_env_name
         run: |
