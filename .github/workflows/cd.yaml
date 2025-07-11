@@ -35,10 +35,11 @@ jobs:
       env_name: '${{ steps.get_env_name.outputs.env_name }}'
     needs:
       - enforce-all-checks
-    if: always()
+    if: |
+      always() &&
+      !failure() &&
+      !cancelled()
     steps:
-      - name: fail if enforce-all-checks failed
-        run: exit ${{ needs.enforce-all-checks.result == 'failure' && '1' || '0' }}
       - name: Read env name
         id: get_env_name
         run: |
@@ -56,6 +57,10 @@ jobs:
     name: ${{ matrix.image.name }} (${{ needs.env_calculator.outputs.env_name }}) Docker images
     needs:
       - env_calculator
+    if: |
+      always() &&
+      !failure() &&
+      !cancelled()
     strategy:
       matrix:
         image:
@@ -85,6 +90,10 @@ jobs:
     needs:
       - publish-docker-images
       - env_calculator
+    if: |
+      always() &&
+      !failure() &&
+      !cancelled()
     uses: ./.github/workflows/e2e.yaml
     with:
       image_tag: ${{ needs.publish-docker-images.outputs.release_name }}
@@ -100,6 +109,10 @@ jobs:
     needs:
       - publish-docker-images
       - env_calculator
+    if: |
+      always() &&
+      !failure() &&
+      !cancelled()
     strategy:
       matrix:
         project: ['core', 'web']
