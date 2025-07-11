@@ -1,3 +1,7 @@
+## 6.0.8 (2025-07-11)
+
+This was a version bump only, there were no code changes.
+
 ## 6.0.7 (2025-07-11)
 
 ### 🩹 Fixes
