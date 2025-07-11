@@ -10,9 +10,24 @@ import {
   Input,
   Label,
 } from '@lotta-schule/hubert';
+import { graphql } from 'api/graphql';
 
 import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
-import CreateUserGroupMutation from 'api/mutation/CreateUserGroupMutation.graphql';
+
+export const CREATE_USER_GROUP = graphql(`
+  mutation CreateUserGroup($group: UserGroupInput!) {
+    group: createUserGroup(group: $group) {
+      id
+      name
+      insertedAt
+      updatedAt
+      isAdminGroup
+      canReadFullName
+      sortKey
+      enrollmentTokens
+    }
+  }
+`);
 
 export interface CreateUserGroupDialogProps {
   isOpen: boolean;
@@ -23,30 +38,30 @@ export interface CreateUserGroupDialogProps {
 export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
   ({ isOpen, onAbort, onConfirm }) => {
     const [name, setName] = React.useState('');
-    const [createUserGroup, { loading: isLoading, error }] = useMutation<
-      { group: UserGroupModel },
-      { group: Partial<UserGroupModel> }
-    >(CreateUserGroupMutation, {
-      update: (cache, { data }) => {
-        if (data?.group) {
-          const readUserGroupsResult = cache.readQuery<{
-            userGroups: UserGroupModel[];
-          }>({ query: GetUserGroupsQuery });
-          cache.writeQuery<{ userGroups: UserGroupModel[] }>({
-            query: GetUserGroupsQuery,
-            data: {
-              userGroups: [
-                ...(readUserGroupsResult?.userGroups ?? []),
-                data.group,
-              ],
-            },
-          });
-        }
-      },
-      onCompleted: ({ group }) => {
-        onConfirm(group);
-      },
-    });
+    const [createUserGroup, { loading: isLoading, error }] = useMutation(
+      CREATE_USER_GROUP,
+      {
+        update: (cache, { data }) => {
+          if (data?.group) {
+            const readUserGroupsResult = cache.readQuery<{
+              userGroups: UserGroupModel[];
+            }>({ query: GetUserGroupsQuery });
+            cache.writeQuery<{ userGroups: UserGroupModel[] }>({
+              query: GetUserGroupsQuery,
+              data: {
+                userGroups: [
+                  ...(readUserGroupsResult?.userGroups ?? []),
+                  data.group,
+                ],
+              },
+            });
+          }
+        },
+        onCompleted: ({ group }) => {
+          onConfirm(group);
+        },
+      }
+    );
     const resetForm = () => {
       setName('');
     };
@@ -63,6 +78,7 @@ export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
               variables: {
                 group: {
                   name,
+                  enrollmentTokens: [],
                 },
               },
             });
