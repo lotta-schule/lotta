@@ -20,7 +20,7 @@ const additionalMocks: MockedResponse[] = [
     request: {
       query: CREATE_USER_GROUP,
       variables: {
-        group: { name: 'Test Group' },
+        group: { name: 'Test Group', enrollmentTokens: [] },
       },
     },
     result: {
