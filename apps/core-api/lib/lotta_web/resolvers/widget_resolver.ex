@@ -71,7 +71,10 @@ defmodule LottaWeb.WidgetResolver do
             []
 
           calendar ->
-            now = DateTime.utc_now()
+            now =
+              Timex.now("Europe/Berlin")
+              |> Timex.beginning_of_day()
+              |> Timex.to_datetime()
 
             Calendar.list_calendar_events(calendar,
               from: now,
