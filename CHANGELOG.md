@@ -1,3 +1,7 @@
+## 6.0.4 (2025-07-11)
+
+This was a version bump only, there were no code changes.
+
 ## 6.0.3 (2025-07-11)
 
 This was a version bump only, there were no code changes.
