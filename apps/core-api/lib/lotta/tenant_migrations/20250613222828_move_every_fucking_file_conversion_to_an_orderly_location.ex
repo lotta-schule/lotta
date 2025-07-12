@@ -25,10 +25,10 @@ defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyL
     count = Enum.count(all_conversions_to_migrate)
 
     all_conversions_to_migrate
-    |> Enum.with_index()
-    |> Enum.each(fn {file_conversion, remote_storage_entity}, i ->
+    |> Enum.with_index(1)
+    |> Enum.each(fn {{file_conversion, remote_storage_entity}, i} ->
       Logger.warning(
-        "(#{prefix()}): Processing file conversion (#{i + 1} / #{count}) #{file_conversion.id} with format #{file_conversion.format}"
+        "(#{prefix()}): Processing file conversion (#{i} / #{count}) #{file_conversion.id} with format #{file_conversion.format}"
       )
 
       migrate_named_format(file_conversion.format, {file_conversion, remote_storage_entity})
