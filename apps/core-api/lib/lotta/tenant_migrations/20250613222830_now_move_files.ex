@@ -3,7 +3,7 @@ defmodule Lotta.Repo.TenantMigrations.NowMoveFiles do
 
   @disable_ddl_transaction true
   @disable_migration_lock true
-  @batch_size 200
+  @batch_size 500
 
   use Ecto.Migration
 

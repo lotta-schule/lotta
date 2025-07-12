@@ -3,7 +3,7 @@ defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyL
 
   @disable_ddl_transaction true
   @disable_migration_lock true
-  @batch_size 200
+  @batch_size 1000
 
   use Ecto.Migration
 
@@ -22,6 +22,10 @@ defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyL
     )
     |> Repo.stream(max_rows: @batch_size, prefix: prefix())
     |> Stream.each(fn {file_conversion, remote_storage_entity} ->
+      Logger.info(
+        "(#{prefix()}): Processing file conversion #{file_conversion.id} with format #{file_conversion.format}"
+      )
+
       case file_conversion.format do
         "storyboard:1200px" ->
           migrate_format({file_conversion, remote_storage_entity}, "poster_1080p")
@@ -36,9 +40,22 @@ defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyL
           migrate_format({file_conversion, remote_storage_entity}, "audioplay_aac")
 
         format ->
-          Logger.warning("File format #{format} is no longer needed. It is being removed...")
-
-          remove_format({file_conversion, remote_storage_entity})
+          if String.starts_with?(format, "poster_") ||
+               String.starts_with?(format, "videoplay_") ||
+               String.starts_with?(format, "preview_") ||
+               String.starts_with?(format, "present_") ||
+               String.starts_with?(format, "avatar_") ||
+               String.starts_with?(format, "logo_") ||
+               String.starts_with?(format, "banner_") ||
+               String.starts_with?(format, "articlepreview_") ||
+               String.starts_with?(format, "pagebg_") ||
+               String.starts_with?(format, "icon_") do
+            Logger.info("File format #{format} is already in the correct location.")
+            :ok
+          else
+            Logger.warning("File format #{format} is no longer needed. It is being removed...")
+            remove_format({file_conversion, remote_storage_entity})
+          end
       end
     end)
     |> Stream.run()
