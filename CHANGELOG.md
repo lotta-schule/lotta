@@ -1,3 +1,13 @@
+## 6.0.9 (2025-07-12)
+
+### 🚀 Features
+
+- **core:** split up migrations into schema and db content for easier biting ([43dfcc78](https://github.com/lotta-schule/lotta/commit/43dfcc78))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.0.8 (2025-07-11)
 
 This was a version bump only, there were no code changes.
