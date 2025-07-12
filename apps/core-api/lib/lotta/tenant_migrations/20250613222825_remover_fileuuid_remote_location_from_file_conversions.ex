@@ -5,15 +5,15 @@ defmodule Lotta.Repo.TenantMigrations.RemoveFileUUIDAndRemoteLocationFromFileCon
 
   def up do
     alter table(:file_conversions) do
-      remove(:file_uuid, :uuid)
-      remove(:remote_location, :string)
+      remove_if_exists(:file_uuid, :uuid)
+      remove_if_exists(:remote_location, :string)
     end
   end
 
   def down do
     alter table(:file_conversions) do
-      add(:file_uuid, :uuid, default: nil)
-      add(:remote_location, :string, default: nil)
+      add(:file_uuid, :uuid)
+      add(:remote_location, :string)
     end
   end
 end
