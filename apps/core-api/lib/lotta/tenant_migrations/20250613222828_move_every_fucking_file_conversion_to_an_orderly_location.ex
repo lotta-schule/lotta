@@ -1,29 +1,26 @@
-defmodule Lotta.Repo.TenantMigrations.MigrateToSelfhostedFileConversions do
+defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyLocation do
   @moduledoc false
+
+  @disable_ddl_transaction true
+  @disable_migration_lock true
+  @batch_size 200
 
   use Ecto.Migration
 
   import Ecto.Query
 
   alias Lotta.{Repo, Storage}
-  alias Lotta.Storage.{File, FileConversion, RemoteStorageEntity, RemoteStorage}
+  alias Lotta.Storage.{FileConversion, RemoteStorageEntity, RemoteStorage}
 
   require Logger
 
   def up do
-    alter table(:file_conversions) do
-      remove(:file_uuid, :uuid)
-      remove(:remote_location, :string)
-    end
-
-    flush()
-
     from(fc in FileConversion,
       join: rse in RemoteStorageEntity,
       on: fc.remote_storage_entity_id == rse.id,
       select: {fc, rse}
     )
-    |> Repo.stream(max_rows: 500, prefix: prefix())
+    |> Repo.stream(max_rows: @batch_size, prefix: prefix())
     |> Stream.each(fn {file_conversion, remote_storage_entity} ->
       case file_conversion.format do
         "storyboard:1200px" ->
@@ -45,31 +42,9 @@ defmodule Lotta.Repo.TenantMigrations.MigrateToSelfhostedFileConversions do
       end
     end)
     |> Stream.run()
-
-    flush()
-
-    from(f in File,
-      join: rse in RemoteStorageEntity,
-      on: f.remote_storage_entity_id == rse.id,
-      where: rse.store_name == ^RemoteStorage.default_store(),
-      select: {f, rse}
-    )
-    |> Repo.stream(max_rows: 250, prefix: prefix())
-    |> Stream.each(fn {file, remote_storage_entity} ->
-      if remote_storage_entity.path != Storage.get_default_path(file) do
-        Storage.copy_to_remote_storage(
-          file,
-          remote_storage_entity.store_name
-        )
-      end
-    end)
   end
 
   def down do
-    alter table(:file_conversions) do
-      add(:file_uuid, :uuid, default: nil)
-      add(:remote_location, :string, default: nil)
-    end
   end
 
   defp migrate_format({file_conversion, remote_storage_entity}, to_format) do

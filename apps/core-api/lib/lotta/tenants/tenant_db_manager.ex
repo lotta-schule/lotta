@@ -103,7 +103,11 @@ defmodule Lotta.Tenants.TenantDbManager do
     {20_240_826_060_632, Lotta.Repo.TenantMigrations.MakeUserGroupIsAdminGroupNotNull},
     {20_240_826_093_644, Lotta.Repo.TenantMigrations.MakeUserGroupCanReadFullNameNotNull},
     {20_241_021_202_316, Lotta.Repo.TenantMigrations.AddTimezoneToEvents},
-    {20_250_613_222_828, Lotta.Repo.TenantMigrations.MigrateToSelfhostedFileConversions},
+    {20_250_613_222_825,
+     Lotta.Repo.TenantMigrations.RemoveFileUUIDAndRemoteLocationFromFileConversions},
+    {20_250_613_222_828,
+     Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyLocation},
+    {20_250_613_222_830, Lotta.Repo.TenantMigrations.NowMoveFiles},
     {20_250_627_065_517, Lotta.Repo.TenantMigrations.AddPagesToFileAndRemoveFullMetadata},
     {20_250_629_003_832, Lotta.Repo.TenantMigrations.MakeConversionFormatsUnique},
     {20_250_711_004_039, Lotta.Repo.TenantMigrations.MakeUsergroupEnrollmenttokensArrayNonNull}
