@@ -1,10 +1,5 @@
 defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyLocation do
   @moduledoc false
-
-  @disable_ddl_transaction true
-  @disable_migration_lock true
-  @batch_size 1000
-
   use Ecto.Migration
 
   import Ecto.Query
@@ -14,54 +9,68 @@ defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyL
 
   require Logger
 
+  @disable_ddl_transaction true
+  @disable_migration_lock true
+  @batch_size 1000
+
   def up do
-    from(fc in FileConversion,
-      join: rse in RemoteStorageEntity,
-      on: fc.remote_storage_entity_id == rse.id,
-      select: {fc, rse}
-    )
-    |> Repo.stream(max_rows: @batch_size, prefix: prefix())
-    |> Stream.each(fn {file_conversion, remote_storage_entity} ->
-      Logger.info(
-        "(#{prefix()}): Processing file conversion #{file_conversion.id} with format #{file_conversion.format}"
+    all_conversions_to_migrate =
+      from(fc in FileConversion,
+        join: rse in RemoteStorageEntity,
+        on: fc.remote_storage_entity_id == rse.id,
+        select: {fc, rse}
+      )
+      |> Repo.all(max_rows: @batch_size, prefix: prefix())
+
+    count = Enum.count(all_conversions_to_migrate)
+
+    all_conversions_to_migrate
+    |> Enum.with_index()
+    |> Enum.each(fn {file_conversion, remote_storage_entity}, i ->
+      Logger.warning(
+        "(#{prefix()}): Processing file conversion (#{i + 1} / #{count}) #{file_conversion.id} with format #{file_conversion.format}"
       )
 
-      case file_conversion.format do
-        "storyboard:1200px" ->
-          migrate_format({file_conversion, remote_storage_entity}, "poster_1080p")
-
-        "mp4:" <> rest when rest in ["480p", "720p", "1080p"] ->
-          migrate_format({file_conversion, remote_storage_entity}, "videoplay_#{rest}-mp4")
-
-        "webm:" <> rest when rest in ["480p", "720p", "1080p"] ->
-          migrate_format({file_conversion, remote_storage_entity}, "videoplay_#{rest}-webm")
-
-        "aac" ->
-          migrate_format({file_conversion, remote_storage_entity}, "audioplay_aac")
-
-        format ->
-          if String.starts_with?(format, "poster_") ||
-               String.starts_with?(format, "videoplay_") ||
-               String.starts_with?(format, "preview_") ||
-               String.starts_with?(format, "present_") ||
-               String.starts_with?(format, "avatar_") ||
-               String.starts_with?(format, "logo_") ||
-               String.starts_with?(format, "banner_") ||
-               String.starts_with?(format, "articlepreview_") ||
-               String.starts_with?(format, "pagebg_") ||
-               String.starts_with?(format, "icon_") do
-            Logger.info("File format #{format} is already in the correct location.")
-            :ok
-          else
-            Logger.warning("File format #{format} is no longer needed. It is being removed...")
-            remove_format({file_conversion, remote_storage_entity})
-          end
-      end
+      migrate_named_format(file_conversion.format, {file_conversion, remote_storage_entity})
     end)
-    |> Stream.run()
   end
 
   def down do
+  end
+
+  defp migrate_named_format("storyboard:1200px", format),
+    do: migrate_format(format, "poster_1080p")
+
+  defp migrate_named_format("mp4:" <> rest, format) when rest in ["480p", "720p", "1080p"],
+    do: migrate_format(format, "videoplay_#{rest}-mp4")
+
+  defp migrate_named_format("webm:" <> rest, format) when rest in ["480p", "720p", "1080p"],
+    do: migrate_format(format, "videoplay_#{rest}-webm")
+
+  defp migrate_named_format("aac", format), do: migrate_format(format, "audioplay_aac")
+
+  defp migrate_named_format(named_format, format) do
+    supported_categories = [
+      "preview",
+      "present",
+      "avatar",
+      "logo",
+      "banner",
+      "articlepreview",
+      "pagebg",
+      "icon",
+      "poster",
+      "videoplay",
+      "audioplay"
+    ]
+
+    if Enum.any?(supported_categories, &String.starts_with?(named_format, &1)) do
+      Logger.info("File format #{named_format} is already in the correct location.")
+      :ok
+    else
+      Logger.warning("File format #{named_format} is no longer needed. It is being removed...")
+      remove_format(format)
+    end
   end
 
   defp migrate_format({file_conversion, remote_storage_entity}, to_format) do
