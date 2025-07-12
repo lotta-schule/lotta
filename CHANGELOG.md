@@ -1,3 +1,13 @@
+## 6.0.10 (2025-07-12)
+
+### 🩹 Fixes
+
+- **core:** Small adjustments on file_uuid and remote_location removal ([468aa5d0](https://github.com/lotta-schule/lotta/commit/468aa5d0))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.0.9 (2025-07-12)
 
 ### 🚀 Features
