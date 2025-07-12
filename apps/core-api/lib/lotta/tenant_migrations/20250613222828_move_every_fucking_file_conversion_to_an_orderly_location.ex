@@ -31,7 +31,16 @@ defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyL
         "(#{prefix()}): Processing file conversion (#{i} / #{count}) #{file_conversion.id} with format #{file_conversion.format}"
       )
 
-      migrate_named_format(file_conversion.format, {file_conversion, remote_storage_entity})
+      try do
+        migrate_named_format(file_conversion.format, {file_conversion, remote_storage_entity})
+      catch
+        :exit, reason ->
+          Logger.error(
+            "(#{prefix()}): Failed to migrate file conversion #{file_conversion.id} with format #{file_conversion.format}: #{inspect(reason)}"
+          )
+
+          :ok
+      end
     end)
   end
 
@@ -107,7 +116,8 @@ defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyL
         end
 
       {:error, changeset} ->
-        Logger.error("Failed to remove file conversion #{file_conversion.id}: #{changeset}")
+        Logger.warning("Failed to remove file conversion #{file_conversion.id}: #{changeset}")
+        :ok
     end
   end
 end
