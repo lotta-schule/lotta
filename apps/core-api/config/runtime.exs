@@ -329,10 +329,10 @@ config :lotta, Oban,
   ],
   queues:
     [
-      file_conversion: [limit: 3],
+      file_conversion: [limit: 4],
       media_conversion: [limit: 1],
-      preview_generation: [limit: 1],
-      file_metadata: [limit: 1]
+      preview_generation: [limit: 2],
+      file_metadata: [limit: 2]
     ]
     |> Enum.filter(fn {k, _} ->
       to_string(k) not in SystemConfig.get("OBAN_EXCLUDE_QUEUES", cast: :string_list)
