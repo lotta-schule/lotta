@@ -12,7 +12,7 @@ defmodule ExAws.Request.Finch do
   The default config handles setting the above.
   """
 
-  @default_opts [receive_timeout: 30_000]
+  @default_opts [receive_timeout: 90_000]
 
   @impl true
   def request(method, url, body \\ "", headers \\ [], http_opts \\ []) do
