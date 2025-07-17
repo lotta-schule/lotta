@@ -140,7 +140,11 @@ defmodule Lotta.PushNotification do
       key_identifier: config[:key_identifier],
       team_id: config[:team_id],
       topic: config[:topic],
-      mode: config[:prod?],
+      mode:
+        case config[:prod?] do
+          true -> :prod
+          _ -> :dev
+        end,
       name: provider_name(:apns)
     ]
   end
