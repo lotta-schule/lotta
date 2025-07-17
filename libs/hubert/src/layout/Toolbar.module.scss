@@ -1,4 +1,4 @@
-@import "../theme/breakpoints";
+@use "../theme/breakpoints" as *;
 
 .root {
   flex-shrink: 0;
@@ -26,9 +26,9 @@
     padding-inline: var(--lotta-spacing);
   }
 
-  & > div,
-  & > button,
-  & > span {
+  &>div,
+  &>button,
+  &>span {
     &:not(:first-child) {
       margin-left: var(--lotta-spacing);
     }

@@ -16,6 +16,14 @@ mutation UpdateArticle($id: ID!, $article: ArticleInput!) {
       fileType
       filename
       filesize
+      formats(category: "ARTICLEPREVIEW") {
+        name
+        url
+        type
+        availability {
+          status
+        }
+      }
     }
     contentModules {
       id
@@ -30,10 +38,13 @@ mutation UpdateArticle($id: ID!, $article: ArticleInput!) {
         filename
         filesize
         insertedAt
-        fileConversions {
-          id
-          format
-          mimeType
+        formats {
+          name
+          url
+          type
+          availability {
+            status
+          }
         }
       }
     }

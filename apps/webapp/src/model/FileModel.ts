@@ -15,28 +15,78 @@ export interface DirectoryModel {
   parentDirectory?: Partial<DirectoryModel> | null;
 }
 
-export enum FileModelType {
-  Pdf = 'PDF',
-  Image = 'IMAGE',
-  Video = 'VIDEO',
-  Audio = 'AUDIO',
-  Misc = 'MISC',
-  Directory = 'DIRECTORY',
-}
+export type AvailableFormat =
+  | 'ORIGINAL'
+  | 'PREVIEW_200'
+  | 'PREVIEW_400'
+  | 'PREVIEW_800'
+  | 'PRESENT_1200'
+  | 'PRESENT_1600'
+  | 'PRESENT_2400'
+  | 'PRESENT_3200'
+  | 'AVATAR_50'
+  | 'AVATAR_100'
+  | 'AVATAR_250'
+  | 'AVATAR_500'
+  | 'AVATAR_1000'
+  | 'LOGO_300'
+  | 'LOGO_600'
+  | 'BANNER_330'
+  | 'BANNER_660'
+  | 'BANNER_990'
+  | 'BANNER_1320'
+  | 'ARTICLEPREVIEW_330'
+  | 'ARTICLEPREVIEW_660'
+  | 'PAGEBG_1024'
+  | 'PAGEBG_1280'
+  | 'PAGEBG_1920'
+  | 'PAGEBG_2560'
+  | 'ICON_64'
+  | 'ICON_128'
+  | 'ICON_256'
+  | 'POSTER_1080P'
+  | 'VIDEOPLAY_200P_WEBM'
+  | 'VIDEOPLAY_480P_WEBM'
+  | 'VIDEOPLAY_720P_WEBM'
+  | 'VIDEOPLAY_1080P_WEBM'
+  | 'VIDEOPLAY_200P_MP4'
+  | 'VIDEOPLAY_480P_MP4'
+  | 'VIDEOPLAY_720P_MP4'
+  | 'VIDEOPLAY_1080P_MP4'
+  | 'AUDIOPLAY_AAC'
+  | 'AUDIOPLAY_OGG';
+
+export type FileModelType =
+  | 'PDF'
+  | 'IMAGE'
+  | 'VIDEO'
+  | 'AUDIO'
+  | 'BINARY'
+  | 'MISC';
 
 export interface FileModel {
   __typename?: 'File';
   id: ID;
-  userId: ID;
+  userId?: ID;
   user?: UserModel;
-  insertedAt: string;
-  updatedAt: string;
-  filename: string;
-  filesize: number;
-  mimeType: string;
-  fileType: FileModelType;
-  parentDirectory: Partial<DirectoryModel>;
-  fileConversions: FileConversionModel[];
+  insertedAt?: string;
+  updatedAt?: string;
+  filename?: string;
+  filesize?: number;
+  mimeType?: string;
+  fileType?: FileModelType;
+  parentDirectory?: Partial<DirectoryModel>;
+  formats: {
+    name: AvailableFormat;
+    url: string;
+    type?: FileModelType;
+    mimeType?: string;
+    availability: {
+      status: 'READY' | 'AVAILABLE' | 'REQUESTABLE' | 'PROCESSING' | 'FAILED';
+      progress?: number;
+      error?: string;
+    };
+  }[];
   usage?: FileModelUsageLocation[];
 }
 

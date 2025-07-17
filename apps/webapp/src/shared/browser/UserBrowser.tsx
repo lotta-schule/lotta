@@ -12,14 +12,14 @@ import {
 } from '@lotta-schule/hubert';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
 import { DirectoryModel, FileModel } from 'model';
 import { File, User } from 'util/model';
-import { useCurrentUser } from 'util/user';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 import { FileSize } from '@lotta-schule/hubert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
-import { useServerData } from 'shared/ServerDataContext';
 import {
   useCreateDirectory,
   useDeleteNode,
@@ -38,7 +38,9 @@ import { FileUsageOverview } from './FileUsageOverview';
 import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
 
 declare module '@lotta-schule/hubert' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface DefaultFileMetadata extends FileModel {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface DefaultDirectoryMetadata extends DirectoryModel {}
 }
 
@@ -46,13 +48,13 @@ export type UserBrowserProps = {
   style?: React.CSSProperties;
   multiple?: boolean;
   isNodeDisabled?: (node: BrowserNode) => boolean;
-  onSelect?: (file: FileModel[]) => void; // TODO: Must be implemented
+  onSelect?: (file: FileModel[]) => void;
 };
 
 export const UserBrowser = React.memo(
   ({ style, multiple, isNodeDisabled, onSelect }: UserBrowserProps) => {
-    const { baseUrl } = useServerData();
     const currentUser = useCurrentUser();
+    const { t } = useTranslation();
 
     const createDirectory = useCreateDirectory();
     const renameNode = useRenameNode();
@@ -102,50 +104,60 @@ export const UserBrowser = React.memo(
 
     const getDownloadUrl = React.useCallback<
       Exclude<BrowserProps['getDownloadUrl'], undefined>
-    >(
-      (node) => {
-        if (isFileNode(node)) {
-          return File.getFileRemoteLocation(baseUrl, node.meta);
-        }
-        return null;
-      },
-      [baseUrl]
-    );
-
-    const getPreviewUrl = React.useCallback(
-      (node: BrowserNode) => {
-        if (isFileNode(node)) {
-          return File.getPreviewImageLocation(baseUrl, node.meta, {
-            width: (devicePixelRatio || 1) * 200,
-            resize: 'contain',
-          });
-        }
-      },
-      [baseUrl]
-    );
-
-    const getMetadata = React.useCallback((node: BrowserNode) => {
-      const base = {
-        'Erstellt am': format(new Date(node.meta.insertedAt), 'Pp', {
-          locale: de,
-        }),
-      };
-
+    >((node) => {
       if (isFileNode(node)) {
-        return {
-          ...base,
-          Größe: new FileSize(node.meta.filesize).humanize(),
-          typ: node.meta.mimeType,
-          Formate: node.meta.fileConversions?.length ?? 0,
-          Nutzung: <FileUsageOverview file={node.meta} />,
-        };
-      } else if (isDirectoryNode(node)) {
-        return {
-          ...base,
-          ...(node.meta.user === null ? { Sichtbarkeit: 'Öffentlich' } : {}),
-        };
+        return File.getRemoteUrl(node.meta, 'original');
+      }
+      return null;
+    }, []);
+
+    const getPreviewUrl = React.useCallback((node: BrowserNode) => {
+      if (isFileNode(node)) {
+        const formatName = devicePixelRatio < 2 ? 'PREVIEW_200' : 'PREVIEW_400';
+        return (
+          node.meta.formats.find((f) => f.name === formatName)?.url ?? null
+        );
       }
     }, []);
+
+    const getMetadata = React.useCallback(
+      (node: BrowserNode) => {
+        let result = {
+          [t('uploaded')]: format(new Date(node.meta.insertedAt || ''), 'Pp', {
+            locale: de,
+          }),
+        };
+
+        if (isFileNode(node)) {
+          result = {
+            ...result,
+            [t('filesize')]: new FileSize(node.meta.filesize || 0).humanize(),
+            [t('type')]: node.meta.mimeType,
+            [t('formats')]:
+              node.meta.formats?.filter(
+                (f) => f.availability.status === 'READY'
+              ).length ?? 0,
+            [t('pages')]: node.meta.metadata?.pages,
+            [t('duration')]:
+              node.meta.metadata?.duration &&
+              Math.floor(node.meta.metadata.duration) + 's',
+            [t('usage')]: <FileUsageOverview file={node.meta} />,
+          };
+        } else if (isDirectoryNode(node)) {
+          result = {
+            ...result,
+            [t('visibility')]: node.meta.user === null ? t('public') : '',
+          };
+        }
+
+        return Object.fromEntries(
+          Object.entries(result).filter(
+            ([, value]) => typeof value === 'number' || !!value
+          )
+        );
+      },
+      [t]
+    );
 
     const mode: BrowserMode = React.useMemo(() => {
       if (onSelect) {

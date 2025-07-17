@@ -1,4 +1,4 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   display: flex;
@@ -13,7 +13,7 @@
 
   transition: min-height 0.3s ease-in-out;
 
-  & > nav {
+  &>nav {
     display: flex;
     align-items: stretch;
     border-bottom: 1px solid rgb(var(--lotta-divider-color));
@@ -27,6 +27,7 @@
 
       &:hover {
         background: rgba(var(--lotta-primary-color), 0.1);
+
         svg {
           transform: scale(1.21);
         }
@@ -65,10 +66,12 @@
         display: none;
       }
     }
+
     .logoLinkClose:not(.forceLogoLinkClose) {
       svg {
         padding: 0;
       }
+
       @media screen and (max-width: $max-xs) {
         display: none;
       }
@@ -82,6 +85,7 @@
   .contentSection {
     overflow: auto;
     padding-inline: var(--lotta-spacing);
+
     &.takesFullSpace {
       overflow: hidden;
       display: flex;

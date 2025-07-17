@@ -14,14 +14,16 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./test.setup.ts'],
     reporters: process.env.GITHUB_ACTIONS
-      ? ['default', 'github-actions']
+      ? ['default', 'junit', 'github-actions']
       : ['default'],
+    outputFile: 'coverage/junit.xml',
 
     retry: process.env.GITHUB_ACTIONS ? 2 : 0,
 
     coverage: {
       clean: true,
       reportsDirectory: 'coverage',
+      enabled: !!process.env.CI,
       provider: 'istanbul',
       reporter: ['json'],
       include: ['src/**/*'],
@@ -43,6 +45,14 @@ export default defineConfig({
 
     env: {
       TZ: 'Europe/Berlin',
+    },
+  },
+
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+      },
     },
   },
 });

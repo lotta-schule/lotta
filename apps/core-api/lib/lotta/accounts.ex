@@ -17,6 +17,11 @@ defmodule Lotta.Accounts do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
+  def query(Category, _params) do
+    Category
+    |> preload([:groups, :category])
+  end
+
   def query(queryable, _params) do
     queryable
   end
@@ -212,7 +217,7 @@ defmodule Lotta.Accounts do
   """
   @spec list_user_groups() :: [UserGroup.t()]
   def list_user_groups() do
-    Repo.all(from UserGroup, order_by: [{:desc, :sort_key}, {:desc, :is_admin_group}])
+    Repo.all(from(UserGroup, order_by: [{:desc, :sort_key}, {:desc, :is_admin_group}]))
   end
 
   @doc """
@@ -370,7 +375,7 @@ defmodule Lotta.Accounts do
 
       error ->
         Logger.error(inspect(error))
-        Sentry.capture_message(inspect(error), extra: %{email: email})
+        Sentry.capture_message(inspect(error), extra: %{email: email, prefix: prefix})
         {:error, :invalid_token}
     end
   end

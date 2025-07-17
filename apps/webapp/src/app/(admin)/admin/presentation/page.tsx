@@ -3,14 +3,13 @@ import { DefaultThemes } from '@lotta-schule/hubert';
 import { faPalette } from '@fortawesome/free-solid-svg-icons';
 import { AdminPage } from '../_component/AdminPage';
 import { loadTenant } from 'loader';
-import { getBaseUrl } from 'helper';
 import * as themes from './_theme';
 import { Presentation } from './Presentation';
 
 const defaultTheme = DefaultThemes.standard;
 
 async function PresentationPage() {
-  const [tenant, baseUrl] = await Promise.all([loadTenant(), getBaseUrl()]);
+  const tenant = await loadTenant();
 
   const additionalThemes = [
     {
@@ -26,11 +25,7 @@ async function PresentationPage() {
 
   return (
     <AdminPage icon={faPalette} title={'Darstellung'} hasHomeLink>
-      <Presentation
-        tenant={tenant}
-        baseUrl={baseUrl}
-        additionalThemes={additionalThemes}
-      />
+      <Presentation tenant={tenant} additionalThemes={additionalThemes} />
     </AdminPage>
   );
 }

@@ -4,8 +4,7 @@ import { ArticleModel, WidgetModel, ID, ArticleFilter } from 'model';
 import { LegacyHeader, Main, Sidebar } from 'layout';
 import { ErrorMessage, NoSsr, useScrollEvent } from '@lotta-schule/hubert';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { File, User } from 'util/model';
-import { useServerData } from 'shared/ServerDataContext';
+import { User } from 'util/model';
 import { WidgetsList } from './widgetsList/WidgetsList';
 import { ArticlePreview } from 'article/preview';
 import { useCategory } from 'util/categories/useCategory';
@@ -23,7 +22,6 @@ export interface CategoryPageProps {
 }
 
 export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
-  const { baseUrl } = useServerData();
   const user = useCurrentUser();
   const category = useCategory(categoryId);
   const twoColumnsLayout = category?.layoutName === '2-columns';
@@ -35,29 +33,6 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
   const FETCH_MORE_OFFSET =
     typeof window !== 'undefined' ? window.innerHeight / 2 || 512 : 0;
 
-  const nextFetchCount = (() => {
-    if (typeof window === 'undefined') {
-      return PREFETCH_COUNT;
-    }
-    // calculate how much articles must be fetched by guessing how much article previews would fit by current screen size
-    const defaultElmHeight = ((layoutName?: string | null) => {
-      switch (layoutName) {
-        case 'densed':
-          return 110;
-        case '2-columns':
-          return 175;
-        default:
-          return 300;
-      }
-    })(category?.layoutName);
-    return (
-      Math.round((1.25 * window.innerHeight) / defaultElmHeight) +
-      (category?.layoutName === '2-columns' && defaultElmHeight % 2 !== 0
-        ? 1
-        : 0)
-    );
-  })();
-
   const {
     data,
     error,
@@ -67,9 +42,9 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
     { articles: ArticleModel[] },
     { categoryId: ID | null; filter: ArticleFilter }
   >(GetArticlesQuery, {
-    variables: { categoryId, filter: { first: nextFetchCount } },
+    variables: { categoryId, filter: { first: PREFETCH_COUNT } },
     onCompleted: ({ articles }) => {
-      if (articles.length < nextFetchCount) {
+      if (articles.length < PREFETCH_COUNT) {
         const lastDate = [...articles].sort(
           (a1, a2) =>
             new Date(a1.updatedAt).getTime() - new Date(a2.updatedAt).getTime()
@@ -89,7 +64,7 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
     ) {
       if (
         data?.articles &&
-        data.articles.length > nextFetchCount - 1 &&
+        data.articles.length > PREFETCH_COUNT - 1 &&
         !isLoading
       ) {
         const lastDate = [...(data?.articles ?? [])].sort(
@@ -100,7 +75,7 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
           fetchMore({
             variables: {
               filter: {
-                first: nextFetchCount,
+                first: PREFETCH_COUNT,
                 updated_before: lastDate,
               },
             },
@@ -121,14 +96,7 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
         }
       }
     }
-  }, [
-    FETCH_MORE_OFFSET,
-    data,
-    nextFetchCount,
-    isLoading,
-    lastFetchedElementDate,
-    fetchMore,
-  ]);
+  }, [FETCH_MORE_OFFSET, data, isLoading, lastFetchedElementDate, fetchMore]);
 
   const {
     data: widgetsData,
@@ -171,12 +139,7 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
     <>
       <CategoryHead category={category} />
       <Main>
-        <LegacyHeader
-          bannerImageUrl={
-            category.bannerImageFile &&
-            File.getFileRemoteLocation(baseUrl, category.bannerImageFile)
-          }
-        >
+        <LegacyHeader bannerImage={category.bannerImageFile || undefined}>
           <h2 data-testid="title">{category.title}</h2>
         </LegacyHeader>
         <div className={styles.articles}>

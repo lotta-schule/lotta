@@ -7,53 +7,31 @@ defmodule LottaWeb.CalendarResolver do
   require Logger
 
   def get_external(%{url: url} = args, _info) do
-    result_body =
-      ConCache.fetch_or_store(:http_cache, url, fn ->
-        case :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}]) do
-          {:ok, 200, _headers, client_ref} ->
-            {:ok, body} = :hackney.body(client_ref)
-            {:ok, %ConCache.Item{value: to_string(body), ttl: :timer.hours(6)}}
+    with {:ok, body} <- fetch_calendar_data(url) do
+      start_date = DateTime.now!("Europe/Berlin") |> DateTime.add(-60 * 60 * 24, :second)
+      end_date = DateTime.now!("Europe/Berlin") |> Timex.shift(days: args[:days] || 90)
 
-          {:ok, status, _headers, _client_ref} ->
-            {:error, "Calendar Error #{status}"}
+      is_in_between = fn
+        nil, _, _ -> true
+        date, start, enddate -> Timex.between?(date, start, enddate, inclusive: true)
+      end
 
-          error ->
-            Logger.error(error)
-            {:error, :unknown_error}
-        end
-      end)
+      events =
+        body
+        |> ExIcal.parse()
+        |> ExIcal.Recurrence.add_recurring_events(end_date)
+        |> Enum.filter(fn event ->
+          is_in_between.(event.start, start_date, end_date) &&
+            is_in_between.(event.end, start_date, end_date)
+        end)
+        |> ExIcal.sort_by_date()
 
-    case result_body do
-      {:ok, body} ->
-        try do
-          start_date = DateTime.now!("Europe/Berlin") |> DateTime.add(-60 * 60 * 24, :second)
-          end_date = DateTime.now!("Europe/Berlin") |> Timex.shift(days: args[:days] || 90)
-
-          is_in_between = fn
-            nil, _, _ -> true
-            date, start, enddate -> Timex.between?(date, start, enddate, inclusive: true)
-          end
-
-          events =
-            body
-            |> ExIcal.parse()
-            |> ExIcal.Recurrence.add_recurring_events(end_date)
-            |> Enum.filter(fn event ->
-              is_in_between.(event.start, start_date, end_date) &&
-                is_in_between.(event.end, start_date, end_date)
-            end)
-            |> ExIcal.sort_by_date()
-
-          {:ok, events}
-        rescue
-          e ->
-            Logger.error(e)
-            {:error, :invalid_calendar_format}
-        end
-
-      error ->
-        error
+      {:ok, events}
     end
+  rescue
+    e ->
+      Logger.error(e)
+      {:error, :invalid_calendar_format}
   end
 
   def list(_args, _context) do
@@ -160,6 +138,23 @@ defmodule LottaWeb.CalendarResolver do
     event
     |> Map.put(:recurrence, get_recurrence(event))
     |> Map.reject(fn {key, _val} -> String.starts_with?(to_string(key), "recurrence_") end)
+  end
+
+  defp fetch_calendar_data(url) do
+    ConCache.get_or_store(:http_cache, url, fn ->
+      with {:ok, %{body: body}} <- Tesla.get(http_client(), url) do
+        {:ok, body}
+      end
+    end)
+  end
+
+  defp http_client() do
+    Tesla.client([
+      Tesla.Middleware.Telemetry,
+      {Tesla.Middleware.Headers, [{"Accept-Charset", "utf-8"}, {"User-Agent", "Lotta"}]},
+      Tesla.Middleware.DecompressResponse,
+      Tesla.Middleware.FollowRedirects
+    ])
   end
 
   defp parse_event_input(data) do

@@ -7,15 +7,9 @@ import Config
     :prod -> {{0, 0, 0, 0, 0, 0, 0, 0}, 4000}
   end
 
-server =
-  case config_env() do
-    :test -> false
-    _ -> true
-  end
-
 config :lotta, LottaWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   http: [ip: ip, port: port],
-  server: server,
   url: [host: "localhost"],
   render_errors: [view: LottaWeb.ErrorView, accepts: ~w(json)],
   pubsub_server: Lotta.PubSub,

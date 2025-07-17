@@ -5,6 +5,13 @@ import { KeyboardArrowLeft } from '../icon';
 import userEvent from '@testing-library/user-event';
 
 describe('LoadingButton', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
   it('renders button label', () => {
     const screen = render(<LoadingButton label="Click Me" />);
     const button = screen.getByRole('button', { name: /Click Me/i });
@@ -100,13 +107,15 @@ describe('LoadingButton', () => {
       resolve();
 
       await waitFor(() => {
+        expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+      });
+
+      vi.advanceTimersByTime(2000);
+
+      await waitFor(() => {
         expect(onComplete).toHaveBeenCalled();
       });
       expect(onError).not.toHaveBeenCalled();
-
-      await waitFor(() => {
-        expect(screen.getByTestId('SuccessIcon')).toBeVisible();
-      });
     });
 
     it('should call the handler and show the error state', async () => {
@@ -210,7 +219,7 @@ describe('LoadingButton', () => {
           expect(screen.getByTestId('SuccessIcon')).toBeVisible();
         });
 
-        await act(() => vi.advanceTimersByTimeAsync(5000));
+        await act(() => vi.advanceTimersByTimeAsync(2000));
 
         expect(
           screen.getByRole('button', { name: /Click Me/i })
@@ -240,7 +249,7 @@ describe('LoadingButton', () => {
           expect(screen.getByTestId('SuccessIcon')).toBeVisible();
         });
 
-        await act(() => vi.advanceTimersByTimeAsync(5000));
+        await act(() => vi.advanceTimersByTimeAsync(2000));
 
         expect(screen.getByTestId('SuccessIcon')).toBeVisible();
       });

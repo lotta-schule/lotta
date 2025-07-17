@@ -11,9 +11,74 @@ import {
   ListItem,
   LoadingButton,
 } from '@lotta-schule/hubert';
+import { graphql } from 'api/graphql';
 
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
-import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
+
+export const DELETE_USER_GROUP = graphql(`
+  mutation DeleteUserGroup($id: ID!) {
+    deleteUserGroup(id: $id) {
+      userGroup {
+        id
+      }
+      unpublishedArticles {
+        id
+        insertedAt
+        updatedAt
+        title
+        preview
+        tags
+        readyToPublish
+        published
+        isPinnedToTop
+        previewImageFile {
+          id
+          mimeType
+          fileType
+          filename
+          filesize
+        }
+        contentModules {
+          id
+          type
+          content
+          sortKey
+          configuration
+          files {
+            id
+            mimeType
+            fileType
+            filename
+            filesize
+            insertedAt
+            formats {
+              name
+              url
+              type
+              availability {
+                status
+              }
+            }
+          }
+        }
+        category {
+          id
+          title
+        }
+        groups {
+          id
+          sortKey
+          name
+        }
+        users {
+          id
+          nickname
+          name
+        }
+      }
+    }
+  }
+`);
 
 export interface DeleteUserGroupDialogProps {
   group: UserGroupModel | null;
@@ -32,7 +97,7 @@ export const DeleteUserGroupDialog = React.memo(
           };
         },
         { id: ID }
-      >(DeleteUserGroupMutation, {
+      >(DELETE_USER_GROUP, {
         update: (cache, { data }) => {
           if (data?.deleteUserGroup?.userGroup) {
             const unpublishedArticlesResult = cache.readQuery<{

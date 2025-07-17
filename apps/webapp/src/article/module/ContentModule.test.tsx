@@ -65,7 +65,7 @@ describe('shared/article/module/ContentModule', () => {
           article={article}
           contentModule={textContentModule}
           index={0}
-          onUpdateModule={vi.fn}
+          onUpdateModule={vi.fn()}
           onRemoveContentModule={onRemoveContentModule}
           onMoveDown={vi.fn}
         />

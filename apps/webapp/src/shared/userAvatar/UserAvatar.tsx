@@ -3,34 +3,41 @@ import { Avatar, AvatarProps } from '@lotta-schule/hubert';
 import { UserModel } from 'model';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { useIsRetina } from 'util/useIsRetina';
-import { useServerData } from 'shared/ServerDataContext';
 import { useTranslation } from 'react-i18next';
+import { useResponsiveProps } from 'util/image/ResponsiveImage';
 
-export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
-  user: UserModel;
+export type UserAvatarProps = Omit<AvatarProps, 'src' | 'alt'> & {
+  user: Pick<UserModel, 'avatarImageFile' | 'name' | 'nickname'>;
   className?: string;
   size?: number;
-}
+};
 
 export const UserAvatar = React.memo(
-  ({ user, size, ...props }: UserAvatarProps) => {
+  ({ user, size = 100, ...props }: UserAvatarProps) => {
     const { t } = useTranslation();
-    const { baseUrl } = useServerData();
-    const retinaMultiplier = useIsRetina() ? 2 : 1;
-    const src = User.getAvatarUrl(
-      baseUrl,
-      user,
-      size ? size * retinaMultiplier : undefined
+
+    const sizes = React.useMemo(() => {
+      const availableSizes = [50, 100, 250, 500, 1000];
+      const matchingIndex = availableSizes.findIndex((s) => s >= size) || 0;
+
+      return availableSizes.splice(matchingIndex, 2) as [number, number];
+    }, [size]);
+
+    const { formats: _formats, ...responsiveProps } = useResponsiveProps(
+      user.avatarImageFile,
+      'avatar',
+      sizes
     );
 
     return (
       <Avatar
+        loading="lazy"
         data-testid={'Avatar'}
-        src={src}
+        src={User.getDefaultAvatarUrl(user)}
         style={size ? { width: size, height: size } : {}}
         title={t('Avatar of {{name}}', { name: User.getNickname(user) })}
         {...props}
+        {...responsiveProps}
       />
     );
   }

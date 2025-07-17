@@ -32,12 +32,10 @@ query SearchDirectoriesAndFiles($searchterm: String!) {
     mimeType
     fileType
     userId
-    fileConversions {
-      id
-      insertedAt
-      updatedAt
-      format
-      mimeType
+    formats(category: "PREVIEW") {
+      name
+      url
+      type
     }
     parentDirectory {
       id

@@ -32,7 +32,11 @@ export const SplitViewButton = ({
         (action === 'open' ? 'Seitenleiste öffnen' : 'Seitenleiste schließen')
       }
       onClick={() => {
-        action === 'open' ? open() : close();
+        if (action === 'open') {
+          open();
+        } else {
+          close();
+        }
       }}
     />
   );

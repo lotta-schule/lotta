@@ -9,7 +9,6 @@ import {
   GET_TENANT_TIMESERIES_ANALYTICS,
 } from './_graphql';
 import userEvent from '@testing-library/user-event';
-
 vi.useFakeTimers({
   shouldAdvanceTime: true,
   now: new Date('2025-08-16T12:00:00.000Z'),
@@ -223,17 +222,19 @@ describe('Analytics', () => {
     it('shows the correct amount of months in the selection', async () => {
       const user = userEvent.setup();
 
-      const screen = render(<Analytics />, {}, { additionalMocks: mocks });
+      const screen = await React.act(() =>
+        render(<Analytics />, {}, { additionalMocks: mocks })
+      );
 
       expect(
         screen.getByRole('button', {
-          name: 'vergangene 30 Tage Monat wählen',
+          name: 'vergangene 30 Tage Zeitraum wählen',
         })
-      ).toBeVisible();
+      ).not.toBeDisabled();
 
       await user.click(
         screen.getByRole('button', {
-          name: 'vergangene 30 Tage Monat wählen',
+          name: 'vergangene 30 Tage Zeitraum wählen',
         })
       );
 
@@ -242,6 +243,7 @@ describe('Analytics', () => {
           screen.getByRole('option', { name: 'August 2025' })
         ).toBeVisible();
       });
+
       expect(screen.getByRole('option', { name: 'Juli 2025' })).toBeVisible();
       expect(screen.getByRole('option', { name: 'Juni 2025' })).toBeVisible();
       expect(screen.getByRole('option', { name: 'Mai 2025' })).toBeVisible();
@@ -271,16 +273,20 @@ describe('Analytics', () => {
       expect(screen.getByRole('option', { name: 'März 2024' })).toBeVisible();
       expect(screen.queryByRole('option', { name: 'Februar 2024' })).toBeNull();
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await React.act(() =>
+        user.click(screen.getByRole('option', { name: 'April 2025' }))
+      );
 
-      await user.click(screen.getByRole('option', { name: 'April 2025' }));
+      await waitFor(() => {
+        expect(mocks[2].result).toHaveBeenCalled();
+      });
 
       await waitFor(() => {
         expect(
           screen.getByRole('button', {
-            name: 'April 2025 Monat wählen',
+            name: /Zeitraum wählen/,
           })
-        ).toBeVisible();
+        ).toHaveAccessibleName(/April 2025/);
       });
 
       await waitFor(() => {

@@ -69,11 +69,3 @@ jobs:
         run: |
           git push origin $(git branch --show-current)
           git push origin tag v${{ steps.bump.outputs.version }}
-
-  deploy-release:
-    name: 'Deploy Release'
-    needs: create-release
-    uses: ./.github/workflows/release-push.yaml
-    with:
-      tag: ${{ needs.create-release.outputs.version }}
-    secrets: inherit

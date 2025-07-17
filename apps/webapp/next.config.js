@@ -14,10 +14,7 @@ const nextConfig = {
   experimental: {
     externalDir: true,
   },
-  transpileModules: [
-    '@lotta-schule/hubert',
-    resolve(__dirname, '../../apps/hubert/src/index.ts'),
-  ],
+  transpilePackages: ['@lotta-schule/hubert'],
   async rewrites() {
     return {
       beforeFiles: [
@@ -32,6 +29,10 @@ const nextConfig = {
         {
           source: '/storage/:path*',
           destination: '/api/storage/:path*',
+        },
+        {
+          source: '/data/:path*',
+          destination: `${env.API_URL || ''}/data/:path*`,
         },
         {
           source: '/api',
@@ -75,6 +76,7 @@ const nextConfig = {
       resolve(__dirname, './src/styles/util'),
       resolve(__dirname, '../../libs/hubert/src/theme'),
     ],
+    quietDeps: true,
   },
   eslint: {
     dirs: ['src'],
@@ -120,4 +122,10 @@ export default withSentryConfig(nextConfig, {
   org: 'lotta',
   project: 'web',
   widenClientFileUpload: true,
+
+  tunnelRoute: '/stry',
+
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: false,
+  },
 });

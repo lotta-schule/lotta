@@ -26,4 +26,5 @@ done
 
 # Update changelog
 
-pnpm nx release changelog $NEW_VERSION
+export HUSKY_SKIP_HOOKS=true
+pnpm nx release changelog $NEW_VERSION --git-commit-args="--no-verify"

@@ -2,10 +2,10 @@
 
 import { ApolloLink, split } from '@apollo/client';
 import {
-  NextSSRInMemoryCache,
-  NextSSRApolloClient,
+  InMemoryCache,
+  ApolloClient,
   SSRMultipartLink,
-} from '@apollo/experimental-nextjs-app-support/ssr';
+} from '@apollo/experimental-nextjs-app-support';
 import { createWebsocketLink } from './links/websocketLink';
 import { TenantModel } from 'model';
 import { createErrorLink } from './links/errorLink';
@@ -16,7 +16,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { sendRefreshRequest } from 'api/auth';
 
 export const createSSRClient = (
-  tenant: TenantModel,
+  tenant: Pick<TenantModel, 'id'>,
   socketUrl?: string | null,
   accessToken?: string
 ) => {
@@ -41,8 +41,8 @@ export const createSSRClient = (
       )
     : httpLink;
 
-  return new NextSSRApolloClient({
-    cache: new NextSSRInMemoryCache(),
+  return new ApolloClient({
+    cache: new InMemoryCache(),
     link: ApolloLink.from(
       [
         createErrorLink(),

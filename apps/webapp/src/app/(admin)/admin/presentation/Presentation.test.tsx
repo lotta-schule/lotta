@@ -40,11 +40,7 @@ const mockTenant: TenantModel = {
 describe('Presentation', () => {
   it('should render correctly', () => {
     const screen = render(
-      <Presentation
-        tenant={mockTenant}
-        additionalThemes={[]}
-        baseUrl="https://example.com"
-      />
+      <Presentation tenant={mockTenant} additionalThemes={[]} />
     );
 
     expect(screen.getByText('Vorlagen')).toBeInTheDocument();
@@ -55,11 +51,7 @@ describe('Presentation', () => {
 
   it('should update the color settings', async () => {
     const screen = render(
-      <Presentation
-        tenant={mockTenant}
-        additionalThemes={[]}
-        baseUrl="https://example.com"
-      />
+      <Presentation tenant={mockTenant} additionalThemes={[]} />
     );
 
     const colorInput = screen.getByLabelText('Akzente');
@@ -73,11 +65,7 @@ describe('Presentation', () => {
   it('should update spacing and border radius', async () => {
     const user = userEvent.setup();
     const screen = render(
-      <Presentation
-        tenant={mockTenant}
-        additionalThemes={[]}
-        baseUrl="https://example.com"
-      />
+      <Presentation tenant={mockTenant} additionalThemes={[]} />
     );
 
     const spacingInput = screen.getByLabelText('Abstand');
@@ -103,7 +91,6 @@ describe('Presentation', () => {
         additionalThemes={[
           { title: 'MyTemplate', theme: { textColor: '#ff0000' } },
         ]}
-        baseUrl="https://example.com"
       />
     );
 
@@ -131,11 +118,7 @@ describe('Presentation', () => {
     ];
 
     const screen = render(
-      <Presentation
-        tenant={mockTenant}
-        additionalThemes={[]}
-        baseUrl="https://example.com"
-      />,
+      <Presentation tenant={mockTenant} additionalThemes={[]} />,
       {},
       { additionalMocks }
     );

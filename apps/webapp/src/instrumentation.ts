@@ -2,6 +2,8 @@ import * as Sentry from '@sentry/nextjs';
 import { appConfig } from 'config';
 import { registerOTel } from '@vercel/otel';
 
+export const onRequestError = Sentry.captureRequestError;
+
 export async function register() {
   const dsn = appConfig.get('NEXT_PUBLIC_SENTRY_DSN');
   const release = appConfig.get('NEXT_PUBLIC_RELEASE_NAME');

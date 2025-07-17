@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Avatar,
   Box,
   Button,
   Checkbox,
@@ -18,11 +17,11 @@ import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { UpdateEmailDialog } from 'shared/dialog/UpdateEmailDialog';
 import { UpdatePasswordDialog } from 'shared/dialog/UpdatePasswordDialog';
-import { File, User } from 'util/model';
-import { FileModelType, UserModel, FileModel } from 'model';
+import { UserAvatar } from 'shared/userAvatar/UserAvatar';
+import { User } from 'util/model';
+import { UserModel, FileModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useGetFieldError } from 'util/useGetFieldError';
-import { useServerData } from 'shared/ServerDataContext';
 import { LegacyHeader, Main } from 'layout';
 import Link from 'next/link';
 
@@ -31,7 +30,6 @@ import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
 import styles from './ProfilePage.module.scss';
 
 export const ProfilePage = () => {
-  const { baseUrl } = useServerData();
   const currentUser = useCurrentUser()!;
 
   const [classOrShortName, setClassOrShortName] = React.useState(
@@ -42,9 +40,9 @@ export const ProfilePage = () => {
   const [isHideFullName, setIsHideFullName] = React.useState(
     currentUser.hideFullName
   );
-  const [avatarImageFile, setAvatarImageFile] = React.useState<
-    { id: string } | null | undefined
-  >(currentUser.avatarImageFile);
+  const [avatarImageFile, setAvatarImageFile] = React.useState(
+    currentUser.avatarImageFile
+  );
   const [enrollmentTokens, setEnrollmentTokens] = React.useState<string[]>(
     currentUser.enrollmentTokens ?? []
   );
@@ -75,13 +73,9 @@ export const ProfilePage = () => {
               title={'Profilbild löschen'}
               onDelete={() => setAvatarImageFile(null)}
             >
-              <Avatar
-                src={
-                  avatarImageFile
-                    ? File.getFileRemoteLocation(baseUrl, avatarImageFile)
-                    : User.getDefaultAvatarUrl(currentUser)
-                }
-                style={{ width: 150, height: 150 }}
+              <UserAvatar
+                user={currentUser}
+                size={150}
                 title={User.getNickname(currentUser)}
               />
             </Deletable>
@@ -92,7 +86,7 @@ export const ProfilePage = () => {
                 size: 'small',
                 disabled: isLoading,
               }}
-              fileFilter={(f) => f.fileType === FileModelType.Image}
+              fileFilter={(f) => f.fileType === 'IMAGE'}
               label={'Profilbild ändern'}
               onSelect={(file: FileModel) => setAvatarImageFile(file)}
             />

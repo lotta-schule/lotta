@@ -5,6 +5,7 @@ import { imageFile, logosDirectory, SomeUser } from 'test/fixtures';
 import userEvent from '@testing-library/user-event';
 
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
+import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
 
 describe('shared/article/module/form/FormElement', () => {
   describe('input element', () => {
@@ -221,6 +222,25 @@ describe('shared/article/module/form/FormElement', () => {
           };
         },
       },
+      {
+        request: {
+          query: GetFileDetailsQuery,
+          variables: { id: imageFile.id },
+        },
+        result: () => ({
+          data: {
+            file: {
+              ...imageFile,
+              user,
+              parentDirectory: {
+                ...logosDirectory,
+                user,
+                parentDirectory: null,
+              },
+            },
+          },
+        }),
+      },
     ];
 
     beforeEach(() => {
@@ -325,7 +345,7 @@ describe('shared/article/module/form/FormElement', () => {
         'lotta-file-id://' +
           '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15",' +
           '"filename":"Dateiname.jpg","filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
-          '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}'
+          '"userId":"1","parentDirectory":{"id":"8743"}}'
       );
     });
 
@@ -342,7 +362,7 @@ describe('shared/article/module/form/FormElement', () => {
             'lotta-file-id://' +
             '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15","filename":"Dateiname.jpg",' +
             '"filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
-            '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}'
+            '"userId":"1","parentDirectory":{"id":"8743"}}'
           }
           onSetValue={setValueFn}
         />

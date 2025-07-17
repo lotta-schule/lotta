@@ -3,6 +3,10 @@ defmodule Lotta.Tenants.TenantDbManager do
   Utilities that help with managing tenant's prefixed databases.
   """
 
+  alias Lotta.Repo
+  alias Ecto.Migration.SchemaMigration
+  alias Lotta.Tenants.Tenant
+
   @migrations [
     {20_190_523_113_923, Lotta.Repo.TenantMigrations.CreateUsers},
     {20_190_523_115_155, Lotta.Repo.TenantMigrations.CreateArticles},
@@ -98,12 +102,16 @@ defmodule Lotta.Tenants.TenantDbManager do
     {20_240_803_115_041, Lotta.Repo.TenantMigrations.CreateCalendarAndEvents},
     {20_240_826_060_632, Lotta.Repo.TenantMigrations.MakeUserGroupIsAdminGroupNotNull},
     {20_240_826_093_644, Lotta.Repo.TenantMigrations.MakeUserGroupCanReadFullNameNotNull},
-    {20_241_021_202_316, Lotta.Repo.TenantMigrations.AddTimezoneToEvents}
+    {20_241_021_202_316, Lotta.Repo.TenantMigrations.AddTimezoneToEvents},
+    {20_250_613_222_825,
+     Lotta.Repo.TenantMigrations.RemoveFileUUIDAndRemoteLocationFromFileConversions},
+    {20_250_613_222_828,
+     Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyLocation},
+    {20_250_613_222_830, Lotta.Repo.TenantMigrations.NowMoveFiles},
+    {20_250_627_065_517, Lotta.Repo.TenantMigrations.AddPagesToFileAndRemoveFullMetadata},
+    {20_250_629_003_832, Lotta.Repo.TenantMigrations.MakeConversionFormatsUnique},
+    {20_250_711_004_039, Lotta.Repo.TenantMigrations.MakeUsergroupEnrollmenttokensArrayNonNull}
   ]
-
-  alias Ecto.Migration.SchemaMigration
-  alias Lotta.Tenants.Tenant
-  alias Lotta.Repo
 
   @spec create_tenant_database_schema(Tenant.t()) :: {:ok, [integer()]}
   def create_tenant_database_schema(tenant) do

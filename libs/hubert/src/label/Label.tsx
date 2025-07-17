@@ -11,7 +11,13 @@ export type LabelProps = {
   hide?: boolean;
 } & React.HTMLProps<HTMLDivElement>;
 
-export const Label = ({ children, className, label, ...props }: LabelProps) => {
+export const Label = ({
+  children,
+  className,
+  label,
+  hide,
+  ...props
+}: LabelProps) => {
   const { labelProps, fieldProps } = useLabel({
     label,
     labelElementType: 'span',
@@ -22,7 +28,7 @@ export const Label = ({ children, className, label, ...props }: LabelProps) => {
     <div
       {...props}
       className={clsx(className, styles.root, {
-        [styles.isHidden]: !!props.hide,
+        [styles.isHidden]: !!hide,
       })}
     >
       <span className={styles.label} {...labelProps}>

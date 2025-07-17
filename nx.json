@@ -12,7 +12,7 @@
         "^production",
         "{workspaceRoot}/vitest.workspace.ts"
       ],
-      "outputs": []
+      "outputs": ["{projectRoot}/coverage"],
     },
     "lint": {
       "inputs": [

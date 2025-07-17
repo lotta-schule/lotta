@@ -22,12 +22,12 @@ import {
   GET_CALENDARS,
   RECURRENCE_FRAGMENT,
 } from '../_graphql';
-import { FragmentOf } from 'gql.tada';
+import { FragmentOf, ResultOf } from 'gql.tada';
 import { EditEventFormContent, EditEventInput } from './EditEventFormContent';
 
 export type CreateEventDialogProps = {
   isOpen: boolean;
-  onClose(): void;
+  onClose(event?: ResultOf<typeof CREATE_CALENDAR_EVENT>['event']): void;
 };
 
 export const CreateEventDialog = React.memo(
@@ -87,6 +87,25 @@ export const CreateEventDialog = React.memo(
       }
     }, [EMPTY_EVENT, isOpen]);
 
+    const isDisabled = React.useMemo(
+      () =>
+        isLoading ||
+        !eventData.summary ||
+        !eventData.calendarId ||
+        !eventData.start ||
+        (!(eventData.isFullDay && !isMultipleDays) &&
+          isAfter(eventData.start, eventData.end)),
+      [
+        isLoading,
+        eventData.summary,
+        eventData.calendarId,
+        eventData.start,
+        eventData.end,
+        eventData.isFullDay,
+        isMultipleDays,
+      ]
+    );
+
     return (
       <Dialog open={isOpen} onRequestClose={onClose} title={t('create event')}>
         <form>
@@ -97,21 +116,17 @@ export const CreateEventDialog = React.memo(
           <DialogActions>
             <Button onClick={() => onClose()}>{t('cancel')}</Button>
             <LoadingButton
-              disabled={
-                isLoading ||
-                !eventData.summary ||
-                !eventData.calendarId ||
-                !eventData.start ||
-                (!(eventData.isFullDay && !isMultipleDays) &&
-                  isAfter(eventData.start, eventData.end))
-              }
+              disabled={isDisabled}
               type="submit"
               onAction={async (e: SubmitEvent | React.MouseEvent) => {
                 e.preventDefault();
-                await createEvent();
+                const result = await createEvent();
+                return result.data?.event;
               }}
-              onComplete={() => {
-                onClose();
+              onComplete={(
+                event: ResultOf<typeof CREATE_CALENDAR_EVENT>['event']
+              ) => {
+                onClose(event);
               }}
             >
               {t('save')}

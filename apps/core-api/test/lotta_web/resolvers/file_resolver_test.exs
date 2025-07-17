@@ -2,13 +2,16 @@ defmodule LottaWeb.FileResolverTest do
   @moduledoc false
 
   use LottaWeb.ConnCase
+  use Lotta.WorkerCase
 
+  import Mock
   import Ecto.Query
 
   alias LottaWeb.Auth.AccessToken
-  alias Lotta.{Repo, Tenants}
+  alias Lotta.{Fixtures, Repo, Storage, Tenants}
   alias Lotta.Accounts.User
-  alias Lotta.Storage.{File, Directory}
+  alias Lotta.Worker.Conversion
+  alias Lotta.Storage.{File, FileConversion, Directory}
 
   @prefix "tenant_test"
 
@@ -85,6 +88,314 @@ defmodule LottaWeb.FileResolverTest do
        image_upload: image_upload,
        tenant: tenant
      }}
+  end
+
+  describe "resolve available formats" do
+    @query """
+      query getFileFormats($id: ID, $category: String) {
+        file(id: $id) {
+          filename
+          formats(category: $category) {
+            name
+            type
+            mimeType
+            url
+            availability {
+              status
+            }
+          }
+        }
+      }
+    """
+
+    test "returns file with correct immediatly available files for images", %{
+      admin_account: admin_account,
+      admin_file: admin_file
+    } do
+      res =
+        build_tenant_conn()
+        |> authorize(admin_account)
+        |> get("/api", query: @query, variables: %{id: admin_file.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "file" => %{
+                   "filename" => "ich_schoen.jpg",
+                   "formats" => formats
+                 }
+               }
+             } = res
+
+      assert Enum.count(formats) == 30
+
+      assert Enum.all?(formats, fn format ->
+               format["type"] == "IMAGE" and
+                 format["availability"]["status"] == "AVAILABLE" and
+                 not (is_nil(format["url"]) or format["url"] == "")
+             end)
+    end
+
+    test "filter by category on request", %{
+      admin_account: admin_account,
+      admin_file: admin_file
+    } do
+      res =
+        build_tenant_conn()
+        |> authorize(admin_account)
+        |> get("/api", query: @query, variables: %{id: admin_file.id, category: "banner"})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "file" => %{
+                   "filename" => "ich_schoen.jpg",
+                   "formats" => formats
+                 }
+               }
+             } = res
+
+      assert Enum.count(formats) == 4
+
+      assert Enum.all?(formats, fn format ->
+               format["type"] == "IMAGE" and
+                 format["availability"]["status"] == "AVAILABLE" and
+                 String.starts_with?(format["name"], "BANNER_")
+             end)
+    end
+
+    test "returns file as READY when they have already been transcoded", %{
+      admin_account: admin_account,
+      admin_file: admin_file
+    } do
+      Tesla.Mock.mock(fn %{method: :get} ->
+        %Tesla.Env{
+          status: 200,
+          body: create_file_stream("test/support/fixtures/ich_schoen.jpg")
+        }
+      end)
+
+      assert {:ok, %FileConversion{}} =
+               Storage.get_file_conversion(admin_file, "articlepreview_660")
+
+      res =
+        build_tenant_conn()
+        |> authorize(admin_account)
+        |> get("/api", query: @query, variables: %{id: admin_file.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "file" => %{
+                   "filename" => "ich_schoen.jpg",
+                   "formats" => formats
+                 }
+               }
+             } = res
+
+      assert Enum.count(formats) == 30
+
+      ready_formats =
+        Enum.filter(formats, fn format ->
+          format["availability"]["status"] == "READY"
+        end)
+
+      assert Enum.count(ready_formats) == 5
+
+      assert Enum.all?(ready_formats, fn format ->
+               format["type"] == "IMAGE" and
+                 String.starts_with?(format["name"], "ARTICLEPREVIEW_") and
+                 not (is_nil(format["url"]) or format["url"] == "")
+             end)
+    end
+
+    test "returns file with correct immediatly available files for audios", %{
+      user2_account: user
+    } do
+      file = Fixtures.fixture(:real_audio_file, user)
+
+      res =
+        build_tenant_conn()
+        |> authorize(user)
+        |> get("/api", query: @query, variables: %{id: file.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "file" => %{
+                   "filename" => "some_filename",
+                   "formats" => formats
+                 }
+               }
+             } = res
+
+      assert Enum.count(formats) == 5
+
+      image_formats =
+        Enum.filter(formats, &(&1["type"] == "IMAGE"))
+
+      assert Enum.all?(image_formats, fn format ->
+               format["availability"]["status"] == "AVAILABLE" and
+                 not (is_nil(format["url"]) or format["url"] == "")
+             end)
+
+      assert Enum.count(image_formats) == 3
+
+      audio_formats =
+        Enum.filter(formats, &(&1["type"] == "AUDIO"))
+
+      assert Enum.count(audio_formats) == 2
+
+      assert Enum.all?(audio_formats, fn format ->
+               format["availability"]["status"] == "REQUESTABLE" and
+                 format["url"] == ""
+             end)
+
+      Tesla.Mock.mock(fn
+        %{method: :get} ->
+          %Tesla.Env{
+            status: 200,
+            body: create_file_stream("test/support/fixtures/eoa2.mp3")
+          }
+      end)
+
+      with_mock(
+        Exile,
+        stream!: fn _cmd, _opts ->
+          create_file_stream("test/support/fixtures/eoa2.mp3")
+          |> Stream.map(&{:stdout, &1})
+        end
+      ) do
+        {:ok, job} =
+          Conversion.get_or_create_conversion_job(
+            file,
+            "audioplay"
+          )
+
+        assert job.state == "completed"
+      end
+
+      res =
+        build_tenant_conn()
+        |> authorize(user)
+        |> get("/api", query: @query, variables: %{id: file.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "file" => %{
+                   "filename" => "some_filename",
+                   "formats" => formats
+                 }
+               }
+             } = res
+
+      assert Enum.count(formats) == 5
+
+      audio_formats =
+        Enum.filter(formats, &(&1["type"] == "AUDIO"))
+
+      assert Enum.count(audio_formats) == 2
+
+      assert Enum.all?(audio_formats, fn format ->
+               format["availability"]["status"] == "READY" and
+                 format["url"] != ""
+             end)
+    end
+
+    test "returns file with correct immediatly available files for videos", %{
+      user2_account: user
+    } do
+      file = Fixtures.fixture(:real_video_file, user)
+
+      res =
+        build_tenant_conn()
+        |> authorize(user)
+        |> get("/api", query: @query, variables: %{id: file.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "file" => %{
+                   "filename" => "some_filename",
+                   "formats" => formats
+                 }
+               }
+             } = res
+
+      assert Enum.count(formats) == 10
+
+      image_formats =
+        Enum.filter(formats, &(&1["type"] == "IMAGE"))
+
+      assert Enum.all?(image_formats, fn format ->
+               format["availability"]["status"] == "AVAILABLE" and
+                 not (is_nil(format["url"]) or format["url"] == "")
+             end)
+
+      assert Enum.count(image_formats) == 4
+
+      video_formats =
+        Enum.filter(formats, &(&1["type"] == "VIDEO"))
+
+      assert Enum.count(video_formats) == 6
+
+      assert Enum.all?(video_formats, fn format ->
+               format["availability"]["status"] == "REQUESTABLE" and
+                 format["url"] == ""
+             end)
+
+      Tesla.Mock.mock(fn
+        %{method: :get} ->
+          %Tesla.Env{
+            status: 200,
+            body: create_file_stream("test/support/fixtures/pc3.m4v")
+          }
+      end)
+
+      with_mock(
+        Exile,
+        stream!: fn _cmd, _opts ->
+          create_file_stream("test/support/fixtures/pc3.m4v")
+          |> Stream.map(&{:stdout, &1})
+        end
+      ) do
+        {:ok, job} =
+          Conversion.get_or_create_conversion_job(
+            file,
+            "videoplay"
+          )
+
+        assert job.state == "completed"
+      end
+
+      res =
+        build_tenant_conn()
+        |> authorize(user)
+        |> get("/api", query: @query, variables: %{id: file.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "file" => %{
+                   "filename" => "some_filename",
+                   "formats" => formats
+                 }
+               }
+             } = res
+
+      assert Enum.count(formats) == 10
+
+      video_formats =
+        Enum.filter(formats, &(&1["type"] == "VIDEO"))
+
+      assert Enum.count(video_formats) == 6
+
+      assert Enum.all?(video_formats, fn format ->
+               format["availability"]["status"] == "READY" and
+                 format["url"] != ""
+             end)
+    end
   end
 
   describe "file query" do
@@ -953,7 +1264,7 @@ defmodule LottaWeb.FileResolverTest do
       assert res["errors"] == [
                %{
                  "locations" => [%{"column" => 3, "line" => 2}],
-                 "message" => "Kein freier Speicher mehr.",
+                 "message" => "not_enough_space",
                  "path" => ["uploadFile"]
                }
              ]
@@ -1007,7 +1318,7 @@ defmodule LottaWeb.FileResolverTest do
       assert res["errors"] == [
                %{
                  "locations" => [%{"column" => 3, "line" => 2}],
-                 "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                 "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                  "path" => ["uploadFile"]
                }
              ]
@@ -1059,7 +1370,7 @@ defmodule LottaWeb.FileResolverTest do
       assert res["errors"] == [
                %{
                  "locations" => [%{"column" => 3, "line" => 2}],
-                 "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                 "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                  "path" => ["uploadFile"]
                }
              ]
@@ -1086,7 +1397,7 @@ defmodule LottaWeb.FileResolverTest do
       assert res["errors"] == [
                %{
                  "locations" => [%{"column" => 3, "line" => 2}],
-                 "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                 "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                  "path" => ["uploadFile"]
                }
              ]
@@ -1193,6 +1504,80 @@ defmodule LottaWeb.FileResolverTest do
                  %{
                    "message" => "Du hast nicht die Rechte, diesen Ordner zu bearbeiten.",
                    "path" => ["deleteFile"]
+                 }
+               ]
+             } = res
+    end
+  end
+
+  describe "request_conversion query" do
+    @query """
+    mutation requestFileConversion($id: ID!, $category: String!) {
+      requestFileConversion(id: $id, category: $category)
+    }
+    """
+
+    test "should start the conversion when the file has been requested", %{
+      admin_jwt: admin_jwt,
+      admin_file: admin_file
+    } do
+      with_testing_mode(:manual, fn ->
+        res =
+          build_conn()
+          |> put_req_header("tenant", "slug:test")
+          |> put_req_header("authorization", "Bearer #{admin_jwt}")
+          |> post("/api", query: @query, variables: %{id: admin_file.id, category: "videoplay"})
+          |> json_response(200)
+
+        assert res == %{
+                 "data" => %{"requestFileConversion" => true}
+               }
+
+        assert_enqueued(
+          worker: Conversion,
+          args: %{"file_id" => admin_file.id, "format_category" => "videoplay"}
+        )
+      end)
+    end
+
+    test "returns error when user is not owner of private directory and user is not admin", %{
+      user_jwt: user_jwt,
+      user2_file: user2_file
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query, variables: %{id: user2_file.id, category: "videoplay"})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"requestFileConversion" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du hast nicht die Rechte, diese Datei zu lesen.",
+                   "path" => ["requestFileConversion"]
+                 }
+               ]
+             } = res
+    end
+
+    test "returns error when category is not valid", %{
+      admin_account: admin_account,
+      admin_file: admin_file
+    } do
+      res =
+        build_tenant_conn()
+        |> authorize(admin_account)
+        |> post("/api", query: @query, variables: %{id: admin_file.id, category: "geheimattacke"})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"requestFileConversion" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Ungültige Kategorie: geheimattacke",
+                   "path" => ["requestFileConversion"]
                  }
                ]
              } = res

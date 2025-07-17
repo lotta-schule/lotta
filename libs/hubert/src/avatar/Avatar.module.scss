@@ -2,12 +2,14 @@
   border: 1px solid rgb(var(--lotta-accent-grey-color));
   background-color: rgb(var(--lotta-accent-grey-color));
   border-radius: 50%;
-  padding: 0.5em; /* TODO: Property */
   display: inline-block;
   background-size: cover;
-  box-shadow: 1px 1px 7px #0000002e; /* TODO: Property */
-  height: 2em; /* TODO: Property */
-  width: 2em; /* TODO: Property */
+
+  box-shadow: 1px 1px 7px #0000002e;
+  height: 2em;
+  width: 2em;
+  object-fit: fill;
+  overflow: hidden;
 
   &.clickable:hover {
     border-color: rgba(var(--lotta-primary-color), 1);

@@ -1,43 +1,36 @@
 import * as React from 'react';
 import { UserNavigation } from './navigation/UserNavigation';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { useServerData } from 'shared/ServerDataContext';
+import { FileModel } from 'model';
 import clsx from 'clsx';
 
 import styles from './Header.module.scss';
 
 export interface LegacyHeaderProps {
+  bannerImage?: FileModel;
   bannerImageUrl?: string | null;
   children?: any;
 }
 
 export const LegacyHeader = React.memo(
-  ({ children, bannerImageUrl }: LegacyHeaderProps) => {
-    const { baseUrl } = useServerData();
-
-    const normalizedUrl = bannerImageUrl?.startsWith('/')
-      ? new URL(bannerImageUrl, baseUrl).toString()
-      : bannerImageUrl;
-
+  ({ children, bannerImage, bannerImageUrl }: LegacyHeaderProps) => {
     return (
       <section
         data-testid="Header"
         className={clsx(styles.root, {
-          [styles.hasBannerImage]: !!normalizedUrl,
+          [styles.hasBannerImage]: !!(bannerImage || bannerImageUrl),
         })}
       >
         <div data-testid="HeaderContent" className={styles.subheader}>
-          {normalizedUrl && (
+          {bannerImage && (
             <ResponsiveImage
-              src={normalizedUrl}
+              file={bannerImage}
               alt=""
-              width={900}
-              aspectRatio={'6:1'}
-              resize={'cover'}
-              maxDisplayWidth={700}
-              sizes="(max-width: 960px) 95vw, 700px"
+              format="banner"
+              sizes={['(min-width: 960px) 60vw', '100vw']}
             />
           )}
+          {bannerImageUrl && <img src={bannerImageUrl} alt="" width={700} />}
           <div className={styles.headerContent}>{children}</div>
         </div>
         <div className={styles.userNavigationGridItem}>

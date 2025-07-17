@@ -5,8 +5,6 @@ defmodule Lotta.Analytics do
   alias LottaWeb.Urls
   alias Lotta.Tenants.Tenant
 
-  use Tesla
-
   require Logger
 
   @doc """
@@ -21,7 +19,7 @@ defmodule Lotta.Analytics do
 
     with client when not is_nil(client) <- create_client(identifier),
          {:ok, %{body: body, status: status}} when status < 400 <-
-           get(client, "/realtime/visitors") do
+           Tesla.get(client, "/realtime/visitors") do
       {:ok, body}
     else
       nil ->
@@ -49,7 +47,7 @@ defmodule Lotta.Analytics do
 
     with client when not is_nil(client) <- create_client(identifier),
          {:ok, %{body: %{"results" => results}, status: status}} when status < 400 <-
-           get(client, "/aggregate",
+           Tesla.get(client, "/aggregate",
              query: [
                period: period,
                date: date,
@@ -100,7 +98,7 @@ defmodule Lotta.Analytics do
 
     with client when not is_nil(client) <- create_client(identifier),
          {:ok, %{body: %{"results" => results}, status: status}} when status < 400 <-
-           get(client, "/timeseries",
+           Tesla.get(client, "/timeseries",
              query: [
                period: period,
                date: date,
@@ -151,7 +149,7 @@ defmodule Lotta.Analytics do
     with client when not is_nil(client) <- create_client(identifier),
          {:ok, [category: prop_category, name: prop_name]} <- parse_property(property_string),
          {:ok, %{body: %{"results" => results}, status: status}} when status < 400 <-
-           get(client, "/breakdown",
+           Tesla.get(client, "/breakdown",
              query: [
                period: period,
                date: date,

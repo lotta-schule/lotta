@@ -16,7 +16,7 @@ defmodule LottaWeb.Schema.Accounts.User do
     field(:nickname, :string)
     field(:hide_full_name, :boolean)
     field(:avatar_image_file, :select_file_input)
-    field(:enrollment_tokens, list_of(:string))
+    field(:enrollment_tokens, list_of(non_null(:string)))
   end
 
   input_object :select_user_input do

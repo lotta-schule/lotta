@@ -23,6 +23,7 @@ export const MessagingPage = React.memo(
 
     const isMobile = useIsMobile();
 
+    // eslint-disable-next-line react-compiler/react-compiler
     if (isBrowser() && conversations && !didWriteCache.current) {
       apolloClient.writeQuery({
         query: GetConversationsQuery,
@@ -30,6 +31,7 @@ export const MessagingPage = React.memo(
           conversations,
         },
       });
+      // eslint-disable-next-line react-compiler/react-compiler
       didWriteCache.current = true;
     }
 

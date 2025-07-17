@@ -42,7 +42,7 @@ describe('GeneralSettings', () => {
     {
       request: { query: UpdateTenantMutation },
       variableMatcher: (_var) => true,
-      result: { data: { updateTenant: { ...tenant, name: 'A new Name' } } },
+      result: { data: { tenant: { ...tenant, title: 'A new Name' } } },
     },
   ];
 
@@ -52,17 +52,19 @@ describe('GeneralSettings', () => {
 
   beforeEach(() => {
     (useRouter as Mock).mockReturnValue(mockRouter);
+
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   afterEach(() => {
     vi.clearAllMocks();
-  });
 
-  const baseUrl = 'https://example.com';
+    vi.useRealTimers();
+  });
 
   it('renders tenant details correctly', () => {
     const screen = render(
-      <GeneralSettings tenant={tenant} baseUrl={baseUrl} />,
+      <GeneralSettings tenant={tenant} />,
       {},
       { additionalMocks }
     );
@@ -76,13 +78,15 @@ describe('GeneralSettings', () => {
   it('calls updateTenant mutation and refreshes the page on save', async () => {
     const user = userEvent.setup();
     const screen = render(
-      <GeneralSettings tenant={tenant} baseUrl={baseUrl} />,
+      <GeneralSettings tenant={tenant} />,
       {},
       { additionalMocks, tenant }
     );
 
     const saveButton = screen.getByText('speichern');
     await user.click(saveButton);
+
+    vi.advanceTimersByTime(2000);
 
     await waitFor(() => {
       expect(mockRouter.refresh).toHaveBeenCalled();

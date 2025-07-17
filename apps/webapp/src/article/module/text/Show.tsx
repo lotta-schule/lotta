@@ -36,7 +36,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
       onChange={() => {}}
     >
       <Editable
-        renderElement={renderElement}
+        renderElement={renderElement({ editing: false })}
         renderLeaf={renderLeaf}
         readOnly
       />

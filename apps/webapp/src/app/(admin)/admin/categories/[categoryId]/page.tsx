@@ -5,10 +5,11 @@ import { AdminPageTitle } from '../../_component/AdminPageTitle';
 import { CategoryEditor } from '../_component';
 
 async function GroupPage({
-  params: { categoryId },
+  params,
 }: {
-  params: { categoryId: string };
+  params: Promise<{ categoryId: string }>;
 }) {
+  const { categoryId } = await params;
   const categories = await loadCategories();
 
   const category = categories.find((category) => category.id === categoryId);

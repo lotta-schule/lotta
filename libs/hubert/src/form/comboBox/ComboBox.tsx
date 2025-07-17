@@ -1,8 +1,9 @@
+/* eslint-disable react-compiler/react-compiler */
 'use client';
 
 import * as React from 'react';
 import { useComboBoxState } from 'react-stately';
-import { useComboBox } from 'react-aria';
+import { useButton, useComboBox } from 'react-aria';
 import { useDebounce } from 'react-use';
 import {
   ListItemFactory,
@@ -182,12 +183,7 @@ export const ComboBox = React.memo(
     const listBoxRef = React.useRef<HTMLUListElement>(null);
     const popoverRef = React.useRef<HTMLDivElement>(null);
 
-    const {
-      labelProps,
-      buttonProps: buttonProps,
-      inputProps,
-      listBoxProps,
-    } = useComboBox(
+    const { labelProps, buttonProps, inputProps, listBoxProps } = useComboBox(
       {
         autoFocus,
         inputRef,
@@ -230,6 +226,11 @@ export const ComboBox = React.memo(
 
           event.continuePropagation();
         },
+        onOpenChange: (isOpen) => {
+          if (!isOpen) {
+            state.setInputValue('');
+          }
+        },
         onFocusChange: (isFocused) => {
           if (!isFocused) {
             state.setInputValue('');
@@ -239,9 +240,14 @@ export const ComboBox = React.memo(
       state
     );
 
+    const { buttonProps: buttonElProps } = useButton(buttonProps, buttonRef);
+
     const inputAriaLabelProps = hideLabel
       ? { 'aria-label': title, 'aria-labelledby': '' }
       : {};
+
+    // eslint-dsable-next-line react-compiler/react-compiler
+    const minWidth = inputWrapperRef.current?.clientWidth || 0;
 
     return (
       <Popover
@@ -256,7 +262,7 @@ export const ComboBox = React.memo(
           })}
           style={style}
           label={title}
-          hide={hideLabel}
+          hide={!!hideLabel}
         >
           <div
             ref={inputWrapperRef}
@@ -268,20 +274,8 @@ export const ComboBox = React.memo(
             {typeof items !== 'function' && (
               <PopoverTrigger
                 className={styles.triggerButton}
-                onClick={() => {
-                  if (state.isOpen) {
-                    state.close();
-                    state.setFocused(false);
-                    state.setInputValue('');
-                  } else {
-                    state.open();
-                    state.setFocused(true);
-                  }
-                }}
-                disabled={disabled}
-                {...buttonProps}
-                aria-label={'Vorschläge anzeigen'}
                 ref={buttonRef}
+                {...buttonElProps}
               >
                 <ExpandMore />
               </PopoverTrigger>
@@ -296,12 +290,12 @@ export const ComboBox = React.memo(
             )}
           </div>
         </Label>
-        <PopoverContent ref={popoverRef}>
+        <PopoverContent ref={popoverRef} style={{ minWidth }}>
           <ListBox
             className={styles.listbox}
-            style={{ width: inputWrapperRef.current?.clientWidth }}
             aria-label={title}
-            {...(listBoxProps as any)}
+            {...listBoxProps}
+            autoFocus={!!listBoxProps.autoFocus}
             ref={listBoxRef}
             label={title}
             state={state}

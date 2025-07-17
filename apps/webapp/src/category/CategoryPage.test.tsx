@@ -11,6 +11,7 @@ import {
 import { ArticleModel, CategoryModel } from 'model';
 import { MockedResponse } from '@apollo/client/testing';
 import { CategoryPage } from './CategoryPage';
+import { PREFETCH_COUNT } from 'pages/c/[slug]';
 
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
@@ -23,7 +24,10 @@ describe('shared/article/CategoryLayout', () => {
     {
       request: {
         query: GetArticlesQuery,
-        variables: { categoryId: category.id, filter: { first: 3 } },
+        variables: {
+          categoryId: category.id,
+          filter: { first: PREFETCH_COUNT },
+        },
       },
       result: { data: { articles } },
     },
@@ -77,7 +81,7 @@ describe('shared/article/CategoryLayout', () => {
       const image = headerContent.querySelector('img');
       expect(image).toBeVisible();
       const imageUrl = new URL(image!.srcset.split(' ')[0]);
-      expect(imageUrl.pathname).toEqual('/storage/f/123');
+      expect(imageUrl.pathname).toEqual('/123/banner_330');
     });
 
     it('should render an ArticlePreview', async () => {

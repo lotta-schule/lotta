@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { Navbar } from './navigation/Navbar';
-import { File } from 'util/model';
 import { Box, NoSsr, ScrollToTopButton } from '@lotta-schule/hubert';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { useImageUrl } from 'util/image/useImageUrl';
-import { useTenant } from 'util/tenant/useTenant';
-import { useServerData } from 'shared/ServerDataContext';
+import { TenantGlobalStyleTag } from './TenantGlobalStyleTag';
+import { useTenant } from 'util/tenant';
 import Link from 'next/link';
 
 import styles from './BaseLayout.module.scss';
@@ -16,43 +14,17 @@ export type BaseLayoutProps = {
 
 export const BaseLayout = React.memo(({ children }: BaseLayoutProps) => {
   const tenant = useTenant();
-  const { baseUrl } = useServerData();
-
-  const backgroundImageUrl =
-    tenant.backgroundImageFile &&
-    File.getFileRemoteLocation(baseUrl, tenant.backgroundImageFile);
-  const { url: imageUrlSimple } = useImageUrl(backgroundImageUrl, {
-    width: 1250,
-    format: 'webp',
-  });
-  const { url: imageUrlRetina } = useImageUrl(backgroundImageUrl, {
-    width: 2500,
-    format: 'webp',
-  });
   return (
     <Box className={styles.root}>
-      {tenant.backgroundImageFile && (
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-                    @media screen and (min-width: 600px) {
-                        body::after {
-                            background-image: url(${imageUrlSimple});
-                            background-image: image-set(url(${imageUrlSimple}) 1x, url(${imageUrlRetina}) 2x);
-                        }
-                    }
-                `.trim(),
-          }}
-        />
-      )}
+      {tenant && <TenantGlobalStyleTag tenant={tenant} />}
       <header className={styles.header}>
         <div className={styles.logoGridItem}>
           {tenant.logoImageFile && (
             <Link href={'/'} passHref title={'Startseite'}>
               <ResponsiveImage
-                resize={'inside'}
-                height={80}
-                src={File.getFileRemoteLocation(baseUrl, tenant.logoImageFile)}
+                file={tenant.logoImageFile}
+                format={'logo'}
+                sizes={[300, 600]}
                 alt={`Logo ${tenant.title}`}
               />
             </Link>

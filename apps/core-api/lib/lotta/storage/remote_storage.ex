@@ -3,7 +3,7 @@ defmodule Lotta.Storage.RemoteStorage do
   Handle remote storage for user-generated content.
   Manges writing and reading to different stores.
   """
-  alias Lotta.Storage.RemoteStorageEntity
+  alias Lotta.Storage.{FileData, RemoteStorageEntity}
 
   @type config :: %{
           name: String.t(),
@@ -25,8 +25,8 @@ defmodule Lotta.Storage.RemoteStorage do
   {:error, :unknown_store}
   """
   @doc since: "2.5.0"
-  @spec config_for_store(String.t()) :: {:ok, config()} | {:error, :unknown_store}
-  def config_for_store(store_name) do
+  @spec config_for_store(String.t() | nil) :: {:ok, config()} | {:error, :unknown_store}
+  def config_for_store(store_name \\ default_store()) do
     Application.fetch_env!(:lotta, __MODULE__)
     |> Keyword.get(:storages)
     |> case do
@@ -60,7 +60,7 @@ defmodule Lotta.Storage.RemoteStorage do
   Get the stragegy set for a given store name, or, if none is given, for the default store.
   """
   @doc since: "2.5.0"
-  @spec get_strategy() :: {:ok, module()} | {:error, :unknown_store}
+  @spec get_strategy(String.t() | nil) :: {:ok, module()} | {:error, :unknown_store}
   def get_strategy(store_name \\ default_store()) do
     case config_for_store(store_name) do
       {:ok, %{type: strategy}} ->
@@ -72,22 +72,19 @@ defmodule Lotta.Storage.RemoteStorage do
   end
 
   @doc """
-  Create a file on the remote storage given an elixir Upload struct.
+  Create a file on the remote storage given a `Lotta.Storage.FileData` struct.
   Returns an (unsaved[!]) RemoteStorageEntity in a result tuple.
 
   !!! WARNING !!!
   This does not create an entry in the database.
   Call Repo.save! on the returned RemoteStorageEntity to persist it.
   """
-  @spec create(Upload.t(), path :: String.t()) ::
+  @spec create(FileData.t(), path :: String.t(), metadata :: keyword()) ::
           {:ok, RemoteStorageEntity.t()} | {:error, term()}
-  def create(%Plug.Upload{} = file, path) do
+  def create(%FileData{} = file, path, meta \\ []) do
     with {:ok, strategy} <- get_strategy(),
          {:ok, config} <- config_for_store(default_store()) do
-      strategy.create(file, path, config)
-    else
-      error ->
-        error
+      strategy.create(file, path, config, meta)
     end
   end
 
@@ -98,13 +95,11 @@ defmodule Lotta.Storage.RemoteStorage do
   This does not delete the database object, only the file on the storage.
   """
   @spec delete(RemoteStorageEntity.t()) :: {:ok, RemoteStorageEntity.t()} | {:error, term()}
-  def delete(%RemoteStorageEntity{store_name: store} = entity) do
+  def delete(%RemoteStorageEntity{path: path, store_name: store} = entity) do
     with {:ok, strategy} <- get_strategy(store),
-         {:ok, config} <- config_for_store(store) do
-      strategy.delete(entity, config)
-    else
-      error ->
-        error
+         {:ok, config} <- config_for_store(store),
+         :ok <- strategy.delete(path, config) do
+      {:ok, entity}
     end
   end
 
@@ -130,7 +125,7 @@ defmodule Lotta.Storage.RemoteStorage do
   def get_http_url(%RemoteStorageEntity{} = remote_storage_entity, opts \\ []) do
     with {:ok, strategy} <- get_strategy(remote_storage_entity.store_name),
          {:ok, config} <- config_for_store(remote_storage_entity.store_name) do
-      strategy.get_http_url(remote_storage_entity, opts, config)
+      strategy.get_http_url(remote_storage_entity, config, opts)
     else
       _ ->
         nil

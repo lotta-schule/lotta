@@ -1,15 +1,11 @@
 defmodule Lotta.StorageTest do
   @moduledoc false
 
-  alias Lotta.Storage.RemoteStorageEntity
-  use Lotta.DataCase, async: true
+  use Lotta.WorkerCase, async: true
 
-  import Ecto.Query
-
-  alias ExAws.S3
   alias Lotta.Accounts.User
   alias Lotta.{Fixtures, Repo, Storage, Tenants}
-  alias Lotta.Storage.{Directory, File, RemoteStorage, RemoteStorageEntity}
+  alias Lotta.Storage.{Directory, File, FileData, RemoteStorage, RemoteStorageEntity}
 
   @prefix "tenant_test"
 
@@ -49,38 +45,49 @@ defmodule Lotta.StorageTest do
       user_directory: directory,
       user: user
     } do
-      upload_obj = %Plug.Upload{
-        filename: "image_file.png",
-        content_type: "image/png",
-        path: "test/support/fixtures/image_file.png"
-      }
+      {:ok, file_data} =
+        FileData.from_path("test/support/fixtures/image_file.png", mime_type: "image/png")
 
-      res =
-        Storage.create_stored_file_from_upload(
-          upload_obj,
+      {:ok, uploaded_file} =
+        Storage.create_file(
+          file_data,
           directory,
           user
         )
 
-      assert {:ok, uploaded_file} = res
+      assert uploaded_file =
+               %File{
+                 remote_storage_entity: _remote_storage_entity,
+                 file_conversions: _file_conversions
+               } = Repo.preload(uploaded_file, [:file_conversions, :remote_storage_entity])
 
-      assert %File{
-               remote_storage_entity: _remote_storage_entity
-             } = uploaded_file
-
-      res = ExAws.request!(S3.list_objects("lotta-dev-ugc", prefix: "tenant_test"))
+      res =
+        ExAws.S3.get_object("lotta-dev-ugc", uploaded_file.remote_storage_entity.path)
+        |> ExAws.request!()
 
       assert %{
-               status_code: 200,
-               body: %{contents: contents}
+               status_code: 200
              } = res
 
-      assert Enum.any?(contents, &(&1.key == "tenant_test/#{uploaded_file.id}"))
+      %{file_conversions: file_conversions} =
+        uploaded_file
+        |> Repo.reload()
+        |> Repo.preload(:file_conversions)
+
+      assert uploaded_file.remote_storage_entity.path ==
+               "tenant_test/#{uploaded_file.id}/original"
+
+      assert Enum.count(file_conversions) > 0
     end
 
     test "copy_to_remote_storage/2 should reupload a file to new location", %{
       user_file: user_file
     } do
+      Tesla.Mock.mock(fn
+        %{method: :get} ->
+          %Tesla.Env{status: 200, body: Elixir.File.stream!("test/support/fixtures/eoa3.mp3")}
+      end)
+
       user_file = Repo.preload(user_file, :remote_storage_entity)
 
       current_file_datetime =
@@ -88,11 +95,11 @@ defmodule Lotta.StorageTest do
         |> ExAws.request!()
         |> Map.fetch!(:headers)
         |> Enum.find_value(fn {key, val} ->
-          if key == "Date", do: val
+          if key == "date", do: val
         end)
         |> Timex.parse!("{RFC1123}")
 
-      # wait 2 seconds in order to enforce new DateTime
+      # wait 1 seconds in order to enforce new DateTime
       :timer.sleep(1000)
 
       {:ok, user_file} =
@@ -106,7 +113,7 @@ defmodule Lotta.StorageTest do
         |> ExAws.request!()
         |> Map.fetch!(:headers)
         |> Enum.find_value(fn {key, val} ->
-          if key == "Date", do: val
+          if key == "date", do: val
         end)
         |> Timex.parse!("{RFC1123}")
 
@@ -150,13 +157,11 @@ defmodule Lotta.StorageTest do
       tmp_path = Path.join(System.tmp_dir!(), "test.txt")
       Elixir.File.write!(tmp_path, "test")
 
+      {:ok, file_data} = FileData.from_path(tmp_path, mime_type: "text/plain")
+
       %RemoteStorageEntity{id: id} =
         RemoteStorage.create(
-          %Plug.Upload{
-            filename: "test.txt",
-            content_type: "text/plain",
-            path: tmp_path
-          },
+          file_data,
           "unused/minio"
         )
         |> elem(1)

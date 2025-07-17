@@ -12,6 +12,14 @@ query GetArticleForPreview($id: ID!) {
       id
       mimeType
       fileType
+      formats(category: "ARTICLEPREVIEW") {
+        name
+        url
+        type
+        availability {
+          status
+        }
+      }
     }
     users {
       id
@@ -19,6 +27,14 @@ query GetArticleForPreview($id: ID!) {
       name
       avatarImageFile {
         id
+        formats(category: "AVATAR") {
+          name
+          url
+          type
+          availability {
+            status
+          }
+        }
       }
     }
   }

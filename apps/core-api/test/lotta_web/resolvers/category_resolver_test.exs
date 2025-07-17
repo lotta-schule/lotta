@@ -217,9 +217,7 @@ defmodule LottaWeb.CategoryResolverTest do
                    %{
                      "category" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "sortKey" => 20,
                      "title" => "GTA"
@@ -232,7 +230,7 @@ defmodule LottaWeb.CategoryResolverTest do
                    },
                    %{
                      "category" => %{"title" => "Fächer"},
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "sortKey" => 30,
                      "title" => "Sprache"
                    },
@@ -246,9 +244,7 @@ defmodule LottaWeb.CategoryResolverTest do
                    %{
                      "category" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
-                       %{"name" => "Schüler"}
+                       %{"name" => "Lehrer"}
                      ],
                      "sortKey" => 40,
                      "title" => "Fächer"
@@ -261,7 +257,7 @@ defmodule LottaWeb.CategoryResolverTest do
                    },
                    %{
                      "category" => nil,
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "sortKey" => 50,
                      "title" => "Material"
                    },
@@ -313,8 +309,6 @@ defmodule LottaWeb.CategoryResolverTest do
                    %{
                      "category" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "sortKey" => 20,
@@ -336,8 +330,6 @@ defmodule LottaWeb.CategoryResolverTest do
                    %{
                      "category" => nil,
                      "groups" => [
-                       %{"name" => "Verwaltung"},
-                       %{"name" => "Lehrer"},
                        %{"name" => "Schüler"}
                      ],
                      "sortKey" => 40,

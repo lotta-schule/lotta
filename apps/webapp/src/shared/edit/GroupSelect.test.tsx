@@ -304,7 +304,7 @@ describe('shared/editor/GroupSelect', () => {
       expect(combobox).toHaveValue('');
 
       await fireEvent.click(
-        screen.getByRole('button', { name: /vorschläge/i })
+        screen.getByRole('button', { name: /suggestions/i })
       );
 
       await waitFor(() => {
@@ -382,7 +382,7 @@ describe('shared/editor/GroupSelect', () => {
         expect(screen.getByRole('combobox')).toBeVisible();
       });
 
-      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+      await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
       await waitFor(() => {
         expect(
@@ -438,7 +438,7 @@ describe('shared/editor/GroupSelect', () => {
         expect(screen.getByRole('combobox')).toBeVisible();
       });
 
-      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+      await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
       const selectedOption = screen.getByRole('option', {
         name: 'Lehrer',
@@ -484,7 +484,7 @@ describe('shared/editor/GroupSelect', () => {
           expect(screen.getByRole('checkbox')).toBeVisible();
         });
 
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+        await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
@@ -525,7 +525,7 @@ describe('shared/editor/GroupSelect', () => {
         });
 
         await fireEvent.click(
-          screen.getByRole('button', { name: /vorschläge/i })
+          screen.getByRole('button', { name: /suggestions/i })
         );
 
         await waitFor(() => {
@@ -565,7 +565,7 @@ describe('shared/editor/GroupSelect', () => {
           expect(screen.getByRole('combobox')).toBeVisible();
         });
 
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+        await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
@@ -602,7 +602,7 @@ describe('shared/editor/GroupSelect', () => {
           expect(screen.getByRole('combobox')).toBeVisible();
         });
 
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+        await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
         await waitFor(() => {
           expect(screen.getByRole('listbox')).toBeVisible();
@@ -644,7 +644,9 @@ describe('shared/editor/GroupSelect', () => {
             expect(screen.getByRole('combobox')).toBeVisible();
           });
 
-          await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+          await user.click(
+            screen.getByRole('button', { name: /suggestions/i })
+          );
 
           await waitFor(() => {
             expect(screen.getByRole('listbox')).toBeVisible();
@@ -683,7 +685,9 @@ describe('shared/editor/GroupSelect', () => {
             expect(screen.getByRole('combobox')).toBeVisible();
           });
 
-          await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+          await user.click(
+            screen.getByRole('button', { name: /suggestions/i })
+          );
 
           await waitFor(() => {
             expect(screen.getByRole('listbox')).toBeVisible();
@@ -722,7 +726,7 @@ describe('shared/editor/GroupSelect', () => {
         expect(screen.getByRole('combobox')).toBeVisible();
       });
 
-      await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+      await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
       await waitFor(() => {
         expect(screen.getByRole('listbox')).toBeVisible();
@@ -770,88 +774,84 @@ describe('shared/editor/GroupSelect', () => {
       });
     });
 
-    it(
-      'should toggle the "None" option on and off when clicked two times',
-      async () => {
-        const user = userEvent.setup();
-        const onSelectGroups = vi.fn();
-        const screen = render(
-          <GroupSelect
-            allowNoneSelection
-            hidePublicGroupSelection
-            selectedGroups={[lehrerGroup]}
-            onSelectGroups={onSelectGroups}
-          />,
-          {},
-          { userGroups: [...userGroups] }
+    it('should toggle the "None" option on and off when clicked two times', async () => {
+      const user = userEvent.setup();
+      const onSelectGroups = vi.fn();
+      const screen = render(
+        <GroupSelect
+          allowNoneSelection
+          hidePublicGroupSelection
+          selectedGroups={[lehrerGroup]}
+          onSelectGroups={onSelectGroups}
+        />,
+        {},
+        { userGroups: [...userGroups] }
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('combobox')).toBeVisible();
+      });
+
+      await user.click(screen.getByRole('button', { name: /suggestions/i }));
+
+      await waitFor(() => {
+        expect(screen.getByRole('listbox')).toBeVisible();
+      });
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
+
+      await user.click(
+        await screen.findByRole('option', { name: 'Ohne zugewiesene Gruppe' })
+      );
+
+      await waitFor(() => {
+        expect(onSelectGroups).toHaveBeenCalledWith([null, lehrerGroup]);
+      });
+
+      screen.rerender(
+        <GroupSelect
+          allowNoneSelection
+          hidePublicGroupSelection
+          selectedGroups={[null, lehrerGroup]}
+          onSelectGroups={onSelectGroups}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByRole('listbox')).toBeNull();
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId('GroupSelectSelection')).toHaveTextContent(
+          'Ohne zugewiesene Gruppe'
         );
+      });
 
-        await waitFor(() => {
-          expect(screen.getByRole('combobox')).toBeVisible();
-        });
+      await waitFor(() => new Promise((resolve) => setTimeout(resolve, 300))); // wait for it to settle
 
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
+      await user.click(screen.getByRole('button', { name: /suggestions/i }));
 
-        await waitFor(() => {
-          expect(screen.getByRole('listbox')).toBeVisible();
-        });
-        await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
+      await waitFor(
+        () => {
+          expect(
+            screen.getByRole('option', {
+              name: 'Ohne zugewiesene Gruppe',
+              hidden: true,
+            })
+          ).toBeVisible();
+        },
+        { timeout: 10000 }
+      );
 
-        await user.click(
-          await screen.findByRole('option', { name: 'Ohne zugewiesene Gruppe' })
-        );
+      await user.click(
+        await screen.findByRole('option', {
+          name: 'Ohne zugewiesene Gruppe',
+          hidden: true,
+        })
+      );
 
-        await waitFor(() => {
-          expect(onSelectGroups).toHaveBeenCalledWith([null, lehrerGroup]);
-        });
-
-        screen.rerender(
-          <GroupSelect
-            allowNoneSelection
-            hidePublicGroupSelection
-            selectedGroups={[null, lehrerGroup]}
-            onSelectGroups={onSelectGroups}
-          />
-        );
-
-        await waitFor(() => {
-          expect(screen.queryByRole('listbox')).toBeNull();
-        });
-
-        await waitFor(() => {
-          expect(screen.getByTestId('GroupSelectSelection')).toHaveTextContent(
-            'Ohne zugewiesene Gruppe'
-          );
-        });
-
-        await waitFor(() => new Promise((resolve) => setTimeout(resolve, 300))); // wait for it to settle
-
-        await user.click(screen.getByRole('button', { name: /vorschläge/i }));
-
-        await waitFor(
-          () => {
-            expect(
-              screen.getByRole('option', {
-                name: 'Ohne zugewiesene Gruppe',
-                hidden: true,
-              })
-            ).toBeVisible();
-          },
-          { timeout: 10000 }
-        );
-
-        await user.click(
-          await screen.findByRole('option', {
-            name: 'Ohne zugewiesene Gruppe',
-            hidden: true,
-          })
-        );
-
-        await waitFor(() => {
-          expect(onSelectGroups).toHaveBeenCalledWith([null, lehrerGroup]);
-        });
-      },
-      { timeout: 10000 }
-    );
+      await waitFor(() => {
+        expect(onSelectGroups).toHaveBeenCalledWith([null, lehrerGroup]);
+      });
+    }, 10_000);
   });
 });

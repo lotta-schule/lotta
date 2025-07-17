@@ -8,6 +8,14 @@ query SearchUsers($searchtext: String!) {
     nickname
     avatarImageFile {
       id
+      formats(category: "AVATAR") {
+        name
+        url
+        type
+        availability {
+          status
+        }
+      }
     }
   }
 }

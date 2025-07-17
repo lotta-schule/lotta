@@ -1,6 +1,6 @@
 import { render } from 'test/util';
 import { Show as ShowAudio } from './Show';
-import { ContentModuleType, FileModelType } from 'model';
+import { ContentModuleType } from 'model';
 
 describe('Audio ContentModule (non-editable)', () => {
   it('should render a video with caption when a file is set', () => {
@@ -27,7 +27,7 @@ describe('Audio ContentModule (non-editable)', () => {
                   id: '1001',
                   mimeType: 'video/mp3',
                   format: 'video/mp3',
-                  fileType: FileModelType.Audio,
+                  fileType: 'AUDIO',
                 } as any,
               ],
             },

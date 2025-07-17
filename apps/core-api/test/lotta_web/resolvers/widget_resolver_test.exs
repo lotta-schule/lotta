@@ -103,12 +103,12 @@ defmodule LottaWeb.WidgetResolverTest do
                  "widgets" => [
                    %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"},
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Kalender",
                      "type" => "CALENDAR"
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Kalender",
                      "type" => "CALENDAR"
                    }
@@ -187,12 +187,12 @@ defmodule LottaWeb.WidgetResolverTest do
                  "widgets" => [
                    %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"},
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Kalender",
                      "type" => "CALENDAR"
                    },
                    %{
-                     "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
+                     "groups" => [%{"name" => "Lehrer"}],
                      "title" => "Kalender",
                      "type" => "CALENDAR"
                    }

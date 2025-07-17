@@ -1,3 +1,149 @@
+## 6.0.18 (2025-07-17)
+
+### 🩹 Fixes
+
+- **core:** Reenable Push Notifications to iOS ([#461](https://github.com/lotta-schule/lotta/pull/461))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.0.17 (2025-07-13)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.16 (2025-07-13)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.15 (2025-07-12)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.14 (2025-07-12)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.13 (2025-07-12)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.12 (2025-07-12)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.11 (2025-07-12)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.10 (2025-07-12)
+
+### 🩹 Fixes
+
+- **core:** Small adjustments on file_uuid and remote_location removal ([468aa5d0](https://github.com/lotta-schule/lotta/commit/468aa5d0))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.0.9 (2025-07-12)
+
+### 🚀 Features
+
+- **core:** split up migrations into schema and db content for easier biting ([43dfcc78](https://github.com/lotta-schule/lotta/commit/43dfcc78))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.0.8 (2025-07-11)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.7 (2025-07-11)
+
+### 🩹 Fixes
+
+- **core:** set correct file name when migrating storage to new paths ([3b80a37d](https://github.com/lotta-schule/lotta/commit/3b80a37d))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.0.6 (2025-07-11)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.5 (2025-07-11)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.4 (2025-07-11)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.3 (2025-07-11)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.2 (2025-07-11)
+
+This was a version bump only, there were no code changes.
+
+## 6.0.1 (2025-07-11)
+
+This was a version bump only, there were no code changes.
+
+# 6.0.0 (2025-07-11)
+
+### 🚀 Features
+
+- rewrite complete asset managment with homemade file conversion ([#425](https://github.com/lotta-schule/lotta/pull/425))
+- **ci:** Create multi-platform docker images as build output ([#387](https://github.com/lotta-schule/lotta/pull/387))
+- **core:** Send feedback to cockpit by default instead of sending mail ([#413](https://github.com/lotta-schule/lotta/pull/413))
+- **core:** Remove videoplay-200 formats, make format/file unique, discard unsupported formats ([#434](https://github.com/lotta-schule/lotta/pull/434))
+- **core:** Faster load times via more efficient queries ([#436](https://github.com/lotta-schule/lotta/pull/436))
+- **core:** Make Oban queues configurable ([#454](https://github.com/lotta-schule/lotta/pull/454))
+- **core:** Extract metadata for pdf ([414752d0](https://github.com/lotta-schule/lotta/commit/414752d0))
+- **core-api:** Add timezone to calendar events ([#400](https://github.com/lotta-schule/lotta/pull/400))
+- **e2e:** Setup E2E testing ([#401](https://github.com/lotta-schule/lotta/pull/401))
+- **webapp:** ReactionCount: Add space between icon and counter ([#405](https://github.com/lotta-schule/lotta/pull/405))
+- **webapp:** fadeIn images when loaded ([#437](https://github.com/lotta-schule/lotta/pull/437))
+- **webapp:** Update Privacy Page (remove keycdn and cloudimage) ([#455](https://github.com/lotta-schule/lotta/pull/455))
+- **webapp:** Admin: After creating cal event, show it in calendar ([#457](https://github.com/lotta-schule/lotta/pull/457))
+
+### 🩹 Fixes
+
+- **core:** Send background push notifications as such for "read_conversation" event ([#408](https://github.com/lotta-schule/lotta/pull/408))
+- **core:** Fix undefined behaviour when a crashed conversion worker is retried ([7dca9f73](https://github.com/lotta-schule/lotta/commit/7dca9f73))
+- **core:** Do not allow nil-values for UserGroup#enrollment_tokens ([#452](https://github.com/lotta-schule/lotta/pull/452))
+- **core:** Show full-day events starting from today instead of tomorrow ([#456](https://github.com/lotta-schule/lotta/pull/456))
+- **core-api:** Make day-long events compatible with apple calendar ([#394](https://github.com/lotta-schule/lotta/pull/394))
+- **core-api:** Calendars: Fix ICS for recurring events and events with descriptions ([277558fc](https://github.com/lotta-schule/lotta/commit/277558fc))
+- **core-api:** Use full-day dtend exclusivly in ics renderer ([2865c28b](https://github.com/lotta-schule/lotta/commit/2865c28b))
+- **hubert:** Set correct size for PopoverContent ([#442](https://github.com/lotta-schule/lotta/pull/442))
+- **webapp:** Image ContentModule: Set image max-width to 100% ([#396](https://github.com/lotta-schule/lotta/pull/396))
+- **webapp:** Make admin/users page scrollable again ([#397](https://github.com/lotta-schule/lotta/pull/397))
+- **webapp:** Use correct websocket endpoint ([4f8fd9ed](https://github.com/lotta-schule/lotta/commit/4f8fd9ed))
+- **webapp:** Readd background to "related articles" ([#406](https://github.com/lotta-schule/lotta/pull/406))
+- **webapp:** Stop showing past recurring events in Calendar widget ([#412](https://github.com/lotta-schule/lotta/pull/412))
+- **webapp:** limit image module width so it stays centered ([#414](https://github.com/lotta-schule/lotta/pull/414))
+- **webapp:** Allow to set an external calendar ([#416](https://github.com/lotta-schule/lotta/pull/416))
+- **webapp:** Use correct font color for text in popovers ([#423](https://github.com/lotta-schule/lotta/pull/423))
+- **webapp:** Make sticky EditToolbar for text module be sticky again 💦 ([#424](https://github.com/lotta-schule/lotta/pull/424))
+- **webapp:** Show two columns for galleries on mobile ([#429](https://github.com/lotta-schule/lotta/pull/429))
+- **webapp:** Make ResponsiveImage a client component ([ce4640b5](https://github.com/lotta-schule/lotta/commit/ce4640b5))
+- **webapp:** Administration: Save changes made to subcategories sorting ([#441](https://github.com/lotta-schule/lotta/pull/441))
+- **webapp:** Correctly compute url of files' "original" format ([#450](https://github.com/lotta-schule/lotta/pull/450))
+- **webapp:** Make fetching of articles in category page more consistent ([#451](https://github.com/lotta-schule/lotta/pull/451))
+- **webapp:** Fix wrong ArticlePreview image size ([fda4f343](https://github.com/lotta-schule/lotta/commit/fda4f343))
+- **webapp:** Add correct margin to paragraphs in (Slate Editor) ([#453](https://github.com/lotta-schule/lotta/pull/453))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+- Billy
+
 ## 5.0.11 (2024-09-12)
 
 

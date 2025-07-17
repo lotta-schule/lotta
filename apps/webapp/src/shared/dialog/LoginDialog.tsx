@@ -10,12 +10,11 @@ import {
   Input,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { UserModel } from 'model';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
 import Link from 'next/link';
+import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
 
 import LoginMutation from 'api/mutation/LoginMutation.graphql';
-import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 
 import styles from './LoginDialog.module.scss';
 
@@ -46,9 +45,9 @@ export const LoginDialog = React.memo<LoginDialogProps>(
         if (data.login) {
           localStorage.setItem('id', data.login.accessToken);
           await apolloClient.reFetchObservableQueries();
-          const { data: userData } = await apolloClient.query<{
-            currentUser: UserModel;
-          }>({ query: GetCurrentUserQuery });
+          const { data: userData } = await apolloClient.query({
+            query: GET_CURRENT_USER,
+          });
           if (userData?.currentUser?.hasChangedDefaultPassword === false) {
             setIsShowUpdatePasswordDialog(true);
           } else {

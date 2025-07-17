@@ -1,4 +1,4 @@
-@import "../../theme/breakpoints";
+@use "../../theme/breakpoints" as *;
 
 .root {
   display: flex;
@@ -13,11 +13,12 @@
 
     @media screen and (max-width: $max-sm) {
       flex: 0 0 0%;
+
       &.active {
         flex: 0 0 100%;
         margin-right: var(--lotta-spacing);
 
-        & ~ .contentView {
+        &~.contentView {
           padding-inline: 0;
         }
       }

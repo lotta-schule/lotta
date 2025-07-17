@@ -32,6 +32,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
         'categories',
         'userGroups',
         'tags',
+        'withCache',
       ])
     );
 
@@ -39,10 +40,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
 
     return (
       <TranslationsProvider>
-        <ServerDataContextProvider
-          tenant={options.tenant ?? tenant}
-          baseUrl="https://example.com"
-        >
+        <ServerDataContextProvider tenant={options.tenant ?? tenant}>
           <HubertProvider>
             <MockedProvider
               mocks={[...defaultMocks, ...(options.additionalMocks || [])]}

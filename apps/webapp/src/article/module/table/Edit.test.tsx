@@ -176,7 +176,6 @@ describe('shared/article/module/table/Edit', () => {
         const fireEvent = userEvent.setup();
         let contentModule = tableContentModule;
         const callback = vi.fn((cm) => {
-          cm.content.rows[0].length === 1;
           contentModule = cm;
         });
         const screen = render(

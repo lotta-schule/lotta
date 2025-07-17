@@ -1,16 +1,27 @@
 import { cache } from 'react';
 import { getClient } from 'api/client';
+import { graphql } from 'api/graphql';
 import { UserGroupModel } from 'model';
 
-import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
+export const GET_GROUP_QUERY = graphql(`
+  query GetGroup($id: ID!) {
+    group(id: $id) {
+      id
+      name
+      isAdminGroup
+      sortKey
+      enrollmentTokens
+      canReadFullName
+    }
+  }
+`);
 
 export const loadUserGroup = cache(async (id: UserGroupModel['id']) => {
-  const group = await getClient()
+  const client = await getClient();
+  return await client
     .query<{ group: UserGroupModel }>({
-      query: GetGroupQuery,
+      query: GET_GROUP_QUERY,
       variables: { id },
     })
     .then(({ data }) => data?.group ?? null);
-
-  return group;
 });

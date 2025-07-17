@@ -1,4 +1,4 @@
-@import "../theme/breakpoints.scss";
+@use "../theme/breakpoints.scss" as *;
 
 .root {
   flex: 0 0 250px;
@@ -22,9 +22,11 @@
     position: relative;
     filter: blur(1px);
   }
+
   &.isDragAccept {
     position: relative;
   }
+
   &.isDragReject {
     position: relative;
   }

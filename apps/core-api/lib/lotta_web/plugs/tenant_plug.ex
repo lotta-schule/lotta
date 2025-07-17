@@ -33,7 +33,11 @@ defmodule LottaWeb.TenantPlug do
     tenant = tenant_by_tenant_header(conn) || tenant_by_host_header(conn)
 
     if tenant do
-      Sentry.Context.set_tags_context(%{"tenant.id" => tenant.id, "tenant.slug" => tenant.slug})
+      Sentry.Context.set_tags_context(%{
+        "tenant.id" => tenant.id,
+        "tenant.slug" => tenant.slug,
+        "tenant.prefix" => tenant.prefix
+      })
 
       OpenTelemetry.Tracer.set_attributes(%{
         "tenant.id": tenant.id,
@@ -42,7 +46,9 @@ defmodule LottaWeb.TenantPlug do
       })
 
       Repo.put_prefix(tenant.prefix)
-      put_private(conn, :lotta_tenant, tenant)
+
+      conn
+      |> put_private(:lotta_tenant, tenant)
     else
       conn
     end

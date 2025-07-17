@@ -1,6 +1,4 @@
-import { UserModel, ArticleModel } from 'model';
-import { createImageUrl } from 'util/image/useImageUrl';
-import { File } from './File';
+import { ArticleModel } from 'model';
 
 export const User = {
   getName(
@@ -24,15 +22,6 @@ export const User = {
     } | null
   ) {
     return user?.nickname || user?.name || '';
-  },
-
-  getAvatarUrl(baseUrl: string, user?: UserModel | null, size = 100) {
-    return user?.avatarImageFile
-      ? createImageUrl(
-          File.getFileRemoteLocation(baseUrl, user.avatarImageFile),
-          { width: size, aspectRatio: '1:1', resize: 'cover' }
-        )
-      : User.getDefaultAvatarUrl(user);
   },
 
   getDefaultAvatarUrl(

@@ -68,6 +68,19 @@ defmodule Lotta.Tenants do
     user_params = Keyword.get(params, :user_params)
     tenant_params = Keyword.get(params, :tenant)
 
+    with {:ok, tenant} <- setup_tenant(user_params, tenant_params) do
+      if DefaultContent.create_default_content(tenant, user_params) == :ok do
+        {:ok, tenant}
+      else
+        delete_tenant(tenant)
+        {:error, "Error creating default content"}
+      end
+    end
+  end
+
+  @spec setup_tenant(user_params :: map(), tenant_params :: map()) ::
+          {:ok, Tenant.t()} | {:error, term()}
+  defp setup_tenant(user_params, tenant_params) do
     Multi.new()
     |> Multi.put(:user_params, user_params)
     |> Multi.insert(:new_tenant_without_prefix, Tenant.create_changeset(tenant_params))
@@ -80,8 +93,7 @@ defmodule Lotta.Tenants do
     |> Multi.run(:migrations, fn _repo, %{tenant: tenant} ->
       TenantDbManager.create_tenant_database_schema(tenant)
     end)
-    |> Multi.merge(&DefaultContent.create_default_content/1)
-    |> Repo.transaction(timeout: 120_000)
+    |> Repo.transaction()
     |> case do
       {:ok, %{tenant: tenant}} ->
         {:ok, tenant}
@@ -94,7 +106,12 @@ defmodule Lotta.Tenants do
 
         Sentry.capture_message(msg)
 
-        {:error, failed_operation, failed_value}
+        message =
+          if is_struct(failed_value, Ecto.Changeset),
+            do: failed_value,
+            else: "#{failed_operation}: #{failed_value}"
+
+        {:error, message}
     end
   end
 
@@ -233,15 +250,17 @@ defmodule Lotta.Tenants do
   @doc since: "1.0.0"
   @spec list_categories(User.t() | nil) :: list(Category.t())
   def list_categories(user) do
-    groups = if user, do: user.all_groups, else: []
+    group_ids = if user, do: Enum.map(user.all_groups, & &1.id), else: []
     is_admin = if user, do: user.is_admin?, else: false
 
     from(c in Category,
-      left_join: cug in "categories_user_groups",
-      on: cug.category_id == c.id,
-      where: cug.group_id in ^Enum.map(groups, & &1.id) or is_nil(cug.group_id) or ^is_admin,
-      order_by: [asc: :sort_key, asc: :category_id],
-      distinct: true
+      left_join: g in assoc(c, :groups),
+      where:
+        ^is_admin or
+          is_nil(g.id) or
+          g.id in ^group_ids,
+      order_by: [asc: c.sort_key, asc: c.category_id],
+      preload: [groups: g]
     )
     |> Repo.all()
   end

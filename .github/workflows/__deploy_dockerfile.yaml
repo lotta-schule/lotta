@@ -35,6 +35,12 @@ on:
         type: string
         required: false
         default: 'true'
+      sentry_dsn:
+        type: string
+        required: false
+        description: |
+          The sentry dsn to use for the build. This is required
+          if you want to upload sourcemaps to sentry
     secrets:
       username:
         description: |
@@ -46,11 +52,6 @@ on:
         required: false
         description: |
           The sentry auth token to use for the build. This is required
-          if you want to upload sourcemaps to sentry
-      sentry_dsn:
-        required: false
-        description: |
-          The sentry dsn to use for the build. This is required
           if you want to upload sourcemaps to sentry
     outputs:
       release_name:
@@ -89,6 +90,8 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          version: latest
 
       - name: Login to remote registry
         uses: docker/login-action@v3
@@ -100,18 +103,14 @@ jobs:
       - name: Build and push *by digest*
         id: build
         uses: docker/build-push-action@v6
-        env:
-          RELEASE_NAME: ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
-          SENTRY_DSN: '${{ secrets.sentry_dsn }}'
-          SENTRY_AUTH_TOKEN: '${{ secrets.sentry_auth_token }}'
         with:
           context: ${{ inputs.context }}
           file: ${{ format('{0}/{1}', inputs.context, (inputs.dockerfile || 'Dockerfile')) }}
           platforms: ${{ matrix.platform }}
           build-args: |
             IMAGE_NAME=$IMAGE_NAME
-            RELEASE_NAME=$RELEASE_NAME
-            SENTRY_DSN=$SENTRY_DSN
+            RELEASE_NAME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+            SENTRY_DSN=${{ inputs.sentry_dsn }}
           secrets: |
             sentry_auth_token=${{ secrets.sentry_auth_token }}
           cache-from: 'type=gha,scope=buildkit-${{ env.IMAGE_NAME }}-${{ matrix.platform }}'
@@ -143,6 +142,7 @@ jobs:
     env:
       IMAGE_NAME: '${{ inputs.name }}'
       LONG_IMAGE_NAME: 'ghcr.io/lotta-schule/${{ inputs.name }}'
+      DOCKER_METADATA_PR_HEAD_SHA: 'true'
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4

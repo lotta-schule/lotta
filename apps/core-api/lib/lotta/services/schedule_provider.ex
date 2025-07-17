@@ -3,8 +3,6 @@ defmodule Lotta.Services.ScheduleProvider do
   HTTP Client to get schedule data
   """
 
-  use Tesla
-
   @spec client(
           type :: String.t(),
           username :: String.t(),
@@ -17,7 +15,8 @@ defmodule Lotta.Services.ScheduleProvider do
       {Tesla.Middleware.BaseUrl, Application.fetch_env!(:lotta, :schedule_provider_url)},
       {Tesla.Middleware.Query,
        [source: type, schoolId: school_id, username: username, password: password]},
-      Tesla.Middleware.JSON
+      Tesla.Middleware.JSON,
+      Tesla.Middleware.Logger
     ]
 
     Tesla.client(middleware)

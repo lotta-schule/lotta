@@ -1,7 +1,7 @@
 import Config
 
 defmodule SystemConfig do
-  @allowed_environments ~w(test development staging production)
+  @allowed_environments ~w(test development preview staging production)
   def get(envvar, opts \\ []) do
     value = System.get_env(envvar) || default(envvar, config_env())
 
@@ -22,11 +22,17 @@ defmodule SystemConfig do
       :boolean ->
         value in ["1", "true", "TRUE", true]
 
+      :url_with_scheme ->
+        value && value |> String.replace(~r/^(?:http(s)?:\/\/)?/, "http\\1://")
+
       :url_encode ->
         value && URI.encode_www_form(value)
 
+      :base64 ->
+        value && Base.decode64!(value)
+
       :string_list ->
-        value && String.split(value, ",")
+        value && Enum.filter(String.split(value, ","), &(String.length(&1) > 0))
 
       :docker_image_tag ->
         value && String.split(value, ":") |> List.last()
@@ -39,7 +45,6 @@ defmodule SystemConfig do
     end
   end
 
-  defp default("POOL_SIZE", _), do: "10"
   defp default("APP_ENVIRONMENT", _), do: "development"
   defp default("BASE_URI_HOST", :dev), do: "local.lotta.schule,lotta.lvh.me,lotta.schule"
   defp default("BASE_URI_HOST", _), do: "lotta.schule"
@@ -52,8 +57,8 @@ defmodule SystemConfig do
   defp default("SERVICE_NAME", _), do: "core"
   defp default("HEADLESS_SERVICE_NAME", _), do: ""
   defp default("NAMESPACE", _), do: nil
-  defp default("SERVER", :test), do: "false"
-  defp default("SERVER", _), do: "true"
+  defp default("PHX_SERVER", :dev), do: "true"
+  defp default("PHX_SERVER", _), do: "false"
   defp default("SECRET_KEY_BASE", env) when env in [:dev, :test], do: "123"
 
   defp default("SECRET_KEY_JWT", env) when env in [:dev, :test],
@@ -68,13 +73,7 @@ defmodule SystemConfig do
   defp default("POSTGRES_DB", :test), do: "api_test"
   defp default("POSTGRES_DB", :dev), do: "lotta"
   defp default("POSTGRES_HOST", _), do: "localhost"
-  defp default("POSTGRES_POOL_SIZE", _), do: "10"
-
-  defp default("RABBITMQ_HOST", _), do: "localhost"
-  defp default("RABBITMQ_USER", _), do: "guest"
-  defp default("RABBITMQ_PASSWORD", _), do: "guest"
-  defp default("RABBITMQ_PREFIX", :test), do: "test"
-  defp default("RABBITMQ_PREFIX", _), do: nil
+  defp default("POSTGRES_POOL_SIZE", _), do: "50"
 
   defp default("REDIS_HOST", env) when env in [:dev, :test], do: "localhost"
   defp default("REDIS_PASSWORD", env) when env in [:dev, :test], do: "lotta"
@@ -105,6 +104,7 @@ defmodule SystemConfig do
 
   defp default("PIGEON_USE_SANDBOX", :test), do: "true"
   defp default("PIGEON_USE_SANDBOX", _), do: "false"
+  defp default("APNS_KEY_B64", _), do: ""
   defp default("APNS_KEY", _), do: nil
   defp default("APNS_KEY_ID", _), do: nil
   defp default("APNS_TEAM_ID", _), do: nil
@@ -112,6 +112,7 @@ defmodule SystemConfig do
   defp default("APNS_USE_PRODUCTION", :prod), do: "true"
   defp default("APNS_USE_PRODUCTION", _), do: false
   defp default("FCM_PROJECT_ID", _), do: nil
+  defp default("FCM_SERVICE_ACCOUNT_JSON_B64", _), do: ""
   defp default("FCM_SERVICE_ACCOUNT_JSON", _), do: nil
 
   defp default("COCKPIT_ADMIN_API_USERNAME", _), do: "admin"
@@ -119,8 +120,6 @@ defmodule SystemConfig do
   defp default("COCKPIT_ENDPOINT", _), do: "http://localhost:4040"
 
   defp default("SENTRY_DSN", _), do: nil
-  defp default("CLOUDIMAGE_TOKEN", :dev), do: nil
-  defp default("CLOUDIMAGE_TOKEN", :test), do: "123"
 
   defp default("SCHEDULE_PROVIDER_URL", env) when env in [:dev, :test],
     do: "http://localhost:3111"
@@ -132,8 +131,15 @@ defmodule SystemConfig do
 
   defp default("ANALYTICS_API_KEY", _), do: nil
 
+  defp default("OBAN_EXCLUDE_QUEUES", _), do: ""
+
   defp default(key, env),
-    do: raise("environment variable #{key} not set and no default for #{inspect(env)}")
+    do:
+      raise("""
+        environment variable #{key} not set and no default for #{inspect(env)}.
+        See here for a list of available environment variables:
+        #{inspect(System.get_env())}
+      """)
 end
 
 config :lotta, :environment, SystemConfig.get("APP_ENVIRONMENT", cast: :environment)
@@ -147,7 +153,9 @@ config :lotta, :base_uri,
   port: SystemConfig.get("BASE_URI_PORT", cast: :integer)
 
 # The secret key base is used to sign/encrypt cookies and other secrets.
-config :lotta, LottaWeb.Endpoint, secret_key_base: SystemConfig.get("SECRET_KEY_BASE")
+config :lotta, LottaWeb.Endpoint,
+  secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
+  server: SystemConfig.get("PHX_SERVER", cast: :boolean)
 
 config :opentelemetry, :resource,
   service: %{
@@ -177,24 +185,13 @@ config :lotta,
        hostname: SystemConfig.get("POSTGRES_HOST"),
        pool_size: SystemConfig.get("POSTGRES_POOL_SIZE", cast: :integer)
 
-config :lotta, :rabbitmq,
-  url:
-    %URI{
-      host: SystemConfig.get("RABBITMQ_HOST"),
-      scheme: "amqp",
-      userinfo:
-        SystemConfig.get("RABBITMQ_USER", cast: :url_encode) <>
-          ":" <> SystemConfig.get("RABBITMQ_PASSWORD", cast: :url_encode)
-    }
-    |> URI.to_string()
-
 config :lotta, :redis_connection,
   host: SystemConfig.get("REDIS_HOST"),
   password: SystemConfig.get("REDIS_PASSWORD"),
   name: :redix
 
 config :ex_aws, :s3,
-  http_client: ExAws.Request.Hackney,
+  http_client: ExAws.Request.Finch,
   access_key_id: SystemConfig.get("AWS_ACCESS_KEY_ID"),
   secret_access_key: SystemConfig.get("AWS_SECRET_ACCESS_KEY"),
   host: SystemConfig.get("UGC_S3_COMPAT_ENDPOINT", cast: :url_host),
@@ -223,7 +220,9 @@ config :lotta, Lotta.Storage.RemoteStorage,
       end)
     end)
 
-config :lotta, :schedule_provider_url, SystemConfig.get("SCHEDULE_PROVIDER_URL")
+config :lotta,
+       :schedule_provider_url,
+       SystemConfig.get("SCHEDULE_PROVIDER_URL", cast: :url_with_scheme)
 
 config :lotta, :analytics,
   endpoint: SystemConfig.get("ANALYTICS_ENDPOINT"),
@@ -272,17 +271,19 @@ config :sentry,
   release: SystemConfig.get("IMAGE_NAME", cast: :docker_image_tag),
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()],
-  filter: Lotta.SentryFilter
-
-config :lotta, Lotta.Storage.ImageProcessingUrl,
-  cloudimage_token: SystemConfig.get("CLOUDIMAGE_TOKEN")
+  filter: Lotta.SentryFilter,
+  integrations: [
+    oban: [
+      # Capture errors:
+      capture_errors: true,
+      # Monitor cron jobs:
+      cron: [enabled: true]
+    ]
+  ]
 
 libcluster_topologies =
-  case SystemConfig.get("HEADLESS_SERVICE_NAME") do
+  case to_string(SystemConfig.get("HEADLESS_SERVICE_NAME")) do
     "" ->
-      []
-
-    nil ->
       []
 
     service_name ->
@@ -300,23 +301,39 @@ libcluster_topologies =
 
 config :libcluster, topologies: libcluster_topologies
 
-config :lotta, Lotta.Notification.Provider.APNS,
-  adapter:
-    if(SystemConfig.get("PIGEON_USE_SANDBOX", cast: :boolean),
-      do: Pigeon.Sandbox,
-      else: Pigeon.APNS
-    ),
-  key: SystemConfig.get("APNS_KEY"),
-  key_identifier: SystemConfig.get("APNS_KEY_ID"),
-  team_id: SystemConfig.get("APNS_TEAM_ID"),
-  topic: SystemConfig.get("APNS_TOPIC"),
-  mode: if(SystemConfig.get("APNS_USE_PRODUCTION", cast: :boolean), do: :prod, else: :dev)
+config :lotta, Lotta.PushNotification,
+  fcm: [
+    project_id: SystemConfig.get("FCM_PROJECT_ID"),
+    service_account_json:
+      SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON_B64", cast: :base64) ||
+        SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON")
+  ],
+  apns: [
+    key: SystemConfig.get("APNS_KEY_B64", cast: :base64) || SystemConfig.get("APNS_KEY"),
+    key_identifier: SystemConfig.get("APNS_KEY_ID"),
+    team_id: SystemConfig.get("APNS_TEAM_ID"),
+    topic: SystemConfig.get("APNS_TOPIC"),
+    prod?: SystemConfig.get("APNS_USE_PRODUCTION", cast: :boolean)
+  ],
+  sandbox?: SystemConfig.get("PIGEON_USE_SANDBOX", cast: :boolean)
 
-config :lotta, Lotta.Notification.Provider.FCM,
-  adapter:
-    if(SystemConfig.get("PIGEON_USE_SANDBOX", cast: :boolean),
-      do: Pigeon.Sandbox,
-      else: Pigeon.FCM
-    ),
-  project_id: SystemConfig.get("FCM_PROJECT_ID"),
-  service_account_json: SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON")
+config :lotta, Oban,
+  engine: Oban.Engines.Basic,
+  notifier: Oban.Notifiers.PG,
+  repo: Lotta.Repo,
+  prefix: "oban",
+  plugins: [
+    {Oban.Plugins.Lifeline, []},
+    {Oban.Plugins.Pruner, interval: :timer.minutes(5), max_age: :timer.hours(12)},
+    {Oban.Plugins.Reindexer, schedule: "@weekly"}
+  ],
+  queues:
+    [
+      file_conversion: [limit: 4],
+      media_conversion: [limit: 1],
+      preview_generation: [limit: 2],
+      file_metadata: [limit: 2]
+    ]
+    |> Enum.filter(fn {k, _} ->
+      to_string(k) not in SystemConfig.get("OBAN_EXCLUDE_QUEUES", cast: :string_list)
+    end)

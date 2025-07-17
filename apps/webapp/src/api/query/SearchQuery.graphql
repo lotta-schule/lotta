@@ -10,6 +10,14 @@ query SearchQuery($searchText: String!, $options: SearchOptions) {
     isPinnedToTop
     previewImageFile {
       id
+      formats(category: "ARTICLEPREVIEW") {
+        name
+        url
+        type
+        availability {
+          status
+        }
+      }
     }
     category {
       id
@@ -24,6 +32,14 @@ query SearchQuery($searchText: String!, $options: SearchOptions) {
       name
       avatarImageFile {
         id
+        formats(category: "AVATAR") {
+          name
+          url
+          type
+          availability {
+            status
+          }
+        }
       }
     }
   }

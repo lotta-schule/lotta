@@ -8,33 +8,45 @@ defmodule Lotta.Application do
   require Logger
 
   def start(_type, _args) do
-    :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
-    :opentelemetry_cowboy.setup()
-    OpentelemetryPhoenix.setup(adapter: :cowboy2)
-    OpentelemetryAbsinthe.setup()
-    OpentelemetryEcto.setup([:lotta, :repo])
-    OpentelemetryRedix.setup()
+    # Create cache dir for file processor
+    Lotta.Storage.FileData.create_cache_dir()
+
+    setup_telemetry()
+    Logger.add_handlers(:lotta)
+
+    Oban.Telemetry.attach_default_logger()
 
     # List all child processes to be supervised
     children =
       prepended_apps() ++
         [
-          {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
+          {Finch, name: Lotta.Finch},
           LottaWeb.Telemetry,
           Lotta.Repo,
+          {Oban, Application.fetch_env!(:lotta, Oban)},
+          {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
           LottaWeb.Endpoint,
+          Lotta.PushNotification,
           {Absinthe.Subscription, LottaWeb.Endpoint},
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
-          Lotta.Queue.MediaConversionRequestPublisher,
-          Lotta.Queue.MediaConversionConsumer,
-          Lotta.Notification.PushNotification,
           {ConCache,
            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
-        ] ++ appended_apps()
+        ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    Supervisor.start_link(children, strategy: :one_for_one, name: Lotta.Supervisor)
+    Supervisor.start_link(children,
+      strategy: :one_for_one,
+      name: Lotta.Supervisor
+    )
+  end
+
+  defp setup_telemetry() do
+    OpentelemetryBandit.setup()
+    OpentelemetryPhoenix.setup(adapter: :bandit)
+    OpentelemetryAbsinthe.setup()
+    OpentelemetryEcto.setup([:lotta, :repo])
+    OpentelemetryRedix.setup()
   end
 
   defp prepended_apps() do
@@ -48,23 +60,6 @@ defmodule Lotta.Application do
       cluster_topologies ->
         [{Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]}]
     end
-  end
-
-  defp appended_apps() do
-    []
-    |> then(fn apps ->
-      if Keyword.get(Application.get_env(:lotta, Lotta.Notification.Provider.APNS), :key),
-        do: apps ++ [Lotta.Notification.Provider.APNS],
-        else: apps
-    end)
-    |> then(fn apps ->
-      if Keyword.get(
-           Application.get_env(:lotta, Lotta.Notification.Provider.FCM),
-           :service_account_json
-         ),
-         do: apps ++ [Lotta.Notification.Provider.FCM],
-         else: apps
-    end)
   end
 
   # Tell Phoenix to update the endpoint configuration

@@ -1,4 +1,4 @@
-@import "../theme/breakpoints.scss";
+@use "../theme/breakpoints.scss" as *;
 
 .root {
   height: 100%;
@@ -46,8 +46,10 @@
           justify-content: flex-end;
           align-items: center;
           flex: 0 0 auto;
+
           button {
             margin-left: var(--lotta-spacing);
+
             &.deleteButton {
               color: rgb(var(--lotta-error-color));
             }
@@ -70,25 +72,30 @@
         }
       }
 
-      &.manyNodes li > div {
+      &.manyNodes li>div {
         padding: 0;
       }
+
       ul {
         font-size: 0.75em;
         list-style: none;
         padding: 0;
         margin: 0;
+
         li {
           display: flex;
           justify-content: space-between;
           margin-bottom: var(--lotta-spacing);
           padding: 0;
+
           &:last-child {
             margin-bottom: 0;
           }
+
           label {
             font-weight: bold;
-            & + span {
+
+            &+span {
               white-space: nowrap;
               text-overflow: ellipsis;
               overflow: hidden;

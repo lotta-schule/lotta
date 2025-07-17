@@ -1,4 +1,4 @@
-@import "breakpoints";
+@use "breakpoints" as *;
 
 .root {
   .row {
@@ -7,7 +7,8 @@
 
   .nameRow {
     display: flex;
-    & > :first-child {
+
+    &> :first-child {
       flex: 1;
     }
   }
@@ -17,17 +18,21 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-end;
+
     @media screen and (max-width: $max-xs) {
       flex-wrap: wrap;
     }
-    & > * {
+
+    &>* {
       flex: 1;
     }
-    & > div:last-of-type {
+
+    &>div:last-of-type {
       flex: 0 0 max-content;
       display: flex;
       flex-direction: column;
       padding-inline: var(--lotta-spacing);
+
       label {
         padding-top: 0;
         padding-bottom: var(--lotta-spacing);
@@ -49,7 +54,8 @@
 
     @media screen and (max-width: $max-xs) {
       grid-template: 1fr / auto auto;
-      & > :first-child {
+
+      &> :first-child {
         grid-column-end: span 2;
       }
 

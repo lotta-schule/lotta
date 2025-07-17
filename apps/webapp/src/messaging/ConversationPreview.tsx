@@ -27,9 +27,15 @@ export const ConversationPreview = React.memo(
   }: ConversationPreviewProps) => {
     const currentUser = useCurrentUser()!;
 
-    const user =
-      conversation.users.find((u) => u.id !== currentUser!.id) ?? null;
+    const user = React.useMemo(
+      () => conversation.users.find((u) => u.id !== currentUser?.id) ?? null,
+      [conversation, currentUser]
+    );
     const group = conversation.groups[0] ?? null;
+
+    if (!currentUser) {
+      return null;
+    }
 
     return (
       <Button

@@ -7,10 +7,11 @@ import {
   VivaLaRevolucion,
   lehrerGroup,
 } from 'test/fixtures';
-import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
+import {
+  DeleteUserGroupDialog,
+  DELETE_USER_GROUP,
+} from './DeleteUserGroupDialog';
 import userEvent from '@testing-library/user-event';
-
-import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
 
 describe('administration: DeleteUserGroupDialog', () => {
   it('should be hidden and open when "isOpen" is passed and close when cancelled', async () => {
@@ -81,7 +82,7 @@ describe('administration: DeleteUserGroupDialog', () => {
       const mocks: MockedResponse[] = [
         {
           request: {
-            query: DeleteUserGroupMutation,
+            query: DELETE_USER_GROUP,
             variables: {
               id: lehrerGroup.id,
             },
@@ -142,7 +143,7 @@ describe('administration: DeleteUserGroupDialog', () => {
       const mocks: MockedResponse[] = [
         {
           request: {
-            query: DeleteUserGroupMutation,
+            query: DELETE_USER_GROUP,
             variables: {
               id: lehrerGroup.id,
             },

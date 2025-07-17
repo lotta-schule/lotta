@@ -4,20 +4,22 @@ defmodule Lotta.Repo.Seeder do
   alias Lotta.Accounts
   alias Lotta.Tenants
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Storage.{Directory, File}
+  alias Lotta.Storage.{Directory, File, FileData}
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Tenants.{Category, Tenant, TenantDbManager, Widget}
 
   def seed do
-
     # Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
+    FileData.create_cache_dir()
+
+    prefix = "tenant_test"
 
     tenant =
       Repo.insert!(%Tenant{
         title: "Test Lotta",
         slug: "test",
-        prefix: "tenant_test",
+        prefix: prefix,
         configuration: %{
           custom_theme: %{
             "palette" => %{
@@ -28,38 +30,31 @@ defmodule Lotta.Repo.Seeder do
         }
       })
 
-    tenant_2 =
-      Repo.insert!(%Tenant{
-        title: "Test Lotta 2",
-        slug: "test2",
-        prefix: "tenant_test2"
-      })
+    {:ok, _} = TenantDbManager.create_tenant_database_schema(tenant)
 
-    all_tenants = [tenant, tenant_2]
-
-    all_tenants
-    |> Enum.each(&TenantDbManager.create_tenant_database_schema(&1))
+    Repo.put_prefix(prefix)
 
     admin_group =
-      all_tenants
-      |> Enum.map(&(
-        Repo.insert!(
-          %UserGroup{
-            name: "Administration",
-            is_admin_group: true,
-            sort_key: 1000
-          },
-          prefix: &1.prefix
-        )
-      ))
-      |> List.first()
+      Repo.insert!(
+        %UserGroup{
+          name: "Administration",
+          is_admin_group: true,
+          sort_key: 1000
+        },
+        prefix: prefix
+      )
 
     verwaltung_group =
       Repo.insert!(%UserGroup{name: "Verwaltung", sort_key: 800}, prefix: tenant.prefix)
 
     lehrer_group =
       Repo.insert!(
-        %UserGroup{name: "Lehrer", sort_key: 600, can_read_full_name: true, enrollment_tokens: ["LEb0815Hp!1969"]},
+        %UserGroup{
+          name: "Lehrer",
+          sort_key: 600,
+          can_read_full_name: true,
+          enrollment_tokens: ["LEb0815Hp!1969"]
+        },
         prefix: tenant.prefix
       )
 
@@ -69,34 +64,27 @@ defmodule Lotta.Repo.Seeder do
         prefix: tenant.prefix
       )
 
-    alexis =
-      all_tenants
-      |> Enum.map(fn tenant ->
-        {:ok, lotta_admin, _pw} =
-          Accounts.register_user(tenant, %{
-            name: "Alexis Rinaldoni",
-            email: "alexis.rinaldoni@einsa.net",
-            password: "test123"
-          })
+    {:ok, lotta_admin, _pw} =
+      Accounts.register_user(tenant, %{
+        name: "Alexis Rinaldoni",
+        email: "alexis.rinaldoni@einsa.net",
+        password: "test123"
+      })
 
-        lotta_admin
-        |> User.update_password_changeset("test123")
-        |> Repo.update!()
+    lotta_admin
+    |> User.update_password_changeset("test123")
+    |> Repo.update!()
 
-        {:ok, alexis, _pw} =
-          Accounts.register_user(tenant, %{
-            name: "Alexis Rinaldoni",
-            nickname: "Der Meister",
-            email: "alexis.rinaldoni@lotta.schule"
-          })
+    {:ok, alexis, _pw} =
+      Accounts.register_user(tenant, %{
+        name: "Alexis Rinaldoni",
+        nickname: "Der Meister",
+        email: "alexis.rinaldoni@lotta.schule"
+      })
 
-        alexis
-        |> User.update_password_changeset("test123")
-        |> Repo.update!()
-      end)
-      |> List.first()
-
-    Repo.put_prefix(tenant.prefix)
+    alexis
+    |> User.update_password_changeset("test123")
+    |> Repo.update!()
 
     {:ok, billy, _pw} =
       Accounts.register_user(tenant, %{
@@ -343,6 +331,13 @@ defmodule Lotta.Repo.Seeder do
           media_duration: 259.3,
           file_type: "video",
           mime_type: "video/m4v"
+        },
+        %File{
+          parent_directory_id: irgendwas_directory.id,
+          filename: "secrets.zip",
+          filesize: 4096,
+          file_type: "binary",
+          mime_type: "application/zip"
         }
       ]
       |> Enum.map(fn file ->
@@ -419,6 +414,13 @@ defmodule Lotta.Repo.Seeder do
           filesize: 12288,
           file_type: "video",
           mime_type: "video/m4v"
+        },
+        %File{
+          parent_directory_id: podcast_directory.id,
+          filename: "wettbewerb.pdf",
+          filesize: 16_777_232,
+          file_type: "binary",
+          mime_type: "application/pdf"
         }
       ]
       |> Enum.map(fn file ->
@@ -1278,5 +1280,4 @@ defmodule Lotta.Repo.Seeder do
     })
     |> Repo.update!()
   end
-
 end

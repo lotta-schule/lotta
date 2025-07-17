@@ -52,18 +52,17 @@ export default {
 
 export const Default: StoryObj<typeof Browser> = {
   play: async ({ canvasElement }) => {
-    const user = userEvent.setup({ delay: 25 });
+    const user = await userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
     user.click(await screen.findByRole('option', { name: 'folder 1' }));
     user.click(await screen.findByRole('option', { name: 'folder 8' }));
     user.click(await screen.findByRole('option', { name: 'ich.jpg' }));
 
-    await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'ich.jpg' })).toHaveAttribute(
-        'aria-selected',
-        'true'
-      );
+    await waitFor(async () => {
+      await expect(
+        screen.getByRole('option', { name: 'ich.jpg' })
+      ).toHaveAttribute('aria-selected', 'true');
     });
     await user.keyboard('{ArrowDown}');
     await user.keyboard('{Shift>}');
@@ -72,7 +71,9 @@ export const Default: StoryObj<typeof Browser> = {
     );
     await user.keyboard('{/Shift}');
 
-    expect(screen.getAllByRole('option', { selected: true })).toHaveLength(3);
+    await expect(
+      screen.getAllByRole('option', { selected: true })
+    ).toHaveLength(3);
 
     await user.keyboard('{Control>}a{/Control}');
 
@@ -90,18 +91,17 @@ export const Select: StoryObj<typeof Browser> = {
     mode: 'select',
   },
   play: async ({ canvasElement }) => {
-    const user = userEvent.setup({ delay: 25 });
+    const user = await userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
     user.click(await screen.findByRole('option', { name: 'folder 1' }));
     user.click(await screen.findByRole('option', { name: 'folder 8' }));
     user.click(await screen.findByRole('option', { name: 'ich.jpg' }));
 
-    await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'ich.jpg' })).toHaveAttribute(
-        'aria-selected',
-        'true'
-      );
+    await waitFor(async () => {
+      await expect(
+        screen.getByRole('option', { name: 'ich.jpg' })
+      ).toHaveAttribute('aria-selected', 'true');
     });
     await user.keyboard('{ArrowDown}');
   },
@@ -112,15 +112,17 @@ export const SelectMultiple: StoryObj<typeof Browser> = {
     mode: 'select-multiple',
   },
   play: async ({ canvasElement }) => {
-    const user = userEvent.setup({ delay: 25 });
+    const user = await userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
     user.click(await screen.findByRole('option', { name: 'folder 1' }));
     user.click(await screen.findByRole('option', { name: 'folder 8' }));
     user.click(await screen.findByLabelText(/ich\.jpg/i));
 
-    await waitFor(() => {
-      expect(screen.getByRole('checkbox', { name: /ich\.jpg/i })).toBeChecked();
+    await waitFor(async () => {
+      await expect(
+        screen.getByRole('checkbox', { name: /ich\.jpg/i })
+      ).toBeChecked();
     });
   },
 };

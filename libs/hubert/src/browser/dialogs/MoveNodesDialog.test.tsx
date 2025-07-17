@@ -21,6 +21,12 @@ const validDirectoryPath = fixtures.getPathForNode('8');
 const validFilePath = fixtures.getPathForNode('15');
 
 describe('Browser/MoveNodesDialog', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
   it('should open the dialog on action and close it when aborted', async () => {
     const onSetCurrentAction = vi.fn();
     const user = userEvent.setup();
@@ -103,6 +109,8 @@ describe('Browser/MoveNodesDialog', () => {
         name: /ordner.*erstellen/i,
       })
     );
+
+    vi.advanceTimersByTime(2000);
 
     await waitFor(() => {
       expect(

@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { ComboBox, LinearProgress } from '@lotta-schule/hubert';
 import { useLazyQuery, useQuery } from '@apollo/client';
-import { useServerData } from 'shared/ServerDataContext';
 import { ArticlePreview } from 'article/preview';
 import { ArticleModel, ID } from 'model';
-import { Article, File } from 'util/model';
+import { Article } from 'util/model';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 
 import SearchQuery from 'api/query/SearchQuery.graphql';
@@ -20,8 +19,6 @@ export const CategoryArticleRedirectSelection = React.memo(
     redirectPath,
     onSelectRedirectPath,
   }: CategoryArticleRedirectSelection) => {
-    const { baseUrl } = useServerData();
-
     const [execute] = useLazyQuery<
       { results: ArticleModel[] },
       { searchText: string }
@@ -59,12 +56,9 @@ export const CategoryArticleRedirectSelection = React.memo(
                 textValue: article.title,
                 leftSection: article.previewImageFile && (
                   <ResponsiveImage
-                    src={File.getFileRemoteLocation(
-                      baseUrl,
-                      article.previewImageFile
-                    )}
+                    file={article.previewImageFile}
+                    format={'articlepreview'}
                     alt={`Vorschaubild zum Beitrag "${article.title}"`}
-                    aspectRatio={'3:2'}
                     width={80}
                     style={{ width: '80px' }}
                   />

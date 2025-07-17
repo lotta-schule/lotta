@@ -1,28 +1,11 @@
-@import "../theme/breakpoints";
+@use "../theme/breakpoints" as *;
 
 .root {
   display: none;
 
-  &[open] {
-    display: flex;
-    opacity: 1;
-    transform: translateY(0);
-
-    @media screen and (max-width: $max-xs) {
-      display: flex;
-    }
-
-    @starting-style {
-      opacity: 0;
-      transform: translateY(30%);
-      display: flex;
-    }
-  }
-
   opacity: 0;
   transform: translateY(0);
-  transition:
-    opacity 0.15s ease-out,
+  transition: opacity 0.15s ease-out,
     transform 0.15s ease-out,
     overlay 0.15s ease-out allow-discrete,
     display 0.15s ease-out allow-discrete;
@@ -41,6 +24,22 @@
   color: rgb(var(--lotta-text-color));
   overflow: visible;
 
+  &[open] {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+
+    @media screen and (max-width: $max-xs) {
+      display: flex;
+    }
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(30%);
+      display: flex;
+    }
+  }
+
   &::backdrop {
     backdrop-filter: blur(10px);
     background-color: rgba(0, 0, 0, 0);
@@ -50,8 +49,10 @@
       overlay 0.2s allow-discrete,
       background-color 0.2s;
   }
+
   &[open]::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
+
     @starting-style {
       background-color: rgb(0 0 0 / 0%);
     }
