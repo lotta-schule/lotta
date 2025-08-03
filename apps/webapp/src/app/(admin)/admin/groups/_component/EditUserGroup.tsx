@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { UserGroupModel, ID, UserGroupInputModel } from 'model';
+import { UserGroupModel } from 'model';
 import {
   Button,
   Checkbox,
@@ -15,8 +15,7 @@ import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 import { AdminPageSection } from 'app/(admin)/admin/_component/AdminPageSection';
 import { useRouter } from 'next/navigation';
-
-import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
+import { UPDATE_USER_GROUP } from '../_graphql';
 
 import styles from './EditUserGroup.module.scss';
 
@@ -29,10 +28,7 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
   const [isDeleteUserGroupDialogOpen, setIsDeleteUserGroupDialogOpen] =
     React.useState(false);
   const [updateGroup, { loading: isLoadingUpdateGroup, error: updateError }] =
-    useMutation<
-      { group: UserGroupModel },
-      { id: ID; group: UserGroupInputModel }
-    >(UpdateUserGroupMutation);
+    useMutation(UPDATE_USER_GROUP);
 
   const [editedGroup, setEditedGroup] = React.useState(group);
 
