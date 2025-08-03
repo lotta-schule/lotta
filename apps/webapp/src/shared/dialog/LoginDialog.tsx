@@ -10,7 +10,9 @@ import {
   Input,
   LoadingButton,
 } from '@lotta-schule/hubert';
+import { useTranslation } from 'react-i18next';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
+import { EduplacesLoginButton } from 'component/form';
 import Link from 'next/link';
 import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
 
@@ -25,6 +27,7 @@ export interface LoginDialogProps {
 
 export const LoginDialog = React.memo<LoginDialogProps>(
   ({ isOpen, onRequestClose }) => {
+    const { t } = useTranslation();
     const apolloClient = useApolloClient();
     const [isShowUpdatePasswordDialog, setIsShowUpdatePasswordDialog] =
       React.useState(false);
@@ -65,46 +68,49 @@ export const LoginDialog = React.memo<LoginDialogProps>(
           open={isOpen}
           aria-hidden={!isOpen || isShowUpdatePasswordDialog}
           className={styles.root}
-          title={'Auf der Website anmelden'}
+          title={t('Login')}
           onRequestClose={onRequestClose}
         >
           <form>
             <DialogContent>
               Melde dich hier mit deinen Zugangsdaten an.
               <ErrorMessage error={error} />
-              <Label label={'Deine Email-Adresse:'}>
+              <Label label={t('Your email address:')}>
                 <Input
                   autoFocus
                   id={'email'}
                   value={email}
                   onChange={(e) => setEmail(e.currentTarget.value)}
                   disabled={isLoading}
-                  placeholder={'beispiel@medienportal.org'}
+                  placeholder={t('example@lotta.schule')}
                   type={'email'}
                   autoComplete={'email'}
                 />
               </Label>
-              <Label label={'Dein Passwort:'}>
+              <Label label={t('Your password:')}>
                 <Input
                   type={'password'}
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.currentTarget.value)}
                   disabled={isLoading}
-                  placeholder={'Passwort'}
+                  placeholder={t('Password')}
                   autoComplete={'current-password'}
                 />
               </Label>
-              <Link href={`/password/request-reset`}>Passwort vergessen?</Link>
+              <Link href={`/password/request-reset`}>
+                {t('Forgot your password?')}
+              </Link>
             </DialogContent>
             <DialogActions>
+              <EduplacesLoginButton style={{ marginRight: 'auto' }} />
               <Button
                 onClick={() => {
                   onRequestClose();
                 }}
                 disabled={isLoading}
               >
-                Abbrechen
+                {t('Cancel')}
               </Button>
               <LoadingButton
                 type={'submit'}
@@ -121,7 +127,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                   });
                 }}
               >
-                Anmelden
+                {t('Login')}
               </LoadingButton>
             </DialogActions>
           </form>

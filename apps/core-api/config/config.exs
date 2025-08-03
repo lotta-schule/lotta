@@ -18,4 +18,6 @@ import_config("config/otel.exs")
 import_config("config/phoenix.exs")
 import_config("config/repo.exs")
 import_config("config/tesla.exs")
+# must come *after* Tesla
+import_config("config/oauth2.exs")
 import_config("config/tzdata.exs")

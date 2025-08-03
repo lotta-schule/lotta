@@ -133,6 +133,15 @@ defmodule SystemConfig do
 
   defp default("OBAN_EXCLUDE_QUEUES", _), do: ""
 
+  defp default("EDUPLACES_AUTH_URL", _), do: "https://auth.sandbox.eduplaces.dev/oauth2"
+  defp default("EDUPLACES_API_URL", _), do: "https://api.sandbox.eduplaces.dev"
+
+  defp default("EDUPLACES_REDIRECT_URI", _),
+    do: "http://localhost:4000/auth/oauth/eduplaces/callback"
+
+  defp default("EDUPLACES_CLIENT_ID", _), do: ""
+  defp default("EDUPLACES_CLIENT_SECRET", _), do: ""
+
   defp default(key, env),
     do:
       raise("""
@@ -337,3 +346,12 @@ config :lotta, Oban,
     |> Enum.filter(fn {k, _} ->
       to_string(k) not in SystemConfig.get("OBAN_EXCLUDE_QUEUES", cast: :string_list)
     end)
+
+config :lotta, Eduplaces,
+  auth_url: SystemConfig.get("EDUPLACES_AUTH_URL", cast: :url_with_scheme),
+  authorize_url: SystemConfig.get("EDUPLACES_AUTH_URL", cast: :url_with_scheme) <> "/auth",
+  token_url: SystemConfig.get("EDUPLACES_AUTH_URL", cast: :url_with_scheme) <> "/token",
+  api_url: SystemConfig.get("EDUPLACES_API_URL", cast: :url_with_scheme),
+  redirect_uri: SystemConfig.get("EDUPLACES_REDIRECT_URI", cast: :url_with_scheme),
+  client_id: SystemConfig.get("EDUPLACES_CLIENT_ID"),
+  client_secret: SystemConfig.get("EDUPLACES_CLIENT_SECRET")

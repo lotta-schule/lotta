@@ -12,6 +12,7 @@ defmodule LottaWeb.TenantPlug do
   import Plug.Conn
 
   alias Lotta.{Repo, Tenants}
+  alias Lotta.Tenants.Tenant
 
   @behaviour Plug
 
@@ -27,6 +28,16 @@ defmodule LottaWeb.TenantPlug do
     |> tap(fn _ ->
       OpenTelemetry.Tracer.end_span(otel_ctx)
     end)
+    |> send_error_if_no_tenant()
+  end
+
+  defp send_error_if_no_tenant(%{private: %{lotta_tenant: %Tenant{}}} = conn), do: conn
+
+  defp send_error_if_no_tenant(conn) do
+    conn
+    |> put_status(:bad_request)
+    |> send_resp(400, "No tenant found")
+    |> halt()
   end
 
   defp put_tenant(conn) do

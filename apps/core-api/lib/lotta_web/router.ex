@@ -27,15 +27,17 @@ defmodule LottaWeb.Router do
     plug(:accepts, ~w(ics))
   end
 
-  scope "/" do
-    pipe_through([:tenant, :auth])
-    forward("/sitemap.xml", LottaWeb.SitemapPlug)
-  end
-
   scope "/auth" do
-    pipe_through([:tenant, :auth, :json_api])
+    scope "/oauth" do
+      get("/:provider/login", LottaWeb.OAuthController, :login)
+      get("/:provider/callback", LottaWeb.OAuthController, :callback)
+    end
 
-    post("/token/refresh", LottaWeb.TokenController, :refresh)
+    scope "/token" do
+      pipe_through([:tenant, :auth, :json_api])
+
+      post("/refresh", LottaWeb.TokenController, :refresh)
+    end
   end
 
   # /storage endpoint could (and probably should) be moved to /data/storage
@@ -48,6 +50,8 @@ defmodule LottaWeb.Router do
 
   scope "/data" do
     pipe_through([:tenant, :auth])
+
+    forward("/sitemap.xml", LottaWeb.SitemapPlug)
 
     scope "/storage" do
       get("/f/:id/:format", LottaWeb.StorageController, :get_file_format)

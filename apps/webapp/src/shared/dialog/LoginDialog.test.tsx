@@ -50,20 +50,22 @@ describe('shared/dialog/LoginDialog', () => {
         { additionalMocks, currentUser: SomeUser }
       );
       await fireEvent.type(
-        screen.getByRole('textbox', { name: /email/i }),
+        screen.getByRole('textbox', { name: /e-mail/i }),
         'nutzer@email.de'
       );
       await fireEvent.type(screen.getByLabelText(/passwort/i), 'password');
 
       vi.useFakeTimers({ shouldAdvanceTime: true });
 
-      await fireEvent.click(screen.getByRole('button', { name: /anmelden/i }));
+      await fireEvent.click(
+        screen.getByRole('button', { name: /^anmelden$/i })
+      );
 
       await waitFor(() => {
         expect(
-          within(screen.getByRole('button', { name: /anmelden/i })).getByTestId(
-            'SuccessIcon'
-          )
+          within(
+            screen.getByRole('button', { name: /^anmelden$/i })
+          ).getByTestId('SuccessIcon')
         ).toBeVisible();
       });
 
@@ -88,11 +90,13 @@ describe('shared/dialog/LoginDialog', () => {
         }
       );
       await fireEvent.type(
-        screen.getByRole('textbox', { name: /email/i }),
+        screen.getByRole('textbox', { name: /e-mail/i }),
         'nutzer@email.de'
       );
       await fireEvent.type(screen.getByLabelText(/passwort/i), 'password');
-      await fireEvent.click(screen.getByRole('button', { name: /anmelden/i }));
+      await fireEvent.click(
+        screen.getByRole('button', { name: /^anmelden$/i })
+      );
       await waitFor(() => {
         expect(
           screen.queryByRole('heading', { name: /passwort ändern/i })

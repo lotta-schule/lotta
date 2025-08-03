@@ -1,9 +1,7 @@
 defmodule LottaWeb.TokenController do
-  require Logger
-
   use LottaWeb, :controller
 
-  import Plug.Conn
+  require Logger
 
   alias Lotta.Accounts.Authentication
 

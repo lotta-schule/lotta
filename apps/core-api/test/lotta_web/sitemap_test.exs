@@ -7,7 +7,7 @@ defmodule LottaWeb.SitemapTest do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
-        |> get("/sitemap.xml")
+        |> get("/data/sitemap.xml")
         |> response(200)
 
       assert res =~
@@ -21,7 +21,7 @@ defmodule LottaWeb.SitemapTest do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
-        |> get("/sitemap.xml?categories")
+        |> get("/data/sitemap.xml?categories")
         |> response(200)
 
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Start<\/loc>/
@@ -41,7 +41,7 @@ defmodule LottaWeb.SitemapTest do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
-        |> get("/sitemap.xml?articles&date=#{Date.to_iso8601(~D[2019-09-01])}")
+        |> get("/data/sitemap.xml?articles&date=#{Date.to_iso8601(~D[2019-09-01])}")
         |> response(200)
 
       assert res =~
