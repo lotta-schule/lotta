@@ -1,3 +1,13 @@
+## 6.0.18 (2025-07-17)
+
+### 🩹 Fixes
+
+- **core:** Reenable Push Notifications to iOS ([#461](https://github.com/lotta-schule/lotta/pull/461))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.0.17 (2025-07-13)
 
 This was a version bump only, there were no code changes.
