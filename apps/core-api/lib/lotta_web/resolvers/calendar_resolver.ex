@@ -149,12 +149,16 @@ defmodule LottaWeb.CalendarResolver do
   end
 
   defp http_client() do
-    Tesla.client([
-      Tesla.Middleware.Telemetry,
-      {Tesla.Middleware.Headers, [{"Accept-Charset", "utf-8"}, {"User-Agent", "Lotta"}]},
-      Tesla.Middleware.DecompressResponse,
-      Tesla.Middleware.FollowRedirects
-    ])
+    middleware = [
+      {Tesla.Middleware.Headers,
+       [
+         {"Accept-Charset", "utf-8"},
+         {"User-Agent", "Lotta"}
+       ]},
+      Tesla.Middleware.DecompressResponse
+    ]
+
+    Lotta.Tesla.create_client(middleware)
   end
 
   defp parse_event_input(data) do
