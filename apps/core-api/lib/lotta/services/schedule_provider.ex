@@ -11,15 +11,13 @@ defmodule Lotta.Services.ScheduleProvider do
         ) :: Tesla.Client.t()
   def client(type, username, password, school_id) do
     middleware = [
-      Tesla.Middleware.OpenTelemetry,
       {Tesla.Middleware.BaseUrl, Application.fetch_env!(:lotta, :schedule_provider_url)},
       {Tesla.Middleware.Query,
        [source: type, schoolId: school_id, username: username, password: password]},
-      Tesla.Middleware.JSON,
-      Tesla.Middleware.Logger
+      Tesla.Middleware.JSON
     ]
 
-    Tesla.client(middleware)
+    Lotta.Tesla.create_client(middleware)
   end
 
   @spec get_schedule(

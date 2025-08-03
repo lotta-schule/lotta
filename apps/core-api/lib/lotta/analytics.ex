@@ -190,7 +190,6 @@ defmodule Lotta.Analytics do
   def create_client(side_id) do
     unless is_nil(config(:endpoint)) or is_nil(config(:api_key)) do
       middleware = [
-        Tesla.Middleware.OpenTelemetry,
         {Tesla.Middleware.BaseUrl, config(:endpoint) <> "/api/v1/stats"},
         Tesla.Middleware.PathParams,
         {Tesla.Middleware.Query, [site_id: side_id]},
@@ -198,7 +197,7 @@ defmodule Lotta.Analytics do
         Tesla.Middleware.JSON
       ]
 
-      Tesla.client(middleware)
+      Lotta.Tesla.create_client(middleware)
     end
   end
 
