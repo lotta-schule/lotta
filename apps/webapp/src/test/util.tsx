@@ -40,7 +40,10 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
 
     return (
       <TranslationsProvider>
-        <ServerDataContextProvider tenant={options.tenant ?? tenant}>
+        <ServerDataContextProvider
+          tenant={options.tenant ?? tenant}
+          socketUrl={'ws://localhost:4000'}
+        >
           <HubertProvider>
             <MockedProvider
               mocks={[...defaultMocks, ...(options.additionalMocks || [])]}

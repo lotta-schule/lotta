@@ -1,37 +1,22 @@
 import { cache } from 'react';
 import { getClient } from '../api/client';
-import { GET_TENANT_QUERY } from 'util/tenant';
+import { GET_TENANT_QUERY, TENANT_COMMON_FIELDS } from 'util/tenant';
 import { graphql } from 'api/graphql';
 
-export const GET_TENANT_WITH_STATS_QUERY = graphql(`
-  query GetTenantWithStats {
-    tenant {
-      id
-      title
-      slug
-      host
-      identifier
-      backgroundImageFile {
-        id
-      }
-      logoImageFile {
-        id
-        formats(category: "LOGO") {
-          name
-          url
+export const GET_TENANT_WITH_STATS_QUERY = graphql(
+  `
+    query GetTenantWithStats {
+      tenant {
+        ...TenantCommonFields
+        stats {
+          userCount
+          articleCount
         }
       }
-      configuration {
-        customTheme
-        userMaxStorageConfig
-      }
-      stats {
-        userCount
-        articleCount
-      }
     }
-  }
-`);
+  `,
+  [TENANT_COMMON_FIELDS]
+);
 
 export class TenantNotFoundError extends Error {
   name = 'TenantNotFoundError';
@@ -53,10 +38,11 @@ export const loadTenant = cache(
         query: includeStats ? GET_TENANT_WITH_STATS_QUERY : GET_TENANT_QUERY,
       })
       .then(({ data }) => {
-        if (!data?.tenant) {
+        const tenant = data?.tenant;
+        if (!tenant) {
           throw new TenantNotFoundError();
         }
-        return data.tenant;
+        return tenant;
       });
   }
 );

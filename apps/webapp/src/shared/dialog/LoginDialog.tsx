@@ -13,6 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
 import { EduplacesLoginButton } from 'component/form';
+import { useTenant } from 'util/tenant';
 import Link from 'next/link';
 import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
 
@@ -29,10 +30,13 @@ export const LoginDialog = React.memo<LoginDialogProps>(
   ({ isOpen, onRequestClose }) => {
     const { t } = useTranslation();
     const apolloClient = useApolloClient();
+    const tenant = useTenant();
     const [isShowUpdatePasswordDialog, setIsShowUpdatePasswordDialog] =
       React.useState(false);
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
+
+    const isEduplacesEnabled = !!tenant.eduplacesSchoolId;
 
     React.useEffect(() => {
       if (isOpen === false) {
@@ -44,7 +48,6 @@ export const LoginDialog = React.memo<LoginDialogProps>(
     const [login, { error, loading: isLoading }] = useMutation(LoginMutation, {
       errorPolicy: 'all',
       onCompleted: async (data) => {
-        // TODO: Proper handling when no data is returned
         if (data.login) {
           localStorage.setItem('id', data.login.accessToken);
           await apolloClient.reFetchObservableQueries();
@@ -56,7 +59,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
           } else {
             setTimeout(() => {
               onRequestClose();
-            }, 1000);
+            }, 500);
           }
         }
       },
@@ -103,7 +106,9 @@ export const LoginDialog = React.memo<LoginDialogProps>(
               </Link>
             </DialogContent>
             <DialogActions>
-              <EduplacesLoginButton style={{ marginRight: 'auto' }} />
+              {isEduplacesEnabled && (
+                <EduplacesLoginButton style={{ marginRight: 'auto' }} />
+              )}
               <Button
                 onClick={() => {
                   onRequestClose();

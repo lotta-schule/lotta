@@ -34,6 +34,8 @@ defmodule Lotta.Tenants.Tenant do
     field(:title, :string)
     field(:slug, :string)
     field(:prefix, :string)
+    field(:address, :string)
+    field(:type, :string)
 
     embeds_one(:configuration, TenantConfiguration, primary_key: false, on_replace: :delete) do
       field(:custom_theme, :map)
@@ -46,7 +48,9 @@ defmodule Lotta.Tenants.Tenant do
     field(:logo_image_file_id, :binary_id)
     field(:background_image_file_id, :binary_id)
 
-    has_many :custom_domains, Lotta.Tenants.CustomDomain
+    field(:eduplaces_school_id, :string, default: nil)
+
+    has_many(:custom_domains, Lotta.Tenants.CustomDomain)
 
     timestamps()
   end
@@ -58,7 +62,7 @@ defmodule Lotta.Tenants.Tenant do
   @spec create_changeset(map()) :: Ecto.Changeset.t()
   def create_changeset(attrs) do
     %__MODULE__{}
-    |> cast(attrs, [:title, :slug])
+    |> cast(attrs, [:title, :slug, :address, :type])
     |> validate_required([:title, :slug])
     |> unique_constraint(:slug)
   end
@@ -70,7 +74,7 @@ defmodule Lotta.Tenants.Tenant do
   @spec update_changeset(t(), map()) :: Ecto.Changeset.t()
   def update_changeset(tenant, attrs) do
     tenant
-    |> cast(attrs, [:title, :logo_image_file_id, :background_image_file_id])
+    |> cast(attrs, [:title, :address, :type, :logo_image_file_id, :background_image_file_id])
     |> validate_required([:title, :slug, :prefix])
     |> unique_constraint(:slug)
     |> maybe_put_embed(:configuration, attrs[:configuration])

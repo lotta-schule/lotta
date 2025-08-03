@@ -8,7 +8,9 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
   object :tenant do
     field(:id, non_null(:id))
     field(:title, non_null(:string))
+    field(:type, :string)
     field(:slug, non_null(:string))
+    field(:address, non_null(:string))
     field(:host, non_null(:string), resolve: &TenantResolver.resolve_host/3)
     field(:configuration, non_null(:tenant_configuration))
     field(:logo_image_file, :file, resolve: &TenantResolver.resolve_logo_image_file/3)
@@ -17,6 +19,8 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
     field(:inserted_at, non_null(:datetime))
 
     field(:identifier, non_null(:string), resolve: &TenantResolver.resolve_identifier/3)
+
+    field(:eduplaces_school_id, :string)
 
     field(:stats, :tenant_stats) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
