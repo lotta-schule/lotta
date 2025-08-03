@@ -29,7 +29,7 @@ defmodule Lotta.Tenants.DefaultContent do
   end
 
   defp create_admin_user(tenant, user_params) do
-    with {:ok, user, password} <- Accounts.register_user(tenant, user_params) do
+    with {:ok, user, password} <- Accounts.register_user_by_mail(tenant, user_params) do
       user
       |> Map.put(:password, password)
       |> User.update_changeset(%{

@@ -21,7 +21,7 @@ defmodule LottaWeb.TenantControllerTest do
     email = "alexis.rinaldoni@einsa.net"
 
     {:ok, _, _pw} =
-      Accounts.register_user(new_tenant, %{
+      Accounts.register_user_by_mail(new_tenant, %{
         name: "Alexis Rinaldoni",
         email: email,
         password: "test123"

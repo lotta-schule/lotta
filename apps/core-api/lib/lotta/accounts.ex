@@ -27,7 +27,7 @@ defmodule Lotta.Accounts do
   end
 
   @doc """
-  Returnsa list of users.
+  Returns a list of users.
   """
   @spec list_users() :: [User.t()]
   def list_users() do
@@ -249,12 +249,12 @@ defmodule Lotta.Accounts do
   end
 
   @doc """
-  Registers a user, generating a first-time password.
+  Registers a user via email, generating a first-time password.
   If successfull, returns a user and a password.
-
   """
-  @spec register_user(Tenant.t(), map()) :: {:ok, User.t(), String.t()} | {:error, Changeset.t()}
-  def register_user(tenant, attrs) do
+  @spec register_user_by_mail(Tenant.t(), map()) ::
+          {:ok, User.t(), String.t()} | {:error, Changeset.t()}
+  def register_user_by_mail(tenant, attrs) do
     pw_length = 8
 
     generated_pw =

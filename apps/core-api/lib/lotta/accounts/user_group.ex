@@ -29,6 +29,8 @@ defmodule Lotta.Accounts.UserGroup do
 
     field(:enrollment_tokens, {:array, :string}, default: [])
 
+    field(:eduplaces_group_id, :string)
+
     many_to_many(
       :users,
       User,

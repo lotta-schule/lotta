@@ -183,7 +183,7 @@ defmodule LottaWeb.UserResolver do
         end
       )
 
-    case Accounts.register_user(tenant, user_params) do
+    case Accounts.register_user_by_mail(tenant, user_params) do
       {:ok, user, password} ->
         user
         |> Lotta.Email.registration_mail(password)

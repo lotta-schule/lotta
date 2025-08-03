@@ -65,7 +65,7 @@ defmodule Lotta.Repo.Seeder do
       )
 
     {:ok, lotta_admin, _pw} =
-      Accounts.register_user(tenant, %{
+      Accounts.register_user_by_mail(tenant, %{
         name: "Alexis Rinaldoni",
         email: "alexis.rinaldoni@einsa.net",
         password: "test123"
@@ -76,7 +76,7 @@ defmodule Lotta.Repo.Seeder do
     |> Repo.update!()
 
     {:ok, alexis, _pw} =
-      Accounts.register_user(tenant, %{
+      Accounts.register_user_by_mail(tenant, %{
         name: "Alexis Rinaldoni",
         nickname: "Der Meister",
         email: "alexis.rinaldoni@lotta.schule"
@@ -87,7 +87,7 @@ defmodule Lotta.Repo.Seeder do
     |> Repo.update!()
 
     {:ok, billy, _pw} =
-      Accounts.register_user(tenant, %{
+      Accounts.register_user_by_mail(tenant, %{
         name: "Christopher Bill",
         nickname: "Billy",
         email: "billy@lotta.schule",
@@ -100,7 +100,7 @@ defmodule Lotta.Repo.Seeder do
     |> Repo.update!()
 
     {:ok, eike, _pw} =
-      Accounts.register_user(tenant, %{
+      Accounts.register_user_by_mail(tenant, %{
         name: "Eike Wiewiorra",
         nickname: "Chef",
         email: "eike.wiewiorra@lotta.schule"
@@ -111,7 +111,7 @@ defmodule Lotta.Repo.Seeder do
     |> Repo.update!()
 
     {:ok, dr_evil, _pw} =
-      Accounts.register_user(tenant, %{
+      Accounts.register_user_by_mail(tenant, %{
         name: "Dr Evil",
         nickname: "drEvil",
         email: "drevil@lotta.schule"
@@ -121,21 +121,21 @@ defmodule Lotta.Repo.Seeder do
     |> User.update_password_changeset("test123")
     |> Repo.update!()
 
-    Accounts.register_user(tenant, %{
+    Accounts.register_user_by_mail(tenant, %{
       name: "Max Mustermann",
       nickname: "MaXi",
       email: "maxi@lotta.schule",
       password: "test123"
     })
 
-    Accounts.register_user(tenant, %{
+    Accounts.register_user_by_mail(tenant, %{
       name: "Dorothea Musterfrau",
       nickname: "Doro",
       email: "doro@lotta.schule",
       password: "test123"
     })
 
-    Accounts.register_user(tenant, %{
+    Accounts.register_user_by_mail(tenant, %{
       name: "Marie Curie",
       nickname: "Polonium",
       email: "mcurie@lotta.schule",
