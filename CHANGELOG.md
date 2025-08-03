@@ -1,3 +1,14 @@
+## 6.0.19 (2025-08-03)
+
+### 🩹 Fixes
+
+- UserGroups can now be updated again ([#466](https://github.com/lotta-schule/lotta/pull/466))
+- **webapp:** Make SearchUserField suggestions visible again ([#465](https://github.com/lotta-schule/lotta/pull/465))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.0.18 (2025-07-17)
 
 ### 🩹 Fixes
