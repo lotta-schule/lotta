@@ -7,10 +7,9 @@ import { ID, UserGroupInputModel, UserGroupModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { isBrowser } from 'util/isBrowser';
+import { UPDATE_USER_GROUP } from '../_graphql';
 
 import styles from './DraggableGroupList.module.scss';
-
-import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 
 export const DraggableGroupList = () => {
   const router = useRouter();
@@ -56,7 +55,7 @@ export const DraggableGroupList = () => {
   const [updateGroup] = useMutation<
     { group: UserGroupModel },
     { id: ID; group: UserGroupInputModel }
-  >(UpdateUserGroupMutation, {
+  >(UPDATE_USER_GROUP, {
     optimisticResponse: ({ id, group }) => {
       const originalGroup = groups.find((g) => g.id === id);
       return {
