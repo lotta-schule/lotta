@@ -1,3 +1,13 @@
+## 6.0.20 (2025-08-04)
+
+### 🩹 Fixes
+
+- **core:** PushNotification were not sent ([4b23ac05](https://github.com/lotta-schule/lotta/commit/4b23ac05))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.0.19 (2025-08-03)
 
 ### 🩹 Fixes
