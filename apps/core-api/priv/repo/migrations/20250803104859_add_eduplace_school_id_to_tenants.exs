@@ -6,7 +6,9 @@ defmodule Lotta.Repo.Migrations.AddEduplaceSchoolIdToTenants do
       add(:address, :string, null: false, default: "")
       add(:type, :string, null: true)
 
-      add(:eduplaces_school_id, :string, null: true, default: nil)
+      add(:eduplaces_id, :string, null: true, default: nil)
     end
+
+    create(unique_index(:tenants, [:eduplaces_id], name: :unique_eduplaces_id))
   end
 end

@@ -8,7 +8,7 @@ defmodule Lotta.Accounts do
   import Ecto.Query
 
   alias Ecto.{Changeset, Multi}
-  alias Lotta.{Content, Email, Mailer, Repo, Storage}
+  alias Lotta.{Content, Eduplaces, Email, Mailer, Repo, Storage}
   alias Lotta.Accounts.{User, UserDevice, UserGroup}
   alias Lotta.Storage.File
   alias Lotta.Tenants.Tenant
@@ -277,6 +277,57 @@ defmodule Lotta.Accounts do
 
       result ->
         result
+    end
+  end
+
+  @doc """
+    Find a user with the given Eduplaces user info.
+    If the user does not exist, it will be created.
+  """
+  @doc since: "6.1.0"
+  @spec get_or_create_eduplaces_user(Tenant.t(), Eduplaces.UserInfo.t()) ::
+          {:ok, User.t()} | {:error, Changeset.t()}
+  def get_or_create_eduplaces_user(tenant, %{id: eduplaces_id} = user_info) do
+    if user =
+         Repo.one(
+           from(u in User,
+             where: u.eduplaces_id == ^eduplaces_id
+           )
+         ) do
+      {:ok, user}
+    else
+      register_eduplaces_user(tenant, user_info)
+    end
+  end
+
+  @doc """
+  Registers a user via eduplaces user info.
+  The user will have no password set, as it is not needed for eduplaces users.
+  """
+  @doc since: "6.1.0"
+  @spec register_eduplaces_user(Tenant.t(), Eduplaces.UserInfo.t()) ::
+          {:ok, User.t(), String.t()} | {:error, Changeset.t()}
+  def register_eduplaces_user(tenant, user_info) do
+    group_ids = Enum.map(user_info.groups, & &1.id)
+
+    groups =
+      Repo.all(
+        from(g in UserGroup,
+          where: g.eduplaces_id in ^group_ids
+        )
+      )
+
+    user_info
+    |> Eduplaces.UserInfo.to_lotta_user()
+    |> User.update_changeset(%{groups: groups})
+    |> Repo.insert(prefix: tenant.prefix)
+    |> case do
+      {:ok, user} ->
+        Storage.create_new_user_directories(user)
+        {:ok, user}
+
+      {:error, changeset} ->
+        {:error, changeset}
     end
   end
 

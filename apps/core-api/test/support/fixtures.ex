@@ -110,6 +110,32 @@ defmodule Lotta.Fixtures do
     |> Map.replace(:password, nil)
   end
 
+  def fixture(:valid_eduplace_user_attrs, attrs) do
+    %{
+      email: "some@email.de",
+      name: "Alberta Smith",
+      nickname: "TheNick",
+      class: "5",
+      password: "password",
+      hide_full_name: false
+    }
+    |> Map.merge(attrs)
+  end
+
+  def fixture(:registered_eduplace_user, %{eduplaces_id: eduplaces_id} = attrs) do
+    usr =
+      %User{}
+      |> Map.merge(fixture(:valid_eduplace_user_attrs))
+      |> Map.merge(attrs)
+
+    if eduplaces_id do
+      Repo.one(
+        from(u in User, where: u.eduplaces_id == ^eduplaces_id),
+        prefix: @prefix
+      )
+    end || Repo.insert!(usr, returning: true, prefix: @prefix)
+  end
+
   def fixture(:admin_user, _attrs) do
     {:ok, user} =
       User

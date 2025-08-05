@@ -17,7 +17,7 @@ defmodule Lotta.Accounts.User do
 
   schema "users" do
     field(:email, :string)
-    field(:eduplaces_user_id, :string)
+    field(:eduplaces_id, :string)
 
     field(:name, :string)
     field(:nickname, :string)

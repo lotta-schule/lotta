@@ -89,7 +89,7 @@ defmodule Lotta.MixProject do
       {:oauth2, "~> 2.1"},
       {:argon2_elixir, "~> 4.0"},
       {:bcrypt_elixir, "~> 3.0"},
-      {:guardian, "~> 2.2"},
+      {:guardian, github: "ptitmouton/guardian", branch: "fix-verify-header-otp28"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.1"},
       {:hackney, "~> 1.20"},

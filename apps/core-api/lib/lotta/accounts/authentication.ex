@@ -113,9 +113,6 @@ defmodule Lotta.Accounts.Authentication do
          {:ok, refresh_token, _claims} <-
            AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
       {:ok, access_token, refresh_token}
-    else
-      {:error, reason} ->
-        {:error, reason}
     end
   end
 

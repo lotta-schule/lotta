@@ -28,6 +28,12 @@ defmodule LottaWeb.Router do
   end
 
   scope "/auth" do
+    scope "/" do
+      pipe_through([:tenant, :auth])
+
+      get("/callback", LottaWeb.OAuthController, :tenant_callback)
+    end
+
     scope "/oauth" do
       get("/:provider/login", LottaWeb.OAuthController, :login)
       get("/:provider/callback", LottaWeb.OAuthController, :callback)

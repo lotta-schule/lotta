@@ -5,6 +5,7 @@ defmodule Lotta.AccountsTest do
   use Bamboo.Test
 
   alias Lotta.{Accounts, Email, Fixtures, Tenants, Repo}
+  alias Lotta.Eduplaces.UserInfo
   alias Lotta.Accounts.{User, UserDevice}
 
   @all_users [
@@ -47,7 +48,7 @@ defmodule Lotta.AccountsTest do
       assert is_nil(Accounts.get_user(0))
     end
 
-    test "register_user/1 should normalize (email) input", %{tenant: t} do
+    test "register_user_by_mail/1 should normalize (email) input", %{tenant: t} do
       user_params = %{
         name: "Ludwig van Beethoven",
         nickname: "Lulu",
@@ -60,7 +61,7 @@ defmodule Lotta.AccountsTest do
       assert {:ok, %User{email: "DerLudwigVan@Beethoven.de"}, _password} = user
     end
 
-    test "register_user/1 with valid data creates a user with a password", %{tenant: t} do
+    test "register_user_by_mail/1 with valid data creates a user with a password", %{tenant: t} do
       assert {:ok, %User{} = user, password} =
                Accounts.register_user_by_mail(t, Fixtures.fixture(:valid_user_attrs))
 
@@ -70,9 +71,28 @@ defmodule Lotta.AccountsTest do
       assert Accounts.Authentication.verify_user_pass(user, password)
     end
 
-    test "register_user/1 with invalid data returns error changeset", %{tenant: t} do
+    test "register_user_by_mail/1 with invalid data returns error changeset", %{tenant: t} do
       assert {:error, %Ecto.Changeset{}} =
                Accounts.register_user_by_mail(t, Fixtures.fixture(:invalid_user_attrs))
+    end
+
+    test "get_or_create_eduplaces_user/1 should create as well as find a user by its eduplaces_id",
+         %{tenant: tenant} do
+      eduplaces_id = "eduplaces-this-is-user1-12345"
+
+      created_user =
+        Fixtures.fixture(:registered_eduplace_user, %{eduplaces_id: eduplaces_id})
+
+      assert {:ok, %User{eduplaces_id: ^eduplaces_id}} =
+               Accounts.get_or_create_eduplaces_user(tenant, %UserInfo{id: eduplaces_id})
+
+      assert created_user.eduplaces_id == eduplaces_id
+
+      {:ok, retrieved_user} =
+        Accounts.get_or_create_eduplaces_user(tenant, %UserInfo{id: eduplaces_id})
+
+      assert %User{eduplaces_id: ^eduplaces_id} = retrieved_user
+      assert retrieved_user.id == created_user.id
     end
 
     test "update_profile/2 with valid data updates the user" do

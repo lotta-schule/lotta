@@ -30,6 +30,15 @@ defmodule Lotta.TenantsTest do
       assert %Tenant{slug: "test"} = Tenants.get_by_custom_domain("test-domain.com")
     end
 
+    test "should get tenant by eduplaces id" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      Repo.update!(tenant, eduplaces_id: "eduplaces-123")
+
+      assert %Tenant{slug: "test", eduplaces_id: "eduplaces-123"} =
+               Tenants.get_by_eduplaces_id("eduplaces-123")
+    end
+
     @tag creates_tenant: true
     test "should create a new tenant" do
       assert {:ok, tenant} =

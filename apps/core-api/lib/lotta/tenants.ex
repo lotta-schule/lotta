@@ -184,6 +184,18 @@ defmodule Lotta.Tenants do
   end
 
   @doc """
+  Get a tenant by its eduplaces school id.
+  """
+  @doc since: "6.1.0"
+  @spec get_tenant_by_eduplaces_id(String.t()) :: Tenant.t() | nil
+  def get_tenant_by_eduplaces_id(eduplaces_id) do
+    from(t in Tenant,
+      where: t.eduplaces_id == ^eduplaces_id
+    )
+    |> Repo.one(prefix: "public")
+  end
+
+  @doc """
   Get all custom domains for a tenant
   """
   @doc since: "4.2.0"

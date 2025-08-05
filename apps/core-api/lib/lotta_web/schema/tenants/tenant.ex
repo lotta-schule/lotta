@@ -20,7 +20,7 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
 
     field(:identifier, non_null(:string), resolve: &TenantResolver.resolve_identifier/3)
 
-    field(:eduplaces_school_id, :string)
+    field(:eduplaces_id, :string)
 
     field(:stats, :tenant_stats) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)

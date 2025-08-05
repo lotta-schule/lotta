@@ -12,14 +12,13 @@ defmodule Lotta.Eduplaces.IDM do
   @spec client(access_token :: OAuth2.AccessToken.t()) :: Tesla.Client.t()
   defp client(access_token) do
     middleware = [
-      Tesla.Middleware.OpenTelemetry,
       {Tesla.Middleware.BearerAuth, token: access_token.access_token},
       {Tesla.Middleware.BaseUrl, api_url()},
       Tesla.Middleware.JSON,
       Tesla.Middleware.Logger
     ]
 
-    Tesla.client(middleware)
+    Lotta.Tesla.create_client(middleware)
   end
 
   @doc """

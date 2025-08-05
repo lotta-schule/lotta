@@ -48,7 +48,7 @@ defmodule Lotta.Tenants.Tenant do
     field(:logo_image_file_id, :binary_id)
     field(:background_image_file_id, :binary_id)
 
-    field(:eduplaces_school_id, :string, default: nil)
+    field(:eduplaces_id, :string, default: nil)
 
     has_many(:custom_domains, Lotta.Tenants.CustomDomain)
 

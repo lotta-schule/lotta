@@ -1,7 +1,10 @@
 defmodule LottaWeb.OAuthController do
   use LottaWeb, :controller
 
-  alias Lotta.Eduplaces.OAuthStrategy
+  alias Lotta.{Accounts, Tenants}
+  alias Lotta.Eduplaces.{OAuthStrategy, UserInfo}
+  alias LottaWeb.Urls
+  alias LottaWeb.Auth.AccessToken
 
   def login(conn, %{"provider" => "eduplaces"}) do
     state = UUID.uuid4()
@@ -39,11 +42,76 @@ defmodule LottaWeb.OAuthController do
         |> json(%{error: "State parameter mismatch."})
 
       true ->
-        OAuthStrategy.get_token!(params)
+        {_token, user} =
+          OAuthStrategy.get_token!(params)
 
+        with {:ok, {tenant, user}} <-
+               get_or_create_user_from_eduplaces_userinfo(user),
+             {:ok, token, _claims} <- AccessToken.encode_and_sign(user, %{}, token_type: "hisec") do
+          target_uri =
+            tenant
+            |> Urls.get_tenant_uri()
+            |> URI.append_path("/auth/callback")
+            |> URI.append_query("token=#{token}")
+            |> URI.to_string()
+
+          conn
+          |> redirect(external: target_uri)
+        else
+          {:error, _} ->
+            conn
+            |> put_status(:not_found)
+            |> json(%{not: :found})
+        end
+    end
+  end
+
+  def tenant_callback(%{private: %{lotta_tenant: tenant}} = conn, %{"token" => token}) do
+    with {:ok, claims} <- AccessToken.decode_and_verify(token, %{"typ" => "hisec"}),
+         {:ok, user} <- AccessToken.resource_from_claims(claims),
+         true <- claims["tid"] == tenant.id || {:error, :no_tenant_match},
+         {:ok, refresh_token, _claims} <-
+           AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
+      conn
+      |> put_resp_cookie("SignInRefreshToken", refresh_token,
+        max_age: 21 * 24 * 60 * 60,
+        http_only: true,
+        same_site: "Lax"
+      )
+      |> redirect(to: "/")
+    else
+      {:error, reason} ->
         conn
-        |> put_status(:ok)
-        |> json(%{alles: :ok})
+        |> put_status(:unauthorized)
+        |> json(%{error: reason})
+    end
+  end
+
+  defp get_or_create_user_from_eduplaces_userinfo(
+         %UserInfo{id: eduplaces_id, school: %{id: eduplaces_id}} = user_info
+       ) do
+    tenant = Tenants.get_tenant_by_eduplaces_id(eduplaces_id)
+
+    if tenant do
+      Lotta.Repo.put_prefix(tenant.prefix)
+    end
+
+    cond do
+      is_nil(tenant) ->
+        {:error, :tenant_not_found}
+
+      is_nil(eduplaces_id) ->
+        {:error, :invalid_user_info}
+
+      true ->
+        Accounts.get_or_create_eduplaces_user(tenant, user_info)
+    end
+    |> case do
+      {:ok, user} ->
+        {:ok, {tenant, user}}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 end
