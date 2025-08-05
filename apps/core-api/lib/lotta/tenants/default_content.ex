@@ -397,7 +397,7 @@ defmodule Lotta.Tenants.DefaultContent do
   defp read_json(files, filename) do
     Application.app_dir(:lotta, "priv/default_content/text/#{filename}.json")
     |> File.read!()
-    |> String.replace(~r/__REMOTE_URL____([[:word:]-\.]*)/, fn text ->
+    |> String.replace(~r/__REMOTE_URL____([\w\-.]*)/, fn text ->
       filename = String.replace_leading(text, "__REMOTE_URL____", "")
 
       case Enum.find(files, &(&1.filename == filename)) do

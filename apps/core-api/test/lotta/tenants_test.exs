@@ -31,12 +31,13 @@ defmodule Lotta.TenantsTest do
     end
 
     test "should get tenant by eduplaces id" do
-      tenant = Tenants.get_tenant_by_slug("test")
-
-      Repo.update!(tenant, eduplaces_id: "eduplaces-123")
+      Tenants.get_tenant_by_slug("test")
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_change(:eduplaces_id, "eduplaces-123")
+      |> Repo.update!()
 
       assert %Tenant{slug: "test", eduplaces_id: "eduplaces-123"} =
-               Tenants.get_by_eduplaces_id("eduplaces-123")
+               Tenants.get_tenant_by_eduplaces_id("eduplaces-123")
     end
 
     @tag creates_tenant: true
