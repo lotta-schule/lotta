@@ -441,7 +441,7 @@ defmodule Lotta.Accounts do
           |> Map.put(:sort_key, UserGroup.get_max_sort_key() + 10)
       end
 
-    UserGroup.changeset(%UserGroup{}, attrs)
+    UserGroup.create_changeset(attrs)
     |> Repo.insert(prefix: Repo.get_prefix())
   end
 
@@ -451,7 +451,7 @@ defmodule Lotta.Accounts do
   @spec update_user_group(UserGroup.t(), map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def update_user_group(%UserGroup{} = group, attrs) do
     group
-    |> UserGroup.changeset(attrs)
+    |> UserGroup.update_changeset(attrs)
     |> Repo.update()
   end
 

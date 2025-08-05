@@ -214,12 +214,7 @@ defmodule Lotta.Storage do
   def copy_to_remote_storage(file_or_file_conversion, store_name) when is_binary(store_name) do
     file_or_file_conversion = Repo.preload(file_or_file_conversion, :remote_storage_entity)
 
-    tesla_client =
-      Tesla.client([
-        Tesla.Middleware.OpenTelemetry,
-        Tesla.Middleware.FollowRedirects,
-        Tesla.Middleware.Logger
-      ])
+    tesla_client = Lotta.Tesla.create_client()
 
     with {:ok, env} <-
            Tesla.get(
