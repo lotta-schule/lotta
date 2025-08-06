@@ -1,3 +1,13 @@
+## 6.0.21 (2025-08-06)
+
+### 🚀 Features
+
+- **hubert:** Make Badges themable ([#468](https://github.com/lotta-schule/lotta/pull/468))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.0.20 (2025-08-04)
 
 ### 🩹 Fixes
