@@ -13,13 +13,16 @@ defmodule LottaWeb.Auth.ErrorHandler do
   def auth_error(conn, {type, reason}, opts) do
     Sentry.capture_message("Guardian error",
       extra: %{
-        "guardian_error" => to_string(type),
-        "guardian_reason" => to_string(reason),
+        "guardian_error" => inspect(type),
+        "guardian_reason" => inspect(reason),
         opts: inspect(opts)
       }
     )
 
     conn
-    |> send_resp(401, Jason.encode!(%{message: to_string(type)}))
+    |> delete_resp_cookie("SignInRefreshToken",
+      http_only: true,
+      same_site: "Lax"
+    )
   end
 end
