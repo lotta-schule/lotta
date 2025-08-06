@@ -36,7 +36,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
 
-    const isEduplacesEnabled = !!tenant.eduplacesSchoolId;
+    const isEduplacesEnabled = !!tenant.eduplacesId;
 
     React.useEffect(() => {
       if (isOpen === false) {

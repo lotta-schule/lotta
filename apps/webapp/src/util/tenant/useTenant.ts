@@ -12,7 +12,7 @@ export const TENANT_COMMON_FIELDS = graphql(`
     host
     identifier
 
-    eduplacesSchoolId
+    eduplacesId
 
     backgroundImageFile {
       id
