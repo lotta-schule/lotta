@@ -166,18 +166,6 @@ export const Presentation = React.memo(
                   })
                 }
               />
-            </div>
-            <div>
-              <ColorSettingRow
-                label={'Beschriftungen'}
-                hint={'Farbe für Text in Beschriftungen'}
-                value={customTheme.labelTextColor}
-                onChange={(labelTextColor) =>
-                  updateThemeProperties({
-                    labelTextColor,
-                  })
-                }
-              />
               <ColorSettingRow
                 label={'Text-Invert (Primär)'}
                 hint={
@@ -187,6 +175,18 @@ export const Presentation = React.memo(
                 onChange={(primaryContrastTextColor) =>
                   updateThemeProperties({
                     primaryContrastTextColor,
+                  })
+                }
+              />
+            </div>
+            <div>
+              <ColorSettingRow
+                label={'Beschriftungen'}
+                hint={'Farbe für Text in Beschriftungen'}
+                value={customTheme.labelTextColor}
+                onChange={(labelTextColor) =>
+                  updateThemeProperties({
+                    labelTextColor,
                   })
                 }
               />
@@ -237,6 +237,26 @@ export const Presentation = React.memo(
                 onChange={(bannerBackgroundColor) =>
                   updateThemeProperties({
                     bannerBackgroundColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Badge - Hintergrundfarbe'}
+                hint={'Hintergrundfarbe für Kennzeichnungen (Badges)'}
+                value={customTheme.badgeBackgroundColor}
+                onChange={(badgeBackgroundColor) =>
+                  updateThemeProperties({
+                    badgeBackgroundColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Badge - Textfarbe'}
+                hint={'Textfarbe für Kennzeichnungen (Badges)'}
+                value={customTheme.badgeTextColor}
+                onChange={(badgeTextColor) =>
+                  updateThemeProperties({
+                    badgeTextColor,
                   })
                 }
               />

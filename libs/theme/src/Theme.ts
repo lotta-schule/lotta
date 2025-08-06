@@ -6,8 +6,8 @@ export type Theme = {
   successColor: string;
   disabledColor: string;
   textColor: string;
-  labelTextColor: string;
   primaryContrastTextColor: string;
+  labelTextColor: string;
   boxBackgroundColor: string;
   pageBackgroundColor: string;
   dividerColor: string;
@@ -20,4 +20,8 @@ export type Theme = {
 
   textFontFamily: string;
   titleFontFamily: string;
+
+  /* component-specific styles */
+  badgeBackgroundColor: string;
+  badgeTextColor: string;
 };
