@@ -1,3 +1,13 @@
+## 6.0.22 (2025-08-07)
+
+### 🩹 Fixes
+
+- **core:** Fix FCM push notifications ([#471](https://github.com/lotta-schule/lotta/pull/471))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.0.21 (2025-08-06)
 
 ### 🚀 Features
