@@ -88,7 +88,7 @@ defmodule Lotta.MixProject do
       {:bandit, "~> 1.0"},
       {:argon2_elixir, "~> 4.0"},
       {:bcrypt_elixir, "~> 3.0"},
-      {:guardian, "~> 2.2"},
+      {:guardian, "~> 2.4.0"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.1"},
       {:hackney, "~> 1.20"},
@@ -100,7 +100,7 @@ defmodule Lotta.MixProject do
       {:bamboo, "~> 2.0"},
       {:bamboo_phoenix, "~> 1.0"},
       {:ex_ical, "~> 0.2.0"},
-      {:pigeon, "~> 2.0.0"},
+      {:pigeon, "~> 2.0.1"},
       {:goth, "~> 1.4.3"},
       {:timex, "~> 3.7"},
       {:sentry, "~> 10.1"},
@@ -135,7 +135,8 @@ defmodule Lotta.MixProject do
       {:opentelemetry_phoenix, "~> 2.0"},
       {:opentelemetry_redix, "~> 0.1"},
       {:opentelemetry_tesla, "~> 2.4.0"},
-      {:opentelemetry_semantic_conventions, "~> 1.27", override: true}
+      {:opentelemetry_semantic_conventions, "~> 1.27", override: true},
+      {:kadabra, github: "ptitmouton/kadabra", branch: "otp-28-support", override: true}
     ]
   end
 
