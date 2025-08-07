@@ -82,7 +82,7 @@ defmodule Lotta.PushNotification do
   def provider_name(provider)
 
   def provider_name(:goth),
-    do: {:via, Registry, {Registry.Lotta.PushNotification, Lotta.PushNotification.Goth}}
+    do: Lotta.PushNotification.Goth
 
   def provider_name(:fcm),
     do: {:via, Registry, {Registry.Lotta.PushNotification, Lotta.PushNotification.Provider.FCM}}
@@ -91,7 +91,7 @@ defmodule Lotta.PushNotification do
     do: {:via, Registry, {Registry.Lotta.PushNotification, Lotta.PushNotification.Provider.APNS}}
 
   defp enabled_providers() do
-    [:fcm, :apns, :goth]
+    [:goth, :fcm, :apns]
     |> Enum.filter(&enabled?/1)
     |> Enum.map(&get_provider_spec/1)
   end
@@ -126,7 +126,7 @@ defmodule Lotta.PushNotification do
     config = get_config(:fcm)
 
     [
-      service_account: Jason.decode!(config[:service_account_json]),
+      source: {:service_account, Jason.decode!(config[:service_account_json])},
       name: provider_name(:goth)
     ]
   end

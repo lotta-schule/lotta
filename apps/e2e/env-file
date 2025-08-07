@@ -42,20 +42,8 @@ APNS_KEY_ID='ABCDE12345'
 APNS_TEAM_ID='ABCDE12345'
 APNS_TOPIC='net.einsa.schule'
 APNS_USE_PRODUCTION='false'
-FCM_PROJECT_ID='myproject'
+# FCM_PROJECT_ID='meinlotta'
 # Has to be valid
-FCM_SERVICE_ACCOUNT_JSON='{
-    \"type\": \"service_account\",
-    \"project_id\": \"meinlotta\",
-    \"private_key_id\": \"ABCDE12345\",
-    \"private_key\": \"-----BEGIN RSA PRIVATE KEY-----\nAAJBANgqvOH7xQ1nAAQQ\n-----END RSA PRIVATE KEY-----\",
-    \"client_email\": \"firebase-adminsdk-asdf2@jajajajahastduwohlged.achtle\",
-    \"client_id\": \"1234567890\",
-    \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",
-    \"token_uri\": \"https://oauth2.googleapis.com/token\",
-    \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",
-    \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/firebase-admidassageicheuchdochnichtjetztschautdochnichtso.gserviceaccount.com\",
-    \"universe_domain\": \"googleapis.com\"
-}'
+# FCM_SERVICE_ACCOUNT_JSON='{"type":"service_account","project_id":"meinlotta","private_key_id":"ABCDE12345","private_key":"-----BEGIN RSA PRIVATE KEY-----\nAAJBANgqvOH7xQ1nAAQQ\n-----END RSA PRIVATE KEY-----","client_email":"firebase-adminsdk-asdf2@jajajajahastduwohlged.achtle","client_id":"1234567890","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_x509_cert_url":"https://www.googleapis.com/robot/v1/metadata/x509/firebase-admidassageicheuchdochnichtjetztschautdochnichtso.gserviceaccount.com","universe_domain":"googleapis.com"}'
 COCKPIT_ADMIN_API_USERNAME='admin'
 COCKPIT_ADMIN_API_KEY='secretapikey'
