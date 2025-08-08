@@ -4,7 +4,6 @@ defmodule Lotta.Repo.Migrations.MoveConfigurationToTenantTable do
   require Logger
 
   import Ecto.Query
-  alias Lotta.Tenants.Tenant
 
   def change do
     alter table(:tenants) do

@@ -19,6 +19,10 @@ defmodule LottaWeb.Router do
     plug(LottaWeb.Context)
   end
 
+  pipeline :browser do
+    plug(:accepts, ~w(html))
+  end
+
   pipeline :json_api do
     plug(:accepts, ~w(json))
   end
@@ -28,6 +32,8 @@ defmodule LottaWeb.Router do
   end
 
   scope "/auth" do
+    pipe_through(:browser)
+
     scope "/" do
       pipe_through([:tenant, :auth])
 

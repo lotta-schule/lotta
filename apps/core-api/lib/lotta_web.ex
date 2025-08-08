@@ -6,7 +6,7 @@ defmodule LottaWeb do
   This can be used in your application as:
 
       use LottaWeb, :controller
-      use LottaWeb, :view
+      use LottaWeb, :html
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -19,16 +19,75 @@ defmodule LottaWeb do
 
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
-  def controller do
+  def router do
     quote do
-      use Phoenix.Controller, namespace: LottaWeb
+      use Phoenix.Router, helpers: false
 
       import Plug.Conn
-      import LottaWeb.Gettext
+      import Phoenix.Controller
+    end
+  end
+
+  def controller do
+    quote do
+      use Phoenix.Controller, formats: [:html, :json]
+
+      use Gettext, backend: LottaWeb.Gettext
+
+      import Plug.Conn
+
+      use PhoenixHTMLHelpers
       unquote(verified_routes())
     end
   end
 
+  def channel do
+    quote do
+      use Phoenix.Channel
+      import LottaWeb.Gettext
+    end
+  end
+
+  def live_component do
+    quote do
+      use Phoenix.LiveComponent
+
+      unquote(html_helpers())
+    end
+  end
+
+  def html do
+    quote do
+      use Phoenix.Component
+
+      # Import convenience functions from controllers
+      import Phoenix.Controller,
+        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
+
+      # Include general helpers for rendering HTML
+      unquote(html_helpers())
+    end
+  end
+
+  defp html_helpers do
+    quote do
+      # Translation
+      use Gettext, backend: LottaWeb.Gettext
+
+      # HTML escaping functionality
+      import Phoenix.HTML
+      # Core UI components
+      import LottaWeb.CoreComponents
+
+      # Common modules used in templates
+      alias Phoenix.LiveView.JS
+
+      # Routes generation with the ~p sigil
+      unquote(verified_routes())
+    end
+  end
+
+  # TODO: This must be removed once we have a proper HTML view
   def view do
     quote do
       use Phoenix.View,
@@ -44,21 +103,6 @@ defmodule LottaWeb do
       import LottaWeb.ErrorHelpers
       import LottaWeb.Gettext
       unquote(verified_routes())
-    end
-  end
-
-  def router do
-    quote do
-      use Phoenix.Router
-      import Plug.Conn
-      import Phoenix.Controller
-    end
-  end
-
-  def channel do
-    quote do
-      use Phoenix.Channel
-      import LottaWeb.Gettext
     end
   end
 
