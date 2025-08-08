@@ -210,18 +210,19 @@ defmodule LottaWeb.OAuthControllerTest do
       other =
         %Tenant{}
         |> Map.merge(fixture(:valid_tenant_attrs))
-        |> Repo.insert!(prefix: "pref_other")
         |> Repo.insert!()
+
+      {:ok, _} = Lotta.Tenants.TenantDbManager.create_tenant_database_schema(other)
 
       user =
         %User{}
-        |> Map.merge(fixture(:valid_eduplace_user_attrs, %{tenant_id: other.id}))
-        |> Repo.insert!(prefix: "pref_other")
+        |> Map.merge(fixture(:valid_eduplace_user_attrs))
+        |> Repo.insert!(prefix: other.prefix)
 
-      token =
+      {:ok, token, _} =
         AccessToken.encode_and_sign(
           user,
-          %{"sub" => "#{user.id}", "tid" => other.id},
+          %{},
           token_type: "hisec"
         )
 
