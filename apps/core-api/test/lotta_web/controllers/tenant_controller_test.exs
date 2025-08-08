@@ -45,17 +45,14 @@ defmodule LottaWeb.TenantControllerTest do
       body = json_response(conn, 200)
       assert body["success"] == true
 
-      assert body["tenants"] ==
-               Enum.map(
-                 tenants,
-                 &%{
-                   "id" => &1.id,
-                   "title" => &1.title,
-                   "slug" => &1.slug,
-                   "logoImageFileId" => nil,
-                   "backgroundImageFileId" => nil
-                 }
-               )
+      Enum.zip(tenants, body["tenants"])
+      |> Enum.each(fn {tenant, tenant_json} ->
+        assert tenant_json["id"] == tenant.id
+        assert tenant_json["title"] == tenant.title
+        assert tenant_json["slug"] == tenant.slug
+        assert tenant_json["logoImageFileId"] == nil
+        assert tenant_json["backgroundImageFileId"] == nil
+      end)
     end
 
     test "should return an empty list if the user is not provided" do

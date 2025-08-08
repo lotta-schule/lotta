@@ -187,14 +187,13 @@ defmodule LottaWeb.OAuthControllerTest do
       user_id = to_string(user.id)
       tenant_id = tenant.id
 
-      assert refresh_token = conn.cookies["SignInRefreshToken"]
+      assert %{"SignInRefreshToken" => %{value: refresh_token}} = get_resp_cookies(conn)
 
       assert {:ok,
               %{
                 "sub" => ^user_id,
-                "tid" => ^tenant_id,
-                "typ" => "refresh"
-              }} = AccessToken.decode_and_verify(refresh_token)
+                "tid" => ^tenant_id
+              }} = AccessToken.decode_and_verify(refresh_token, %{"typ" => "refresh"})
     end
 
     test "returns unauthorized when token is invalid", %{conn: conn, tenant: tenant} do

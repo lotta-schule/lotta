@@ -21,7 +21,7 @@ defmodule LottaWeb do
 
   def router do
     quote do
-      use Phoenix.Router, helpers: false
+      use Phoenix.Router, helpers: true
 
       import Plug.Conn
       import Phoenix.Controller
@@ -30,7 +30,7 @@ defmodule LottaWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, formats: [:html, :json]
+      use Phoenix.Controller, formats: [:html, :json, :xml, :ics]
 
       use Gettext, backend: LottaWeb.Gettext
 

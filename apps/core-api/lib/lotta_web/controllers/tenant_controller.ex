@@ -4,85 +4,48 @@ defmodule LottaWeb.TenantController do
   import Plug.Conn
 
   import Ecto.Query
-  import Absinthe.Utils, only: [camelize: 2]
 
-  alias Ecto.Changeset
   alias Lotta.{Tenants, Repo}
   alias Lotta.Accounts.User
+
+  action_fallback(LottaWeb.FallbackController)
 
   def create_test(conn, %{"tenant" => tenant_params, "user" => user_params}) do
     tenant_params = atomize_keys(tenant_params)
     user_params = atomize_keys(user_params)
 
-    case Tenants.create_tenant(user_params: user_params, tenant: tenant_params) do
-      {:ok, tenant} ->
-        send_resp(
-          conn,
-          :ok,
-          Jason.encode!(%{
-            success: true,
-            tenant: %{
-              id: tenant.id,
-              slug: tenant.slug,
-              title: tenant.title,
-              inserted_at: tenant.inserted_at,
-              updated_at: tenant.updated_at
-            }
-          })
-        )
-
-      {:error, %Changeset{} = changeset} ->
-        send_resp(
-          conn,
-          :bad_request,
-          Jason.encode!(%{error: LottaWeb.ErrorHelpers.extract_error_details(changeset)})
-        )
-
-      {:error, reason} ->
-        send_resp(conn, :internal_server_error, Jason.encode!(inspect(reason)))
+    with {:ok, tenant} <-
+           IO.inspect(Tenants.create_tenant(user_params: user_params, tenant: tenant_params)) do
+      conn
+      |> render(:created, tenant: tenant)
     end
   end
 
   def delete_tenant(conn, %{"tenant" => %{"id" => tenant_id}}) do
     tenant = Tenants.get_tenant(tenant_id)
 
-    case Tenants.delete_tenant(tenant) do
-      {:ok, _tenant} ->
-        send_resp(conn, :ok, Jason.encode!(%{success: true}))
-
-      other ->
-        send_resp(conn, :internal_server_error, Jason.encode!(other))
+    with {:ok, tenant} <- Tenants.delete_tenant(tenant) do
+      conn
+      |> render(:deleted, tenant: tenant)
     end
   end
 
   def list_user_tenants(conn, args) do
     username = Map.get(args, "username", "")
 
-    Tenants.list_tenants()
-    |> Enum.filter(fn %{prefix: prefix} ->
-      from(u in User,
-        where: u.email == ^username
-      )
-      |> Repo.exists?(prefix: prefix)
-    end)
-    |> Enum.map(fn tenant ->
-      tenant
-      |> Map.keys()
-      |> Enum.reduce(%{}, fn
-        key, acc
-        when key in [:id, :slug, :title, :logo_image_file_id, :background_image_file_id] ->
-          Map.put(acc, camelize(to_string(key), lower: true), Map.get(tenant, key))
-
-        _, acc ->
-          acc
+    tenants =
+      Tenants.list_tenants()
+      |> Enum.filter(fn %{prefix: prefix} ->
+        Repo.exists?(
+          from(u in User,
+            where: u.email == ^username
+          ),
+          prefix: prefix
+        )
       end)
-    end)
-    |> then(fn tenants ->
-      json(conn, %{
-        success: true,
-        tenants: tenants
-      })
-    end)
+
+    conn
+    |> render(:list, tenants: tenants)
   end
 
   defp atomize_keys(map) do
