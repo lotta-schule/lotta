@@ -87,7 +87,7 @@ defmodule LottaWeb do
     end
   end
 
-  # TODO: This must be removed once we have a proper HTML view
+  # This must be removed once we have a proper HTML view
   def view do
     quote do
       use Phoenix.View,

@@ -32,7 +32,6 @@ defmodule LottaWeb.OAuthController do
         signed: true,
         same_site: "Lax"
       )
-      |> IO.inspect(label: "Callback conn after deleting ep_login_state cookie")
 
     cond do
       is_nil(received_login_state) || is_nil(persisted_state) ||
