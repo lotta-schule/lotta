@@ -15,7 +15,7 @@ defmodule LottaWeb.TenantController do
     user_params = atomize_keys(user_params)
 
     with {:ok, tenant} <-
-           IO.inspect(Tenants.create_tenant(user_params: user_params, tenant: tenant_params)) do
+           Tenants.create_tenant(user_params: user_params, tenant: tenant_params) do
       conn
       |> render(:created, tenant: tenant)
     end

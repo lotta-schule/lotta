@@ -2,11 +2,11 @@ defmodule LottaWeb.OAuthControllerTest do
   use LottaWeb.ConnCase, async: true
 
   import Mock
-  import Phoenix.Controller, only: [redirected_to: 1]
   import Plug.Conn
   import Lotta.Fixtures
 
   alias Lotta.{Repo, Tenants}
+  alias Lotta.Accounts.User
   alias LottaWeb.Auth.AccessToken
   alias Lotta.Eduplaces.{UserInfo, OAuthStrategy}
 
@@ -207,12 +207,17 @@ defmodule LottaWeb.OAuthControllerTest do
 
     test "returns unauthorized when tenant ID mismatches", %{conn: conn, tenant: tenant} do
       claims = %{"tid" => "other_tenant"}
-      user = %{id: "user"}
+
+      user =
+        %User{}
+        |> Map.merge(fixture(:valid_eduplace_user_attrs, %{tenant_id: "other_tenant"}))
+
+      token = AccessToken.encode_and_sign(user, claims, token_type: "hisec")
 
       conn =
         conn
         |> put_req_header("tenant", "slug:#{tenant.slug}")
-        |> get("/auth/callback?token=token")
+        |> get("/auth/callback?token=#{token}")
 
       assert html_response(conn, 401) =~ "not authorized to access this resource"
     end
