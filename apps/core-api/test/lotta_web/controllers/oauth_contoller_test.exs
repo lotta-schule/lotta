@@ -7,6 +7,7 @@ defmodule LottaWeb.OAuthControllerTest do
 
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.User
+  alias Lotta.Tenants.Tenant
   alias LottaWeb.Auth.AccessToken
   alias Lotta.Eduplaces.{UserInfo, OAuthStrategy}
 
@@ -206,13 +207,23 @@ defmodule LottaWeb.OAuthControllerTest do
     end
 
     test "returns unauthorized when tenant ID mismatches", %{conn: conn, tenant: tenant} do
-      claims = %{"tid" => "other_tenant"}
+      other =
+        %Tenant{}
+        |> Map.merge(fixture(:valid_tenant_attrs))
+        |> Repo.insert!(prefix: "pref_other")
+        |> Repo.insert!()
 
       user =
         %User{}
-        |> Map.merge(fixture(:valid_eduplace_user_attrs, %{tenant_id: "other_tenant"}))
+        |> Map.merge(fixture(:valid_eduplace_user_attrs, %{tenant_id: other.id}))
+        |> Repo.insert!(prefix: "pref_other")
 
-      token = AccessToken.encode_and_sign(user, claims, token_type: "hisec")
+      token =
+        AccessToken.encode_and_sign(
+          user,
+          %{"sub" => "#{user.id}", "tid" => other.id},
+          token_type: "hisec"
+        )
 
       conn =
         conn

@@ -14,6 +14,16 @@ defmodule Lotta.Fixtures do
 
   def fixture(name, params \\ %{})
 
+  def fixture(:valid_tenant_attrs, _) do
+    %{
+      title: "Meine andere Schule",
+      slug: "meine-andere-schule",
+      prefix: "t_other",
+      logo_image_file_id: nil,
+      background_image_file_id: nil
+    }
+  end
+
   def fixture(:valid_category_attrs, _) do
     %{
       title: "Meine Kategorie",
