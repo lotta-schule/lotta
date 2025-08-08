@@ -1,3 +1,23 @@
+## 6.0.22 (2025-08-07)
+
+### 🩹 Fixes
+
+- **core:** Fix FCM push notifications ([#471](https://github.com/lotta-schule/lotta/pull/471))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.0.21 (2025-08-06)
+
+### 🚀 Features
+
+- **hubert:** Make Badges themable ([#468](https://github.com/lotta-schule/lotta/pull/468))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.0.20 (2025-08-04)
 
 ### 🩹 Fixes
@@ -167,29 +187,26 @@ This was a version bump only, there were no code changes.
 
 ## 5.0.11 (2024-09-12)
 
-
 ### 🩹 Fixes
 
 - **webapp:** Fix wrong token expiration comparison ([#384](https://github.com/lotta-schule/lotta/pull/384))
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Alexis Rinaldoni @ptitmouton
 
 ## 5.0.10 (2024-09-12)
-
 
 ### 🩹 Fixes
 
 - **core-api:** Remove expired refreshtoken cookies to avoid failing refresh ([#382](https://github.com/lotta-schule/lotta/pull/382))
 - **webapp:** Remove white background from text contentModule edittoolbar ([#383](https://github.com/lotta-schule/lotta/pull/383))
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Alexis Rinaldoni @ptitmouton
 
 ## 5.0.9 (2024-09-12)
-
 
 ### 🚀 Features
 
@@ -208,13 +225,12 @@ This was a version bump only, there were no code changes.
 - **webapp:** Corrected two column view for article preview in user/tag article list ([#380](https://github.com/lotta-schule/lotta/pull/380))
 - **webapp:** Fix EditMode GridList overlapping page layout ([#381](https://github.com/lotta-schule/lotta/pull/381))
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Alexis Rinaldoni @ptitmouton
 - Billy
 
 ## 5.0.8 (2024-09-04)
-
 
 ### 🚀 Features
 
@@ -224,24 +240,22 @@ This was a version bump only, there were no code changes.
 
 - **core-api:** Make subscription of calendars work again ([#364](https://github.com/lotta-schule/lotta/pull/364))
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Alexis Rinaldoni @ptitmouton
 
 ## 5.0.7 (2024-09-03)
 
-
 ### 🩹 Fixes
 
-- **core-api:** articles: Better error handling on string -> int conversion  d4027c ([#361](https://github.com/lotta-schule/lotta/pull/361))
+- **core-api:** articles: Better error handling on string -> int conversion d4027c ([#361](https://github.com/lotta-schule/lotta/pull/361))
 - **core-api:** file search: Return error instead of crashing for unauthenticated users ([#362](https://github.com/lotta-schule/lotta/pull/362))
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Alexis Rinaldoni @ptitmouton
 
 ## 5.0.6 (2024-09-02)
-
 
 ### 🚀 Features
 
@@ -252,23 +266,21 @@ This was a version bump only, there were no code changes.
 - **core-api:** Correctly handle bad response from analytics tool ([#359](https://github.com/lotta-schule/lotta/pull/359))
 - **core-api:** Send 404 when file has not been found, check id format ([#360](https://github.com/lotta-schule/lotta/pull/360))
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Alexis Rinaldoni @ptitmouton
 
 ## 5.0.5 (2024-09-01)
 
-
 ### 🩹 Fixes
 
 - **core-api:** Apply SQL.Sandbox pooling for ecto only in test env ([d879ed4f](https://github.com/lotta-schule/lotta/commit/d879ed4f))
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Alexis Rinaldoni
 
 ## 5.0.4 (2024-09-01)
-
 
 ### 🩹 Fixes
 
@@ -276,7 +288,7 @@ This was a version bump only, there were no code changes.
 - **webapp:** Add back availability to see events outside of own month, fix eslint setup ([#351](https://github.com/lotta-schule/lotta/pull/351))
 - **webapp:** Fix safari shrunking contents of UserArticlesDialog ([#355](https://github.com/lotta-schule/lotta/pull/355))
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Alexis Rinaldoni @ptitmouton
 
@@ -285,7 +297,6 @@ This was a version bump only, there were no code changes.
 This was a version bump only, there were no code changes.
 
 ## 5.0.2 (2024-09-01)
-
 
 ### 🚀 Features
 
@@ -296,7 +307,7 @@ This was a version bump only, there were no code changes.
 - **webapp:** Stop ArticleReaction dialog from disappearing from mobile viewport ([#348](https://github.com/lotta-schule/lotta/pull/348))
 - **webapp:** Stop UserArticlesDialog from scrolling everywhere ([#349](https://github.com/lotta-schule/lotta/pull/349))
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Alexis Rinaldoni @ptitmouton
 
@@ -305,7 +316,6 @@ This was a version bump only, there were no code changes.
 This was a version bump only, there were no code changes.
 
 # 5.0.0 (2024-09-01)
-
 
 ### 🚀 Features
 
@@ -316,7 +326,7 @@ This was a version bump only, there were no code changes.
 - **core:** Reorganize project configuration ([#23](https://github.com/lotta-schule/lotta/pull/23))
 - **core:** Add endpoints returning tenant analytics data ([#24](https://github.com/lotta-schule/lotta/pull/24))
 - **core:** Automatically unpublish articles of single just-deleted group ([#26](https://github.com/lotta-schule/lotta/pull/26))
-- **core:** find users with *no group* via admin user search ([#27](https://github.com/lotta-schule/lotta/pull/27))
+- **core:** find users with _no group_ via admin user search ([#27](https://github.com/lotta-schule/lotta/pull/27))
 - **hubert:** use native html dialogs ([#251](https://github.com/lotta-schule/lotta/pull/251))
 - **hubert:** Create Pill button ([#280](https://github.com/lotta-schule/lotta/pull/280))
 - **hubert:** Allow confirming combobox input on other keys than ENTER ([#298](https://github.com/lotta-schule/lotta/pull/298))
@@ -372,7 +382,7 @@ This was a version bump only, there were no code changes.
 - **webapp:** AdminSection / Users: Make Popovers on Safari not overflow ([#339](https://github.com/lotta-schule/lotta/pull/339))
 - **webapp:** AdminPage: Make AdminPage scrollable again ([#347](https://github.com/lotta-schule/lotta/pull/347))
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Alexis Rinaldoni @ptitmouton
 - Billy

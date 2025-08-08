@@ -104,16 +104,16 @@ defmodule SystemConfig do
 
   defp default("PIGEON_USE_SANDBOX", :test), do: "true"
   defp default("PIGEON_USE_SANDBOX", _), do: "false"
-  defp default("APNS_KEY_B64", _), do: ""
   defp default("APNS_KEY", _), do: nil
+  defp default("APNS_KEY_B64", _), do: ""
   defp default("APNS_KEY_ID", _), do: nil
   defp default("APNS_TEAM_ID", _), do: nil
   defp default("APNS_TOPIC", _), do: "net.einsa.lotta"
   defp default("APNS_USE_PRODUCTION", :prod), do: "true"
   defp default("APNS_USE_PRODUCTION", _), do: false
   defp default("FCM_PROJECT_ID", _), do: nil
-  defp default("FCM_SERVICE_ACCOUNT_JSON_B64", _), do: ""
   defp default("FCM_SERVICE_ACCOUNT_JSON", _), do: nil
+  defp default("FCM_SERVICE_ACCOUNT_JSON_B64", _), do: ""
 
   defp default("COCKPIT_ADMIN_API_USERNAME", _), do: "admin"
   defp default("COCKPIT_ADMIN_API_KEY", env) when env in [:dev, :test], do: "test123"
@@ -314,11 +314,11 @@ config :lotta, Lotta.PushNotification,
   fcm: [
     project_id: SystemConfig.get("FCM_PROJECT_ID"),
     service_account_json:
-      SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON_B64", cast: :base64) ||
-        SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON")
+      SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON") ||
+        SystemConfig.get("FCM_SERVICE_ACCOUNT_JSON_B64", cast: :base64)
   ],
   apns: [
-    key: SystemConfig.get("APNS_KEY_B64", cast: :base64) || SystemConfig.get("APNS_KEY"),
+    key: SystemConfig.get("APNS_KEY") || SystemConfig.get("APNS_KEY_B64", cast: :base64),
     key_identifier: SystemConfig.get("APNS_KEY_ID"),
     team_id: SystemConfig.get("APNS_TEAM_ID"),
     topic: SystemConfig.get("APNS_TOPIC"),

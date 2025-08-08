@@ -4,7 +4,7 @@ defmodule Lotta.MixProject do
   def project do
     [
       app: :lotta,
-      version: "6.0.20",
+      version: "6.0.22",
       name: "Lotta API Server",
       source_url: "https://github.com/lotta-schule/core",
       homepage_url: "https://lotta.schule",
@@ -97,7 +97,7 @@ defmodule Lotta.MixProject do
       {:ex_aws_s3, "~> 2.1"},
       {:hackney, "~> 1.20"},
       {:finch, "~> 0.19"},
-      {:tesla, "~> 1.5"},
+      {:tesla, "~> 1.15"},
       {:sweet_xml, "~> 0.7"},
       {:poison, "~> 6.0"},
       {:uuid, "~> 1.1.8"},
@@ -140,7 +140,7 @@ defmodule Lotta.MixProject do
       {:opentelemetry_redix, "~> 0.1"},
       {:opentelemetry_tesla, "~> 2.4.0"},
       {:opentelemetry_semantic_conventions, "~> 1.27", override: true},
-      {:kadabra, path: "../../../kadabra", override: true}
+      {:kadabra, github: "ptitmouton/kadabra", branch: "otp-28-support", override: true}
     ]
   end
 
