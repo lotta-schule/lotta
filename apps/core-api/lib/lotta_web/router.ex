@@ -43,6 +43,9 @@ defmodule LottaWeb.Router do
     scope "/oauth" do
       get("/:provider/login", LottaWeb.OAuthController, :login)
       get("/:provider/callback", LottaWeb.OAuthController, :callback)
+      # provider param is ignored, as we get the provider from ?ssi query param
+      # it probably would better to move this to /auth/oauth/request_login
+      get("/:provider/authorize", LottaWeb.OAuthController, :request_login)
     end
 
     scope "/token" do

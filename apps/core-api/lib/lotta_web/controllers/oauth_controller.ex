@@ -8,7 +8,7 @@ defmodule LottaWeb.OAuthController do
 
   require Logger
 
-  def login(conn, %{"provider" => "eduplaces"}) do
+  def login(conn, %{"provider" => "eduplaces"} = params) do
     state = UUID.uuid4()
 
     conn
@@ -19,7 +19,9 @@ defmodule LottaWeb.OAuthController do
       # 10 minutes max_age
       max_age: 10 * 60
     )
-    |> redirect(external: OAuthStrategy.authorize_url!(state: state))
+    |> redirect(
+      external: OAuthStrategy.authorize_url!(state: state, login_hint: params["login_hint"])
+    )
   end
 
   def callback(conn, %{"provider" => "eduplaces", "state" => received_login_state} = params) do
@@ -70,11 +72,20 @@ defmodule LottaWeb.OAuthController do
           |> redirect(external: target_uri)
         else
           {:error, _} ->
+            # You could either being to early and just wait for your tenant to be created
+            Logger.warning("Tenant not found or user info is invalid.")
+            # Make it more user-friendly later
+            # conn
+            # |> put_status(:not_found)
+            # |> render(:no_tenant)
             conn
             |> put_status(:not_found)
-            |> render(:no_tenant,
-              title: gettext("This school is not registered with Eduplaces."),
-              message: gettext("The school has not activated the Eduplaces integration yet.")
+            |> render(:not_found,
+              title: gettext("Tenant not found"),
+              message:
+                gettext(
+                  "The tenant associated with your account could not be found. It maybe is not registered. Please contact support."
+                )
             )
         end
     end
@@ -92,6 +103,20 @@ defmodule LottaWeb.OAuthController do
       |> put_status(:not_found)
       |> render(:"404")
 
+  def request_login(conn, %{"iss" => "https://auth.sandbox.eduplaces.dev"} = params) do
+    query =
+      params
+      |> Map.take(["login_hint"])
+      |> URI.encode_query()
+
+    redirect(
+      conn,
+      to: Enum.join(["/auth/oauth/eduplaces/login", query], "?")
+    )
+  end
+
+  def request_login(_, _), do: {:error, :not_found}
+
   def tenant_callback(%{private: %{lotta_tenant: tenant}} = conn, %{"token" => token}) do
     with {:ok, claims} <- AccessToken.decode_and_verify(token, %{"typ" => "hisec"}),
          {:ok, user} <- AccessToken.resource_from_claims(claims),
@@ -99,6 +124,9 @@ defmodule LottaWeb.OAuthController do
          {:ok, refresh_token, _claims} <-
            AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
       conn
+      |> delete_resp_cookie("SignInAccessToken",
+        same_site: "Lax"
+      )
       |> put_resp_cookie("SignInRefreshToken", refresh_token,
         max_age: 21 * 24 * 60 * 60,
         http_only: true,
