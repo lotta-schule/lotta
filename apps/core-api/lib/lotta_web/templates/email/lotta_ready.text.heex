@@ -1,10 +1,10 @@
-Hallo <%= @user.name %>,
+Hallo {@user.name},
 Vielen Dank für Ihr Interesse an lotta.
-Das System steht nun für Sie unter der Adresse <%= LottaWeb.Urls.get_tenant_url(@tenant) %> zur Verfügung.
+Das System steht nun für Sie unter der Adresse {LottaWeb.Urls.get_tenant_url(@tenant)} zur Verfügung.
 
 Melden Sie sich mit folgenden Zugangsdaten an:
-Nutzername: <%= @user.email %>
-Passwort: <%= @user.password %>
+Nutzername: {@user.email}
+Passwort: {@user.password}
 
 Anleitungen und Inspiration finden Sie auf unserer Hilfeseite https://info.lotta.schule. Zusätzlich finden Sie als Anhang zu dieser Email eine Übersicht zum Aufbau von Lotta als PDF-Datei.
 Für Fragen stehen wir gerne zur Verfügung,

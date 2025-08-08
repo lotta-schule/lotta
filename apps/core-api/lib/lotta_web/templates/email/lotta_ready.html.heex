@@ -1,0 +1,24 @@
+<p>
+  Hallo {@user.name},
+</p>
+<p>
+  Vielen Dank für Ihr Interesse an <strong>lotta</strong>.
+</p>
+<p>
+  Das System steht nun für Sie unter der Adresse <a href={LottaWeb.Urls.get_tenant_url(@tenant)}>{LottaWeb.Urls.get_tenant_url(@tenant)}</a> zur Verfügung.
+</p>
+
+<p>
+Melden Sie sich mit folgenden Zugangsdaten an:<br />
+<strong>Nutzername:</strong> {@user.email}<br />
+<strong>Passwort:</strong> {@user.password}<br />
+</p>
+
+<p>
+  Anleitungen und Inspiration finden Sie auf <a href="https://docs.lotta.schule">unserer Hilfeseite </a>.<br />
+Zusätzlich finden Sie als Anhang zu dieser Email eine Übersicht zum Aufbau von Lotta als PDF-Datei.
+</p>
+<p>
+  Für Fragen stehen wir gerne zur Verfügung,<br />
+  Ihr Lotta-Team
+</p>

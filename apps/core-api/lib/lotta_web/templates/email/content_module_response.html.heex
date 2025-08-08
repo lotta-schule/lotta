@@ -7,6 +7,6 @@
 </p>
 <ul>
   <%= for {key, value} <- @responses do %>
-    <li><strong><%= key %></strong> <%= Poison.encode!(value) %></li>
+    <li><strong><%= key %></strong> <%= inspect(value) %></li>
   <% end %>
 </ul>

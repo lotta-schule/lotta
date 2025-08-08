@@ -4,5 +4,5 @@ Das Formular im Beitrag <%= @article.title %> wurde versendet.
 
 Das sind die Antworten:
 <%= for {key, value} <- @responses do %>
-  - <%= key %>: <%= Poison.encode!(value) %>
+  - <%= key %>: <%= inspect(value) %>
 <% end %>

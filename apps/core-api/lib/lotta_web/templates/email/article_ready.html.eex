@@ -1,9 +1,0 @@
-<p>
-  Hallo <%= @user.name %>,
-</p>
-<p>
-  Der Beitrag <%= link(@article.title, to: LottaWeb.Urls.get_article_url(@article)) %> wurde von <%= users_list(@article) %> als "fertig" markiert.
-</p>
-<p>
-  Er steht zur Überprüfung bereit.
-</p>
