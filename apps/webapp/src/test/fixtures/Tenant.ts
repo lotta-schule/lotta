@@ -19,6 +19,7 @@ export const tenant = {
     userMaxStorageConfig: '20971520',
     customTheme: {},
   },
+  type: 'school',
 } satisfies Tenant;
 
 /**

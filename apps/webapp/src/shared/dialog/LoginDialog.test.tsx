@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { act, render, waitFor, within } from 'test/util';
 import { LoginDialog } from './LoginDialog';
-import { SomeUser } from 'test/fixtures';
+import { SomeUser, tenant } from 'test/fixtures';
 import LoginMutation from 'api/mutation/LoginMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
@@ -20,7 +20,10 @@ const additionalMocks = [
 
 describe('shared/dialog/LoginDialog', () => {
   it('should not show the login dialog when isOpen is not true', () => {
-    const screen = render(<LoginDialog onRequestClose={() => {}} />, {});
+    const screen = render(
+      <LoginDialog onRequestClose={() => {}} isOpen={false} />,
+      {}
+    );
 
     expect(screen.queryByRole('dialog')).toBeNull();
   });
@@ -101,6 +104,32 @@ describe('shared/dialog/LoginDialog', () => {
         expect(
           screen.queryByRole('heading', { name: /passwort ändern/i })
         ).not.toBeNull();
+      });
+    });
+  });
+
+  describe('third-party-login', () => {
+    describe('Eduplaces', () => {
+      it('should not show the Eduplaces login button when the tenant has no associated eduplacesId', () => {
+        const screen = render(
+          <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+          {},
+          { additionalMocks }
+        );
+
+        expect(screen.queryByRole('button', { name: /eduplaces/i })).toBeNull();
+      });
+
+      it('should render the Eduplaces login button', () => {
+        const screen = render(
+          <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+          {},
+          { additionalMocks, tenant: { ...tenant, eduplacesId: '123' } }
+        );
+
+        expect(
+          screen.getByRole('button', { name: /eduplaces/i })
+        ).toBeVisible();
       });
     });
   });

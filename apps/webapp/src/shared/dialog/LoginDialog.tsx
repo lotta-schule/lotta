@@ -26,8 +26,8 @@ export interface LoginDialogProps {
   onRequestClose(): void;
 }
 
-export const LoginDialog = React.memo<LoginDialogProps>(
-  ({ isOpen, onRequestClose }) => {
+export const LoginDialog = React.memo(
+  ({ isOpen, onRequestClose }: LoginDialogProps) => {
     const { t } = useTranslation();
     const apolloClient = useApolloClient();
     const tenant = useTenant();
