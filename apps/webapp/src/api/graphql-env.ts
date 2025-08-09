@@ -5560,6 +5560,18 @@ const introspection = {
         "name": "Tenant",
         "fields": [
           {
+            "name": "address",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
             "name": "backgroundImageFile",
             "type": {
               "kind": "OBJECT",
@@ -5594,6 +5606,15 @@ const introspection = {
                   }
                 }
               }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "eduplacesId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
             },
             "args": [],
             "isDeprecated": false
@@ -5684,6 +5705,15 @@ const introspection = {
                 "kind": "SCALAR",
                 "name": "String"
               }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "type",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
             },
             "args": [],
             "isDeprecated": false
@@ -6397,15 +6427,12 @@ const introspection = {
           {
             "name": "enrollmentTokens",
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  }
+                  "kind": "SCALAR",
+                  "name": "String"
                 }
               }
             }
