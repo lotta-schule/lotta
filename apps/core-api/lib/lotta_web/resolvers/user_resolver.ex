@@ -137,12 +137,21 @@ defmodule LottaWeb.UserResolver do
         end,
       last_seen:
         case Map.get(args, :last_seen) do
-          days when is_number(days) ->
-            DateTime.add(
-              DateTime.utc_now(),
-              days * -1,
-              :day
-            )
+          days when is_number(days) and days < 0 ->
+            {:before,
+             DateTime.add(
+               DateTime.utc_now(),
+               days,
+               :day
+             )}
+
+          days when is_number(days) and days > 0 ->
+            {:after,
+             DateTime.add(
+               DateTime.utc_now(),
+               days * -1,
+               :day
+             )}
 
           _ ->
             nil
