@@ -271,13 +271,17 @@ export const ComboBox = React.memo(
             })}
           >
             <Input {...inputProps} {...inputAriaLabelProps} ref={inputRef} />
-            {typeof items !== 'function' && (
+            {typeof items !== 'function' ? (
               <PopoverTrigger
                 className={styles.triggerButton}
                 ref={buttonRef}
                 {...buttonElProps}
               >
                 <ExpandMore />
+              </PopoverTrigger>
+            ) : (
+              <PopoverTrigger asChild>
+                <div />
               </PopoverTrigger>
             )}
             {isLoading && (

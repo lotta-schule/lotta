@@ -66,7 +66,13 @@ export const SearchUserField = React.memo(
                 selected: !!selectedUsers?.find(
                   (selectedUser) => selectedUser.id === user.id
                 ),
-                leftSection: <UserAvatar user={user} />,
+                leftSection: (
+                  <UserAvatar
+                    user={user}
+                    size={25}
+                    className={styles.userAvatar}
+                  />
+                ),
               }));
             }}
             onSelect={(userId) => {

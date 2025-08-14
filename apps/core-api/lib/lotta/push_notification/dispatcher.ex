@@ -151,7 +151,7 @@ defmodule Lotta.PushNotification.Dispatcher do
     end)
   end
 
-  defp push(provider, notification) do
+  defp push(notification, provider) do
     provider
     |> PushNotification.provider_name()
     |> Pigeon.push(notification, on_response: &log_notification/1)

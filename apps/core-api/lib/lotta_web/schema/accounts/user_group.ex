@@ -10,7 +10,7 @@ defmodule LottaWeb.Schema.Accounts.UserGroup do
   input_object :user_group_input do
     field(:name, non_null(:string))
     field(:sort_key, :integer)
-    field(:enrollment_tokens, non_null(list_of(non_null(:string))))
+    field(:enrollment_tokens, list_of(non_null(:string)))
     field(:is_admin_group, :boolean)
     field(:can_read_full_name, :boolean)
   end

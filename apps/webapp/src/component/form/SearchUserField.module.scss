@@ -2,4 +2,14 @@
   flex-grow: 1;
   flex-shrink: 0;
   width: 12em;
+
+  .userAvatar {
+    width: 2.2em !important;
+    height: 2.2em !important;
+    display: flex;
+    margin-inline: var(--spacing);
+
+    text-align: center;
+    align-self: flex-end;
+  }
 }

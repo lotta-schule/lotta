@@ -7,10 +7,10 @@ import {
 } from 'test/fixtures';
 import { render, waitFor, within } from 'test/util';
 import { EditUserGroup } from './EditUserGroup';
+import { UPDATE_USER_GROUP } from '../_graphql';
 import userEvent from '@testing-library/user-event';
 
 import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
-import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 
 const additionalMocks = [
   {
@@ -197,7 +197,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         const user = userEvent.setup();
         const saveMock = {
           request: {
-            query: UpdateUserGroupMutation,
+            query: UPDATE_USER_GROUP,
             variables: {
               id: lehrerGroup.id,
               group: {

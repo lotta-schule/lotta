@@ -1,3 +1,44 @@
+## 6.0.22 (2025-08-07)
+
+### 🩹 Fixes
+
+- **core:** Fix FCM push notifications ([#471](https://github.com/lotta-schule/lotta/pull/471))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.0.21 (2025-08-06)
+
+### 🚀 Features
+
+- **hubert:** Make Badges themable ([#468](https://github.com/lotta-schule/lotta/pull/468))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.0.20 (2025-08-04)
+
+### 🩹 Fixes
+
+- **core:** PushNotification were not sent ([4b23ac05](https://github.com/lotta-schule/lotta/commit/4b23ac05))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.0.19 (2025-08-03)
+
+### 🩹 Fixes
+
+- UserGroups can now be updated again ([#466](https://github.com/lotta-schule/lotta/pull/466))
+- **webapp:** Make SearchUserField suggestions visible again ([#465](https://github.com/lotta-schule/lotta/pull/465))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.0.18 (2025-07-17)
 
 ### 🩹 Fixes

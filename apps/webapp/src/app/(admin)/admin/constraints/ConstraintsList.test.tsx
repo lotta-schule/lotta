@@ -10,14 +10,14 @@ const adminUser = { ...SomeUser, groups: [adminGroup] };
 
 describe('pages/admin/users/constraints', () => {
   describe('should not impose limit', () => {
-    it('should have "no limit" checkbox checked when limit is -1', async () => {
+    it('should have "no limit" checkbox checked when limit is null', async () => {
       const screen = render(
         <ConstraintList
           tenant={{
             ...tenant,
             configuration: {
               ...tenant.configuration,
-              userMaxStorageConfig: '-1',
+              userMaxStorageConfig: null,
             },
           }}
         />,
@@ -58,7 +58,7 @@ describe('pages/admin/users/constraints', () => {
       );
       expect(
         screen.getByRole('spinbutton', { name: /begrenzung/i })
-      ).toHaveValue(20);
+      ).toHaveValue(1024);
     });
   });
 
@@ -114,7 +114,59 @@ describe('pages/admin/users/constraints', () => {
     });
 
     describe('update the value', () => {
-      it('should work by request when changing via input field', async () => {
+      it('should send correct request when setting to no limit', async () => {
+        const fireEvent = userEvent.setup();
+        const updateFn = vi.fn(() => ({
+          data: {
+            tenant: {
+              ...tenant,
+              configuration: {
+                ...tenant.configuration,
+                userMaxStorageConfig: null,
+              },
+            },
+          },
+        }));
+
+        const mocks = [
+          {
+            request: {
+              query: UpdateTenantMutation,
+              variables: {
+                tenant: {
+                  configuration: {
+                    ...tenant.configuration,
+                    userMaxStorageConfig: null,
+                  },
+                },
+              },
+            },
+            result: updateFn,
+          },
+        ];
+
+        const screen = render(
+          <ConstraintList
+            tenant={{
+              ...tenant,
+              configuration: {
+                ...tenant.configuration,
+                userMaxStorageConfig: null,
+              },
+            }}
+          />,
+          {},
+          { additionalMocks: mocks, currentUser: adminUser }
+        );
+        await fireEvent.click(
+          screen.getByRole('button', { name: /speichern/i })
+        );
+        await waitFor(() => {
+          expect(updateFn).toHaveBeenCalled();
+        });
+      });
+
+      it('should send correct request when changing via input field', async () => {
         const fireEvent = userEvent.setup();
         const updateFn = vi.fn(() => ({
           data: {

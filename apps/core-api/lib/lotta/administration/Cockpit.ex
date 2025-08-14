@@ -89,14 +89,13 @@ defmodule Lotta.Administration.Cockpit do
 
   defp create_client() do
     middleware = [
-      Tesla.Middleware.OpenTelemetry,
       {Tesla.Middleware.BaseUrl, config(:endpoint)},
       Tesla.Middleware.PathParams,
       Tesla.Middleware.JSON,
       {Tesla.Middleware.BasicAuth, username: config(:username), password: config(:password)}
     ]
 
-    Tesla.client(middleware)
+    Lotta.Tesla.create_client(middleware)
   end
 
   defp config(key), do: Keyword.get(config(), key)

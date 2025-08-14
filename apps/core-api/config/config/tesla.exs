@@ -7,3 +7,7 @@ adapter =
   end
 
 config :tesla, adapter: adapter
+
+config :tesla, Tesla.Middleware.Logger,
+  filter_headers: ["authorization", "cookie", "set-cookie"],
+  debug: config_env() == :dev

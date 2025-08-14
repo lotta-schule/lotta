@@ -40,10 +40,16 @@ defmodule Lotta.Accounts.UserGroup do
   end
 
   @doc false
-  def changeset(%UserGroup{} = user_group, attrs) do
+  def update_changeset(%UserGroup{} = user_group, attrs) do
     user_group
     |> cast(attrs, [:name, :sort_key, :is_admin_group, :can_read_full_name, :enrollment_tokens])
-    |> validate_required([:name, :sort_key, :enrollment_tokens])
+    |> validate_required([:name, :sort_key])
+  end
+
+  def create_changeset(attrs) do
+    %UserGroup{}
+    |> update_changeset(attrs)
+    |> validate_required([:enrollment_tokens])
   end
 
   def get_max_sort_key() do

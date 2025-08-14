@@ -36,6 +36,9 @@ query SearchDirectoriesAndFiles($searchterm: String!) {
       name
       url
       type
+      availability {
+        status
+      }
     }
     parentDirectory {
       id
