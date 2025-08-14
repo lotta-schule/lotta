@@ -699,19 +699,22 @@ defmodule Lotta.Storage do
     size_limit =
       tenant.configuration
       |> Map.get(:user_max_storage_config)
-      |> then(&String.to_integer(&1 || "-1"))
+      |> then(fn
+        value when is_binary(value) -> String.to_integer(value)
+        value when is_integer(value) -> value
+        _ -> nil
+      end)
 
-    free_space = if size_limit == -1, do: -1, else: size_limit
+    if is_nil(size_limit) do
+      :ok
+    else
+      case size_limit - FileManagment.total_user_files_size(user) do
+        free_space when free_space >= required_space ->
+          :ok
 
-    case size_limit - FileManagment.total_user_files_size(user) do
-      _ when free_space == -1 ->
-        :ok
-
-      free_space when free_space >= required_space ->
-        :ok
-
-      _ ->
-        {:error, :not_enough_space}
+        _ ->
+          {:error, :not_enough_space}
+      end
     end
   end
 
