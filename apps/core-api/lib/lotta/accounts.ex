@@ -131,7 +131,9 @@ defmodule Lotta.Accounts do
   @doc """
   Searches users by text. The user is searched by *exact match* of email, or by name or nickname
   """
-  @spec search_user(String.t(), [String.t()] | nil, DateTime.t() | nil) :: [User.t()]
+  @spec search_user(String.t(), [String.t()] | nil, {:before | :after, DateTime.t()} | nil) :: [
+          User.t()
+        ]
   def search_user(searchtext, group_ids, last_seen) do
     from(u in User)
     |> search_user_apply_searchtext_filter(searchtext)
@@ -182,10 +184,13 @@ defmodule Lotta.Accounts do
     )
   end
 
-  defp search_user_apply_last_seen_filter(query, last_seen) when is_nil(last_seen), do: query
-
-  defp search_user_apply_last_seen_filter(query, last_seen),
+  defp search_user_apply_last_seen_filter(query, {:after, last_seen}),
     do: from(u in query, where: u.last_seen < ^last_seen)
+
+  defp search_user_apply_last_seen_filter(query, {:before, last_seen}),
+    do: from(u in query, where: u.last_seen > ^last_seen)
+
+  defp search_user_apply_last_seen_filter(query, last_seen) when is_nil(last_seen), do: query
 
   @doc """
   Updates a user by an admin.
