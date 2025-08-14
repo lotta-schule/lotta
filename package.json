@@ -11,7 +11,7 @@
     "typecheck": "nx run-many --target=typecheck --parallel",
     "release:prepare": "./scripts/release.sh",
     "nx": "nx",
-    "prepare": "husky || true"
+    "prepare": "husky init || true"
   },
   "devDependencies": {
     "@eslint/compat": "^1.1.1",
