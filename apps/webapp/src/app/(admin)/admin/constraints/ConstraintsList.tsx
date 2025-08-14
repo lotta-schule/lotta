@@ -10,7 +10,7 @@ import {
   Label,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { TenantModel } from 'model';
+import { Tenant } from 'util/tenant';
 import { useMutation } from '@apollo/client';
 import { motion } from 'framer-motion';
 
@@ -21,21 +21,24 @@ import styles from './ConstraintsList.module.scss';
 const MEGABYTE = 1024 * 1024;
 
 export type ConstraintListProps = {
-  tenant: TenantModel;
+  tenant: Tenant;
 };
 
 export const ConstraintList = ({ tenant }: ConstraintListProps) => {
-  const lastSetLimitRef = React.useRef(20);
+  const DEFAULT = 1024;
+  const lastSetLimitRef = React.useRef<number | null>(DEFAULT);
   const [value, setValue] = React.useState(
     tenant.configuration.userMaxStorageConfig
       ? parseInt(tenant.configuration.userMaxStorageConfig, 10) / MEGABYTE
-      : -1
+      : null
   );
 
-  const isLimitSet = value >= 0;
+  const isLimitSet = !!value && value >= 0;
 
-  // eslint-disable-next-line react-compiler/react-compiler
-  const valueOrDefault = isLimitSet ? value : lastSetLimitRef.current;
+  const valueOrDefault = isLimitSet
+    ? value
+    : // eslint-disable-next-line react-compiler/react-compiler
+      lastSetLimitRef.current || DEFAULT;
 
   React.useEffect(() => {
     if (isLimitSet) {
@@ -48,7 +51,8 @@ export const ConstraintList = ({ tenant }: ConstraintListProps) => {
       tenant: {
         configuration: {
           ...tenant.configuration,
-          userMaxStorageConfig: String(value * MEGABYTE),
+          userMaxStorageConfig:
+            value !== null ? String(value * MEGABYTE) : null,
         },
       },
     },
@@ -78,7 +82,7 @@ export const ConstraintList = ({ tenant }: ConstraintListProps) => {
         <Checkbox
           isSelected={!isLimitSet}
           onChange={(isSelected) =>
-            setValue(isSelected ? -1 : lastSetLimitRef.current)
+            setValue(isSelected ? null : lastSetLimitRef.current)
           }
         >
           Datenmenge, die Nutzer hochladen können, nicht begrenzen
@@ -87,7 +91,7 @@ export const ConstraintList = ({ tenant }: ConstraintListProps) => {
         <Checkbox
           isSelected={isLimitSet}
           onChange={(isSelected) =>
-            setValue(isSelected ? lastSetLimitRef.current : -1)
+            setValue(isSelected ? lastSetLimitRef.current : null)
           }
         >
           Datenmenge, die Nutzer hochladen können, begrenzen auf:
@@ -108,7 +112,7 @@ export const ConstraintList = ({ tenant }: ConstraintListProps) => {
             <div className={styles.slider}>
               <input
                 type={'range'}
-                value={value}
+                value={value ?? 0}
                 onChange={(e) => setValue(parseInt(e.target.value))}
                 aria-labelledby={'userAvatar-storage-limit'}
                 step={50}
