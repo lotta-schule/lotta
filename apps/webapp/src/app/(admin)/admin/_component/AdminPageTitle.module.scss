@@ -1,7 +1,7 @@
 @use "breakpoints" as *;
 
 .root {
-  &>h3 {
+  & > h3 {
     display: flex;
     align-items: center;
   }

@@ -12,4 +12,44 @@
   .scrollHorizontally {
     overflow-x: auto;
   }
+  .stylingSection {
+    display: flex;
+  }
+  .editStyleSection {
+    width: 50%;
+  }
+  .stylingInput {
+    width: auto;
+  }
+  .previewHorizontally {
+    margin: auto;
+    display: ruby;
+  }
+  .previewVertically {
+    margin: auto;
+    li {
+      margin-bottom: calc(2 * var(--lotta-spacing));
+    }
+    .successColor {
+      color: rgb(var(--lotta-success-color));
+      border-color: rgb(var(--lotta-success-color));
+    }
+  }
+  .newMessageBadge {
+    position: absolute;
+    right: -1.5em;
+    top: -0.5em;
+    font-size: 0.8rem;
+  }
+
+  .background {
+    background-color: rgb(var(--lotta-page-background-color));
+    width: 500px;
+    height: 300px;
+  }
+  .navigation {
+    width: 350px;
+    height: 40px;
+    background-color: rgb(var(--lotta-navigation-background-color));
+  }
 }

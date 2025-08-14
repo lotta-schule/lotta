@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 import {
+  Badge,
   Box,
+  Button,
   DefaultThemes,
   ErrorMessage,
   Input,
@@ -17,7 +19,11 @@ import { AdminPageSection } from '../_component/AdminPageSection';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { ColorSettingRow, SelectTemplateButton } from './_component';
+import {
+  ColorSettingRow,
+  PagePreview,
+  SelectTemplateButton,
+} from './_component';
 import { TenantModel } from 'model';
 import { headerFonts, textFonts } from 'styles/fonts';
 import { useRouter } from 'next/navigation';
@@ -26,6 +32,8 @@ import clsx from 'clsx';
 import styles from './Presentation.module.scss';
 
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
+import { Icon } from 'shared/Icon';
+import { faCheck, faClose, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const defaultTheme = DefaultThemes.standard;
 
@@ -80,6 +88,169 @@ export const Presentation = React.memo(
     return (
       <div className={styles.root}>
         <ErrorMessage error={error} />
+        <AdminPageSection title={'Buttons'}>
+          <div className={styles.stylingSection}>
+            <div className={styles.editStyleSection}>
+              <ColorSettingRow
+                label={'Button & Akzente'}
+                hint={'Akzentfarbe für wichtige und interaktive Elemente'}
+                value={customTheme.primaryColor}
+                onChange={(primaryColor) => {
+                  updateThemeProperties({ primaryColor });
+                }}
+              />
+              <ColorSettingRow
+                label={'Button Textfarbe'}
+                hint={'Textfarbe für gefüllte Buttons'}
+                value={customTheme.highlightColor}
+                onChange={(highlightColor) =>
+                  updateThemeProperties({
+                    highlightColor,
+                  })
+                }
+              />
+              <Label label={'Rundungen'}>
+                <Input
+                  className={styles.stylingInput}
+                  disabled={isLoading}
+                  value={customTheme.borderRadius}
+                  onChange={(e) =>
+                    updateThemeProperties({
+                      borderRadius: e.currentTarget.value,
+                    })
+                  }
+                />
+              </Label>
+            </div>
+            <div className={styles.previewHorizontally}>
+              <Button>Button</Button>
+            </div>
+            <div className={styles.previewHorizontally}>
+              <Button variant={'fill'}>Button</Button>
+            </div>
+            <div className={styles.previewHorizontally}>
+              <Button
+                icon={<Icon icon={faTrash} />}
+                className={styles.deleteButton}
+              />
+            </div>
+          </div>
+        </AdminPageSection>
+        <AdminPageSection title={'Besondere Buttons'}>
+          <div className={styles.stylingSection}>
+            <div className={styles.editStyleSection}>
+              <ColorSettingRow
+                label={'Fehler'}
+                hint={'Farbe für Fehlermeldungen'}
+                value={customTheme.errorColor}
+                onChange={(errorColor) =>
+                  updateThemeProperties({
+                    errorColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Erfolg'}
+                hint={'Farbe für Erfolgsmeldungen'}
+                value={customTheme.successColor}
+                onChange={(successColor) =>
+                  updateThemeProperties({
+                    successColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Deaktiviert'}
+                hint={'Farbe für deaktivierte Elemente'}
+                value={customTheme.disabledColor}
+                onChange={(disabledColor) =>
+                  updateThemeProperties({
+                    disabledColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Badge - Hintergrundfarbe'}
+                hint={'Hintergrundfarbe für Kennzeichnungen (Badges)'}
+                value={customTheme.badgeBackgroundColor}
+                onChange={(badgeBackgroundColor) =>
+                  updateThemeProperties({
+                    badgeBackgroundColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Badge - Textfarbe'}
+                hint={'Textfarbe für Kennzeichnungen (Badges)'}
+                value={customTheme.badgeTextColor}
+                onChange={(badgeTextColor) =>
+                  updateThemeProperties({
+                    badgeTextColor,
+                  })
+                }
+              />
+            </div>
+            <div className={styles.previewVertically}>
+              <ul>
+                <li>
+                  <Button variant={'error'} icon={<Icon icon={faClose} />}>
+                    Fehler
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    className={styles.successColor}
+                    icon={<Icon icon={faCheck} />}
+                  >
+                    Erfolg
+                  </Button>
+                </li>
+
+                <li>
+                  <Button variant={'fill'} disabled={'true'}>
+                    Deaktiviert
+                  </Button>
+                </li>
+                <li>
+                  <Button>
+                    Button mit Badge
+                    <Badge
+                      className={styles.newMessageBadge}
+                      value={'3'}
+                    />{' '}
+                  </Button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </AdminPageSection>
+        <AdminPageSection title={'Website'}>
+          <div className={styles.stylingSection}>
+            <div className={styles.editStyleSection}>
+              <ColorSettingRow
+                label={'Button & Akzente'}
+                hint={'Akzentfarbe für wichtige und interaktive Elemente'}
+                value={customTheme.primaryColor}
+                onChange={(primaryColor) => {
+                  updateThemeProperties({ primaryColor });
+                }}
+              />
+              <ColorSettingRow
+                label={'Button Textfarbe'}
+                hint={'Textfarbe für gefüllte Buttons'}
+                value={customTheme.highlightColor}
+                onChange={(highlightColor) =>
+                  updateThemeProperties({
+                    highlightColor,
+                  })
+                }
+              />
+            </div>
+            <div className={styles.previewVertically}>
+              <PagePreview theme={customTheme} style={{ width: '100%' }} />
+            </div>
+          </div>
+        </AdminPageSection>
 
         <AdminPageSection title={'Vorlagen'}>
           <div className={clsx(styles.grid, styles.scrollHorizontally)}>
