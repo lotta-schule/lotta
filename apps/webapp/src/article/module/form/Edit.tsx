@@ -1,11 +1,16 @@
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
-import { faArrowsUpDown, faCircleExclamation, faPlus, faTrash, faGear } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowsUpDown,
+  faCircleExclamation,
+  faPlus,
+  faTrash,
+  faGear,
+} from '@fortawesome/free-solid-svg-icons';
 
 import {
   Button,
   Checkbox,
-  Divider,
   Input,
   Label,
   SortableDraggableList,
@@ -13,7 +18,6 @@ import {
 import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';
-import { FormElementConfiguration } from './FormElementConfiguration';
 
 import styles from './Edit.module.scss';
 
@@ -58,7 +62,10 @@ export const Edit = React.memo(
             },
             children: (
               <div className={styles.inputWrapper}>
-                <div className={styles.iconWrapper}> <Icon icon={faArrowsUpDown} size={'lg'} /></div>
+                <div className={styles.iconWrapper}>
+                  {' '}
+                  <Icon icon={faArrowsUpDown} size={'lg'} />
+                </div>
                 <div>
                   <FormElement
                     element={element}
@@ -68,7 +75,10 @@ export const Edit = React.memo(
                   />
                 </div>
                 <div className={styles.iconWrapper}>
-                  <div><Icon icon={faCircleExclamation} size={'lg'} /> <Icon icon={faTrash} size={'lg'} /></div>
+                  <div>
+                    <Icon icon={faCircleExclamation} size={'lg'} />{' '}
+                    <Icon icon={faTrash} size={'lg'} />
+                  </div>
                   {/* <FormElementConfiguration
                     element={element}
                     updateElement={(updatedElementOptions) =>
@@ -110,17 +120,19 @@ export const Edit = React.memo(
           Feld hinzufügen
         </Button>
         <div className={styles.settingsWrapper}>
-          <div><Icon icon={faGear} size={'xl'} /></div>
           <div>
-         <h3>Formular Einstellungen</h3>
-          <Checkbox
+            <Icon icon={faGear} size={'xl'} />
+          </div>
+          <div>
+            <h3>Formular Einstellungen</h3>
+            <Checkbox
               isSelected={configuration.destination !== undefined}
               onChange={(isSelected) =>
                 updateConfiguration({
                   destination: isSelected ? '' : undefined,
                 })
               }
-          >
+            >
               Formulardaten per Email versenden
             </Checkbox>
             <Label label={'Formular an folgende Email senden:'}>
