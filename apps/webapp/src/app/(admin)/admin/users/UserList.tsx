@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { UserModel, UserGroupModel, TenantModel } from 'model';
+import { UserModel, UserGroupModel } from 'model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import {
@@ -20,6 +20,7 @@ import {
   useDebounce,
 } from '@lotta-schule/hubert';
 import { EditUserPermissionsDialog } from './_component';
+import { type TenantWithStats } from 'loader';
 import clsx from 'clsx';
 
 import SearchUsersAsAdminQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
@@ -27,7 +28,7 @@ import SearchUsersAsAdminQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
 import styles from './UserList.module.scss';
 
 export type UserListProps = {
-  tenant: TenantModel;
+  tenant: TenantWithStats;
   currentUser: UserModel;
 };
 
@@ -67,7 +68,7 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
       variables: {
         searchtext: searchFilter.name || null,
         groups: searchFilter.groups.length
-          ? searchFilter.groups.map((g) => ({ id: g?.id }))
+          ? searchFilter.groups.map((g) => g && { id: g?.id })
           : null,
         lastSeen: searchFilter.lastSeen,
       },

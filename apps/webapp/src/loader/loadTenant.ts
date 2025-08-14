@@ -1,7 +1,7 @@
 import { cache } from 'react';
 import { getClient } from '../api/client';
 import { GET_TENANT_QUERY } from 'util/tenant';
-import { graphql } from 'api/graphql';
+import { graphql, ResultOf } from 'api/graphql';
 
 export const GET_TENANT_WITH_STATS_QUERY = graphql(`
   query GetTenantWithStats {
@@ -32,6 +32,10 @@ export const GET_TENANT_WITH_STATS_QUERY = graphql(`
     }
   }
 `);
+
+export type TenantWithStats = NonNullable<
+  ResultOf<typeof GET_TENANT_WITH_STATS_QUERY>['tenant']
+>;
 
 export class TenantNotFoundError extends Error {
   name = 'TenantNotFoundError';
