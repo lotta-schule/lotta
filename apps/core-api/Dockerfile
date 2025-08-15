@@ -49,7 +49,7 @@ RUN set -xe && \
   aom-dev \
   aom-libs \
   aom \
-  graphicsmagick-dev \
+  imagemagick-dev \
   openexr-dev \
   libgsf-dev \
   glib-dev \
