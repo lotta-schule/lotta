@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { UserGroupModel } from 'model';
 import {
   Button,
   Checkbox,
@@ -15,13 +14,13 @@ import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 import { AdminPageSection } from 'app/(admin)/admin/_component/AdminPageSection';
 import { useRouter } from 'next/navigation';
-import { UPDATE_USER_GROUP } from '../_graphql';
+import { UPDATE_USER_GROUP, UserGroup } from '../_graphql';
 
 import styles from './EditUserGroup.module.scss';
 
-export interface EditUserGroupProps {
-  group: UserGroupModel;
-}
+export type EditUserGroupProps = {
+  group: UserGroup;
+};
 
 export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
   const router = useRouter();
@@ -78,6 +77,7 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
             <Label label={'Gruppenname'}>
               <Input
                 id="group-name"
+                readOnly={!!group.eduplacesId}
                 aria-describedby="group-name-help-text"
                 disabled={isLoadingUpdateGroup}
                 value={editedGroup.name}
@@ -121,26 +121,28 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
             </Checkbox>
           </AdminPageSection>
 
-          <AdminPageSection title="Einschreibeschlüssel">
-            <p>
-              Nutzer, die bei der Registrierung einen Einschreibeschlüssel
-              verwenden, werden automatisch dieser Gruppe zugeordnet.
-            </p>
+          {!group.eduplacesId && (
+            <AdminPageSection title="Einschreibeschlüssel">
+              <p>
+                Nutzer, die bei der Registrierung einen Einschreibeschlüssel
+                verwenden, werden automatisch dieser Gruppe zugeordnet.
+              </p>
 
-            <EnrollmentTokensEditor
-              disabled={isLoadingUpdateGroup}
-              tokens={editedGroup.enrollmentTokens}
-              setTokens={(enrollmentTokens) => {
-                setEditedGroup({
-                  ...editedGroup,
-                  enrollmentTokens,
-                });
-              }}
-            />
-          </AdminPageSection>
+              <EnrollmentTokensEditor
+                disabled={isLoadingUpdateGroup}
+                tokens={editedGroup.enrollmentTokens}
+                setTokens={(enrollmentTokens) => {
+                  setEditedGroup({
+                    ...editedGroup,
+                    enrollmentTokens,
+                  });
+                }}
+              />
+            </AdminPageSection>
+          )}
 
           <AdminPageSection bottomToolbar>
-            {!group.isAdminGroup && (
+            {!group.isAdminGroup && !group.eduplacesId && (
               <>
                 <Button
                   className={styles.deleteButton}

@@ -5689,6 +5689,18 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "state",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "ENUM",
+                "name": "TenantState"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
             "name": "stats",
             "type": {
               "kind": "OBJECT",
@@ -5819,6 +5831,24 @@ const introspection = {
           }
         ],
         "isOneOf": false
+      },
+      {
+        "kind": "ENUM",
+        "name": "TenantState",
+        "enumValues": [
+          {
+            "name": "ACTIVE",
+            "isDeprecated": false
+          },
+          {
+            "name": "INIT",
+            "isDeprecated": false
+          },
+          {
+            "name": "READONLY",
+            "isDeprecated": false
+          }
+        ]
       },
       {
         "kind": "OBJECT",
@@ -6316,6 +6346,15 @@ const introspection = {
                 "kind": "SCALAR",
                 "name": "Boolean"
               }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "eduplacesId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
             },
             "args": [],
             "isDeprecated": false

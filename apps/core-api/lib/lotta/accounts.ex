@@ -507,9 +507,6 @@ defmodule Lotta.Accounts do
   Updates a group.
   """
   @spec update_user_group(UserGroup.t(), map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
-  def update_user_group(%UserGroup{eduplaces_id: id}, _) when is_binary(id) && byte_size(id) >= 1,
-    do: {:error, "Cannot update eduplaces groups."}
-
   def update_user_group(%UserGroup{} = group, attrs) do
     group
     |> UserGroup.update_changeset(attrs)
@@ -523,10 +520,10 @@ defmodule Lotta.Accounts do
   as they would otherwise be without any group assigned, which would lead them to be visible to everyone.
   """
   @spec update_user_group(UserGroup.t(), map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
-  def update_user_group(%UserGroup{eduplaces_id: id}, _) when is_binary(id) && byte_size(id) >= 1,
-    do: {:error, "Cannot delete eduplaces groups."}
+  def delete_user_group(%UserGroup{eduplaces_id: id}, _)
+      when is_binary(id) and byte_size(id) >= 1,
+      do: {:error, "Cannot delete eduplaces groups."}
 
-  @spec delete_user_group(UserGroup.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def delete_user_group(%UserGroup{} = group) do
     Multi.new()
     |> Multi.run(
