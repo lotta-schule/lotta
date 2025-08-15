@@ -12,13 +12,15 @@ defmodule Lotta.Repo.Migrations.AddEduplaceSchoolIdToTenants do
 
     create(unique_index(:tenants, [:eduplaces_id], name: :unique_eduplaces_id))
 
-    flush()
+    if direction() == :up do
+      flush()
 
-    repo().update_all(
-      "tenants",
-      set: [
-        state: "active"
-      ]
-    )
+      repo().update_all(
+        "tenants",
+        set: [
+          state: "active"
+        ]
+      )
+    end
   end
 end
