@@ -39,6 +39,7 @@ defmodule Lotta.Worker.Tenant do
 
     with :ok <- DefaultContent.create_default_content(tenant, user) do
       init_analytics(tenant)
+      notify_created(tenant)
       :ok
     end
   end
@@ -49,6 +50,15 @@ defmodule Lotta.Worker.Tenant do
       }) do
     with {:ok, tenant} <- Tenants.get_tenant(tenant_id) do
       Analytics.create_site(tenant)
+    end
+  end
+
+  def perform(%{
+        id: _job_id,
+        args: %{"type" => "notify_created", "id" => tenant_id}
+      }) do
+    with {:ok, tenant} <- Tenants.get_tenant(tenant_id) do
+      Lotta.Administration.Notification.Slack.new_lotta_notification(tenant)
     end
   end
 
@@ -72,6 +82,16 @@ defmodule Lotta.Worker.Tenant do
   def init_analytics(%{id: id}) do
     __MODULE__.new(%{
       "type" => "init_analytics",
+      "id" => id
+    })
+    |> Oban.insert()
+  end
+
+  @spec notify_created(Tenant.t()) ::
+          {:ok, Oban.Job.t()} | {:error, String.t()}
+  def notify_created(%{id: id}) do
+    __MODULE__.new(%{
+      "type" => "notify_created",
       "id" => id
     })
     |> Oban.insert()

@@ -119,6 +119,8 @@ defmodule SystemConfig do
   defp default("COCKPIT_ADMIN_API_KEY", env) when env in [:dev, :test], do: "test123"
   defp default("COCKPIT_ENDPOINT", _), do: "http://localhost:4040"
 
+  defp default("SLACK_WEBHOOK_URL", _), do: nil
+
   defp default("SENTRY_DSN", _), do: nil
 
   defp default("SCHEDULE_PROVIDER_URL", env) when env in [:dev, :test],
@@ -245,6 +247,9 @@ config :lotta, :cockpit,
   endpoint: SystemConfig.get("COCKPIT_ENDPOINT"),
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
+
+config :lotta, Lotta.Administration.Notification.Slack,
+  webhook: SystemConfig.get("SLACK_WEBHOOK_URL")
 
 config :lotta,
        Lotta.Mailer,
