@@ -96,15 +96,17 @@ defmodule Lotta.Accounts do
   @doc """
   Returns list of all users that are member of at least one administrator group.
   """
-  @spec list_admin_users() :: [User.t()]
-  def list_admin_users() do
+  @spec list_admin_users(tenant :: Tenant.t() | nil) :: [User.t()]
+  def list_admin_users(tenant \\ nil) do
+    opts = if tenant, do: [prefix: tenant.prefix], else: []
+
     from(u in User,
       join: ug in assoc(u, :groups),
       where: ug.is_admin_group == true,
       order_by: [u.name, u.email],
       distinct: true
     )
-    |> Repo.all()
+    |> Repo.all(opts)
   end
 
   @doc """
@@ -505,6 +507,9 @@ defmodule Lotta.Accounts do
   Updates a group.
   """
   @spec update_user_group(UserGroup.t(), map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
+  def update_user_group(%UserGroup{eduplaces_id: id}, _) when is_binary(id) && byte_size(id) >= 1,
+    do: {:error, "Cannot update eduplaces groups."}
+
   def update_user_group(%UserGroup{} = group, attrs) do
     group
     |> UserGroup.update_changeset(attrs)
@@ -517,6 +522,10 @@ defmodule Lotta.Accounts do
   This will also make all articles which had only this group assigned to be set back to the "draft" state,
   as they would otherwise be without any group assigned, which would lead them to be visible to everyone.
   """
+  @spec update_user_group(UserGroup.t(), map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
+  def update_user_group(%UserGroup{eduplaces_id: id}, _) when is_binary(id) && byte_size(id) >= 1,
+    do: {:error, "Cannot delete eduplaces groups."}
+
   @spec delete_user_group(UserGroup.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def delete_user_group(%UserGroup{} = group) do
     Multi.new()
