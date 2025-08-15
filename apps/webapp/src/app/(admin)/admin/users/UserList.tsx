@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { UserModel, UserGroupModel, TenantModel } from 'model';
+import { UserModel, UserGroupModel } from 'model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import {
@@ -20,6 +20,7 @@ import {
   useDebounce,
 } from '@lotta-schule/hubert';
 import { EditUserPermissionsDialog } from './_component';
+import { type TenantWithStats } from 'loader';
 import clsx from 'clsx';
 
 import SearchUsersAsAdminQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
@@ -27,7 +28,7 @@ import SearchUsersAsAdminQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
 import styles from './UserList.module.scss';
 
 export type UserListProps = {
-  tenant: TenantModel;
+  tenant: TenantWithStats;
   currentUser: UserModel;
 };
 
@@ -67,7 +68,7 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
       variables: {
         searchtext: searchFilter.name || null,
         groups: searchFilter.groups.length
-          ? searchFilter.groups.map((g) => ({ id: g?.id }))
+          ? searchFilter.groups.map((g) => g && { id: g?.id })
           : null,
         lastSeen: searchFilter.lastSeen,
       },
@@ -112,7 +113,7 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
           fallback={
             <LinearProgress
               isIndeterminate
-              aria-label="Gruppen werden geladen..."
+              aria-label={t('Groups are being loaded...')}
             />
           }
         >
@@ -121,7 +122,7 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
             allowNoneSelection
             hidePublicGroupSelection
             disableAdminGroupsExclusivity
-            label={'Nach Gruppe filtern:'}
+            label={t('Filter by group')}
             selectedGroups={searchFilter.groups ?? []}
             onSelectGroups={(groups) =>
               setSearchFilter({ ...searchFilter, groups })
@@ -129,19 +130,20 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
             className={styles.filter}
           />
         </React.Suspense>
-        <Label label={'Namen suchen:'} className={clsx(styles.nameSearch)}>
+        <Label label={t('search by name:')} className={clsx(styles.nameSearch)}>
           <Input
             value={searchText}
             onChange={(e) =>
               setSearchText((e.target as HTMLInputElement).value)
             }
-            placeholder={'Napoleon Bonaparte'}
+            placeholder={t('John Doe')}
           />
         </Label>
 
         <div className={clsx(styles.filter, styles.selectfield)}>
           <Select
-            title={'zuletzt angemeldet'}
+            title={t('Last seen')}
+            value={searchFilter.lastSeen?.toString() ?? 'null'}
             onChange={(lastSeen) =>
               setSearchFilter({
                 ...searchFilter,
@@ -149,11 +151,12 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
               })
             }
           >
-            <Option value={'30'}>vor 30 Tagen oder mehr</Option>
-            <Option value={'90'}>vor 90 Tage oder mehr</Option>
-            <Option value={'180'}>vor 6 Monate oder mehr</Option>
-            <Option value={'365'}>vor einem Jahr oder mehr</Option>
-            <Option value={'null'}>zurücksetzen</Option>
+            <Option value={'null'}>{t('No selection')}</Option>
+            <Option value={'-30'}>{t('less than 30 days ago')}</Option>
+            <Option value={'30'}>{t('30 days or more ago')}</Option>
+            <Option value={'90'}>{t('90 days or more ago')}</Option>
+            <Option value={'180'}>{t('six months or more ago')}</Option>
+            <Option value={'365'}>{t('one year or more ago')}</Option>
           </Select>
         </div>
       </Toolbar>
@@ -161,7 +164,7 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
       {isLoading && (
         <LinearProgress
           isIndeterminate
-          label={'Nutzersuche läuft'}
+          label={t('search is being executed...')}
           data-testid="loading"
         />
       )}

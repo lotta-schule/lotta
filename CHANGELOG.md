@@ -1,3 +1,16 @@
+## 6.0.23 (2025-08-14)
+
+### 🩹 Fixes
+
+- **web:** user space constraint is now saved with correct value ([#478](https://github.com/lotta-schule/lotta/pull/478))
+- **web:** Get format availability for file search results ([#481](https://github.com/lotta-schule/lotta/pull/481))
+- **web:** UserList: Correctly filter for users without groups ([#482](https://github.com/lotta-schule/lotta/pull/482))
+- **web:** UserList: Show 'last seen' selection + make 'less than 30 days' an option ([#483](https://github.com/lotta-schule/lotta/pull/483))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.0.22 (2025-08-07)
 
 ### 🩹 Fixes
