@@ -335,7 +335,7 @@ export const ArticlePreview = React.memo(
                     <Button
                       aria-label="Beitrag an der Kategorie anpinnen"
                       className={clsx(styles.pinButton, {
-                        active: article.isPinnedToTop,
+                        [styles.active]: article.isPinnedToTop,
                       })}
                       onClick={() => toggleArticlePin()}
                       icon={<Icon icon={faLocationDot} size={'lg'} />}
