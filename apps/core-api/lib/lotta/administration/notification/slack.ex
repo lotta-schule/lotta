@@ -56,7 +56,7 @@ defmodule Lotta.Administration.Notification.Slack do
         ]
         |> Enum.concat(
           Enum.map(
-            Accounts.list_admins(tenant),
+            Accounts.list_admin_users(tenant),
             &%{
               type: :section,
               text: %{
