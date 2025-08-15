@@ -52,23 +52,21 @@ defmodule Lotta.AccountsTest do
       user_params = %{
         name: "Ludwig van Beethoven",
         nickname: "Lulu",
-        email: "DerLudwigVan@Beethoven.de   ",
-        password: "musik123"
+        email: "DerLudwigVan@Beethoven.de   "
       }
 
-      user = Accounts.register_user_by_mail(t, user_params)
-
-      assert {:ok, %User{email: "DerLudwigVan@Beethoven.de"}, _password} = user
+      assert {:ok, %User{email: "DerLudwigVan@Beethoven.de"}} =
+               Accounts.register_user_by_mail(t, user_params)
     end
 
     test "register_user_by_mail/1 with valid data creates a user with a password", %{tenant: t} do
-      assert {:ok, %User{} = user, password} =
+      assert {:ok, %User{} = user} =
                Accounts.register_user_by_mail(t, Fixtures.fixture(:valid_user_attrs))
 
       assert user.email == "some@email.de"
       assert user.name == "Alberta Smith"
-      refute is_nil(password)
-      assert Accounts.Authentication.verify_user_pass(user, password)
+      refute is_nil(user.password)
+      assert Accounts.Authentication.verify_user_pass(user, user.password)
     end
 
     test "register_user_by_mail/1 with invalid data returns error changeset", %{tenant: t} do

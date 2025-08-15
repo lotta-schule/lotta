@@ -5,17 +5,27 @@ defmodule LottaWeb.TenantController do
 
   import Ecto.Query
 
+  alias Lotta.Analytics
   alias Lotta.{Tenants, Repo}
   alias Lotta.Accounts.User
+  alias Lotta.Tenants.Tenant
 
   action_fallback(LottaWeb.FallbackController)
 
-  def create_test(conn, %{"tenant" => tenant_params, "user" => user_params}) do
-    tenant_params = atomize_keys(tenant_params)
-    user_params = atomize_keys(user_params)
+  def create_test(conn, %{
+        "tenant" => %{
+          "title" => title,
+          "slug" => slug
+        },
+        "user" => %{
+          "name" => name,
+          "email" => email
+        }
+      }) do
+    tenant = %Tenant{title: title, slug: slug}
+    user = %User{name: name, email: email}
 
-    with {:ok, tenant} <-
-           Tenants.create_tenant(user_params: user_params, tenant: tenant_params) do
+    with {:ok, tenant} <- Tenants.create_tenant(tenant, user) do
       conn
       |> render(:created, tenant: tenant)
     end
@@ -24,7 +34,8 @@ defmodule LottaWeb.TenantController do
   def delete_tenant(conn, %{"tenant" => %{"id" => tenant_id}}) do
     tenant = Tenants.get_tenant(tenant_id)
 
-    with {:ok, tenant} <- Tenants.delete_tenant(tenant) do
+    with :ok <- Analytics.delete_site(tenant),
+         {:ok, tenant} <- Tenants.delete_tenant(tenant) do
       conn
       |> render(:deleted, tenant: tenant)
     end
@@ -46,15 +57,5 @@ defmodule LottaWeb.TenantController do
 
     conn
     |> render(:list, tenants: tenants)
-  end
-
-  defp atomize_keys(map) do
-    Enum.reduce(map, %{}, fn
-      {key, val}, acc when is_atom(key) ->
-        Map.put(acc, key, val)
-
-      {key, val}, acc ->
-        Map.put(acc, String.to_atom(key), val)
-    end)
   end
 end

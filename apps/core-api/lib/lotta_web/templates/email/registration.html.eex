@@ -8,5 +8,5 @@
 </p>
 <p>
 <em>Nutzername:</em> <pre><%= @user.email %><br />
-<em>Passwort:</em> <pre><%= @password %><br />
+<em>Passwort:</em> <pre><%= @user.password %><br />
 </p>

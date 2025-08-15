@@ -64,7 +64,7 @@ defmodule Lotta.Repo.Seeder do
         prefix: tenant.prefix
       )
 
-    {:ok, lotta_admin, _pw} =
+    {:ok, lotta_admin} =
       Accounts.register_user_by_mail(tenant, %{
         name: "Alexis Rinaldoni",
         email: "alexis.rinaldoni@einsa.net",
@@ -75,7 +75,7 @@ defmodule Lotta.Repo.Seeder do
     |> User.update_password_changeset("test123")
     |> Repo.update!()
 
-    {:ok, alexis, _pw} =
+    {:ok, alexis} =
       Accounts.register_user_by_mail(tenant, %{
         name: "Alexis Rinaldoni",
         nickname: "Der Meister",
@@ -86,7 +86,7 @@ defmodule Lotta.Repo.Seeder do
     |> User.update_password_changeset("test123")
     |> Repo.update!()
 
-    {:ok, billy, _pw} =
+    {:ok, billy} =
       Accounts.register_user_by_mail(tenant, %{
         name: "Christopher Bill",
         nickname: "Billy",
@@ -99,7 +99,7 @@ defmodule Lotta.Repo.Seeder do
     |> User.update_password_changeset("test123")
     |> Repo.update!()
 
-    {:ok, eike, _pw} =
+    {:ok, eike} =
       Accounts.register_user_by_mail(tenant, %{
         name: "Eike Wiewiorra",
         nickname: "Chef",
@@ -110,7 +110,7 @@ defmodule Lotta.Repo.Seeder do
     |> User.update_password_changeset("test123")
     |> Repo.update!()
 
-    {:ok, dr_evil, _pw} =
+    {:ok, dr_evil} =
       Accounts.register_user_by_mail(tenant, %{
         name: "Dr Evil",
         nickname: "drEvil",

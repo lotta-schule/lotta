@@ -3,6 +3,7 @@ defmodule Lotta.TenantsTest do
 
   use Lotta.WorkerCase, async: false
 
+  alias Lotta.Accounts.User
   alias Lotta.{Tenants, Repo}
   alias Lotta.Tenants.{CustomDomain, Tenant}
 
@@ -42,10 +43,20 @@ defmodule Lotta.TenantsTest do
 
     @tag creates_tenant: true
     test "should create a new tenant" do
+      tenant = %Tenant{
+        title: "Chile Lotta",
+        slug: "chile"
+      }
+
+      user = %User{
+        name: "Salvador Allende",
+        email: "salvador.allende@einsa.net"
+      }
+
       assert {:ok, tenant} =
                Tenants.create_tenant(
-                 user_params: %{name: "Salvador Allende", email: "salvador.allende@einsa.net"},
-                 tenant: %{title: "Chile Lotta", slug: "chile"}
+                 tenant,
+                 user
                )
 
       assert %{title: "Chile Lotta", slug: "chile", prefix: prefix} = tenant
@@ -57,10 +68,20 @@ defmodule Lotta.TenantsTest do
 
     @tag creates_tenant: true
     test "should delete a given tenant" do
+      tenant = %Tenant{
+        title: "Chile Lotta",
+        slug: "chile"
+      }
+
+      user = %User{
+        name: "Salvador Allende",
+        email: "salvador.allende@einsa.net"
+      }
+
       assert {:ok, tenant} =
                Tenants.create_tenant(
-                 user_params: %{name: "Salvador Allende", email: "salvador.allende@einsa.net"},
-                 tenant: %{title: "Chile Lotta", slug: "chile"}
+                 tenant,
+                 user
                )
 
       assert {:ok, _tenant} = Tenants.delete_tenant(tenant)

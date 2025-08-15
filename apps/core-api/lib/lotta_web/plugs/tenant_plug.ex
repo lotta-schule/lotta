@@ -12,7 +12,6 @@ defmodule LottaWeb.TenantPlug do
   import Plug.Conn
 
   alias Lotta.{Repo, Tenants}
-  alias Lotta.Tenants.Tenant
 
   @behaviour Plug
 

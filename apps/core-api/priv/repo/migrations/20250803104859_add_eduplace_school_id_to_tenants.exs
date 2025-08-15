@@ -3,6 +3,7 @@ defmodule Lotta.Repo.Migrations.AddEduplaceSchoolIdToTenants do
 
   def change do
     alter table(:tenants) do
+      add(:state, :string, null: false, default: "init")
       add(:address, :string, null: false, default: "")
       add(:type, :string, null: true)
 
@@ -10,5 +11,14 @@ defmodule Lotta.Repo.Migrations.AddEduplaceSchoolIdToTenants do
     end
 
     create(unique_index(:tenants, [:eduplaces_id], name: :unique_eduplaces_id))
+
+    flush()
+
+    repo().update_all(
+      "tenants",
+      set: [
+        state: "active"
+      ]
+    )
   end
 end

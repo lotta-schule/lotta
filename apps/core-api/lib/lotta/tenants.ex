@@ -6,18 +6,18 @@ defmodule Lotta.Tenants do
 
   import Ecto.Query
 
+  alias LottaWeb.Schema.Tenants.Tenant
   alias Lotta.Administration.Cockpit
   alias LottaWeb.Schema.Tenants.Tenant
   alias Ecto.Multi
-  alias Lotta.{Email, Mailer, Repo, Storage}
-  alias Lotta.Accounts.User
+  alias Lotta.{Accounts, Email, Mailer, Repo, Storage}
+  alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Content.Article
   alias Lotta.Storage.File
 
   alias Lotta.Tenants.{
     Category,
     CustomDomain,
-    DefaultContent,
     Feedback,
     Tenant,
     TenantDbManager,
@@ -62,25 +62,28 @@ defmodule Lotta.Tenants do
   Create a new tenant.
   """
   @doc since: "2.6.0"
-  @spec create_tenant(user_params: map(), tenant: map()) ::
+  @spec create_tenant(tenant :: %Tenant{}, user :: %User{}) ::
           {:ok, Tenant.t()} | {:error, term(), term()}
-  def create_tenant(params) do
-    user_params = Keyword.get(params, :user_params)
-    tenant_params = Keyword.get(params, :tenant)
+  def create_tenant(tenant, user) do
+    with {:ok, tenant, user} <- setup_tenant(tenant, user),
+         {:ok, _job} <- Lotta.Worker.Tenant.setup_default_content(tenant, user) do
+      {:ok, tenant}
+    else
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, changeset}
 
-    with {:ok, tenant} <- setup_tenant(user_params, tenant_params) do
-      if DefaultContent.create_default_content(tenant, user_params) == :ok do
-        {:ok, tenant}
-      else
-        delete_tenant(tenant)
+      error ->
+        Logger.error("Error creating tenant: #{inspect(error)}")
         {:error, "Error creating default content"}
-      end
     end
   end
 
-  @spec setup_tenant(user_params :: map(), tenant_params :: map()) ::
+  @spec setup_tenant(tenant :: %Tenant{}, user :: %User{}) ::
           {:ok, Tenant.t()} | {:error, term()}
-  defp setup_tenant(user_params, tenant_params) do
+  defp setup_tenant(tenant, user) do
+    tenant_params = Map.from_struct(tenant)
+    user_params = Map.from_struct(user)
+
     Multi.new()
     |> Multi.put(:user_params, user_params)
     |> Multi.insert(:new_tenant_without_prefix, Tenant.create_changeset(tenant_params))
@@ -93,10 +96,25 @@ defmodule Lotta.Tenants do
     |> Multi.run(:migrations, fn _repo, %{tenant: tenant} ->
       TenantDbManager.create_tenant_database_schema(tenant)
     end)
+    |> Multi.run(:user, fn _repo, %{tenant: tenant, user_params: user_params} ->
+      with {:ok, user} <- Accounts.register_user_by_mail(tenant, user_params) do
+        user
+        |> User.update_changeset(%{
+          groups: [
+            %UserGroup{
+              name: "Administrator",
+              sort_key: 0,
+              is_admin_group: true
+            }
+          ]
+        })
+        |> Repo.update(prefix: tenant.prefix)
+      end
+    end)
     |> Repo.transaction()
     |> case do
-      {:ok, %{tenant: tenant}} ->
-        {:ok, tenant}
+      {:ok, %{tenant: tenant, user: user}} ->
+        {:ok, tenant, user}
 
       {:error, failed_operation, failed_value, _changes_so_far} ->
         msg =
@@ -216,6 +234,18 @@ defmodule Lotta.Tenants do
   def update_tenant(tenant, args) do
     tenant
     |> Tenant.update_changeset(args)
+    |> Repo.update()
+  end
+
+  @doc """
+  Set the tenant's state to `:active` or `:readonly`.
+  """
+  @doc since: "6.1.0"
+  @spec update_state(Tenant.t(), :active | :readonly) ::
+          {:ok, Tenant.t()} | {:error, Ecto.Changeset.t(Tenant.t())}
+  def update_state(tenant, state) when state in [:active, :readonly] do
+    tenant
+    |> Ecto.Changeset.change(state: state)
     |> Repo.update()
   end
 

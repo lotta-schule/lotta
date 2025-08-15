@@ -75,7 +75,7 @@ defmodule LottaWeb.UserResolver do
 
   def get_current(_args, %{context: %{current_user: current_user}}) do
     if current_user do
-      Task.start(Accounts, :see_user, [current_user])
+      Accounts.see_user(current_user)
     end
 
     {:ok, current_user}
@@ -184,9 +184,9 @@ defmodule LottaWeb.UserResolver do
       )
 
     case Accounts.register_user_by_mail(tenant, user_params) do
-      {:ok, user, password} ->
+      {:ok, user} ->
         user
-        |> Lotta.Email.registration_mail(password)
+        |> Lotta.Email.registration_mail()
         |> Mailer.deliver_now()
 
         {:ok, true}

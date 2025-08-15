@@ -17,7 +17,7 @@ defmodule Lotta.Analytics do
   def get_realtime_users(tenant) do
     identifier = Urls.get_tenant_identifier(tenant)
 
-    with client when not is_nil(client) <- create_client(identifier),
+    with client when not is_nil(client) <- create_stats_client(identifier),
          {:ok, %{body: body, status: status}} when status < 400 <-
            Tesla.get(client, "/realtime/visitors") do
       {:ok, body}
@@ -45,7 +45,7 @@ defmodule Lotta.Analytics do
   def get_aggregation_metrics(tenant, period, date) do
     identifier = Urls.get_tenant_identifier(tenant)
 
-    with client when not is_nil(client) <- create_client(identifier),
+    with client when not is_nil(client) <- create_stats_client(identifier),
          {:ok, %{body: %{"results" => results}, status: status}} when status < 400 <-
            Tesla.get(client, "/aggregate",
              query: [
@@ -96,7 +96,7 @@ defmodule Lotta.Analytics do
 
     identifier = Urls.get_tenant_identifier(tenant)
 
-    with client when not is_nil(client) <- create_client(identifier),
+    with client when not is_nil(client) <- create_stats_client(identifier),
          {:ok, %{body: %{"results" => results}, status: status}} when status < 400 <-
            Tesla.get(client, "/timeseries",
              query: [
@@ -146,7 +146,7 @@ defmodule Lotta.Analytics do
 
     identifier = Urls.get_tenant_identifier(tenant)
 
-    with client when not is_nil(client) <- create_client(identifier),
+    with client when not is_nil(client) <- create_stats_client(identifier),
          {:ok, [category: prop_category, name: prop_name]} <- parse_property(property_string),
          {:ok, %{body: %{"results" => results}, status: status}} when status < 400 <-
            Tesla.get(client, "/breakdown",
@@ -186,13 +186,84 @@ defmodule Lotta.Analytics do
     end
   end
 
-  @spec create_client(site_id :: String.t()) :: Tesla.Client.t() | nil
-  def create_client(side_id) do
-    unless is_nil(config(:endpoint)) or is_nil(config(:api_key)) do
+  @spec create_site(Tenant.t()) :: :ok | {:error, String.t()}
+  def create_site(tenant) do
+    site_id = Urls.get_tenant_identifier(tenant)
+    params = %{domain: site_id, timezone: "Europe/Berlin"}
+
+    with client when not is_nil(client) <- create_sites_client(),
+         {:ok, %{status: status}} when status < 400 <-
+           Tesla.post(
+             client,
+             "/",
+             URI.encode_query(params),
+             headers: [{"Content-Type", "application/x-www-form-urlencoded"}]
+           ) do
+      :ok
+    else
+      nil ->
+        {:error, "Analytics is not enabled"}
+
+      {_, %{status: status, body: body}} ->
+        Logger.error("Failed to create plausible site: (#{status}) #{inspect(body)}")
+        {:error, "Failed to create plausible site: (#{status})"}
+
+      {:error, _error} = error ->
+        error
+
+      _ ->
+        {:error, "Unknown error"}
+    end
+  end
+
+  @spec delete_site(Tenant.t()) :: :ok | {:error, String.t()}
+  def delete_site(tenant) do
+    site_id = Urls.get_tenant_identifier(tenant)
+
+    with client when not is_nil(client) <- create_sites_client(),
+         {:ok, %{status: status}} when status < 400 <-
+           Tesla.delete(client, site_id) do
+      :ok
+    else
+      nil ->
+        {:error, "Analytics is not enabled"}
+
+      {_, %{status: status, body: body}} ->
+        Sentry.capture_message("Failed to delete plausible site: (#{status}) #{inspect(body)}")
+        Logger.error("Failed to delete plausible site: (#{status}) #{inspect(body)}")
+        {:error, "Failed to delete plausible site: (#{status})"}
+
+      {:error, error_message} = error ->
+        Logger.error("Failed to delete plausible site: #{inspect(error_message)}")
+        Sentry.capture_message("Failed to delete plausible site: #{inspect(error_message)}")
+        error
+
+      _ ->
+        {:error, "Unknown error"}
+    end
+  end
+
+  @spec create_stats_client(site_id :: String.t()) :: Tesla.Client.t() | nil
+  defp create_stats_client(side_id), do: create_base_client("/api/v1/stats", site_id: side_id)
+
+  @spec create_sites_client() :: Tesla.Client.t() | nil
+  defp create_sites_client(), do: create_base_client("/api/v1/sites")
+
+  @spec create_base_client(path :: String.t(), args :: [{:site_id, number()}]) ::
+          Tesla.Client.t() | nil
+  defp create_base_client(path, args \\ []) do
+    endpoint = config(:endpoint)
+    api_key = config(:api_key)
+
+    unless is_nil(endpoint) or is_nil(api_key) do
+      query_params =
+        args
+        |> Keyword.take([:site_id])
+
       middleware = [
-        {Tesla.Middleware.BaseUrl, config(:endpoint) <> "/api/v1/stats"},
+        {Tesla.Middleware.BaseUrl, config(:endpoint) <> path},
+        {Tesla.Middleware.Query, query_params},
         Tesla.Middleware.PathParams,
-        {Tesla.Middleware.Query, [site_id: side_id]},
         {Tesla.Middleware.BearerAuth, token: config(:api_key)},
         Tesla.Middleware.JSON
       ]

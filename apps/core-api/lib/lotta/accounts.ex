@@ -253,7 +253,7 @@ defmodule Lotta.Accounts do
   If successfull, returns a user and a password.
   """
   @spec register_user_by_mail(Tenant.t(), map()) ::
-          {:ok, User.t(), String.t()} | {:error, Changeset.t()}
+          {:ok, User.t()} | {:error, Changeset.t()}
   def register_user_by_mail(tenant, attrs) do
     pw_length = 8
 
@@ -273,7 +273,7 @@ defmodule Lotta.Accounts do
       {:ok, user} ->
         Storage.create_new_user_directories(user)
 
-        {:ok, user, generated_pw}
+        {:ok, Map.put(user, :password, generated_pw)}
 
       result ->
         result

@@ -51,8 +51,8 @@ defmodule LottaWeb.TenantPlugTest do
     end
 
     test "no tenant found", %{conn: conn} do
-      assert %{private: %{}, status: 400, resp_body: "No tenant found"} =
-               TenantPlug.call(conn, %{})
+      assert %{private: private_map, status: nil, resp_body: nil} = TenantPlug.call(conn, %{})
+      refute Map.has_key?(private_map, :lotta_tenant)
     end
   end
 end

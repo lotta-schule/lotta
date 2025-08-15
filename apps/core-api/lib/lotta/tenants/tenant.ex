@@ -27,7 +27,8 @@ defmodule Lotta.Tenants.Tenant do
           prefix: String.t(),
           configuration: configuration(),
           logo_image_file_id: Lotta.Storage.File.id() | nil,
-          background_image_file_id: Lotta.Storage.File.id() | nil
+          background_image_file_id: Lotta.Storage.File.id() | nil,
+          state: :init | :active | :readonly
         }
 
   schema "tenants" do
@@ -36,6 +37,7 @@ defmodule Lotta.Tenants.Tenant do
     field(:prefix, :string)
     field(:address, :string)
     field(:type, :string)
+    field(:state, Ecto.Enum, values: [:init, :active, :readonly], default: :init)
 
     embeds_one(:configuration, TenantConfiguration, primary_key: false, on_replace: :delete) do
       field(:custom_theme, :map)
