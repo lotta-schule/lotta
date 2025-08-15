@@ -44,9 +44,9 @@ defmodule Lotta.Content do
       |> Article.get_published_articles_query()
 
     if is_nil(category_id) do
-      from [..., c] in query, where: c.hide_articles_from_homepage != true
+      from([..., c] in query, where: c.hide_articles_from_homepage != true)
     else
-      from a in query, where: a.category_id == ^category_id
+      from(a in query, where: a.category_id == ^category_id)
     end
     |> filter_query(filter)
     |> Repo.all()
@@ -152,7 +152,8 @@ defmodule Lotta.Content do
       join: au in "article_users",
       on: au.article_id == a.id,
       where: au.user_id == ^user.id,
-      order_by: [desc: :updated_at, desc: :id]
+      order_by: [desc: :updated_at, desc: :id],
+      limit: 75
     )
     |> Repo.all()
   end
@@ -402,7 +403,7 @@ defmodule Lotta.Content do
   end
 
   defp filter_query(query, filter) do
-    query = from q in query, order_by: [desc: :updated_at, desc: :id]
+    query = from(q in query, order_by: [desc: :updated_at, desc: :id])
 
     (filter || %{})
     |> Enum.reduce(query, fn
@@ -410,10 +411,10 @@ defmodule Lotta.Content do
         query
 
       {:first, limit}, query ->
-        from q in query, limit: ^limit
+        from(q in query, limit: ^limit)
 
       {:updated_before, updated_before}, query ->
-        from q in query, where: q.updated_at < ^updated_before
+        from(q in query, where: q.updated_at < ^updated_before)
     end)
   end
 end
