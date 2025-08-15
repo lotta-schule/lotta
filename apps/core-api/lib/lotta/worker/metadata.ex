@@ -34,7 +34,7 @@ defmodule Lotta.Worker.Metadata do
          {:ok, results} <- read_metadata(file_data, file.file_type),
          {:ok, file} <-
            file
-           |> Ecto.Changeset.change(metadata: results)
+           |> Ecto.Changeset.change(metadata: sanitize_values(results))
            |> Ecto.Changeset.put_change(
              :media_duration,
              case Float.parse(Map.get(results, :duration, "")) do
@@ -72,6 +72,29 @@ defmodule Lotta.Worker.Metadata do
 
   defp read_metadata(_, _filetype),
     do: {:ok, %{}}
+
+  def sanitize_values(%NaiveDateTime{} = value), do: NaiveDateTime.to_iso8601(value)
+  def sanitize_values(%DateTime{} = value), do: DateTime.to_iso8601(value)
+  def sanitize_values(struct) when is_struct(struct), do: struct
+
+  def sanitize_values(map) when is_map(map),
+    do:
+      map
+      |> Map.new(fn {k, v} -> {k, sanitize_values(v)} end)
+
+  def sanitize_values(list) when is_list(list), do: Enum.map(list, &sanitize_values/1)
+
+  def sanitize_values(value) when is_binary(value) do
+    if String.contains?(value, "\u0000") do
+      value
+      |> to_charlist()
+      |> Enum.map(&Integer.to_string/1)
+    else
+      String.replace_invalid(value)
+    end
+  end
+
+  def sanitize_values(value), do: value
 
   @impl Oban.Worker
   def timeout(_job), do: :timer.seconds(30)
