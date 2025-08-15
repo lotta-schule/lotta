@@ -9,4 +9,9 @@
   width: 2em;
   object-fit: fill;
   overflow: hidden;
+
+  &.clickable:hover {
+    border-color: rgba(var(--lotta-primary-color), 1);
+    box-shadow: 0px 0px 7px rgba(var(--lotta-primary-color), 0.6);
+  }
 }

@@ -12,7 +12,20 @@ export interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   className?: string;
 }
 
-export const Avatar = React.memo(({ className, ...props }: AvatarProps) => {
-  return <img {...props} className={clsx(styles.root, className)} />;
-});
+export const Avatar = React.memo(
+  ({ src, title, className, role, style, onClick, ...props }: AvatarProps) => {
+    return (
+      <div
+        {...props}
+        role={role || 'img'}
+        title={title}
+        onClick={onClick}
+        className={clsx(styles.root, className, {
+          [styles.clickable]: !!onClick,
+        })}
+        style={{ ...style, backgroundImage: `url(${src})` }}
+      />
+    );
+  }
+);
 Avatar.displayName = 'Avatar';
