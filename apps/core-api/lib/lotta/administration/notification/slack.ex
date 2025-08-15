@@ -1,4 +1,7 @@
 defmodule Lotta.Administration.Notification.Slack do
+  @moduledoc """
+  Send notifications to Slack for Lotta administrative events.
+  """
   alias Lotta.Accounts
   alias Lotta.Tenants.Tenant
   alias LottaWeb.Urls

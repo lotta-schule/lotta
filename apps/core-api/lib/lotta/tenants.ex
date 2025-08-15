@@ -62,8 +62,8 @@ defmodule Lotta.Tenants do
   Create a new tenant.
   """
   @doc since: "2.6.0"
-  @spec create_tenant(tenant :: %Tenant{}, user :: %User{}) ::
-          {:ok, Tenant.t()} | {:error, term(), term()}
+  @spec create_tenant(tenant :: Tenant.empty(), user :: User.empty()) ::
+          {:ok, Tenant.t()} | {:error, Ecto.Changese.t()} | {:error, String.t()}
   def create_tenant(tenant, user) do
     with {:ok, tenant, user} <- setup_tenant(tenant, user),
          {:ok, _job} <- Lotta.Worker.Tenant.setup_default_content(tenant, user) do
@@ -78,7 +78,7 @@ defmodule Lotta.Tenants do
     end
   end
 
-  @spec setup_tenant(tenant :: %Tenant{}, user :: %User{}) ::
+  @spec setup_tenant(tenant :: Tenant.empty(), user :: User.empty()) ::
           {:ok, Tenant.t()} | {:error, term()}
   defp setup_tenant(tenant, user) do
     tenant_params = Map.from_struct(tenant)

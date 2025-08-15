@@ -21,8 +21,17 @@ defmodule Lotta.Tenants.Tenant do
           user_max_storage_config: String.t() | nil
         }
 
+  @type empty() :: %__MODULE__{
+          slug: String.t(),
+          title: String.t()
+        }
+
   @type t() :: %__MODULE__{
           id: id(),
+          title: String.t(),
+          address: String.t() | nil,
+          type: String.t() | nil,
+          eduplaces_id: String.t() | nil,
           slug: String.t(),
           prefix: String.t(),
           configuration: configuration(),

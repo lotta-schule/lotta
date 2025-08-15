@@ -68,6 +68,16 @@ defmodule Lotta.Accounts.User do
 
   @type t :: %__MODULE__{id: id, email: email(), name: String.t()}
 
+  @type empty ::
+          %__MODULE__{
+            name: String.t(),
+            email: email()
+          }
+          | %__MODULE__{
+              name: String.t(),
+              eduplaces_id: String.t()
+            }
+
   @doc """
   Returns a changeset for when the admin wants to update *another user*'s changeset.
   """
