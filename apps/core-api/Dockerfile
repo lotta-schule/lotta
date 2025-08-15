@@ -22,7 +22,7 @@ ENV VIX_COMPILATION_MODE=PLATFORM_PROVIDED_LIBVIPS
 
 RUN apk update
 
-ENV VIPSHOME="/tmp/vips"
+ARG VIPSHOME="/tmp/vips"
 ENV PKG_CONFIG_PATH="${VIPSHOME}/lib/pkgconfig"
 
 RUN mkdir -p $(dirname ${VIPSHOME})
@@ -85,8 +85,8 @@ RUN set -xe && \
   curl -fSL -o pdfium "https://github.com/bblanchon/pdfium-binaries/releases/download/${PDFIUM_VERSION}/$file_name" && \
   tar xf pdfium -C $VIPSHOME
 
-COPY <<EOF $VIPSHOME/lib/pkgconfig/pdfium.pc
-prefix=$VIPSHOME
+COPY <<EOF ${VIPSHOME}/lib/pkgconfig/pdfium.pc
+prefix=${VIPSHOME}
 exec_prefix=\${prefix}
 libdir=\${exec_prefix}/lib
 includedir=\${prefix}/include
@@ -103,7 +103,7 @@ RUN cd ${VIPSHOME} \
   && cd build-dir \
   && meson compile \
   && meson install \
-  && cp $VIPSHOME/lib/libpdfium.so /usr/local/lib/ \
+  && cp ${VIPSHOME}/lib/libpdfium.so /usr/local/lib/ \
   && ldconfig /usr/local/lib
 
 RUN apk del .build-deps
@@ -246,7 +246,7 @@ RUN mix compile
 
 # Compress source code for sentry
 RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
-  mix sentry.package_source_code || (env && false)
+  mix sentry.package_source_code || false
 
 # build release
 RUN mix release
