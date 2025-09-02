@@ -2,7 +2,7 @@ defmodule LottaWeb.OAuthController do
   use LottaWeb, :controller
 
   alias Lotta.{Accounts, Tenants}
-  alias Lotta.Eduplaces.{OAuthStrategy, UserInfo}
+  alias Lotta.Eduplaces.{AuthCodeStrategy, UserInfo}
   alias LottaWeb.Urls
   alias LottaWeb.Auth.AccessToken
 
@@ -20,7 +20,7 @@ defmodule LottaWeb.OAuthController do
       max_age: 10 * 60
     )
     |> redirect(
-      external: OAuthStrategy.authorize_url!(state: state, login_hint: params["login_hint"])
+      external: AuthCodeStrategy.authorize_url!(state: state, login_hint: params["login_hint"])
     )
   end
 
@@ -56,7 +56,7 @@ defmodule LottaWeb.OAuthController do
 
       true ->
         {_token, user} =
-          OAuthStrategy.get_token!(params)
+          AuthCodeStrategy.get_token!(params)
 
         with {:ok, {tenant, user}} <-
                get_or_create_user_from_eduplaces_userinfo(user),

@@ -9,7 +9,7 @@ defmodule LottaWeb.OAuthControllerTest do
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
   alias LottaWeb.Auth.AccessToken
-  alias Lotta.Eduplaces.{UserInfo, OAuthStrategy}
+  alias Lotta.Eduplaces.{UserInfo, AuthCodeStrategy}
 
   @prefix "tenant_test"
 
@@ -24,7 +24,7 @@ defmodule LottaWeb.OAuthControllerTest do
       authorize_url = "https://eduplaces.com/oauth/authorize?state=some-state"
 
       # Mock the strategy authorize URL
-      with_mock(OAuthStrategy,
+      with_mock(AuthCodeStrategy,
         authorize_url!: fn opts ->
           assert Keyword.has_key?(opts, :state)
           authorize_url
@@ -74,7 +74,7 @@ defmodule LottaWeb.OAuthControllerTest do
 
       user = fixture(:registered_user, %{email: "hedwig@hogwarts.de", eduplaces_id: user_info.id})
 
-      with_mock(OAuthStrategy,
+      with_mock(AuthCodeStrategy,
         get_token!: fn _params -> {"fake_token", user_info} end
       ) do
         conn =
@@ -108,7 +108,7 @@ defmodule LottaWeb.OAuthControllerTest do
         school: %{id: "school123"}
       }
 
-      with_mock(OAuthStrategy,
+      with_mock(AuthCodeStrategy,
         get_token!: fn _params -> {"token", user_info} end
       ) do
         conn =
@@ -137,7 +137,7 @@ defmodule LottaWeb.OAuthControllerTest do
       |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
       |> Repo.update!()
 
-      with_mock(OAuthStrategy,
+      with_mock(AuthCodeStrategy,
         get_token!: fn _params -> {"token", user_info} end
       ) do
         conn =

@@ -1,4 +1,4 @@
-defmodule Lotta.Eduplaces.OAuthStrategy do
+defmodule Lotta.Eduplaces.AuthCodeStrategy do
   @moduledoc """
   OAuth2 strategy for Eduplaces login
   """
@@ -81,5 +81,10 @@ defmodule Lotta.Eduplaces.OAuthStrategy do
     UserInfo.from_jwt_info(JWT.peek(id_token).fields)
   end
 
-  defp as_keyword_list(map), do: Enum.map(map, fn {k, v} -> {String.to_existing_atom(k), v} end)
+  defp as_keyword_list(map),
+    do:
+      Enum.map(map, fn
+        {k, v} when is_binary(k) -> {String.to_existing_atom(k), v}
+        {k, v} -> {k, v}
+      end)
 end
