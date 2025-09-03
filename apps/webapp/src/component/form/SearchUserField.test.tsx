@@ -85,6 +85,7 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
       expect(selectUserFn).toHaveBeenCalledWith(
         omit(KeinErSieEsUser, [
           'email',
+          'eduplacesId',
           'enrollmentTokens',
           'groups',
           'assignedGroups',

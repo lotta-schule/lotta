@@ -8,6 +8,7 @@ import { DirectoryModel, FileModel, UserModel } from 'model';
 
 export const adminGroup = {
   id: '1',
+  eduplacesId: null,
   insertedAt: '2015-01-01 00:00',
   updatedAt: '2015-01-01 00:00',
   name: 'Administrator',
@@ -19,6 +20,7 @@ export const adminGroup = {
 
 export const lehrerGroup = {
   id: '4',
+  eduplacesId: null,
   insertedAt: '2015-01-01 00:00',
   updatedAt: '2015-01-01 00:00',
   name: 'Lehrer',
@@ -30,6 +32,7 @@ export const lehrerGroup = {
 
 export const elternGroup = {
   id: '10',
+  eduplacesId: null,
   insertedAt: '2015-01-10 11:00',
   updatedAt: '2015-01-12 14:00',
   name: 'Eltern',
@@ -41,6 +44,7 @@ export const elternGroup = {
 
 export const schuelerGroup = {
   id: '5',
+  eduplacesId: null,
   insertedAt: '2015-01-01 07:45',
   updatedAt: '2015-01-01 07:45',
   name: 'Schüler',
@@ -323,6 +327,7 @@ export const powerpointFile = {
 
 export const SomeUser = {
   id: '1',
+  eduplacesId: null,
   insertedAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   lastSeen: new Date().toISOString(),
@@ -341,6 +346,7 @@ export const SomeUser = {
 
 export const SomeUserin = {
   id: '2',
+  eduplacesId: null,
   insertedAt: '2019-05-18 10:00',
   updatedAt: '2019-05-18 10:00',
   lastSeen: '2019-05-18 10:00',
@@ -359,6 +365,7 @@ export const SomeUserin = {
 
 export const KeinErSieEsUser = {
   id: '3',
+  eduplacesId: null,
   insertedAt: '2019-05-18 10:00',
   updatedAt: '2019-05-18 10:00',
   lastSeen: '2019-05-18 10:00',
