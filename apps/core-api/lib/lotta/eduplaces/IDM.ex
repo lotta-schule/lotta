@@ -29,6 +29,14 @@ defmodule Lotta.Eduplaces.IDM do
   def get_user(user_id), do: get("/users/#{user_id}")
 
   @doc """
+  List all available users.
+  """
+  @doc since: "6.1.0"
+  @spec list_users() ::
+          {:ok, list()} | {:error, any()}
+  def list_users, do: get("/users")
+
+  @doc """
   Get the school's information.
   """
   @doc since: "6.1.0"

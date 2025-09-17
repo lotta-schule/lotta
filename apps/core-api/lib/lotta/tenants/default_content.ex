@@ -346,6 +346,8 @@ defmodule Lotta.Tenants.DefaultContent do
     ])
   end
 
+  defp send_ready_email(tenant, %{email: nil}), do: {:ok, nil}
+
   defp send_ready_email(tenant, user) do
     user
     |> Email.lotta_ready_mail(tenant: tenant)

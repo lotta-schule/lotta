@@ -2,6 +2,7 @@ defmodule Lotta.Tenants.Tenant do
   @moduledoc """
     Ecto Schema for tenants
   """
+  alias Lotta.Tenants
 
   use Ecto.Schema
 
@@ -74,7 +75,9 @@ defmodule Lotta.Tenants.Tenant do
   def create_changeset(attrs) do
     %__MODULE__{}
     |> cast(attrs, [:title, :slug, :address, :type])
-    |> validate_required([:title, :slug])
+    |> validate_required([:title])
+    |> maybe_gen_slug()
+    |> validate_required([:slug])
     |> unique_constraint(:slug)
   end
 
@@ -95,4 +98,35 @@ defmodule Lotta.Tenants.Tenant do
 
   defp maybe_put_embed(changeset, :configuration, attrs),
     do: put_embed(changeset, :configuration, attrs)
+
+  defp maybe_gen_slug(changeset) do
+    case get_field(changeset, :slug) do
+      nil ->
+        title = get_field(changeset, :title, "")
+
+        slug =
+          title |> String.downcase() |> String.replace(~r/[^a-z0-9]+/u, "-") |> String.trim("-")
+
+        put_change(changeset, :slug, slug)
+
+      _ ->
+        changeset
+    end
+  end
+
+  def generate_slug(title) do
+    base_slug =
+      title
+      |> String.downcase()
+      |> String.replace(~r/[^a-z0-9]+/u, "-")
+      |> String.trim("-")
+
+    Enum.reduce_while(1..1000, nil, fn i, _acc ->
+      slug = if i == 1, do: base_slug, else: "#{base_slug}-#{i}"
+
+      if Tenants.slug_available?(slug),
+        do: {:halt, slug},
+        else: {:cont, nil}
+    end)
+  end
 end

@@ -2,7 +2,9 @@ defmodule LottaWeb.OAuthController do
   use LottaWeb, :controller
 
   alias Lotta.{Accounts, Tenants}
-  alias Lotta.Eduplaces.{AuthCodeStrategy, UserInfo}
+  alias Lotta.Accounts.User
+  alias Lotta.Tenants.Tenant
+  alias Lotta.Eduplaces.{AuthCodeStrategy, IDM, UserInfo}
   alias LottaWeb.Urls
   alias LottaWeb.Auth.AccessToken
 
@@ -71,13 +73,46 @@ defmodule LottaWeb.OAuthController do
           conn
           |> redirect(external: target_uri)
         else
-          {:error, _} ->
-            # You could either being to early and just wait for your tenant to be created
-            Logger.warning("Tenant not found or user info is invalid.")
-            # Make it more user-friendly later
-            # conn
-            # |> put_status(:not_found)
-            # |> render(:no_tenant)
+          {:error, _} when is_struct(user, UserInfo) ->
+            IO.inspect(user, label: "User info")
+
+            tenant = %Tenant{
+              title: user.school.name,
+              eduplaces_id: user.school.id
+            }
+
+            user =
+              %User{
+                name: user.username,
+                eduplaces_id: user.id
+              }
+
+            case Tenants.create_tenant(tenant, user) do
+              {:ok, tenant} ->
+                Logger.info("Created new tenant #{tenant.id} from Eduplaces userinfo.")
+
+                conn
+                |> redirect(to: "/setup/#{tenant.slug}/status")
+
+              {:error, changeset} ->
+                Logger.error(
+                  "Failed to create tenant from Eduplaces userinfo: #{inspect(changeset)}"
+                )
+
+                conn
+                |> put_status(:internal_server_error)
+                |> render(:server_error,
+                  title: gettext("Internal server error"),
+                  message:
+                    gettext(
+                      "An error occurred while creating your tenant. Please contact support."
+                    )
+                )
+            end
+
+          error ->
+            Logger.warning("Unexpected error during login: #{inspect(error)}")
+
             conn
             |> put_status(:not_found)
             |> render(:not_found,

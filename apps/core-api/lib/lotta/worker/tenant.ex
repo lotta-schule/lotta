@@ -23,19 +23,31 @@ defmodule Lotta.Worker.Tenant do
   @impl Oban.Worker
   def perform(%{
         id: _job_id,
-        args: %{
-          "type" => "setup",
-          "id" => tenant_id,
-          "user_email" => email,
-          "user_password" => password
-        }
+        args:
+          %{
+            "type" => "setup",
+            "id" => tenant_id,
+            "user_email" => email,
+            "user_password" => password,
+            "eduplaces_id" => eduplaces_id
+          } = args
       }) do
     tenant = Tenants.get_tenant(tenant_id) || raise "Tenant not found"
 
-    user =
-      Lotta.Repo.get_by(User, [email: email], prefix: tenant.prefix) || raise "User not found"
+    where_clause =
+      case IO.inspect(args) do
+        %{"eduplaces_id" => eduplaces_id}
+        when not is_nil(eduplaces_id) and byte_size(eduplaces_id) > 0 ->
+          [eduplaces_id: eduplaces_id]
 
-    user = Map.put(user, :password, password)
+        %{"user_email" => email} when not is_nil(email) and byte_size(email) > 0 ->
+          [email: email]
+      end
+
+    user =
+      User
+      |> Lotta.Repo.get_by!(where_clause, prefix: tenant.prefix)
+      |> Map.put(:password, password)
 
     with :ok <- DefaultContent.create_default_content(tenant, user) do
       init_analytics(tenant)
@@ -67,12 +79,17 @@ defmodule Lotta.Worker.Tenant do
 
   @spec setup_default_content(Tenant.t(), User.t()) ::
           {:ok, Oban.Job.t()} | {:error, String.t()}
-  def setup_default_content(%Tenant{id: id}, %User{email: email, password: password}) do
+  def setup_default_content(%Tenant{id: id}, %User{
+        email: email,
+        password: password,
+        eduplaces_id: eduplaces_id
+      }) do
     __MODULE__.new(%{
       "type" => "setup",
       "id" => id,
       "user_email" => email,
-      "user_password" => password
+      "user_password" => password,
+      "eduplaces_id" => eduplaces_id
     })
     |> Oban.insert()
   end

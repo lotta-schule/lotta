@@ -5,7 +5,7 @@ defmodule Lotta.Eduplaces.UserInfo do
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Eduplaces.{GroupInfo, SchoolInfo}
 
-  defstruct [:id, :username, :groups, :role, :school]
+  defstruct id: nil, username: nil, groups: [], role: nil, school: nil
 
   @type t :: %__MODULE__{
           id: String.t(),

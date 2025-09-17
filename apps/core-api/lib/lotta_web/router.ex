@@ -95,6 +95,12 @@ defmodule LottaWeb.Router do
     end
   end
 
+  scope "/setup" do
+    pipe_through(:browser)
+
+    get("/:slug/status", LottaWeb.SetupController, :status)
+  end
+
   scope "/admin-api" do
     pipe_through([:admin_auth, :json_api])
 

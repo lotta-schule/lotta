@@ -59,13 +59,73 @@ defmodule Lotta.Tenants do
   end
 
   @doc """
+  Wether a given slug is available.
+  A slug is available if it is not already taken by another tenant
+  and it is not reserved.
+  """
+  @doc since: "6.1.0"
+  @spec slug_available?(String.t()) :: boolean()
+  def slug_available?(slug),
+    do: slug not in get_occupied_slugs() and slug not in get_reserved_slugs()
+
+  @doc """
+  List all non-available slugs.
+  A slug is available if it is not already taken by another tenant.
+  """
+  @doc since: "6.1.0"
+  @spec get_occupied_slugs() :: [String.t()]
+  def get_occupied_slugs() do
+    from(t in Tenant, select: t.slug)
+    |> Lotta.Repo.all()
+  end
+
+  @doc """
+  List all reserved slugs.
+  A slug is reserved if it is not allowed to be used by a tenant.
+  """
+  @doc since: "6.1.0"
+  @spec get_reserved_slugs() :: [String.t()]
+  def get_reserved_slugs(),
+    do: [
+      "www",
+      "admin",
+      "api",
+      "mail",
+      "ftp",
+      "smtp",
+      "pop3",
+      "imap",
+      "webmail",
+      "blog",
+      "shop",
+      "test",
+      "staging",
+      "preview",
+      "demo",
+      "support",
+      "help",
+      "status",
+      "secure",
+      "portal",
+      "intranet",
+      "intern",
+      "internal",
+      "static",
+      "assets",
+      "files",
+      "data"
+    ]
+
+  @doc """
   Create a new tenant.
   """
   @doc since: "2.6.0"
   @spec create_tenant(tenant :: Tenant.empty(), user :: User.empty()) ::
           {:ok, Tenant.t()} | {:error, Ecto.Changese.t()} | {:error, String.t()}
   def create_tenant(tenant, user) do
-    with {:ok, tenant, user} <- setup_tenant(tenant, user),
+    IO.inspect({tenant, user}, label: "create_tenant")
+
+    with {:ok, tenant, user} <- IO.inspect(setup_tenant(tenant, user), label: "setup_tenant"),
          {:ok, _job} <- Lotta.Worker.Tenant.setup_default_content(tenant, user) do
       {:ok, tenant}
     else
@@ -97,7 +157,21 @@ defmodule Lotta.Tenants do
       TenantDbManager.create_tenant_database_schema(tenant)
     end)
     |> Multi.run(:user, fn _repo, %{tenant: tenant, user_params: user_params} ->
-      with {:ok, user} <- Accounts.register_user_by_mail(tenant, user_params) do
+      register_user = fn ->
+        case user_params do
+          %{eduplaces_id: eduplaces_id}
+          when not is_nil(eduplaces_id) and byte_size(eduplaces_id) > 0 ->
+            Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{id: eduplaces_id})
+
+          %{email: email} when not is_nil(email) and byte_size(email) > 0 ->
+            Accounts.register_user_by_mail(tenant, user_params)
+
+          _ ->
+            {:error, "Either email or eduplaces_id must be set for the user"}
+        end
+      end
+
+      with {:ok, user} <- register_user.() do
         user
         |> User.update_changeset(%{
           groups: [
@@ -111,6 +185,7 @@ defmodule Lotta.Tenants do
         |> Repo.update(prefix: tenant.prefix)
       end
     end)
+    |> IO.inspect(label: "Creating tenant #{tenant_params.slug}")
     |> Repo.transaction()
     |> case do
       {:ok, %{tenant: tenant, user: user}} ->

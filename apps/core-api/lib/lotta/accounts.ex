@@ -315,14 +315,18 @@ defmodule Lotta.Accounts do
   @spec register_eduplaces_user(Tenant.t(), Eduplaces.UserInfo.t()) ::
           {:ok, User.t(), String.t()} | {:error, Changeset.t()}
   def register_eduplaces_user(tenant, user_info) do
-    group_ids = Enum.map(user_info.groups, & &1.id)
-
     groups =
-      Repo.all(
-        from(g in UserGroup,
-          where: g.eduplaces_id in ^group_ids
-        )
-      )
+      case Enum.map(user_info.groups, & &1.id) do
+        [] ->
+          []
+
+        group_ids ->
+          Repo.all(
+            from(g in UserGroup,
+              where: g.eduplaces_id in ^group_ids
+            )
+          )
+      end
 
     user_info
     |> Eduplaces.UserInfo.to_lotta_user()

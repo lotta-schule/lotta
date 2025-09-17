@@ -346,7 +346,8 @@ config :lotta, Oban,
       file_conversion: [limit: 4],
       media_conversion: [limit: 1],
       preview_generation: [limit: 2],
-      file_metadata: [limit: 2]
+      file_metadata: [limit: 2],
+      tenant: [limit: 1]
     ]
     |> Enum.filter(fn {k, _} ->
       to_string(k) not in SystemConfig.get("OBAN_EXCLUDE_QUEUES", cast: :string_list)
