@@ -13,7 +13,7 @@ services:
       retries: 7
 
   redis:
-    image: bitnami/redis:latest
+    image: bitnamilegacy/redis:latest
     environment:
       - REDIS_PASSWORD=lotta
     healthcheck:
@@ -23,7 +23,7 @@ services:
       retries: 7
 
   minio:
-    image: bitnami/minio:2024
+    image: bitnamilegacy/minio:2024
     ports:
       - 9000:9000
     environment:
