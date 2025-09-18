@@ -91,9 +91,11 @@ defmodule Lotta.Administration.Notification.Slack do
       config()
       |> Keyword.get(:webhook)
 
-  defp config, do: Application.get_env(:lotta, Lotta.Administration.Notification.Slack, [])
+  defp config do
+    Application.get_env(:lotta, Lotta.Administration.Notification.Slack, [])
+  end
 
   defp environment_name do
-    Application.get_env(:cockpit, :env, "DEV")
+    Application.get_env(:lotta, :environment, "development")
   end
 end

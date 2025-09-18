@@ -138,7 +138,7 @@ defmodule Lotta.Analytics do
           property :: String.t(),
           metrics :: list(String.t() | :atom)
         ) ::
-          {:ok, list(map())} | {:error, any()}
+          {:ok, list(map())} | {:error, String.t()}
   def get_breakdown_metrics(tenant, period, date, property, metrics) do
     metrics = Enum.map(metrics, &to_string/1)
     combined_metrics_string = Enum.join(metrics, ",")
@@ -186,6 +186,7 @@ defmodule Lotta.Analytics do
     end
   end
 
+  @doc since: "6.1.0"
   @spec create_site(Tenant.t()) :: :ok | {:error, String.t()}
   def create_site(tenant) do
     site_id = Urls.get_tenant_identifier(tenant)
@@ -216,6 +217,7 @@ defmodule Lotta.Analytics do
     end
   end
 
+  @doc since: "6.1.0"
   @spec delete_site(Tenant.t()) :: :ok | {:error, String.t()}
   def delete_site(tenant) do
     site_id = Urls.get_tenant_identifier(tenant)
@@ -229,13 +231,11 @@ defmodule Lotta.Analytics do
         {:error, "Analytics is not enabled"}
 
       {_, %{status: status, body: body}} ->
-        Sentry.capture_message("Failed to delete plausible site: (#{status}) #{inspect(body)}")
         Logger.error("Failed to delete plausible site: (#{status}) #{inspect(body)}")
         {:error, "Failed to delete plausible site: (#{status})"}
 
       {:error, error_message} = error ->
         Logger.error("Failed to delete plausible site: #{inspect(error_message)}")
-        Sentry.capture_message("Failed to delete plausible site: #{inspect(error_message)}")
         error
 
       _ ->
@@ -255,7 +255,9 @@ defmodule Lotta.Analytics do
     endpoint = config(:endpoint)
     api_key = config(:api_key)
 
-    unless is_nil(endpoint) or is_nil(api_key) do
+    if is_nil(endpoint) or is_nil(api_key) do
+      nil
+    else
       query_params =
         args
         |> Keyword.take([:site_id])

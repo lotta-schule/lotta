@@ -7,33 +7,30 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
   alias JOSE.JWT
   alias Lotta.Eduplaces.UserInfo
 
+  # this is only for the compiler to know about the atoms,
+  # so they can be parsed by String.to_existing_atom/1
+  _ = [
+    :client_id,
+    :client_secret,
+    :site,
+    :state,
+    :response_type,
+    :scope,
+    :error,
+    :error_description
+  ]
+
   defp config do
     Application.get_env(:lotta, Eduplaces)
-    |> Keyword.merge(
-      strategy: __MODULE__
-      # site: "https://api.github.com",
-      # authorize_url: "https://github.com/login/oauth/authorize",
-      # token_url: "https://github.com/login/oauth/access_token"
-    )
+    |> Keyword.merge(strategy: __MODULE__)
   end
 
   def allowed_atoms do
-    [
-      :client_id,
-      :client_secret,
-      :site,
-      :state,
-      :response_type,
-      :scope,
-      :error,
-      :error_description
-    ]
   end
 
   def client do
     config()
     |> OAuth2.Client.new()
-    # |> put_header("User-Agent", "Bond, James Bond")
     |> OAuth2.Client.put_serializer("application/json", Jason)
   end
 

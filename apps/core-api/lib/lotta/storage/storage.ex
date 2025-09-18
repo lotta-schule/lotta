@@ -462,7 +462,6 @@ defmodule Lotta.Storage do
     end
   catch
     error ->
-      Sentry.capture_exception(error)
       Logger.error("Failed to get file conversion: #{inspect(error)}")
       {:error, "An unexpected error occurred"}
   end
