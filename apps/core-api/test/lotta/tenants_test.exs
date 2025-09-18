@@ -150,7 +150,11 @@ defmodule Lotta.TenantsTest do
         assert %{title: "Eduplaces School", slug: "eduplaces", prefix: prefix} = tenant
         assert prefix == "tenant_#{tenant.id}"
 
-        assert_called(Lotta.Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{id: "eduplaces-user-123"}))
+        assert_called(
+          Lotta.Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{
+            id: "eduplaces-user-123"
+          })
+        )
       end
     end
 
@@ -166,6 +170,122 @@ defmodule Lotta.TenantsTest do
       }
 
       assert {:error, _} = Tenants.create_tenant(tenant, user)
+    end
+  end
+
+  describe "Tenant.generate_slug/1" do
+    test "generates slug from title with lowercase and dashes" do
+      assert Tenant.generate_slug("My Cool School") == "my-cool-school"
+    end
+
+    test "replaces special characters with dashes" do
+      assert Tenant.generate_slug("Schüle für Künste & Wissenschaft!") ==
+               "sch-le-f-r-k-nste-wissenschaft"
+    end
+
+    test "handles German umlauts and special characters" do
+      assert Tenant.generate_slug("Schule für Überlegene Bildung") ==
+               "schule-f-r-berlegene-bildung"
+    end
+
+    test "removes leading and trailing dashes" do
+      assert Tenant.generate_slug("!!!My School!!!") == "my-school"
+      assert Tenant.generate_slug("   School   ") == "school"
+    end
+
+    test "handles multiple consecutive special characters" do
+      assert Tenant.generate_slug("My---Cool___School") == "my-cool-school"
+    end
+
+    test "handles numbers in title" do
+      assert Tenant.generate_slug("School 123") == "school-123"
+      assert Tenant.generate_slug("42 Academy") == "42-academy"
+    end
+
+    test "handles empty string" do
+      assert Tenant.generate_slug("") == ""
+    end
+
+    test "handles string with only special characters" do
+      assert Tenant.generate_slug("!!!@@@###") == ""
+    end
+
+    test "finds available slug when base slug is occupied" do
+      import Mock
+
+      # Mock slug_available? to return false for "test" and true for "test-2"
+      with_mock(Tenants, [:passthrough],
+        slug_available?: fn
+          "test" -> false
+          "test-2" -> true
+          _ -> true
+        end
+      ) do
+        assert Tenant.generate_slug("Test") == "test-2"
+      end
+    end
+
+    test "increments suffix until available slug is found" do
+      import Mock
+
+      # Mock slug_available? to return false for "school" through "school-5", true for "school-6"
+      with_mock(Tenants, [:passthrough],
+        slug_available?: fn
+          "school" -> false
+          "school-2" -> false
+          "school-3" -> false
+          "school-4" -> false
+          "school-5" -> false
+          "school-6" -> true
+          _ -> true
+        end
+      ) do
+        assert Tenant.generate_slug("School") == "school-6"
+      end
+    end
+
+    test "returns nil when no available slug found within 1000 attempts" do
+      import Mock
+
+      # Mock slug_available? to always return false
+      with_mock(Tenants, [:passthrough], slug_available?: fn _ -> false end) do
+        assert Tenant.generate_slug("School") == nil
+      end
+    end
+
+    test "returns base slug when it's available" do
+      import Mock
+
+      # Mock slug_available? to return true for any slug
+      with_mock(Tenants, [:passthrough], slug_available?: fn _ -> true end) do
+        assert Tenant.generate_slug("Available School") == "available-school"
+      end
+    end
+
+    test "handles complex real-world school names" do
+      import Mock
+
+      with_mock(Tenants, [:passthrough], slug_available?: fn _ -> true end) do
+        assert Tenant.generate_slug("Gymnasium St. Maria-Magdalena") ==
+                 "gymnasium-st-maria-magdalena"
+
+        assert Tenant.generate_slug("École Française de Berlin") == "cole-fran-aise-de-berlin"
+        # Chinese characters get removed
+        assert Tenant.generate_slug("北京第一中学") == ""
+        # Cyrillic gets removed, numbers stay
+        assert Tenant.generate_slug("Школа №42") == "42"
+      end
+    end
+
+    test "handles very long titles" do
+      import Mock
+
+      with_mock(Tenants, [:passthrough], slug_available?: fn _ -> true end) do
+        long_title = String.duplicate("Very Long School Name ", 10)
+        slug = Tenant.generate_slug(long_title)
+        assert slug == String.duplicate("very-long-school-name-", 9) <> "very-long-school-name"
+        assert String.length(slug) > 200
+      end
     end
   end
 end

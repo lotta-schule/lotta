@@ -20,7 +20,8 @@ defmodule LottaWeb.SetupController do
       _ ->
         conn
         |> put_status(:not_found)
-        |> render(LottaWeb.OAuthHTML, :not_found,
+        |> put_view(LottaWeb.OAuthHTML)
+        |> render(:not_found,
           title: gettext("Tenant not found"),
           message: gettext("The requested tenant does not exist.")
         )
