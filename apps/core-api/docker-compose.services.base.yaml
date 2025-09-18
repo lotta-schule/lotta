@@ -31,6 +31,7 @@ services:
       MINIO_ROOT_USER: AKIAIOSFODNN7EXAMPLE
       MINIO_ROOT_PASSWORD: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
       MINIO_DEFAULT_BUCKETS: 'lotta-dev-ugc:s3:*'
+    user: root
     healthcheck:
       test:
         [
