@@ -95,7 +95,7 @@ jobs:
           -e POSTGRES_USER=lotta
           -e POSTGRES_PASSWORD=lotta
       redis:
-        image: bitnami/redis:latest
+        image: bitnamilegacy/redis:latest
         ports:
           - 6379:6379
         options: >-
