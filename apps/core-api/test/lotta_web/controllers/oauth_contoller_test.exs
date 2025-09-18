@@ -1,5 +1,5 @@
 defmodule LottaWeb.OAuthControllerTest do
-  use LottaWeb.ConnCase, async: true
+  use LottaWeb.ConnCase
 
   import Mock
   import Plug.Conn

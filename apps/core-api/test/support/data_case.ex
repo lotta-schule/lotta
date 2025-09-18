@@ -25,8 +25,14 @@ defmodule Lotta.DataCase do
     end
   end
 
-  setup _tags do
+  setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Lotta.Repo)
+
+    if tags[:async] != true do
+      Ecto.Adapters.SQL.Sandbox.mode(Lotta.Repo, {:shared, self()})
+    end
+
+    :ok
   end
 
   @doc """

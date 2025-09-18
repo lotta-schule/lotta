@@ -1,5 +1,5 @@
 defmodule Lotta.Eduplaces.IDMTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   import Mock
   import Tesla.Mock
 

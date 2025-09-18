@@ -4,7 +4,7 @@ defmodule LottaWeb.OAuthController do
   alias Lotta.{Accounts, Tenants}
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
-  alias Lotta.Eduplaces.{AuthCodeStrategy, IDM, UserInfo}
+  alias Lotta.Eduplaces.{AuthCodeStrategy, UserInfo}
   alias LottaWeb.Urls
   alias LottaWeb.Auth.AccessToken
 

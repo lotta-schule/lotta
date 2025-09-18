@@ -1,7 +1,7 @@
 defmodule Lotta.AnalyticsTest do
   @moduledoc false
 
-  use Lotta.DataCase, async: true
+  use Lotta.DataCase
 
   alias Lotta.Analytics
   alias Lotta.Tenants

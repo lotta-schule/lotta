@@ -1,7 +1,7 @@
 defmodule Lotta.StorageTest do
   @moduledoc false
 
-  use Lotta.WorkerCase, async: true
+  use Lotta.WorkerCase
 
   alias Lotta.Accounts.User
   alias Lotta.{Fixtures, Repo, Storage, Tenants}
