@@ -29,7 +29,6 @@ defmodule LottaWeb.ConnCase do
     end
   end
 
-  # TODO: This should probably better not be ignored
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Lotta.Repo)
 

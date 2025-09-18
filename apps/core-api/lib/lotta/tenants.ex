@@ -155,33 +155,7 @@ defmodule Lotta.Tenants do
       TenantDbManager.create_tenant_database_schema(tenant)
     end)
     |> Multi.run(:user, fn _repo, %{tenant: tenant, user_params: user_params} ->
-      register_user = fn ->
-        case user_params do
-          %{eduplaces_id: eduplaces_id}
-          when not is_nil(eduplaces_id) and byte_size(eduplaces_id) > 0 ->
-            Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{id: eduplaces_id})
-
-          %{email: email} when not is_nil(email) and byte_size(email) > 0 ->
-            Accounts.register_user_by_mail(tenant, user_params)
-
-          _ ->
-            {:error, "Either email or eduplaces_id must be set for the user"}
-        end
-      end
-
-      with {:ok, user} <- register_user.() do
-        user
-        |> User.update_changeset(%{
-          groups: [
-            %UserGroup{
-              name: "Administrator",
-              sort_key: 0,
-              is_admin_group: true
-            }
-          ]
-        })
-        |> Repo.update(prefix: tenant.prefix)
-      end
+      register_and_setup_admin_user(tenant, user_params)
     end)
     |> Repo.transaction()
     |> case do
@@ -202,6 +176,38 @@ defmodule Lotta.Tenants do
             else: "#{failed_operation}: #{failed_value}"
 
         {:error, message}
+    end
+  end
+
+  @spec register_and_setup_admin_user(Tenant.t(), map()) :: {:ok, User.t()} | {:error, term()}
+  defp register_and_setup_admin_user(tenant, user_params) do
+    with {:ok, user} <- register_user_for_tenant(user_params, tenant) do
+      user
+      |> User.update_changeset(%{
+        groups: [
+          %UserGroup{
+            name: "Administrator",
+            sort_key: 0,
+            is_admin_group: true
+          }
+        ]
+      })
+      |> Repo.update(prefix: tenant.prefix)
+    end
+  end
+
+  @spec register_user_for_tenant(map(), Tenant.t()) :: {:ok, User.t()} | {:error, term()}
+  defp register_user_for_tenant(user_params, tenant) do
+    case user_params do
+      %{eduplaces_id: eduplaces_id}
+      when not is_nil(eduplaces_id) and byte_size(eduplaces_id) > 0 ->
+        Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{id: eduplaces_id})
+
+      %{email: email} when not is_nil(email) and byte_size(email) > 0 ->
+        Accounts.register_user_by_mail(tenant, user_params)
+
+      _ ->
+        {:error, "Either email or eduplaces_id must be set for the user"}
     end
   end
 
