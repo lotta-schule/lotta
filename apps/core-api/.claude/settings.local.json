@@ -1,8 +1,6 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(mix test:*)"
-    ],
+    "allow": ["Bash(mix test:*)", "Bash(mix credo:*)"],
     "deny": [],
     "ask": []
   }

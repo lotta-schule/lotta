@@ -1,4 +1,3 @@
-import { resolve } from 'node:path';
 import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
@@ -9,23 +8,6 @@ const config: StorybookConfig = {
     '@storybook/addon-interactions',
     '@storybook/addon-links',
     '@storybook/addon-themes',
-    {
-      name: '@storybook/addon-storysource',
-      options: {
-        rule: {
-          test: [/\.stories\.tsx?$/],
-          include: [resolve(import.meta.dirname, '../src')],
-        },
-        loaderOptions: {
-          prettierConfig: {
-            printWidth: 80,
-            singleQuote: true,
-            semi: true,
-            trailingComma: 'all',
-          },
-        },
-      },
-    },
     '@lotta-schule/storybook-addon-theme',
   ],
   framework: {
