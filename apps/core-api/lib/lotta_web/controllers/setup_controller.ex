@@ -13,7 +13,7 @@ defmodule LottaWeb.SetupController do
         conn
         |> render(:status)
 
-      %Tenant{state: state} = tenant when state in [:active, :disabled] ->
+      %Tenant{state: state} = tenant when state in [:active, :readonly] ->
         conn
         |> redirect(external: Urls.get_tenant_url(tenant))
 

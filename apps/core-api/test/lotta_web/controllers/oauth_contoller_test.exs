@@ -9,7 +9,7 @@ defmodule LottaWeb.OAuthControllerTest do
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
   alias LottaWeb.Auth.AccessToken
-  alias Lotta.Eduplaces.{UserInfo, AuthCodeStrategy}
+  alias Lotta.Eduplaces.{UserInfo, AuthCodeStrategy, SchoolInfo}
 
   @prefix "tenant_test"
 
@@ -66,7 +66,7 @@ defmodule LottaWeb.OAuthControllerTest do
       conn: conn,
       tenant: tenant
     } do
-      user_info = %UserInfo{id: "user123", school: %{id: "school123"}}
+      user_info = %UserInfo{id: "user123", school: %SchoolInfo{id: "school123", name: "Test School", official_id: "TS123", schooling_level: "secondary"}}
 
       tenant
       |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
@@ -99,13 +99,13 @@ defmodule LottaWeb.OAuthControllerTest do
       end
     end
 
-    test "returns 404 when no tenant exists with this eduplaces_id", %{conn: conn} do
+    test "creates new tenant when no tenant exists with this eduplaces_id", %{conn: conn} do
       user_info = %UserInfo{
         id: "user123",
         username: "Hedwig",
         groups: [],
         role: :student,
-        school: %{id: "school123"}
+        school: %SchoolInfo{id: "school123", name: "Test School", official_id: "TS123", schooling_level: "secondary"}
       }
 
       with_mock(AuthCodeStrategy,
@@ -115,9 +115,10 @@ defmodule LottaWeb.OAuthControllerTest do
           conn
           |> put_req_cookie("ep_login_state", "valid_state")
           |> get("/auth/oauth/eduplaces/callback?state=valid_state")
-          |> fetch_cookies()
 
-        assert html_response(conn, 404) =~ "not registered"
+        # Should redirect to setup page with the new tenant's slug
+        redirect_path = redirected_to(conn)
+        assert redirect_path =~ "/setup/test-school/status"
       end
     end
 
@@ -130,7 +131,7 @@ defmodule LottaWeb.OAuthControllerTest do
         username: "Hedwig",
         groups: [],
         role: :student,
-        school: %{id: "school123"}
+        school: %SchoolInfo{id: "school123", name: "Test School", official_id: "TS123", schooling_level: "secondary"}
       }
 
       tenant

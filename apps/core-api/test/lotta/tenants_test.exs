@@ -92,5 +92,80 @@ defmodule Lotta.TenantsTest do
 
       assert is_nil(Tenants.get_tenant(tenant.id))
     end
+
+    test "slug_available?/1 returns false for occupied slugs" do
+      assert Tenants.slug_available?("test") == false
+    end
+
+    test "slug_available?/1 returns false for reserved slugs" do
+      assert Tenants.slug_available?("admin") == false
+      assert Tenants.slug_available?("api") == false
+      assert Tenants.slug_available?("www") == false
+    end
+
+    test "slug_available?/1 returns true for available slugs" do
+      assert Tenants.slug_available?("available-slug") == true
+    end
+
+    test "get_occupied_slugs/0 returns list of occupied slugs" do
+      occupied_slugs = Tenants.get_occupied_slugs()
+      assert "test" in occupied_slugs
+    end
+
+    test "get_reserved_slugs/0 returns list of reserved slugs" do
+      reserved_slugs = Tenants.get_reserved_slugs()
+      assert "admin" in reserved_slugs
+      assert "api" in reserved_slugs
+      assert "www" in reserved_slugs
+    end
+
+    @tag creates_tenant: true
+    test "should create a new tenant with eduplaces user" do
+      import Mock
+
+      tenant = %Tenant{
+        title: "Eduplaces School",
+        slug: "eduplaces"
+      }
+
+      user = %User{
+        eduplaces_id: "eduplaces-user-123"
+      }
+
+      with_mock(Lotta.Accounts,
+        register_eduplaces_user: fn tenant, _user_info ->
+          {:ok,
+           %User{
+             id: 999,
+             name: "Test User",
+             email: "test@eduplaces.com",
+             eduplaces_id: "eduplaces-user-123",
+             groups: []
+           }
+           |> Repo.insert!(prefix: tenant.prefix)}
+        end
+      ) do
+        assert {:ok, tenant} = Tenants.create_tenant(tenant, user)
+
+        assert %{title: "Eduplaces School", slug: "eduplaces", prefix: prefix} = tenant
+        assert prefix == "tenant_#{tenant.id}"
+
+        assert_called(Lotta.Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{id: "eduplaces-user-123"}))
+      end
+    end
+
+    @tag creates_tenant: true
+    test "should fail to create tenant when neither email nor eduplaces_id is provided" do
+      tenant = %Tenant{
+        title: "Invalid User Tenant",
+        slug: "invalid"
+      }
+
+      user = %User{
+        name: "Test User"
+      }
+
+      assert {:error, _} = Tenants.create_tenant(tenant, user)
+    end
   end
 end

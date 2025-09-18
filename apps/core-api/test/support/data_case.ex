@@ -25,7 +25,8 @@ defmodule Lotta.DataCase do
     end
   end
 
-  setup tags do
+  # TODO: This should probably better not be ignored
+  setup _tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Lotta.Repo)
   end
 

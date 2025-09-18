@@ -27,9 +27,9 @@ defmodule Lotta.Worker.Tenant do
           %{
             "type" => "setup",
             "id" => tenant_id,
-            "user_email" => email,
+            "user_email" => _email,
             "user_password" => password,
-            "eduplaces_id" => eduplaces_id
+            "eduplaces_id" => _eduplaces_id
           } = args
       }) do
     tenant = Tenants.get_tenant(tenant_id) || raise "Tenant not found"
