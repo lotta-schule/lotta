@@ -66,7 +66,18 @@ defmodule LottaWeb.OAuthControllerTest do
       conn: conn,
       tenant: tenant
     } do
-      user_info = %UserInfo{id: "user123", school: %SchoolInfo{id: "school123", name: "Test School", official_id: "TS123", schooling_level: "secondary"}}
+      user_info = %UserInfo{
+        id: "user123",
+        username: "Teacher User",
+        groups: [],
+        role: :teacher,
+        school: %SchoolInfo{
+          id: "school123",
+          name: "Test School",
+          official_id: "TS123",
+          schooling_level: "secondary"
+        }
+      }
 
       tenant
       |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
@@ -105,7 +116,12 @@ defmodule LottaWeb.OAuthControllerTest do
         username: "Hedwig",
         groups: [],
         role: :student,
-        school: %SchoolInfo{id: "school123", name: "Test School", official_id: "TS123", schooling_level: "secondary"}
+        school: %SchoolInfo{
+          id: "school123",
+          name: "Test School",
+          official_id: "TS123",
+          schooling_level: "secondary"
+        }
       }
 
       with_mock(AuthCodeStrategy,
@@ -130,8 +146,13 @@ defmodule LottaWeb.OAuthControllerTest do
         id: "user991564",
         username: "Hedwig",
         groups: [],
-        role: :student,
-        school: %SchoolInfo{id: "school123", name: "Test School", official_id: "TS123", schooling_level: "secondary"}
+        role: :teacher,
+        school: %SchoolInfo{
+          id: "school123",
+          name: "Test School",
+          official_id: "TS123",
+          schooling_level: "secondary"
+        }
       }
 
       tenant
@@ -165,6 +186,37 @@ defmodule LottaWeb.OAuthControllerTest do
                  )
 
         assert user.id == String.to_integer(user_id)
+      end
+    end
+
+    test "returns forbidden error when user is not a teacher", %{conn: conn, tenant: tenant} do
+      user_info = %UserInfo{
+        id: "user123",
+        username: "Student User",
+        groups: [],
+        role: :student,
+        school: %SchoolInfo{
+          id: "school123",
+          name: "Test School",
+          official_id: "TS123",
+          schooling_level: "secondary"
+        }
+      }
+
+      tenant
+      |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
+      |> Repo.update!()
+
+      with_mock(AuthCodeStrategy,
+        get_token!: fn _params -> {"token", user_info} end
+      ) do
+        conn =
+          conn
+          |> put_req_cookie("ep_login_state", "valid_state")
+          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+
+        assert html_response(conn, 403) =~ "Access denied"
+        assert html_response(conn, 403) =~ "Only a teacher is allowed to setup lotta for a school"
       end
     end
   end

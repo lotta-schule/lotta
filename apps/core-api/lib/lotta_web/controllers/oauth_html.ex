@@ -31,4 +31,16 @@ defmodule LottaWeb.OAuthHTML do
     />
     """
   end
+
+  def forbidden(assigns) do
+    ~H"""
+    <LottaWeb.ErrorHTML.fullsize_error title={@title} message={@message} image="server_error" />
+    """
+  end
+
+  def server_error(assigns) do
+    ~H"""
+    <LottaWeb.ErrorHTML.fullsize_error title={@title} message={@message} image="server_error" />
+    """
+  end
 end

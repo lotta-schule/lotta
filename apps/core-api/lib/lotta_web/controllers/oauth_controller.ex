@@ -73,6 +73,18 @@ defmodule LottaWeb.OAuthController do
           conn
           |> redirect(external: target_uri)
         else
+          {:error, :not_a_teacher} ->
+            conn
+            |> put_status(:forbidden)
+            |> render(:forbidden,
+              title: gettext("Access denied"),
+              message:
+                gettext("""
+                  Only a teacher is allowed to setup lotta for a school.
+                  Contact a teacher at your school to proceed, we will be happy to help.
+                """)
+            )
+
           {:error, _} when is_struct(user, UserInfo) ->
             tenant = %Tenant{
               title: user.school.name,
@@ -187,8 +199,11 @@ defmodule LottaWeb.OAuthController do
     end
   end
 
+  @spec get_or_create_user_from_eduplaces_userinfo(UserInfo.t()) ::
+          {:ok, {Tenant.t(), User.t()}}
+          | {:error, :tenant_not_found | :invalid_user_info | :not_a_teacher, String.t()}
   defp get_or_create_user_from_eduplaces_userinfo(
-         %UserInfo{id: eduplaces_id, school: %{id: eduplaces_school_id}} = user_info
+         %UserInfo{id: eduplaces_id, role: role, school: %{id: eduplaces_school_id}} = user_info
        ) do
     tenant = Tenants.get_tenant_by_eduplaces_id(eduplaces_school_id)
 
@@ -202,6 +217,9 @@ defmodule LottaWeb.OAuthController do
 
       is_nil(eduplaces_id) ->
         {:error, :invalid_user_info}
+
+      role != :teacher ->
+        {:error, :not_a_teacher}
 
       true ->
         Accounts.get_or_create_eduplaces_user(tenant, user_info)

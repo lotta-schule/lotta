@@ -4,17 +4,16 @@ defmodule Lotta.Eduplaces.IDMTest do
   import Tesla.Mock
 
   alias Lotta.Eduplaces.IDM
-  alias OAuth2.{Client, Response}
 
   describe "IDM module integration tests" do
     test "get/1 returns parsed JSON response on 200 status" do
-      mock_response = %Response{
+      mock_response = %OAuth2.Response{
         status_code: 200,
         body: ~s({"id": "123", "name": "Test User"})
       }
 
       with_mock(Lotta.Eduplaces.ClientCredentialStrategy,
-        client: fn -> %Client{} end
+        client: fn -> %OAuth2.Client{} end
       ) do
         with_mock(OAuth2.Client,
           get: fn _client, _path -> {:ok, mock_response} end
@@ -25,13 +24,13 @@ defmodule Lotta.Eduplaces.IDMTest do
     end
 
     test "get/1 returns error on non-200 status" do
-      mock_response = %Response{
+      mock_response = %OAuth2.Response{
         status_code: 404,
         body: "Not Found"
       }
 
       with_mock(Lotta.Eduplaces.ClientCredentialStrategy,
-        client: fn -> %Client{} end
+        client: fn -> %OAuth2.Client{} end
       ) do
         with_mock(OAuth2.Client,
           get: fn _client, _path -> {:ok, mock_response} end
@@ -43,7 +42,7 @@ defmodule Lotta.Eduplaces.IDMTest do
 
     test "get/1 returns error when OAuth2 client fails" do
       with_mock(Lotta.Eduplaces.ClientCredentialStrategy,
-        client: fn -> %Client{} end
+        client: fn -> %OAuth2.Client{} end
       ) do
         with_mock(OAuth2.Client,
           get: fn _client, _path -> {:error, :timeout} end
@@ -54,13 +53,13 @@ defmodule Lotta.Eduplaces.IDMTest do
     end
 
     test "get/1 returns error when JSON parsing fails" do
-      mock_response = %Response{
+      mock_response = %OAuth2.Response{
         status_code: 200,
         body: "invalid json"
       }
 
       with_mock(Lotta.Eduplaces.ClientCredentialStrategy,
-        client: fn -> %Client{} end
+        client: fn -> %OAuth2.Client{} end
       ) do
         with_mock(OAuth2.Client,
           get: fn _client, _path -> {:ok, mock_response} end
