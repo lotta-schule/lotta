@@ -120,7 +120,7 @@ describe('shared/dialog/LoginDialog', () => {
         expect(screen.queryByRole('button', { name: /eduplaces/i })).toBeNull();
       });
 
-      it('should render the Eduplaces login button', () => {
+      it('should render the Eduplaces login button when tenant has eduplacesId', () => {
         const screen = render(
           <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
           {},
