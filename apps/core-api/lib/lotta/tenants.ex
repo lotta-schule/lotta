@@ -123,9 +123,7 @@ defmodule Lotta.Tenants do
   @spec create_tenant(tenant :: Tenant.empty(), user :: User.empty()) ::
           {:ok, Tenant.t()} | {:error, Ecto.Changese.t()} | {:error, String.t()}
   def create_tenant(tenant, user) do
-    IO.inspect({tenant, user}, label: "create_tenant")
-
-    with {:ok, tenant, user} <- IO.inspect(setup_tenant(tenant, user), label: "setup_tenant"),
+    with {:ok, tenant, user} <- setup_tenant(tenant, user),
          {:ok, _job} <- Lotta.Worker.Tenant.setup_default_content(tenant, user) do
       {:ok, tenant}
     else
@@ -185,7 +183,6 @@ defmodule Lotta.Tenants do
         |> Repo.update(prefix: tenant.prefix)
       end
     end)
-    |> IO.inspect(label: "Creating tenant #{tenant_params.slug}")
     |> Repo.transaction()
     |> case do
       {:ok, %{tenant: tenant, user: user}} ->

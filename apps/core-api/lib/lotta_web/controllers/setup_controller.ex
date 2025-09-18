@@ -8,7 +8,7 @@ defmodule LottaWeb.SetupController do
   require Logger
 
   def status(conn, %{"slug" => slug}) do
-    case IO.inspect(Tenants.get_tenant_by_slug(slug)) do
+    case Tenants.get_tenant_by_slug(slug) do
       %Tenant{state: :init} ->
         conn
         |> render(:status)

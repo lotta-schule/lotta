@@ -35,7 +35,7 @@ defmodule Lotta.Worker.Tenant do
     tenant = Tenants.get_tenant(tenant_id) || raise "Tenant not found"
 
     where_clause =
-      case IO.inspect(args) do
+      case args do
         %{"eduplaces_id" => eduplaces_id}
         when not is_nil(eduplaces_id) and byte_size(eduplaces_id) > 0 ->
           [eduplaces_id: eduplaces_id]

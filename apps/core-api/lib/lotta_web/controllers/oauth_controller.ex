@@ -74,8 +74,6 @@ defmodule LottaWeb.OAuthController do
           |> redirect(external: target_uri)
         else
           {:error, _} when is_struct(user, UserInfo) ->
-            IO.inspect(user, label: "User info")
-
             tenant = %Tenant{
               title: user.school.name,
               eduplaces_id: user.school.id
