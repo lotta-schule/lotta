@@ -22,6 +22,13 @@ defmodule LottaWeb.FallbackController do
     |> render(:"404")
   end
 
+  def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: LottaWeb.ChangesetJSON, html: LottaWeb.ErrorHTML)
+    |> render(:error, changeset: changeset)
+  end
+
   def call(conn, error) when is_exception(error) do
     conn
     |> put_status(:internal_server_error)

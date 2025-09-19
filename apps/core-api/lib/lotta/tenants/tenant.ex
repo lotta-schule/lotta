@@ -102,7 +102,7 @@ defmodule Lotta.Tenants.Tenant do
   defp maybe_gen_slug(changeset) do
     case get_field(changeset, :slug) do
       nil ->
-        title = get_field(changeset, :title, "")
+        title = get_field(changeset, :title) || ""
 
         slug =
           title |> String.downcase() |> String.replace(~r/[^a-z0-9]+/u, "-") |> String.trim("-")

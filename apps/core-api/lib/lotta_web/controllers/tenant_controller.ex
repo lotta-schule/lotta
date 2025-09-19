@@ -31,14 +31,27 @@ defmodule LottaWeb.TenantController do
     end
   end
 
-  def delete_tenant(conn, %{"tenant" => %{"id" => tenant_id}}) do
-    tenant = Tenants.get_tenant(tenant_id)
+  def delete_tenant(conn, %{"tenant" => %{"id" => tenant_id}})
+      when is_integer(tenant_id) or is_binary(tenant_id) do
+    case Tenants.get_tenant(tenant_id) do
+      nil ->
+        {:error, :not_found}
 
-    with :ok <- Analytics.delete_site(tenant),
-         {:ok, tenant} <- Tenants.delete_tenant(tenant) do
-      conn
-      |> render(:deleted, tenant: tenant)
+      tenant ->
+        with :ok <- Analytics.delete_site(tenant),
+             {:ok, tenant} <- Tenants.delete_tenant(tenant) do
+          conn
+          |> render(:deleted, tenant: tenant)
+        end
     end
+  end
+
+  def delete_tenant(_conn, %{"tenant" => _tenant_params}) do
+    {:error, :bad_request}
+  end
+
+  def delete_tenant(_conn, _params) do
+    {:error, :bad_request}
   end
 
   def list_user_tenants(conn, args) do
