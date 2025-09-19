@@ -1,7 +1,5 @@
 const mailEndpoint = `${process.env.CORE_URL}/_debug/mails/api`;
 
-const WAIT_TIME_MS = 500;
-
 export type BambooMailSubject = [name: string, email: string];
 
 export type BambooMail = {
@@ -26,13 +24,29 @@ export const resetSentMails = async () => {
 };
 
 export const getSentMails = async (): Promise<BambooMail[]> => {
-  // Wait a bit to ensure mails are processed
-  await new Promise((resolve) => setTimeout(resolve, WAIT_TIME_MS));
   const res = await fetch(mailEndpoint + '/emails.json');
   if (!res.ok) {
     throw new Error('Failed to fetch sent emails. Status Code: ' + res.status);
   }
   return await res.json();
+};
+
+export const waitForSentMail = async (
+  filter: (mail: BambooMail) => boolean,
+  { timeout = 5000, interval = 500 } = {}
+) => {
+  const start = Date.now();
+  while (true) {
+    const mails = await getSentMails();
+    const mail = mails.find(filter);
+    if (mail) {
+      return mail;
+    }
+    if (Date.now() - start > timeout) {
+      throw new Error('Timed out waiting for email');
+    }
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
 };
 
 export const getLastMail = async () => {
