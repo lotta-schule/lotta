@@ -1,5 +1,7 @@
 const mailEndpoint = `${process.env.CORE_URL}/_debug/mails/api`;
 
+const WAIT_TIME_MS = 500;
+
 export type BambooMailSubject = [name: string, email: string];
 
 export type BambooMail = {
@@ -24,6 +26,8 @@ export const resetSentMails = async () => {
 };
 
 export const getSentMails = async (): Promise<BambooMail[]> => {
+  // Wait a bit to ensure mails are processed
+  await new Promise((resolve) => setTimeout(resolve, WAIT_TIME_MS));
   const res = await fetch(mailEndpoint + '/emails.json');
   if (!res.ok) {
     throw new Error('Failed to fetch sent emails. Status Code: ' + res.status);
