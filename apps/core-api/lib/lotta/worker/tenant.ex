@@ -60,8 +60,13 @@ defmodule Lotta.Worker.Tenant do
         id: _job_id,
         args: %{"type" => "init_analytics", "id" => tenant_id}
       }) do
-    with {:ok, tenant} <- Tenants.get_tenant(tenant_id) do
-      Analytics.create_site(tenant)
+    case Tenants.get_tenant(tenant_id) do
+      nil ->
+        Logger.error("Tenant with ID #{tenant_id} not found for analytics setup")
+        :error
+
+      tenant ->
+        Analytics.create_site(tenant)
     end
   end
 
@@ -115,7 +120,7 @@ defmodule Lotta.Worker.Tenant do
   end
 
   @spec delete_analytics(Tenant.t()) ::
-          {:ok, Oban.Job.t()} | {:error, String.t()}
+          {:ok, Oban.Job.t()} | {:error, Oban.Job.changeset() | String.t()}
   def delete_analytics(%{site_id: site_id}) do
     __MODULE__.new(%{
       "type" => "delete_analytics",
