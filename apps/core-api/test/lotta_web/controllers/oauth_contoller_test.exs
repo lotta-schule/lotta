@@ -2,7 +2,6 @@ defmodule LottaWeb.OAuthControllerTest do
   use LottaWeb.ConnCase
 
   import Mock
-  import Tesla.Mock
   import Plug.Conn
   import Lotta.Fixtures
 
