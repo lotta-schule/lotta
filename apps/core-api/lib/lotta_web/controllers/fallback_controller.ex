@@ -1,6 +1,8 @@
 defmodule LottaWeb.FallbackController do
   use LottaWeb, :controller
 
+  require Logger
+
   def call(conn, {:error, :bad_request}) do
     conn
     |> put_status(:bad_request)
@@ -27,6 +29,15 @@ defmodule LottaWeb.FallbackController do
     |> put_status(:unprocessable_entity)
     |> put_view(json: LottaWeb.ChangesetJSON, html: LottaWeb.ErrorHTML)
     |> render(:error, changeset: changeset)
+  end
+
+  def call(conn, {:error, message}) when is_binary(message) do
+    Logger.error("Error: #{message}")
+
+    conn
+    |> put_status(:internal_server_error)
+    |> put_view(json: LottaWeb.ErrorJSON, html: LottaWeb.ErrorHTML)
+    |> render(:"500")
   end
 
   def call(conn, error) when is_exception(error) do

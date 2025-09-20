@@ -38,6 +38,16 @@ defmodule LottaWeb.FallbackControllerTest do
       assert result.status == 404
     end
 
+    test "handles {:error, message} with binary message" do
+      conn =
+        build_conn()
+        |> Map.put(:params, %{"_format" => "json"})
+
+      result = FallbackController.call(conn, {:error, "Custom error message"})
+
+      assert result.status == 500
+    end
+
     test "handles exception errors" do
       conn =
         build_conn()
