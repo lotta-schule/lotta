@@ -81,6 +81,11 @@ defmodule LottaWeb.TenantControllerTest do
 
   describe "Create test tenant" do
     test "creates a test tenant with valid parameters" do
+      mock(fn
+        %{method: :post, url: url} when is_binary(url) ->
+          %Tesla.Env{status: 200, body: %{}}
+      end)
+
       tenant_params = %{
         "title" => "Test School",
         "slug" => "test-school"
@@ -108,6 +113,11 @@ defmodule LottaWeb.TenantControllerTest do
     end
 
     test "returns error when tenant parameters are invalid" do
+      mock(fn
+        %{method: :post, url: url} when is_binary(url) ->
+          %Tesla.Env{status: 200, body: %{}}
+      end)
+
       tenant_params = %{
         "title" => "",
         "slug" => ""
@@ -131,6 +141,11 @@ defmodule LottaWeb.TenantControllerTest do
     end
 
     test "returns error when user parameters are invalid" do
+      mock(fn
+        %{method: :post, url: url} when is_binary(url) ->
+          %Tesla.Env{status: 200, body: %{}}
+      end)
+
       tenant_params = %{
         "title" => "Test School",
         "slug" => "test-school-2"
@@ -154,6 +169,11 @@ defmodule LottaWeb.TenantControllerTest do
     end
 
     test "returns unauthorized when no authentication provided" do
+      mock(fn
+        %{method: :post, url: url} when is_binary(url) ->
+          %Tesla.Env{status: 200, body: %{}}
+      end)
+
       tenant_params = %{
         "title" => "Test School",
         "slug" => "test-school"
