@@ -38,8 +38,9 @@ defmodule LottaWeb.TenantController do
         {:error, :not_found}
 
       tenant ->
-        with :ok <- Analytics.delete_site(tenant),
-             {:ok, tenant} <- Tenants.delete_tenant(tenant) do
+        Analytics.delete_site(tenant)
+
+        with {:ok, tenant} <- Tenants.delete_tenant(tenant) do
           conn
           |> render(:deleted, tenant: tenant)
         end
