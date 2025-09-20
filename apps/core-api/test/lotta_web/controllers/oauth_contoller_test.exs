@@ -2,6 +2,7 @@ defmodule LottaWeb.OAuthControllerTest do
   use LottaWeb.ConnCase
 
   import Mock
+  import Tesla.Mock
   import Plug.Conn
   import Lotta.Fixtures
 
@@ -15,6 +16,14 @@ defmodule LottaWeb.OAuthControllerTest do
 
   setup ctx do
     tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+    setup do
+      Tesla.Mock.mock(fn
+        %{url: "https://plausible.io/" <> _rest} = env ->
+          %Tesla.Env{env | status: 200, body: "OK"}
+      end)
+      :ok
+    end
 
     {:ok, Map.merge(ctx, %{tenant: tenant})}
   end
