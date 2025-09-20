@@ -32,15 +32,17 @@ defmodule LottaWeb.Router do
   end
 
   scope "/auth" do
-    pipe_through(:browser)
-
     scope "/" do
+      pipe_through(:browser)
+
       pipe_through([:tenant, :auth])
 
       get("/callback", LottaWeb.OAuthController, :tenant_callback)
     end
 
     scope "/oauth" do
+      pipe_through(:browser)
+
       get("/:provider/login", LottaWeb.OAuthController, :login)
       get("/:provider/callback", LottaWeb.OAuthController, :callback)
       # provider param is ignored, as we get the provider from ?ssi query param
