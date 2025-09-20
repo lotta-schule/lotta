@@ -196,7 +196,9 @@
         width: 25px;
         height: 25px;
         min-height: 25px;
-
+        svg {
+          color: rgba(var(--lotta-primary-color), 0.5);
+        }
         &.active {
           svg {
             color: rgb(var(--lotta-primary-color));
