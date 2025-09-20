@@ -13,6 +13,15 @@ defmodule Lotta.Tenants.DefaultContentTest do
   alias Lotta.Storage.{File, Directory}
   alias Lotta.Accounts.Authentication
 
+  setup do
+    Tesla.Mock.mock(fn
+      %{url: "https://plausible.io/" <> _rest} = env ->
+        %Tesla.Env{env | status: 200, body: "OK"}
+    end)
+
+    :ok
+  end
+
   describe "default content" do
     test "should create a tenant with all the default content" do
       tenant = %Tenant{
