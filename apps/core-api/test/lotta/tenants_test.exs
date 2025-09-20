@@ -9,7 +9,7 @@ defmodule Lotta.TenantsTest do
 
   @prefix "tenant_test"
 
-  setup ctx do
+  setup do
     Tesla.Mock.mock(fn
       %{url: "https://plausible.io/" <> _rest} = env ->
         %Tesla.Env{env | status: 200, body: "OK"}
