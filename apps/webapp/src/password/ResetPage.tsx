@@ -1,6 +1,8 @@
+'use client';
+
 import * as React from 'react';
 import { Main } from 'layout';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Box, Button, ErrorMessage, Input, Label } from '@lotta-schule/hubert';
 import { useApolloClient, useMutation } from '@apollo/client';
 import Link from 'next/link';

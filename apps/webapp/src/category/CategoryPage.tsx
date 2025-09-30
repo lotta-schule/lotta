@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { ArticleModel, WidgetModel, ID, ArticleFilter } from 'model';
@@ -9,8 +11,9 @@ import { WidgetsList } from './widgetsList/WidgetsList';
 import { ArticlePreview } from 'article/preview';
 import { useCategory } from 'util/categories/useCategory';
 import { CategoryHead } from './CategoryHead';
-import { PREFETCH_COUNT } from 'pages/c/[slug]';
 import clsx from 'clsx';
+
+const PREFETCH_COUNT = 10;
 
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';

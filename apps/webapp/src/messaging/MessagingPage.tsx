@@ -1,8 +1,10 @@
+'use client';
+
 import * as React from 'react';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useIsMobile } from '@lotta-schule/hubert';
 import { useApolloClient } from '@apollo/client';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { LegacyHeader, Main, Sidebar } from 'layout';
 import { isBrowser } from 'util/isBrowser';
 import { ConversationModel } from 'model';

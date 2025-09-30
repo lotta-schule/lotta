@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Box } from '@lotta-schule/hubert';
 import { LegacyHeader, Main } from 'layout';

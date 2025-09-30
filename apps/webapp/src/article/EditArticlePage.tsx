@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { useMutation, useSubscription } from '@apollo/client';
 import { ArticleModel, ID } from 'model';
@@ -14,7 +16,7 @@ import { Article as ArticleUtil } from 'util/model/Article';
 import { useBeforeUnloadConfirmation } from 'util/useBeforeUnloadConfirmation';
 import { EditArticleFooter } from './editor/EditArticleFooter';
 import { Main } from 'layout';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import omit from 'lodash/omit';
 
 import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';
