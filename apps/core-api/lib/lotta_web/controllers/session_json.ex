@@ -1,4 +1,4 @@
-defmodule LottaWeb.TokenJSON do
+defmodule LottaWeb.SessionJSON do
   @moduledoc false
   use LottaWeb, :html
 

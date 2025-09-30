@@ -190,10 +190,9 @@ export const getApolloClient = ({
         '__typename'
       );
     }
-    const headers: Record<string, string> = {};
-    const token =
-      operation.getContext().authToken ??
-      (isBrowser() && localStorage.getItem('id'));
+    const headers: Record<string, string> =
+      operation.getContext().headers || {};
+    const token = operation.getContext().authToken;
     if (token) {
       headers['authorization'] = `Bearer ${token}`;
     }

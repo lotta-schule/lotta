@@ -20,7 +20,6 @@ export const ResetPage = () => {
       onCompleted: (data) => {
         if (data['resetPassword']) {
           apolloClient.resetStore();
-          localStorage.setItem('id', data['resetPassword'].accessToken);
           setData(data);
           router.replace('/');
         }

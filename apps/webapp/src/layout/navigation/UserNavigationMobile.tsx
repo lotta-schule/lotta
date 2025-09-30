@@ -18,7 +18,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ArticleModel } from 'model';
 import { User, Article } from 'util/model';
-import { useOnLogout } from 'util/user/useOnLogout';
 import { isMobileDrawerOpenVar } from 'api/apollo/cache';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
@@ -37,7 +36,6 @@ export const UserNavigationMobile = React.memo(() => {
   const currentUser = useCurrentUser();
   const newMessagesBadgeNumber = currentUser?.unreadMessages ?? 0;
   const newFeedbackBadgeNumber = useNewFeedbackCount();
-  const onLogout = useOnLogout();
 
   const { data: unpublishedArticlesData } = useQuery<{
     articles: ArticleModel[];
@@ -59,17 +57,16 @@ export const UserNavigationMobile = React.memo(() => {
       {!!currentUser && (
         <>
           <nav className={styles.root}>
-            <BaseButton
-              variant={'borderless'}
-              className={styles.button}
-              onClick={() => {
-                onLogout();
-              }}
-              data-testid="LogoutButton"
-            >
-              <Icon icon={faArrowRightFromBracket} size="xl" />
-              <span className={styles.label}>Abmelden</span>
-            </BaseButton>
+            <Link href="/auth/logout" passHref legacyBehavior>
+              <BaseButton
+                variant={'borderless'}
+                className={styles.button}
+                data-testid="LogoutButton"
+              >
+                <Icon icon={faArrowRightFromBracket} size="xl" />
+                <span className={styles.label}>Abmelden</span>
+              </BaseButton>
+            </Link>
             <BaseButton
               variant={'borderless'}
               className={styles.button}

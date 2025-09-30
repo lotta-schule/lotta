@@ -13,7 +13,6 @@ import { createAuthLink } from './links/authLink';
 import { createHttpLink } from './links/httpLink';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { sendRefreshRequest } from 'api/auth';
 
 export const createSSRClient = (
   tenant: Pick<TenantModel, 'id'>,
@@ -48,14 +47,6 @@ export const createSSRClient = (
         createErrorLink(),
         createAuthLink({
           initialToken: accessToken,
-          sendRefreshTokenRequest: async () => {
-            const res = await sendRefreshRequest({});
-
-            if (!res) {
-              throw new Error('Failed to refresh token');
-            }
-            return res.accessToken;
-          },
         }),
         // in a SSR environment, if you use multipart features like
         // @defer, you need to decide how to handle these.

@@ -30,14 +30,14 @@ const EditArticleRoute = ({
   const router = useRouter();
   const currentUser = useCurrentUser();
   const didWriteClient = React.useRef(false);
-  // eslint-disable-next-line react-compiler/react-compiler
+
   if (!didWriteClient.current) {
     getApolloClient().writeQuery({
       query: GetArticleQuery,
       variables: { id: article.id },
       data: { article },
     });
-    // eslint-disable-next-line react-compiler/react-compiler
+
     didWriteClient.current = true;
   }
 

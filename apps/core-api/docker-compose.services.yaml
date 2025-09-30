@@ -27,3 +27,15 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: db@lotta.schule
+      PGADMIN_DEFAULT_PASSWORD: lotta
+    volumes:
+      - /var/lib/pgadmin
+      - ./:/files
+    restart: always
+    ports:
+      - 8888:80

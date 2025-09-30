@@ -1,22 +1,8 @@
 import * as React from 'react';
-import { act, render, waitFor, within } from 'test/util';
+import { render } from 'test/util';
 import { LoginDialog } from './LoginDialog';
-import { SomeUser, tenant } from 'test/fixtures';
-import LoginMutation from 'api/mutation/LoginMutation.graphql';
+import { tenant } from 'test/fixtures';
 import userEvent from '@testing-library/user-event';
-
-const additionalMocks = [
-  {
-    request: {
-      query: LoginMutation,
-      variables: {
-        username: 'nutzer@email.de',
-        password: 'password',
-      },
-    },
-    result: { data: { login: { accessToken: 'abc' } } },
-  },
-];
 
 describe('shared/dialog/LoginDialog', () => {
   it('should not show the login dialog when isOpen is not true', () => {
@@ -40,71 +26,63 @@ describe('shared/dialog/LoginDialog', () => {
   });
 
   describe('fields', () => {
-    afterEach(() => {
-      vi.useRealTimers();
-    });
-
-    it('should send a complete login, then show a confirm message', async () => {
-      const fireEvent = userEvent.setup();
-      const onRequestClose = vi.fn();
+    it('should render a form with action /auth/login', () => {
       const screen = render(
-        <LoginDialog isOpen={true} onRequestClose={onRequestClose} />,
-        {},
-        { additionalMocks, currentUser: SomeUser }
-      );
-      await fireEvent.type(
-        screen.getByRole('textbox', { name: /e-mail/i }),
-        'nutzer@email.de'
-      );
-      await fireEvent.type(screen.getByLabelText(/passwort/i), 'password');
-
-      vi.useFakeTimers({ shouldAdvanceTime: true });
-
-      await fireEvent.click(
-        screen.getByRole('button', { name: /^anmelden$/i })
+        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+        {}
       );
 
-      await waitFor(() => {
-        expect(
-          within(
-            screen.getByRole('button', { name: /^anmelden$/i })
-          ).getByTestId('SuccessIcon')
-        ).toBeVisible();
-      });
-
-      await act(() => vi.advanceTimersByTimeAsync(2000));
-
-      await waitFor(() => {
-        expect(onRequestClose).toHaveBeenCalled();
-      });
+      const form = screen.getByRole('dialog').querySelector('form');
+      expect(form).toHaveAttribute('action', '/auth/login');
+      expect(form).toHaveAttribute('method', 'POST');
     });
 
-    it('should send a complete login, then show the password change dialog if the userAvatar logs in for the first time', async () => {
+    it('should have username and password fields with correct names', async () => {
       const fireEvent = userEvent.setup();
       const screen = render(
         <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
-        {},
-        {
-          additionalMocks,
-          currentUser: {
-            ...SomeUser,
-            hasChangedDefaultPassword: false,
-          },
-        }
+        {}
       );
-      await fireEvent.type(
-        screen.getByRole('textbox', { name: /e-mail/i }),
-        'nutzer@email.de'
+
+      const emailInput = screen.getByRole('textbox', { name: /e-mail/i });
+      const passwordInput = screen.getByLabelText(/passwort/i);
+
+      expect(emailInput).toHaveAttribute('name', 'username');
+      expect(passwordInput).toHaveAttribute('name', 'password');
+      expect(passwordInput).toHaveAttribute('type', 'password');
+
+      await fireEvent.type(emailInput, 'test@example.com');
+      await fireEvent.type(passwordInput, 'mypassword');
+
+      expect(emailInput).toHaveValue('test@example.com');
+      expect(passwordInput).toHaveValue('mypassword');
+    });
+
+    it('should have a hidden return_path field', () => {
+      const screen = render(
+        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+        {}
       );
-      await fireEvent.type(screen.getByLabelText(/passwort/i), 'password');
-      await fireEvent.click(
-        screen.getByRole('button', { name: /^anmelden$/i })
+
+      const returnPathInput = screen
+        .getByRole('dialog')
+        .querySelector('input[name="return_path"]');
+
+      expect(returnPathInput).toBeInTheDocument();
+      expect(returnPathInput).toHaveAttribute('type', 'hidden');
+    });
+
+    it('should have required fields', () => {
+      const screen = render(
+        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+        {}
       );
-      await waitFor(() => {
-        expect(
-          screen.queryByRole('heading', { name: /passwort ändern/i })
-        ).not.toBeNull();
-      });
+
+      const emailInput = screen.getByRole('textbox', { name: /e-mail/i });
+      const passwordInput = screen.getByLabelText(/passwort/i);
+
+      expect(emailInput).toBeRequired();
+      expect(passwordInput).toBeRequired();
     });
   });
 
@@ -114,7 +92,7 @@ describe('shared/dialog/LoginDialog', () => {
         const screen = render(
           <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
           {},
-          { additionalMocks }
+          {}
         );
 
         expect(screen.queryByRole('button', { name: /eduplaces/i })).toBeNull();
@@ -124,7 +102,7 @@ describe('shared/dialog/LoginDialog', () => {
         const screen = render(
           <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
           {},
-          { additionalMocks, tenant: { ...tenant, eduplacesId: '123' } }
+          { tenant: { ...tenant, eduplacesId: '123' } }
         );
 
         expect(

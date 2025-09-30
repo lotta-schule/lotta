@@ -7,7 +7,14 @@ defmodule LottaWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :lotta
   use Absinthe.Phoenix.Endpoint
 
-  plug(Plug.Telemetry, event_prefix: [:phoenix, :endpoint])
+  plug(Plug.Telemetry,
+    event_prefix: [:phoenix, :endpoint]
+  )
+
+  plug(LottaWeb.TenantPlug)
+  plug(:use_cookie_as_header)
+  plug(LottaWeb.Auth.Pipeline)
+  plug(LottaWeb.Context)
 
   socket("/api/user-socket", LottaWeb.UserSocket,
     websocket: [check_origin: false],
@@ -83,4 +90,29 @@ defmodule LottaWeb.Endpoint do
   )
 
   plug(LottaWeb.Router)
+
+  defp use_cookie_as_header(conn, _opts) do
+    conn =
+      conn
+      |> Plug.Conn.fetch_cookies()
+
+    cookie_access_token = conn.cookies["SignInAccessToken"]
+
+    header_access_token =
+      conn
+      |> Plug.Conn.get_req_header("authorization")
+      |> List.first()
+
+    cond do
+      is_nil(cookie_access_token) || byte_size(cookie_access_token) < 2 ->
+        conn
+
+      not is_nil(header_access_token) ->
+        conn
+
+      true ->
+        conn
+        |> Plug.Conn.put_req_header("authorization", "Bearer " <> cookie_access_token)
+    end
+  end
 end

@@ -245,7 +245,13 @@ RUN mix compile
 
 # Compress source code for sentry
 RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
-  mix sentry.package_source_code || (env && false)
+  /bin/sh -c '\
+    if [ -n "$SENTRY_AUTH_TOKEN" ]; then \
+      echo "Sentry auth token found, uploading source code..."; \
+      mix sentry.package_source_code \
+    else \
+      echo "No Sentry auth token found, skipping source code upload."; \
+    fi'
 
 # build release
 RUN mix release

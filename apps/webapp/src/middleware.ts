@@ -24,32 +24,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next({ request });
   }
 
-  const authInfo = {
+  let authInfo = {
     refreshToken: null as string | null,
     accessToken: request.cookies.get('SignInAccessToken')?.value ?? null,
   };
 
   const incomingRefreshToken = request.cookies.get('SignInRefreshToken')?.value;
-  const authHeader = request.headers.get('Authorization');
-
-  if (!authInfo.accessToken && authHeader?.startsWith('Bearer ')) {
-    const accessToken = authHeader.slice(7);
-
-    let accessTokenJwt = null;
-    try {
-      accessTokenJwt = JWT.parse(accessToken);
-    } catch (e) {
-      console.error('Error parsing access token', e);
-    }
-
-    if (!accessTokenJwt?.isValid()) {
-      console.warn('Access token is not valid!', accessTokenJwt);
-    } else if (accessTokenJwt.isExpired(0)) {
-      console.warn('Access token is expired!', accessTokenJwt);
-    } else {
-      authInfo.accessToken = accessToken;
-    }
-  }
 
   if (incomingRefreshToken) {
     let refreshTokenJwt = null;
@@ -59,16 +39,12 @@ export async function middleware(request: NextRequest) {
       console.error('Error parsing refresh token', e);
     }
 
-    if (
-      refreshTokenJwt?.isValid() &&
-      // we do not need to check if the refresh token is expired (or will expire in the next seconds)
-      !refreshTokenJwt.isExpired(0)
-    ) {
-      if (
-        // refresh the token if it expires in the next 5 minutes or if the access token is not set
+    if (refreshTokenJwt?.isValid() && !refreshTokenJwt.isExpired(0)) {
+      const shouldRefresh =
         refreshTokenJwt.body.expires.getTime() - Date.now() < 1000 * 60 * 5 ||
-        !authInfo.accessToken
-      ) {
+        !authInfo.accessToken;
+
+      if (shouldRefresh) {
         const updateRefreshTokenResult = await sendRefreshRequest({
           'x-lotta-originary-host': request.headers.get('host'),
           Cookie: serialize('SignInRefreshToken', incomingRefreshToken, {
@@ -80,27 +56,13 @@ export async function middleware(request: NextRequest) {
         });
 
         if (updateRefreshTokenResult) {
-          const { accessToken, refreshToken: updatedRefreshToken } =
-            updateRefreshTokenResult;
-
-          authInfo.refreshToken = updatedRefreshToken;
-          authInfo.accessToken = accessToken;
+          authInfo = {
+            refreshToken: updateRefreshTokenResult.refreshToken,
+            accessToken: updateRefreshTokenResult.accessToken,
+          };
         }
       } else {
         authInfo.refreshToken = incomingRefreshToken;
-      }
-    } else if (authHeader) {
-      console.warn('User does not have a refresh token');
-      const accessToken = authHeader.slice(7);
-      let accessTokenJwt = null;
-      try {
-        accessTokenJwt = JWT.parse(accessToken);
-      } catch (e) {
-        console.error('Error parsing access token', e);
-      }
-
-      if (accessTokenJwt?.isValid() && !accessTokenJwt.isExpired(0)) {
-        authInfo.accessToken = accessToken;
       }
     }
   }
@@ -122,14 +84,6 @@ export async function middleware(request: NextRequest) {
         path: '/',
       });
 
-      // TODO:
-      // I do not think saving the access token in a cookie is a good idea
-      // I think a better approach would be passing it along from server components to
-      // the Apollo client WITHOUT passing via a cookie
-      // We only want to set the access token cookie if a new access token was
-      // generated.
-      // This is the case when a new refresh token (authInfo.refreshToken !== null) was
-      // issued
       if (authInfo.accessToken) {
         const parsedAccessToken = JWT.parse(authInfo.accessToken);
         response.cookies.set('SignInAccessToken', authInfo.accessToken, {

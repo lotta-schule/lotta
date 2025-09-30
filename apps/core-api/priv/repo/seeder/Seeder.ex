@@ -68,11 +68,11 @@ defmodule Lotta.Repo.Seeder do
       Accounts.register_user_by_mail(tenant, %{
         name: "Alexis Rinaldoni",
         email: "alexis.rinaldoni@einsa.net",
-        password: "test123"
+        password: "password"
       })
 
     lotta_admin
-    |> User.update_password_changeset("test123")
+    |> User.update_password_changeset("password")
     |> Repo.update!()
 
     {:ok, alexis} =
@@ -83,7 +83,7 @@ defmodule Lotta.Repo.Seeder do
       })
 
     alexis
-    |> User.update_password_changeset("test123")
+    |> User.update_password_changeset("password")
     |> Repo.update!()
 
     {:ok, billy} =
@@ -91,12 +91,12 @@ defmodule Lotta.Repo.Seeder do
         name: "Christopher Bill",
         nickname: "Billy",
         email: "billy@lotta.schule",
-        password: "test123",
+        password: "password",
         enrollment_tokens: ["Seb034hP2?019"]
       })
 
     billy
-    |> User.update_password_changeset("test123")
+    |> User.update_password_changeset("password")
     |> Repo.update!()
 
     {:ok, eike} =
@@ -107,7 +107,7 @@ defmodule Lotta.Repo.Seeder do
       })
 
     eike
-    |> User.update_password_changeset("test123")
+    |> User.update_password_changeset("password")
     |> Repo.update!()
 
     {:ok, dr_evil} =
@@ -117,22 +117,29 @@ defmodule Lotta.Repo.Seeder do
         email: "drevil@lotta.schule"
       })
 
+    dr_evil_password = Map.get(dr_evil, :password)
+
     dr_evil
-    |> User.update_password_changeset("test123")
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_change(:password_hash, Argon2.hash_pwd_salt("password"))
+    |> Ecto.Changeset.put_change(:password_hash_format, 1)
+    |> Ecto.Changeset.put_change(:has_changed_default_password, false)
     |> Repo.update!()
+
+    dr_evil = Map.put(dr_evil, :password, dr_evil_password)
 
     Accounts.register_user_by_mail(tenant, %{
       name: "Max Mustermann",
       nickname: "MaXi",
       email: "maxi@lotta.schule",
-      password: "test123"
+      password: "password"
     })
 
     Accounts.register_user_by_mail(tenant, %{
       name: "Dorothea Musterfrau",
       nickname: "Doro",
       email: "doro@lotta.schule",
-      password: "test123"
+      password: "password"
     })
 
     Accounts.register_user_by_mail(tenant, %{
@@ -140,7 +147,7 @@ defmodule Lotta.Repo.Seeder do
       nickname: "Polonium",
       email: "mcurie@lotta.schule",
       hide_full_name: true,
-      password: "test456"
+      password: "password"
     })
 
     Tenants.create_feedback(eike, %{
