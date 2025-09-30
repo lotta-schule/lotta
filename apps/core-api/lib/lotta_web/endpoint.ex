@@ -7,9 +7,7 @@ defmodule LottaWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :lotta
   use Absinthe.Phoenix.Endpoint
 
-  plug(Plug.Telemetry,
-    event_prefix: [:phoenix, :endpoint]
-  )
+  plug(Plug.Telemetry, event_prefix: [:phoenix, :endpoint])
 
   plug(LottaWeb.TenantPlug)
   plug(:use_cookie_as_header)

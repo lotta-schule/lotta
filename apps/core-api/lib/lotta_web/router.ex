@@ -11,6 +11,10 @@ defmodule LottaWeb.Router do
     plug(:accepts, ~w(html))
   end
 
+  pipeline :browser do
+    plug(:accepts, ~w(html))
+  end
+
   pipeline :json_api do
     plug(:accepts, ~w(json))
   end
@@ -57,6 +61,8 @@ defmodule LottaWeb.Router do
   end
 
   scope "/data" do
+    forward("/sitemap.xml", LottaWeb.SitemapPlug)
+
     forward("/sitemap.xml", LottaWeb.SitemapPlug)
 
     scope "/storage" do
