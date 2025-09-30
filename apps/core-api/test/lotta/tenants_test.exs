@@ -1,13 +1,22 @@
 defmodule Lotta.TenantsTest do
   @moduledoc false
 
-  use Lotta.WorkerCase, async: false
+  use Lotta.WorkerCase
 
   alias Lotta.Accounts.User
   alias Lotta.{Tenants, Repo}
   alias Lotta.Tenants.{CustomDomain, Tenant}
 
   @prefix "tenant_test"
+
+  setup do
+    Tesla.Mock.mock(fn
+      %{url: "https://plausible.io/" <> _rest} = env ->
+        %Tesla.Env{env | status: 200, body: "OK"}
+    end)
+
+    :ok
+  end
 
   describe "Tenants" do
     test "should get tenant by prefix" do

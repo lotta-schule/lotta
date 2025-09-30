@@ -1,3 +1,19 @@
+## 6.0.24 (2025-08-15)
+
+### 🚀 Features
+
+- **core:** Add support for more image formats via graphicsmagick ([#484](https://github.com/lotta-schule/lotta/pull/484))
+- **core:** Replace graphicsmagick with imagemagick for better compatibility ([0528d833](https://github.com/lotta-schule/lotta/commit/0528d833))
+
+### 🩹 Fixes
+
+- **core:** Limit user articles fetching to 75 articles because of performance ([#485](https://github.com/lotta-schule/lotta/pull/485))
+- **core:** Strip out invalid characters from exif (and other) metadata ([#488](https://github.com/lotta-schule/lotta/pull/488))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.0.23 (2025-08-14)
 
 ### 🩹 Fixes
