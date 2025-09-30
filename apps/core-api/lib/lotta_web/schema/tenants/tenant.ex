@@ -8,7 +8,10 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
   object :tenant do
     field(:id, non_null(:id))
     field(:title, non_null(:string))
+    field(:type, :string)
+    field(:state, non_null(:tenant_state))
     field(:slug, non_null(:string))
+    field(:address, non_null(:string))
     field(:host, non_null(:string), resolve: &TenantResolver.resolve_host/3)
     field(:configuration, non_null(:tenant_configuration))
     field(:logo_image_file, :file, resolve: &TenantResolver.resolve_logo_image_file/3)
@@ -17,6 +20,8 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
     field(:inserted_at, non_null(:datetime))
 
     field(:identifier, non_null(:string), resolve: &TenantResolver.resolve_identifier/3)
+
+    field(:eduplaces_id, :string)
 
     field(:stats, :tenant_stats) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
@@ -61,5 +66,11 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
   input_object :tenant_configuration_input do
     field(:custom_theme, :json)
     field(:user_max_storage_config, :string)
+  end
+
+  enum :tenant_state do
+    value(:init, description: "Tenant is being initialized")
+    value(:active, description: "Tenant is active and operational")
+    value(:readonly, description: "Tenant is in read-only mode")
   end
 end

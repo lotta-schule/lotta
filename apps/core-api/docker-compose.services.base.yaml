@@ -13,7 +13,7 @@ services:
       retries: 7
 
   redis:
-    image: bitnami/redis:latest
+    image: bitnamilegacy/redis:latest
     environment:
       - REDIS_PASSWORD=lotta
     healthcheck:
@@ -23,7 +23,7 @@ services:
       retries: 7
 
   minio:
-    image: bitnami/minio:2024
+    image: bitnamilegacy/minio:2024
     ports:
       - 9000:9000
     environment:
@@ -31,6 +31,7 @@ services:
       MINIO_ROOT_USER: AKIAIOSFODNN7EXAMPLE
       MINIO_ROOT_PASSWORD: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
       MINIO_DEFAULT_BUCKETS: 'lotta-dev-ugc:s3:*'
+    user: root
     healthcheck:
       test:
         [

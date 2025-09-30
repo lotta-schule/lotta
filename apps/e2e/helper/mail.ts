@@ -31,6 +31,24 @@ export const getSentMails = async (): Promise<BambooMail[]> => {
   return await res.json();
 };
 
+export const waitForSentMail = async (
+  filter: (mail: BambooMail) => boolean,
+  { timeout = 5000, interval = 500 } = {}
+) => {
+  const start = Date.now();
+  while (true) {
+    const mails = await getSentMails();
+    const mail = mails.find(filter);
+    if (mail) {
+      return mail;
+    }
+    if (Date.now() - start > timeout) {
+      throw new Error('Timed out waiting for email');
+    }
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+};
+
 export const getLastMail = async () => {
   const mails = await getSentMails();
   return mails.at(0);

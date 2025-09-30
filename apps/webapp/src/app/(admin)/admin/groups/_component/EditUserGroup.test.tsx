@@ -7,14 +7,12 @@ import {
 } from 'test/fixtures';
 import { render, waitFor, within } from 'test/util';
 import { EditUserGroup } from './EditUserGroup';
-import { UPDATE_USER_GROUP } from '../_graphql';
+import { GET_USER_GROUPS, UPDATE_USER_GROUP } from '../_graphql';
 import userEvent from '@testing-library/user-event';
-
-import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 
 const additionalMocks = [
   {
-    request: { query: GetUserGroupsQuery },
+    request: { query: GET_USER_GROUPS },
     result: {
       data: { groups: [adminGroup, lehrerGroup, elternGroup, schuelerGroup] },
     },

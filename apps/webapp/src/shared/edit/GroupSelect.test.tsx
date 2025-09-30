@@ -452,6 +452,7 @@ describe('shared/editor/GroupSelect', () => {
     describe('selecting a group', () => {
       const secondAdminGroup: UserGroupModel = {
         id: '87',
+        eduplacesId: null,
         insertedAt: '2020-09-11 00:00',
         updatedAt: '2020-09-11 00:00',
         name: 'Administrator2',

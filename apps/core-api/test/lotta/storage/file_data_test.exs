@@ -1,7 +1,7 @@
 defmodule Lotta.Storage.FileDataTest do
   @moduledoc false
 
-  use Lotta.DataCase, async: true
+  use Lotta.DataCase
 
   import Mock
 

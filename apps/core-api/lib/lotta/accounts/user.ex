@@ -17,6 +17,8 @@ defmodule Lotta.Accounts.User do
 
   schema "users" do
     field(:email, :string)
+    field(:eduplaces_id, :string)
+
     field(:name, :string)
     field(:nickname, :string)
     field(:class, :string)
@@ -33,24 +35,29 @@ defmodule Lotta.Accounts.User do
 
     field(:enrollment_tokens, {:array, :string}, default: [])
 
-    belongs_to :avatar_image_file, File,
+    belongs_to(:avatar_image_file, File,
       on_replace: :nilify,
       type: :binary_id
+    )
 
-    has_many :files, File
-    has_many :directories, Directory
-    has_many :devices, UserDevice
-    has_many :sent_messages, Lotta.Messages.Message
+    has_many(:files, File)
+    has_many(:directories, Directory)
+    has_many(:devices, UserDevice)
+    has_many(:sent_messages, Lotta.Messages.Message)
 
-    many_to_many :groups,
-                 UserGroup,
-                 join_through: "user_user_group",
-                 on_replace: :delete
+    many_to_many(
+      :groups,
+      UserGroup,
+      join_through: "user_user_group",
+      on_replace: :delete
+    )
 
-    many_to_many :articles,
-                 Article,
-                 join_through: "article_users",
-                 on_replace: :delete
+    many_to_many(
+      :articles,
+      Article,
+      join_through: "article_users",
+      on_replace: :delete
+    )
 
     timestamps()
   end
@@ -60,6 +67,16 @@ defmodule Lotta.Accounts.User do
   @type email :: String.t()
 
   @type t :: %__MODULE__{id: id, email: email(), name: String.t()}
+
+  @type empty ::
+          %__MODULE__{
+            name: String.t(),
+            email: email()
+          }
+          | %__MODULE__{
+              name: String.t(),
+              eduplaces_id: String.t()
+            }
 
   @doc """
   Returns a changeset for when the admin wants to update *another user*'s changeset.
@@ -113,10 +130,17 @@ defmodule Lotta.Accounts.User do
       :enrollment_tokens
     ])
     |> normalize_email()
-    |> validate_required([:name, :email, :password])
+    |> validate_required([:name])
+    |> check_constraint(:email,
+      name: :at_least_one_of_eduplaces_id_or_email,
+      message: "Email is missing"
+    )
     |> validate_length(:email, min: 4, max: 100)
     |> unique_constraint(:email, name: :users__lower_email_index)
-    |> validate_required(:password)
+    |> check_constraint(:email,
+      name: :passwort_required_when_email_is_set,
+      message: "Password is required"
+    )
     |> validate_length(:password, min: 6, max: 150)
     |> validate_has_nickname_if_hide_full_name_is_set()
     |> put_pass_hash()

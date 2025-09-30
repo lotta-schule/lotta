@@ -99,7 +99,7 @@ export const AppContextProviders = ({
   }
 
   return (
-    <ServerDataContextProvider tenant={tenant}>
+    <ServerDataContextProvider tenant={tenant} socketUrl={socketUrl}>
       <ApolloProvider client={client}>
         <TenantContextProviders>{children}</TenantContextProviders>
       </ApolloProvider>

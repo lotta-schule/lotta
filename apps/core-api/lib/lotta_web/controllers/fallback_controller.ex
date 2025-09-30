@@ -1,22 +1,49 @@
 defmodule LottaWeb.FallbackController do
-  @moduledoc """
-  Translates controller action results into valid `Plug.Conn` responses.
-
-  See `Phoenix.Controller.action_fallback/1` for more details.
-  """
   use LottaWeb, :controller
 
-  def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+  require Logger
+
+  def call(conn, {:error, :bad_request}) do
     conn
-    |> put_status(:unprocessable_entity)
-    |> put_view(LottaWeb.ChangesetView)
-    |> render("error.json", changeset: changeset)
+    |> put_status(:bad_request)
+    |> put_view(json: LottaWeb.ErrorJSON, html: LottaWeb.ErrorHTML)
+    |> render(:"400")
+  end
+
+  def call(conn, {:error, :unauthorized}) do
+    conn
+    |> put_status(:unauthorized)
+    |> put_view(json: LottaWeb.ErrorJSON, html: LottaWeb.ErrorHTML)
+    |> render(:"401")
   end
 
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
-    |> put_view(LottaWeb.ErrorView)
+    |> put_view(json: LottaWeb.ErrorJSON, html: LottaWeb.ErrorHTML)
     |> render(:"404")
+  end
+
+  def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: LottaWeb.ChangesetJSON, html: LottaWeb.ErrorHTML)
+    |> render(:error, changeset: changeset)
+  end
+
+  def call(conn, {:error, message}) when is_binary(message) do
+    Logger.error("Error: #{message}")
+
+    conn
+    |> put_status(:internal_server_error)
+    |> put_view(json: LottaWeb.ErrorJSON, html: LottaWeb.ErrorHTML)
+    |> render(:"500")
+  end
+
+  def call(conn, error) when is_exception(error) do
+    conn
+    |> put_status(:internal_server_error)
+    |> put_view(json: LottaWeb.ErrorJSON, html: LottaWeb.ErrorHTML)
+    |> render(:"500")
   end
 end

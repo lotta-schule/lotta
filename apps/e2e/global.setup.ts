@@ -15,7 +15,7 @@ setup(
     await loginButton.click();
 
     const loginDialog = page.getByRole('dialog', { name: /anmelden/i });
-    await loginDialog.waitFor({ state: 'visible' });
+    await loginDialog.waitFor({ state: 'visible', timeout: 2500 });
 
     page.screenshot();
     loginDialog.screenshot();

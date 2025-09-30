@@ -1,34 +1,47 @@
 defmodule Lotta.Tenants.DefaultContentTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.WorkerCase
   use Bamboo.Test
 
   import Ecto.Query
 
-  alias Lotta.{Tenants}
+  alias Lotta.{Tenants, Repo}
+  alias Lotta.Tenants.{Category, Tenant}
   alias Lotta.Content.Article
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.{File, Directory}
-  alias Lotta.Tenants.Category
   alias Lotta.Accounts.Authentication
+
+  setup do
+    Tesla.Mock.mock(fn
+      %{url: "https://plausible.io/" <> _rest} = env ->
+        %Tesla.Env{env | status: 200, body: "OK"}
+    end)
+
+    :ok
+  end
 
   describe "default content" do
     test "should create a tenant with all the default content" do
+      tenant = %Tenant{
+        slug: "default-content-test",
+        title: "Default Content Test"
+      }
+
+      user = %User{
+        name: "Max Mustermann",
+        email: "maxmustermann@lotta.schule"
+      }
+
       assert {:ok, tenant} =
-               Tenants.create_tenant(
-                 user_params: %{
-                   name: "Max Mustermann",
-                   email: "maxmustermann@lotta.schule"
-                 },
-                 tenant: %{
-                   slug: "default-content-test",
-                   title: "Default Content Test",
-                   prefix: "default_content_test"
-                 }
-               )
+               tenant
+               |> Tenants.create_tenant(user)
 
       Repo.put_prefix(tenant.prefix)
+
+      assert tenant = Tenants.get_tenant_by_slug(tenant.slug)
+      assert tenant.state == :active
 
       # Groups
       groups = Repo.all(UserGroup)

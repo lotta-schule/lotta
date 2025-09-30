@@ -1,5 +1,5 @@
 {
-  "{{count}} visitors online_one": "1 Besucher online",
+  "{{count}} visitors online_one": "Ein Besucher online",
   "{{count}} visitors online_other": "{{count}} Besucher online",
   "{count} more_one": "{{count}} weiteres",
   "{count} more_other": "{{count}} weitere",
@@ -25,6 +25,7 @@
   "Calendar Type": "Kalendertyp",
   "calendars": "Kalender",
   "cancel": "abbrechen",
+  "Cancel": "Abbrechen",
   "close": "schließen",
   "copy link to clipboard": "Link in die Zwischenablage kopieren",
   "create calendar": "Kalender erstellen",
@@ -51,6 +52,7 @@
   "entry page": "Eingangsseite",
   "event": "Ereignis",
   "exam dates": "Klausurtermine",
+  "example@lotta.schule": "beispiel@lotta.schule",
   "exit page": "Absprungseite",
   "External Calendar (subscription in iCal format)": "Externer Kalender (Abonnement im iCal-Format)",
   "file": "Datei",
@@ -59,6 +61,7 @@
   "files_other": "{{count}} Dateien",
   "filesize": "Dateigröße",
   "Filter by group": "Nach Gruppe filtern",
+  "Forgot your password?": "Passwort vergessen?",
   "format": "Format",
   "formats": "Formate",
   "formats_one": "{{count}} Format",
@@ -71,6 +74,8 @@
   "less than 30 days ago": "vor weniger als 30 Tagen",
   "loading calendar": "Kalender wird geladen",
   "loading calendars": "Kalender werden geladen",
+  "Login": "Anmelden",
+  "Login with Eduplaces": "Mit Eduplaces anmelden",
   "logo": "Logo",
   "Logo of {{title}}": "Logo von {{title}}",
   "Lotta Calendar": "Lotta Kalender",
@@ -95,6 +100,7 @@
   "pages": "Seiten",
   "pageviews": "Seitenaufrufe",
   "pageviews per visit": "Seiten pro Besuch",
+  "Password": "Passwort",
   "preview": "Vorschaubild",
   "preview image of {{title}}": "Vorschaubild von {{title}}",
   "previous": "zurück",
@@ -145,5 +151,7 @@
   "widget": "Marginale",
   "widgets": "{{count}} Marginale",
   "yearly": "jährlich",
-  "yesterday": "gestern"
+  "yesterday": "gestern",
+  "Your email address:": "Deine E-Mail-Adresse:",
+  "Your password:": "Dein Passwort:"
 }

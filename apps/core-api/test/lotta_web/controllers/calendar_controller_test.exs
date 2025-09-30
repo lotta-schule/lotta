@@ -1,7 +1,7 @@
 defmodule LottaWeb.CalendarControllerTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase, async: true
+  use LottaWeb.ConnCase
 
   import Phoenix.ConnTest
   import Lotta.Factory

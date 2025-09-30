@@ -42,11 +42,11 @@ defmodule Lotta.Application do
   end
 
   defp setup_telemetry() do
+    OpentelemetryOban.setup()
     OpentelemetryBandit.setup()
     OpentelemetryPhoenix.setup(adapter: :bandit)
     OpentelemetryAbsinthe.setup()
     OpentelemetryEcto.setup([:lotta, :repo])
-    OpentelemetryRedix.setup()
   end
 
   defp prepended_apps() do

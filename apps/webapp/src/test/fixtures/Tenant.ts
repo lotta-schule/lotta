@@ -15,10 +15,12 @@ export const tenant = {
   host: 'info.lotta.schule',
   logoImageFile: null,
   backgroundImageFile: null,
+  eduplacesId: null,
   configuration: {
     userMaxStorageConfig: '20971520',
     customTheme: {},
   },
+  type: 'school',
 } satisfies Tenant;
 
 /**

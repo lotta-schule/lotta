@@ -14,6 +14,16 @@ defmodule Lotta.Fixtures do
 
   def fixture(name, params \\ %{})
 
+  def fixture(:valid_tenant_attrs, _) do
+    %{
+      title: "Meine andere Schule",
+      slug: "meine-andere-schule",
+      prefix: "t_other",
+      logo_image_file_id: nil,
+      background_image_file_id: nil
+    }
+  end
+
   def fixture(:valid_category_attrs, _) do
     %{
       title: "Meine Kategorie",
@@ -108,6 +118,32 @@ defmodule Lotta.Fixtures do
         )) ||
        Repo.insert!(usr, returning: true, prefix: @prefix))
     |> Map.replace(:password, nil)
+  end
+
+  def fixture(:valid_eduplace_user_attrs, attrs) do
+    %{
+      email: "some@email.de",
+      name: "Alberta Smith",
+      nickname: "TheNick",
+      class: "5",
+      password: "password",
+      hide_full_name: false
+    }
+    |> Map.merge(attrs)
+  end
+
+  def fixture(:registered_eduplace_user, %{eduplaces_id: eduplaces_id} = attrs) do
+    usr =
+      %User{}
+      |> Map.merge(fixture(:valid_eduplace_user_attrs))
+      |> Map.merge(attrs)
+
+    if eduplaces_id do
+      Repo.one(
+        from(u in User, where: u.eduplaces_id == ^eduplaces_id),
+        prefix: @prefix
+      )
+    end || Repo.insert!(usr, returning: true, prefix: @prefix)
   end
 
   def fixture(:admin_user, _attrs) do

@@ -5,8 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Mock } from 'vitest';
 import { userEvent } from '@testing-library/user-event';
 import { DraggableGroupList } from './DraggableGroupList';
-
-import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
+import { GET_USER_GROUPS } from '../_graphql';
 
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
@@ -23,7 +22,7 @@ describe('DraggableGroupList', () => {
   const additionalMocks: MockedResponse[] = [
     {
       request: {
-        query: GetUserGroupsQuery,
+        query: GET_USER_GROUPS,
       },
       result: {
         data: {

@@ -1,4 +1,4 @@
-import { getSentMails } from './mail';
+import { waitForSentMail } from './mail';
 import { loginUserRequiringPWUpdate } from './auth';
 import { Browser, expect } from '@playwright/test';
 
@@ -89,24 +89,23 @@ export const createTenantSetup = async (
     user: admin,
   });
 
-  const defaultPassword = await getSentMails().then((mails) => {
-    const matchingMails = mails.filter(
-      (mail) =>
+  const matchingMail = await waitForSentMail(
+    (mail) =>
+      !!(
         mail.subject.includes(name) &&
         mail.to.find(([, mail]) => mail === admin.email)
-    );
-    expect(matchingMails).toHaveLength(1);
+      )
+  );
 
-    const mailText = matchingMails[0].text_body;
-    const usernameMatcher = mailText.match(/Nutzername: (\S+)/);
-    const passwordMatcher = mailText.match(/Passwort: (\S+)/);
+  const mailText = matchingMail.text_body;
+  const usernameMatcher = mailText.match(/Nutzername: (\S+)/);
+  const passwordMatcher = mailText.match(/Passwort: (\S+)/);
 
-    expect(usernameMatcher).not.toBeNull();
-    expect(passwordMatcher).not.toBeNull();
-    expect(usernameMatcher![1]).toBe(admin.email);
+  expect(usernameMatcher).not.toBeNull();
+  expect(passwordMatcher).not.toBeNull();
+  expect(usernameMatcher![1]).toBe(admin.email);
 
-    return passwordMatcher![1];
-  });
+  const defaultPassword = passwordMatcher![1];
 
   const newBrowserContext = await browser.newContext();
   await newBrowserContext.storageState({
