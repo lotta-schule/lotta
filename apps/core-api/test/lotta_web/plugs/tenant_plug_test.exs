@@ -1,7 +1,7 @@
 defmodule LottaWeb.TenantPlugTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use LottaWeb.ConnCase
 
   import Plug.Conn
 
@@ -10,7 +10,7 @@ defmodule LottaWeb.TenantPlugTest do
 
   # Setup a test connection with a minimal Plug stack
   setup do
-    {:ok, conn: %Plug.Conn{}, tenant: Tenants.get_tenant_by_slug("test")}
+    {:ok, tenant: Tenants.get_tenant_by_slug("test")}
   end
 
   describe "TenantPlug" do
@@ -51,7 +51,8 @@ defmodule LottaWeb.TenantPlugTest do
     end
 
     test "no tenant found", %{conn: conn} do
-      assert %{private: %{}} = TenantPlug.call(conn, %{})
+      assert %{private: private_map, status: nil, resp_body: nil} = TenantPlug.call(conn, %{})
+      refute Map.has_key?(private_map, :lotta_tenant)
     end
   end
 end

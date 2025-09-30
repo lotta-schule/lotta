@@ -1,14 +1,11 @@
 import { cache } from 'react';
 import { getClient } from 'api/client';
-import { UserGroupModel } from 'model';
-
-import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
+import { GET_USER_GROUPS } from 'util/tenant/useUserGroups';
 
 export const loadUserGroups = cache(async () => {
   const client = await getClient();
-  return await client
-    .query<{ userGroups: UserGroupModel[] }>({
-      query: GetUserGroupsQuery,
-    })
-    .then(({ data }) => data?.userGroups ?? []);
+  const results = await client.query({
+    query: GET_USER_GROUPS,
+  });
+  return results.data.userGroups;
 });

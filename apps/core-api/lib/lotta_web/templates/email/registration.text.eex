@@ -3,5 +3,5 @@ Deine Registrierung bei <%= @tenant.title %> war erfolgreich.
 
 Du kannst dich unter <%= LottaWeb.Urls.get_tenant_url(@tenant) %> mit deinen Zugangsdaten anmelden:
 Nutzername: <%= @user.email %>
-Passwort: <%= @password %>
+Passwort: <%= @user.password %>
 

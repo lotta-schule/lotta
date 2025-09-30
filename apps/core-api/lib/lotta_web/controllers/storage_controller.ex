@@ -1,9 +1,8 @@
 defmodule LottaWeb.StorageController do
   require Logger
 
-  use Phoenix.Controller
+  use LottaWeb, :controller
 
-  import Plug.Conn
   import Lotta.Guard
 
   alias Lotta.Storage

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { act, render, waitFor, within } from 'test/util';
 import { LoginDialog } from './LoginDialog';
-import { SomeUser } from 'test/fixtures';
+import { SomeUser, tenant } from 'test/fixtures';
 import LoginMutation from 'api/mutation/LoginMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
@@ -20,7 +20,10 @@ const additionalMocks = [
 
 describe('shared/dialog/LoginDialog', () => {
   it('should not show the login dialog when isOpen is not true', () => {
-    const screen = render(<LoginDialog onRequestClose={() => {}} />, {});
+    const screen = render(
+      <LoginDialog onRequestClose={() => {}} isOpen={false} />,
+      {}
+    );
 
     expect(screen.queryByRole('dialog')).toBeNull();
   });
@@ -50,20 +53,22 @@ describe('shared/dialog/LoginDialog', () => {
         { additionalMocks, currentUser: SomeUser }
       );
       await fireEvent.type(
-        screen.getByRole('textbox', { name: /email/i }),
+        screen.getByRole('textbox', { name: /e-mail/i }),
         'nutzer@email.de'
       );
       await fireEvent.type(screen.getByLabelText(/passwort/i), 'password');
 
       vi.useFakeTimers({ shouldAdvanceTime: true });
 
-      await fireEvent.click(screen.getByRole('button', { name: /anmelden/i }));
+      await fireEvent.click(
+        screen.getByRole('button', { name: /^anmelden$/i })
+      );
 
       await waitFor(() => {
         expect(
-          within(screen.getByRole('button', { name: /anmelden/i })).getByTestId(
-            'SuccessIcon'
-          )
+          within(
+            screen.getByRole('button', { name: /^anmelden$/i })
+          ).getByTestId('SuccessIcon')
         ).toBeVisible();
       });
 
@@ -88,15 +93,43 @@ describe('shared/dialog/LoginDialog', () => {
         }
       );
       await fireEvent.type(
-        screen.getByRole('textbox', { name: /email/i }),
+        screen.getByRole('textbox', { name: /e-mail/i }),
         'nutzer@email.de'
       );
       await fireEvent.type(screen.getByLabelText(/passwort/i), 'password');
-      await fireEvent.click(screen.getByRole('button', { name: /anmelden/i }));
+      await fireEvent.click(
+        screen.getByRole('button', { name: /^anmelden$/i })
+      );
       await waitFor(() => {
         expect(
           screen.queryByRole('heading', { name: /passwort ändern/i })
         ).not.toBeNull();
+      });
+    });
+  });
+
+  describe('third-party-login', () => {
+    describe('Eduplaces', () => {
+      it('should not show the Eduplaces login button when the tenant has no associated eduplacesId', () => {
+        const screen = render(
+          <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+          {},
+          { additionalMocks }
+        );
+
+        expect(screen.queryByRole('button', { name: /eduplaces/i })).toBeNull();
+      });
+
+      it('should render the Eduplaces login button when tenant has eduplacesId', () => {
+        const screen = render(
+          <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+          {},
+          { additionalMocks, tenant: { ...tenant, eduplacesId: '123' } }
+        );
+
+        expect(
+          screen.getByRole('button', { name: /eduplaces/i })
+        ).toBeVisible();
       });
     });
   });

@@ -6,8 +6,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { MockedResponse } from '@apollo/client/testing';
 import { lehrerGroup } from 'test/fixtures';
-
-import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
+import { GET_USER_GROUPS } from '../_graphql';
 
 const userGroupMock = {
   ...lehrerGroup,
@@ -31,7 +30,7 @@ const additionalMocks: MockedResponse[] = [
   },
   {
     request: {
-      query: GetUserGroupsQuery,
+      query: GET_USER_GROUPS,
     },
     result: {
       data: {

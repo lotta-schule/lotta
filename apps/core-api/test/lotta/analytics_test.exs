@@ -1,7 +1,7 @@
 defmodule Lotta.AnalyticsTest do
   @moduledoc false
 
-  use Lotta.DataCase, async: true
+  use Lotta.DataCase
 
   alias Lotta.Analytics
   alias Lotta.Tenants
@@ -111,6 +111,32 @@ defmodule Lotta.AnalyticsTest do
              ]
            }
          }}
+
+      %Tesla.Env{
+        method: :post,
+        url: "https://plausible.io/api/v1/sites/",
+        body: "domain=test.lotta.schule&timezone=Europe%2FBerlin"
+      } ->
+        {:ok, %Tesla.Env{status: 201, body: %{}}}
+
+      %Tesla.Env{
+        method: :post,
+        url: "https://plausible.io/api/v1/sites/",
+        body: "domain=error.lotta.schule&timezone=Europe%2FBerlin"
+      } ->
+        {:ok, %Tesla.Env{status: 400, body: %{"error" => "Site already exists"}}}
+
+      %Tesla.Env{
+        method: :delete,
+        url: "https://plausible.io/api/v1/sites/test.lotta.schule"
+      } ->
+        {:ok, %Tesla.Env{status: 200, body: %{}}}
+
+      %Tesla.Env{
+        method: :delete,
+        url: "https://plausible.io/api/v1/sites/error.lotta.schule"
+      } ->
+        {:ok, %Tesla.Env{status: 404, body: %{"error" => "Site not found"}}}
     end)
 
     {:ok, tenant: tenant}
@@ -212,6 +238,62 @@ defmodule Lotta.AnalyticsTest do
                   ]
                 }
               ]} = response
+    end
+
+    test "create_site creates a site successfully", %{tenant: tenant} do
+      response = Analytics.create_site(tenant)
+
+      assert :ok = response
+    end
+
+    test "create_site returns error when site creation fails", %{tenant: _tenant} do
+      error_tenant = %{slug: "error"}
+
+      response = Analytics.create_site(error_tenant)
+
+      assert {:error, "Failed to create plausible site: (400)"} = response
+    end
+
+    test "delete_site deletes a site successfully", %{tenant: tenant} do
+      response = Analytics.delete_site(tenant)
+
+      assert :ok = response
+    end
+
+    test "delete_site returns error when site deletion fails", %{tenant: _tenant} do
+      error_tenant = %{slug: "error"}
+
+      response = Analytics.delete_site(error_tenant)
+
+      assert {:error, "Failed to delete plausible site: (404)"} = response
+    end
+
+    test "returns error when analytics is not enabled" do
+      default_config = Application.get_env(:lotta, :analytics)
+
+      Application.put_env(:lotta, :analytics, endpoint: nil, api_key: nil)
+
+      on_exit(fn ->
+        Application.put_env(:lotta, :analytics, default_config)
+      end)
+
+      tenant = %{slug: "test"}
+
+      assert {:error, "Analytics is not enabled"} = Analytics.get_realtime_users(tenant)
+
+      assert {:error, "Analytics is not enabled"} =
+               Analytics.get_aggregation_metrics(tenant, "month", "2024-03-01")
+
+      assert {:error, "Analytics is not enabled"} =
+               Analytics.get_timeseries_metrics(tenant, "month", "2024-03-01", "visits")
+
+      assert {:error, "Analytics is not enabled"} =
+               Analytics.get_breakdown_metrics(tenant, "month", "2024-03-01", "visit_device", [
+                 "visits"
+               ])
+
+      assert {:error, "Analytics is not enabled"} = Analytics.create_site(tenant)
+      assert {:error, "Analytics is not enabled"} = Analytics.delete_site(tenant)
     end
   end
 end

@@ -119,6 +119,8 @@ defmodule SystemConfig do
   defp default("COCKPIT_ADMIN_API_KEY", env) when env in [:dev, :test], do: "test123"
   defp default("COCKPIT_ENDPOINT", _), do: "http://localhost:4040"
 
+  defp default("SLACK_WEBHOOK_URL", _), do: nil
+
   defp default("SENTRY_DSN", _), do: nil
 
   defp default("SCHEDULE_PROVIDER_URL", env) when env in [:dev, :test],
@@ -132,6 +134,15 @@ defmodule SystemConfig do
   defp default("ANALYTICS_API_KEY", _), do: nil
 
   defp default("OBAN_EXCLUDE_QUEUES", _), do: ""
+
+  defp default("EDUPLACES_AUTH_URL", _), do: "https://auth.sandbox.eduplaces.dev/oauth2"
+  defp default("EDUPLACES_API_URL", _), do: "https://api.sandbox.eduplaces.dev"
+
+  defp default("EDUPLACES_REDIRECT_URI", _),
+    do: "http://localhost:4000/auth/oauth/eduplaces/callback"
+
+  defp default("EDUPLACES_CLIENT_ID", _), do: ""
+  defp default("EDUPLACES_CLIENT_SECRET", _), do: ""
 
   defp default(key, env),
     do:
@@ -237,6 +248,9 @@ config :lotta, :cockpit,
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
 
+config :lotta, Lotta.Administration.Notification.Slack,
+  webhook: SystemConfig.get("SLACK_WEBHOOK_URL")
+
 config :lotta,
        Lotta.Mailer,
        (case SystemConfig.get("MAILER_ADAPTER") do
@@ -332,8 +346,18 @@ config :lotta, Oban,
       file_conversion: [limit: 4],
       media_conversion: [limit: 1],
       preview_generation: [limit: 2],
-      file_metadata: [limit: 2]
+      file_metadata: [limit: 2],
+      tenant: [limit: 1]
     ]
     |> Enum.filter(fn {k, _} ->
       to_string(k) not in SystemConfig.get("OBAN_EXCLUDE_QUEUES", cast: :string_list)
     end)
+
+config :lotta, Eduplaces,
+  auth_url: SystemConfig.get("EDUPLACES_AUTH_URL", cast: :url_with_scheme),
+  authorize_url: SystemConfig.get("EDUPLACES_AUTH_URL", cast: :url_with_scheme) <> "/auth",
+  token_url: SystemConfig.get("EDUPLACES_AUTH_URL", cast: :url_with_scheme) <> "/token",
+  api_url: SystemConfig.get("EDUPLACES_API_URL", cast: :url_with_scheme),
+  redirect_uri: SystemConfig.get("EDUPLACES_REDIRECT_URI", cast: :url_with_scheme),
+  client_id: SystemConfig.get("EDUPLACES_CLIENT_ID"),
+  client_secret: SystemConfig.get("EDUPLACES_CLIENT_SECRET")

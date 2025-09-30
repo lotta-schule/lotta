@@ -30,7 +30,7 @@ export const loginUser = async (
   await loginDialog.waitFor({ state: 'visible' });
   expect(loginDialog).toBeVisible();
 
-  await loginDialog.getByRole('textbox', { name: /email/i }).fill(user.email);
+  await loginDialog.getByRole('textbox', { name: /e-mail/i }).fill(user.email);
 
   await loginDialog
     .getByRole('textbox', { name: /passwort/i })

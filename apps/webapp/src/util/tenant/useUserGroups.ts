@@ -1,16 +1,25 @@
 import { useSuspenseQuery } from '@apollo/client';
-import { UserGroupModel } from 'model/UserGroupModel';
+import { graphql, ResultOf } from 'api/graphql';
 
-import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
+export const GET_USER_GROUPS = graphql(`
+  query GetUserGroups {
+    userGroups {
+      id
+      name
+      isAdminGroup
+      sortKey
+      canReadFullName
+      eduplacesId
+    }
+  }
+`);
+
+export type UserGroup = NonNullable<
+  ResultOf<typeof GET_USER_GROUPS>['userGroups']
+>[number];
 
 export const useUserGroups = () => {
-  const { data } = useSuspenseQuery<{ userGroups: UserGroupModel[] }>(
-    GetUserGroupsQuery
-  );
+  const { data } = useSuspenseQuery(GET_USER_GROUPS);
 
-  // TODO: Server's job
-  const groups =
-    [...(data?.userGroups ?? [])].sort((a, b) => a.sortKey - b.sortKey) ?? [];
-
-  return groups;
+  return data.userGroups;
 };

@@ -7,7 +7,8 @@ defmodule Lotta.Tenants.DefaultContent do
 
   import Ecto.Changeset
 
-  alias Lotta.{Accounts, Email, Mailer, Repo, Storage}
+  alias Lotta.Tenants
+  alias Lotta.{Email, Mailer, Repo, Storage}
   alias Lotta.Tenants.{Category, Tenant}
   alias Lotta.Storage.{Directory, FileData, RemoteStorage}
   alias Lotta.Accounts.{User, UserGroup}
@@ -17,32 +18,15 @@ defmodule Lotta.Tenants.DefaultContent do
   Creates the default content for a new tenant.
   The tenant should already have been created, the user should be eligible to be administrator
   """
-  @spec create_default_content(Tenant.t(), map()) :: :ok | {:error, any()}
-  def create_default_content(tenant, user_params) do
-    with {:ok, admin_user} <- create_admin_user(tenant, user_params),
-         {:ok, _default_groups} <- create_default_groups(tenant),
+  @spec create_default_content(Tenant.t(), User.t()) :: :ok | {:error, any()}
+  def create_default_content(tenant, admin_user) do
+    with {:ok, _default_groups} <- create_default_groups(tenant),
          {:ok, [_homepage, content_category]} <- create_categories(tenant),
          {:ok, files} <- create_files(tenant, admin_user),
          {:ok, _articles} <- create_articles(admin_user, content_category, files),
          {:ok, _mail} <- send_ready_email(tenant, admin_user),
+         {:ok, _tenant} <- Tenants.update_state(tenant, :active),
          do: :ok
-  end
-
-  defp create_admin_user(tenant, user_params) do
-    with {:ok, user, password} <- Accounts.register_user(tenant, user_params) do
-      user
-      |> Map.put(:password, password)
-      |> User.update_changeset(%{
-        groups: [
-          %UserGroup{
-            name: "Administrator",
-            sort_key: 0,
-            is_admin_group: true
-          }
-        ]
-      })
-      |> Repo.update(prefix: tenant.prefix)
-    end
   end
 
   defp create_default_groups(tenant) do
@@ -362,6 +346,8 @@ defmodule Lotta.Tenants.DefaultContent do
     ])
   end
 
+  defp send_ready_email(_tenant, %{email: nil}), do: {:ok, nil}
+
   defp send_ready_email(tenant, user) do
     user
     |> Email.lotta_ready_mail(tenant: tenant)
@@ -397,7 +383,7 @@ defmodule Lotta.Tenants.DefaultContent do
   defp read_json(files, filename) do
     Application.app_dir(:lotta, "priv/default_content/text/#{filename}.json")
     |> File.read!()
-    |> String.replace(~r/__REMOTE_URL____([[:word:]-\.]*)/, fn text ->
+    |> String.replace(~r/__REMOTE_URL____([\w\-.]*)/, fn text ->
       filename = String.replace_leading(text, "__REMOTE_URL____", "")
 
       case Enum.find(files, &(&1.filename == filename)) do

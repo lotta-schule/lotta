@@ -1,4 +1,5 @@
 node_modules
+apps/core-api/_data
 .nx
 *.md
 *.test.ts

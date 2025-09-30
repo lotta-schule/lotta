@@ -8,7 +8,6 @@ defmodule Lotta.PushNotification.Dispatcher do
   use GenServer
 
   require Logger
-  require OpenTelemetry.Tracer
 
   alias Lotta.{Messages, PushNotification, Repo}
 
@@ -48,61 +47,57 @@ defmodule Lotta.PushNotification.Dispatcher do
   end
 
   defp process_notification({:message_sent, tenant, message, conversation}) do
-    OpenTelemetry.Tracer.with_span :push_notification_process_message_sent do
-      message
-      |> list_recipients_for_message(conversation)
-      |> Enum.each(fn user ->
-        PushNotification.Request.new(tenant)
-        |> PushNotification.Request.put_title(message.user.name)
-        |> PushNotification.Request.put_subtitle(
-          if Enum.count(conversation.groups) == 1,
-            do: "in #{List.first(conversation.groups).name}"
-        )
-        |> PushNotification.Request.put_body(message.content)
-        |> PushNotification.Request.put_thread_id("#{tenant.slug}/#{conversation.id}")
-        |> PushNotification.Request.put_category("receive_message")
-        |> PushNotification.Request.put_data(%{
-          "user_id" => user.id,
-          "tenant_id" => tenant.id,
-          "conversation_id" => conversation.id,
-          "message_id" => message.id
-        })
-        |> push_to_user(user)
-        |> tap(fn notification ->
-          :telemetry.execute(
-            [:lotta, :push_notification, :message_sent, :sent],
-            %{system_time: System.system_time()},
-            %{
-              tenant: tenant,
-              user: user,
-              message: message,
-              conversation: conversation,
-              notification: notification
-            }
-          )
-        end)
-      end)
-    end
-  end
-
-  defp process_notification({:conversation_read, tenant, user, conversation}) do
-    OpenTelemetry.Tracer.with_span :push_notification_process_conversation_read do
+    message
+    |> list_recipients_for_message(conversation)
+    |> Enum.each(fn user ->
       PushNotification.Request.new(tenant)
-      |> Map.put(:push_type, :background)
-      |> PushNotification.Request.put_category("read_conversation")
+      |> PushNotification.Request.put_title(message.user.name)
+      |> PushNotification.Request.put_subtitle(
+        if Enum.count(conversation.groups) == 1,
+          do: "in #{List.first(conversation.groups).name}"
+      )
+      |> PushNotification.Request.put_body(message.content)
+      |> PushNotification.Request.put_thread_id("#{tenant.slug}/#{conversation.id}")
+      |> PushNotification.Request.put_category("receive_message")
       |> PushNotification.Request.put_data(%{
         "user_id" => user.id,
         "tenant_id" => tenant.id,
-        "conversation_id" => conversation.id
+        "conversation_id" => conversation.id,
+        "message_id" => message.id
       })
       |> push_to_user(user)
+      |> tap(fn notification ->
+        :telemetry.execute(
+          [:lotta, :push_notification, :message_sent, :sent],
+          %{system_time: System.system_time()},
+          %{
+            tenant: tenant,
+            user: user,
+            message: message,
+            conversation: conversation,
+            notification: notification
+          }
+        )
+      end)
+    end)
+  end
 
-      :telemetry.execute(
-        [:lotta, :push_notification, :conversation_read, :sent],
-        %{system_time: System.system_time()},
-        %{tenant: tenant, user: user, conversation: conversation}
-      )
-    end
+  defp process_notification({:conversation_read, tenant, user, conversation}) do
+    PushNotification.Request.new(tenant)
+    |> Map.put(:push_type, :background)
+    |> PushNotification.Request.put_category("read_conversation")
+    |> PushNotification.Request.put_data(%{
+      "user_id" => user.id,
+      "tenant_id" => tenant.id,
+      "conversation_id" => conversation.id
+    })
+    |> push_to_user(user)
+
+    :telemetry.execute(
+      [:lotta, :push_notification, :conversation_read, :sent],
+      %{system_time: System.system_time()},
+      %{tenant: tenant, user: user, conversation: conversation}
+    )
   end
 
   defp process_notification(notification) do
@@ -141,14 +136,9 @@ defmodule Lotta.PushNotification.Dispatcher do
   end
 
   defp list_recipients_for_message(message, conversation) do
-    otel_ctx = OpenTelemetry.Tracer.start_span(:list_recipients_for_message)
-
     conversation
     |> Messages.list_conversation_users()
     |> Enum.filter(&(&1.id != message.user_id))
-    |> tap(fn _ ->
-      OpenTelemetry.Tracer.end_span(otel_ctx)
-    end)
   end
 
   defp push(notification, provider) do

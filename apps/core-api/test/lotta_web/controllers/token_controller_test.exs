@@ -1,7 +1,7 @@
 defmodule LottaWeb.TokenControllerTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase, async: true
+  use LottaWeb.ConnCase
 
   import Lotta.Accounts.Authentication
   import Phoenix.ConnTest
@@ -71,10 +71,8 @@ defmodule LottaWeb.TokenControllerTest do
         |> post("/auth/token/refresh")
         |> fetch_cookies()
 
-      conn
-      |> json_response(401)
-
-      assert is_nil(conn.cookies["SignInRefreshToken"])
+      assert %{"success" => false} = json_response(conn, 401)
+      assert is_nil(get_resp_cookies(conn)["SignInRefreshToken"])
     end
 
     test "should throw an error if the signature is not valid", %{refresh_token: token} do
@@ -97,10 +95,9 @@ defmodule LottaWeb.TokenControllerTest do
         |> post("/auth/token/refresh")
         |> fetch_cookies()
 
-      conn
-      |> json_response(401)
+      assert %{"success" => false} = json_response(conn, 401)
 
-      assert is_nil(conn.cookies["SignInRefreshToken"])
+      assert is_nil(get_resp_cookies(conn)["SignInRefreshToken"])
     end
 
     test "should throw an error if there is no refresh token cookie" do
@@ -110,10 +107,8 @@ defmodule LottaWeb.TokenControllerTest do
         |> put_req_header("content-type", "application/json")
         |> post("/auth/token/refresh")
 
-      conn
-      |> json_response(400)
-
-      assert is_nil(conn.cookies["SignInRefreshToken"])
+      assert %{"success" => false} = json_response(conn, 400)
+      assert is_nil(get_resp_cookies(conn)["SignInRefreshToken"])
     end
   end
 end

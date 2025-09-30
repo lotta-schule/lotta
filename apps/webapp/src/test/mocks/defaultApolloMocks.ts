@@ -1,19 +1,19 @@
 import { tenant, allCategories, userGroups } from 'test/fixtures';
-import { CategoryModel, UserGroupModel } from 'model';
+import { CategoryModel } from 'model';
 import { InMemoryCache } from '@apollo/client';
 import { identity } from 'lodash';
-import { GET_TENANT_QUERY, Tenant } from 'util/tenant';
+import { GET_TENANT_QUERY, Tenant, UserGroup } from 'util/tenant';
 import { GET_CURRENT_USER, CurrentUser } from 'util/user/useCurrentUser';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
-import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
+import { GET_USER_GROUPS } from 'util/tenant/useUserGroups';
 
 export interface ApolloMocksOptions {
   currentUser?: CurrentUser;
   tenant?: Tenant;
-  userGroups?: UserGroupModel[];
+  userGroups?: UserGroup[];
   tags?: string[];
   categories?: (categories: CategoryModel[]) => CategoryModel[];
   withCache?: (cache: InMemoryCache) => InMemoryCache;
@@ -28,7 +28,7 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
       },
     },
     {
-      request: { query: GetUserGroupsQuery },
+      request: { query: GET_USER_GROUPS },
       result: {
         data: {
           userGroups: [...(options.userGroups || userGroups || [])],
@@ -68,7 +68,7 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
     data: { tenant: options.tenant ?? tenant },
   });
   cache.writeQuery({
-    query: GetUserGroupsQuery,
+    query: GET_USER_GROUPS,
     data: { userGroups: options.userGroups ?? userGroups },
   });
   if (options.currentUser) {

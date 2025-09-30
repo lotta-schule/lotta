@@ -11,8 +11,7 @@ import {
   Label,
 } from '@lotta-schule/hubert';
 import { graphql } from 'api/graphql';
-
-import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
+import { GET_USER_GROUPS } from '../_graphql';
 
 export const CREATE_USER_GROUP = graphql(`
   mutation CreateUserGroup($group: UserGroupInput!) {
@@ -43,11 +42,11 @@ export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
       {
         update: (cache, { data }) => {
           if (data?.group) {
-            const readUserGroupsResult = cache.readQuery<{
-              userGroups: UserGroupModel[];
-            }>({ query: GetUserGroupsQuery });
-            cache.writeQuery<{ userGroups: UserGroupModel[] }>({
-              query: GetUserGroupsQuery,
+            const readUserGroupsResult = cache.readQuery({
+              query: GET_USER_GROUPS,
+            });
+            cache.writeQuery({
+              query: GET_USER_GROUPS,
               data: {
                 userGroups: [
                   ...(readUserGroupsResult?.userGroups ?? []),

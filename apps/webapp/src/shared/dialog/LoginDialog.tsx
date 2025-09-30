@@ -10,7 +10,10 @@ import {
   Input,
   LoadingButton,
 } from '@lotta-schule/hubert';
+import { useTranslation } from 'react-i18next';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
+import { EduplacesLoginButton } from 'component/form';
+import { useTenant } from 'util/tenant';
 import Link from 'next/link';
 import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
 
@@ -23,13 +26,17 @@ export interface LoginDialogProps {
   onRequestClose(): void;
 }
 
-export const LoginDialog = React.memo<LoginDialogProps>(
-  ({ isOpen, onRequestClose }) => {
+export const LoginDialog = React.memo(
+  ({ isOpen, onRequestClose }: LoginDialogProps) => {
+    const { t } = useTranslation();
     const apolloClient = useApolloClient();
+    const tenant = useTenant();
     const [isShowUpdatePasswordDialog, setIsShowUpdatePasswordDialog] =
       React.useState(false);
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
+
+    const isEduplacesEnabled = !!tenant.eduplacesId;
 
     React.useEffect(() => {
       if (isOpen === false) {
@@ -41,7 +48,6 @@ export const LoginDialog = React.memo<LoginDialogProps>(
     const [login, { error, loading: isLoading }] = useMutation(LoginMutation, {
       errorPolicy: 'all',
       onCompleted: async (data) => {
-        // TODO: Proper handling when no data is returned
         if (data.login) {
           localStorage.setItem('id', data.login.accessToken);
           await apolloClient.reFetchObservableQueries();
@@ -53,7 +59,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
           } else {
             setTimeout(() => {
               onRequestClose();
-            }, 1000);
+            }, 500);
           }
         }
       },
@@ -65,46 +71,51 @@ export const LoginDialog = React.memo<LoginDialogProps>(
           open={isOpen}
           aria-hidden={!isOpen || isShowUpdatePasswordDialog}
           className={styles.root}
-          title={'Auf der Website anmelden'}
+          title={t('Login')}
           onRequestClose={onRequestClose}
         >
           <form>
             <DialogContent>
               Melde dich hier mit deinen Zugangsdaten an.
               <ErrorMessage error={error} />
-              <Label label={'Deine Email-Adresse:'}>
+              <Label label={t('Your email address:')}>
                 <Input
                   autoFocus
                   id={'email'}
                   value={email}
                   onChange={(e) => setEmail(e.currentTarget.value)}
                   disabled={isLoading}
-                  placeholder={'beispiel@medienportal.org'}
+                  placeholder={t('example@lotta.schule')}
                   type={'email'}
                   autoComplete={'email'}
                 />
               </Label>
-              <Label label={'Dein Passwort:'}>
+              <Label label={t('Your password:')}>
                 <Input
                   type={'password'}
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.currentTarget.value)}
                   disabled={isLoading}
-                  placeholder={'Passwort'}
+                  placeholder={t('Password')}
                   autoComplete={'current-password'}
                 />
               </Label>
-              <Link href={`/password/request-reset`}>Passwort vergessen?</Link>
+              <Link href={`/password/request-reset`}>
+                {t('Forgot your password?')}
+              </Link>
             </DialogContent>
             <DialogActions>
+              {isEduplacesEnabled && (
+                <EduplacesLoginButton style={{ marginRight: 'auto' }} />
+              )}
               <Button
                 onClick={() => {
                   onRequestClose();
                 }}
                 disabled={isLoading}
               >
-                Abbrechen
+                {t('Cancel')}
               </Button>
               <LoadingButton
                 type={'submit'}
@@ -121,7 +132,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                   });
                 }}
               >
-                Anmelden
+                {t('Login')}
               </LoadingButton>
             </DialogActions>
           </form>
