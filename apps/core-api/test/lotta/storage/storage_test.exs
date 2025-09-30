@@ -90,6 +90,8 @@ defmodule Lotta.StorageTest do
 
       user_file = Repo.preload(user_file, :remote_storage_entity)
 
+      IO.puts("Current path: #{user_file.remote_storage_entity.path}")
+
       current_file_datetime =
         ExAws.S3.head_object("lotta-dev-ugc", user_file.remote_storage_entity.path)
         |> ExAws.request!()

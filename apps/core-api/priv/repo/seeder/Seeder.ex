@@ -1265,11 +1265,18 @@ defmodule Lotta.Repo.Seeder do
 
   defp upload_test_file!(file) do
     remote_path = "tenant_test/#{file.id}"
+    local_path = "test/support/fixtures/#{file.filename}"
 
-    "test/support/fixtures/#{file.filename}"
-    |> ExAws.S3.Upload.stream_file()
-    |> ExAws.S3.upload("lotta-dev-ugc", remote_path)
-    |> ExAws.request!()
+    IO.puts("Uploading #{local_path} to #{remote_path}")
+
+    %{body: response, status_code: 200} =
+      local_path
+      |> ExAws.S3.Upload.stream_file()
+      |> ExAws.S3.upload("lotta-dev-ugc", remote_path)
+      |> IO.inspect()
+      |> ExAws.request!()
+
+    IO.inspect(response, label: "S3 upload response")
 
     file
     |> Repo.preload(:remote_storage_entity)
