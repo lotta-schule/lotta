@@ -43,40 +43,43 @@ defmodule LottaWeb.SessionController do
   def login(conn, %{"username" => username, "password" => password} = params) do
     return_path = params["return_path"] || "/"
 
-    with {:ok, user} <- Authentication.login_with_username_pass(username, password) do
-      is_first_login = user.has_changed_default_password == false
+    username
+    |> Authentication.login_with_username_pass(password)
+    |> case do
+      {:ok, user} ->
+        is_first_login = user.has_changed_default_password == false
 
-      token_opts = if is_first_login, do: [token_type: "hisec"], else: []
-      {:ok, access_token, refresh_token} = Authentication.create_user_tokens(user, token_opts)
+        token_opts = if is_first_login, do: [token_type: "hisec"], else: []
+        {:ok, access_token, refresh_token} = Authentication.create_user_tokens(user, token_opts)
 
-      token_max_age = if(is_first_login, do: 5 * 60, else: 60 * 60)
+        token_max_age = if(is_first_login, do: 5 * 60, else: 60 * 60)
 
-      conn =
-        conn
-        |> put_resp_cookie("SignInRefreshToken", refresh_token,
-          http_only: true,
-          same_site: "Lax",
-          max_age: 3 * 7 * 24 * 60 * 60
-        )
-        |> put_resp_cookie("SignInAccessToken", access_token,
-          http_only: false,
-          same_site: "Lax",
-          max_age: token_max_age
-        )
-
-      conn =
-        if is_first_login do
-          put_resp_cookie(conn, "request_pw_reset", "1",
+        conn =
+          conn
+          |> put_resp_cookie("SignInRefreshToken", refresh_token,
+            http_only: true,
+            same_site: "Lax",
+            max_age: 3 * 7 * 24 * 60 * 60
+          )
+          |> put_resp_cookie("SignInAccessToken", access_token,
             http_only: false,
             same_site: "Lax",
             max_age: token_max_age
           )
-        else
-          conn
-        end
 
-      redirect(conn, external: return_path)
-    else
+        conn =
+          if is_first_login do
+            put_resp_cookie(conn, "request_pw_reset", "1",
+              http_only: false,
+              same_site: "Lax",
+              max_age: token_max_age
+            )
+          else
+            conn
+          end
+
+        redirect(conn, external: return_path)
+
       {:error, reason} ->
         Logger.warning("Login failed for username: #{username}: #{inspect(reason)}")
         {:error, :unauthorized}
