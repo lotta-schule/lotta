@@ -69,27 +69,25 @@ export const UserNavigation = React.memo(() => {
       switch (action) {
         case 'profile':
           router.push('/profile');
-          break;
+          return;
         case 'files':
           router.push('/profile/files');
-          break;
+          return;
         case 'own-articles':
           router.push('/profile/articles');
-          break;
+          return;
         case 'feedback':
           setFeedbackModalIsOpen(true);
-          break;
+          return;
         case 'administration':
           router.push('/admin');
-          break;
+          return;
         case 'unpublished':
           router.push('/unpublished');
-          break;
+          return;
         case 'logout':
           window.location.href = '/auth/logout';
-          break;
-        default:
-          throw new Error('Action is not supported!');
+          return;
       }
     },
     [router]
