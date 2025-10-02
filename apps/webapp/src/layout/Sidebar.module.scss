@@ -2,15 +2,23 @@
 
 .root {
   position: relative;
-  width: 25%;
-  padding-left: var(--lotta-spacing);
 
-  @media screen and (max-width: $max-md) {
-    width: 33%;
+  &.isEmpty {
+    width: 0;
+    padding: 0;
   }
 
-  @media screen and (max-width: $max-xs) {
-    width: 100%;
+  &:not(.isEmpty) {
+    width: 25%;
+    padding-left: var(--lotta-spacing);
+
+    @media screen and (max-width: $max-md) {
+      width: 33%;
+    }
+
+    @media screen and (max-width: $max-xs) {
+      width: 100%;
+    }
   }
 }
 

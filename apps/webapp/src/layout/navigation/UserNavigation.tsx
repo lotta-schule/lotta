@@ -30,7 +30,6 @@ import { Article, User } from 'util/model';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
-import { useOnLogout } from 'util/user/useOnLogout';
 import { useNewFeedbackCount } from 'util/feedback';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
@@ -55,8 +54,6 @@ export const UserNavigation = React.memo(() => {
 
   const newFeedbackBadgeNumber = useNewFeedbackCount();
 
-  const onLogout = useOnLogout();
-
   const [loginModalIsOpen, setLoginModalIsOpen] = React.useState(false);
   const [feedbackModalIsOpen, setFeedbackModalIsOpen] = React.useState(false);
   const [registerModalIsOpen, setRegisterModalIsOpen] = React.useState(false);
@@ -72,30 +69,28 @@ export const UserNavigation = React.memo(() => {
       switch (action) {
         case 'profile':
           router.push('/profile');
-          break;
+          return;
         case 'files':
           router.push('/profile/files');
-          break;
+          return;
         case 'own-articles':
           router.push('/profile/articles');
-          break;
+          return;
         case 'feedback':
           setFeedbackModalIsOpen(true);
-          break;
+          return;
         case 'administration':
           router.push('/admin');
-          break;
+          return;
         case 'unpublished':
           router.push('/unpublished');
-          break;
+          return;
         case 'logout':
-          onLogout();
-          break;
-        default:
-          throw new Error('Action is not supported!');
+          window.location.href = '/auth/logout';
+          return;
       }
     },
-    [router, onLogout]
+    [router]
   );
 
   const nav = React.useMemo(() => {

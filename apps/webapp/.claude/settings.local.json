@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/alexis/development/lotta/lotta/**)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm typecheck:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

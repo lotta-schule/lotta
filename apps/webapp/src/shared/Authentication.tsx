@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { checkExpiredToken } from 'api/legacyClient';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ConversationModel, ID, MessageModel } from 'model';
 import { useSubscription } from '@apollo/client';
@@ -13,15 +12,6 @@ import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
 
 const Authentication = React.memo(() => {
   const currentUser = useCurrentUser();
-
-  React.useEffect(() => {
-    const intervalId = setInterval(() => {
-      checkExpiredToken();
-    }, 60 * 1000);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
 
   useSubscription<{ message: MessageModel }>(ReceiveMessageSubscription, {
     skip: typeof window === 'undefined' || !currentUser,

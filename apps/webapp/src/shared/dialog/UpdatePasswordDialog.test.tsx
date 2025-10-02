@@ -76,6 +76,56 @@ describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => 
       );
       expect(screen.queryByRole('button', { name: /abbrechen/i })).toBeNull();
     });
+
+    it('should skip RequestHisecTokenDialog when request_pw_reset cookie is set', async () => {
+      const fireEvent = userEvent.setup();
+      document.cookie = 'request_pw_reset=1';
+      let updateMutationCalled = false;
+      const additionalMocks: MockedResponse[] = [
+        {
+          request: {
+            query: UpdatePasswordMutation,
+            variables: {
+              newPassword: 'pw456',
+            },
+          },
+          result: () => {
+            updateMutationCalled = true;
+            return {
+              data: { updatePassword: { id: 1 } },
+            };
+          },
+        },
+      ];
+      const onClose = vi.fn();
+      render(
+        <UpdatePasswordDialog
+          isFirstPasswordChange
+          isOpen
+          onRequestClose={onClose}
+        />,
+        {},
+        { currentUser: SomeUser, additionalMocks }
+      );
+      await fireEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
+      await fireEvent.type(
+        screen.getByLabelText('Wiederholung Neues Passwort:'),
+        'pw456'
+      );
+      await fireEvent.click(screen.getByRole('button', { name: /ändern/ }));
+
+      await waitFor(() => {
+        expect(updateMutationCalled).toEqual(true);
+      });
+      await waitFor(() => {
+        expect(onClose).toHaveBeenCalled();
+      });
+      expect(
+        screen.queryByTestId('RequestHisecTokenDialog')
+      ).not.toBeInTheDocument();
+
+      document.cookie = 'request_pw_reset=; Max-Age=0';
+    });
   });
 
   describe('send form', () => {

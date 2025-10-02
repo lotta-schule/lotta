@@ -7,6 +7,7 @@ import { isMobileDrawerOpenVar } from 'api/apollo/cache';
 import { useRouter } from 'next/router';
 
 import styles from './Sidebar.module.scss';
+import clsx from 'clsx';
 
 export interface SidebarProps {
   isEmpty?: boolean;
@@ -41,19 +42,13 @@ export const Sidebar = React.memo<SidebarProps>(({ children, isEmpty }) => {
         <Footer />
       </Drawer>
     );
-  } else if (isEmpty) {
-    // there must be a relative container for footer positioning
-    return (
-      <div
-        data-testid="BaseLayoutSidebar"
-        style={{ position: 'relative', width: 0 }}
-      >
-        <Footer />
-      </div>
-    );
   } else {
     return (
-      <aside data-testid="BaseLayoutSidebar" className={styles.root}>
+      <aside
+        data-testid="BaseLayoutSidebar"
+        className={clsx({ [styles.isEmpty]: isEmpty }, styles.root)}
+        aria-hidden={isEmpty}
+      >
         {children}
         <Footer />
       </aside>

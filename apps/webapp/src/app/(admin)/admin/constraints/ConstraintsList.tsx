@@ -37,8 +37,7 @@ export const ConstraintList = ({ tenant }: ConstraintListProps) => {
 
   const valueOrDefault = isLimitSet
     ? value
-    : // eslint-disable-next-line react-compiler/react-compiler
-      lastSetLimitRef.current || DEFAULT;
+    : lastSetLimitRef.current || DEFAULT;
 
   React.useEffect(() => {
     if (isLimitSet) {

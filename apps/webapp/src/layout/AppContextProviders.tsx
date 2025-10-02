@@ -21,6 +21,16 @@ const DynamicAuthentication = dynamic(() => import('shared/Authentication'), {
   ssr: false,
 });
 
+const DynamicUpdatePasswordDialog = dynamic(
+  () =>
+    import('shared/dialog/UpdatePasswordDialog').then(
+      (mod) => mod.UpdatePasswordDialog
+    ),
+  {
+    ssr: false,
+  }
+);
+
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 
 const defaultTheme = DefaultThemes.standard;
@@ -42,11 +52,37 @@ const TenantContextProviders = React.memo(
   ({ children }: TenantContextProvidersProps) => {
     const tenant = useTenant();
     const customTheme = tenant.configuration.customTheme;
+    const [isPasswordChangeOpen, setIsPasswordChangeOpen] =
+      React.useState(false);
 
     const theme = {
       ...defaultTheme,
       ...(customTheme as any),
     };
+
+    React.useEffect(() => {
+      if (typeof window !== 'undefined') {
+        const cookies = document.cookie.split(';').reduce(
+          (acc, cookie) => {
+            const [key, value] = cookie.trim().split('=');
+            acc[key] = value;
+            return acc;
+          },
+          {} as Record<string, string>
+        );
+
+        if (cookies['request_pw_reset'] === '1') {
+          setIsPasswordChangeOpen(true);
+        }
+      }
+    }, []);
+
+    const handlePasswordChangeClose = React.useCallback(() => {
+      setIsPasswordChangeOpen(false);
+      if (typeof window !== 'undefined') {
+        document.cookie = 'request_pw_reset=; Max-Age=0; path=/; SameSite=Lax';
+      }
+    }, []);
 
     return (
       <HubertProvider>
@@ -54,6 +90,13 @@ const TenantContextProviders = React.memo(
         <DynamicAuthentication />
         <AppHead />
         <BaseLayout>{children}</BaseLayout>
+        {isPasswordChangeOpen && (
+          <DynamicUpdatePasswordDialog
+            isFirstPasswordChange
+            isOpen={isPasswordChangeOpen}
+            onRequestClose={handlePasswordChangeClose}
+          />
+        )}
       </HubertProvider>
     );
   }
@@ -70,7 +113,7 @@ export const AppContextProviders = ({
   const firstBrowserInit = React.useRef(false);
 
   const client = getApolloClient({ tenant, socketUrl });
-  // eslint-disable-next-line react-compiler/react-compiler
+
   if (!firstBrowserInit.current) {
     client.writeQuery({
       query: GET_TENANT_QUERY,
@@ -88,13 +131,7 @@ export const AppContextProviders = ({
         data: { currentUser },
       });
     }
-    if (typeof window !== 'undefined') {
-      const authToken = document.cookie.match(/SignInAccessToken=(.+);?/i)?.[1];
-      if (authToken) {
-        localStorage.setItem('id', authToken);
-      }
-    }
-    // eslint-disable-next-line react-compiler/react-compiler
+
     firstBrowserInit.current = true;
   }
 

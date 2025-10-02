@@ -32,6 +32,20 @@ export const UpdatePasswordDialog = React.memo(
     const [newPassword, setNewPassword] = React.useState('');
     const [newPasswordRepetition, setNewPasswordRepetition] =
       React.useState('');
+
+    const hasHisecToken = React.useMemo(() => {
+      if (typeof window === 'undefined') return false;
+      const cookies = document.cookie.split(';').reduce(
+        (acc, cookie) => {
+          const [key, value] = cookie.trim().split('=');
+          acc[key] = value;
+          return acc;
+        },
+        {} as Record<string, string>
+      );
+      return cookies['request_pw_reset'] === '1';
+    }, []);
+
     const resetForm = () => {
       setNewPassword('');
       setNewPasswordRepetition('');
@@ -58,7 +72,11 @@ export const UpdatePasswordDialog = React.memo(
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              setShowRequestHisecToken(true);
+              if (hasHisecToken) {
+                updatePassword();
+              } else {
+                setShowRequestHisecToken(true);
+              }
             }}
             data-testid="UpdatePasswordDialog"
           >
