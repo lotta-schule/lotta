@@ -219,7 +219,9 @@ defmodule Lotta.Storage do
     with {:ok, env} <-
            Tesla.get(
              tesla_client,
-             RemoteStorage.get_http_url(file_or_file_conversion.remote_storage_entity),
+             RemoteStorage.get_http_url(file_or_file_conversion.remote_storage_entity,
+               signed: true
+             ),
              opts: [adapter: [response: :stream]]
            ),
          {:ok, file_data} <-

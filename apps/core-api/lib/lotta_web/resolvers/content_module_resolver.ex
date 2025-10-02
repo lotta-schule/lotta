@@ -6,6 +6,8 @@ defmodule LottaWeb.ContentModuleResolver do
   alias Lotta.{Content, Email, Mailer, Repo, Storage}
   alias Bamboo.Attachment
 
+  require Logger
+
   def send_form_response(
         %{content_module_id: content_module_id, response: response},
         %{context: %{current_user: current_user}}
@@ -89,11 +91,14 @@ defmodule LottaWeb.ContentModuleResolver do
         end
 
       "lotta-file-id://" <> file_description ->
-        with {:ok, %{"id" => file_id}} <- Jason.decode(file_description),
-             file when not is_nil(file) <- Storage.get_file(file_id),
-             true <- can_read?(user, file),
+        with {:ok, %{"id" => file_id}} <-
+               Jason.decode(file_description),
+             file when not is_nil(file) <-
+               Storage.get_file(file_id),
+             true <-
+               can_read?(user, file),
              {:ok, status, _headers, client_ref} when status < 400 <-
-               :hackney.get(Storage.get_http_url(file)),
+               :hackney.get(Storage.get_http_url(file, signed: true)),
              {:ok, data} <- :hackney.body(client_ref) do
           {file.filename,
            %Attachment{
@@ -106,7 +111,14 @@ defmodule LottaWeb.ContentModuleResolver do
           nil ->
             {"(Datei nicht gefunden)", nil}
 
-          _error ->
+          false ->
+            Logger.warning(
+              "User #{user.id} is not allowed to access file with id #{file_description}"
+            )
+
+            {"(Datei nicht gültig)", nil}
+
+          error ->
             {"(Datei nicht gültig)", nil}
         end
 
