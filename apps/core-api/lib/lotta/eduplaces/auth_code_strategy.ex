@@ -7,6 +7,8 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
   alias JOSE.JWT
   alias Lotta.Eduplaces.UserInfo
 
+  require Logger
+
   # this is only for the compiler to know about the atoms,
   # so they can be parsed by String.to_existing_atom/1
   _ = [
@@ -17,7 +19,8 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
     :response_type,
     :scope,
     :error,
-    :error_description
+    :error_description,
+    :provider
   ]
 
   defp config do
@@ -69,6 +72,8 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
   end
 
   def get_token(client, params \\ [], headers \\ []) do
+    Logger.debug("Getting token with params: #{inspect(params)} and headers: #{inspect(headers)}")
+
     client
     |> put_header("accept", "application/json")
     |> OAuth2.Strategy.AuthCode.get_token(as_keyword_list(params), headers)

@@ -78,14 +78,10 @@ defmodule SystemConfig do
   defp default("REDIS_HOST", env) when env in [:dev, :test], do: "localhost"
   defp default("REDIS_PASSWORD", env) when env in [:dev, :test], do: "lotta"
 
-  defp default("UGC_S3_COMPAT_ENDPOINT", env) when env in [:dev, :test], do: "http://localhost"
-  defp default("UGC_S3_COMPAT_REGION", env) when env in [:dev, :test], do: "us-east-1"
-  defp default("UGC_COMPAT_S3_PORT", env) when env in [:dev, :test], do: "9000"
+  defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "AKIAIOSFODNN7EXAMPLE"
 
   defp default("AWS_SECRET_ACCESS_KEY", env) when env in [:dev, :test],
     do: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-
-  defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "AKIAIOSFODNN7EXAMPLE"
 
   defp default("REMOTE_STORAGE_DEFAULT_STORE", env) when env in [:dev, :test], do: "minio"
   defp default("REMOTE_STORAGE_PREFIX", _), do: nil
@@ -204,11 +200,7 @@ config :lotta, :redis_connection,
 config :ex_aws, :s3,
   http_client: ExAws.Request.Finch,
   access_key_id: SystemConfig.get("AWS_ACCESS_KEY_ID"),
-  secret_access_key: SystemConfig.get("AWS_SECRET_ACCESS_KEY"),
-  host: SystemConfig.get("UGC_S3_COMPAT_ENDPOINT", cast: :url_host),
-  region: SystemConfig.get("UGC_S3_COMPAT_REGION"),
-  scheme: SystemConfig.get("UGC_S3_COMPAT_ENDPOINT", cast: :url_scheme),
-  port: SystemConfig.get("UGC_COMPAT_S3_PORT", cast: :integer)
+  secret_access_key: SystemConfig.get("AWS_SECRET_ACCESS_KEY")
 
 config :lotta, Lotta.Storage.RemoteStorage,
   default_storage: SystemConfig.get("REMOTE_STORAGE_DEFAULT_STORE"),
@@ -223,10 +215,15 @@ config :lotta, Lotta.Storage.RemoteStorage,
       |> then(fn env_name ->
         Map.put(acc, storage_name, %{
           type: Lotta.Storage.RemoteStorage.Strategy.S3,
-          config: %{
-            endpoint: SystemConfig.get("REMOTE_STORAGE_#{env_name}_ENDPOINT"),
-            bucket: SystemConfig.get("REMOTE_STORAGE_#{env_name}_BUCKET")
-          }
+          config:
+            %{
+              endpoint: SystemConfig.get("REMOTE_STORAGE_#{env_name}_ENDPOINT"),
+              bucket: SystemConfig.get("REMOTE_STORAGE_#{env_name}_BUCKET"),
+              region: System.get_env("REMOTE_STORAGE_#{env_name}_REGION"),
+              access_key_id: System.get_env("REMOTE_STORAGE_#{env_name}_ACCESS_KEY_ID"),
+              secret_access_key: System.get_env("REMOTE_STORAGE_#{env_name}_SECRET_ACCESS_KEY")
+            }
+            |> Map.reject(fn {_k, v} -> v in [nil, ""] end)
         })
       end)
     end)
