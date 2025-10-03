@@ -16,17 +16,17 @@ export async function register() {
       release,
       enabled: appConfig.get('NODE_ENV') === 'production',
       skipOpenTelemetrySetup: true,
-      tracesSampleRate: 0,
+      tracesSampleRate: 0.15,
+      tracePropagationTargets: [/^\/api/, appConfig.get('API_URL')],
     });
   }
-}
 
-// Register OpenTelemetry.
-registerOTel({
-  serviceName: appConfig.get('SERVICE_NAME'),
-  attributes: {
-    env: appConfig.get('APP_ENVIRONMENT'),
-    'service.name': appConfig.get('SERVICE_NAME'),
-    'node.env': appConfig.get('NODE_ENV'),
-  },
-});
+  registerOTel({
+    serviceName: appConfig.get('SERVICE_NAME'),
+    attributes: {
+      env: appConfig.get('APP_ENVIRONMENT'),
+      'service.name': appConfig.get('SERVICE_NAME'),
+      'node.env': appConfig.get('NODE_ENV'),
+    },
+  });
+}

@@ -16,14 +16,14 @@ level =
 config :logger, :console,
   format: format,
   level: level,
-  metadata: [:request_id],
+  metadata: [:request_id, :trace_id, :span_id],
   backends: [:console, Sentry.LoggerBackend]
 
 config :lotta, :logger, [
   {:handler, :sentry, Sentry.LoggerHandler,
    %{
      config: %{
-       metadata: [:file, :line],
+       metadata: [:file, :line, :request_id, :trace_id, :span_id],
        rate_limiting: [max_events: 10, interval: _1_second = 1_000],
        capture_log_messages: true,
        level: :error

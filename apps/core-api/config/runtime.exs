@@ -172,17 +172,11 @@ config :opentelemetry, :resource,
   deployment: %{
     environment: SystemConfig.get("APP_ENVIRONMENT"),
     version: SystemConfig.get("IMAGE_NAME")
-  },
-  span_processor: :batch,
-  traces_exporter: :otlp
-
-config :opentelemetry, :processors,
-  otel_batch_processor: %{
-    exporter: {
-      :opentelemetry_exporter,
-      %{endpoints: []}
-    }
   }
+
+config :opentelemetry,
+  span_processor: {Sentry.OpenTelemetry.SpanProcessor, []},
+  sampler: {Sentry.OpenTelemetry.Sampler, []}
 
 config :lotta,
        Lotta.Repo,
@@ -283,11 +277,10 @@ config :sentry,
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()],
   filter: Lotta.SentryFilter,
+  traces_sample_rate: 0.15,
   integrations: [
     oban: [
-      # Capture errors:
       capture_errors: true,
-      # Monitor cron jobs:
       cron: [enabled: true]
     ]
   ]
