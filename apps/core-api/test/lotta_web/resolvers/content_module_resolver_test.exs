@@ -5,6 +5,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
   use Bamboo.Test
 
   import Ecto.Query
+  import Lotta.Fixtures
 
   alias LottaWeb.Auth.AccessToken
 
@@ -251,13 +252,14 @@ defmodule LottaWeb.ContentModuleResolverTest do
 
     test "sends lotta file and save its filename to database", %{
       test_formular: test_formular,
-      admin_jwt: admin_jwt,
-      admin_file: admin_file
+      admin: admin
     } do
+      admin_file = fixture(:real_file, admin)
+      filename = admin_file.filename
+
       res =
-        build_conn()
-        |> put_req_header("tenant", "slug:test")
-        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        build_tenant_conn()
+        |> authorize(admin)
         |> post("/api",
           query: @query,
           variables: %{
@@ -269,7 +271,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
           \"dieses_feld_existiert_nicht\": \"abcABC\",
           \"transport\": \"lieferung\",
           \"beschreibung\": \"\",
-          \"coupon\": \"lotta-file-id://{\\\"filename\\\":\\\"irgendwas.png\\\",\\\"filesize\\\":713,\\\"filetype\\\":\\\"image/png\\\",\\\"id\\\":\\\"#{admin_file.id}\\\"}\"
+          \"coupon\": \"lotta-file-id://{\\\"filename\\\":\\\"#{filename}\\\",\\\"filesize\\\":#{admin_file.filesize},\\\"filetype\\\":\\\"#{admin_file.mime_type}\\\",\\\"id\\\":\\\"#{admin_file.id}\\\"}\"
         }"
           }
         )
@@ -293,7 +295,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
                  "größe" => "klein",
                  "name" => "Test",
                  "transport" => "lieferung",
-                 "coupon" => "irgendwas.png"
+                 "coupon" => filename
                }
              }
 
@@ -301,11 +303,11 @@ defmodule LottaWeb.ContentModuleResolverTest do
         to: [{_, "alexis.rinaldoni@lotta.schule"}],
         text_body: text_body,
         html_body: html_body,
-        attachments: [%{filename: "irgendwas.png"}]
+        attachments: [%{filename: ^filename}]
       })
 
-      assert text_body =~ "coupon: \"irgendwas.png\""
-      assert html_body =~ "<li><strong>coupon</strong> &quot;irgendwas.png&quot;</li>"
+      assert text_body =~ "coupon: \"#{filename}\""
+      assert html_body =~ "<li><strong>coupon</strong> &quot;#{filename}&quot;</li>"
     end
 
     test "sends empty file value if user has no rights to access file", %{

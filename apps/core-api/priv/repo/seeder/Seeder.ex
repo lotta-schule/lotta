@@ -1,10 +1,9 @@
 defmodule Lotta.Repo.Seeder do
-  alias Lotta.Repo
+  alias ExAws.S3
   alias Ecto.Changeset
-  alias Lotta.Accounts
-  alias Lotta.Tenants
+  alias Lotta.{Accounts, Tenants, Repo}
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Storage.{Directory, File, FileData}
+  alias Lotta.Storage.{Directory, File, FileData, RemoteStorage}
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Tenants.{Category, Tenant, TenantDbManager, Widget}
@@ -1271,12 +1270,22 @@ defmodule Lotta.Repo.Seeder do
   end
 
   defp upload_test_file!(file) do
-    remote_path = "tenant_test/#{file.id}"
+    {:ok, config} = RemoteStorage.config_for_store(default_store())
+    bucket_name = config[:config][:bucket]
 
-    "test/support/fixtures/#{file.filename}"
-    |> ExAws.S3.Upload.stream_file()
-    |> ExAws.S3.upload("lotta-dev-ugc", remote_path)
-    |> ExAws.request!()
+    remote_path = "tenant_test/#{file.id}"
+    local_path = "test/support/fixtures/#{file.filename}"
+
+    {:ok, %{body: _response, status_code: 200}} =
+      local_path
+      |> S3.Upload.stream_file()
+      |> S3.upload(bucket_name, remote_path)
+      |> ExAws.request(
+        config[:config][:endpoint]
+        |> URI.parse()
+        |> Map.take([:scheme, :host, :port])
+        |> Map.to_list()
+      )
 
     file
     |> Repo.preload(:remote_storage_entity)
@@ -1287,4 +1296,7 @@ defmodule Lotta.Repo.Seeder do
     })
     |> Repo.update!()
   end
+
+  defp default_store, do: config()[:default_store] || "minio"
+  defp config, do: Application.get_env(:lotta, Lotta.Storage.RemoteStorage)
 end
