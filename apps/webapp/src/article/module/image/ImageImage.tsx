@@ -33,7 +33,7 @@ export const ImageImage = React.memo(
       () =>
         isEditModeEnabled ? (
           <SelectFileOverlay
-            label={'Bild auswechseln'}
+            label={'Bild wechseln'}
             fileFilter={(f) => f.fileType === 'IMAGE'}
             onSelectFile={onUpdateFile}
           >

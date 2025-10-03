@@ -13,7 +13,7 @@ import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArticleModel, CategoryModel } from 'model';
 import { Icon } from 'shared/Icon';
-import { LegacyHeader, Main, Sidebar } from 'layout';
+import { Header, Main, Sidebar } from 'layout';
 import { CategorySelect } from 'shared/categorySelect/CategorySelect';
 import { ArticlePreview } from 'article/preview';
 
@@ -39,9 +39,9 @@ export const SearchPage = () => {
   return (
     <>
       <Main className={styles.root}>
-        <LegacyHeader bannerImageUrl={'/searchBanner.png'}>
+        <Header bannerImageUrl={'/searchBanner.png'}>
           <h2>Suche</h2>
-        </LegacyHeader>
+        </Header>
 
         <section className={styles.inputSection}>
           <div className={styles.description}>

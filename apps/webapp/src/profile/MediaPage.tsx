@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Box } from '@lotta-schule/hubert';
-import { LegacyHeader, Main } from 'layout';
+import { Header, Main } from 'layout';
 import { UserBrowser } from 'shared/browser';
 
 import styles from './MediaPage.module.scss';
@@ -10,9 +10,9 @@ import styles from './MediaPage.module.scss';
 export const MediaPage = () => {
   return (
     <Main className={styles.root}>
-      <LegacyHeader bannerImageUrl={'/bannerProfil.png'}>
+      <Header bannerImageUrl={'/bannerProfil.png'}>
         <h2>Dateien und Medien</h2>
-      </LegacyHeader>
+      </Header>
 
       <Box className={styles.container}>
         <UserBrowser />

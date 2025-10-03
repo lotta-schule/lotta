@@ -2,7 +2,6 @@ import '../styles/globals.scss';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 
 import * as React from 'react';
-import { headers } from 'next/headers';
 import { config as faConfig } from '@fortawesome/fontawesome-svg-core';
 import {
   DefaultThemes,
@@ -12,8 +11,6 @@ import {
 import { TenantNotFoundErrorPage } from 'layout/error/TenantNotFoundErrorPage';
 import { fonts } from 'styles/fonts';
 import { loadTenant } from 'loader';
-import { getBaseUrlString } from 'helper';
-import { getAuthTokenFromHeader } from 'api/apollo/client-rsc';
 import { TranslationsProvider } from 'i18n/client';
 import { TenantGlobalStyleTag } from 'layout/TenantGlobalStyleTag';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
@@ -23,9 +20,6 @@ faConfig.autoAddCss = false;
 export default async function RootLayout({
   children,
 }: React.PropsWithChildren) {
-  const headerValues = await headers();
-  await getBaseUrlString();
-  getAuthTokenFromHeader(headerValues);
   const tenant = await loadTenant().catch(() => null);
 
   const customTheme = tenant?.configuration.customTheme as
