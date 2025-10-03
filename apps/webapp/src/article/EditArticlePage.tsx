@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { useMutation, useSubscription } from '@apollo/client';
 import { ArticleModel, ID } from 'model';
@@ -11,10 +13,9 @@ import { AddModuleBar } from 'article/editor/AddModuleBar';
 import { ArticleEditable as Article } from 'article/ArticleEditable';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article as ArticleUtil } from 'util/model/Article';
-import { useBeforeUnloadConfirmation } from 'util/useBeforeUnloadConfirmation';
 import { EditArticleFooter } from './editor/EditArticleFooter';
 import { Main } from 'layout';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import omit from 'lodash/omit';
 
 import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';
@@ -24,9 +25,6 @@ import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
 export interface EditArticlePageProps {
   article: ArticleModel;
 }
-
-const BEFORE_LEAVE_MESSAGE =
-  'Möchtest du die Seite wirklich verlassen? Ungespeicherte Änderungen gehen verloren.';
 
 export const EditArticlePage = React.memo(
   ({ article }: EditArticlePageProps) => {
@@ -106,8 +104,6 @@ export const EditArticlePage = React.memo(
         },
       }
     );
-
-    useBeforeUnloadConfirmation(isArticleDirty, BEFORE_LEAVE_MESSAGE);
 
     React.useEffect(() => {
       if (!currentUser) {

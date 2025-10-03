@@ -5,7 +5,8 @@ import { loadTenant } from '../loader';
 import Link from 'next/link';
 import clsx from 'clsx';
 
-import styles from './BaseLayout.module.scss';
+import styles from './TenantLayout.module.scss';
+import { Navbar } from './navigation/Navbar';
 
 export type TenantLayoutProps = React.PropsWithChildren<{
   /**
@@ -45,7 +46,7 @@ export const TenantLayout = async ({
           <h1>{tenant.title}</h1>
         </div>
       </header>
-      {/*<Navbar />*/}
+      <Navbar />
       <main className={styles.main}>
         {children}
         {!fullSizeScrollable && (

@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import {
@@ -24,7 +26,7 @@ import { useTenant } from 'util/tenant/useTenant';
 import { ArticlesList } from 'shared/articlesList/ArticlesList';
 import { Main, Sidebar } from 'layout';
 import { ProfileDeleteFileSelection } from './component/ProfileDeleteFileSelection';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { UserBrowser } from 'shared/browser';
 import { graphql, ResultOf } from 'api/graphql';

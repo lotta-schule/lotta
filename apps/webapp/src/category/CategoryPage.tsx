@@ -1,7 +1,9 @@
+'use client';
+
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { ArticleModel, WidgetModel, ID, ArticleFilter } from 'model';
-import { LegacyHeader, Main, Sidebar } from 'layout';
+import { Header, Main, Sidebar } from 'layout';
 import { ErrorMessage, NoSsr, useScrollEvent } from '@lotta-schule/hubert';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
@@ -9,8 +11,9 @@ import { WidgetsList } from './widgetsList/WidgetsList';
 import { ArticlePreview } from 'article/preview';
 import { useCategory } from 'util/categories/useCategory';
 import { CategoryHead } from './CategoryHead';
-import { PREFETCH_COUNT } from 'pages/c/[slug]';
 import clsx from 'clsx';
+
+const PREFETCH_COUNT = 10;
 
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
@@ -139,9 +142,9 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
     <>
       <CategoryHead category={category} />
       <Main>
-        <LegacyHeader bannerImage={category.bannerImageFile || undefined}>
+        <Header bannerImage={category.bannerImageFile || undefined}>
           <h2 data-testid="title">{category.title}</h2>
-        </LegacyHeader>
+        </Header>
         <div className={styles.articles}>
           {[...articlesToShow]
             .sort((a1, a2) => {

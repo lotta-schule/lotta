@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render } from 'test/util';
-import { BaseLayout } from './BaseLayout';
+import { TenantLayout } from './TenantLayout';
 import { imageFile, tenant } from 'test/fixtures';
 import { Tenant } from 'util/tenant';
 
@@ -13,9 +13,9 @@ const tenantMock = {
 describe('TenantLayout', () => {
   it('should render title, logo and child', () => {
     const screen = render(
-      <BaseLayout>
+      <TenantLayout>
         <div>Child Content</div>
-      </BaseLayout>,
+      </TenantLayout>,
       {},
       { tenant: tenantMock }
     );
@@ -27,9 +27,9 @@ describe('TenantLayout', () => {
 
   it('should apply background image style', () => {
     const screen = render(
-      <BaseLayout>
+      <TenantLayout>
         <div>Child Content</div>
-      </BaseLayout>,
+      </TenantLayout>,
       {},
       { tenant: tenantMock }
     );
@@ -52,9 +52,9 @@ describe('TenantLayout', () => {
 
   it('should render ScrollToTopButton in NoSsr wrapper', () => {
     const screen = render(
-      <BaseLayout>
+      <TenantLayout>
         <div>Child Content</div>
-      </BaseLayout>
+      </TenantLayout>
     );
 
     expect(
