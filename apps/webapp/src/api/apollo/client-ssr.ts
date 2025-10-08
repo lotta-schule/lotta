@@ -11,6 +11,7 @@ import { TenantModel } from 'model';
 import { createErrorLink } from './links/errorLink';
 import { createAuthLink } from './links/authLink';
 import { createHttpLink } from './links/httpLink';
+import { createSentryTracingLink } from './links/sentryTracingLink';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { sendRefreshRequest } from 'api/auth';
@@ -57,9 +58,7 @@ export const createSSRClient = (
             return res.accessToken;
           },
         }),
-        // in a SSR environment, if you use multipart features like
-        // @defer, you need to decide how to handle these.
-        // This strips all interfaces with a `@defer` directive from your queries.
+        createSentryTracingLink(),
         new SSRMultipartLink({
           stripDefer: true,
         }),
