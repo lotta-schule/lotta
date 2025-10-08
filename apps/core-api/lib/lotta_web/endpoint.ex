@@ -57,6 +57,7 @@ defmodule LottaWeb.Endpoint do
   )
 
   plug(Sentry.PlugContext)
+  plug(LottaWeb.Plugs.SentryTraceContextPlug)
 
   plug(Plug.MethodOverride)
   plug(Plug.Head)
