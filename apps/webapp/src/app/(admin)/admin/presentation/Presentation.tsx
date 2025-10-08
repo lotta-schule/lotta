@@ -102,14 +102,14 @@ export const Presentation = React.memo(
               <ColorSettingRow
                 label={'Button Textfarbe'}
                 hint={'Textfarbe für gefüllte Buttons'}
-                value={customTheme.highlightColor}
-                onChange={(highlightColor) =>
+                value={customTheme.primaryContrastTextColor}
+                onChange={(primaryContrastTextColor) =>
                   updateThemeProperties({
-                    highlightColor,
+                    primaryContrastTextColor,
                   })
                 }
               />
-              <Label label={'Rundungen'}>
+              <Label label={'Rundungen für Buttons'}>
                 <Input
                   className={styles.stylingInput}
                   disabled={isLoading}
@@ -228,16 +228,68 @@ export const Presentation = React.memo(
           <div className={styles.stylingSection}>
             <div className={styles.editStyleSection}>
               <ColorSettingRow
-                label={'Button & Akzente'}
-                hint={'Akzentfarbe für wichtige und interaktive Elemente'}
-                value={customTheme.primaryColor}
-                onChange={(primaryColor) => {
-                  updateThemeProperties({ primaryColor });
-                }}
+                label={'Hintergrund der Navigationsleiste'}
+                hint={'Farbe für den Hintergrund der Navigationsleiste'}
+                value={customTheme.navigationBackgroundColor}
+                onChange={(navigationBackgroundColor) =>
+                  updateThemeProperties({
+                    navigationBackgroundColor,
+                  })
+                }
               />
               <ColorSettingRow
-                label={'Button Textfarbe'}
-                hint={'Textfarbe für gefüllte Buttons'}
+                label={'Text Hauptnavigation'}
+                hint={'Textfarbe für die Buttons in der Hauptnavigationsleiste'}
+                value={customTheme.navigationContrastTextColor}
+                onChange={(navigationContrastTextColor) =>
+                  updateThemeProperties({
+                    navigationContrastTextColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Text'}
+                hint={'Farbe für Text'}
+                value={customTheme.textColor}
+                onChange={(textColor) =>
+                  updateThemeProperties({
+                    textColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Hintergrund'}
+                hint={'Farbe für den Hintergrund des Inhaltsbereichs'}
+                value={customTheme.boxBackgroundColor}
+                onChange={(boxBackgroundColor) =>
+                  updateThemeProperties({
+                    boxBackgroundColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Seitenhintergrund'}
+                hint={'Farbe für den Hintergrund des gesamten Seiteninhalts'}
+                value={customTheme.pageBackgroundColor}
+                onChange={(pageBackgroundColor) =>
+                  updateThemeProperties({
+                    pageBackgroundColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Trennlinien'}
+                hint={'Farbe für Trennlinien'}
+                value={customTheme.dividerColor}
+                onChange={(dividerColor) =>
+                  updateThemeProperties({
+                    dividerColor,
+                  })
+                }
+              />
+              <ColorSettingRow
+                label={'Hervorhebung'}
+                hint={'Farbe für Hervorhebungen'}
                 value={customTheme.highlightColor}
                 onChange={(highlightColor) =>
                   updateThemeProperties({
@@ -245,9 +297,48 @@ export const Presentation = React.memo(
                   })
                 }
               />
+              <ColorSettingRow
+                label={'Bannerhintergrund'}
+                hint={'Farbe für den Hintergrund des Banners'}
+                value={customTheme.bannerBackgroundColor}
+                onChange={(bannerBackgroundColor) =>
+                  updateThemeProperties({
+                    bannerBackgroundColor,
+                  })
+                }
+              />
             </div>
             <div className={styles.previewVertically}>
-              <PagePreview theme={customTheme} style={{ width: '100%' }} />
+              <PagePreview theme={customTheme} style={{ width: '500px' }} />
+            </div>
+          </div>
+        </AdminPageSection>
+        <AdminPageSection title={'Abstände'}>
+          <div className={styles.stylingSection}>
+            <div className={styles.editStyleSection}>
+              <Label label={'Abstand'}>
+                <Input
+                  value={customTheme.spacing}
+                  disabled={isLoading}
+                  onChange={(e) =>
+                    updateThemeProperties({
+                      spacing: e.currentTarget.value,
+                    })
+                  }
+                />
+              </Label>
+            </div>
+            <div className={styles.previewVertically}>
+              <div className={styles.boxes}>
+                <div className={styles.box}></div>
+                <div className={styles.box}></div>
+                <div className={styles.box}></div>
+              </div>
+              <div className={styles.boxes}>
+                <div className={styles.box}></div>
+                <div className={styles.box}></div>
+                <div className={styles.box}></div>
+              </div>
             </div>
           </div>
         </AdminPageSection>

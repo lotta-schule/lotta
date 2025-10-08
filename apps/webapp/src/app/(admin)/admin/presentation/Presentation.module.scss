@@ -52,4 +52,14 @@
     height: 40px;
     background-color: rgb(var(--lotta-navigation-background-color));
   }
+  .boxes {
+    display: flex;
+    margin-bottom: var(--lotta-spacing);
+    .box {
+      width: 100px;
+      height: 50px;
+      background-color: rgb(var(--lotta-primary-color));
+      margin-right: var(--lotta-spacing);
+    }
+  }
 }
