@@ -11,7 +11,7 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
 
   # this is only for the compiler to know about the atoms,
   # so they can be parsed by String.to_existing_atom/1
-  _ = [
+  @allowed_atoms [
     :client_id,
     :client_secret,
     :site,
@@ -28,8 +28,8 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
     |> Keyword.merge(strategy: __MODULE__)
   end
 
-  def allowed_atoms do
-  end
+  def allowed_atoms, do:
+    @allowed_atoms
 
   def client do
     config()
