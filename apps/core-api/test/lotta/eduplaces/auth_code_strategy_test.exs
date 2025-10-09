@@ -277,9 +277,17 @@ defmodule Lotta.Eduplaces.AuthCodeStrategyTest do
 
   describe "allowed_atoms/0" do
     test "returns expected value" do
-      # The function appears to be empty in the current implementation
-      result = AuthCodeStrategy.allowed_atoms()
-      assert result == nil
+      assert [
+        :client_id,
+        :client_secret,
+        :site,
+        :state,
+        :response_type,
+        :scope,
+        :error,
+        :error_description,
+        :provider
+      ] == AuthCodeStrategy.allowed_atoms()
     end
   end
 
