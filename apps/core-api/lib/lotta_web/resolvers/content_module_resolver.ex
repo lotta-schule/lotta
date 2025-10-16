@@ -119,6 +119,7 @@ defmodule LottaWeb.ContentModuleResolver do
             {"(Datei nicht gültig)", nil}
 
           error ->
+            Logger.error("Error retrieving file with id #{file_description}: #{inspect(error)}")
             {"(Datei nicht gültig)", nil}
         end
 

@@ -78,6 +78,9 @@ defmodule SystemConfig do
   defp default("REDIS_HOST", env) when env in [:dev, :test], do: "localhost"
   defp default("REDIS_PASSWORD", env) when env in [:dev, :test], do: "lotta"
 
+  defp default("UGC_S3_COMPAT_ENDPOINT", env) when env in [:dev, :test],
+    do: "http://localhost:9000"
+
   defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "AKIAIOSFODNN7EXAMPLE"
 
   defp default("AWS_SECRET_ACCESS_KEY", env) when env in [:dev, :test],
@@ -212,6 +215,11 @@ config :lotta, Lotta.Storage.RemoteStorage,
           config:
             %{
               endpoint: SystemConfig.get("REMOTE_STORAGE_#{env_name}_ENDPOINT"),
+              api_endpoint:
+                System.get_env(
+                  "REMOTE_STORAGE_#{env_name}_API_ENDPOINT",
+                  SystemConfig.get("UGC_S3_COMPAT_ENDPOINT")
+                ),
               bucket: SystemConfig.get("REMOTE_STORAGE_#{env_name}_BUCKET"),
               region: System.get_env("REMOTE_STORAGE_#{env_name}_REGION"),
               access_key_id: System.get_env("REMOTE_STORAGE_#{env_name}_ACCESS_KEY_ID"),

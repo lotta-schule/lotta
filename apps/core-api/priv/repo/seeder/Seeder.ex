@@ -1274,7 +1274,7 @@ defmodule Lotta.Repo.Seeder do
       |> S3.Upload.stream_file()
       |> S3.upload(bucket_name, remote_path)
       |> ExAws.request(
-        config[:config][:endpoint]
+        config[:config][:api_endpoint]
         |> URI.parse()
         |> Map.take([:scheme, :host, :port])
         |> Map.to_list()
