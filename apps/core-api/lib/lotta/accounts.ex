@@ -330,7 +330,7 @@ defmodule Lotta.Accounts do
 
     user_info
     |> Eduplaces.UserInfo.to_lotta_user()
-    |> User.update_changeset(%{groups: groups})
+    |> User.update_changeset(groups: groups)
     |> Repo.insert(prefix: tenant.prefix)
     |> case do
       {:ok, user} ->

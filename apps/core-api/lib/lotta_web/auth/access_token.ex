@@ -17,14 +17,14 @@ defmodule LottaWeb.Auth.AccessToken do
   alias Lotta.Accounts.User
   alias LottaWeb.Urls
 
-  @spec subject_for_token(User.t(), Map.t()) :: {:ok, String.t()} | {:error, :token_not_valid}
+  @spec subject_for_token(User.t(), map()) :: {:ok, String.t()} | {:error, :token_not_valid}
   def subject_for_token(%{id: user_id}, _claims) do
     {:ok, to_string(user_id)}
   end
 
   def subject_for_token(_payload, _claims), do: {:error, :token_not_valid}
 
-  @spec resource_from_claims(Map.t()) :: {:ok, User.t()} | {:error, :user_not_found}
+  @spec resource_from_claims(map()) :: {:ok, User.t()} | {:error, :user_not_found}
   def resource_from_claims(%{"sub" => subject_id, "tid" => tid}) do
     tenant = Tenants.get_tenant(tid)
 

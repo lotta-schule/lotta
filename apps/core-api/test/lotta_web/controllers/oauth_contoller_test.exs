@@ -99,7 +99,9 @@ defmodule LottaWeb.OAuthControllerTest do
           |> get("/auth/oauth/eduplaces/callback?state=valid_state")
 
         assert redirect_uri = redirected_to(conn)
-        assert "https://test.lotta.schule/auth/callback?token=" <> token = redirect_uri
+
+        assert "https://test.lotta.schule/auth/callback?token=" <> token =
+                 String.replace_suffix(redirect_uri, "&return_url=/", "")
 
         tenant_id = tenant.id
         user_id = to_string(user.id)
@@ -120,7 +122,7 @@ defmodule LottaWeb.OAuthControllerTest do
         id: "user123",
         username: "Hedwig",
         groups: [],
-        role: :student,
+        role: :teacher,
         school: %SchoolInfo{
           id: "school123",
           name: "Test School",
@@ -137,9 +139,10 @@ defmodule LottaWeb.OAuthControllerTest do
           |> put_req_cookie("ep_login_state", "valid_state")
           |> get("/auth/oauth/eduplaces/callback?state=valid_state")
 
-        # Should redirect to setup page with the new tenant's slug
+        # Should redirect to tenant URI with token and return_url pointing to /setup
         redirect_path = redirected_to(conn)
-        assert redirect_path =~ "/setup/test-school/status"
+        assert redirect_path =~ "https://test-school.lotta.schule/auth/callback?token="
+        assert redirect_path =~ "return_url=/setup"
       end
     end
 
@@ -174,7 +177,9 @@ defmodule LottaWeb.OAuthControllerTest do
           |> fetch_cookies()
 
         assert redirect_uri = redirected_to(conn)
-        assert "https://test.lotta.schule/auth/callback?token=" <> token = redirect_uri
+
+        assert "https://test.lotta.schule/auth/callback?token=" <> token =
+                 String.replace_suffix(redirect_uri, "&return_url=/", "")
 
         tenant_id = tenant.id
 
