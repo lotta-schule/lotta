@@ -310,7 +310,7 @@ defmodule LottaWeb.CoreComponentsTest do
         </.table>
         """)
 
-      assert html =~ ~s|<span class="sr-only">Actions</span>|
+      assert html =~ ~s|<span class="sr-only">Aktionen</span>|
       assert html =~ ~s|class="w-0 font-semibold"|
       assert html =~ "Edit John"
     end
