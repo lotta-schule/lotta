@@ -19,7 +19,7 @@ defmodule LottaWeb.SetupControllerTest do
         |> put_req_header("tenant", "slug:#{tenant.slug}")
         |> get("/setup/status")
 
-      assert html_response(conn, 200) =~ "Lotta is being setup"
+      assert html_response(conn, 200) =~ "Lotta wird für deine Schule eingerichtet"
     end
 
     test "redirects to tenant URL for active tenant", %{conn: conn} do
@@ -59,7 +59,7 @@ defmodule LottaWeb.SetupControllerTest do
     test "returns 404 for non-existent tenant", %{conn: conn} do
       conn = get(conn, "/setup/status")
 
-      assert html_response(conn, 404) =~ "Tenant not found"
+      assert html_response(conn, 404) =~ "Instanz nicht gefunden"
     end
   end
 end

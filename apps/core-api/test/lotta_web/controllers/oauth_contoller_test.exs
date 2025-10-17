@@ -54,7 +54,7 @@ defmodule LottaWeb.OAuthControllerTest do
         |> get("/auth/oauth/eduplaces/callback?state=")
         |> fetch_cookies()
 
-      assert html_response(conn, 400) =~ "Missing or invalid state parameter."
+      assert html_response(conn, 400) =~ "Fehlender oder ungültiger Status-Parameter"
     end
 
     test "returns error when state mismatches", %{conn: conn} do
@@ -64,7 +64,7 @@ defmodule LottaWeb.OAuthControllerTest do
         |> get("/auth/oauth/eduplaces/callback?state=invalid_state")
         |> fetch_cookies()
 
-      assert html_response(conn, 400) =~ "State parameter mismatch."
+      assert html_response(conn, 400) =~ "Status-Parameter stimmt nicht überein"
     end
 
     test "redirects to tenant URI with access token on successful login", %{
@@ -225,8 +225,10 @@ defmodule LottaWeb.OAuthControllerTest do
           |> put_req_cookie("ep_login_state", "valid_state")
           |> get("/auth/oauth/eduplaces/callback?state=valid_state")
 
-        assert html_response(conn, 403) =~ "Access denied"
-        assert html_response(conn, 403) =~ "Only a teacher is allowed to setup lotta for a school"
+        assert html_response(conn, 403) =~ "Zugriff verweigert"
+
+        assert html_response(conn, 403) =~
+                 "Nur eine Lehrkraft darf Lotta für eine Schule einrichten"
       end
     end
   end
@@ -266,7 +268,7 @@ defmodule LottaWeb.OAuthControllerTest do
         |> put_req_header("tenant", "slug:#{tenant.slug}")
         |> get("/auth/callback?token=invalid")
 
-      assert html_response(conn, 401) =~ "not authorized to access this resource"
+      assert html_response(conn, 401) =~ "Nicht autorisiert"
     end
 
     test "returns unauthorized when tenant ID mismatches", %{conn: conn, tenant: tenant} do
@@ -294,7 +296,7 @@ defmodule LottaWeb.OAuthControllerTest do
         |> put_req_header("tenant", "slug:#{tenant.slug}")
         |> get("/auth/callback?token=#{token}")
 
-      assert html_response(conn, 401) =~ "not authorized to access this resource"
+      assert html_response(conn, 401) =~ "Nicht autorisiert"
     end
   end
 end
