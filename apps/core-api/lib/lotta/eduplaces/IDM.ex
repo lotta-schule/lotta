@@ -2,6 +2,12 @@ defmodule Lotta.Eduplaces.IDM do
   @moduledoc """
   IDM client for Eduplaces. Get user information and schedule data.
   """
+  alias Lotta.Tenants.Tenant
+
+  @typedoc """
+  Represents a group response from the IDM API.
+  """
+  @type group_response :: map()
 
   @doc since: "6.1.0"
   @spec get(path :: String.t()) ::
@@ -51,4 +57,16 @@ defmodule Lotta.Eduplaces.IDM do
   @spec list_schools() ::
           {:ok, list()} | {:error, any()}
   def list_schools(), do: get("/schools")
+
+  @doc """
+  List all available groups for a given tenant.
+  """
+  @doc since: "6.1.0"
+  @spec list_groups(Tenant.t()) ::
+          {:ok, list(group_response())} | {:error, any()}
+  def list_groups(%Tenant{eduplaces_id: school_id}), do: list_groups(school_id)
+
+  @spec list_groups(binary()) ::
+          {:ok, list(group_response())} | {:error, any()}
+  def list_groups(school_id), do: get("/schools/#{school_id}/groups")
 end

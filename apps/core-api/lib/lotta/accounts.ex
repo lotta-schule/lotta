@@ -524,10 +524,6 @@ defmodule Lotta.Accounts do
   as they would otherwise be without any group assigned, which would lead them to be visible to everyone.
   """
   @spec delete_user_group(UserGroup.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
-  def delete_user_group(%UserGroup{eduplaces_id: id})
-      when is_binary(id) and byte_size(id) >= 1,
-      do: {:error, "Cannot delete eduplaces groups."}
-
   def delete_user_group(%UserGroup{} = group) do
     Multi.new()
     |> Multi.run(

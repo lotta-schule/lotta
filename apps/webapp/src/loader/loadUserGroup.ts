@@ -10,6 +10,7 @@ export const GET_GROUP_QUERY = graphql(`
       name
       isAdminGroup
       sortKey
+      eduplacesId
       enrollmentTokens
       canReadFullName
     }

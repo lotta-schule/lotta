@@ -59,6 +59,18 @@ defmodule Lotta.Tenants do
   end
 
   @doc """
+  List all tenants that have an eduplaces_id set.
+  """
+  @doc since: "6.1.0"
+  @spec list_eduplaces_tenants() :: [Tenant.t()]
+  def list_eduplaces_tenants() do
+    from(t in Tenant,
+      where: not is_nil(t.eduplaces_id)
+    )
+    |> Repo.all(prefix: "public")
+  end
+
+  @doc """
   Wether a given slug is available.
   A slug is available if it is not already taken by another tenant
   and it is not reserved.

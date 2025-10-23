@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   adminGroup,
+  eduplacesGroup,
   elternGroup,
   lehrerGroup,
   schuelerGroup,
@@ -298,6 +299,68 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         ).toBeVisible();
       });
       expect(screen.queryByRole('button', { name: /löschen/i })).toBeNull();
+    });
+  });
+
+  describe('Eduplaces-managed groups', () => {
+    it('should show Eduplaces notice for groups with eduplacesId', async () => {
+      const screen = render(
+        <EditUserGroup group={eduplacesGroup} />,
+        {},
+        { additionalMocks }
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/diese gruppe wird von eduplaces verwaltet/i)
+        ).toBeVisible();
+      });
+
+      const notice = screen.getByText(
+        /diese gruppe wird von eduplaces verwaltet/i
+      ).parentElement;
+      const icon = notice?.querySelector('svg');
+      expect(icon).toBeInTheDocument();
+    });
+
+    it('should hide all form sections for Eduplaces-managed groups', async () => {
+      const screen = render(
+        <EditUserGroup group={eduplacesGroup} />,
+        {},
+        { additionalMocks }
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/diese gruppe wird von eduplaces verwaltet/i)
+        ).toBeVisible();
+      });
+
+      expect(
+        screen.queryByRole('textbox', { name: /gruppenname/i })
+      ).toBeNull();
+      expect(
+        screen.queryByRole('checkbox', { name: /vollständigen namen/i })
+      ).toBeNull();
+      expect(screen.queryByPlaceholderText(/einschreibeschlüssel/i)).toBeNull();
+      expect(screen.queryByRole('button', { name: /speichern/i })).toBeNull();
+      expect(screen.queryByRole('button', { name: /löschen/i })).toBeNull();
+    });
+
+    it('should not show Eduplaces notice for regular groups', async () => {
+      const screen = render(
+        <EditUserGroup group={lehrerGroup} />,
+        {},
+        { additionalMocks }
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('form')).toBeVisible();
+      });
+
+      expect(
+        screen.queryByText(/diese gruppe wird von eduplaces verwaltet/i)
+      ).toBeNull();
     });
   });
 });

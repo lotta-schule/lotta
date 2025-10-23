@@ -483,18 +483,6 @@ defmodule Lotta.AccountsTest do
       assert deleted_group.id == group.id
       assert is_nil(Accounts.get_user_group(group.id))
     end
-
-    test "delete_user_group/1 prevents deletion of eduplaces groups" do
-      # Create group with eduplaces_id to simulate an eduplaces group
-      group =
-        Fixtures.fixture(:user_group, is_admin_group: false)
-        |> Ecto.Changeset.change(%{eduplaces_id: "eduplaces-group-123"})
-        |> Repo.update!()
-
-      assert {:error, "Cannot delete eduplaces groups."} = Accounts.delete_user_group(group)
-
-      assert Accounts.get_user_group(group.id) != nil
-    end
   end
 
   describe "additional user functions" do

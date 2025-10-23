@@ -12,7 +12,7 @@ export const adminGroup = {
   insertedAt: '2015-01-01 00:00',
   updatedAt: '2015-01-01 00:00',
   name: 'Administrator',
-  canReadFullName: null,
+  canReadFullName: false,
   sortKey: 1000,
   isAdminGroup: true,
   enrollmentTokens: [],
@@ -36,7 +36,7 @@ export const elternGroup = {
   insertedAt: '2015-01-10 11:00',
   updatedAt: '2015-01-12 14:00',
   name: 'Eltern',
-  canReadFullName: null,
+  canReadFullName: false,
   sortKey: 3000,
   isAdminGroup: false,
   enrollmentTokens: [],
@@ -52,6 +52,18 @@ export const schuelerGroup = {
   canReadFullName: false,
   isAdminGroup: false,
   enrollmentTokens: ['ajf82j84h2h', 'uishfiji2j38f'],
+};
+
+export const eduplacesGroup = {
+  id: '6',
+  eduplacesId: 'eduplaces-123',
+  insertedAt: '2015-01-01 08:00',
+  updatedAt: '2015-01-01 08:00',
+  name: 'Eduplaces Gruppe',
+  sortKey: 4000,
+  canReadFullName: false,
+  isAdminGroup: false,
+  enrollmentTokens: [],
 };
 
 export const userGroups = [adminGroup, lehrerGroup, schuelerGroup, elternGroup];
