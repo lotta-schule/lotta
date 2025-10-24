@@ -252,33 +252,21 @@ defmodule Lotta.Tenants do
   """
   @doc since: "2.6.0"
   @spec get_tenant(Tenant.id()) :: Tenant.t() | nil
-  def get_tenant(id) do
-    Repo.get(Tenant, id, prefix: "public")
-  end
+  def get_tenant(id), do: Repo.get(Tenant, id, prefix: "public")
 
   @doc """
   Get a tenant by its slug.
   """
   @doc since: "2.6.0"
   @spec get_tenant_by_slug(String.t()) :: Tenant.t() | nil
-  def get_tenant_by_slug(slug) do
-    from(t in Tenant,
-      where: t.slug == ^slug
-    )
-    |> Repo.one(prefix: "public")
-  end
+  def get_tenant_by_slug(slug), do: Repo.get_by(Tenant, %{slug: slug}, prefix: "public")
 
   @doc """
   Get a tenant by its prefix.
   """
   @doc since: "2.6.0"
   @spec get_tenant_by_prefix(String.t()) :: Tenant.t() | nil
-  def get_tenant_by_prefix(prefix) do
-    from(t in Tenant,
-      where: t.prefix == ^prefix
-    )
-    |> Repo.one(prefix: "public")
-  end
+  def get_tenant_by_prefix(prefix), do: Repo.get_by(Tenant, %{prefix: prefix}, prefix: "public")
 
   @doc """
   Get a tenant by its custom domain
