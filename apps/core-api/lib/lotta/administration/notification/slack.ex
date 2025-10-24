@@ -2,13 +2,18 @@ defmodule Lotta.Administration.Notification.Slack do
   @moduledoc """
   Send notifications to Slack for Lotta administrative events.
   """
-  alias Lotta.Accounts
+  alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
   alias LottaWeb.Urls
 
   require Logger
 
-  def new_lotta_notification(%Tenant{} = tenant) do
+  @doc """
+  Creates a Slack notification payload for a new Lotta system.
+  """
+  @doc since: "6.1.0"
+  @spec new_lotta_notification(Tenant.t(), admin_users :: list(User.t())) :: map()
+  def new_lotta_notification(%Tenant{} = tenant, admin_users \\ []) do
     %{
       blocks:
         [
@@ -56,7 +61,7 @@ defmodule Lotta.Administration.Notification.Slack do
         ]
         |> Enum.concat(
           Enum.map(
-            Accounts.list_admin_users(tenant),
+            admin_users,
             &%{
               type: :section,
               text: %{
@@ -69,6 +74,11 @@ defmodule Lotta.Administration.Notification.Slack do
     }
   end
 
+  @doc """
+  Sends a notification to the configured Slack webhook URL.
+  """
+  @doc since: "6.1.0"
+  @spec send(map()) :: {:ok, Tesla.Env.result()} | {:error, any()}
   def send(notification) do
     if url = webhook_url() do
       Tesla.post(create_client(), url, notification)

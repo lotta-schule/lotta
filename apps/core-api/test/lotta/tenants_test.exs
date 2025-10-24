@@ -147,7 +147,9 @@ defmodule Lotta.TenantsTest do
         eduplaces_id: "eduplaces-user-123"
       }
 
-      with_mock(Lotta.Accounts,
+      with_mock(
+        Lotta.Accounts,
+        [:passthrough],
         register_eduplaces_user: fn tenant, _user_info ->
           {:ok,
            %User{

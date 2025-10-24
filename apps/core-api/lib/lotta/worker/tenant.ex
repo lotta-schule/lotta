@@ -3,8 +3,9 @@ defmodule Lotta.Worker.Tenant do
   Worker for fetching a files metadata.
   """
   alias Lotta.Accounts.User
-  alias Lotta.{Analytics, Tenants}
+  alias Lotta.{Accounts, Analytics, Tenants}
   alias Lotta.Tenants.{DefaultContent, Tenant}
+  alias Lotta.Administration.Notification.Slack
 
   use Oban.Worker,
     queue: :tenant,
@@ -74,8 +75,15 @@ defmodule Lotta.Worker.Tenant do
         id: _job_id,
         args: %{"type" => "notify_created", "id" => tenant_id}
       }) do
-    with {:ok, tenant} <- Tenants.get_tenant(tenant_id) do
-      Lotta.Administration.Notification.Slack.new_lotta_notification(tenant)
+    if tenant = Tenants.get_tenant(tenant_id) do
+      admin_users = Accounts.list_admin_users(tenant)
+
+      tenant
+      |> Slack.new_lotta_notification(admin_users)
+      |> Slack.send()
+    else
+      Logger.error("Tenant with ID #{tenant_id} not found for creation notification")
+      {:error, :tenant_not_found}
     end
   end
 
