@@ -109,7 +109,7 @@ defmodule Lotta.Administration.Notification.SlackTest do
         assert name_section.accessory
         assert name_section.accessory.type == :button
         assert name_section.accessory.text.type == :plain_text
-        assert name_section.accessory.text.text == "öffnen"
+        assert name_section.accessory.text.text == "Lotta öffnen"
         assert name_section.accessory.url == tenant_url
       end
     end

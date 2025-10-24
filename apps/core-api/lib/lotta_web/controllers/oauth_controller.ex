@@ -87,12 +87,16 @@ defmodule LottaWeb.OAuthController do
 
   def request_login(_, _), do: {:error, :not_found}
 
-  def tenant_callback(%{private: %{lotta_tenant: tenant}} = conn, %{"token" => token}) do
+  def tenant_callback(%{private: %{lotta_tenant: tenant}} = conn, %{"token" => token} = params) do
     with {:ok, claims} <- AccessToken.decode_and_verify(token, %{"typ" => "hisec"}),
          {:ok, user} <- AccessToken.resource_from_claims(claims),
          true <- claims["tid"] == tenant.id || {:error, :no_tenant_match},
          {:ok, refresh_token, _claims} <-
            AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
+      return_url =
+        params["return_url"] ||
+          "/"
+
       conn
       |> delete_resp_cookie("SignInAccessToken",
         same_site: "Lax"
@@ -102,7 +106,7 @@ defmodule LottaWeb.OAuthController do
         http_only: true,
         same_site: "Lax"
       )
-      |> redirect(to: "/")
+      |> redirect(to: return_url)
     else
       {:error, reason} ->
         Logger.warning("Invalid access token: #{inspect(reason)}")

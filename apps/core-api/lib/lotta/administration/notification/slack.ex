@@ -46,7 +46,7 @@ defmodule Lotta.Administration.Notification.Slack do
               text: %{
                 type: :plain_text,
                 emoji: true,
-                text: "öffnen"
+                text: "Lotta öffnen"
               },
               url: Urls.get_tenant_url(tenant)
             }
