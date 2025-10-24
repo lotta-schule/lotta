@@ -132,4 +132,8 @@ export default withSentryConfig(nextConfig, {
   sourcemaps: {
     deleteSourcemapsAfterUpload: false,
   },
+
+  reactComponentAnnotation: {
+    enabled: true,
+  },
 });

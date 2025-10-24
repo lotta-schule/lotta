@@ -84,7 +84,7 @@ defmodule LottaWeb.Schema.Accounts.File do
 
   object :available_format do
     field(:name, non_null(:conversion_format))
-    field(:url, non_null(:string))
+    field(:url, :string)
     field(:type, non_null(:file_type))
     field(:mime_type, non_null(:string))
 
