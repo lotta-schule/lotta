@@ -21,6 +21,7 @@ defmodule LottaWeb.Router do
 
   pipeline :browser do
     plug(:accepts, ~w(html))
+    plug(:put_root_layout, html: {LottaWeb.Layouts, :root})
   end
 
   pipeline :json_api do

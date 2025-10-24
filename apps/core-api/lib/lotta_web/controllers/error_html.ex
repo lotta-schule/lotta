@@ -20,7 +20,7 @@ defmodule LottaWeb.ErrorHTML do
   def fullsize_error(assigns) do
     ~H"""
     <style>
-      body {
+      .lotta-fullsize-error {
         font-family: sans-serif;
         display: flex;
         flex-direction: column;
@@ -33,9 +33,14 @@ defmodule LottaWeb.ErrorHTML do
 
         margin-bottom: auto;
         transition: min-height 0.3s ease-in-out;
+
+        & svg {
+          max-width: 80vw;
+          max-height: 60vh;
+        }
       }
     </style>
-    <div class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="flex items-center justify-center h-screen bg-gray-100 lotta-fullsize-error">
       <div class="bg-white p-6 rounded-lg shadow-md text-center">
         <h1 class="text-4xl font-bold mb-4">{@title}</h1>
         <LottaWeb.Images.server_error :if={@image == "server_error"} />
