@@ -213,7 +213,10 @@ defmodule Lotta.Tenants do
     case user_params do
       %{eduplaces_id: eduplaces_id}
       when not is_nil(eduplaces_id) and byte_size(eduplaces_id) > 0 ->
-        Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{id: eduplaces_id})
+        Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{
+          id: eduplaces_id,
+          username: user_params[:name]
+        })
 
       %{email: email} when not is_nil(email) and byte_size(email) > 0 ->
         Accounts.register_user_by_mail(tenant, user_params)

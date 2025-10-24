@@ -340,17 +340,28 @@ defmodule Lotta.Accounts do
   @spec register_eduplaces_user(Tenant.t(), Eduplaces.UserInfo.t()) ::
           {:ok, User.t(), String.t()} | {:error, Changeset.t()}
   def register_eduplaces_user(tenant, user_info) do
-    groups =
-      case Enum.map(user_info.groups, & &1.id) do
-        [] ->
-          []
+    user_info =
+      Lotta.Eduplaces.IDM.get_user(user_info.id)
+      |> case do
+        {:ok, user_data} -> Eduplaces.UserInfo.from_idm_details(user_data)
+        {:error, _reason} -> user_info
+      end
 
-        group_ids ->
-          Repo.all(
-            from(g in UserGroup,
-              where: g.eduplaces_id in ^group_ids
+    groups =
+      if Repo.get_prefix() != tenant.prefix do
+        []
+      else
+        case Enum.map(user_info.groups, & &1.id) do
+          [] ->
+            []
+
+          group_ids ->
+            Repo.all(
+              from(g in UserGroup,
+                where: g.eduplaces_id in ^group_ids
+              )
             )
-          )
+        end
       end
 
     user_info

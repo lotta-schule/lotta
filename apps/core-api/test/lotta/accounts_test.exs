@@ -706,9 +706,10 @@ defmodule Lotta.AccountsTest do
         groups: []
       }
 
-      with_mock(Lotta.Storage, [:passthrough],
-        create_new_user_directories: fn _user -> :ok end
-      ) do
+      with_mocks([
+        {Lotta.Storage, [:passthrough], [create_new_user_directories: fn _user -> :ok end]},
+        {Lotta.Eduplaces.IDM, [], [get_user: fn _user_id -> {:error, :not_found} end]}
+      ]) do
         assert {:ok, user} = Accounts.register_eduplaces_user(tenant, user_info)
 
         assert user.eduplaces_id == "eduplaces-user-456"
