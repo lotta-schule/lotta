@@ -74,7 +74,7 @@ defmodule Lotta.Tenants.Tenant do
   @spec create_changeset(map()) :: Ecto.Changeset.t()
   def create_changeset(attrs) do
     %__MODULE__{}
-    |> cast(attrs, [:title, :slug, :address, :type])
+    |> cast(attrs, [:title, :slug, :address, :type, :eduplaces_id])
     |> validate_required([:title])
     |> maybe_gen_slug()
     |> validate_required([:slug])
