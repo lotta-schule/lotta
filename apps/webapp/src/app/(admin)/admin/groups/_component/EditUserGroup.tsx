@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { UserGroupModel } from 'model';
 import {
   Button,
   Checkbox,
@@ -10,18 +9,19 @@ import {
   Input,
   Label,
   LoadingButton,
+  Eduplaces as EduplacesIcon,
 } from '@lotta-schule/hubert';
 import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 import { AdminPageSection } from 'app/(admin)/admin/_component/AdminPageSection';
 import { useRouter } from 'next/navigation';
-import { UPDATE_USER_GROUP } from '../_graphql';
+import { UPDATE_USER_GROUP, UserGroup } from '../_graphql';
 
 import styles from './EditUserGroup.module.scss';
 
-export interface EditUserGroupProps {
-  group: UserGroupModel;
-}
+export type EditUserGroupProps = {
+  group: UserGroup;
+};
 
 export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
   const router = useRouter();
@@ -74,105 +74,120 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
         >
           <ErrorMessage error={updateError} />
 
-          <AdminPageSection title="Allgemein">
-            <Label label={'Gruppenname'}>
-              <Input
-                id="group-name"
-                aria-describedby="group-name-help-text"
-                disabled={isLoadingUpdateGroup}
-                value={editedGroup.name}
-                onChange={(e) =>
-                  setEditedGroup({
-                    ...editedGroup,
-                    name: (e.target as HTMLInputElement).value,
-                  })
-                }
-              />
-            </Label>
-            <small id="group-name-help-text">
-              Gib der Gruppe einen verständlichen Namen
-            </small>
-          </AdminPageSection>
+          {!!group.eduplacesId && (
+            <div className={styles.notice}>
+              <EduplacesIcon />
+              <div>
+                Diese Gruppe wird von Eduplaces verwaltet. Änderungen müssen in
+                Eduplaces vorgenommen werden.
+              </div>
+            </div>
+          )}
 
-          <AdminPageSection title="Berechtigungen">
-            {group.isAdminGroup && (
-              <Checkbox
-                isDisabled={isLoadingUpdateGroup || group.isAdminGroup}
-                isSelected={!!editedGroup.isAdminGroup}
-              >
-                Diese Gruppe hat universelle Administratorrechte
-              </Checkbox>
-            )}
+          {!group.eduplacesId && (
+            <>
+              <AdminPageSection title="Allgemein">
+                <Label label={'Gruppenname'} disabled={!!group.eduplacesId}>
+                  <Input
+                    id="group-name"
+                    readOnly={!!group.eduplacesId}
+                    aria-describedby="group-name-help-text"
+                    disabled={isLoadingUpdateGroup}
+                    value={editedGroup.name}
+                    onChange={(e) =>
+                      setEditedGroup({
+                        ...editedGroup,
+                        name: (e.target as HTMLInputElement).value,
+                      })
+                    }
+                  />
+                </Label>
+                <small id="group-name-help-text">
+                  Gib der Gruppe einen verständlichen Namen
+                </small>
+              </AdminPageSection>
 
-            <Checkbox
-              isDisabled={isLoadingUpdateGroup || group.isAdminGroup}
-              isSelected={
-                (editedGroup.canReadFullName || group.isAdminGroup) ?? false
-              }
-              onChange={(isSelected) => {
-                setEditedGroup({
-                  ...editedGroup,
-                  canReadFullName: isSelected,
-                });
-              }}
-            >
-              Diese Gruppe kann die vollständigen Namen von Nutzern sehen, auch
-              wenn diese sie nicht freigegeben haben
-            </Checkbox>
-          </AdminPageSection>
+              <AdminPageSection title="Berechtigungen">
+                {group.isAdminGroup && (
+                  <Checkbox
+                    isDisabled={isLoadingUpdateGroup || group.isAdminGroup}
+                    isSelected={!!editedGroup.isAdminGroup}
+                  >
+                    Diese Gruppe hat universelle Administratorrechte
+                  </Checkbox>
+                )}
 
-          <AdminPageSection title="Einschreibeschlüssel">
-            <p>
-              Nutzer, die bei der Registrierung einen Einschreibeschlüssel
-              verwenden, werden automatisch dieser Gruppe zugeordnet.
-            </p>
-
-            <EnrollmentTokensEditor
-              disabled={isLoadingUpdateGroup}
-              tokens={editedGroup.enrollmentTokens}
-              setTokens={(enrollmentTokens) => {
-                setEditedGroup({
-                  ...editedGroup,
-                  enrollmentTokens,
-                });
-              }}
-            />
-          </AdminPageSection>
-
-          <AdminPageSection bottomToolbar>
-            {!group.isAdminGroup && (
-              <>
-                <Button
-                  className={styles.deleteButton}
-                  variant="error"
-                  onClick={() => setIsDeleteUserGroupDialogOpen(true)}
+                <Checkbox
+                  isDisabled={isLoadingUpdateGroup || group.isAdminGroup}
+                  isSelected={
+                    (editedGroup.canReadFullName || group.isAdminGroup) ?? false
+                  }
+                  onChange={(isSelected) => {
+                    setEditedGroup({
+                      ...editedGroup,
+                      canReadFullName: isSelected,
+                    });
+                  }}
                 >
-                  "{group.name}" löschen
-                </Button>
-              </>
-            )}
+                  Diese Gruppe kann die vollständigen Namen von Nutzern sehen,
+                  auch wenn diese sie nicht freigegeben haben
+                </Checkbox>
+              </AdminPageSection>
 
-            <LoadingButton
-              type="submit"
-              disabled={!groupHasBeenChanged}
-              className={styles.saveButton}
-              onAction={async () => {
-                await updateGroup({
-                  variables: {
-                    id: group.id,
-                    group: {
-                      name: editedGroup.name,
-                      isAdminGroup: editedGroup.isAdminGroup,
-                      canReadFullName: editedGroup.canReadFullName,
-                      enrollmentTokens: editedGroup.enrollmentTokens,
-                    },
-                  },
-                });
-              }}
-            >
-              speichern
-            </LoadingButton>
-          </AdminPageSection>
+              <AdminPageSection title="Einschreibeschlüssel">
+                <p>
+                  Nutzer, die bei der Registrierung einen Einschreibeschlüssel
+                  verwenden, werden automatisch dieser Gruppe zugeordnet.
+                </p>
+
+                <EnrollmentTokensEditor
+                  disabled={isLoadingUpdateGroup}
+                  tokens={editedGroup.enrollmentTokens}
+                  setTokens={(enrollmentTokens) => {
+                    setEditedGroup({
+                      ...editedGroup,
+                      enrollmentTokens,
+                    });
+                  }}
+                />
+              </AdminPageSection>
+
+              <AdminPageSection bottomToolbar>
+                {!group.isAdminGroup && (
+                  <>
+                    <Button
+                      className={styles.deleteButton}
+                      variant="error"
+                      onClick={() => setIsDeleteUserGroupDialogOpen(true)}
+                    >
+                      "{group.name}" löschen
+                    </Button>
+                  </>
+                )}
+
+                <LoadingButton
+                  type="submit"
+                  disabled={!groupHasBeenChanged}
+                  className={styles.saveButton}
+                  onAction={async () => {
+                    await updateGroup({
+                      variables: {
+                        id: group.id,
+                        group: {
+                          name: editedGroup.name,
+                          isAdminGroup: editedGroup.isAdminGroup,
+                          canReadFullName: editedGroup.canReadFullName,
+                          enrollmentTokens: editedGroup.enrollmentTokens,
+                        },
+                      },
+                    });
+                  }}
+                >
+                  speichern
+                </LoadingButton>
+              </AdminPageSection>
+            </>
+          )}
         </form>
       )}
       <DeleteUserGroupDialog

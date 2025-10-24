@@ -9,16 +9,16 @@ test.describe('Tenant administration', () => {
   test.describe('general settings', () => {
     test.describe.configure({ mode: 'serial' });
     const somewhatUniqueIdentifier = Math.random().toString(36).substring(7);
-    let tenant: TenantDescriptor;
+    let tenant: TenantDescriptor = undefined!;
     test.beforeAll(async ({ browser, admin, browserName }) => {
-      const { tenant: t } = await createTenantSetup(
+      const result = await createTenantSetup(
         { browser, admin },
         {
           name: `AdminSettings General Lotta ${browserName} ${somewhatUniqueIdentifier}`,
           slug: `adminsettings-general-lotta-${browserName}-${somewhatUniqueIdentifier}`,
         }
       );
-      tenant = t;
+      tenant = result.tenant;
     });
 
     test.beforeEach(async ({ page, isMobile, admin, takeScreenshot }) => {

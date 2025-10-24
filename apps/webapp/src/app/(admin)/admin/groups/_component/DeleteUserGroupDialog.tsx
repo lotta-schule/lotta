@@ -12,6 +12,7 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { graphql } from 'api/graphql';
+import { UserGroup } from '../_graphql';
 
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 
@@ -80,11 +81,11 @@ export const DELETE_USER_GROUP = graphql(`
   }
 `);
 
-export interface DeleteUserGroupDialogProps {
-  group: UserGroupModel | null;
+export type DeleteUserGroupDialogProps = {
+  group: UserGroup | null;
   onRequestClose(): void;
   onConfirm(): void;
-}
+};
 
 export const DeleteUserGroupDialog = React.memo(
   ({ group, onRequestClose, onConfirm }: DeleteUserGroupDialogProps) => {

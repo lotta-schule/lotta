@@ -16,7 +16,7 @@ defmodule LottaWeb.SubscriptionCase do
       use Absinthe.Phoenix.SubscriptionTest,
         schema: LottaWeb.Schema
 
-      use LottaWeb.ConnCase, async: true
+      use LottaWeb.ConnCase
     end
   end
 end

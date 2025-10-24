@@ -5,8 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Mock } from 'vitest';
 import { userEvent } from '@testing-library/user-event';
 import { DraggableGroupList } from './DraggableGroupList';
-
-import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
+import { GET_USER_GROUPS } from '../_graphql';
 
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
@@ -23,7 +22,7 @@ describe('DraggableGroupList', () => {
   const additionalMocks: MockedResponse[] = [
     {
       request: {
-        query: GetUserGroupsQuery,
+        query: GET_USER_GROUPS,
       },
       result: {
         data: {
@@ -107,5 +106,58 @@ describe('DraggableGroupList', () => {
         `/admin/groups/${schuelerGroup.id}`
       );
     });
+  });
+
+  it('should show Eduplaces icon for groups with eduplacesId', async () => {
+    (useSearchParams as Mock).mockReturnValue({
+      get: vi.fn().mockImplementation(() => {
+        return null;
+      }),
+      entries: vi.fn().mockReturnValue([]),
+    });
+    (useParams as Mock).mockReturnValue({
+      groupId: null,
+    });
+
+    const groupsWithEduplaces = userGroups.map((g) =>
+      g.id === lehrerGroup.id ? { ...g, eduplacesId: 'eduplaces-123' } : g
+    );
+
+    const mocksWithEduplaces: MockedResponse[] = [
+      {
+        request: {
+          query: GET_USER_GROUPS,
+        },
+        result: {
+          data: {
+            userGroups: groupsWithEduplaces,
+          },
+        },
+      },
+    ];
+
+    const screen = render(
+      <DraggableGroupList />,
+      {},
+      { additionalMocks: mocksWithEduplaces }
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('list')).toBeVisible();
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('button')).toHaveLength(userGroups.length);
+    });
+
+    const lehrerGroupItem = screen.getByTitle('Lehrer');
+    expect(lehrerGroupItem).toBeVisible();
+
+    const lehrerButton = screen
+      .getAllByRole('button')
+      .find((btn) => btn.textContent?.includes('Lehrer'));
+    expect(lehrerButton).toBeDefined();
+
+    expect(lehrerButton).toBeDefined();
   });
 });

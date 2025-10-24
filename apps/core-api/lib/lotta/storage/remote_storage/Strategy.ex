@@ -34,6 +34,6 @@ defprotocol Lotta.Storage.RemoteStorage.Strategy do
           storage_config :: RemoteStorage.config(),
           options :: keyword()
         ) ::
-          {:ok, URI.t()} | {:error, term()}
+          String.t() | nil
   def get_http_url(remote_storage_entity, config, opts \\ [])
 end

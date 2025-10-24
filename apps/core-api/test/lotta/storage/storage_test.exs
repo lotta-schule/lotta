@@ -1,7 +1,7 @@
 defmodule Lotta.StorageTest do
   @moduledoc false
 
-  use Lotta.WorkerCase, async: true
+  use Lotta.WorkerCase
 
   alias Lotta.Accounts.User
   alias Lotta.{Fixtures, Repo, Storage, Tenants}
@@ -57,17 +57,11 @@ defmodule Lotta.StorageTest do
 
       assert uploaded_file =
                %File{
-                 remote_storage_entity: _remote_storage_entity,
+                 remote_storage_entity: remote_storage_entity,
                  file_conversions: _file_conversions
                } = Repo.preload(uploaded_file, [:file_conversions, :remote_storage_entity])
 
-      res =
-        ExAws.S3.get_object("lotta-dev-ugc", uploaded_file.remote_storage_entity.path)
-        |> ExAws.request!()
-
-      assert %{
-               status_code: 200
-             } = res
+      assert RemoteStorage.exists?(remote_storage_entity)
 
       %{file_conversions: file_conversions} =
         uploaded_file
@@ -81,18 +75,33 @@ defmodule Lotta.StorageTest do
     end
 
     test "copy_to_remote_storage/2 should reupload a file to new location", %{
-      user_file: user_file
+      user: user,
+      user_directory: directory
     } do
+      {:ok, config} = RemoteStorage.config_for_store("minio")
+      bucket_name = config[:config][:bucket]
+
+      config =
+        config[:config][:endpoint]
+        |> URI.parse()
+        |> Map.take([:scheme, :host, :port])
+        |> Map.to_list()
+
       Tesla.Mock.mock(fn
         %{method: :get} ->
-          %Tesla.Env{status: 200, body: Elixir.File.stream!("test/support/fixtures/eoa3.mp3")}
+          %Tesla.Env{status: 200, body: Elixir.File.stream!("test/support/fixtures/secrets.zip")}
       end)
+
+      {:ok, file} =
+        FileData.from_path("test/support/fixtures/secrets.zip", mime_type: "application/zip")
+
+      {:ok, user_file} = Storage.create_file(file, directory, user)
 
       user_file = Repo.preload(user_file, :remote_storage_entity)
 
       current_file_datetime =
-        ExAws.S3.head_object("lotta-dev-ugc", user_file.remote_storage_entity.path)
-        |> ExAws.request!()
+        ExAws.S3.head_object(bucket_name, user_file.remote_storage_entity.path)
+        |> ExAws.request!(config)
         |> Map.fetch!(:headers)
         |> Enum.find_value(fn {key, val} ->
           if key == "date", do: val
@@ -109,8 +118,8 @@ defmodule Lotta.StorageTest do
       assert %File{} = user_file
 
       new_file_datetime =
-        ExAws.S3.head_object("lotta-dev-ugc", user_file.remote_storage_entity.path)
-        |> ExAws.request!()
+        ExAws.S3.head_object(bucket_name, user_file.remote_storage_entity.path)
+        |> ExAws.request!(config)
         |> Map.fetch!(:headers)
         |> Enum.find_value(fn {key, val} ->
           if key == "date", do: val
@@ -181,6 +190,22 @@ defmodule Lotta.StorageTest do
     } do
       assert Storage.get_http_url(user_file) =~
                ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\/.*/
+    end
+
+    test "should generate a presigned URL when signed option is true", %{
+      user_file: user_file
+    } do
+      url = Storage.get_http_url(user_file, signed: true)
+
+      assert url =~
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\/.*/
+
+      assert url =~ ~r/X-Amz-Algorithm=/
+      assert url =~ ~r/X-Amz-Credential=/
+      assert url =~ ~r/X-Amz-Date=/
+      assert url =~ ~r/X-Amz-Expires=/
+      assert url =~ ~r/X-Amz-SignedHeaders=/
+      assert url =~ ~r/X-Amz-Signature=/
     end
 
     test "should call get_path with directory", %{

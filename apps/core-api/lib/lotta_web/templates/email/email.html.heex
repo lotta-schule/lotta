@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        background-color: <%= theme_prop(@tenant, "pageBackgroundColor", "#ffffff") %>;
+        color: <%= theme_prop(@tenant, "textColor", "#333333") %>;
+      }
+      header {
+        min-height: 7.5em;
+        padding: 1em 4em;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      header img {
+        width: 20%;
+        max-width: 200px;
+      }
+      main {
+        padding: 2em 4em;
+        border-color: <%= theme_prop(@tenant, "primaryColor", "#333333") %>;
+        border-style: solid;
+        border-width: 4px 0 5px 0;
+      }
+      footer {
+        padding: 1em 4em;
+        min-height: 3.75em;
+      }
+      a {
+        color: <%= theme_prop(@tenant, "textColor", "#333") %>;
+        font-weight: bolder;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src={logo_url(@tenant)} style="height: 80px; width: auto" ) />
+    </header>
+    <main>
+      {@inner_content}
+    </main>
+    <footer>
+      <a href={tenant_url(@tenant)} title={title(@tenant)}>{title(@tenant)}</a>
+    </footer>
+  </body>
+</html>

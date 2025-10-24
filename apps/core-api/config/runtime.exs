@@ -78,14 +78,13 @@ defmodule SystemConfig do
   defp default("REDIS_HOST", env) when env in [:dev, :test], do: "localhost"
   defp default("REDIS_PASSWORD", env) when env in [:dev, :test], do: "lotta"
 
-  defp default("UGC_S3_COMPAT_ENDPOINT", env) when env in [:dev, :test], do: "http://localhost"
-  defp default("UGC_S3_COMPAT_REGION", env) when env in [:dev, :test], do: "us-east-1"
-  defp default("UGC_COMPAT_S3_PORT", env) when env in [:dev, :test], do: "9000"
+  defp default("UGC_S3_COMPAT_ENDPOINT", env) when env in [:dev, :test],
+    do: "http://localhost:9000"
+
+  defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "AKIAIOSFODNN7EXAMPLE"
 
   defp default("AWS_SECRET_ACCESS_KEY", env) when env in [:dev, :test],
     do: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-
-  defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "AKIAIOSFODNN7EXAMPLE"
 
   defp default("REMOTE_STORAGE_DEFAULT_STORE", env) when env in [:dev, :test], do: "minio"
   defp default("REMOTE_STORAGE_PREFIX", _), do: nil
@@ -119,6 +118,8 @@ defmodule SystemConfig do
   defp default("COCKPIT_ADMIN_API_KEY", env) when env in [:dev, :test], do: "test123"
   defp default("COCKPIT_ENDPOINT", _), do: "http://localhost:4040"
 
+  defp default("SLACK_WEBHOOK_URL", _), do: nil
+
   defp default("SENTRY_DSN", _), do: nil
 
   defp default("SCHEDULE_PROVIDER_URL", env) when env in [:dev, :test],
@@ -132,6 +133,15 @@ defmodule SystemConfig do
   defp default("ANALYTICS_API_KEY", _), do: nil
 
   defp default("OBAN_EXCLUDE_QUEUES", _), do: ""
+
+  defp default("EDUPLACES_AUTH_URL", _), do: "https://auth.sandbox.eduplaces.dev/oauth2"
+  defp default("EDUPLACES_API_URL", _), do: "https://api.sandbox.eduplaces.dev"
+
+  defp default("EDUPLACES_REDIRECT_URI", _),
+    do: "http://localhost:4000/auth/oauth/eduplaces/callback"
+
+  defp default("EDUPLACES_CLIENT_ID", _), do: ""
+  defp default("EDUPLACES_CLIENT_SECRET", _), do: ""
 
   defp default(key, env),
     do:
@@ -165,17 +175,11 @@ config :opentelemetry, :resource,
   deployment: %{
     environment: SystemConfig.get("APP_ENVIRONMENT"),
     version: SystemConfig.get("IMAGE_NAME")
-  },
-  span_processor: :batch,
-  traces_exporter: :otlp
-
-config :opentelemetry, :processors,
-  otel_batch_processor: %{
-    exporter: {
-      :opentelemetry_exporter,
-      %{endpoints: []}
-    }
   }
+
+config :opentelemetry,
+  span_processor: {Sentry.OpenTelemetry.SpanProcessor, []},
+  sampler: {Sentry.OpenTelemetry.Sampler, []}
 
 config :lotta,
        Lotta.Repo,
@@ -193,11 +197,7 @@ config :lotta, :redis_connection,
 config :ex_aws, :s3,
   http_client: ExAws.Request.Finch,
   access_key_id: SystemConfig.get("AWS_ACCESS_KEY_ID"),
-  secret_access_key: SystemConfig.get("AWS_SECRET_ACCESS_KEY"),
-  host: SystemConfig.get("UGC_S3_COMPAT_ENDPOINT", cast: :url_host),
-  region: SystemConfig.get("UGC_S3_COMPAT_REGION"),
-  scheme: SystemConfig.get("UGC_S3_COMPAT_ENDPOINT", cast: :url_scheme),
-  port: SystemConfig.get("UGC_COMPAT_S3_PORT", cast: :integer)
+  secret_access_key: SystemConfig.get("AWS_SECRET_ACCESS_KEY")
 
 config :lotta, Lotta.Storage.RemoteStorage,
   default_storage: SystemConfig.get("REMOTE_STORAGE_DEFAULT_STORE"),
@@ -212,10 +212,20 @@ config :lotta, Lotta.Storage.RemoteStorage,
       |> then(fn env_name ->
         Map.put(acc, storage_name, %{
           type: Lotta.Storage.RemoteStorage.Strategy.S3,
-          config: %{
-            endpoint: SystemConfig.get("REMOTE_STORAGE_#{env_name}_ENDPOINT"),
-            bucket: SystemConfig.get("REMOTE_STORAGE_#{env_name}_BUCKET")
-          }
+          config:
+            %{
+              endpoint: SystemConfig.get("REMOTE_STORAGE_#{env_name}_ENDPOINT"),
+              api_endpoint:
+                System.get_env(
+                  "REMOTE_STORAGE_#{env_name}_API_ENDPOINT",
+                  SystemConfig.get("UGC_S3_COMPAT_ENDPOINT")
+                ),
+              bucket: SystemConfig.get("REMOTE_STORAGE_#{env_name}_BUCKET"),
+              region: System.get_env("REMOTE_STORAGE_#{env_name}_REGION"),
+              access_key_id: System.get_env("REMOTE_STORAGE_#{env_name}_ACCESS_KEY_ID"),
+              secret_access_key: System.get_env("REMOTE_STORAGE_#{env_name}_SECRET_ACCESS_KEY")
+            }
+            |> Map.reject(fn {_k, v} -> v in [nil, ""] end)
         })
       end)
     end)
@@ -236,6 +246,9 @@ config :lotta, :cockpit,
   endpoint: SystemConfig.get("COCKPIT_ENDPOINT"),
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
+
+config :lotta, Lotta.Administration.Notification.Slack,
+  webhook: SystemConfig.get("SLACK_WEBHOOK_URL")
 
 config :lotta,
        Lotta.Mailer,
@@ -272,11 +285,10 @@ config :sentry,
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()],
   filter: Lotta.SentryFilter,
+  traces_sample_rate: 0.15,
   integrations: [
     oban: [
-      # Capture errors:
       capture_errors: true,
-      # Monitor cron jobs:
       cron: [enabled: true]
     ]
   ]
@@ -332,8 +344,18 @@ config :lotta, Oban,
       file_conversion: [limit: 4],
       media_conversion: [limit: 1],
       preview_generation: [limit: 2],
-      file_metadata: [limit: 2]
+      file_metadata: [limit: 2],
+      tenant: [limit: 1]
     ]
     |> Enum.filter(fn {k, _} ->
       to_string(k) not in SystemConfig.get("OBAN_EXCLUDE_QUEUES", cast: :string_list)
     end)
+
+config :lotta, Eduplaces,
+  auth_url: SystemConfig.get("EDUPLACES_AUTH_URL", cast: :url_with_scheme),
+  authorize_url: SystemConfig.get("EDUPLACES_AUTH_URL", cast: :url_with_scheme) <> "/auth",
+  token_url: SystemConfig.get("EDUPLACES_AUTH_URL", cast: :url_with_scheme) <> "/token",
+  api_url: SystemConfig.get("EDUPLACES_API_URL", cast: :url_with_scheme),
+  redirect_uri: SystemConfig.get("EDUPLACES_REDIRECT_URI", cast: :url_with_scheme),
+  client_id: SystemConfig.get("EDUPLACES_CLIENT_ID"),
+  client_secret: SystemConfig.get("EDUPLACES_CLIENT_SECRET")

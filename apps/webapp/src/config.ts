@@ -18,7 +18,7 @@ export const appConfig = createConfig({
     fallback: '',
   },
   API_SOCKET_URL: {
-    fallback: 'ws://127.0.0.1:4000/user-socket/graphql',
+    fallback: 'ws://localhost:4000/user-socket/graphql',
   },
   APP_ENVIRONMENT: {
     fallback: process.env.NODE_ENV ?? 'development',

@@ -4,7 +4,6 @@ defmodule Lotta.Repo.Migrations.MoveConfigurationToTenantTable do
   require Logger
 
   import Ecto.Query
-  alias Lotta.Tenants.Tenant
 
   def change do
     alter table(:tenants) do
@@ -20,14 +19,14 @@ defmodule Lotta.Repo.Migrations.MoveConfigurationToTenantTable do
     if direction() == :up do
       flush()
 
-      from(t in Tenant)
+      from(t in "tenants", select: [:id, :prefix, :title, :slug, :configuration])
       |> repo().all()
       |> Enum.map(&fetch_configuration/1)
       |> Enum.each(&apply_configuration(elem(&1, 0), elem(&1, 1)))
     end
   end
 
-  defp fetch_configuration(%Tenant{prefix: prefix} = tenant) do
+  defp fetch_configuration(%{prefix: prefix} = tenant) do
     full_configuration =
       from(c in "configuration", select: [:name, :json_value, :string_value, :file_value_id])
       |> repo().all(prefix: prefix)

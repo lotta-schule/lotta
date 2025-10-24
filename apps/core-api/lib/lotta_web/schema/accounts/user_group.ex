@@ -23,6 +23,7 @@ defmodule LottaWeb.Schema.Accounts.UserGroup do
     field(:sort_key, non_null(:integer))
     field(:is_admin_group, non_null(:boolean))
     field(:can_read_full_name, non_null(:boolean))
+    field(:eduplaces_id, :string)
 
     field(:enrollment_tokens, non_null(list_of(non_null(:string))),
       resolve: &LottaWeb.UserGroupResolver.resolve_enrollment_tokens/3

@@ -20,12 +20,12 @@ defmodule Lotta.Email do
   Send new user an email confirming their registration and giving him or her his or her first password
   """
   @doc since: "2.2.0"
-  @spec registration_mail(User.t(), String.t(), email_opts()) :: Bamboo.Email.t()
-  def registration_mail(%User{} = user, password, opts \\ []) do
+  @spec registration_mail(User.t(), email_opts()) :: Bamboo.Email.t()
+  def registration_mail(%User{} = user, opts \\ []) do
     base_mail(opts)
     |> to(user.email)
     |> with_tenant(&subject(&1, "Deine Registrierung bei #{&2.title}"))
-    |> render(:registration, user: user, password: password)
+    |> render(:registration, user: user)
   end
 
   @doc """

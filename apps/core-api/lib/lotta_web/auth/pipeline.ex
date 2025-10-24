@@ -5,7 +5,7 @@ defmodule LottaWeb.Auth.Pipeline do
 
   use Guardian.Plug.Pipeline,
     otp_app: :lotta,
-    error_handler: LottaWeb.Auth.ErrorHandler,
+    error_handler: Elixir.LottaWeb.Auth.ErrorHandler,
     module: LottaWeb.Auth.AccessToken
 
   plug(Guardian.Plug.VerifyHeader,

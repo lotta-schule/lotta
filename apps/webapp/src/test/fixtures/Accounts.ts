@@ -8,10 +8,11 @@ import { DirectoryModel, FileModel, UserModel } from 'model';
 
 export const adminGroup = {
   id: '1',
+  eduplacesId: null,
   insertedAt: '2015-01-01 00:00',
   updatedAt: '2015-01-01 00:00',
   name: 'Administrator',
-  canReadFullName: null,
+  canReadFullName: false,
   sortKey: 1000,
   isAdminGroup: true,
   enrollmentTokens: [],
@@ -19,6 +20,7 @@ export const adminGroup = {
 
 export const lehrerGroup = {
   id: '4',
+  eduplacesId: null,
   insertedAt: '2015-01-01 00:00',
   updatedAt: '2015-01-01 00:00',
   name: 'Lehrer',
@@ -30,10 +32,11 @@ export const lehrerGroup = {
 
 export const elternGroup = {
   id: '10',
+  eduplacesId: null,
   insertedAt: '2015-01-10 11:00',
   updatedAt: '2015-01-12 14:00',
   name: 'Eltern',
-  canReadFullName: null,
+  canReadFullName: false,
   sortKey: 3000,
   isAdminGroup: false,
   enrollmentTokens: [],
@@ -41,6 +44,7 @@ export const elternGroup = {
 
 export const schuelerGroup = {
   id: '5',
+  eduplacesId: null,
   insertedAt: '2015-01-01 07:45',
   updatedAt: '2015-01-01 07:45',
   name: 'Schüler',
@@ -48,6 +52,18 @@ export const schuelerGroup = {
   canReadFullName: false,
   isAdminGroup: false,
   enrollmentTokens: ['ajf82j84h2h', 'uishfiji2j38f'],
+};
+
+export const eduplacesGroup = {
+  id: '6',
+  eduplacesId: 'eduplaces-123',
+  insertedAt: '2015-01-01 08:00',
+  updatedAt: '2015-01-01 08:00',
+  name: 'Eduplaces Gruppe',
+  sortKey: 4000,
+  canReadFullName: false,
+  isAdminGroup: false,
+  enrollmentTokens: [],
 };
 
 export const userGroups = [adminGroup, lehrerGroup, schuelerGroup, elternGroup];
@@ -323,6 +339,7 @@ export const powerpointFile = {
 
 export const SomeUser = {
   id: '1',
+  eduplacesId: null,
   insertedAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   lastSeen: new Date().toISOString(),
@@ -341,6 +358,7 @@ export const SomeUser = {
 
 export const SomeUserin = {
   id: '2',
+  eduplacesId: null,
   insertedAt: '2019-05-18 10:00',
   updatedAt: '2019-05-18 10:00',
   lastSeen: '2019-05-18 10:00',
@@ -359,6 +377,7 @@ export const SomeUserin = {
 
 export const KeinErSieEsUser = {
   id: '3',
+  eduplacesId: null,
   insertedAt: '2019-05-18 10:00',
   updatedAt: '2019-05-18 10:00',
   lastSeen: '2019-05-18 10:00',

@@ -1,8 +1,8 @@
 # The version of Alpine to use for the final image
-ARG ALPINE_VERSION="3.21"
+ARG ALPINE_VERSION="3.22"
 ARG ELIXIR_VERSION="v1.18.4"
-ARG OTP_VERSION="27.3.4"
-ARG REBAR3_VERSION="3.24.0"
+ARG OTP_VERSION="28.0.2"
+ARG REBAR3_VERSION="3.25.0"
 ARG PDFIUM_VERSION="chromium%2F7047"
 ARG VIPS_VERSION="8.17.0"
 
@@ -22,7 +22,7 @@ ENV VIX_COMPILATION_MODE=PLATFORM_PROVIDED_LIBVIPS
 
 RUN apk update
 
-ENV VIPSHOME="/tmp/vips"
+ARG VIPSHOME="/tmp/vips"
 ENV PKG_CONFIG_PATH="${VIPSHOME}/lib/pkgconfig"
 
 RUN mkdir -p $(dirname ${VIPSHOME})
@@ -49,6 +49,7 @@ RUN set -xe && \
   aom-dev \
   aom-libs \
   aom \
+  imagemagick-dev \
   openexr-dev \
   libgsf-dev \
   glib-dev \
@@ -84,8 +85,8 @@ RUN set -xe && \
   curl -fSL -o pdfium "https://github.com/bblanchon/pdfium-binaries/releases/download/${PDFIUM_VERSION}/$file_name" && \
   tar xf pdfium -C $VIPSHOME
 
-COPY <<EOF $VIPSHOME/lib/pkgconfig/pdfium.pc
-prefix=$VIPSHOME
+COPY <<EOF ${VIPSHOME}/lib/pkgconfig/pdfium.pc
+prefix=${VIPSHOME}
 exec_prefix=\${prefix}
 libdir=\${exec_prefix}/lib
 includedir=\${prefix}/include
@@ -102,7 +103,7 @@ RUN cd ${VIPSHOME} \
   && cd build-dir \
   && meson compile \
   && meson install \
-  && cp $VIPSHOME/lib/libpdfium.so /usr/local/lib/ \
+  && cp ${VIPSHOME}/lib/libpdfium.so /usr/local/lib/ \
   && ldconfig /usr/local/lib
 
 RUN apk del .build-deps
@@ -114,12 +115,11 @@ ARG OTP_VERSION
 ARG REBAR3_VERSION
 
 RUN set -xe \
-  && OTP_DOWNLOAD_URL="https://github.com/erlang/otp/archive/OTP-${OTP_VERSION}.tar.gz" \
-  && OTP_DOWNLOAD_SHA256="a05fa5c952fdf1718121d4ca3fd0c96fcb8b54ed61e37862417478d7b6c89232" \
+  && OTP_DOWNLOAD_URL="https://github.com/erlang/otp/releases/download/OTP-${OTP_VERSION}/otp_src_${OTP_VERSION}.tar.gz" \
+  && OTP_DOWNLOAD_SHA256="ce43dc8a29ad6bc1b6dbfc97f053d2e850b4a4c290eca065058d6b33ce476db5" \
   && apk add --no-cache --virtual .fetch-deps \
   curl \
   ca-certificates \
-  && REBAR3_DOWNLOAD_SHA256="391b0eaa2825bb427fef1e55a0d166493059175f57a33b00346b84a20398216c" \
   && curl -fSL -o otp-src.tar.gz "$OTP_DOWNLOAD_URL" \
   && echo "$OTP_DOWNLOAD_SHA256  otp-src.tar.gz" | sha256sum -c - \
   && apk add --no-cache --virtual .build-deps \
@@ -159,6 +159,7 @@ RUN set -xe \
   | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
   )" \
   && REBAR3_DOWNLOAD_URL="https://github.com/erlang/rebar3/archive/${REBAR3_VERSION}.tar.gz" \
+  && REBAR3_DOWNLOAD_SHA256="7d3f42dc0e126e18fb73e4366129f11dd37bad14d404f461e0a3129ce8903440" \
   && curl -fSL -o rebar3-src.tar.gz "$REBAR3_DOWNLOAD_URL" \
   && echo "${REBAR3_DOWNLOAD_SHA256}  rebar3-src.tar.gz" | sha256sum -c - \
   && mkdir -p /usr/src/rebar3-src \
@@ -245,7 +246,7 @@ RUN mix compile
 
 # Compress source code for sentry
 RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
-  mix sentry.package_source_code || (env && false)
+  mix sentry.package_source_code || false
 
 # build release
 RUN mix release

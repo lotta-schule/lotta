@@ -33,7 +33,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 24.5
           cache: 'pnpm'
 
       - name: Install npm dependencies
@@ -64,13 +64,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 24.5
           cache: 'pnpm'
 
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '27.3.4'
+          otp-version: '28.0.2'
           elixir-version: '1.18.4'
 
       - name: Install node dependencies
@@ -95,7 +95,7 @@ jobs:
           -e POSTGRES_USER=lotta
           -e POSTGRES_PASSWORD=lotta
       redis:
-        image: bitnami/redis:latest
+        image: bitnamilegacy/redis:latest
         ports:
           - 6379:6379
         options: >-
@@ -131,7 +131,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 24.5
           cache: 'pnpm'
 
       - uses: actions/cache@v4
@@ -144,7 +144,7 @@ jobs:
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '27.3.4'
+          otp-version: '28.0.2'
           elixir-version: '1.18.4'
 
       - uses: hostwithquantum/setup-mc@main
@@ -241,14 +241,14 @@ jobs:
         uses: actions/setup-node@v4
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
         with:
-          node-version: 23
+          node-version: 24.5
           cache: 'pnpm'
 
       - name: Setup the BEAM and Elixir
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '27.3.4'
+          otp-version: '28.0.2'
           elixir-version: '1.18.4'
 
       - name: Install npm dependencies

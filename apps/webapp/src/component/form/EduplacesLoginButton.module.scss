@@ -1,0 +1,29 @@
+.root {
+  --moon: #fafafa;
+  --infra-purple: #4a00b8;
+
+  text-align: center;
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 12px;
+  border: 1px solid;
+  transition: all 0.1s ease-in-out;
+
+  border-color: transparent;
+  background-color: var(--infra-purple);
+  color: var(--moon);
+
+  svg {
+    fill: var(--moon);
+  }
+
+  &:hover {
+    color: var(--infra-purple);
+    background-color: var(--moon);
+    border-color: var(--infra-purple);
+
+    svg {
+      fill: var(--infra-purple);
+    }
+  }
+}

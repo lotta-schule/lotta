@@ -29,6 +29,8 @@ defmodule Lotta.Accounts.UserGroup do
 
     field(:enrollment_tokens, {:array, :string}, default: [])
 
+    field(:eduplaces_id, :string)
+
     many_to_many(
       :users,
       User,
@@ -42,7 +44,14 @@ defmodule Lotta.Accounts.UserGroup do
   @doc false
   def update_changeset(%UserGroup{} = user_group, attrs) do
     user_group
-    |> cast(attrs, [:name, :sort_key, :is_admin_group, :can_read_full_name, :enrollment_tokens])
+    |> cast(attrs, [
+      :name,
+      :sort_key,
+      :is_admin_group,
+      :can_read_full_name,
+      :enrollment_tokens,
+      :eduplaces_id
+    ])
     |> validate_required([:name, :sort_key])
   end
 
@@ -54,6 +63,6 @@ defmodule Lotta.Accounts.UserGroup do
 
   def get_max_sort_key() do
     from(c in UserGroup, select: max(c.sort_key))
-    |> Repo.one()
+    |> Repo.one() || 0
   end
 end

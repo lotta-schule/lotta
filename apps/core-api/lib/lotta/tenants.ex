@@ -6,18 +6,18 @@ defmodule Lotta.Tenants do
 
   import Ecto.Query
 
+  alias LottaWeb.Schema.Tenants.Tenant
   alias Lotta.Administration.Cockpit
   alias LottaWeb.Schema.Tenants.Tenant
   alias Ecto.Multi
-  alias Lotta.{Email, Mailer, Repo, Storage}
-  alias Lotta.Accounts.User
+  alias Lotta.{Accounts, Email, Mailer, Repo, Storage}
+  alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Content.Article
   alias Lotta.Storage.File
 
   alias Lotta.Tenants.{
     Category,
     CustomDomain,
-    DefaultContent,
     Feedback,
     Tenant,
     TenantDbManager,
@@ -59,28 +59,101 @@ defmodule Lotta.Tenants do
   end
 
   @doc """
+  List all tenants that have an eduplaces_id set.
+  """
+  @doc since: "6.1.0"
+  @spec list_eduplaces_tenants() :: [Tenant.t()]
+  def list_eduplaces_tenants() do
+    from(t in Tenant,
+      where: not is_nil(t.eduplaces_id)
+    )
+    |> Repo.all(prefix: "public")
+  end
+
+  @doc """
+  Wether a given slug is available.
+  A slug is available if it is not already taken by another tenant
+  and it is not reserved.
+  """
+  @doc since: "6.1.0"
+  @spec slug_available?(String.t()) :: boolean()
+  def slug_available?(slug),
+    do: slug not in get_occupied_slugs() and slug not in get_reserved_slugs()
+
+  @doc """
+  List all non-available slugs.
+  A slug is available if it is not already taken by another tenant.
+  """
+  @doc since: "6.1.0"
+  @spec get_occupied_slugs() :: [String.t()]
+  def get_occupied_slugs() do
+    from(t in Tenant, select: t.slug)
+    |> Lotta.Repo.all()
+  end
+
+  @doc """
+  List all reserved slugs.
+  A slug is reserved if it is not allowed to be used by a tenant.
+  """
+  @doc since: "6.1.0"
+  @spec get_reserved_slugs() :: [String.t()]
+  def get_reserved_slugs(),
+    do: [
+      "www",
+      "admin",
+      "api",
+      "mail",
+      "ftp",
+      "smtp",
+      "pop3",
+      "imap",
+      "webmail",
+      "blog",
+      "shop",
+      "test",
+      "staging",
+      "preview",
+      "demo",
+      "support",
+      "help",
+      "status",
+      "secure",
+      "portal",
+      "intranet",
+      "intern",
+      "internal",
+      "static",
+      "assets",
+      "files",
+      "data"
+    ]
+
+  @doc """
   Create a new tenant.
   """
   @doc since: "2.6.0"
-  @spec create_tenant(user_params: map(), tenant: map()) ::
-          {:ok, Tenant.t()} | {:error, term(), term()}
-  def create_tenant(params) do
-    user_params = Keyword.get(params, :user_params)
-    tenant_params = Keyword.get(params, :tenant)
+  @spec create_tenant(tenant :: Tenant.empty(), user :: User.empty()) ::
+          {:ok, Tenant.t()} | {:error, Ecto.Changese.t()} | {:error, String.t()}
+  def create_tenant(tenant, user) do
+    with {:ok, tenant, user} <- setup_tenant(tenant, user),
+         {:ok, _job} <- Lotta.Worker.Tenant.setup_default_content(tenant, user) do
+      {:ok, tenant}
+    else
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, changeset}
 
-    with {:ok, tenant} <- setup_tenant(user_params, tenant_params) do
-      if DefaultContent.create_default_content(tenant, user_params) == :ok do
-        {:ok, tenant}
-      else
-        delete_tenant(tenant)
+      error ->
+        Logger.error("Error creating tenant: #{inspect(error)}")
         {:error, "Error creating default content"}
-      end
     end
   end
 
-  @spec setup_tenant(user_params :: map(), tenant_params :: map()) ::
+  @spec setup_tenant(tenant :: Tenant.empty(), user :: User.empty()) ::
           {:ok, Tenant.t()} | {:error, term()}
-  defp setup_tenant(user_params, tenant_params) do
+  defp setup_tenant(tenant, user) do
+    tenant_params = Map.from_struct(tenant)
+    user_params = Map.from_struct(user)
+
     Multi.new()
     |> Multi.put(:user_params, user_params)
     |> Multi.insert(:new_tenant_without_prefix, Tenant.create_changeset(tenant_params))
@@ -93,10 +166,13 @@ defmodule Lotta.Tenants do
     |> Multi.run(:migrations, fn _repo, %{tenant: tenant} ->
       TenantDbManager.create_tenant_database_schema(tenant)
     end)
+    |> Multi.run(:user, fn _repo, %{tenant: tenant, user_params: user_params} ->
+      register_and_setup_admin_user(tenant, user_params)
+    end)
     |> Repo.transaction()
     |> case do
-      {:ok, %{tenant: tenant}} ->
-        {:ok, tenant}
+      {:ok, %{tenant: tenant, user: user}} ->
+        {:ok, tenant, user}
 
       {:error, failed_operation, failed_value, _changes_so_far} ->
         msg =
@@ -112,6 +188,41 @@ defmodule Lotta.Tenants do
             else: "#{failed_operation}: #{failed_value}"
 
         {:error, message}
+    end
+  end
+
+  @spec register_and_setup_admin_user(Tenant.t(), map()) :: {:ok, User.t()} | {:error, term()}
+  defp register_and_setup_admin_user(tenant, user_params) do
+    with {:ok, user} <- register_user_for_tenant(user_params, tenant) do
+      user
+      |> User.update_changeset(%{
+        groups: [
+          %UserGroup{
+            name: "Administrator",
+            sort_key: 0,
+            is_admin_group: true
+          }
+        ]
+      })
+      |> Repo.update(prefix: tenant.prefix)
+    end
+  end
+
+  @spec register_user_for_tenant(map(), Tenant.t()) :: {:ok, User.t()} | {:error, term()}
+  defp register_user_for_tenant(user_params, tenant) do
+    case user_params do
+      %{eduplaces_id: eduplaces_id}
+      when not is_nil(eduplaces_id) and byte_size(eduplaces_id) > 0 ->
+        Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{
+          id: eduplaces_id,
+          username: user_params[:name]
+        })
+
+      %{email: email} when not is_nil(email) and byte_size(email) > 0 ->
+        Accounts.register_user_by_mail(tenant, user_params)
+
+      _ ->
+        {:error, "Either email or eduplaces_id must be set for the user"}
     end
   end
 
@@ -141,33 +252,21 @@ defmodule Lotta.Tenants do
   """
   @doc since: "2.6.0"
   @spec get_tenant(Tenant.id()) :: Tenant.t() | nil
-  def get_tenant(id) do
-    Repo.get(Tenant, id, prefix: "public")
-  end
+  def get_tenant(id), do: Repo.get(Tenant, id, prefix: "public")
 
   @doc """
   Get a tenant by its slug.
   """
   @doc since: "2.6.0"
   @spec get_tenant_by_slug(String.t()) :: Tenant.t() | nil
-  def get_tenant_by_slug(slug) do
-    from(t in Tenant,
-      where: t.slug == ^slug
-    )
-    |> Repo.one(prefix: "public")
-  end
+  def get_tenant_by_slug(slug), do: Repo.get_by(Tenant, %{slug: slug}, prefix: "public")
 
   @doc """
   Get a tenant by its prefix.
   """
   @doc since: "2.6.0"
   @spec get_tenant_by_prefix(String.t()) :: Tenant.t() | nil
-  def get_tenant_by_prefix(prefix) do
-    from(t in Tenant,
-      where: t.prefix == ^prefix
-    )
-    |> Repo.one(prefix: "public")
-  end
+  def get_tenant_by_prefix(prefix), do: Repo.get_by(Tenant, %{prefix: prefix}, prefix: "public")
 
   @doc """
   Get a tenant by its custom domain
@@ -179,6 +278,18 @@ defmodule Lotta.Tenants do
       join: d in CustomDomain,
       on: d.tenant_id == t.id,
       where: d.host == ^host
+    )
+    |> Repo.one(prefix: "public")
+  end
+
+  @doc """
+  Get a tenant by its eduplaces school id.
+  """
+  @doc since: "6.1.0"
+  @spec get_tenant_by_eduplaces_id(String.t()) :: Tenant.t() | nil
+  def get_tenant_by_eduplaces_id(eduplaces_id) do
+    from(t in Tenant,
+      where: t.eduplaces_id == ^eduplaces_id
     )
     |> Repo.one(prefix: "public")
   end
@@ -204,6 +315,18 @@ defmodule Lotta.Tenants do
   def update_tenant(tenant, args) do
     tenant
     |> Tenant.update_changeset(args)
+    |> Repo.update()
+  end
+
+  @doc """
+  Set the tenant's state to `:active` or `:readonly`.
+  """
+  @doc since: "6.1.0"
+  @spec update_state(Tenant.t(), :active | :readonly) ::
+          {:ok, Tenant.t()} | {:error, Ecto.Changeset.t(Tenant.t())}
+  def update_state(tenant, state) when state in [:active, :readonly] do
+    tenant
+    |> Ecto.Changeset.change(state: state)
     |> Repo.update()
   end
 

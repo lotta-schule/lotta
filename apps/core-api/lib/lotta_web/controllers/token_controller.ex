@@ -1,11 +1,11 @@
 defmodule LottaWeb.TokenController do
-  require Logger
-
   use LottaWeb, :controller
 
-  import Plug.Conn
+  require Logger
 
   alias Lotta.Accounts.Authentication
+
+  action_fallback(LottaWeb.FallbackController)
 
   def refresh(conn, params) do
     conn =
@@ -14,38 +14,29 @@ defmodule LottaWeb.TokenController do
 
     token = params["token"] || conn.cookies["SignInRefreshToken"]
 
-    if is_nil(token) do
+    with token when not is_nil(token) <- token,
+         {:ok, access_token, refresh_token} <-
+           Authentication.refresh_token(token) do
       conn
-      |> put_status(400)
-      |> put_view(LottaWeb.ErrorView)
-      |> render(:"400")
+      |> put_resp_cookie("SignInRefreshToken", refresh_token,
+        http_only: true,
+        same_site: "Lax",
+        # 3 weeks max_age
+        max_age: 3 * 7 * 24 * 60 * 60
+      )
+      |> render(:refresh,
+        access_token: access_token,
+        refresh_token: refresh_token
+      )
     else
-      case Authentication.refresh_token(token) do
-        {:ok, access_token, refresh_token} ->
-          conn
-          |> put_resp_cookie("SignInRefreshToken", refresh_token,
-            http_only: true,
-            same_site: "Lax",
-            # 3 weeks max_age
-            max_age: 3 * 7 * 24 * 60 * 60
-          )
-          |> json(%{
-            accessToken: access_token,
-            refreshToken: refresh_token
-          })
+      nil ->
+        Logger.warning("Refresh token not found in request or cookies.")
+        {:error, :bad_request}
 
-        {:error, reason} ->
-          Logger.warning("Error when requesting refresh token exchange: #{inspect(reason)}")
+      {:error, reason} ->
+        Logger.warning("Error when requesting refresh token exchange: #{inspect(reason)}")
 
-          conn
-          |> put_status(401)
-          |> delete_resp_cookie("SignInRefreshToken",
-            http_only: true,
-            same_site: "Lax"
-          )
-          |> put_view(LottaWeb.ErrorView)
-          |> render(:"401")
-      end
+        {:error, :unauthorized}
     end
   end
 end

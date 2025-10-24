@@ -19,6 +19,11 @@ defmodule LottaWeb.Router do
     plug(LottaWeb.Context)
   end
 
+  pipeline :browser do
+    plug(:accepts, ~w(html))
+    plug(:put_root_layout, html: {LottaWeb.Layouts, :root})
+  end
+
   pipeline :json_api do
     plug(:accepts, ~w(json))
   end
@@ -27,15 +32,30 @@ defmodule LottaWeb.Router do
     plug(:accepts, ~w(ics))
   end
 
-  scope "/" do
-    pipe_through([:tenant, :auth])
-    forward("/sitemap.xml", LottaWeb.SitemapPlug)
-  end
-
   scope "/auth" do
-    pipe_through([:tenant, :auth, :json_api])
+    scope "/" do
+      pipe_through(:browser)
 
-    post("/token/refresh", LottaWeb.TokenController, :refresh)
+      pipe_through([:tenant, :auth])
+
+      get("/callback", LottaWeb.OAuthController, :tenant_callback)
+    end
+
+    scope "/oauth" do
+      pipe_through(:browser)
+
+      get("/:provider/login", LottaWeb.OAuthController, :login)
+      get("/:provider/callback", LottaWeb.OAuthController, :callback)
+      # provider param is ignored, as we get the provider from ?ssi query param
+      # it probably would better to move this to /auth/oauth/request_login
+      get("/:provider/authorize", LottaWeb.OAuthController, :request_login)
+    end
+
+    scope "/token" do
+      pipe_through([:tenant, :auth, :json_api])
+
+      post("/refresh", LottaWeb.TokenController, :refresh)
+    end
   end
 
   # /storage endpoint could (and probably should) be moved to /data/storage
@@ -48,6 +68,8 @@ defmodule LottaWeb.Router do
 
   scope "/data" do
     pipe_through([:tenant, :auth])
+
+    forward("/sitemap.xml", LottaWeb.SitemapPlug)
 
     scope "/storage" do
       get("/f/:id/:format", LottaWeb.StorageController, :get_file_format)
@@ -74,6 +96,12 @@ defmodule LottaWeb.Router do
         before_send: {__MODULE__, :absinthe_before_send}
       )
     end
+  end
+
+  scope "/setup" do
+    pipe_through([:browser, :tenant])
+
+    get("/status", LottaWeb.SetupController, :status)
   end
 
   scope "/admin-api" do

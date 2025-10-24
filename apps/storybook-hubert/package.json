@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "@lotta-schule/storybook-hubert",
-  "version": "6.0.22",
+  "version": "6.0.24",
   "description": "Storybook Documentation for Hubert",
   "author": "Alexis Rinaldoni <alexis.rinaldoni@einsa.net>",
   "license": "GPL-3.0-or-later",
@@ -23,7 +23,6 @@
     "@storybook/addon-interactions": "^8.6.3",
     "@storybook/addon-links": "^8.6.3",
     "@storybook/addon-mdx-gfm": "^8.6.3",
-    "@storybook/addon-storysource": "^8.6.3",
     "@storybook/addon-themes": "^8.6.3",
     "@storybook/addon-viewport": "^8.6.3",
     "@storybook/blocks": "^8.6.3",

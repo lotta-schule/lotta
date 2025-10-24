@@ -1,9 +1,0 @@
-query GetUserGroups {
-  userGroups {
-    id
-    name
-    isAdminGroup
-    sortKey
-    canReadFullName
-  }
-}

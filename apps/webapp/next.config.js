@@ -23,6 +23,10 @@ const nextConfig = {
           destination: '/c/0',
         },
         {
+          source: '/setup/:path*',
+          destination: '/api/auth/:path*',
+        },
+        {
           source: '/auth/:path*',
           destination: '/api/auth/:path*',
         },
@@ -127,5 +131,9 @@ export default withSentryConfig(nextConfig, {
 
   sourcemaps: {
     deleteSourcemapsAfterUpload: false,
+  },
+
+  reactComponentAnnotation: {
+    enabled: true,
   },
 });

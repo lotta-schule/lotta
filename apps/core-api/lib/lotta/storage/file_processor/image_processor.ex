@@ -46,7 +46,7 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
   @spec process_multiple(FileData.t(), File.t(), formats :: Keyword.t()) ::
           {:ok, keyword(FileData.t())} | {:error, String.t()}
   def process_multiple(%FileData{} = file_data, %File{} = file, formats_args) do
-    with {:ok, image} <- Image.open(FileData.stream!(file_data)) do
+    with {:ok, image} <- get_image_from_file_data(file_data) do
       formats_args
       |> Enum.map(fn {format, args} ->
         {size_string, vips_args} = parse_args(args)
@@ -54,7 +54,11 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
         with {format, file_data} when format != :error <-
                create_thumbnail_stream(format, image, size_string, vips_args),
              {:ok, file_conversion} <-
-               Storage.create_file_conversion(file_data, file, to_string(format)) do
+               Storage.create_file_conversion(
+                 file_data,
+                 file,
+                 to_string(format)
+               ) do
           Conversion.report_progress(file, file_conversion)
 
           {format, file_conversion}
@@ -71,14 +75,8 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
 
   defp create_thumbnail_stream(format, image, size_string, vips_args) do
     with {:ok, image} <- Image.thumbnail(image, size_string, vips_args),
-         stream when not is_nil(stream) <-
-           Image.stream!(image,
-             buffer_size: 8 * 1024 * 1024,
-             strip_metadata: true,
-             minimize_file_size: true,
-             suffix: ".webp"
-           ),
-         {:ok, file_data} <- FileData.from_stream(stream, "image.webp", mime_type: "image/webp") do
+         {:ok, file_data} <-
+           get_file_data_from_image(image, "image.webp", mime_type: "image/webp") do
       {format, file_data}
     else
       {:error, error} ->
@@ -86,6 +84,33 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
 
       nil ->
         {:error, "Failed to create thumbnail: image processing returned without result"}
+    end
+  end
+
+  defp get_image_from_file_data(%FileData{_path: path}),
+    do: Image.open(path)
+
+  defp get_image_from_file_data(%FileData{} = file_data),
+    do: Image.open(FileData.stream!(file_data))
+
+  defp get_file_data_from_image(image, filename, opts) do
+    image
+    |> Image.stream!(
+      buffer_size: 8 * 1024 * 1024,
+      strip_metadata: true,
+      minimize_file_size: true,
+      suffix: ".webp"
+    )
+    |> case do
+      nil ->
+        Logger.error("Failed to convert Image to FileData: image stream is nil")
+        {:error, "Failed to convert Image to FileData"}
+
+      stream when is_binary(stream) ->
+        FileData.from_path(stream, opts)
+
+      stream ->
+        FileData.from_stream(stream, filename, opts)
     end
   end
 

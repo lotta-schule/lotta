@@ -8,7 +8,7 @@ defmodule Lotta.Accounts do
   import Ecto.Query
 
   alias Ecto.{Changeset, Multi}
-  alias Lotta.{Content, Email, Mailer, Repo, Storage}
+  alias Lotta.{Content, Eduplaces, Email, Mailer, Repo, Storage}
   alias Lotta.Accounts.{User, UserDevice, UserGroup}
   alias Lotta.Storage.File
   alias Lotta.Tenants.Tenant
@@ -27,7 +27,7 @@ defmodule Lotta.Accounts do
   end
 
   @doc """
-  Returnsa list of users.
+  Returns a list of users.
   """
   @spec list_users() :: [User.t()]
   def list_users() do
@@ -96,15 +96,17 @@ defmodule Lotta.Accounts do
   @doc """
   Returns list of all users that are member of at least one administrator group.
   """
-  @spec list_admin_users() :: [User.t()]
-  def list_admin_users() do
+  @spec list_admin_users(tenant :: Tenant.t() | nil) :: [User.t()]
+  def list_admin_users(tenant \\ nil) do
+    opts = if tenant, do: [prefix: tenant.prefix], else: []
+
     from(u in User,
       join: ug in assoc(u, :groups),
       where: ug.is_admin_group == true,
       order_by: [u.name, u.email],
       distinct: true
     )
-    |> Repo.all()
+    |> Repo.all(opts)
   end
 
   @doc """
@@ -126,6 +128,31 @@ defmodule Lotta.Accounts do
   @spec get_user_by_email(User.email()) :: User.t() | nil
   def get_user_by_email(email) do
     Repo.get_by(User, email: email)
+  end
+
+  @doc """
+  Gets a single user by eduplaces_id.
+
+  Returns nil if the User does not exist.
+  """
+  @doc since: "6.1.0"
+  @spec get_user_by_eduplaces_id(String.t()) :: User.t() | nil
+  def get_user_by_eduplaces_id(eduplaces_id) do
+    Repo.get_by(User, eduplaces_id: eduplaces_id)
+  end
+
+  @doc """
+  Gets multiple users by their eduplaces_ids.
+
+  Returns a list of users. Users that don't exist are not included.
+  """
+  @doc since: "6.1.0"
+  @spec list_users_by_eduplaces_ids([String.t()]) :: [User.t()]
+  def list_users_by_eduplaces_ids(eduplaces_ids) when is_list(eduplaces_ids) do
+    from(u in User,
+      where: u.eduplaces_id in ^eduplaces_ids
+    )
+    |> Repo.all()
   end
 
   @doc """
@@ -254,12 +281,12 @@ defmodule Lotta.Accounts do
   end
 
   @doc """
-  Registers a user, generating a first-time password.
+  Registers a user via email, generating a first-time password.
   If successfull, returns a user and a password.
-
   """
-  @spec register_user(Tenant.t(), map()) :: {:ok, User.t(), String.t()} | {:error, Changeset.t()}
-  def register_user(tenant, attrs) do
+  @spec register_user_by_mail(Tenant.t(), map()) ::
+          {:ok, User.t()} | {:error, Changeset.t()}
+  def register_user_by_mail(tenant, attrs) do
     pw_length = 8
 
     generated_pw =
@@ -278,10 +305,76 @@ defmodule Lotta.Accounts do
       {:ok, user} ->
         Storage.create_new_user_directories(user)
 
-        {:ok, user, generated_pw}
+        {:ok, Map.put(user, :password, generated_pw)}
 
       result ->
         result
+    end
+  end
+
+  @doc """
+    Find a user with the given Eduplaces user info.
+    If the user does not exist, it will be created.
+  """
+  @doc since: "6.1.0"
+  @spec get_or_create_eduplaces_user(Tenant.t(), Eduplaces.UserInfo.t()) ::
+          {:ok, User.t()} | {:error, Changeset.t()}
+  def get_or_create_eduplaces_user(tenant, %{id: eduplaces_id} = user_info) do
+    if user =
+         Repo.one(
+           from(u in User,
+             where: u.eduplaces_id == ^eduplaces_id
+           )
+         ) do
+      {:ok, user}
+    else
+      register_eduplaces_user(tenant, user_info)
+    end
+  end
+
+  @doc """
+  Registers a user via eduplaces user info.
+  The user will have no password set, as it is not needed for eduplaces users.
+  """
+  @doc since: "6.1.0"
+  @spec register_eduplaces_user(Tenant.t(), Eduplaces.UserInfo.t()) ::
+          {:ok, User.t(), String.t()} | {:error, Changeset.t()}
+  def register_eduplaces_user(tenant, user_info) do
+    user_info =
+      Lotta.Eduplaces.IDM.get_user(user_info.id)
+      |> case do
+        {:ok, user_data} -> Eduplaces.UserInfo.from_idm_details(user_data)
+        {:error, _reason} -> user_info
+      end
+
+    groups =
+      if Repo.get_prefix() != tenant.prefix do
+        []
+      else
+        case Enum.map(user_info.groups, & &1.id) do
+          [] ->
+            []
+
+          group_ids ->
+            Repo.all(
+              from(g in UserGroup,
+                where: g.eduplaces_id in ^group_ids
+              )
+            )
+        end
+      end
+
+    user_info
+    |> Eduplaces.UserInfo.to_lotta_user()
+    |> User.update_changeset(groups: groups)
+    |> Repo.insert(prefix: tenant.prefix)
+    |> case do
+      {:ok, user} ->
+        Storage.create_new_user_directories(user)
+        {:ok, user}
+
+      {:error, changeset} ->
+        {:error, changeset}
     end
   end
 
@@ -457,6 +550,21 @@ defmodule Lotta.Accounts do
   def update_user_group(%UserGroup{} = group, attrs) do
     group
     |> UserGroup.update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Sets the members of a group by replacing all current members with the given list of users.
+  Any users not in the given list will be removed from the group.
+  """
+  @doc since: "6.1.0"
+  @spec set_group_members(UserGroup.t(), [User.t()]) ::
+          {:ok, UserGroup.t()} | {:error, Changeset.t()}
+  def set_group_members(%UserGroup{} = group, users) when is_list(users) do
+    group
+    |> Repo.preload(:users)
+    |> Changeset.change()
+    |> Changeset.put_assoc(:users, users)
     |> Repo.update()
   end
 

@@ -1,10 +1,9 @@
 defmodule Lotta.Repo.Seeder do
-  alias Lotta.Repo
+  alias ExAws.S3
   alias Ecto.Changeset
-  alias Lotta.Accounts
-  alias Lotta.Tenants
+  alias Lotta.{Accounts, Tenants, Repo}
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Storage.{Directory, File, FileData}
+  alias Lotta.Storage.{Directory, File, FileData, RemoteStorage}
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Tenants.{Category, Tenant, TenantDbManager, Widget}
@@ -64,8 +63,8 @@ defmodule Lotta.Repo.Seeder do
         prefix: tenant.prefix
       )
 
-    {:ok, lotta_admin, _pw} =
-      Accounts.register_user(tenant, %{
+    {:ok, lotta_admin} =
+      Accounts.register_user_by_mail(tenant, %{
         name: "Alexis Rinaldoni",
         email: "alexis.rinaldoni@einsa.net",
         password: "test123"
@@ -75,8 +74,8 @@ defmodule Lotta.Repo.Seeder do
     |> User.update_password_changeset("test123")
     |> Repo.update!()
 
-    {:ok, alexis, _pw} =
-      Accounts.register_user(tenant, %{
+    {:ok, alexis} =
+      Accounts.register_user_by_mail(tenant, %{
         name: "Alexis Rinaldoni",
         nickname: "Der Meister",
         email: "alexis.rinaldoni@lotta.schule"
@@ -86,8 +85,8 @@ defmodule Lotta.Repo.Seeder do
     |> User.update_password_changeset("test123")
     |> Repo.update!()
 
-    {:ok, billy, _pw} =
-      Accounts.register_user(tenant, %{
+    {:ok, billy} =
+      Accounts.register_user_by_mail(tenant, %{
         name: "Christopher Bill",
         nickname: "Billy",
         email: "billy@lotta.schule",
@@ -99,8 +98,8 @@ defmodule Lotta.Repo.Seeder do
     |> User.update_password_changeset("test123")
     |> Repo.update!()
 
-    {:ok, eike, _pw} =
-      Accounts.register_user(tenant, %{
+    {:ok, eike} =
+      Accounts.register_user_by_mail(tenant, %{
         name: "Eike Wiewiorra",
         nickname: "Chef",
         email: "eike.wiewiorra@lotta.schule"
@@ -110,8 +109,8 @@ defmodule Lotta.Repo.Seeder do
     |> User.update_password_changeset("test123")
     |> Repo.update!()
 
-    {:ok, dr_evil, _pw} =
-      Accounts.register_user(tenant, %{
+    {:ok, dr_evil} =
+      Accounts.register_user_by_mail(tenant, %{
         name: "Dr Evil",
         nickname: "drEvil",
         email: "drevil@lotta.schule"
@@ -121,21 +120,21 @@ defmodule Lotta.Repo.Seeder do
     |> User.update_password_changeset("test123")
     |> Repo.update!()
 
-    Accounts.register_user(tenant, %{
+    Accounts.register_user_by_mail(tenant, %{
       name: "Max Mustermann",
       nickname: "MaXi",
       email: "maxi@lotta.schule",
       password: "test123"
     })
 
-    Accounts.register_user(tenant, %{
+    Accounts.register_user_by_mail(tenant, %{
       name: "Dorothea Musterfrau",
       nickname: "Doro",
       email: "doro@lotta.schule",
       password: "test123"
     })
 
-    Accounts.register_user(tenant, %{
+    Accounts.register_user_by_mail(tenant, %{
       name: "Marie Curie",
       nickname: "Polonium",
       email: "mcurie@lotta.schule",
@@ -1264,12 +1263,22 @@ defmodule Lotta.Repo.Seeder do
   end
 
   defp upload_test_file!(file) do
-    remote_path = "tenant_test/#{file.id}"
+    {:ok, config} = RemoteStorage.config_for_store(default_store())
+    bucket_name = config[:config][:bucket]
 
-    "test/support/fixtures/#{file.filename}"
-    |> ExAws.S3.Upload.stream_file()
-    |> ExAws.S3.upload("lotta-dev-ugc", remote_path)
-    |> ExAws.request!()
+    remote_path = "tenant_test/#{file.id}"
+    local_path = "test/support/fixtures/#{file.filename}"
+
+    {:ok, %{body: _response, status_code: 200}} =
+      local_path
+      |> S3.Upload.stream_file()
+      |> S3.upload(bucket_name, remote_path)
+      |> ExAws.request(
+        config[:config][:api_endpoint]
+        |> URI.parse()
+        |> Map.take([:scheme, :host, :port])
+        |> Map.to_list()
+      )
 
     file
     |> Repo.preload(:remote_storage_entity)
@@ -1280,4 +1289,7 @@ defmodule Lotta.Repo.Seeder do
     })
     |> Repo.update!()
   end
+
+  defp default_store, do: config()[:default_store] || "minio"
+  defp config, do: Application.get_env(:lotta, Lotta.Storage.RemoteStorage)
 end

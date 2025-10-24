@@ -10,6 +10,7 @@ export * from './DeleteOutline';
 export * from './Download';
 export * from './DragHandle';
 export * from './Edit';
+export * from './Eduplaces';
 export * from './ExpandMore';
 export * from './File';
 export * from './FileArchive';
