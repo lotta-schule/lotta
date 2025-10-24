@@ -82,6 +82,12 @@ defmodule LottaWeb.TenantControllerTest do
   describe "Create test tenant" do
     test "creates a test tenant with valid parameters" do
       mock(fn
+        %{method: :post, url: "https://auth.sandbox.eduplaces.dev/oauth2/token"} ->
+          %Tesla.Env{status: 200, body: %{"access_token" => "fake_token"}}
+
+        %{url: "https://api.sandbox.eduplaces.dev/idm/ep/v1/" <> _path} ->
+          %Tesla.Env{status: 404, body: "Not Found"}
+
         %{method: :post, url: url} when is_binary(url) ->
           %Tesla.Env{status: 200, body: %{}}
       end)

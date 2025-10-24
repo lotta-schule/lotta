@@ -1,7 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { SortableDraggableList } from '@lotta-schule/hubert';
+import {
+  Eduplaces as EduplacesIcon,
+  SortableDraggableList,
+} from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client';
 import { ID, UserGroupInputModel, UserGroupModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
@@ -100,6 +103,7 @@ export const DraggableGroupList = () => {
       items={groups.map((g) => ({
         id: g.id,
         title: g.name,
+        icon: g.eduplacesId && <EduplacesIcon />,
         selected: selectedGroupId === g.id,
         onClick: () => onSelect(g),
       }))}

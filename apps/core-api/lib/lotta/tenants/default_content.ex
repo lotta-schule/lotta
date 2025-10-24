@@ -25,6 +25,7 @@ defmodule Lotta.Tenants.DefaultContent do
          {:ok, files} <- create_files(tenant, admin_user),
          {:ok, _articles} <- create_articles(admin_user, content_category, files),
          {:ok, _mail} <- send_ready_email(tenant, admin_user),
+         _ <- sync_external(tenant),
          {:ok, _tenant} <- Tenants.update_state(tenant, :active),
          do: :ok
   end
@@ -352,6 +353,13 @@ defmodule Lotta.Tenants.DefaultContent do
     user
     |> Email.lotta_ready_mail(tenant: tenant)
     |> Mailer.deliver_later()
+  end
+
+  defp sync_external(tenant) do
+    Task.async(fn ->
+      Lotta.Eduplaces.Syncer.sync_tenant_groups(tenant)
+    end)
+    |> Task.await(:timer.minutes(5))
   end
 
   defp available_assets() do

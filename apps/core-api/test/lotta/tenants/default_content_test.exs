@@ -17,6 +17,12 @@ defmodule Lotta.Tenants.DefaultContentTest do
     Tesla.Mock.mock(fn
       %{url: "https://plausible.io/" <> _rest} = env ->
         %Tesla.Env{env | status: 200, body: "OK"}
+
+      %{method: :post, url: "https://auth.sandbox.eduplaces.dev/oauth2/token"} ->
+        %Tesla.Env{status: 200, body: %{"access_token" => "fake_token"}}
+
+      %{url: "https://api.sandbox.eduplaces.dev/idm/ep/v1/" <> _path} ->
+        %Tesla.Env{status: 404, body: "Not Found"}
     end)
 
     :ok

@@ -59,6 +59,18 @@ defmodule Lotta.Tenants do
   end
 
   @doc """
+  List all tenants that have an eduplaces_id set.
+  """
+  @doc since: "6.1.0"
+  @spec list_eduplaces_tenants() :: [Tenant.t()]
+  def list_eduplaces_tenants() do
+    from(t in Tenant,
+      where: not is_nil(t.eduplaces_id)
+    )
+    |> Repo.all(prefix: "public")
+  end
+
+  @doc """
   Wether a given slug is available.
   A slug is available if it is not already taken by another tenant
   and it is not reserved.
@@ -201,7 +213,10 @@ defmodule Lotta.Tenants do
     case user_params do
       %{eduplaces_id: eduplaces_id}
       when not is_nil(eduplaces_id) and byte_size(eduplaces_id) > 0 ->
-        Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{id: eduplaces_id})
+        Accounts.register_eduplaces_user(tenant, %Lotta.Eduplaces.UserInfo{
+          id: eduplaces_id,
+          username: user_params[:name]
+        })
 
       %{email: email} when not is_nil(email) and byte_size(email) > 0 ->
         Accounts.register_user_by_mail(tenant, user_params)

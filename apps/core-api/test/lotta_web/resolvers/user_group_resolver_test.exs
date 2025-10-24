@@ -9,6 +9,7 @@ defmodule LottaWeb.UserGroupResolverTest do
   alias Lotta.{Accounts, Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Content.Article
+  alias Lotta.Fixtures
   alias Ecto.Changeset
 
   @prefix "tenant_test"
@@ -405,6 +406,31 @@ defmodule LottaWeb.UserGroupResolverTest do
       assert Accounts.get_user_group(lehrer_group.id) == nil
     end
 
+    test "should return an error if group is eduplaces group", %{admin_jwt: admin_jwt} do
+      group =
+        Fixtures.fixture(:user_group, is_admin_group: false)
+        |> Ecto.Changeset.change(%{eduplaces_id: "eduplaces-group-123"})
+        |> Repo.update!()
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query, variables: %{id: group.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => nil,
+               "errors" => [
+                 %{
+                   "message" =>
+                     "Gruppe ist mit Eduplaces synchronisiert und kann nicht gelöscht werden.",
+                   "path" => ["deleteUserGroup"]
+                 }
+               ]
+             } = res
+    end
+
     test "should return an error if user is admin, but requested id does not exist", %{
       admin_jwt: admin_jwt
     } do
@@ -419,7 +445,7 @@ defmodule LottaWeb.UserGroupResolverTest do
                "data" => nil,
                "errors" => [
                  %{
-                   "message" => "Gruppe existiert nicht.",
+                   "message" => "Gruppe mit der id 0 existiert nicht.",
                    "path" => ["deleteUserGroup"]
                  }
                ]

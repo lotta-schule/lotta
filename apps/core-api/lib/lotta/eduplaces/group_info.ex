@@ -17,4 +17,6 @@ defmodule Lotta.Eduplaces.GroupInfo do
       name: name
     }
   end
+
+  def from_idm_details(details), do: from_jwt_info(details)
 end
