@@ -30,7 +30,8 @@ defmodule Lotta.Application do
           {Absinthe.Subscription, LottaWeb.Endpoint},
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
           {ConCache,
-           name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
+           name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)},
+          {Lotta.Eduplaces.Syncer, Application.get_env(:lotta, Lotta.Eduplaces.Syncer, [])}
         ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

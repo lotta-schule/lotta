@@ -73,11 +73,15 @@ defmodule LottaWeb.UserGroupResolver do
   def delete(%{id: id}, _info) do
     group = Accounts.get_user_group(id)
 
-    if is_nil(group) do
-      {:error, "Gruppe existiert nicht."}
-    else
-      Accounts.delete_user_group(group)
-      |> format_errors("Fehler beim Löschen  der Gruppe")
+    case group do
+      nil ->
+        {:error, "Gruppe mit der id #{id} existiert nicht."}
+
+      %{eduplaces_id: id} when not is_nil(id) ->
+        {:error, "Gruppe ist mit Eduplaces synchronisiert und kann nicht gelöscht werden."}
+
+      group ->
+        Accounts.delete_user_group(group)
     end
   end
 end
