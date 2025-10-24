@@ -4,8 +4,9 @@ import * as Sentry from '@sentry/nextjs';
 export const createSentryTracingLink = () =>
   new ApolloLink((operation, forward) => {
     const span = Sentry.getActiveSpan();
-    const trace = Sentry.getTraceData({ span });
     if (span) {
+      const trace =
+        'getTraceData' in Sentry ? Sentry.getTraceData({ span }) : undefined;
       const { traceId, spanId } = span.spanContext();
       const baggage = trace?.baggage;
 

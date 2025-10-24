@@ -15,9 +15,10 @@ export async function register() {
       environment: appConfig.get('APP_ENVIRONMENT'),
       release,
       enabled: appConfig.get('NODE_ENV') === 'production',
+      sendDefaultPii: true,
       skipOpenTelemetrySetup: true,
       tracesSampleRate: 0.15,
-      tracePropagationTargets: [/^\/api/, appConfig.get('API_URL')],
+      tracePropagationTargets: [/\/^auth/, /^\/api/, appConfig.get('API_URL')],
     });
   }
 

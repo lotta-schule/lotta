@@ -1,6 +1,7 @@
 import '../../styles/globals.scss';
 
 import * as React from 'react';
+import * as Sentry from '@sentry/nextjs';
 import {
   DefaultThemes,
   GlobalStyles,
@@ -18,6 +19,16 @@ import { getAuthTokenFromHeader } from 'api/apollo/client-rsc';
 import { TranslationsProvider } from 'i18n/client';
 import { TenantGlobalStyleTag } from 'layout/TenantGlobalStyleTag';
 import { headers } from 'next/headers';
+import type { Metadata } from 'next';
+
+export function generateMetadata(): Metadata {
+  const traceData = Sentry.getTraceData();
+  return {
+    other: {
+      ...traceData,
+    },
+  };
+}
 
 export default async function AppLayout({ children }: React.PropsWithChildren) {
   const socketUrl = appConfig.get('API_SOCKET_URL');
