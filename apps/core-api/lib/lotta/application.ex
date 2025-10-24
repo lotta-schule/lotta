@@ -31,8 +31,7 @@ defmodule Lotta.Application do
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
           {ConCache,
            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)},
-          {Lotta.Eduplaces.EduplacesSyncer,
-           Application.get_env(:lotta, Lotta.Eduplaces.EduplacesSyncer, [])}
+          {Lotta.Eduplaces.Syncer, Application.get_env(:lotta, Lotta.Eduplaces.Syncer, [])}
         ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

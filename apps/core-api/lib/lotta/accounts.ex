@@ -131,6 +131,31 @@ defmodule Lotta.Accounts do
   end
 
   @doc """
+  Gets a single user by eduplaces_id.
+
+  Returns nil if the User does not exist.
+  """
+  @doc since: "6.1.0"
+  @spec get_user_by_eduplaces_id(String.t()) :: User.t() | nil
+  def get_user_by_eduplaces_id(eduplaces_id) do
+    Repo.get_by(User, eduplaces_id: eduplaces_id)
+  end
+
+  @doc """
+  Gets multiple users by their eduplaces_ids.
+
+  Returns a list of users. Users that don't exist are not included.
+  """
+  @doc since: "6.1.0"
+  @spec list_users_by_eduplaces_ids([String.t()]) :: [User.t()]
+  def list_users_by_eduplaces_ids(eduplaces_ids) when is_list(eduplaces_ids) do
+    from(u in User,
+      where: u.eduplaces_id in ^eduplaces_ids
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Searches users by text. The user is searched by *exact match* of email, or by name or nickname
   """
   @spec search_user(String.t(), [String.t()] | nil, {:before | :after, DateTime.t()} | nil) :: [
@@ -514,6 +539,21 @@ defmodule Lotta.Accounts do
   def update_user_group(%UserGroup{} = group, attrs) do
     group
     |> UserGroup.update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Sets the members of a group by replacing all current members with the given list of users.
+  Any users not in the given list will be removed from the group.
+  """
+  @doc since: "6.1.0"
+  @spec set_group_members(UserGroup.t(), [User.t()]) ::
+          {:ok, UserGroup.t()} | {:error, Changeset.t()}
+  def set_group_members(%UserGroup{} = group, users) when is_list(users) do
+    group
+    |> Repo.preload(:users)
+    |> Changeset.change()
+    |> Changeset.put_assoc(:users, users)
     |> Repo.update()
   end
 
