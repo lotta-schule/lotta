@@ -148,7 +148,7 @@ defmodule LottaWeb.OAuthControllerTest do
         # Should redirect to tenant URI with token and return_url pointing to /setup
         redirect_path = redirected_to(conn)
         assert redirect_path =~ "https://test-school.lotta.schule/auth/callback?token="
-        assert redirect_path =~ "return_url=/setup"
+        assert redirect_path =~ "return_url=/setup/status"
       end
     end
 

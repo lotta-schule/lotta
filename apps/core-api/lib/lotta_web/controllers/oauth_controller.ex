@@ -196,7 +196,7 @@ defmodule LottaWeb.OAuthController do
             user = Repo.get_by!(User, eduplaces_id: user.eduplaces_id)
 
             conn
-            |> login_on_tenant(user, tenant, "/setup")
+            |> login_on_tenant(user, tenant, "/setup/status")
 
           {:error, changeset} ->
             Logger.error("Failed to create tenant from Eduplaces userinfo: #{inspect(changeset)}")
