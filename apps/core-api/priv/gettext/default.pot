@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 
-#: lib/lotta_web/controllers/oauth_controller.ex:172
+#: lib/lotta_web/controllers/oauth_controller.ex:176
 #, elixir-autogen, elixir-format
 msgid "Access denied"
 msgstr ""
@@ -21,18 +21,18 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: lib/lotta_web/controllers/oauth_controller.ex:209
+#: lib/lotta_web/controllers/oauth_controller.ex:213
 #, elixir-autogen, elixir-format
 msgid "An error occurred while creating your tenant. Please contact support."
 msgstr ""
 
-#: lib/lotta_web/controllers/oauth_controller.ex:250
+#: lib/lotta_web/controllers/oauth_controller.ex:254
 #, elixir-autogen, elixir-format
 msgid "An error occurred while logging you in. Please login manually."
 msgstr ""
 
-#: lib/lotta_web/controllers/oauth_controller.ex:207
-#: lib/lotta_web/controllers/oauth_controller.ex:249
+#: lib/lotta_web/controllers/oauth_controller.ex:211
+#: lib/lotta_web/controllers/oauth_controller.ex:253
 #, elixir-autogen, elixir-format
 msgid "Internal server error"
 msgstr ""
@@ -42,17 +42,12 @@ msgstr ""
 msgid "Just a few more seconds"
 msgstr ""
 
-#: lib/lotta_web/controllers/setup_html/status.html.heex:19
-#, elixir-autogen, elixir-format
-msgid "Lotta is being setup for your school."
-msgstr ""
-
 #: lib/lotta_web/controllers/oauth_controller.ex:46
 #, elixir-autogen, elixir-format
 msgid "Missing or invalid state parameter."
 msgstr ""
 
-#: lib/lotta_web/controllers/oauth_controller.ex:174
+#: lib/lotta_web/controllers/oauth_controller.ex:178
 #, elixir-autogen, elixir-format
 msgid "Only a teacher is allowed to setup lotta for a school.\nContact a teacher at your school to proceed, we will be happy to help.\n"
 msgstr ""
@@ -62,7 +57,7 @@ msgstr ""
 msgid "State parameter mismatch."
 msgstr ""
 
-#: lib/lotta_web/controllers/oauth_controller.ex:219
+#: lib/lotta_web/controllers/oauth_controller.ex:223
 #: lib/lotta_web/controllers/setup_controller.ex:26
 #, elixir-autogen, elixir-format
 msgid "Tenant not found"
@@ -83,19 +78,19 @@ msgstr ""
 msgid "The state parameter is missing or invalid. Please try logging in again."
 msgstr ""
 
-#: lib/lotta_web/controllers/oauth_controller.ex:221
+#: lib/lotta_web/controllers/oauth_controller.ex:225
 #, elixir-autogen, elixir-format
 msgid "The tenant associated with your account could not be found. It maybe is not registered. Please contact support."
 msgstr ""
 
-#: lib/lotta_web/controllers/oauth_controller.ex:113
-#: lib/lotta_web/controllers/oauth_controller.ex:121
+#: lib/lotta_web/controllers/oauth_controller.ex:117
+#: lib/lotta_web/controllers/oauth_controller.ex:125
 #, elixir-autogen, elixir-format
 msgid "Unauthorized"
 msgstr ""
 
-#: lib/lotta_web/controllers/oauth_controller.ex:114
-#: lib/lotta_web/controllers/oauth_controller.ex:122
+#: lib/lotta_web/controllers/oauth_controller.ex:118
+#: lib/lotta_web/controllers/oauth_controller.ex:126
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this resource."
 msgstr ""
@@ -121,4 +116,14 @@ msgstr ""
 #: lib/lotta_web/controllers/error_html/404.html.heex:1
 #, elixir-autogen, elixir-format
 msgid "not found"
+msgstr ""
+
+#: lib/lotta_web/controllers/setup_html/status.html.heex:19
+#, elixir-autogen, elixir-format
+msgid "Lotta is being setup for your school..."
+msgstr ""
+
+#: lib/lotta_web/controllers/setup_html/status.html.heex:21
+#, elixir-autogen, elixir-format
+msgid "You will be redirected in a few moments."
 msgstr ""

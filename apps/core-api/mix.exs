@@ -155,7 +155,11 @@ defmodule Lotta.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.reset", "test"],
-      sentry_recompile: ["compile", "deps.compile sentry --force"]
+      sentry_recompile: ["compile", "deps.compile sentry --force"],
+      translations: [
+        "gettext.extract",
+        "gettext.merge priv/gettext/de/LC_MESSAGES/default.po priv/gettext/default.pot"
+      ]
     ]
   end
 end
