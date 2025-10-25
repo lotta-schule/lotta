@@ -5,7 +5,7 @@ defmodule Lotta.TenantsTest do
 
   alias Lotta.Accounts.User
   alias Lotta.{Tenants, Repo}
-  alias Lotta.Tenants.{CustomDomain, Tenant}
+  alias Lotta.Tenants.{CustomDomain, Tenant, UsageLog}
 
   @prefix "tenant_test"
 
@@ -187,6 +187,192 @@ defmodule Lotta.TenantsTest do
       }
 
       assert {:error, _} = Tenants.create_tenant(tenant, user)
+    end
+  end
+
+  describe "create_usage_log_entry/4" do
+    test "creates a usage log entry with valid parameters" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      assert {:ok, usage_log} =
+               Tenants.create_usage_log_entry(
+                 tenant,
+                 :active_user_count,
+                 "150",
+                 "user-123"
+               )
+
+      assert usage_log.tenant_id == tenant.id
+      assert usage_log.type == :active_user_count
+      assert usage_log.value == "150"
+      assert usage_log.unique_identifier == "user-123"
+      assert usage_log.date == Date.utc_today()
+
+      # Verify it was saved to the database
+      saved_log = Repo.get_by(UsageLog, [tenant_id: tenant.id], prefix: "public")
+      assert saved_log.value == "150"
+    end
+
+    test "creates a usage log entry for total_storage_count type" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      assert {:ok, usage_log} =
+               Tenants.create_usage_log_entry(
+                 tenant,
+                 :total_storage_count,
+                 "52428800",
+                 "storage-report-2025-10"
+               )
+
+      assert usage_log.type == :total_storage_count
+      assert usage_log.value == "52428800"
+      assert usage_log.unique_identifier == "storage-report-2025-10"
+    end
+
+    test "creates a usage log entry for media_conversion_seconds type" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      assert {:ok, usage_log} =
+               Tenants.create_usage_log_entry(
+                 tenant,
+                 :media_conversion_seconds,
+                 "3600"
+               )
+
+      assert usage_log.type == :media_conversion_seconds
+      assert usage_log.value == "3600"
+      assert usage_log.unique_identifier == nil
+    end
+
+    test "creates a usage log entry without unique_identifier (defaults to nil)" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      assert {:ok, usage_log} =
+               Tenants.create_usage_log_entry(
+                 tenant,
+                 :active_user_count,
+                 "200"
+               )
+
+      assert usage_log.unique_identifier == nil
+    end
+
+    test "automatically sets date to today" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      assert {:ok, usage_log} =
+               Tenants.create_usage_log_entry(
+                 tenant,
+                 :active_user_count,
+                 "100"
+               )
+
+      assert usage_log.date == Date.utc_today()
+    end
+
+    test "returns error with invalid type" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      assert {:error, changeset} =
+               Tenants.create_usage_log_entry(
+                 tenant,
+                 :invalid_type,
+                 "100"
+               )
+
+      assert changeset.errors[:type]
+    end
+
+    test "returns error when value is missing" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      assert {:error, changeset} =
+               Tenants.create_usage_log_entry(
+                 tenant,
+                 :active_user_count,
+                 nil
+               )
+
+      assert changeset.errors[:value]
+    end
+  end
+
+  describe "create_total_storage_log/1" do
+    test "creates a log entry with total storage sum" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      # Get current total
+      current_total =
+        from(f in Lotta.Storage.File, select: sum(f.filesize))
+        |> Repo.one(prefix: tenant.prefix)
+        |> case do
+          nil -> 0
+          sum -> sum
+        end
+
+      assert {:ok, usage_log} = Tenants.create_total_storage_log(tenant)
+
+      assert usage_log.type == :total_storage_count
+      assert usage_log.value == to_string(current_total)
+      assert usage_log.tenant_id == tenant.id
+      assert usage_log.date == Date.utc_today()
+      assert usage_log.unique_identifier == nil
+    end
+
+    test "creates a log entry with 0 when no files exist" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      # Delete all files
+      Repo.delete_all(Lotta.Storage.File, prefix: tenant.prefix)
+
+      assert {:ok, usage_log} = Tenants.create_total_storage_log(tenant)
+
+      assert usage_log.type == :total_storage_count
+      assert usage_log.value == "0"
+      assert usage_log.tenant_id == tenant.id
+    end
+  end
+
+  describe "create_active_user_count_log/1" do
+    test "creates a log entry with count of users with groups" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      # Count existing users
+      total_users = Repo.aggregate(Lotta.Accounts.User, :count, :id, prefix: tenant.prefix)
+
+      Repo.put_prefix(tenant.prefix)
+      users_without_groups = Lotta.Accounts.list_users_without_groups()
+      expected_count = total_users - length(users_without_groups)
+
+      assert {:ok, usage_log} = Tenants.create_active_user_count_log(tenant)
+
+      assert usage_log.type == :active_user_count
+      assert usage_log.value == to_string(expected_count)
+      assert usage_log.tenant_id == tenant.id
+      assert usage_log.date == Date.utc_today()
+      assert usage_log.unique_identifier == nil
+    end
+  end
+
+  describe "create_usage_logs/1" do
+    test "creates both storage and user count logs" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      assert :ok = Tenants.create_usage_logs(tenant)
+
+      # Verify both logs were created
+      storage_log =
+        Repo.get_by(UsageLog, [tenant_id: tenant.id, type: :total_storage_count],
+          prefix: "public"
+        )
+
+      user_count_log =
+        Repo.get_by(UsageLog, [tenant_id: tenant.id, type: :active_user_count], prefix: "public")
+
+      assert storage_log != nil
+      assert user_count_log != nil
+      assert storage_log.date == Date.utc_today()
+      assert user_count_log.date == Date.utc_today()
     end
   end
 
