@@ -11,7 +11,7 @@ defmodule Lotta.Release do
   alias Lotta.Repo
   alias Lotta.Storage.RemoteStorage
   alias Lotta.Tenants.{Tenant, TenantDbManager}
-  alias Lotta.{Accounts, Content, Storage}
+  alias Lotta.Storage
   alias Ecto.Migrator
 
   def migrate do
@@ -157,89 +157,15 @@ defmodule Lotta.Release do
     unused
   end
 
-  def convert_existing_media do
+  def delete_all_oban_jobs() do
     start_app()
 
-    on_each_tenant_repo(fn tenant, _ ->
-      Logger.notice(
-        "Customer #{tenant.title} with schema #{tenant.prefix} is being converted ..."
-      )
+    {:ok, count} = Oban.cancel_all_jobs(Oban.Job)
+    Logger.info("Cancelled #{count} Oban jobs")
 
-      convert_existing_media(tenant)
-    end)
+    {:ok, count} = Oban.delete_all_jobs(Oban.Job)
+    Logger.info("Deleted #{count} Oban jobs")
   end
-
-  defp convert_existing_media(%Tenant{} = tenant) do
-    start_app()
-
-    Logger.notice("Converting existing media for tenant #{tenant.prefix} ...")
-
-    # Create previews
-    Repo.all(Storage.File, prefix: tenant.prefix)
-    |> tap(fn files ->
-      Logger.notice("Converting #{Enum.count(files)} preview files ...")
-    end)
-    |> ensure_formats(:preview_200)
-
-    Content.Article
-    |> Repo.all(prefix: tenant.prefix)
-    |> Repo.preload(:preview_image_file)
-    |> Enum.map(& &1.preview_image_file)
-    |> Enum.reject(&is_nil/1)
-    |> tap(fn files ->
-      Logger.notice("Converting #{Enum.count(files)} article preview images ...")
-    end)
-    |> ensure_formats(:articlepreview_330)
-
-    Accounts.User
-    |> Repo.all(prefix: tenant.prefix)
-    |> Repo.preload(:avatar_image_file)
-    |> Enum.map(& &1.avatar_image_file)
-    |> Enum.reject(&is_nil/1)
-    |> tap(fn files ->
-      Logger.notice("Converting #{Enum.count(files)} avatar preview images ...")
-    end)
-    |> ensure_formats(:avatar_50)
-
-    Content.ContentModule
-    |> Repo.all(prefix: tenant.prefix)
-    |> Repo.preload(:files)
-    |> Enum.group_by(& &1.type)
-    |> Enum.map(fn
-      {type, modules} when type in ["image", "image_collection", "text"] ->
-        Logger.notice("converting #{Enum.count(modules)} #{type} content modules ...")
-
-        modules
-        |> Enum.flat_map(& &1.files)
-        |> tap(fn files ->
-          ensure_formats(files, :present_1200)
-          ensure_formats(files, :avatar_500)
-        end)
-
-      {"video", modules} ->
-        Logger.notice("converting #{Enum.count(modules)} video content modules ...")
-
-        [:"videoplay_200p-webm", :poster_1080p]
-        |> Enum.each(fn format ->
-          modules
-          |> Enum.flat_map(& &1.files)
-          |> ensure_formats(format)
-        end)
-
-      {"audio", modules} ->
-        Logger.notice("converting #{Enum.count(modules)} audio content modules ...")
-
-        modules
-        |> Enum.flat_map(& &1.files)
-        |> ensure_formats(:audioplay_aac)
-
-      {type, modules} ->
-        Logger.notice("No conversion for #{Enum.count(modules)} #{type} content modules ...")
-    end)
-  end
-
-  defp ensure_formats(files, format),
-    do: Enum.map(files, &Lotta.Worker.Conversion.get_or_create_conversion_job(&1, format))
 
   defp on_each_tenant_repo(fun) do
     Repo.with_new_dynamic_repo(fn pid ->
