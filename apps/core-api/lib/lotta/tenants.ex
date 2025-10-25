@@ -435,8 +435,6 @@ defmodule Lotta.Tenants do
     with {:ok, _storage_log} <- create_total_storage_log(tenant),
          {:ok, _user_log} <- create_active_user_count_log(tenant) do
       :ok
-    else
-      {:error, reason} -> {:error, reason}
     end
   end
 
