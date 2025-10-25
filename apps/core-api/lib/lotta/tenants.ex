@@ -22,6 +22,7 @@ defmodule Lotta.Tenants do
     Tenant,
     TenantDbManager,
     Usage,
+    UsageLog,
     Widget
   }
 
@@ -360,6 +361,84 @@ defmodule Lotta.Tenants do
   """
   @spec get_usage(Tenant.t() | nil) :: {:ok, list(map())} | {:error, term()}
   def get_usage(tenant \\ current()), do: Usage.get_usage(tenant)
+
+  @doc """
+  Creates a usage log entry for a tenant.
+  The date is automatically set to today's date.
+  """
+  @doc since: "6.1.0"
+  @spec create_usage_log_entry(
+          tenant :: Tenant.t(),
+          type :: atom(),
+          value :: String.t(),
+          unique_identifier :: String.t() | nil
+        ) ::
+          {:ok, UsageLog.t()} | {:error, Ecto.Changeset.t()}
+  def create_usage_log_entry(tenant, type, value, unique_identifier \\ nil) do
+    %UsageLog{}
+    |> UsageLog.changeset(%{
+      tenant_id: tenant.id,
+      type: type,
+      value: value,
+      date: Date.utc_today(),
+      unique_identifier: unique_identifier
+    })
+    |> Repo.insert(prefix: "public")
+  end
+
+  @doc """
+  Creates a usage log entry for total storage used by a tenant.
+  Sums all file sizes (excluding file conversions) and creates a log entry.
+  """
+  @doc since: "6.1.0"
+  @spec create_total_storage_log(tenant :: Tenant.t()) ::
+          {:ok, UsageLog.t()} | {:error, Ecto.Changeset.t()}
+  def create_total_storage_log(tenant) do
+    total_storage =
+      from(f in File, select: sum(f.filesize))
+      |> Repo.one(prefix: tenant.prefix)
+      |> case do
+        nil -> 0
+        sum -> sum
+      end
+
+    create_usage_log_entry(tenant, :total_storage_count, to_string(total_storage))
+  end
+
+  @doc """
+  Creates a usage log entry for active user count (users with at least one group).
+  Calculates total users minus users without groups.
+  """
+  @doc since: "6.1.0"
+  @spec create_active_user_count_log(tenant :: Tenant.t()) ::
+          {:ok, UsageLog.t()} | {:error, Ecto.Changeset.t()}
+  def create_active_user_count_log(tenant) do
+    total_user_count =
+      from(u in User, select: count(u.id))
+      |> Repo.one(prefix: tenant.prefix)
+
+    users_without_groups =
+      Repo.put_prefix(tenant.prefix)
+      |> then(fn _ -> Accounts.list_users_without_groups() end)
+
+    users_with_groups = total_user_count - length(users_without_groups)
+
+    create_usage_log_entry(tenant, :active_user_count, to_string(users_with_groups))
+  end
+
+  @doc """
+  Creates both total storage and active user count usage logs for a tenant.
+  """
+  @doc since: "6.1.0"
+  @spec create_usage_logs(tenant :: Tenant.t()) :: :ok | {:error, term()}
+  def create_usage_logs(tenant) do
+    with {:ok, _storage_log} <- create_total_storage_log(tenant),
+         {:ok, _user_log} <- create_active_user_count_log(tenant) do
+      :ok
+    else
+      {:error, reason} -> {:error, reason}
+    end
+  end
 
   @doc """
   Returns the list of all categories accessible by the user.

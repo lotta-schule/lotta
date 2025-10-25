@@ -64,7 +64,7 @@ defmodule Lotta.Worker.Tenant do
     case Tenants.get_tenant(tenant_id) do
       nil ->
         Logger.error("Tenant with ID #{tenant_id} not found for analytics setup")
-        :error
+        {:error, :tenant_not_found}
 
       tenant ->
         Analytics.create_site(tenant)
@@ -85,6 +85,40 @@ defmodule Lotta.Worker.Tenant do
       Logger.error("Tenant with ID #{tenant_id} not found for creation notification")
       {:error, :tenant_not_found}
     end
+  end
+
+  def perform(%{
+        id: _job_id,
+        args: %{"type" => "collect_daily_usage_logs"}
+      }) do
+    Logger.info("Starting daily usage log collection for all tenants")
+
+    tenants = Tenants.list_tenants()
+
+    results =
+      Enum.map(tenants, fn tenant ->
+        case Tenants.create_usage_logs(tenant) do
+          :ok ->
+            Logger.debug("Successfully created usage logs for tenant #{tenant.slug}")
+            {:ok, tenant.id}
+
+          {:error, reason} ->
+            Logger.error(
+              "Failed to create usage logs for tenant #{tenant.slug}: #{inspect(reason)}"
+            )
+
+            {:error, tenant.id, reason}
+        end
+      end)
+
+    success_count = Enum.count(results, fn result -> match?({:ok, _}, result) end)
+    failure_count = Enum.count(results, fn result -> match?({:error, _, _}, result) end)
+
+    Logger.info(
+      "Daily usage log collection completed. Success: #{success_count}, Failures: #{failure_count}"
+    )
+
+    :ok
   end
 
   @impl Oban.Worker
@@ -133,6 +167,19 @@ defmodule Lotta.Worker.Tenant do
     __MODULE__.new(%{
       "type" => "delete_analytics",
       "site_id" => site_id
+    })
+    |> Oban.insert()
+  end
+
+  @doc """
+  Schedules a job to collect daily usage logs for all tenants.
+  This should typically be scheduled via a cron job to run daily.
+  """
+  @spec collect_daily_usage_logs() ::
+          {:ok, Oban.Job.t()} | {:error, Oban.Job.changeset() | String.t()}
+  def collect_daily_usage_logs do
+    __MODULE__.new(%{
+      "type" => "collect_daily_usage_logs"
     })
     |> Oban.insert()
   end
