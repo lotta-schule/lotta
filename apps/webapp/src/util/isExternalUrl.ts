@@ -11,8 +11,12 @@ export const isExternalUrl = (url: string): boolean => {
 
   // Check if it's an absolute URL
   try {
-    new URL(url);
-    // If we can create a URL object, it's an external absolute URL
+    const urlObj = new URL(url);
+    // If we're in a browser context, check if the host is different
+    if (typeof window !== 'undefined') {
+      return window.location.host !== urlObj.host;
+    }
+    // On server-side, any absolute URL is considered external
     return true;
   } catch {
     // If URL parsing fails, treat it as an internal relative URL

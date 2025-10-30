@@ -1,7 +1,17 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { isExternalUrl } from './isExternalUrl';
 
 describe('isExternalUrl', () => {
+  beforeEach(() => {
+    // Mock window.location for browser context
+    delete (global as any).window;
+    (global as any).window = {
+      location: {
+        host: 'lotta-gymnasium.lotta.schule',
+      },
+    };
+  });
+
   it('should return false for relative URLs starting with /', () => {
     expect(isExternalUrl('/path/to/page')).toBe(false);
     expect(isExternalUrl('/c/category-id')).toBe(false);
@@ -21,5 +31,12 @@ describe('isExternalUrl', () => {
   it('should return false for relative URLs without leading slash', () => {
     expect(isExternalUrl('path/to/page')).toBe(false);
     expect(isExternalUrl('category-id')).toBe(false);
+  });
+
+  it('should return false for same-host absolute URLs', () => {
+    expect(isExternalUrl('https://lotta-gymnasium.lotta.schule/path')).toBe(
+      false
+    );
+    expect(isExternalUrl('http://lotta-gymnasium.lotta.schule')).toBe(false);
   });
 });

@@ -8,7 +8,7 @@ import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
 import { isMobileDrawerOpenVar } from 'api/apollo/cache';
 import { useRouter } from 'next/router';
-import { isExternalUrl } from 'util/isExternalUrl';
+import { isCategoryExternalRedirect } from 'util/isCategoryExternalRedirect';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -82,8 +82,7 @@ export const Navbar = React.memo(() => {
               const href = category.redirect
                 ? category.redirect
                 : Category.getPath(category);
-              const isExternal =
-                category.redirect && isExternalUrl(category.redirect);
+              const isExternal = isCategoryExternalRedirect(category);
 
               return isExternal ? (
                 <a
@@ -135,8 +134,7 @@ export const Navbar = React.memo(() => {
             const href = category.redirect
               ? category.redirect
               : Category.getPath(category);
-            const isExternal =
-              category.redirect && isExternalUrl(category.redirect);
+            const isExternal = isCategoryExternalRedirect(category);
 
             return isExternal ? (
               <a

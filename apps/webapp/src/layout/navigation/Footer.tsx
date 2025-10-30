@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Category } from 'util/model';
 import { useCategories } from 'util/categories/useCategories';
-import { isExternalUrl } from 'util/isExternalUrl';
+import { isCategoryExternalRedirect } from 'util/isCategoryExternalRedirect';
 import Link from 'next/link';
 
 import styles from './Footer.module.scss';
@@ -14,8 +14,7 @@ export const Footer = React.memo(() => {
     <div className={styles.root}>
       {categories.map((category) => {
         const href = category.redirect || Category.getPath(category);
-        const isExternal =
-          category.redirect && isExternalUrl(category.redirect);
+        const isExternal = isCategoryExternalRedirect(category);
 
         return isExternal ? (
           <a
