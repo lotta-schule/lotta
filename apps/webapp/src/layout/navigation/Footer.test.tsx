@@ -71,6 +71,12 @@ describe('shared/layouts/Footer', () => {
     expect(
       sidenavLinks.find((l) => l.getAttribute('href') === '/c/5-Datenschutz')
     ).toBeTruthy();
+
+    // Internal links should not have target="_blank"
+    sidenavLinks.forEach((link) => {
+      expect(link).not.toHaveAttribute('target', '_blank');
+      expect(link).not.toHaveAttribute('rel', 'noopener noreferrer');
+    });
   });
 
   it('A sidenav category leading to an external site should be set accordingly', async () => {
@@ -114,5 +120,7 @@ describe('shared/layouts/Footer', () => {
     const link = screen.queryByRole('link', { name: /external/i });
     expect(link).not.toBeNull();
     expect(link).toHaveAttribute('href', 'https://google.com');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 });
