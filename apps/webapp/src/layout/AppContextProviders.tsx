@@ -70,7 +70,7 @@ export const AppContextProviders = ({
   const firstBrowserInit = React.useRef(false);
 
   const client = getApolloClient({ tenant, socketUrl });
-  // eslint-disable-next-line react-compiler/react-compiler
+
   if (!firstBrowserInit.current) {
     client.writeQuery({
       query: GET_TENANT_QUERY,
@@ -94,7 +94,7 @@ export const AppContextProviders = ({
         localStorage.setItem('id', authToken);
       }
     }
-    // eslint-disable-next-line react-compiler/react-compiler
+
     firstBrowserInit.current = true;
   }
 

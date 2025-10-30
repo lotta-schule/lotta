@@ -114,5 +114,7 @@ describe('shared/layouts/Footer', () => {
     const link = screen.queryByRole('link', { name: /external/i });
     expect(link).not.toBeNull();
     expect(link).toHaveAttribute('href', 'https://google.com');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 });

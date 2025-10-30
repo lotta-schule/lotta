@@ -8,6 +8,7 @@ import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
 import { isMobileDrawerOpenVar } from 'api/apollo/cache';
 import { useRouter } from 'next/router';
+import { isExternalUrl } from 'util/isExternalUrl';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -77,27 +78,43 @@ export const Navbar = React.memo(() => {
                 </NavigationButton>
               </Link>
             )}
-            {mainCategories.map((category) => (
-              <Link
-                key={category.id}
-                href={
-                  category.redirect
-                    ? category.redirect
-                    : Category.getPath(category)
-                }
-                passHref
-                legacyBehavior
-              >
-                <NavigationButton
-                  selected={categoriesHierarchy.indexOf(category.id) > -1}
-                  className={clsx(styles.navButton, {
-                    selected: categoriesHierarchy.indexOf(category.id) > -1,
-                  })}
+            {mainCategories.map((category) => {
+              const href = category.redirect
+                ? category.redirect
+                : Category.getPath(category);
+              const isExternal =
+                category.redirect && isExternalUrl(category.redirect);
+
+              return isExternal ? (
+                <a
+                  key={category.id}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: 'none' }}
                 >
-                  {category.title}
-                </NavigationButton>
-              </Link>
-            ))}
+                  <NavigationButton
+                    selected={categoriesHierarchy.indexOf(category.id) > -1}
+                    className={clsx(styles.navButton, {
+                      selected: categoriesHierarchy.indexOf(category.id) > -1,
+                    })}
+                  >
+                    {category.title}
+                  </NavigationButton>
+                </a>
+              ) : (
+                <Link key={category.id} href={href} passHref legacyBehavior>
+                  <NavigationButton
+                    selected={categoriesHierarchy.indexOf(category.id) > -1}
+                    className={clsx(styles.navButton, {
+                      selected: categoriesHierarchy.indexOf(category.id) > -1,
+                    })}
+                  >
+                    {category.title}
+                  </NavigationButton>
+                </Link>
+              );
+            })}
             <Button className={styles.placeholder}>{''}</Button>
           </nav>
         </div>
@@ -114,30 +131,47 @@ export const Navbar = React.memo(() => {
       </div>
       {subcategories.length > 0 && (
         <nav data-testid={'nav-level2'} className={styles.secondaryAppBar}>
-          {subcategories.map((category) => (
-            <Link
-              key={category.id}
-              href={
-                category.redirect
-                  ? category.redirect
-                  : Category.getPath(category)
-              }
-              passHref
-              legacyBehavior
-            >
-              <NavigationButton
+          {subcategories.map((category) => {
+            const href = category.redirect
+              ? category.redirect
+              : Category.getPath(category);
+            const isExternal =
+              category.redirect && isExternalUrl(category.redirect);
+
+            return isExternal ? (
+              <a
                 key={category.id}
-                small
-                secondary
-                selected={categoriesHierarchy.indexOf(category.id) > -1}
-                className={clsx(styles.navButtonSecond, {
-                  selected: categoriesHierarchy.indexOf(category.id) > -1,
-                })}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none' }}
               >
-                {category.title}
-              </NavigationButton>
-            </Link>
-          ))}
+                <NavigationButton
+                  small
+                  secondary
+                  selected={categoriesHierarchy.indexOf(category.id) > -1}
+                  className={clsx(styles.navButtonSecond, {
+                    selected: categoriesHierarchy.indexOf(category.id) > -1,
+                  })}
+                >
+                  {category.title}
+                </NavigationButton>
+              </a>
+            ) : (
+              <Link key={category.id} href={href} passHref legacyBehavior>
+                <NavigationButton
+                  small
+                  secondary
+                  selected={categoriesHierarchy.indexOf(category.id) > -1}
+                  className={clsx(styles.navButtonSecond, {
+                    selected: categoriesHierarchy.indexOf(category.id) > -1,
+                  })}
+                >
+                  {category.title}
+                </NavigationButton>
+              </Link>
+            );
+          })}
         </nav>
       )}
     </nav>
