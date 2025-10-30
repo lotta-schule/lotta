@@ -56,7 +56,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     "videoplay_480p-webm": [
       resize: [height: 480],
       format: :webm,
-      video_bitrate: "500k",
+      video_bitrate: "0.75M",
       audio_bitrate: "96k",
       type: :video
     ],
@@ -71,7 +71,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     "videoplay_720p-webm": [
       resize: [height: 720],
       format: :webm,
-      video_bitrate: "1M",
+      video_bitrate: "1.5M",
       audio_bitrate: "128k",
       type: :video
     ],
@@ -86,7 +86,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     "videoplay_1080p-webm": [
       resize: [height: 1080],
       format: :webm,
-      video_bitrate: "2M",
+      video_bitrate: "3M",
       audio_bitrate: "192k",
       type: :video
     ],
