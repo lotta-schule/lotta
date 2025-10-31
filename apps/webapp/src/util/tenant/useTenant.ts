@@ -41,6 +41,7 @@ export const TENANT_COMMON_FIELDS = graphql(`
     configuration {
       customTheme
       userMaxStorageConfig
+      isEmailRegistrationEnabled
     }
   }
 `);

@@ -39,6 +39,25 @@ describe('shared/layouts/UserNavigation', () => {
         ).toBeVisible();
       });
     });
+
+    it('should not render register button when email registration is disabled', () => {
+      const screen = render(
+        <UserNavigation />,
+        {},
+        {
+          tenant: {
+            configuration: {
+              isEmailRegistrationEnabled: false,
+            },
+          },
+        }
+      );
+
+      expect(screen.getByRole('button', { name: /anmelden/i })).toBeVisible();
+      expect(
+        screen.queryByRole('button', { name: /registrieren/i })
+      ).toBeNull();
+    });
   });
 
   describe('logged-in user', () => {
@@ -103,10 +122,10 @@ describe('shared/layouts/UserNavigation', () => {
         ).toBeVisible();
 
         expect(
-          screen.queryByRole('menuitem', { name: /administrieren/i })
+          screen.queryByRole('menuitem', { name: /verwalten/i })
         ).toBeNull();
         expect(
-          screen.queryByRole('menuitem', { name: /beiträge freigeben/i })
+          screen.queryByRole('menuitem', { name: /veröffentlichen/i })
         ).toBeNull();
       });
     });
@@ -166,10 +185,10 @@ describe('shared/layouts/UserNavigation', () => {
           screen.getByRole('menuitem', { name: /feedback/i })
         ).toBeVisible();
         expect(
-          screen.getByRole('menuitem', { name: /administrieren/i })
+          screen.getByRole('menuitem', { name: /verwalten/i })
         ).toBeVisible();
         expect(
-          screen.getByRole('menuitem', { name: /beiträge freigeben/i })
+          screen.getByRole('menuitem', { name: /veröffentlichen/i })
         ).toBeVisible();
         expect(
           screen.getByRole('menuitem', { name: /abmelden/i })
@@ -192,7 +211,7 @@ describe('shared/layouts/UserNavigation', () => {
 
         await waitFor(() => {
           expect(
-            screen.getByRole('menuitem', { name: /administrieren/i })
+            screen.getByRole('menuitem', { name: /verwalten/i })
           ).toBeVisible();
         });
 

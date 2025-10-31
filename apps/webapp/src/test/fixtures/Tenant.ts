@@ -19,6 +19,7 @@ export const tenant = {
   configuration: {
     userMaxStorageConfig: '20971520',
     customTheme: {},
+    isEmailRegistrationEnabled: true,
   },
   type: 'school',
 } satisfies Tenant;
