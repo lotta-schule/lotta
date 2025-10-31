@@ -35,6 +35,28 @@ describe('FullErrorPage', () => {
     const imageElement = screen.queryByRole('presentation');
     expect(imageElement).not.toBeInTheDocument();
   });
+
+  it('renders the subtitle when provided', () => {
+    const screen = render(
+      <FullErrorPage title="Error Title" subtitle="Error Subtitle">
+        Some error occurred
+      </FullErrorPage>
+    );
+
+    const titleElement = screen.getByRole('heading', { level: 1 });
+    expect(titleElement).toHaveTextContent('Error Title');
+    expect(titleElement).toHaveTextContent('Error Subtitle');
+  });
+
+  it('does not render subtitle when not provided', () => {
+    const screen = render(
+      <FullErrorPage title="Error Title">Some error occurred</FullErrorPage>
+    );
+
+    const titleElement = screen.getByRole('heading', { level: 1 });
+    expect(titleElement).toHaveTextContent('Error Title');
+    expect(titleElement).not.toHaveTextContent(':');
+  });
 });
 
 describe('SecondaryErrorText', () => {

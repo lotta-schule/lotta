@@ -19,7 +19,8 @@ defmodule Lotta.Tenants.Tenant do
 
   @type configuration() :: %{
           custom_theme: map() | nil,
-          user_max_storage_config: String.t() | nil
+          user_max_storage_config: String.t() | nil,
+          is_email_registration_enabled: boolean() | nil
         }
 
   @type empty() :: %__MODULE__{
@@ -52,6 +53,7 @@ defmodule Lotta.Tenants.Tenant do
     embeds_one(:configuration, TenantConfiguration, primary_key: false, on_replace: :delete) do
       field(:custom_theme, :map)
       field(:user_max_storage_config, :string)
+      field(:is_email_registration_enabled, :boolean, default: true)
     end
 
     # These fields are not used in the public schema, but in

@@ -1,12 +1,24 @@
 .root {
+  .list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    @media screen and (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .storageSetting {
     & > div:not(:last-child) {
       margin-right: var(--lotta-spacing);
     }
+
     display: flex;
     align-items: center;
+
     .slider {
       flex: 1;
+
       input[type="range"] {
         width: 100%;
       }

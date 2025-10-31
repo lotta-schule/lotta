@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 import * as Sentry from '@sentry/nextjs';
+import { Button } from '@lotta-schule/hubert';
 import { t } from 'i18next';
+import Link from 'next/link';
 import { ServerDownErrorPage } from 'layout/error/ServerDownErrorPage';
 import clsx from 'clsx';
 
@@ -19,11 +21,22 @@ export default function Error({
 
   return (
     <div className={clsx(styles.root, styles.isRootPage)}>
-      <nav>
-        <h2>{t('An unexpected error occured')}</h2>
-      </nav>
       <div className={clsx(styles.contentSection, styles.takesFullSpace)}>
-        <ServerDownErrorPage error={error} />
+        <div>
+          <ServerDownErrorPage
+            title={t('An unexpected error occured')}
+            error={error}
+          />
+        </div>
+      </div>
+      <div>
+        <Button
+          component={Link}
+          href={'/admin'}
+          style={{ width: '20em', margin: '0 auto' }}
+        >
+          &lt; {t('Back to admin home page')}
+        </Button>
       </div>
     </div>
   );

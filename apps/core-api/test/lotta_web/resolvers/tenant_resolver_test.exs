@@ -257,6 +257,19 @@ defmodule LottaWeb.TenantResolverTest do
     }
     """
 
+    @configuration_query """
+    mutation UpdateTenant($tenant: TenantInput!) {
+      updateTenant(tenant: $tenant) {
+        slug
+        title
+        configuration {
+          isEmailRegistrationEnabled
+          userMaxStorageConfig
+        }
+      }
+    }
+    """
+
     test "upates title", %{admin_jwt: admin_jwt} do
       tenant = %{
         title: "Web Beispiel Neu"
@@ -277,6 +290,56 @@ defmodule LottaWeb.TenantResolverTest do
                  }
                }
              }
+    end
+
+    test "updates email registration configuration", %{admin_jwt: admin_jwt} do
+      tenant = %{
+        configuration: %{
+          isEmailRegistrationEnabled: false
+        }
+      }
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @configuration_query, variables: %{tenant: tenant})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "updateTenant" => %{
+                   "slug" => "test",
+                   "title" => "Test Lotta",
+                   "configuration" => %{
+                     "isEmailRegistrationEnabled" => false
+                   }
+                 }
+               }
+             } = res
+    end
+
+    test "returns default value for email registration when not set", %{admin_jwt: admin_jwt} do
+      tenant = %{
+        title: "Test Lotta"
+      }
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @configuration_query, variables: %{tenant: tenant})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "updateTenant" => %{
+                   "configuration" => %{
+                     "isEmailRegistrationEnabled" => true
+                   }
+                 }
+               }
+             } = res
     end
 
     test "returns error if user is not admin", %{user_jwt: user_jwt} do

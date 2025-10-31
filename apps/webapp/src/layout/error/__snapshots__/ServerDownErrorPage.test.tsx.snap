@@ -7,6 +7,10 @@ exports[`ServerDownErrorPage > should render the ServerDownErrorPage component 1
   >
     <h1>
       Server nicht erreichbar
+      : 
+      <strong>
+        Upsi
+      </strong>
     </h1>
     <div>
       <img

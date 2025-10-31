@@ -11,13 +11,12 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { useTranslation } from 'react-i18next';
-import { UpdatePasswordDialog } from './UpdatePasswordDialog';
+import { UpdatePasswordDialog } from '../UpdatePasswordDialog';
 import { EduplacesLoginButton } from 'component/form';
 import { useTenant } from 'util/tenant';
 import Link from 'next/link';
 import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
-
-import LoginMutation from 'api/mutation/LoginMutation.graphql';
+import { LOGIN } from './_graphql';
 
 import styles from './LoginDialog.module.scss';
 
@@ -37,6 +36,8 @@ export const LoginDialog = React.memo(
     const [password, setPassword] = React.useState('');
 
     const isEduplacesEnabled = !!tenant.eduplacesId;
+    const isEmailRegistrationEnabled =
+      tenant.configuration.isEmailRegistrationEnabled;
 
     React.useEffect(() => {
       if (isOpen === false) {
@@ -45,10 +46,10 @@ export const LoginDialog = React.memo(
       }
     }, [isOpen]);
 
-    const [login, { error, loading: isLoading }] = useMutation(LoginMutation, {
+    const [login, { error, loading: isLoading }] = useMutation(LOGIN, {
       errorPolicy: 'all',
       onCompleted: async (data) => {
-        if (data.login) {
+        if (data.login?.accessToken) {
           localStorage.setItem('id', data.login.accessToken);
           await apolloClient.reFetchObservableQueries();
           const { data: userData } = await apolloClient.query({
@@ -76,37 +77,44 @@ export const LoginDialog = React.memo(
         >
           <form>
             <DialogContent>
-              Melde dich hier mit deinen Zugangsdaten an.
-              <ErrorMessage error={error} />
-              <Label label={t('Your email address:')}>
-                <Input
-                  autoFocus
-                  id={'email'}
-                  value={email}
-                  onChange={(e) => setEmail(e.currentTarget.value)}
-                  disabled={isLoading}
-                  placeholder={t('example@lotta.schule')}
-                  type={'email'}
-                  autoComplete={'email'}
-                />
-              </Label>
-              <Label label={t('Your password:')}>
-                <Input
-                  type={'password'}
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.currentTarget.value)}
-                  disabled={isLoading}
-                  placeholder={t('Password')}
-                  autoComplete={'current-password'}
-                />
-              </Label>
-              <Link href={`/password/request-reset`}>
-                {t('Forgot your password?')}
-              </Link>
+              {isEmailRegistrationEnabled && (
+                <>
+                  {t('Login with your email and password.')}
+                  <ErrorMessage error={error} />
+                  <Label label={t('Your email address:')}>
+                    <Input
+                      autoFocus
+                      id={'email'}
+                      value={email}
+                      onChange={(e) => setEmail(e.currentTarget.value)}
+                      disabled={isLoading}
+                      placeholder={t('example@lotta.schule')}
+                      type={'email'}
+                      autoComplete={'email'}
+                    />
+                  </Label>
+                  <Label label={t('Your password:')}>
+                    <Input
+                      type={'password'}
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.currentTarget.value)}
+                      disabled={isLoading}
+                      placeholder={t('Password')}
+                      autoComplete={'current-password'}
+                    />
+                  </Label>
+                  <Link href={`/password/request-reset`}>
+                    {t('Forgot your password?')}
+                  </Link>
+                </>
+              )}
+              {!isEmailRegistrationEnabled && (
+                <p>{t('Log in using your Eduplaces account.')}</p>
+              )}
             </DialogContent>
             <DialogActions>
-              {isEduplacesEnabled && (
+              {isEduplacesEnabled && isEmailRegistrationEnabled && (
                 <EduplacesLoginButton style={{ marginRight: 'auto' }} />
               )}
               <Button
@@ -117,23 +125,28 @@ export const LoginDialog = React.memo(
               >
                 {t('Cancel')}
               </Button>
-              <LoadingButton
-                type={'submit'}
-                onAction={async (e: SubmitEvent | React.MouseEvent) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  await login({
-                    variables: { username: email, password },
-                  }).then((res) => {
-                    if (res.errors?.length) {
-                      throw res.errors[0];
-                    }
-                    return res;
-                  });
-                }}
-              >
-                {t('Login')}
-              </LoadingButton>
+              {isEduplacesEnabled && !isEmailRegistrationEnabled && (
+                <EduplacesLoginButton />
+              )}
+              {isEmailRegistrationEnabled && (
+                <LoadingButton
+                  type={'submit'}
+                  onAction={async (e: SubmitEvent | React.MouseEvent) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    await login({
+                      variables: { username: email, password },
+                    }).then((res) => {
+                      if (res.errors?.length) {
+                        throw res.errors[0];
+                      }
+                      return res;
+                    });
+                  }}
+                >
+                  {t('Login')}
+                </LoadingButton>
+              )}
             </DialogActions>
           </form>
         </Dialog>

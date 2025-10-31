@@ -10,9 +10,10 @@ import {
   Label,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { Tenant } from 'util/tenant';
+import { t } from 'i18next';
 import { useMutation } from '@apollo/client';
 import { motion } from 'framer-motion';
+import { Tenant } from 'util/tenant';
 
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 
@@ -25,25 +26,28 @@ export type ConstraintListProps = {
 };
 
 export const ConstraintList = ({ tenant }: ConstraintListProps) => {
-  const DEFAULT = 1024;
-  const lastSetLimitRef = React.useRef<number | null>(DEFAULT);
-  const [value, setValue] = React.useState(
+  const STORAGE_LIMIT_DEFAULT = 1024;
+
+  const lastSetLimitRef = React.useRef<number | null>(STORAGE_LIMIT_DEFAULT);
+  const [storageLimitValue, setValue] = React.useState(
     tenant.configuration.userMaxStorageConfig
       ? parseInt(tenant.configuration.userMaxStorageConfig, 10) / MEGABYTE
       : null
   );
+  const [isEmailRegistrationEnabled, setIsEmailRegistrationEnabled] =
+    React.useState(tenant.configuration.isEmailRegistrationEnabled !== false);
 
-  const isLimitSet = !!value && value >= 0;
+  const isStorageLimitSet = !!storageLimitValue && storageLimitValue >= 0;
 
-  const valueOrDefault = isLimitSet
-    ? value
-    : lastSetLimitRef.current || DEFAULT;
+  const storageLimitValueOrDefault = isStorageLimitSet
+    ? storageLimitValue
+    : lastSetLimitRef.current || STORAGE_LIMIT_DEFAULT;
 
   React.useEffect(() => {
-    if (isLimitSet) {
-      lastSetLimitRef.current = value;
+    if (isStorageLimitSet) {
+      lastSetLimitRef.current = storageLimitValue;
     }
-  }, [isLimitSet, value]);
+  }, [isStorageLimitSet, storageLimitValue]);
 
   const [updateTenant, { error }] = useMutation(UpdateTenantMutation, {
     variables: {
@@ -51,7 +55,10 @@ export const ConstraintList = ({ tenant }: ConstraintListProps) => {
         configuration: {
           ...tenant.configuration,
           userMaxStorageConfig:
-            value !== null ? String(value * MEGABYTE) : null,
+            storageLimitValue !== null
+              ? String(storageLimitValue * MEGABYTE)
+              : null,
+          isEmailRegistrationEnabled,
         },
       },
     },
@@ -59,92 +66,104 @@ export const ConstraintList = ({ tenant }: ConstraintListProps) => {
 
   return (
     <div className={styles.root}>
-      <h3>Speicherplatz-Beschränkungen</h3>
-      <div>
-        <p id={`user-storage-limit`}>Freier Speicher für jeden Nutzer</p>
-        <ErrorMessage error={error} />
-        <p>
-          <small>
+      <ErrorMessage error={error} />
+      <div className={styles.list}>
+        <section>
+          <h3>{t('storage constraints')}</h3>
+          <p>
             Der freie Speicher für jeden Nutzer bestimmt, wie viel persönlicher
             Speicherplatz jeder Nutzer durch seine Anmeldung zur Verfügung
             gestellt bekommt.
-          </small>
-        </p>
-        <p>
-          <small>
-            Er bestimmt neben dem Speicher, den der Nutzer durch seine Gruppen
-            zur Verfügung gestellt bekommt, wie viele Medien Nutzer online
-            vorhalten können.
-          </small>
-        </p>
+          </p>
 
-        <Checkbox
-          isSelected={!isLimitSet}
-          onChange={(isSelected) =>
-            setValue(isSelected ? null : lastSetLimitRef.current)
-          }
-        >
-          Datenmenge, die Nutzer hochladen können, nicht begrenzen
-        </Checkbox>
+          <Checkbox
+            isSelected={!isStorageLimitSet}
+            onChange={(isSelected) =>
+              setValue(isSelected ? null : lastSetLimitRef.current)
+            }
+          >
+            {t('Do not limit the amount of data users can upload')}
+          </Checkbox>
 
-        <Checkbox
-          isSelected={isLimitSet}
-          onChange={(isSelected) =>
-            setValue(isSelected ? lastSetLimitRef.current : null)
-          }
-        >
-          Datenmenge, die Nutzer hochladen können, begrenzen auf:
-        </Checkbox>
+          <Checkbox
+            isSelected={isStorageLimitSet}
+            onChange={(isSelected) =>
+              setValue(isSelected ? lastSetLimitRef.current : null)
+            }
+          >
+            {t('Limit the amount of data users can upload to:')}
+          </Checkbox>
 
-        <motion.div
-          initial={'closed'}
-          animate={isLimitSet ? 'open' : 'closed'}
-          variants={{
-            open: { opacity: 1, height: 'auto' },
-            closed: { opacity: 0, height: 0 },
-          }}
-        >
-          <div className={styles.storageSetting}>
-            <div>
-              <Icon icon={faSdCard} />
-            </div>
-            <div className={styles.slider}>
-              <input
-                type={'range'}
-                value={value ?? 0}
-                onChange={(e) => setValue(parseInt(e.target.value))}
-                aria-labelledby={'userAvatar-storage-limit'}
-                step={50}
-                min={0}
-                max={8192}
-              />
-            </div>
-            <div>
-              <Label label={'Begrenzung in MB'}>
-                <Input
-                  value={valueOrDefault}
-                  onChange={({ currentTarget }) => {
-                    if (currentTarget.value) {
-                      setValue(parseInt(currentTarget.value));
-                    }
-                  }}
+          <motion.div
+            initial={'closed'}
+            animate={isStorageLimitSet ? 'open' : 'closed'}
+            variants={{
+              open: { opacity: 1, height: 'auto' },
+              closed: { opacity: 0, height: 0 },
+            }}
+          >
+            <div className={styles.storageSetting}>
+              <div>
+                <Icon icon={faSdCard} />
+              </div>
+              <div className={styles.slider}>
+                <input
+                  type={'range'}
+                  value={storageLimitValue ?? 0}
+                  onChange={(e) => setValue(parseInt(e.target.value))}
+                  aria-labelledby={'userAvatar-storage-limit'}
                   step={50}
                   min={0}
-                  type={'number'}
-                  aria-labelledby={'userAvatar-storage-limit'}
+                  max={8192}
                 />
-              </Label>
+              </div>
+              <div>
+                <Label label={t('storage limit in MB')}>
+                  <Input
+                    value={storageLimitValueOrDefault}
+                    onChange={({ currentTarget }) => {
+                      if (currentTarget.value) {
+                        setValue(parseInt(currentTarget.value));
+                      }
+                    }}
+                    step={50}
+                    min={0}
+                    type={'number'}
+                    aria-labelledby={'userAvatar-storage-limit'}
+                  />
+                </Label>
+              </div>
             </div>
-          </div>
-        </motion.div>
-        <LoadingButton
-          onAction={async () => {
-            await updateTenant();
-          }}
-        >
-          Speichern
-        </LoadingButton>
+          </motion.div>
+        </section>
+
+        {!!tenant.eduplacesId && (
+          <section>
+            <h3>{t('login constraints')}</h3>
+
+            <Checkbox
+              isSelected={isEmailRegistrationEnabled}
+              onChange={setIsEmailRegistrationEnabled}
+            >
+              {t('Allow users to register with email address.')}
+            </Checkbox>
+            <p>
+              {t(
+                'If disabled, users will only be able to login via Eduplaces. Registration via email will be disabled.'
+              )}
+            </p>
+          </section>
+        )}
       </div>
+
+      <LoadingButton
+        style={{ marginTop: '1rem', marginLeft: 'auto' }}
+        onAction={async () => {
+          await updateTenant();
+        }}
+      >
+        {t('save')}
+      </LoadingButton>
     </div>
   );
 };
