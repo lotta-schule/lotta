@@ -18,6 +18,8 @@ import {
   Collapse,
   LinearProgress,
 } from '@lotta-schule/hubert';
+import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/navigation';
 import { CategoryModel, WidgetModel, ID, UserGroupModel } from 'model';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { useCategories } from 'util/categories/useCategories';
@@ -29,7 +31,6 @@ import { Category, RedirectType } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
 import { AdminPageSection } from '../../_component/AdminPageSection';
-import { useRouter } from 'next/navigation';
 
 import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
@@ -41,8 +42,10 @@ export interface CategoryEditorProps {
 export const CategoryEditor = React.memo(
   ({ category }: CategoryEditorProps) => {
     const router = useRouter();
+    const { t } = useTranslation();
 
-    const [categories] = useCategories();
+    const [categories, { withIndentedLabels: categoriesWithIndentedLabels }] =
+      useCategories();
 
     const [categoryOptions, setCategoryOptions] = React.useState(category);
     const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] =
@@ -102,10 +105,10 @@ export const CategoryEditor = React.memo(
       <div>
         <ErrorMessage error={error || currentWidgetsError} />
 
-        <AdminPageSection title="Allgemeines">
-          <Label label={'Name der Kategorie'}>
+        <AdminPageSection title={t('general')}>
+          <Label label={t('category name')}>
             <Input
-              aria-label={'Name der Kategorie'}
+              aria-label={t('category name')}
               value={categoryOptions.title ?? ''}
               onChange={(e) =>
                 setCategoryOptions({
@@ -121,7 +124,7 @@ export const CategoryEditor = React.memo(
               fallback={
                 <LinearProgress
                   isIndeterminate
-                  aria-label="Gruppen werden geladen..."
+                  aria-label={t('loading user groups ...')}
                 />
               }
             >
@@ -135,10 +138,10 @@ export const CategoryEditor = React.memo(
           )}
         </AdminPageSection>
 
-        <AdminPageSection title="Darstellung">
-          <Label label={'Bannerbild'}>
+        <AdminPageSection title={t('appearance')}>
+          <Label label={t('banner image')}>
             <SelectFileOverlay
-              label={'Banner ändern'}
+              label={t('change banner')}
               onSelectFile={(bannerImageFile) =>
                 setCategoryOptions({ ...categoryOptions, bannerImageFile })
               }
@@ -150,7 +153,9 @@ export const CategoryEditor = React.memo(
                   lazy
                   sizes="auto"
                   style={{ width: '100%' }}
-                  alt={`Banner für ${categoryOptions.title}`}
+                  alt={t('banner for {{categoryName}}', {
+                    categoryName: categoryOptions.title,
+                  })}
                   format="banner"
                   file={categoryOptions.bannerImageFile}
                 />
@@ -160,7 +165,7 @@ export const CategoryEditor = React.memo(
             </SelectFileOverlay>
           </Label>
           <Select
-            title={'Layout für die Kategorie wählen'}
+            title={t('category layout')}
             value={categoryOptions.layoutName ?? 'standard'}
             onChange={(layoutName) =>
               setCategoryOptions({
@@ -177,7 +182,7 @@ export const CategoryEditor = React.memo(
         </AdminPageSection>
 
         {!categoryOptions.isHomepage && (
-          <AdminPageSection title="Konfiguration">
+          <AdminPageSection title={t('configuration')}>
             <Checkbox
               isSelected={categoryOptions.hideArticlesFromHomepage}
               onChange={(isSelected) =>
@@ -194,7 +199,7 @@ export const CategoryEditor = React.memo(
             </Checkbox>
             <RadioGroup
               name={'category-redirect-type'}
-              aria-label={'Die Kategorie als Weiterleitung'}
+              aria-label={t('use the category as redirection')}
               value={Category.getRedirectType(categoryOptions)}
               onChange={(_e, value) => {
                 if (value === RedirectType.None) {
@@ -225,13 +230,13 @@ export const CategoryEditor = React.memo(
             >
               <Radio
                 value={RedirectType.None}
-                label={
-                  'Kategorie wird nicht weitergeleitet und zeigt eigene Beiträge an.'
-                }
+                label={t(
+                  'the category is not redirected and shows its own posts'
+                )}
               />
               <Radio
                 value={RedirectType.InternalCategory}
-                label={'Kategorie zu einer anderen Kategorie weiterleiten:'}
+                label={t('redirect category to another category:')}
               />
 
               <Collapse
@@ -242,7 +247,7 @@ export const CategoryEditor = React.memo(
                 }
               >
                 <Select
-                  title={'Zu einer anderen Kategorie weiterleiten ...'}
+                  title={t('redirect to another category ...')}
                   value={categoryOptions.redirect || 'null'}
                   onChange={(redirect) =>
                     setCategoryOptions({
@@ -252,20 +257,22 @@ export const CategoryEditor = React.memo(
                   }
                   id={'category-redirect'}
                 >
-                  {categories.map((category) => (
-                    <Option
-                      key={category.id}
-                      value={Category.getPath(category)}
-                    >
-                      {category.title}
-                    </Option>
-                  ))}
+                  {categoriesWithIndentedLabels.map(
+                    ({ category, indentedLabel }) => (
+                      <Option
+                        key={category.id}
+                        value={Category.getPath(category)}
+                      >
+                        {indentedLabel}
+                      </Option>
+                    )
+                  )}
                 </Select>
               </Collapse>
 
               <Radio
                 value={RedirectType.InternalArticle}
-                label={'Kategorie zu einem Beitrag weiterleiten:'}
+                label={t('redirect category to an article:')}
               />
 
               <Collapse
@@ -288,7 +295,7 @@ export const CategoryEditor = React.memo(
 
               <Radio
                 value={RedirectType.Extern}
-                label={'Kategorie zu einer Seite im Internet weiterleiten'}
+                label={t('redirect category to a website in the internet:')}
               />
 
               <Collapse
@@ -298,9 +305,9 @@ export const CategoryEditor = React.memo(
                   RedirectType.Extern
                 }
               >
-                <Label label={'Ziel der Weiterleitung:'}>
+                <Label label={t('target of the redirection:')}>
                   <Input
-                    aria-label={'Ziel der Weiterleitung'}
+                    aria-label={t('redirection target')}
                     value={categoryOptions.redirect ?? ''}
                     onChange={(e) =>
                       setCategoryOptions({
