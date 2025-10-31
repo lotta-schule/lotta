@@ -13,6 +13,11 @@
 
   transition: min-height 0.3s ease-in-out;
 
+  &:has(.contentSection.takesFullSpace) {
+    flex: 1;
+    height: 100%;
+  }
+
   & > nav {
     display: flex;
     align-items: stretch;
