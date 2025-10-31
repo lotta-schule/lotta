@@ -18,6 +18,7 @@ import { Tenant } from 'util/tenant';
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 
 import styles from './ConstraintsList.module.scss';
+import { AdminPageSection } from '../_component/AdminPageSection';
 
 const MEGABYTE = 1024 * 1024;
 
@@ -67,103 +68,100 @@ export const ConstraintList = ({ tenant }: ConstraintListProps) => {
   return (
     <div className={styles.root}>
       <ErrorMessage error={error} />
-      <div className={styles.list}>
-        <section>
-          <h3>{t('storage constraints')}</h3>
-          <p>
-            Der freie Speicher für jeden Nutzer bestimmt, wie viel persönlicher
-            Speicherplatz jeder Nutzer durch seine Anmeldung zur Verfügung
-            gestellt bekommt.
-          </p>
+      <AdminPageSection title={t('storage constraints')}>
+        <p>
+          Der freie Speicher für jeden Nutzer bestimmt, wie viel persönlicher
+          Speicherplatz jeder Nutzer durch seine Anmeldung zur Verfügung
+          gestellt bekommt.
+        </p>
 
-          <Checkbox
-            isSelected={!isStorageLimitSet}
-            onChange={(isSelected) =>
-              setValue(isSelected ? null : lastSetLimitRef.current)
-            }
-          >
-            {t('Do not limit the amount of data users can upload')}
-          </Checkbox>
+        <Checkbox
+          isSelected={!isStorageLimitSet}
+          onChange={(isSelected) =>
+            setValue(isSelected ? null : lastSetLimitRef.current)
+          }
+        >
+          {t('Do not limit the amount of data users can upload')}
+        </Checkbox>
 
-          <Checkbox
-            isSelected={isStorageLimitSet}
-            onChange={(isSelected) =>
-              setValue(isSelected ? lastSetLimitRef.current : null)
-            }
-          >
-            {t('Limit the amount of data users can upload to:')}
-          </Checkbox>
+        <Checkbox
+          isSelected={isStorageLimitSet}
+          onChange={(isSelected) =>
+            setValue(isSelected ? lastSetLimitRef.current : null)
+          }
+        >
+          {t('Limit the amount of data users can upload to:')}
+        </Checkbox>
 
-          <motion.div
-            initial={'closed'}
-            animate={isStorageLimitSet ? 'open' : 'closed'}
-            variants={{
-              open: { opacity: 1, height: 'auto' },
-              closed: { opacity: 0, height: 0 },
-            }}
-          >
-            <div className={styles.storageSetting}>
-              <div>
-                <Icon icon={faSdCard} />
-              </div>
-              <div className={styles.slider}>
-                <input
-                  type={'range'}
-                  value={storageLimitValue ?? 0}
-                  onChange={(e) => setValue(parseInt(e.target.value))}
-                  aria-labelledby={'userAvatar-storage-limit'}
+        <motion.div
+          initial={'closed'}
+          animate={isStorageLimitSet ? 'open' : 'closed'}
+          variants={{
+            open: { opacity: 1, height: 'auto' },
+            closed: { opacity: 0, height: 0 },
+          }}
+        >
+          <div className={styles.storageSetting}>
+            <div>
+              <Icon icon={faSdCard} />
+            </div>
+            <div className={styles.slider}>
+              <input
+                type={'range'}
+                value={storageLimitValue ?? 0}
+                onChange={(e) => setValue(parseInt(e.target.value))}
+                aria-labelledby={'userAvatar-storage-limit'}
+                step={50}
+                min={0}
+                max={8192}
+              />
+            </div>
+            <div>
+              <Label label={t('storage limit in MB')}>
+                <Input
+                  value={storageLimitValueOrDefault}
+                  onChange={({ currentTarget }) => {
+                    if (currentTarget.value) {
+                      setValue(parseInt(currentTarget.value));
+                    }
+                  }}
                   step={50}
                   min={0}
-                  max={8192}
+                  type={'number'}
+                  aria-labelledby={'userAvatar-storage-limit'}
                 />
-              </div>
-              <div>
-                <Label label={t('storage limit in MB')}>
-                  <Input
-                    value={storageLimitValueOrDefault}
-                    onChange={({ currentTarget }) => {
-                      if (currentTarget.value) {
-                        setValue(parseInt(currentTarget.value));
-                      }
-                    }}
-                    step={50}
-                    min={0}
-                    type={'number'}
-                    aria-labelledby={'userAvatar-storage-limit'}
-                  />
-                </Label>
-              </div>
+              </Label>
             </div>
-          </motion.div>
-        </section>
+          </div>
+        </motion.div>
+      </AdminPageSection>
 
-        {!!tenant.eduplacesId && (
-          <section>
-            <h3>{t('login constraints')}</h3>
+      {!!tenant.eduplacesId && (
+        <AdminPageSection title={t('login constraints')}>
+          <Checkbox
+            isSelected={isEmailRegistrationEnabled}
+            onChange={setIsEmailRegistrationEnabled}
+          >
+            {t('Allow users to register with email address.')}
+          </Checkbox>
+          <p>
+            {t(
+              'If disabled, users will only be able to login via Eduplaces. Registration via email will be disabled.'
+            )}
+          </p>
+        </AdminPageSection>
+      )}
 
-            <Checkbox
-              isSelected={isEmailRegistrationEnabled}
-              onChange={setIsEmailRegistrationEnabled}
-            >
-              {t('Allow users to register with email address.')}
-            </Checkbox>
-            <p>
-              {t(
-                'If disabled, users will only be able to login via Eduplaces. Registration via email will be disabled.'
-              )}
-            </p>
-          </section>
-        )}
-      </div>
-
-      <LoadingButton
-        style={{ marginTop: '1rem', marginLeft: 'auto' }}
-        onAction={async () => {
-          await updateTenant();
-        }}
-      >
-        {t('save')}
-      </LoadingButton>
+      <AdminPageSection bottomToolbar>
+        <LoadingButton
+          style={{ marginLeft: 'auto' }}
+          onAction={async () => {
+            await updateTenant();
+          }}
+        >
+          {t('save')}
+        </LoadingButton>
+      </AdminPageSection>
     </div>
   );
 };

@@ -243,7 +243,7 @@ describe('pages/admin/users/constraints', () => {
         { currentUser: adminUser }
       );
 
-      const sections = screen.getAllByRole('heading', { level: 3 });
+      const sections = screen.getAllByRole('heading', { level: 4 });
       expect(sections).toHaveLength(2);
       expect(
         screen.getByRole('heading', { name: /anmeldebeschränkungen/i })
@@ -262,7 +262,7 @@ describe('pages/admin/users/constraints', () => {
         { currentUser: adminUser }
       );
 
-      const sections = screen.getAllByRole('heading', { level: 3 });
+      const sections = screen.getAllByRole('heading', { level: 4 });
       expect(sections).toHaveLength(1);
       expect(
         screen.queryByRole('heading', { name: /anmeldebeschränkungen/i })

@@ -9,7 +9,12 @@ async function ConstraintsListPage() {
   const tenant = await loadTenant();
 
   return (
-    <AdminPage icon={faExpand} title={t('constraints')} hasHomeLink>
+    <AdminPage
+      icon={faExpand}
+      title={t('constraints')}
+      hasHomeLink
+      takesFullSpace
+    >
       <ConstraintList tenant={tenant} />
     </AdminPage>
   );

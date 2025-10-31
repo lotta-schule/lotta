@@ -27,16 +27,14 @@ export default function Error({
             title={t('An unexpected error occured')}
             error={error}
           />
+          <Button
+            component={Link}
+            href={'/admin'}
+            style={{ width: '20em', margin: '0 auto' }}
+          >
+            &lt; {t('Back to admin page')}
+          </Button>
         </div>
-      </div>
-      <div>
-        <Button
-          component={Link}
-          href={'/admin'}
-          style={{ width: '20em', margin: '0 auto' }}
-        >
-          &lt; {t('Back to admin home page')}
-        </Button>
       </div>
     </div>
   );
