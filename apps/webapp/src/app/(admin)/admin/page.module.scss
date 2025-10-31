@@ -14,7 +14,7 @@
 
   section {
     display: grid;
-    grid-gap: calc(2 * var(--lotta-spacing));
+    grid-gap: calc(1 * var(--lotta-spacing));
     padding-bottom: var(--lotta-spacing);
 
     grid-template-columns: repeat(auto-fill, minmax(12em, 1fr));
