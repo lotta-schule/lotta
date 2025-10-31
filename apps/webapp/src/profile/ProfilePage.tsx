@@ -44,7 +44,7 @@ export const ProfilePage = () => {
     currentUser?.avatarImageFile
   );
   const [enrollmentTokens, setEnrollmentTokens] = React.useState<string[]>(
-    currentUser?.enrollmentTokens ?? []
+    (currentUser?.enrollmentTokens ?? []).concat([''])
   );
 
   const [isShowUpdatePasswordDialog, setIsShowUpdatePasswordDialog] =
@@ -221,7 +221,7 @@ export const ProfilePage = () => {
                         avatarImageFile: avatarImageFile
                           ? { id: avatarImageFile.id }
                           : null,
-                        enrollmentTokens,
+                        enrollmentTokens: enrollmentTokens.filter((t) => t),
                       },
                     },
                   });
