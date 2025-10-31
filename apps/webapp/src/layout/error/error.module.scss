@@ -8,16 +8,19 @@
   h1 {
     margin-left: 1em;
   }
+
   h1 ~ div {
     margin: 1em;
     text-align: center;
   }
+
   img {
     display: inline-block;
     max-width: 80%;
     max-height: 70vh;
   }
 }
+
 .secondary {
   font-size: 0.9rem;
 }

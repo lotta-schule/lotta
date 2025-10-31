@@ -21,6 +21,25 @@ describe('shared/layouts/UserNavigationMobile', () => {
       expect(screen.queryByTestId('AdminButton')).toBeNull();
       expect(screen.queryByTestId('MessagingButton')).toBeNull();
     });
+
+    it('should not render register button when email registration is disabled', () => {
+      const screen = render(
+        <UserNavigationMobile />,
+        {},
+        {
+          tenant: {
+            configuration: {
+              isEmailRegistrationEnabled: false,
+            },
+          },
+        }
+      );
+
+      expect(screen.queryAllByRole('button')).toHaveLength(2);
+      expect(screen.queryByTestId('LoginButton')).not.toBeNull();
+      expect(screen.queryByTestId('RegisterButton')).toBeNull();
+      expect(screen.queryByTestId('SearchButton')).not.toBeNull();
+    });
   });
 
   describe('non-admin user', () => {

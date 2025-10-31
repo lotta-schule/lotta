@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { Badge, BaseButton, Button } from '@lotta-schule/hubert';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { useTenant } from 'util/tenant/useTenant';
 import { Icon } from 'shared/Icon';
 import {
   faComments,
@@ -16,12 +17,13 @@ import {
   faCirclePlus,
   faCommentDots,
 } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 import { ArticleModel } from 'model';
 import { User, Article } from 'util/model';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { isMobileDrawerOpenVar } from 'api/apollo/cache';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
-import { LoginDialog } from 'shared/dialog/LoginDialog';
+import { LoginDialog } from 'shared/dialog/login';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
 import { useNewFeedbackCount } from 'util/feedback';
@@ -33,8 +35,10 @@ import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.g
 import styles from './UserNavigationMobile.module.scss';
 
 export const UserNavigationMobile = React.memo(() => {
+  const { t } = useTranslation();
   const router = useRouter();
   const currentUser = useCurrentUser();
+  const tenant = useTenant();
   const newMessagesBadgeNumber = currentUser?.unreadMessages ?? 0;
   const newFeedbackBadgeNumber = useNewFeedbackCount();
   const onLogout = useOnLogout();
@@ -68,7 +72,7 @@ export const UserNavigationMobile = React.memo(() => {
               data-testid="LogoutButton"
             >
               <Icon icon={faArrowRightFromBracket} size="xl" />
-              <span className={styles.label}>Abmelden</span>
+              <span className={styles.label}>{t('logout')}</span>
             </BaseButton>
             <BaseButton
               variant={'borderless'}
@@ -79,7 +83,7 @@ export const UserNavigationMobile = React.memo(() => {
               data-testid="CreateArticleButton"
             >
               <Icon icon={faCirclePlus} size="lg" />
-              <span className={styles.label}>Beitrag</span>
+              <span className={styles.label}>{t('article')}</span>
             </BaseButton>
             <Link href={'/search'} passHref legacyBehavior>
               <BaseButton
@@ -88,7 +92,7 @@ export const UserNavigationMobile = React.memo(() => {
                 data-testid="SearchButton"
               >
                 <Icon icon={faMagnifyingGlass} size="xl" />
-                <span className={styles.label}>Suche</span>
+                <span className={styles.label}>{t('search')}</span>
               </BaseButton>
             </Link>
             <Link href={'/profile'} passHref legacyBehavior>
@@ -98,7 +102,7 @@ export const UserNavigationMobile = React.memo(() => {
                 data-testid="ProfileButton"
               >
                 <Icon icon={faUser} size="xl" />
-                <span className={styles.label}>Profil</span>
+                <span className={styles.label}>{t('profile')}</span>
               </BaseButton>
             </Link>
             <Link href={'/profile/files'} passHref legacyBehavior>
@@ -108,7 +112,7 @@ export const UserNavigationMobile = React.memo(() => {
                 data-testid="ProfileFilesButton"
               >
                 <Icon icon={faFolder} size="xl" />
-                <span className={styles.label}>Dateien</span>
+                <span className={styles.label}>{t('files')}</span>
               </BaseButton>
             </Link>
             <Link href={'/profile/articles'} passHref legacyBehavior>
@@ -118,7 +122,7 @@ export const UserNavigationMobile = React.memo(() => {
                 data-testid="OwnArticlesButton"
               >
                 <Icon icon={faClipboardList} size="xl" />
-                <span className={styles.label}>Meine Beiträge</span>
+                <span className={styles.label}>{t('my articles')}</span>
               </BaseButton>
             </Link>
             <BaseButton
@@ -128,7 +132,7 @@ export const UserNavigationMobile = React.memo(() => {
               onClick={() => setFeedbackModalIsOpen(true)}
             >
               <Icon icon={faCommentDots} size="xl" />
-              <span className={styles.label}>Feedback</span>
+              <span className={styles.label}>{t('feedback')}</span>
             </BaseButton>
             <Link href={'/messaging'} passHref legacyBehavior>
               <BaseButton
@@ -138,7 +142,7 @@ export const UserNavigationMobile = React.memo(() => {
               >
                 <Icon icon={faComments} size={'lg'} />
                 <span className={styles.label}>
-                  Nachrichten{' '}
+                  {t('messages')}{' '}
                   <Badge
                     value={newMessagesBadgeNumber}
                     className={styles.badge}
@@ -156,7 +160,7 @@ export const UserNavigationMobile = React.memo(() => {
                   >
                     <Icon icon={faShieldHalved} size="xl" />
                     <span className={styles.label}>
-                      Admin
+                      {t('admin')}
                       <Badge
                         value={newFeedbackBadgeNumber}
                         data-testid="FeedbackBadge"
@@ -168,7 +172,7 @@ export const UserNavigationMobile = React.memo(() => {
                   <BaseButton variant={'borderless'} className={styles.button}>
                     <Icon icon={faClipboardList} size="xl" />
                     <span className={styles.label}>
-                      Beiträge freigeben
+                      {t('release articles')}
                       <Badge
                         value={unpublishedBadgeNumber}
                         className={styles.badge}
@@ -211,23 +215,25 @@ export const UserNavigationMobile = React.memo(() => {
               onClick={() => setLoginModalIsOpen(true)}
               data-testid="LoginButton"
             >
-              Anmelden
+              {t('login')}
             </Button>
-            <Button
-              variant={'borderless'}
-              fullWidth
-              onClick={() => setRegisterModalIsOpen(true)}
-              data-testid="RegisterButton"
-            >
-              Registrieren
-            </Button>
+            {tenant?.configuration.isEmailRegistrationEnabled !== false && (
+              <Button
+                variant={'borderless'}
+                fullWidth
+                onClick={() => setRegisterModalIsOpen(true)}
+                data-testid="RegisterButton"
+              >
+                {t('register')}
+              </Button>
+            )}
             <Link href={'/search'} passHref legacyBehavior>
               <Button
                 fullWidth
                 data-testid="SearchButton"
                 variant={'borderless'}
               >
-                Suche
+                {t('search')}
               </Button>
             </Link>
           </div>

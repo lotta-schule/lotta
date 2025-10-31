@@ -13,7 +13,7 @@
 
   transition: min-height 0.3s ease-in-out;
 
-  &>nav {
+  & > nav {
     display: flex;
     align-items: stretch;
     border-bottom: 1px solid rgb(var(--lotta-divider-color));
@@ -84,7 +84,7 @@
 
   .contentSection {
     overflow: auto;
-    padding-inline: var(--lotta-spacing);
+    padding: var(--lotta-spacing);
 
     &.takesFullSpace {
       overflow: hidden;
