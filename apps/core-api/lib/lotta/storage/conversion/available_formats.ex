@@ -56,8 +56,9 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
     "videoplay_480p-webm": [
       resize: [height: 480],
       format: :webm,
-      video_bitrate: "0.75M",
-      audio_bitrate: "96k",
+      video_bitrate: "0",
+      crf: 40,
+      audio_bitrate: "64k",
       type: :video
     ],
     "videoplay_480p-mp4": [
@@ -65,14 +66,15 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
       format: :mp4,
       preset: :veryfast,
       crf: 28,
-      audio_bitrate: "96k",
+      audio_bitrate: "64k",
       type: :video
     ],
     "videoplay_720p-webm": [
       resize: [height: 720],
       format: :webm,
-      video_bitrate: "1.5M",
-      audio_bitrate: "128k",
+      video_bitrate: "0",
+      audio_bitrate: "96k",
+      crf: 25,
       type: :video
     ],
     "videoplay_720p-mp4": [
@@ -80,14 +82,15 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
       format: :mp4,
       preset: :fast,
       crf: 23,
-      audio_bitrate: "128k",
+      audio_bitrate: "96k",
       type: :video
     ],
     "videoplay_1080p-webm": [
       resize: [height: 1080],
       format: :webm,
-      video_bitrate: "3M",
-      audio_bitrate: "192k",
+      video_bitrate: "0",
+      crf: 20,
+      audio_bitrate: "128k",
       type: :video
     ],
     "videoplay_1080p-mp4": [
@@ -95,7 +98,7 @@ defmodule Lotta.Storage.Conversion.AvailableFormats do
       format: :mp4,
       preset: :slow,
       crf: 20,
-      audio_bitrate: "192k",
+      audio_bitrate: "128k",
       type: :video
     ]
   ]

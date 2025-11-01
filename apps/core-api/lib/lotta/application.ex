@@ -20,6 +20,7 @@ defmodule Lotta.Application do
     children =
       prepended_apps() ++
         [
+          {Task.Supervisor, name: Lotta.TaskSupervisor},
           {Finch, name: Lotta.Finch},
           LottaWeb.Telemetry,
           Lotta.Repo,
