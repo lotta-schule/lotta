@@ -19,6 +19,7 @@ defmodule Lotta.Tenants do
     Category,
     CustomDomain,
     Feedback,
+    MonthlyUsageLog,
     Tenant,
     TenantDbManager,
     Usage,
@@ -436,6 +437,96 @@ defmodule Lotta.Tenants do
          {:ok, _user_log} <- create_active_user_count_log(tenant) do
       :ok
     end
+  end
+
+  @doc """
+  Refreshes the monthly_usage_logs materialized view.
+
+  ## Options
+    * `:concurrent` - If false, uses blocking refresh. Default: true
+
+  ## Examples
+
+      iex> refresh_monthly_usage_logs()
+      :ok
+
+      iex> refresh_monthly_usage_logs(concurrent: false)
+      :ok
+
+  """
+  @doc since: "6.1.0"
+  @spec refresh_monthly_usage_logs(keyword()) :: :ok | {:error, term()}
+  def refresh_monthly_usage_logs(opts \\ []) do
+    concurrent = Keyword.get(opts, :concurrent, true)
+
+    sql =
+      if concurrent do
+        "REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_usage_logs"
+      else
+        "REFRESH MATERIALIZED VIEW monthly_usage_logs"
+      end
+
+    with {:ok, _result} <- Repo.query(sql, [], prefix: "public") do
+      :ok
+    end
+  end
+
+  @doc """
+  Gets monthly usage logs for a specific tenant.
+
+  ## Options
+    * `:type` - Filter by usage type
+    * `:year` - Filter by year
+    * `:month` - Filter by month
+    * `:limit` - Limit number of results
+
+  ## Examples
+
+      iex> get_monthly_usage_logs(tenant)
+      [%MonthlyUsageLog{}, ...]
+
+      iex> get_monthly_usage_logs(tenant, type: :active_user_count, year: 2025)
+      [%MonthlyUsageLog{}, ...]
+
+  """
+  @doc since: "6.1.0"
+  @spec get_monthly_usage_logs(Tenant.t(), keyword()) :: [MonthlyUsageLog.t()]
+  def get_monthly_usage_logs(tenant, opts \\ []) do
+    query =
+      from(m in MonthlyUsageLog,
+        where: m.tenant_id == ^tenant.id,
+        order_by: [desc: m.year, desc: m.month, asc: m.type]
+      )
+
+    query =
+      if type = opts[:type] do
+        from(m in query, where: m.type == ^type)
+      else
+        query
+      end
+
+    query =
+      if year = opts[:year] do
+        from(m in query, where: m.year == ^year)
+      else
+        query
+      end
+
+    query =
+      if month = opts[:month] do
+        from(m in query, where: m.month == ^month)
+      else
+        query
+      end
+
+    query =
+      if limit = opts[:limit] do
+        from(m in query, limit: ^limit)
+      else
+        query
+      end
+
+    Repo.all(query, prefix: "public")
   end
 
   @doc """

@@ -8,8 +8,12 @@
 
   [role="table"] [role="row"] {
     display: flex;
-    margin-bottom: calc(3 * var(--lotta-spacing));
+    margin-bottom: calc(1 * var(--lotta-spacing));
     justify-content: stretch;
+
+    &.isCurrentMonth {
+      border-bottom: 1px dashed rgb(var(--lotta-divider-color));
+    }
 
     & > div {
       flex: 1;

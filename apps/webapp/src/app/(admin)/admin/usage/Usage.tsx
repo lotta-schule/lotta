@@ -1,28 +1,28 @@
 import * as React from 'react';
 import { Box, FileSize } from '@lotta-schule/hubert';
-import { format } from 'date-fns';
+import { format, isSameMonth } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { TenantModel, TenantUsageModel } from 'model';
+import { TenantModel } from 'model';
+import { type TenantUsage } from 'loader';
 import clsx from 'clsx';
 
 import styles from './Usage.module.scss';
 
 export interface UsageProps {
-  usage: TenantUsageModel[];
+  usage: TenantUsage;
   tenant: TenantModel;
 }
 
 export const Usage = React.memo(({ tenant, usage }: UsageProps) => {
-  const getMediaConversionTimeFormatted = (usage: any) => {
+  const getMediaConversionTimeFormatted = (usage: TenantUsage[number]) => {
     if (!usage) {
       return null;
     }
-    if (usage.media.mediaConversionCurrentPeriod < 60) {
-      return `${usage.media.mediaConversionCurrentPeriod || 0} Sekunden`;
+    const totalSeconds = usage.mediaConversionSeconds?.value || 0;
+    if (totalSeconds < 60) {
+      return `${totalSeconds} Sekunden`;
     } else {
-      return `${Math.round(
-        usage.media.mediaConversionCurrentPeriod / 60
-      )} Minuten`;
+      return `${Math.round(totalSeconds / 60)} Minuten`;
     }
   };
 
@@ -42,38 +42,42 @@ export const Usage = React.memo(({ tenant, usage }: UsageProps) => {
         >
           <div role={'rowheader'}>&nbsp;</div>
           <div role={'rowheader'}>
+            <h3>aktive Nutzer</h3>
+          </div>
+          <div role={'rowheader'}>
             <h3>Speicherplatz</h3>
           </div>
           <div role={'roleheader'}>
             <h3>Multimedia</h3>
           </div>
         </div>
-        {usage?.map((usage, index) => (
-          <div
-            role={'row'}
-            className={clsx(styles.gridContainer, styles.usageTable)}
-            key={usage.periodStart}
-          >
-            <Box role={'cell'}>
-              {format(new Date(usage.periodStart), 'MMMM yyyy', {
-                locale: de,
+        {usage?.map((usage) => {
+          const date = new Date(usage.year, usage.month - 1, 1);
+          return (
+            <div
+              role={'row'}
+              className={clsx(styles.gridContainer, styles.usageTable, {
+                [styles.isCurrentMonth]: isSameMonth(date, new Date()),
               })}
-            </Box>
-            <Box role={'cell'}>
-              {index === 0 && (
-                <>
-                  <div>{new FileSize(usage.storage.usedTotal).humanize()}</div>
-                  <div>
-                    <small>({usage.storage.filesTotal} Dateien)</small>
-                  </div>
-                </>
-              )}
-            </Box>
-            <Box role={'cell'}>
-              {getMediaConversionTimeFormatted(usage)} Audio/Video
-            </Box>
-          </div>
-        ))}
+              key={`${usage.year}-${usage.month}`}
+            >
+              <Box role={'cell'}>
+                {format(date, 'MMMM yyyy', {
+                  locale: de,
+                })}
+              </Box>
+              <Box role={'cell'}>{usage.activeUserCount?.value ?? null}</Box>
+              <Box role={'cell'}>
+                {usage.totalStorageCount?.value
+                  ? new FileSize(usage.totalStorageCount.value).humanize()
+                  : null}
+              </Box>
+              <Box role={'cell'}>
+                {getMediaConversionTimeFormatted(usage)} Audio/Video
+              </Box>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
