@@ -9,7 +9,6 @@ export * from './MessageModel';
 export * from './PageModel';
 export * from './ScheduleResult';
 export * from './TenantModel';
-export * from './TenantUsageModel';
 export * from './UserGroupModel';
 export * from './UserModel';
 export * from './WidgetModel';

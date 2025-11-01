@@ -121,6 +121,21 @@ defmodule Lotta.Worker.Tenant do
     :ok
   end
 
+  def perform(%{
+        id: _job_id,
+        args: %{"type" => "refresh_monthly_usage_logs"}
+      }) do
+    case Tenants.refresh_monthly_usage_logs(concurrent: true) do
+      :ok ->
+        Logger.info("Successfully refreshed monthly usage logs materialized view")
+        :ok
+
+      {:error, reason} ->
+        Logger.error("Failed to refresh monthly usage logs: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
   @impl Oban.Worker
   def timeout(_job), do: :timer.minutes(5)
 
@@ -180,6 +195,20 @@ defmodule Lotta.Worker.Tenant do
   def collect_daily_usage_logs do
     __MODULE__.new(%{
       "type" => "collect_daily_usage_logs"
+    })
+    |> Oban.insert()
+  end
+
+  @doc """
+  Schedules a job to refresh the monthly usage logs materialized view.
+  This should be scheduled after daily usage logs are collected to ensure
+  the monthly aggregations are up to date.
+  """
+  @spec refresh_monthly_usage_logs() ::
+          {:ok, Oban.Job.t()} | {:error, Oban.Job.changeset() | String.t()}
+  def refresh_monthly_usage_logs do
+    __MODULE__.new(%{
+      "type" => "refresh_monthly_usage_logs"
     })
     |> Oban.insert()
   end

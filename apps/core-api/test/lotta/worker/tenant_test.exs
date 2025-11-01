@@ -174,4 +174,50 @@ defmodule Lotta.Worker.TenantTest do
       end
     end
   end
+
+  describe "refresh_monthly_usage_logs" do
+    test "refresh_monthly_usage_logs/1 should create the correct job isntance" do
+      assert {:ok, job} =
+               Tenant.refresh_monthly_usage_logs()
+
+      assert job.worker == "Lotta.Worker.Tenant"
+      assert job.args == %{"type" => "refresh_monthly_usage_logs"}
+    end
+
+    test "calls Tenants.refresh_monthly_usage_logs with concurrent: true" do
+      with_mock(Tenants, [:passthrough], refresh_monthly_usage_logs: fn _opts -> :ok end) do
+        result =
+          perform_job(Tenant, %{
+            "type" => "refresh_monthly_usage_logs"
+          })
+
+        assert result == :ok
+        assert called(Tenants.refresh_monthly_usage_logs(concurrent: true))
+      end
+    end
+
+    test "returns ok when refresh succeeds" do
+      with_mock(Tenants, [:passthrough], refresh_monthly_usage_logs: fn _opts -> :ok end) do
+        result =
+          perform_job(Tenant, %{
+            "type" => "refresh_monthly_usage_logs"
+          })
+
+        assert result == :ok
+      end
+    end
+
+    test "returns error when refresh fails" do
+      with_mock(Tenants, [:passthrough],
+        refresh_monthly_usage_logs: fn _opts -> {:error, :test_error} end
+      ) do
+        result =
+          perform_job(Tenant, %{
+            "type" => "refresh_monthly_usage_logs"
+          })
+
+        assert result == {:error, :test_error}
+      end
+    end
+  end
 end

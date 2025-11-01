@@ -165,22 +165,39 @@ defmodule LottaWeb.TenantResolverTest do
     @query """
     query getTenantUsage {
       usage {
-        periodStart
-        periodEnd
-        storage {
-          usedTotal
-          filesTotal
+        year
+        month
+        activeUserCount {
+          value
+          updatedAt
         }
-        media {
-          mediaFilesTotal
-          mediaFilesTotalDuration
-          mediaConversionCurrentPeriod
+        totalStorageCount {
+          value
+          updatedAt
+        }
+        mediaConversionSeconds {
+          value
+          updatedAt
         }
       }
     }
     """
 
-    test "get duration information", %{admin_jwt: admin_jwt} do
+    setup do
+      tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+      # Create some usage log entries for testing
+      {:ok, _} = Tenants.create_usage_log_entry(tenant, :active_user_count, "150")
+      {:ok, _} = Tenants.create_usage_log_entry(tenant, :total_storage_count, "5000000")
+      {:ok, _} = Tenants.create_usage_log_entry(tenant, :media_conversion_seconds, "3600")
+
+      # Refresh the materialized view to make the data available
+      Tenants.refresh_monthly_usage_logs()
+
+      :ok
+    end
+
+    test "returns monthly usage data grouped by year and month", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -190,23 +207,54 @@ defmodule LottaWeb.TenantResolverTest do
 
       assert %{
                "data" => %{
-                 "usage" => [current_usage, _, _, _, _, _]
+                 "usage" => usage_periods
                }
              } = res
 
+      # Verify we have a list of usage periods
+      assert is_list(usage_periods)
+      assert length(usage_periods) > 0
+
+      # Verify structure of a usage period
+      [first_period | _] = usage_periods
+
       assert %{
-               "periodStart" => _start,
-               "periodEnd" => _end,
-               "media" => %{
-                 "mediaConversionCurrentPeriod" => 480.9,
-                 "mediaFilesTotal" => 3,
-                 "mediaFilesTotalDuration" => 480.9
-               },
-               "storage" => %{
-                 "filesTotal" => 27,
-                 "usedTotal" => 17_076_953
-               }
-             } = current_usage
+               "year" => year,
+               "month" => month,
+               "activeUserCount" => active_user_count,
+               "totalStorageCount" => storage_count,
+               "mediaConversionSeconds" => media_conversion
+             } = first_period
+
+      assert is_integer(year)
+      assert is_integer(month)
+
+      # Verify active user count data
+      assert %{
+               "value" => value,
+               "updatedAt" => _updated_at
+             } = active_user_count
+
+      assert is_float(value)
+      assert value == 150.0
+
+      # Verify storage count data
+      assert %{
+               "value" => storage_value,
+               "updatedAt" => _
+             } = storage_count
+
+      assert is_float(storage_value)
+      assert storage_value == 5_000_000.0
+
+      # Verify media conversion data
+      assert %{
+               "value" => media_value,
+               "updatedAt" => _
+             } = media_conversion
+
+      assert is_float(media_value)
+      assert media_value == 3600.0
     end
 
     test "returns error if user is not admin", %{user_jwt: user_jwt} do

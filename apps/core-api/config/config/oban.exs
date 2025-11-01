@@ -11,7 +11,10 @@ config :lotta, Oban,
     {Oban.Plugins.Reindexer, schedule: "@weekly"},
     {Oban.Plugins.Cron,
      crontab: [
-       {"0 2 * * *", Lotta.Worker.Tenant, args: %{"type" => "collect_daily_usage_logs"}}
+       {"0 2 * * *", Lotta.Worker.Tenant, args: %{"type" => "collect_daily_usage_logs"}},
+       # At 03:00 on every day-of-month from 1 through 3 and every day-of-month from 28 through 30 and on Sunday.
+       {"0 3 1-3,28-30 * 0,3", Lotta.Worker.Tenant,
+        args: %{"type" => "refresh_monthly_usage_logs"}}
      ]}
   ]
 
