@@ -1,3 +1,14 @@
+## 6.1.1 (2025-11-01)
+
+### 🩹 Fixes
+
+- **core:** Do not try to sync eduplaces when tenant has no eduplaces_id ([692d0d90](https://github.com/lotta-schule/lotta/commit/692d0d90))
+- **web:** Fix user avatars not being shown ([be17a1b0](https://github.com/lotta-schule/lotta/commit/be17a1b0))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.0 (2025-11-01)
 
 ### 🚀 Features
