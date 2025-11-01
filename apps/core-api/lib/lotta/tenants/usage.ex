@@ -1,112 +1,74 @@
 defmodule Lotta.Tenants.Usage do
   @moduledoc """
-  This module bundles all the necessery
-  functions for usage calculation
+  This module provides functions for retrieving usage statistics
+  from the monthly usage logs materialized view.
   """
 
-  require Logger
-
-  import Ecto.Query
-
-  alias Lotta.Repo
+  alias Lotta.Tenants
   alias Lotta.Tenants.Tenant
-  alias Lotta.Storage.{File, FileConversion}
 
   @doc """
-  Return the usage statistics
+  Returns the monthly usage statistics for a tenant, grouped by year and month.
+
+  The return value is a list of maps, where each map represents a month
+  and contains all usage types for that month. The list is sorted by date
+  descending (most recent first).
+
+  ## Returns
+
+  `{:ok, [
+    %{
+      year: 2025,
+      month: 11,
+      active_user_count: %{value: Decimal.new("150"), updated_at: ~U[...]},
+      total_storage_count: %{value: Decimal.new("5000000"), updated_at: ~U[...]},
+      media_conversion_seconds: %{value: Decimal.new("3600"), updated_at: ~U[...]}
+    },
+    ...
+  ]}`
+
+  ## Examples
+
+      iex> get_usage(tenant)
+      {:ok, [
+        %{
+          year: 2025,
+          month: 11,
+          active_user_count: %{value: Decimal.new("150"), updated_at: ~U[...]},
+          total_storage_count: %{value: Decimal.new("5000000"), updated_at: ~U[...]},
+          media_conversion_seconds: %{value: Decimal.new("3600"), updated_at: ~U[...]}
+        }
+      ]}
+
   """
-  @spec get_usage(Tenant.t()) :: {:ok, list(map())} | {:error, term()}
+  @spec get_usage(Tenant.t()) :: {:ok, list(map())}
   def get_usage(tenant) do
-    usages =
-      0..5
-      |> Enum.map(fn month ->
-        period_start =
-          Timex.now()
-          |> Timex.shift(months: -month)
-          |> Timex.beginning_of_month()
-          |> Timex.to_datetime()
+    all_logs = Tenants.get_monthly_usage_logs(tenant)
 
-        period_end =
-          case month do
-            0 ->
-              Timex.now()
+    grouped_by_period =
+      all_logs
+      |> Enum.group_by(fn log -> {log.year, log.month} end)
 
-            _ ->
-              period_start
-              |> Timex.end_of_month()
-              |> Timex.to_datetime()
-          end
+    result =
+      grouped_by_period
+      |> Enum.map(fn {{year, month}, logs} ->
+        logs_by_type =
+          logs
+          |> Enum.map(fn log ->
+            {log.type, %{value: log.value, updated_at: log.updated_at}}
+          end)
+          |> Map.new()
 
-        with {:ok, storage_usage} <- get_storage_usage(tenant),
-             {:ok, media_usage} <- get_media_usage(tenant, period_start, period_end) do
-          {:ok,
-           %{
-             period_start: period_start,
-             period_end: period_end,
-             storage: storage_usage,
-             media: media_usage
-           }}
-        else
-          {:error, reason} ->
-            Logger.error("Could not fetch data for month now - #{month}: #{inspect(reason)}")
-            nil
-        end
+        %{
+          year: year,
+          month: month,
+          active_user_count: Map.get(logs_by_type, :active_user_count),
+          total_storage_count: Map.get(logs_by_type, :total_storage_count),
+          media_conversion_seconds: Map.get(logs_by_type, :media_conversion_seconds)
+        }
       end)
-      |> Enum.filter(&(!is_nil(&1)))
-      |> Enum.map(&elem(&1, 1))
+      |> Enum.sort_by(fn %{year: year, month: month} -> {year, month} end, :desc)
 
-    {:ok, usages}
-  end
-
-  defp get_storage_usage(tenant) do
-    all_files_size =
-      from f in File,
-        select: %{all_files_size: sum(f.filesize), files_total: count(f.id)}
-
-    file_conversions =
-      from f in FileConversion,
-        select: %{all_conversions_size: sum(f.filesize)}
-
-    with %{files_total: files_total, all_files_size: files_size} <-
-           Repo.one(all_files_size, prefix: tenant.prefix),
-         %{all_conversions_size: conversions_size} <-
-           Repo.one(file_conversions, prefix: tenant.prefix) do
-      {:ok,
-       %{
-         used_total: (files_size || 0) + (conversions_size || 0),
-         files_total: files_total
-       }}
-    else
-      _ ->
-        {:error, "Could not find usage information"}
-    end
-  end
-
-  defp get_media_usage(tenant, start_date, end_date) do
-    media_total =
-      from(f in File,
-        where: not is_nil(f.media_duration),
-        select: %{
-          media_files_total: count(f.id),
-          media_files_total_duration: sum(f.media_duration)
-        }
-      )
-
-    current_period_conversions =
-      from(f in File,
-        where: f.inserted_at >= ^start_date and f.inserted_at <= ^end_date,
-        select: %{
-          media_conversion_current_period: sum(f.media_duration)
-        }
-      )
-
-    with media_total when not is_nil(media_total) <- Repo.one(media_total, prefix: tenant.prefix),
-         current_period_conversions when not is_nil(current_period_conversions) <-
-           Repo.one(current_period_conversions, prefix: tenant.prefix) do
-      {:ok, Map.merge(media_total, current_period_conversions)}
-    else
-      nil ->
-        {:error, "Could not find usage information"}
-    end
+    {:ok, result}
   end
 end

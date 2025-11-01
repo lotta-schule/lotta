@@ -25,7 +25,7 @@ defmodule LottaWeb.Schema.Tenants do
       resolve(&LottaWeb.FeedbackResolver.list/2)
     end
 
-    field(:usage, non_null(list_of(non_null(:usage)))) do
+    field(:usage, non_null(list_of(non_null(:monthly_usage_period)))) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       resolve(&LottaWeb.TenantResolver.usage/2)

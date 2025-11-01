@@ -376,6 +376,167 @@ defmodule Lotta.TenantsTest do
     end
   end
 
+  describe "refresh_monthly_usage_logs/1" do
+    test "refreshes the materialized view successfully" do
+      assert :ok = Tenants.refresh_monthly_usage_logs()
+    end
+
+    test "refreshes with concurrent option set to true" do
+      assert :ok = Tenants.refresh_monthly_usage_logs(concurrent: true)
+    end
+
+    test "refreshes with concurrent option set to false" do
+      assert :ok = Tenants.refresh_monthly_usage_logs(concurrent: false)
+    end
+  end
+
+  describe "get_monthly_usage_logs/2" do
+    setup do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      # Create some usage logs for different months
+      {:ok, _} =
+        Tenants.create_usage_log_entry(
+          tenant,
+          :active_user_count,
+          "100",
+          "2025-01-test"
+        )
+
+      {:ok, _} =
+        Tenants.create_usage_log_entry(
+          tenant,
+          :total_storage_count,
+          "5000000",
+          "2025-01-storage"
+        )
+
+      {:ok, _} =
+        Tenants.create_usage_log_entry(
+          tenant,
+          :media_conversion_seconds,
+          "3600"
+        )
+
+      # Add another entry for the same month/type to test averaging
+      %UsageLog{}
+      |> UsageLog.changeset(%{
+        tenant_id: tenant.id,
+        type: :active_user_count,
+        value: "200",
+        date: Date.utc_today(),
+        unique_identifier: "2025-01-test-2"
+      })
+      |> Repo.insert!(prefix: "public")
+
+      # Refresh the materialized view
+      Tenants.refresh_monthly_usage_logs()
+
+      {:ok, tenant: tenant}
+    end
+
+    test "returns monthly usage logs for a tenant", %{tenant: tenant} do
+      logs = Tenants.get_monthly_usage_logs(tenant)
+
+      assert length(logs) > 0
+      assert Enum.all?(logs, fn log -> log.tenant_id == tenant.id end)
+    end
+
+    test "filters by type", %{tenant: tenant} do
+      logs = Tenants.get_monthly_usage_logs(tenant, type: :active_user_count)
+
+      assert length(logs) > 0
+      assert Enum.all?(logs, fn log -> log.type == :active_user_count end)
+    end
+
+    test "filters by year and month", %{tenant: tenant} do
+      today = Date.utc_today()
+
+      logs =
+        Tenants.get_monthly_usage_logs(tenant,
+          year: today.year,
+          month: today.month
+        )
+
+      assert length(logs) > 0
+      assert Enum.all?(logs, fn log -> log.year == today.year and log.month == today.month end)
+    end
+
+    test "combines type, year, and month filters", %{tenant: tenant} do
+      today = Date.utc_today()
+
+      logs =
+        Tenants.get_monthly_usage_logs(tenant,
+          type: :active_user_count,
+          year: today.year,
+          month: today.month
+        )
+
+      assert Enum.all?(logs, fn log ->
+               log.type == :active_user_count and log.year == today.year and
+                 log.month == today.month
+             end)
+    end
+
+    test "limits results", %{tenant: tenant} do
+      # Without filter, we have 3 types of usage logs, so limit: 2 should return 2 results
+      logs = Tenants.get_monthly_usage_logs(tenant, limit: 2)
+
+      assert length(logs) == 2
+    end
+
+    test "calculates average for active_user_count type", %{tenant: tenant} do
+      today = Date.utc_today()
+
+      logs =
+        Tenants.get_monthly_usage_logs(tenant,
+          type: :active_user_count,
+          year: today.year,
+          month: today.month
+        )
+
+      # Should average 100 and 200 = 150
+      assert length(logs) > 0
+      log = hd(logs)
+      assert Decimal.equal?(log.value, Decimal.new("150"))
+    end
+
+    test "calculates sum for media_conversion_seconds type", %{tenant: tenant} do
+      today = Date.utc_today()
+
+      logs =
+        Tenants.get_monthly_usage_logs(tenant,
+          type: :media_conversion_seconds,
+          year: today.year,
+          month: today.month
+        )
+
+      assert length(logs) > 0
+      log = hd(logs)
+      assert Decimal.equal?(log.value, Decimal.new("3600"))
+    end
+
+    test "returns empty list for non-existent tenant" do
+      # Create a tenant struct with a non-existent ID
+      fake_tenant = %Lotta.Tenants.Tenant{id: 99_999}
+      logs = Tenants.get_monthly_usage_logs(fake_tenant)
+
+      assert logs == []
+    end
+
+    test "orders results by year desc, month desc, type asc", %{tenant: tenant} do
+      logs = Tenants.get_monthly_usage_logs(tenant)
+
+      # Verify ordering
+      sorted_logs =
+        Enum.sort_by(logs, fn log ->
+          {-log.year, -log.month, Atom.to_string(log.type)}
+        end)
+
+      assert logs == sorted_logs
+    end
+  end
+
   describe "Tenant.generate_slug/1" do
     test "generates slug from title with lowercase and dashes" do
       assert Tenant.generate_slug("My Cool School") == "my-cool-school"
