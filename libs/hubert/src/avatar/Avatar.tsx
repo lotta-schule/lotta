@@ -15,7 +15,7 @@ export interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 export const Avatar = React.memo(
   ({ src, title, className, role, style, onClick, ...props }: AvatarProps) => {
     return (
-      <div
+      <img
         {...props}
         role={role || 'img'}
         title={title}
