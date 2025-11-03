@@ -24,7 +24,6 @@ defmodule Lotta.Application do
           {Finch, name: Lotta.Finch},
           LottaWeb.Telemetry,
           Lotta.Repo,
-          {Oban, Application.fetch_env!(:lotta, Oban)},
           {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
           LottaWeb.Endpoint,
           Lotta.PushNotification,
@@ -32,7 +31,8 @@ defmodule Lotta.Application do
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
           {ConCache,
            name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)},
-          {Lotta.Eduplaces.Syncer, Application.get_env(:lotta, Lotta.Eduplaces.Syncer, [])}
+          {Lotta.Eduplaces.Syncer, Application.get_env(:lotta, Lotta.Eduplaces.Syncer, [])},
+          {Oban, Application.fetch_env!(:lotta, Oban)}
         ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

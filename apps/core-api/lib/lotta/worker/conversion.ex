@@ -126,13 +126,17 @@ defmodule Lotta.Worker.Conversion do
       },
       conversion_progress: channel_name
     )
+  rescue
+    e ->
+      Logger.error("Failed to publish conversion progress: #{inspect(e)}")
+      :error
   end
 
   @impl Oban.Worker
   def timeout(job) do
     case get_processor_module(job) do
-      VideoProcessor -> :timer.hours(2)
-      _ -> :timer.minutes(10)
+      VideoProcessor -> :timer.hours(4)
+      _ -> :timer.minutes(15)
     end
   end
 
