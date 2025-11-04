@@ -3,13 +3,21 @@ import clsx from 'clsx';
 
 import styles from './Avatar.module.scss';
 
-export interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+export interface AvatarProps
+  extends Omit<React.HTMLProps<HTMLDivElement>, 'ref'> {
+  /**
+   * The avatar image source
+   */
+  src: string;
+
   /**
    * The title of the avatar
    */
   title?: string;
 
   className?: string;
+
+  style?: React.CSSProperties;
 }
 
 export const Avatar = React.memo(
