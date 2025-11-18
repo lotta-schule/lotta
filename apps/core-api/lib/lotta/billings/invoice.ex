@@ -30,6 +30,12 @@ defmodule Lotta.Billings.Invoice do
           items: [InvoiceItem.t()] | Ecto.Association.NotLoaded.t(),
           total: Decimal.t(),
           notes: String.t() | nil,
+          customer_name: String.t() | nil,
+          customer_address: String.t() | nil,
+          customer_no: String.t() | nil,
+          customer_contact_name: String.t() | nil,
+          customer_contact_email: String.t() | nil,
+          customer_contact_phone: String.t() | nil,
           tenant_id: pos_integer(),
           tenant: Tenant.t() | Ecto.Association.NotLoaded.t()
         }
@@ -52,6 +58,14 @@ defmodule Lotta.Billings.Invoice do
     field(:total, :decimal)
     field(:notes, :string)
 
+    # Customer information (copied from tenant at invoice creation)
+    field(:customer_name, :string)
+    field(:customer_address, :string)
+    field(:customer_no, :string)
+    field(:customer_contact_name, :string)
+    field(:customer_contact_email, :string)
+    field(:customer_contact_phone, :string)
+
     belongs_to(:tenant, Tenant)
     has_many(:items, InvoiceItem)
 
@@ -73,7 +87,13 @@ defmodule Lotta.Billings.Invoice do
       :period_end,
       :total,
       :status,
-      :notes
+      :notes,
+      :customer_name,
+      :customer_address,
+      :customer_no,
+      :customer_contact_name,
+      :customer_contact_email,
+      :customer_contact_phone
     ])
     |> cast_assoc(:items, with: &InvoiceItem.create_changeset/2)
     |> validate_required([

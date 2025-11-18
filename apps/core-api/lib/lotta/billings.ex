@@ -208,7 +208,6 @@ defmodule Lotta.Billings do
     end
   end
 
-  # Private helper to set valid_from to today if not provided
   defp maybe_set_default_valid_from(attrs) do
     if Map.has_key?(attrs, :valid_from) and not is_nil(attrs[:valid_from]) do
       attrs
@@ -263,7 +262,6 @@ defmodule Lotta.Billings do
 
     {items, total} = calculate_period_charges(tenant, period_start, period_end)
 
-    # Items are already in the correct InvoiceItem format from helpers
     attrs = %{
       invoice_number: generate_invoice_number(),
       tenant_id: tenant.id,
@@ -273,7 +271,13 @@ defmodule Lotta.Billings do
       period_end: period_end,
       items: items,
       total: total,
-      status: :draft
+      status: :draft,
+      customer_name: tenant.title,
+      customer_address: tenant.billing_address || tenant.address,
+      customer_no: tenant.customer_no,
+      customer_contact_name: tenant.contact_name,
+      customer_contact_email: tenant.contact_email,
+      customer_contact_phone: tenant.contact_phone
     }
 
     Invoice.create_changeset(attrs)
@@ -586,22 +590,18 @@ defmodule Lotta.Billings do
     }
   end
 
-  # Private helper to calculate charges for a period
   defp calculate_period_charges(tenant, period_start, period_end) do
     items = []
 
-    # Add plan item if tenant has a plan
     items =
       case get_plan_item(tenant, period_start) do
         nil -> items
         plan_item -> [plan_item | items]
       end
 
-    # Add additional items
     additional_items = get_additional_items_for_period(tenant, period_start, period_end)
     items = items ++ additional_items
 
-    # Calculate total
     total =
       items
       |> Enum.map(fn item -> Decimal.new(item[:amount] || item["amount"]) end)
@@ -610,7 +610,6 @@ defmodule Lotta.Billings do
     {items, total}
   end
 
-  # Build base price row (fixed monthly fee)
   defp build_base_price_row(base_price, plan_title) do
     %{
       "description" => "Base Plan: #{plan_title}",
@@ -624,7 +623,6 @@ defmodule Lotta.Billings do
     }
   end
 
-  # Build base user charge row
   defp build_base_user_charge_row(active_users, unit_price) when is_integer(active_users) do
     if active_users > 0 do
       amount = Decimal.mult(Decimal.new(active_users), Decimal.new(unit_price))
@@ -653,14 +651,12 @@ defmodule Lotta.Billings do
     end
   end
 
-  # Build storage usage row (always included, shows usage vs limit)
   defp build_storage_usage_row(storage_used_gb, storage_included_gb, exceeding_price) do
     storage_overage_gb =
       Decimal.max(Decimal.new(0), Decimal.sub(storage_used_gb, storage_included_gb))
 
     amount = Decimal.mult(storage_overage_gb, Decimal.new(exceeding_price))
 
-    # Format with 2 decimal places
     storage_used_str = storage_used_gb |> Decimal.round(2) |> Decimal.to_string(:normal)
     storage_included_str = storage_included_gb |> Decimal.round(2) |> Decimal.to_string(:normal)
     storage_overage_str = storage_overage_gb |> Decimal.round(2) |> Decimal.to_string(:normal)
@@ -686,7 +682,6 @@ defmodule Lotta.Billings do
     }
   end
 
-  # Build media conversion usage row (always included, shows usage vs limit)
   defp build_conversion_usage_row(
          conversion_used_minutes,
          conversion_included_minutes,
@@ -700,7 +695,6 @@ defmodule Lotta.Billings do
 
     amount = Decimal.mult(conversion_overage_minutes, Decimal.new(exceeding_price))
 
-    # Format with 2 decimal places
     conversion_used_str =
       conversion_used_minutes |> Decimal.round(2) |> Decimal.to_string(:normal)
 
@@ -760,7 +754,6 @@ defmodule Lotta.Billings do
       storage_included_gb =
         Decimal.mult(Decimal.new(usage.active_user_count), Decimal.new(user_max_storage))
 
-      # Build rows - include base_price row if configured
       rows =
         [
           if(base_price, do: build_base_price_row(base_price, plan.title)),
@@ -794,8 +787,6 @@ defmodule Lotta.Billings do
     end
   end
 
-  # Get additional items that were active during the period
-  # Returns list of maps in InvoiceItem format
   defp get_additional_items_for_period(tenant, period_start, period_end) do
     from(ai in AdditionalItem,
       where: ai.tenant_id == ^tenant.id,
@@ -804,7 +795,6 @@ defmodule Lotta.Billings do
     )
     |> Repo.all(prefix: "public")
     |> Enum.map(fn item ->
-      # Create a single row for this additional item
       row = %{
         "description" => item.name,
         "quantity" => 1,
@@ -816,7 +806,6 @@ defmodule Lotta.Billings do
         }
       }
 
-      # Return in InvoiceItem format
       %{
         "type" => "additional_item",
         "period_start" => period_start,
@@ -828,9 +817,7 @@ defmodule Lotta.Billings do
     end)
   end
 
-  # Generate a unique invoice number in format LTA00001
   defp generate_invoice_number do
-    # Get the maximum existing invoice number
     max_number =
       from(i in Invoice,
         select: i.invoice_number,
@@ -843,7 +830,6 @@ defmodule Lotta.Billings do
           0
 
         invoice_number ->
-          # Extract number from "LTA00123" format
           invoice_number
           |> String.replace("LTA", "")
           |> String.to_integer()
@@ -853,7 +839,6 @@ defmodule Lotta.Billings do
     "LTA#{String.pad_leading(Integer.to_string(next_number), 5, "0")}"
   end
 
-  # Query filters
   defp maybe_filter_by_status(query, nil), do: query
   defp maybe_filter_by_status(query, status), do: where(query, [i], i.status == ^status)
 

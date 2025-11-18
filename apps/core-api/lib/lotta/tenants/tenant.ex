@@ -44,7 +44,10 @@ defmodule Lotta.Tenants.Tenant do
           current_plan_expires_at: Date.t() | nil,
           next_plan_name: String.t() | nil,
           customer_no: String.t() | nil,
-          billing_address: String.t() | nil
+          billing_address: String.t() | nil,
+          contact_name: String.t() | nil,
+          contact_email: String.t() | nil,
+          contact_phone: String.t() | nil
         }
 
   schema "tenants" do
@@ -75,6 +78,9 @@ defmodule Lotta.Tenants.Tenant do
     field(:next_plan_name, :string)
     field(:customer_no, :string)
     field(:billing_address, :string)
+    field(:contact_name, :string)
+    field(:contact_email, :string)
+    field(:contact_phone, :string)
 
     has_many(:custom_domains, Lotta.Tenants.CustomDomain)
     has_many(:additional_items, Lotta.Billings.AdditionalItem)
@@ -112,7 +118,10 @@ defmodule Lotta.Tenants.Tenant do
       :logo_image_file_id,
       :background_image_file_id,
       :customer_no,
-      :billing_address
+      :billing_address,
+      :contact_name,
+      :contact_email,
+      :contact_phone
     ])
     |> validate_required([:title, :slug, :prefix])
     |> unique_constraint(:slug)
