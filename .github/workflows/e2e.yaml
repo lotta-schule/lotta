@@ -1,3 +1,4 @@
+---
 name: Playwright Tests
 on:
   workflow_call:
@@ -13,14 +14,44 @@ on:
         required: false
       endpoint:
         required: false
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
-
 jobs:
+  lighthouse:
+    runs-on: ubuntu-24.04
+    if: ${{ !cancelled() }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.5
+          cache: pnpm
+      - name: Install node dependencies
+        run: pnpm install
+        working-directory: apps/e2e
+      - name: Run lotta as a service from docker-compose.yml
+        uses: hoverkraft-tech/compose-action@v2.0.2
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        with:
+          compose-file: docker-compose.yaml
+          cwd: ${{ github.workspace }}/apps/e2e
+          up-flags: --force-recreate --wait
+      - run: |
+          ./lighthouse-ci.sh
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+        working-directory: apps/e2e
   test:
-    name: 'E2E-Testing ( ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} )'
+    name: E2E-Testing ( ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} )
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -206,12 +237,11 @@ jobs:
             ### Screenshots
             See [Screenshots](${{ steps.upload-screenshots.outputs.run_screenshots_url }})
           comment-tag: playwright-report
-
       - name: Create commit comment
         uses: peter-evans/commit-comment@v3
         if: ${{ github.event_name == 'push' }}
         with:
-          body: |
+          body: |-
             ### Test summary
             See [Playwright Report](${{ steps.upload-report.outputs.run_report_url }})
 
