@@ -39,7 +39,12 @@ defmodule Lotta.Tenants.Tenant do
           configuration: configuration(),
           logo_image_file_id: Lotta.Storage.File.id() | nil,
           background_image_file_id: Lotta.Storage.File.id() | nil,
-          state: :init | :active | :readonly
+          state: :init | :active | :readonly,
+          current_plan_name: String.t() | nil,
+          current_plan_expires_at: Date.t() | nil,
+          next_plan_name: String.t() | nil,
+          customer_no: String.t() | nil,
+          billing_address: String.t() | nil
         }
 
   schema "tenants" do
@@ -64,7 +69,16 @@ defmodule Lotta.Tenants.Tenant do
 
     field(:eduplaces_id, :string, default: nil)
 
+    # Billing fields
+    field(:current_plan_name, :string)
+    field(:current_plan_expires_at, :date)
+    field(:next_plan_name, :string)
+    field(:customer_no, :string)
+    field(:billing_address, :string)
+
     has_many(:custom_domains, Lotta.Tenants.CustomDomain)
+    has_many(:additional_items, Lotta.Billings.AdditionalItem)
+    has_many(:invoices, Lotta.Billings.Invoice)
 
     timestamps()
   end
@@ -81,6 +95,7 @@ defmodule Lotta.Tenants.Tenant do
     |> maybe_gen_slug()
     |> validate_required([:slug])
     |> unique_constraint(:slug)
+    |> assign_default_plan()
   end
 
   @doc """
@@ -90,7 +105,15 @@ defmodule Lotta.Tenants.Tenant do
   @spec update_changeset(t(), map()) :: Ecto.Changeset.t()
   def update_changeset(tenant, attrs) do
     tenant
-    |> cast(attrs, [:title, :address, :type, :logo_image_file_id, :background_image_file_id])
+    |> cast(attrs, [
+      :title,
+      :address,
+      :type,
+      :logo_image_file_id,
+      :background_image_file_id,
+      :customer_no,
+      :billing_address
+    ])
     |> validate_required([:title, :slug, :prefix])
     |> unique_constraint(:slug)
     |> maybe_put_embed(:configuration, attrs[:configuration])
@@ -130,5 +153,22 @@ defmodule Lotta.Tenants.Tenant do
         do: {:halt, slug},
         else: {:cont, nil}
     end)
+  end
+
+  # Assigns the default plan to a tenant during creation
+  defp assign_default_plan(changeset) do
+    case Lotta.Billings.Plans.get_default() do
+      nil ->
+        changeset
+
+      {plan_name, _plan} ->
+        expires_at = Lotta.Billings.Plans.calculate_expiration(plan_name)
+        next_plan = Lotta.Billings.Plans.get_next_plan_name(plan_name)
+
+        changeset
+        |> put_change(:current_plan_name, plan_name)
+        |> put_change(:current_plan_expires_at, expires_at)
+        |> put_change(:next_plan_name, next_plan)
+    end
   end
 end

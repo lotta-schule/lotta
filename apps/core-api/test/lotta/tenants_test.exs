@@ -537,6 +537,147 @@ defmodule Lotta.TenantsTest do
     end
   end
 
+  describe "Usage.get_usage/1" do
+    setup do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      # Create some usage logs for different months
+      {:ok, _} =
+        Tenants.create_usage_log_entry(
+          tenant,
+          :active_user_count,
+          "100",
+          "2025-01-test"
+        )
+
+      {:ok, _} =
+        Tenants.create_usage_log_entry(
+          tenant,
+          :total_storage_count,
+          "5000000",
+          "2025-01-storage"
+        )
+
+      {:ok, _} =
+        Tenants.create_usage_log_entry(
+          tenant,
+          :media_conversion_seconds,
+          "3600"
+        )
+
+      # Refresh the materialized view
+      Tenants.refresh_monthly_usage_logs()
+
+      {:ok, tenant: tenant}
+    end
+
+    test "returns usage grouped by year and month", %{tenant: tenant} do
+      alias Lotta.Tenants.Usage
+
+      assert {:ok, result} = Usage.get_usage(tenant)
+
+      assert is_list(result)
+      assert length(result) > 0
+
+      # Check that each entry has the expected structure
+      Enum.each(result, fn entry ->
+        assert is_integer(entry.year)
+        assert is_integer(entry.month)
+        assert entry.month >= 1 and entry.month <= 12
+      end)
+    end
+
+    test "includes all usage types", %{tenant: tenant} do
+      alias Lotta.Tenants.Usage
+
+      assert {:ok, [entry | _]} = Usage.get_usage(tenant)
+
+      # Check that usage types are present
+      assert entry.active_user_count != nil
+      assert entry.total_storage_count != nil
+      assert entry.media_conversion_seconds != nil
+    end
+
+    test "sorts results by year and month descending", %{tenant: tenant} do
+      alias Lotta.Tenants.Usage
+
+      assert {:ok, result} = Usage.get_usage(tenant)
+
+      # Verify ordering (most recent first)
+      sorted_result =
+        Enum.sort_by(result, fn %{year: year, month: month} -> {year, month} end, :desc)
+
+      assert result == sorted_result
+    end
+  end
+
+  describe "Usage.get_usage/3" do
+    setup do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      # Create usage logs for specific month
+      {:ok, _} =
+        Tenants.create_usage_log_entry(
+          tenant,
+          :active_user_count,
+          "150",
+          "specific-month-test"
+        )
+
+      {:ok, _} =
+        Tenants.create_usage_log_entry(
+          tenant,
+          :total_storage_count,
+          "8000000",
+          "specific-month-storage"
+        )
+
+      {:ok, _} =
+        Tenants.create_usage_log_entry(
+          tenant,
+          :media_conversion_seconds,
+          "7200"
+        )
+
+      # Refresh the materialized view
+      Tenants.refresh_monthly_usage_logs()
+
+      {:ok, tenant: tenant}
+    end
+
+    test "returns usage for specific year and month", %{tenant: tenant} do
+      alias Lotta.Tenants.Usage
+      today = Date.utc_today()
+
+      assert usage_data = Usage.get_usage(tenant, today.year, today.month)
+
+      assert usage_data != nil
+      assert usage_data.year == today.year
+      assert usage_data.month == today.month
+      assert usage_data.active_user_count != nil
+      assert usage_data.total_storage_count != nil
+      assert usage_data.media_conversion_seconds != nil
+    end
+
+    test "returns nil when no data exists for the period", %{tenant: tenant} do
+      alias Lotta.Tenants.Usage
+
+      # Query for a month in the future that has no data
+      assert is_nil(Usage.get_usage(tenant, 2099, 12))
+    end
+
+    test "returns correct usage values for the period", %{tenant: tenant} do
+      alias Lotta.Tenants.Usage
+      today = Date.utc_today()
+
+      assert usage_data = Usage.get_usage(tenant, today.year, today.month)
+
+      assert usage_data.active_user_count.value != nil
+      assert usage_data.total_storage_count.value != nil
+      assert usage_data.media_conversion_seconds.value != nil
+    end
+  end
+
   describe "Tenant.generate_slug/1" do
     test "generates slug from title with lowercase and dashes" do
       assert Tenant.generate_slug("My Cool School") == "my-cool-school"
@@ -650,6 +791,147 @@ defmodule Lotta.TenantsTest do
         assert slug == String.duplicate("very-long-school-name-", 9) <> "very-long-school-name"
         assert String.length(slug) > 200
       end
+    end
+  end
+
+  describe "Billing" do
+    @tag creates_tenant: true
+    test "should auto-assign default plan on tenant creation" do
+      tenant = %Tenant{
+        title: "Billing Test Lotta",
+        slug: "billing-test"
+      }
+
+      user = %User{
+        name: "Test User",
+        email: "test@example.com"
+      }
+
+      assert {:ok, created_tenant} = Tenants.create_tenant(tenant, user)
+
+      # Should have the default plan assigned
+      assert created_tenant.current_plan_name == "test"
+      assert created_tenant.current_plan_expires_at != nil
+      assert created_tenant.next_plan_name == nil
+
+      # Expiration should be approximately 3 months from now (test plan default_duration)
+      today = Date.utc_today()
+      expected_expiration = Date.shift(today, month: 3)
+      assert created_tenant.current_plan_expires_at == expected_expiration
+    end
+
+    test "update_plan/4 should update tenant's plan" do
+      tenant = Tenants.get_tenant_by_slug("test")
+      new_expires_at = Date.add(Date.utc_today(), 30)
+
+      assert {:ok, updated_tenant} =
+               Tenants.update_plan(tenant, "supporter", new_expires_at, "supporter")
+
+      assert updated_tenant.current_plan_name == "supporter"
+      assert updated_tenant.current_plan_expires_at == new_expires_at
+      assert updated_tenant.next_plan_name == "supporter"
+    end
+
+    test "update_plan/4 should auto-calculate expiration and next plan" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      assert {:ok, updated_tenant} = Tenants.update_plan(tenant, "supporter")
+
+      assert updated_tenant.current_plan_name == "supporter"
+      assert updated_tenant.current_plan_expires_at != nil
+      assert updated_tenant.next_plan_name == "supporter"
+
+      # Supporter plan has 1 month duration
+      expected_expiration = Date.shift(Date.utc_today(), month: 1)
+      assert updated_tenant.current_plan_expires_at == expected_expiration
+    end
+
+    test "get_current_plan/1 returns plan configuration" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      # First update to a known plan
+      {:ok, tenant} = Tenants.update_plan(tenant, "supporter")
+
+      plan = Tenants.get_current_plan(tenant)
+
+      assert is_map(plan)
+      assert plan.title == "Lotta"
+      assert plan.user_max_storage == 1
+      assert plan.media_conversion_minutes == 15
+    end
+
+    test "get_current_plan/1 returns nil when no plan assigned" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      # Clear the plan
+      tenant
+      |> Ecto.Changeset.change(%{current_plan_name: nil})
+      |> Repo.update!(prefix: "public")
+
+      tenant = Tenants.get_tenant_by_slug("test")
+      assert Tenants.get_current_plan(tenant) == nil
+    end
+
+    test "plan_expired?/1 returns false for unexpired plan" do
+      tenant = Tenants.get_tenant_by_slug("test")
+      future_date = Date.add(Date.utc_today(), 30)
+
+      {:ok, tenant} = Tenants.update_plan(tenant, "supporter", future_date, "supporter")
+
+      assert Tenants.plan_expired?(tenant) == false
+    end
+
+    test "plan_expired?/1 returns true for expired plan" do
+      tenant = Tenants.get_tenant_by_slug("test")
+      past_date = Date.add(Date.utc_today(), -30)
+
+      {:ok, tenant} = Tenants.update_plan(tenant, "supporter", past_date, "supporter")
+
+      assert Tenants.plan_expired?(tenant) == true
+    end
+
+    test "plan_expired?/1 returns false when no expiration date" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      tenant
+      |> Ecto.Changeset.change(%{current_plan_expires_at: nil})
+      |> Repo.update!(prefix: "public")
+
+      tenant = Tenants.get_tenant_by_slug("test")
+      assert Tenants.plan_expired?(tenant) == false
+    end
+
+    test "renew_plan/1 renews to next plan" do
+      tenant = Tenants.get_tenant_by_slug("test")
+      past_date = Date.add(Date.utc_today(), -30)
+
+      # Set up an expired supporter plan that renews to supporter
+      {:ok, tenant} = Tenants.update_plan(tenant, "supporter", past_date, "supporter")
+
+      assert {:ok, renewed_tenant} = Tenants.renew_plan(tenant)
+
+      # Should still be on supporter plan
+      assert renewed_tenant.current_plan_name == "supporter"
+      assert renewed_tenant.next_plan_name == "supporter"
+
+      # Should have new expiration date (1 month from now)
+      expected_expiration = Date.shift(Date.utc_today(), month: 1)
+      assert renewed_tenant.current_plan_expires_at == expected_expiration
+    end
+
+    test "renew_plan/1 clears plan when no next plan" do
+      tenant = Tenants.get_tenant_by_slug("test")
+      past_date = Date.add(Date.utc_today(), -30)
+
+      # Set up an expired test plan with no next plan
+      {:ok, tenant} = Tenants.update_plan(tenant, "test", past_date, nil)
+
+      assert {:ok, renewed_tenant} = Tenants.renew_plan(tenant)
+
+      # Plan should be cleared
+      assert renewed_tenant.current_plan_name == nil
+      assert renewed_tenant.current_plan_expires_at == nil
+      assert renewed_tenant.next_plan_name == nil
     end
   end
 end
