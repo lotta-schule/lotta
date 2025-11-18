@@ -471,7 +471,7 @@ defmodule Lotta.Billings do
 
   ## Examples
 
-      iex> get_invoice_by_number("LOTTA-00000001")
+      iex> get_invoice_by_number("LTA00001")
       %Invoice{}
 
       iex> get_invoice_by_number("INVALID")
@@ -828,7 +828,7 @@ defmodule Lotta.Billings do
     end)
   end
 
-  # Generate a unique invoice number in format LOTTA-00000001
+  # Generate a unique invoice number in format LTA00001
   defp generate_invoice_number do
     # Get the maximum existing invoice number
     max_number =
@@ -843,14 +843,14 @@ defmodule Lotta.Billings do
           0
 
         invoice_number ->
-          # Extract number from "LOTTA-00000123" format
+          # Extract number from "LTA00123" format
           invoice_number
-          |> String.replace("LOTTA-", "")
+          |> String.replace("LTA", "")
           |> String.to_integer()
       end
 
     next_number = max_number + 1
-    "LOTTA-#{String.pad_leading(Integer.to_string(next_number), 8, "0")}"
+    "LTA#{String.pad_leading(Integer.to_string(next_number), 5, "0")}"
   end
 
   # Query filters

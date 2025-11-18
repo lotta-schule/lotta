@@ -643,7 +643,7 @@ defmodule Lotta.BillingsTest do
       assert invoice.period_start == ~D[2025-11-01]
       assert invoice.period_end == ~D[2025-11-30]
       assert invoice.tenant_id == tenant.id
-      assert invoice.invoice_number =~ ~r/^LOTTA-\d{8}$/
+      assert invoice.invoice_number =~ ~r/^LTA\d{5}$/
     end
 
     test "generate_invoice/3 includes plan in items if tenant has plan", %{tenant: tenant} do
@@ -875,7 +875,7 @@ defmodule Lotta.BillingsTest do
     end
 
     test "get_invoice/1 returns nil for non-existent id" do
-      assert Billings.get_invoice(999_999) == nil
+      assert Billings.get_invoice(99_999) == nil
     end
 
     test "get_invoice!/1 returns invoice by id", %{tenant: tenant} do
@@ -887,7 +887,7 @@ defmodule Lotta.BillingsTest do
 
     test "get_invoice!/1 raises for non-existent id" do
       assert_raise Ecto.NoResultsError, fn ->
-        Billings.get_invoice!(999_999)
+        Billings.get_invoice!(99_999)
       end
     end
   end
@@ -901,7 +901,7 @@ defmodule Lotta.BillingsTest do
     end
 
     test "returns nil for non-existent number" do
-      assert Billings.get_invoice_by_number("LOTTA-99999999") == nil
+      assert Billings.get_invoice_by_number("LTA99999") == nil
     end
   end
 
