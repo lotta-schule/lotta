@@ -55,7 +55,7 @@ defmodule Lotta.Eduplaces.IDM do
   @doc since: "6.1.0"
   @spec get_school(school_id :: String.t()) ::
           {:ok, map()} | {:error, any()}
-  def get_school(school_id), do: get("/school/#{school_id}")
+  def get_school(school_id), do: get("/schools/#{school_id}")
 
   @doc """
   List all available schools.
