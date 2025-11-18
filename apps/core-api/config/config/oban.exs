@@ -14,7 +14,9 @@ config :lotta, Oban,
        {"0 2 * * *", Lotta.Worker.Tenant, args: %{"type" => "collect_daily_usage_logs"}},
        # At 03:00 on every day-of-month from 1 through 3 and every day-of-month from 28 through 30 and on Sunday.
        {"0 3 1-3,28-30 * 0,3", Lotta.Worker.Tenant,
-        args: %{"type" => "refresh_monthly_usage_logs"}}
+        args: %{"type" => "refresh_monthly_usage_logs"}},
+       # At 03:45 on day-of-month 2.
+       {"45 3 1 * *", Lotta.Worker.Tenant, args: %{"type" => "generate_invoices"}}
      ]}
   ]
 

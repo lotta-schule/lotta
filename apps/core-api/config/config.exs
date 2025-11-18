@@ -21,3 +21,5 @@ import_config("config/tesla.exs")
 # must come *after* Tesla
 import_config("config/oauth2.exs")
 import_config("config/tzdata.exs")
+#
+import_config("config/plans.exs")
