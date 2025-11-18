@@ -100,7 +100,7 @@ defmodule Lotta.Eduplaces.IDMTest do
         %{method: :post, url: "https://auth.sandbox.eduplaces.dev/oauth2/token"} ->
           %Tesla.Env{status: 200, body: %{"access_token" => "fake_token"}}
 
-        %{method: :get, url: "https://api.sandbox.eduplaces.dev/idm/ep/v1/school/school123"} ->
+        %{method: :get, url: "https://api.sandbox.eduplaces.dev/idm/ep/v1/schools/school123"} ->
           %Tesla.Env{status: 200, body: ~s({"id": "school123"})}
       end)
 
