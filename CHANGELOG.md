@@ -1,3 +1,13 @@
+## 6.1.4 (2025-11-04)
+
+### 🩹 Fixes
+
+- **hubert:** use correct srcSet for user-avatars ([d222fca9](https://github.com/lotta-schule/lotta/commit/d222fca9))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.3 (2025-11-03)
 
 This was a version bump only, there were no code changes.
