@@ -112,11 +112,6 @@ defmodule LottaWeb.Router do
   end
 
   scope "/admin" do
-    pipe_through([:admin_auth])
-
-    live_dashboard("/live", metrics: LottaWeb.Telemetry)
-    oban_dashboard("/oban")
-
     scope "/api" do
       pipe_through(:json_api)
 
@@ -126,8 +121,10 @@ defmodule LottaWeb.Router do
   end
 
   scope "/_debug" do
-    # health endpoint
-    forward("/health", LottaWeb.HealthPlug)
+    pipe_through([:admin_auth])
+
+    live_dashboard("/live", metrics: LottaWeb.Telemetry)
+    oban_dashboard("/oban")
 
     scope "/mails" do
       forward(

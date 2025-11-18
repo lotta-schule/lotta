@@ -273,6 +273,6 @@ RUN chown -R nobody: /app
 USER nobody
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:4000/_debug/health || exit 1
+  CMD nc -z localhost 4321 || exit 1
 
 CMD ["env", "sh", "-c", "/app/bin/migrate && /app/bin/server"]
