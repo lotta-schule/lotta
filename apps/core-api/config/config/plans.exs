@@ -5,7 +5,7 @@ config :lotta,
     "test" => %{
       is_default: true,
       title: "Test",
-      default_duration: [months: 3],
+      default_duration: [month: 3],
       default_next_plan: nil
     },
     "supporter" => %{
@@ -16,7 +16,7 @@ config :lotta,
       active_user_price: "0.12",
       exceeding_storage_price: "1.00",
       exceeding_conversion_price: "1.00",
-      default_duration: [months: 1],
+      default_duration: [month: 1],
       default_next_plan: "supporter"
     },
     "default_2025" => %{
@@ -27,7 +27,7 @@ config :lotta,
       active_user_price: "0.12",
       exceeding_storage_price: "1.00",
       exceeding_conversion_price: "1.00",
-      default_duration: [months: 1],
+      default_duration: [month: 1],
       default_next_plan: "default_2025"
     }
   }

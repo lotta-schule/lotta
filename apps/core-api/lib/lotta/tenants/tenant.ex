@@ -155,20 +155,15 @@ defmodule Lotta.Tenants.Tenant do
     end)
   end
 
-  # Assigns the default plan to a tenant during creation
   defp assign_default_plan(changeset) do
-    case Lotta.Billings.Plans.get_default() do
-      nil ->
-        changeset
+    with {plan_name, _plan} <- Lotta.Billings.Plans.get_default() do
+      expires_at = Lotta.Billings.Plans.calculate_expiration(plan_name)
+      next_plan = Lotta.Billings.Plans.get_next_plan_name(plan_name)
 
-      {plan_name, _plan} ->
-        expires_at = Lotta.Billings.Plans.calculate_expiration(plan_name)
-        next_plan = Lotta.Billings.Plans.get_next_plan_name(plan_name)
-
-        changeset
-        |> put_change(:current_plan_name, plan_name)
-        |> put_change(:current_plan_expires_at, expires_at)
-        |> put_change(:next_plan_name, next_plan)
+      changeset
+      |> put_change(:current_plan_name, plan_name)
+      |> put_change(:current_plan_expires_at, expires_at)
+      |> put_change(:next_plan_name, next_plan)
     end
   end
 end

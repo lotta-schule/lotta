@@ -29,23 +29,12 @@ defmodule Lotta.Billings.Plans do
   def get_default do
     plans = all()
 
-    # First, try to find a plan with is_default: true
     default_plan =
       Enum.find(plans, fn {_name, plan} ->
         Map.get(plan, :is_default, false)
       end)
 
-    case default_plan do
-      nil ->
-        # If no default is set, return the first plan
-        case Enum.to_list(plans) do
-          [] -> nil
-          [first | _] -> first
-        end
-
-      plan ->
-        plan
-    end
+    with plan when not is_nil(plan) <- default_plan, do: plan
   end
 
   @doc """
@@ -53,10 +42,7 @@ defmodule Lotta.Billings.Plans do
   """
   @spec get_default_name() :: String.t() | nil
   def get_default_name do
-    case get_default() do
-      {name, _plan} -> name
-      nil -> nil
-    end
+    with {name, _plan} <- get_default(), do: name
   end
 
   @doc """
@@ -82,8 +68,8 @@ defmodule Lotta.Billings.Plans do
         nil
 
       plan ->
-        duration = Map.get(plan, :default_duration)
-        add_duration(from_date, duration)
+        from_date
+        |> Date.shift(Map.get(plan, :default_duration, month: 1))
     end
   end
 
@@ -97,18 +83,4 @@ defmodule Lotta.Billings.Plans do
       plan -> Map.get(plan, :default_next_plan)
     end
   end
-
-  # Private helper to add duration to a date
-  defp add_duration(date, nil), do: date
-
-  defp add_duration(date, duration) when is_list(duration) do
-    months = Keyword.get(duration, :months, 0)
-    days = Keyword.get(duration, :days, 0)
-
-    date
-    |> Date.shift(month: months)
-    |> Date.add(days)
-  end
-
-  defp add_duration(date, _), do: date
 end

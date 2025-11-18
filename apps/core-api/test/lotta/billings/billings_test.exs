@@ -116,7 +116,8 @@ defmodule Lotta.BillingsTest do
         })
 
       refute changeset.valid?
-      assert %{name: ["can't be blank"]} = errors_on(changeset)
+      errors = errors_on(changeset)
+      assert %{name: ["can't be blank"]} = errors
     end
 
     test "price is required", %{tenant: tenant} do
@@ -141,7 +142,8 @@ defmodule Lotta.BillingsTest do
         })
 
       refute changeset.valid?
-      assert %{price: ["must be greater than or equal to 0"]} = errors_on(changeset)
+      errors = errors_on(changeset)
+      assert %{price: ["must be greater than or equal to 0"]} = errors
     end
 
     test "description defaults to empty string", %{tenant: tenant} do
@@ -153,7 +155,33 @@ defmodule Lotta.BillingsTest do
           tenant_id: tenant.id
         })
 
-      assert get_field(changeset, :description) == ""
+      description = get_field(changeset, :description)
+      assert description == ""
+    end
+
+    test "name must not be empty string", %{tenant: tenant} do
+      changeset =
+        %AdditionalItem{}
+        |> AdditionalItem.changeset(%{
+          name: "",
+          price: "15.99",
+          tenant_id: tenant.id
+        })
+
+      refute changeset.valid?
+      assert %{name: _} = errors_on(changeset)
+    end
+
+    test "tenant_id is required", %{tenant: _tenant} do
+      changeset =
+        %AdditionalItem{}
+        |> AdditionalItem.changeset(%{
+          name: "Email Service",
+          price: "15.99"
+        })
+
+      refute changeset.valid?
+      assert %{tenant_id: ["can't be blank"]} = errors_on(changeset)
     end
 
     test "valid_until must be on or after valid_from", %{tenant: tenant} do

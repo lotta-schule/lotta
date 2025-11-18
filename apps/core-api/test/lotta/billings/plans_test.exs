@@ -23,7 +23,7 @@ defmodule Lotta.Billings.PlansTest do
       assert is_map(plan)
       assert plan.title == "Test"
       assert plan.is_default == true
-      assert plan.default_duration == [months: 3]
+      assert plan.default_duration == [month: 3]
     end
 
     test "returns supporter plan" do
