@@ -3,7 +3,7 @@ defmodule Lotta.Worker.Tenant do
   Worker for fetching a files metadata.
   """
   alias Lotta.Accounts.User
-  alias Lotta.{Accounts, Analytics, Tenants}
+  alias Lotta.{Accounts, Analytics, Billings, Tenants}
   alias Lotta.Tenants.{DefaultContent, Tenant}
   alias Lotta.Administration.Notification.Slack
 
@@ -136,6 +136,55 @@ defmodule Lotta.Worker.Tenant do
     end
   end
 
+  def perform(%{
+        id: _job_id,
+        args: %{"type" => "generate_invoices"}
+      }) do
+    Logger.info("Starting invoice generation for all tenants with active plans")
+
+    # Get current date to determine which month/year to generate invoices for
+    # This runs on day 1 of the month, so we generate for the previous month
+    today = Date.utc_today()
+    previous_month_date = Date.add(today, -1)
+    year = previous_month_date.year
+    month = previous_month_date.month
+
+    Logger.info("Generating invoices for period: #{year}-#{month}")
+
+    # Get all tenants that have a current plan
+    tenants =
+      Tenants.list_tenants()
+      |> Enum.filter(fn tenant -> not is_nil(tenant.current_plan_name) end)
+
+    results =
+      Enum.map(tenants, fn tenant ->
+        case Billings.generate_invoice(tenant, year, month) do
+          {:ok, invoice} ->
+            Logger.debug(
+              "Successfully generated invoice #{invoice.invoice_number} for tenant #{tenant.slug}"
+            )
+
+            {:ok, tenant.id, invoice.id}
+
+          {:error, reason} ->
+            Logger.error(
+              "Failed to generate invoice for tenant #{tenant.slug}: #{inspect(reason)}"
+            )
+
+            {:error, tenant.id, reason}
+        end
+      end)
+
+    success_count = Enum.count(results, fn result -> match?({:ok, _, _}, result) end)
+    failure_count = Enum.count(results, fn result -> match?({:error, _, _}, result) end)
+
+    Logger.info(
+      "Invoice generation completed for #{year}-#{month}. Success: #{success_count}, Failures: #{failure_count}"
+    )
+
+    :ok
+  end
+
   @impl Oban.Worker
   def timeout(_job), do: :timer.minutes(5)
 
@@ -209,6 +258,20 @@ defmodule Lotta.Worker.Tenant do
   def refresh_monthly_usage_logs do
     __MODULE__.new(%{
       "type" => "refresh_monthly_usage_logs"
+    })
+    |> Oban.insert()
+  end
+
+  @doc """
+  Schedules a job to generate invoices for all tenants with active plans.
+  This should typically be scheduled via a cron job to run on the first day
+  of each month to generate invoices for the previous month.
+  """
+  @spec generate_invoices() ::
+          {:ok, Oban.Job.t()} | {:error, Oban.Job.changeset() | String.t()}
+  def generate_invoices do
+    __MODULE__.new(%{
+      "type" => "generate_invoices"
     })
     |> Oban.insert()
   end

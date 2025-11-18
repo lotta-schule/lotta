@@ -899,6 +899,66 @@ defmodule Lotta.Tenants do
     Repo.delete(feedback)
   end
 
+  @doc """
+  Updates the plan for a tenant.
+  """
+  @spec update_plan(Tenant.t(), String.t(), Date.t() | nil, String.t() | nil) ::
+          {:ok, Tenant.t()} | {:error, Ecto.Changeset.t()}
+  def update_plan(tenant, plan_name, expires_at \\ nil, next_plan_name \\ nil) do
+    expires_at = expires_at || Lotta.Billings.Plans.calculate_expiration(plan_name)
+    next_plan_name = next_plan_name || Lotta.Billings.Plans.get_next_plan_name(plan_name)
+
+    tenant
+    |> Ecto.Changeset.change(%{
+      current_plan_name: plan_name,
+      current_plan_expires_at: expires_at,
+      next_plan_name: next_plan_name
+    })
+    |> Repo.update(prefix: "public")
+  end
+
+  @doc """
+  Gets the current plan for a tenant.
+  Returns the plan configuration from Lotta.Billings.Plans if the tenant has a plan assigned.
+  """
+  @spec get_current_plan(Tenant.t()) :: map() | nil
+  def get_current_plan(%Tenant{current_plan_name: nil}), do: nil
+
+  def get_current_plan(%Tenant{current_plan_name: plan_name}) do
+    Lotta.Billings.Plans.get(plan_name)
+  end
+
+  @doc """
+  Checks if a tenant's plan has expired.
+  """
+  @spec plan_expired?(Tenant.t()) :: boolean()
+  def plan_expired?(%Tenant{current_plan_expires_at: nil}), do: false
+
+  def plan_expired?(%Tenant{current_plan_expires_at: expires_at}) do
+    Date.compare(Date.utc_today(), expires_at) == :gt
+  end
+
+  @doc """
+  Renews a tenant's plan to the next plan.
+  If the tenant has a next_plan_name set, it will transition to that plan.
+  Otherwise, the plan will be cleared.
+  """
+  @spec renew_plan(Tenant.t()) :: {:ok, Tenant.t()} | {:error, Ecto.Changeset.t()}
+  def renew_plan(%Tenant{next_plan_name: nil} = tenant) do
+    # No next plan, clear the current plan
+    tenant
+    |> Ecto.Changeset.change(%{
+      current_plan_name: nil,
+      current_plan_expires_at: nil,
+      next_plan_name: nil
+    })
+    |> Repo.update(prefix: "public")
+  end
+
+  def renew_plan(%Tenant{next_plan_name: next_plan} = tenant) do
+    update_plan(tenant, next_plan)
+  end
+
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
