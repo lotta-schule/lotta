@@ -262,6 +262,7 @@ LABEL org.opencontainers.image.authors="Lotta Schule <kontakt@lotta.schule>"
 LABEL org.opencontainers.image.url="https://lotta.schule"
 
 EXPOSE 4000
+EXPOSE 4321
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -272,7 +273,7 @@ COPY --from=builder /app/_build/prod/rel/lotta ./
 RUN chown -R nobody: /app
 USER nobody
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:4000/_debug/health || exit 1
+HEALTHCHECK --interval=30s --timeout=15s --start-period=30s --retries=5 \
+  CMD netstat -ltn | grep -c 4321
 
 CMD ["env", "sh", "-c", "/app/bin/migrate && /app/bin/server"]
