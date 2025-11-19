@@ -9,7 +9,7 @@ import { Browser } from '@playwright/test';
     password: 'prec10us',
   };
 
-  // Setup
+  console.log(`create tenant and assign admin user ${admin.name}`);
   const browser = await chromium.launch();
 
   const { tenant } = await createTenantSetup(
@@ -20,5 +20,5 @@ import { Browser } from '@playwright/test';
     }
   );
 
-  console.log(tenant.id);
+  console.log(tenant);
 })();
