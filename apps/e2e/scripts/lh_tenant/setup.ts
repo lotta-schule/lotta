@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import { createTenantSetup } from '../../helper';
 import { Browser } from '@playwright/test';
 
-(async () => {
+const setupLighthouseTenant = async () => {
   const admin = {
     name: 'Bilbo Baggins',
     email: 'bilbo.baggins@shire.me',
@@ -20,5 +20,10 @@ import { Browser } from '@playwright/test';
     }
   );
 
-  console.log(tenant);
-})();
+  return tenant;
+};
+
+setupLighthouseTenant().then((tenant) => {
+  console.log(JSON.stringify(tenant));
+  process.exit(0);
+});
