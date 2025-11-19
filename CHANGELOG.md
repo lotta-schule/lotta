@@ -1,3 +1,18 @@
+## 6.1.5 (2025-11-19)
+
+### 🚀 Features
+
+- **core:** Add billing (plans + invoices) ([#516](https://github.com/lotta-schule/lotta/pull/516))
+- **core:** Use tcp-healthcheck instead of http ([#519](https://github.com/lotta-schule/lotta/pull/519))
+
+### 🩹 Fixes
+
+- **core:** update eduplaces to correct /schools/:id endpoint ([#517](https://github.com/lotta-schule/lotta/pull/517))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.1.4 (2025-11-04)
 
 ### 🩹 Fixes
