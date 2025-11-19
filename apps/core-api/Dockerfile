@@ -274,6 +274,6 @@ RUN chown -R nobody: /app
 USER nobody
 
 HEALTHCHECK --interval=30s --timeout=15s --start-period=30s --retries=5 \
-  CMD nc -z localhost 4321 || exit 1
+  CMD netstat -ltn | grep -c 4321
 
 CMD ["env", "sh", "-c", "/app/bin/migrate && /app/bin/server"]
