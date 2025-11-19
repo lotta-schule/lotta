@@ -21,6 +21,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   lighthouse:
+    name: 'Performance + Accessibility via Lighthouse'
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() }}
     steps:
@@ -67,6 +68,8 @@ jobs:
             http://lighthouse.local.lotta.schule:3000
           uploadArtifacts: true
           temporaryPublicStorage: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.lhci_gh_app_token }}
   test:
     name: E2E-Testing ( ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} )
     runs-on: ubuntu-24.04
