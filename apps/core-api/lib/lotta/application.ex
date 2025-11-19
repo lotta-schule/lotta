@@ -18,26 +18,29 @@ defmodule Lotta.Application do
 
     # List all child processes to be supervised
     children =
-      prepended_apps() ++
-        [
-          {Task.Supervisor, name: Lotta.TaskSupervisor},
-          {Finch, name: Lotta.Finch},
-          LottaWeb.Telemetry,
-          Lotta.Repo,
-          {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
-          LottaWeb.Endpoint,
-          Lotta.PushNotification,
-          {Absinthe.Subscription, LottaWeb.Endpoint},
-          {Redix, Application.fetch_env!(:lotta, :redis_connection)},
-          {ConCache,
-           name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)},
-          {Lotta.Eduplaces.Syncer, Application.get_env(:lotta, Lotta.Eduplaces.Syncer, [])},
-          {Oban, Application.fetch_env!(:lotta, Oban)}
-        ]
+      [
+        get_libcluster_app_child(),
+        {Task.Supervisor, name: Lotta.TaskSupervisor},
+        {Finch, name: Lotta.Finch},
+        LottaWeb.Telemetry,
+        Lotta.Repo,
+        {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
+        LottaWeb.Endpoint,
+        Lotta.PushNotification,
+        {Absinthe.Subscription, LottaWeb.Endpoint},
+        {Redix, Application.fetch_env!(:lotta, :redis_connection)},
+        {ConCache,
+         name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)},
+        {Lotta.Eduplaces.Syncer, Application.get_env(:lotta, Lotta.Eduplaces.Syncer, [])},
+        {Oban, Application.fetch_env!(:lotta, Oban)},
+        get_tcp_healthcheck_app_child()
+      ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    Supervisor.start_link(children,
+    children
+    |> Enum.filter(&(not is_nil(&1)))
+    |> Supervisor.start_link(
       strategy: :one_for_one,
       name: Lotta.Supervisor
     )
@@ -51,17 +54,19 @@ defmodule Lotta.Application do
     OpentelemetryEcto.setup([:lotta, :repo])
   end
 
-  defp prepended_apps() do
-    topologies = Application.get_env(:libcluster, :topologies)
-    Logger.info("Topologies: #{inspect(topologies)}")
-
-    case Application.get_env(:libcluster, :topologies) do
-      nil ->
-        []
-
-      cluster_topologies ->
-        [{Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]}]
+  defp get_libcluster_app_child() do
+    with cluster_topologies when not is_nil(cluster_topologies) <-
+           Application.get_env(:libcluster, :topologies) do
+      Logger.info("Topologies: #{inspect(cluster_topologies)}")
+      {Cluster.Supervisor, [cluster_topologies, [name: Lotta.ClusterSupervisor]]}
     end
+  end
+
+  defp get_tcp_healthcheck_app_child() do
+    config = Application.get_env(:lotta, Lotta.TCPHealthCheck, [])
+
+    if Keyword.get(config, :enabled),
+      do: {TcpHealthCheck, Keyword.get(config, :config)}
   end
 
   # Tell Phoenix to update the endpoint configuration
