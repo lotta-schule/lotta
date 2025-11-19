@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Category } from 'util/model';
+import { Category, RedirectType } from 'util/model';
 import { useCategories } from 'util/categories/useCategories';
 import Link from 'next/link';
 
@@ -12,6 +12,8 @@ export const Footer = React.memo(() => {
   return (
     <div className={styles.root}>
       {categories.map((category) => {
+        const isExternalLink =
+          Category.getRedirectType(category) === RedirectType.Extern;
         return (
           <Link
             key={category.id}
@@ -19,6 +21,10 @@ export const Footer = React.memo(() => {
             className={styles.link}
             passHref
             data-testid="SidenavLink"
+            {...(isExternalLink && {
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            })}
           >
             {category.title}
           </Link>

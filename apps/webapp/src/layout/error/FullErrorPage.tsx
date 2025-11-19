@@ -4,17 +4,23 @@ import styles from './error.module.scss';
 
 export type FullErrorPageProps = React.PropsWithChildren<{
   title: string;
+  subtitle?: string;
   imageUrl?: string;
 }>;
 
 export const FullErrorPage = ({
   title,
+  subtitle,
   imageUrl,
   children,
 }: FullErrorPageProps) => {
   return (
     <section className={styles.error}>
-      <h1>{title}</h1>
+      <h1>
+        {title}
+        {subtitle && ': '}
+        {subtitle && <strong>{subtitle}</strong>}
+      </h1>
       <div>
         {imageUrl && (
           <img

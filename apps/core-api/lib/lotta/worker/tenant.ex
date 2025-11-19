@@ -3,7 +3,7 @@ defmodule Lotta.Worker.Tenant do
   Worker for fetching a files metadata.
   """
   alias Lotta.Accounts.User
-  alias Lotta.{Accounts, Analytics, Tenants}
+  alias Lotta.{Accounts, Analytics, Billings, Tenants}
   alias Lotta.Tenants.{DefaultContent, Tenant}
   alias Lotta.Administration.Notification.Slack
 
@@ -64,7 +64,7 @@ defmodule Lotta.Worker.Tenant do
     case Tenants.get_tenant(tenant_id) do
       nil ->
         Logger.error("Tenant with ID #{tenant_id} not found for analytics setup")
-        :error
+        {:error, :tenant_not_found}
 
       tenant ->
         Analytics.create_site(tenant)
@@ -85,6 +85,104 @@ defmodule Lotta.Worker.Tenant do
       Logger.error("Tenant with ID #{tenant_id} not found for creation notification")
       {:error, :tenant_not_found}
     end
+  end
+
+  def perform(%{
+        id: _job_id,
+        args: %{"type" => "collect_daily_usage_logs"}
+      }) do
+    Logger.info("Starting daily usage log collection for all tenants")
+
+    tenants = Tenants.list_tenants()
+
+    results =
+      Enum.map(tenants, fn tenant ->
+        case Tenants.create_usage_logs(tenant) do
+          :ok ->
+            Logger.debug("Successfully created usage logs for tenant #{tenant.slug}")
+            {:ok, tenant.id}
+
+          {:error, reason} ->
+            Logger.error(
+              "Failed to create usage logs for tenant #{tenant.slug}: #{inspect(reason)}"
+            )
+
+            {:error, tenant.id, reason}
+        end
+      end)
+
+    success_count = Enum.count(results, fn result -> match?({:ok, _}, result) end)
+    failure_count = Enum.count(results, fn result -> match?({:error, _, _}, result) end)
+
+    Logger.info(
+      "Daily usage log collection completed. Success: #{success_count}, Failures: #{failure_count}"
+    )
+
+    :ok
+  end
+
+  def perform(%{
+        id: _job_id,
+        args: %{"type" => "refresh_monthly_usage_logs"}
+      }) do
+    case Tenants.refresh_monthly_usage_logs(concurrent: true) do
+      :ok ->
+        Logger.info("Successfully refreshed monthly usage logs materialized view")
+        :ok
+
+      {:error, reason} ->
+        Logger.error("Failed to refresh monthly usage logs: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
+  def perform(%{
+        id: _job_id,
+        args: %{"type" => "generate_invoices"}
+      }) do
+    Logger.info("Starting invoice generation for all tenants with active plans")
+
+    # Get current date to determine which month/year to generate invoices for
+    # This runs on day 1 of the month, so we generate for the previous month
+    today = Date.utc_today()
+    previous_month_date = Date.add(today, -1)
+    year = previous_month_date.year
+    month = previous_month_date.month
+
+    Logger.info("Generating invoices for period: #{year}-#{month}")
+
+    # Get all tenants that have a current plan
+    tenants =
+      Tenants.list_tenants()
+      |> Enum.filter(fn tenant -> not is_nil(tenant.current_plan_name) end)
+
+    results =
+      Enum.map(tenants, fn tenant ->
+        case Billings.generate_invoice(tenant, year, month) do
+          {:ok, invoice} ->
+            Logger.debug(
+              "Successfully generated invoice #{invoice.invoice_number} for tenant #{tenant.slug}"
+            )
+
+            {:ok, tenant.id, invoice.id}
+
+          {:error, reason} ->
+            Logger.error(
+              "Failed to generate invoice for tenant #{tenant.slug}: #{inspect(reason)}"
+            )
+
+            {:error, tenant.id, reason}
+        end
+      end)
+
+    success_count = Enum.count(results, fn result -> match?({:ok, _, _}, result) end)
+    failure_count = Enum.count(results, fn result -> match?({:error, _, _}, result) end)
+
+    Logger.info(
+      "Invoice generation completed for #{year}-#{month}. Success: #{success_count}, Failures: #{failure_count}"
+    )
+
+    :ok
   end
 
   @impl Oban.Worker
@@ -133,6 +231,47 @@ defmodule Lotta.Worker.Tenant do
     __MODULE__.new(%{
       "type" => "delete_analytics",
       "site_id" => site_id
+    })
+    |> Oban.insert()
+  end
+
+  @doc """
+  Schedules a job to collect daily usage logs for all tenants.
+  This should typically be scheduled via a cron job to run daily.
+  """
+  @spec collect_daily_usage_logs() ::
+          {:ok, Oban.Job.t()} | {:error, Oban.Job.changeset() | String.t()}
+  def collect_daily_usage_logs do
+    __MODULE__.new(%{
+      "type" => "collect_daily_usage_logs"
+    })
+    |> Oban.insert()
+  end
+
+  @doc """
+  Schedules a job to refresh the monthly usage logs materialized view.
+  This should be scheduled after daily usage logs are collected to ensure
+  the monthly aggregations are up to date.
+  """
+  @spec refresh_monthly_usage_logs() ::
+          {:ok, Oban.Job.t()} | {:error, Oban.Job.changeset() | String.t()}
+  def refresh_monthly_usage_logs do
+    __MODULE__.new(%{
+      "type" => "refresh_monthly_usage_logs"
+    })
+    |> Oban.insert()
+  end
+
+  @doc """
+  Schedules a job to generate invoices for all tenants with active plans.
+  This should typically be scheduled via a cron job to run on the first day
+  of each month to generate invoices for the previous month.
+  """
+  @spec generate_invoices() ::
+          {:ok, Oban.Job.t()} | {:error, Oban.Job.changeset() | String.t()}
+  def generate_invoices do
+    __MODULE__.new(%{
+      "type" => "generate_invoices"
     })
     |> Oban.insert()
   end

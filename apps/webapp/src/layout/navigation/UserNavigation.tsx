@@ -23,17 +23,19 @@ import {
   Item,
 } from '@lotta-schule/hubert';
 import { useQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/Icon';
 import { ArticleModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, User } from 'util/model';
-import { LoginDialog } from 'shared/dialog/LoginDialog';
+import { LoginDialog } from 'shared/dialog/login';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { useNewFeedbackCount } from 'util/feedback';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
+import { useTenant } from 'util/tenant';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import clsx from 'clsx';
@@ -43,7 +45,9 @@ import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.g
 import styles from './UserNavigation.module.scss';
 
 export const UserNavigation = React.memo(() => {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
+  const tenant = useTenant();
 
   const router = useRouter();
   const { data: unpublishedArticlesData } = useQuery<{
@@ -111,7 +115,7 @@ export const UserNavigation = React.memo(() => {
               secondary
               onClick={() => setCreateArticleModalIsOpen(true)}
               icon={<Icon icon={faCirclePlus} size={'xl'} />}
-              label={'neuer Beitrag'}
+              label={t('new article')}
               className={styles.navigationButton}
             ></NavigationButton>
             <Link href={'/search'} passHref legacyBehavior>
@@ -134,7 +138,7 @@ export const UserNavigation = React.memo(() => {
                   </span>
                 }
               >
-                Nachrichten
+                {t('messages')}
                 <Badge
                   className={styles.newMessageBadge}
                   value={newMessagesBadgeNumber}
@@ -149,7 +153,7 @@ export const UserNavigation = React.memo(() => {
                 variant: 'borderless',
                 children: (
                   <>
-                    Mein Profil{' '}
+                    {t('my account')}{' '}
                     <Icon
                       icon={faCaretDown}
                       style={{ paddingRight: 0 }}
@@ -164,19 +168,19 @@ export const UserNavigation = React.memo(() => {
               {[
                 <Item key={'profile'} textValue={'Meine Daten'}>
                   <Icon icon={faUser} color="secondary" />
-                  Meine Daten
+                  {t('my data')}
                 </Item>,
                 <Item key={'files'} textValue={'Meine Dateien und Medien'}>
                   <Icon icon={faFolder} color="secondary" />
-                  Meine Dateien und Medien
+                  {t('my files and media')}
                 </Item>,
                 <Item key={'own-articles'} textValue={'Meine Beiträge'}>
                   <Icon icon={faClipboardList} color="secondary" />
-                  Meine Beiträge
+                  {t('my articles')}
                 </Item>,
                 <Item key={'feedback'} textValue={'Feedback'}>
                   <Icon icon={faCommentDots} color="secondary" />
-                  Feedback
+                  {t('feedback')}
                 </Item>,
                 ...(User.isAdmin(currentUser)
                   ? [
@@ -186,7 +190,7 @@ export const UserNavigation = React.memo(() => {
                       >
                         <Icon icon={faShieldHalved} color="secondary" />
                         <span>
-                          Seite administrieren
+                          {t('administrate page')}
                           <Badge
                             value={newFeedbackBadgeNumber}
                             data-testid="FeedbackBadge"
@@ -199,7 +203,7 @@ export const UserNavigation = React.memo(() => {
                       >
                         <Icon icon={faClipboardList} color="secondary" />
                         <span>
-                          Beiträge freigeben
+                          {t('publish articles')}
                           <Badge value={unpublishedBadgeNumber} />
                         </span>
                       </Item>,
@@ -207,7 +211,7 @@ export const UserNavigation = React.memo(() => {
                   : []),
                 <Item key={'logout'} textValue={'Abmelden'}>
                   <Icon icon={faArrowRightFromBracket} color="secondary" />
-                  Abmelden
+                  {t('logout')}
                 </Item>,
               ]}
             </MenuButton>
@@ -227,20 +231,22 @@ export const UserNavigation = React.memo(() => {
           <NavigationButton
             secondary
             onClick={() => setLoginModalIsOpen(true)}
-            label={'Anmelden'}
+            label={t('login')}
             className={clsx('secondary', 'small')}
           ></NavigationButton>
-          <NavigationButton
-            secondary
-            onClick={() => setRegisterModalIsOpen(true)}
-            label={'Registrieren'}
-            className={clsx('secondary', 'small')}
-          ></NavigationButton>
+          {tenant?.configuration.isEmailRegistrationEnabled !== false && (
+            <NavigationButton
+              secondary
+              onClick={() => setRegisterModalIsOpen(true)}
+              label={t('register')}
+              className={clsx('secondary', 'small')}
+            ></NavigationButton>
+          )}
           <Link href={'/search'} passHref legacyBehavior>
             <NavigationButton
               secondary
               onClick={() => router.push('/search')}
-              label={'Suche'}
+              label={t('search')}
               className={clsx('secondary', 'small')}
             ></NavigationButton>
           </Link>
@@ -254,7 +260,9 @@ export const UserNavigation = React.memo(() => {
       );
     }
   }, [
+    t,
     currentUser,
+    tenant,
     newMessagesBadgeNumber,
     newFeedbackBadgeNumber,
     unpublishedBadgeNumber,

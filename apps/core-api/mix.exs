@@ -4,7 +4,7 @@ defmodule Lotta.MixProject do
   def project do
     [
       app: :lotta,
-      version: "6.0.24",
+      version: "6.1.5",
       name: "Lotta API Server",
       source_url: "https://github.com/lotta-schule/core",
       homepage_url: "https://lotta.schule",
@@ -127,6 +127,7 @@ defmodule Lotta.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
       # Telemetry & OpenTelemetry
+      {:tcp_health_check, "~> 0.1.0"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_metrics_prometheus, "~> 1.1.0"},
       {:telemetry_poller, "~> 1.1"},
@@ -155,7 +156,11 @@ defmodule Lotta.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.reset", "test"],
-      sentry_recompile: ["compile", "deps.compile sentry --force"]
+      sentry_recompile: ["compile", "deps.compile sentry --force"],
+      translations: [
+        "gettext.extract",
+        "gettext.merge priv/gettext/de/LC_MESSAGES/default.po priv/gettext/default.pot"
+      ]
     ]
   end
 end

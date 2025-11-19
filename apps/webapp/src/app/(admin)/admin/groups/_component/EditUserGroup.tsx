@@ -15,12 +15,14 @@ import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 import { AdminPageSection } from 'app/(admin)/admin/_component/AdminPageSection';
 import { useRouter } from 'next/navigation';
-import { UPDATE_USER_GROUP, UserGroup } from '../_graphql';
+import { UPDATE_USER_GROUP } from '../_graphql';
+import { ResultOf } from 'gql.tada';
+import { type GET_GROUP_QUERY } from 'loader';
 
 import styles from './EditUserGroup.module.scss';
 
 export type EditUserGroupProps = {
-  group: UserGroup;
+  group: NonNullable<ResultOf<typeof GET_GROUP_QUERY>['group']>;
 };
 
 export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
@@ -30,13 +32,10 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
   const [updateGroup, { loading: isLoadingUpdateGroup, error: updateError }] =
     useMutation(UPDATE_USER_GROUP);
 
-  const [editedGroup, setEditedGroup] = React.useState(group);
-
-  React.useEffect(() => {
-    if (group) {
-      setEditedGroup(group);
-    }
-  }, [group]);
+  const [editedGroup, setEditedGroup] = React.useState({
+    ...group,
+    enrollmentTokens: [...(group.enrollmentTokens ?? []), ''],
+  });
 
   const groupHasBeenChanged = React.useMemo(() => {
     if (group.name !== editedGroup.name) {
@@ -50,6 +49,7 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
         .sort()
         .join() !==
       Array.from(editedGroup.enrollmentTokens ?? [])
+        .filter((t) => t)
         .sort()
         .join()
     ) {
@@ -177,7 +177,9 @@ export const EditUserGroup = React.memo(({ group }: EditUserGroupProps) => {
                           name: editedGroup.name,
                           isAdminGroup: editedGroup.isAdminGroup,
                           canReadFullName: editedGroup.canReadFullName,
-                          enrollmentTokens: editedGroup.enrollmentTokens,
+                          enrollmentTokens: editedGroup.enrollmentTokens.filter(
+                            (t) => t
+                          ),
                         },
                       },
                     });

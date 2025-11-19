@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* prettier-ignore */
 
 /** An IntrospectionQuery representation of your schema.
@@ -681,11 +682,8 @@ const introspection = {
           {
             "name": "url",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String"
-              }
+              "kind": "SCALAR",
+              "name": "String"
             },
             "args": [],
             "isDeprecated": false
@@ -2749,40 +2747,6 @@ const introspection = {
       },
       {
         "kind": "OBJECT",
-        "name": "MediaUsage",
-        "fields": [
-          {
-            "name": "mediaConversionCurrentPeriod",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float"
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
-            "name": "mediaFilesTotal",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int"
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
-            "name": "mediaFilesTotalDuration",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float"
-            },
-            "args": [],
-            "isDeprecated": false
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
         "name": "Message",
         "fields": [
           {
@@ -2928,6 +2892,64 @@ const introspection = {
           },
           {
             "name": "value",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "MonthlyUsagePeriod",
+        "fields": [
+          {
+            "name": "activeUserCount",
+            "type": {
+              "kind": "OBJECT",
+              "name": "UsageTypeData"
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "mediaConversionSeconds",
+            "type": {
+              "kind": "OBJECT",
+              "name": "UsageTypeData"
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "month",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int"
+              }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "totalStorageCount",
+            "type": {
+              "kind": "OBJECT",
+              "name": "UsageTypeData"
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "year",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -5280,7 +5302,7 @@ const introspection = {
                   "kind": "NON_NULL",
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Usage"
+                    "name": "MonthlyUsagePeriod"
                   }
                 }
               }
@@ -5526,31 +5548,6 @@ const introspection = {
         "isOneOf": false
       },
       {
-        "kind": "OBJECT",
-        "name": "StorageUsage",
-        "fields": [
-          {
-            "name": "filesTotal",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int"
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
-            "name": "usedTotal",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int"
-            },
-            "args": [],
-            "isDeprecated": false
-          }
-        ],
-        "interfaces": []
-      },
-      {
         "kind": "SCALAR",
         "name": "String"
       },
@@ -5755,6 +5752,15 @@ const introspection = {
             "isDeprecated": false
           },
           {
+            "name": "isEmailRegistrationEnabled",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean"
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
             "name": "logoImageFile",
             "type": {
               "kind": "OBJECT",
@@ -5784,6 +5790,13 @@ const introspection = {
             "type": {
               "kind": "SCALAR",
               "name": "Json"
+            }
+          },
+          {
+            "name": "isEmailRegistrationEnabled",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean"
             }
           },
           {
@@ -6093,40 +6106,28 @@ const introspection = {
       },
       {
         "kind": "OBJECT",
-        "name": "Usage",
+        "name": "UsageTypeData",
         "fields": [
           {
-            "name": "media",
+            "name": "updatedAt",
             "type": {
-              "kind": "OBJECT",
-              "name": "MediaUsage"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime"
+              }
             },
             "args": [],
             "isDeprecated": false
           },
           {
-            "name": "periodEnd",
+            "name": "value",
             "type": {
-              "kind": "SCALAR",
-              "name": "DateTime"
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
-            "name": "periodStart",
-            "type": {
-              "kind": "SCALAR",
-              "name": "DateTime"
-            },
-            "args": [],
-            "isDeprecated": false
-          },
-          {
-            "name": "storage",
-            "type": {
-              "kind": "OBJECT",
-              "name": "StorageUsage"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float"
+              }
             },
             "args": [],
             "isDeprecated": false

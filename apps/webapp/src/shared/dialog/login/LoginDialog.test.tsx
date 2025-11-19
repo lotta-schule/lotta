@@ -2,13 +2,13 @@ import * as React from 'react';
 import { act, render, waitFor, within } from 'test/util';
 import { LoginDialog } from './LoginDialog';
 import { SomeUser, tenant } from 'test/fixtures';
-import LoginMutation from 'api/mutation/LoginMutation.graphql';
+import { LOGIN } from './_graphql';
 import userEvent from '@testing-library/user-event';
 
 const additionalMocks = [
   {
     request: {
-      query: LoginMutation,
+      query: LOGIN,
       variables: {
         username: 'nutzer@email.de',
         password: 'password',
@@ -105,6 +105,46 @@ describe('shared/dialog/LoginDialog', () => {
           screen.queryByRole('heading', { name: /passwort ändern/i })
         ).not.toBeNull();
       });
+    });
+  });
+
+  describe('email registration disabled', () => {
+    it('should not show email/password fields when isEmailRegistrationEnabled is false', () => {
+      const screen = render(
+        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+        {},
+        {
+          tenant: {
+            ...tenant,
+            eduplacesId: '123',
+            configuration: {
+              isEmailRegistrationEnabled: false,
+            },
+          },
+        }
+      );
+
+      expect(screen.queryByRole('textbox', { name: /e-mail/i })).toBeNull();
+      expect(screen.queryByLabelText(/passwort/i)).toBeNull();
+      expect(screen.getByRole('button', { name: /eduplaces/i })).toBeVisible();
+    });
+
+    it('should show email/password fields when isEmailRegistrationEnabled is true', () => {
+      const screen = render(
+        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+        {},
+        {
+          tenant: {
+            ...tenant,
+            configuration: {
+              isEmailRegistrationEnabled: true,
+            },
+          },
+        }
+      );
+
+      expect(screen.getByRole('textbox', { name: /e-mail/i })).toBeVisible();
+      expect(screen.getByLabelText(/passwort/i)).toBeVisible();
     });
   });
 

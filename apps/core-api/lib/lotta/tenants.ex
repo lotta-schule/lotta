@@ -19,9 +19,11 @@ defmodule Lotta.Tenants do
     Category,
     CustomDomain,
     Feedback,
+    MonthlyUsageLog,
     Tenant,
     TenantDbManager,
     Usage,
+    UsageLog,
     Widget
   }
 
@@ -360,6 +362,172 @@ defmodule Lotta.Tenants do
   """
   @spec get_usage(Tenant.t() | nil) :: {:ok, list(map())} | {:error, term()}
   def get_usage(tenant \\ current()), do: Usage.get_usage(tenant)
+
+  @doc """
+  Creates a usage log entry for a tenant.
+  The date is automatically set to today's date.
+  """
+  @doc since: "6.1.0"
+  @spec create_usage_log_entry(
+          tenant :: Tenant.t(),
+          type :: atom(),
+          value :: String.t(),
+          unique_identifier :: String.t() | nil
+        ) ::
+          {:ok, UsageLog.t()} | {:error, Ecto.Changeset.t()}
+  def create_usage_log_entry(tenant, type, value, unique_identifier \\ nil) do
+    %UsageLog{}
+    |> UsageLog.changeset(%{
+      tenant_id: tenant.id,
+      type: type,
+      value: value,
+      date: Date.utc_today(),
+      unique_identifier: unique_identifier
+    })
+    |> Repo.insert(prefix: "public")
+  end
+
+  @doc """
+  Creates a usage log entry for total storage used by a tenant.
+  Sums all file sizes (excluding file conversions) and creates a log entry.
+  """
+  @doc since: "6.1.0"
+  @spec create_total_storage_log(tenant :: Tenant.t()) ::
+          {:ok, UsageLog.t()} | {:error, Ecto.Changeset.t()}
+  def create_total_storage_log(tenant) do
+    total_storage =
+      from(f in File, select: sum(f.filesize))
+      |> Repo.one(prefix: tenant.prefix)
+      |> case do
+        nil -> 0
+        sum -> sum
+      end
+
+    create_usage_log_entry(tenant, :total_storage_count, to_string(total_storage))
+  end
+
+  @doc """
+  Creates a usage log entry for active user count (users with at least one group).
+  Calculates total users minus users without groups.
+  """
+  @doc since: "6.1.0"
+  @spec create_active_user_count_log(tenant :: Tenant.t()) ::
+          {:ok, UsageLog.t()} | {:error, Ecto.Changeset.t()}
+  def create_active_user_count_log(tenant) do
+    total_user_count =
+      from(u in User, select: count(u.id))
+      |> Repo.one(prefix: tenant.prefix)
+
+    users_without_groups =
+      Repo.put_prefix(tenant.prefix)
+      |> then(fn _ -> Accounts.list_users_without_groups() end)
+
+    users_with_groups = total_user_count - length(users_without_groups)
+
+    create_usage_log_entry(tenant, :active_user_count, to_string(users_with_groups))
+  end
+
+  @doc """
+  Creates both total storage and active user count usage logs for a tenant.
+  """
+  @doc since: "6.1.0"
+  @spec create_usage_logs(tenant :: Tenant.t()) :: :ok | {:error, term()}
+  def create_usage_logs(tenant) do
+    with {:ok, _storage_log} <- create_total_storage_log(tenant),
+         {:ok, _user_log} <- create_active_user_count_log(tenant) do
+      :ok
+    end
+  end
+
+  @doc """
+  Refreshes the monthly_usage_logs materialized view.
+
+  ## Options
+    * `:concurrent` - If false, uses blocking refresh. Default: true
+
+  ## Examples
+
+      iex> refresh_monthly_usage_logs()
+      :ok
+
+      iex> refresh_monthly_usage_logs(concurrent: false)
+      :ok
+
+  """
+  @doc since: "6.1.0"
+  @spec refresh_monthly_usage_logs(keyword()) :: :ok | {:error, term()}
+  def refresh_monthly_usage_logs(opts \\ []) do
+    concurrent = Keyword.get(opts, :concurrent, true)
+
+    sql =
+      if concurrent do
+        "REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_usage_logs"
+      else
+        "REFRESH MATERIALIZED VIEW monthly_usage_logs"
+      end
+
+    with {:ok, _result} <- Repo.query(sql, [], prefix: "public") do
+      :ok
+    end
+  end
+
+  @doc """
+  Gets monthly usage logs for a specific tenant.
+
+  ## Options
+    * `:type` - Filter by usage type
+    * `:year` - Filter by year
+    * `:month` - Filter by month
+    * `:limit` - Limit number of results
+
+  ## Examples
+
+      iex> get_monthly_usage_logs(tenant)
+      [%MonthlyUsageLog{}, ...]
+
+      iex> get_monthly_usage_logs(tenant, type: :active_user_count, year: 2025)
+      [%MonthlyUsageLog{}, ...]
+
+  """
+  @doc since: "6.1.0"
+  @spec get_monthly_usage_logs(Tenant.t(), keyword()) :: [MonthlyUsageLog.t()]
+  def get_monthly_usage_logs(tenant, opts \\ []) do
+    query =
+      from(m in MonthlyUsageLog,
+        where: m.tenant_id == ^tenant.id,
+        order_by: [desc: m.year, desc: m.month, asc: m.type]
+      )
+
+    query =
+      if type = opts[:type] do
+        from(m in query, where: m.type == ^type)
+      else
+        query
+      end
+
+    query =
+      if year = opts[:year] do
+        from(m in query, where: m.year == ^year)
+      else
+        query
+      end
+
+    query =
+      if month = opts[:month] do
+        from(m in query, where: m.month == ^month)
+      else
+        query
+      end
+
+    query =
+      if limit = opts[:limit] do
+        from(m in query, limit: ^limit)
+      else
+        query
+      end
+
+    Repo.all(query, prefix: "public")
+  end
 
   @doc """
   Returns the list of all categories accessible by the user.
@@ -729,6 +897,66 @@ defmodule Lotta.Tenants do
           {:ok, Feedback.t()} | {:error, Ecto.Changeset.t()}
   def delete_feedback(feedback) do
     Repo.delete(feedback)
+  end
+
+  @doc """
+  Updates the plan for a tenant.
+  """
+  @spec update_plan(Tenant.t(), String.t(), Date.t() | nil, String.t() | nil) ::
+          {:ok, Tenant.t()} | {:error, Ecto.Changeset.t()}
+  def update_plan(tenant, plan_name, expires_at \\ nil, next_plan_name \\ nil) do
+    expires_at = expires_at || Lotta.Billings.Plans.calculate_expiration(plan_name)
+    next_plan_name = next_plan_name || Lotta.Billings.Plans.get_next_plan_name(plan_name)
+
+    tenant
+    |> Ecto.Changeset.change(%{
+      current_plan_name: plan_name,
+      current_plan_expires_at: expires_at,
+      next_plan_name: next_plan_name
+    })
+    |> Repo.update(prefix: "public")
+  end
+
+  @doc """
+  Gets the current plan for a tenant.
+  Returns the plan configuration from Lotta.Billings.Plans if the tenant has a plan assigned.
+  """
+  @spec get_current_plan(Tenant.t()) :: map() | nil
+  def get_current_plan(%Tenant{current_plan_name: nil}), do: nil
+
+  def get_current_plan(%Tenant{current_plan_name: plan_name}) do
+    Lotta.Billings.Plans.get(plan_name)
+  end
+
+  @doc """
+  Checks if a tenant's plan has expired.
+  """
+  @spec plan_expired?(Tenant.t()) :: boolean()
+  def plan_expired?(%Tenant{current_plan_expires_at: nil}), do: false
+
+  def plan_expired?(%Tenant{current_plan_expires_at: expires_at}) do
+    Date.compare(Date.utc_today(), expires_at) == :gt
+  end
+
+  @doc """
+  Renews a tenant's plan to the next plan.
+  If the tenant has a next_plan_name set, it will transition to that plan.
+  Otherwise, the plan will be cleared.
+  """
+  @spec renew_plan(Tenant.t()) :: {:ok, Tenant.t()} | {:error, Ecto.Changeset.t()}
+  def renew_plan(%Tenant{next_plan_name: nil} = tenant) do
+    # No next plan, clear the current plan
+    tenant
+    |> Ecto.Changeset.change(%{
+      current_plan_name: nil,
+      current_plan_expires_at: nil,
+      next_plan_name: nil
+    })
+    |> Repo.update(prefix: "public")
+  end
+
+  def renew_plan(%Tenant{next_plan_name: next_plan} = tenant) do
+    update_plan(tenant, next_plan)
   end
 
   def data() do

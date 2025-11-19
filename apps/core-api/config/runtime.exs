@@ -66,6 +66,10 @@ defmodule SystemConfig do
 
   defp default("ISSUER_JWT", _), do: "lotta"
 
+  defp default("TCP_HEALTH_CHECK_PORT", _), do: "4321"
+
+  defp default("TCP_HEALTH_CHECK_ENABLED", _), do: "true"
+
   defp default("PORT", _), do: "4000"
 
   defp default("POSTGRES_USER", env) when env in [:dev, :test], do: "lotta"
@@ -166,6 +170,10 @@ config :lotta, :base_uri,
 config :lotta, LottaWeb.Endpoint,
   secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
   server: SystemConfig.get("PHX_SERVER", cast: :boolean)
+
+config :lotta, Lotta.TCPHealthCheck,
+  enabled: SystemConfig.get("TCP_HEALTH_CHECK_ENABLED", cast: :boolean),
+  config: [port: SystemConfig.get("TCP_HEALTH_CHECK_PORT", cast: :integer)]
 
 config :opentelemetry, :resource,
   service: %{
@@ -330,15 +338,6 @@ config :lotta, Lotta.PushNotification,
   sandbox?: SystemConfig.get("PIGEON_USE_SANDBOX", cast: :boolean)
 
 config :lotta, Oban,
-  engine: Oban.Engines.Basic,
-  notifier: Oban.Notifiers.PG,
-  repo: Lotta.Repo,
-  prefix: "oban",
-  plugins: [
-    {Oban.Plugins.Lifeline, []},
-    {Oban.Plugins.Pruner, interval: :timer.minutes(5), max_age: :timer.hours(12)},
-    {Oban.Plugins.Reindexer, schedule: "@weekly"}
-  ],
   queues:
     [
       file_conversion: [limit: 4],

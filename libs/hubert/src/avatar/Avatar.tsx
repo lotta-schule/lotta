@@ -21,7 +21,26 @@ export interface AvatarProps
 }
 
 export const Avatar = React.memo(
-  ({ src, title, className, role, style, onClick, ...props }: AvatarProps) => {
+  ({
+    src,
+    srcSet,
+    title,
+    className,
+    role,
+    style,
+    onClick,
+    ...props
+  }: AvatarProps) => {
+    const imageSet = srcSet
+      ?.split(',')
+      .map((s) =>
+        s
+          .split(' ')
+          .map((part, i) => (i === 0 ? `url(${part})` : part))
+          .join(' ')
+      )
+      .join(', ');
+
     return (
       <div
         {...props}
@@ -31,7 +50,10 @@ export const Avatar = React.memo(
         className={clsx(styles.root, className, {
           [styles.clickable]: !!onClick,
         })}
-        style={{ ...style, backgroundImage: `url(${src})` }}
+        style={{
+          ...style,
+          backgroundImage: imageSet ? `image-set(${imageSet})` : `url(${src})`,
+        }}
       />
     );
   }

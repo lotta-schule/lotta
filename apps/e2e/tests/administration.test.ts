@@ -33,7 +33,7 @@ test.describe('Tenant administration', () => {
 
       await takeScreenshot('admin-settings');
 
-      await page.getByRole('button', { name: /grundeinstellungen/i }).click();
+      await page.getByRole('button', { name: /allgemein/i }).click();
       await page.waitForURL(`${baseURL}/admin/general`, {
         waitUntil: 'domcontentloaded',
       });

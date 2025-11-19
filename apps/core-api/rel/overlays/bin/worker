@@ -1,0 +1,5 @@
+#!/bin/sh
+cd -P -- "$(dirname -- "$0")"
+
+PHX_SERVER=false exec ./lotta start
+

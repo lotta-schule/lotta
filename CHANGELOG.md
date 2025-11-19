@@ -1,3 +1,79 @@
+## 6.1.5 (2025-11-19)
+
+### 🚀 Features
+
+- **core:** Add billing (plans + invoices) ([#516](https://github.com/lotta-schule/lotta/pull/516))
+- **core:** Use tcp-healthcheck instead of http ([#519](https://github.com/lotta-schule/lotta/pull/519))
+
+### 🩹 Fixes
+
+- **core:** update eduplaces to correct /schools/:id endpoint ([#517](https://github.com/lotta-schule/lotta/pull/517))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.1.4 (2025-11-04)
+
+### 🩹 Fixes
+
+- **hubert:** use correct srcSet for user-avatars ([d222fca9](https://github.com/lotta-schule/lotta/commit/d222fca9))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.3 (2025-11-03)
+
+This was a version bump only, there were no code changes.
+
+## 6.1.2 (2025-11-02)
+
+This was a version bump only, there were no code changes.
+
+## 6.1.1 (2025-11-01)
+
+### 🩹 Fixes
+
+- **core:** Do not try to sync eduplaces when tenant has no eduplaces_id ([692d0d90](https://github.com/lotta-schule/lotta/commit/692d0d90))
+- **web:** Fix user avatars not being shown ([be17a1b0](https://github.com/lotta-schule/lotta/commit/be17a1b0))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.0 (2025-11-01)
+
+### 🚀 Features
+
+- Add Eduplaces support ([#490](https://github.com/lotta-schule/lotta/pull/490))
+- Sync eduplaces groups and group users ([#500](https://github.com/lotta-schule/lotta/pull/500))
+- Allow login/registration via email to be disabled by admin ([#508](https://github.com/lotta-schule/lotta/pull/508))
+- usage data is now more precise and includes active user count ([#512](https://github.com/lotta-schule/lotta/pull/512))
+- **core:** Add support for presigned URLs from S3 remote storages ([#493](https://github.com/lotta-schule/lotta/pull/493))
+- **core:** Log daily storage/usercount usage and media conversion time ([#502](https://github.com/lotta-schule/lotta/pull/502))
+- **web:** Make article pins more distinguishible ([#487](https://github.com/lotta-schule/lotta/pull/487))
+- **web:** Optimize avatar-style for interaction ([#486](https://github.com/lotta-schule/lotta/pull/486))
+- **web:** Open external sidebar categories in extra window ([#506](https://github.com/lotta-schule/lotta/pull/506))
+- **web:** add docs link to admin menu ([#507](https://github.com/lotta-schule/lotta/pull/507))
+- **web:** better category select, sorted and with subcategories indent ([#509](https://github.com/lotta-schule/lotta/pull/509))
+
+### 🩹 Fixes
+
+- Breaking bug in tracing ([5fdd0b61](https://github.com/lotta-schule/lotta/commit/5fdd0b61))
+- **core:** fix error returning usergroup's eduplacesId ([35da5d46](https://github.com/lotta-schule/lotta/commit/35da5d46))
+- **core:** login user on tenant creation when from eduplaces ([#498](https://github.com/lotta-schule/lotta/pull/498))
+- **core:** responsive error pages ([8facd3f0](https://github.com/lotta-schule/lotta/commit/8facd3f0))
+- **core:** send slack notification on new tenant ([21274ef5](https://github.com/lotta-schule/lotta/commit/21274ef5))
+- **core:** Use correct setup status path after tenant ceduspaces reation ([e70f704c](https://github.com/lotta-schule/lotta/commit/e70f704c))
+- **core:** Use correct setup status path after eduspace tenant creation ([c25d2f31](https://github.com/lotta-schule/lotta/commit/c25d2f31))
+- **web:** EnrollmentTokensEditor now emits token currently being edited ([#510](https://github.com/lotta-schule/lotta/pull/510))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+- Copilot @Copilot
+
 ## 6.0.24 (2025-08-15)
 
 ### 🚀 Features

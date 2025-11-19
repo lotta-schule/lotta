@@ -4,13 +4,15 @@ import { FullErrorPage } from './FullErrorPage';
 
 export interface ServerDownErrorProps {
   error: Error;
+  title?: string;
 }
 
 export const ServerDownErrorPage = React.memo(
-  ({ error }: ServerDownErrorProps) => {
+  ({ error, title }: ServerDownErrorProps) => {
     return (
       <FullErrorPage
-        title={'Server nicht erreichbar'}
+        title={title || 'Server nicht erreichbar'}
+        subtitle={error.message}
         imageUrl={'/ServerDownImage.svg'}
       >
         <p>
