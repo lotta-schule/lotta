@@ -273,7 +273,7 @@ COPY --from=builder /app/_build/prod/rel/lotta ./
 RUN chown -R nobody: /app
 USER nobody
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=15s --start-period=30s --retries=5 \
   CMD nc -z localhost 4321 || exit 1
 
 CMD ["env", "sh", "-c", "/app/bin/migrate && /app/bin/server"]
