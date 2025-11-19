@@ -98,6 +98,7 @@ jobs:
     with:
       image_tag: ${{ needs.publish-docker-images.outputs.release_name }}
     secrets:
+      lhci_gh_app_token: '${{ secrets.LHCI_GITHUB_APP_TOKEN }}'
       aws_key_id: '${{ secrets.PUBLIC_BUCKET_AWS_ACCESS_KEY_ID }}'
       aws_secret_access_key: '${{ secrets.PUBLIC_BUCKET_AWS_SECRET_ACCESS_KEY }}'
       endpoint: '${{ secrets.PUBLIC_BUCKET_ENDPOINT }}'

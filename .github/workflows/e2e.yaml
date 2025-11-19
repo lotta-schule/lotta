@@ -10,6 +10,8 @@ on:
     secrets:
       aws_key_id:
         required: false
+      lhci_gh_app_token:
+        required: false
       aws_secret_access_key:
         required: false
       endpoint:
@@ -51,7 +53,7 @@ jobs:
       - run: |
           ./lighthouse-ci.sh
         env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.lhci_gh_app_token }}
         working-directory: apps/e2e
   test:
     name: E2E-Testing ( ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} )
