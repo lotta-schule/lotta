@@ -37,6 +37,9 @@ jobs:
       - name: Install node dependencies
         run: pnpm install
         working-directory: apps/e2e
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
+        working-directory: apps/e2e
       - name: Run lotta as a service from docker-compose.yml
         uses: hoverkraft-tech/compose-action@v2.0.2
         env:
