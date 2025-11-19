@@ -10,8 +10,6 @@ on:
     secrets:
       aws_key_id:
         required: false
-      lhci_gh_app_token:
-        required: false
       aws_secret_access_key:
         required: false
       endpoint:
@@ -20,56 +18,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
-  lighthouse:
-    name: 'Performance + Accessibility via Lighthouse'
-    runs-on: ubuntu-24.04
-    if: ${{ !cancelled() }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24.5
-          cache: pnpm
-      - name: Install node dependencies
-        run: pnpm install
-        working-directory: apps/e2e
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
-        working-directory: apps/e2e
-      - name: Run lotta as a service from docker-compose.yml
-        uses: hoverkraft-tech/compose-action@v2.0.2
-        env:
-          IMAGE_TAG: ${{ inputs.image_tag }}
-        with:
-          compose-file: docker-compose.yaml
-          cwd: ${{ github.workspace }}/apps/e2e
-          up-flags: --force-recreate --wait
-      - run: |
-          node -r ts-node/register scripts/lh_tenant/setup
-        env:
-          BASE_URI_HOST: local.lotta.schule
-          BASE_URI_SCHEME: http
-          BASE_URI_PORT: 3000
-          CORE_URL: http://localhost:4000
-          ADMIN_USERNAME: admin
-          ADMIN_PASSWORD: secretapikey
-        working-directory: apps/e2e
-      - name: Audit URLs using Lighthouse
-        uses: treosh/lighthouse-ci-action@v12
-        with:
-          urls: |
-            http://lighthouse.local.lotta.schule:3000
-          uploadArtifacts: true
-          temporaryPublicStorage: true
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.lhci_gh_app_token }}
   test:
     name: E2E-Testing ( ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} )
     runs-on: ubuntu-24.04
@@ -160,7 +108,6 @@ jobs:
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
-          working-directory: apps/e2e
           path: apps/e2e/all-blob-reports
           pattern: blob-report-*
           merge-multiple: true

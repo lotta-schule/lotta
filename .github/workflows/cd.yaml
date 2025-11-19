@@ -85,6 +85,57 @@ jobs:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
+  lighthouse:
+    name: 'Performance + Accessibility via Lighthouse'
+    runs-on: ubuntu-24.04
+    if: ${{ !cancelled() }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup PNPM package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.5
+          cache: pnpm
+      - name: Install node dependencies
+        run: pnpm install
+        working-directory: apps/e2e
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
+        working-directory: apps/e2e
+      - name: Run lotta as a service from docker-compose.yml
+        uses: hoverkraft-tech/compose-action@v2.0.2
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        with:
+          compose-file: docker-compose.yaml
+          cwd: ${{ github.workspace }}/apps/e2e
+          up-flags: --force-recreate --wait
+      - run: |
+          node -r ts-node/register scripts/lh_tenant/setup
+        env:
+          BASE_URI_HOST: local.lotta.schule
+          BASE_URI_SCHEME: http
+          BASE_URI_PORT: 3000
+          CORE_URL: http://localhost:4000
+          ADMIN_USERNAME: admin
+          ADMIN_PASSWORD: secretapikey
+        working-directory: apps/e2e
+      - name: Audit URLs using Lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            http://lighthouse.local.lotta.schule:3000
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: '${{ secrets.LHCI_GITHUB_APP_TOKEN }}'
+
   run-e2e-tests:
     name: Run end-to-end tests
     needs:
@@ -98,7 +149,6 @@ jobs:
     with:
       image_tag: ${{ needs.publish-docker-images.outputs.release_name }}
     secrets:
-      lhci_gh_app_token: '${{ secrets.LHCI_GITHUB_APP_TOKEN }}'
       aws_key_id: '${{ secrets.PUBLIC_BUCKET_AWS_ACCESS_KEY_ID }}'
       aws_secret_access_key: '${{ secrets.PUBLIC_BUCKET_AWS_SECRET_ACCESS_KEY }}'
       endpoint: '${{ secrets.PUBLIC_BUCKET_ENDPOINT }}'
