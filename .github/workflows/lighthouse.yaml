@@ -1,5 +1,8 @@
 ---
 name: Lighthouse test
+permissions:
+  contents: read
+  pull-requests: write
 on:
   workflow_call:
     inputs:
