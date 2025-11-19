@@ -121,10 +121,12 @@ defmodule LottaWeb.Router do
   end
 
   scope "/_debug" do
-    pipe_through([:admin_auth])
+    scope "/" do
+      pipe_through([:admin_auth])
 
-    live_dashboard("/live", metrics: LottaWeb.Telemetry)
-    oban_dashboard("/oban")
+      live_dashboard("/live", metrics: LottaWeb.Telemetry)
+      oban_dashboard("/oban")
+    end
 
     scope "/mails" do
       forward(
