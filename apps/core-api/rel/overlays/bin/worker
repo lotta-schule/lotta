@@ -1,5 +1,5 @@
 #!/bin/sh
 cd -P -- "$(dirname -- "$0")"
 
-exec ./lotta eval Lotta.Release.migrate
+PHX_SERVER=false exec ./lotta start
 

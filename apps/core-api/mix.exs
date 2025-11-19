@@ -127,6 +127,7 @@ defmodule Lotta.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
       # Telemetry & OpenTelemetry
+      {:tcp_health_check, "~> 0.1.0"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_metrics_prometheus, "~> 1.1.0"},
       {:telemetry_poller, "~> 1.1"},

@@ -105,8 +105,9 @@ jobs:
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
         with:
-          compose-file: docker-compose.yaml
           cwd: ${{ github.workspace }}/apps/e2e
+          compose-file: docker-compose.yaml
+          compose-flags: --verbose
           up-flags: --force-recreate --wait
 
       - name: Run Playwright tests

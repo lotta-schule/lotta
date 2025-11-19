@@ -1,3 +1,4 @@
+---
 include:
   - path: ../core-api/docker-compose.services.base.yaml
 
@@ -15,6 +16,7 @@ services:
     image: ${LOTTA_CORE_IMAGE:-ghcr.io/lotta-schule/core:${LOTTA_CORE_VERSION:-${IMAGE_TAG:-latest}}}
     ports:
       - 4000:4000
+      - 4321:4321
     depends_on:
       postgres:
         condition: service_healthy
