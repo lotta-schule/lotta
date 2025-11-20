@@ -2,7 +2,7 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=794px" />
     <title>Rechnung Nr: {@invoice.invoice_number}</title>
     <style>
       :root {
@@ -20,6 +20,33 @@
 
         section {
             break-inside: avoid;
+        }
+      }
+
+      @media screen {
+        html {
+          padding: 10px;
+        }
+      }
+      @media screen and (min-width: 300px) {
+        body {
+          margin: 0 auto;
+          width: 298px;
+          min-height: 422px;
+        }
+      }
+      @media screen and (min-width: 400px) {
+        body {
+          margin: 0 auto;
+          width: 397px;
+          min-height: 562px;
+        }
+      }
+      @media screen and (min-width: 600px) {
+        body {
+          margin: 0 auto;
+          width: 595px;
+          min-height: 842px;
         }
       }
 
