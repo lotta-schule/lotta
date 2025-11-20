@@ -1,3 +1,5 @@
+@use "breakpoints" as *;
+
 .root {
   .grid {
     display: flex;
@@ -11,5 +13,92 @@
 
   .scrollHorizontally {
     overflow-x: auto;
+  }
+  .stylingSection {
+    display: flex;
+    @media screen and (max-width: $max-sm) {
+      display: block;
+    }
+  }
+  .editStyleSection {
+    width: 50%;
+    @media screen and (max-width: $max-sm) {
+      width: 100%;
+    }
+  }
+  .stylingInput {
+    width: auto;
+  }
+  .previewHorizontally {
+    margin: auto;
+  }
+  .previewVertically {
+    margin: auto;
+    max-width: 50%;
+    @media screen and (max-width: $max-sm) {
+      width: 100%;
+    }
+    li {
+      margin-bottom: calc(2 * var(--lotta-spacing));
+    }
+    .successColor {
+      color: rgb(var(--lotta-success-color));
+      border-color: rgb(var(--lotta-success-color));
+    }
+  }
+  .newMessageBadge {
+    position: absolute;
+    right: -1.5em;
+    top: -0.5em;
+    font-size: 0.8rem;
+  }
+
+  .background {
+    background-color: rgb(var(--lotta-page-background-color));
+    width: 500px;
+    height: 300px;
+  }
+  .navigation {
+    width: 350px;
+    height: 40px;
+    background-color: rgb(var(--lotta-navigation-background-color));
+  }
+  .boxes {
+    display: flex;
+    margin-bottom: var(--lotta-spacing);
+    .box {
+      width: 100px;
+      height: 50px;
+      background-color: rgb(var(--lotta-primary-color));
+      margin-right: var(--lotta-spacing);
+    }
+  }
+  input[type="range"],
+  meter,
+  progress {
+    margin-block-end: 20px;
+    writing-mode: vertical-rl;
+  }
+  .imageSettings {
+    max-width: 50%;
+    display: flex;
+  }
+
+  input[type="color"]::-moz-color-swatch,
+  input[type="color"]::-webkit-color-swatch {
+    border: 0;
+  }
+
+  .fontSelect {
+    display: flex;
+  }
+
+  .textPreview {
+    padding: 0 5em;
+    width: 50%;
+    @media screen and (max-width: $max-sm) {
+      padding: 0;
+      width: 100%;
+    }
   }
 }
