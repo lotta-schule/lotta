@@ -8,6 +8,8 @@ defmodule LottaWeb.Live.TenantLive do
     ],
     layout: {LottaWeb.Layouts, :admin}
 
+  import Ecto.Query
+
   def update_changeset(tenant, params, _ \\ []),
     do:
       Lotta.Tenants.Tenant.update_changeset(
@@ -84,6 +86,20 @@ defmodule LottaWeb.Live.TenantLive do
             {key, value.title}
           end)
         end
+      },
+      invoices: %{
+        module: Backpex.Fields.HasMany,
+        label: "Invoices",
+        display_field: :invoice_number,
+        live_resource: LottaWeb.Live.InvoiceLive,
+        options_query: fn query, _field ->
+          from(i in query,
+            where: not is_nil(i.issued_at),
+            order_by: [desc: i.issued_at]
+          )
+        end,
+        query_limit: 12,
+        only: [:show]
       }
     ]
   end

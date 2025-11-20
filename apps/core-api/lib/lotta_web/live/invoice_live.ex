@@ -24,6 +24,12 @@ defmodule LottaWeb.Live.InvoiceLive do
   @impl Backpex.LiveResource
   def fields do
     [
+      tenant: %{
+        module: Backpex.Fields.BelongsTo,
+        label: "Tenant",
+        display_field: :title,
+        live_resource: LottaWeb.Live.TenantLive
+      },
       invoice_number: %{
         module: Backpex.Fields.Text,
         label: "Invoice Number",
