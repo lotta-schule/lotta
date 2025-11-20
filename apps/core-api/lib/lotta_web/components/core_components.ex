@@ -27,9 +27,57 @@ defmodule LottaWeb.CoreComponents do
 
   """
   use Phoenix.Component
-  use Gettext, backend: LottaWeb.Gettext
+  use Gettext, backend: NewerWeb.Gettext
 
   alias Phoenix.LiveView.JS
+
+  @doc """
+  Renders flash notices.
+
+  ## Examples
+
+      <.flash kind={:info} flash={@flash} />
+      <.flash kind={:info} phx-mounted={show("#flash")}>Welcome Back!</.flash>
+  """
+  attr(:id, :string, doc: "the optional id of flash container")
+  attr(:flash, :map, default: %{}, doc: "the map of flash messages to display")
+  attr(:title, :string, default: nil)
+  attr(:kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup")
+  attr(:rest, :global, doc: "the arbitrary HTML attributes to add to the flash container")
+
+  slot(:inner_block, doc: "the optional inner block that renders the flash message")
+
+  def flash(assigns) do
+    assigns = assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
+
+    ~H"""
+    <div
+      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
+      id={@id}
+      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+      role="alert"
+      class="toast toast-top toast-end z-50"
+      {@rest}
+    >
+      <div class={[
+        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap",
+        @kind == :info && "alert-info",
+        @kind == :error && "alert-error"
+      ]}>
+        <.icon :if={@kind == :info} name="hero-information-circle" class="size-5 shrink-0" />
+        <.icon :if={@kind == :error} name="hero-exclamation-circle" class="size-5 shrink-0" />
+        <div>
+          <p :if={@title} class="font-semibold">{@title}</p>
+          <p>{msg}</p>
+        </div>
+        <div class="flex-1" />
+        <button type="button" class="group self-start cursor-pointer" aria-label={gettext("close")}>
+          <.icon name="hero-x-mark" class="size-5 opacity-40 group-hover:opacity-70" />
+        </button>
+      </div>
+    </div>
+    """
+  end
 
   @doc """
   Renders a button with navigation support.
@@ -155,6 +203,7 @@ defmodule LottaWeb.CoreComponents do
           />{@label}
         </span>
       </label>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -175,6 +224,7 @@ defmodule LottaWeb.CoreComponents do
           {Phoenix.HTML.Form.options_for_select(@options, @value)}
         </select>
       </label>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -194,6 +244,7 @@ defmodule LottaWeb.CoreComponents do
           {@rest}
         >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
       </label>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -216,7 +267,18 @@ defmodule LottaWeb.CoreComponents do
           {@rest}
         />
       </label>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
+    """
+  end
+
+  # Helper used by inputs to generate form errors
+  defp error(assigns) do
+    ~H"""
+    <p class="mt-1.5 flex gap-2 items-center text-sm text-error">
+      <.icon name="hero-exclamation-circle" class="size-5" />
+      {render_slot(@inner_block)}
+    </p>
     """
   end
 
@@ -334,6 +396,33 @@ defmodule LottaWeb.CoreComponents do
     """
   end
 
+  @doc """
+  Renders a [Heroicon](https://heroicons.com).
+
+  Heroicons come in three styles – outline, solid, and mini.
+  By default, the outline style is used, but solid and mini may
+  be applied by using the `-solid` and `-mini` suffix.
+
+  You can customize the size and colors of the icons by setting
+  width, height, and background color classes.
+
+  Icons are extracted from the `deps/heroicons` directory and bundled within
+  your compiled app.css by the plugin in `assets/vendor/heroicons.js`.
+
+  ## Examples
+
+      <.icon name="hero-x-mark" />
+      <.icon name="hero-arrow-path" class="ml-1 size-3 motion-safe:animate-spin" />
+  """
+  attr(:name, :string, required: true)
+  attr(:class, :string, default: "size-4")
+
+  def icon(%{name: "hero-" <> _} = assigns) do
+    ~H"""
+    <span class={[@name, @class]} />
+    """
+  end
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do
@@ -360,17 +449,14 @@ defmodule LottaWeb.CoreComponents do
   @doc """
   Translates an error message using gettext.
   """
+  def translate_backpex({msg, opts}) do
+    Gettext.dgettext(LottaWeb.Gettext, :default, msg, opts)
+  end
+
+  @doc """
+  Translates a backpex message using gettext.
+  """
   def translate_error({msg, opts}) do
-    # When using gettext, we typically pass the strings we want
-    # to translate as a static argument:
-    #
-    #     # Translate the number of files with plural rules
-    #     dngettext("errors", "1 file", "%{count} files", count)
-    #
-    # However the error messages in our forms and APIs are generated
-    # dynamically, so we need to translate them by calling Gettext
-    # with our gettext backend as first argument. Translations are
-    # available in the errors.po file (as we use the "errors" domain).
     if count = opts[:count] do
       Gettext.dngettext(LottaWeb.Gettext, "errors", msg, msg, count, opts)
     else

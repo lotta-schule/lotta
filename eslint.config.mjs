@@ -13,7 +13,7 @@ import vitest from 'eslint-plugin-vitest';
 
 /** @type {import('eslint').Linter['getConfigForFile']} */
 const config = [
-  { ignores: ['.next/**/*'] },
+  { ignores: ['.next/**/*', 'assets/vendor/**/*'] },
   js.configs.recommended,
   {
     ...prettierRecommended,

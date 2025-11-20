@@ -7,6 +7,17 @@ defmodule LottaWeb.Layouts do
 
   embed_templates("layouts/*")
 
+  attr(:flash, :map, required: true, doc: "the map of flash messages")
+  attr(:fluid?, :boolean, default: true, doc: "if the content uses full width")
+  attr(:current_url, :string, required: true, doc: "the current url")
+
+  attr(:current_scope, :map,
+    default: nil,
+    doc: "the current [scope](https://hexdocs.pm/phoenix/scopes.html)"
+  )
+
+  slot(:inner_block, required: true)
+
   @doc """
   Renders your app layout.
 
@@ -21,15 +32,6 @@ defmodule LottaWeb.Layouts do
       </Layouts.app>
 
   """
-  attr(:flash, :map, required: true, doc: "the map of flash messages")
-
-  attr(:current_scope, :map,
-    default: nil,
-    doc: "the current [scope](https://hexdocs.pm/phoenix/scopes.html)"
-  )
-
-  slot(:inner_block, required: true)
-
   def app(assigns) do
     ~H"""
     <header class="navbar px-4 sm:px-6 lg:px-8">
@@ -63,4 +65,8 @@ defmodule LottaWeb.Layouts do
     </main>
     """
   end
+
+  def admin(assigns)
+
+  def admin_root(assigns)
 end

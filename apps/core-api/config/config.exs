@@ -8,6 +8,9 @@
 import Config
 
 import_config("config/absinthe.exs")
+import_config("config/backpex.exs")
+import_config("config/esbuild.exs")
+import_config("config/tailwind.exs")
 import_config("config/argon2.exs")
 import_config("config/endpoint.exs")
 import_config("config/gettext.exs")
