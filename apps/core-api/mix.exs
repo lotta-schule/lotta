@@ -176,9 +176,8 @@ defmodule Lotta.MixProject do
       ],
       sentry_recompile: ["compile", "deps.compile sentry --force"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["cmd npm --prefix assets ci", "compile", "tailwind lotta", "esbuild lotta"],
+      "assets.build": ["compile", "tailwind lotta", "esbuild lotta"],
       "assets.deploy": [
-        "cmd npm --prefix assets ci",
         "tailwind lotta --minify",
         "esbuild lotta --minify",
         "phx.digest"
