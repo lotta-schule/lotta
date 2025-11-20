@@ -28,8 +28,7 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
     |> Keyword.merge(strategy: __MODULE__)
   end
 
-  def allowed_atoms, do:
-    @allowed_atoms
+  def allowed_atoms, do: @allowed_atoms
 
   def client do
     config()
