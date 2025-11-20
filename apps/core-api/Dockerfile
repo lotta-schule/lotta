@@ -225,6 +225,7 @@ RUN set -xe && \
   apk upgrade --no-cache && \
   apk add --no-cache --virtual .build-deps \
   git \
+  nodejs npm \
   rust cargo \
   build-base
 
@@ -241,8 +242,8 @@ COPY priv priv
 RUN mix deps.get --only prod && \
   mix deps.compile
 
-RUN MIX_ENV=prod mix compile
 RUN MIX_ENV=prod mix assets.deploy
+RUN MIX_ENV=prod mix compile
 
 # build project
 COPY lib lib
