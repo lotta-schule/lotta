@@ -185,6 +185,7 @@ defmodule LottaWeb.Live.InvoiceLiveTest do
       field_keys = Keyword.keys(fields)
 
       expected_order = [
+        :tenant,
         :invoice_number,
         :period,
         :customer_no,

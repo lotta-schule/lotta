@@ -27,7 +27,7 @@ defmodule LottaWeb.CoreComponents do
 
   """
   use Phoenix.Component
-  use Gettext, backend: NewerWeb.Gettext
+  use Gettext, backend: LottaWeb.Gettext
 
   alias Phoenix.LiveView.JS
 
