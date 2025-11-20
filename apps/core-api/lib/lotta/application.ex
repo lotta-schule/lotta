@@ -32,8 +32,8 @@ defmodule Lotta.Application do
         {ConCache,
          name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)},
         {Lotta.Eduplaces.Syncer, Application.get_env(:lotta, Lotta.Eduplaces.Syncer, [])},
-        {ChromicPDF, Application.get_env(:lotta, ChromicPDF, [])},
         {Oban, Application.fetch_env!(:lotta, Oban)},
+        get_chromic_app_child(),
         get_tcp_healthcheck_app_child()
       ]
 
@@ -63,11 +63,18 @@ defmodule Lotta.Application do
     end
   end
 
+  defp get_chromic_app_child() do
+    config = Application.get_env(:lotta, Lotta.ChromicPDF, [])
+
+    if Keyword.get(config, :enabled),
+      do: {Lotta.ChromicPDF, Keyword.get(config, :config)}
+  end
+
   defp get_tcp_healthcheck_app_child() do
     config = Application.get_env(:lotta, Lotta.TCPHealthCheck, [])
 
-    if Keyword.get(config, :enabled),
-      do: {TcpHealthCheck, Keyword.get(config, :config)}
+    if Keyword.get(config, :disabled) != true,
+      do: {TcpHealthCheck, Keyword.get(config, :config, [])}
   end
 
   # Tell Phoenix to update the endpoint configuration
