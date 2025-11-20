@@ -34,6 +34,8 @@ RUN set -xe && \
   libssl3 \
   libstdc++ \
   build-base \
+  # chromium
+  chromium \
   # ffmpeg
   ffmpeg \
   # For libvips
