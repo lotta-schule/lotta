@@ -8,7 +8,7 @@ defmodule LottaWeb.Live.InvoiceLive do
     ],
     layout: {LottaWeb.Layouts, :admin}
 
-  import Ecto.Query, only: [fragment: 1, dynamic: 2]
+  import Ecto.Query
 
   @impl Backpex.LiveResource
   def can?(_, action, _) do
