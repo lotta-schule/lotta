@@ -11,6 +11,7 @@ defmodule Lotta.Billings.Invoice do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias LottaWeb.BillingView
   alias Lotta.Billings.InvoiceItem
   alias Lotta.Tenants.Tenant
 
@@ -139,6 +140,30 @@ defmodule Lotta.Billings.Invoice do
     else
       changeset
     end
+  end
+
+  def to_html(%__MODULE__{} = invoice) do
+    Phoenix.Template.render_to_string(
+      LottaWeb.BillingView,
+      "invoice",
+      "html",
+      invoice: invoice
+    )
+  end
+
+  def to_pdf(%__MODULE__{} = invoice) do
+    html = to_html(invoice)
+
+    {:ok, pdf} =
+      ChromicPDF.print_to_pdf({:html, html},
+        print_to_pdf: %{
+          displayHeaderFooter: true,
+          footerTemplate: BillingView.invoice_footer(),
+          headerTemplate: "<span></span>"
+        }
+      )
+
+    pdf
   end
 
   # Validates that period_start is the first day of the month

@@ -612,7 +612,7 @@ defmodule Lotta.Billings do
 
   defp build_base_price_row(base_price, plan_title) do
     %{
-      "description" => "Base Plan: #{plan_title}",
+      "description" => "#{plan_title}",
       "quantity" => 1,
       "unit_price" => base_price,
       "amount" => base_price,
@@ -628,7 +628,7 @@ defmodule Lotta.Billings do
       amount = Decimal.mult(Decimal.new(active_users), Decimal.new(unit_price))
 
       %{
-        "description" => "Base Plan: #{active_users} active users",
+        "description" => "#{active_users} aktive Nutzer",
         "quantity" => active_users,
         "unit_price" => unit_price,
         "amount" => Decimal.to_string(amount),
@@ -639,7 +639,7 @@ defmodule Lotta.Billings do
       }
     else
       %{
-        "description" => "Base Plan: 0 active users",
+        "description" => "0 aktive nutzer",
         "quantity" => 0,
         "unit_price" => unit_price,
         "amount" => "0.00",
@@ -659,14 +659,9 @@ defmodule Lotta.Billings do
 
     storage_used_str = storage_used_gb |> Decimal.round(2) |> Decimal.to_string(:normal)
     storage_included_str = storage_included_gb |> Decimal.round(2) |> Decimal.to_string(:normal)
-    storage_overage_str = storage_overage_gb |> Decimal.round(2) |> Decimal.to_string(:normal)
 
     description =
-      if Decimal.compare(storage_overage_gb, Decimal.new(0)) == :gt do
-        "Storage: #{storage_used_str}/#{storage_included_str} GB used. #{storage_overage_str} GB over limit."
-      else
-        "Storage: #{storage_used_str}/#{storage_included_str} GB used"
-      end
+      "Speicher: #{storage_used_str}/#{storage_included_str} GB"
 
     %{
       "description" => description,
@@ -698,15 +693,8 @@ defmodule Lotta.Billings do
     conversion_used_str =
       conversion_used_minutes |> Decimal.round(2) |> Decimal.to_string(:normal)
 
-    conversion_overage_str =
-      conversion_overage_minutes |> Decimal.round(2) |> Decimal.to_string(:normal)
-
     description =
-      if Decimal.compare(conversion_overage_minutes, Decimal.new(0)) == :gt do
-        "Media conversion: #{conversion_used_str}/#{conversion_included_minutes} min used. #{conversion_overage_str} minutes over limit."
-      else
-        "Media conversion: #{conversion_used_str}/#{conversion_included_minutes} min used"
-      end
+      "Medien: #{conversion_used_str}/#{conversion_included_minutes} min"
 
     %{
       "description" => description,

@@ -23,3 +23,4 @@ import_config("config/oauth2.exs")
 import_config("config/tzdata.exs")
 #
 import_config("config/plans.exs")
+import_config("config/billing.exs")
