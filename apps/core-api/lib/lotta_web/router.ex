@@ -30,7 +30,7 @@ defmodule LottaWeb.Router do
     plug(:put_secure_browser_headers)
   end
 
-  pipeline :admin do
+  pipeline :admin_root do
     plug(:put_root_layout, html: {LottaWeb.Layouts, :admin_root})
   end
 
@@ -116,12 +116,13 @@ defmodule LottaWeb.Router do
 
   scope "/admin" do
     scope "/" do
-      pipe_through([:admin_auth, :browser])
+      pipe_through([:admin_auth, :browser, :admin_root])
 
       backpex_routes()
 
       live_session :default, on_mount: Backpex.InitAssigns do
         live_resources("/tenants", LottaWeb.Live.TenantLive)
+        live_resources("/invoices", LottaWeb.Live.InvoiceLive)
       end
     end
 

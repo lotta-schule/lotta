@@ -238,13 +238,14 @@ COPY config config
 RUN mix deps.get --only prod && \
   mix deps.compile
 
+RUN MIX_ENV=prod mix assets.deploy
+RUN MIX_ENV=prod mix compile
+
 # build project
 COPY priv priv
 COPY lib lib
 
 COPY rel rel
-
-RUN mix compile
 
 # Compress source code for sentry
 RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \

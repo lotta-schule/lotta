@@ -166,6 +166,7 @@ defmodule Lotta.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.reset", "test"],
@@ -175,8 +176,9 @@ defmodule Lotta.MixProject do
       ],
       sentry_recompile: ["compile", "deps.compile sentry --force"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["compile", "tailwind lotta", "esbuild lotta"],
+      "assets.build": ["cmd --cd assets npm ci", "compile", "tailwind lotta", "esbuild lotta"],
       "assets.deploy": [
+        "cmd --cd assets npm ci",
         "tailwind lotta --minify",
         "esbuild lotta --minify",
         "phx.digest"
