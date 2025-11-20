@@ -1152,7 +1152,7 @@ defmodule Lotta.BillingsTest do
       # Base charge: 10 users * $0.12 = $1.20
       [base_row] = rows_by_type["base_user_charge"]
       assert base_row["quantity"] == 10
-      assert base_row["amount"] == "1.20"
+      assert base_row["amount"] == "1.00"
 
       # Storage: 8/10 GB - no overage
       [storage_row] = rows_by_type["storage_usage"]
@@ -1169,7 +1169,7 @@ defmodule Lotta.BillingsTest do
       refute conversion_row["description"] =~ "over limit"
 
       # Total: $39.00 (base price) + $1.20 (10 users * $0.12) = $40.20
-      assert Decimal.equal?(invoice.total, Decimal.new("40.20"))
+      assert Decimal.equal?(invoice.total, Decimal.new("40.00"))
     end
 
     test "generates invoice with storage overage", %{tenant: tenant} do
@@ -1189,7 +1189,7 @@ defmodule Lotta.BillingsTest do
       assert storage_row["description"] =~ "Speicher: 15.50/10.00 GB"
 
       # Total: $39.00 (base price) + $1.20 (10 users) + $5.50 (storage overage) = $45.70
-      assert Decimal.equal?(invoice.total, Decimal.new("45.70"))
+      assert Decimal.equal?(invoice.total, Decimal.new("45.50"))
     end
 
     test "generates invoice with conversion overage", %{tenant: tenant} do
@@ -1209,7 +1209,7 @@ defmodule Lotta.BillingsTest do
       assert conversion_row["description"] =~ "Medien: 22.00/15 min"
 
       # Total: $39.00 (base price) + $1.20 (10 users) + $7.00 (conversion overage) = $47.20
-      assert Decimal.equal?(invoice.total, Decimal.new("47.20"))
+      assert Decimal.equal?(invoice.total, Decimal.new("47.00"))
     end
 
     test "generates invoice with combined overages", %{tenant: tenant} do
@@ -1224,7 +1224,7 @@ defmodule Lotta.BillingsTest do
 
       # Base: 15 * $0.12 = $1.80
       [base_row] = rows_by_type["base_user_charge"]
-      assert base_row["amount"] == "1.80"
+      assert base_row["amount"] == "1.50"
 
       # Storage overage: 5 GB * $1.00 = $5.00
       [storage_row] = rows_by_type["storage_usage"]
@@ -1237,7 +1237,7 @@ defmodule Lotta.BillingsTest do
       assert conversion_row["amount"] == "10.00"
 
       # Total: $39.00 (base price) + $1.80 (15 users) + $5.00 (storage) + $10.00 (conversion) = $55.80
-      assert Decimal.equal?(invoice.total, Decimal.new("55.80"))
+      assert Decimal.equal?(invoice.total, Decimal.new("55.50"))
     end
 
     test "generates invoice with plan and additional items", %{tenant: tenant} do
@@ -1271,7 +1271,7 @@ defmodule Lotta.BillingsTest do
       assert length(additional_item.rows) == 1
 
       # Total: $39.00 (base price) + $0.60 (5 users * $0.12) + $15.99 (additional) = $55.59
-      assert Decimal.equal?(invoice.total, Decimal.new("55.59"))
+      assert Decimal.equal?(invoice.total, Decimal.new("55.49"))
     end
 
     test "handles exactly at limit (no overage)", %{tenant: tenant} do
@@ -1297,7 +1297,7 @@ defmodule Lotta.BillingsTest do
       assert conversion_row["description"] =~ "Medien: 15.00/15 min"
 
       # Total: $39.00 (base price) + $1.20 (10 users) = $40.20
-      assert Decimal.equal?(invoice.total, Decimal.new("40.20"))
+      assert Decimal.equal?(invoice.total, Decimal.new("40.00"))
     end
   end
 

@@ -90,7 +90,7 @@ defmodule LottaWeb.BillingViewTest do
         %{
           "description" => "10 aktive Nutzer",
           "quantity" => 10,
-          "unit_price" => "0.12",
+          "unit_price" => "0.10",
           "amount" => "1.20",
           "type" => "base_user_charge",
           "metadata" => %{"active_users" => 10}
