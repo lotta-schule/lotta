@@ -1,7 +1,7 @@
 /* This file is for your main application CSS */
 
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "../vendor/daisyui";
 @plugin "./tailwind_heroicons.js";
 
 @source "../../deps/backpex/**/*.*ex";
