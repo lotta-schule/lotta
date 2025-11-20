@@ -124,6 +124,10 @@ defmodule SystemConfig do
 
   defp default("SLACK_WEBHOOK_URL", _), do: nil
 
+  defp default("DISABLE_CHROMIC", _), do: "false"
+  defp default("DEBUG_CHROMIC", :prod), do: "false"
+  defp default("DEBUG_CHROMIC", _), do: "true"
+
   defp default("SENTRY_DSN", _), do: nil
 
   defp default("SCHEDULE_PROVIDER_URL", env) when env in [:dev, :test],
@@ -257,6 +261,12 @@ config :lotta, :cockpit,
 
 config :lotta, Lotta.Administration.Notification.Slack,
   webhook: SystemConfig.get("SLACK_WEBHOOK_URL")
+
+config :lotta, ChromicPDF,
+  disabled: SystemConfig.get("DISABLE_CHROMIC", cast: :boolean),
+  config: [
+    discard_stderr: SystemConfig.get("DEBUG_CHROMIC", cast: :boolean) == false
+  ]
 
 config :lotta,
        Lotta.Mailer,

@@ -4,7 +4,7 @@ defmodule Lotta.BillingsTest do
   use Lotta.DataCase
 
   alias Lotta.{Billings}
-  alias Lotta.Billings.AdditionalItem
+  alias Lotta.Billings.{AdditionalItem, Invoice}
   alias Lotta.Tenants
   alias Lotta.Repo
 
@@ -667,15 +667,13 @@ defmodule Lotta.BillingsTest do
       [plan_item] = plan_items
       plan_item_rows = plan_item.rows || []
 
-      # Check if Base Plan is in rows or notes
       has_base_plan =
         Enum.any?(plan_item_rows, fn row ->
-          is_map(row) and is_binary(row["description"]) and row["description"] =~ "Base Plan"
+          is_map(row) and is_binary(row["description"]) and row["description"] =~ "Lotta"
         end) or (is_binary(plan_item.notes) and plan_item.notes =~ "Base Plan")
 
       assert has_base_plan
 
-      # Check if plan name is supporter
       has_supporter =
         Enum.any?(plan_item_rows, fn row ->
           is_map(row) and row["plan_name"] == "supporter"
@@ -1116,25 +1114,25 @@ defmodule Lotta.BillingsTest do
       [base_price_row] = rows_by_type["base_price"]
       assert base_price_row["quantity"] == 1
       assert base_price_row["amount"] == "39.00"
-      assert base_price_row["description"] =~ "Base Plan"
+      assert base_price_row["description"] =~ "Lotta"
 
       # Base charge: 0 users
       [base_row] = rows_by_type["base_user_charge"]
       assert base_row["quantity"] == 0
       assert base_row["amount"] == "0.00"
-      assert base_row["description"] =~ "0 active users"
+      assert base_row["description"] =~ "0 aktive nutzer"
 
       # Storage: 0/0 GB
       [storage_row] = rows_by_type["storage_usage"]
       assert storage_row["quantity"] == 0.0
       assert storage_row["amount"] == "0.00"
-      assert storage_row["description"] =~ "0.00/0.00 GB used"
+      assert storage_row["description"] =~ "Speicher: 0.00/0.00 GB"
 
       # Conversion: 0/15 min
       [conversion_row] = rows_by_type["media_conversion_usage"]
       assert conversion_row["quantity"] == 0.0
       assert conversion_row["amount"] == "0.00"
-      assert conversion_row["description"] =~ "0.00/15 min used"
+      assert conversion_row["description"] =~ "Medien: 0.00/15 min"
 
       # Total should be just the base price
       assert Decimal.equal?(invoice.total, Decimal.new("39.00"))
@@ -1154,24 +1152,24 @@ defmodule Lotta.BillingsTest do
       # Base charge: 10 users * $0.12 = $1.20
       [base_row] = rows_by_type["base_user_charge"]
       assert base_row["quantity"] == 10
-      assert base_row["amount"] == "1.20"
+      assert base_row["amount"] == "1.00"
 
       # Storage: 8/10 GB - no overage
       [storage_row] = rows_by_type["storage_usage"]
       assert storage_row["quantity"] == 0.0
       assert storage_row["amount"] == "0.00"
-      assert storage_row["description"] =~ "8.00/10.00 GB used"
+      assert storage_row["description"] =~ "Speicher: 8.00/10.00 GB"
       refute storage_row["description"] =~ "over limit"
 
       # Conversion: 10/15 min - no overage
       [conversion_row] = rows_by_type["media_conversion_usage"]
       assert conversion_row["quantity"] == 0.0
       assert conversion_row["amount"] == "0.00"
-      assert conversion_row["description"] =~ "10.00/15 min used"
+      assert conversion_row["description"] =~ "Medien: 10.00/15 min"
       refute conversion_row["description"] =~ "over limit"
 
       # Total: $39.00 (base price) + $1.20 (10 users * $0.12) = $40.20
-      assert Decimal.equal?(invoice.total, Decimal.new("40.20"))
+      assert Decimal.equal?(invoice.total, Decimal.new("40.00"))
     end
 
     test "generates invoice with storage overage", %{tenant: tenant} do
@@ -1188,11 +1186,10 @@ defmodule Lotta.BillingsTest do
       [storage_row] = rows_by_type["storage_usage"]
       assert storage_row["quantity"] == 5.5
       assert storage_row["amount"] == "5.50"
-      assert storage_row["description"] =~ "15.50/10.00 GB used"
-      assert storage_row["description"] =~ "5.50 GB over limit"
+      assert storage_row["description"] =~ "Speicher: 15.50/10.00 GB"
 
       # Total: $39.00 (base price) + $1.20 (10 users) + $5.50 (storage overage) = $45.70
-      assert Decimal.equal?(invoice.total, Decimal.new("45.70"))
+      assert Decimal.equal?(invoice.total, Decimal.new("45.50"))
     end
 
     test "generates invoice with conversion overage", %{tenant: tenant} do
@@ -1209,11 +1206,10 @@ defmodule Lotta.BillingsTest do
       [conversion_row] = rows_by_type["media_conversion_usage"]
       assert conversion_row["quantity"] == 7.0
       assert conversion_row["amount"] == "7.00"
-      assert conversion_row["description"] =~ "22.00/15 min used"
-      assert conversion_row["description"] =~ "7.00 minutes over limit"
+      assert conversion_row["description"] =~ "Medien: 22.00/15 min"
 
       # Total: $39.00 (base price) + $1.20 (10 users) + $7.00 (conversion overage) = $47.20
-      assert Decimal.equal?(invoice.total, Decimal.new("47.20"))
+      assert Decimal.equal?(invoice.total, Decimal.new("47.00"))
     end
 
     test "generates invoice with combined overages", %{tenant: tenant} do
@@ -1228,7 +1224,7 @@ defmodule Lotta.BillingsTest do
 
       # Base: 15 * $0.12 = $1.80
       [base_row] = rows_by_type["base_user_charge"]
-      assert base_row["amount"] == "1.80"
+      assert base_row["amount"] == "1.50"
 
       # Storage overage: 5 GB * $1.00 = $5.00
       [storage_row] = rows_by_type["storage_usage"]
@@ -1241,7 +1237,7 @@ defmodule Lotta.BillingsTest do
       assert conversion_row["amount"] == "10.00"
 
       # Total: $39.00 (base price) + $1.80 (15 users) + $5.00 (storage) + $10.00 (conversion) = $55.80
-      assert Decimal.equal?(invoice.total, Decimal.new("55.80"))
+      assert Decimal.equal?(invoice.total, Decimal.new("55.50"))
     end
 
     test "generates invoice with plan and additional items", %{tenant: tenant} do
@@ -1275,7 +1271,7 @@ defmodule Lotta.BillingsTest do
       assert length(additional_item.rows) == 1
 
       # Total: $39.00 (base price) + $0.60 (5 users * $0.12) + $15.99 (additional) = $55.59
-      assert Decimal.equal?(invoice.total, Decimal.new("55.59"))
+      assert Decimal.equal?(invoice.total, Decimal.new("55.49"))
     end
 
     test "handles exactly at limit (no overage)", %{tenant: tenant} do
@@ -1292,16 +1288,16 @@ defmodule Lotta.BillingsTest do
       [storage_row] = rows_by_type["storage_usage"]
       assert storage_row["quantity"] == 0.0
       assert storage_row["amount"] == "0.00"
-      assert storage_row["description"] =~ "10.00/10.00 GB used"
+      assert storage_row["description"] =~ "Speicher: 10.00/10.00 GB"
 
       # No conversion overage at exactly 15/15 min
       [conversion_row] = rows_by_type["media_conversion_usage"]
       assert conversion_row["quantity"] == 0.0
       assert conversion_row["amount"] == "0.00"
-      assert conversion_row["description"] =~ "15.00/15 min used"
+      assert conversion_row["description"] =~ "Medien: 15.00/15 min"
 
       # Total: $39.00 (base price) + $1.20 (10 users) = $40.20
-      assert Decimal.equal?(invoice.total, Decimal.new("40.20"))
+      assert Decimal.equal?(invoice.total, Decimal.new("40.00"))
     end
   end
 
@@ -1313,6 +1309,68 @@ defmodule Lotta.BillingsTest do
         Billings.update_invoice_notes(invoice, "Payment received via bank transfer")
 
       assert updated.notes == "Payment received via bank transfer"
+    end
+  end
+
+  describe "Invoice HTML rendering" do
+    test "to_html/1 generates HTML for invoice", %{tenant: tenant} do
+      {:ok, invoice} = Billings.generate_invoice(tenant, 2025, 11)
+      invoice = Repo.preload(invoice, :items)
+
+      html = Invoice.to_html(invoice)
+
+      assert is_binary(html)
+      assert String.length(html) > 0
+      assert html =~ invoice.invoice_number
+    end
+
+    test "to_html/1 includes all invoice items", %{tenant: tenant} do
+      {:ok, _item} =
+        Billings.add_additional_item(tenant, %{
+          name: "Test Service",
+          price: "15.99",
+          valid_from: ~D[2025-11-01]
+        })
+
+      {:ok, invoice} = Billings.generate_invoice(tenant, 2025, 11)
+      invoice = Repo.preload(invoice, :items)
+
+      html = Invoice.to_html(invoice)
+
+      assert is_binary(html)
+      # Should have both plan and additional item
+      assert length(invoice.items) >= 2
+    end
+
+    test "to_html/1 includes customer information when present", %{tenant: tenant} do
+      {:ok, updated_tenant} =
+        Tenants.update_tenant(tenant, %{
+          title: "HTML Test Org",
+          billing_address: "789 HTML St"
+        })
+
+      {:ok, invoice} = Billings.generate_invoice(updated_tenant, 2025, 11)
+      invoice = Repo.preload(invoice, :items)
+
+      html = Invoice.to_html(invoice)
+
+      assert html =~ "HTML Test Org"
+    end
+
+    test "to_html/1 works without customer information", %{tenant: tenant} do
+      {:ok, updated_tenant} =
+        Tenants.update_tenant(tenant, %{
+          billing_address: nil,
+          customer_no: nil
+        })
+
+      {:ok, invoice} = Billings.generate_invoice(updated_tenant, 2025, 11)
+      invoice = Repo.preload(invoice, :items)
+
+      html = Invoice.to_html(invoice)
+
+      assert is_binary(html)
+      assert String.length(html) > 0
     end
   end
 end

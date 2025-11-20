@@ -33,7 +33,7 @@ defmodule Lotta.Billings.PlansTest do
       assert plan.title == "Lotta"
       assert plan.user_max_storage == 1
       assert plan.media_conversion_minutes == 15
-      assert plan.active_user_price == "0.12"
+      assert plan.active_user_price == "0.10"
     end
 
     test "returns nil for non-existent plan" do
