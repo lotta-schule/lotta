@@ -664,7 +664,7 @@ defmodule Lotta.Billings.InvoiceTest do
     end
   end
 
-  describe "as_html/1" do
+  describe "to_html/1" do
     setup %{tenant: tenant} do
       # Create a complete invoice with items
       {:ok, invoice} =
@@ -705,33 +705,33 @@ defmodule Lotta.Billings.InvoiceTest do
     end
 
     test "renders HTML string", %{invoice: invoice} do
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       assert String.contains?(html, "<!DOCTYPE html>") or String.contains?(html, "<html")
     end
 
     test "includes invoice number in HTML", %{invoice: invoice} do
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert html =~ invoice.invoice_number
     end
 
     test "includes customer name in HTML", %{invoice: invoice} do
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert html =~ "Test Customer"
     end
 
     test "includes total amount in HTML", %{invoice: invoice} do
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       # Should contain the total in some format
       assert html =~ "100" or html =~ Decimal.to_string(invoice.total)
     end
 
     test "includes item descriptions in HTML", %{invoice: invoice} do
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert html =~ "Base Plan"
     end
@@ -760,10 +760,184 @@ defmodule Lotta.Billings.InvoiceTest do
         |> Repo.insert(prefix: "public")
 
       invoice = Repo.preload(invoice, :items)
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       assert String.length(html) > 0
+    end
+  end
+
+  describe "to_pdf/1" do
+    import Mock
+
+    setup %{tenant: tenant} do
+      {:ok, invoice} =
+        Invoice.create_changeset(%{
+          invoice_number: "LTA00999",
+          tenant_id: tenant.id,
+          year: 2025,
+          month: 11,
+          period_start: ~D[2025-11-01],
+          period_end: ~D[2025-11-30],
+          total: "100.00",
+          status: :issued,
+          customer_name: "PDF Test Customer",
+          customer_address: "123 PDF St",
+          items: [
+            %{
+              type: "plan",
+              period_start: ~D[2025-11-01],
+              period_end: ~D[2025-11-30],
+              amount: "100.00",
+              notes: "Test Plan",
+              rows: [
+                %{
+                  "description" => "Base Plan",
+                  "quantity" => 1,
+                  "unit_price" => "100.00",
+                  "amount" => "100.00",
+                  "type" => "base_price"
+                }
+              ]
+            }
+          ]
+        })
+        |> Repo.insert(prefix: "public")
+
+      invoice = Repo.preload(invoice, :items)
+      {:ok, invoice: invoice}
+    end
+
+    test "generates PDF binary", %{invoice: invoice} do
+      mock_pdf_binary = <<"%PDF-1.4\n">>
+
+      with_mock ChromicPDF,
+        print_to_pdf: fn {:html, _html}, _opts -> {:ok, mock_pdf_binary} end do
+        pdf = Invoice.to_pdf(invoice)
+
+        assert is_binary(pdf)
+        assert pdf == mock_pdf_binary
+        # Verify ChromicPDF was called
+        assert called(ChromicPDF.print_to_pdf(:_, :_))
+      end
+    end
+
+    test "calls ChromicPDF with correct HTML content", %{invoice: invoice} do
+      mock_pdf_binary = <<"%PDF-1.4\n">>
+
+      with_mock ChromicPDF,
+        print_to_pdf: fn {:html, html}, _opts ->
+          # Verify HTML contains invoice data
+          assert is_binary(html)
+          assert String.contains?(html, invoice.invoice_number)
+          {:ok, mock_pdf_binary}
+        end do
+        pdf = Invoice.to_pdf(invoice)
+
+        assert pdf == mock_pdf_binary
+      end
+    end
+
+    test "calls ChromicPDF with header and footer configuration", %{invoice: invoice} do
+      mock_pdf_binary = <<"%PDF-1.4\n">>
+
+      with_mock ChromicPDF,
+        print_to_pdf: fn {:html, _html}, opts ->
+          # Verify print options are passed
+          assert opts[:print_to_pdf][:displayHeaderFooter] == true
+          assert is_binary(opts[:print_to_pdf][:footerTemplate])
+          assert opts[:print_to_pdf][:headerTemplate] == "<span></span>"
+          {:ok, mock_pdf_binary}
+        end do
+        Invoice.to_pdf(invoice)
+
+        assert called(ChromicPDF.print_to_pdf(:_, :_))
+      end
+    end
+
+    test "handles invoice with all customer information", %{tenant: tenant} do
+      {:ok, invoice_with_customer} =
+        Invoice.create_changeset(%{
+          invoice_number: "LTA01000",
+          tenant_id: tenant.id,
+          year: 2025,
+          month: 10,
+          period_start: ~D[2025-10-01],
+          period_end: ~D[2025-10-31],
+          total: "200.00",
+          customer_name: "Full Customer Info",
+          customer_address: "456 Complete Ave",
+          customer_no: "CUST-001",
+          customer_contact_name: "John Doe",
+          customer_contact_email: "john@example.com",
+          items: [
+            %{
+              type: "plan",
+              period_start: ~D[2025-10-01],
+              period_end: ~D[2025-10-31],
+              amount: "200.00",
+              notes: "Test",
+              rows: []
+            }
+          ]
+        })
+        |> Repo.insert(prefix: "public")
+
+      invoice_with_customer = Repo.preload(invoice_with_customer, :items)
+      mock_pdf_binary = <<"%PDF-1.4\n">>
+
+      with_mock ChromicPDF,
+        print_to_pdf: fn {:html, html}, _opts ->
+          # Verify customer info is in HTML
+          assert is_binary(html)
+          assert String.contains?(html, "Full Customer Info")
+
+          assert String.contains?(html, "john@example.com") or
+                   String.contains?(html, "CUST-001")
+
+          {:ok, mock_pdf_binary}
+        end do
+        pdf = Invoice.to_pdf(invoice_with_customer)
+
+        assert is_binary(pdf)
+      end
+    end
+
+    test "works with invoice containing no customer information", %{tenant: tenant} do
+      {:ok, invoice_no_customer} =
+        Invoice.create_changeset(%{
+          invoice_number: "LTA01001",
+          tenant_id: tenant.id,
+          year: 2025,
+          month: 9,
+          period_start: ~D[2025-09-01],
+          period_end: ~D[2025-09-30],
+          total: "50.00",
+          customer_name: nil,
+          customer_address: nil,
+          items: [
+            %{
+              type: "plan",
+              period_start: ~D[2025-09-01],
+              period_end: ~D[2025-09-30],
+              amount: "50.00",
+              notes: "Test",
+              rows: []
+            }
+          ]
+        })
+        |> Repo.insert(prefix: "public")
+
+      invoice_no_customer = Repo.preload(invoice_no_customer, :items)
+      mock_pdf_binary = <<"%PDF-1.4\n">>
+
+      with_mock ChromicPDF,
+        print_to_pdf: fn {:html, _html}, _opts -> {:ok, mock_pdf_binary} end do
+        pdf = Invoice.to_pdf(invoice_no_customer)
+
+        assert is_binary(pdf)
+        assert pdf == mock_pdf_binary
+      end
     end
   end
 end

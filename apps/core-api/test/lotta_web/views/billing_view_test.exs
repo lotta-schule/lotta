@@ -70,7 +70,7 @@ defmodule LottaWeb.BillingViewTest do
     end
 
     test "renders complete invoice with all view helpers", %{invoice: invoice} do
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       assert String.contains?(html, invoice.invoice_number)
@@ -143,7 +143,7 @@ defmodule LottaWeb.BillingViewTest do
       updated_invoice = Repo.get(Invoice, invoice.id, prefix: "public")
       updated_invoice = Repo.preload(updated_invoice, :items, force: true)
 
-      html = Invoice.as_html(updated_invoice)
+      html = Invoice.to_html(updated_invoice)
 
       assert is_binary(html)
       # Should include storage and conversion descriptions
@@ -152,7 +152,7 @@ defmodule LottaWeb.BillingViewTest do
     end
 
     test "renders invoice with prices formatted correctly", %{invoice: invoice} do
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       # Should contain Euro symbol for prices
       assert html =~ "€" or html =~ "EUR"
@@ -161,7 +161,7 @@ defmodule LottaWeb.BillingViewTest do
     end
 
     test "renders invoice with QR code", %{invoice: invoice} do
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       # Should contain SVG (QR code)
       assert html =~ "<svg" or html =~ "svg"
@@ -195,7 +195,7 @@ defmodule LottaWeb.BillingViewTest do
         |> Repo.insert(prefix: "public")
 
       invoice = Repo.preload(invoice, :items)
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       assert String.length(html) > 0
@@ -268,7 +268,7 @@ defmodule LottaWeb.BillingViewTest do
         |> Repo.insert(prefix: "public")
 
       invoice = Repo.preload(invoice, :items)
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       assert String.length(html) > 0
@@ -300,7 +300,7 @@ defmodule LottaWeb.BillingViewTest do
         |> Repo.insert(prefix: "public")
 
       invoice = Repo.preload(invoice, :items)
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       assert html =~ "99999" or html =~ "€"

@@ -9,12 +9,18 @@
         --color-text: #333;
         --color-primary: #ab0001;
         --color-secondary: #aaa;
+
+        -webkit-print-color-adjust: exact; /* Print color */
       }
       @media print {
           @page {
               size: A4;
-              margin: 20mm;
+              margin: 15mm;
           }
+
+        section {
+            break-inside: avoid;
+        }
       }
 
       * {
@@ -32,10 +38,12 @@
       }
 
       .container {
-          max-width: 210mm;
           margin: 0 auto;
-          padding: 15mm 20mm;
       }
+
+        section {
+        margin-bottom: 1cm;
+        }
 
       .header {
           display: flex;
@@ -43,7 +51,8 @@
           margin-bottom: 0.5cm;
       }
 
-      .logo {
+      .logo img {
+          height: 1.75cm;
       }
 
       .company-info, .invoice-info {
@@ -174,32 +183,6 @@
       .signature {
           margin-top: 30px;
       }
-
-      .footer {
-          margin-top: 60px;
-          padding-top: 20px;
-          border-top: 1px solid #ddd;
-          display: flex;
-          justify-content: space-between;
-          font-size: 7pt;
-          color: var(--color-secondary);
-      }
-
-      .footer-column {
-          flex: 1;
-          margin-right: 20px;
-      }
-
-      .footer-column:last-child {
-          margin-right: 0;
-      }
-
-      .page-number {
-          text-align: right;
-          font-size: 8pt;
-          color: var(--color-secondary);
-          margin-top: 20px;
-      }
     </style>
   </head>
   <body>
@@ -229,102 +212,84 @@
         </div>
       </div>
 
-      <h1>Ihre Lotta-Rechnung</h1>
-      <p class="billing-period">
-        Leistungszeitraum {@invoice.period_start} - {@invoice.period_end}
-      </p>
+      <section>
+        <h1>Ihre Lotta-Rechnung</h1>
+        <p class="billing-period">
+          Leistungszeitraum {@invoice.period_start} - {@invoice.period_end}
+        </p>
 
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th style="text-align: right;">Menge</th>
-            <th style="text-align: right;">Preis/St.</th>
-            <th style="text-align: center;">Menge +</th>
-            <th style="text-align: right;">Preis +</th>
-            <th style="text-align: right;">Kosten</th>
-          </tr>
-        </thead>
-        <%= for item <- @invoice.items do %>
-          <%= for row <- item.rows do %>
-            <tbody>
-              <tr>
-                <td>{row["description"]}</td>
-                <td style="text-align: center;">
-                  {get_row_value(row, :used_quantity)}
-                </td>
-                <td class="amount">
-                  {get_row_value(row, :unit_price)}
-                </td>
-                <td style="text-align: center;">{get_row_value(row, :overage_amount)}</td>
-                <td class="amount">{get_row_value(row, :overage_price)}</td>
-                <td class="amount">{get_row_value(row, :price)}</td>
-              </tr>
-            </tbody>
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th style="text-align: right;">Menge</th>
+              <th style="text-align: right;">Preis/St.</th>
+              <th style="text-align: center;">Menge +</th>
+              <th style="text-align: right;">Preis +</th>
+              <th style="text-align: right;">Kosten</th>
+            </tr>
+          </thead>
+          <%= for item <- @invoice.items do %>
+            <%= for row <- item.rows do %>
+              <tbody>
+                <tr>
+                  <td>{row["description"]}</td>
+                  <td style="text-align: center;">
+                    {get_row_value(row, :used_quantity)}
+                  </td>
+                  <td class="amount">
+                    {get_row_value(row, :unit_price)}
+                  </td>
+                  <td style="text-align: center;">{get_row_value(row, :overage_amount)}</td>
+                  <td class="amount">{get_row_value(row, :overage_price)}</td>
+                  <td class="amount">{get_row_value(row, :price)}</td>
+                </tr>
+              </tbody>
+            <% end %>
           <% end %>
-        <% end %>
-      </table>
-
-      <div class="totals">
-        <table>
-          <tr class="final-total">
-            <td class="label">Gesamt</td>
-            <td class="amount">{format_price(@invoice.total)}</td>
-          </tr>
         </table>
-      </div>
 
-      <p style="margin-bottom: 1em;">Gemäß §19 UStG wird keine Umsatzsteuer berechnet.</p>
-      <p>
-        Bitte überweisen Sie den Rechnungsbetrag innerhalb von 14 Tagen auf das folgende Konto:
-      </p>
-      <div class="payment-info">
-        <table>
-          <tr>
-            <td>Kontoinhaber:</td>
-            <td>einsA GbR</td>
-          </tr>
-          <tr>
-            <td>IBAN:</td>
-            <td>DE24 4306 0967 1310 1660 00</td>
-          </tr>
-          <tr>
-            <td>BIC:</td>
-            <td>GENODEM1GLS (GLS Bank)</td>
-          </tr>
-          <tr>
-            <td>Verwendungszweck:</td>
-            <td>{@invoice.invoice_number}</td>
-          </tr>
-        </table>
-        {raw(payment_qr(@invoice))}
-      </div>
-
-      <p>
-        Vielen Dank für Ihren Auftrag und das damit verbundene Vertrauen.
-      </p>
-
-      <div class="footer">
-        <div class="footer-column">
-          <p>einsA GbR</p>
-          <p>Wilhelminenstraße 10</p>
-          <p>04129 Leipzig</p>
+        <div class="totals">
+          <table>
+            <tr class="final-total">
+              <td class="label">Gesamt</td>
+              <td class="amount">{format_price(@invoice.total)}</td>
+            </tr>
+          </table>
         </div>
-        <div class="footer-column">
-          <p>Geschäftsführer: Eike Wiewiorra</p>
-          <p>Ust.ID: DE 311 605 299</p>
-          <p>email: kontakt@lotta.schule</p>
-        </div>
-        <div class="footer-column">
-          <p>Konto: GLS-Bank</p>
-          <p>BIC: GENODEM1GLS</p>
-          <p>IBAN: DE24 4306 0967 1310 1660 00</p>
-        </div>
-      </div>
+        <p>Gemäß §19 UStG wird keine Umsatzsteuer berechnet.</p>
+      </section>
 
-      <div class="page-number">
-        Seite 1/1
-      </div>
+      <section>
+        <p>
+          Bitte überweisen Sie den Rechnungsbetrag innerhalb von 14 Tagen auf das folgende Konto:
+        </p>
+        <div class="payment-info">
+          <table>
+            <tr>
+              <td>Kontoinhaber:</td>
+              <td>einsA GbR</td>
+            </tr>
+            <tr>
+              <td>IBAN:</td>
+              <td>DE24 4306 0967 1310 1660 00</td>
+            </tr>
+            <tr>
+              <td>BIC:</td>
+              <td>GENODEM1GLS (GLS Bank)</td>
+            </tr>
+            <tr>
+              <td>Verwendungszweck:</td>
+              <td>{@invoice.invoice_number}</td>
+            </tr>
+          </table>
+          {raw(payment_qr(@invoice))}
+        </div>
+
+        <p>
+          Vielen Dank für Ihren Auftrag und das damit verbundene Vertrauen.
+        </p>
+      </section>
     </div>
   </body>
 </html>

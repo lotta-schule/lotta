@@ -1313,18 +1313,18 @@ defmodule Lotta.BillingsTest do
   end
 
   describe "Invoice HTML rendering" do
-    test "as_html/1 generates HTML for invoice", %{tenant: tenant} do
+    test "to_html/1 generates HTML for invoice", %{tenant: tenant} do
       {:ok, invoice} = Billings.generate_invoice(tenant, 2025, 11)
       invoice = Repo.preload(invoice, :items)
 
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       assert String.length(html) > 0
       assert html =~ invoice.invoice_number
     end
 
-    test "as_html/1 includes all invoice items", %{tenant: tenant} do
+    test "to_html/1 includes all invoice items", %{tenant: tenant} do
       {:ok, _item} =
         Billings.add_additional_item(tenant, %{
           name: "Test Service",
@@ -1335,14 +1335,14 @@ defmodule Lotta.BillingsTest do
       {:ok, invoice} = Billings.generate_invoice(tenant, 2025, 11)
       invoice = Repo.preload(invoice, :items)
 
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       # Should have both plan and additional item
       assert length(invoice.items) >= 2
     end
 
-    test "as_html/1 includes customer information when present", %{tenant: tenant} do
+    test "to_html/1 includes customer information when present", %{tenant: tenant} do
       {:ok, updated_tenant} =
         Tenants.update_tenant(tenant, %{
           title: "HTML Test Org",
@@ -1352,12 +1352,12 @@ defmodule Lotta.BillingsTest do
       {:ok, invoice} = Billings.generate_invoice(updated_tenant, 2025, 11)
       invoice = Repo.preload(invoice, :items)
 
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert html =~ "HTML Test Org"
     end
 
-    test "as_html/1 works without customer information", %{tenant: tenant} do
+    test "to_html/1 works without customer information", %{tenant: tenant} do
       {:ok, updated_tenant} =
         Tenants.update_tenant(tenant, %{
           billing_address: nil,
@@ -1367,7 +1367,7 @@ defmodule Lotta.BillingsTest do
       {:ok, invoice} = Billings.generate_invoice(updated_tenant, 2025, 11)
       invoice = Repo.preload(invoice, :items)
 
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       assert String.length(html) > 0

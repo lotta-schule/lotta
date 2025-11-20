@@ -32,6 +32,7 @@ defmodule Lotta.Application do
         {ConCache,
          name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)},
         {Lotta.Eduplaces.Syncer, Application.get_env(:lotta, Lotta.Eduplaces.Syncer, [])},
+        {ChromicPDF, []},
         {Oban, Application.fetch_env!(:lotta, Oban)},
         get_tcp_healthcheck_app_child()
       ]

@@ -40,7 +40,7 @@ defmodule Lotta.Billings.EpcCode do
   """
   @spec to_svg(epc_code :: t(), svg_settings :: SvgSettings.t() | nil) ::
           String.t()
-  def to_svg(epc_code = %__MODULE__{}, svg_settings \\ %SvgSettings{}) do
+  def to_svg(%__MODULE__{} = epc_code, svg_settings \\ %SvgSettings{}) do
     result =
       epc_code
       |> generate_content()

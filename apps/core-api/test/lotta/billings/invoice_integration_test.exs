@@ -47,7 +47,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
 
       # Step 4: Export as HTML
       paid_with_items = Repo.preload(paid, :items)
-      html = Invoice.as_html(paid_with_items)
+      html = Invoice.to_html(paid_with_items)
 
       assert is_binary(html)
       assert String.contains?(html, paid.invoice_number)
@@ -101,7 +101,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
       {:ok, invoice} = Billings.generate_invoice(tenant, 2025, 11)
       invoice = Repo.preload(invoice, :items)
 
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       # Should contain both additional items
@@ -116,7 +116,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
       {:ok, invoice} = Billings.generate_invoice(tenant_with_plan, 2025, 11)
       invoice = Repo.preload(invoice, :items)
 
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       # Should contain plan information
@@ -137,7 +137,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
       {:ok, invoice} = Billings.generate_invoice(updated_tenant, 2025, 11)
       invoice = Repo.preload(invoice, :items)
 
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert html =~ "Test Organization"
       assert html =~ "123 Billing St" or html =~ "Billing"
@@ -157,7 +157,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
       invoice = Repo.preload(invoice, :items)
 
       # Should not crash when rendering
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       assert is_binary(html)
       assert String.length(html) > 0
@@ -170,7 +170,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
 
       # Render HTML which should include QR code
       invoice = Repo.preload(invoice, :items)
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       # HTML should contain SVG (QR code is embedded as SVG)
       assert html =~ "<svg" or html =~ "qr" or is_binary(html)
@@ -182,7 +182,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
       invoice = Repo.preload(invoice, :items)
 
       # The QR code is embedded in the HTML
-      html = Invoice.as_html(invoice)
+      html = Invoice.to_html(invoice)
 
       # Verify invoice total is present somewhere in HTML
       total_str = Decimal.to_string(invoice.total)
@@ -204,7 +204,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
         invoice = Repo.preload(invoice, :items)
 
         # Should not crash when rendering with config
-        html = Invoice.as_html(invoice)
+        html = Invoice.to_html(invoice)
 
         assert is_binary(html)
         assert String.length(html) > 0
@@ -224,7 +224,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
         invoice = Repo.preload(invoice, :items)
 
         # Should handle missing config gracefully
-        html = Invoice.as_html(invoice)
+        html = Invoice.to_html(invoice)
 
         assert is_binary(html)
       after

@@ -6,6 +6,87 @@ defmodule LottaWeb.BillingView do
 
   use LottaWeb, :view
 
+  def invoice_footer do
+    """
+    <style>
+      :root {
+        --color-text: #333;
+        --color-primary: #ab0001;
+        --color-secondary: #aaa;
+      }
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+      }
+
+      body {
+          font-family: Arial, sans-serif;
+          font-size: 9pt;
+          line-height: 1.3;
+          color: var(--color-text)
+          background: white;
+      }
+
+      footer {
+        width: 100%;
+          border-top: 1px solid #ddd;
+          display: flex;
+          flex-direction: column;
+          padding: 0 15mm;
+      }
+      .footer {
+          display: flex;
+          padding-top: 10px;
+          width: 100%;
+          justify-content: space-between;
+          font-size: 7pt;
+          color: var(--color-secondary);
+      }
+
+      .footer-column:nth-child(1) {
+          text-align: left;
+      }
+      .footer-column:nth-child(2) {
+          text-align: center;
+      }
+      .footer-column:nth-child(3) {
+          text-align: right;
+      }
+
+      .page-number {
+          text-align: right;
+          font-size: 8pt;
+          color: var(--color-secondary);
+          margin-top: 20px;
+      }
+    </style>
+    <footer>
+      <div class="footer">
+        <div class="footer-column">
+          <p>einsA GbR</p>
+          <p>Wilhelminenstraße 10</p>
+          <p>04129 Leipzig</p>
+        </div>
+        <div class="footer-column">
+          <p>Geschäftsführer: Eike Wiewiorra</p>
+          <p>Ust.ID: DE 311 605 299</p>
+          <p>email: kontakt@lotta.schule</p>
+        </div>
+        <div class="footer-column">
+          <p>Konto: GLS-Bank</p>
+          <p>BIC: GENODEM1GLS</p>
+          <p>IBAN: DE24 4306 0967 1310 1660 00</p>
+        </div>
+      </div>
+
+      <div class="page-number">
+        Seite <span class="pageNumber"></span>/<span class="totalPages"></span>
+      </div>
+    </footer>
+    """
+  end
+
   defp get_row_value(%{"type" => type, "metadata" => metadata}, :used_quantity)
        when type in ["storage_usage", "media_conversion_usage"] do
     rounded(metadata["storage_included_gb"] || metadata["conversion_included_minutes"])
