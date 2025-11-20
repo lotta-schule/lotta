@@ -6,5 +6,12 @@
   "navigationContrastTextColor": "#53555f",
   "primaryContrastTextColor": "#ffffff",
   "errorColor": "#dc4c6a",
-  "successTextColor": "#2f8c5b"
+  "successTextColor": "#1cea6a",
+  "bannerBackgroundColor": "#fff",
+  "textFontFamily": "Nunito",
+  "titleFontFamily": "Quicksand",
+  "borderRadius": "2px",
+  "spacing": "12px",
+  "badgeBackgroundColor": "#95d2ff",
+  "badgeTextColor": "#444950"
 }

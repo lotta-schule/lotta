@@ -3,10 +3,16 @@ import { Theme } from '@lotta-schule/theme';
 
 export type PagePreviewProps = {
   theme: Theme;
+  backgroundImageSrc: string | undefined;
 } & React.SVGProps<SVGSVGElement>;
 
 export const PagePreview = React.memo(
-  ({ className, theme: _theme, ...props }: PagePreviewProps) => (
+  ({
+    className,
+    theme: _theme,
+    backgroundImageSrc,
+    ...props
+  }: PagePreviewProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 527.46 419.08"
@@ -23,11 +29,14 @@ export const PagePreview = React.memo(
 .cls-83 {
   fill: none;
 }
-.cls-2 {
+.page-bg-wrapper {
   clip-path: url(#clip-path);
 }
-.cls-3 {
+.page-bg-wrapper .page-bg {
   fill: rgb(var(--lotta-page-background-color));
+}
+.page-bg-wrapper image {
+  opacity: .5;
 }
 .cls-4 {
   clip-path: url(#clip-path-2);
@@ -847,10 +856,20 @@ cls-94 {
         </clipPath>
       </defs>
       <title>Zeichenfläche 1</title>
-      <g className="cls-2">
+      <g className="page-bg-wrapper">
         <path
-          className="cls-3"
+          className="page-bg"
           d="M22.53,1.5H506.94c6,0,9.63,0,12,1A12.5,12.5,0,0,1,526.46,10c1,2.41,1,6,1,12.05v376c0,6,0,9.64-1,12.05a12.5,12.5,0,0,1-7.48,7.47c-2.41,1-6,1-12,1H22.53c-6,0-9.64,0-12-1A12.49,12.49,0,0,1,3,410.1c-1-2.41-1-6-1-12.05V22c0-6,0-9.64,1-12a12.49,12.49,0,0,1,7.47-7.47C12.89,1.5,16.5,1.5,22.53,1.5Z"
+        />
+
+        <image
+          href={backgroundImageSrc}
+          x="0"
+          y="0"
+          width="527.46"
+          height="419.08"
+          preserveAspectRatio="xMidYMid slice"
+          clipPath="url(#clip-path)"
         />
       </g>
       <g className="cls-4">
