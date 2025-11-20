@@ -21,3 +21,4 @@ jobs:
       otp-version: '28.0.2'
       elixir-version: '1.18.4'
       node-version: '24.5'
+      pnpm-version: '10'
