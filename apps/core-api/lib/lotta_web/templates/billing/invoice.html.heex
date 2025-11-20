@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rechnung Nr: {@invoice.invoice_number}</title>
+    <style>
+      :root {
+        --color-text: #333;
+        --color-primary: #ab0001;
+        --color-secondary: #aaa;
+      }
+      @media print {
+          @page {
+              size: A4;
+              margin: 20mm;
+          }
+      }
+
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+      }
+
+      body {
+          font-family: Arial, sans-serif;
+          font-size: 9pt;
+          line-height: 1.3;
+          color: var(--color-text)
+          background: white;
+      }
+
+      .container {
+          max-width: 210mm;
+          margin: 0 auto;
+          padding: 15mm 20mm;
+      }
+
+      .header {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 0.5cm;
+      }
+
+      .logo {
+      }
+
+      .company-info, .invoice-info {
+          font-size: 8pt;
+          color: var(--color-secondary)
+          margin-bottom: 0.5cm;
+      }
+
+      .recipient {
+          margin-top: 0.5cm;
+          margin-bottom: 0.35cm;
+      }
+
+      .recipient h2 {
+          font-size: 12pt;
+          font-weight: normal;
+          margin-bottom: 5px;
+      }
+
+      .recipient p {
+          margin-bottom: 3px;
+      }
+
+      .invoice-header {
+        display: grid;
+        grid-template-columns: 65% auto;
+        margin-bottom: 1cm;
+      }
+
+      .invoice-meta {
+          font-size: 9pt;
+          line-height: 1.4;
+      }
+
+      .invoice-details {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          gap: 10px;
+          margin-bottom: 0.4cm;
+      }
+
+      .invoice-details .label {
+          font-weight: normal;
+      }
+
+      h1 {
+        font-size: 14pt;
+        font-weight: 400;
+      }
+
+      .billing-period {
+        margin-bottom: 0.4cm;
+      }
+
+      table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 0.2cm;
+      }
+
+      table th {
+          background-color: var(--color-primary);
+          color: white;
+          padding: 8px;
+          text-align: left;
+          font-weight: normal;
+      }
+
+      table td {
+          padding: 8px;
+          border-bottom: 1px solid #ddd;
+      }
+
+      table td.amount {
+          text-align: right;
+      }
+
+      .totals {
+          margin-top: 20px;
+      }
+
+      .totals table {
+          width: auto;
+          margin-left: auto;
+      }
+
+      .totals td {
+          border: none;
+          padding: 5px 15px;
+      }
+
+      .totals .label {
+          text-align: right;
+          padding-right: 20px;
+      }
+
+      .totals .final-total {
+          font-weight: bold;
+          border-top: 1px solid #000;
+          padding-top: 10px;
+      }
+
+      .payment-info {
+          margin-top: 20px;
+          margin-bottom: 10px;
+          line-height: 1.5;
+
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+      }
+      .payment-info table {
+        margin: 0;
+      }
+      .payment-info table td {
+        padding: 0;
+        border: 0;
+      }
+      .payment-info table td:first-child {
+        padding-right: 8px;
+      }
+
+      .payment-info svg {
+          width: 4cm;
+          height: 3cm;
+      }
+
+      .signature {
+          margin-top: 30px;
+      }
+
+      .footer {
+          margin-top: 60px;
+          padding-top: 20px;
+          border-top: 1px solid #ddd;
+          display: flex;
+          justify-content: space-between;
+          font-size: 7pt;
+          color: var(--color-secondary);
+      }
+
+      .footer-column {
+          flex: 1;
+          margin-right: 20px;
+      }
+
+      .footer-column:last-child {
+          margin-right: 0;
+      }
+
+      .page-number {
+          text-align: right;
+          font-size: 8pt;
+          color: var(--color-secondary);
+          margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo"><img src={default_logo_data_url()} /></div>
+      <div class="invoice-header">
+        <div>
+          <div class="company-info"></div>
+
+          <div class="recipient">
+            <h2>{@invoice.customer_name}</h2>
+            <%= if @invoice.customer_contact_name do %>
+              <p>z.Hd. {@invoice.customer_contact_name}</p>
+            <% end %>
+            <p style="white-space: pre">{@invoice.customer_address}</p>
+          </div>
+        </div>
+
+        <div class="invoice-info">
+          Kundennummer: {@invoice.customer_no}<br />
+          Rechnungsnummer: {@invoice.invoice_number}<br />
+          <%= if @invoice.issued_at do %>
+            Rechnungsdatum: {DateTime.to_date(@invoice.issued_at)}<br />
+          <% else %>
+            <strong style="color: red;">ENTWURF - NOCH NICHT AUSGESTELLT</strong> <br />
+          <% end %>
+        </div>
+      </div>
+
+      <h1>Ihre Lotta-Rechnung</h1>
+      <p class="billing-period">
+        Leistungszeitraum {@invoice.period_start} - {@invoice.period_end}
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th style="text-align: right;">Menge</th>
+            <th style="text-align: right;">Preis/St.</th>
+            <th style="text-align: center;">Menge +</th>
+            <th style="text-align: right;">Preis +</th>
+            <th style="text-align: right;">Kosten</th>
+          </tr>
+        </thead>
+        <%= for item <- @invoice.items do %>
+          <%= for row <- item.rows do %>
+            <tbody>
+              <tr>
+                <td>{row["description"]}</td>
+                <td style="text-align: center;">
+                  {get_row_value(row, :used_quantity)}
+                </td>
+                <td class="amount">
+                  {get_row_value(row, :unit_price)}
+                </td>
+                <td style="text-align: center;">{get_row_value(row, :overage_amount)}</td>
+                <td class="amount">{get_row_value(row, :overage_price)}</td>
+                <td class="amount">{get_row_value(row, :price)}</td>
+              </tr>
+            </tbody>
+          <% end %>
+        <% end %>
+      </table>
+
+      <div class="totals">
+        <table>
+          <tr class="final-total">
+            <td class="label">Gesamt</td>
+            <td class="amount">{format_price(@invoice.total)}</td>
+          </tr>
+        </table>
+      </div>
+
+      <p style="margin-bottom: 1em;">Gemäß §19 UStG wird keine Umsatzsteuer berechnet.</p>
+      <p>
+        Bitte überweisen Sie den Rechnungsbetrag innerhalb von 14 Tagen auf das folgende Konto:
+      </p>
+      <div class="payment-info">
+        <table>
+          <tr>
+            <td>Kontoinhaber:</td>
+            <td>einsA GbR</td>
+          </tr>
+          <tr>
+            <td>IBAN:</td>
+            <td>DE24 4306 0967 1310 1660 00</td>
+          </tr>
+          <tr>
+            <td>BIC:</td>
+            <td>GENODEM1GLS (GLS Bank)</td>
+          </tr>
+          <tr>
+            <td>Verwendungszweck:</td>
+            <td>{@invoice.invoice_number}</td>
+          </tr>
+        </table>
+        {raw(payment_qr(@invoice))}
+      </div>
+
+      <p>
+        Vielen Dank für Ihren Auftrag und das damit verbundene Vertrauen.
+      </p>
+
+      <div class="footer">
+        <div class="footer-column">
+          <p>einsA GbR</p>
+          <p>Wilhelminenstraße 10</p>
+          <p>04129 Leipzig</p>
+        </div>
+        <div class="footer-column">
+          <p>Geschäftsführer: Eike Wiewiorra</p>
+          <p>Ust.ID: DE 311 605 299</p>
+          <p>email: kontakt@lotta.schule</p>
+        </div>
+        <div class="footer-column">
+          <p>Konto: GLS-Bank</p>
+          <p>BIC: GENODEM1GLS</p>
+          <p>IBAN: DE24 4306 0967 1310 1660 00</p>
+        </div>
+      </div>
+
+      <div class="page-number">
+        Seite 1/1
+      </div>
+    </div>
+  </body>
+</html>

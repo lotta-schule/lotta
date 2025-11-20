@@ -141,6 +141,15 @@ defmodule Lotta.Billings.Invoice do
     end
   end
 
+  def as_html(%__MODULE__{} = invoice) do
+    Phoenix.Template.render_to_string(
+      LottaWeb.BillingView,
+      "invoice",
+      "html",
+      invoice: invoice
+    )
+  end
+
   # Validates that period_start is the first day of the month
   # and period_end is the last day of the month
   defp validate_period_dates(changeset) do

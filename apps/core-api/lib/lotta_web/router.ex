@@ -104,16 +104,13 @@ defmodule LottaWeb.Router do
     get("/status", LottaWeb.SetupController, :status)
   end
 
-  scope "/admin-api" do
-    pipe_through([:admin_auth, :json_api])
-
-    post("/create-test", LottaWeb.TenantController, :create_test)
-    post("/delete-tenant", LottaWeb.TenantController, :delete_tenant)
-  end
-
   scope "/admin" do
+    scope "/" do
+      pipe_through([:admin_auth, :browser])
+    end
+
     scope "/api" do
-      pipe_through(:json_api)
+      pipe_through([:admin_auth, :json_api])
 
       post("/create-test", LottaWeb.TenantController, :create_test)
       post("/delete-tenant", LottaWeb.TenantController, :delete_tenant)

@@ -100,6 +100,7 @@ defmodule Lotta.MixProject do
       {:tesla, "~> 1.15"},
       {:sweet_xml, "~> 0.7"},
       {:poison, "~> 6.0"},
+      {:qr_code, "~> 3.2.0"},
       {:uuid, "~> 1.1.8"},
       {:bamboo, "~> 2.0"},
       {:bamboo_phoenix, "~> 1.0"},
