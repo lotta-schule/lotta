@@ -1,13 +1,105 @@
-defmodule LottaWeb.CoreComponentsTest do
+defmodule CockpitWeb.CoreComponentsTest do
   @moduledoc false
 
   use LottaWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Phoenix.Component
-  import LottaWeb.CoreComponents
+  import CockpitWeb.CoreComponents
 
   alias Phoenix.LiveView.JS
+
+  describe "flash/1" do
+    test "renders info flash with inner block" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.flash kind={:info}>Welcome back!</.flash>
+        """)
+
+      assert html =~ ~s|id="flash-info"|
+      assert html =~ ~s|role="alert"|
+      assert html =~ ~s|class="toast toast-top toast-end z-50"|
+      assert html =~ ~s|alert-info|
+      assert html =~ ~s|hero-information-circle|
+      assert html =~ "Welcome back!"
+    end
+
+    test "renders error flash with inner block" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.flash kind={:error}>Something went wrong!</.flash>
+        """)
+
+      assert html =~ ~s|id="flash-error"|
+      assert html =~ ~s|alert-error|
+      assert html =~ ~s|hero-exclamation-circle|
+      assert html =~ "Something went wrong!"
+    end
+
+    test "renders flash with title" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.flash kind={:info} title="Success">Operation completed</.flash>
+        """)
+
+      assert html =~ ~s|class="font-semibold"|
+      assert html =~ "Success"
+      assert html =~ "Operation completed"
+    end
+
+    test "renders flash from flash map" do
+      flash = %{"info" => "Flash message from map"}
+      assigns = %{flash: flash}
+
+      html =
+        rendered_to_string(~H"""
+        <.flash kind={:info} flash={@flash} />
+        """)
+
+      assert html =~ "Flash message from map"
+    end
+
+    test "renders flash with custom id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.flash kind={:info} id="custom-flash">Message</.flash>
+        """)
+
+      assert html =~ ~s|id="custom-flash"|
+    end
+
+    test "renders close button" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.flash kind={:info}>Message</.flash>
+        """)
+
+      assert html =~ ~s|hero-x-mark|
+      assert html =~ ~s|type="button"|
+    end
+
+    test "does not render when no message" do
+      flash = %{}
+      assigns = %{flash: flash}
+
+      html =
+        rendered_to_string(~H"""
+        <.flash kind={:info} flash={@flash} />
+        """)
+
+      refute html =~ ~s|role="alert"|
+    end
+  end
 
   describe "button/1" do
     test "renders basic button" do

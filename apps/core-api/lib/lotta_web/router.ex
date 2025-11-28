@@ -4,6 +4,7 @@ defmodule LottaWeb.Router do
   """
   use LottaWeb, :router
 
+  import Phoenix.LiveView.Router
   import Phoenix.LiveDashboard.Router
   import Oban.Web.Router
 
@@ -20,8 +21,12 @@ defmodule LottaWeb.Router do
   end
 
   pipeline :browser do
-    plug(:accepts, ~w(html))
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
     plug(:put_root_layout, html: {LottaWeb.Layouts, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
   end
 
   pipeline :json_api do
@@ -105,10 +110,6 @@ defmodule LottaWeb.Router do
   end
 
   scope "/admin" do
-    scope "/" do
-      pipe_through([:admin_auth, :browser])
-    end
-
     scope "/api" do
       pipe_through([:admin_auth, :json_api])
 

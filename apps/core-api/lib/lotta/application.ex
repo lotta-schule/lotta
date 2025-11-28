@@ -33,6 +33,7 @@ defmodule Lotta.Application do
          name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)},
         {Lotta.Eduplaces.Syncer, Application.get_env(:lotta, Lotta.Eduplaces.Syncer, [])},
         {Oban, Application.fetch_env!(:lotta, Oban)},
+        CockpitWeb.Endpoint,
         get_chromic_app_child(),
         get_tcp_healthcheck_app_child()
       ]
@@ -81,6 +82,7 @@ defmodule Lotta.Application do
   # whenever the application is updated.
   def config_change(changed, _new, removed) do
     LottaWeb.Endpoint.config_change(changed, removed)
+    CockpitWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 end

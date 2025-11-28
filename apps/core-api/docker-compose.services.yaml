@@ -27,3 +27,18 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DISABLE_POSTFIX: 'true'
+      PGADMIN_DEFAULT_EMAIL: lotta@lotta.schule
+      PGADMIN_DEFAULT_PASSWORD: lotta
+      PGADMIN_SERVER_JSON_FILE: /tmp/server.json
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    ports:
+      - '8432:80'
+    volumes:
+      - ./pgadmin.json:/tmp/server.json:ro
+      - ~/Downloads:/home/downloads:ro

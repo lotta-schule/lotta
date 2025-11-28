@@ -59,7 +59,9 @@ defmodule SystemConfig do
   defp default("NAMESPACE", _), do: nil
   defp default("PHX_SERVER", :dev), do: "true"
   defp default("PHX_SERVER", _), do: "false"
-  defp default("SECRET_KEY_BASE", env) when env in [:dev, :test], do: "123"
+
+  defp default("SECRET_KEY_BASE", env) when env in [:dev, :test],
+    do: "XrmuJRXNUaYf6nvFypMQi3bQ7CycRw3m6PPdbppXZcCiWDMjyHpGtkzW3umXKRAvaL"
 
   defp default("SECRET_KEY_JWT", env) when env in [:dev, :test],
     do: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
@@ -175,6 +177,25 @@ config :lotta, LottaWeb.Endpoint,
   secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
   server: SystemConfig.get("PHX_SERVER", cast: :boolean)
 
+config :lotta, CockpitWeb.Endpoint,
+  secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
+  server: SystemConfig.get("PHX_SERVER", cast: :boolean)
+
+if config_env() == :dev do
+  config :lotta, LottaWeb.Endpoint,
+    watchers: [
+      # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
+      esbuild: {Esbuild, :install_and_run, [:lotta, ~w(--sourcemap=inline --watch)]}
+    ]
+
+  config :lotta, CockpitWeb.Endpoint,
+    watchers: [
+      # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
+      esbuild: {Esbuild, :install_and_run, [:cockpit, ~w(--sourcemap=inline --watch)]},
+      tailwind: {Tailwind, :install_and_run, [:cockpit, ~w(--watch)]}
+    ]
+end
+
 config :lotta, Lotta.TCPHealthCheck,
   enabled: SystemConfig.get("TCP_HEALTH_CHECK_ENABLED", cast: :boolean),
   config: [port: SystemConfig.get("TCP_HEALTH_CHECK_PORT", cast: :integer)]
@@ -258,6 +279,8 @@ config :lotta, :cockpit,
   endpoint: SystemConfig.get("COCKPIT_ENDPOINT"),
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
+
+config :joken, default_signer: SystemConfig.get("SECRET_KEY_JWT")
 
 config :lotta, Lotta.Administration.Notification.Slack,
   webhook: SystemConfig.get("SLACK_WEBHOOK_URL")

@@ -93,6 +93,7 @@ defmodule Lotta.MixProject do
       {:argon2_elixir, "~> 4.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:guardian, "~> 2.4.0"},
+      {:joken, "~> 2.6.2"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.1"},
       {:hackney, "~> 1.20"},
@@ -119,12 +120,23 @@ defmodule Lotta.MixProject do
       {:ffmpex, "~> 0.11"},
       {:oban, "~> 2.19"},
       {:oban_web, "~> 2.11"},
+      {:backpex, "~> 0.16.3"},
       # Test
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.14", only: :test},
       {:junit_formatter, "~> 3.2", only: :test},
       {:mock, "~> 0.3", only: :test},
       # Development
+      {:phoenix_live_reload, "~> 1.6", only: :dev},
+      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
+      {:heroicons,
+       github: "tailwindlabs/heroicons",
+       tag: "v2.2.0",
+       sparse: "optimized",
+       app: false,
+       compile: false,
+       depth: 1},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
@@ -155,14 +167,23 @@ defmodule Lotta.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.reset", "test"],
-      sentry_recompile: ["compile", "deps.compile sentry --force"],
       translations: [
         "gettext.extract",
         "gettext.merge priv/gettext/de/LC_MESSAGES/default.po priv/gettext/default.pot"
-      ]
+      ],
+      sentry_recompile: ["compile", "deps.compile sentry --force"],
+      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.build": ["compile", "tailwind cockpit", "esbuild cockpit"],
+      "assets.deploy": [
+        "tailwind cockpit --minify",
+        "esbuild cockpit --minify",
+        "phx.digest"
+      ],
+      precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"]
     ]
   end
 end

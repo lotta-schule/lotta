@@ -51,6 +51,8 @@ defmodule Lotta.Billings.Invoice do
     field(:due_date, :date)
     field(:paid_at, :utc_datetime)
 
+    field(:period, :string, virtual: true)
+
     field(:status, Ecto.Enum,
       values: [:draft, :issued, :paid, :overdue, :cancelled],
       default: :draft
