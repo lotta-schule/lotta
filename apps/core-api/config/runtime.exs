@@ -122,7 +122,7 @@ defmodule SystemConfig do
 
   defp default("COCKPIT_ADMIN_API_USERNAME", _), do: "admin"
   defp default("COCKPIT_ADMIN_API_KEY", env) when env in [:dev, :test], do: "test123"
-  defp default("COCKPIT_ENDPOINT", _), do: "http://localhost:4040"
+  defp default("COCKPIT_HOST", _), do: "localhost"
 
   defp default("SLACK_WEBHOOK_URL", _), do: nil
 
@@ -179,6 +179,7 @@ config :lotta, LottaWeb.Endpoint,
 
 config :lotta, CockpitWeb.Endpoint,
   secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
+  url: [host: SystemConfig.get("COCKPIT_HOST")],
   server: SystemConfig.get("PHX_SERVER", cast: :boolean)
 
 if config_env() == :dev do
@@ -276,7 +277,7 @@ config :lotta, LottaWeb.Auth.AccessToken,
   issuer: "lotta"
 
 config :lotta, :cockpit,
-  endpoint: SystemConfig.get("COCKPIT_ENDPOINT"),
+  endpoint: SystemConfig.get("COCKPIT_HOST"),
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
 

@@ -19,4 +19,4 @@ config :lotta, LottaWeb.Endpoint,
   live_view: [signing_salt: "abcdefghijklmnopqrstuvwxyz1234567890"],
   debug_errors: config_env() == :dev,
   code_reloader: config_env() == :dev,
-  check_origin: config_env() != :dev
+  check_origin: false
