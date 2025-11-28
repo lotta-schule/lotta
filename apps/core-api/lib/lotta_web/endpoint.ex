@@ -15,18 +15,18 @@ defmodule LottaWeb.Endpoint do
   ]
 
   socket("/api/user-socket", LottaWeb.UserSocket,
-    websocket: [connect_info: [session: @session_options], check_origin: false],
-    longpoll: [connect_info: [session: @session_options], check_origin: false]
+    websocket: [check_origin: false],
+    longpoll: [check_origin: false]
   )
 
   socket("/api/graphql-socket", LottaWeb.GraphQLSocket,
-    websocket: [connect_info: [session: @session_options], check_origin: false],
-    longpoll: [connect_info: [session: @session_options], check_origin: false]
+    websocket: [check_origin: false],
+    longpoll: [check_origin: false]
   )
 
   socket("/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options], check_origin: false],
-    longpoll: [connect_info: [session: @session_options], check_origin: false]
+    websocket: [check_origin: false],
+    longpoll: [check_origin: false]
   )
 
   # Serve at "/" the static files from "priv/static" directory.
