@@ -268,6 +268,7 @@ LABEL org.opencontainers.image.authors="Lotta Schule <kontakt@lotta.schule>"
 LABEL org.opencontainers.image.url="https://lotta.schule"
 
 EXPOSE 4000
+EXPOSE 4010
 EXPOSE 4321
 
 RUN mkdir -p /app
