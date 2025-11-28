@@ -25,7 +25,7 @@ export const Edit = React.memo(
     return (
       <figure className={styles.edit}>
         <SelectFileOverlay
-          label={'Video auswechseln'}
+          label={'Video wechseln'}
           fileFilter={(f) => f.fileType === 'VIDEO'}
           onSelectFile={(file) => {
             onUpdateModule({

@@ -1,9 +1,10 @@
 @use "breakpoints" as *;
 
 .root {
-  min-width: fit-content;
-  width: 18em;
-  min-height: 6em;
+  min-width: min-content;
+  max-width: max-content;
+  width: 12em;
+  min-height: 3em;
   border: 2px solid var(--lotta-color-secondary);
   margin: 0 auto;
   position: relative;

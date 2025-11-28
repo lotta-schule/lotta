@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Box, NoSsr, ScrollToTopButton } from '@lotta-schule/hubert';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { loadTenant } from '../loader';
+import { loadTenant } from '../loader/loadTenant';
+import { Navbar } from './navigation/Navbar';
 import Link from 'next/link';
 import clsx from 'clsx';
 
-import styles from './BaseLayout.module.scss';
+import styles from './TenantLayout.module.scss';
 
 export type TenantLayoutProps = React.PropsWithChildren<{
   /**
@@ -45,7 +46,7 @@ export const TenantLayout = async ({
           <h1>{tenant.title}</h1>
         </div>
       </header>
-      {/*<Navbar />*/}
+      <Navbar />
       <main className={styles.main}>
         {children}
         {!fullSizeScrollable && (

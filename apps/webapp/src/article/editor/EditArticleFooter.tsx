@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import {
@@ -24,7 +26,7 @@ import {
   Checkbox,
 } from '@lotta-schule/hubert';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 
 import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';

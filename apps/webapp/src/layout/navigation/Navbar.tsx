@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Button, NavigationButton } from '@lotta-schule/hubert';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
@@ -7,7 +9,7 @@ import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
 import { isMobileDrawerOpenVar } from 'api/apollo/cache';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -16,8 +18,7 @@ import styles from './Navbar.module.scss';
 export const Navbar = React.memo(() => {
   const wrapperRef = React.useRef<HTMLElement>(null);
 
-  const router = useRouter();
-  const path = router.asPath;
+  const path = usePathname();
 
   const isHomepage = path === '/';
 

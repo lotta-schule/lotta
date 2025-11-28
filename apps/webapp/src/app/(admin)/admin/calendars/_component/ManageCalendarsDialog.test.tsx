@@ -41,7 +41,7 @@ describe('ManageCalendarsDialog', () => {
     const screen = render(
       <ManageCalendarsDialog isOpen={true} onClose={onClose} />,
       {},
-      { additionalMocks, addTypename: true }
+      { additionalMocks }
     );
 
     expect(await screen.findAllByRole('listitem')).toHaveLength(2);

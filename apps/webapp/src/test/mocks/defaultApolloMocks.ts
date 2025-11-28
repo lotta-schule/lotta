@@ -60,9 +60,7 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
       result: {},
     },
   ];
-  const cache = new InMemoryCache({
-    addTypename: false,
-  });
+  const cache = new InMemoryCache();
   cache.writeQuery({
     query: GET_TENANT_QUERY,
     data: { tenant: options.tenant ?? tenant },

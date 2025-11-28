@@ -16,7 +16,6 @@ describe('util/userAvatar/useCurrentUser', () => {
             result: { data: { currentUser } },
           },
         ]}
-        addTypename={false}
       >
         <div>{children}</div>
       </MockedProvider>

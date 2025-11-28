@@ -116,37 +116,42 @@ export const Gallery = React.memo<GalleryProps>(
               />
             </GridListItem>
           ))}
-        </GridList>
 
-        {isEditModeEnabled && onUpdateModule && (
-          <SelectFileButton
-            multiple
-            label={'Bild hinzufügen'}
-            fileFilter={(f) => f.fileType === 'IMAGE'}
-            onSelect={(f: FileModel[]) => {
-              onUpdateModule({
-                ...contentModule,
-                files: uniqBy(contentModule.files.concat(f), (file) => file.id),
-                configuration: {
-                  ...contentModule.configuration,
-                  files: {
-                    ...contentModule.configuration.files,
-                    ...f.reduce(
-                      (prev, file, i) => ({
-                        ...prev,
-                        [file.id]: {
-                          caption: '',
-                          sortKey: contentModule.files.length * 10 + i * 10,
-                        },
-                      }),
-                      {}
+          {isEditModeEnabled && onUpdateModule && (
+            <GridListItem cols={1} key="add" className={styles.addItem}>
+              <SelectFileButton
+                multiple
+                label={'Bild hinzufügen'}
+                fileFilter={(f) => f.fileType === 'IMAGE'}
+                onSelect={(f: FileModel[]) => {
+                  onUpdateModule({
+                    ...contentModule,
+                    files: uniqBy(
+                      contentModule.files.concat(f),
+                      (file) => file.id
                     ),
-                  },
-                },
-              });
-            }}
-          />
-        )}
+                    configuration: {
+                      ...contentModule.configuration,
+                      files: {
+                        ...contentModule.configuration.files,
+                        ...f.reduce(
+                          (prev, file, i) => ({
+                            ...prev,
+                            [file.id]: {
+                              caption: '',
+                              sortKey: contentModule.files.length * 10 + i * 10,
+                            },
+                          }),
+                          {}
+                        ),
+                      },
+                    },
+                  });
+                }}
+              />
+            </GridListItem>
+          )}
+        </GridList>
         {!isEditModeEnabled &&
           selectedFileIndex !== null &&
           (() => {

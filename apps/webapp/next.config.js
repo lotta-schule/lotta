@@ -16,46 +16,39 @@ const nextConfig = {
   },
   transpilePackages: ['@lotta-schule/hubert'],
   async rewrites() {
-    return {
-      beforeFiles: [
-        {
-          source: '/',
-          destination: '/c/0',
-        },
-        {
-          source: '/auth/:path*',
-          destination: '/api/auth/:path*',
-        },
-        {
-          source: '/storage/:path*',
-          destination: '/api/storage/:path*',
-        },
-        {
-          source: '/data/:path*',
-          destination: `${env.API_URL || ''}/data/:path*`,
-        },
-        {
-          source: '/api',
-          destination: '/api/backend',
-        },
-        // web manifest
-        {
-          source: '/manifest.json',
-          destination: '/api/manifest',
-        },
-        // Plausible Analytics
-        {
-          source: '/p/script.js',
-          destination: 'https://plausible.intern.lotta.schule/js/script.js',
-        },
-        {
-          source: '/p/e',
-          destination: 'https://plausible.intern.lotta.schule/api/event',
-        },
-      ],
-      afterFiles: [],
-      fallback: [],
-    };
+    const apiUrl = env.API_URL || '';
+    return [
+      {
+        source: '/auth/:path*',
+        destination: `${apiUrl}/auth/:path*`,
+      },
+      {
+        source: '/storage/:path*',
+        destination: `${apiUrl}/storage/:path*`,
+      },
+      {
+        source: '/data/:path*',
+        destination: `${apiUrl}/data/:path*`,
+      },
+      {
+        source: '/api',
+        destination: `${apiUrl}/api`,
+      },
+      // web manifest
+      {
+        source: '/manifest.json',
+        destination: '/api/manifest',
+      },
+      // Plausible Analytics
+      {
+        source: '/p/script.js',
+        destination: 'https://plausible.intern.lotta.schule/js/script.js',
+      },
+      {
+        source: '/p/e',
+        destination: 'https://plausible.intern.lotta.schule/api/event',
+      },
+    ];
   },
   async redirects() {
     return [
