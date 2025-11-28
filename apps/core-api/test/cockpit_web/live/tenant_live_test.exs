@@ -1,11 +1,11 @@
-defmodule LottaWeb.Live.TenantLiveTest do
+defmodule CockpitWeb.Live.TenantLiveTest do
   @moduledoc false
 
-  use Lotta.DataCase, async: true
+  use Lotta.DataCase
 
   import Mock
 
-  alias LottaWeb.Live.TenantLive
+  alias CockpitWeb.Live.TenantLive
   alias Lotta.Tenants
   alias Lotta.Tenants.Tenant
 
@@ -94,7 +94,6 @@ defmodule LottaWeb.Live.TenantLiveTest do
       with_mock Tenants, [:passthrough], slug_available?: fn _ -> true end do
         changeset = TenantLive.create_changeset(nil, params)
 
-        # The slug generation logic is in Tenant.create_changeset
         assert get_change(changeset, :slug) != nil
       end
     end
@@ -125,47 +124,18 @@ defmodule LottaWeb.Live.TenantLiveTest do
   # and through integration tests
 
   describe "item_actions/1" do
-    test "removes delete action from default actions" do
+    test "has custom delete action" do
       default_actions = [
         show: :show,
         edit: :edit,
         delete: :delete
       ]
 
-      result = TenantLive.item_actions(default_actions)
-
-      assert result == [show: :show, edit: :edit]
-      refute Keyword.has_key?(result, :delete)
-    end
-
-    test "handles empty list" do
-      result = TenantLive.item_actions([])
-
-      assert result == []
-    end
-
-    test "preserves other actions" do
-      default_actions = [
-        custom: :custom,
-        show: :show,
-        another: :another,
-        delete: :delete
-      ]
-
-      result = TenantLive.item_actions(default_actions)
-
-      assert result == [custom: :custom, show: :show, another: :another]
-    end
-
-    test "handles list without delete action" do
-      default_actions = [
-        show: :show,
-        edit: :edit
-      ]
-
-      result = TenantLive.item_actions(default_actions)
-
-      assert result == [show: :show, edit: :edit]
+      assert [
+               show: :show,
+               edit: %{module: Backpex.ItemActions.Edit, only: [:row]},
+               delete: %{module: CockpitWeb.ItemActions.DeleteTenant, only: [:row]}
+             ] = TenantLive.item_actions(default_actions)
     end
   end
 

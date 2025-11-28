@@ -24,7 +24,7 @@ const nextConfig = {
         },
         {
           source: '/setup/:path*',
-          destination: '/api/auth/:path*',
+          destination: '/api/setup/:path*',
         },
         {
           source: '/auth/:path*',

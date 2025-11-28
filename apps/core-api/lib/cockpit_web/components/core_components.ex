@@ -1,4 +1,4 @@
-defmodule LottaWeb.CoreComponents do
+defmodule CockpitWeb.CoreComponents do
   @moduledoc """
   Provides core UI components.
 
@@ -27,7 +27,7 @@ defmodule LottaWeb.CoreComponents do
 
   """
   use Phoenix.Component
-  use Gettext, backend: LottaWeb.Gettext
+  use Gettext, backend: CockpitWeb.Gettext
 
   alias Phoenix.LiveView.JS
 
@@ -450,7 +450,7 @@ defmodule LottaWeb.CoreComponents do
   Translates an error message using gettext.
   """
   def translate_backpex({msg, opts}) do
-    Gettext.dgettext(LottaWeb.Gettext, :default, msg, opts)
+    Gettext.dgettext(CockpitWeb.Gettext, :default, msg, opts)
   end
 
   @doc """
@@ -458,9 +458,9 @@ defmodule LottaWeb.CoreComponents do
   """
   def translate_error({msg, opts}) do
     if count = opts[:count] do
-      Gettext.dngettext(LottaWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(CockpitWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(LottaWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(CockpitWeb.Gettext, "errors", msg, opts)
     end
   end
 

@@ -1,4 +1,4 @@
-defmodule LottaWeb.Live.InvoiceLive do
+defmodule CockpitWeb.Live.InvoiceLive do
   alias Lotta.Billings.Invoice
 
   use Backpex.LiveResource,
@@ -6,7 +6,7 @@ defmodule LottaWeb.Live.InvoiceLive do
       schema: Lotta.Billings.Invoice,
       repo: Lotta.Repo
     ],
-    layout: {LottaWeb.Layouts, :admin}
+    layout: {CockpitWeb.Layouts, :admin}
 
   import Ecto.Query
 
@@ -28,7 +28,7 @@ defmodule LottaWeb.Live.InvoiceLive do
         module: Backpex.Fields.BelongsTo,
         label: "Tenant",
         display_field: :title,
-        live_resource: LottaWeb.Live.TenantLive
+        live_resource: CockpitWeb.Live.TenantLive
       },
       invoice_number: %{
         module: Backpex.Fields.Text,

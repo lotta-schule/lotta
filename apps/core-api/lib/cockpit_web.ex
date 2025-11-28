@@ -1,12 +1,12 @@
-defmodule LottaWeb do
+defmodule CockpitWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, views, channels and so on.
 
   This can be used in your application as:
 
-      use LottaWeb, :controller
-      use LottaWeb, :html
+      use CockpitWeb, :controller
+      use CockpitWeb, :html
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -33,7 +33,7 @@ defmodule LottaWeb do
     quote do
       use Phoenix.Controller, formats: [:html, :json, :xml, :ics]
 
-      use Gettext, backend: LottaWeb.Gettext
+      use Gettext, backend: CockpitWeb.Gettext
 
       import Plug.Conn
 
@@ -45,7 +45,15 @@ defmodule LottaWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import LottaWeb.Gettext
+      import CockpitWeb.Gettext
+    end
+  end
+
+  def live_view do
+    quote do
+      use Phoenix.LiveView
+
+      unquote(html_helpers())
     end
   end
 
@@ -73,12 +81,12 @@ defmodule LottaWeb do
   defp html_helpers do
     quote do
       # Translation
-      use Gettext, backend: LottaWeb.Gettext
+      use Gettext, backend: CockpitWeb.Gettext
 
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components
-      # import LottaWeb.CoreComponents
+      import CockpitWeb.CoreComponents
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS
@@ -88,31 +96,12 @@ defmodule LottaWeb do
     end
   end
 
-  # This must be removed once we have a proper HTML view
-  def view do
-    quote do
-      use Phoenix.View,
-        root: "lib/lotta_web/templates",
-        namespace: LottaWeb
-
-      # Import convenience functions from controllers
-      import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
-
-      import Phoenix.HTML
-      import Phoenix.HTML.Form
-      use PhoenixHTMLHelpers
-      import LottaWeb.ErrorHelpers
-      import LottaWeb.Gettext
-      unquote(verified_routes())
-    end
-  end
-
   def verified_routes do
     quote do
       use Phoenix.VerifiedRoutes,
-        endpoint: LottaWeb.Endpoint,
-        router: LottaWeb.Router,
-        statics: LottaWeb.static_paths()
+        endpoint: CockpitWeb.Endpoint,
+        router: CockpitWeb.Router,
+        statics: CockpitWeb.static_paths()
     end
   end
 

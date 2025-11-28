@@ -177,12 +177,22 @@ config :lotta, LottaWeb.Endpoint,
   secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
   server: SystemConfig.get("PHX_SERVER", cast: :boolean)
 
+config :lotta, CockpitWeb.Endpoint,
+  secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
+  server: SystemConfig.get("PHX_SERVER", cast: :boolean)
+
 if config_env() == :dev do
   config :lotta, LottaWeb.Endpoint,
     watchers: [
       # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-      esbuild: {Esbuild, :install_and_run, [:lotta, ~w(--sourcemap=inline --watch)]},
-      tailwind: {Tailwind, :install_and_run, [:lotta, ~w(--watch)]}
+      esbuild: {Esbuild, :install_and_run, [:lotta, ~w(--sourcemap=inline --watch)]}
+    ]
+
+  config :lotta, CockpitWeb.Endpoint,
+    watchers: [
+      # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
+      esbuild: {Esbuild, :install_and_run, [:cockpit, ~w(--sourcemap=inline --watch)]},
+      tailwind: {Tailwind, :install_and_run, [:cockpit, ~w(--watch)]}
     ]
 end
 
@@ -269,6 +279,8 @@ config :lotta, :cockpit,
   endpoint: SystemConfig.get("COCKPIT_ENDPOINT"),
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
+
+config :joken, default_signer: SystemConfig.get("SECRET_KEY_JWT")
 
 config :lotta, Lotta.Administration.Notification.Slack,
   webhook: SystemConfig.get("SLACK_WEBHOOK_URL")

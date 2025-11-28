@@ -1,4 +1,4 @@
-defmodule LottaWeb.Live.TenantLive do
+defmodule CockpitWeb.Live.TenantLive do
   use Backpex.LiveResource,
     adapter_config: [
       schema: Lotta.Tenants.Tenant,
@@ -6,7 +6,7 @@ defmodule LottaWeb.Live.TenantLive do
       update_changeset: &__MODULE__.update_changeset/3,
       create_changeset: &__MODULE__.create_changeset/3
     ],
-    layout: {LottaWeb.Layouts, :admin}
+    layout: {CockpitWeb.Layouts, :admin}
 
   import Ecto.Query
 
@@ -23,7 +23,14 @@ defmodule LottaWeb.Live.TenantLive do
   @impl Backpex.LiveResource
   def item_actions(default_actions) do
     default_actions
-    |> Keyword.drop([:delete])
+    |> Keyword.take([:index, :edit, :show])
+    |> Keyword.merge(
+      edit: %{module: Backpex.ItemActions.Edit, only: [:row]},
+      delete: %{
+        module: CockpitWeb.ItemActions.DeleteTenant,
+        only: [:row]
+      }
+    )
   end
 
   @impl Backpex.LiveResource
@@ -31,6 +38,10 @@ defmodule LottaWeb.Live.TenantLive do
 
   @impl Backpex.LiveResource
   def plural_name, do: "Tenants"
+
+  @impl Backpex.LiveResource
+  def can?(_, :new, _), do: false
+  def can?(_, _, _), do: true
 
   @impl Backpex.LiveResource
   def fields do
@@ -91,7 +102,7 @@ defmodule LottaWeb.Live.TenantLive do
         module: Backpex.Fields.HasMany,
         label: "Invoices",
         display_field: :invoice_number,
-        live_resource: LottaWeb.Live.InvoiceLive,
+        live_resource: CockpitWeb.Live.InvoiceLive,
         options_query: fn query, _field ->
           from(i in query,
             where: not is_nil(i.issued_at),

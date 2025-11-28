@@ -7,7 +7,6 @@ defmodule LottaWeb.Router do
   import Phoenix.LiveView.Router
   import Phoenix.LiveDashboard.Router
   import Oban.Web.Router
-  import Backpex.Router
 
   pipeline :tenant do
     plug(LottaWeb.TenantPlug)
@@ -28,10 +27,6 @@ defmodule LottaWeb.Router do
     plug(:put_root_layout, html: {LottaWeb.Layouts, :root})
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
-  end
-
-  pipeline :admin_root do
-    plug(:put_root_layout, html: {LottaWeb.Layouts, :admin_root})
   end
 
   pipeline :json_api do
@@ -115,17 +110,6 @@ defmodule LottaWeb.Router do
   end
 
   scope "/admin" do
-    scope "/" do
-      pipe_through([:admin_auth, :browser, :admin_root])
-
-      backpex_routes()
-
-      live_session :default, on_mount: Backpex.InitAssigns do
-        live_resources("/tenants", LottaWeb.Live.TenantLive)
-        live_resources("/invoices", LottaWeb.Live.InvoiceLive)
-      end
-    end
-
     scope "/api" do
       pipe_through([:admin_auth, :json_api])
 

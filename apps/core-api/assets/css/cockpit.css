@@ -1,5 +1,3 @@
-/* This file is for your main application CSS */
-
 @import "tailwindcss";
 @plugin "../vendor/daisyui";
 @plugin "./tailwind_heroicons.js";

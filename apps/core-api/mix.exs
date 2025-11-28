@@ -93,6 +93,7 @@ defmodule Lotta.MixProject do
       {:argon2_elixir, "~> 4.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:guardian, "~> 2.4.0"},
+      {:joken, "~> 2.6.2"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.1"},
       {:hackney, "~> 1.20"},
@@ -176,11 +177,10 @@ defmodule Lotta.MixProject do
       ],
       sentry_recompile: ["compile", "deps.compile sentry --force"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["cmd npm --prefix assets ci", "compile", "tailwind lotta", "esbuild lotta"],
+      "assets.build": ["compile", "tailwind cockpit", "esbuild cockpit"],
       "assets.deploy": [
-        "cmd npm --prefix assets ci",
-        "tailwind lotta --minify",
-        "esbuild lotta --minify",
+        "tailwind cockpit --minify",
+        "esbuild cockpit --minify",
         "phx.digest"
       ],
       precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"]

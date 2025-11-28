@@ -1,9 +1,9 @@
-defmodule LottaWeb.Live.InvoiceLiveTest do
+defmodule CockpitWeb.Live.InvoiceLiveTest do
   @moduledoc false
 
   use Lotta.DataCase, async: true
 
-  alias LottaWeb.Live.InvoiceLive
+  alias CockpitWeb.Live.InvoiceLive
 
   describe "can?/3" do
     test "allows index action" do
@@ -200,18 +200,73 @@ defmodule LottaWeb.Live.InvoiceLiveTest do
   end
 
   describe "render_resource_slot/3" do
-    test "renders for :show action and :main slot" do
-      assigns = %{}
+    import Phoenix.LiveViewTest
 
-      result = InvoiceLive.render_resource_slot(assigns, :show, :main)
+    test "renders iframe for :show action and :main slot" do
+      invoice = %Lotta.Billings.Invoice{
+        id: 1,
+        invoice_number: "INV-2024-001",
+        year: 2024,
+        month: 1,
+        period_start: ~D[2024-01-01],
+        period_end: ~D[2024-01-31],
+        total: Decimal.new("100.00"),
+        customer_name: "Test Customer",
+        customer_no: "C-001",
+        items: []
+      }
 
-      # The function returns a rendered Phoenix.LiveView.Rendered struct
-      # Verify it's a rendered component
-      assert %Phoenix.LiveView.Rendered{} = result
+      assigns = %{item: invoice}
+
+      html =
+        rendered_to_string(InvoiceLive.render_resource_slot(assigns, :show, :main))
+
+      # Verify iframe is present
+      assert html =~ ~s|<iframe|
+
+      # Verify iframe has correct styling
+      assert html =~
+               ~s|style="width: min(80%, 794px); aspect-ratio: 210 / 297; border: none; zoom: .75; padding: 1em;"|
+
+      # Verify iframe has onLoad handler
+      assert html =~
+               ~s|onLoad="this.style.height=this.contentWindow.document.body.scrollHeight +'px';"|
+
+      # Verify src attribute starts with data URI
+      assert html =~ ~s|src="data:text/html;base64,|
+    end
+
+    test "iframe src contains base64 encoded HTML" do
+      invoice = %Lotta.Billings.Invoice{
+        id: 2,
+        invoice_number: "INV-2024-002",
+        year: 2024,
+        month: 2,
+        period_start: ~D[2024-02-01],
+        period_end: ~D[2024-02-29],
+        total: Decimal.new("250.50"),
+        customer_name: "Another Customer",
+        customer_no: "C-002",
+        items: []
+      }
+
+      assigns = %{item: invoice}
+
+      html =
+        rendered_to_string(InvoiceLive.render_resource_slot(assigns, :show, :main))
+
+      [_, src] = Regex.run(~r/src="([^"]+)"/, html)
+
+      assert String.starts_with?(src, "data:text/html;base64,")
+
+      base64_content = String.replace_prefix(src, "data:text/html;base64,", "")
+      decoded_html = Base.decode64!(base64_content)
+
+      assert is_binary(decoded_html)
+      assert String.length(decoded_html) > 0
     end
 
     test "render_resource_slot is defined for specific action and slot" do
-      # Verify the function exists and can be called
       assert function_exported?(InvoiceLive, :render_resource_slot, 3)
     end
   end
