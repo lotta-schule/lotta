@@ -7,8 +7,6 @@ defmodule Lotta.Tenants do
   import Ecto.Query
 
   alias LottaWeb.Schema.Tenants.Tenant
-  alias Lotta.Administration.Cockpit
-  alias LottaWeb.Schema.Tenants.Tenant
   alias Ecto.Multi
   alias Lotta.{Accounts, Email, Mailer, Repo, Storage}
   alias Lotta.Accounts.{User, UserGroup}
@@ -813,10 +811,23 @@ defmodule Lotta.Tenants do
   @spec send_feedback_to_lotta(Feedback.t(), binary() | nil) ::
           {:ok, Feedback.t()} | {:error, Ecto.Changeset.t()}
   def send_feedback_to_lotta(feedback, user, message \\ nil) do
+    tenant =
+      feedback
+      |> Ecto.get_meta(:prefix)
+      |> get_tenant_by_prefix()
+
     Ecto.Multi.new()
     |> Ecto.Multi.update(:feedback, Ecto.Changeset.change(feedback, is_forwarded: true))
     |> Ecto.Multi.run(:send_feedback, fn _repo, %{feedback: feedback} ->
-      case Cockpit.send_feedback(feedback) do
+      Cockpit.Feedback.Feedback.new(
+        name: user.name,
+        email: user.email,
+        message: feedback.content
+      )
+      |> Cockpit.Feedback.Feedback.set_tenant(tenant)
+      |> Cockpit.Feedback.Feedback.set_title("FWD: #{feedback.topic}")
+      |> Cockpit.Feedback.Zammad.create_ticket()
+      |> case do
         :ok ->
           {:ok, feedback}
 
@@ -845,7 +856,19 @@ defmodule Lotta.Tenants do
   @spec create_feedback_for_lotta(binary(), binary() | nil, User.t()) ::
           :ok | :error
   def create_feedback_for_lotta(subject, message, user) do
-    case Cockpit.send_message(user, subject, message) do
+    tenant =
+      Repo.get_prefix()
+      |> get_tenant_by_prefix()
+
+    Cockpit.Feedback.Feedback.new(
+      name: user.name,
+      email: user.email,
+      message: message
+    )
+    |> Cockpit.Feedback.Feedback.set_title(subject)
+    |> Cockpit.Feedback.Feedback.set_tenant(tenant)
+    |> Cockpit.Feedback.Zammad.create_ticket()
+    |> case do
       :ok ->
         :ok
 

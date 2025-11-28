@@ -124,6 +124,13 @@ defmodule SystemConfig do
   defp default("COCKPIT_ADMIN_API_KEY", env) when env in [:dev, :test], do: "test123"
   defp default("COCKPIT_HOST", _), do: "localhost"
 
+  defp default("ZAMMAD_ENDPOINT", :test), do: "https://zammad.example.com"
+  defp default("ZAMMAD_ENDPOINT", _), do: nil
+  defp default("ZAMMAD_USERNAME", :test), do: "test_user"
+  defp default("ZAMMAD_USERNAME", _), do: nil
+  defp default("ZAMMAD_PASSWORD", :test), do: "test_password"
+  defp default("ZAMMAD_PASSWORD", _), do: nil
+
   defp default("SLACK_WEBHOOK_URL", _), do: nil
 
   defp default("DISABLE_CHROMIC", _), do: "false"
@@ -280,6 +287,11 @@ config :lotta, :cockpit,
   endpoint: SystemConfig.get("COCKPIT_HOST"),
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
+
+config :lotta, :zammad,
+  endpoint: SystemConfig.get("ZAMMAD_ENDPOINT"),
+  username: SystemConfig.get("ZAMMAD_USERNAME"),
+  password: SystemConfig.get("ZAMMAD_PASSWORD")
 
 config :joken, default_signer: SystemConfig.get("SECRET_KEY_JWT")
 

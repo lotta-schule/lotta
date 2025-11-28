@@ -20,3 +20,5 @@ config :lotta, CockpitWeb.Endpoint,
   debug_errors: config_env() == :dev,
   code_reloader: config_env() == :dev,
   check_origin: config_env() != :dev
+
+config :lotta, :zammad, []

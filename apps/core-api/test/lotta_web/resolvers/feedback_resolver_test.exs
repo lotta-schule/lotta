@@ -164,9 +164,9 @@ defmodule LottaWeb.FeedbackResolverTest do
       Tesla.Mock.mock(fn
         %Tesla.Env{
           method: :post,
-          url: "http://localhost:4040/api/feedback"
+          url: "https://zammad.example.com/api/v1/tickets"
         } ->
-          {:ok, %Tesla.Env{status: 200}}
+          {:ok, %Tesla.Env{status: 201}}
       end)
 
       res =
@@ -202,7 +202,7 @@ defmodule LottaWeb.FeedbackResolverTest do
       Tesla.Mock.mock(fn
         %Tesla.Env{
           method: :post,
-          url: "http://localhost:4040/api/feedback"
+          url: "https://zammad.example.com/api/v1/tickets"
         } ->
           {:ok, %Tesla.Env{status: 400}}
       end)
@@ -349,9 +349,9 @@ defmodule LottaWeb.FeedbackResolverTest do
       Tesla.Mock.mock(fn
         %Tesla.Env{
           method: :post,
-          url: "http://localhost:4040/api/feedback"
+          url: "https://zammad.example.com/api/v1/tickets"
         } ->
-          {:ok, %Tesla.Env{status: 200}}
+          {:ok, %Tesla.Env{status: 201}}
       end)
 
       res =
@@ -381,7 +381,7 @@ defmodule LottaWeb.FeedbackResolverTest do
       Tesla.Mock.mock(fn
         %Tesla.Env{
           method: :post,
-          url: "http://localhost:4040/api/feedback"
+          url: "https://zammad.example.com/api/v1/tickets"
         } ->
           {:ok, %Tesla.Env{status: 400}}
       end)
