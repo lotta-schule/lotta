@@ -158,10 +158,11 @@ export const EditArticlePage = React.memo(
                   'isPinnedToTop',
                   // updatedAt is only set if it should explicitly be overwritten
                   'updatedAt',
+                  '__typename',
                 ]) as ArticleModel),
                 ...additionalProps,
                 contentModules: editedArticle.contentModules.map((cm) => ({
-                  ...cm,
+                  ...omit(cm, '__typename'),
                   content: cm.content ? JSON.stringify(cm.content) : cm.content,
                   configuration: JSON.stringify(cm.configuration || {}),
                 })),

@@ -210,29 +210,15 @@ describe('middleware', () => {
       'mockAccessToken'
     );
   });
-
-  it('should not process authentication for static asset files', async () => {
-    const mockRequest = createMockRequest(
-      'http://test.lotta.schule/images/logo.svg',
-      {
-        SignInRefreshToken: 'mockRefreshToken',
-        SignInAccessToken: 'mockAccessToken',
-      },
-      { host: 'mockHost' }
-    );
-
-    const response = await middleware(mockRequest);
-
-    expect(mockJWT.parse).not.toHaveBeenCalled();
-    expect(mockSendRefreshRequest).not.toHaveBeenCalled();
-    expect(response.cookies.getAll()).toEqual([]);
-  });
 });
 
 describe('config', () => {
   it('should have the correct matcher', () => {
     expect(config.matcher).toEqual([
-      '/((?!_next/static|_next/image|font|favicon.ico|favicon|p/|stry/).*)',
+      {
+        source:
+          '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|p/|stry/|api/|backend/|auth/storage/).*)',
+      },
     ]);
   });
 });

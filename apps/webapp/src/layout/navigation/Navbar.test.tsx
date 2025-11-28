@@ -23,7 +23,7 @@ describe('Navbar', () => {
 
     it('of subcategories', async () => {
       const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-        'next/router'
+        'next/navigation'
       );
       mockRouter.reset(`/c/${FaecherCategory.id}`);
 
@@ -44,7 +44,7 @@ describe('Navbar', () => {
   // Problems mocking scrollIntoView
   it('should scroll to active nav item', async () => {
     const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-      'next/router'
+      'next/navigation'
     );
     mockRouter.reset(`/c/${FaecherCategory.id}`);
     const screen = render(<Navbar />);

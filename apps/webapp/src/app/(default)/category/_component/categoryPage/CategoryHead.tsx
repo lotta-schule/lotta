@@ -1,16 +1,17 @@
-import * as React from 'react';
+import React from 'react';
 import { CategoryModel } from 'model';
 import { Category, File } from 'util/model';
 import { Tenant } from 'util/model/Tenant';
-import { useTenant } from 'util/tenant/useTenant';
 import Head from 'next/head';
+import { loadTenant } from 'loader/loadTenant';
 
 export interface CategoryHeadProps {
   category: CategoryModel;
 }
 
-export const CategoryHead = React.memo<CategoryHeadProps>(({ category }) => {
-  const tenant = useTenant();
+export const CategoryHead = async ({ category }: CategoryHeadProps) => {
+  const tenant = await loadTenant();
+  console.log({ tenant });
 
   const title = category.isHomepage
     ? tenant.title
@@ -27,21 +28,16 @@ export const CategoryHead = React.memo<CategoryHeadProps>(({ category }) => {
     category.bannerImageFile &&
     File.getRemoteUrl(category.bannerImageFile, 'banner', 900);
 
-  const image = React.useMemo<
-    [url: string, width: number, height: number | null] | null
-  >(() => {
+  const image = (():
+    | [url: string, width: number, height: number | null]
+    | null => {
     if (category.isHomepage && logoImageUrl) {
       return [logoImageUrl, 320, null];
     } else if (category.bannerImageFile && bannerImageUrl) {
       return [bannerImageUrl, 900, 150];
     }
     return null;
-  }, [
-    bannerImageUrl,
-    category.bannerImageFile,
-    category.isHomepage,
-    logoImageUrl,
-  ]);
+  })();
 
   return (
     <Head>
@@ -70,5 +66,5 @@ export const CategoryHead = React.memo<CategoryHeadProps>(({ category }) => {
       )}
     </Head>
   );
-});
+};
 CategoryHead.displayName = 'CategoryHead';

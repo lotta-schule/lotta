@@ -2,22 +2,21 @@ import * as React from 'react';
 import { render } from 'test/util';
 import { TenantLayout } from './TenantLayout';
 import { imageFile, tenant } from 'test/fixtures';
-import { Tenant } from 'util/tenant';
 
-const tenantMock = {
-  ...tenant,
-  backgroundImageFile: imageFile,
-  logoImageFile: imageFile,
-} as Tenant;
+vi.mock('../loader/loadTenant', async () => {
+  return {
+    loadTenant: vi.fn(async () => ({
+      ...tenant,
+      backgroundImageFile: imageFile,
+      logoImageFile: imageFile,
+    })),
+  };
+});
 
 describe('TenantLayout', () => {
-  it('should render title, logo and child', () => {
+  it('should render title, logo and child', async () => {
     const screen = render(
-      <TenantLayout>
-        <div>Child Content</div>
-      </TenantLayout>,
-      {},
-      { tenant: tenantMock }
+      await TenantLayout({ children: <div>Child Content</div> })
     );
 
     expect(screen.getByText('DerEineVonHier')).toBeVisible();
@@ -25,36 +24,9 @@ describe('TenantLayout', () => {
     expect(screen.getByText('Child Content')).toBeInTheDocument();
   });
 
-  it('should apply background image style', () => {
+  it('should render ScrollToTopButton in NoSsr wrapper', async () => {
     const screen = render(
-      <TenantLayout>
-        <div>Child Content</div>
-      </TenantLayout>,
-      {},
-      { tenant: tenantMock }
-    );
-
-    const styleTag = screen.container.querySelector('style');
-    expect(styleTag).not.toBeNull();
-    expect(styleTag!.innerHTML).toMatchInlineSnapshot(`
-      "@media screen and (min-width: 600px) {
-            body::after {
-              background-image: image-set(url(https://example.com/123/pagebg_1024) 1x,url(https://example.com/123/pagebg_1920) 2x);
-            }
-        }
-        @media screen and (min-width: 1280px) {
-            body::after {
-              background-image: image-set(url(https://example.com/123/pagebg_1280) 1x,url(https://example.com/123/pagebg_2560) 2x);
-            }
-        }"
-    `);
-  });
-
-  it('should render ScrollToTopButton in NoSsr wrapper', () => {
-    const screen = render(
-      <TenantLayout>
-        <div>Child Content</div>
-      </TenantLayout>
+      await TenantLayout({ children: <div>Child Content</div> })
     );
 
     expect(

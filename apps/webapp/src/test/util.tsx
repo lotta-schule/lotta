@@ -18,7 +18,6 @@ import { tenant } from './fixtures';
 
 export type TestSetupOptions = {
   additionalMocks?: MockedResponse[];
-  addTypename?: boolean;
 } & ApolloMocksOptions;
 
 export let currentApolloCache: null | InMemoryCache = null;
@@ -47,7 +46,6 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
           <HubertProvider>
             <MockedProvider
               mocks={[...defaultMocks, ...(options.additionalMocks || [])]}
-              addTypename={options.addTypename}
               cache={cache}
             >
               <React.Suspense

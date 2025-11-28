@@ -201,6 +201,7 @@ beforeAll(() => {
       mockRouter: globalThis.mockRouter,
       useRouter: vi.fn(() => globalThis.mockRouter),
       useParams: vi.fn(() => mockParams),
+      usePathname: vi.fn(() => globalThis.mockRouter._pathname),
     };
   });
 

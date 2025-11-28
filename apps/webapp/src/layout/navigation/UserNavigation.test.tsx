@@ -205,7 +205,7 @@ describe('shared/layouts/UserNavigation', () => {
 
       it('should navigate to profile when clicking "Meine Daten"', async () => {
         const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-          'next/router'
+          'next/navigation'
         );
         const fireEvent = userEvent.setup();
         const screen = render(
@@ -233,7 +233,7 @@ describe('shared/layouts/UserNavigation', () => {
 
       it('should navigate to files when clicking "Meine Dateien"', async () => {
         const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-          'next/router'
+          'next/navigation'
         );
         const fireEvent = userEvent.setup();
         const screen = render(
@@ -261,7 +261,7 @@ describe('shared/layouts/UserNavigation', () => {
 
       it('should navigate to own articles when clicking "Meine Beiträge"', async () => {
         const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-          'next/router'
+          'next/navigation'
         );
         const fireEvent = userEvent.setup();
         const screen = render(
@@ -312,7 +312,7 @@ describe('shared/layouts/UserNavigation', () => {
 
       it('should navigate to admin when clicking "Seite administrieren"', async () => {
         const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-          'next/router'
+          'next/navigation'
         );
         const fireEvent = userEvent.setup();
         const screen = render(
@@ -340,7 +340,7 @@ describe('shared/layouts/UserNavigation', () => {
 
       it('should navigate to unpublished when clicking "Beiträge freigeben"', async () => {
         const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-          'next/router'
+          'next/navigation'
         );
         const fireEvent = userEvent.setup();
         const screen = render(

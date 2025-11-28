@@ -261,7 +261,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
     );
 
     const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-      'next/router'
+      'next/navigation'
     );
 
     await waitFor(() => {
