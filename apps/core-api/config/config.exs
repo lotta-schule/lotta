@@ -9,11 +9,11 @@ import Config
 
 import_config("config/absinthe.exs")
 import_config("config/backpex.exs")
+import_config("config/cockpit.exs")
 import_config("config/esbuild.exs")
 import_config("config/tailwind.exs")
 import_config("config/argon2.exs")
 import_config("config/lotta_web_endpoint.exs")
-import_config("config/cockpit_web_endpoint.exs")
 import_config("config/gettext.exs")
 import_config("config/junit.exs")
 import_config("config/logger.exs")
