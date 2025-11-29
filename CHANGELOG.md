@@ -1,3 +1,13 @@
+## 6.1.9 (2025-11-29)
+
+### 🚀 Features
+
+- **core:** redesign usage overview in cockpit ([327bab20](https://github.com/lotta-schule/lotta/commit/327bab20))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.8 (2025-11-29)
 
 ### 🩹 Fixes
