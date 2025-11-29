@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "@lotta-schule/storybook-addon-theme",
-  "version": "6.1.5",
+  "version": "6.1.6",
   "description": "Addon for storybook which allows managing the Hubert theme from within the documentation",
   "author": "Alexis Rinaldoni <alexis@rinaldoni.net>",
   "license": "GPL-3.0-or-later",

@@ -1,3 +1,15 @@
+## 6.1.6 (2025-11-29)
+
+### 🚀 Features
+
+- **core:** Generate pdf invoices ([#520](https://github.com/lotta-schule/lotta/pull/520))
+- **core:** add an admin-interface over backpex for middle-term cockpit replacement ([#521](https://github.com/lotta-schule/lotta/pull/521))
+- **core:** move zammad ticket creation into core ([#523](https://github.com/lotta-schule/lotta/pull/523))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.1.5 (2025-11-19)
 
 ### 🚀 Features
