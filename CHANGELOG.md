@@ -1,3 +1,18 @@
+## 6.1.7 (2025-11-29)
+
+### 🚀 Features
+
+- **core:** add internal free plan, make address nullable ([d46d28f9](https://github.com/lotta-schule/lotta/commit/d46d28f9))
+
+### 🩹 Fixes
+
+- **core:** include image assets to bundle ([b93dc529](https://github.com/lotta-schule/lotta/commit/b93dc529))
+- **core:** fix cockpit image asset path ([f18a25d2](https://github.com/lotta-schule/lotta/commit/f18a25d2))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.6 (2025-11-29)
 
 ### 🚀 Features
