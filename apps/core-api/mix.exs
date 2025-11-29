@@ -176,9 +176,20 @@ defmodule Lotta.MixProject do
         "gettext.merge priv/gettext/de/LC_MESSAGES/default.po priv/gettext/default.pot"
       ],
       sentry_recompile: ["compile", "deps.compile sentry --force"],
+      "assets.copy": [
+        "cmd mkdir -p priv/static/images",
+        "cmd cp assets/images/* priv/static/images/"
+      ],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["compile", "tailwind cockpit", "esbuild cockpit", "esbuild lotta"],
+      "assets.build": [
+        "compile",
+        "assets.copy",
+        "tailwind cockpit",
+        "esbuild cockpit",
+        "esbuild lotta"
+      ],
       "assets.deploy": [
+        "assets.copy",
         "tailwind cockpit --minify",
         "esbuild cockpit --minify",
         "esbuild lotta --minify",
