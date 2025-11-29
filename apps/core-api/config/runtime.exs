@@ -46,7 +46,7 @@ defmodule SystemConfig do
   end
 
   defp default("APP_ENVIRONMENT", _), do: "development"
-  defp default("WEB_HOST", :dev), do: "localhost"
+  defp default("WEB_HOST", env) when env in [:dev, :test], do: "localhost"
   defp default("BASE_URI_HOST", :dev), do: "local.lotta.schule,lotta.lvh.me,lotta.schule"
   defp default("BASE_URI_HOST", _), do: "lotta.schule"
   defp default("BASE_URI_PORT", :dev), do: "3000"
