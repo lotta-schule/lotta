@@ -4,6 +4,7 @@ defmodule CockpitWeb.Live.TenantLiveTest do
   use Lotta.DataCase
 
   import Mock
+  import Phoenix.LiveViewTest
 
   alias CockpitWeb.Live.TenantLive
   alias Lotta.Tenants
@@ -119,9 +120,79 @@ defmodule CockpitWeb.Live.TenantLiveTest do
     end
   end
 
-  # Note: round/2 and fetch_current_tenant_usage/2 are private functions
-  # They are tested indirectly through the public render_resource_slot/3 function
-  # and through integration tests
+  describe "render_resource_slot/3 for :show :before_main" do
+    test "renders dialog button with usage logs" do
+      tenant = %Tenant{
+        id: 42,
+        title: "Test Tenant",
+        slug: "test-tenant",
+        prefix: "tenant_42"
+      }
+
+      usages = [
+        %{
+          year: 2024,
+          month: 11,
+          active_user_count: %{value: Decimal.new("150")},
+          total_storage_count: %{value: Decimal.new("1024.567")},
+          media_conversion_seconds: %{value: Decimal.new("3600.5")}
+        }
+      ]
+
+      with_mock Lotta.Tenants.Usage,
+        get_usage: fn ^tenant -> {:ok, usages} end do
+        assigns = %{item: tenant, __changed__: nil}
+
+        html =
+          rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
+
+        assert html =~ ~s|id="usage-dialog-t42"|
+        assert html =~ "monthly usage logs"
+        assert html =~ "hero-presentation-chart-line"
+      end
+    end
+
+    test "handles empty usage data gracefully" do
+      tenant = %Tenant{
+        id: 99,
+        title: "Empty Tenant",
+        slug: "empty-tenant",
+        prefix: "tenant_99"
+      }
+
+      with_mock Lotta.Tenants.Usage,
+        get_usage: fn ^tenant -> {:ok, []} end do
+        assigns = %{item: tenant, __changed__: nil}
+
+        html =
+          rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
+
+        assert html =~ ~s|id="usage-dialog-t99"|
+        assert html =~ "monthly usage logs"
+      end
+    end
+
+    test "handles usage fetch error" do
+      tenant = %Tenant{
+        id: 77,
+        title: "Error Tenant",
+        slug: "error-tenant",
+        prefix: "tenant_77"
+      }
+
+      with_mock Lotta.Tenants.Usage,
+        get_usage: fn ^tenant -> {:error, :not_found} end do
+        assigns = %{item: tenant, __changed__: nil}
+
+        html =
+          rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
+
+        # Should still render dialog button even when usage fetch fails
+        assert html =~ ~s|id="usage-dialog-t77"|
+        assert html =~ "monthly usage logs"
+      end
+    end
+  end
 
   describe "item_actions/1" do
     test "has custom delete action" do

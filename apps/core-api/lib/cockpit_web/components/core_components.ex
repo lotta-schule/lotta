@@ -27,7 +27,7 @@ defmodule CockpitWeb.CoreComponents do
 
   """
   use Phoenix.Component
-  use Gettext, backend: CockpitWeb.Gettext
+  use Gettext, backend: LottaWeb.Gettext
 
   alias Phoenix.LiveView.JS
 
@@ -396,6 +396,42 @@ defmodule CockpitWeb.CoreComponents do
     """
   end
 
+  attr(:label, :string, required: true)
+  attr(:icon, :string, default: nil)
+  attr(:dialog_id, :string, required: true)
+  slot(:inner_block, required: true)
+
+  def dialog_button(assigns) do
+    ~H"""
+    <.button
+      phx-click={JS.toggle_attribute({"open", "true"}, to: "\##{@dialog_id}")}
+      class="btn btn-sm btn-neutral"
+      >
+      <Backpex.HTML.CoreComponents.icon
+        :if={@icon}
+        name={@icon}
+        class="h-4 w-4"
+      />
+      {gettext("monthly usage logs")}
+    </.button>
+    <dialog id={@dialog_id} class="modal">
+      <div class="modal-box w-11/12 max-w-5xl relative">
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" title={gettext("close")}>✕</button>
+        </form>
+        <div class="max-h-[80vh] overflow-y-auto">
+          {render_slot(@inner_block)}
+        </div>
+        <form method="dialog" class="modal-backdrop">
+          <button
+            phx-click={JS.toggle_attribute({"open", "false"}, to: "\##{@dialog_id}")}
+          >{gettext("close")}</button>
+        </form>
+      </div>
+    </dialog>
+    """
+  end
+
   @doc """
   Renders a [Heroicon](https://heroicons.com).
 
@@ -450,7 +486,7 @@ defmodule CockpitWeb.CoreComponents do
   Translates an error message using gettext.
   """
   def translate_backpex({msg, opts}) do
-    Gettext.dgettext(CockpitWeb.Gettext, :default, msg, opts)
+    Gettext.dgettext(LottaWeb.Gettext, :default, msg, opts)
   end
 
   @doc """
@@ -458,9 +494,9 @@ defmodule CockpitWeb.CoreComponents do
   """
   def translate_error({msg, opts}) do
     if count = opts[:count] do
-      Gettext.dngettext(CockpitWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(LottaWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(CockpitWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(LottaWeb.Gettext, "errors", msg, opts)
     end
   end
 

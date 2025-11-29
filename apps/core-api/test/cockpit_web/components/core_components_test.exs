@@ -532,4 +532,105 @@ defmodule CockpitWeb.CoreComponentsTest do
       assert result == []
     end
   end
+
+  describe "dialog_button/1" do
+    test "renders button with label" do
+      assigns = %{dialog_id: "test-dialog", label: "Open Dialog"}
+
+      html =
+        rendered_to_string(~H"""
+        <.dialog_button dialog_id={@dialog_id} label={@label}>
+          <p>Dialog content</p>
+        </.dialog_button>
+        """)
+
+      assert html =~ ~s|class="btn btn-sm btn-neutral"|
+      assert html =~ ~s|monthly usage logs|
+    end
+
+    test "renders button with icon" do
+      assigns = %{dialog_id: "test-dialog", label: "Open Dialog", icon: "hero-information-circle"}
+
+      html =
+        rendered_to_string(~H"""
+        <.dialog_button dialog_id={@dialog_id} label={@label} icon={@icon}>
+          <p>Dialog content</p>
+        </.dialog_button>
+        """)
+
+      assert html =~ ~s|hero-information-circle|
+      assert html =~ ~s|h-4 w-4|
+    end
+
+    test "renders dialog element with correct id" do
+      assigns = %{dialog_id: "my-custom-dialog", label: "Open"}
+
+      html =
+        rendered_to_string(~H"""
+        <.dialog_button dialog_id={@dialog_id} label={@label}>
+          <p>Content here</p>
+        </.dialog_button>
+        """)
+
+      assert html =~ ~s|<dialog id="my-custom-dialog"|
+      assert html =~ ~s|class="modal"|
+    end
+
+    test "renders inner block content" do
+      assigns = %{dialog_id: "test-dialog", label: "Open"}
+
+      html =
+        rendered_to_string(~H"""
+        <.dialog_button dialog_id={@dialog_id} label={@label}>
+          <p>This is custom content</p>
+          <span>More content</span>
+        </.dialog_button>
+        """)
+
+      assert html =~ "<p>This is custom content</p>"
+      assert html =~ "<span>More content</span>"
+    end
+
+    test "renders close button in dialog" do
+      assigns = %{dialog_id: "test-dialog", label: "Open"}
+
+      html =
+        rendered_to_string(~H"""
+        <.dialog_button dialog_id={@dialog_id} label={@label}>
+          <p>Content</p>
+        </.dialog_button>
+        """)
+
+      assert html =~ ~s|class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"|
+      assert html =~ "✕"
+    end
+
+    test "renders dialog with modal box styling" do
+      assigns = %{dialog_id: "test-dialog", label: "Open"}
+
+      html =
+        rendered_to_string(~H"""
+        <.dialog_button dialog_id={@dialog_id} label={@label}>
+          <p>Content</p>
+        </.dialog_button>
+        """)
+
+      assert html =~ ~s|class="modal-box w-11/12 max-w-5xl relative"|
+      assert html =~ ~s|class="max-h-[80vh] overflow-y-auto"|
+    end
+
+    test "includes JS toggle attribute for opening dialog" do
+      assigns = %{dialog_id: "test-dialog", label: "Open"}
+
+      html =
+        rendered_to_string(~H"""
+        <.dialog_button dialog_id={@dialog_id} label={@label}>
+          <p>Content</p>
+        </.dialog_button>
+        """)
+
+      assert html =~ ~s|phx-click=|
+      assert html =~ "#test-dialog"
+    end
+  end
 end

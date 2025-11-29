@@ -33,7 +33,7 @@ defmodule CockpitWeb do
     quote do
       use Phoenix.Controller, formats: [:html, :json, :xml, :ics]
 
-      use Gettext, backend: CockpitWeb.Gettext
+      use Gettext, backend: LottaWeb.Gettext
 
       import Plug.Conn
 
@@ -45,7 +45,7 @@ defmodule CockpitWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import CockpitWeb.Gettext
+      import LottaWeb.Gettext
     end
   end
 
@@ -81,7 +81,7 @@ defmodule CockpitWeb do
   defp html_helpers do
     quote do
       # Translation
-      use Gettext, backend: CockpitWeb.Gettext
+      use Gettext, backend: LottaWeb.Gettext
 
       # HTML escaping functionality
       import Phoenix.HTML

@@ -110,6 +110,7 @@ defmodule Lotta.MixProject do
       {:pigeon, "~> 2.0.1"},
       {:goth, "~> 1.4.3"},
       {:timex, "~> 3.7"},
+      {:file_size, "~> 3.0.1"},
       {:sentry, "~> 11.0"},
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},

@@ -9,6 +9,9 @@ defmodule CockpitWeb.Live.TenantLive do
     layout: {CockpitWeb.Layouts, :admin}
 
   import Ecto.Query
+  import CockpitWeb.CoreComponents
+  import CockpitWeb.TenantComponents
+  use Gettext, backend: LottaWeb.Gettext
 
   def update_changeset(tenant, params, _ \\ []),
     do:
@@ -114,39 +117,15 @@ defmodule CockpitWeb.Live.TenantLive do
     ]
   end
 
-  def render_resource_slot(assigns, :show, :after_main) do
-    ~H"""
-    <.list_monthly_usage_logs tenant={@item} />
-    """
-  end
-
-  defp list_monthly_usage_logs(%{tenant: tenant} = assigns) do
+  def render_resource_slot(%{item: tenant} = assigns, :show, :before_main) do
     assigns = fetch_current_tenant_usage(assigns, tenant)
 
     ~H"""
-    <Backpex.HTML.Layout.main_container>
-      <table class="table">
-        <thead>
-          <tr>
-            <th colspan="4">Monthly Usage Logs</th>
-          </tr>
-          <tr>
-            <th>Year-Month</th>
-            <th>active users</th>
-            <th>total storage (bytes)</th>
-            <th>media conversion (minutes)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr :for={usage <- @usages}>
-            <td>{usage.year}-{usage.month}</td>
-            <td>{usage.active_user_count[:value] |> round(0)}</td>
-            <td>{usage.total_storage_count[:value] |> round(3)}</td>
-            <td>{usage.media_conversion_seconds[:value] |> round(1)}</td>
-          </tr>
-        </tbody>
-      </table>
-    </Backpex.HTML.Layout.main_container>
+    <.dialog_button dialog_id={"usage-dialog-t#{@item.id}"} label={gettext("monthly usage logs")} icon="hero-presentation-chart-line">
+        <div class="max-h-[80vh] overflow-y-auto">
+          <.monthly_usage_logs_list usages={@usages} />
+        </div>
+    </.dialog_button>
     """
   end
 
@@ -156,7 +135,4 @@ defmodule CockpitWeb.Live.TenantLive do
       _ -> assign(assigns, :usages, [])
     end
   end
-
-  defp round(%Decimal{} = value, precision), do: Decimal.round(value, precision)
-  defp round(nil, _), do: nil
 end
