@@ -832,7 +832,7 @@ defmodule Lotta.Tenants do
           {:ok, feedback}
 
         {:error, error} ->
-          Logger.error("Error sending feedback to lotta team:", %{sentry: %{error: error}})
+          Logger.error("Error sending feedback to lotta team: #{inspect(error)}")
 
           feedback
           |> Email.send_feedback_to_lotta_mail(user, message)
@@ -873,7 +873,7 @@ defmodule Lotta.Tenants do
         :ok
 
       {:error, error} ->
-        Logger.error("Error sending feedback to lotta team:", %{sentry: %{error: error}})
+        Logger.error("Error sending feedback to lotta team: #{inspect(error)}")
 
         Email.create_feedback_for_lotta(subject, message, user)
         |> Mailer.deliver_now()
@@ -882,7 +882,7 @@ defmodule Lotta.Tenants do
             :ok
 
           {:error, error} ->
-            Logger.error("Error sending feedback to lotta team:", %{sentry: %{error: error}})
+            Logger.error("Error sending feedback to lotta team: #{inspect(error)}")
             :error
         end
     end
