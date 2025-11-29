@@ -545,7 +545,7 @@ defmodule CockpitWeb.CoreComponentsTest do
         """)
 
       assert html =~ ~s|class="btn btn-sm btn-neutral"|
-      assert html =~ ~s|monthly usage logs|
+      assert html =~ ~s|monatliche Nutzung|
     end
 
     test "renders button with icon" do

@@ -147,7 +147,7 @@ defmodule CockpitWeb.Live.TenantLiveTest do
           rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
 
         assert html =~ ~s|id="usage-dialog-t42"|
-        assert html =~ "monthly usage logs"
+        assert html =~ "monatliche Nutzung"
         assert html =~ "hero-presentation-chart-line"
       end
     end
@@ -168,7 +168,7 @@ defmodule CockpitWeb.Live.TenantLiveTest do
           rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
 
         assert html =~ ~s|id="usage-dialog-t99"|
-        assert html =~ "monthly usage logs"
+        assert html =~ "monatliche Nutzung"
       end
     end
 
@@ -189,7 +189,7 @@ defmodule CockpitWeb.Live.TenantLiveTest do
 
         # Should still render dialog button even when usage fetch fails
         assert html =~ ~s|id="usage-dialog-t77"|
-        assert html =~ "monthly usage logs"
+        assert html =~ "monatliche Nutzung"
       end
     end
   end

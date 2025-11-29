@@ -34,12 +34,12 @@ defmodule CockpitWeb.TenantComponentsTest do
         """)
 
       assert html =~ ~s|class="table w-full"|
-      assert html =~ "monthly usage logs"
-      assert html =~ "year"
-      assert html =~ "month"
-      assert html =~ "active users"
-      assert html =~ "total storage"
-      assert html =~ "media conversion"
+      assert html =~ "monatliche Nutzung"
+      assert html =~ "Jahr"
+      assert html =~ "Monat"
+      assert html =~ "aktive Nutzer"
+      assert html =~ "Gesamtspeicher"
+      assert html =~ "Medienumwandlung"
     end
 
     test "formats usage values correctly" do
@@ -121,7 +121,7 @@ defmodule CockpitWeb.TenantComponentsTest do
         """)
 
       assert html =~ ~s|class="table w-full"|
-      assert html =~ "monthly usage logs"
+      assert html =~ "monatliche Nutzung"
       # Should still have header row
       assert html =~ "<thead>"
     end
