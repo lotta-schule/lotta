@@ -91,12 +91,11 @@ defmodule CockpitWeb.Live.TenantLive do
       current_plan_name: %{
         module: Backpex.Fields.Select,
         label: "Current Plan Name",
-        options: fn _assigns ->
+        options:
           Lotta.Billings.Plans.all()
-          |> Enum.map(fn {key, value} ->
-            {key, value.title}
+          |> Enum.map(fn {key, plan} ->
+            {"#{plan.title} (#{key})", key}
           end)
-        end
       },
       invoices: %{
         module: Backpex.Fields.HasMany,

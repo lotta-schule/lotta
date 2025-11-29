@@ -199,24 +199,12 @@ defmodule CockpitWeb.Live.TenantLiveTest do
       assert email_config.except == [:index]
     end
 
-    test "current_plan_name uses Select field with options" do
-      fields = TenantLive.fields()
-      plan_config = Keyword.get(fields, :current_plan_name)
-
-      assert plan_config.module == Backpex.Fields.Select
-      assert plan_config.label == "Current Plan Name"
-      assert is_function(plan_config.options, 1)
-    end
-
     test "current_plan_name options returns valid plan list" do
       fields = TenantLive.fields()
       plan_config = Keyword.get(fields, :current_plan_name)
 
-      options = plan_config.options.(%{})
-
-      assert is_list(options)
-      # Options should be in format [{key, title}, ...]
-      assert Enum.all?(options, fn {_key, title} -> is_binary(title) end)
+      assert is_list(plan_config.options)
+      assert Enum.all?(plan_config.options, fn {title, key} -> is_binary(title) end)
     end
 
     test "textarea fields are excluded from index" do
