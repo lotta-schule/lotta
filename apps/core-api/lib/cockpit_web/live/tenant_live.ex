@@ -12,7 +12,7 @@ defmodule CockpitWeb.Live.TenantLive do
 
   def update_changeset(tenant, params, _ \\ []),
     do:
-      Lotta.Tenants.Tenant.update_changeset(
+      Lotta.Tenants.Tenant.update_by_admin_changeset(
         tenant,
         params
       )

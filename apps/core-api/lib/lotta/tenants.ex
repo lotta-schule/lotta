@@ -158,10 +158,27 @@ defmodule Lotta.Tenants do
     |> Multi.put(:user_params, user_params)
     |> Multi.insert(:new_tenant_without_prefix, Tenant.create_changeset(tenant_params))
     |> Multi.update(:new_tenant, fn %{new_tenant_without_prefix: tenant} ->
-      Ecto.Changeset.change(tenant, prefix: "tenant_#{tenant.id}")
+      Ecto.Changeset.change(tenant,
+        prefix: "tenant_#{tenant.id}"
+      )
     end)
     |> Multi.update(:tenant, fn %{new_tenant: tenant} ->
-      Tenant.update_changeset(tenant, %{prefix: tenant.prefix || "tenant_#{tenant.id}"})
+      {plan_name, plan} = Lotta.Billings.Plans.get_default()
+
+      plan_expires_at =
+        with %{default_duration: duration} <- plan do
+          Date.utc_today()
+          |> Date.shift(month: 1)
+          |> Date.beginning_of_month()
+          |> Date.shift(duration)
+        end
+
+      tenant
+      |> Tenant.update_by_admin_changeset(%{
+        current_plan_name: plan_name,
+        current_plan_expires_at: plan_expires_at,
+        next_plan_name: plan[:default_next_plan]
+      })
     end)
     |> Multi.run(:migrations, fn _repo, %{tenant: tenant} ->
       TenantDbManager.create_tenant_database_schema(tenant)

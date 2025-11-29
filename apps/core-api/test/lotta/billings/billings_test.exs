@@ -3,10 +3,9 @@ defmodule Lotta.BillingsTest do
 
   use Lotta.DataCase
 
-  alias Lotta.{Billings}
+  alias Lotta.{Billings, Tenants, Repo}
   alias Lotta.Billings.{AdditionalItem, Invoice}
-  alias Lotta.Tenants
-  alias Lotta.Repo
+  alias Lotta.Tenants.Tenant
 
   # Helper to insert usage data for a given month
   defp insert_usage_data(tenant_id, year, month, active_users, storage_gb, conversion_minutes) do
@@ -750,7 +749,8 @@ defmodule Lotta.BillingsTest do
     test "generate_invoice/3 copies customer information from tenant", %{tenant: tenant} do
       # Update tenant with customer information
       {:ok, updated_tenant} =
-        Tenants.update_tenant(tenant, %{
+        tenant
+        |> Tenant.update_by_admin_changeset(%{
           title: "Test School",
           address: "123 Main St",
           billing_address: "456 Billing Ave",
@@ -759,10 +759,10 @@ defmodule Lotta.BillingsTest do
           contact_email: "john@example.com",
           contact_phone: "+1-555-0123"
         })
+        |> Repo.update(prefix: "public")
 
       {:ok, invoice} = Billings.generate_invoice(updated_tenant, 2025, 11)
 
-      # Verify customer information is copied to invoice
       assert invoice.customer_name == "Test School"
       assert invoice.customer_address == "456 Billing Ave"
       assert invoice.customer_no == "CUST-001"
@@ -774,34 +774,34 @@ defmodule Lotta.BillingsTest do
     test "generate_invoice/3 falls back to address when billing_address is nil", %{
       tenant: tenant
     } do
-      # Update tenant with address but no billing_address
       {:ok, updated_tenant} =
-        Tenants.update_tenant(tenant, %{
+        tenant
+        |> Tenant.update_by_admin_changeset(%{
           title: "Test School",
           address: "789 Regular St",
           billing_address: nil
         })
+        |> Repo.update(prefix: "public")
 
       {:ok, invoice} = Billings.generate_invoice(updated_tenant, 2025, 11)
 
-      # Verify fallback to regular address
       assert invoice.customer_address == "789 Regular St"
     end
 
     test "generate_invoice/3 handles nil customer fields gracefully", %{tenant: tenant} do
-      # Ensure tenant has nil customer fields
       {:ok, updated_tenant} =
-        Tenants.update_tenant(tenant, %{
+        tenant
+        |> Tenant.update_by_admin_changeset(%{
           customer_no: nil,
           billing_address: nil,
           contact_name: nil,
           contact_email: nil,
           contact_phone: nil
         })
+        |> Repo.update(prefix: "public")
 
       {:ok, invoice} = Billings.generate_invoice(updated_tenant, 2025, 11)
 
-      # Verify invoice is created successfully with nil fields
       assert invoice.customer_no == nil
       assert invoice.customer_contact_name == nil
       assert invoice.customer_contact_email == nil
@@ -1344,10 +1344,12 @@ defmodule Lotta.BillingsTest do
 
     test "to_html/1 includes customer information when present", %{tenant: tenant} do
       {:ok, updated_tenant} =
-        Tenants.update_tenant(tenant, %{
+        tenant
+        |> Tenant.update_by_admin_changeset(%{
           title: "HTML Test Org",
           billing_address: "789 HTML St"
         })
+        |> Repo.update(prefix: "public")
 
       {:ok, invoice} = Billings.generate_invoice(updated_tenant, 2025, 11)
       invoice = Repo.preload(invoice, :items)
@@ -1359,10 +1361,12 @@ defmodule Lotta.BillingsTest do
 
     test "to_html/1 works without customer information", %{tenant: tenant} do
       {:ok, updated_tenant} =
-        Tenants.update_tenant(tenant, %{
+        tenant
+        |> Tenant.update_by_admin_changeset(%{
           billing_address: nil,
           customer_no: nil
         })
+        |> Repo.update(prefix: "public")
 
       {:ok, invoice} = Billings.generate_invoice(updated_tenant, 2025, 11)
       invoice = Repo.preload(invoice, :items)

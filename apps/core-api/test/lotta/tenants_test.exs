@@ -122,6 +122,22 @@ defmodule Lotta.TenantsTest do
       assert Tenants.slug_available?("available-slug") == true
     end
 
+    @tag creates_tenant: true
+    test "can create tenant without address" do
+      tenant = %Tenant{
+        title: "No Address School",
+        slug: "no-address"
+      }
+
+      user = %User{
+        name: "Test",
+        email: "test@example.com"
+      }
+
+      assert {:ok, created_tenant} = Tenants.create_tenant(tenant, user)
+      assert created_tenant.address == nil
+    end
+
     test "get_occupied_slugs/0 returns list of occupied slugs" do
       occupied_slugs = Tenants.get_occupied_slugs()
       assert "test" in occupied_slugs
@@ -809,15 +825,40 @@ defmodule Lotta.TenantsTest do
 
       assert {:ok, created_tenant} = Tenants.create_tenant(tenant, user)
 
-      # Should have the default plan assigned
-      assert created_tenant.current_plan_name == "test"
+      {default_plan_name, default_plan} = Lotta.Billings.Plans.get_default()
+      assert created_tenant.current_plan_name == default_plan_name
       assert created_tenant.current_plan_expires_at != nil
-      assert created_tenant.next_plan_name == nil
+      assert created_tenant.next_plan_name == default_plan[:default_next_plan]
 
-      # Expiration should be approximately 3 months from now (test plan default_duration)
-      today = Date.utc_today()
-      expected_expiration = Date.shift(today, month: 3)
+      expected_expiration =
+        Date.utc_today()
+        |> Date.shift(month: 1)
+        |> Date.beginning_of_month()
+        |> Date.shift(default_plan[:default_duration])
+
       assert created_tenant.current_plan_expires_at == expected_expiration
+    end
+
+    @tag creates_tenant: true
+    test "tenant creation calculates expiration at beginning of next month" do
+      tenant = %Tenant{
+        title: "Timing Test",
+        slug: "timing-test"
+      }
+
+      user = %User{
+        name: "Test",
+        email: "timing@test.com"
+      }
+
+      {:ok, created_tenant} = Tenants.create_tenant(tenant, user)
+
+      assert Date.compare(
+               created_tenant.current_plan_expires_at,
+               Date.utc_today()
+             ) == :gt
+
+      assert created_tenant.current_plan_expires_at.day == 1
     end
 
     test "update_plan/4 should update tenant's plan" do

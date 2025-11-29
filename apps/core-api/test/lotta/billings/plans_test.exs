@@ -36,6 +36,15 @@ defmodule Lotta.Billings.PlansTest do
       assert plan.active_user_price == "0.10"
     end
 
+    test "returns free plan" do
+      plan = Plans.get("free")
+
+      assert is_map(plan)
+      assert plan.title == "Free"
+      assert plan.default_duration == [month: 12]
+      assert plan.default_next_plan == "free"
+    end
+
     test "returns nil for non-existent plan" do
       assert Plans.get("non_existent") == nil
     end
@@ -86,7 +95,6 @@ defmodule Lotta.Billings.PlansTest do
       from_date = ~D[2025-01-01]
       expires_at = Plans.calculate_expiration("test", from_date)
 
-      # Test plan has 3 months duration
       assert expires_at == ~D[2025-04-01]
     end
 
@@ -94,14 +102,19 @@ defmodule Lotta.Billings.PlansTest do
       from_date = ~D[2025-01-01]
       expires_at = Plans.calculate_expiration("supporter", from_date)
 
-      # Supporter plan has 1 month duration
       assert expires_at == ~D[2025-02-01]
+    end
+
+    test "calculates expiration for free plan (12 months)" do
+      from_date = ~D[2025-01-01]
+      expires_at = Plans.calculate_expiration("free", from_date)
+
+      assert expires_at == ~D[2026-01-01]
     end
 
     test "uses current date when not specified" do
       expires_at = Plans.calculate_expiration("test")
 
-      # Should be approximately 3 months from today
       assert is_struct(expires_at, Date)
       assert Date.compare(expires_at, Date.utc_today()) == :gt
     end
@@ -118,6 +131,10 @@ defmodule Lotta.Billings.PlansTest do
 
     test "returns next plan name for supporter plan" do
       assert Plans.get_next_plan_name("supporter") == "supporter"
+    end
+
+    test "returns next plan name for free plan (renews to itself)" do
+      assert Plans.get_next_plan_name("free") == "free"
     end
 
     test "returns next plan name for default_2025 plan" do
