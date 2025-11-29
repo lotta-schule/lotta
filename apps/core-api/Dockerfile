@@ -235,18 +235,17 @@ RUN mix local.hex --force && \
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
+RUN mix deps.get --only $MIX_ENV
 COPY config config
-COPY assets assets
+
+RUN mix deps.compile
+
 COPY priv priv
-
-RUN mix deps.get --only prod && \
-  MIX_ENV=prod mix deps.compile
-
-RUN MIX_ENV=prod mix assets.deploy
-RUN MIX_ENV=prod mix compile
-
-# build project
 COPY lib lib
+COPY assets assets
+
+RUN mix assets.deploy
+RUN mix compile
 
 COPY rel rel
 
