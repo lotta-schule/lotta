@@ -46,6 +46,7 @@ defmodule SystemConfig do
   end
 
   defp default("APP_ENVIRONMENT", _), do: "development"
+  defp default("WEB_HOST", :dev), do: "localhost"
   defp default("BASE_URI_HOST", :dev), do: "local.lotta.schule,lotta.lvh.me,lotta.schule"
   defp default("BASE_URI_HOST", _), do: "lotta.schule"
   defp default("BASE_URI_PORT", :dev), do: "3000"
@@ -182,6 +183,7 @@ config :lotta, :base_uri,
 # The secret key base is used to sign/encrypt cookies and other secrets.
 config :lotta, LottaWeb.Endpoint,
   secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
+  url: [host: SystemConfig.get("WEB_HOST")],
   server: SystemConfig.get("PHX_SERVER", cast: :boolean)
 
 config :lotta, CockpitWeb.Endpoint,
