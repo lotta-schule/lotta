@@ -46,6 +46,7 @@ defmodule SystemConfig do
   end
 
   defp default("APP_ENVIRONMENT", _), do: "development"
+  defp default("LOG_LEVEL", _), do: nil
   defp default("WEB_HOST", env) when env in [:dev, :test], do: "localhost"
   defp default("BASE_URI_HOST", :dev), do: "local.lotta.schule,lotta.lvh.me,lotta.schule"
   defp default("BASE_URI_HOST", _), do: "lotta.schule"
@@ -209,6 +210,16 @@ end
 config :lotta, Lotta.TCPHealthCheck,
   enabled: SystemConfig.get("TCP_HEALTH_CHECK_ENABLED", cast: :boolean),
   config: [port: SystemConfig.get("TCP_HEALTH_CHECK_PORT", cast: :integer)]
+
+case SystemConfig.get("LOG_LEVEL") do
+  "all" -> config :logger, level: :all
+  "debug" -> config :logger, level: :debug
+  "notice" -> config :logger, level: :notice
+  "info" -> config :logger, level: :info
+  "warn" -> config :logger, level: :warn
+  "error" -> config :logger, level: :error
+  _ -> :ok
+end
 
 config :opentelemetry, :resource,
   service: %{
