@@ -1,3 +1,13 @@
+## 6.1.8 (2025-11-29)
+
+### 🩹 Fixes
+
+- **core:** fix cockpit plan selection ([eed1f269](https://github.com/lotta-schule/lotta/commit/eed1f269))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.7 (2025-11-29)
 
 ### 🚀 Features
