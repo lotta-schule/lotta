@@ -177,10 +177,11 @@ defmodule Lotta.MixProject do
       ],
       sentry_recompile: ["compile", "deps.compile sentry --force"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["compile", "tailwind cockpit", "esbuild cockpit"],
+      "assets.build": ["compile", "tailwind cockpit", "esbuild cockpit", "esbuild lotta"],
       "assets.deploy": [
         "tailwind cockpit --minify",
         "esbuild cockpit --minify",
+        "esbuild lotta --minify",
         "phx.digest"
       ],
       precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"]

@@ -240,7 +240,7 @@ COPY assets assets
 COPY priv priv
 
 RUN mix deps.get --only prod && \
-  mix deps.compile
+  MIX_ENV=prod mix deps.compile
 
 RUN MIX_ENV=prod mix assets.deploy
 RUN MIX_ENV=prod mix compile
