@@ -169,14 +169,14 @@ defmodule Lotta.Worker.Tenant do
               "Successfully generated invoice #{invoice.invoice_number} for tenant #{tenant.slug}"
             )
 
-            {:ok, tenant.id, invoice.id}
+            {:ok, tenant, invoice}
 
           {:error, reason} ->
             Logger.error(
               "Failed to generate invoice for tenant #{tenant.slug}: #{inspect(reason)}"
             )
 
-            {:error, tenant.id, reason}
+            {:error, tenant, reason}
         end
       end)
 
@@ -186,6 +186,27 @@ defmodule Lotta.Worker.Tenant do
     Logger.info(
       "Invoice generation completed for #{year}-#{month}. Success: #{success_count}, Failures: #{failure_count}"
     )
+
+    if Keyword.get(
+         Application.get_env(:lotta, Lotta.Billings),
+         :enable_billing_notifications,
+         true
+       ) do
+      results
+      |> Enum.filter(fn result -> match?({:ok, _, _}, result) end)
+      |> Enum.reduce([], fn {:ok, tenant, invoice}, acc ->
+        [{tenant, invoice} | acc]
+      end)
+      |> case do
+        [] ->
+          :ok
+
+        successful_invoices ->
+          successful_invoices
+          |> Slack.new_lotta_invoices_to_issue_notification()
+          |> Slack.send()
+      end
+    end
 
     :ok
   end

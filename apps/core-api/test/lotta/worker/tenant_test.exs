@@ -237,7 +237,7 @@ defmodule Lotta.Worker.TenantTest do
 
       with_mock(Billings, [:passthrough],
         generate_invoice: fn _tenant, _year, _month ->
-          {:ok, %{id: 1, invoice_number: "LTA00001"}}
+          {:ok, %{id: 1, invoice_number: "LTA00001", total: Decimal.new("14.00")}}
         end
       ) do
         result =
@@ -307,7 +307,14 @@ defmodule Lotta.Worker.TenantTest do
 
       with_mock(Billings, [:passthrough],
         generate_invoice: fn _tenant, year, month ->
-          {:ok, %{id: 1, invoice_number: "LTA00001", year: year, month: month}}
+          {:ok,
+           %{
+             id: 1,
+             invoice_number: "LTA00001",
+             total: Decimal.new("14.00"),
+             year: year,
+             month: month
+           }}
         end
       ) do
         perform_job(Tenant, %{

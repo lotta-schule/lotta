@@ -162,6 +162,8 @@ defmodule SystemConfig do
   defp default("EDUPLACES_CLIENT_ID", _), do: ""
   defp default("EDUPLACES_CLIENT_SECRET", _), do: ""
 
+  defp default("ENABLE_BILLING_NOTIFICATIONS", _), do: "true"
+
   defp default(key, env),
     do:
       raise("""
@@ -417,3 +419,6 @@ config :lotta, Eduplaces,
   redirect_uri: SystemConfig.get("EDUPLACES_REDIRECT_URI", cast: :url_with_scheme),
   client_id: SystemConfig.get("EDUPLACES_CLIENT_ID"),
   client_secret: SystemConfig.get("EDUPLACES_CLIENT_SECRET")
+
+config :lotta, Lotta.Billings,
+  enable_billing_notifications: SystemConfig.get("ENABLE_BILLING_NOTIFICATIONS", cast: :boolean)

@@ -178,6 +178,164 @@ defmodule Lotta.Administration.Notification.SlackTest do
     end
   end
 
+  describe "new_lotta_invoices_to_issue_notification/1" do
+    test "creates notification with correct structure" do
+      invoices = [
+        {
+          %Tenants.Tenant{slug: "test-school", title: "Test School"},
+          %{invoice_number: "2024-001", total: Decimal.new("150.00")}
+        },
+        {
+          %Tenants.Tenant{slug: "another-school", title: "Another School"},
+          %{invoice_number: "2024-002", total: Decimal.new("200.50")}
+        }
+      ]
+
+      notification = Slack.new_lotta_invoices_to_issue_notification(invoices)
+
+      assert %{blocks: blocks} = notification
+      assert is_list(blocks)
+      assert length(blocks) == 5
+    end
+
+    test "includes header section with correct text" do
+      invoices = [
+        {
+          %Tenants.Tenant{slug: "test-school", title: "Test School"},
+          %{invoice_number: "2024-001", total: Decimal.new("150.00")}
+        }
+      ]
+
+      notification = Slack.new_lotta_invoices_to_issue_notification(invoices)
+
+      header_section = Enum.at(notification.blocks, 0)
+      assert header_section.type == "section"
+      assert header_section.text.type == "mrkdwn"
+
+      assert header_section.text.text ==
+               "*Neue Lotta-Rechnungen stehen zur Ausstellung im Cockpit bereit*"
+    end
+
+    test "includes dividers" do
+      invoices = [
+        {
+          %Tenants.Tenant{slug: "test-school", title: "Test School"},
+          %{invoice_number: "2024-001", total: Decimal.new("150.00")}
+        }
+      ]
+
+      notification = Slack.new_lotta_invoices_to_issue_notification(invoices)
+
+      dividers = Enum.filter(notification.blocks, &(&1.type == "divider"))
+      assert length(dividers) == 2
+    end
+
+    test "includes invoice list with tenant and invoice details" do
+      invoices = [
+        {
+          %Tenants.Tenant{slug: "test-school", title: "Test School"},
+          %{invoice_number: "2024-001", total: Decimal.new("150.00")}
+        },
+        {
+          %Tenants.Tenant{slug: "another-school", title: "Another School"},
+          %{invoice_number: "2024-002", total: Decimal.new("200.50")}
+        }
+      ]
+
+      notification = Slack.new_lotta_invoices_to_issue_notification(invoices)
+
+      invoice_section = Enum.at(notification.blocks, 2)
+      assert invoice_section.type == "section"
+      assert invoice_section.text.type == "mrkdwn"
+
+      invoice_text = invoice_section.text.text
+      assert invoice_text =~ "test-school"
+      assert invoice_text =~ "2024-001"
+      assert invoice_text =~ "150.00"
+      assert invoice_text =~ "another-school"
+      assert invoice_text =~ "2024-002"
+      assert invoice_text =~ "200.50"
+    end
+
+    test "includes footer instruction text" do
+      invoices = [
+        {
+          %Tenants.Tenant{slug: "test-school", title: "Test School"},
+          %{invoice_number: "2024-001", total: Decimal.new("150.00")}
+        }
+      ]
+
+      notification = Slack.new_lotta_invoices_to_issue_notification(invoices)
+
+      footer_section = Enum.at(notification.blocks, 4)
+      assert footer_section.type == "section"
+      assert footer_section.text.type == "mrkdwn"
+
+      assert footer_section.text.text ==
+               "Um die Rechnungen auszustellen, müssen sie im Cockpit bestätigt werden"
+    end
+
+    test "handles single invoice" do
+      invoices = [
+        {
+          %Tenants.Tenant{slug: "single-school", title: "Single School"},
+          %{invoice_number: "2024-999", total: Decimal.new("99.99")}
+        }
+      ]
+
+      notification = Slack.new_lotta_invoices_to_issue_notification(invoices)
+
+      invoice_section = Enum.at(notification.blocks, 2)
+      invoice_text = invoice_section.text.text
+
+      assert invoice_text =~ "single-school"
+      assert invoice_text =~ "2024-999"
+      assert invoice_text =~ "99.99"
+      # Should only have one line
+      refute invoice_text =~ "\n-"
+    end
+
+    test "handles multiple invoices with correct formatting" do
+      invoices = [
+        {
+          %Tenants.Tenant{slug: "school-1", title: "School 1"},
+          %{invoice_number: "2024-001", total: Decimal.new("100.00")}
+        },
+        {
+          %Tenants.Tenant{slug: "school-2", title: "School 2"},
+          %{invoice_number: "2024-002", total: Decimal.new("200.00")}
+        },
+        {
+          %Tenants.Tenant{slug: "school-3", title: "School 3"},
+          %{invoice_number: "2024-003", total: Decimal.new("300.00")}
+        }
+      ]
+
+      notification = Slack.new_lotta_invoices_to_issue_notification(invoices)
+
+      invoice_section = Enum.at(notification.blocks, 2)
+      invoice_text = invoice_section.text.text
+
+      # Verify each invoice appears on its own line
+      lines = String.split(invoice_text, "\n")
+      assert length(lines) == 3
+
+      # Verify each line has the correct format
+      assert Enum.at(lines, 0) =~ "- *school-1*: Rechnung #2024-001 über 100.00 EUR"
+      assert Enum.at(lines, 1) =~ "- *school-2*: Rechnung #2024-002 über 200.00 EUR"
+      assert Enum.at(lines, 2) =~ "- *school-3*: Rechnung #2024-003 über 300.00 EUR"
+    end
+
+    test "handles empty invoice list" do
+      invoices = []
+
+      notification = Slack.new_lotta_invoices_to_issue_notification(invoices)
+
+      invoice_section = Enum.at(notification.blocks, 2)
+      assert invoice_section.text.text == ""
+    end
+  end
+
   describe "send/1" do
     test "sends notification successfully when webhook URL is configured" do
       notification = %{blocks: []}

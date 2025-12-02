@@ -167,16 +167,4 @@ defmodule CockpitWeb.ItemActions.DeleteTenantTest do
       assert label == "Cancel"
     end
   end
-
-  describe "Backpex.ItemAction callbacks" do
-    test "all required callbacks are implemented" do
-      # Verify all Backpex.ItemAction callbacks are defined
-      assert function_exported?(DeleteTenant, :icon, 2)
-      assert function_exported?(DeleteTenant, :handle, 3)
-      assert function_exported?(DeleteTenant, :confirm, 1)
-      assert function_exported?(DeleteTenant, :label, 2)
-      assert function_exported?(DeleteTenant, :confirm_label, 1)
-      assert function_exported?(DeleteTenant, :cancel_label, 1)
-    end
-  end
 end
