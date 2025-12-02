@@ -104,7 +104,11 @@ defmodule CockpitWeb.Live.InvoiceLive do
       src={@pdf_src}
       style="width: min(80%, 794px); border: none; zoom: .75; padding: 1em;"
     />
-    <a :if={String.starts_with?(@pdf_src, "data:application")} href={@pdf_src} download={@item.invoice_number <> ".pdf"}>
+    <a
+      :if={String.starts_with?(@pdf_src, "data:application")}
+      href={@pdf_src}
+      download={@item.invoice_number <> ".pdf"}
+    >
       Download PDF
     </a>
     """
