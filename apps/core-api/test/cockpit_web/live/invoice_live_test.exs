@@ -14,25 +14,33 @@ defmodule CockpitWeb.Live.InvoiceLiveTest do
       assert InvoiceLive.can?(nil, :show, nil) == true
     end
 
-    test "denies edit action" do
-      refute InvoiceLive.can?(nil, :edit, nil)
+    test "denies edit action for issued invoices" do
+      refute InvoiceLive.can?(nil, :edit, %{issued_at: ~U[2024-01-01 00:00:00Z]})
     end
 
-    test "denies delete action" do
-      refute InvoiceLive.can?(nil, :delete, nil)
+    test "allows edit action for unissued invoices" do
+      assert InvoiceLive.can?(nil, :edit, %{issued_at: nil})
     end
 
-    test "denies create action" do
-      refute InvoiceLive.can?(nil, :create, nil)
+    test "denies delete action for issued invoices" do
+      refute InvoiceLive.can?(nil, :delete, %{issued_at: ~U[2024-01-01 00:00:00Z]})
     end
 
-    test "denies new action" do
-      refute InvoiceLive.can?(nil, :new, nil)
+    test "allows delete action for unissued invoices" do
+      assert InvoiceLive.can?(nil, :delete, %{issued_at: nil})
     end
 
-    test "denies custom actions" do
-      refute InvoiceLive.can?(nil, :custom_action, nil)
-      refute InvoiceLive.can?(nil, :another_action, nil)
+    test "allows create action for unissued invoices" do
+      assert InvoiceLive.can?(nil, :create, %{issued_at: nil})
+    end
+
+    test "allows new action for unissued invoices" do
+      assert InvoiceLive.can?(nil, :new, %{issued_at: nil})
+    end
+
+    test "allows custom actions for unissued invoices" do
+      assert InvoiceLive.can?(nil, :custom_action, %{issued_at: nil})
+      assert InvoiceLive.can?(nil, :another_action, %{issued_at: nil})
     end
 
     test "allows actions regardless of first argument" do
@@ -102,6 +110,7 @@ defmodule CockpitWeb.Live.InvoiceLiveTest do
 
       assert config.module == Backpex.Fields.Text
       assert config.label == "Customer Number"
+      assert config.readonly == true
     end
 
     test "total field uses Currency module with EUR formatting" do
@@ -124,13 +133,14 @@ defmodule CockpitWeb.Live.InvoiceLiveTest do
       assert config.readonly == true
     end
 
-    test "due_date field is readonly Date" do
+    test "due_date field is Date" do
       fields = InvoiceLive.fields()
       config = Keyword.get(fields, :due_date)
 
       assert config.module == Backpex.Fields.Date
       assert config.label == "Due Date"
-      assert config.readonly == true
+      # due_date is not readonly - it can be edited
+      refute Map.get(config, :readonly)
     end
 
     test "paid_at field is readonly DateTime" do
@@ -145,8 +155,8 @@ defmodule CockpitWeb.Live.InvoiceLiveTest do
     test "all readonly fields are marked correctly" do
       fields = InvoiceLive.fields()
 
-      readonly_fields = [:invoice_number, :issued_at, :due_date, :paid_at]
-      editable_fields = [:period, :customer_no, :total]
+      readonly_fields = [:invoice_number, :period, :customer_no, :issued_at, :paid_at]
+      editable_fields = [:total, :due_date]
 
       for field <- readonly_fields do
         config = Keyword.get(fields, field)
@@ -266,8 +276,31 @@ defmodule CockpitWeb.Live.InvoiceLiveTest do
       assert String.length(decoded_html) > 0
     end
 
-    test "render_resource_slot is defined for specific action and slot" do
-      assert function_exported?(InvoiceLive, :render_resource_slot, 3)
+    test "render_resource_slot renders PDF for issued invoices" do
+      invoice = %Lotta.Billings.Invoice{
+        id: 3,
+        invoice_number: "INV-2024-003",
+        year: 2024,
+        month: 3,
+        period_start: ~D[2024-03-01],
+        period_end: ~D[2024-03-31],
+        total: Decimal.new("100.00"),
+        customer_name: "Test Customer",
+        customer_no: "C-003",
+        issued_at: ~U[2024-03-15 10:00:00Z],
+        items: []
+      }
+
+      assigns = %{item: invoice}
+
+      html =
+        rendered_to_string(InvoiceLive.render_resource_slot(assigns, :show, :main))
+
+      # Verify iframe is present
+      assert html =~ ~s|<iframe|
+
+      # For issued invoices, should render PDF or HTML depending on ChromicPDF availability
+      assert html =~ ~s|src="data:|
     end
   end
 
