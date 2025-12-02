@@ -135,6 +135,7 @@ defmodule SystemConfig do
 
   defp default("SLACK_WEBHOOK_URL", _), do: nil
 
+  defp default("DISABLE_CHROMIC", :test), do: "true"
   defp default("DISABLE_CHROMIC", _), do: "false"
   defp default("DEBUG_CHROMIC", :prod), do: "false"
   defp default("DEBUG_CHROMIC", _), do: "true"
