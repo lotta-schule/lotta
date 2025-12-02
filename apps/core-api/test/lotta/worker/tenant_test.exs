@@ -130,7 +130,6 @@ defmodule Lotta.Worker.TenantTest do
           "type" => "collect_daily_usage_logs"
         })
 
-        # Should be called at least once for the test tenant
         assert called(Tenants.create_usage_logs(:_))
       end
     end
@@ -140,7 +139,6 @@ defmodule Lotta.Worker.TenantTest do
 
       with_mock(Tenants, [:passthrough],
         create_usage_logs: fn tenant ->
-          # Fail for first tenant, succeed for others
           if tenant.id == hd(tenants).id do
             {:error, :test_error}
           else
@@ -153,10 +151,8 @@ defmodule Lotta.Worker.TenantTest do
             "type" => "collect_daily_usage_logs"
           })
 
-        # Job should complete successfully even if some tenants fail
         assert result == :ok
 
-        # Should still be called for all tenants
         assert called(Tenants.create_usage_logs(:_))
       end
     end
@@ -231,16 +227,14 @@ defmodule Lotta.Worker.TenantTest do
       assert job.args == %{"type" => "generate_invoices"}
     end
 
-    test "calls Billings.generate_invoice for all tenants with current_plan_name" do
-      # Set up tenant with a plan
+    test "calls Billings.generate_invoice for all tenants with valid and not-free current_plan_name" do
       tenant = Tenants.get_tenant_by_slug("test")
 
       tenant =
         tenant
-        |> Ecto.Changeset.change(%{current_plan_name: "test_plan"})
+        |> Ecto.Changeset.change(%{current_plan_name: "default_2025"})
         |> Lotta.Repo.update!(prefix: "public")
 
-      # Mock the generate_invoice function
       with_mock(Billings, [:passthrough],
         generate_invoice: fn _tenant, _year, _month ->
           {:ok, %{id: 1, invoice_number: "LTA00001"}}
@@ -252,13 +246,11 @@ defmodule Lotta.Worker.TenantTest do
           })
 
         assert result == :ok
-        # Should be called at least once for our test tenant with a plan
         assert called(Billings.generate_invoice(tenant, :_, :_))
       end
     end
 
     test "skips tenants without current_plan_name" do
-      # Ensure test tenant has no plan
       tenant = Tenants.get_tenant_by_slug("test")
 
       tenant
@@ -276,13 +268,11 @@ defmodule Lotta.Worker.TenantTest do
           })
 
         assert result == :ok
-        # Should not be called for tenant without plan
         refute called(Billings.generate_invoice(:_, :_, :_))
       end
     end
 
     test "handles errors from individual tenants and continues" do
-      # Set up tenant with a plan
       tenant = Tenants.get_tenant_by_slug("test")
 
       tenant
@@ -299,20 +289,17 @@ defmodule Lotta.Worker.TenantTest do
             "type" => "generate_invoices"
           })
 
-        # Job should complete successfully even if invoice generation fails
         assert result == :ok
       end
     end
 
     test "generates invoices for the previous month" do
-      # Set up tenant with a plan
       tenant = Tenants.get_tenant_by_slug("test")
 
       tenant
-      |> Ecto.Changeset.change(%{current_plan_name: "test_plan"})
+      |> Ecto.Changeset.change(%{current_plan_name: "default_2025"})
       |> Lotta.Repo.update!(prefix: "public")
 
-      # Calculate expected previous month
       today = Date.utc_today()
       previous_month_date = Date.add(today, -1)
       expected_year = previous_month_date.year
@@ -327,7 +314,6 @@ defmodule Lotta.Worker.TenantTest do
           "type" => "generate_invoices"
         })
 
-        # Verify it was called with the previous month's year and month
         assert called(Billings.generate_invoice(:_, expected_year, expected_month))
       end
     end

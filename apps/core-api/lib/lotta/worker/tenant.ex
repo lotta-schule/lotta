@@ -154,7 +154,12 @@ defmodule Lotta.Worker.Tenant do
     # Get all tenants that have a current plan
     tenants =
       Tenants.list_tenants()
-      |> Enum.filter(fn tenant -> not is_nil(tenant.current_plan_name) end)
+      |> Enum.filter(fn tenant ->
+        case Billings.Plans.get(tenant.current_plan_name) do
+          %{base_price: price} when not is_nil(price) -> true
+          _ -> false
+        end
+      end)
 
     results =
       Enum.map(tenants, fn tenant ->
