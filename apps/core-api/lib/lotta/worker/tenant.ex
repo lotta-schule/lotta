@@ -154,7 +154,12 @@ defmodule Lotta.Worker.Tenant do
     # Get all tenants that have a current plan
     tenants =
       Tenants.list_tenants()
-      |> Enum.filter(fn tenant -> not is_nil(tenant.current_plan_name) end)
+      |> Enum.filter(fn tenant ->
+        case Billings.Plans.get(tenant.current_plan_name) do
+          %{base_price: price} when not is_nil(price) -> true
+          _ -> false
+        end
+      end)
 
     results =
       Enum.map(tenants, fn tenant ->
@@ -164,14 +169,14 @@ defmodule Lotta.Worker.Tenant do
               "Successfully generated invoice #{invoice.invoice_number} for tenant #{tenant.slug}"
             )
 
-            {:ok, tenant.id, invoice.id}
+            {:ok, tenant, invoice}
 
           {:error, reason} ->
             Logger.error(
               "Failed to generate invoice for tenant #{tenant.slug}: #{inspect(reason)}"
             )
 
-            {:error, tenant.id, reason}
+            {:error, tenant, reason}
         end
       end)
 
@@ -181,6 +186,27 @@ defmodule Lotta.Worker.Tenant do
     Logger.info(
       "Invoice generation completed for #{year}-#{month}. Success: #{success_count}, Failures: #{failure_count}"
     )
+
+    if Keyword.get(
+         Application.get_env(:lotta, Lotta.Billings),
+         :enable_billing_notifications,
+         true
+       ) do
+      results
+      |> Enum.filter(fn result -> match?({:ok, _, _}, result) end)
+      |> Enum.reduce([], fn {:ok, tenant, invoice}, acc ->
+        [{tenant, invoice} | acc]
+      end)
+      |> case do
+        [] ->
+          :ok
+
+        successful_invoices ->
+          successful_invoices
+          |> Slack.new_lotta_invoices_to_issue_notification()
+          |> Slack.send()
+      end
+    end
 
     :ok
   end

@@ -65,10 +65,10 @@ defmodule Lotta.Application do
   end
 
   defp get_chromic_app_child() do
-    config = Application.get_env(:lotta, Lotta.ChromicPDF, [])
+    config = Application.get_env(:lotta, ChromicPDF, [])
 
-    if Keyword.get(config, :enabled),
-      do: {Lotta.ChromicPDF, Keyword.get(config, :config)}
+    if Keyword.get(config, :disabled) != true,
+      do: {ChromicPDF, Keyword.get(config, :config)}
   end
 
   defp get_tcp_healthcheck_app_child() do

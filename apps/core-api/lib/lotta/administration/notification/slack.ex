@@ -4,6 +4,7 @@ defmodule Lotta.Administration.Notification.Slack do
   """
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
+  alias Lotta.Billings.Invoice
   alias LottaWeb.Urls
 
   require Logger
@@ -71,6 +72,48 @@ defmodule Lotta.Administration.Notification.Slack do
             }
           )
         )
+    }
+  end
+
+  @doc """
+  Creates a Slack notification payload for newly available lotta invoices to issue.
+  """
+  @doc since: "6.1.8"
+  @spec new_lotta_invoices_to_issue_notification([{Tenant.t(), Invoice.t()}]) :: map()
+  def new_lotta_invoices_to_issue_notification(invoices) do
+    %{
+      blocks: [
+        %{
+          type: "section",
+          text: %{
+            type: "mrkdwn",
+            text: "*Neue Lotta-Rechnungen stehen zur Ausstellung im Cockpit bereit*"
+          }
+        },
+        %{
+          type: "divider"
+        },
+        %{
+          type: "section",
+          text: %{
+            type: "mrkdwn",
+            text:
+              Enum.map_join(invoices, "\n", fn {tenant, invoice} ->
+                "- *#{tenant.slug}*: Rechnung ##{invoice.invoice_number} über #{invoice.total} EUR"
+              end)
+          }
+        },
+        %{
+          type: "divider"
+        },
+        %{
+          type: "section",
+          text: %{
+            type: "mrkdwn",
+            text: "Um die Rechnungen auszustellen, müssen sie im Cockpit bestätigt werden"
+          }
+        }
+      ]
     }
   end
 

@@ -121,10 +121,14 @@ defmodule CockpitWeb.Live.TenantLive do
     assigns = fetch_current_tenant_usage(assigns, tenant)
 
     ~H"""
-    <.dialog_button dialog_id={"usage-dialog-t#{@item.id}"} label={gettext("monthly usage logs")} icon="hero-presentation-chart-line">
-        <div class="max-h-[80vh] overflow-y-auto">
-          <.monthly_usage_logs_list usages={@usages} />
-        </div>
+    <.dialog_button
+      dialog_id={"usage-dialog-t#{@item.id}"}
+      label={gettext("monthly usage logs")}
+      icon="hero-presentation-chart-line"
+    >
+      <div class="max-h-[80vh] overflow-y-auto">
+        <.monthly_usage_logs_list usages={@usages} />
+      </div>
     </.dialog_button>
     """
   end

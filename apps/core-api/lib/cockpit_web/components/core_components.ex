@@ -406,7 +406,7 @@ defmodule CockpitWeb.CoreComponents do
     <.button
       phx-click={JS.toggle_attribute({"open", "true"}, to: "\##{@dialog_id}")}
       class="btn btn-sm btn-neutral"
-      >
+    >
       <Backpex.HTML.CoreComponents.icon
         :if={@icon}
         name={@icon}
@@ -417,15 +417,20 @@ defmodule CockpitWeb.CoreComponents do
     <dialog id={@dialog_id} class="modal">
       <div class="modal-box w-11/12 max-w-5xl relative">
         <form method="dialog">
-          <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" title={gettext("close")}>✕</button>
+          <button
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            title={gettext("close")}
+          >
+            ✕
+          </button>
         </form>
         <div class="max-h-[80vh] overflow-y-auto">
           {render_slot(@inner_block)}
         </div>
         <form method="dialog" class="modal-backdrop">
-          <button
-            phx-click={JS.toggle_attribute({"open", "false"}, to: "\##{@dialog_id}")}
-          >{gettext("close")}</button>
+          <button phx-click={JS.toggle_attribute({"open", "false"}, to: "\##{@dialog_id}")}>
+            {gettext("close")}
+          </button>
         </form>
       </div>
     </dialog>
