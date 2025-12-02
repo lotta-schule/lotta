@@ -1,3 +1,13 @@
+## 6.1.10 (2025-12-02)
+
+### 🚀 Features
+
+- **core:** issue invoices from cockpit ([#524](https://github.com/lotta-schule/lotta/pull/524))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.1.9 (2025-11-29)
 
 ### 🚀 Features

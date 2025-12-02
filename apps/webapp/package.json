@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "@lotta-schule/webapp",
-  "version": "6.1.9",
+  "version": "6.1.10",
   "description": "Lotta Schule Webapp",
   "scripts": {
     "dev": "next dev",
