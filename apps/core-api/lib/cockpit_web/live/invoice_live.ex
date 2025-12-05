@@ -124,7 +124,7 @@ defmodule CockpitWeb.Live.InvoiceLive do
       get_html_src(invoice)
     else
       invoice = Lotta.Repo.preload(invoice, :items)
-      "data:application/pdf;base64,#{Base.encode64(Invoice.to_pdf(invoice))}"
+      "data:application/pdf;base64,#{Invoice.to_pdf(invoice)}"
     end
   end
 end
