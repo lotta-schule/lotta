@@ -1,3 +1,13 @@
+## 6.1.11 (2025-12-05)
+
+### 🩹 Fixes
+
+- **core:** output correct invoice pdf data ([bfb9d501](https://github.com/lotta-schule/lotta/commit/bfb9d501))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.10 (2025-12-02)
 
 ### 🚀 Features
