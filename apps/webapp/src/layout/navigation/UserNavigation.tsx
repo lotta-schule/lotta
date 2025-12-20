@@ -1,5 +1,4 @@
 'use client';
-
 import * as React from 'react';
 import {
   faCirclePlus,
@@ -24,7 +23,7 @@ import {
   MenuButton,
   Item,
 } from '@lotta-schule/hubert';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { Icon } from 'shared/Icon';
 import { ArticleModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';

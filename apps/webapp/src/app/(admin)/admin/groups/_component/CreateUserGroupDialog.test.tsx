@@ -4,7 +4,7 @@ import {
   CreateUserGroupDialog,
 } from './CreateUserGroupDialog';
 import userEvent from '@testing-library/user-event';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { lehrerGroup } from 'test/fixtures';
 import { GET_USER_GROUPS } from '../_graphql';
 
@@ -14,7 +14,7 @@ const userGroupMock = {
   id: 'new-test-group-id',
 };
 
-const additionalMocks: MockedResponse[] = [
+const additionalMocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: CREATE_USER_GROUP,
@@ -41,7 +41,7 @@ const additionalMocks: MockedResponse[] = [
 ];
 
 describe('CreateUserGroupDialog', () => {
-  it('renders dialog when isOpen is true', () => {
+  it('renders dialog when isOpen is true', async () => {
     const screen = render(
       <CreateUserGroupDialog
         isOpen={true}
@@ -50,9 +50,11 @@ describe('CreateUserGroupDialog', () => {
       />
     );
 
-    expect(
-      screen.getByRole('dialog', { name: 'Nutzergruppe erstellen' })
-    ).toBeVisible();
+    await waitFor(() => {
+      expect(
+        screen.getByRole('dialog', { name: 'Nutzergruppe erstellen' })
+      ).toBeVisible();
+    });
   });
 
   it('calls onAbort when abort button is clicked', async () => {

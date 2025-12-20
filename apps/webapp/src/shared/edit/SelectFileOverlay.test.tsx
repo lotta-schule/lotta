@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render, waitFor, within } from 'test/util';
 import { SelectFileOverlay } from './SelectFileOverlay';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { imageFile, logosDirectory } from 'test/fixtures';
 import userEvent from '@testing-library/user-event';
 
@@ -9,7 +9,7 @@ import GetDirectoriesAndFiles from 'api/query/GetDirectoriesAndFiles.graphql';
 import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
 
 describe('SelectFileOverlay Component', () => {
-  const additionalMocks: MockedResponse[] = [
+  const additionalMocks: MockLink.MockedResponse[] = [
     {
       request: {
         query: GetDirectoriesAndFiles,

@@ -1,9 +1,7 @@
 'use client';
-
 import * as React from 'react';
-import { useSuspenseQuery } from '@apollo/client';
+import { useSuspenseQuery } from '@apollo/client/react';
 import { Box } from '@lotta-schule/hubert';
-import { type AxisOptions } from 'react-charts';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { formatDate } from '../_util';
@@ -11,13 +9,16 @@ import { de } from 'date-fns/locale';
 import { Period } from '../Analytics';
 import { gqlCompatibleMetricType, MetricType } from './MetricType';
 import { GET_TENANT_TIMESERIES_ANALYTICS } from '../_graphql';
-import dynamic from 'next/dynamic';
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 import styles from './MetricsChart.module.scss';
-
-const Chart = dynamic(() => import('./DynamicChart'), {
-  ssr: false,
-});
 
 export type MetricsChartProps = {
   period: Period;
@@ -25,7 +26,7 @@ export type MetricsChartProps = {
 };
 
 type DailyMetric = {
-  date: Date;
+  date: string;
   value: number | null;
 };
 
@@ -47,37 +48,13 @@ export const MetricsChart = React.memo(
       },
     });
 
-    const primaryAxis = React.useMemo<AxisOptions<any>>(
-      () => ({
-        getValue: (datum) => datum.date,
-        formatters: {
-          tooltip: (datum: Date) =>
-            datum && format(datum, 'EEEE', { locale: de }),
-          scale: (value: Date) =>
-            value && format(value, 'doMM', { locale: de }),
-          showGrid: false,
-        },
-      }),
-      []
-    );
-
-    const secondaryAxes = React.useMemo(
-      (): AxisOptions<any>[] => [
-        {
-          getValue: (datum) => datum.value,
-          elementType: 'area',
-        },
-      ],
-      []
-    );
-
     const series: { label: string; data: DailyMetric[] }[] = React.useMemo(
       () => [
         {
           label: t(metric),
           data:
             metrics.map((m) => ({
-              date: new Date(m.date),
+              date: format(new Date(m.date), 'doMM', { locale: de }),
               value: m.value,
             })) ?? [],
         },
@@ -85,23 +62,32 @@ export const MetricsChart = React.memo(
       [metric, metrics, t]
     );
 
+    console.log(series);
+
     return (
       <Box className={styles.root}>
         <div className={styles.chartWrapper} data-testid="ChartWrapper">
-          <Chart
-            options={{
-              data: series,
-              primaryAxis,
-              secondaryAxes,
-              padding: {
+          <ResponsiveContainer>
+            <AreaChart
+              data={series.at(0)?.data ?? []}
+              margin={{
                 top: 40,
                 right: 40,
                 bottom: 40,
                 left: 40,
-              },
-              defaultColors: ['rgb(var(--lotta-primary-color))'],
-            }}
-          />
+              }}
+            >
+              <XAxis dataKey="date" angle={-45} textAnchor="end" />
+              <YAxis label={series.at(0)?.label} />
+              <Tooltip active />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="rgb(var(--lotta-primary-color))"
+                fill="rgba(var(--lotta-primary-color), 0.5)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </Box>
     );

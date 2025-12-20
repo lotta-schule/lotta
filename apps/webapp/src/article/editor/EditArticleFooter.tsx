@@ -1,5 +1,4 @@
 'use client';
-
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import {
@@ -7,7 +6,7 @@ import {
   faCalendar,
   faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { CategorySelect } from '../../shared/categorySelect/CategorySelect';
 import { ArticleModel, ID, UserGroupModel } from 'model';
 import { Category, User } from 'util/model';

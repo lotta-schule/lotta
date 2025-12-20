@@ -5,17 +5,17 @@ import * as React from 'react';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
 
 declare module 'vitest' {
-  interface Assertion<T = any>
-    extends TestingLibraryMatchers<
-      typeof expect.stringMatching | typeof expect.stringContaining,
-      T
-    > {}
-  interface AsymmetricMatchersContaining
-    extends TestingLibraryMatchers<unknown, unknown> {}
+  interface Assertion<T = any> extends TestingLibraryMatchers<
+    typeof expect.stringMatching | typeof expect.stringContaining,
+    T
+  > {}
+  interface AsymmetricMatchersContaining extends TestingLibraryMatchers<
+    unknown,
+    unknown
+  > {}
 }
-import { TextEncoder, TextDecoder } from 'util';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
-import { MockRouter, BlobPolyfill, ResizeObserverPolyfill } from 'test/mocks';
+import { MockRouter } from 'test/mocks';
 import { NEXT_DATA } from 'next/dist/shared/lib/utils';
 import { DirectoryModel, FileModel } from 'model';
 
@@ -41,136 +41,38 @@ declare global {
 }
 declare namespace globalThis {
   let mockRouter: MockRouter;
-  let Blob: typeof BlobPolyfill;
 }
 
 self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ };
 
-globalThis.Blob = BlobPolyfill;
 globalThis.mockRouter = new MockRouter();
-
-globalThis.Blob = BlobPolyfill as any;
-(globalThis as any).ResizeObserver = ResizeObserverPolyfill as any;
 
 beforeAll(() => {
   loadDevMessages();
   loadErrorMessages();
 
-  // stub out window.getSelection
-  // window.getSelection isn't in jsdom
-  // https://github.com/tmpvar/jsdom/issues/937
-  (window as any).getSelection = function () {
-    return {
-      addRange: function () {},
-      removeAllRanges: function () {},
-    };
-  };
-
-  window.location = Object.assign('http://test.lotta.schule', {
-    hash: '',
-    host: 'test.lotta.schule',
-    hostname: 'test.lotta.schule',
-    origin: 'http://test.lotta.schule',
-    href: 'http://test.lotta.schule',
-    port: '',
-    pathname: '/',
-    search: '' as any,
-    protocol: 'http:',
-    ancestorOrigins: [] as any,
-    reload: () => {},
-    replace: () => '',
-    assign: (url: string) => Object.assign(window.location, { url: url }),
+  window.addEventListener('beforeunload', (e) => {
+    e.preventDefault();
+    e.returnValue = true;
   });
 
-  HTMLDialogElement.prototype.show = vi.fn(function mock(
-    this: HTMLDialogElement
-  ) {
-    this.open = true;
-  });
-
-  HTMLDialogElement.prototype.showModal = vi.fn(function mock(
-    this: HTMLDialogElement
-  ) {
-    this.open = true;
-  });
-
-  HTMLDialogElement.prototype.close = vi.fn(function mock(
-    this: HTMLDialogElement
-  ) {
-    this.open = false;
-  });
-
-  HTMLElement.prototype.showPopover = vi.fn();
-  HTMLElement.prototype.hidePopover = vi.fn();
-  HTMLElement.prototype.togglePopover = vi.fn();
-
-  // create setup document
-  Object.assign(global, { TextDecoder, TextEncoder });
-
-  // window.matchMedia mock
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: vi.fn().mockImplementation((query) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(), // Deprecated
-      removeListener: vi.fn(), // Deprecated
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  });
-
-  Object.defineProperty(window, 'IntersectionObserver', {
-    writable: false,
-    value: vi.fn(() => ({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-    })),
-  });
-
-  Object.defineProperty(window, 'ResizeObserver', {
-    writable: false,
-    value: vi.fn(() => ({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    })),
-  });
-
-  Element.prototype.scroll = vi.fn(() => {});
-  Object.defineProperty(window, 'scrollTo', {
-    writable: false,
-    value: vi.fn(),
-  });
-
-  Element.prototype.scrollIntoView = vi.fn(() => void 0);
-  Object.defineProperty(window, 'scrollIntoView', {
-    writable: false,
-    value: vi.fn(),
-  });
-
-  vi.mock('next/head', () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const ReactDOMServer = require('react-dom/server');
-    return {
-      __esModule: true,
-      default: ({
-        children,
-      }: {
-        children: Array<React.ReactElement> | React.ReactElement | null;
-      }) => {
-        if (children) {
-          global.document.head.insertAdjacentHTML(
-            'afterbegin',
-            ReactDOMServer.renderToString(children) || ''
-          );
-        }
-        return null;
-      },
+  vi.mock('next/head', async () => {
+    const ReactDOMServer = await import('react-dom/server');
+    return ({
+      children,
+    }: {
+      children: Array<React.ReactElement> | React.ReactElement | null;
+    }) => {
+      if (children) {
+        document.head.insertAdjacentHTML(
+          'afterbegin',
+          ReactDOMServer.renderToString(children) || ''
+        );
+      }
+      return null;
     };
   });
+
   vi.mock('next/config', () => ({
     __esModule: true,
     default: () => ({
@@ -182,22 +84,11 @@ beforeAll(() => {
     }),
   }));
 
-  vi.mock('next/router', async () => {
-    const { MockRouter } = await import('test/mocks/MockRouter');
-    globalThis.mockRouter ||= new MockRouter();
-    return {
-      __esModule: true,
-      mockRouter: globalThis.mockRouter,
-      useRouter: () => globalThis.mockRouter,
-    };
-  });
-
   vi.mock('next/navigation', async () => {
     const { MockRouter } = await import('test/mocks/MockRouter');
     const mockParams = {};
     globalThis.mockRouter ||= new MockRouter();
     return {
-      __esModule: true,
       mockRouter: globalThis.mockRouter,
       useRouter: vi.fn(() => globalThis.mockRouter),
       useParams: vi.fn(() => mockParams),
@@ -223,4 +114,8 @@ beforeAll(() => {
     }
     return originalError.call(console, args);
   });
+});
+
+afterEach(() => {
+  vi.clearAllMocks();
 });

@@ -283,7 +283,9 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         await screen.findByRole('button', { name: /"lehrer" löschen/i })
       );
 
-      expect(screen.getByRole('dialog', { name: /löschen/i })).toBeVisible();
+      await waitFor(() => {
+        expect(screen.getByRole('dialog', { name: /löschen/i })).toBeVisible();
+      });
     });
 
     it('delete button should be disabled when group is sole admin group', async () => {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { render, screen, waitFor } from 'test/util';
 import {
   Weihnachtsmarkt,
@@ -57,7 +57,9 @@ describe('administration: DeleteUserGroupDialog', () => {
       />
     );
 
-    expect(screen.queryByRole('dialog')).toBeNull();
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).toBeNull();
+    });
   });
 
   it('should call onRequestClose when clicking the "Abort" button', async () => {
@@ -79,7 +81,7 @@ describe('administration: DeleteUserGroupDialog', () => {
 
   describe('send delete request', () => {
     it('delete the group and show a list of unpublished articles', async () => {
-      const mocks: MockedResponse[] = [
+      const mocks: MockLink.MockedResponse[] = [
         {
           request: {
             query: DELETE_USER_GROUP,
@@ -140,7 +142,7 @@ describe('administration: DeleteUserGroupDialog', () => {
     });
 
     it('should send onConfirm even when closing via dialogs "close" button', async () => {
-      const mocks: MockedResponse[] = [
+      const mocks: MockLink.MockedResponse[] = [
         {
           request: {
             query: DELETE_USER_GROUP,

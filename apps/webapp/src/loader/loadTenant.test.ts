@@ -3,7 +3,7 @@ import { getClient } from 'api/client';
 import { vi } from 'vitest';
 
 vi.mock('api/client');
-vi.mock('@apollo/experimental-nextjs-app-support', () => ({
+vi.mock('@apollo/client-integration-nextjs', () => ({
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({

@@ -1,5 +1,4 @@
 'use client';
-
 import * as React from 'react';
 import {
   Button,
@@ -8,7 +7,7 @@ import {
   CircularProgress,
   useDebounce,
 } from '@lotta-schule/hubert';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArticleModel, CategoryModel } from 'model';

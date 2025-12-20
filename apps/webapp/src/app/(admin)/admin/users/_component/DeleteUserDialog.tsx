@@ -8,7 +8,7 @@ import {
   DialogActions,
   ErrorMessage,
 } from '@lotta-schule/hubert';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { Article } from 'util/model';
 import Link from 'next/link';
 

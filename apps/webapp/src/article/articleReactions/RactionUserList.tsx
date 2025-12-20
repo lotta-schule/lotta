@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useSuspenseQuery } from '@apollo/client';
+import { useSuspenseQuery } from '@apollo/client/react';
 import { List, ListItem, Overlay } from '@lotta-schule/hubert';
 import { ArticleModel, ArticleReactionType, UserModel } from 'model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';

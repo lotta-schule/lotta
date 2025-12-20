@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import {
@@ -10,7 +12,7 @@ import { de } from 'date-fns/locale';
 import { ArticleModel, ID, UserModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, User } from 'util/model';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { Article as ArticleUtil } from 'util/model/Article';
 import {
   Button,

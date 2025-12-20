@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import * as Sentry from '@sentry/nextjs';
 import { t } from 'i18next';
 import { ServerDownErrorPage } from 'layout/error/ServerDownErrorPage';
 import clsx from 'clsx';
@@ -13,10 +12,6 @@ export default function Error({
 }: {
   error: Error & { digest?: string };
 }) {
-  React.useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
-
   return (
     <div className={clsx(styles.root, styles.isRootPage)}>
       <nav>

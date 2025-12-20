@@ -1,12 +1,12 @@
 import { loadUserGroup, GET_GROUP_QUERY } from './loadUserGroup';
 import { getClient } from 'api/client';
-import { MockedResponse } from '@apollo/client/testing';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { Defer20220824Handler } from '@apollo/client/incremental';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
 vi.mock('api/client');
-vi.mock('@apollo/experimental-nextjs-app-support', () => ({
+vi.mock('@apollo/client-integration-nextjs', () => ({
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -16,11 +16,12 @@ vi.mock('api/apollo/client-rsc', () => ({
 const mockGetClient = vi.mocked(getClient);
 
 describe('loadUserGroup', () => {
-  const createMockClient = (mocks: MockedResponse[]) => {
+  const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
       link: mockLink,
       cache: new InMemoryCache(),
+      incrementalHandler: new Defer20220824Handler(),
     });
   };
 
@@ -38,7 +39,7 @@ describe('loadUserGroup', () => {
       canReadFullName: true,
     };
 
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: {
           query: GET_GROUP_QUERY,
@@ -57,7 +58,7 @@ describe('loadUserGroup', () => {
   });
 
   it('should return null when group is not found', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: {
           query: GET_GROUP_QUERY,
@@ -76,7 +77,7 @@ describe('loadUserGroup', () => {
   });
 
   it('should return null when data is null', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: {
           query: GET_GROUP_QUERY,
@@ -95,7 +96,7 @@ describe('loadUserGroup', () => {
   });
 
   it('should handle query errors', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: {
           query: GET_GROUP_QUERY,

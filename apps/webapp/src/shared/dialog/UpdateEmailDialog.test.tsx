@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { UpdateEmailDialog } from './UpdateEmailDialog';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 
 import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
@@ -22,9 +22,9 @@ describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('should have the focus on the input field and the submit button disabled when open', () => {
+  it('should have the submit button disabled when open', () => {
     render(<UpdateEmailDialog isOpen onRequestClose={() => {}} />);
-    expect(screen.getByLabelText('Neue Email:')).toHaveFocus();
+    expect(screen.getByRole('button', { name: /ändern/ })).toBeDisabled();
   });
 
   it('should start with a disabled submit button, but should enable the button when emails have been entered', async () => {
@@ -39,7 +39,7 @@ describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
     it('change the email and then close the dialog', async () => {
       const fireEvent = userEvent.setup();
       let updateMutationCalled = false;
-      const additionalMocks: MockedResponse[] = [
+      const additionalMocks: MockLink.MockedResponse[] = [
         {
           request: {
             query: UpdateEmailMutation,

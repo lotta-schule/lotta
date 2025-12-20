@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MockRouter, render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
+import { MockRouter } from 'test/mocks';
 import { EditArticlePage } from './EditArticlePage';
 import { ArticleModel, ContentModuleModel, ContentModuleType } from 'model';
-import userEvent from '@testing-library/user-event';
 
 import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';
 import UpdateArticleMutation from 'api/mutation/UpdateArticleMutation.graphql';
@@ -182,10 +181,6 @@ describe('article/EditArticlePage', () => {
 
     it('should redirect to article page after saving', async () => {
       const fireEvent = userEvent.setup();
-      const onPushLocation = vi.fn(async (url: any) => {
-        expect(url).toMatch(/^\/a\//);
-        return true;
-      });
       const variables = {
         id: Weihnachtsmarkt.id,
         article: {
@@ -226,7 +221,11 @@ describe('article/EditArticlePage', () => {
       const onSave = createOnSave(Weihnachtsmarkt, variables.article, {
         updatedAt: date.toISOString(),
       });
-      const { mockRouter } = await vi.importMock<MockRouter>('next/navigation');
+      const {
+        default: { mockRouter },
+      } = await vi.importMock<{ default: { mockRouter: MockRouter } }>(
+        'next/navigation'
+      );
       mockRouter.reset(`/a/${Weihnachtsmarkt.id}/edit`);
       const screen = render(
         <EditArticlePage article={Weihnachtsmarkt} />,
@@ -245,11 +244,14 @@ describe('article/EditArticlePage', () => {
           ],
         }
       );
-      mockRouter.events.on('routeChangeStart', onPushLocation);
       await fireEvent.click(screen.getByRole('button', { name: /titel/i }));
       await fireEvent.click(screen.getByRole('button', { name: /speichern/i }));
       await waitFor(() => {
-        expect(onPushLocation).toHaveBeenCalled();
+        expect(mockRouter._push).toHaveBeenCalledWith(
+          expect.stringContaining(`/a/${Weihnachtsmarkt.id}`),
+          expect.stringContaining(`/a/${Weihnachtsmarkt.id}`),
+          undefined
+        );
       });
     });
   });

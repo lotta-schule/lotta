@@ -3,7 +3,7 @@ import {
   ConversionProgress,
   GET_FILE_FORMATS_QUERY,
 } from './ConversionProgress';
-import { DataProxy } from '@apollo/client';
+import { DataProxy } from '@apollo/client/v4-migration';
 import { ResultOf, VariablesOf } from 'gql.tada';
 
 type TDATA = ResultOf<typeof GET_FILE_FORMATS_QUERY>;

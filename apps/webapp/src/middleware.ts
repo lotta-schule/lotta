@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/nextjs';
 import { sendRefreshRequest } from 'api/auth';
 import { serialize } from 'cookie-es';
 import { NextResponse } from 'next/server';
@@ -87,7 +86,6 @@ export async function middleware(request: NextRequest) {
         });
       }
     } catch (e) {
-      Sentry.captureException(e);
       console.error('Error parsing new token', e);
     }
   } else {

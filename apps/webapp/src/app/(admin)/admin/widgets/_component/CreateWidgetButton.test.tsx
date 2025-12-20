@@ -115,8 +115,12 @@ describe('CreateWidgetButton', () => {
   it('should create an iframe widget', async () => {
     const user = userEvent.setup();
     const mockRouter = await vi
-      .importMock<{ useRouter: () => MockRouter }>('next/navigation')
-      .then((module) => module.useRouter());
+      .importMock<{
+        default: {
+          useRouter: () => MockRouter;
+        };
+      }>('next/navigation')
+      .then((module) => module.default.useRouter());
 
     const onCreateWidget = vi.fn(() => ({
       data: {

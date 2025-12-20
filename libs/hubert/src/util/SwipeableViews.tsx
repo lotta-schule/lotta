@@ -44,12 +44,12 @@ export const SwipeableViews = ({
         }}
         transition={{
           left: {
-            transition: 'ease',
+            type: 'spring',
             ease: 'easeOut',
             damping: 25,
           },
           x: {
-            type: 'easeInOut',
+            type: 'spring',
             damping: 25,
           },
         }}

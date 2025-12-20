@@ -1,5 +1,5 @@
 import React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { render, fireEvent, waitFor } from 'test/util';
 import { CreateEventDialog } from './CreateEventDialog';
 import { GET_CALENDARS } from '../_graphql';
@@ -24,7 +24,7 @@ const additionalMocks = [
       },
     },
   },
-] satisfies MockedResponse[];
+] satisfies MockLink.MockedResponse[];
 
 describe('CreateEventDialog', () => {
   beforeEach(() => {

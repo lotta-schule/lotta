@@ -1,4 +1,4 @@
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { renderHook, waitFor } from 'test/util';
 import { useNewFeedbackCount } from './useNewFeedbackCount';
 import { SomeUser, adminGroup } from 'test/fixtures';
@@ -13,7 +13,7 @@ describe('useNewFeedbackCount', () => {
   });
 
   it('should return the number of new feedbacks', async () => {
-    const additionalMocks: MockedResponse[] = [
+    const additionalMocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetFeedbackOverviewQuery },
         result: {

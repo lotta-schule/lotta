@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { CircularProgress } from '@lotta-schule/hubert';
 import { graphql } from 'api/graphql';
 import * as React from 'react';

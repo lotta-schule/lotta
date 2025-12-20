@@ -35,18 +35,21 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
       {},
       { tags: ['tag', 'noch ein tag', 'wieder-tag'] }
     );
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /suggestions/i })
+      ).toBeVisible();
+    });
     await fireEvent.click(screen.getByRole('button', { name: /suggestions/i }));
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeVisible();
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation
-
-    expect(screen.queryAllByRole('option').map((o) => o.textContent)).toEqual([
-      'tag',
-      'noch ein tag',
-      'wieder-tag',
-    ]);
+    await waitFor(() => {
+      expect(screen.queryAllByRole('option').map((o) => o.textContent)).toEqual(
+        ['tag', 'noch ein tag', 'wieder-tag']
+      );
+    });
   });
 
   it('should call onChange with the selected tag', async () => {

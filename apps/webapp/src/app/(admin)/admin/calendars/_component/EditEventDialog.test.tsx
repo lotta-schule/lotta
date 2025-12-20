@@ -1,5 +1,5 @@
 import React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { fireEvent, render, waitFor } from 'test/util';
 import { GET_CALENDARS, UPDATE_CALENDAR_EVENT } from '../_graphql';
 import { EditEventDialog } from './EditEventDialog';
@@ -33,7 +33,7 @@ const additionalMocks = [
       },
     },
   },
-] satisfies MockedResponse[];
+] satisfies MockLink.MockedResponse[];
 
 const eventToBeEdited = createEventFixture(calendars[1]);
 
@@ -124,7 +124,7 @@ describe('EditEventDialog', () => {
         },
       }));
 
-      const mock: MockedResponse<
+      const mock: MockLink.MockedResponse<
         ResultOf<typeof UPDATE_CALENDAR_EVENT>,
         VariablesOf<typeof UPDATE_CALENDAR_EVENT>
       > = {

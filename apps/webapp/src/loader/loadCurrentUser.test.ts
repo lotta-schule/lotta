@@ -1,13 +1,14 @@
 import { loadCurrentUser, UnauthenticatedError } from './loadCurrentUser';
 import { getClient } from 'api/client';
-import { MockedResponse } from '@apollo/client/testing';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { Defer20220824Handler } from '@apollo/client/incremental';
+import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
 
 vi.mock('api/client');
-vi.mock('@apollo/experimental-nextjs-app-support', () => ({
+vi.mock('@apollo/client-integration-nextjs', () => ({
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -17,11 +18,15 @@ vi.mock('api/apollo/client-rsc', () => ({
 const mockGetClient = vi.mocked(getClient);
 
 describe('loadCurrentUser', () => {
-  const createMockClient = (mocks: MockedResponse[]) => {
+  const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
       link: mockLink,
       cache: new InMemoryCache(),
+
+      localState: new LocalState({}),
+
+      incrementalHandler: new Defer20220824Handler(),
     });
   };
 
@@ -37,7 +42,7 @@ describe('loadCurrentUser', () => {
       role: 'user',
     };
 
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GET_CURRENT_USER },
         result: { data: { currentUser: mockUser } },
@@ -53,7 +58,7 @@ describe('loadCurrentUser', () => {
   });
 
   it('should return null when user is not authenticated', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GET_CURRENT_USER },
         result: { data: { currentUser: null } },
@@ -69,7 +74,7 @@ describe('loadCurrentUser', () => {
   });
 
   it('should return null when data is null', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GET_CURRENT_USER },
         result: { data: null },
@@ -85,7 +90,7 @@ describe('loadCurrentUser', () => {
   });
 
   it('should throw UnauthenticatedError when forceAuthenticated is true and user is null', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GET_CURRENT_USER },
         result: { data: { currentUser: null } },
@@ -108,7 +113,7 @@ describe('loadCurrentUser', () => {
       role: 'user',
     };
 
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GET_CURRENT_USER },
         result: { data: { currentUser: mockUser } },
@@ -124,7 +129,7 @@ describe('loadCurrentUser', () => {
   });
 
   it('should handle query errors', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GET_CURRENT_USER },
         error: new Error('GraphQL error'),

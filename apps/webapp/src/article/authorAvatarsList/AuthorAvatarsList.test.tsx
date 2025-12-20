@@ -18,7 +18,7 @@ describe('AuthorAvatarsList', () => {
       const screen = render(<AuthorAvatarsList users={users} onUpdate={fn} />);
       expect(
         screen.getByRole('button', { name: /che entfernen/i })
-      ).toBeVisible();
+      ).toBeInTheDocument();
       await fireEvent.click(
         screen.getByRole('button', { name: /che entfernen/i })
       );

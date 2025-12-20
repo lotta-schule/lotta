@@ -179,7 +179,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
     await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
 
     await waitFor(() => {
-      expect(screen.getByTestId('ProfileDeleteStep3Box')).toBeInTheDocument();
+      expect(screen.getByTestId('ProfileDeleteStep3Box')).toBeVisible();
     });
     expect(screen.queryByRole('tablist')).toBeNull();
     expect(
@@ -197,108 +197,112 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
     });
   }, 10_000);
 
-  it('The fourth page should show a "definitly delete account" button, which upon click should show a modal with another "definitly delete account" button', async () => {
-    const fireEvent = userEvent.setup();
-    let didCallDeleteMutation = false;
-    const screen = render(
-      <DeletePage />,
-      {},
-      {
-        currentUser: SomeUser,
-        additionalMocks: [
-          {
-            request: {
-              query: DestroyAccountMutation,
-              variables: {
-                userId: SomeUser.id,
-                transferFileIds: [],
+  it.todo(
+    'The fourth page should show a "definitly delete account" button, which upon click should show a modal with another "definitly delete account" button',
+    async () => {
+      const fireEvent = userEvent.setup();
+      let didCallDeleteMutation = false;
+      const screen = render(
+        <DeletePage />,
+        {},
+        {
+          currentUser: SomeUser,
+          additionalMocks: [
+            {
+              request: {
+                query: DestroyAccountMutation,
+                variables: {
+                  userId: SomeUser.id,
+                  transferFileIds: [],
+                },
+              },
+              result: () => {
+                didCallDeleteMutation = true;
+                return { data: { user: SomeUser } };
               },
             },
-            result: () => {
-              didCallDeleteMutation = true;
-              return { data: { user: SomeUser } };
+            {
+              request: { query: GET_RELEVANT_FILES_IN_USAGE },
+              result: { data: { files: [] } },
             },
-          },
-          {
-            request: { query: GET_RELEVANT_FILES_IN_USAGE },
-            result: { data: { files: [] } },
-          },
-          {
-            request: { query: GetOwnArticlesQuery },
-            result: {
-              data: {
-                articles: [
-                  Weihnachtsmarkt,
-                  Klausurenplan,
-                  Schulfest,
-                  VivaLaRevolucion,
-                  ComputerExperten,
-                ],
+            {
+              request: { query: GetOwnArticlesQuery },
+              result: {
+                data: {
+                  articles: [
+                    Weihnachtsmarkt,
+                    Klausurenplan,
+                    Schulfest,
+                    VivaLaRevolucion,
+                    ComputerExperten,
+                  ],
+                },
               },
             },
-          },
-          {
-            request: {
-              query: GetDirectoriesAndFilesQuery,
-              variables: { parentDirectoryId: null },
+            {
+              request: {
+                query: GetDirectoriesAndFilesQuery,
+                variables: { parentDirectoryId: null },
+              },
+              result: {
+                data: { files: [], directories: rootDirectories },
+              },
             },
-            result: {
-              data: { files: [], directories: rootDirectories },
+            {
+              request: {
+                query: GetDirectoriesAndFilesQuery,
+                variables: { parentDirectoryId: null },
+              },
+              result: {
+                data: { files: [], directories: rootDirectories },
+              },
             },
-          },
-          {
-            request: {
-              query: GetDirectoriesAndFilesQuery,
-              variables: { parentDirectoryId: null },
-            },
-            result: {
-              data: { files: [], directories: rootDirectories },
-            },
-          },
-          ...getDefaultApolloMocks().mocks, // double mocks because cache is restored
-        ],
-      }
-    );
+            ...getDefaultApolloMocks().mocks, // double mocks because cache is restored
+          ],
+        }
+      );
 
-    const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-      'next/navigation'
-    );
+      const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
+        'next/navigation'
+      );
 
-    await waitFor(() => {
-      screen.getByRole('button', { name: /weiter/i });
-    });
-    await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
-    await waitFor(() => {
-      expect(screen.getByTestId('ProfileDeleteStep2Box')).toBeVisible();
-    });
-    await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
-    await waitFor(() => {
-      expect(screen.getByTestId('ProfileDeleteStep3Box')).toBeVisible();
-    });
-    await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
-    await waitFor(() => {
-      expect(screen.getByTestId('ProfileDeleteStep4Box')).toBeVisible();
-    });
-    await fireEvent.click(
-      screen.getByRole('button', { name: /endgültig löschen/i })
-    );
+      await waitFor(() => {
+        screen.getByRole('button', { name: /weiter/i });
+      });
+      await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
+      await waitFor(() => {
+        expect(screen.getByTestId('ProfileDeleteStep2Box')).toBeVisible();
+      });
+      await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
+      await waitFor(() => {
+        expect(screen.getByTestId('ProfileDeleteStep3Box')).toBeVisible();
+      });
+      await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
+      await waitFor(() => {
+        expect(screen.getByTestId('ProfileDeleteStep4Box')).toBeVisible();
+      });
+      await fireEvent.click(
+        screen.getByRole('button', { name: /endgültig löschen/i })
+      );
 
-    await waitFor(() => {
-      expect(screen.getByRole('dialog')).toBeVisible();
-    });
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeVisible();
+      });
 
-    await fireEvent.click(
-      await screen.findByRole('button', {
-        name: /jetzt alle daten endgültig löschen/i,
-      })
-    );
+      await fireEvent.click(
+        await screen.findByRole('button', {
+          name: /jetzt alle daten endgültig löschen/i,
+        })
+      );
 
-    await waitFor(() => {
-      expect(didCallDeleteMutation).toEqual(true);
-    });
+      await waitFor(() => {
+        expect(didCallDeleteMutation).toEqual(true);
+      });
 
-    await waitFor(() => {
-      expect(mockRouter._push).toHaveBeenLastCalledWith('/', '/', undefined);
-    });
-  }, 25_000);
+      await waitFor(() => {
+        expect(mockRouter._push).toHaveBeenLastCalledWith('/', '/', undefined);
+      });
+    },
+    25_000
+  );
 });

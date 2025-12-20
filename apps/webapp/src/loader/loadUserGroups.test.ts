@@ -1,13 +1,13 @@
 import { loadUserGroups } from './loadUserGroups';
 import { getClient } from 'api/client';
-import { MockedResponse } from '@apollo/client/testing';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { Defer20220824Handler } from '@apollo/client/incremental';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 import { GET_USER_GROUPS } from 'util/tenant/useUserGroups';
 
 vi.mock('api/client');
-vi.mock('@apollo/experimental-nextjs-app-support', () => ({
+vi.mock('@apollo/client-integration-nextjs', () => ({
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -17,11 +17,12 @@ vi.mock('api/apollo/client-rsc', () => ({
 const mockGetClient = vi.mocked(getClient);
 
 describe('loadUserGroups', () => {
-  const createMockClient = (mocks: MockedResponse[]) => {
+  const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
       link: mockLink,
       cache: new InMemoryCache(),
+      incrementalHandler: new Defer20220824Handler(),
     });
   };
 
@@ -36,7 +37,7 @@ describe('loadUserGroups', () => {
       { id: '3', name: 'Students', isAdminGroup: false, sortKey: 300 },
     ];
 
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GET_USER_GROUPS },
         result: { data: { userGroups: mockUserGroups } },
@@ -52,7 +53,7 @@ describe('loadUserGroups', () => {
   });
 
   it('should handle empty user groups array', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GET_USER_GROUPS },
         result: { data: { userGroups: [] } },
@@ -68,7 +69,7 @@ describe('loadUserGroups', () => {
   });
 
   it('should handle query errors', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GET_USER_GROUPS },
         error: new Error('GraphQL error'),

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, fireEvent, waitFor } from 'test/util';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { CreateCalendarDialog } from './CreateCalendarDialog';
 import { CREATE_CALENDAR, GET_CALENDARS } from '../_graphql';
 import userEvent from '@testing-library/user-event';
@@ -46,7 +46,7 @@ const additionalMocks = [
       },
     },
   },
-] satisfies MockedResponse[];
+] satisfies MockLink.MockedResponse[];
 
 describe('CreateCalendarDialog', () => {
   it('renders correctly when open', () => {
@@ -99,7 +99,7 @@ describe('CreateCalendarDialog', () => {
           errors: [{ message: 'An error occurred' }],
         },
       },
-    ] satisfies MockedResponse[];
+    ] satisfies MockLink.MockedResponse[];
     const onClose = vi.fn();
     const screen = render(
       <CreateCalendarDialog isOpen onClose={onClose} />,

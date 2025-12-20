@@ -1,8 +1,7 @@
 'use client';
-
 import { ArticleModel } from 'model';
 import { ID } from 'model/ID';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { usePathname } from 'next/navigation';
 
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';

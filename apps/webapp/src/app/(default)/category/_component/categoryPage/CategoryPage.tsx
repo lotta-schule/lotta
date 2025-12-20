@@ -5,6 +5,7 @@ import { CategoryHead } from './CategoryHead';
 import { ResultOf } from 'api/graphql';
 import { Header, Main, Sidebar } from 'layout';
 import { MoreArticlesLoader } from './MoreArticlesLoader';
+import { CategoryModel } from 'model';
 import { GET_ARTICLES_QUERY } from './_graphql/GET_ARTICLES_QUERY';
 import clsx from 'clsx';
 
@@ -13,7 +14,7 @@ import styles from './CategoryPage.module.scss';
 export const PREFETCH_COUNT = 10;
 
 export type CategoryPageProps = {
-  initialArticles: ResultOf<typeof GET_ARTICLES_QUERY>[];
+  initialArticles: ResultOf<typeof GET_ARTICLES_QUERY>['articles'];
   category: CategoryModel;
 };
 

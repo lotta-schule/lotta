@@ -1,5 +1,4 @@
 'use client';
-
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import {
@@ -8,7 +7,7 @@ import {
   faAngleLeft,
   faAngleRight,
 } from '@fortawesome/free-solid-svg-icons';
-import { useQuery, useApolloClient, useMutation } from '@apollo/client';
+import { useApolloClient, useMutation, useQuery } from '@apollo/client/react';
 import { ArticleModel } from 'model';
 import {
   Button,
@@ -111,43 +110,65 @@ export const DeletePage = React.memo(() => {
 
   const {
     data: ownArticlesData,
+    previousData: ownArticlesPreviousData,
     loading: isLoadingOwnArticles,
     error: ownArticlesError,
   } = useQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery, {
     skip: currentStep !== ProfileDeleteStep.ReviewArticles,
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
-    onCompleted: (data) => {
-      if (data) {
-        if (!data.articles.length) {
-          // userAvatar has not written any articles. So don't bother him, go to next step
-          setCurrentStep((s) => s + 1);
-        }
-      }
-    },
-    onError: () => setCurrentStep((s) => s - 1),
   });
 
   const {
     data: relevantFilesData,
+    previousData: relevantFilesPreviousData,
     loading: isLoadingRelevantFiles,
     error: relevantFilesError,
   } = useQuery(GET_RELEVANT_FILES_IN_USAGE, {
     skip: currentStep !== ProfileDeleteStep.ReviewFiles,
     initialFetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
-    onCompleted: (data) => {
-      if (data) {
-        if (!data.files?.length) {
-          // userAvatar has no files used in public articles or categories. Just show him his own files
-          setSelectedFilesTab(1);
-        } else {
-          setSelectedFilesToTransfer(data.files);
-        }
-      }
-    },
-    onError: () => setCurrentStep((s) => s - 1),
   });
+
+  React.useEffect(() => {
+    if (
+      ownArticlesData !== undefined &&
+      ownArticlesPreviousData === undefined &&
+      ownArticlesData.articles?.length === 0
+    ) {
+      // userAvatar has not written any articles. So don't bother him, go to next step
+      setCurrentStep((s) => s + 1);
+    }
+  }, [ownArticlesData, ownArticlesPreviousData]);
+
+  React.useEffect(() => {
+    if (
+      ownArticlesError !== undefined &&
+      ownArticlesPreviousData === undefined
+    ) {
+      setCurrentStep((s) => s - 1);
+    }
+  }, [ownArticlesError, ownArticlesPreviousData]);
+
+  React.useEffect(() => {
+    if (
+      relevantFilesData !== undefined &&
+      relevantFilesPreviousData === undefined &&
+      relevantFilesData.files?.length === 0
+    ) {
+      // userAvatar has no files used in public articles or categories. Just show him his own files
+      setSelectedFilesTab(1);
+    }
+  }, [relevantFilesData, relevantFilesPreviousData]);
+
+  React.useEffect(() => {
+    if (
+      relevantFilesError !== undefined &&
+      relevantFilesPreviousData === undefined
+    ) {
+      setCurrentStep((s) => s - 1);
+    }
+  }, [relevantFilesError, relevantFilesPreviousData]);
 
   const [
     destroyAccount,
@@ -160,7 +181,7 @@ export const DeletePage = React.memo(() => {
     },
     onCompleted: async () => {
       setIsConfirmDialogOpen(false);
-      await router.push('/');
+      router.push('/');
       localStorage.clear();
       apolloClient.clearStore().then(() => {
         location?.reload();

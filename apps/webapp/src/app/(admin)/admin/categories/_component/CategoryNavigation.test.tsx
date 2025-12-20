@@ -9,9 +9,9 @@ import {
   MatheCategory,
 } from 'test/fixtures';
 import { CategoryNavigation } from './CategoryNavigation';
-import userEvent from '@testing-library/user-event';
 import { MockRouter } from 'test/mocks';
 import { MockedFunction } from 'vitest';
+import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNavigation', () => {
   const topLevelCategories = allCategories.filter((c) => !c.category);
@@ -87,9 +87,16 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
           screen.getByRole('listitem', { name: /fächer/i })
         );
 
-        const expandButton = within(
-          screen.getByRole('listitem', { name: /fächer/i })
-        ).getByRole('button', { name: /unter/i });
+        const faecherButton = screen.getByRole('listitem', { name: /fächer/i });
+        await waitFor(() => {
+          expect(
+            within(faecherButton).getByRole('button', { name: /unter/i })
+          ).toBeVisible();
+        });
+
+        const expandButton = await within(faecherButton).findByRole('button', {
+          name: /unter/i,
+        });
 
         await fireEvent.click(expandButton);
 

@@ -1,4 +1,4 @@
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import {
   CalendarKlassenarbeiten,
   GangamStyleWidget,
@@ -35,7 +35,7 @@ describe("Administrators' WidgetEditor", () => {
   });
 
   describe('updating values', () => {
-    const mock: MockedResponse = {
+    const mock: MockLink.MockedResponse = {
       request: {
         query: UpdateWidgetMutation,
         variables: {

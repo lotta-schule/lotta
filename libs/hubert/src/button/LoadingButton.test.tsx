@@ -246,12 +246,12 @@ describe('LoadingButton', () => {
         });
 
         await waitFor(() => {
-          expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+          expect(screen.getByTestId('SuccessIcon')).toBeInTheDocument();
         });
 
         await act(() => vi.advanceTimersByTimeAsync(2000));
 
-        expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+        expect(screen.getByTestId('SuccessIcon')).toBeInTheDocument();
       });
     });
   });

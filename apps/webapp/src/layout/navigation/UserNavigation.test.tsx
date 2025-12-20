@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { render, waitFor } from 'test/util';
 import { UserNavigation } from './UserNavigation';
 import { SomeUser, adminGroup } from 'test/fixtures';
@@ -86,10 +86,11 @@ describe('shared/layouts/UserNavigation', () => {
         await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
 
         await waitFor(() => {
-          expect(
-            screen.getByRole('menuitem', { name: /meine daten/i })
-          ).toBeVisible();
+          expect(screen.getByRole('menu', { hidden: true })).toBeVisible();
         });
+        expect(
+          screen.getByRole('menuitem', { name: /meine daten/i })
+        ).toBeVisible();
         expect(
           screen.getByRole('menuitem', { name: /meine dateien/i })
         ).toBeVisible();
@@ -113,7 +114,7 @@ describe('shared/layouts/UserNavigation', () => {
     });
 
     describe('for admin', () => {
-      const additionalMocks: MockedResponse[] = [
+      const additionalMocks: MockLink.MockedResponse[] = [
         {
           request: { query: GetUnpublishedArticlesQuery },
           result: { data: { articles: [] } },

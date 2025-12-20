@@ -1,14 +1,15 @@
 import { loadCategories } from './loadCategories';
 import { getClient } from 'api/client';
-import { MockedResponse } from '@apollo/client/testing';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { Defer20220824Handler } from '@apollo/client/incremental';
+import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 
 vi.mock('api/client');
-vi.mock('@apollo/experimental-nextjs-app-support', () => ({
+vi.mock('@apollo/client-integration-nextjs', () => ({
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -18,11 +19,15 @@ vi.mock('api/apollo/client-rsc', () => ({
 const mockGetClient = vi.mocked(getClient);
 
 describe('loadCategories', () => {
-  const createMockClient = (mocks: MockedResponse[]) => {
+  const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
       link: mockLink,
       cache: new InMemoryCache(),
+
+      localState: new LocalState({}),
+
+      incrementalHandler: new Defer20220824Handler(),
     });
   };
 
@@ -37,7 +42,7 @@ describe('loadCategories', () => {
       { id: '3', title: 'Classes', isHomepage: false, sortKey: 300 },
     ];
 
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetCategoriesQuery },
         result: { data: { categories: mockCategories } },
@@ -53,7 +58,7 @@ describe('loadCategories', () => {
   });
 
   it('should return empty array when data is null', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetCategoriesQuery },
         result: { data: null },
@@ -69,7 +74,7 @@ describe('loadCategories', () => {
   });
 
   it('should return empty array when categories is null', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetCategoriesQuery },
         result: { data: { categories: null } },
@@ -85,7 +90,7 @@ describe('loadCategories', () => {
   });
 
   it('should handle query errors', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetCategoriesQuery },
         error: new Error('GraphQL error'),

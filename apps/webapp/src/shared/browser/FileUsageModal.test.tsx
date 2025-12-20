@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, waitFor, within } from 'test/util';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import {
   ComputerExperten,
   FaecherCategory,
@@ -29,7 +29,7 @@ describe('FileUsageModal Component', () => {
     { __typename: 'FileUserUsageLocation', usage: 'avatar', user: SomeUser },
   ];
 
-  const additionalMocks: MockedResponse[] = [
+  const additionalMocks: MockLink.MockedResponse[] = [
     {
       request: { query: GetFileDetailsQuery, variables: { id: imageFile.id } },
       result: {

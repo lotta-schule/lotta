@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import {
   FaecherCategory,
   StartseiteCategory,
@@ -16,7 +16,7 @@ import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graphql';
 
-const allWidgetsMock: MockedResponse = {
+const allWidgetsMock: MockLink.MockedResponse = {
   request: {
     query: GetWidgetsQuery,
     variables: {},
@@ -26,7 +26,7 @@ const allWidgetsMock: MockedResponse = {
 const getCategoryWidgetsMock = (
   categoryId: string,
   responseWidgets: any[] = []
-): MockedResponse => ({
+): MockLink.MockedResponse => ({
   request: {
     query: GetCategoryWidgetsQuery,
     variables: { categoryId },
@@ -36,7 +36,7 @@ const getCategoryWidgetsMock = (
 const getArticlesMock = (
   categoryId: string,
   responseArticles: any[] = []
-): MockedResponse => ({
+): MockLink.MockedResponse => ({
   request: {
     query: GetArticlesQuery,
     variables: { categoryId },
@@ -46,7 +46,7 @@ const getArticlesMock = (
 const getArticleForPreview = (
   articleId: string,
   responseArticle: any = null
-): MockedResponse => ({
+): MockLink.MockedResponse => ({
   request: {
     query: GetArticleForPreviewQuery,
     variables: { id: articleId },

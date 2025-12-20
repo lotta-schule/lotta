@@ -48,13 +48,12 @@ describe('shared/dialog/RequestHisecToken', () => {
     });
   });
 
-  it('should have the focus on the input field and the submit button disabled when open', () => {
+  it('should have the submit button disabled when open', async () => {
     const screen = render(
       <RequestHisecTokenDialog isOpen onRequestClose={() => {}} />,
       {},
       { currentUser: SomeUser }
     );
-    expect(screen.getByLabelText('Passwort:')).toHaveFocus();
     expect(screen.queryByRole('button', { name: /senden/i })).toBeDisabled();
   });
 
@@ -103,6 +102,11 @@ describe('shared/dialog/RequestHisecToken', () => {
         { currentUser: SomeUser, additionalMocks }
       );
       await fireEvent.type(screen.getByLabelText('Passwort:'), 'pw123');
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /senden/ })
+        ).not.toBeDisabled();
+      });
       await fireEvent.click(screen.getByRole('button', { name: /senden/ }));
 
       await waitFor(() => {

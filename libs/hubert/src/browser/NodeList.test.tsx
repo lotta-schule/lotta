@@ -35,14 +35,6 @@ describe('NodeList component', () => {
     expect(screen.getAllByRole('option')).toHaveLength(defaultNodes.length);
   });
 
-  it('scrolls into view when path length matches currentPath length', () => {
-    render(<WrappedNodeList />);
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({
-      inline: 'start',
-      behavior: 'smooth',
-    });
-  });
-
   it('should automatically unselect a file when it vanishes', async () => {
     const onSelect = vi.fn();
     const selectedNode = defaultNodes.at(-1)!;

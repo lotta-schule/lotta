@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { imageFile, tenant } from 'test/fixtures';
 import { render, fireEvent, waitFor } from 'test/util';
 import { TenantModel } from 'model';
@@ -107,11 +107,13 @@ describe('Presentation', () => {
     const onResult = vi.fn(() => ({
       data: { tenant: { ...mockTenant, logoImageFile: null } },
     }));
-    const additionalMocks: MockedResponse[] = [
+    const additionalMocks: MockLink.MockedResponse[] = [
       {
-        variableMatcher: () => true,
         request: {
           query: UpdateTenantMutation,
+          variables(_vars) {
+            return true;
+          },
         },
         result: onResult,
       },
@@ -126,6 +128,8 @@ describe('Presentation', () => {
     const saveButton = screen.getByText('speichern');
     await user.click(saveButton);
 
-    expect(onResult).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(onResult).toHaveBeenCalled();
+    });
   });
 });

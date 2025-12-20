@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ErrorMessage, List, LinearProgress } from '@lotta-schule/hubert';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { CalendarEventModel } from 'model/CalendarEventModel';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import { addDays } from 'date-fns';

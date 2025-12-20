@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { render, waitFor } from 'test/util';
 import { SomeUser, adminGroup, lehrerGroup, elternGroup } from 'test/fixtures';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
@@ -15,7 +15,7 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
         request: { query: GetUserQuery, variables: { id: user.id } },
         result: vi.fn(() => ({ data: { user } })),
       },
-    ] as MockedResponse[];
+    ] as MockLink.MockedResponse[];
 
   describe('show userAvatar basic information', () => {
     it('should show userAvatar information', async () => {
@@ -175,7 +175,9 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
         const assignedGroups = await screen.findByTestId(
           'GroupSelectSelection'
         );
-        expect(assignedGroups).toHaveTextContent('Administrator');
+        await waitFor(() => {
+          expect(assignedGroups).toHaveTextContent('Administrator');
+        });
 
         await user.click(
           await screen.findByRole('button', { name: /suggestions/i })

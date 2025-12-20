@@ -10,7 +10,7 @@ import {
   GET_CALENDARS,
 } from '../_graphql';
 import userEvent from '@testing-library/user-event';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 
 const defaultCalendars = [
   createCalendarFixture({ name: 'Klausuren' }),
@@ -37,8 +37,8 @@ const createAdditionalMocks = ({
   {
     request: {
       query: CREATE_CALENDAR_EVENT,
+      variables: (_vars) => true,
     },
-    variableMatcher: (_variables) => true,
     result: (vars) => {
       return {
         data: {
@@ -55,7 +55,7 @@ const createAdditionalMocks = ({
         },
       };
     },
-  } satisfies MockedResponse<
+  } satisfies MockLink.MockedResponse<
     ResultOf<typeof CREATE_CALENDAR_EVENT>,
     VariablesOf<typeof CREATE_CALENDAR_EVENT>
   >,
@@ -133,9 +133,12 @@ describe('CalendarToolbar', () => {
     });
 
     await userEvent.click(createEventButton);
-    expect(
-      screen.getByRole('dialog', { name: /ereignis erstellen/i })
-    ).toBeVisible();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('dialog', { name: /ereignis erstellen/i })
+      ).toBeVisible();
+    });
   });
 
   it('should navigate to the newly created date when CreateEventDialog has been closed', async () => {
@@ -168,9 +171,12 @@ describe('CalendarToolbar', () => {
 
     vi.advanceTimersByTime(5000);
 
-    await waitFor(() => {
-      expect(dialog.open).toBe(false);
-    });
+    await waitFor(
+      () => {
+        expect(dialog.open).toBe(false);
+      },
+      { timeout: 30_000 }
+    );
 
     expect(await screen.findByText('Juli 2999')).toBeVisible();
   });
@@ -193,9 +199,11 @@ describe('CalendarToolbar', () => {
     const manageCalendarsOption = screen.getByText(/Kalender verwalten/i);
     await userEvent.click(manageCalendarsOption);
 
-    expect(
-      screen.getByRole('dialog', { name: /kalender verwalten/i })
-    ).toBeVisible();
+    await waitFor(() => {
+      expect(
+        screen.getByRole('dialog', { name: /kalender verwalten/i })
+      ).toBeVisible();
+    });
 
     const dateLabel = await screen.findByText('Oktober 2023');
     expect(dateLabel).toBeVisible();

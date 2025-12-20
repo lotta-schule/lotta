@@ -1,14 +1,14 @@
 import { loadFeedback } from './loadFeedback';
 import { getClient } from 'api/client';
-import { MockedResponse } from '@apollo/client/testing';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { Defer20220824Handler } from '@apollo/client/incremental';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
 import GetFeedbackQuery from 'api/query/GetFeedbackQuery.graphql';
 
 vi.mock('api/client');
-vi.mock('@apollo/experimental-nextjs-app-support', () => ({
+vi.mock('@apollo/client-integration-nextjs', () => ({
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -18,11 +18,12 @@ vi.mock('api/apollo/client-rsc', () => ({
 const mockGetClient = vi.mocked(getClient);
 
 describe('loadFeedback', () => {
-  const createMockClient = (mocks: MockedResponse[]) => {
+  const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
       link: mockLink,
       cache: new InMemoryCache(),
+      incrementalHandler: new Defer20220824Handler(),
     });
   };
 
@@ -41,7 +42,7 @@ describe('loadFeedback', () => {
       },
     ];
 
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetFeedbackQuery },
         result: { data: { feedbacks: mockFeedbacks } },
@@ -57,7 +58,7 @@ describe('loadFeedback', () => {
   });
 
   it('should return empty array when data is null', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetFeedbackQuery },
         result: { data: null },
@@ -73,7 +74,7 @@ describe('loadFeedback', () => {
   });
 
   it('should return empty array when feedbacks is null', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetFeedbackQuery },
         result: { data: { feedbacks: null } },
@@ -89,7 +90,7 @@ describe('loadFeedback', () => {
   });
 
   it('should handle query errors', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetFeedbackQuery },
         error: new Error('GraphQL error'),

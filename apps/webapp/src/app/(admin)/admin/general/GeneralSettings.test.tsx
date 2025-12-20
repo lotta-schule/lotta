@@ -5,10 +5,10 @@ import { Mock, vi } from 'vitest';
 import { SelectFileOverlayProps } from 'shared/edit/SelectFileOverlay';
 import { imageFile, tenant } from 'test/fixtures';
 import { ResponsiveImageProps } from 'util/image/ResponsiveImage';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
+import userEvent from '@testing-library/user-event';
 
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
-import userEvent from '@testing-library/user-event';
 
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
@@ -38,10 +38,12 @@ vi.mock('util/image/ResponsiveImage', () => ({
 }));
 
 describe('GeneralSettings', () => {
-  const additionalMocks: MockedResponse[] = [
+  const additionalMocks: MockLink.MockedResponse[] = [
     {
-      request: { query: UpdateTenantMutation },
-      variableMatcher: (_var) => true,
+      request: {
+        query: UpdateTenantMutation,
+        variables: (_var) => true,
+      },
       result: { data: { tenant: { ...tenant, title: 'A new Name' } } },
     },
   ];
@@ -88,8 +90,11 @@ describe('GeneralSettings', () => {
 
     vi.advanceTimersByTime(2000);
 
-    await waitFor(() => {
-      expect(mockRouter.refresh).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockRouter.refresh).toHaveBeenCalled();
+      },
+      { timeout: 4000 }
+    );
   });
 });

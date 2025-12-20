@@ -1,9 +1,8 @@
 'use client';
-
 import * as React from 'react';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useIsMobile } from '@lotta-schule/hubert';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { useRouter } from 'next/navigation';
 import { Header, Main, Sidebar } from 'layout';
 import { isBrowser } from 'util/isBrowser';

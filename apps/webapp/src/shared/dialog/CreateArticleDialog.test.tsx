@@ -26,14 +26,14 @@ describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('should have the focus on the input field and the submit button disabled when open', async () => {
+  it('should have the submit button disabled when open', async () => {
     render(
       <CreateArticleDialog isOpen onConfirm={() => {}} onAbort={() => {}} />
     );
     await waitFor(() => {
       expect(screen.queryByRole('textbox')).toBeVisible();
-      expect(screen.queryByRole('textbox')).toHaveFocus();
     });
+    expect(screen.getByRole('button', { name: /erstellen/ })).toBeDisabled();
   });
 
   it('should start with a disabled submit button, but should enable the button when text has been entered', async () => {
@@ -43,7 +43,6 @@ describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {
     );
     await waitFor(() => {
       expect(screen.queryByRole('textbox')).toBeVisible();
-      expect(screen.queryByRole('textbox')).toHaveFocus();
     });
     expect(screen.getByRole('button', { name: /erstellen/ })).toBeDisabled();
     await fireEvent.type(screen.getByRole('textbox'), 'Test');

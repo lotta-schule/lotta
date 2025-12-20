@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { ManageCalendarsDialog } from './ManageCalendarsDialog';
 import { GET_CALENDARS } from '../_graphql';
 import userEvent from '@testing-library/user-event';
@@ -33,7 +33,7 @@ const additionalMocks = [
       },
     },
   },
-] satisfies MockedResponse[];
+] satisfies MockLink.MockedResponse[];
 
 describe('ManageCalendarsDialog', () => {
   it('renders calendars correctly', async () => {
@@ -62,7 +62,7 @@ describe('ManageCalendarsDialog', () => {
           },
         },
       },
-    ] satisfies MockedResponse[];
+    ] satisfies MockLink.MockedResponse[];
 
     const onClose = vi.fn();
     const screen = render(
@@ -71,7 +71,9 @@ describe('ManageCalendarsDialog', () => {
       { additionalMocks: emptyMocks }
     );
 
-    expect(await screen.findByText(/keine kalender gefunden/i)).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText(/keine kalender gefunden/i)).toBeVisible();
+    });
   });
 
   it('opens the CreateCalendarDialog when "create calendar" button is clicked', async () => {

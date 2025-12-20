@@ -1,7 +1,6 @@
 'use client';
-
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { ArticleModel } from 'model';
 import { EditArticlePageProps } from 'article/EditArticlePage';
 import dynamic from 'next/dynamic';

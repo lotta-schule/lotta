@@ -5,23 +5,23 @@ exports[`AdminPageTitle > should render correctly 1`] = `
   data-overlay-container="true"
 >
   <div
-    class="_root_833c91 _root_61ca45 _hasScrollableParent_833c91"
+    class="_root_1q58p_1 _root_1h9n6_1 _hasScrollableParent_1q58p_11"
     role="toolbar"
   >
     <h3>
       <a
         aria-current="false"
-        class="_root_a3b6d5 _root_0f34c5 _backButton_61ca45 _onlyIcon_0f34c5"
+        class="_root_ybf73_1 _root_z0q9c_1 _backButton_1h9n6_5 _onlyIcon_z0q9c_18"
         data-variant="default"
         href="/admin"
         role="button"
         type="button"
       >
         <span
-          class="_icon_0f34c5"
+          class="_icon_z0q9c_10"
         >
           <span
-            class="_root_8d26a2"
+            class="_root_2hjmu_1"
           />
         </span>
       </a>

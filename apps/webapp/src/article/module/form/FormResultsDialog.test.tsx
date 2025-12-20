@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { saveAs } from 'file-saver';
 import { ContentModuleModel, ContentModuleType } from 'model';
 import { render, waitFor } from 'test/util';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { FormResultsDialog } from './FormResultsDialog';
-import fileSaver, { saveAs } from 'file-saver';
 import userEvent from '@testing-library/user-event';
 
 import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
@@ -20,7 +19,7 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
   } as ContentModuleModel;
 
   let didFetchResults = false;
-  const mocks: MockedResponse[] = [
+  const mocks: MockLink.MockedResponse[] = [
     {
       request: {
         query: GetContentModuleResults,
@@ -109,8 +108,13 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
   });
 
   it('should generate and download a csv when the button is clicked', async () => {
+    vi.spyOn(URL, 'createObjectURL').mockReturnValueOnce('http://localhost/0');
+    vi.mock('file-saver', async (_importActual) => ({
+      saveAs: vi.fn(),
+    }));
+
     const fireEvent = userEvent.setup();
-    global.URL.createObjectURL = vi.fn(() => 'http://localhost/0');
+    URL.createObjectURL = vi.fn(() => 'http://localhost/0');
 
     const screen = render(
       <FormResultsDialog
@@ -130,32 +134,25 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
       screen.getByRole('button', { name: /csv herunterladen/i })
     ).toBeInTheDocument();
 
-    let data: Blob | undefined, filename: string | undefined;
-    vi.spyOn(fileSaver, 'saveAs').mockImplementation(
-      (_data: string | Blob, _filename?: string) => {
-        if (!_data || _data instanceof Blob === false) {
-          throw new Error('data is not a Blob. I did not want a non-blob!.');
-        }
-        data = _data;
-        filename = _filename;
-      }
-    );
     await fireEvent.click(
       screen.getByRole('button', { name: /csv herunterladen/i })
     );
-    expect(saveAs).toHaveBeenCalled();
 
+    const saveAsMock = vi.mocked(saveAs);
     await waitFor(() => {
-      expect(data).not.toBeUndefined();
+      expect(saveAsMock).toHaveBeenCalledExactlyOnceWith(
+        expect.any(Blob),
+        'formulardaten.csv'
+      );
     });
 
-    expect(data).toBeInstanceOf(Blob);
-    expect(filename).toEqual('formulardaten.csv');
+    const data = saveAsMock.mock.calls[0][0] as Blob;
 
     expect(data?.type).toMatch(/text\/csv/);
-    const inputData = (data as any)?.inputData as string[];
 
-    const text = inputData.join('');
+    const text = await data
+      ?.arrayBuffer()
+      .then((buf) => new TextDecoder().decode(buf));
 
     expect(text).toEqual(
       '"Datum","blub","bla","mail"\r\n' +

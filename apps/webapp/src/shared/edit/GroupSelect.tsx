@@ -2,11 +2,12 @@
 
 import * as React from 'react';
 import { Checkbox, ComboBox, NoSsr, Tag } from '@lotta-schule/hubert';
-import { UserGroupModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import clsx from 'clsx';
 
 import styles from './GroupSelect.module.scss';
+
+type UserGroupModel = ReturnType<typeof useUserGroups>[number];
 
 export interface GroupSelectProps<
   AllowNoneSelection extends boolean | undefined,
@@ -105,7 +106,7 @@ export const GroupSelect = React.memo(
     label = 'Gruppe suchen',
     row = false,
     selectedGroups,
-    suggestionFilter,
+    suggestionFilter = () => true,
     onSelectGroups,
   }: T) => {
     const availableGroups = useUserGroups();
@@ -133,7 +134,7 @@ export const GroupSelect = React.memo(
 
     const groups = React.useMemo(() => {
       const sortedGroups = availableGroups
-        .filter((suggestionFilter as T['suggestionFilter']) ?? (() => true))
+        .filter(suggestionFilter)
         .sort(groupSorter);
 
       if (allowNoneSelection) {

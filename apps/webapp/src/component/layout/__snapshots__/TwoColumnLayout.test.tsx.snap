@@ -5,15 +5,15 @@ exports[`TwoColumnLayout > should render successfully 1`] = `
   data-overlay-container="true"
 >
   <div
-    class="_root_a3c7d4"
+    class="_root_1wzon_1"
   >
     <aside
-      class="_sidebar_a3c7d4"
+      class="_sidebar_1wzon_6"
     >
       Sidebar
     </aside>
     <main
-      class="_main_a3c7d4"
+      class="_main_1wzon_15"
     >
       Content
     </main>

@@ -5,7 +5,7 @@ exports[`AdminPageSection > should render a bottomtoolbar section 1`] = `
   data-overlay-container="true"
 >
   <section
-    class="_root_ee9ac9 _bottomToolbar_ee9ac9"
+    class="_root_1e0hr_1 _bottomToolbar_1e0hr_4"
   />
 </div>
 `;

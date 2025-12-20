@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ComboBox, NoSsr } from '@lotta-schule/hubert';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client/react';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { UserModel } from 'model';
 import { User } from 'util/model';

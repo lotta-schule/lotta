@@ -1,7 +1,6 @@
 'use client';
-
 import * as React from 'react';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client/react';
 import {
   Browser,
   BrowserMode,
@@ -70,16 +69,24 @@ export const UserBrowser = React.memo(
     const onRequestChildNodes: BrowserProps['onRequestChildNodes'] =
       React.useCallback(
         async (node, options) => {
-          const result = await fetchDirectoriesAndFiles({
-            variables: { parentDirectoryId: node?.id ?? null },
-            fetchPolicy: options?.refetch ? 'network-only' : 'cache-first',
-          });
+          try {
+            const result = await fetchDirectoriesAndFiles({
+              variables: { parentDirectoryId: node?.id ?? null },
+              fetchPolicy: options?.refetch ? 'network-only' : 'cache-first',
+            });
 
-          if (result.error) {
-            throw result.error;
+            return makeBrowserNodes(result.data) ?? [];
+          } catch (error: unknown) {
+            if (
+              Error.isError(error) &&
+              'code' in error &&
+              error.code === DOMException.ABORT_ERR
+            ) {
+              console.warn('file fetching aborted');
+              return [];
+            }
+            throw error;
           }
-
-          return makeBrowserNodes(result.data) ?? [];
         },
         [fetchDirectoriesAndFiles]
       );

@@ -1,7 +1,6 @@
 'use client';
-
 import * as React from 'react';
-import { useMutation, useSubscription } from '@apollo/client';
+import { useMutation, useSubscription } from '@apollo/client/react';
 import { ArticleModel, ID } from 'model';
 import {
   Button,

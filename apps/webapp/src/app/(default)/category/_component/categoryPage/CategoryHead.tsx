@@ -11,7 +11,6 @@ export interface CategoryHeadProps {
 
 export const CategoryHead = async ({ category }: CategoryHeadProps) => {
   const tenant = await loadTenant();
-  console.log({ tenant });
 
   const title = category.isHomepage
     ? tenant.title

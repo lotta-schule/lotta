@@ -1,4 +1,4 @@
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import {
   CalendarKlassenarbeiten,
   GangamStyleWidget,
@@ -19,7 +19,7 @@ const widgets = [
   CalendarKlassenarbeiten,
 ];
 
-const additionalMocks: MockedResponse[] = [
+const additionalMocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: GetWidgetsQuery,
@@ -47,8 +47,13 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetsNavigation', () =
   it('should select a widget', async () => {
     const user = userEvent.setup();
     const mockRouter = await vi
-      .importMock<{ mockRouter: MockRouter }>('next/navigation')
-      .then((m) => m.mockRouter);
+      .importMock<{
+        default: {
+          useRouter: () => MockRouter;
+        };
+      }>('next/navigation')
+      .then((module) => module.default.useRouter());
+
     const screen = render(<WidgetsNavigation />, {}, { additionalMocks });
     screen.rerender(<WidgetsNavigation />); // rerender to trigger the query
 

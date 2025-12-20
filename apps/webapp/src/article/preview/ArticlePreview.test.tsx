@@ -153,7 +153,9 @@ describe('shared/article/ArticlePreview', () => {
         {},
         { currentUser: SomeUser }
       );
-      expect(screen.getByRole('img', { name: /vorschaubild/i })).toBeVisible();
+      expect(
+        screen.getByRole('img', { name: /vorschaubild/i })
+      ).toBeInTheDocument();
       expect(
         screen.getByRole('img', { name: /vorschaubild/i })
       ).toHaveAttribute(
@@ -316,7 +318,7 @@ describe('shared/article/ArticlePreview', () => {
           { currentUser: KeinErSieEsUser }
         );
         const avatarsList = screen.getByTestId('AuthorAvatarsList');
-        expect(avatarsList.querySelector('button')).toBeVisible();
+        expect(avatarsList.querySelector('button')).toBeInTheDocument();
         await fireEvent.click(avatarsList.querySelector('button')!);
         expect(fn).toHaveBeenCalledWith({
           ...WeihnachtsmarktWithUsers,

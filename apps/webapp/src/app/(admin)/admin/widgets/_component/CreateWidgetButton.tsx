@@ -1,9 +1,8 @@
 'use client';
-
 import * as React from 'react';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton, Item } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { useRouter } from 'next/navigation';
 import { WidgetModel, WidgetModelType } from 'model';
 import { Widget } from 'util/model';

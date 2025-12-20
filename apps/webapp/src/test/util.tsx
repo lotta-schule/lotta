@@ -10,14 +10,15 @@ import {
   queries,
   RenderHookOptions,
 } from '@testing-library/react';
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { ApolloMocksOptions, getDefaultApolloMocks } from 'test/mocks';
 import { TranslationsProvider } from 'i18n/client';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
 import { tenant } from './fixtures';
 
 export type TestSetupOptions = {
-  additionalMocks?: MockedResponse[];
+  additionalMocks?: MockLink.MockedResponse[];
 } & ApolloMocksOptions;
 
 export let currentApolloCache: null | InMemoryCache = null;
@@ -112,3 +113,4 @@ export const getMetaTagValue = (metaName: string) => {
 // override render method
 export { customRender as render };
 export { customRenderHook as renderHook };
+export { userEvent } from '@vitest/browser/context';

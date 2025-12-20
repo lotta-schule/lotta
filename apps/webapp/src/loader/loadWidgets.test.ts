@@ -1,14 +1,15 @@
 import { loadWidgets } from './loadWidgets';
 import { getClient } from 'api/client';
-import { MockedResponse } from '@apollo/client/testing';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { Defer20220824Handler } from '@apollo/client/incremental';
+import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 
 vi.mock('api/client');
-vi.mock('@apollo/experimental-nextjs-app-support', () => ({
+vi.mock('@apollo/client-integration-nextjs', () => ({
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -18,11 +19,15 @@ vi.mock('api/apollo/client-rsc', () => ({
 const mockGetClient = vi.mocked(getClient);
 
 describe('loadWidgets', () => {
-  const createMockClient = (mocks: MockedResponse[]) => {
+  const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
       link: mockLink,
       cache: new InMemoryCache(),
+
+      localState: new LocalState({}),
+
+      incrementalHandler: new Defer20220824Handler(),
     });
   };
 
@@ -36,7 +41,7 @@ describe('loadWidgets', () => {
       { id: '2', title: 'Widget 2', type: 'schedule' },
     ];
 
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetWidgetsQuery },
         result: { data: { widgets: mockWidgets } },
@@ -52,7 +57,7 @@ describe('loadWidgets', () => {
   });
 
   it('should return empty array when data is null', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetWidgetsQuery },
         result: { data: null },
@@ -68,7 +73,7 @@ describe('loadWidgets', () => {
   });
 
   it('should return empty array when widgets is null', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetWidgetsQuery },
         result: { data: { widgets: null } },
@@ -84,7 +89,7 @@ describe('loadWidgets', () => {
   });
 
   it('should handle query errors', async () => {
-    const mocks: MockedResponse[] = [
+    const mocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetWidgetsQuery },
         error: new Error('GraphQL error'),

@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import * as Sentry from '@sentry/nextjs';
 import { type Tenant } from 'util/tenant';
 
 const ServerDataContext = React.createContext({
@@ -22,11 +21,6 @@ export const ServerDataContextProvider = ({
     () => ({ tenant, socketUrl }),
     [tenant, socketUrl]
   );
-
-  React.useEffect(() => {
-    Sentry.setContext('tenant', tenant as any);
-    Sentry.setTags({ 'tenant.slug': tenant?.slug, 'tenant.id': tenant?.id });
-  }, [tenant]);
 
   return (
     <ServerDataContext.Provider value={value}>
