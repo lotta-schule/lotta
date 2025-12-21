@@ -49,8 +49,8 @@
     "@storybook/theming": "^8.6.3",
     "@storybook/types": "^8.6.3",
     "@testing-library/jest-dom": "^6.4.8",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "tsup": "^8.4.0"
   },
   "peerDependencies": {

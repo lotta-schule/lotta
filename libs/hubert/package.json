@@ -29,8 +29,8 @@
   },
   "peerDependencies": {
     "framer-motion": ">= 6.3.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "sass": "^1.54.3"
   }
 }
