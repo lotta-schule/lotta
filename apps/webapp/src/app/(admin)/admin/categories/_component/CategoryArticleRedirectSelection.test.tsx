@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
 import { ComputerExperten } from 'test/fixtures';
 import { MockLink } from '@apollo/client/testing';
-import userEvent from '@testing-library/user-event';
 
 import SearchQuery from 'api/query/SearchQuery.graphql';
 import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graphql';

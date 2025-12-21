@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render, fireEvent, waitFor } from 'test/util';
+import { render, fireEvent, waitFor, userEvent } from 'test/util';
 import { MockLink } from '@apollo/client/testing';
 import { CreateCalendarDialog } from './CreateCalendarDialog';
 import { CREATE_CALENDAR, GET_CALENDARS } from '../_graphql';
-import userEvent from '@testing-library/user-event';
 
 const additionalMocks = [
   {

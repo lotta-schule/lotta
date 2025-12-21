@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DirectoryModel, FileModel } from 'model';
 import { MockRouter } from 'test/mocks';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import {
   ComputerExperten,
   VivaLaRevolucion,
@@ -13,7 +13,6 @@ import {
 } from 'test/fixtures';
 import { DeletePage, GET_RELEVANT_FILES_IN_USAGE } from './DeletePage';
 import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
-import userEvent from '@testing-library/user-event';
 
 import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
@@ -31,7 +30,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
   const rootDirectories = directories.filter((d) => !d.parentDirectory);
 
   it('should be able to go to second page and see own articles when clicking on button', async () => {
-    const fireEvent = userEvent.setup();
+    const user = userEvent.setup();
     const screen = render(
       <DeletePage />,
       {},
@@ -68,9 +67,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
     expect(
       await screen.findByRole('heading', { name: /daten löschen/i })
     ).toBeInTheDocument();
-    await fireEvent.click(
-      await screen.findByRole('button', { name: /weiter/i })
-    );
+    await user.click(await screen.findByRole('button', { name: /weiter/i }));
 
     await waitFor(() => {
       expect(screen.getByTestId('ProfileDeleteStep2Box')).toBeVisible();
@@ -78,7 +75,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
   }, 10_000);
 
   it('should be able to go to third page after having seen the first and the second one', async () => {
-    const fireEvent = userEvent.setup();
+    const user = userEvent.setup();
     const screen = render(
       <DeletePage />,
       {},
@@ -116,22 +113,18 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
       }
     );
 
-    await fireEvent.click(
-      await screen.findByRole('button', { name: /weiter/i })
-    );
+    await user.click(await screen.findByRole('button', { name: /weiter/i }));
     await waitFor(() => {
       expect(screen.getByTestId('ProfileDeleteStep2Box')).toBeVisible();
     });
-    await fireEvent.click(
-      await screen.findByRole('button', { name: /weiter/i })
-    );
+    await user.click(await screen.findByRole('button', { name: /weiter/i }));
     await waitFor(() => {
       expect(screen.getByTestId('ProfileDeleteStep3Box')).toBeVisible();
     });
   }, 10_000);
 
   it('The third page should not show the DeleteFileSelection or the tab bar if userAvatar has no files', async () => {
-    const fireEvent = userEvent.setup();
+    const user = userEvent.setup();
     const screen = render(
       <DeletePage />,
       {},
@@ -169,14 +162,14 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
       }
     );
 
-    fireEvent.click(await screen.findByRole('button', { name: /weiter/i }));
+    await user.click(await screen.findByRole('button', { name: /weiter/i }));
     await waitFor(() => {
       expect(screen.getByRole('progressbar')).toBeVisible();
     });
     await waitFor(() => {
       expect(screen.queryByRole('progressbar')).toBeNull();
     });
-    await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
+    await user.click(screen.getByRole('button', { name: /weiter/i }));
 
     await waitFor(() => {
       expect(screen.getByTestId('ProfileDeleteStep3Box')).toBeVisible();

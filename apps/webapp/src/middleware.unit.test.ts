@@ -1,7 +1,6 @@
-import { Mocked, MockedFunction } from 'vitest';
-import { parse } from 'node:url';
+import type { Mocked, MockedFunction } from 'vitest';
+import type { NextRequest } from 'next/server';
 import { sendRefreshRequest } from 'api/auth';
-import { type NextRequest } from 'next/server';
 import { serialize } from 'cookie-es';
 import { JWT } from 'util/auth/jwt';
 import { middleware, config } from './middleware';
@@ -35,7 +34,7 @@ describe('middleware', () => {
       },
       headers: headersObj,
       url,
-      nextUrl: parse(url),
+      nextUrl: URL.parse(url),
     } as unknown as NextRequest;
   };
 

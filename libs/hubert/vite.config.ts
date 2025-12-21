@@ -58,6 +58,8 @@ export default defineConfig({
   },
 
   test: {
+    name: 'hubert component tests',
+
     globals: true,
     browser: {
       provider: playwright(),

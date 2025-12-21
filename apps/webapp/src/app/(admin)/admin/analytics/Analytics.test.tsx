@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MockedFunction } from 'vitest';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { Analytics } from './Analytics';
 import { PropertyBreakdown } from './_component';
 import {
@@ -8,7 +8,6 @@ import {
   GET_TENANT_BREAKDOWN_ANALYTICS,
   GET_TENANT_TIMESERIES_ANALYTICS,
 } from './_graphql';
-import userEvent from '@testing-library/user-event';
 vi.useFakeTimers({
   shouldAdvanceTime: true,
   now: new Date('2025-08-16T12:00:00.000Z'),

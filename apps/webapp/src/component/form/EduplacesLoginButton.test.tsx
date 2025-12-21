@@ -1,29 +1,29 @@
-import { render } from 'test/util';
+import { render, userEvent, waitFor } from 'test/util';
 import { EduplacesLoginButton } from './EduplacesLoginButton';
-import userEvent from '@testing-library/user-event';
+import { redirectTo } from 'util/browserLocation';
 
-describe('CreateWidgetButton', () => {
-  it('should render the button', () => {
+describe('EduplacesLoginButton', () => {
+  it('should render the button', async () => {
     const screen = render(<EduplacesLoginButton />);
 
-    expect(screen.getByRole('button')).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+    });
     expect(screen.getByRole('button')).toHaveTextContent(
       /eduplaces.*anmelden/i
     );
   });
 
-  it.todo(
-    'should redirect the user to the external login page on click',
-    async () => {
-      const user = userEvent.setup();
+  it('should redirect the user to the external login page on click', async () => {
+    const user = userEvent.setup();
 
-      const screen = render(<EduplacesLoginButton />);
+    const screen = render(<EduplacesLoginButton />);
 
-      expect(screen.getByRole('button')).toBeVisible();
-      await user.click(screen.getByRole('button'));
+    expect(screen.getByRole('button')).toBeVisible();
+    await user.click(screen.getByRole('button'));
 
-      // TODO: Make own module
-      // expect(window.location.href).toContain('/auth/oauth/eduplaces/login');
-    }
-  );
+    expect(redirectTo).toHaveBeenCalledWith(
+      expect.stringContaining('/auth/oauth/eduplaces/login')
+    );
+  });
 });

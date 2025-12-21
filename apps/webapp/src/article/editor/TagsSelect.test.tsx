@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { TagsSelect } from './TagsSelect';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
   it('should render an empty TagsSelect', async () => {

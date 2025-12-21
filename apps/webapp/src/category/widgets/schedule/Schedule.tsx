@@ -19,7 +19,7 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from 'shared/Icon';
-import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client/react';
+import { skipToken, useApolloClient, useQuery } from '@apollo/client/react';
 import { WidgetModel, ScheduleResult, WidgetModelType } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
@@ -60,33 +60,27 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
     error: currentScheduleError,
   } = useQuery<{ schedule: ScheduleResult | null }>(GetScheduleQuery, {
     variables: { widgetId: widget.id, date: currentDate },
+    returnPartialData: !currentDate,
     skip: !currentUser?.class,
     ssr: false,
-    onCompleted: (data) => {
-      if (data.schedule) {
-        const newDateString = dateToDateString(
-          parse(data.schedule.head.date, 'PPPP', new Date(), {
-            locale: de,
-          })
-        );
-        if (!currentDate) {
-          client.writeQuery({
-            query: GetScheduleQuery,
-            variables: { widgetId: widget.id, date: newDateString },
-            data,
-            broadcast: false,
-          });
-          setCurrentDate(newDateString);
-        }
-      }
-    },
   });
-  const [getLastSchedule, { data: lastScheduleData }] = useLazyQuery<{
-    schedule: ScheduleResult | null;
-  }>(GetScheduleQuery, { ssr: false, errorPolicy: 'all' });
-  const [getNextSchedule, { data: nextScheduleData }] = useLazyQuery<{
-    schedule: ScheduleResult | null;
-  }>(GetScheduleQuery, { ssr: false, errorPolicy: 'all', onError: () => {} });
+
+  React.useEffect(() => {
+    if (!currentDate && currentScheduleData?.schedule?.head?.date) {
+      const newDateString = dateToDateString(
+        parse(currentScheduleData.schedule.head.date, 'PPPP', new Date(), {
+          locale: de,
+        })
+      );
+      client.writeQuery({
+        query: GetScheduleQuery,
+        variables: { widgetId: widget.id, date: newDateString },
+        data: currentScheduleData,
+        broadcast: false,
+      });
+      setCurrentDate(newDateString);
+    }
+  }, [currentDate, currentScheduleData, client, widget.id]);
 
   const getAvailableDate = React.useCallback(
     (direction: 'previous' | 'next', startDateString: DateString): Date => {
@@ -110,28 +104,36 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
     [currentScheduleData]
   );
 
-  React.useEffect(() => {
-    if (currentDate) {
-      getLastSchedule({
-        variables: {
-          widgetId: widget.id,
-          date: dateToDateString(getAvailableDate('previous', currentDate)),
-        },
-      });
-      getNextSchedule({
-        variables: {
-          widgetId: widget.id,
-          date: dateToDateString(getAvailableDate('next', currentDate)),
-        },
-      });
-    }
-  }, [
-    widget.id,
-    currentDate,
-    getAvailableDate,
-    getLastSchedule,
-    getNextSchedule,
-  ]);
+  const { data: lastScheduleData } = useQuery<{
+    schedule: ScheduleResult | null;
+  }>(
+    GetScheduleQuery,
+    currentDate
+      ? {
+          ssr: false,
+          errorPolicy: 'all',
+          variables: {
+            widgetId: widget.id,
+            date: dateToDateString(getAvailableDate('previous', currentDate)),
+          },
+        }
+      : skipToken
+  );
+  const { data: nextScheduleData } = useQuery<{
+    schedule: ScheduleResult | null;
+  }>(
+    GetScheduleQuery,
+    currentDate
+      ? {
+          ssr: false,
+          errorPolicy: 'all',
+          variables: {
+            widgetId: widget.id,
+            date: dateToDateString(getAvailableDate('next', currentDate)),
+          },
+        }
+      : skipToken
+  );
 
   const tableRows = React.useMemo(() => {
     if (!currentUser) {

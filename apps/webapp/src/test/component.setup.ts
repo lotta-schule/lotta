@@ -3,6 +3,7 @@
 import '@testing-library/jest-dom/vitest';
 import * as React from 'react';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
+import { afterEach, beforeAll, vi } from 'vitest';
 
 declare module 'vitest' {
   interface Assertion<T = any> extends TestingLibraryMatchers<
@@ -54,6 +55,12 @@ beforeAll(() => {
   window.addEventListener('beforeunload', (e) => {
     e.preventDefault();
     e.returnValue = true;
+  });
+
+  vi.mock('util/browserLocation', async () => {
+    return {
+      redirectTo: vi.fn(),
+    };
   });
 
   vi.mock('next/head', async () => {

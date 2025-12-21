@@ -1,9 +1,7 @@
 import { sendRefreshRequest } from 'api/auth';
 import { serialize } from 'cookie-es';
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { JWT } from 'util/auth/jwt';
-
-import type { NextRequest } from 'next/server';
 
 export const config = {
   matcher: [

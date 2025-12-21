@@ -64,7 +64,7 @@ export const Navbar = React.memo(() => {
     <nav className={clsx(styles.root, 'navbar')} ref={wrapperRef}>
       <div className={styles.gridContainer}>
         <div>
-          <nav className={styles.navbar}>
+          <nav className={styles.navbar} data-testid={'nav-level1'}>
             {homepageCategory && (
               <Link href={'/'} passHref legacyBehavior>
                 <NavigationButton
@@ -99,7 +99,9 @@ export const Navbar = React.memo(() => {
                 </NavigationButton>
               </Link>
             ))}
-            <Button className={styles.placeholder}>{''}</Button>
+            <Button className={styles.placeholder} aria-hidden="true">
+              {''}
+            </Button>
           </nav>
         </div>
         <div className={styles.mobileBurgerMenuButton}>

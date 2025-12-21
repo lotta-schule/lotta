@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { render } from 'test/util';
+import { render, userEvent, waitFor } from 'test/util';
 import { LoginDialog } from './LoginDialog';
 import { tenant } from 'test/fixtures';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/dialog/LoginDialog', () => {
   it('should not show the login dialog when isOpen is not true', () => {
@@ -15,13 +14,13 @@ describe('shared/dialog/LoginDialog', () => {
   });
 
   it('should close the dialog when clicking on cancel', async () => {
-    const fireEvent = userEvent.setup();
+    const user = userEvent.setup();
     const onRequestClose = vi.fn();
     const screen = render(
       <LoginDialog isOpen={true} onRequestClose={onRequestClose} />,
       {}
     );
-    await fireEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
+    await user.click(screen.getByRole('button', { name: /abbrechen/i }));
     expect(onRequestClose).toHaveBeenCalled();
   });
 
@@ -38,7 +37,7 @@ describe('shared/dialog/LoginDialog', () => {
     });
 
     it('should have username and password fields with correct names', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
         {}
@@ -51,8 +50,8 @@ describe('shared/dialog/LoginDialog', () => {
       expect(passwordInput).toHaveAttribute('name', 'password');
       expect(passwordInput).toHaveAttribute('type', 'password');
 
-      await fireEvent.type(emailInput, 'test@example.com');
-      await fireEvent.type(passwordInput, 'mypassword');
+      await user.fill(emailInput, 'test@example.com');
+      await user.fill(passwordInput, 'mypassword');
 
       expect(emailInput).toHaveValue('test@example.com');
       expect(passwordInput).toHaveValue('mypassword');
@@ -98,16 +97,18 @@ describe('shared/dialog/LoginDialog', () => {
         expect(screen.queryByRole('button', { name: /eduplaces/i })).toBeNull();
       });
 
-      it('should render the Eduplaces login button when tenant has eduplacesId', () => {
+      it('should render the Eduplaces login button when tenant has eduplacesId', async () => {
         const screen = render(
           <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
           {},
           { tenant: { ...tenant, eduplacesId: '123' } }
         );
 
-        expect(
-          screen.getByRole('button', { name: /eduplaces/i })
-        ).toBeVisible();
+        await waitFor(() => {
+          expect(
+            screen.getByRole('button', { name: /eduplaces/i })
+          ).toBeVisible();
+        });
       });
     });
   });

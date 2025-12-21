@@ -29,7 +29,6 @@ export type GeneralSettingsProps = {
 
 export const GeneralSettings = ({ tenant }: GeneralSettingsProps) => {
   const router = useRouter();
-  console.log({ router });
   const [title, setTitle] = React.useState(tenant.title);
   const [logo, setLogo] = React.useState(tenant.logoImageFile);
 

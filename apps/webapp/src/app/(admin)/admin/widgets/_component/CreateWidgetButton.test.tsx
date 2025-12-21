@@ -1,8 +1,7 @@
 import { WidgetModelType } from 'model';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { MockRouter } from 'test/mocks';
 import { CreateWidgetButton } from './CreateWidgetButton';
-import userEvent from '@testing-library/user-event';
 
 import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';
 

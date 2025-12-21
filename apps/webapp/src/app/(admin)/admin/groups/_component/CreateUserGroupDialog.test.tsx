@@ -1,9 +1,8 @@
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import {
   CREATE_USER_GROUP,
   CreateUserGroupDialog,
 } from './CreateUserGroupDialog';
-import userEvent from '@testing-library/user-event';
 import { MockLink } from '@apollo/client/testing';
 import { lehrerGroup } from 'test/fixtures';
 import { GET_USER_GROUPS } from '../_graphql';

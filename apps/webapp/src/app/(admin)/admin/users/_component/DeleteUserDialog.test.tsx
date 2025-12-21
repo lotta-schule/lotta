@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { ComputerExperten, SomeUser } from 'test/fixtures';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { DeleteUserDialog } from './DeleteUserDialog';
-import userEvent from '@testing-library/user-event';
 
 import GetArticlesWithUserFiles from 'api/query/GetArticlesWithUserFiles.graphql';
 import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';

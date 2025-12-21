@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { FileModel } from 'model';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { SomeUser, getPrivateAndPublicFiles } from 'test/fixtures';
 import { ProfileDeleteFileSelection } from './ProfileDeleteFileSelection';
 import { RelevantFilesInUsage } from 'profile/DeletePage';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/article/ProfileDeleteFileSelection', () => {
   const files = getPrivateAndPublicFiles(SomeUser).filter(

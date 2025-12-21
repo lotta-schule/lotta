@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react-vite';
 import { Avatar, BaseButton } from '@lotta-schule/hubert';
 
 export default {
   title: 'Buttons/BaseButton',
   component: BaseButton,
   argTypes: {},
-  parameters: {},
 };
 
 export const General: StoryObj<typeof BaseButton> = {

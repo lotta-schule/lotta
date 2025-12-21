@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import {
   adminGroup,
   imageFile,
@@ -9,7 +9,6 @@ import {
   Weihnachtsmarkt,
 } from 'test/fixtures';
 import { ArticlePreview } from './ArticlePreview';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/article/ArticlePreview', () => {
   describe('should render title', () => {
@@ -62,7 +61,7 @@ describe('shared/article/ArticlePreview', () => {
     });
 
     it('and call update callback when edited', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const fn = vi.fn();
       const screen = render(
         <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={fn} />,
@@ -72,10 +71,7 @@ describe('shared/article/ArticlePreview', () => {
       const titleInput = screen.getByRole('textbox', {
         name: /article title/i,
       }) as HTMLInputElement;
-      await fireEvent.type(titleInput, 'A', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: titleInput.value.length,
-      });
+      await user.fill(titleInput, 'A');
       expect(fn).toHaveBeenCalledWith({ ...Weihnachtsmarkt, title: 'A' });
     });
   });
@@ -111,7 +107,7 @@ describe('shared/article/ArticlePreview', () => {
     });
 
     it('and call update callback when edited', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const fn = vi.fn();
       const screen = render(
         <ArticlePreview article={Weihnachtsmarkt} onUpdateArticle={fn} />,
@@ -121,10 +117,7 @@ describe('shared/article/ArticlePreview', () => {
       const previewInput = screen.getByRole('textbox', {
         name: /article preview text/i,
       }) as HTMLInputElement;
-      await fireEvent.type(previewInput, 'A', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: previewInput.value.length,
-      });
+      await user.fill(previewInput, 'A');
       expect(fn).toHaveBeenCalledWith({
         ...Weihnachtsmarkt,
         preview: 'A',
@@ -307,7 +300,7 @@ describe('shared/article/ArticlePreview', () => {
       });
 
       it('should show the "delete" button for authors when in EditMode', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const fn = vi.fn();
         const screen = render(
           <ArticlePreview
@@ -317,17 +310,27 @@ describe('shared/article/ArticlePreview', () => {
           {},
           { currentUser: KeinErSieEsUser }
         );
-        const avatarsList = screen.getByTestId('AuthorAvatarsList');
-        expect(avatarsList.querySelector('button')).toBeInTheDocument();
-        await fireEvent.click(avatarsList.querySelector('button')!);
-        expect(fn).toHaveBeenCalledWith({
-          ...WeihnachtsmarktWithUsers,
-          users: [SomeUserin],
+        await user.hover(
+          screen.getByRole('img', { name: 'Profilbild von Che' })
+        );
+        await waitFor(() => {
+          expect(
+            screen.getByRole('button', { name: /che entfernen/i })
+          ).toBeVisible();
+        });
+        await user.click(
+          screen.getByRole('button', { name: /che entfernen/i })
+        );
+        await waitFor(() => {
+          expect(fn).toHaveBeenCalledWith({
+            ...WeihnachtsmarktWithUsers,
+            users: [SomeUserin],
+          });
         });
       });
       describe('should show warning when removing oneself', () => {
         it('show a warning when userAvatar tries to remove him/herself and close the popup on abort', async () => {
-          const fireEvent = userEvent.setup();
+          const user = userEvent.setup();
           const onUpdate = vi.fn();
           const screen = render(
             <ArticlePreview
@@ -337,7 +340,10 @@ describe('shared/article/ArticlePreview', () => {
             {},
             { currentUser: SomeUser }
           );
-          await fireEvent.click(
+          await user.hover(
+            screen.getByRole('img', { name: 'Profilbild von Che' })
+          );
+          await user.click(
             screen.getByRole('button', { name: /che entfernen/i })
           );
           await waitFor(() => {
@@ -349,7 +355,7 @@ describe('shared/article/ArticlePreview', () => {
           expect(
             screen.getByRole('dialog').querySelectorAll('button')[0]
           ).toHaveTextContent(/abbrechen/i);
-          await fireEvent.click(
+          await user.click(
             screen.getByRole('dialog').querySelectorAll('button')[0]
           );
           await waitFor(() => {
@@ -358,7 +364,7 @@ describe('shared/article/ArticlePreview', () => {
         });
 
         it('show a warning when userAvatar tries to remove him/herself and remove userAvatar on confirm', async () => {
-          const fireEvent = userEvent.setup();
+          const user = userEvent.setup();
           const onUpdate = vi.fn();
           const screen = render(
             <ArticlePreview
@@ -368,7 +374,10 @@ describe('shared/article/ArticlePreview', () => {
             {},
             { currentUser: SomeUser }
           );
-          await fireEvent.click(
+          await user.hover(
+            screen.getByRole('img', { name: 'Profilbild von Che' })
+          );
+          await user.click(
             screen.getByRole('button', { name: /che entfernen/i })
           );
           await waitFor(() => {
@@ -380,7 +389,7 @@ describe('shared/article/ArticlePreview', () => {
           expect(
             screen.getByRole('dialog').querySelectorAll('button')[1]
           ).toHaveTextContent(/entfernen/i);
-          await fireEvent.click(
+          await user.click(
             screen.getByRole('dialog').querySelectorAll('button')[1]
           );
 

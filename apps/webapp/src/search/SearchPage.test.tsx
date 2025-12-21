@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { ComputerExperten, FaecherCategory } from 'test/fixtures';
 import { SearchPage } from './SearchPage';
-import userEvent from '@testing-library/user-event';
 
 import SearchQuery from 'api/query/SearchQuery.graphql';
 

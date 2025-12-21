@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Weihnachtsmarkt } from 'test/fixtures';
-import { render } from 'test/util';
+import { render, userEvent } from 'test/util';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
   it('should show the the inserted at date input with correct value', () => {
@@ -63,10 +62,7 @@ describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
       name: /erstellt/i,
       hidden: true,
     }) as HTMLInputElement;
-    await fireEvent.type(createdInput, '1999-01-01', {
-      initialSelectionStart: 0,
-      initialSelectionEnd: createdInput.value.length,
-    });
+    await fireEvent.fill(createdInput, '1999-01-01');
     await fireEvent.click(screen.getByRole('button', { name: /OK/i }));
     expect(onUpdate).toHaveBeenCalledWith({
       insertedAt: '1999-01-01T00:00:00.000Z',

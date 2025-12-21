@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 import { Divider } from '@lotta-schule/hubert';
 
 export default {

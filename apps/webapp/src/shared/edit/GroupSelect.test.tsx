@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { UserGroupModel } from 'model';
-import { render, waitFor, within } from 'test/util';
+import { render, waitFor, within, userEvent } from 'test/util';
 import {
   adminGroup,
   lehrerGroup,
@@ -10,7 +10,6 @@ import {
   userGroups,
 } from 'test/fixtures';
 import { GroupSelect } from './GroupSelect';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/editor/GroupSelect', () => {
   describe('label prop', () => {
@@ -232,25 +231,22 @@ describe('shared/editor/GroupSelect', () => {
       expect(screen.queryByLabelText(/alle sichtbar/i)).toBeNull();
     });
 
-    it.todo(
-      'should change the elements description when publicGroupSelectionLabel is given',
-      async () => {
-        const screen = render(
-          <GroupSelect
-            publicGroupSelectionLabel={'Keine Gruppen'}
-            selectedGroups={[]}
-            onSelectGroups={() => {}}
-          />,
-          {}
-        );
+    it('should change the elements description when publicGroupSelectionLabel is given', async () => {
+      const screen = render(
+        <GroupSelect
+          publicGroupSelectionLabel={'Keine Gruppen'}
+          selectedGroups={[]}
+          onSelectGroups={() => {}}
+        />,
+        {}
+      );
 
-        await waitFor(() => {
-          expect(screen.getByRole('checkbox')).toBeVisible();
-        });
+      await waitFor(() => {
+        expect(screen.getByRole('checkbox')).toBeVisible();
+      });
 
-        expect(screen.queryByLabelText(/keine gruppen/i)).toBeInTheDocument();
-      }
-    );
+      expect(screen.queryByLabelText(/keine gruppen/i)).toBeInTheDocument();
+    });
   });
 
   describe('selection display', () => {

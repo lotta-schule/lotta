@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { fireEvent, render, waitFor } from 'test/util';
+import { fireEvent, render, waitFor, userEvent } from 'test/util';
 import { CalendarToolbar } from './CalendarToolbar';
 import { CalendarContext, CalendarProvider } from './CalendarContext';
 import { createCalendarFixture } from 'test/fixtures';
@@ -9,7 +9,6 @@ import {
   GET_CALENDAR_EVENTS,
   GET_CALENDARS,
 } from '../_graphql';
-import userEvent from '@testing-library/user-event';
 import { MockLink } from '@apollo/client/testing';
 
 const defaultCalendars = [

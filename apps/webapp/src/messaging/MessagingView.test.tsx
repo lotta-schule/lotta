@@ -6,10 +6,8 @@ import {
   SomeUser,
   SomeUserin,
 } from 'test/fixtures';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { MessagingView } from './MessagingView';
-
-import userEvent from '@testing-library/user-event';
 
 import styles from './ConversationPreview.module.scss';
 

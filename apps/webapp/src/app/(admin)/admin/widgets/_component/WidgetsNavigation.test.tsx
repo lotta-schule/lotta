@@ -5,10 +5,9 @@ import {
   VPLehrerWidget,
   VPSchuelerWidget,
 } from 'test/fixtures';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { WidgetsNavigation } from './WidgetsNavigation';
 import { MockRouter } from 'test/mocks';
-import userEvent from '@testing-library/user-event';
 
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 

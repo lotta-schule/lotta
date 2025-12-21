@@ -1,21 +1,21 @@
 import * as React from 'react';
-import { render, waitFor } from '../test-utils';
+import { render, userEvent, waitFor } from '../test-utils';
 import { Deletable } from './Deletable';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/general/util/Deletable', () => {
   it('should show a Delete button when onDelete is given', async () => {
-    const fireEvent = userEvent.setup();
+    const user = userEvent.setup();
     const onDelete = vi.fn();
     const screen = render(
       <Deletable onDelete={onDelete}>
-        <img width={300} height={300} alt={''} />
+        <img width={300} height={300} alt={''} role="img" />
       </Deletable>
     );
+    await user.hover(screen.getByRole('img'));
     await waitFor(() => {
-      expect(screen.getByRole('button')).toBeInTheDocument();
+      expect(screen.getByRole('button')).toBeVisible();
     });
-    await fireEvent.click(screen.getByRole('button'));
+    await user.click(screen.getByRole('button'));
     expect(onDelete).toHaveBeenCalled();
   });
 

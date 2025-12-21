@@ -1,9 +1,8 @@
 import React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { fireEvent, render, waitFor } from 'test/util';
+import { fireEvent, render, waitFor, userEvent } from 'test/util';
 import { GET_CALENDARS, UPDATE_CALENDAR_EVENT } from '../_graphql';
 import { EditEventDialog } from './EditEventDialog';
-import userEvent from '@testing-library/user-event';
 import { createCalendarFixture, createEventFixture } from 'test/fixtures';
 import { ResultOf, VariablesOf } from 'api/graphql';
 

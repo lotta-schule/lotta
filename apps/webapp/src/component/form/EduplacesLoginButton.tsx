@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 import styles from './EduplacesLoginButton.module.scss';
 import clsx from 'clsx';
+import { redirectTo } from 'util/browserLocation';
 
 export const EduplacesLoginButton = React.memo(
   ({ className, ...props }: Omit<ButtonProps, 'onClick' | 'icon'>) => {
@@ -39,7 +40,7 @@ export const EduplacesLoginButton = React.memo(
     }, [socketUrl]);
 
     const onClick = React.useCallback(() => {
-      window.location.href = loginUrl;
+      redirectTo(loginUrl);
     }, [loginUrl]);
 
     return (

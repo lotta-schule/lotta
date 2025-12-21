@@ -41,6 +41,7 @@ import clsx from 'clsx';
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 
 import styles from './UserNavigation.module.scss';
+import { redirectTo } from 'util/browserLocation';
 
 export const UserNavigation = React.memo(() => {
   const currentUser = useCurrentUser();
@@ -87,7 +88,7 @@ export const UserNavigation = React.memo(() => {
           router.push('/unpublished');
           return;
         case 'logout':
-          window.location.href = '/auth/logout';
+          redirectTo('/auth/logout');
           return;
       }
     },

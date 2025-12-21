@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor, within } from 'test/util';
+import { render, waitFor, within, userEvent } from 'test/util';
 import { MockLink } from '@apollo/client/testing';
 import {
   ComputerExperten,
@@ -9,7 +9,6 @@ import {
   tenant,
 } from 'test/fixtures';
 import { FileUsageModal } from './FileUsageModal';
-import userEvent from '@testing-library/user-event';
 
 import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
 

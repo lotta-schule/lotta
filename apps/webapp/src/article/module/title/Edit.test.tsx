@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, userEvent, waitFor } from 'test/util';
 import { Klausurenplan } from 'test/fixtures';
 import { Edit } from './Edit';
-import userEvent from '@testing-library/user-event';
 
 const titleContentModule = Klausurenplan.contentModules[0];
 

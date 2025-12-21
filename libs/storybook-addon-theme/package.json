@@ -41,19 +41,35 @@
     ]
   },
   "devDependencies": {
-    "@storybook/blocks": "^8.6.14",
-    "@storybook/components": "^8.6.14",
-    "@storybook/core-events": "^8.6.14",
-    "@storybook/manager-api": "^8.6.14",
-    "@storybook/preview-api": "^8.6.14",
-    "@storybook/theming": "^8.6.14",
-    "@storybook/types": "^8.6.14",
     "@testing-library/jest-dom": "^6.9.1",
+    "@types/node": "^25.0.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "tsup": "^8.5.1"
   },
   "peerDependencies": {
-    "storybook": "^8.6.3"
+    "storybook": "^10.1.10"
+  },
+  "dependencies": {
+    "@storybook/addon-docs": "^10.1.10"
+  },
+  "lint-staged": {
+    "$schema": "https://json.schemastore.org/lint-staged",
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.{graphql,gql}": [
+      "prettier --write"
+    ],
+    "*.{html,xml}": [
+      "prettier --write"
+    ]
   }
 }

@@ -62,8 +62,6 @@ export const MetricsChart = React.memo(
       [metric, metrics, t]
     );
 
-    console.log(series);
-
     return (
       <Box className={styles.root}>
         <div className={styles.chartWrapper} data-testid="ChartWrapper">

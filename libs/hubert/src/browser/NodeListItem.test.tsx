@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { userEvent } from 'test-utils';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
@@ -8,7 +9,6 @@ import {
   waitForPosition,
 } from '../test-utils';
 import { NodeListItem, NodeListItemProps } from './NodeListItem';
-import userEvent from '@testing-library/user-event';
 import { page } from '@vitest/browser/context';
 import { BrowserPath } from './BrowserStateContext';
 
@@ -93,7 +93,6 @@ describe('Browser/NodeListItem', () => {
       });
 
       it('should not call onClick handler when disabled', async () => {
-        const user = userEvent.setup();
         const onClick = vi.fn();
 
         const screen = render(
@@ -108,7 +107,7 @@ describe('Browser/NodeListItem', () => {
           'aria-disabled',
           'true'
         );
-        await user.click(screen.getByRole('option'));
+        screen.getByRole('option').click();
 
         expect(onClick).not.toHaveBeenCalled();
       });
@@ -210,9 +209,8 @@ describe('Browser/NodeListItem', () => {
 
       await waitForPosition();
 
-      await user.pointer({
-        keys: '[MouseRight>]',
-        target: screen.getByRole('option'),
+      await user.click(screen.getByRole('option'), {
+        button: 'right',
       });
 
       await waitFor(() => {
@@ -244,9 +242,9 @@ describe('Browser/NodeListItem', () => {
         <WrappedNodeListItem node={filePath.at(-1)!} isDisabled />
       );
 
-      await user.pointer({
-        keys: '[MouseRight>]',
-        target: screen.getByRole('option'),
+      await user.click(screen.getByRole('option'), {
+        button: 'right',
+        force: true,
       });
 
       expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
@@ -258,9 +256,9 @@ describe('Browser/NodeListItem', () => {
         <WrappedNodeListItem node={filePath.at(-1)!} isEditingDisabled />
       );
 
-      await user.pointer({
-        keys: '[MouseRight>]',
-        target: screen.getByRole('option'),
+      await user.click(screen.getByRole('option'), {
+        button: 'right',
+        force: true,
       });
 
       expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
@@ -272,9 +270,8 @@ describe('Browser/NodeListItem', () => {
         <WrappedNodeListItem mode="select" node={filePath.at(-1)!} />
       );
 
-      await user.pointer({
-        keys: '[MouseRight>]',
-        target: screen.getByRole('option'),
+      await user.click(screen.getByRole('option'), {
+        button: 'right',
       });
 
       expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
@@ -286,9 +283,8 @@ describe('Browser/NodeListItem', () => {
         <WrappedNodeListItem mode="select-multiple" node={filePath.at(-1)!} />
       );
 
-      await user.pointer({
-        keys: '[MouseRight>]',
-        target: screen.getByRole('option'),
+      await user.click(screen.getByRole('option'), {
+        button: 'right',
       });
 
       expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();

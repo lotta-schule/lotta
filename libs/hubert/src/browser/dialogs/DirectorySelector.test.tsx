@@ -1,8 +1,7 @@
 import { render, waitFor } from '@testing-library/react';
 import { DirectorySelector } from './DirectorySelector'; // Adjust the import path as necessary
 import { BrowserNode, BrowserPath } from 'browser/BrowserStateContext';
-import { fixtures } from 'test-utils';
-import userEvent from '@testing-library/user-event';
+import { fixtures, userEvent } from 'test-utils';
 
 const getNodesForParent = vi.fn(
   async (parent: BrowserNode<'directory'> | null) => {
@@ -112,7 +111,6 @@ describe('DirectorySelector Component', () => {
   });
 
   it('calls onChange with the parent path when the back item is clicked', async () => {
-    const user = userEvent.setup();
     const childNode = fixtures.getNode('13');
     const childNodePath = fixtures.getPathForNode(childNode);
     const onChange = vi.fn();
@@ -124,7 +122,7 @@ describe('DirectorySelector Component', () => {
       />
     );
 
-    await user.click(await screen.findByText('../folder 8'));
+    (await screen.findByText('../folder 8')).click();
     await waitFor(() => expect(onChange).toHaveBeenCalledWith(parentNodePath));
   });
 });

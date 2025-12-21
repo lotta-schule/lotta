@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render, waitFor, within } from 'test/util';
+import { render, waitFor, within, userEvent } from 'test/util';
 import { SelectFileOverlay } from './SelectFileOverlay';
 import { MockLink } from '@apollo/client/testing';
 import { imageFile, logosDirectory } from 'test/fixtures';
-import userEvent from '@testing-library/user-event';
 
 import GetDirectoriesAndFiles from 'api/query/GetDirectoriesAndFiles.graphql';
 import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
@@ -78,8 +77,9 @@ describe('SelectFileOverlay Component', () => {
       { additionalMocks }
     );
 
-    const selectButton = screen.getByText('Select File');
-    await user.click(selectButton);
+    await user.hover(screen.getByText('Child Component'), { force: true });
+    await waitFor(() => expect(screen.getByText('Select File')).toBeVisible());
+    await user.click(screen.getByText('Select File'));
 
     const dialog = await screen.findByRole('dialog');
 

@@ -1,4 +1,4 @@
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { GeneralSettings } from './GeneralSettings';
 import { useRouter } from 'next/navigation';
 import { Mock, vi } from 'vitest';
@@ -6,7 +6,6 @@ import { SelectFileOverlayProps } from 'shared/edit/SelectFileOverlay';
 import { imageFile, tenant } from 'test/fixtures';
 import { ResponsiveImageProps } from 'util/image/ResponsiveImage';
 import { MockLink } from '@apollo/client/testing';
-import userEvent from '@testing-library/user-event';
 
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 

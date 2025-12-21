@@ -4,8 +4,8 @@ import {
   render,
   TestBrowserWrapper,
   TestBrowserWrapperProps,
+  userEvent,
 } from '../test-utils';
-import userEvent from '@testing-library/user-event';
 import {
   SearchResultNodeList,
   SearchResultNodeListProps,

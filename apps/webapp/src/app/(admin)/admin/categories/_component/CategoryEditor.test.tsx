@@ -6,9 +6,8 @@ import {
   KunstCategory,
   ComputerExperten,
 } from 'test/fixtures';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { CategoryEditor } from './CategoryEditor';
-import userEvent from '@testing-library/user-event';
 
 import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
@@ -468,10 +467,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       const categoryTitleInput = screen.getByRole('textbox', {
         name: /name der kategorie/i,
       }) as HTMLInputElement;
-      await user.type(categoryTitleInput, 'Neue Fächer', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: categoryTitleInput.value.length,
-      });
+      await user.fill(categoryTitleInput, 'Neue Fächer');
       await user.click(
         screen.getByRole('checkbox', {
           name: /auf der startseite verstecken/i,

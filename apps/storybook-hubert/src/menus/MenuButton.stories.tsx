@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react-vite';
 import { Close, ChevronRight, MenuButton, Item } from '@lotta-schule/hubert';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
 
 export default {
   title: 'menus/MenuButton',

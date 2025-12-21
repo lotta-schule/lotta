@@ -20,7 +20,9 @@ export const ArticlePage = React.memo(
         <ArticleHead article={article} />
         {title && <h3 className={styles.title}>{title}</h3>}
         <Article article={article} />
-        {article.tags?.map((tag) => <ArticlesByTag key={tag} tag={tag} />)}
+        {article.tags?.map((tag) => (
+          <ArticlesByTag key={tag} tag={tag} />
+        ))}
       </div>
     );
   }

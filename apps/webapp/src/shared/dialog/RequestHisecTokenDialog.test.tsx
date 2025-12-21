@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
-import userEvent from '@testing-library/user-event';
 
 import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
 

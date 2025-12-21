@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { ContentModuleModel, ContentModuleType } from 'model';
 import {
   Klausurenplan,
@@ -8,7 +8,6 @@ import {
   SomeUserin,
 } from 'test/fixtures';
 import { ContentModule } from './ContentModule';
-import userEvent from '@testing-library/user-event';
 
 import GetContentModuleResults from '../../api/query/GetContentModuleResults.graphql';
 

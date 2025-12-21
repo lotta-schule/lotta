@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { commands } from '@vitest/browser/context';
+import { render, waitFor, userEvent } from 'test/util';
 import { FormElement } from './FormElement';
 import { imageFile, logosDirectory, SomeUser } from 'test/fixtures';
-import userEvent from '@testing-library/user-event';
 
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
@@ -246,7 +246,6 @@ describe('shared/article/module/form/FormElement', () => {
         'http://localhost/0'
       );
 
-      const fireEvent = userEvent.setup();
       const setValueFn = vi.fn();
       const screen = render(
         <FormElement
@@ -260,10 +259,13 @@ describe('shared/article/module/form/FormElement', () => {
       );
       expect(screen.getAllByRole('button')).toHaveLength(1);
       expect(screen.getByRole('button')).toHaveTextContent(/datei hochladen/i);
-      await fireEvent.upload(
-        document.querySelector('input[type=file]')!,
-        new File(['hello world'], 'hello.txt', { type: 'text/plain' })
-      );
+      const uploadButton = document.querySelector('input[type=file]')!;
+      expect(uploadButton).toBeInTheDocument();
+      await commands.setFile('input[type=file]', {
+        name: 'hello.txt',
+        type: 'text/plain',
+        content: 'Hello World',
+      });
       await waitFor(() => {
         expect(setValueFn).toHaveBeenCalledWith(
           'file-upload://{"filesize":11,"filename":"hello.txt","filetype":"text/plain","blob":"http://localhost/0"}'

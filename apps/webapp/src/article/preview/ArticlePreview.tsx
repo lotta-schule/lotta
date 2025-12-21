@@ -83,9 +83,7 @@ export const ArticlePreview = React.memo(
     const [toggleArticlePin] = useMutation<
       { article: ArticleModel },
       { id: ID }
-    >(ToggleArticlePinMutation, {
-      variables: { id: article.id },
-    });
+    >(ToggleArticlePinMutation);
 
     const maybeLinked = (content: any) =>
       disableLink ? (
@@ -339,7 +337,9 @@ export const ArticlePreview = React.memo(
                       className={clsx(styles.pinButton, {
                         [styles.active]: article.isPinnedToTop,
                       })}
-                      onClick={() => toggleArticlePin()}
+                      onClick={() =>
+                        toggleArticlePin({ variables: { id: article.id } })
+                      }
                       icon={<Icon icon={faLocationDot} size={'lg'} />}
                     />
                   )}

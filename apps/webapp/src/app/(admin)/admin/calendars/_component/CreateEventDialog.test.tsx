@@ -1,10 +1,9 @@
 import React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { render, fireEvent, waitFor } from 'test/util';
+import { render, fireEvent, waitFor, userEvent } from 'test/util';
 import { CreateEventDialog } from './CreateEventDialog';
 import { GET_CALENDARS } from '../_graphql';
 import { createCalendarFixture } from 'test/fixtures';
-import userEvent from '@testing-library/user-event';
 
 const additionalMocks = [
   {
@@ -268,10 +267,7 @@ describe('CreateEventDialog', () => {
 
       const timeInput = await screen.findByLabelText('Startzeit');
       expect(timeInput).toHaveValue('12:00');
-      await user.type(timeInput, '18:30', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: 5,
-      });
+      await user.type(timeInput, '18:30');
 
       await waitFor(() => {
         expect(timeInput).toHaveValue('18:30');
@@ -292,10 +288,7 @@ describe('CreateEventDialog', () => {
 
       const endTimeInput = await screen.findByLabelText('Endzeit');
       expect(endTimeInput).toHaveValue('13:00');
-      await user.type(endTimeInput, '20:00', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: 5,
-      });
+      await user.type(endTimeInput, '20:00');
 
       await waitFor(() => {
         expect(endTimeInput).toHaveValue('20:00');
@@ -318,14 +311,12 @@ describe('CreateEventDialog', () => {
       const endTimeInput = await screen.findByLabelText('Endzeit');
       expect(startTimeInput).toHaveValue('12:00');
       expect(endTimeInput).toHaveValue('13:00');
-      await user.type(endTimeInput, '10:00', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: 5,
-      });
-      await user.tab();
+      await user.type(endTimeInput, '10:00{Escape}');
       expect(endTimeInput).toHaveValue('10:00');
 
-      expect(startTimeInput).toHaveValue('09:00');
+      await waitFor(() => {
+        expect(startTimeInput).toHaveValue('09:00');
+      });
     });
 
     it('changes end time to one hour after start time when start time is changed to AFTER end time', async () => {
@@ -344,11 +335,7 @@ describe('CreateEventDialog', () => {
       const endTimeInput = await screen.findByLabelText('Endzeit');
       expect(startTimeInput).toHaveValue('12:00');
       expect(endTimeInput).toHaveValue('13:00');
-      await user.type(startTimeInput, '15:00', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: 5,
-      });
-      await user.tab();
+      await user.type(startTimeInput, '15:00{Escape}');
       expect(startTimeInput).toHaveValue('15:00');
 
       expect(endTimeInput).toHaveValue('16:00');

@@ -45,6 +45,11 @@ export const DraggableListItem = ({
         transition,
       }}
       aria-current={selected ? 'page' : undefined}
+      aria-disabled={
+        props['aria-disabled'] || onClick
+          ? undefined
+          : attributes['aria-disabled']
+      }
       className={clsx(className, styles.root, {
         [styles.selected]: selected,
         [styles.isClickable]: onClick,

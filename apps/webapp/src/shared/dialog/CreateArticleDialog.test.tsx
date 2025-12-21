@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render, screen, waitFor } from 'test/util';
+import { render, screen, waitFor, userEvent } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { CreateArticleDialog } from './CreateArticleDialog';
 import CreateArticleMutation from 'api/mutation/CreateArticleMutation.graphql';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {
   it('should show the dialog if isOpen is true', async () => {

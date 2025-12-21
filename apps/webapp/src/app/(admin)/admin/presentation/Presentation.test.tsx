@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { MockLink } from '@apollo/client/testing';
 import { imageFile, tenant } from 'test/fixtures';
-import { render, fireEvent, waitFor } from 'test/util';
+import { render, fireEvent, waitFor, userEvent } from 'test/util';
 import { TenantModel } from 'model';
 import { Presentation } from './Presentation';
-import userEvent from '@testing-library/user-event';
 
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 
@@ -69,16 +68,10 @@ describe('Presentation', () => {
     );
 
     const spacingInput = screen.getByLabelText('Abstand');
-    await user.type(spacingInput, '{backspace}20px', {
-      initialSelectionStart: 0,
-      initialSelectionEnd: 4,
-    });
+    await user.fill(spacingInput, '20px');
 
     const borderRadiusInput = screen.getByLabelText('Rundungen');
-    await user.type(borderRadiusInput, '{backspace}10px', {
-      initialSelectionStart: 0,
-      initialSelectionEnd: 4,
-    });
+    await user.fill(borderRadiusInput, '10px');
 
     expect(spacingInput).toHaveValue('20px');
     expect(borderRadiusInput).toHaveValue('10px');
