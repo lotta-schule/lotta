@@ -80,12 +80,9 @@
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:"
   },
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@10.26.1",
   "pnpm": {
     "overrides": {
-      "eslint": "catalog:",
-      "react": "catalog:",
-      "react-dom": "catalog:",
       "react-is": "catalog:"
     },
     "onlyBuiltDependencies": [

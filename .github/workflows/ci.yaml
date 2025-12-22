@@ -26,9 +26,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -57,9 +55,7 @@ jobs:
         uses: nrwl/nx-set-shas@v3
 
       - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -126,9 +122,7 @@ jobs:
         uses: nrwl/nx-set-shas@v3
 
       - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
