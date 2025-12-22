@@ -85,6 +85,7 @@ jobs:
     env:
       TZ: Europe/Berlin
       LOCALE: de_DE.UTF-8
+      LANGUAGE: de_DE
     services:
       postgres:
         image: postgres:latest
@@ -178,10 +179,10 @@ jobs:
 
       - name: Upload Test Screenshots for the webapp
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && hashFiles('apps/webapp/.test-reports/screenshots/**') != '' }}
         with:
           name: web-vitest-screenshots
-          path: apps/webapp/.test-reports/screenshots
+          path: apps/webapp/.test-reports/screenshots/
           retention-days: 7
 
       - name: Upload Test Traces for the hubert
@@ -194,10 +195,10 @@ jobs:
 
       - name: Upload Test Screenshots for the hubert
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && hashFiles('libs/hubert/.test-reports/screenshots/**') != '' }}
         with:
           name: hubert-vitest-screenshots
-          path: libs/hubert/.test-reports/screenshots
+          path: libs/hubert/.test-reports/screenshots/
           retention-days: 7
 
       - name: Upload Tests for storybook-addon-theme
@@ -270,35 +271,36 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.project.traces-artifact }}
-          path: /tmp/${{matrix.project.traces-artifact}}/traces
+          path: /tmp/${{matrix.project.traces-artifact}}
 
       - name: Upload HTML report to S3
         id: upload-traces
         run: |
-          export REPORT_PATH="/test/${{ github.base_ref || github.ref_name }}/${{ matrix.project.traces-artifact }}"
+          export REPORT_PATH="/test/${{ github.base_ref || github.ref_name }}/${{ matrix.project.traces-artifact }}.zip"
+          zip -r /tmp/${{matrix.project.traces-artifact}} /tmp/${{matrix.project.traces-artifact}}.zip
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
-            /tmp/${{matrix.project.traces-artifact}}/ \
+            /tmp/${{matrix.project.traces-artifact}}.zip \
             s3://public-lotta-assets$REPORT_PATH/
 
-          echo "report_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud$REPORT_PATH/index.html" >> $GITHUB_OUTPUT
+          echo "url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud$REPORT_PATH" >> $GITHUB_OUTPUT
 
       - name: Download screenshot reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: /tmp/${{matrix.project.traces-artifact}}/screenshots
+          path: /tmp/${{matrix.project.traces-artifact}}
           pattern: ${{ matrix.project.screenshot-artifact }}
           merge-multiple: true
 
       - name: Upload Screenshots to S3
         id: upload-screenshots
-        if: ${{ hashFiles('/tmp/' + matrix.project.traces-artifact + '/screenshots/**') != '' }}
+        if: hashFiles(format('/tmp/{0}/screenshots/**', matrix.project.traces-artifact)) != ''
         run: |
           export REPORT_PATH="/test/${{ github.base_ref || github.ref_name }}/${{ matrix.project.screenshot-artifact }}"
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/${{matrix.project.screenshot-artifact}}/ \
             s3://public-lotta-assets$REPORT_PATH/
 
-          echo "report_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud$REPORT_PATH/index.html" >> $GITHUB_OUTPUT
+          echo "url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud$REPORT_PATH" >> $GITHUB_OUTPUT
 
       - name: Comment PR with execution number
         uses: thollander/actions-comment-pull-request@v3
@@ -308,10 +310,10 @@ jobs:
             ## Component Test Report ${{ matrix.project.app }}
 
             ### Traces
-            See [Playwright traces](${{ steps.upload-traces.outputs.report_url }})
+            See [Playwright traces](https://trace.playwright.dev/?trace=${{ steps.upload-traces.outputs.url }})
 
             ### Screenshots
-            See [Screenshots](${{ steps.upload-screenshots.outputs.report_url }})
+            See [Screenshots](${{ steps.upload-screenshots.outputs.url }})
           comment-tag: playwright-report
 
       - name: Create commit comment
@@ -322,10 +324,10 @@ jobs:
             ## Component Test Report ${{ matrix.project.app }}
 
             ### Traces
-            See [Playwright traces](${{ steps.upload-traces.outputs.report_url }})
+            See [Playwright traces](https://trace.playwright.dev/?trace=${{ steps.upload-traces.outputs.url }})
 
             ### Screenshots
-            See [Screenshots](${{ steps.upload-screenshots.outputs.report_url }})
+            See [Screenshots](${{ steps.upload-screenshots.outputs.url }})
 
   check-build:
     # We do not need to check the build for environments that are

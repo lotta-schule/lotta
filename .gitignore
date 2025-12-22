@@ -8,6 +8,7 @@ npm-debug.log*
 coverage/
 .auth/
 __screenshots__/
+.test-reports
 
 # caches
 .eslintcache
