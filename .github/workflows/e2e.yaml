@@ -151,13 +151,8 @@ jobs:
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/playwright-report/ \
-            s3://public-lotta-assets/playwright-reports/${{ github.run_number }}/
-
-          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
-            /tmp/playwright-report/ \
             s3://public-lotta-assets/playwright-reports/${{ github.base_ref || github.ref_name }}/
 
-          echo 'run_report_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/playwright-reports/${{ github.run_number }}/index.html' >> $GITHUB_OUTPUT
           echo 'ref_report_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/playwright-reports/${{ github.base_ref || github.ref_name }}/index.html' >> $GITHUB_OUTPUT
 
       - name: Download blob reports from GitHub Actions Artifacts
@@ -172,13 +167,8 @@ jobs:
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/screenshot/ \
-            s3://public-lotta-assets/screenshots/${{ github.run_number }}/
-
-          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
-            /tmp/screenshot/ \
             s3://public-lotta-assets/screenshots/${{ github.base_ref || github.ref_name }}/
 
-          echo 'run_screenshots_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/screenshots/${{ github.run_number }}/index.html' >> $GITHUB_OUTPUT
           echo 'ref_screenshots_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/screenshots/${{ github.base_ref || github.ref_name }}/index.html' >> $GITHUB_OUTPUT
 
       - name: Comment PR with execution number
@@ -186,6 +176,8 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         with:
           message: |
+            ## End-to-End Test Report
+
             ### Test summary
             See [Playwright Report](${{ steps.upload-report.outputs.run_report_url }})
 
@@ -198,8 +190,10 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         with:
           body: |
+            ## End-to-End Test Report
+
             ### Test summary
-            See [Playwright Report](${{ steps.upload-report.outputs.run_report_url }})
+            See [Playwright Report](${{ steps.upload-report.outputs.ref_report_url }})
 
             ### Screenshots
-            See [Screenshots](${{ steps.upload-screenshots.outputs.run_screenshots_url }})
+            See [Screenshots](${{ steps.upload-screenshots.outputs.ref_screenshots_url }})

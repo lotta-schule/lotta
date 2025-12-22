@@ -34,9 +34,13 @@ export default defineConfig({
             provider: playwright(),
             enabled: true,
             instances: [{ browser: 'chromium', headless: !!process.env.CI }],
-            viewport: { width: 1280, height: 720 },
-            screenshotDirectory: '.screenshots',
             testerHtmlPath: 'src/test/browser-tester.html',
+            viewport: { width: 1280, height: 720 },
+            screenshotDirectory: '.test-reports/screenshots',
+            trace: {
+              mode: 'on-first-retry',
+              tracesDir: '.test-reports/traces',
+            },
           },
 
           setupFiles: ['./src/test/component.setup.ts'],
@@ -87,6 +91,8 @@ export default defineConfig({
 
     env: {
       TZ: 'Europe/Berlin',
+      LOCALE: 'de_DE.UTF-8',
+      LANGUAGE: 'de_DE:de',
     },
   },
 

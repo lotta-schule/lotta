@@ -66,6 +66,11 @@ export default defineConfig({
       enabled: true,
       instances: [{ browser: 'chromium', headless: !!process.env.CI }],
       viewport: { width: 1280, height: 720 },
+      screenshotDirectory: '.test-reports/screenshots',
+      trace: {
+        mode: 'on-first-retry',
+        tracesDir: '.test-reports/traces',
+      },
     },
 
     setupFiles: ['./test.setup.ts'],
@@ -83,6 +88,12 @@ export default defineConfig({
       provider: 'istanbul',
       reporter: ['json'],
       exclude: ['test-utils.tsx', 'test.setup.ts', 'test-fixtures.ts'],
+    },
+
+    env: {
+      TZ: 'Europe/Berlin',
+      LOCALE: 'de_DE.UTF-8',
+      LANGUAGE: 'de_DE:de',
     },
   },
 });
