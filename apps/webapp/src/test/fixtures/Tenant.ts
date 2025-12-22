@@ -47,6 +47,7 @@ export const StartseiteCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const FaecherCategory = {
@@ -62,6 +63,7 @@ export const FaecherCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const MaterialCategory = {
@@ -77,6 +79,7 @@ export const MaterialCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const ImpressumCategory = {
@@ -92,6 +95,7 @@ export const ImpressumCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const DatenschutzCategory = {
@@ -107,6 +111,7 @@ export const DatenschutzCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const MatheCategory = {
@@ -122,6 +127,7 @@ export const MatheCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const SportCategory = {
@@ -137,6 +143,7 @@ export const SportCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const KunstCategory = {
@@ -152,6 +159,7 @@ export const KunstCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const MusikCategory = {
@@ -167,6 +175,7 @@ export const MusikCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const DeutschCategory = {
@@ -182,6 +191,7 @@ export const DeutschCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const FrancaisCategory = {
@@ -197,6 +207,7 @@ export const FrancaisCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const KlassenarbeitenUCategory = {
@@ -212,6 +223,7 @@ export const KlassenarbeitenUCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const KlassenarbeitenOCategory = {
@@ -227,6 +239,7 @@ export const KlassenarbeitenOCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const HausaufgabenCategory = {
@@ -242,6 +255,7 @@ export const HausaufgabenCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const ArbeitsblätterCategory = {
@@ -257,6 +271,7 @@ export const ArbeitsblätterCategory = {
   layoutName: null,
   redirect: null,
   groups: [],
+  widgets: [],
 };
 
 export const allCategories = [

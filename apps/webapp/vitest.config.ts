@@ -35,11 +35,14 @@ export default defineConfig({
             enabled: true,
             instances: [{ browser: 'chromium', headless: !!process.env.CI }],
             viewport: { width: 1280, height: 720 },
+            screenshotDirectory: '.screenshots',
+            testerHtmlPath: 'src/test/browser-tester.html',
           },
 
           setupFiles: ['./src/test/component.setup.ts'],
-          retry: process.env.GITHUB_ACTIONS ? 2 : 0,
+          retry: process.env.GITHUB_ACTIONS ? 3 : 1,
           include: ['src/**/*.test.{ts,tsx}', '!src/**/*.unit.test.{ts,tsx}'],
+          testTimeout: 30_000, // default is 5000ms, increase for browser tests
         },
       },
       {

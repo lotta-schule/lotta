@@ -88,7 +88,6 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
         }
 
         onSelect?.([nextNodePath]);
-        console.log('nextNode', nextNode);
         if (isDirectoryNode(nextNode)) {
           onNavigate?.([...path, nextNode]);
         }

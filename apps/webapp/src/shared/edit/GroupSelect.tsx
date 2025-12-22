@@ -149,6 +149,15 @@ export const GroupSelect = React.memo(
       nonSelectionLabel,
     ]);
 
+    const items = React.useMemo(
+      () =>
+        groups.map((group) => ({
+          label: group.name,
+          key: group.id ?? 'no-group',
+        })),
+      [groups]
+    );
+
     return (
       <NoSsr>
         <div className={clsx(styles.root, className)} data-testid="GroupSelect">
@@ -156,10 +165,7 @@ export const GroupSelect = React.memo(
             fullWidth
             disabled={disabled || !groups.length}
             title={label}
-            items={groups.map((group) => ({
-              label: group.name,
-              key: group.id ?? 'no-group',
-            }))}
+            items={items}
             onSelect={(groupId) => {
               if (groupId === 'no-group' && allowNoneSelection === true) {
                 const noneSelectionAlreadySelected =

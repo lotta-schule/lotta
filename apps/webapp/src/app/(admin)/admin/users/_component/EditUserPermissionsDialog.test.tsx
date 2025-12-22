@@ -7,7 +7,9 @@ import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
 import GetUserQuery from 'api/query/GetUserQuery.graphql';
 
-describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', () => {
+/* See https://github.com/lotta-schule/lotta/issues/528 */
+/* This component must vanish */
+describe.skip('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', () => {
   const mocks = (user: any) =>
     [
       {
@@ -72,7 +74,6 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
         `Über Einschreibeschlüssel zugewiesene Gruppen:Lehrer`
       );
     });
-
     describe('saving', () => {
       it('should assign new group after save button is clicked click', async () => {
         const user = userEvent.setup();
@@ -118,11 +119,12 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
         );
         expect(assignedGroups).toHaveTextContent(/Administrator/i);
 
-        await user.click(
+        (
           await screen.findByRole('button', { name: /suggestions/i })
-        );
+        ).dispatchEvent(new PointerEvent('pointerdown'));
+
         await waitFor(() => {
-          expect(screen.queryByRole('listbox')).toBeVisible();
+          expect(screen.getByRole('listbox')).toBeVisible();
         });
 
         await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish

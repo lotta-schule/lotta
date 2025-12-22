@@ -1,5 +1,5 @@
-import { DeletePage } from 'profile/DeletePage';
+import { DeleteUserProfilePage } from 'profile/deleteUserProfilePage';
 
 export default function DeleteRoute() {
-  return <DeletePage />;
+  return <DeleteUserProfilePage />;
 }

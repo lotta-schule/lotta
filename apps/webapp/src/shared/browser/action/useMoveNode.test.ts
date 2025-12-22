@@ -7,7 +7,7 @@ import {
   profilDirectory,
 } from 'test/fixtures';
 import { DirectoryModel, FileModel } from 'model';
-import { BrowserNode } from '../../../../../../libs/hubert/src/browser';
+import { BrowserNode } from '@lotta-schule/hubert';
 import { useMoveNode } from './useMoveNode';
 
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';

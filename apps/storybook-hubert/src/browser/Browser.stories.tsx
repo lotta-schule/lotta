@@ -52,7 +52,7 @@ export default {
 
 export const Default: StoryObj<typeof Browser> = {
   play: async ({ canvasElement }) => {
-    const user = await userEvent.setup({ delay: 25 });
+    const user = userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
     user.click(await screen.findByRole('option', { name: 'folder 1' }));

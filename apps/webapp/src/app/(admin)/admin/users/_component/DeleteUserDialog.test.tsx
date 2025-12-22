@@ -2,9 +2,9 @@ import * as React from 'react';
 import { ComputerExperten, SomeUser } from 'test/fixtures';
 import { render, waitFor, userEvent } from 'test/util';
 import { DeleteUserDialog } from './DeleteUserDialog';
+import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries';
 
 import GetArticlesWithUserFiles from 'api/query/GetArticlesWithUserFiles.graphql';
-import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
 
 describe('administration/users/DeleteUserDialog', () => {
   it('should show a warning on the first page', async () => {
@@ -106,7 +106,7 @@ describe('administration/users/DeleteUserDialog', () => {
           },
           {
             request: {
-              query: DestroyAccountMutation,
+              query: PERMANENTLY_DELETE_USER_ACCOUNT,
               variables: {
                 userId: SomeUser.id,
                 transferFileIds: [],

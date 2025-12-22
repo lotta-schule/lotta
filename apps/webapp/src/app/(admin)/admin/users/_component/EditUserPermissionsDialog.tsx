@@ -106,6 +106,7 @@ export const EditUserPermissionsDialog = React.memo(
                 <section data-testid="GroupSelectSection">
                   <GroupSelect
                     row
+                    allowNoneSelection
                     hidePublicGroupSelection
                     disableAdminGroupsExclusivity
                     className={styles.groupSelect}

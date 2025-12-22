@@ -9,10 +9,10 @@ import {
 } from '@lotta-schule/hubert';
 import { useServerData } from 'shared/ServerDataContext';
 import { useTranslation } from 'react-i18next';
+import { redirectTo } from 'util/browserLocation';
 
 import styles from './EduplacesLoginButton.module.scss';
 import clsx from 'clsx';
-import { redirectTo } from 'util/browserLocation';
 
 export const EduplacesLoginButton = React.memo(
   ({ className, ...props }: Omit<ButtonProps, 'onClick' | 'icon'>) => {

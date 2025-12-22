@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { pick } from 'lodash';
-import { HubertProvider } from '@lotta-schule/hubert';
+import {
+  DefaultThemes,
+  GlobalStyles,
+  HubertProvider,
+} from '@lotta-schule/hubert';
 import { InMemoryCache } from '@apollo/client';
 import {
   render,
@@ -40,6 +44,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
 
     return (
       <TranslationsProvider>
+        <GlobalStyles theme={DefaultThemes.standard} />
         <ServerDataContextProvider
           tenant={options.tenant ?? tenant}
           socketUrl={'ws://localhost:4000'}

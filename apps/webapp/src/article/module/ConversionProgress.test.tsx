@@ -3,11 +3,7 @@ import {
   ConversionProgress,
   GET_FILE_FORMATS_QUERY,
 } from './ConversionProgress';
-import { DataProxy } from '@apollo/client/v4-migration';
-import { ResultOf, VariablesOf } from 'gql.tada';
-
-type TDATA = ResultOf<typeof GET_FILE_FORMATS_QUERY>;
-type TVARS = VariablesOf<typeof GET_FILE_FORMATS_QUERY>;
+import { ResultOf } from 'api/graphql';
 
 type NonNull<T> = Exclude<T, null | undefined>;
 
@@ -16,8 +12,8 @@ describe('ConversionProgress', () => {
   const category = 'videoplay';
 
   const createMock = (
-    formats: NonNull<TDATA['file']>['formats']
-  ): DataProxy.WriteQueryOptions<TDATA, TVARS> => ({
+    formats: NonNull<ResultOf<typeof GET_FILE_FORMATS_QUERY>['file']>['formats']
+  ) => ({
     query: GET_FILE_FORMATS_QUERY,
     variables: { id: fileId },
     data: {
@@ -32,7 +28,7 @@ describe('ConversionProgress', () => {
     const screen = render(
       <ConversionProgress fileId={undefined} category={category} />
     );
-    expect(screen.container.firstChild).toBeEmptyDOMElement();
+    expect(screen.queryByTestId('conversion-progress')).toBeNull();
   });
 
   it('renders null when no category formats are available', () => {
@@ -50,7 +46,7 @@ describe('ConversionProgress', () => {
         },
       }
     );
-    expect(screen.container.firstChild).toBeEmptyDOMElement();
+    expect(screen.queryByTestId('conversion-progress')).toBeNull();
   });
 
   it('renders null when all category formats are READY', async () => {
@@ -72,7 +68,7 @@ describe('ConversionProgress', () => {
         },
       }
     );
-    expect(screen.container.firstChild).toBeEmptyDOMElement();
+    expect(screen.queryByTestId('conversion-progress')).toBeNull();
   });
 
   it('renders the progress bar and text when processing formats exist', async () => {
@@ -164,6 +160,6 @@ describe('ConversionProgress', () => {
       <ConversionProgress fileId={undefined} category={category} />
     );
 
-    expect(screen.container.firstChild).toBeEmptyDOMElement();
+    expect(screen.queryByTestId('conversion-progress')).toBeNull();
   });
 });

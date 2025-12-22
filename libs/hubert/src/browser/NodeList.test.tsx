@@ -81,9 +81,7 @@ describe('NodeList component', () => {
 
       it('should select the next item if there is one', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn((selection) => {
-          console.log({ selectionIGot: selection });
-        });
+        const onSelect = vi.fn();
         const screen = render(
           <WrappedNodeList
             selected={[defaultNodesPaths.at(-2)!]}
@@ -95,12 +93,6 @@ describe('NodeList component', () => {
         expect(
           screen.getByRole('option', { selected: true })
         ).toHaveTextContent(defaultNodes.at(-2)!.name);
-
-        console.log({
-          defaultNodesMine: defaultNodes.at(-2),
-          newPathIWant: defaultNodesPaths.at(-1),
-          of: defaultNodes.map((n) => n.type.at(0) + '-' + n.name),
-        });
 
         await user.keyboard('{arrowdown}');
 

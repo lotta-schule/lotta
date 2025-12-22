@@ -18,7 +18,7 @@ describe('pages/search', () => {
     });
 
     it('should issue a search request after typing', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <SearchPage />,
         {},
@@ -37,7 +37,7 @@ describe('pages/search', () => {
           ],
         }
       );
-      await fireEvent.type(screen.getByLabelText('Suchbegriff'), 'Test');
+      await user.type(screen.getByLabelText('Suchbegriff'), 'Test');
       await waitFor(() => {
         const articlePreviews = screen.getAllByTestId('ArticlePreview');
         expect(articlePreviews).toHaveLength(1);
@@ -47,25 +47,21 @@ describe('pages/search', () => {
 
     describe('filtering', () => {
       it('should open and close search filter', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(<SearchPage />, {}, {});
         await waitFor(() => {
           expect(
             screen.getByTestId('advanced-search').getAttribute('aria-expanded')
           ).toEqual('false');
         });
-        await fireEvent.click(
-          screen.getByRole('button', { name: /erweitert/i })
-        );
+        await user.click(screen.getByRole('button', { name: /erweitert/i }));
         await waitFor(() => {
           expect(
             screen.getByTestId('advanced-search').getAttribute('aria-expanded')
           ).toEqual('true');
         });
         await new Promise((resolve) => setTimeout(resolve, 500));
-        await fireEvent.click(
-          screen.getByRole('button', { name: /erweitert/i })
-        );
+        await user.click(screen.getByRole('button', { name: /erweitert/i }));
         await waitFor(() => {
           expect(
             screen.getByTestId('advanced-search').getAttribute('aria-expanded')
@@ -74,7 +70,7 @@ describe('pages/search', () => {
       });
 
       it('should add category to filteroptions', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const resultFn = vi.fn(() => ({
           data: { results: [ComputerExperten] },
         }));
@@ -98,18 +94,16 @@ describe('pages/search', () => {
             ],
           }
         );
-        await fireEvent.click(
-          screen.getByRole('button', { name: /erweitert/i })
-        );
+        await user.click(screen.getByRole('button', { name: /erweitert/i }));
         const categorySelect = await screen.findByRole('button', {
           name: /kategorie/i,
         });
-        await fireEvent.click(categorySelect);
+        await user.click(categorySelect);
         const faecherOption = await screen.findByRole('option', {
           name: /fächer/i,
         });
-        await fireEvent.click(faecherOption);
-        await fireEvent.type(screen.getByLabelText('Suchbegriff'), 'Test');
+        await user.click(faecherOption);
+        await user.type(screen.getByLabelText('Suchbegriff'), 'Test');
         await waitFor(() => {
           expect(resultFn).toHaveBeenCalled();
         });

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import '@testing-library/jest-dom/vitest';
+import { configure } from '@testing-library/react';
 import * as React from 'react';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
-import { afterEach, beforeAll, vi } from 'vitest';
 
 declare module 'vitest' {
   interface Assertion<T = any> extends TestingLibraryMatchers<
@@ -45,6 +45,9 @@ declare namespace globalThis {
 }
 
 self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ };
+configure({
+  asyncUtilTimeout: 2500, // default is 1000ms, increase for browser tests
+});
 
 globalThis.mockRouter = new MockRouter();
 
@@ -60,6 +63,7 @@ beforeAll(() => {
   vi.mock('util/browserLocation', async () => {
     return {
       redirectTo: vi.fn(),
+      reload: vi.fn(),
     };
   });
 

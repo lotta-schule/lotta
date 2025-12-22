@@ -48,7 +48,6 @@ export const NodeRenameInput = React.memo(
         <form
           className={styles.root}
           onSubmit={async (e) => {
-            console.log('submit');
             e.preventDefault();
             if (newNodeName.length > 0) {
               setIsLoading(true);

@@ -16,22 +16,33 @@ describe('shared/article/module/table/Edit', () => {
   });
 
   it('should correctly call the onUpateModule prop', async () => {
-    const fireEvent = userEvent.setup();
-    const callback = vi.fn((cm) => {
-      expect(cm.content.title).toEqual('Eine neue Überschrift');
-    });
+    const user = userEvent.setup();
+    const callback = vi.fn();
     const screen = render(
-      <Edit contentModule={titleContentModule} onUpdateModule={callback} />
+      <>
+        <Edit contentModule={titleContentModule} onUpdateModule={callback} />
+        <button type="button" onClick={() => {}}>
+          Dummy just to be able to blur
+        </button>
+      </>
     );
     const input = screen.getByRole('textbox');
-    await fireEvent.click(input);
-    await fireEvent.clear(input);
-    await fireEvent.type(input, 'Eine neue Überschrift');
-    await fireEvent.click(document.body);
+    await user.click(input);
+    await user.clear(input);
+    await user.type(input, 'Eine neue Überschrift');
+    await user.click(
+      screen.getByRole('button', { name: 'Dummy just to be able to blur' })
+    );
     await waitFor(() => {
       expect(callback).toHaveBeenCalled();
     });
-    expect(input).toHaveValue('Eine neue Überschrift');
+    expect(callback).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          title: 'Eine neue Überschrift',
+        }),
+      })
+    );
   });
 
   it('should reset title when clicking ESC', async () => {

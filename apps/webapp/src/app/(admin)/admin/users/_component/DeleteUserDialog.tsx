@@ -11,9 +11,9 @@ import {
 import { useMutation, useQuery } from '@apollo/client/react';
 import { Article } from 'util/model';
 import Link from 'next/link';
+import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries';
 
 import GetArticlesWithUserFiles from 'api/query/GetArticlesWithUserFiles.graphql';
-import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
 
 enum DeleteUserDialogSteps {
   Start,
@@ -40,7 +40,7 @@ export const DeleteUserDialog = React.memo<DeleteUserDialogProps>(
       nextFetchPolicy: 'cache-first',
     });
 
-    const [destroyAccount] = useMutation(DestroyAccountMutation, {
+    const [destroyAccount] = useMutation(PERMANENTLY_DELETE_USER_ACCOUNT, {
       variables: { userId: user.id, transferFileIds: [] },
       onCompleted: () => onConfirm?.(),
     });
