@@ -277,7 +277,7 @@ jobs:
         id: upload-traces
         run: |
           export REPORT_PATH="/test/${{ github.base_ref || github.ref_name }}/${{ matrix.project.traces-artifact }}.zip"
-          zip -r /tmp/${{matrix.project.traces-artifact}} /tmp/${{matrix.project.traces-artifact}}.zip
+          zip -r /tmp/${{matrix.project.traces-artifact}}.zip /tmp/${{matrix.project.traces-artifact}}
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/${{matrix.project.traces-artifact}}.zip \
             s3://public-lotta-assets$REPORT_PATH/
