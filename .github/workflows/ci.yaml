@@ -84,6 +84,7 @@ jobs:
     needs: pnpm-install
     env:
       TZ: Europe/Berlin
+      LOCALE: de_DE.UTF-8
     services:
       postgres:
         image: postgres:latest
