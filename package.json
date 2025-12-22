@@ -83,9 +83,10 @@
   "packageManager": "pnpm@10.14.0",
   "pnpm": {
     "overrides": {
-      "eslint": "^9.0.0",
-      "react": "^19.2.1",
-      "react-dom": "^19.2.1"
+      "eslint": "catalog:",
+      "react": "catalog:",
+      "react-dom": "catalog:",
+      "react-is": "catalog:"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
