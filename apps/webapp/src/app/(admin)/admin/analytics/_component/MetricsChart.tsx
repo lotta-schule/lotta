@@ -87,3 +87,5 @@ export const MetricsChart = React.memo(
   }
 );
 MetricsChart.displayName = 'MetricsChart';
+
+export default MetricsChart;

@@ -107,13 +107,13 @@ beforeAll(() => {
     };
   });
 
-  vi.mock('react', async (importOriginal) => {
-    const actual = await importOriginal<typeof React>();
-    return {
-      ...actual,
-      cache: vi.fn((fn) => fn),
-    };
-  });
+  // vi.mock('react', async (importOriginal) => {
+  //   const actual = await importOriginal<typeof React>();
+  //   return {
+  //     ...actual,
+  //     cache: vi.fn((fn) => fn),
+  //   };
+  // });
 
   const originalError = console.error;
   vi.spyOn(console, 'error').mockImplementation((...args) => {
