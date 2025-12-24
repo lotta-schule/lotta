@@ -50,11 +50,11 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
 
   describe('option listing options', () => {
     it('show all categories as options', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <CategorySelect selectedCategory={null} onSelectCategory={() => {}} />
       );
-      await fireEvent.click(screen.getByRole('button', { name: /wählen/i }));
+      await user.click(screen.getByRole('button', { name: /wählen/i }));
       await waitFor(() => {
         expect(screen.getAllByRole('option')).toHaveLength(15);
       });

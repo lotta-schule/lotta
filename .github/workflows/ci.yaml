@@ -85,7 +85,7 @@ jobs:
     env:
       TZ: Europe/Berlin
       LOCALE: de_DE.UTF-8
-      LANGUAGE: de_DE
+      LANGUAGE: de
     services:
       postgres:
         image: postgres:latest
@@ -269,6 +269,7 @@ jobs:
 
       - name: Download traces reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
+        if: hashFiles(format('/tmp/{0}', matrix.project.traces-artifact)) != ''
         with:
           name: ${{ matrix.project.traces-artifact }}
           path: /tmp/${{matrix.project.traces-artifact}}
@@ -281,12 +282,13 @@ jobs:
       - name: Upload HTML report to S3
         id: upload-traces
         run: |
-          export REPORT_PATH="/test/${{ github.base_ref || github.ref_name }}/${{ matrix.project.traces-artifact }}.zip"
-          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
-            /tmp/${{matrix.project.traces-artifact}}.zip \
+          export FILENAME="${{matrix.project.traces-artifact}}.zip"
+          export REPORT_PATH="/test/${{ github.base_ref || github.ref_name }}"
+          s3cmd put --acl-public --no-mime-magic --guess-mime-type  \
+            /tmp/$FILENAME \
             s3://public-lotta-assets$REPORT_PATH/
 
-          echo "url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud$REPORT_PATH" >> $GITHUB_OUTPUT
+          echo "url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud$REPORT_PATH/$FILENAME" >> $GITHUB_OUTPUT
 
       - name: Download screenshot reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
@@ -297,7 +299,7 @@ jobs:
 
       - name: Upload Screenshots to S3
         id: upload-screenshots
-        if: hashFiles(format('/tmp/{0}/screenshots/**', matrix.project.traces-artifact)) != ''
+        if: hashFiles(format('/tmp/{0}', matrix.project.screenshot-artifact)) != ''
         run: |
           export REPORT_PATH="/test/${{ github.base_ref || github.ref_name }}/${{ matrix.project.screenshot-artifact }}"
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \

@@ -40,7 +40,7 @@ export type SelectProps = React.AriaAttributes &
     children: React.ReactNode | React.ReactNode[];
   };
 
-export type OptionProps = {
+export type OptionProps = React.PropsWithRef<{
   children?: React.ReactNode | React.ReactNode[];
 
   value: string;
@@ -52,7 +52,7 @@ export type OptionProps = {
   leftSection?: React.ReactNode;
 
   rightSection?: React.ReactNode;
-};
+}>;
 export const Option = (_props: OptionProps) => null;
 
 export const Select = ({
