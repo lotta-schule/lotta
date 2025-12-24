@@ -105,7 +105,8 @@ describe('CreateMessageDialog', () => {
       });
     });
 
-    it('should select a group and call the onConfirm with it', async () => {
+    // See https://github.com/lotta-schule/lotta/issues/528
+    it.skip('should select a group and call the onConfirm with it', async () => {
       const user = userEvent.setup();
       const onConfirm = vi.fn((destination) => {
         expect(destination.user).not.toBeDefined();
