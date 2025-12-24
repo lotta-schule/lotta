@@ -1,6 +1,6 @@
 {
   "name": "playwright",
-  "version": "6.1.11",
+  "version": "6.1.12",
   "description": "",
   "main": "index.js",
   "scripts": {

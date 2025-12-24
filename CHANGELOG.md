@@ -1,3 +1,13 @@
+## 6.1.12 (2025-12-24)
+
+### 🩹 Fixes
+
+- update react ([9a1f9030](https://github.com/lotta-schule/lotta/commit/9a1f9030))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.11 (2025-12-05)
 
 ### 🩹 Fixes
