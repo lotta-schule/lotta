@@ -44,7 +44,7 @@
     "is-url": "^1.2.4",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
-    "next": "15.1.4",
+    "next": "15.1.11",
     "phoenix": "^1.7.18",
     "react": "19.2.3",
     "react-big-calendar": "^1.18.0",

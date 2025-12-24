@@ -80,7 +80,7 @@
   "packageManager": "pnpm@10.14.0",
   "pnpm": {
     "patchedDependencies": {
-      "next@15.1.4": "patches/next@15.1.4.patch"
+      "next@15.1.11": "patches/next@15.1.11.patch"
     },
     "overrides": {
       "eslint": "^9.0.0"
