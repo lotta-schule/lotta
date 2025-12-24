@@ -1,3 +1,13 @@
+## 6.1.13 (2025-12-24)
+
+### 🩹 Fixes
+
+- **webapp:** udpate next ([c21c118a](https://github.com/lotta-schule/lotta/commit/c21c118a))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.12 (2025-12-24)
 
 ### 🩹 Fixes
