@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { FaecherCategory } from 'test/fixtures';
+import { allCategories, FaecherCategory } from 'test/fixtures';
 import { render, waitFor, within } from 'test/util';
 import { MockRouter } from 'test/mocks';
 import { Navbar } from './Navbar';
@@ -14,7 +14,7 @@ describe('Navbar', () => {
   describe('it should render the correct amount', () => {
     afterEach(mockRouterResetter);
     it('of main categories', async () => {
-      const screen = render(<Navbar />);
+      const screen = render(<Navbar categories={allCategories} />);
 
       await waitFor(() => {
         expect(screen.getAllByRole('button')).toHaveLength(3);
@@ -24,7 +24,7 @@ describe('Navbar', () => {
     it('of subcategories', async () => {
       mockRouterResetter();
 
-      const screen = render(<Navbar />, {});
+      const screen = render(<Navbar categories={allCategories} />, {});
       await waitFor(() => {
         expect(screen.getByRole('button', { name: 'Fächer' })).toBeVisible();
       });

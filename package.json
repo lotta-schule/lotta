@@ -83,7 +83,9 @@
   "packageManager": "pnpm@10.26.1",
   "pnpm": {
     "overrides": {
-      "react-is": "catalog:"
+      "react-is": "catalog:",
+      "react": "catalog:",
+      "react-dom": "catalog:"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",

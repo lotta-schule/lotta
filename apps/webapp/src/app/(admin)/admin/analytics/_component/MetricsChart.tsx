@@ -57,7 +57,6 @@ export const MetricsChart = React.memo(
             data: metrics.map((m) => m.value) ?? [],
             borderColor: 'rgb(var(--lotta-primary-color))',
             backgroundColor: 'rgba(var(--lotta-primary-color), 0.5)',
-            fill: true,
             tension: 0.4,
           },
         ],

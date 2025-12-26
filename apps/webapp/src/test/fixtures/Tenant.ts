@@ -8,7 +8,7 @@ import { Tenant } from 'util/tenant';
  */
 
 export const tenant = {
-  __typename: 'Tenant',
+  __typename: 'Tenant' as const,
   id: '1',
   title: 'DerEineVonHier',
   slug: 'derdiedas',
@@ -18,7 +18,7 @@ export const tenant = {
   backgroundImageFile: null,
   eduplacesId: null,
   configuration: {
-    __typename: 'TenantConfiguration',
+    __typename: 'TenantConfiguration' as const,
     userMaxStorageConfig: '20971520',
     customTheme: {},
   },
@@ -35,7 +35,7 @@ export const tenant = {
  */
 
 export const StartseiteCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '1',
   sortKey: 0,
   title: 'Start',
@@ -51,7 +51,7 @@ export const StartseiteCategory = {
 };
 
 export const FaecherCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '2',
   sortKey: 1,
   title: 'Fächer',
@@ -67,7 +67,7 @@ export const FaecherCategory = {
 };
 
 export const MaterialCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '3',
   sortKey: 5,
   title: 'Material',
@@ -83,7 +83,7 @@ export const MaterialCategory = {
 };
 
 export const ImpressumCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '4',
   sortKey: 7,
   title: 'Impressum',
@@ -99,7 +99,7 @@ export const ImpressumCategory = {
 };
 
 export const DatenschutzCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '5',
   sortKey: 10,
   title: 'Datenschutz',
@@ -115,7 +115,7 @@ export const DatenschutzCategory = {
 };
 
 export const MatheCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '20',
   sortKey: 0,
   title: 'Mathe',
@@ -131,7 +131,7 @@ export const MatheCategory = {
 };
 
 export const SportCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '21',
   sortKey: 10,
   title: 'Sport',
@@ -147,7 +147,7 @@ export const SportCategory = {
 };
 
 export const KunstCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '22',
   sortKey: 20,
   title: 'Kunst',
@@ -163,7 +163,7 @@ export const KunstCategory = {
 };
 
 export const MusikCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '23',
   sortKey: 30,
   title: 'Musik',
@@ -179,7 +179,7 @@ export const MusikCategory = {
 };
 
 export const DeutschCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '24',
   sortKey: 40,
   title: 'Deutsch',
@@ -195,7 +195,7 @@ export const DeutschCategory = {
 };
 
 export const FrancaisCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '25',
   sortKey: 50,
   title: 'Français',
@@ -211,7 +211,7 @@ export const FrancaisCategory = {
 };
 
 export const KlassenarbeitenUCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '31',
   sortKey: 0,
   title: 'Klassenarbeiten Unterstufe',
@@ -227,7 +227,7 @@ export const KlassenarbeitenUCategory = {
 };
 
 export const KlassenarbeitenOCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '32',
   sortKey: 10,
   title: 'Klassenarbeiten Oberstufe',
@@ -243,7 +243,7 @@ export const KlassenarbeitenOCategory = {
 };
 
 export const HausaufgabenCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '33',
   sortKey: 20,
   title: 'Hausaufgaben',
@@ -259,7 +259,7 @@ export const HausaufgabenCategory = {
 };
 
 export const ArbeitsblätterCategory = {
-  __typename: 'Category',
+  __typename: 'Category' as const,
   id: '34',
   sortKey: 30,
   title: 'Arbeitsblätter',
@@ -293,7 +293,7 @@ export const allCategories = [
 ];
 
 export const VPSchuelerWidget: WidgetModel<WidgetModelType.Schedule> = {
-  __typename: 'Widget',
+  __typename: 'Widget' as const,
   id: '91800',
   title: 'VP Schüler',
   type: WidgetModelType.Schedule,
@@ -308,7 +308,7 @@ export const VPSchuelerWidget: WidgetModel<WidgetModelType.Schedule> = {
 };
 
 export const VPLehrerWidget: WidgetModel<WidgetModelType.Schedule> = {
-  __typename: 'Widget',
+  __typename: 'Widget' as const,
   id: '91801',
   title: 'VP Lehrer',
   type: WidgetModelType.Schedule,
@@ -323,7 +323,7 @@ export const VPLehrerWidget: WidgetModel<WidgetModelType.Schedule> = {
 };
 
 export const CalendarKlassenarbeiten: WidgetModel<WidgetModelType.Calendar> = {
-  __typename: 'Widget',
+  __typename: 'Widget' as const,
   id: '91802',
   title: 'VP Lehrer',
   type: WidgetModelType.Calendar,
@@ -342,7 +342,7 @@ export const CalendarKlassenarbeiten: WidgetModel<WidgetModelType.Calendar> = {
 };
 
 export const GangamStyleWidget: WidgetModel<WidgetModelType.IFrame> = {
-  __typename: 'Widget',
+  __typename: 'Widget' as const,
   id: '91803',
   title: 'GangamStyle',
   type: WidgetModelType.IFrame,

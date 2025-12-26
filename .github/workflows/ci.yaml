@@ -269,17 +269,19 @@ jobs:
 
       - name: Download traces reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
-        if: hashFiles(format('/tmp/{0}', matrix.project.traces-artifact)) != ''
+        if: hashFiles(format('/tmp/{0}/*', matrix.project.traces-artifact)) != ''
         with:
           name: ${{ matrix.project.traces-artifact }}
           path: /tmp/${{matrix.project.traces-artifact}}
 
       - name: zip traces
+        if: hashFiles(format('/tmp/{0}/*', matrix.project.traces-artifact)) != ''
         run: |
           zip -r ${{matrix.project.traces-artifact}}.zip ${{matrix.project.traces-artifact}}
         working-directory: /tmp
 
       - name: Upload HTML report to S3
+        if: hashFiles(format('/tmp/{0}/*', matrix.project.traces-artifact)) != ''
         id: upload-traces
         run: |
           export FILENAME="${{matrix.project.traces-artifact}}.zip"
@@ -299,7 +301,7 @@ jobs:
 
       - name: Upload Screenshots to S3
         id: upload-screenshots
-        if: hashFiles(format('/tmp/{0}', matrix.project.screenshot-artifact)) != ''
+        if: hashFiles(format('/tmp/{0}/*', matrix.project.screenshot-artifact)) != ''
         run: |
           export REPORT_PATH="/test/${{ github.base_ref || github.ref_name }}/${{ matrix.project.screenshot-artifact }}"
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \

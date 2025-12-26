@@ -9,7 +9,7 @@ import {
   MatheCategory,
 } from 'test/fixtures';
 import { CategoryNavigation } from './CategoryNavigation';
-import { MockRouter } from 'test/mocks';
+import { type MockRouter } from 'test/mocks';
 import { MockedFunction } from 'vitest';
 
 describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNavigation', () => {

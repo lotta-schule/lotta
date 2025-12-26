@@ -6,23 +6,26 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from 'shared/Icon';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
-import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
 import { isMobileDrawerOpenVar } from 'api/apollo/cache';
 import { usePathname } from 'next/navigation';
+import { type loadCategories } from 'loader';
 import clsx from 'clsx';
 import Link from 'next/link';
 
 import styles from './Navbar.module.scss';
 
-export const Navbar = React.memo(() => {
+export type NavbarProps = {
+  categories: Exclude<Awaited<ReturnType<typeof loadCategories>>, undefined>;
+};
+
+export const Navbar = React.memo(({ categories }: NavbarProps) => {
   const wrapperRef = React.useRef<HTMLElement>(null);
 
   const path = usePathname();
 
   const isHomepage = path === '/';
 
-  const [categories] = useCategories();
   const currentCategoryId = useCurrentCategoryId();
   const categoriesAncestors = useCategoriesAncestorsForItem(
     currentCategoryId || '0'
@@ -32,14 +35,12 @@ export const Navbar = React.memo(() => {
 
   const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];
 
-  const homepageCategory = (categories || []).find(
-    (category) => category.isHomepage
-  );
-  const mainCategories = (categories || []).filter(
+  const homepageCategory = categories.find((category) => category.isHomepage);
+  const mainCategories = categories.filter(
     (category) =>
       !category.category && !category.isSidenav && !category.isHomepage
   );
-  const subcategories = (categories || []).filter(
+  const subcategories = categories.filter(
     (category) =>
       category.category && category.category.id === categoriesHierarchy[0]
   );

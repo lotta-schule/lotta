@@ -311,7 +311,8 @@ describe('shared/article/ArticlePreview', () => {
           { currentUser: KeinErSieEsUser }
         );
         await user.hover(
-          screen.getByRole('img', { name: 'Profilbild von Che' })
+          screen.getByRole('img', { name: 'Profilbild von Che' }),
+          { force: true }
         );
         await waitFor(() => {
           expect(
@@ -329,7 +330,7 @@ describe('shared/article/ArticlePreview', () => {
         });
       });
       describe('should show warning when removing oneself', () => {
-        it('show a warning when userAvatar tries to remove him/herself and close the popup on abort', async () => {
+        it('show a warning when userAvatar tries to remove itself', async () => {
           const user = userEvent.setup();
           const onUpdate = vi.fn();
           const screen = render(
@@ -341,7 +342,8 @@ describe('shared/article/ArticlePreview', () => {
             { currentUser: SomeUser }
           );
           await user.hover(
-            screen.getByRole('img', { name: 'Profilbild von Che' })
+            screen.getByRole('img', { name: 'Profilbild von Che' }),
+            { force: true }
           );
           await user.click(
             screen.getByRole('button', { name: /che entfernen/i })
@@ -375,7 +377,8 @@ describe('shared/article/ArticlePreview', () => {
             { currentUser: SomeUser }
           );
           await user.hover(
-            screen.getByRole('img', { name: 'Profilbild von Che' })
+            screen.getByRole('img', { name: 'Profilbild von Che' }),
+            { force: true }
           );
           await user.click(
             screen.getByRole('button', { name: /che entfernen/i })

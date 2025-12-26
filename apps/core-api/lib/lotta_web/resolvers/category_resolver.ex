@@ -1,13 +1,10 @@
 defmodule LottaWeb.CategoryResolver do
   @moduledoc false
 
-  import Ecto.Query
   import LottaWeb.ErrorHelpers
 
-  alias Lotta.Repo
   alias Lotta.Tenants
-  alias Lotta.Accounts.User
-  alias Lotta.Tenants.{Category, Widget}
+  alias Lotta.Tenants.Category
 
   def resolve_widgets(_args, %{
         context: %{current_user: user},

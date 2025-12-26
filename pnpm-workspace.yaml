@@ -2,6 +2,8 @@ packages:
   - libs/*
   - apps/*
 
+injectWorkspacePackages: true
+
 catalog:
   '@absinthe/socket': ^0.2.1
   '@absinthe/socket-apollo-link': ^0.2.1
