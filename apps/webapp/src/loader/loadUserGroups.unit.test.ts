@@ -1,15 +1,14 @@
-import { loadWidgets } from './loadWidgets';
+import { loadUserGroups } from './loadUserGroups';
 import { getClient } from 'api/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { Defer20220824Handler } from '@apollo/client/incremental';
-import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
-
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import { GET_USER_GROUPS } from 'util/tenant/useUserGroups';
 
 vi.mock('api/client');
-vi.mock('@apollo/client-integration-nextjs', () => ({
+vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
+  ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -18,15 +17,12 @@ vi.mock('api/apollo/client-rsc', () => ({
 
 const mockGetClient = vi.mocked(getClient);
 
-describe('loadWidgets', () => {
+describe('loadUserGroups', () => {
   const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
       link: mockLink,
       cache: new InMemoryCache(),
-
-      localState: new LocalState({}),
-
       incrementalHandler: new Defer20220824Handler(),
     });
   };
@@ -35,55 +31,40 @@ describe('loadWidgets', () => {
     vi.clearAllMocks();
   });
 
-  it('should load widgets successfully', async () => {
-    const mockWidgets = [
-      { id: '1', title: 'Widget 1', type: 'calendar' },
-      { id: '2', title: 'Widget 2', type: 'schedule' },
+  it('should load user groups successfully', async () => {
+    const mockUserGroups = [
+      { id: '1', name: 'Administrators', isAdminGroup: true, sortKey: 100 },
+      { id: '2', name: 'Teachers', isAdminGroup: false, sortKey: 200 },
+      { id: '3', name: 'Students', isAdminGroup: false, sortKey: 300 },
     ];
 
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetWidgetsQuery },
-        result: { data: { widgets: mockWidgets } },
+        request: { query: GET_USER_GROUPS },
+        result: { data: { userGroups: mockUserGroups } },
       },
     ];
 
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadWidgets();
+    const result = await loadUserGroups();
 
-    expect(result).toEqual(mockWidgets);
+    expect(result).toEqual(mockUserGroups);
   });
 
-  it('should return empty array when data is null', async () => {
+  it('should handle empty user groups array', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetWidgetsQuery },
-        result: { data: null },
+        request: { query: GET_USER_GROUPS },
+        result: { data: { userGroups: [] } },
       },
     ];
 
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadWidgets();
-
-    expect(result).toEqual([]);
-  });
-
-  it('should return empty array when widgets is null', async () => {
-    const mocks: MockLink.MockedResponse[] = [
-      {
-        request: { query: GetWidgetsQuery },
-        result: { data: { widgets: null } },
-      },
-    ];
-
-    const client = createMockClient(mocks);
-    mockGetClient.mockResolvedValue(client);
-
-    const result = await loadWidgets();
+    const result = await loadUserGroups();
 
     expect(result).toEqual([]);
   });
@@ -91,7 +72,7 @@ describe('loadWidgets', () => {
   it('should handle query errors', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetWidgetsQuery },
+        request: { query: GET_USER_GROUPS },
         error: new Error('GraphQL error'),
       },
     ];
@@ -99,13 +80,13 @@ describe('loadWidgets', () => {
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    await expect(loadWidgets()).rejects.toThrow('GraphQL error');
+    await expect(loadUserGroups()).rejects.toThrow('GraphQL error');
   });
 
   it('should handle client initialization errors', async () => {
     const error = new Error('Client error');
     mockGetClient.mockRejectedValue(error);
 
-    await expect(loadWidgets()).rejects.toThrow('Client error');
+    await expect(loadUserGroups()).rejects.toThrow('Client error');
   });
 });

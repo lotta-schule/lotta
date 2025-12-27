@@ -9,7 +9,7 @@ import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { Category } from 'util/model';
 import { isMobileDrawerOpenVar } from 'api/apollo/cache';
 import { usePathname } from 'next/navigation';
-import { type loadCategories } from 'loader';
+import { type loadCategories } from 'loader/loadCategories';
 import clsx from 'clsx';
 import Link from 'next/link';
 

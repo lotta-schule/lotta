@@ -1,4 +1,4 @@
-import { loadTenantUsage } from './loadTenantUsage';
+import { loadWidgets } from './loadWidgets';
 import { getClient } from 'api/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { Defer20220824Handler } from '@apollo/client/incremental';
@@ -6,10 +6,11 @@ import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
-import GetUsageQuery from 'api/query/GetUsageQuery.graphql';
+import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 
 vi.mock('api/client');
-vi.mock('@apollo/client-integration-nextjs', () => ({
+vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
+  ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -18,7 +19,7 @@ vi.mock('api/apollo/client-rsc', () => ({
 
 const mockGetClient = vi.mocked(getClient);
 
-describe('loadTenantUsage', () => {
+describe('loadWidgets', () => {
   const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
@@ -35,31 +36,31 @@ describe('loadTenantUsage', () => {
     vi.clearAllMocks();
   });
 
-  it('should load tenant usage successfully', async () => {
-    const mockUsage = [
-      { period: '2024-01', storageUsed: 1024, transferUsed: 2048 },
-      { period: '2024-02', storageUsed: 1536, transferUsed: 3072 },
+  it('should load widgets successfully', async () => {
+    const mockWidgets = [
+      { id: '1', title: 'Widget 1', type: 'calendar' },
+      { id: '2', title: 'Widget 2', type: 'schedule' },
     ];
 
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetUsageQuery },
-        result: { data: { usage: mockUsage } },
+        request: { query: GetWidgetsQuery },
+        result: { data: { widgets: mockWidgets } },
       },
     ];
 
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadTenantUsage();
+    const result = await loadWidgets();
 
-    expect(result).toEqual(mockUsage);
+    expect(result).toEqual(mockWidgets);
   });
 
   it('should return empty array when data is null', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetUsageQuery },
+        request: { query: GetWidgetsQuery },
         result: { data: null },
       },
     ];
@@ -67,23 +68,23 @@ describe('loadTenantUsage', () => {
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadTenantUsage();
+    const result = await loadWidgets();
 
     expect(result).toEqual([]);
   });
 
-  it('should return empty array when usage is null', async () => {
+  it('should return empty array when widgets is null', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetUsageQuery },
-        result: { data: { usage: null } },
+        request: { query: GetWidgetsQuery },
+        result: { data: { widgets: null } },
       },
     ];
 
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadTenantUsage();
+    const result = await loadWidgets();
 
     expect(result).toEqual([]);
   });
@@ -91,7 +92,7 @@ describe('loadTenantUsage', () => {
   it('should handle query errors', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetUsageQuery },
+        request: { query: GetWidgetsQuery },
         error: new Error('GraphQL error'),
       },
     ];
@@ -99,13 +100,13 @@ describe('loadTenantUsage', () => {
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    await expect(loadTenantUsage()).rejects.toThrow('GraphQL error');
+    await expect(loadWidgets()).rejects.toThrow('GraphQL error');
   });
 
   it('should handle client initialization errors', async () => {
     const error = new Error('Client error');
     mockGetClient.mockRejectedValue(error);
 
-    await expect(loadTenantUsage()).rejects.toThrow('Client error');
+    await expect(loadWidgets()).rejects.toThrow('Client error');
   });
 });

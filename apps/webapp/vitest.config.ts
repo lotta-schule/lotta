@@ -1,13 +1,12 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
+import { browserCommands } from './src/test/commands';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import graphql from '@rollup/plugin-graphql';
-import { browserCommands } from './src/test/commands';
 
 export default defineConfig({
   root: import.meta.dirname,
-  cacheDir: '.vite',
 
   plugins: [tsconfigPaths(), react(), graphql({}), browserCommands()],
 
@@ -17,6 +16,7 @@ export default defineConfig({
 
   resolve: {
     conditions: ['module', 'browser', 'development|production|test'],
+    dedupe: ['react', 'react-dom'],
   },
 
   ssr: {
@@ -28,6 +28,7 @@ export default defineConfig({
     projects: [
       {
         extends: true,
+        cacheDir: '.vitest/browser-cache',
         test: {
           name: { label: 'component', color: 'cyan' },
           browser: {
@@ -51,6 +52,7 @@ export default defineConfig({
       },
       {
         extends: true,
+        cacheDir: '.vitest/unit-cache',
         test: {
           name: { label: 'unit', color: 'green' },
           environment: 'node',
@@ -102,5 +104,22 @@ export default defineConfig({
         loadPaths: ['./src/styles/util', '../../libs/hubert/src/theme'],
       },
     },
+  },
+
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      '@testing-library/react',
+      '@testing-library/user-event',
+      '@testing-library/jest-dom',
+      'react/jsx-runtime',
+      'react/jsx-dev-runtime',
+      '@apollo/client',
+      '@apollo/client/testing',
+      '@apollo/client-integration-nextjs',
+      'react-chartjs-2',
+      'chart.js',
+    ],
   },
 });

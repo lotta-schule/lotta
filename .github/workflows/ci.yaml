@@ -31,7 +31,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24.5
+          node-version: 25.2
           cache: 'pnpm'
 
       - name: Install npm dependencies
@@ -171,7 +171,7 @@ jobs:
 
       - name: Upload Test Traces for the webapp
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && hashFiles('apps/webapp/.test-reports/traces/**') != '' }}
         with:
           name: web-vitest-traces
           path: apps/webapp/.test-reports/traces
@@ -269,10 +269,9 @@ jobs:
 
       - name: Download traces reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
-        if: hashFiles(format('/tmp/{0}/*', matrix.project.traces-artifact)) != ''
         with:
-          name: ${{ matrix.project.traces-artifact }}
-          path: /tmp/${{matrix.project.traces-artifact}}
+          pattern: ${{ matrix.project.traces-artifact }}
+          path: /tmp
 
       - name: zip traces
         if: hashFiles(format('/tmp/{0}/*', matrix.project.traces-artifact)) != ''
@@ -295,7 +294,7 @@ jobs:
       - name: Download screenshot reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: /tmp/${{matrix.project.traces-artifact}}
+          path: /tmp
           pattern: ${{ matrix.project.screenshot-artifact }}
           merge-multiple: true
 
@@ -370,7 +369,7 @@ jobs:
         uses: actions/setup-node@v4
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
         with:
-          node-version: 24.5
+          node-version: 25.2
           cache: 'pnpm'
 
       - name: Setup the BEAM and Elixir

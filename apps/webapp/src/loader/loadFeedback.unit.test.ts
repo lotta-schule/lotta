@@ -1,13 +1,15 @@
-import { loadUserGroups } from './loadUserGroups';
+import { loadFeedback } from './loadFeedback';
 import { getClient } from 'api/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { Defer20220824Handler } from '@apollo/client/incremental';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
-import { GET_USER_GROUPS } from 'util/tenant/useUserGroups';
+
+import GetFeedbackQuery from 'api/query/GetFeedbackQuery.graphql';
 
 vi.mock('api/client');
-vi.mock('@apollo/client-integration-nextjs', () => ({
+vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
+  ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -16,7 +18,7 @@ vi.mock('api/apollo/client-rsc', () => ({
 
 const mockGetClient = vi.mocked(getClient);
 
-describe('loadUserGroups', () => {
+describe('loadFeedback', () => {
   const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
@@ -30,40 +32,60 @@ describe('loadUserGroups', () => {
     vi.clearAllMocks();
   });
 
-  it('should load user groups successfully', async () => {
-    const mockUserGroups = [
-      { id: '1', name: 'Administrators', isAdminGroup: true, sortKey: 100 },
-      { id: '2', name: 'Teachers', isAdminGroup: false, sortKey: 200 },
-      { id: '3', name: 'Students', isAdminGroup: false, sortKey: 300 },
+  it('should load feedback successfully', async () => {
+    const mockFeedbacks = [
+      { id: '1', topic: 'Bug Report', content: 'Found a bug', userId: '123' },
+      {
+        id: '2',
+        topic: 'Feature Request',
+        content: 'New feature idea',
+        userId: '456',
+      },
     ];
 
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GET_USER_GROUPS },
-        result: { data: { userGroups: mockUserGroups } },
+        request: { query: GetFeedbackQuery },
+        result: { data: { feedbacks: mockFeedbacks } },
       },
     ];
 
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadUserGroups();
+    const result = await loadFeedback();
 
-    expect(result).toEqual(mockUserGroups);
+    expect(result).toEqual(mockFeedbacks);
   });
 
-  it('should handle empty user groups array', async () => {
+  it('should return empty array when data is null', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GET_USER_GROUPS },
-        result: { data: { userGroups: [] } },
+        request: { query: GetFeedbackQuery },
+        result: { data: null },
       },
     ];
 
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadUserGroups();
+    const result = await loadFeedback();
+
+    expect(result).toEqual([]);
+  });
+
+  it('should return empty array when feedbacks is null', async () => {
+    const mocks: MockLink.MockedResponse[] = [
+      {
+        request: { query: GetFeedbackQuery },
+        result: { data: { feedbacks: null } },
+      },
+    ];
+
+    const client = createMockClient(mocks);
+    mockGetClient.mockResolvedValue(client);
+
+    const result = await loadFeedback();
 
     expect(result).toEqual([]);
   });
@@ -71,7 +93,7 @@ describe('loadUserGroups', () => {
   it('should handle query errors', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GET_USER_GROUPS },
+        request: { query: GetFeedbackQuery },
         error: new Error('GraphQL error'),
       },
     ];
@@ -79,13 +101,13 @@ describe('loadUserGroups', () => {
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    await expect(loadUserGroups()).rejects.toThrow('GraphQL error');
+    await expect(loadFeedback()).rejects.toThrow('GraphQL error');
   });
 
   it('should handle client initialization errors', async () => {
     const error = new Error('Client error');
     mockGetClient.mockRejectedValue(error);
 
-    await expect(loadUserGroups()).rejects.toThrow('Client error');
+    await expect(loadFeedback()).rejects.toThrow('Client error');
   });
 });

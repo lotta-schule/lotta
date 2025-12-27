@@ -59,7 +59,8 @@
   "devDependencies": {
     "i18next-parser": "catalog:",
     "ignore-loader": "catalog:",
-    "sass": "catalog:"
+    "sass": "catalog:",
+    "vitest-browser-react": "^2.0.2"
   },
   "packageManager": "pnpm@10.14.0",
   "pnpm": {

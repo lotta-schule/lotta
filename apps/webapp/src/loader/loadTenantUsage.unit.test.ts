@@ -1,4 +1,4 @@
-import { loadCategories } from './loadCategories';
+import { loadTenantUsage } from './loadTenantUsage';
 import { getClient } from 'api/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { Defer20220824Handler } from '@apollo/client/incremental';
@@ -6,10 +6,11 @@ import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
-import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
+import GetUsageQuery from 'api/query/GetUsageQuery.graphql';
 
 vi.mock('api/client');
-vi.mock('@apollo/client-integration-nextjs', () => ({
+vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
+  ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -18,7 +19,7 @@ vi.mock('api/apollo/client-rsc', () => ({
 
 const mockGetClient = vi.mocked(getClient);
 
-describe('loadCategories', () => {
+describe('loadTenantUsage', () => {
   const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
@@ -35,32 +36,31 @@ describe('loadCategories', () => {
     vi.clearAllMocks();
   });
 
-  it('should load categories successfully', async () => {
-    const mockCategories = [
-      { id: '1', title: 'News', isHomepage: true, sortKey: 100 },
-      { id: '2', title: 'Events', isHomepage: false, sortKey: 200 },
-      { id: '3', title: 'Classes', isHomepage: false, sortKey: 300 },
+  it('should load tenant usage successfully', async () => {
+    const mockUsage = [
+      { period: '2024-01', storageUsed: 1024, transferUsed: 2048 },
+      { period: '2024-02', storageUsed: 1536, transferUsed: 3072 },
     ];
 
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetCategoriesQuery },
-        result: { data: { categories: mockCategories } },
+        request: { query: GetUsageQuery },
+        result: { data: { usage: mockUsage } },
       },
     ];
 
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadCategories();
+    const result = await loadTenantUsage();
 
-    expect(result).toEqual(mockCategories);
+    expect(result).toEqual(mockUsage);
   });
 
   it('should return empty array when data is null', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetCategoriesQuery },
+        request: { query: GetUsageQuery },
         result: { data: null },
       },
     ];
@@ -68,23 +68,23 @@ describe('loadCategories', () => {
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadCategories();
+    const result = await loadTenantUsage();
 
     expect(result).toEqual([]);
   });
 
-  it('should return empty array when categories is null', async () => {
+  it('should return empty array when usage is null', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetCategoriesQuery },
-        result: { data: { categories: null } },
+        request: { query: GetUsageQuery },
+        result: { data: { usage: null } },
       },
     ];
 
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadCategories();
+    const result = await loadTenantUsage();
 
     expect(result).toEqual([]);
   });
@@ -92,7 +92,7 @@ describe('loadCategories', () => {
   it('should handle query errors', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetCategoriesQuery },
+        request: { query: GetUsageQuery },
         error: new Error('GraphQL error'),
       },
     ];
@@ -100,13 +100,13 @@ describe('loadCategories', () => {
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    await expect(loadCategories()).rejects.toThrow('GraphQL error');
+    await expect(loadTenantUsage()).rejects.toThrow('GraphQL error');
   });
 
   it('should handle client initialization errors', async () => {
     const error = new Error('Client error');
     mockGetClient.mockRejectedValue(error);
 
-    await expect(loadCategories()).rejects.toThrow('Client error');
+    await expect(loadTenantUsage()).rejects.toThrow('Client error');
   });
 });

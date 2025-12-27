@@ -4,6 +4,13 @@ import '@testing-library/jest-dom/vitest';
 import { configure } from '@testing-library/react';
 import * as React from 'react';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
+import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
+import { resetApolloClientSingletons } from '@apollo/client-integration-nextjs';
+import { MockRouter } from 'test/mocks';
+import { NEXT_DATA } from 'next/dist/shared/lib/utils';
+import { DirectoryModel, FileModel } from 'model';
+
+afterEach(resetApolloClientSingletons);
 
 declare module 'vitest' {
   interface Assertion<T = any> extends TestingLibraryMatchers<
@@ -15,10 +22,6 @@ declare module 'vitest' {
     unknown
   > {}
 }
-import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
-import { MockRouter } from 'test/mocks';
-import { NEXT_DATA } from 'next/dist/shared/lib/utils';
-import { DirectoryModel, FileModel } from 'model';
 
 declare module '@lotta-schule/hubert' {
   export interface DefaultFileMetadata extends FileModel {}

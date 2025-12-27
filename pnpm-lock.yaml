@@ -778,6 +778,9 @@ importers:
       sass:
         specifier: 'catalog:'
         version: 1.97.0
+      vitest-browser-react:
+        specifier: ^2.0.2
+        version: 2.0.2(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.16)
 
   libs/hubert:
     dependencies:
@@ -16077,6 +16080,23 @@ packages:
       yaml:
         optional: true
 
+  vitest-browser-react@2.0.2:
+    resolution:
+      {
+        integrity: sha512-zuSgTe/CKODU3ip+w4ls6Qm4xZ9+A4OHmDf0obt/mwAqavpOtqtq2YcioZt8nfDQE50EWmhdnRfDmpS1jCsbTQ==,
+      }
+    peerDependencies:
+      '@types/react': ^18.0.0 || ^19.0.0
+      '@types/react-dom': ^18.0.0 || ^19.0.0
+      react: ^19.2.3
+      react-dom: ^19.2.3
+      vitest: ^4.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
   vitest@4.0.16:
     resolution:
       {
@@ -27641,6 +27661,15 @@ snapshots:
       sass: 1.97.0
       terser: 5.44.1
       yaml: 2.8.2
+
+  vitest-browser-react@2.0.2(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.16):
+    dependencies:
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
+      vitest: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/browser-playwright@4.0.16)(@vitest/ui@4.0.16)(jsdom@27.3.0)(sass@1.97.0)(terser@5.44.1)(yaml@2.8.2)
+    optionalDependencies:
+      '@types/react': 19.2.7
+      '@types/react-dom': 19.2.3(@types/react@19.2.7)
 
   vitest@4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/browser-playwright@4.0.16)(@vitest/ui@4.0.16)(jsdom@27.3.0)(sass@1.97.0)(terser@5.44.1)(yaml@2.8.2):
     dependencies:

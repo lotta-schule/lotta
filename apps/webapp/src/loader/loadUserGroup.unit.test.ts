@@ -1,14 +1,13 @@
-import { loadFeedback } from './loadFeedback';
+import { loadUserGroup, GET_GROUP_QUERY } from './loadUserGroup';
 import { getClient } from 'api/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { Defer20220824Handler } from '@apollo/client/incremental';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
-import GetFeedbackQuery from 'api/query/GetFeedbackQuery.graphql';
-
 vi.mock('api/client');
-vi.mock('@apollo/client-integration-nextjs', () => ({
+vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
+  ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -17,7 +16,7 @@ vi.mock('api/apollo/client-rsc', () => ({
 
 const mockGetClient = vi.mocked(getClient);
 
-describe('loadFeedback', () => {
+describe('loadUserGroup', () => {
   const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
@@ -31,36 +30,60 @@ describe('loadFeedback', () => {
     vi.clearAllMocks();
   });
 
-  it('should load feedback successfully', async () => {
-    const mockFeedbacks = [
-      { id: '1', topic: 'Bug Report', content: 'Found a bug', userId: '123' },
-      {
-        id: '2',
-        topic: 'Feature Request',
-        content: 'New feature idea',
-        userId: '456',
-      },
-    ];
+  it('should load user group successfully', async () => {
+    const mockGroup = {
+      id: '1',
+      name: 'Test Group',
+      isAdminGroup: false,
+      sortKey: 100,
+      enrollmentTokens: ['token1', 'token2'],
+      canReadFullName: true,
+    };
 
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetFeedbackQuery },
-        result: { data: { feedbacks: mockFeedbacks } },
+        request: {
+          query: GET_GROUP_QUERY,
+          variables: { id: '1' },
+        },
+        result: { data: { group: mockGroup } },
       },
     ];
 
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadFeedback();
+    const result = await loadUserGroup('1');
 
-    expect(result).toEqual(mockFeedbacks);
+    expect(result).toEqual(mockGroup);
   });
 
-  it('should return empty array when data is null', async () => {
+  it('should return null when group is not found', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetFeedbackQuery },
+        request: {
+          query: GET_GROUP_QUERY,
+          variables: { id: 'nonexistent' },
+        },
+        result: { data: { group: null } },
+      },
+    ];
+
+    const client = createMockClient(mocks);
+    mockGetClient.mockResolvedValue(client);
+
+    const result = await loadUserGroup('nonexistent');
+
+    expect(result).toBeNull();
+  });
+
+  it('should return null when data is null', async () => {
+    const mocks: MockLink.MockedResponse[] = [
+      {
+        request: {
+          query: GET_GROUP_QUERY,
+          variables: { id: '1' },
+        },
         result: { data: null },
       },
     ];
@@ -68,31 +91,18 @@ describe('loadFeedback', () => {
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadFeedback();
+    const result = await loadUserGroup('1');
 
-    expect(result).toEqual([]);
-  });
-
-  it('should return empty array when feedbacks is null', async () => {
-    const mocks: MockLink.MockedResponse[] = [
-      {
-        request: { query: GetFeedbackQuery },
-        result: { data: { feedbacks: null } },
-      },
-    ];
-
-    const client = createMockClient(mocks);
-    mockGetClient.mockResolvedValue(client);
-
-    const result = await loadFeedback();
-
-    expect(result).toEqual([]);
+    expect(result).toBeNull();
   });
 
   it('should handle query errors', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetFeedbackQuery },
+        request: {
+          query: GET_GROUP_QUERY,
+          variables: { id: '1' },
+        },
         error: new Error('GraphQL error'),
       },
     ];
@@ -100,13 +110,13 @@ describe('loadFeedback', () => {
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    await expect(loadFeedback()).rejects.toThrow('GraphQL error');
+    await expect(loadUserGroup('1')).rejects.toThrow('GraphQL error');
   });
 
   it('should handle client initialization errors', async () => {
     const error = new Error('Client error');
     mockGetClient.mockRejectedValue(error);
 
-    await expect(loadFeedback()).rejects.toThrow('Client error');
+    await expect(loadUserGroup('1')).rejects.toThrow('Client error');
   });
 });

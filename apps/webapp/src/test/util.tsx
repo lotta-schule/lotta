@@ -118,4 +118,4 @@ export const getMetaTagValue = (metaName: string) => {
 // override render method
 export { customRender as render };
 export { customRenderHook as renderHook };
-export { userEvent } from '@vitest/browser/context';
+export { userEvent } from 'vitest/browser';

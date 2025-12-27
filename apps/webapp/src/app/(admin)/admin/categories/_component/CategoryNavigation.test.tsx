@@ -54,7 +54,6 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
               el.attributes.getNamedItem('data-testid')?.value !== 'drag-handle'
           );
         expect(clickableTitle).toBeDefined();
-        screen.debug();
         await user.click(clickableTitle!);
         await waitFor(() => {
           expect(router._push).toHaveBeenCalledWith(

@@ -1,12 +1,16 @@
-import { loadUserGroup, GET_GROUP_QUERY } from './loadUserGroup';
+import { loadCategories } from './loadCategories';
 import { getClient } from 'api/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { Defer20220824Handler } from '@apollo/client/incremental';
+import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
+import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
+
 vi.mock('api/client');
-vi.mock('@apollo/client-integration-nextjs', () => ({
+vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
+  ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
 vi.mock('api/apollo/client-rsc', () => ({
@@ -15,12 +19,15 @@ vi.mock('api/apollo/client-rsc', () => ({
 
 const mockGetClient = vi.mocked(getClient);
 
-describe('loadUserGroup', () => {
+describe('loadCategories', () => {
   const createMockClient = (mocks: MockLink.MockedResponse[]) => {
     const mockLink = new MockLink(mocks);
     return new ApolloClient({
       link: mockLink,
       cache: new InMemoryCache(),
+
+      localState: new LocalState({}),
+
       incrementalHandler: new Defer20220824Handler(),
     });
   };
@@ -29,60 +36,32 @@ describe('loadUserGroup', () => {
     vi.clearAllMocks();
   });
 
-  it('should load user group successfully', async () => {
-    const mockGroup = {
-      id: '1',
-      name: 'Test Group',
-      isAdminGroup: false,
-      sortKey: 100,
-      enrollmentTokens: ['token1', 'token2'],
-      canReadFullName: true,
-    };
+  it('should load categories successfully', async () => {
+    const mockCategories = [
+      { id: '1', title: 'News', isHomepage: true, sortKey: 100 },
+      { id: '2', title: 'Events', isHomepage: false, sortKey: 200 },
+      { id: '3', title: 'Classes', isHomepage: false, sortKey: 300 },
+    ];
 
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: {
-          query: GET_GROUP_QUERY,
-          variables: { id: '1' },
-        },
-        result: { data: { group: mockGroup } },
+        request: { query: GetCategoriesQuery },
+        result: { data: { categories: mockCategories } },
       },
     ];
 
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadUserGroup('1');
+    const result = await loadCategories();
 
-    expect(result).toEqual(mockGroup);
+    expect(result).toEqual(mockCategories);
   });
 
-  it('should return null when group is not found', async () => {
+  it('should return empty array when data is null', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: {
-          query: GET_GROUP_QUERY,
-          variables: { id: 'nonexistent' },
-        },
-        result: { data: { group: null } },
-      },
-    ];
-
-    const client = createMockClient(mocks);
-    mockGetClient.mockResolvedValue(client);
-
-    const result = await loadUserGroup('nonexistent');
-
-    expect(result).toBeNull();
-  });
-
-  it('should return null when data is null', async () => {
-    const mocks: MockLink.MockedResponse[] = [
-      {
-        request: {
-          query: GET_GROUP_QUERY,
-          variables: { id: '1' },
-        },
+        request: { query: GetCategoriesQuery },
         result: { data: null },
       },
     ];
@@ -90,18 +69,31 @@ describe('loadUserGroup', () => {
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    const result = await loadUserGroup('1');
+    const result = await loadCategories();
 
-    expect(result).toBeNull();
+    expect(result).toEqual([]);
+  });
+
+  it('should return empty array when categories is null', async () => {
+    const mocks: MockLink.MockedResponse[] = [
+      {
+        request: { query: GetCategoriesQuery },
+        result: { data: { categories: null } },
+      },
+    ];
+
+    const client = createMockClient(mocks);
+    mockGetClient.mockResolvedValue(client);
+
+    const result = await loadCategories();
+
+    expect(result).toEqual([]);
   });
 
   it('should handle query errors', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: {
-          query: GET_GROUP_QUERY,
-          variables: { id: '1' },
-        },
+        request: { query: GetCategoriesQuery },
         error: new Error('GraphQL error'),
       },
     ];
@@ -109,13 +101,13 @@ describe('loadUserGroup', () => {
     const client = createMockClient(mocks);
     mockGetClient.mockResolvedValue(client);
 
-    await expect(loadUserGroup('1')).rejects.toThrow('GraphQL error');
+    await expect(loadCategories()).rejects.toThrow('GraphQL error');
   });
 
   it('should handle client initialization errors', async () => {
     const error = new Error('Client error');
     mockGetClient.mockRejectedValue(error);
 
-    await expect(loadUserGroup('1')).rejects.toThrow('Client error');
+    await expect(loadCategories()).rejects.toThrow('Client error');
   });
 });
