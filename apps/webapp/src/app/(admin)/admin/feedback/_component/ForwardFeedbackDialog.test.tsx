@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { FeedbackModel } from 'model';
 import { ForwardFeedbackDialog } from './ForwardFeedbackDialog';
-import userEvent from '@testing-library/user-event';
 
 import SendFeedbackToLottaMutation from 'api/mutation/SendFeedbackToLottaMutation.graphql';
 

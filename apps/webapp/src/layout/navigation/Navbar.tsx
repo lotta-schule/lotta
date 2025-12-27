@@ -1,27 +1,31 @@
+'use client';
+
 import * as React from 'react';
 import { Button, NavigationButton } from '@lotta-schule/hubert';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from 'shared/Icon';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
-import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
 import { isMobileDrawerOpenVar } from 'api/apollo/cache';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
+import { type loadCategories } from 'loader/loadCategories';
 import clsx from 'clsx';
 import Link from 'next/link';
 
 import styles from './Navbar.module.scss';
 
-export const Navbar = React.memo(() => {
+export type NavbarProps = {
+  categories: Exclude<Awaited<ReturnType<typeof loadCategories>>, undefined>;
+};
+
+export const Navbar = React.memo(({ categories }: NavbarProps) => {
   const wrapperRef = React.useRef<HTMLElement>(null);
 
-  const router = useRouter();
-  const path = router.asPath;
+  const path = usePathname();
 
   const isHomepage = path === '/';
 
-  const [categories] = useCategories();
   const currentCategoryId = useCurrentCategoryId();
   const categoriesAncestors = useCategoriesAncestorsForItem(
     currentCategoryId || '0'
@@ -31,14 +35,12 @@ export const Navbar = React.memo(() => {
 
   const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];
 
-  const homepageCategory = (categories || []).find(
-    (category) => category.isHomepage
-  );
-  const mainCategories = (categories || []).filter(
+  const homepageCategory = categories.find((category) => category.isHomepage);
+  const mainCategories = categories.filter(
     (category) =>
       !category.category && !category.isSidenav && !category.isHomepage
   );
-  const subcategories = (categories || []).filter(
+  const subcategories = categories.filter(
     (category) =>
       category.category && category.category.id === categoriesHierarchy[0]
   );
@@ -63,7 +65,7 @@ export const Navbar = React.memo(() => {
     <nav className={clsx(styles.root, 'navbar')} ref={wrapperRef}>
       <div className={styles.gridContainer}>
         <div>
-          <nav className={styles.navbar}>
+          <nav className={styles.navbar} data-testid={'nav-level1'}>
             {homepageCategory && (
               <Link href={'/'} passHref legacyBehavior>
                 <NavigationButton
@@ -98,7 +100,9 @@ export const Navbar = React.memo(() => {
                 </NavigationButton>
               </Link>
             ))}
-            <Button className={styles.placeholder}>{''}</Button>
+            <Button className={styles.placeholder} aria-hidden="true">
+              {''}
+            </Button>
           </nav>
         </div>
         <div className={styles.mobileBurgerMenuButton}>

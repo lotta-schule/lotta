@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { Button, ErrorMessage, Input } from '@lotta-schule/hubert';

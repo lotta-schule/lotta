@@ -1,6 +1,6 @@
 'use client';
 
-import { useSuspenseQuery } from '@apollo/client';
+import { useSuspenseQuery } from '@apollo/client/react';
 import { List, ListItem, ListItemSecondaryText } from '@lotta-schule/hubert';
 import { useParams, useRouter } from 'next/navigation';
 import { t } from 'i18next';

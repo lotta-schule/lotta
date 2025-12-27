@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation, useSubscription } from '@apollo/client';
+import { useMutation, useSubscription } from '@apollo/client/react';
 import { graphql } from 'api/graphql';
 import { FileModel } from 'model';
 

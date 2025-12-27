@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useQuery, useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { ArticleModel, CategoryModel, ID } from 'model';
 import {
   Button,

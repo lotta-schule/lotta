@@ -1,9 +1,8 @@
-import { render, fireEvent, waitFor } from 'test/util';
+import { render, fireEvent, waitFor, userEvent } from 'test/util';
 import { GroupListToolbar } from './GroupListToolbar';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { CreateUserGroupDialog } from './CreateUserGroupDialog';
 import { Mock, MockedFunction } from 'vitest';
-import userEvent from '@testing-library/user-event';
 
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
@@ -55,10 +54,7 @@ describe('GroupListToolbar', () => {
 
     expect(input).toHaveValue('initialSearch');
 
-    await user.type(input, 'New Group', {
-      initialSelectionStart: 0,
-      initialSelectionEnd: 'initialSearch'.length,
-    });
+    await user.fill(input, 'New Group');
 
     expect(input).toHaveValue('New Group');
     expect(mockRouter.replace).toHaveBeenCalledWith(

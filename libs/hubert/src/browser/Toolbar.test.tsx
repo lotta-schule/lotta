@@ -5,9 +5,9 @@ import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
   fixtures,
+  userEvent,
 } from 'test-utils';
 import { Upload } from 'browser';
-import userEvent from '@testing-library/user-event';
 
 const defaultPath = fixtures.getPathForNode('8');
 

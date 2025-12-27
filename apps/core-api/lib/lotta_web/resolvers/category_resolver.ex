@@ -1,32 +1,16 @@
 defmodule LottaWeb.CategoryResolver do
   @moduledoc false
 
-  import Ecto.Query
   import LottaWeb.ErrorHelpers
 
-  alias Lotta.Repo
   alias Lotta.Tenants
-  alias Lotta.Accounts.User
-  alias Lotta.Tenants.{Category, Widget}
+  alias Lotta.Tenants.Category
 
   def resolve_widgets(_args, %{
-        context: %{current_user: %User{all_groups: groups, is_admin?: is_admin}},
+        context: %{current_user: user},
         source: %Category{} = category
       }) do
-    widgets =
-      from(w in Widget,
-        left_join: wug in "widgets_user_groups",
-        on: wug.widget_id == w.id,
-        join: cw in "categories_widgets",
-        on: w.id == cw.widget_id,
-        where:
-          (^is_admin or wug.group_id in ^Enum.map(groups, & &1.id) or is_nil(wug.group_id)) and
-            cw.category_id == ^category.id,
-        distinct: w.id
-      )
-      |> Repo.all()
-
-    {:ok, widgets}
+    {:ok, Tenants.list_widgets_by_category(category, user)}
   end
 
   def all(_args, %{context: %{current_user: current_user}}) do

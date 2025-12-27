@@ -1,5 +1,6 @@
+'use client';
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { Badge, BaseButton, Button } from '@lotta-schule/hubert';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Icon } from 'shared/Icon';
@@ -24,7 +25,7 @@ import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
 import { useNewFeedbackCount } from 'util/feedback';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';

@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import {
   faCirclePlus,
@@ -22,7 +23,7 @@ import {
   MenuButton,
   Item,
 } from '@lotta-schule/hubert';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { Icon } from 'shared/Icon';
 import { ArticleModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -33,13 +34,14 @@ import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
 import { useNewFeedbackCount } from 'util/feedback';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
 
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 
 import styles from './UserNavigation.module.scss';
+import { redirectTo } from 'util/browserLocation';
 
 export const UserNavigation = React.memo(() => {
   const currentUser = useCurrentUser();
@@ -86,7 +88,7 @@ export const UserNavigation = React.memo(() => {
           router.push('/unpublished');
           return;
         case 'logout':
-          window.location.href = '/auth/logout';
+          redirectTo('/auth/logout');
           return;
       }
     },

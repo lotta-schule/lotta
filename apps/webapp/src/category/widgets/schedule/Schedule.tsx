@@ -1,6 +1,5 @@
+'use client';
 import * as React from 'react';
-import uniq from 'lodash/uniq';
-import flatten from 'lodash/flatten';
 import {
   addBusinessDays,
   isSameDay,
@@ -16,7 +15,12 @@ import {
   Table,
   Tooltip,
 } from '@lotta-schule/hubert';
-import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
+import {
+  faChevronLeft,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
+import { skipToken, useApolloClient, useQuery } from '@apollo/client/react';
 import { WidgetModel, ScheduleResult, WidgetModelType } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
@@ -24,15 +28,9 @@ import Link from 'next/link';
 
 import clsx from 'clsx';
 
-import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';
-
 import styles from './Schedule.module.scss';
 
-import {
-  faChevronLeft,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
+import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';
 
 export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 
@@ -63,33 +61,27 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
     error: currentScheduleError,
   } = useQuery<{ schedule: ScheduleResult | null }>(GetScheduleQuery, {
     variables: { widgetId: widget.id, date: currentDate },
+    returnPartialData: !currentDate,
     skip: !currentUser?.class,
     ssr: false,
-    onCompleted: (data) => {
-      if (data.schedule) {
-        const newDateString = dateToDateString(
-          parse(data.schedule.head.date, 'PPPP', new Date(), {
-            locale: de,
-          })
-        );
-        if (!currentDate) {
-          client.writeQuery({
-            query: GetScheduleQuery,
-            variables: { widgetId: widget.id, date: newDateString },
-            data,
-            broadcast: false,
-          });
-          setCurrentDate(newDateString);
-        }
-      }
-    },
   });
-  const [getLastSchedule, { data: lastScheduleData }] = useLazyQuery<{
-    schedule: ScheduleResult | null;
-  }>(GetScheduleQuery, { ssr: false, errorPolicy: 'all' });
-  const [getNextSchedule, { data: nextScheduleData }] = useLazyQuery<{
-    schedule: ScheduleResult | null;
-  }>(GetScheduleQuery, { ssr: false, errorPolicy: 'all', onError: () => {} });
+
+  React.useEffect(() => {
+    if (!currentDate && currentScheduleData?.schedule?.head?.date) {
+      const newDateString = dateToDateString(
+        parse(currentScheduleData.schedule.head.date, 'PPPP', new Date(), {
+          locale: de,
+        })
+      );
+      client.writeQuery({
+        query: GetScheduleQuery,
+        variables: { widgetId: widget.id, date: newDateString },
+        data: currentScheduleData,
+        broadcast: false,
+      });
+      setCurrentDate(newDateString);
+    }
+  }, [currentDate, currentScheduleData, client, widget.id]);
 
   const getAvailableDate = React.useCallback(
     (direction: 'previous' | 'next', startDateString: DateString): Date => {
@@ -102,8 +94,8 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
           : addBusinessDays(startDate, 1);
 
       if (
-        !currentScheduleData?.schedule?.head.skipDates.find((skipDate) =>
-          isSameDay(new Date(skipDate), newDate)
+        !currentScheduleData?.schedule?.head?.skipDates?.find(
+          (skipDate) => skipDate && isSameDay(new Date(skipDate), newDate)
         )
       ) {
         return newDate;
@@ -113,84 +105,94 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
     [currentScheduleData]
   );
 
-  React.useEffect(() => {
-    if (currentDate) {
-      getLastSchedule({
-        variables: {
-          widgetId: widget.id,
-          date: dateToDateString(getAvailableDate('previous', currentDate)),
-        },
-      });
-      getNextSchedule({
-        variables: {
-          widgetId: widget.id,
-          date: dateToDateString(getAvailableDate('next', currentDate)),
-        },
-      });
-    }
-  }, [
-    widget.id,
-    currentDate,
-    getAvailableDate,
-    getLastSchedule,
-    getNextSchedule,
-  ]);
+  const { data: lastScheduleData } = useQuery<{
+    schedule: ScheduleResult | null;
+  }>(
+    GetScheduleQuery,
+    currentDate
+      ? {
+          ssr: false,
+          errorPolicy: 'all',
+          variables: {
+            widgetId: widget.id,
+            date: dateToDateString(getAvailableDate('previous', currentDate)),
+          },
+        }
+      : skipToken
+  );
+  const { data: nextScheduleData } = useQuery<{
+    schedule: ScheduleResult | null;
+  }>(
+    GetScheduleQuery,
+    currentDate
+      ? {
+          ssr: false,
+          errorPolicy: 'all',
+          variables: {
+            widgetId: widget.id,
+            date: dateToDateString(getAvailableDate('next', currentDate)),
+          },
+        }
+      : skipToken
+  );
 
   const tableRows = React.useMemo(() => {
     if (!currentUser) {
       return [];
     }
-    const rows = flatten(
-      Array.from(currentScheduleData?.schedule?.body?.schedule ?? [])
-        .sort((l1, l2) => l1.lessonIndex - l2.lessonIndex)
-        .filter((line) => {
-          if (
-            selectedCourses !== null &&
-            ['11', '12'].indexOf(currentUser.class!) > -1
-          ) {
-            return selectedCourses.indexOf(line.lessonName) > -1;
-          }
-          return true;
-        })
-        .map((line, index) =>
-          [
-            <tr key={index * 2}>
-              <td>{line.lessonIndex}</td>
-              <td
-                className={clsx({
-                  [styles.updated]: line.lessonNameHasChanged,
-                })}
-              >
-                {line.lessonName}
-              </td>
-              <td
-                className={clsx({
-                  [styles.updated]: line.teacherHasChanged,
-                })}
-              >
-                {line.teacher === '&nbsp;' ? '---' : line.teacher}
-              </td>
-              <td
-                className={clsx({
-                  [styles.updated]: line.roomHasChanged,
-                })}
-              >
-                {line.room === '&nbsp;' ? '---' : line.room}
-              </td>
-            </tr>,
-          ].concat(
-            line.comment
-              ? [
-                  <tr key={index * 2 + 1}>
-                    <td colSpan={4} align={'right'}>
-                      {line.comment}
-                    </td>
-                  </tr>,
-                ]
-              : []
-          )
+    const rows = Array.from(currentScheduleData?.schedule?.body?.schedule ?? [])
+      .filter((line): line is Exclude<typeof line, undefined> => {
+        if (line === undefined) {
+          return false;
+        }
+        if (
+          line?.lessonName &&
+          selectedCourses !== null &&
+          ['11', '12'].indexOf(currentUser.class!) > -1
+        ) {
+          return selectedCourses.indexOf(line.lessonName) > -1;
+        }
+        return true;
+      })
+      .sort((l1, l2) => (l1?.lessonIndex ?? 0) - (l2?.lessonIndex ?? 0))
+      .flatMap((line, index) =>
+        [
+          <tr key={index * 2}>
+            <td>{line.lessonIndex}</td>
+            <td
+              className={clsx({
+                [styles.updated]: line.lessonNameHasChanged,
+              })}
+            >
+              {line.lessonName}
+            </td>
+            <td
+              className={clsx({
+                [styles.updated]: line.teacherHasChanged,
+              })}
+            >
+              {line.teacher === '&nbsp;' ? '---' : line.teacher}
+            </td>
+            <td
+              className={clsx({
+                [styles.updated]: line.roomHasChanged,
+              })}
+            >
+              {line.room === '&nbsp;' ? '---' : line.room}
+            </td>
+          </tr>,
+        ].concat(
+          line.comment
+            ? [
+                <tr key={index * 2 + 1}>
+                  <td colSpan={4} align={'right'}>
+                    {line.comment}
+                  </td>
+                </tr>,
+              ]
+            : []
         )
-    );
+      );
     if (rows.length < 1) {
       return [
         <tr key={-1}>
@@ -242,15 +244,15 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
         )}
         <div className={styles.date}>
           {lastScheduleData?.schedule ? (
-            <Tooltip label={lastScheduleData.schedule.head.date}>
+            <Tooltip label={lastScheduleData.schedule.head?.date}>
               <Button
-                aria-label={lastScheduleData.schedule.head.date}
+                aria-label={lastScheduleData.schedule.head?.date}
                 icon={<Icon icon={faChevronLeft} size="lg" />}
                 onClick={() =>
                   setCurrentDate(
                     dateToDateString(
                       parse(
-                        lastScheduleData.schedule!.head.date,
+                        lastScheduleData.schedule?.head?.date ?? '',
                         'PPPP',
                         new Date(),
                         { locale: de }
@@ -265,15 +267,15 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
           )}
           <span>{currentScheduleData.schedule.head?.date}</span>
           {nextScheduleData?.schedule ? (
-            <Tooltip label={nextScheduleData.schedule.head.date}>
+            <Tooltip label={nextScheduleData.schedule.head?.date}>
               <Button
-                aria-label={nextScheduleData.schedule.head.date}
+                aria-label={nextScheduleData.schedule.head?.date}
                 icon={<Icon icon={faChevronRight} size="lg" />}
                 onClick={() =>
                   setCurrentDate(
                     dateToDateString(
                       parse(
-                        nextScheduleData.schedule!.head.date,
+                        nextScheduleData.schedule?.head?.date ?? '',
                         'PPPP',
                         new Date(),
                         { locale: de }
@@ -294,17 +296,21 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
             </Table>
             <SelectCoursesDialog
               isOpen={isSelectCoursesDialogOpen}
-              possibleCourses={uniq([
-                ...(lastScheduleData?.schedule?.body?.schedule.map(
-                  (schedule) => schedule.lessonName
-                ) ?? []),
-                ...(nextScheduleData?.schedule?.body?.schedule.map(
-                  (schedule) => schedule.lessonName
-                ) ?? []),
-                ...(currentScheduleData.schedule?.body?.schedule.map(
-                  (schedule) => schedule.lessonName
-                ) ?? []),
-              ])}
+              possibleCourses={Array.from(
+                new Set(
+                  [
+                    ...(lastScheduleData?.schedule?.body?.schedule?.map(
+                      (schedule) => schedule?.lessonName
+                    ) ?? []),
+                    ...(nextScheduleData?.schedule?.body?.schedule?.map(
+                      (schedule) => schedule?.lessonName
+                    ) ?? []),
+                    ...(currentScheduleData.schedule?.body?.schedule?.map(
+                      (schedule) => schedule?.lessonName
+                    ) ?? []),
+                  ].filter((course) => course !== undefined)
+                )
+              )}
               onRequestClose={() => {
                 try {
                   const persistedCourseList =
@@ -328,7 +334,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
               .filter(Boolean)
               .map((supervision, i) => (
                 <li key={i}>
-                  {supervision.time} {supervision.location}
+                  {supervision?.time} {supervision?.location}
                 </li>
               ))}
           </ul>

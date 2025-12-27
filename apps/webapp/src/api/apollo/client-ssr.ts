@@ -1,11 +1,11 @@
 'use client';
-
-import { ApolloLink, split } from '@apollo/client';
+import { ApolloLink } from '@apollo/client';
 import {
-  InMemoryCache,
   ApolloClient,
+  InMemoryCache,
   SSRMultipartLink,
-} from '@apollo/experimental-nextjs-app-support';
+} from '@apollo/client-integration-nextjs';
+import { Defer20220824Handler } from '@apollo/client/incremental';
 import { createWebsocketLink } from './links/websocketLink';
 import { TenantModel } from 'model';
 import { createErrorLink } from './links/errorLink';
@@ -18,7 +18,7 @@ export const createSSRClient = (
   tenant: Pick<TenantModel, 'id'>,
   socketUrl?: string | null,
   accessToken?: string
-) => {
+): ApolloClient => {
   const websocketLink = createWebsocketLink(tenant, socketUrl, accessToken);
   const httpLink = createHttpLink({
     requestExtraHeaders: () => ({
@@ -26,7 +26,7 @@ export const createSSRClient = (
     }),
   });
   const networkLink = websocketLink
-    ? split(
+    ? ApolloLink.split(
         (operation) => {
           const definition = getMainDefinition(operation.query);
           return (
@@ -42,6 +42,7 @@ export const createSSRClient = (
 
   return new ApolloClient({
     cache: new InMemoryCache(),
+
     link: ApolloLink.from(
       [
         createErrorLink(),
@@ -58,5 +59,6 @@ export const createSSRClient = (
         networkLink,
       ].filter(Boolean)
     ),
+    incrementalHandler: new Defer20220824Handler(),
   });
 };

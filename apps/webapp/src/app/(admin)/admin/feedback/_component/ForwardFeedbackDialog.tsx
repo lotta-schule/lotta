@@ -8,7 +8,7 @@ import {
   Input,
   Label,
 } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FeedbackModel } from 'model';
 import { Icon } from 'shared/Icon';

@@ -1,10 +1,10 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { CircularProgress } from '@lotta-schule/hubert';
+import { useTranslation } from 'react-i18next';
 import { graphql } from 'api/graphql';
 import * as React from 'react';
 
 import styles from './ConversionProgress.module.scss';
-import { useTranslation } from 'react-i18next';
 
 export const GET_FILE_FORMATS_QUERY = graphql(`
   query file($id: ID!) {
@@ -77,7 +77,7 @@ export const ConversionProgress = React.memo(
     }
 
     return (
-      <div className={styles.root}>
+      <div className={styles.root} data-testid="conversion-progress">
         <CircularProgress
           className={styles.progress}
           aria-labelledby={`conversion-progress-text-${fileId}`}

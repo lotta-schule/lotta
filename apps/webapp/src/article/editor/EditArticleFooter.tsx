@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import {
@@ -5,7 +6,7 @@ import {
   faCalendar,
   faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { CategorySelect } from '../../shared/categorySelect/CategorySelect';
 import { ArticleModel, ID, UserGroupModel } from 'model';
 import { Category, User } from 'util/model';
@@ -24,7 +25,7 @@ import {
   Checkbox,
 } from '@lotta-schule/hubert';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 
 import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
@@ -195,7 +196,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                 className={'is-last-button-group-button'}
                 variant={'fill'}
                 disabled={isLoading}
-                onClick={() => onSave()}
+                onClick={onSave}
               >
                 speichern
               </Button>

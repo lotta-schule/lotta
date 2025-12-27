@@ -1,5 +1,4 @@
 'use client';
-
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import { faSdCard } from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +10,7 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { Tenant } from 'util/tenant';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { motion } from 'framer-motion';
 
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';

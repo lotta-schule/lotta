@@ -43,6 +43,7 @@ export const ReactionCountButtons = React.memo(
             icon={<Icon icon={icon!.icon} />}
             disabled={!count || !onSelect}
             onClick={() => onSelect?.(type)}
+            key={type}
           >
             <div className={styles.count}>{count}</div>
           </PillButton>

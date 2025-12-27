@@ -5,7 +5,7 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from 'shared/Icon';
 import { useTranslation } from 'react-i18next';
 import { CalendarConfiguration } from './CalendarConfiguration';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { GET_CALENDARS } from 'app/(admin)/admin/calendars/_graphql';
 
 export interface CalendarWidgetConfigurationProps {

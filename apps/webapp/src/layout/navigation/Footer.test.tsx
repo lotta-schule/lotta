@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
-import { MockedProvider } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { Footer } from './Footer';
 import { allCategories } from 'test/fixtures';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';

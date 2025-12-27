@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { MockedResponse } from '@apollo/client/testing';
+import { render, waitFor, userEvent } from 'test/util';
+import { MockLink } from '@apollo/client/testing';
 import { DeleteEventConfirmationDialog } from './DeleteEventConfirmationDialog';
 import { DELETE_CALENDAR_EVENT } from '../_graphql';
 import { vi } from 'vitest';
 import { createCalendarFixture, createEventFixture } from 'test/fixtures';
 import { ResultOf, VariablesOf } from 'gql.tada';
-import userEvent from '@testing-library/user-event';
 
 describe('DeleteEventConfirmationDialog', () => {
   const eventToBeDeleted = createEventFixture(createCalendarFixture());
 
-  const deleteEventMock: MockedResponse<
+  const deleteEventMock: MockLink.MockedResponse<
     ResultOf<typeof DELETE_CALENDAR_EVENT>,
     VariablesOf<typeof DELETE_CALENDAR_EVENT>
   > = {

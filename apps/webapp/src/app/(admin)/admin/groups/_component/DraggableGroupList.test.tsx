@@ -1,9 +1,8 @@
-import { render, waitFor } from 'test/util';
-import { MockedResponse } from '@apollo/client/testing';
+import { render, waitFor, userEvent } from 'test/util';
+import { MockLink } from '@apollo/client/testing';
 import { lehrerGroup, schuelerGroup, userGroups } from 'test/fixtures';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Mock } from 'vitest';
-import { userEvent } from '@testing-library/user-event';
 import { DraggableGroupList } from './DraggableGroupList';
 import { GET_USER_GROUPS } from '../_graphql';
 
@@ -19,7 +18,7 @@ describe('DraggableGroupList', () => {
     push: vi.fn(),
     replace: vi.fn(),
   };
-  const additionalMocks: MockedResponse[] = [
+  const additionalMocks: MockLink.MockedResponse[] = [
     {
       request: {
         query: GET_USER_GROUPS,

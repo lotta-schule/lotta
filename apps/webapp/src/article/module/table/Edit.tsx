@@ -26,8 +26,10 @@ interface EditProps {
   ): void;
 }
 
-export interface EditTableCellProps
-  extends Omit<InputProps, 'value' | 'style' | 'onChange'> {
+export interface EditTableCellProps extends Omit<
+  InputProps,
+  'value' | 'style' | 'onChange'
+> {
   cell: TableCellInterface;
   onChange(cell: TableCellInterface): void;
   position: { row: number; column: number };
@@ -75,9 +77,9 @@ export const Edit = React.memo<EditProps>(
 
     const contentRows = React.useMemo(
       () =>
-        range(rowCount).map((rowIndex) =>
-          range(columnCount).map(
-            (columnIndex) =>
+        new Array(rowCount).fill(0).map((_, rowIndex) =>
+          new Array(columnCount).fill(0).map(
+            (_, columnIndex) =>
               contentModule.content?.rows?.[rowIndex]?.[columnIndex] ?? {
                 text: '',
               }

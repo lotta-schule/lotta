@@ -6,9 +6,9 @@ import {
   waitFor,
   within,
   fixtures,
+  userEvent,
 } from '../../test-utils';
 import { MoveNodesDialog } from './MoveNodesDialog';
-import userEvent from '@testing-library/user-event';
 
 const WrappedMoveNodesDialog = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>
@@ -95,7 +95,7 @@ describe('Browser/MoveNodesDialog', () => {
       expect(createNewDirectoryDialog).toBeVisible();
     });
 
-    await user.type(
+    await user.fill(
       within(createNewDirectoryDialog).getByLabelText(/name des ordners/i),
       'bla'
     );

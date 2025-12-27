@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { render, screen, waitFor, within } from 'test/util';
+import { render, screen, waitFor, within, userEvent } from 'test/util';
 import { FaecherCategory, SomeUser } from 'test/fixtures';
 import { CreateCategoryDialog } from './CreateCategoryDialog';
 import { CategoryModel } from 'model';
 import CreateCategoryMutation from 'api/mutation/CreateCategoryMutation.graphql';
-import userEvent from '@testing-library/user-event';
 
 const createMocks = (props?: Partial<CategoryModel>) => [
   {
@@ -96,13 +95,13 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
   });
 
   it('should clear the form and call onAbort when clicking the "Reset" button', async () => {
-    const fireEvent = userEvent.setup();
+    const user = userEvent.setup();
     const onAbort = vi.fn();
     render(
       <CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={onAbort} />
     );
-    await fireEvent.type(screen.getByRole('textbox'), 'Test');
-    await fireEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
+    await user.fill(screen.getByRole('textbox'), 'Test');
+    await user.click(screen.getByRole('button', { name: /abbrechen/i }));
 
     await waitFor(() => {
       expect(onAbort).toHaveBeenCalled();
@@ -124,7 +123,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
     });
 
     it('should create a main article with the given title', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const onConfirm = vi.fn((createdCategory) => {
         expect(createdCategory.id).toEqual(666);
         expect(createdCategory.title).toEqual('Test');
@@ -140,8 +139,8 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
         {},
         { currentUser: SomeUser, additionalMocks: createMocks() }
       );
-      await fireEvent.type(screen.getByRole('textbox'), 'Test');
-      await fireEvent.click(screen.getByRole('button', { name: /erstellen/ }));
+      await user.type(screen.getByRole('textbox'), 'Test');
+      await user.click(screen.getByRole('button', { name: /erstellen/ }));
 
       await waitFor(() => {
         expect(onConfirm).toHaveBeenCalled();
@@ -151,22 +150,20 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
 
   describe('send for subcategory', () => {
     it('should disable the submit button if no parentCategory is selected', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />,
         {},
         { currentUser: SomeUser }
       );
 
-      await fireEvent.type(screen.getByRole('textbox'), 'Test');
-      await fireEvent.click(
-        screen.getByRole('radio', { name: /subnavigation/i })
-      );
+      await user.type(screen.getByRole('textbox'), 'Test');
+      await user.click(screen.getByRole('radio', { name: /subnavigation/i }));
       expect(screen.getByRole('button', { name: /erstellen/ })).toBeDisabled();
     });
 
     it('should create an article', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const onConfirm = vi.fn((createdCategory) => {
         expect(createdCategory.title).toEqual('Test');
         expect(createdCategory.isSidenav).toEqual(false);
@@ -192,20 +189,18 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
         }
       );
 
-      await fireEvent.type(screen.getByRole('textbox'), 'Test');
-      await fireEvent.click(
-        screen.getByRole('radio', { name: /subnavigation/i })
-      );
+      await user.type(screen.getByRole('textbox'), 'Test');
+      await user.click(screen.getByRole('radio', { name: /subnavigation/i }));
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const select = await screen.getByRole('button', {
+      const select = screen.getByRole('button', {
         name: /übergeordnete kategorie/i,
       });
-      await fireEvent.click(select);
+      await user.click(select);
       const faecherOption = await screen.findByRole('option', {
         name: /fächer/i,
       });
-      await fireEvent.click(faecherOption);
-      await fireEvent.click(screen.getByRole('button', { name: /erstellen/ }));
+      await user.click(faecherOption);
+      await user.click(screen.getByRole('button', { name: /erstellen/ }));
 
       await waitFor(() => {
         expect(onConfirm).toHaveBeenCalled();
@@ -215,7 +210,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
 
   describe('send for sidenav', () => {
     it('should create an article', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const onConfirm = vi.fn((createdCategory) => {
         expect(createdCategory.id).toEqual(666);
         expect(createdCategory.title).toEqual('Test');
@@ -236,11 +231,9 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
         }
       );
 
-      await fireEvent.type(screen.getByRole('textbox'), 'Test');
-      await fireEvent.click(
-        screen.getByRole('radio', { name: /randnavigation/i })
-      );
-      await fireEvent.click(screen.getByRole('button', { name: /erstellen/ }));
+      await user.type(screen.getByRole('textbox'), 'Test');
+      await user.click(screen.getByRole('radio', { name: /randnavigation/i }));
+      await user.click(screen.getByRole('button', { name: /erstellen/ }));
 
       await waitFor(() => {
         expect(onConfirm).toHaveBeenCalled();

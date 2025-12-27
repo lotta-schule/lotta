@@ -1,12 +1,11 @@
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import {
   CalendarKlassenarbeiten,
   GangamStyleWidget,
   VPSchuelerWidget,
 } from 'test/fixtures';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { WidgetEditor } from './WidgetEditor';
-import userEvent from '@testing-library/user-event';
 
 import UpdateWidgetMutation from 'api/mutation/UpdateWidgetMutation.graphql';
 
@@ -35,7 +34,7 @@ describe("Administrators' WidgetEditor", () => {
   });
 
   describe('updating values', () => {
-    const mock: MockedResponse = {
+    const mock: MockLink.MockedResponse = {
       request: {
         query: UpdateWidgetMutation,
         variables: {
@@ -65,7 +64,7 @@ describe("Administrators' WidgetEditor", () => {
       })),
     };
     it("should update the widget's properties", async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(
         <WidgetEditor widget={VPSchuelerWidget} />,
         {},
@@ -74,15 +73,10 @@ describe("Administrators' WidgetEditor", () => {
       const widgetNameInput = screen.getByRole('textbox', {
         name: /name des widget/i,
       }) as HTMLInputElement;
-      await fireEvent.type(widgetNameInput, 'Neuer Name', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: widgetNameInput.value.length,
-      });
-      await fireEvent.click(
-        screen.getByRole('checkbox', { name: /für alle/i })
-      );
+      await user.fill(widgetNameInput, 'Neuer Name');
+      await user.click(screen.getByRole('checkbox', { name: /für alle/i }));
 
-      await fireEvent.click(screen.getByRole('button', { name: /speichern/i }));
+      await user.click(screen.getByRole('button', { name: /speichern/i }));
       await waitFor(() => {
         expect(mock.result).toHaveBeenCalled();
       });

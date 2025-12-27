@@ -1,4 +1,5 @@
 import { ApolloClient, ApolloLink } from '@apollo/client';
+import { Defer20220824Handler } from '@apollo/client/incremental';
 import { createCache } from './cache';
 import { createErrorLink } from './links/errorLink';
 import { createAuthLink } from './links/authLink';
@@ -20,6 +21,7 @@ export const createRSCClient = async () => {
   const headerValues = await headers();
   return new ApolloClient({
     cache: createCache(),
+
     link: ApolloLink.from([
       createErrorLink(),
       createAuthLink({
@@ -36,5 +38,6 @@ export const createRSCClient = async () => {
         }),
       }),
     ]),
+    incrementalHandler: new Defer20220824Handler(),
   });
 };

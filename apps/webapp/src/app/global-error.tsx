@@ -1,7 +1,6 @@
 'use client'; // Error boundaries must be Client Components
 
 import * as React from 'react';
-import * as Sentry from '@sentry/nextjs';
 import {
   HubertProvider,
   Button,
@@ -17,10 +16,6 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  React.useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
-
   return (
     <html>
       <head>

@@ -1,0 +1,24 @@
+diff --git a/dist/esm/lib/typescript/writeConfigurationDefaults.js b/dist/esm/lib/typescript/writeConfigurationDefaults.js
+index bf245913bdc7770e3ff2046aa968ebb0853e9d34..06b5d7e3f327649660cc9a215d67298cb91f9af1 100644
+--- a/dist/esm/lib/typescript/writeConfigurationDefaults.js
++++ b/dist/esm/lib/typescript/writeConfigurationDefaults.js
+@@ -116,6 +116,7 @@ export function getRequiredConfiguration(ts) {
+ }
+ const localDevTestFilesExcludeAction = 'NEXT_PRIVATE_LOCAL_DEV_TEST_FILES_EXCLUDE';
+ export async function writeConfigurationDefaults(ts, tsConfigPath, isFirstTimeSetup, hasAppDir, distDir, hasPagesDir) {
++  return;
+     var _userTsConfig_compilerOptions;
+     if (isFirstTimeSetup) {
+         await fs.writeFile(tsConfigPath, '{}' + os.EOL);
+diff --git a/dist/lib/typescript/writeConfigurationDefaults.js b/dist/lib/typescript/writeConfigurationDefaults.js
+index f526d3ec425f790414f01a87f479581193abb4de..d496030fc1ba8ee6ca3ada24ca69f2dd8386ef99 100644
+--- a/dist/lib/typescript/writeConfigurationDefaults.js
++++ b/dist/lib/typescript/writeConfigurationDefaults.js
+@@ -184,6 +184,7 @@ function getRequiredConfiguration(ts) {
+ }
+ const localDevTestFilesExcludeAction = 'NEXT_PRIVATE_LOCAL_DEV_TEST_FILES_EXCLUDE';
+ async function writeConfigurationDefaults(ts, tsConfigPath, isFirstTimeSetup, hasAppDir, distDir, hasPagesDir) {
++  return;
+     var _userTsConfig_compilerOptions;
+     if (isFirstTimeSetup) {
+         await _fs.promises.writeFile(tsConfigPath, '{}' + _os.default.EOL);

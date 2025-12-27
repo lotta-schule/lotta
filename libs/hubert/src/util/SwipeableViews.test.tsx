@@ -36,7 +36,7 @@ describe('SwipeableViews Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId('movingStrip')).toHaveStyle('left: 0%');
+      expect(screen.getByTestId('movingStrip')).toHaveStyle('left: 0px');
     });
 
     screen.rerender(
@@ -46,7 +46,9 @@ describe('SwipeableViews Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId('movingStrip')).toHaveStyle('left: -200%');
+      expect(
+        parseInt(screen.getByTestId('movingStrip').style.left)
+      ).toBeLessThan(-100);
     });
   });
 

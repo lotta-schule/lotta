@@ -1,29 +1,18 @@
-import * as Sentry from '@sentry/nextjs';
 import { sendRefreshRequest } from 'api/auth';
 import { serialize } from 'cookie-es';
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { JWT } from 'util/auth/jwt';
-
-import type { NextRequest } from 'next/server';
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|font|favicon.ico|favicon|p/|stry/).*)',
+    {
+      source:
+        '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|p/|stry/|api/|backend/|auth/storage/).*)',
+    },
   ],
 };
 
-// This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
-  if (
-    /\.(png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot)$/.test(
-      request.nextUrl.pathname
-    ) ||
-    /^\/(api|backend|auth|storage)/.test(request.nextUrl.pathname)
-  ) {
-    // do not execute on static files
-    return NextResponse.next({ request });
-  }
-
   let authInfo = {
     refreshToken: null as string | null,
     accessToken: request.cookies.get('SignInAccessToken')?.value ?? null,
@@ -95,7 +84,6 @@ export async function middleware(request: NextRequest) {
         });
       }
     } catch (e) {
-      Sentry.captureException(e);
       console.error('Error parsing new token', e);
     }
   } else {

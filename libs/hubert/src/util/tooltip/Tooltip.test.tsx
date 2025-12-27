@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render } from '@testing-library/react';
 import { Button } from '../../button/Button';
 import { Tooltip } from './Tooltip';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from 'test-utils';
 
 describe('util/Tooltip', () => {
   it('should render', () => {

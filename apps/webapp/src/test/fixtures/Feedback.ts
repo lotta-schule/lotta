@@ -1,6 +1,7 @@
 import { FeedbackModel } from 'model';
 
 export const newFeedback: FeedbackModel = {
+  __typename: 'Feedback',
   id: '6543-feed-back-1234',
   insertedAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
@@ -12,6 +13,7 @@ export const newFeedback: FeedbackModel = {
 };
 
 export const readFeedback: FeedbackModel = {
+  __typename: 'Feedback',
   id: '6973-feed-back-1432',
   insertedAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
@@ -23,6 +25,7 @@ export const readFeedback: FeedbackModel = {
 };
 
 export const respondedFeedback: FeedbackModel = {
+  __typename: 'Feedback',
   id: '1111-feed-back-1234',
   insertedAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
@@ -34,6 +37,7 @@ export const respondedFeedback: FeedbackModel = {
 };
 
 export const forwardedFeedback: FeedbackModel = {
+  __typename: 'Feedback',
   id: '9999-feed-back-1234',
   insertedAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),

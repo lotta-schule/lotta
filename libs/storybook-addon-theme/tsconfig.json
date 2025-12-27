@@ -8,12 +8,11 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
-    "module": "CommonJS",
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "target": "ESNext",
     "paths": {
-      "@lotta-schule/theme": [
-        "../../theme/src/index.ts"
-      ]
+      "@lotta-schule/theme": ["../../theme/src/index.ts"]
     }
   },
   "references": [
@@ -22,7 +21,7 @@
     },
     {
       "path": "./tsconfig.lib.json"
-    },
+    }
   ],
   "include": []
 }

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { LehrerListe } from 'test/fixtures';
 import { Edit } from './Edit';
 import { excelPasteTransfer, numbersPasteTransfer } from './mockData';
-import userEvent from '@testing-library/user-event';
+import { commands } from '@vitest/browser/context';
 
 const tableContentModule = LehrerListe.contentModules[0];
 
@@ -21,7 +21,7 @@ describe('shared/article/module/table/Edit', () => {
 
   describe('editor table cells', () => {
     it('should editor a cell when entering text', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const callback = vi.fn((cm) => {
         expect(cm.content).toEqual({
           rows: [
@@ -43,9 +43,9 @@ describe('shared/article/module/table/Edit', () => {
         screen.getByRole('cell', { name: 'Lehrer E' })
       ).toBeInTheDocument();
       const input = screen.getByDisplayValue('Lehrer E');
-      await fireEvent.clear(input);
-      await fireEvent.type(input, 'Der Mr Lehrer E');
-      await fireEvent.click(screen.getByRole('table')); // blur input
+      await user.clear(input);
+      await user.type(input, 'Der Mr Lehrer E');
+      await user.click(screen.getByRole('table')); // blur input
       await waitFor(() => {
         expect(callback).toHaveBeenCalled();
       });
@@ -53,14 +53,14 @@ describe('shared/article/module/table/Edit', () => {
 
     describe('navigate via enter key', () => {
       it('should jump to next column', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const callback = vi.fn();
         const screen = render(
           <Edit contentModule={tableContentModule} onUpdateModule={callback} />
         );
         const input = screen.getByDisplayValue('Kürzel');
-        await fireEvent.click(input);
-        await fireEvent.type(input, '{enter}');
+        await user.click(input);
+        await user.type(input, '{enter}');
         await waitFor(() => {
           expect(screen.getByDisplayValue('Name')).toHaveFocus();
         });
@@ -68,14 +68,14 @@ describe('shared/article/module/table/Edit', () => {
       });
 
       it('should jump to next row', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const callback = vi.fn();
         const screen = render(
           <Edit contentModule={tableContentModule} onUpdateModule={callback} />
         );
         const input = screen.getByDisplayValue('Name');
-        await fireEvent.click(input);
-        await fireEvent.type(input, '{enter}');
+        await user.click(input);
+        await user.type(input, '{enter}');
         await waitFor(() => {
           expect(screen.getByDisplayValue('LAb')).toHaveFocus();
         });
@@ -83,7 +83,7 @@ describe('shared/article/module/table/Edit', () => {
       });
 
       it('should create a new row when on last element', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         let contentModule = tableContentModule;
         let didCallCallback = false;
         const callback = vi.fn((cm) => {
@@ -98,8 +98,8 @@ describe('shared/article/module/table/Edit', () => {
           <Edit contentModule={contentModule} onUpdateModule={callback} />
         );
         const input = screen.getByDisplayValue('Lehrer F');
-        await fireEvent.click(input);
-        await fireEvent.type(input, '{enter}');
+        await user.click(input);
+        await user.type(input, '{enter}');
         await waitFor(() => {
           expect(callback).toHaveBeenCalled();
         });
@@ -146,7 +146,7 @@ describe('shared/article/module/table/Edit', () => {
       });
 
       it('should remove a column when clicking the button', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const callback = vi.fn((cm) => {
           expect(cm.content).toEqual({
             rows: [
@@ -166,14 +166,14 @@ describe('shared/article/module/table/Edit', () => {
         const button = screen.getByRole('button', {
           name: /spalte entfernen/i,
         });
-        await fireEvent.click(button);
+        await user.click(button);
         await waitFor(() => {
           expect(callback).toHaveBeenCalled();
         });
       });
 
       it('should insert a column when clicking the button', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         let contentModule = tableContentModule;
         const callback = vi.fn((cm) => {
           contentModule = cm;
@@ -184,7 +184,7 @@ describe('shared/article/module/table/Edit', () => {
         const button = screen.getByRole('button', {
           name: /spalte hinzufügen/i,
         });
-        await fireEvent.click(button);
+        await user.click(button);
         await waitFor(() => {
           expect(callback).toHaveBeenCalled();
         });
@@ -197,7 +197,7 @@ describe('shared/article/module/table/Edit', () => {
       });
 
       it('should remove a row when clicking the button', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const callback = vi.fn((cm) => {
           expect(cm.content).toEqual({
             rows: [
@@ -216,14 +216,14 @@ describe('shared/article/module/table/Edit', () => {
         const button = screen.getByRole('button', {
           name: /zeile entfernen/i,
         });
-        await fireEvent.click(button);
+        await user.click(button);
         await waitFor(() => {
           expect(callback).toHaveBeenCalled();
         });
       });
 
       it('should insert a row when clicking the button', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         let contentModule = tableContentModule;
         const callback = vi.fn((cm) => {
           expect(cm.content.rows).toHaveLength(8);
@@ -235,7 +235,7 @@ describe('shared/article/module/table/Edit', () => {
         const button = screen.getByRole('button', {
           name: /zeile hinzufügen/i,
         });
-        await fireEvent.click(button);
+        await user.click(button);
         await waitFor(() => {
           expect(callback).toHaveBeenCalled();
         });
@@ -251,9 +251,20 @@ describe('shared/article/module/table/Edit', () => {
 
   describe('pasting from other application', () => {
     it('should paste from excel to top-most upper-left corner', async () => {
-      const fireEvent = userEvent.setup();
-      const callback = vi.fn((cm) => {
-        expect(cm.content).toEqual({
+      const user = userEvent.setup();
+      const callback = vi.fn();
+      const screen = render(
+        <Edit contentModule={tableContentModule} onUpdateModule={callback} />
+      );
+      const upperLeftInput = screen.getByDisplayValue('Kürzel');
+      await user.click(upperLeftInput);
+      await commands.paste(excelPasteTransfer);
+      await waitFor(() => {
+        expect(callback).toHaveBeenCalled();
+      });
+
+      expect(callback.mock.lastCall?.[0]).toMatchObject({
+        content: {
           rows: [
             [{ text: 'A' }, { text: 'B' }, { text: 'C' }],
             [{ text: 'D' }, { text: 'E' }, { text: 'F' }],
@@ -263,23 +274,25 @@ describe('shared/article/module/table/Edit', () => {
             [{ text: 'LÄh' }, { text: 'Lehrer E' }, { text: '' }],
             [{ text: 'LeF' }, { text: 'Lehrer F' }, { text: '' }],
           ],
-        });
-      });
-      const screen = render(
-        <Edit contentModule={tableContentModule} onUpdateModule={callback} />
-      );
-      const upperLeftInput = screen.getByDisplayValue('Kürzel');
-      await fireEvent.click(upperLeftInput);
-      await fireEvent.paste(excelPasteTransfer as any);
-      await waitFor(() => {
-        expect(callback).toHaveBeenCalled();
+        },
       });
     });
 
     it('should paste from numbers to top-most upper-left corner', async () => {
-      const fireEvent = userEvent.setup();
-      const callback = vi.fn((cm) => {
-        expect(cm.content).toEqual({
+      const user = userEvent.setup();
+      const callback = vi.fn();
+      const screen = render(
+        <Edit contentModule={tableContentModule} onUpdateModule={callback} />
+      );
+      const upperLeftInput = screen.getByDisplayValue('Kürzel');
+      await user.click(upperLeftInput);
+      await commands.paste(numbersPasteTransfer);
+      await waitFor(() => {
+        expect(callback).toHaveBeenCalled();
+      });
+
+      expect(callback.mock.lastCall?.[0]).toMatchObject({
+        content: {
           rows: [
             [{ text: 'A' }, { text: 'B' }, { text: 'C' }],
             [{ text: 'D' }, { text: 'E' }, { text: 'F' }],
@@ -289,23 +302,25 @@ describe('shared/article/module/table/Edit', () => {
             [{ text: 'LÄh' }, { text: 'Lehrer E' }, { text: '' }],
             [{ text: 'LeF' }, { text: 'Lehrer F' }, { text: '' }],
           ],
-        });
-      });
-      const screen = render(
-        <Edit contentModule={tableContentModule} onUpdateModule={callback} />
-      );
-      const upperLeftInput = screen.getByDisplayValue('Kürzel');
-      await fireEvent.click(upperLeftInput);
-      await fireEvent.paste(numbersPasteTransfer as any);
-      await waitFor(() => {
-        expect(callback).toHaveBeenCalled();
+        },
       });
     });
 
     it('should expand the current grid if pastet to the bottom right corner', async () => {
-      const fireEvent = userEvent.setup();
-      const callback = vi.fn((cm) => {
-        expect(cm.content).toEqual({
+      const user = userEvent.setup();
+      const callback = vi.fn();
+      const screen = render(
+        <Edit contentModule={tableContentModule} onUpdateModule={callback} />
+      );
+      const bottomRightInput = screen.getByDisplayValue('Lehrer E');
+      await user.click(bottomRightInput);
+      await commands.paste(numbersPasteTransfer);
+      await waitFor(() => {
+        expect(callback).toHaveBeenCalled();
+      });
+
+      expect(callback.mock.lastCall?.[0]).toMatchObject({
+        content: {
           rows: [
             [{ text: 'Kürzel' }, { text: 'Name' }, { text: '' }, { text: '' }],
             [
@@ -326,16 +341,7 @@ describe('shared/article/module/table/Edit', () => {
             [{ text: 'LeF' }, { text: 'D' }, { text: 'E' }, { text: 'F' }],
             [{ text: '' }, { text: 'G' }, { text: 'H' }, { text: 'I' }],
           ],
-        });
-      });
-      const screen = render(
-        <Edit contentModule={tableContentModule} onUpdateModule={callback} />
-      );
-      const bottomRightInput = screen.getByDisplayValue('Lehrer E');
-      await fireEvent.click(bottomRightInput);
-      fireEvent.paste(numbersPasteTransfer as any);
-      await waitFor(() => {
-        expect(callback).toHaveBeenCalled();
+        },
       });
     });
   });

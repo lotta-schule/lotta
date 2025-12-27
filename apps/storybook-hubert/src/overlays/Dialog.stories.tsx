@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react-vite';
 import { Button, Dialog, DialogProps } from '@lotta-schule/hubert';
-import { action } from '@storybook/addon-actions';
-import { useArgs } from '@storybook/preview-api';
+import { action } from 'storybook/actions';
+import { useArgs } from 'storybook/preview-api';
 
 export default {
   title: 'overlays/Dialog',

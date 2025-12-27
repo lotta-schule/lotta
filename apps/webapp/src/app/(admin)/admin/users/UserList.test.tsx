@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import {
   SomeUser,
   SomeUserin,
@@ -8,7 +8,6 @@ import {
   tenant,
 } from 'test/fixtures';
 import { UserList } from './UserList';
-import userEvent from '@testing-library/user-event';
 
 import GetUserQuery from 'api/query/GetUserQuery.graphql';
 import SearchUsersQuery from 'api/query/SearchUsersAsAdminQuery.graphql';

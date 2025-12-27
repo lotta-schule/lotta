@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import {
   SomeUser,
   SomeUserin,
@@ -8,7 +8,6 @@ import {
 import { UserBrowser, UserBrowserProps } from 'shared/browser';
 import { ComposeMessage } from './ComposeMessage';
 import { MessageModel } from 'model';
-import userEvent from '@testing-library/user-event';
 
 import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
 

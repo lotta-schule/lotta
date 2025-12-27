@@ -1,9 +1,10 @@
+'use client';
 import * as React from 'react';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useIsMobile } from '@lotta-schule/hubert';
-import { useApolloClient } from '@apollo/client';
-import { useRouter } from 'next/router';
-import { LegacyHeader, Main, Sidebar } from 'layout';
+import { useApolloClient } from '@apollo/client/react';
+import { useRouter } from 'next/navigation';
+import { Header, Main, Sidebar } from 'layout';
 import { isBrowser } from 'util/isBrowser';
 import { ConversationModel } from 'model';
 import { MessagingView } from './MessagingView';
@@ -43,9 +44,9 @@ export const MessagingPage = React.memo(
       <>
         <Main>
           {!isMobile && (
-            <LegacyHeader bannerImageUrl={'/bannerMessaging.png'}>
+            <Header bannerImageUrl={'/bannerMessaging.png'}>
               <h2 data-testid={'title'}>Nachrichten</h2>
-            </LegacyHeader>
+            </Header>
           )}
           <MessagingView />
         </Main>

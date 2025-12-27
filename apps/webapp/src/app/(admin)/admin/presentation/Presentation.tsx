@@ -12,7 +12,7 @@ import {
   Select,
   useTheme,
 } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { AdminPageSection } from '../_component/AdminPageSection';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';

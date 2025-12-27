@@ -1,10 +1,11 @@
+'use client';
 import * as React from 'react';
 import { Drawer, NoSsr, useIsMobile } from '@lotta-schule/hubert';
-import { useReactiveVar } from '@apollo/client';
+import { useReactiveVar } from '@apollo/client/react';
 import { Footer } from './navigation/Footer';
 import { WidgetsList } from 'category/widgetsList/WidgetsList';
 import { isMobileDrawerOpenVar } from 'api/apollo/cache';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 
 import styles from './Sidebar.module.scss';
 import clsx from 'clsx';
@@ -15,7 +16,7 @@ export interface SidebarProps {
 }
 
 export const Sidebar = React.memo<SidebarProps>(({ children, isEmpty }) => {
-  const router = useRouter();
+  const pathname = usePathname();
   const isMobile = useIsMobile();
 
   const isMobileDrawerOpen = useReactiveVar(isMobileDrawerOpenVar);
@@ -23,7 +24,7 @@ export const Sidebar = React.memo<SidebarProps>(({ children, isEmpty }) => {
 
   React.useEffect(() => {
     closeMobileDrawer();
-  }, [router.pathname]);
+  }, [pathname]);
 
   if (isMobile) {
     return (

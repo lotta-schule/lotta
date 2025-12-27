@@ -91,7 +91,8 @@ defmodule Lotta.Tenants.DefaultContent do
     available_assets()
     |> Enum.reduce_while({:ok, []}, fn {filename, type, path}, {:ok, files} ->
       with {:ok, file_data} <- FileData.from_path(path, mime_type: type),
-           {:ok, file} <- Storage.create_file(file_data, shared_dir, user, skip_wait: true) do
+           {:ok, file} <-
+             Storage.create_file(file_data, shared_dir, user, skip_wait: true, skip_cleanup: true) do
         {:cont, {:ok, [file | files]}}
       else
         error ->

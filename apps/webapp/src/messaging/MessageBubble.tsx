@@ -3,7 +3,7 @@ import { Button, FileSize } from '@lotta-schule/hubert';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { format } from 'date-fns';
 import { faCloudArrowDown, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { FileModel, MessageModel } from 'model';
 import { File, User } from 'util/model';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';

@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { UserModel } from 'model';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent, within } from 'test/util';
 import { SomeUser, SomeUserin, schuelerGroup } from 'test/fixtures';
 import { CreateMessageDialog } from './CreateMessageDialog';
-import userEvent from '@testing-library/user-event';
 
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 
@@ -26,28 +25,28 @@ describe('CreateMessageDialog', () => {
   describe('select detination popup', () => {
     const SomeUserWithGroups = { ...SomeUser, groups: [schuelerGroup] };
 
-    it('should not show the "groups" tab if userr has no groups', async () => {
-      const fireEvent = userEvent.setup();
+    it('should not show the "groups" tab if user has no groups', async () => {
       const screen = render(
         <CreateMessageDialog isOpen onAbort={() => {}} onConfirm={() => {}} />,
         {},
         { currentUser: SomeUser }
       );
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /nachricht verfassen/i })
-      );
       await waitFor(() => {
         expect(
           screen.getByRole('dialog', { name: /empfänger/i })
         ).toBeVisible();
       });
 
-      expect(screen.queryByRole('tab', { name: /gruppe/i })).toBeNull();
+      expect(screen.getByRole('tablist')).toBeVisible();
+      expect(
+        within(screen.getByRole('tablist')).getAllByRole('tab')
+      ).toHaveLength(1);
+      expect(screen.queryByRole('tab')).toHaveTextContent(/nutzer/i);
     });
 
     it('should select a userAvatar and create the corresponding thread object', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const searchTerm = 'Drinalda';
       const onConfirm = vi.fn((destination) => {
         expect(destination.user.name).toEqual('Luisa Drinalda');
@@ -65,17 +64,16 @@ describe('CreateMessageDialog', () => {
         }
       );
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /nachricht verfassen/i })
-      );
       await waitFor(() => {
         expect(
           screen.getByRole('dialog', { name: /empfänger/i })
         ).toBeVisible();
       });
+      expect(
+        screen.getByRole('tab', { name: /nutzer/i, selected: true })
+      ).toBeVisible();
 
-      await fireEvent.click(screen.getByRole('tab', { name: /nutzer/i }));
-      await fireEvent.type(
+      await user.type(
         screen.getByRole('combobox', { name: /nutzer suchen/i }),
         'Drinalda'
       );
@@ -90,7 +88,7 @@ describe('CreateMessageDialog', () => {
         },
         { timeout: 5000 }
       );
-      await fireEvent.click(screen.getByRole('option', { name: /drinalda/i }));
+      await user.click(screen.getByRole('option', { name: /drinalda/i }));
 
       await waitFor(() => {
         expect(screen.getByTestId('message-destination')).toHaveTextContent(
@@ -98,7 +96,7 @@ describe('CreateMessageDialog', () => {
         );
       });
 
-      await fireEvent.click(
+      await user.click(
         screen.getByRole('button', { name: 'Nachricht verfassen' })
       );
 
@@ -107,8 +105,9 @@ describe('CreateMessageDialog', () => {
       });
     });
 
-    it('should select a group and call the onConfirm with it', async () => {
-      const fireEvent = userEvent.setup();
+    // See https://github.com/lotta-schule/lotta/issues/528
+    it.skip('should select a group and call the onConfirm with it', async () => {
+      const user = userEvent.setup();
       const onConfirm = vi.fn((destination) => {
         expect(destination.user).not.toBeDefined();
         expect(destination.group.name).toEqual('Schüler');
@@ -119,29 +118,23 @@ describe('CreateMessageDialog', () => {
         { currentUser: SomeUserWithGroups }
       );
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /nachricht verfassen/i })
-      );
       await waitFor(() => {
         expect(
           screen.getByRole('dialog', { name: /empfänger/i })
         ).toBeVisible();
       });
 
-      await fireEvent.click(screen.getByRole('tab', { name: /gruppe/i }));
+      await user.click(screen.getByRole('tab', { name: /gruppe/i }));
 
       await waitFor(() => {
         expect(
           screen.getByRole('combobox', { name: /gruppe wählen/i })
         ).toBeVisible();
       });
-      await fireEvent.click(
-        screen.getByRole('button', { name: /suggestions/i })
-      );
+      await user.click(screen.getByRole('button', { name: /empfehlungen/i }));
       expect(screen.getAllByRole('option')).toHaveLength(1);
 
-      await new Promise((resolve) => setTimeout(resolve, 400)); // wait for animation to finish
-      await fireEvent.click(screen.getByRole('option', { name: 'Schüler' }));
+      await user.click(screen.getByRole('option', { name: 'Schüler' }));
 
       await waitFor(() => {
         expect(screen.getByTestId('message-destination')).toHaveTextContent(
@@ -149,7 +142,7 @@ describe('CreateMessageDialog', () => {
         );
       });
 
-      await fireEvent.click(
+      await user.click(
         screen.getByRole('button', { name: 'Nachricht verfassen' })
       );
 

@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { render, screen, waitFor } from 'test/util';
+import { render, screen, waitFor, userEvent } from 'test/util';
 import { ComputerExperten, FaecherCategory } from 'test/fixtures';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
-import userEvent from '@testing-library/user-event';
 
 import DeleteCategoryMutation from 'api/mutation/DeleteCategoryMutation.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';

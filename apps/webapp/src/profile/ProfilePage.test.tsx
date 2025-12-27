@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { SomeUser, adminGroup, elternGroup, lehrerGroup } from 'test/fixtures';
 import { ProfilePage } from './ProfilePage';
-import userEvent from '@testing-library/user-event';
 
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';

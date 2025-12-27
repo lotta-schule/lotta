@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, waitFor } from '../../test-utils';
+import { render, userEvent, waitFor } from '../../test-utils';
 import { ComboBox } from './ComboBox';
-import userEvent from '@testing-library/user-event';
 
 import styles from './ComboBox.module.scss';
 
@@ -43,7 +42,7 @@ describe('Combobox', () => {
         <ComboBox title={'Choose something'} items={defaultItems} />
       );
 
-      await user.type(screen.getByRole('combobox'), 'Do');
+      await user.fill(screen.getByRole('combobox'), 'Do');
       await waitFor(() => {
         expect(screen.getByRole('listbox')).toBeVisible();
       });
@@ -76,7 +75,7 @@ describe('Combobox', () => {
         <ComboBox title={'Choose something'} items={onItems} />
       );
 
-      await user.type(screen.getByRole('combobox'), 'D');
+      await user.fill(screen.getByRole('combobox'), 'D');
       expect(screen.getByRole('combobox')).toBeVisible();
       await waitFor(() => {
         expect(onItems).toHaveBeenCalledWith('D');
@@ -122,7 +121,8 @@ describe('Combobox', () => {
         />
       );
 
-      await user.type(screen.getByRole('combobox'), 'Papaya{Enter}');
+      await user.fill(screen.getByRole('combobox'), 'Papaya');
+      await user.keyboard('{Enter}');
       expect(onSelect).toHaveBeenCalledWith('Papaya');
     });
     it('should call onSelect with item key when a proposed option is selected', async () => {
@@ -160,7 +160,8 @@ describe('Combobox', () => {
         />
       );
 
-      await user.type(screen.getByRole('combobox'), 'Apple{Enter}');
+      await user.fill(screen.getByRole('combobox'), 'Apple');
+      await user.keyboard('{Enter}');
       await waitFor(() => {
         expect(onSelect).toHaveBeenCalledWith('Apple');
       });
@@ -197,7 +198,8 @@ describe('Combobox', () => {
         />
       );
 
-      await user.type(screen.getByRole('combobox'), 'Dragonfruit{Enter}');
+      await user.fill(screen.getByRole('combobox'), 'Dragonfruit');
+      await user.keyboard('{Enter}');
       expect(onSelect).not.toHaveBeenCalled();
     });
 
@@ -215,7 +217,8 @@ describe('Combobox', () => {
           />
         );
 
-        await user.type(screen.getByRole('combobox'), 'Dragonfruit{Enter}');
+        await user.fill(screen.getByRole('combobox'), 'Dragonfruit');
+        await user.keyboard('{Enter}');
 
         await waitFor(() => {
           expect(onSelect).toHaveBeenCalledWith('Dragonfruit');

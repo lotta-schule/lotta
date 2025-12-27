@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { schuelerGroup, SomeUser } from 'test/fixtures';
 import { MessageToolbar } from './MessageToolbar';
 import { SplitViewProvider } from '@lotta-schule/hubert';
-import userEvent from '@testing-library/user-event';
 
 describe('src/messaging/MessageToolbar', () => {
   const SomeUserWithGroups = { ...SomeUser, groups: [schuelerGroup] };

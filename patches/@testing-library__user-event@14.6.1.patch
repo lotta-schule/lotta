@@ -1,0 +1,40 @@
+diff --git a/dist/cjs/document/patchFocus.js b/dist/cjs/document/patchFocus.js
+index 69491b754d28fc0a492e336479d98360e4e00e83..f493b92b957395c7fa3153f037fb50671a566f4e 100644
+--- a/dist/cjs/document/patchFocus.js
++++ b/dist/cjs/document/patchFocus.js
+@@ -15,11 +15,13 @@ function patchFocus(HTMLElement) {
+     Object.defineProperties(HTMLElement.prototype, {
+         focus: {
+             configurable: true,
+-            get: ()=>patchedFocus
++            value: patchedFocus,
++            writable: true
+         },
+         blur: {
+             configurable: true,
+-            get: ()=>patchedBlur
++            value: patchedFocus,
++            writable: true
+         },
+         [patched]: {
+             configurable: true,
+diff --git a/dist/esm/document/patchFocus.js b/dist/esm/document/patchFocus.js
+index be6bfb0bf406dd033046b1cc5c297c7a60b78f69..93c6c7f8d17d0e122a8e3d2bee882af58c34dbf8 100644
+--- a/dist/esm/document/patchFocus.js
++++ b/dist/esm/document/patchFocus.js
+@@ -13,11 +13,13 @@ function patchFocus(HTMLElement) {
+     Object.defineProperties(HTMLElement.prototype, {
+         focus: {
+             configurable: true,
+-            get: ()=>patchedFocus
++            value: patchedFocus,
++            writable: true
+         },
+         blur: {
+             configurable: true,
+-            get: ()=>patchedBlur
++            value: patchedFocus,
++            writable: true
+         },
+         [patched]: {
+             configurable: true,

@@ -12,14 +12,17 @@ RUN corepack enable
 WORKDIR /app
 
 FROM base AS deps
-COPY . /app
-WORKDIR /app
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+COPY pnpm-lock.yaml /app/pnpm-lock.yaml
+COPY pnpm-workspace.yaml /app/pnpm-workspace.yaml
+COPY tsconfig.base.json /app/tsconfig.base.json
+COPY libs /app/libs
+COPY apps/webapp /app/apps/webapp
 
-FROM base AS prod-deps
-COPY apps/webapp/package.json /app
 WORKDIR /app
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod
+
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter ./apps/webapp build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter ./apps/webapp deploy --prod pruned
 
 # Build the source code
 
@@ -34,8 +37,6 @@ ENV SENTRY_DSN=$SENTRY_DSN
 ENV NEXT_PUBLIC_SENTRY_DSN=$SENTRY_DSN
 
 RUN apt-get update && apt-get install -y ca-certificates
-RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
-  pnpm --filter ./apps/webapp run build
 
 FROM node:${NODE_VERSION}-alpine AS runner
 
@@ -61,9 +62,7 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/apps/webapp /app
-COPY --from=prod-deps /app/node_modules /app/node_modules
-COPY --from=prod-deps /app/package.json /app/package.json
+COPY --from=builder /app/pruned /app
 RUN chown nextjs:nodejs /app
 
 USER nextjs

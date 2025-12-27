@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Preview } from '@storybook/react';
-import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
+import { Preview } from '@storybook/react-vite';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import { MotionGlobalConfig } from 'framer-motion';
 import {
   DefaultThemes,
@@ -46,7 +46,7 @@ const preview: Preview = {
       },
     },
     viewport: {
-      viewports: INITIAL_VIEWPORTS,
+      options: INITIAL_VIEWPORTS,
     },
   },
 
@@ -59,7 +59,7 @@ const preview: Preview = {
     },
   },
 
-  tags: ['autodocs']
+  tags: ['autodocs'],
 };
 
 export default preview;

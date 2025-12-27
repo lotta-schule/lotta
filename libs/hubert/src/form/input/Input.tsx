@@ -4,8 +4,7 @@ import clsx from 'clsx';
 
 import styles from './Input.module.scss';
 
-export interface SingleLineInputProps
-  extends React.HTMLProps<HTMLInputElement> {
+export interface SingleLineInputProps extends React.HTMLProps<HTMLInputElement> {
   inline?: boolean;
   multiline?: false;
 }

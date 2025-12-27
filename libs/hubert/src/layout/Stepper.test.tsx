@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils';
+import { render, userEvent } from '../test-utils';
 import { Stepper } from './Stepper';
-import userEvent from '@testing-library/user-event';
 
 describe('Stepper', () => {
   it('should render a stepper', () => {

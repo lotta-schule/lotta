@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { expect, fn, userEvent, within } from '@storybook/test';
-import { Meta, StoryObj } from '@storybook/react';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
 import { Avatar, Deletable } from '@lotta-schule/hubert';
 
 export default {

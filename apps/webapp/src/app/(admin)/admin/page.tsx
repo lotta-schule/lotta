@@ -19,7 +19,6 @@ import { serverTranslations } from 'i18n/server';
 import { Icon } from 'shared/Icon';
 import { NewFeedbackCountBadge } from 'component/feedback/NewFeedbackCountBadge';
 import { AdminPage } from './_component/AdminPage';
-import Link from 'next/link';
 
 import styles from './page.module.scss';
 
@@ -34,7 +33,6 @@ async function AdminRootPage() {
       <h3>{t('My lotta')}</h3>
       <section>
         <BaseButton
-          as={Link}
           href={'/admin/general'}
           variant={'borderless'}
           className={styles.button}
@@ -46,7 +44,6 @@ async function AdminRootPage() {
         </BaseButton>
 
         <BaseButton
-          as={Link}
           href={'/admin/presentation'}
           variant={'borderless'}
           className={styles.button}
@@ -58,7 +55,6 @@ async function AdminRootPage() {
         </BaseButton>
 
         <BaseButton
-          as={Link}
           href={'/admin/calendars'}
           variant={'borderless'}
           className={styles.button}
@@ -70,7 +66,6 @@ async function AdminRootPage() {
         </BaseButton>
 
         <BaseButton
-          as={Link}
           href={'/admin/usage'}
           variant={'borderless'}
           className={styles.button}
@@ -82,7 +77,6 @@ async function AdminRootPage() {
         </BaseButton>
 
         <BaseButton
-          as={Link}
           href={'/admin/analytics'}
           variant={'borderless'}
           className={styles.button}
@@ -94,7 +88,6 @@ async function AdminRootPage() {
         </BaseButton>
 
         <BaseButton
-          as={Link}
           href={'/admin/feedback'}
           variant={'borderless'}
           className={styles.button}
@@ -112,7 +105,6 @@ async function AdminRootPage() {
       <h3>Nutzer und Gruppen</h3>
       <section>
         <BaseButton
-          as={Link}
           href={'/admin/users'}
           variant={'borderless'}
           className={styles.button}
@@ -124,7 +116,6 @@ async function AdminRootPage() {
         </BaseButton>
 
         <BaseButton
-          as={Link}
           href={'/admin/groups'}
           variant={'borderless'}
           className={styles.button}
@@ -136,7 +127,6 @@ async function AdminRootPage() {
         </BaseButton>
 
         <BaseButton
-          as={Link}
           href={'/admin/constraints'}
           variant={'borderless'}
           className={styles.button}
@@ -151,7 +141,6 @@ async function AdminRootPage() {
       <h3>Kategorien und Marginalen</h3>
       <section>
         <BaseButton
-          as={Link}
           href={'/admin/categories'}
           variant={'borderless'}
           className={styles.button}
@@ -163,7 +152,6 @@ async function AdminRootPage() {
         </BaseButton>
 
         <BaseButton
-          as={Link}
           href={'/admin/widgets'}
           variant={'borderless'}
           className={styles.button}
@@ -176,12 +164,7 @@ async function AdminRootPage() {
       </section>
 
       <section>
-        <BaseButton
-          as={Link}
-          href={'/'}
-          variant={'borderless'}
-          className={styles.button}
-        >
+        <BaseButton href={'/'} variant={'borderless'} className={styles.button}>
           <span>
             <Icon icon={faDoorOpen} />
           </span>

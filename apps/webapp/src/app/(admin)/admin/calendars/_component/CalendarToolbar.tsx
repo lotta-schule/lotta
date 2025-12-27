@@ -17,7 +17,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
 import { ToolbarProps } from 'react-big-calendar';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { Icon } from 'shared/Icon';
 import { de } from 'date-fns/locale';
 import { format } from 'date-fns';

@@ -1,8 +1,7 @@
 'use client';
-
 import * as React from 'react';
 import { SortableDraggableList } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { ID, UserGroupInputModel, UserGroupModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StoryObj, Meta } from '@storybook/react';
+import { StoryObj, Meta } from '@storybook/react-vite';
 import { Avatar, AvatarGroup, AvatarProps } from '@lotta-schule/hubert';
 
 export default {

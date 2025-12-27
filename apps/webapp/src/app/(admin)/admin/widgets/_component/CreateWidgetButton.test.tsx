@@ -1,8 +1,7 @@
 import { WidgetModelType } from 'model';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { MockRouter } from 'test/mocks';
 import { CreateWidgetButton } from './CreateWidgetButton';
-import userEvent from '@testing-library/user-event';
 
 import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';
 
@@ -115,8 +114,12 @@ describe('CreateWidgetButton', () => {
   it('should create an iframe widget', async () => {
     const user = userEvent.setup();
     const mockRouter = await vi
-      .importMock<{ useRouter: () => MockRouter }>('next/navigation')
-      .then((module) => module.useRouter());
+      .importMock<{
+        default: {
+          useRouter: () => MockRouter;
+        };
+      }>('next/navigation')
+      .then((module) => module.default.useRouter());
 
     const onCreateWidget = vi.fn(() => ({
       data: {

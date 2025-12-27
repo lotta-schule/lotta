@@ -7,5 +7,5 @@ export const loadUserGroups = cache(async () => {
   const results = await client.query({
     query: GET_USER_GROUPS,
   });
-  return results.data.userGroups;
+  return results.data?.userGroups;
 });

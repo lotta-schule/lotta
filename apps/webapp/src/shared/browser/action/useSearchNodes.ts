@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client/react';
 import { makeDirectoryPaths } from '../makeBrowserNodes';
 import { DirectoryModel, FileModel } from 'model';
 

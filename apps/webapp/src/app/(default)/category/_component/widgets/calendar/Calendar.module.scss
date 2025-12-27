@@ -1,0 +1,31 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-y: auto;
+  height: calc(100% - calc(2 * var(--lotta-spacing)));
+
+  .list {
+    overflow: auto;
+  }
+
+  .calendarColorDot {
+    vertical-align: sub;
+    padding-right: 0.5em;
+  }
+
+  .figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    padding: var(--lotta-spacing);
+    width: 100%;
+    background-color: rgba(var(--lotta-box-background-color), 1);
+
+    & > figure {
+      display: inline-flex;
+      align-items: center;
+      width: 50%;
+      padding: calc(0.5 * var(--lotta-spacing));
+    }
+  }
+}

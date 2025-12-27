@@ -7,7 +7,7 @@ import {
   Option,
   Collapse,
 } from '@lotta-schule/hubert';
-import { useSuspenseQuery } from '@apollo/client';
+import { useSuspenseQuery } from '@apollo/client/react';
 import {
   addDays,
   addHours,
@@ -101,7 +101,6 @@ export const EditEventFormContent = React.memo(
             }
           />
         </Label>
-
         <div className={styles.configRow}>
           <Select
             title={t('calendar')}
@@ -205,7 +204,6 @@ export const EditEventFormContent = React.memo(
             </Checkbox>
           </div>
         </div>
-
         <div className={styles.dateRow}>
           <Label label={t('date')} style={{ flexGrow: 1 }}>
             <Input
@@ -341,7 +339,6 @@ export const EditEventFormContent = React.memo(
             />
           </Label>
         </div>
-
         <Collapse isOpen={isMultipleDays}>
           <div className={styles.dateRow}>
             <Label label={t('end date')} style={{ flexGrow: 1 }}>

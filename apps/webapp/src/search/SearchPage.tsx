@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import {
   Button,
@@ -6,12 +7,12 @@ import {
   CircularProgress,
   useDebounce,
 } from '@lotta-schule/hubert';
-import { useQuery } from '@apollo/client';
+import { skipToken, useQuery } from '@apollo/client/react';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArticleModel, CategoryModel } from 'model';
 import { Icon } from 'shared/Icon';
-import { LegacyHeader, Main, Sidebar } from 'layout';
+import { Header, Main, Sidebar } from 'layout';
 import { CategorySelect } from 'shared/categorySelect/CategorySelect';
 import { ArticlePreview } from 'article/preview';
 
@@ -26,20 +27,24 @@ export const SearchPage = () => {
   const [category, setCategory] = React.useState<CategoryModel | null>(null);
   const debouncedSearchtext = useDebounce(searchText, 500);
 
-  const { data, loading: isLoading } = useQuery(SearchQuery, {
-    variables: {
-      searchText: debouncedSearchtext,
-      options: { categoryId: category?.id ?? null },
-    },
-    skip: !debouncedSearchtext,
-  });
+  const { data, loading: isLoading } = useQuery(
+    SearchQuery,
+    debouncedSearchtext
+      ? {
+          variables: {
+            searchText: debouncedSearchtext,
+            options: { categoryId: category?.id ?? null },
+          },
+        }
+      : skipToken
+  );
 
   return (
     <>
       <Main className={styles.root}>
-        <LegacyHeader bannerImageUrl={'/searchBanner.png'}>
+        <Header bannerImageUrl={'/searchBanner.png'}>
           <h2>Suche</h2>
-        </LegacyHeader>
+        </Header>
 
         <section className={styles.inputSection}>
           <div className={styles.description}>
@@ -76,8 +81,8 @@ export const SearchPage = () => {
             aria-expanded={isAdvancedSearchFormVisible}
             animate={isAdvancedSearchFormVisible ? 'open' : 'closed'}
             variants={{
-              open: { opacity: 0, height: 0 },
-              closed: { opacity: 1, height: 'auto' },
+              open: { opacity: 1, height: 'auto' },
+              closed: { opacity: 0, height: 0 },
             }}
             data-testid={'advanced-search'}
           >

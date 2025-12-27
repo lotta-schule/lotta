@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, waitFor } from '../test-utils';
+import { render, userEvent, waitFor } from '../test-utils';
 import { Popover } from './Popover';
-import userEvent from '@testing-library/user-event';
 import { PopoverTrigger } from './PopoverTrigger';
 import { PopoverContent } from './PopoverContent';
 

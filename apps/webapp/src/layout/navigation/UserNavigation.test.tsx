@@ -1,22 +1,28 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
-import { render, waitFor } from 'test/util';
+import { MockLink } from '@apollo/client/testing';
+import { render, waitFor, userEvent } from 'test/util';
 import { UserNavigation } from './UserNavigation';
 import { SomeUser, adminGroup } from 'test/fixtures';
+import { useRouter } from 'next/navigation';
+import { redirectTo } from 'util/browserLocation';
 import { MockRouter } from 'test/mocks';
-import userEvent from '@testing-library/user-event';
 
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
+const mockRouter = useRouter() as unknown as MockRouter;
+
+const mockRouterResetter = () => mockRouter.reset('/');
+
 describe('shared/layouts/UserNavigation', () => {
   describe('logged out user', () => {
     it('should render a functional login button', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(<UserNavigation />);
       expect(screen.getByRole('button', { name: /anmelden/i })).toBeVisible();
 
-      await fireEvent.click(screen.getByRole('button', { name: /anmelden/i }));
+      await user.click(screen.getByRole('button', { name: /anmelden/i }));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog', { name: /anmelden/i })).toBeVisible();
@@ -24,15 +30,13 @@ describe('shared/layouts/UserNavigation', () => {
     });
 
     it('should render a functional register button', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const screen = render(<UserNavigation />);
       expect(
         screen.getByRole('button', { name: /registrieren/i })
       ).toBeVisible();
 
-      await fireEvent.click(
-        screen.getByRole('button', { name: /registrieren/i })
-      );
+      await user.click(screen.getByRole('button', { name: /registrieren/i }));
 
       await waitFor(() => {
         expect(
@@ -66,7 +70,7 @@ describe('shared/layouts/UserNavigation', () => {
   describe('user drop-down', () => {
     describe('for non-admin', () => {
       it('should render profile button', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(
           <UserNavigation />,
           {},
@@ -81,15 +85,18 @@ describe('shared/layouts/UserNavigation', () => {
           }
         );
 
-        expect(screen.getByRole('button', { name: /profil/i })).toBeVisible();
+        await waitFor(() => {
+          expect(screen.getByRole('button', { name: /profil/i })).toBeVisible();
+        });
 
-        await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
+        await user.click(screen.getByRole('button', { name: /profil/i }));
 
         await waitFor(() => {
-          expect(
-            screen.getByRole('menuitem', { name: /meine daten/i })
-          ).toBeVisible();
+          expect(screen.getByRole('menu', { hidden: true })).toBeVisible();
         });
+        expect(
+          screen.getByRole('menuitem', { name: /meine daten/i })
+        ).toBeVisible();
         expect(
           screen.getByRole('menuitem', { name: /meine dateien/i })
         ).toBeVisible();
@@ -113,7 +120,8 @@ describe('shared/layouts/UserNavigation', () => {
     });
 
     describe('for admin', () => {
-      const additionalMocks: MockedResponse[] = [
+      afterEach(mockRouterResetter);
+      const additionalMocks: MockLink.MockedResponse[] = [
         {
           request: { query: GetUnpublishedArticlesQuery },
           result: { data: { articles: [] } },
@@ -138,7 +146,7 @@ describe('shared/layouts/UserNavigation', () => {
       ];
 
       it('should render profile button', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(
           <UserNavigation />,
           {},
@@ -148,9 +156,11 @@ describe('shared/layouts/UserNavigation', () => {
           }
         );
 
-        expect(screen.getByRole('button', { name: /profil/i })).toBeVisible();
+        await waitFor(() => {
+          expect(screen.getByRole('button', { name: /profil/i })).toBeVisible();
+        });
 
-        await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
+        await user.click(screen.getByRole('button', { name: /profil/i }));
 
         await waitFor(() => {
           expect(
@@ -178,7 +188,7 @@ describe('shared/layouts/UserNavigation', () => {
       });
 
       it('should show a badge when new feedback is available', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
 
         const screen = render(
           <UserNavigation />,
@@ -189,7 +199,7 @@ describe('shared/layouts/UserNavigation', () => {
           }
         );
 
-        await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
+        await user.click(screen.getByRole('button', { name: /profil/i }));
 
         await waitFor(() => {
           expect(
@@ -204,10 +214,7 @@ describe('shared/layouts/UserNavigation', () => {
       });
 
       it('should navigate to profile when clicking "Meine Daten"', async () => {
-        const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-          'next/router'
-        );
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(
           <UserNavigation />,
           {},
@@ -217,8 +224,8 @@ describe('shared/layouts/UserNavigation', () => {
           }
         );
 
-        await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
-        await fireEvent.click(
+        await user.click(screen.getByRole('button', { name: /profil/i }));
+        await user.click(
           screen.getByRole('menuitem', { name: /meine daten/i })
         );
 
@@ -232,10 +239,7 @@ describe('shared/layouts/UserNavigation', () => {
       });
 
       it('should navigate to files when clicking "Meine Dateien"', async () => {
-        const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-          'next/router'
-        );
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(
           <UserNavigation />,
           {},
@@ -245,8 +249,8 @@ describe('shared/layouts/UserNavigation', () => {
           }
         );
 
-        await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
-        await fireEvent.click(
+        await user.click(screen.getByRole('button', { name: /profil/i }));
+        await user.click(
           screen.getByRole('menuitem', { name: /meine dateien/i })
         );
 
@@ -260,10 +264,7 @@ describe('shared/layouts/UserNavigation', () => {
       });
 
       it('should navigate to own articles when clicking "Meine Beiträge"', async () => {
-        const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-          'next/router'
-        );
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(
           <UserNavigation />,
           {},
@@ -273,8 +274,8 @@ describe('shared/layouts/UserNavigation', () => {
           }
         );
 
-        await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
-        await fireEvent.click(
+        await user.click(screen.getByRole('button', { name: /profil/i }));
+        await user.click(
           screen.getByRole('menuitem', { name: /meine beiträge/i })
         );
 
@@ -288,7 +289,7 @@ describe('shared/layouts/UserNavigation', () => {
       });
 
       it('should open feedback dialog when clicking "Feedback"', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(
           <UserNavigation />,
           {},
@@ -298,10 +299,8 @@ describe('shared/layouts/UserNavigation', () => {
           }
         );
 
-        await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
-        await fireEvent.click(
-          screen.getByRole('menuitem', { name: /^feedback$/i })
-        );
+        await user.click(screen.getByRole('button', { name: /profil/i }));
+        await user.click(screen.getByRole('menuitem', { name: /^feedback$/i }));
 
         await waitFor(() => {
           expect(
@@ -311,10 +310,7 @@ describe('shared/layouts/UserNavigation', () => {
       });
 
       it('should navigate to admin when clicking "Seite administrieren"', async () => {
-        const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-          'next/router'
-        );
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(
           <UserNavigation />,
           {},
@@ -324,8 +320,8 @@ describe('shared/layouts/UserNavigation', () => {
           }
         );
 
-        await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
-        await fireEvent.click(
+        await user.click(screen.getByRole('button', { name: /profil/i }));
+        await user.click(
           screen.getByRole('menuitem', { name: /administrieren/i })
         );
 
@@ -339,10 +335,7 @@ describe('shared/layouts/UserNavigation', () => {
       });
 
       it('should navigate to unpublished when clicking "Beiträge freigeben"', async () => {
-        const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-          'next/router'
-        );
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(
           <UserNavigation />,
           {},
@@ -352,8 +345,8 @@ describe('shared/layouts/UserNavigation', () => {
           }
         );
 
-        await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
-        await fireEvent.click(
+        await user.click(screen.getByRole('button', { name: /profil/i }));
+        await user.click(
           screen.getByRole('menuitem', { name: /beiträge freigeben/i })
         );
 
@@ -367,7 +360,7 @@ describe('shared/layouts/UserNavigation', () => {
       });
 
       it('should logout when clicking "Abmelden"', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(
           <UserNavigation />,
           {},
@@ -377,16 +370,11 @@ describe('shared/layouts/UserNavigation', () => {
           }
         );
 
-        delete (window as any).location;
-        (window as any).location = { href: '' };
-
-        await fireEvent.click(screen.getByRole('button', { name: /profil/i }));
-        await fireEvent.click(
-          screen.getByRole('menuitem', { name: /abmelden/i })
-        );
+        await user.click(screen.getByRole('button', { name: /profil/i }));
+        await user.click(screen.getByRole('menuitem', { name: /abmelden/i }));
 
         await waitFor(() => {
-          expect(window.location.href).toBe('/auth/logout');
+          expect(vi.mocked(redirectTo)).toHaveBeenCalledWith('/auth/logout');
         });
       });
     });

@@ -4,11 +4,11 @@ import { InMemoryCache } from '@apollo/client';
 import { identity } from 'lodash';
 import { GET_TENANT_QUERY, Tenant, UserGroup } from 'util/tenant';
 import { GET_CURRENT_USER, CurrentUser } from 'util/user/useCurrentUser';
+import { GET_USER_GROUPS } from 'util/tenant/useUserGroups';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
 import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
-import { GET_USER_GROUPS } from 'util/tenant/useUserGroups';
 
 export interface ApolloMocksOptions {
   currentUser?: CurrentUser;
@@ -60,9 +60,7 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
       result: {},
     },
   ];
-  const cache = new InMemoryCache({
-    addTypename: false,
-  });
+  const cache = new InMemoryCache();
   cache.writeQuery({
     query: GET_TENANT_QUERY,
     data: { tenant: options.tenant ?? tenant },

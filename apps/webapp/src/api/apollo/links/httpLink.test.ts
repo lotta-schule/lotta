@@ -34,7 +34,7 @@ describe('createHttpLink', () => {
       requestExtraHeaders: requestExtraHeadersMock,
     });
     expect(mockCreateLink).toHaveBeenCalledWith({
-      uri: 'http://localhost:4000/api',
+      uri: '/api',
       fetch: customFetchMock,
     });
     expect(result).toBe(mockCreateLink.mock.results[0].value);

@@ -1,4 +1,4 @@
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { currentApolloCache, renderHook, waitFor } from 'test/util';
 import { SomeUser, logosDirectory } from 'test/fixtures';
 import { DirectoryModel, FileModel } from 'model';
@@ -15,14 +15,14 @@ const parentDirectoryNode = {
   parent: logosDirectory.parentDirectory?.id ?? null,
 } satisfies BrowserNode<'directory'>;
 
-export const additionalMocks: MockedResponse[] = [
+export const additionalMocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: UPLOAD_FILE_MUTATION,
+      variables: (vars) =>
+        vars.file instanceof File &&
+        vars.parentDirectoryId === logosDirectory.id,
     },
-    variableMatcher: (variables: any) =>
-      variables.file instanceof File &&
-      variables.parentDirectoryId === logosDirectory.id,
     result: (variables) => ({
       data: {
         file: {

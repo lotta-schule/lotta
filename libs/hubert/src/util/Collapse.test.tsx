@@ -2,7 +2,7 @@ import { Collapse } from './Collapse';
 import { render, waitFor } from '../test-utils';
 import styles from './Collapse.module.scss';
 
-const content = (
+const Content = () => (
   <div>
     <p>
       Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
@@ -28,22 +28,38 @@ const content = (
     </ul>
   </div>
 );
+Content.displayName = 'Content';
 
 describe('util/Collapse', () => {
-  it('should render the content', () => {
-    const screen = render(<Collapse isOpen>{content}</Collapse>);
-    expect(screen.getByRole('list')).toBeVisible();
+  it('should render the content', async () => {
+    const screen = render(
+      <Collapse isOpen>
+        <Content />
+      </Collapse>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('list')).toBeVisible();
+    });
   });
 
   it('should show collapsed content and make it reappear', async () => {
-    const screen = render(<Collapse isOpen={false}>{content}</Collapse>);
+    const screen = render(
+      <Collapse isOpen={false}>
+        <Content />
+      </Collapse>
+    );
 
     expect(screen.container.querySelector(`.${styles.root}`)).toHaveProperty(
       'ariaHidden',
       'true'
     );
 
-    screen.rerender(<Collapse isOpen={true}>{content}</Collapse>);
+    screen.rerender(
+      <Collapse isOpen={true}>
+        <Content />
+      </Collapse>
+    );
     await waitFor(() => {
       expect(screen.getByRole('list')).toBeVisible();
     });

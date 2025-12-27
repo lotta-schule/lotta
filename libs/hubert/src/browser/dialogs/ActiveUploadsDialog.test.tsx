@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor, within } from 'test-utils';
+import { render, userEvent, waitFor, within } from 'test-utils';
 import { Upload } from '../upload/useUploadClient';
 import {
   ActiveUploadsDialog,
@@ -11,7 +11,6 @@ import {
   TestBrowserWrapperProps,
   fixtures,
 } from 'test-utils';
-import userEvent from '@testing-library/user-event';
 
 const parentNode = fixtures.getNode('8');
 

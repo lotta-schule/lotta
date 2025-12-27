@@ -12,7 +12,7 @@ import { Element, Transforms } from 'slate';
 import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
 import { Image } from '../SlateCustomTypes';
 import { graphql } from 'api/graphql';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import clsx from 'clsx';
 

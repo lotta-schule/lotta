@@ -14,6 +14,7 @@ export type DraggableListItemProps = React.HTMLProps<HTMLDivElement> & {
   onClick?: React.MouseEventHandler<HTMLLIElement>;
   onClickIcon?: React.MouseEventHandler<HTMLDivElement>;
   icon?: React.ReactNode;
+  iconTitle?: string;
   selected?: boolean;
   title: string;
 };
@@ -24,6 +25,7 @@ export const DraggableListItem = ({
   isDraggable = true,
   selected,
   icon,
+  iconTitle,
   onClick,
   onClickIcon,
   children,
@@ -43,6 +45,11 @@ export const DraggableListItem = ({
         transition,
       }}
       aria-current={selected ? 'page' : undefined}
+      aria-disabled={
+        props['aria-disabled'] || onClick
+          ? undefined
+          : attributes['aria-disabled']
+      }
       className={clsx(className, styles.root, {
         [styles.selected]: selected,
         [styles.isClickable]: onClick,
@@ -68,6 +75,9 @@ export const DraggableListItem = ({
             className={clsx(styles.icon, {
               [styles.isIconClickable]: onClickIcon,
             })}
+            role={onClickIcon ? 'button' : undefined}
+            tabIndex={onClickIcon ? 0 : undefined}
+            aria-label={iconTitle}
             onClick={(e) => {
               if (onClickIcon) {
                 e.stopPropagation();

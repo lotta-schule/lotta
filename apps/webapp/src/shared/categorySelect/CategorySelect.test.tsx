@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { FaecherCategory, MaterialCategory } from 'test/fixtures';
 import { CategorySelect } from './CategorySelect';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/editArticleLayout/CategorySelect', () => {
   it('should render the thing', async () => {
@@ -27,8 +26,10 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
         onSelectCategory={onSelectCategory}
       />
     );
-    const select = screen.getByRole('button', { name: /wählen/i });
-    await user.click(select);
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /wählen/i })).toBeVisible()
+    );
+    screen.getByRole('button', { name: /wählen/i }).click();
     await waitFor(() => {
       expect(screen.getByRole('option', { name: /material/i })).toBeVisible();
     });
@@ -51,11 +52,13 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
 
   describe('option listing options', () => {
     it('show all categories as options', async () => {
-      const fireEvent = userEvent.setup();
       const screen = render(
         <CategorySelect selectedCategory={null} onSelectCategory={() => {}} />
       );
-      await fireEvent.click(screen.getByRole('button', { name: /wählen/i }));
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /wählen/i })).toBeVisible();
+      });
+      screen.getByRole('button', { name: /wählen/i }).click();
       await waitFor(() => {
         expect(screen.getAllByRole('option')).toHaveLength(15);
       });

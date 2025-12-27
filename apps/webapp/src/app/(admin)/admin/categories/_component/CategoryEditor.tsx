@@ -1,9 +1,8 @@
 'use client';
-
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import { faFloppyDisk, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
   Button,
   Checkbox,

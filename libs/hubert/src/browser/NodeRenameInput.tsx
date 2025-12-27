@@ -72,6 +72,15 @@ export const NodeRenameInput = React.memo(
             value={newNodeName}
             onBlur={onRequestClose}
             onChange={(e) => setNewNodeName(e.currentTarget.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                onRequestClose();
+              }
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                renamingInput?.form?.requestSubmit();
+              }
+            }}
           />
           <PopoverContent style={{ width: renamingInput?.clientWidth }}>
             <ErrorMessage error={errorMessage} />

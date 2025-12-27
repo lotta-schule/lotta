@@ -1,6 +1,5 @@
 import * as React from 'react';
-import userEvent from '@testing-library/user-event';
-import { render, waitFor } from 'test/util';
+import { userEvent, render, waitFor } from 'test/util';
 import { adminGroup, SomeUser, tenant } from 'test/fixtures';
 import { ConstraintList } from './ConstraintsList';
 

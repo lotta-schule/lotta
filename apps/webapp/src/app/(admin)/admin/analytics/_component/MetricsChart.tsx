@@ -1,9 +1,7 @@
 'use client';
-
 import * as React from 'react';
-import { useSuspenseQuery } from '@apollo/client';
+import { useSuspenseQuery } from '@apollo/client/react';
 import { Box } from '@lotta-schule/hubert';
-import { type AxisOptions } from 'react-charts';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { formatDate } from '../_util';
@@ -11,22 +9,23 @@ import { de } from 'date-fns/locale';
 import { Period } from '../Analytics';
 import { gqlCompatibleMetricType, MetricType } from './MetricType';
 import { GET_TENANT_TIMESERIES_ANALYTICS } from '../_graphql';
-import dynamic from 'next/dynamic';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Title,
+} from 'chart.js';
+
+ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Title);
 
 import styles from './MetricsChart.module.scss';
-
-const Chart = dynamic(() => import('./DynamicChart'), {
-  ssr: false,
-});
 
 export type MetricsChartProps = {
   period: Period;
   metric: MetricType;
-};
-
-type DailyMetric = {
-  date: Date;
-  value: number | null;
 };
 
 export const MetricsChart = React.memo(
@@ -47,59 +46,38 @@ export const MetricsChart = React.memo(
       },
     });
 
-    const primaryAxis = React.useMemo<AxisOptions<any>>(
+    const chartData = React.useMemo(
       () => ({
-        getValue: (datum) => datum.date,
-        formatters: {
-          tooltip: (datum: Date) =>
-            datum && format(datum, 'EEEE', { locale: de }),
-          scale: (value: Date) =>
-            value && format(value, 'doMM', { locale: de }),
-          showGrid: false,
-        },
+        labels:
+          metrics.map((m) =>
+            format(new Date(m.date), 'doMM', { locale: de })
+          ) ?? [],
+        datasets: [
+          {
+            data: metrics.map((m) => m.value) ?? [],
+            borderColor: 'rgb(var(--lotta-primary-color))',
+            backgroundColor: 'rgba(var(--lotta-primary-color), 0.5)',
+            tension: 0.4,
+          },
+        ],
       }),
-      []
-    );
-
-    const secondaryAxes = React.useMemo(
-      (): AxisOptions<any>[] => [
-        {
-          getValue: (datum) => datum.value,
-          elementType: 'area',
-        },
-      ],
-      []
-    );
-
-    const series: { label: string; data: DailyMetric[] }[] = React.useMemo(
-      () => [
-        {
-          label: t(metric),
-          data:
-            metrics.map((m) => ({
-              date: new Date(m.date),
-              value: m.value,
-            })) ?? [],
-        },
-      ],
-      [metric, metrics, t]
+      [metrics]
     );
 
     return (
       <Box className={styles.root}>
         <div className={styles.chartWrapper} data-testid="ChartWrapper">
-          <Chart
+          <Line
+            data={chartData}
             options={{
-              data: series,
-              primaryAxis,
-              secondaryAxes,
-              padding: {
-                top: 40,
-                right: 40,
-                bottom: 40,
-                left: 40,
+              responsive: true,
+              plugins: {
+                title: { display: true, text: t(metric) },
+                legend: {
+                  display: true,
+                  position: 'top' as const,
+                },
               },
-              defaultColors: ['rgb(var(--lotta-primary-color))'],
             }}
           />
         </div>
@@ -108,3 +86,5 @@ export const MetricsChart = React.memo(
   }
 );
 MetricsChart.displayName = 'MetricsChart';
+
+export default MetricsChart;

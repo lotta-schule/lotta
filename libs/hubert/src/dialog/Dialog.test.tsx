@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, waitFor } from '../test-utils';
+import { render, userEvent, waitFor } from '../test-utils';
 import { Dialog } from './Dialog';
-import userEvent from '@testing-library/user-event';
 
 describe('general/dialog', () => {
   it('should not show the dialog when not open', () => {

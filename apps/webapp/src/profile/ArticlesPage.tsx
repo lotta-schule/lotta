@@ -1,7 +1,9 @@
+'use client';
+
 import * as React from 'react';
 import { Box, ErrorMessage } from '@lotta-schule/hubert';
 import { ArticleModel } from 'model';
-import { LegacyHeader, Main, Sidebar } from 'layout';
+import { Header, Main, Sidebar } from 'layout';
 import { ArticlesList } from 'shared/articlesList/ArticlesList';
 
 export interface ArticlesPageProps {
@@ -14,9 +16,9 @@ export const ArticlesPage = React.memo(
     return (
       <>
         <Main>
-          <LegacyHeader bannerImageUrl={'/bannerProfil.png'}>
+          <Header bannerImageUrl={'/bannerProfil.png'}>
             <h2>Meine Beiträge</h2>
-          </LegacyHeader>
+          </Header>
 
           <Box>
             <ErrorMessage error={error} />

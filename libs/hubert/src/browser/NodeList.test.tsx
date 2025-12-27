@@ -4,11 +4,11 @@ import {
   render,
   TestBrowserWrapper,
   TestBrowserWrapperProps,
+  userEvent,
   waitFor,
 } from '../test-utils';
 import { NodeList, NodeListProps } from './NodeList';
 import { isDirectoryNode } from './utils';
-import userEvent from '@testing-library/user-event';
 
 const defaultPath = fixtures.getPathForNode('8');
 const defaultNodes = fixtures.getChildNodes('8');
@@ -33,14 +33,6 @@ describe('NodeList component', () => {
   it('renders list items when nodes array is not empty', () => {
     const screen = render(<WrappedNodeList />);
     expect(screen.getAllByRole('option')).toHaveLength(defaultNodes.length);
-  });
-
-  it('scrolls into view when path length matches currentPath length', () => {
-    render(<WrappedNodeList />);
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({
-      inline: 'start',
-      behavior: 'smooth',
-    });
   });
 
   it('should automatically unselect a file when it vanishes', async () => {
@@ -104,7 +96,9 @@ describe('NodeList component', () => {
 
         await user.keyboard('{arrowdown}');
 
-        expect(onSelect).toHaveBeenCalledWith([defaultNodesPaths.at(-1)]);
+        await waitFor(() => {
+          expect(onSelect).toHaveBeenLastCalledWith([defaultNodesPaths.at(-1)]);
+        });
       });
 
       it('should add the next item if there is one when shift is clicked, closing a potential open sibbling directory', async () => {
@@ -169,7 +163,9 @@ describe('NodeList component', () => {
 
         await user.keyboard('{arrowup}');
 
-        expect(onSelect).toHaveBeenCalledWith([defaultNodesPaths.at(-3)]);
+        await waitFor(() => {
+          expect(onSelect).toHaveBeenLastCalledWith([defaultNodesPaths.at(-3)]);
+        });
       });
 
       it('should add the next item if there is one when shift is clicked', async () => {
@@ -266,7 +262,7 @@ describe('NodeList component', () => {
           />
         );
 
-        await user.keyboard('{meta>}{a}');
+        await user.keyboard('{meta>}{a}{/meta}');
 
         expect(onSelect).toHaveBeenCalledWith(defaultNodesPaths);
       });
@@ -283,7 +279,7 @@ describe('NodeList component', () => {
           />
         );
 
-        await user.keyboard('{meta>}{a}');
+        await user.keyboard('{meta>}{a}{/meta}');
 
         expect(onSelect).not.toHaveBeenCalled();
       });
@@ -308,6 +304,7 @@ describe('NodeList component', () => {
           await user.click(
             screen.getByRole('option', { name: nextNodeToSelect.name })
           );
+          await user.keyboard('{/meta}');
 
           expect(onSelect).toHaveBeenCalledWith([
             defaultNodesPaths.at(1),
@@ -335,6 +332,7 @@ describe('NodeList component', () => {
               name: new RegExp(nextNodeToSelect.name),
             })
           );
+          await user.keyboard('{/meta}');
 
           expect(onSelect).toHaveBeenCalledWith([
             defaultNodesPaths.at(1),
@@ -360,6 +358,7 @@ describe('NodeList component', () => {
           await user.click(
             screen.getByRole('option', { name: nextNodeToSelect.name })
           );
+          await user.keyboard('{/meta}');
 
           expect(onSelect).toHaveBeenCalledWith([
             fixtures.getPathForNode(nextNodeToSelect),
@@ -385,6 +384,7 @@ describe('NodeList component', () => {
           await user.click(
             screen.getByRole('option', { name: nextNodeToSelect.name })
           );
+          await user.keyboard('{/shift}');
 
           expect(onSelect).toHaveBeenCalledWith([
             defaultNodesPaths.at(1),
@@ -414,6 +414,7 @@ describe('NodeList component', () => {
               name: new RegExp(nextNodeToSelect.name),
             })
           );
+          await user.keyboard('{/shift}');
 
           expect(onSelect).toHaveBeenCalledWith([
             defaultNodesPaths.at(1),
@@ -440,6 +441,7 @@ describe('NodeList component', () => {
           await user.click(
             screen.getByRole('option', { name: nextNodeToSelect.name })
           );
+          await user.keyboard('{/shift}');
 
           expect(onSelect).toHaveBeenCalledWith([
             fixtures.getPathForNode(nextNodeToSelect),

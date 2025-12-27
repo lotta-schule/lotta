@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { render, waitFor } from '../test-utils';
+import { render, userEvent, waitFor } from '../test-utils';
 import {
   BrowserPath,
   BrowserStateProvider,
   BrowserStateProviderProps,
 } from './BrowserStateContext';
 import { NodeRenameInput, NodeRenameInputProps } from './NodeRenameInput';
-import userEvent from '@testing-library/user-event';
 
 type WrappedNodeRenameInputProps = NodeRenameInputProps & {
   renameNode: BrowserStateProviderProps['renameNode'];
@@ -46,7 +45,9 @@ describe('Browser/NodeRenameInput', () => {
   it('should rename the file, then call onRequestClose', async () => {
     const user = userEvent.setup();
     let resolve = () => {};
-    const renameNode = vi.fn(() => new Promise((r) => (resolve = r)) as any);
+    const renameNode = vi.fn(
+      () => new Promise<void>((r) => (resolve = r)) as any
+    );
     const onRequestClose = vi.fn();
     const screen = render(
       <WrappedNodeRenameInput
@@ -56,11 +57,9 @@ describe('Browser/NodeRenameInput', () => {
       />
     );
 
-    user.type(screen.getByRole('textbox'), 'new name.jpg{enter}', {
-      skipClick: true,
-      initialSelectionStart: 0,
-      initialSelectionEnd: filePath[0].name.length,
-    });
+    await user.fill(screen.getByRole('textbox'), 'new name.jpg');
+    await user.keyboard('{Enter}');
+    expect(screen.getByRole('textbox')).toHaveValue('new name.jpg');
 
     await waitFor(() => {
       expect(renameNode).toHaveBeenCalledWith(filePath[0], 'new name.jpg');
@@ -77,7 +76,7 @@ describe('Browser/NodeRenameInput', () => {
 
   it('should show the error message when there was a problem', async () => {
     const user = userEvent.setup();
-    let reject = () => {};
+    let reject = (_reason?: Error) => {};
     const renameNode = vi.fn(() => new Promise((_, r) => (reject = r)) as any);
     const onRequestClose = vi.fn();
     const screen = render(
@@ -88,11 +87,9 @@ describe('Browser/NodeRenameInput', () => {
       />
     );
 
-    user.type(screen.getByRole('textbox'), 'new name.jpg{enter}', {
-      skipClick: true,
-      initialSelectionStart: 0,
-      initialSelectionEnd: filePath[0].name.length,
-    });
+    await user.fill(screen.getByRole('textbox'), 'new name.jpg');
+    await user.keyboard('{Enter}');
+    expect(screen.getByRole('textbox')).toHaveValue('new name.jpg');
 
     await waitFor(() => {
       expect(renameNode).toHaveBeenCalledWith(filePath[0], 'new name.jpg');

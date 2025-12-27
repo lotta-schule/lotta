@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { EnrollmentTokensEditor } from './EnrollmentTokensEditor';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/EnrollmentTokensEditor', () => {
   it('should render an empty token list when no token were passed', () => {

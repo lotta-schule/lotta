@@ -5,9 +5,9 @@ import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
   fixtures,
+  userEvent,
 } from 'test-utils';
 import { BrowserPath } from './BrowserStateContext';
-import userEvent from '@testing-library/user-event';
 
 const WrappedNodeListItem = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>

@@ -1,0 +1,54 @@
+[12:44:39.613] [INFO] Storybook upgrade - v10.1.10
+[12:44:39.614] [INFO] detect-projects-spinner-start: Detecting projects...
+[12:44:39.615] [DEBUG] Finding Storybook projects...
+[12:44:39.631] [DEBUG] Found 0 Storybook projects
+[12:44:48.063] [PROMPT] No Storybook projects were found. Please enter the path to the .storybook directory for the project you want to upgrade. {"choice":""}
+[12:44:48.064] [INFO] detect-projects-spinner: Detecting projects: 1 projects
+[12:44:48.064] [DEBUG] Getting Storybook data...
+[12:44:48.064] [DEBUG] Getting Storybook info...
+[12:44:48.071] [DEBUG] SB_CORE-SERVER_0006 (MainFileMissingError): No configuration files have been found in your configDir: [33m[39m.
+Storybook needs a "main.js" file, please add it.
+
+You can pass a --config-dir flag to tell Storybook, where your main.js file is located at.
+
+More info: https://storybook.js.org/docs/configure?ref=error
+
+[12:44:48.071] [INFO] detect-projects-spinner-stop: 1 project detected
+[12:44:48.071] [DEBUG] Found 0 valid projects and 1 error projects
+[12:44:48.072] [ERROR] Failed to get projects
+[12:44:48.072] [ERROR] [38;2;241;97;97mError: ❌ Storybook found errors while collecting data for the following projects:
+:
+SB_CORE-SERVER_0006 (MainFileMissingError): No configuration files have been found in your configDir: [33m[39m.
+Storybook needs a "main.js" file, please add it.
+
+You can pass a --config-dir flag to tell Storybook, where your main.js file is located at.
+
+More info: https://storybook.js.org/docs/configure?ref=error
+
+    at validateConfigurationFiles (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/storybook/dist/_node-chunks/chunk-LLCTWVOB.js:9991:11)
+    at async loadMainConfig (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/storybook/dist/_node-chunks/chunk-LLCTWVOB.js:11667:3)
+    at async getStorybookInfo (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/storybook/dist/_node-chunks/chunk-LLCTWVOB.js:11790:59)
+    at async getStorybookData (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/@storybook/cli/dist/_node-chunks/chunk-DRVRF5O4.js:165:7)
+    at async processProject (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/@storybook/cli/dist/_node-chunks/chunk-DRVRF5O4.js:296:9)
+Please fix the errors and run the upgrade command again.[39m
+    at getProjects (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/@storybook/cli/dist/_node-chunks/chunk-DRVRF5O4.js:468:13)
+    at async upgrade (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/@storybook/cli/dist/_node-chunks/run-GAOAOJZE.js:9360:24)
+    at async file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/@storybook/cli/dist/_node-chunks/run-GAOAOJZE.js:9558:70
+    at async withTelemetry (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/storybook/dist/_node-chunks/chunk-PGCRO4IZ.js:209:12)
+    at async Command.<anonymous> (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/@storybook/cli/dist/_node-chunks/run-GAOAOJZE.js:9554:3)
+[12:44:48.074] [INFO] Storybook collects completely anonymous usage telemetry. We use it to shape Storybook's roadmap and prioritize features. You can learn more, including how to opt out, at https://storybook.js.org/telemetry
+[12:44:48.707] [ERROR] Error: ❌ Storybook found errors while collecting data for the following projects:
+:
+SB_CORE-SERVER_0006 (MainFileMissingError): No configuration files have been found in your configDir: [33m[39m.
+Storybook needs a "main.js" file, please add it.
+
+You can pass a --config-dir flag to tell Storybook, where your main.js file is located at.
+
+More info: https://storybook.js.org/docs/configure?ref=error
+
+    at validateConfigurationFiles (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/storybook/dist/_node-chunks/chunk-LLCTWVOB.js:9991:11)
+    at async loadMainConfig (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/storybook/dist/_node-chunks/chunk-LLCTWVOB.js:11667:3)
+    at async getStorybookInfo (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/storybook/dist/_node-chunks/chunk-LLCTWVOB.js:11790:59)
+    at async getStorybookData (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/@storybook/cli/dist/_node-chunks/chunk-DRVRF5O4.js:165:7)
+    at async processProject (file:///Users/arinaldoni/.npm/_npx/eebaf9eda7885457/node_modules/@storybook/cli/dist/_node-chunks/chunk-DRVRF5O4.js:296:9)
+Please fix the errors and run the upgrade command again.

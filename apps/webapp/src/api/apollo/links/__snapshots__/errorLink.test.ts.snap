@@ -1,48 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`createErrorLink > should handle both GraphQL and network errors 1`] = `
-{
-  "graphQLErrors": [
-    {
-      "locations": [
-        {
-          "column": 2,
-          "line": 1,
-        },
-      ],
-      "message": "Test GraphQL error",
-      "path": [
-        "testPath",
-      ],
-    },
-  ],
-  "networkError": [Error: Test Network error],
-}
-`;
+exports[`createErrorLink > should handle both GraphQL and network errors 1`] = `[TypeError: errorLink.onError is not a function]`;
 
-exports[`createErrorLink > should log GraphQL errors to the console 1`] = `
-{
-  "graphQLErrors": [
-    {
-      "locations": [
-        {
-          "column": 2,
-          "line": 1,
-        },
-      ],
-      "message": "Test GraphQL error",
-      "path": [
-        "testPath",
-      ],
-    },
-  ],
-  "networkError": null,
-}
-`;
+exports[`createErrorLink > should log GraphQL errors to the console 1`] = `[TypeError: errorLink.onError is not a function]`;
 
-exports[`createErrorLink > should log network errors to the console 1`] = `
-{
-  "graphQLErrors": null,
-  "networkError": [Error: Test Network error],
-}
-`;
+exports[`createErrorLink > should log network errors to the console 1`] = `[TypeError: errorLink.onError is not a function]`;

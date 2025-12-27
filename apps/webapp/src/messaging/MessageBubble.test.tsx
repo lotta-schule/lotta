@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import {
   SomeUser,
   SomeUserin,
@@ -9,7 +9,6 @@ import {
 } from 'test/fixtures';
 import { FileModel } from 'model';
 import { MessageBubble } from './MessageBubble';
-import userEvent from '@testing-library/user-event';
 
 import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
 

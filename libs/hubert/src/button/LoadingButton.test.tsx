@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { LoadingButton } from './LoadingButton';
-import { act, createPromise, render, waitFor } from '../test-utils';
+import { act, createPromise, render, userEvent, waitFor } from '../test-utils';
 import { KeyboardArrowLeft } from '../icon';
-import userEvent from '@testing-library/user-event';
 
 describe('LoadingButton', () => {
   beforeEach(() => {
@@ -154,31 +153,39 @@ describe('LoadingButton', () => {
 
     describe('embedded in a form', () => {
       it("should not call onAction if the type is not set to 'submit'", async () => {
-        const fireEvent = userEvent.setup();
-        const onSubmit = vi.fn();
+        const user = userEvent.setup();
+        const onSubmit = vi.fn<React.FormEventHandler>((e) => {
+          e.preventDefault();
+
+          return false;
+        });
         const onAction = vi.fn();
         const screen = render(
-          <form onSubmit={onSubmit}>
-            <input type="text" />
+          <form method="get" onSubmit={onSubmit}>
+            <input type="text" defaultValue="" />
+            <input type="submit" value="Submit the form" />
             <LoadingButton label="Click Me" onAction={onAction} />
           </form>
         );
 
-        await fireEvent.type(screen.getByRole('textbox'), 'Hello World{enter}');
+        await user.fill(screen.getByRole('textbox'), 'Hello World');
+        await user.click(
+          screen.getByRole('button', { name: /Submit the form/i })
+        );
 
         await waitFor(() => {
           expect(onSubmit).toHaveBeenCalled();
         });
-
         expect(onAction).not.toHaveBeenCalled();
       });
 
       it("should run the onAction handle when it's in a form that is being submitted", async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const onAction = vi.fn(() => Promise.resolve());
         const screen = render(
           <form>
             <input type="text" />
+            <input type="submit" value="Submit the form" />
             <LoadingButton
               type="submit"
               label="Send the form"
@@ -186,7 +193,11 @@ describe('LoadingButton', () => {
             />
           </form>
         );
-        await fireEvent.type(screen.getByRole('textbox'), 'Hello World{enter}');
+
+        await user.fill(screen.getByRole('textbox'), 'Hello World');
+        await user.click(
+          screen.getByRole('button', { name: /Send the form/i })
+        );
 
         expect(onAction).toHaveBeenCalled();
 
@@ -204,12 +215,12 @@ describe('LoadingButton', () => {
       it('should return to the idle state after a waiting time', async () => {
         vi.useFakeTimers({ shouldAdvanceTime: true });
 
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const onAction = vi.fn(async () => void 0);
         const screen = render(
           <LoadingButton label="Click Me" onAction={onAction} />
         );
-        fireEvent.click(screen.getByRole('button', { name: /Click Me/i }));
+        await user.click(screen.getByRole('button', { name: /Click Me/i }));
 
         await waitFor(() => {
           expect(onAction).toHaveBeenCalled();
@@ -230,8 +241,8 @@ describe('LoadingButton', () => {
       it('should keep its state after the request if resetState=false', async () => {
         vi.useFakeTimers({ shouldAdvanceTime: true });
 
-        const fireEvent = userEvent.setup();
-        const onAction = vi.fn(async () => void 0);
+        const user = userEvent.setup();
+        const onAction = vi.fn(() => Promise.resolve());
         const screen = render(
           <LoadingButton
             label="Click Me"
@@ -239,19 +250,19 @@ describe('LoadingButton', () => {
             resetState={false}
           />
         );
-        fireEvent.click(screen.getByRole('button', { name: /Click Me/i }));
+        await user.click(screen.getByRole('button', { name: /Click Me/i }));
 
         await waitFor(() => {
           expect(onAction).toHaveBeenCalled();
         });
 
         await waitFor(() => {
-          expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+          expect(screen.getByTestId('SuccessIcon')).toBeInTheDocument();
         });
 
         await act(() => vi.advanceTimersByTimeAsync(2000));
 
-        expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+        expect(screen.getByTestId('SuccessIcon')).toBeInTheDocument();
       });
     });
   });

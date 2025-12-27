@@ -9,7 +9,7 @@ import {
 } from '@lotta-schule/hubert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { useTranslation } from 'react-i18next';
 import { FileModel, ID, FileModelUsageLocation } from 'model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';

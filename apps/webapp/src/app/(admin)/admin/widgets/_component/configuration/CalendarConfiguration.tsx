@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { faCircleMinus } from '@fortawesome/free-solid-svg-icons';
 import { Button, Input, Label, Option, Select } from '@lotta-schule/hubert';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { useTranslation } from 'react-i18next';
 import { CalendarWidgetCalendarConfig } from 'model';
 import { Icon } from 'shared/Icon';

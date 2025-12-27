@@ -16,14 +16,13 @@ vi.mock('loader', async () => ({
 }));
 vi.mock('helper');
 
-vi.mock('next/link', () => ({
-  default: function NextLinkMock({
-    children,
-    ...props
-  }: React.PropsWithChildren) {
-    return <a {...props}>{children}</a>;
-  },
-}));
+vi.mock(
+  'next/link',
+  () =>
+    function NextLinkMock({ children, ...props }: React.PropsWithChildren) {
+      return <a {...props}>{children}</a>;
+    }
+);
 
 const loadTenantMock = loadTenant as MockedFunction<typeof loadTenant>;
 

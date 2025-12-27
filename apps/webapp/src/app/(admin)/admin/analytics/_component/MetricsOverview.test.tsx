@@ -4,7 +4,7 @@ import { render, waitFor } from 'test/util';
 import { MetricsOverview } from './MetricsOverview';
 import { Period } from '../Analytics';
 import { GET_TENANT_AGGREGATE_ANALYTICS } from '../_graphql';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 
 vi.useFakeTimers({
   shouldAdvanceTime: true,
@@ -12,7 +12,7 @@ vi.useFakeTimers({
   now: new Date('2024-03-16').getTime(),
 });
 
-const mocks: MockedResponse[] = [
+const mocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: GET_TENANT_AGGREGATE_ANALYTICS,
