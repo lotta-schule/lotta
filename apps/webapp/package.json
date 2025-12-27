@@ -60,6 +60,7 @@
     "i18next-parser": "catalog:",
     "ignore-loader": "catalog:",
     "sass": "catalog:",
+    "vitest": "catalog:",
     "vitest-browser-react": "^2.0.2"
   },
   "packageManager": "pnpm@10.14.0",

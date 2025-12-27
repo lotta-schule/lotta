@@ -26,6 +26,9 @@ export default defineConfig({
   },
   test: {
     projects: [
+      // TODO: react server components testing project
+      // with probably jsdom and special resolve rule
+      // https://github.com/apollographql/apollo-client-integrations/issues/353
       {
         extends: true,
         cacheDir: '.vitest/browser-cache',

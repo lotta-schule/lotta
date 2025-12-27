@@ -206,7 +206,7 @@ const mocks = [
   },
 ];
 
-describe.skip('Analytics', () => {
+describe('Analytics', () => {
   it('renders with default date and user count', async () => {
     const screen = render(<Analytics />, {}, { additionalMocks: mocks });
 

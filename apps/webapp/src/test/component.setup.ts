@@ -5,12 +5,13 @@ import { configure } from '@testing-library/react';
 import * as React from 'react';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
-import { resetApolloClientSingletons } from '@apollo/client-integration-nextjs';
+// This import is for server components
+// import { resetApolloClientSingletons } from '@apollo/client-integration-nextjs';
 import { MockRouter } from 'test/mocks';
 import { NEXT_DATA } from 'next/dist/shared/lib/utils';
 import { DirectoryModel, FileModel } from 'model';
 
-afterEach(resetApolloClientSingletons);
+// afterEach(resetApolloClientSingletons);
 
 declare module 'vitest' {
   interface Assertion<T = any> extends TestingLibraryMatchers<
@@ -31,16 +32,6 @@ declare module '@lotta-schule/hubert' {
 declare global {
   interface Window {
     __NEXT_DATA__: NEXT_DATA;
-    Blob: new (
-      content: BlobPart[],
-      options?: BlobPropertyBag
-    ) => Blob & { readonly inputData: BlobPart[] };
-  }
-  interface Blob {
-    new (
-      content: BlobPart[],
-      options?: BlobPropertyBag
-    ): Blob & { readonly inputData: BlobPart[] };
   }
 }
 declare namespace globalThis {
@@ -109,14 +100,6 @@ beforeAll(() => {
       usePathname: vi.fn(() => globalThis.mockRouter._pathname),
     };
   });
-
-  // vi.mock('react', async (importOriginal) => {
-  //   const actual = await importOriginal<typeof React>();
-  //   return {
-  //     ...actual,
-  //     cache: vi.fn((fn) => fn),
-  //   };
-  // });
 
   const originalError = console.error;
   vi.spyOn(console, 'error').mockImplementation((...args) => {

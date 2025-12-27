@@ -26,8 +26,10 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
         onSelectCategory={onSelectCategory}
       />
     );
-    const select = screen.getByRole('button', { name: /wählen/i });
-    await user.click(select);
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /wählen/i })).toBeVisible()
+    );
+    screen.getByRole('button', { name: /wählen/i }).click();
     await waitFor(() => {
       expect(screen.getByRole('option', { name: /material/i })).toBeVisible();
     });
@@ -50,11 +52,13 @@ describe('shared/layouts/editArticleLayout/CategorySelect', () => {
 
   describe('option listing options', () => {
     it('show all categories as options', async () => {
-      const user = userEvent.setup();
       const screen = render(
         <CategorySelect selectedCategory={null} onSelectCategory={() => {}} />
       );
-      await user.click(screen.getByRole('button', { name: /wählen/i }));
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /wählen/i })).toBeVisible();
+      });
+      screen.getByRole('button', { name: /wählen/i }).click();
       await waitFor(() => {
         expect(screen.getAllByRole('option')).toHaveLength(15);
       });

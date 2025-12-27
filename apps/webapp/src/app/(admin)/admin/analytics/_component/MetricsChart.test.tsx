@@ -34,7 +34,7 @@ const monthPeriod: Period = {
   key: '2024-03-16',
 };
 
-describe.skip('MetricsChart', () => {
+describe('MetricsChart', () => {
   it('renders chart when data is fetched', async () => {
     const screen = await React.act(() =>
       render(

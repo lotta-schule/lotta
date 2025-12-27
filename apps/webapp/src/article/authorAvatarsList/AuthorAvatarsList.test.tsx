@@ -15,7 +15,10 @@ describe('AuthorAvatarsList', () => {
       const user = userEvent.setup();
       const fn = vi.fn();
       const screen = render(<AuthorAvatarsList users={users} onUpdate={fn} />);
-      await user.hover(screen.getByRole('img', { name: 'Profilbild von Che' }));
+      await user.hover(
+        screen.getByRole('img', { name: 'Profilbild von Che' }),
+        { force: true }
+      );
       await waitFor(() => {
         expect(
           screen.getByRole('button', { name: /che entfernen/i })

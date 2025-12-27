@@ -120,7 +120,7 @@ describe.skip('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialo
         expect(assignedGroups).toHaveTextContent(/Administrator/i);
 
         (
-          await screen.findByRole('button', { name: /suggestions/i })
+          await screen.findByRole('button', { name: /empfehlungen/i })
         ).dispatchEvent(new PointerEvent('pointerdown'));
 
         await waitFor(() => {
@@ -181,7 +181,7 @@ describe.skip('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialo
         });
 
         await user.click(
-          await screen.findByRole('button', { name: /suggestions/i })
+          await screen.findByRole('button', { name: /empfehlungen/i })
         );
         await waitFor(() => {
           expect(screen.queryByRole('listbox')).toBeVisible();

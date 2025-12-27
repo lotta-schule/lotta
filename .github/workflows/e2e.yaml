@@ -180,10 +180,10 @@ jobs:
             ## End-to-End Test Report
 
             ### Test summary
-            See [Playwright Report](${{ steps.upload-report.outputs.run_report_url }})
+            See [Playwright Report](${{ steps.upload-report.outputs.ref_report_url }})
 
             ### Screenshots
-            See [Screenshots](${{ steps.upload-screenshots.outputs.run_screenshots_url }})
+            See [Screenshots](${{ steps.upload-screenshots.outputs.ref_screenshots_url }})
           comment-tag: playwright-report
 
       - name: Create commit comment

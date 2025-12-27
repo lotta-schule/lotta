@@ -9,6 +9,8 @@ coverage/
 .auth/
 __screenshots__/
 .test-reports
+.vitest/
+.vitest-attachments/
 
 # caches
 .eslintcache

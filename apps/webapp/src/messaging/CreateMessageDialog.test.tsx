@@ -131,7 +131,7 @@ describe('CreateMessageDialog', () => {
           screen.getByRole('combobox', { name: /gruppe wählen/i })
         ).toBeVisible();
       });
-      await user.click(screen.getByRole('button', { name: /suggestions/i }));
+      await user.click(screen.getByRole('button', { name: /empfehlungen/i }));
       expect(screen.getAllByRole('option')).toHaveLength(1);
 
       await user.click(screen.getByRole('option', { name: 'Schüler' }));
