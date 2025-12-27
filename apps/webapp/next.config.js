@@ -1,7 +1,6 @@
 // @ts-check
 
 import { resolve } from 'node:path';
-import { env } from 'node:process';
 import { URL } from 'node:url';
 
 const __dirname = new URL('.', import.meta.url).pathname;
@@ -16,7 +15,6 @@ const nextConfig = {
   transpilePackages: ['@lotta-schule/hubert'],
   allowedDevOrigins: ['localhost', '*.lotta.lvh.me', '*.local.lotta.schule'],
   async rewrites() {
-    const apiUrl = env.API_URL || '';
     return [
       {
         source: '/c/:path*',
@@ -24,19 +22,19 @@ const nextConfig = {
       },
       {
         source: '/auth/:path*',
-        destination: `${apiUrl}/auth/:path*`,
+        destination: `/api/auth/:path*`,
       },
       {
         source: '/storage/:path*',
-        destination: `${apiUrl}/storage/:path*`,
+        destination: `/api/storage/:path*`,
       },
       {
         source: '/data/:path*',
-        destination: `${apiUrl}/data/:path*`,
+        destination: `/api/data/:path*`,
       },
       {
         source: '/api',
-        destination: `${apiUrl}/api`,
+        destination: `/api/api`,
       },
       // web manifest
       {
