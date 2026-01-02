@@ -1,4 +1,3 @@
-/* eslint-disable react-compiler/react-compiler */
 'use client';
 
 import * as React from 'react';
@@ -128,9 +127,13 @@ export const ComboBox = React.memo(
       isDisabled: disabled,
       autoFocus,
       label: title,
+      allowsEmptyCollection: true,
+      shouldCloseOnBlur: false,
       onOpenChange: (isOpen) => {
         if (!isOpen && !state.isFocused) {
-          state.setInputValue('');
+          if (state.inputValue.length) {
+            state.setInputValue('');
+          }
           cancelDebounce();
         }
       },
@@ -171,9 +174,11 @@ export const ComboBox = React.memo(
     );
 
     React.useEffect(() => {
-      const item = findItem(state.inputValue);
-      if (item) {
-        state.selectionManager.setFocusedKey(item.key as string | number);
+      if (state.inputValue.length) {
+        const item = findItem(state.inputValue);
+        if (item) {
+          state.selectionManager.setFocusedKey(item.key as string | number);
+        }
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.inputValue]);
@@ -227,12 +232,12 @@ export const ComboBox = React.memo(
           event.continuePropagation();
         },
         onOpenChange: (isOpen) => {
-          if (!isOpen) {
+          if (!isOpen && state.setInputValue.length) {
             state.setInputValue('');
           }
         },
         onFocusChange: (isFocused) => {
-          if (!isFocused) {
+          if (!isFocused && state.inputValue.length) {
             state.setInputValue('');
           }
         },

@@ -117,17 +117,17 @@ exports[`PillButton > renders correctly 1`] = `
   </style>
   <button
     aria-current="false"
-    class="_root_0977c5 _root_3de4f3 _root_6e7a63 _button_6e7a63 _onlyIcon_3de4f3"
+    class="_root_ybf73_1 _root_z0q9c_1 _root_u8s1i_1 _button_u8s1i_1 _onlyIcon_z0q9c_18"
     data-variant="default"
     role="button"
     type="button"
   >
     <span
-      class="_icon_3de4f3"
+      class="_icon_z0q9c_10"
     >
       <svg
         aria-hidden="true"
-        class="_root_2ade80"
+        class="_root_1lr2i_1"
         data-testid="close-icon"
         focusable="false"
         viewBox="0 0 24 24"
@@ -139,7 +139,7 @@ exports[`PillButton > renders correctly 1`] = `
       </svg>
     </span>
     <span
-      class="_label_3de4f3"
+      class="_label_z0q9c_14"
     >
       Button
     </span>

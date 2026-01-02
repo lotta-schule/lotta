@@ -4,11 +4,11 @@ import {
   TestBrowserWrapperProps,
   fixtures,
   render,
+  userEvent,
   waitFor,
   within,
 } from '../../test-utils';
 import { DeleteDirectoryDialog } from './DeleteDirectoryDialog';
-import userEvent from '@testing-library/user-event';
 
 const WrappedDeleteDirectoryDialog = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>

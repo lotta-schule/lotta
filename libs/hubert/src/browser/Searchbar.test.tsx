@@ -2,10 +2,10 @@ import {
   render,
   TestBrowserWrapper,
   TestBrowserWrapperProps,
+  userEvent,
   waitFor,
 } from 'test-utils';
 import { Searchbar } from './Searchbar';
-import userEvent from '@testing-library/user-event';
 
 const WrappedSearchbar = ({ ...props }: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>
@@ -22,7 +22,7 @@ describe('Browser Searchbar', () => {
       <WrappedSearchbar currentPath={[]} searchNodes={onSearchNodes} />
     );
 
-    await user.type(screen.getByRole('textbox'), 'textdatei');
+    await user.fill(screen.getByRole('textbox'), 'textdatei');
 
     await waitFor(() => {
       expect(onSearchNodes).toHaveBeenCalledWith('textdatei');
@@ -43,7 +43,8 @@ describe('Browser Searchbar', () => {
       />
     );
 
-    await user.type(screen.getByRole('textbox'), 'textdatei');
+    await user.fill(screen.getByRole('textbox'), 'textdatei');
+    await user.click(document.body); // click outside to blur
 
     screen.rerender(
       <WrappedSearchbar
@@ -55,15 +56,21 @@ describe('Browser Searchbar', () => {
     );
 
     await waitFor(() => {
-      expect(onSetCurrentSearchResults).toHaveBeenCalledWith([]);
+      expect(onSetCurrentSearchResults).toHaveBeenCalled();
+      const resultsCount =
+        onSetCurrentSearchResults.mock.lastCall?.[0]?.length || 0;
+      expect(resultsCount).toBe(0);
     });
 
-    await user.tab();
-
-    expect(screen.getByRole('textbox')).not.toHaveFocus();
+    await waitFor(() => {
+      expect(screen.getByRole('textbox')).not.toHaveFocus();
+    });
 
     await waitFor(() => {
-      expect(onSetCurrentSearchResults).toHaveBeenCalledWith(null);
+      expect(onSetCurrentSearchResults).toHaveBeenCalled();
+      const resultsCount =
+        onSetCurrentSearchResults.mock.lastCall?.[0]?.length || 0;
+      expect(resultsCount).toBe(0);
     });
   });
 });

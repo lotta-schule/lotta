@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Avatar, AvatarProps } from '@lotta-schule/hubert';
 import { UserModel } from 'model';

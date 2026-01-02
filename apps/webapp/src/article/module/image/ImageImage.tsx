@@ -6,8 +6,10 @@ import { ImageCaption } from './ImageCaption';
 
 import styles from './ImageImage.module.scss';
 
-interface ImageImageProps
-  extends Omit<ImageContentProps, 'onClick' | 'alt' | 'file'> {
+interface ImageImageProps extends Omit<
+  ImageContentProps,
+  'onClick' | 'alt' | 'file'
+> {
   animateOnLoad?: boolean;
   isEditModeEnabled: boolean;
   file?: FileModel | null;
@@ -33,7 +35,7 @@ export const ImageImage = React.memo(
       () =>
         isEditModeEnabled ? (
           <SelectFileOverlay
-            label={'Bild auswechseln'}
+            label={'Bild wechseln'}
             fileFilter={(f) => f.fileType === 'IMAGE'}
             onSelectFile={onUpdateFile}
           >

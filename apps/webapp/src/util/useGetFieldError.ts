@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ApolloError } from '@apollo/client';
+import { ApolloError } from '@apollo/client/v4-migration';
 
 export const useGetFieldError = (error?: ApolloError) => {
   return React.useCallback(

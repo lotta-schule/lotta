@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { saveAs } from 'file-saver';

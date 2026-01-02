@@ -4,7 +4,8 @@
       "Read(//home/alexis/development/lotta/lotta/**)",
       "Bash(pnpm test:*)",
       "Bash(pnpm lint:*)",
-      "Bash(pnpm typecheck:*)"
+      "Bash(pnpm typecheck:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

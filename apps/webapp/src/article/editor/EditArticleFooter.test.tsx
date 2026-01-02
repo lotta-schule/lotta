@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { adminGroup, SomeUser, Weihnachtsmarkt } from 'test/fixtures';
 import { EditArticleFooter } from './EditArticleFooter';
-import userEvent from '@testing-library/user-event';
 
 import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
 

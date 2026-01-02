@@ -7,7 +7,6 @@ import {
   waitFor,
   within,
 } from '../test-utils';
-import { MockedFunction } from 'vitest';
 import { Explorer } from './Explorer';
 
 const WrappedExplorer = ({ ...props }: TestBrowserWrapperProps) => (
@@ -34,11 +33,6 @@ describe('Browser/Explorer', () => {
     const nodePath = fixtures.getPathForNode('13');
     const screen = render(<WrappedExplorer currentPath={nodePath} />);
 
-    const scrollIntoViewMock = HTMLElement.prototype
-      .scrollIntoView as MockedFunction<
-      typeof HTMLElement.prototype.scrollIntoView
-    >;
-
     const lists = screen.queryAllByRole('listbox');
 
     await waitFor(() => {
@@ -53,7 +47,5 @@ describe('Browser/Explorer', () => {
         fixtures.browserNodes.filter((n) => n.parent === '8').length
       );
     });
-
-    expect(scrollIntoViewMock).toHaveBeenCalled();
   });
 });

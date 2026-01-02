@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render, waitFor, within } from 'test/util';
+import { render, waitFor, within, userEvent } from 'test/util';
 import { Feedback } from './Feedback';
 import { feedbacks } from 'test/fixtures';
 import { DeleteFeedbackDialogProps } from './_component/DeleteFeedbackDialog';
-import userEvent from '@testing-library/user-event';
 
 describe('Feedback', () => {
   it('should list all feedbacks', async () => {

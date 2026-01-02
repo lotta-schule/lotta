@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { UserGroupModel, ID, ArticleModel } from 'model';
 import {
   Button,

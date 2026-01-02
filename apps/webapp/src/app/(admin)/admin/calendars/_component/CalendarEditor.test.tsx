@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { MockedResponse } from '@apollo/client/testing';
+import { render, waitFor, userEvent } from 'test/util';
+import { MockLink } from '@apollo/client/testing';
 import { CalendarEditor } from './CalendarEditor';
 import { UPDATE_CALENDAR } from '../_graphql';
-import userEvent from '@testing-library/user-event';
 
 const additionalMocks = [
   {
     request: {
       query: UPDATE_CALENDAR,
+      variables: (_vars) => true,
     },
-    variableMatcher: () => true,
     result: ({ id, data }) => ({
       data: {
         calendar: {
@@ -24,7 +23,7 @@ const additionalMocks = [
       },
     }),
   },
-] satisfies MockedResponse[];
+] satisfies MockLink.MockedResponse[];
 
 describe('CalendarEditor', () => {
   it('renders correctly', () => {
@@ -118,7 +117,7 @@ describe('CalendarEditor', () => {
           errors: [{ message: 'An error occurred' }],
         },
       },
-    ] satisfies MockedResponse[];
+    ] satisfies MockLink.MockedResponse[];
 
     const onClose = vi.fn();
     const screen = render(

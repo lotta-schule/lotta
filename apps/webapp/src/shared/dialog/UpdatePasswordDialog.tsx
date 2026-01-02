@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Button,
   Dialog,
@@ -54,7 +54,6 @@ export const UpdatePasswordDialog = React.memo(
       { updatePassword: boolean },
       { newPassword: string }
     >(UpdatePasswordMutation, {
-      variables: { newPassword },
       onCompleted: () => {
         resetForm();
         onRequestClose();
@@ -73,7 +72,7 @@ export const UpdatePasswordDialog = React.memo(
             onSubmit={(e) => {
               e.preventDefault();
               if (hasHisecToken) {
-                updatePassword();
+                updatePassword({ variables: { newPassword } });
               } else {
                 setShowRequestHisecToken(true);
               }
@@ -148,6 +147,7 @@ export const UpdatePasswordDialog = React.memo(
             setShowRequestHisecToken(false);
             if (authToken) {
               updatePassword({
+                variables: { newPassword },
                 context: { authToken },
               });
             }

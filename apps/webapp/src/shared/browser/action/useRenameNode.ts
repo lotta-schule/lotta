@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { BrowserProps } from '@lotta-schule/hubert';
 
 import UpdateDirectoryMutation from 'api/mutation/UpdateDirectoryMutation.graphql';

@@ -7,7 +7,7 @@ import {
   SomeUser,
 } from 'test/fixtures';
 import { ArticlesByUser } from './ArticlesByUser';
-import { FetchResult } from '@apollo/client';
+import { ApolloLink } from '@apollo/client';
 import { ArticleModel } from 'model';
 
 import GetArticlesByUser from 'api/query/GetArticlesByUserQuery.graphql';
@@ -15,8 +15,8 @@ import GetArticlesByUser from 'api/query/GetArticlesByUserQuery.graphql';
 describe('shared/article/ArticlesByUser', () => {
   const getAdditionalMocks = (
     result:
-      | FetchResult<{ articles: ArticleModel[] }>
-      | (() => FetchResult<{ articles: ArticleModel[] }>)
+      | ApolloLink.Result<{ articles: ArticleModel[] }>
+      | (() => ApolloLink.Result<{ articles: ArticleModel[] }>)
   ) => [
     {
       request: {

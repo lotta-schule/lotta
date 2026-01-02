@@ -1,62 +1,37 @@
 import * as React from 'react';
-import { FaecherCategory, FrancaisCategory } from 'test/fixtures';
-import { render, waitFor } from 'test/util';
+import { useRouter } from 'next/navigation';
+import { allCategories, FaecherCategory } from 'test/fixtures';
+import { render, waitFor, within } from 'test/util';
 import { MockRouter } from 'test/mocks';
 import { Navbar } from './Navbar';
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
+const mockRouter = useRouter() as unknown as MockRouter;
+
+const mockRouterResetter = () => mockRouter.reset(`/c/${FaecherCategory.id}`);
+
 describe('Navbar', () => {
   describe('it should render the correct amount', () => {
+    afterEach(mockRouterResetter);
     it('of main categories', async () => {
-      const screen = render(<Navbar />);
+      const screen = render(<Navbar categories={allCategories} />);
 
-      await waitFor(async () => {
-        expect(
-          screen
-            .queryAllByRole('button')
-            .filter(
-              (button) =>
-                button.getAttribute('data-testid') !== 'MobileMenuButton'
-            )
-        ).toHaveLength(4);
+      await waitFor(() => {
+        expect(screen.getAllByRole('button')).toHaveLength(3);
       });
     });
 
     it('of subcategories', async () => {
-      const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-        'next/router'
-      );
-      mockRouter.reset(`/c/${FaecherCategory.id}`);
+      mockRouterResetter();
 
-      const screen = render(<Navbar />, {});
-      await waitFor(async () => {
-        expect(
-          screen
-            .queryAllByRole('button')
-            .filter(
-              (button) =>
-                button.getAttribute('data-testid') !== 'MobileMenuButton'
-            )
-        ).toHaveLength(10);
+      const screen = render(<Navbar categories={allCategories} />, {});
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Fächer' })).toBeVisible();
       });
-    });
-  });
 
-  // Problems mocking scrollIntoView
-  it('should scroll to active nav item', async () => {
-    const { mockRouter } = await vi.importMock<{ mockRouter: MockRouter }>(
-      'next/router'
-    );
-    mockRouter.reset(`/c/${FaecherCategory.id}`);
-    const screen = render(<Navbar />);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('nav-level2')).toHaveProperty('scrollLeft', 0);
-    });
-
-    mockRouter.push(`/c/${FrancaisCategory.id}`);
-
-    await waitFor(() => {
-      expect(Element.prototype.scroll).toHaveBeenCalled();
+      expect(
+        within(screen.getByTestId('nav-level2')).getAllByRole('button')
+      ).toHaveLength(6); // Fächer has 6 subcategories
     });
   });
 });

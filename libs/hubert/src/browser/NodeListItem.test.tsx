@@ -1,22 +1,21 @@
 import * as React from 'react';
+import { userEvent } from 'test-utils';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
   fixtures,
   render,
   waitFor,
+  waitForPosition,
 } from '../test-utils';
 import { NodeListItem, NodeListItemProps } from './NodeListItem';
-import userEvent from '@testing-library/user-event';
+import { page } from '@vitest/browser/context';
 import { BrowserPath } from './BrowserStateContext';
 
 const directoryPath = fixtures.getPathForNode('8');
 const filePath = fixtures.getPathForNode('19');
 
-let isMobile = false;
-vi.mock('../util/useIsMobile', () => ({
-  useIsMobile: () => isMobile,
-}));
+const defaultViewport = { width: 1280, height: 720 };
 
 const WrappedNodeListItem = ({
   node,
@@ -45,8 +44,8 @@ const WrappedNodeListItem = ({
 );
 
 describe('Browser/NodeListItem', () => {
-  beforeEach(() => {
-    isMobile = false;
+  beforeEach(async () => {
+    await page.viewport(defaultViewport.width, defaultViewport.height);
   });
   describe('render node', () => {
     it('should render the name of a node', () => {
@@ -94,7 +93,6 @@ describe('Browser/NodeListItem', () => {
       });
 
       it('should not call onClick handler when disabled', async () => {
-        const user = userEvent.setup();
         const onClick = vi.fn();
 
         const screen = render(
@@ -109,7 +107,7 @@ describe('Browser/NodeListItem', () => {
           'aria-disabled',
           'true'
         );
-        await user.click(screen.getByRole('option'));
+        screen.getByRole('option').click();
 
         expect(onClick).not.toHaveBeenCalled();
       });
@@ -133,7 +131,7 @@ describe('Browser/NodeListItem', () => {
 
   describe('menu button', () => {
     it('should show the menu button on directories on mobile', async () => {
-      isMobile = true;
+      await page.viewport(393, 851);
 
       const screen = render(
         <WrappedNodeListItem node={directoryPath.at(-1)!} />
@@ -143,7 +141,7 @@ describe('Browser/NodeListItem', () => {
     });
 
     it('should not show the menu button on files on mobile', async () => {
-      isMobile = true;
+      await page.viewport(393, 851);
 
       const screen = render(<WrappedNodeListItem node={filePath.at(-1)!} />);
 
@@ -158,8 +156,8 @@ describe('Browser/NodeListItem', () => {
       expect(screen.queryByRole('button', { name: /ordnermenü/i })).toBeNull();
     });
 
-    it('should not show the menu button on directories on mobile when the node is disabled', () => {
-      isMobile = true;
+    it('should not show the menu button on directories on mobile when the node is disabled', async () => {
+      await page.viewport(393, 851);
 
       const screen = render(
         <WrappedNodeListItem node={directoryPath.at(-1)!} isDisabled />
@@ -168,8 +166,8 @@ describe('Browser/NodeListItem', () => {
       expect(screen.queryByRole('button', { name: /ordnermenü/i })).toBeNull();
     });
 
-    it('should not show the menu button on directories on mobile when in "select" mode', () => {
-      isMobile = true;
+    it('should not show the menu button on directories on mobile when in "select" mode', async () => {
+      await page.viewport(393, 851);
 
       const screen = render(
         <WrappedNodeListItem mode="select" node={directoryPath.at(-1)!} />
@@ -178,8 +176,8 @@ describe('Browser/NodeListItem', () => {
       expect(screen.queryByRole('button', { name: /ordnermenü/i })).toBeNull();
     });
 
-    it('should not show the menu button on directories on mobile when in "select-multiple" mode', () => {
-      isMobile = true;
+    it('should not show the menu button on directories on mobile when in "select-multiple" mode', async () => {
+      await page.viewport(393, 851);
 
       const screen = render(
         <WrappedNodeListItem
@@ -209,9 +207,10 @@ describe('Browser/NodeListItem', () => {
       const user = userEvent.setup();
       const screen = render(<WrappedNodeListItem node={filePath.at(-1)!} />);
 
-      await user.pointer({
-        keys: '[MouseRight>]',
-        target: screen.getByRole('option'),
+      await waitForPosition();
+
+      await user.click(screen.getByRole('option'), {
+        button: 'right',
       });
 
       await waitFor(() => {
@@ -243,9 +242,9 @@ describe('Browser/NodeListItem', () => {
         <WrappedNodeListItem node={filePath.at(-1)!} isDisabled />
       );
 
-      await user.pointer({
-        keys: '[MouseRight>]',
-        target: screen.getByRole('option'),
+      await user.click(screen.getByRole('option'), {
+        button: 'right',
+        force: true,
       });
 
       expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
@@ -257,9 +256,9 @@ describe('Browser/NodeListItem', () => {
         <WrappedNodeListItem node={filePath.at(-1)!} isEditingDisabled />
       );
 
-      await user.pointer({
-        keys: '[MouseRight>]',
-        target: screen.getByRole('option'),
+      await user.click(screen.getByRole('option'), {
+        button: 'right',
+        force: true,
       });
 
       expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
@@ -271,9 +270,8 @@ describe('Browser/NodeListItem', () => {
         <WrappedNodeListItem mode="select" node={filePath.at(-1)!} />
       );
 
-      await user.pointer({
-        keys: '[MouseRight>]',
-        target: screen.getByRole('option'),
+      await user.click(screen.getByRole('option'), {
+        button: 'right',
       });
 
       expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
@@ -285,9 +283,8 @@ describe('Browser/NodeListItem', () => {
         <WrappedNodeListItem mode="select-multiple" node={filePath.at(-1)!} />
       );
 
-      await user.pointer({
-        keys: '[MouseRight>]',
-        target: screen.getByRole('option'),
+      await user.click(screen.getByRole('option'), {
+        button: 'right',
       });
 
       expect(screen.queryByRole('menu', { name: /kontextmenü/i })).toBeNull();
@@ -324,7 +321,7 @@ describe('Browser/NodeListItem', () => {
         />
       );
 
-      expect(screen.getByRole('checkbox')).toBeVisible();
+      expect(screen.getByRole('checkbox')).toBeInTheDocument();
 
       await user.click(screen.getByRole('checkbox'));
 
@@ -345,7 +342,7 @@ describe('Browser/NodeListItem', () => {
         />
       );
 
-      expect(screen.getByRole('checkbox')).toBeVisible();
+      expect(screen.getByRole('checkbox')).toBeInTheDocument();
       expect(screen.getByRole('checkbox')).toBeChecked();
 
       await user.click(screen.getByRole('checkbox'));

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor, within } from 'test/util';
+import { render, waitFor, within, userEvent } from 'test/util';
 import { useParams, useRouter } from 'next/navigation';
 import {
   allCategories,
@@ -9,8 +9,7 @@ import {
   MatheCategory,
 } from 'test/fixtures';
 import { CategoryNavigation } from './CategoryNavigation';
-import userEvent from '@testing-library/user-event';
-import { MockRouter } from 'test/mocks';
+import { type MockRouter } from 'test/mocks';
 import { MockedFunction } from 'vitest';
 
 describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNavigation', () => {
@@ -38,14 +37,24 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
   describe('selected category', () => {
     describe('select category', () => {
       it('should select a start category on click', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(<CategoryNavigation />, {});
         await waitFor(() => {
           expect(
             screen.getByRole('listitem', { name: /start/i })
           ).toBeVisible();
         });
-        await fireEvent.click(screen.getByRole('listitem', { name: /start/i }));
+
+        const clickableTitle = screen
+          .getByRole('listitem', { name: /start/i })
+          .querySelectorAll('li > div')
+          .values()
+          .find(
+            (el) =>
+              el.attributes.getNamedItem('data-testid')?.value !== 'drag-handle'
+          );
+        expect(clickableTitle).toBeDefined();
+        await user.click(clickableTitle!);
         await waitFor(() => {
           expect(router._push).toHaveBeenCalledWith(
             `/admin/categories/${StartseiteCategory.id}`,
@@ -56,16 +65,14 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       });
 
       it('should select a common category on click', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(<CategoryNavigation />, {});
         await waitFor(() => {
           expect(
             screen.getByRole('listitem', { name: /fächer/i })
           ).toBeVisible();
         });
-        await fireEvent.click(
-          screen.getByRole('listitem', { name: /fächer/i })
-        );
+        await user.click(screen.getByRole('listitem', { name: /fächer/i }));
         await waitFor(() => {
           expect(router._push).toHaveBeenCalledWith(
             `/admin/categories/${FaecherCategory.id}`,
@@ -76,22 +83,27 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
       });
 
       it('should select a subcategory on click', async () => {
-        const fireEvent = userEvent.setup();
+        const user = userEvent.setup();
         const screen = render(<CategoryNavigation />, {});
         await waitFor(() => {
           expect(
             screen.getByRole('listitem', { name: /fächer/i })
           ).toBeVisible();
         });
-        await fireEvent.click(
-          screen.getByRole('listitem', { name: /fächer/i })
-        );
+        await user.click(screen.getByRole('listitem', { name: /fächer/i }));
 
-        const expandButton = within(
-          screen.getByRole('listitem', { name: /fächer/i })
-        ).getByRole('button', { name: /unter/i });
+        const faecherButton = screen.getByRole('listitem', { name: /fächer/i });
+        await waitFor(() => {
+          expect(
+            within(faecherButton).getByRole('button', { name: /unter/i })
+          ).toBeVisible();
+        });
 
-        await fireEvent.click(expandButton);
+        const expandButton = await within(faecherButton).findByRole('button', {
+          name: /unter/i,
+        });
+
+        await user.click(expandButton);
 
         await waitFor(() => {
           expect(
@@ -99,7 +111,7 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
           ).toBeVisible();
         });
 
-        await fireEvent.click(screen.getByRole('listitem', { name: /mathe/i }));
+        await user.click(screen.getByRole('listitem', { name: /mathe/i }));
 
         await waitFor(() => {
           expect(router._push).toHaveBeenCalledWith(

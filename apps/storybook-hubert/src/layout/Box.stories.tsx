@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 import { Box } from '@lotta-schule/hubert';
 
 export default {

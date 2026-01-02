@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import {
@@ -10,7 +12,7 @@ import { de } from 'date-fns/locale';
 import { ArticleModel, ID, UserModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, User } from 'util/model';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { Article as ArticleUtil } from 'util/model/Article';
 import {
   Button,
@@ -81,9 +83,7 @@ export const ArticlePreview = React.memo(
     const [toggleArticlePin] = useMutation<
       { article: ArticleModel },
       { id: ID }
-    >(ToggleArticlePinMutation, {
-      variables: { id: article.id },
-    });
+    >(ToggleArticlePinMutation);
 
     const maybeLinked = (content: any) =>
       disableLink ? (
@@ -337,7 +337,9 @@ export const ArticlePreview = React.memo(
                       className={clsx(styles.pinButton, {
                         [styles.active]: article.isPinnedToTop,
                       })}
-                      onClick={() => toggleArticlePin()}
+                      onClick={() =>
+                        toggleArticlePin({ variables: { id: article.id } })
+                      }
                       icon={<Icon icon={faLocationDot} size={'lg'} />}
                     />
                   )}

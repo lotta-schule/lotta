@@ -3,7 +3,7 @@
 exports[`ServerDownErrorPage > should render the ServerDownErrorPage component 1`] = `
 <div>
   <section
-    class="_error_42c9b3"
+    class="_error_1ef3h_1"
   >
     <h1>
       Server nicht erreichbar

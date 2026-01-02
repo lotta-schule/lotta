@@ -1,32 +1,29 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`AdminPageTitle > should render correctly 1`] = `
-<div
-  data-overlay-container="true"
+<style
+  data-hubert-css-variables-def="true"
 >
-  <div
-    class="_root_833c91 _root_61ca45 _hasScrollableParent_833c91"
-    role="toolbar"
-  >
-    <h3>
-      <a
-        aria-current="false"
-        class="_root_a3b6d5 _root_0f34c5 _backButton_61ca45 _onlyIcon_0f34c5"
-        data-variant="default"
-        href="/admin"
-        role="button"
-        type="button"
-      >
-        <span
-          class="_icon_0f34c5"
-        >
-          <span
-            class="_root_8d26a2"
-          />
-        </span>
-      </a>
-      My Page
-    </h3>
-  </div>
-</div>
+  :root {
+    --lotta-primary-color: 255, 87, 34;
+    --lotta-navigation-background-color: 51, 51, 51;
+    --lotta-navigation-contrast-text-color: 234, 234, 234;
+    --lotta-error-color: 255, 0, 0;
+    --lotta-success-color: 10, 82, 37;
+    --lotta-disabled-color: 97, 97, 97;
+    --lotta-text-color: 33, 33, 33;
+    --lotta-label-text-color: 158, 158, 158;
+    --lotta-primary-contrast-text-color: 255, 255, 255;
+    --lotta-box-background-color: 255, 255, 255;
+    --lotta-page-background-color: 202, 205, 215;
+    --lotta-divider-color: 224, 224, 224;
+    --lotta-highlight-color: 224, 224, 224;
+    --lotta-banner-background-color: 54, 123, 240;
+    --lotta-accent-grey-color: 227, 227, 227;
+    --lotta-spacing: 8px;
+    --lotta-border-radius: 4px;
+    --lotta-text-font-family: Muli;
+    --lotta-title-font-family: 'Schoolbell', cursive;
+}
+</style>
 `;

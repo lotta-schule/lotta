@@ -4,9 +4,9 @@ import {
   TestBrowserWrapperProps,
   fixtures,
   render,
+  userEvent,
 } from '../test-utils';
 import { StatusBar } from './StatusBar';
-import userEvent from '@testing-library/user-event';
 
 const defaultPath = fixtures.getPathForNode('14');
 

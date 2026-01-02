@@ -3,14 +3,14 @@
 exports[`tabs/Tab > should render a Tab button 1`] = `
 <button
   aria-selected="false"
-  class="_root_0977c5 _root_3de4f3 _root_70a42a _tab_1efd66"
+  class="_root_ybf73_1 _root_z0q9c_1 _root_cfn1r_1 _tab_kn9ig_1"
   data-variant="default"
   role="tab"
   type="button"
   value="4"
 >
   <span
-    class="_label_3de4f3 _label_70a42a"
+    class="_label_z0q9c_14 _label_cfn1r_35"
   >
     Tab-Button
   </span>

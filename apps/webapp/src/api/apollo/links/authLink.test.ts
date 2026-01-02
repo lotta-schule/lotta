@@ -1,5 +1,5 @@
 import { Mock } from 'vitest';
-import { Observable, Operation, FetchResult } from '@apollo/client';
+import { Observable, ApolloLink } from '@apollo/client';
 import { waitFor } from '@testing-library/react';
 import { createAuthLink } from './authLink';
 
@@ -10,7 +10,7 @@ class MockObserver {
 }
 
 describe('createAuthLink', () => {
-  let operation: Operation;
+  let operation: ApolloLink.Operation;
   let forward: Mock;
 
   const initialToken = 'test-token';
@@ -19,8 +19,8 @@ describe('createAuthLink', () => {
     operation = {
       setContext: vi.fn((fn) => fn({ headers: {} })),
       getContext: vi.fn().mockReturnValue({ headers: {} }),
-    } as unknown as Operation;
-    forward = vi.fn(() => new Observable<FetchResult>(() => {}));
+    } as unknown as ApolloLink.Operation;
+    forward = vi.fn(() => new Observable<ApolloLink.Result>(() => {}));
   });
 
   afterEach(() => {

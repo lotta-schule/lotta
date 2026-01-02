@@ -130,4 +130,7 @@ export const TestBrowserWrapper = ({
   );
 };
 
+export const waitForPosition = () => React.act(async () => {});
+
+export { userEvent } from '@vitest/browser/context';
 export * as fixtures from './test-fixtures';

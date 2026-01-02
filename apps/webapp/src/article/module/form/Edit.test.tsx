@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render } from 'test/util';
+import { render, userEvent } from 'test/util';
 import { ContentModuleModel, ContentModuleType } from 'model';
 import { FormConfiguration } from './Form';
 import { Edit } from './Edit';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/article/modules/form/Edit', () => {
   const contentModule: ContentModuleModel<any, FormConfiguration> = {

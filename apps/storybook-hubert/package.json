@@ -15,29 +15,21 @@
   },
   "type": "module",
   "devDependencies": {
-    "@lotta-schule/storybook-addon-theme": "../../libs/storybook-addon-theme",
-    "@storybook/addon-a11y": "^8.6.3",
-    "@storybook/addon-actions": "^8.6.3",
-    "@storybook/addon-coverage": "^1.0.5",
-    "@storybook/addon-essentials": "^8.6.3",
-    "@storybook/addon-interactions": "^8.6.3",
-    "@storybook/addon-links": "^8.6.3",
-    "@storybook/addon-mdx-gfm": "^8.6.3",
-    "@storybook/addon-themes": "^8.6.3",
-    "@storybook/addon-viewport": "^8.6.3",
-    "@storybook/blocks": "^8.6.3",
-    "@storybook/manager-api": "^8.6.3",
-    "@storybook/preview-api": "^8.6.3",
-    "@storybook/react": "^8.6.3",
-    "@storybook/react-vite": "^8.6.3",
-    "@storybook/test": "^8.6.3",
-    "@storybook/test-runner": "^0.22.0",
-    "@storybook/theming": "^8.6.3",
-    "chromatic": "^11.26.1",
-    "framer-motion": "^11.15.0",
-    "http-server": "^14.1.1",
-    "storybook": "^8.6.3",
-    "wait-on": "^8.0.1"
+    "@lotta-schule/storybook-addon-theme": "workspace:*",
+    "@storybook/addon-a11y": "catalog:",
+    "@storybook/addon-coverage": "catalog:",
+    "@storybook/addon-docs": "catalog:",
+    "@storybook/addon-links": "catalog:",
+    "@storybook/addon-themes": "catalog:",
+    "@storybook/react": "catalog:",
+    "@storybook/react-vite": "catalog:",
+    "@storybook/test": "catalog:",
+    "@storybook/test-runner": "catalog:",
+    "chromatic": "catalog:",
+    "framer-motion": "catalog:",
+    "http-server": "catalog:",
+    "storybook": "catalog:",
+    "wait-on": "catalog:"
   },
   "nx": {
     "$schema": "https://raw.githubusercontent.com/nrwl/nx/master/packages/nx/schemas/project-schema.json",
@@ -86,5 +78,24 @@
         ]
       }
     }
+  },
+  "lint-staged": {
+    "$schema": "https://json.schemastore.org/lint-staged",
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.{graphql,gql}": [
+      "prettier --write"
+    ],
+    "*.{html,xml}": [
+      "prettier --write"
+    ]
   }
 }

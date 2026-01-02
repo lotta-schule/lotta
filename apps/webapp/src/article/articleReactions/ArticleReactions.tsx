@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@lotta-schule/hubert';
-import { useMutation, useSuspenseQuery } from '@apollo/client';
+import { useMutation, useSuspenseQuery } from '@apollo/client/react';
 import { ArticleModel, ArticleReactionType } from 'model';
 import { Icon } from 'shared/Icon';
 import { useCurrentUser } from 'util/user/useCurrentUser';

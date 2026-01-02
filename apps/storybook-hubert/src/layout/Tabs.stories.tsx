@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StoryFn, Meta } from '@storybook/react';
+import { StoryFn, Meta } from '@storybook/react-vite';
 import { Tab, Tabbar } from '@lotta-schule/hubert';
 
 export default {
