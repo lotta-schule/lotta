@@ -49,7 +49,12 @@ export default defineConfig({
 
           setupFiles: ['./src/test/component.setup.ts'],
           retry: process.env.GITHUB_ACTIONS ? 3 : 1,
-          include: ['src/**/*.test.{ts,tsx}', '!src/**/*.unit.test.{ts,tsx}'],
+          fileParallelism: !process.env.CI,
+          maxConcurrency: process.env.CI ? 1 : 5,
+          include: [
+            'src/**/*.test.{ts,tsx}',
+            '!src/**/*.{unit,rsc}.test.{ts,tsx}',
+          ],
           testTimeout: 30_000, // default is 5000ms, increase for browser tests
         },
       },
