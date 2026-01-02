@@ -1,3 +1,13 @@
+## 6.1.14 (2026-01-02)
+
+### 🩹 Fixes
+
+- **core:** fix tenant worker uniqueness bug ([67883b16](https://github.com/lotta-schule/lotta/commit/67883b16))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.13 (2025-12-24)
 
 ### 🩹 Fixes
