@@ -13,7 +13,7 @@ defmodule Lotta.Worker.Tenant do
     # 0-9, 0 is highest
     priority: 0,
     unique: [
-      period: :infinity,
+      period: 60 * 60 * 12,
       timestamp: :scheduled_at,
       states: Oban.Job.states(),
       fields: [:worker, :args]
