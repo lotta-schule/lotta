@@ -1,3 +1,13 @@
+## 6.1.16 (2026-01-09)
+
+### 🩹 Fixes
+
+- **core:** eduplaces - add fallback to 'school' prop for official_id ([6ab9c933](https://github.com/lotta-schule/lotta/commit/6ab9c933))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.15 (2026-01-09)
 
 ### 🩹 Fixes
