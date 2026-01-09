@@ -73,7 +73,8 @@ defmodule LottaWeb.OAuthController do
       |> put_status(:not_found)
       |> render(:"404")
 
-  def request_login(conn, %{"iss" => "https://auth.sandbox.eduplaces.dev"} = params) do
+  def request_login(conn, %{"iss" => issuer} = params)
+      when issuer in ["https://auth.eduplaces.io", "https://auth.sandbox.eduplaces.dev"] do
     query =
       params
       |> Map.take(["login_hint"])
@@ -85,7 +86,27 @@ defmodule LottaWeb.OAuthController do
     )
   end
 
-  def request_login(_, _), do: {:error, :not_found}
+  def request_login(conn, %{"iss" => issuer}) do
+    Logger.warning("Received login request with unknown issuer: #{issuer}")
+
+    conn
+    |> put_status(:bad_request)
+    |> render(:bad_request,
+      title: gettext("Unknown issuer"),
+      message: gettext("The issuer provided is not recognized.")
+    )
+  end
+
+  def request_login(conn, params) do
+    Logger.warning("Received login request with unknown params: #{inspect(params)}")
+
+    conn
+    |> put_status(:bad_request)
+    |> render(:bad_request,
+      title: gettext("Missing issuer"),
+      message: gettext("The issuer parameter is required.")
+    )
+  end
 
   def tenant_callback(%{private: %{lotta_tenant: tenant}} = conn, %{"token" => token} = params) do
     with {:ok, claims} <- AccessToken.decode_and_verify(token, %{"typ" => "hisec"}),
