@@ -1,3 +1,13 @@
+## 6.1.15 (2026-01-09)
+
+### 🩹 Fixes
+
+- **core:** Add eduplaces prod issuer ([30c3036c](https://github.com/lotta-schule/lotta/commit/30c3036c))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.14 (2026-01-02)
 
 ### 🩹 Fixes
