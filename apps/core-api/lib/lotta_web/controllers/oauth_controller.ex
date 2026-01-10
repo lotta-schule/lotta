@@ -184,6 +184,8 @@ defmodule LottaWeb.OAuthController do
     {_token, user} =
       AuthCodeStrategy.get_token!(params)
 
+    Logger.info("Received Eduplaces callback for user #{inspect(user)}")
+
     get_or_create_user_from_eduplaces_userinfo(user)
     |> case do
       {:ok, {tenant, user}} ->
