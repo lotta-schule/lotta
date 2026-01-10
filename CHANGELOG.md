@@ -1,3 +1,7 @@
+## 6.1.17 (2026-01-10)
+
+This was a version bump only, there were no code changes.
+
 ## 6.1.16 (2026-01-09)
 
 ### 🩹 Fixes
