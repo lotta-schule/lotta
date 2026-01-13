@@ -42,8 +42,8 @@ The [IEX Console](https://hexdocs.pm/iex/1.13/IEx.html) opens. Type:
 
 ```elixir
 Tenants.create_tenant(
-  user_params: %{email: "<your-email>", name: "<your-name>"},
-  tenant: %{slug: "<chose-a-slug>", title: "<tenant-title>"}
+  %Lotta.Tenants.Tenant{slug: "<chose-a-slug>", title: "<tenant-title>"},
+  %Lotta.Accounts.User{email: "<your-email>", name: "<your-name>"}
 )
 ```
 

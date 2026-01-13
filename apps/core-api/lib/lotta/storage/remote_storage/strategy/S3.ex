@@ -103,7 +103,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
       config
       |> Map.drop([:bucket, :endpoint])
       |> Map.merge(
-        config[:endpoint]
+        config[:api_endpoint]
         |> URI.parse()
         |> Map.take([:scheme, :host, :port])
       )

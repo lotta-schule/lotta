@@ -25,6 +25,7 @@ defmodule LottaWeb do
 
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 
@@ -77,7 +78,7 @@ defmodule LottaWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components
-      import LottaWeb.CoreComponents
+      # import LottaWeb.CoreComponents
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS

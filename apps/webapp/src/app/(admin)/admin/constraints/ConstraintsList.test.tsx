@@ -27,10 +27,14 @@ describe('pages/admin/users/constraints', () => {
       );
       await waitFor(() => {
         expect(
-          screen.getByRole('checkbox', { name: /nicht begrenzen/i })
+          screen.getByRole('checkbox', {
+            name: /keine begrenzung.*speicherplatz/i,
+          })
         ).toBeChecked();
         expect(
-          screen.getByRole('checkbox', { name: /begrenzen auf/i })
+          screen.getByRole('checkbox', {
+            name: /speicherplatz.*begrenzen auf/i,
+          })
         ).not.toBeChecked();
       });
     });
@@ -53,10 +57,12 @@ describe('pages/admin/users/constraints', () => {
         }
       );
       await fireEvent.click(
-        screen.getByRole('checkbox', { name: /begrenzen auf:/i })
+        screen.getByRole('checkbox', {
+          name: /speicherplatz.*begrenzen auf/i,
+        })
       );
       expect(
-        screen.getByRole('spinbutton', { name: /begrenzung/i })
+        screen.getByRole('spinbutton', { name: /speicherplatz/i })
       ).toHaveValue(1024);
     });
   });
@@ -69,10 +75,12 @@ describe('pages/admin/users/constraints', () => {
         { currentUser: adminUser }
       );
       expect(
-        screen.getByRole('checkbox', { name: /begrenzen auf/i })
+        screen.getByRole('checkbox', { name: /speicherplatz.*begrenzen auf/i })
       ).toBeChecked();
       expect(
-        screen.getByRole('checkbox', { name: /nicht begrenzen/i })
+        screen.getByRole('checkbox', {
+          name: /keine begrenzung.*speicherplatz/i,
+        })
       ).not.toBeChecked();
     });
 
@@ -85,19 +93,21 @@ describe('pages/admin/users/constraints', () => {
       );
       await fireEvent.type(
         screen.getByRole('spinbutton', {
-          name: /begrenzung/i,
+          name: /speicherplatz/i,
         }),
         '123'
       );
       await fireEvent.tab();
       await fireEvent.click(
-        screen.getByRole('checkbox', { name: /nicht begrenzen/i })
+        screen.getByRole('checkbox', {
+          name: /keine begrenzung.*speicherplatz/i,
+        })
       );
       await fireEvent.click(
-        screen.getByRole('checkbox', { name: /begrenzen auf/i })
+        screen.getByRole('checkbox', { name: /speicherplatz.*begrenzen auf/i })
       );
       expect(
-        screen.getByRole('spinbutton', { name: /begrenzung/i })
+        screen.getByRole('spinbutton', { name: /speicherplatz/i })
       ).toHaveValue(20123);
     });
 
@@ -108,7 +118,7 @@ describe('pages/admin/users/constraints', () => {
         { currentUser: adminUser }
       );
       expect(
-        screen.getByRole('spinbutton', { name: /begrenzung/i })
+        screen.getByRole('spinbutton', { name: /speicherplatz/i })
       ).toHaveValue(20);
     });
 
@@ -201,13 +211,13 @@ describe('pages/admin/users/constraints', () => {
         );
         await fireEvent.type(
           screen.getByRole('spinbutton', {
-            name: /begrenzung/i,
+            name: /speicherplatz/i,
           }),
           '123'
         );
         await fireEvent.tab();
         expect(
-          screen.getByRole('spinbutton', { name: /begrenzung/i })
+          screen.getByRole('spinbutton', { name: /speicherplatz/i })
         ).not.toHaveFocus();
         await fireEvent.click(
           screen.getByRole('button', { name: /speichern/i })
@@ -216,6 +226,90 @@ describe('pages/admin/users/constraints', () => {
           expect(updateFn).toHaveBeenCalled();
         });
       });
+    });
+  });
+
+  describe('email registration constraints', () => {
+    it('should show email registration section when tenant has eduplacesId', () => {
+      const screen = render(
+        <ConstraintList
+          tenant={{
+            ...tenant,
+            eduplacesId: 'eduplaces-123',
+          }}
+        />,
+        {},
+        { currentUser: adminUser }
+      );
+
+      const sections = screen.getAllByRole('heading', { level: 4 });
+      expect(sections).toHaveLength(2);
+      expect(
+        screen.getByRole('heading', { name: /anmeldebeschränkungen/i })
+      ).toBeInTheDocument();
+    });
+
+    it('should not show email registration section when tenant has no eduplacesId', () => {
+      const screen = render(
+        <ConstraintList
+          tenant={{
+            ...tenant,
+            eduplacesId: null,
+          }}
+        />,
+        {},
+        { currentUser: adminUser }
+      );
+
+      const sections = screen.getAllByRole('heading', { level: 4 });
+      expect(sections).toHaveLength(1);
+      expect(
+        screen.queryByRole('heading', { name: /anmeldebeschränkungen/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it('should show proper state for email registration enabled', () => {
+      const screen = render(
+        <ConstraintList
+          tenant={{
+            ...tenant,
+            eduplacesId: 'eduplaces-123',
+            configuration: {
+              ...tenant.configuration,
+              isEmailRegistrationEnabled: true,
+            },
+          }}
+        />,
+        {},
+        { currentUser: adminUser }
+      );
+
+      const checkbox = screen.getByRole('checkbox', {
+        name: /erlauben.*e-mail-adresse/i,
+      });
+      expect(checkbox).toBeChecked();
+    });
+
+    it('should show proper state for email registration disabled', () => {
+      const screen = render(
+        <ConstraintList
+          tenant={{
+            ...tenant,
+            eduplacesId: 'eduplaces-123',
+            configuration: {
+              ...tenant.configuration,
+              isEmailRegistrationEnabled: false,
+            },
+          }}
+        />,
+        {},
+        { currentUser: adminUser }
+      );
+
+      const checkbox = screen.getByRole('checkbox', {
+        name: /erlauben.*e-mail-adresse/i,
+      });
+      expect(checkbox).not.toBeChecked();
     });
   });
 });

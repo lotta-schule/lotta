@@ -17,6 +17,12 @@ defmodule Lotta.Tenants.DefaultContentTest do
     Tesla.Mock.mock(fn
       %{url: "https://plausible.io/" <> _rest} = env ->
         %Tesla.Env{env | status: 200, body: "OK"}
+
+      %{method: :post, url: "https://auth.sandbox.eduplaces.dev/oauth2/token"} ->
+        %Tesla.Env{status: 200, body: %{"access_token" => "fake_token"}}
+
+      %{url: "https://api.sandbox.eduplaces.dev/idm/ep/v1/" <> _path} ->
+        %Tesla.Env{status: 404, body: "Not Found"}
     end)
 
     :ok
@@ -134,6 +140,142 @@ defmodule Lotta.Tenants.DefaultContentTest do
                |> Repo.preload([:files, :user])
 
       assert Enum.count(public_directory.files) == 17
+    end
+
+    test "should create tenant without eduplaces_id and skip external sync" do
+      tenant = %Tenant{
+        slug: "no-eduplaces-test",
+        title: "No Eduplaces Test",
+        eduplaces_id: nil
+      }
+
+      user = %User{
+        name: "Test User",
+        email: "test@example.com"
+      }
+
+      assert {:ok, tenant} = Tenants.create_tenant(tenant, user)
+
+      # Tenant should be created successfully and be active
+      assert tenant = Tenants.get_tenant_by_slug(tenant.slug)
+      assert tenant.state == :active
+      assert is_nil(tenant.eduplaces_id)
+    end
+
+    test "should create tenant with empty eduplaces_id and skip external sync" do
+      tenant = %Tenant{
+        slug: "empty-eduplaces-test",
+        title: "Empty Eduplaces Test",
+        eduplaces_id: ""
+      }
+
+      user = %User{
+        name: "Test User",
+        email: "test2@example.com"
+      }
+
+      assert {:ok, tenant} = Tenants.create_tenant(tenant, user)
+
+      # Tenant should be created successfully and be active
+      assert tenant = Tenants.get_tenant_by_slug(tenant.slug)
+      assert tenant.state == :active
+    end
+
+    test "should create tenant with eduplaces_id and call external sync successfully" do
+      tenant = %Tenant{
+        slug: "with-eduplaces-test",
+        title: "With Eduplaces Test",
+        eduplaces_id: "test-eduplaces-id"
+      }
+
+      user = %User{
+        name: "Test User",
+        email: "test3@example.com"
+      }
+
+      # Mock successful sync
+      Tesla.Mock.mock(fn
+        %{url: "https://plausible.io/" <> _rest} = env ->
+          %Tesla.Env{env | status: 200, body: "OK"}
+
+        %{method: :post, url: "https://auth.sandbox.eduplaces.dev/oauth2/token"} ->
+          %Tesla.Env{status: 200, body: %{"access_token" => "fake_token"}}
+
+        %{url: "https://api.sandbox.eduplaces.dev/idm/ep/v1/" <> _path} ->
+          %Tesla.Env{status: 200, body: %{"groups" => []}}
+      end)
+
+      assert {:ok, tenant} = Tenants.create_tenant(tenant, user)
+
+      # Tenant should be created successfully and be active despite sync being called
+      assert tenant = Tenants.get_tenant_by_slug(tenant.slug)
+      assert tenant.state == :active
+      assert tenant.eduplaces_id == "test-eduplaces-id"
+    end
+
+    test "should create tenant even when external sync fails with 404" do
+      tenant = %Tenant{
+        slug: "eduplaces-404-test",
+        title: "Eduplaces 404 Test",
+        eduplaces_id: "failing-eduplaces-id"
+      }
+
+      user = %User{
+        name: "Test User",
+        email: "test4@example.com"
+      }
+
+      # Mock failed sync (404)
+      Tesla.Mock.mock(fn
+        %{url: "https://plausible.io/" <> _rest} = env ->
+          %Tesla.Env{env | status: 200, body: "OK"}
+
+        %{method: :post, url: "https://auth.sandbox.eduplaces.dev/oauth2/token"} ->
+          %Tesla.Env{status: 200, body: %{"access_token" => "fake_token"}}
+
+        %{url: "https://api.sandbox.eduplaces.dev/idm/ep/v1/" <> _path} ->
+          %Tesla.Env{status: 404, body: "Not Found"}
+      end)
+
+      assert {:ok, tenant} = Tenants.create_tenant(tenant, user)
+
+      # Tenant should be created successfully and be active despite sync failure
+      assert tenant = Tenants.get_tenant_by_slug(tenant.slug)
+      assert tenant.state == :active
+      assert tenant.eduplaces_id == "failing-eduplaces-id"
+    end
+
+    test "should create tenant even when external sync task crashes" do
+      tenant = %Tenant{
+        slug: "eduplaces-crash-test",
+        title: "Eduplaces Crash Test",
+        eduplaces_id: "crashing-eduplaces-id"
+      }
+
+      user = %User{
+        name: "Test User",
+        email: "test5@example.com"
+      }
+
+      # Mock crash scenario - return invalid response that will cause decode error
+      Tesla.Mock.mock(fn
+        %{url: "https://plausible.io/" <> _rest} = env ->
+          %Tesla.Env{env | status: 200, body: "OK"}
+
+        %{method: :post, url: "https://auth.sandbox.eduplaces.dev/oauth2/token"} ->
+          %Tesla.Env{status: 200, body: %{"access_token" => "fake_token"}}
+
+        %{url: "https://api.sandbox.eduplaces.dev/idm/ep/v1/" <> _path} ->
+          # Return malformed response that will cause a crash
+          %Tesla.Env{status: 200, body: "invalid json"}
+      end)
+
+      assert {:ok, tenant} = Tenants.create_tenant(tenant, user)
+
+      # Tenant should be created successfully and be active despite sync crash
+      assert tenant = Tenants.get_tenant_by_slug(tenant.slug)
+      assert tenant.state == :active
+      assert tenant.eduplaces_id == "crashing-eduplaces-id"
     end
   end
 end

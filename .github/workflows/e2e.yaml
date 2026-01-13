@@ -1,3 +1,4 @@
+---
 name: Playwright Tests
 on:
   workflow_call:
@@ -13,14 +14,12 @@ on:
         required: false
       endpoint:
         required: false
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
-
 jobs:
   test:
-    name: 'E2E-Testing ( ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} )'
+    name: E2E-Testing ( ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} )
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -55,8 +54,9 @@ jobs:
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
         with:
-          compose-file: docker-compose.yaml
           cwd: ${{ github.workspace }}/apps/e2e
+          compose-file: docker-compose.yaml
+          compose-flags: --verbose
           up-flags: --force-recreate --wait
 
       - name: Run Playwright tests
@@ -104,7 +104,6 @@ jobs:
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
-          working-directory: apps/e2e
           path: apps/e2e/all-blob-reports
           pattern: blob-report-*
           merge-multiple: true
@@ -162,6 +161,15 @@ jobs:
           pattern: screenshot-*
           merge-multiple: true
 
+      - name: Check if any screenshot files exist
+        id: check-screenshots
+        run: |
+          if [ -d "/tmp/screenshot" ] && [ "$(ls -A /tmp/screenshot)" ]; then
+            echo "screenshots_exist=true" >> $GITHUB_OUTPUT
+          else
+            echo "screenshots_exist=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Upload screenshots to S3
         id: upload-screenshots
         if: ${{ hashFiles('tmp/screenshot/**') != '' }}
@@ -185,7 +193,6 @@ jobs:
             ### Screenshots
             See [Screenshots](${{ steps.upload-screenshots.outputs.ref_screenshots_url }})
           comment-tag: playwright-report
-
       - name: Create commit comment
         uses: peter-evans/commit-comment@v3
         if: ${{ github.event_name == 'push' }}

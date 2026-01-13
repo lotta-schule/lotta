@@ -34,6 +34,8 @@ RUN set -xe && \
   libssl3 \
   libstdc++ \
   build-base \
+  # chromium
+  chromium \
   # ffmpeg
   ffmpeg \
   # For libvips
@@ -223,6 +225,7 @@ RUN set -xe && \
   apk upgrade --no-cache && \
   apk add --no-cache --virtual .build-deps \
   git \
+  nodejs npm \
   rust cargo \
   build-base
 
@@ -232,17 +235,19 @@ RUN mix local.hex --force && \
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
+RUN mix deps.get --only $MIX_ENV
 COPY config config
-RUN mix deps.get --only prod && \
-  mix deps.compile
 
-# build project
+RUN mix deps.compile
+
 COPY priv priv
 COPY lib lib
+COPY assets assets
+
+RUN mix assets.deploy
+RUN mix compile
 
 COPY rel rel
-
-RUN mix compile
 
 # Compress source code for sentry
 RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
@@ -268,6 +273,8 @@ LABEL org.opencontainers.image.authors="Lotta Schule <kontakt@lotta.schule>"
 LABEL org.opencontainers.image.url="https://lotta.schule"
 
 EXPOSE 4000
+EXPOSE 4010
+EXPOSE 4321
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -278,7 +285,7 @@ COPY --from=builder /app/_build/prod/rel/lotta ./
 RUN chown -R nobody: /app
 USER nobody
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:4000/_debug/health || exit 1
+HEALTHCHECK --interval=30s --timeout=15s --start-period=30s --retries=5 \
+  CMD netstat -ltn | grep -c 4321
 
 CMD ["env", "sh", "-c", "/app/bin/migrate && /app/bin/server"]

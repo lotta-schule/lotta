@@ -4,11 +4,17 @@ defmodule LottaWeb.Router do
   """
   use LottaWeb, :router
 
+  import Phoenix.LiveView.Router
   import Phoenix.LiveDashboard.Router
   import Oban.Web.Router
 
   pipeline :browser do
-    plug(:accepts, ~w(html))
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, html: {LottaWeb.Layouts, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
   end
 
   pipeline :json_api do
@@ -85,26 +91,14 @@ defmodule LottaWeb.Router do
   end
 
   scope "/setup" do
-    pipe_through(:browser)
+    pipe_through([:browser, :tenant])
 
-    get("/:slug/status", LottaWeb.SetupController, :status)
-  end
-
-  scope "/admin-api" do
-    pipe_through([:admin_auth, :json_api])
-
-    post("/create-test", LottaWeb.TenantController, :create_test)
-    post("/delete-tenant", LottaWeb.TenantController, :delete_tenant)
+    get("/status", LottaWeb.SetupController, :status)
   end
 
   scope "/admin" do
-    pipe_through([:admin_auth])
-
-    live_dashboard("/live", metrics: LottaWeb.Telemetry)
-    oban_dashboard("/oban")
-
     scope "/api" do
-      pipe_through(:json_api)
+      pipe_through([:admin_auth, :json_api])
 
       post("/create-test", LottaWeb.TenantController, :create_test)
       post("/delete-tenant", LottaWeb.TenantController, :delete_tenant)
@@ -112,8 +106,12 @@ defmodule LottaWeb.Router do
   end
 
   scope "/_debug" do
-    # health endpoint
-    forward("/health", LottaWeb.HealthPlug)
+    scope "/" do
+      pipe_through([:admin_auth])
+
+      live_dashboard("/live", metrics: LottaWeb.Telemetry)
+      oban_dashboard("/oban")
+    end
 
     scope "/mails" do
       forward(

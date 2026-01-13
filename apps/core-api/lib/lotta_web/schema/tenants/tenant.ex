@@ -47,6 +47,7 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
     field(:logo_image_file, :file)
     field(:custom_theme, :json)
     field(:user_max_storage_config, :string)
+    field(:is_email_registration_enabled, :boolean, default_value: true)
   end
 
   object :tenant_stats do
@@ -66,6 +67,7 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
   input_object :tenant_configuration_input do
     field(:custom_theme, :json)
     field(:user_max_storage_config, :string)
+    field(:is_email_registration_enabled, :boolean)
   end
 
   enum :tenant_state do

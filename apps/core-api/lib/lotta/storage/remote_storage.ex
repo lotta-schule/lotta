@@ -4,6 +4,7 @@ defmodule Lotta.Storage.RemoteStorage do
   Manges writing and reading to different stores.
   """
   alias Lotta.Storage.{FileData, RemoteStorageEntity}
+  require Logger
 
   @type config :: %{
           name: String.t(),
@@ -84,6 +85,7 @@ defmodule Lotta.Storage.RemoteStorage do
   def create(%FileData{} = file, path, meta \\ []) do
     with {:ok, strategy} <- get_strategy(),
          {:ok, config} <- config_for_store(default_store()) do
+      Logger.debug("Using storage strategy #{inspect(strategy)} to upload file to #{path}")
       strategy.create(file, path, config, meta)
     end
   end

@@ -4,6 +4,7 @@ import { createCache } from './cache';
 import { createErrorLink } from './links/errorLink';
 import { createAuthLink } from './links/authLink';
 import { createHttpLink } from './links/httpLink';
+import { createSentryTracingLink } from './links/sentryTracingLink';
 import { headers } from 'next/headers';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
@@ -27,6 +28,7 @@ export const createRSCClient = async () => {
       createAuthLink({
         initialToken: getAuthTokenFromHeader(headerValues) ?? undefined,
       }),
+      createSentryTracingLink(),
       createVariableInputMutationsLink(),
       createHttpLink({
         requestExtraHeaders: () => ({

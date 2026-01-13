@@ -25,8 +25,11 @@ defmodule Lotta.Tenants.DefaultContent do
          {:ok, files} <- create_files(tenant, admin_user),
          {:ok, _articles} <- create_articles(admin_user, content_category, files),
          {:ok, _mail} <- send_ready_email(tenant, admin_user),
-         {:ok, _tenant} <- Tenants.update_state(tenant, :active),
-         do: :ok
+         {:ok, _tenant} <- Tenants.update_state(tenant, :active) do
+      sync_external(tenant)
+
+      :ok
+    end
   end
 
   defp create_default_groups(tenant) do
@@ -354,6 +357,29 @@ defmodule Lotta.Tenants.DefaultContent do
     |> Email.lotta_ready_mail(tenant: tenant)
     |> Mailer.deliver_later()
   end
+
+  defp sync_external(%{eduplaces_id: eduplaces_id} = tenant)
+       when is_binary(eduplaces_id) and byte_size(eduplaces_id) > 0 do
+    task =
+      Task.Supervisor.async_nolink(Lotta.TaskSupervisor, fn ->
+        Lotta.Eduplaces.Syncer.sync_tenant_groups(tenant)
+      end)
+
+    case Task.yield(task, :timer.minutes(5)) || Task.shutdown(task) do
+      {:ok, result} ->
+        result
+
+      nil ->
+        Logger.warning("External sync timed out for tenant #{tenant.slug}")
+        :ok
+
+      {:exit, reason} ->
+        Logger.warning("External sync failed for tenant #{tenant.slug}: #{inspect(reason)}")
+        :ok
+    end
+  end
+
+  defp sync_external(_tenant), do: :ok
 
   defp available_assets() do
     [

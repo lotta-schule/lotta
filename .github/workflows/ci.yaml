@@ -73,10 +73,10 @@ jobs:
         run: pnpm install
 
       - name: Lint
-        run: pnpm nx affected -t lint
+        run: pnpm nx run-many -t lint
 
       - name: Typecheck
-        run: pnpm nx affected -t typecheck
+        run: pnpm nx run-many -t typecheck
 
   tests:
     name: Run tests

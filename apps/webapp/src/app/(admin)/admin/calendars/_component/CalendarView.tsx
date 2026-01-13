@@ -186,7 +186,7 @@ export const CalendarView = React.memo(
             event: t('event'),
             today: t('today'),
             allDay: t('all-day'),
-            showMore: (count: number) => t('{count} more', { count }),
+            showMore: (count: number) => t('{{count}} more', { count }),
             time: t('time'),
             yesterday: t('yesterday'),
             tomorrow: t('tomorrow'),

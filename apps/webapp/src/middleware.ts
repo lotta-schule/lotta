@@ -2,6 +2,7 @@ import { sendRefreshRequest } from 'api/auth';
 import { serialize } from 'cookie-es';
 import { type NextRequest, NextResponse } from 'next/server';
 import { JWT } from 'util/auth/jwt';
+import { Logger } from 'util/logger';
 
 export const config = {
   matcher: [
@@ -20,12 +21,31 @@ export async function middleware(request: NextRequest) {
 
   const incomingRefreshToken = request.cookies.get('SignInRefreshToken')?.value;
 
+  if (!authInfo.accessToken && authHeader?.startsWith('Bearer ')) {
+    const accessToken = authHeader.slice(7);
+
+    let accessTokenJwt = null;
+    try {
+      accessTokenJwt = JWT.parse(accessToken);
+    } catch (error) {
+      Logger.error('Error parsing access token', { error });
+    }
+
+    if (!accessTokenJwt?.isValid()) {
+      Logger.warn('Access token is not valid!', { accessTokenJwt });
+    } else if (accessTokenJwt.isExpired(0)) {
+      Logger.warn('Access token is expired!');
+    } else {
+      authInfo.accessToken = accessToken;
+    }
+  }
+
   if (incomingRefreshToken) {
     let refreshTokenJwt = null;
     try {
       refreshTokenJwt = JWT.parse(incomingRefreshToken);
-    } catch (e) {
-      console.error('Error parsing refresh token', e);
+    } catch (error) {
+      Logger.error('Error parsing refresh token', { error });
     }
 
     if (refreshTokenJwt?.isValid() && !refreshTokenJwt.isExpired(0)) {
@@ -52,6 +72,19 @@ export async function middleware(request: NextRequest) {
         }
       } else {
         authInfo.refreshToken = incomingRefreshToken;
+      }
+    } else if (authHeader) {
+      Logger.warn('User does not have a refresh token');
+      const accessToken = authHeader.slice(7);
+      let accessTokenJwt = null;
+      try {
+        accessTokenJwt = JWT.parse(accessToken);
+      } catch (error) {
+        Logger.error('Error parsing access token', { error });
+      }
+
+      if (accessTokenJwt?.isValid() && !accessTokenJwt.isExpired(0)) {
+        authInfo.accessToken = accessToken;
       }
     }
   }
@@ -84,7 +117,7 @@ export async function middleware(request: NextRequest) {
         });
       }
     } catch (e) {
-      console.error('Error parsing new token', e);
+      Logger.error('Error parsing new token', { e });
     }
   } else {
     // user has no valid refresh token

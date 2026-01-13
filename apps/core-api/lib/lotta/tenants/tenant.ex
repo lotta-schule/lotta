@@ -19,7 +19,8 @@ defmodule Lotta.Tenants.Tenant do
 
   @type configuration() :: %{
           custom_theme: map() | nil,
-          user_max_storage_config: String.t() | nil
+          user_max_storage_config: String.t() | nil,
+          is_email_registration_enabled: boolean() | nil
         }
 
   @type empty() :: %__MODULE__{
@@ -38,7 +39,15 @@ defmodule Lotta.Tenants.Tenant do
           configuration: configuration(),
           logo_image_file_id: Lotta.Storage.File.id() | nil,
           background_image_file_id: Lotta.Storage.File.id() | nil,
-          state: :init | :active | :readonly
+          state: :init | :active | :readonly,
+          current_plan_name: String.t() | nil,
+          current_plan_expires_at: Date.t() | nil,
+          next_plan_name: String.t() | nil,
+          customer_no: String.t() | nil,
+          billing_address: String.t() | nil,
+          contact_name: String.t() | nil,
+          contact_email: String.t() | nil,
+          contact_phone: String.t() | nil
         }
 
   schema "tenants" do
@@ -52,6 +61,7 @@ defmodule Lotta.Tenants.Tenant do
     embeds_one(:configuration, TenantConfiguration, primary_key: false, on_replace: :delete) do
       field(:custom_theme, :map)
       field(:user_max_storage_config, :string)
+      field(:is_email_registration_enabled, :boolean, default: true)
     end
 
     # These fields are not used in the public schema, but in
@@ -62,7 +72,19 @@ defmodule Lotta.Tenants.Tenant do
 
     field(:eduplaces_id, :string, default: nil)
 
+    # Billing fields
+    field(:current_plan_name, :string)
+    field(:current_plan_expires_at, :date)
+    field(:next_plan_name, :string)
+    field(:customer_no, :string)
+    field(:billing_address, :string)
+    field(:contact_name, :string)
+    field(:contact_email, :string)
+    field(:contact_phone, :string)
+
     has_many(:custom_domains, Lotta.Tenants.CustomDomain)
+    has_many(:additional_items, Lotta.Billings.AdditionalItem)
+    has_many(:invoices, Lotta.Billings.Invoice)
 
     timestamps()
   end
@@ -74,11 +96,12 @@ defmodule Lotta.Tenants.Tenant do
   @spec create_changeset(map()) :: Ecto.Changeset.t()
   def create_changeset(attrs) do
     %__MODULE__{}
-    |> cast(attrs, [:title, :slug, :address, :type])
+    |> cast(attrs, [:title, :slug, :address, :type, :eduplaces_id])
     |> validate_required([:title])
     |> maybe_gen_slug()
     |> validate_required([:slug])
     |> unique_constraint(:slug)
+    |> assign_default_plan()
   end
 
   @doc """
@@ -88,9 +111,46 @@ defmodule Lotta.Tenants.Tenant do
   @spec update_changeset(t(), map()) :: Ecto.Changeset.t()
   def update_changeset(tenant, attrs) do
     tenant
-    |> cast(attrs, [:title, :address, :type, :logo_image_file_id, :background_image_file_id])
+    |> cast(attrs, [
+      :title,
+      :address,
+      :type,
+      :logo_image_file_id,
+      :background_image_file_id,
+      :billing_address,
+      :contact_name,
+      :contact_email,
+      :contact_phone
+    ])
     |> validate_required([:title, :slug, :prefix])
     |> unique_constraint(:slug)
+    |> maybe_put_embed(:configuration, attrs[:configuration])
+  end
+
+  @doc """
+  Changeset to be used for updating tenant configuration by lotta administration.
+  """
+  @spec update_by_admin_changeset(t(), map()) :: Ecto.Changeset.t()
+  def update_by_admin_changeset(tenant, attrs) do
+    tenant
+    |> cast(attrs, [
+      :title,
+      :address,
+      :type,
+      :logo_image_file_id,
+      :background_image_file_id,
+      :customer_no,
+      :billing_address,
+      :contact_name,
+      :contact_email,
+      :contact_phone,
+      :current_plan_name,
+      :current_plan_expires_at,
+      :next_plan_name
+    ])
+    |> validate_required([:title, :slug, :prefix])
+    |> unique_constraint(:slug)
+    |> unique_constraint(:customer_no)
     |> maybe_put_embed(:configuration, attrs[:configuration])
   end
 
@@ -128,5 +188,17 @@ defmodule Lotta.Tenants.Tenant do
         do: {:halt, slug},
         else: {:cont, nil}
     end)
+  end
+
+  defp assign_default_plan(changeset) do
+    with {plan_name, _plan} <- Lotta.Billings.Plans.get_default() do
+      expires_at = Lotta.Billings.Plans.calculate_expiration(plan_name)
+      next_plan = Lotta.Billings.Plans.get_next_plan_name(plan_name)
+
+      changeset
+      |> put_change(:current_plan_name, plan_name)
+      |> put_change(:current_plan_expires_at, expires_at)
+      |> put_change(:next_plan_name, next_plan)
+    end
   end
 end

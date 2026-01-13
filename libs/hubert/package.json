@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "@lotta-schule/hubert",
-  "version": "6.0.24",
+  "version": "6.1.16",
   "description": "Component Library for lotta",
   "author": "Alexis Rinaldoni <alexis.rinaldoni@einsa.net>",
   "license": "GPL-3.0-or-later",
@@ -29,8 +29,8 @@
   },
   "peerDependencies": {
     "framer-motion": ">= 6.3.0",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "sass": "^1.54.3"
   },
   "lint-staged": {

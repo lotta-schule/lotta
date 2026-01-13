@@ -3,21 +3,25 @@ defmodule LottaWeb.Schema.Tenants.Usage do
 
   use Absinthe.Schema.Notation
 
-  object :usage do
-    field(:period_start, :datetime)
-    field(:period_end, :datetime)
-    field(:storage, :storage_usage)
-    field(:media, :media_usage)
+  @desc "Usage data for a specific usage type with value and timestamp"
+  object :usage_type_data do
+    field :value, non_null(:float) do
+      resolve(fn data, _, _ ->
+        # Convert Decimal to Float for GraphQL
+        float_value = data.value |> Decimal.to_float()
+        {:ok, float_value}
+      end)
+    end
+
+    field(:updated_at, non_null(:datetime))
   end
 
-  object :storage_usage do
-    field(:used_total, :integer)
-    field(:files_total, :integer)
-  end
-
-  object :media_usage do
-    field(:media_files_total, :integer)
-    field(:media_files_total_duration, :float)
-    field(:media_conversion_current_period, :float)
+  @desc "Monthly usage statistics for a specific month, grouped by usage type"
+  object :monthly_usage_period do
+    field(:year, non_null(:integer))
+    field(:month, non_null(:integer))
+    field(:active_user_count, :usage_type_data)
+    field(:total_storage_count, :usage_type_data)
+    field(:media_conversion_seconds, :usage_type_data)
   end
 end

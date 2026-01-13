@@ -1,12 +1,10 @@
-import { loadTenantUsage } from './loadTenantUsage';
+import { loadTenantUsage, GET_USAGE } from './loadTenantUsage';
 import { getClient } from 'api/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { Defer20220824Handler } from '@apollo/client/incremental';
 import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
-
-import GetUsageQuery from 'api/query/GetUsageQuery.graphql';
 
 vi.mock('api/client');
 vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
@@ -38,13 +36,31 @@ describe('loadTenantUsage', () => {
 
   it('should load tenant usage successfully', async () => {
     const mockUsage = [
-      { period: '2024-01', storageUsed: 1024, transferUsed: 2048 },
-      { period: '2024-02', storageUsed: 1536, transferUsed: 3072 },
+      {
+        year: 2024,
+        month: 1,
+        activeUserCount: { value: 10, updatedAt: '2024-01-31T00:00:00Z' },
+        totalStorageCount: { value: 1024, updatedAt: '2024-01-31T00:00:00Z' },
+        mediaConversionSeconds: {
+          value: 120,
+          updatedAt: '2024-01-31T00:00:00Z',
+        },
+      },
+      {
+        year: 2024,
+        month: 2,
+        activeUserCount: { value: 15, updatedAt: '2024-02-29T00:00:00Z' },
+        totalStorageCount: { value: 1536, updatedAt: '2024-02-29T00:00:00Z' },
+        mediaConversionSeconds: {
+          value: 180,
+          updatedAt: '2024-02-29T00:00:00Z',
+        },
+      },
     ];
 
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetUsageQuery },
+        request: { query: GET_USAGE },
         result: { data: { usage: mockUsage } },
       },
     ];
@@ -60,7 +76,7 @@ describe('loadTenantUsage', () => {
   it('should return empty array when data is null', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetUsageQuery },
+        request: { query: GET_USAGE },
         result: { data: null },
       },
     ];
@@ -76,7 +92,7 @@ describe('loadTenantUsage', () => {
   it('should return empty array when usage is null', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetUsageQuery },
+        request: { query: GET_USAGE },
         result: { data: { usage: null } },
       },
     ];
@@ -92,7 +108,7 @@ describe('loadTenantUsage', () => {
   it('should handle query errors', async () => {
     const mocks: MockLink.MockedResponse[] = [
       {
-        request: { query: GetUsageQuery },
+        request: { query: GET_USAGE },
         error: new Error('GraphQL error'),
       },
     ];

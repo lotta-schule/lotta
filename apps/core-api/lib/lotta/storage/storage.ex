@@ -121,6 +121,33 @@ defmodule Lotta.Storage do
   end
 
   @doc """
+  Creates a usage log entry for media file conversions.
+  Only logs video and audio files with duration > 0.
+  Ignores errors (e.g., duplicate entries).
+  """
+  @doc since: "6.1.0"
+  @spec create_conversion_log(File.t()) :: :ok
+  def create_conversion_log(%File{} = file) do
+    with true <- file.file_type in ["video", "audio"],
+         true <- file.media_duration != nil and file.media_duration > 0,
+         prefix when not is_nil(prefix) <- Ecto.get_meta(file, :prefix),
+         %Tenants.Tenant{} = tenant <- Tenants.get_tenant_by_prefix(prefix) do
+      unique_identifier = "#{file.user_id}:#{file.id}:#{file.filename}"
+
+      Tenants.create_usage_log_entry(
+        tenant,
+        :media_conversion_seconds,
+        to_string(file.media_duration),
+        unique_identifier
+      )
+
+      :ok
+    else
+      _ -> :ok
+    end
+  end
+
+  @doc """
   Upload a variant of a file (e.g. a thumbnail) that is locally available.
   Creates the  `Lotta.Storage.FileConversion` object (assigned to the file)
   in the database and stores the data in the default RemoteStorage.
@@ -145,8 +172,12 @@ defmodule Lotta.Storage do
            |> Repo.insert(
              on_conflict: [set: [format: variant_name]],
              conflict_target: [:file_id, :format]
-           ) do
-      upload_filedata_for_file_or_conversion(file_data, file_conversion)
+           ),
+         {:ok, _conversion} = result <-
+           upload_filedata_for_file_or_conversion(file_data, file_conversion) do
+      create_conversion_log(file)
+
+      result
     end
   end
 

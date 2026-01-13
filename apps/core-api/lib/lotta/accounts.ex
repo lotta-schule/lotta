@@ -131,6 +131,31 @@ defmodule Lotta.Accounts do
   end
 
   @doc """
+  Gets a single user by eduplaces_id.
+
+  Returns nil if the User does not exist.
+  """
+  @doc since: "6.1.0"
+  @spec get_user_by_eduplaces_id(String.t()) :: User.t() | nil
+  def get_user_by_eduplaces_id(eduplaces_id) do
+    Repo.get_by(User, eduplaces_id: eduplaces_id)
+  end
+
+  @doc """
+  Gets multiple users by their eduplaces_ids.
+
+  Returns a list of users. Users that don't exist are not included.
+  """
+  @doc since: "6.1.0"
+  @spec list_users_by_eduplaces_ids([String.t()]) :: [User.t()]
+  def list_users_by_eduplaces_ids(eduplaces_ids) when is_list(eduplaces_ids) do
+    from(u in User,
+      where: u.eduplaces_id in ^eduplaces_ids
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Searches users by text. The user is searched by *exact match* of email, or by name or nickname
   """
   @spec search_user(String.t(), [String.t()] | nil, {:before | :after, DateTime.t()} | nil) :: [
@@ -315,22 +340,33 @@ defmodule Lotta.Accounts do
   @spec register_eduplaces_user(Tenant.t(), Eduplaces.UserInfo.t()) ::
           {:ok, User.t(), String.t()} | {:error, Changeset.t()}
   def register_eduplaces_user(tenant, user_info) do
-    groups =
-      case Enum.map(user_info.groups, & &1.id) do
-        [] ->
-          []
+    user_info =
+      Lotta.Eduplaces.IDM.get_user(user_info.id)
+      |> case do
+        {:ok, user_data} -> Eduplaces.UserInfo.from_idm_details(user_data)
+        {:error, _reason} -> user_info
+      end
 
-        group_ids ->
-          Repo.all(
-            from(g in UserGroup,
-              where: g.eduplaces_id in ^group_ids
+    groups =
+      if Repo.get_prefix() != tenant.prefix do
+        []
+      else
+        case Enum.map(user_info.groups, & &1.id) do
+          [] ->
+            []
+
+          group_ids ->
+            Repo.all(
+              from(g in UserGroup,
+                where: g.eduplaces_id in ^group_ids
+              )
             )
-          )
+        end
       end
 
     user_info
     |> Eduplaces.UserInfo.to_lotta_user()
-    |> User.update_changeset(%{groups: groups})
+    |> User.update_changeset(groups: groups)
     |> Repo.insert(prefix: tenant.prefix)
     |> case do
       {:ok, user} ->
@@ -518,16 +554,27 @@ defmodule Lotta.Accounts do
   end
 
   @doc """
+  Sets the members of a group by replacing all current members with the given list of users.
+  Any users not in the given list will be removed from the group.
+  """
+  @doc since: "6.1.0"
+  @spec set_group_members(UserGroup.t(), [User.t()]) ::
+          {:ok, UserGroup.t()} | {:error, Changeset.t()}
+  def set_group_members(%UserGroup{} = group, users) when is_list(users) do
+    group
+    |> Repo.preload(:users)
+    |> Changeset.change()
+    |> Changeset.put_assoc(:users, users)
+    |> Repo.update()
+  end
+
+  @doc """
   Deletes a Group.
 
   This will also make all articles which had only this group assigned to be set back to the "draft" state,
   as they would otherwise be without any group assigned, which would lead them to be visible to everyone.
   """
   @spec delete_user_group(UserGroup.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
-  def delete_user_group(%UserGroup{eduplaces_id: id})
-      when is_binary(id) and byte_size(id) >= 1,
-      do: {:error, "Cannot delete eduplaces groups."}
-
   def delete_user_group(%UserGroup{} = group) do
     Multi.new()
     |> Multi.run(

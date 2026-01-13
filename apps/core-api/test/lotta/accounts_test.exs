@@ -93,6 +93,64 @@ defmodule Lotta.AccountsTest do
       assert retrieved_user.id == created_user.id
     end
 
+    test "get_user_by_eduplaces_id/1 returns user with matching eduplaces_id" do
+      eduplaces_id = "eduplaces-test-123"
+
+      user =
+        Fixtures.fixture(:registered_eduplace_user, %{
+          eduplaces_id: eduplaces_id,
+          email: "eduplace-test@test.com"
+        })
+
+      retrieved_user = Accounts.get_user_by_eduplaces_id(eduplaces_id)
+
+      assert retrieved_user.id == user.id
+      assert retrieved_user.eduplaces_id == eduplaces_id
+    end
+
+    test "get_user_by_eduplaces_id/1 returns nil when user does not exist" do
+      assert is_nil(Accounts.get_user_by_eduplaces_id("nonexistent-id"))
+    end
+
+    test "list_users_by_eduplaces_ids/1 returns users with matching eduplaces_ids" do
+      user1 =
+        Fixtures.fixture(:registered_eduplace_user, %{
+          eduplaces_id: "edu-1",
+          email: "edu1@test.com"
+        })
+
+      user2 =
+        Fixtures.fixture(:registered_eduplace_user, %{
+          eduplaces_id: "edu-2",
+          email: "edu2@test.com"
+        })
+
+      _user3 =
+        Fixtures.fixture(:registered_eduplace_user, %{
+          eduplaces_id: "edu-3",
+          email: "edu3@test.com"
+        })
+
+      users = Accounts.list_users_by_eduplaces_ids(["edu-1", "edu-2"])
+
+      assert length(users) == 2
+      user_ids = Enum.map(users, & &1.id)
+      assert user1.id in user_ids
+      assert user2.id in user_ids
+    end
+
+    test "list_users_by_eduplaces_ids/1 returns empty list when no matches found" do
+      users = Accounts.list_users_by_eduplaces_ids(["nonexistent-1", "nonexistent-2"])
+
+      assert users == []
+    end
+
+    test "list_users_by_eduplaces_ids/1 returns empty list for empty input" do
+      users = Accounts.list_users_by_eduplaces_ids([])
+
+      assert users == []
+    end
+
     test "update_profile/2 with valid data updates the user" do
       user = Fixtures.fixture(:registered_user)
 
@@ -484,16 +542,54 @@ defmodule Lotta.AccountsTest do
       assert is_nil(Accounts.get_user_group(group.id))
     end
 
-    test "delete_user_group/1 prevents deletion of eduplaces groups" do
-      # Create group with eduplaces_id to simulate an eduplaces group
-      group =
-        Fixtures.fixture(:user_group, is_admin_group: false)
-        |> Ecto.Changeset.change(%{eduplaces_id: "eduplaces-group-123"})
-        |> Repo.update!()
+    test "set_group_members/2 sets the members of a group" do
+      group = Fixtures.fixture(:user_group, is_admin_group: false)
+      user1 = Fixtures.fixture(:registered_user, %{email: "member1@test.com"})
+      user2 = Fixtures.fixture(:registered_user, %{email: "member2@test.com"})
 
-      assert {:error, "Cannot delete eduplaces groups."} = Accounts.delete_user_group(group)
+      assert {:ok, updated_group} = Accounts.set_group_members(group, [user1, user2])
 
-      assert Accounts.get_user_group(group.id) != nil
+      updated_group = Repo.preload(updated_group, :users, force: true)
+      member_emails = Enum.map(updated_group.users, & &1.email)
+
+      assert length(updated_group.users) == 2
+      assert "member1@test.com" in member_emails
+      assert "member2@test.com" in member_emails
+    end
+
+    test "set_group_members/2 replaces existing members" do
+      group = Fixtures.fixture(:user_group, is_admin_group: false)
+      user1 = Fixtures.fixture(:registered_user, %{email: "old1@test.com"})
+      user2 = Fixtures.fixture(:registered_user, %{email: "old2@test.com"})
+      user3 = Fixtures.fixture(:registered_user, %{email: "new1@test.com"})
+
+      # Set initial members
+      {:ok, _} = Accounts.set_group_members(group, [user1, user2])
+
+      # Replace with new members
+      assert {:ok, updated_group} = Accounts.set_group_members(group, [user3])
+
+      updated_group = Repo.preload(updated_group, :users, force: true)
+      member_emails = Enum.map(updated_group.users, & &1.email)
+
+      assert length(updated_group.users) == 1
+      assert "new1@test.com" in member_emails
+      refute "old1@test.com" in member_emails
+      refute "old2@test.com" in member_emails
+    end
+
+    test "set_group_members/2 can set empty member list" do
+      group = Fixtures.fixture(:user_group, is_admin_group: false)
+      user1 = Fixtures.fixture(:registered_user, %{email: "remove@test.com"})
+
+      # Set initial members
+      {:ok, _} = Accounts.set_group_members(group, [user1])
+
+      # Clear all members
+      assert {:ok, updated_group} = Accounts.set_group_members(group, [])
+
+      updated_group = Repo.preload(updated_group, :users, force: true)
+      assert updated_group.users == []
     end
   end
 
@@ -610,9 +706,10 @@ defmodule Lotta.AccountsTest do
         groups: []
       }
 
-      with_mock(Lotta.Storage, [:passthrough],
-        create_new_user_directories: fn _user -> :ok end
-      ) do
+      with_mocks([
+        {Lotta.Storage, [:passthrough], [create_new_user_directories: fn _user -> :ok end]},
+        {Lotta.Eduplaces.IDM, [], [get_user: fn _user_id -> {:error, :not_found} end]}
+      ]) do
         assert {:ok, user} = Accounts.register_eduplaces_user(tenant, user_info)
 
         assert user.eduplaces_id == "eduplaces-user-456"

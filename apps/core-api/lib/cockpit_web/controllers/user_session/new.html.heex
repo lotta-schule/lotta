@@ -1,0 +1,41 @@
+<div class="login-form-wrapper">
+  <div class="mx-auto max-w-sm flex flex-col">
+    <img src="/images/lotta.svg" class="my-8 mx-auto" alt="Lotta Logo" />
+
+    <h2 class="text-2xl font-semibold text-center">Anmelden</h2>
+
+    <.form :let={f} for={@conn.params["user"]} as={:user} action="/users/login">
+      <%= if @error_message do %>
+        <div class="alert alert-danger" role="alert">
+          {@error_message}
+        </div>
+      <% end %>
+
+      <label for="username" class="floating-label mt-3">
+        <span>Benutzername</span>
+        <.input
+          class="input input-md w-full"
+          type="text"
+          placeholder="Benutzername"
+          autocomplete="username"
+          field={f[:username]}
+        />
+      </label>
+
+      <label for="password" class="floating-label mt-3">
+        <span>Passwort</span>
+        <.input
+          class="input input-md w-full"
+          type="password"
+          placeholder="Passwort"
+          autocomplete="password"
+          field={f[:password]}
+        />
+      </label>
+
+      <div>
+        <button type="submit" class="btn btn-primary mt-3">Anmelden</button>
+      </div>
+    </.form>
+  </div>
+</div>

@@ -1,0 +1,168 @@
+## This file is a PO Template file.
+##
+## "msgid"s here are often extracted from source code.
+## Add new messages manually only if they're dynamic
+## messages that can't be statically extracted.
+##
+## Run "mix gettext.extract" to bring this file up to
+## date. Leave "msgstr"s empty as changing them here has no
+## effect: edit them in PO (.po) files instead.
+#
+msgid ""
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:176
+#, elixir-autogen, elixir-format
+msgid "Access denied"
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:213
+#, elixir-autogen, elixir-format
+msgid "An error occurred while creating your tenant. Please contact support."
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:254
+#, elixir-autogen, elixir-format
+msgid "An error occurred while logging you in. Please login manually."
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:211
+#: lib/lotta_web/controllers/oauth_controller.ex:253
+#, elixir-autogen, elixir-format
+msgid "Internal server error"
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_html.ex:29
+#, elixir-autogen, elixir-format
+msgid "Just a few more seconds"
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:46
+#, elixir-autogen, elixir-format
+msgid "Missing or invalid state parameter."
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:178
+#, elixir-autogen, elixir-format
+msgid "Only a teacher is allowed to setup lotta for a school.\nContact a teacher at your school to proceed, we will be happy to help.\n"
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:55
+#, elixir-autogen, elixir-format
+msgid "State parameter mismatch."
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:223
+#: lib/lotta_web/controllers/setup_controller.ex:26
+#, elixir-autogen, elixir-format
+msgid "Tenant not found"
+msgstr ""
+
+#: lib/lotta_web/controllers/setup_controller.ex:27
+#, elixir-autogen, elixir-format
+msgid "The requested tenant does not exist."
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:56
+#, elixir-autogen, elixir-format
+msgid "The state parameter does not match. Please try logging in again."
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:48
+#, elixir-autogen, elixir-format
+msgid "The state parameter is missing or invalid. Please try logging in again."
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:225
+#, elixir-autogen, elixir-format
+msgid "The tenant associated with your account could not be found. It maybe is not registered. Please contact support."
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:117
+#: lib/lotta_web/controllers/oauth_controller.ex:125
+#, elixir-autogen, elixir-format
+msgid "Unauthorized"
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_controller.ex:118
+#: lib/lotta_web/controllers/oauth_controller.ex:126
+#, elixir-autogen, elixir-format
+msgid "You are not authorized to access this resource."
+msgstr ""
+
+#: lib/lotta_web/controllers/oauth_html.ex:28
+#, elixir-autogen, elixir-format
+msgid "You're lotta is being made ready at this moment."
+msgstr ""
+
+#: lib/lotta_web/controllers/error_html/400.html.heex:1
+#: lib/lotta_web/controllers/error_html/400.html.heex:1
+#, elixir-autogen, elixir-format
+msgid "bad request"
+msgstr ""
+
+#: lib/lotta_web/controllers/error_html/500.html.heex:1
+#: lib/lotta_web/controllers/error_html/500.html.heex:1
+#, elixir-autogen, elixir-format
+msgid "internal server error"
+msgstr ""
+
+#: lib/lotta_web/controllers/error_html/404.html.heex:1
+#: lib/lotta_web/controllers/error_html/404.html.heex:1
+#, elixir-autogen, elixir-format
+msgid "not found"
+msgstr ""
+
+#: lib/lotta_web/controllers/setup_html/status.html.heex:19
+#, elixir-autogen, elixir-format
+msgid "Lotta is being setup for your school..."
+msgstr ""
+
+#: lib/lotta_web/controllers/setup_html/status.html.heex:21
+#, elixir-autogen, elixir-format
+msgid "You will be redirected in a few moments."
+msgstr ""
+
+#: lib/cockpit_web/components/core_components.ex:346
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr ""
+
+#: lib/cockpit_web/components/tenant_components.ex:21
+#, elixir-autogen, elixir-format
+msgid "active users"
+msgstr ""
+
+#: lib/cockpit_web/components/core_components.ex:74
+#: lib/cockpit_web/components/core_components.ex:420
+#: lib/cockpit_web/components/core_components.ex:428
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr ""
+
+#: lib/cockpit_web/components/tenant_components.ex:23
+#, elixir-autogen, elixir-format
+msgid "media conversion"
+msgstr ""
+
+#: lib/cockpit_web/components/tenant_components.ex:20
+#, elixir-autogen, elixir-format
+msgid "month"
+msgstr ""
+
+#: lib/cockpit_web/components/core_components.ex:415
+#: lib/cockpit_web/components/tenant_components.ex:17
+#: lib/cockpit_web/live/tenant_live.ex:124
+#, elixir-autogen, elixir-format
+msgid "monthly usage logs"
+msgstr ""
+
+#: lib/cockpit_web/components/tenant_components.ex:22
+#, elixir-autogen, elixir-format
+msgid "total storage"
+msgstr ""
+
+#: lib/cockpit_web/components/tenant_components.ex:20
+#, elixir-autogen, elixir-format
+msgid "year"
+msgstr ""

@@ -5,10 +5,10 @@ import { serverTranslations } from 'i18n/server';
 export default async function Loading() {
   const { t } = await serverTranslations();
   return (
-    <AdminPage title={t('Page is loading...')}>
+    <AdminPage title={t('Page is loading...')} takesFullSpace>
       <CircularProgress
         style={{
-          marginTop: 'calc(5 * var(--lotta-spacing))',
+          marginTop: '25%',
           marginInline: 'auto',
         }}
         aria-label={t('Page is loading...')}

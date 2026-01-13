@@ -82,6 +82,12 @@ defmodule LottaWeb.TenantControllerTest do
   describe "Create test tenant" do
     test "creates a test tenant with valid parameters" do
       mock(fn
+        %{method: :post, url: "https://auth.sandbox.eduplaces.dev/oauth2/token"} ->
+          %Tesla.Env{status: 200, body: %{"access_token" => "fake_token"}}
+
+        %{url: "https://api.sandbox.eduplaces.dev/idm/ep/v1/" <> _path} ->
+          %Tesla.Env{status: 404, body: "Not Found"}
+
         %{method: :post, url: url} when is_binary(url) ->
           %Tesla.Env{status: 200, body: %{}}
       end)
@@ -100,7 +106,7 @@ defmodule LottaWeb.TenantControllerTest do
         build_conn()
         |> put_req_header("accept", "application/json")
         |> put_req_header("authorization", "Basic " <> Base.encode64("admin:test123"))
-        |> post("/admin-api/create-test", %{
+        |> post("/admin/api/create-test", %{
           "tenant" => tenant_params,
           "user" => user_params
         })
@@ -132,7 +138,7 @@ defmodule LottaWeb.TenantControllerTest do
         build_conn()
         |> put_req_header("accept", "application/json")
         |> put_req_header("authorization", "Basic " <> Base.encode64("admin:test123"))
-        |> post("/admin-api/create-test", %{
+        |> post("/admin/api/create-test", %{
           "tenant" => tenant_params,
           "user" => user_params
         })
@@ -160,7 +166,7 @@ defmodule LottaWeb.TenantControllerTest do
         build_conn()
         |> put_req_header("accept", "application/json")
         |> put_req_header("authorization", "Basic " <> Base.encode64("admin:test123"))
-        |> post("/admin-api/create-test", %{
+        |> post("/admin/api/create-test", %{
           "tenant" => tenant_params,
           "user" => user_params
         })
@@ -187,7 +193,7 @@ defmodule LottaWeb.TenantControllerTest do
       conn =
         build_conn()
         |> put_req_header("accept", "application/json")
-        |> post("/admin-api/create-test", %{
+        |> post("/admin/api/create-test", %{
           "tenant" => tenant_params,
           "user" => user_params
         })
@@ -209,7 +215,7 @@ defmodule LottaWeb.TenantControllerTest do
         build_conn()
         |> put_req_header("accept", "application/json")
         |> put_req_header("authorization", "Basic " <> Base.encode64("admin:test123"))
-        |> post("/admin-api/delete-tenant", %{
+        |> post("/admin/api/delete-tenant", %{
           "tenant" => %{"id" => tenant.id}
         })
 
@@ -229,7 +235,7 @@ defmodule LottaWeb.TenantControllerTest do
         build_conn()
         |> put_req_header("accept", "application/json")
         |> put_req_header("authorization", "Basic " <> Base.encode64("admin:test123"))
-        |> post("/admin-api/delete-tenant", %{
+        |> post("/admin/api/delete-tenant", %{
           "tenant" => %{"id" => 999_999}
         })
 
@@ -246,7 +252,7 @@ defmodule LottaWeb.TenantControllerTest do
         build_conn()
         |> put_req_header("accept", "application/json")
         |> put_req_header("authorization", "Basic " <> Base.encode64("admin:test123"))
-        |> post("/admin-api/delete-tenant", %{
+        |> post("/admin/api/delete-tenant", %{
           "tenant" => %{}
         })
 
@@ -257,7 +263,7 @@ defmodule LottaWeb.TenantControllerTest do
       conn =
         build_conn()
         |> put_req_header("accept", "application/json")
-        |> post("/admin-api/delete-tenant", %{
+        |> post("/admin/api/delete-tenant", %{
           "tenant" => %{"id" => 1}
         })
 

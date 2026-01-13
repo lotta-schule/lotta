@@ -1,18 +1,11 @@
 import { render, within } from 'test/util';
 import { AdminPage } from './AdminPage';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
-import { loadTenant } from 'loader';
+import { loadTenant } from 'loader/loadTenant';
 import { MockedFunction } from 'vitest';
 
-vi.mock('loader', async () => ({
-  loadCategories: vi.fn(),
-  loadCurrentUser: vi.fn(),
-  loadFeedback: vi.fn(),
+vi.mock('loader/loadTenant', async () => ({
   loadTenant: vi.fn(),
-  loadTenantUsage: vi.fn(),
-  loadUsaerGroups: vi.fn(),
-  loadUsaerGroup: vi.fn(),
-  loadWidgets: vi.fn(),
 }));
 vi.mock('helper');
 

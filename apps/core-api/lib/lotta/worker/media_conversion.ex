@@ -291,7 +291,7 @@ defmodule Lotta.Worker.MediaConversion do
   end
 
   @impl Oban.Worker
-  def timeout(_job), do: :timer.hours(2)
+  def timeout(_job), do: :timer.hours(4)
 
   @doc """
   Awaits the completion of a conversion job.

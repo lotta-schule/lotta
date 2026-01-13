@@ -14,10 +14,10 @@
 
   section {
     display: grid;
-    grid-gap: calc(2 * var(--lotta-spacing));
+    grid-gap: var(--lotta-spacing);
     padding-bottom: var(--lotta-spacing);
 
-    grid-template-columns: repeat(auto-fill, minmax(12em, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(11em, 1fr));
     justify-items: center;
 
     &:not(:last-child) {
@@ -40,7 +40,7 @@
     font-weight: bolder;
     flex-direction: column;
     align-items: center;
-    width: 14em;
+    width: 11em;
     text-align: center;
 
     @media screen and (max-width: $max-xs) {

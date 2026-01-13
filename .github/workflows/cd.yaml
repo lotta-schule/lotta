@@ -85,6 +85,21 @@ jobs:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
+  lighthouse-audit:
+    name: Run lighthouse audit
+    needs:
+      - publish-docker-images
+      - env_calculator
+    if: |
+      always() &&
+      !failure() &&
+      !cancelled()
+    uses: ./.github/workflows/lighthouse.yaml
+    with:
+      image_tag: ${{ needs.publish-docker-images.outputs.release_name }}
+    secrets:
+      lhci_token: '${{ secrets.LHCI_GITHUB_APP_TOKEN }}'
+
   run-e2e-tests:
     name: Run end-to-end tests
     needs:

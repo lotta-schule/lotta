@@ -5,4 +5,5 @@ export CORE_URL=${CORE_URL:-"http://localhost:4000"}
 export ADMIN_USERNAME=${ADMIN_USERNAME:-"admin"}
 export ADMIN_PASSWORD=${ADMIN_PASSWORD:-"secretapikey"}
 
+
 pnpm exec playwright test $@

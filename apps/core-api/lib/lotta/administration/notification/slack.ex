@@ -2,13 +2,19 @@ defmodule Lotta.Administration.Notification.Slack do
   @moduledoc """
   Send notifications to Slack for Lotta administrative events.
   """
-  alias Lotta.Accounts
+  alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
+  alias Lotta.Billings.Invoice
   alias LottaWeb.Urls
 
   require Logger
 
-  def new_lotta_notification(%Tenant{} = tenant) do
+  @doc """
+  Creates a Slack notification payload for a new Lotta system.
+  """
+  @doc since: "6.1.0"
+  @spec new_lotta_notification(Tenant.t(), admin_users :: list(User.t())) :: map()
+  def new_lotta_notification(%Tenant{} = tenant, admin_users \\ []) do
     %{
       blocks:
         [
@@ -41,7 +47,7 @@ defmodule Lotta.Administration.Notification.Slack do
               text: %{
                 type: :plain_text,
                 emoji: true,
-                text: "öffnen"
+                text: "Lotta öffnen"
               },
               url: Urls.get_tenant_url(tenant)
             }
@@ -56,7 +62,7 @@ defmodule Lotta.Administration.Notification.Slack do
         ]
         |> Enum.concat(
           Enum.map(
-            Accounts.list_admin_users(tenant),
+            admin_users,
             &%{
               type: :section,
               text: %{
@@ -69,6 +75,53 @@ defmodule Lotta.Administration.Notification.Slack do
     }
   end
 
+  @doc """
+  Creates a Slack notification payload for newly available lotta invoices to issue.
+  """
+  @doc since: "6.1.8"
+  @spec new_lotta_invoices_to_issue_notification([{Tenant.t(), Invoice.t()}]) :: map()
+  def new_lotta_invoices_to_issue_notification(invoices) do
+    %{
+      blocks: [
+        %{
+          type: "section",
+          text: %{
+            type: "mrkdwn",
+            text: "*Neue Lotta-Rechnungen stehen zur Ausstellung im Cockpit bereit*"
+          }
+        },
+        %{
+          type: "divider"
+        },
+        %{
+          type: "section",
+          text: %{
+            type: "mrkdwn",
+            text:
+              Enum.map_join(invoices, "\n", fn {tenant, invoice} ->
+                "- *#{tenant.slug}*: Rechnung ##{invoice.invoice_number} über #{invoice.total} EUR"
+              end)
+          }
+        },
+        %{
+          type: "divider"
+        },
+        %{
+          type: "section",
+          text: %{
+            type: "mrkdwn",
+            text: "Um die Rechnungen auszustellen, müssen sie im Cockpit bestätigt werden"
+          }
+        }
+      ]
+    }
+  end
+
+  @doc """
+  Sends a notification to the configured Slack webhook URL.
+  """
+  @doc since: "6.1.0"
+  @spec send(map()) :: {:ok, Tesla.Env.result()} | {:error, any()}
   def send(notification) do
     if url = webhook_url() do
       Tesla.post(create_client(), url, notification)

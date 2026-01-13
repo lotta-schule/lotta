@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  faBook,
   faCircleUser,
   faUserGroup,
   faChartBar,
@@ -40,7 +41,7 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faSliders} />
           </span>
-          <span>Grundeinstellungen</span>
+          <span>{t('general')}</span>
         </BaseButton>
 
         <BaseButton
@@ -51,7 +52,7 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faPalette} />
           </span>
-          <span>Darstellung</span>
+          <span>{t('presentation')}</span>
         </BaseButton>
 
         <BaseButton
@@ -62,7 +63,7 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faCalendar} />
           </span>
-          <span>Kalender</span>
+          <span>{t('calendar')}</span>
         </BaseButton>
 
         <BaseButton
@@ -73,7 +74,7 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faChartBar} />
           </span>
-          <span>Nutzung</span>
+          <span>{t('usage')}</span>
         </BaseButton>
 
         <BaseButton
@@ -84,7 +85,7 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faChartLine} />
           </span>
-          <span>Statistiken</span>
+          <span>{t('statistics')}</span>
         </BaseButton>
 
         <BaseButton
@@ -96,13 +97,13 @@ async function AdminRootPage() {
             <Icon icon={faCommentDots} />
           </span>
           <span>
-            Feedback
+            {t('feedback')}
             <NewFeedbackCountBadge />
           </span>
         </BaseButton>
       </section>
 
-      <h3>Nutzer und Gruppen</h3>
+      <h3>{t('users and groups')}</h3>
       <section>
         <BaseButton
           href={'/admin/users'}
@@ -112,7 +113,7 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faCircleUser} />
           </span>
-          <span>Nutzer</span>
+          <span>{t('users')}</span>
         </BaseButton>
 
         <BaseButton
@@ -123,7 +124,7 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faUserGroup} />
           </span>
-          <span>Gruppen</span>
+          <span>{t('groups')}</span>
         </BaseButton>
 
         <BaseButton
@@ -134,11 +135,11 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faExpand} />
           </span>
-          <span>Beschränkungen</span>
+          <span>{t('constraints')}</span>
         </BaseButton>
       </section>
 
-      <h3>Kategorien und Marginalen</h3>
+      <h3>{t('categories and widgets')}</h3>
       <section>
         <BaseButton
           href={'/admin/categories'}
@@ -148,7 +149,7 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faShapes} />
           </span>
-          <span>Kategorien</span>
+          <span>{t('categories')}</span>
         </BaseButton>
 
         <BaseButton
@@ -159,7 +160,23 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faSquareCaretRight} />
           </span>
-          <span>Marginalen</span>
+          <span>{t('widgets')}</span>
+        </BaseButton>
+      </section>
+
+      <h3>{t('Help')}</h3>
+      <section>
+        <BaseButton
+          as={Link}
+          href={'https://docs.lotta.schule'}
+          target={'_blank'}
+          variant={'borderless'}
+          className={styles.button}
+        >
+          <span>
+            <Icon icon={faBook} />
+          </span>
+          <span>{t('Documentation')}</span>
         </BaseButton>
       </section>
 
@@ -168,7 +185,7 @@ async function AdminRootPage() {
           <span>
             <Icon icon={faDoorOpen} />
           </span>
-          <span>Bereich verlassen</span>
+          <span>{t('leave area')}</span>
         </BaseButton>
       </section>
     </AdminPage>

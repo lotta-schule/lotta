@@ -6,6 +6,7 @@ defmodule Lotta.StorageTest do
   alias Lotta.Accounts.User
   alias Lotta.{Fixtures, Repo, Storage, Tenants}
   alias Lotta.Storage.{Directory, File, FileData, RemoteStorage, RemoteStorageEntity}
+  alias Lotta.Tenants.UsageLog
 
   @prefix "tenant_test"
 
@@ -221,6 +222,192 @@ defmodule Lotta.StorageTest do
     } do
       assert path = Storage.get_path(file, user)
       assert Enum.map(path, & &1.name) == ["ehrenberg-on-air"]
+    end
+  end
+
+  describe "create_conversion_log/1" do
+    test "creates a log entry for video files with duration > 0", %{user: user} do
+      tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+      file =
+        Fixtures.fixture(
+          :file,
+          {user,
+           %{
+             file_type: "video",
+             media_duration: 120.5,
+             filename: "test_video.mp4"
+           }}
+        )
+
+      assert :ok = Storage.create_conversion_log(file)
+
+      # Verify the log was created
+      usage_log =
+        Repo.get_by(
+          UsageLog,
+          [tenant_id: tenant.id, unique_identifier: "#{user.id}:#{file.id}:#{file.filename}"],
+          prefix: "public"
+        )
+
+      assert usage_log != nil
+      assert usage_log.type == :media_conversion_seconds
+      assert usage_log.value == "120.5"
+      assert usage_log.tenant_id == tenant.id
+      assert usage_log.date == Date.utc_today()
+    end
+
+    test "creates a log entry for audio files with duration > 0", %{user: user} do
+      tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+      file =
+        Fixtures.fixture(
+          :file,
+          {user,
+           %{
+             file_type: "audio",
+             media_duration: 45.8,
+             filename: "test_audio.mp3"
+           }}
+        )
+
+      assert :ok = Storage.create_conversion_log(file)
+
+      # Verify the log was created
+      usage_log =
+        Repo.get_by(
+          UsageLog,
+          [tenant_id: tenant.id, unique_identifier: "#{user.id}:#{file.id}:#{file.filename}"],
+          prefix: "public"
+        )
+
+      assert usage_log != nil
+      assert usage_log.type == :media_conversion_seconds
+      assert usage_log.value == "45.8"
+    end
+
+    test "does not create a log entry for video files with duration = 0", %{user: user} do
+      tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+      file =
+        Fixtures.fixture(
+          :file,
+          {user,
+           %{
+             file_type: "video",
+             media_duration: 0.0,
+             filename: "zero_duration.mp4"
+           }}
+        )
+
+      assert :ok = Storage.create_conversion_log(file)
+
+      # Verify no log was created
+      usage_log =
+        Repo.get_by(
+          UsageLog,
+          [tenant_id: tenant.id, unique_identifier: "#{user.id}:#{file.id}:#{file.filename}"],
+          prefix: "public"
+        )
+
+      assert usage_log == nil
+    end
+
+    test "does not create a log entry for video files with nil duration", %{user: user} do
+      tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+      file =
+        Fixtures.fixture(
+          :file,
+          {user,
+           %{
+             file_type: "video",
+             media_duration: nil,
+             filename: "nil_duration.mp4"
+           }}
+        )
+
+      assert :ok = Storage.create_conversion_log(file)
+
+      # Verify no log was created
+      usage_log =
+        Repo.get_by(
+          UsageLog,
+          [tenant_id: tenant.id, unique_identifier: "#{user.id}:#{file.id}:#{file.filename}"],
+          prefix: "public"
+        )
+
+      assert usage_log == nil
+    end
+
+    test "does not create a log entry for non-media files", %{user: user} do
+      tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+      file =
+        Fixtures.fixture(
+          :file,
+          {user,
+           %{
+             file_type: "image",
+             media_duration: nil,
+             filename: "image.png"
+           }}
+        )
+
+      assert :ok = Storage.create_conversion_log(file)
+
+      # Verify no log was created
+      usage_log =
+        Repo.get_by(
+          UsageLog,
+          [tenant_id: tenant.id, unique_identifier: "#{user.id}:#{file.id}:#{file.filename}"],
+          prefix: "public"
+        )
+
+      assert usage_log == nil
+    end
+
+    test "ignores duplicate log entries (idempotent)", %{user: user} do
+      tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+      file =
+        Fixtures.fixture(
+          :file,
+          {user,
+           %{
+             file_type: "video",
+             media_duration: 60.0,
+             filename: "duplicate_test.mp4"
+           }}
+        )
+
+      # Create the log first time
+      assert :ok = Storage.create_conversion_log(file)
+
+      # Verify it was created
+      usage_log =
+        Repo.get_by(
+          UsageLog,
+          [tenant_id: tenant.id, unique_identifier: "#{user.id}:#{file.id}:#{file.filename}"],
+          prefix: "public"
+        )
+
+      assert usage_log != nil
+      first_inserted_at = usage_log.inserted_at
+
+      # Try to create it again (should be silently ignored)
+      assert :ok = Storage.create_conversion_log(file)
+
+      # Verify only one entry exists and it wasn't updated
+      usage_log_again =
+        Repo.get_by(
+          UsageLog,
+          [tenant_id: tenant.id, unique_identifier: "#{user.id}:#{file.id}:#{file.filename}"],
+          prefix: "public"
+        )
+
+      assert usage_log_again != nil
+      assert usage_log_again.inserted_at == first_inserted_at
     end
   end
 end
