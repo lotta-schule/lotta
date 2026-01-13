@@ -91,7 +91,7 @@ defmodule LottaWeb.Router do
   end
 
   scope "/setup" do
-    pipe_through([:browser, :tenant])
+    pipe_through(:browser)
 
     get("/status", LottaWeb.SetupController, :status)
   end
