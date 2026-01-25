@@ -152,7 +152,7 @@ defmodule LottaWeb.OAuthControllerTest do
       end
     end
 
-    test "Creates a user when no user exists with this eduplaces_id", %{
+    test "Creates a teacher user when no user exists with this eduplaces_id", %{
       conn: conn,
       tenant: tenant
     } do
@@ -205,10 +205,13 @@ defmodule LottaWeb.OAuthControllerTest do
       end
     end
 
-    test "returns forbidden error when user is not a teacher", %{conn: conn, tenant: tenant} do
+    test "Creates a student user when no user exists with this eduplaces_id", %{
+      conn: conn,
+      tenant: tenant
+    } do
       user_info = %UserInfo{
-        id: "user123",
-        username: "Student User",
+        id: "user991564",
+        username: "Hedwig",
         groups: [],
         role: :student,
         school: %SchoolInfo{
@@ -222,6 +225,53 @@ defmodule LottaWeb.OAuthControllerTest do
       tenant
       |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
       |> Repo.update!()
+
+      with_mock(AuthCodeStrategy,
+        get_token!: fn _params -> {"token", user_info} end
+      ) do
+        conn =
+          conn
+          |> put_req_cookie("ep_login_state", "valid_state")
+          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+          |> fetch_cookies()
+
+        assert redirect_uri = redirected_to(conn)
+
+        assert "https://test.lotta.schule/auth/callback?token=" <> token =
+                 String.replace_suffix(redirect_uri, "&return_url=/", "")
+
+        tenant_id = tenant.id
+
+        assert {:ok,
+                %{
+                  "tid" => ^tenant_id,
+                  "sub" => user_id,
+                  "typ" => "hisec"
+                }} = AccessToken.decode_and_verify(token)
+
+        assert user =
+                 Repo.get_by(Lotta.Accounts.User,
+                   eduplaces_id: user_info.id
+                 )
+
+        assert user.id == String.to_integer(user_id)
+      end
+    end
+
+    test "returns forbidden error when user is not a teacher and the school does not exist yet",
+         %{conn: conn} do
+      user_info = %UserInfo{
+        id: "user123",
+        username: "Student User",
+        groups: [],
+        role: :student,
+        school: %SchoolInfo{
+          id: "school123",
+          name: "Test School",
+          official_id: "TS123",
+          schooling_level: "secondary"
+        }
+      }
 
       with_mock(AuthCodeStrategy,
         get_token!: fn _params -> {"token", user_info} end
