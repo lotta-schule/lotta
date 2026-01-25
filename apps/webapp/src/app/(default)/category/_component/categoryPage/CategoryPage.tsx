@@ -41,10 +41,11 @@ export const CategoryPage = React.memo(
                   article={article}
                   limitedHeight
                   layout={category.layoutName ?? 'standard'}
+                  loadImageEagerly
                 />
               </div>
             ))}
-            {initialArticles.length >= PREFETCH_COUNT && (
+            {initialArticles!.length >= PREFETCH_COUNT && (
               <React.Suspense fallback={null}>
                 <MoreArticlesLoader
                   categoryId={category.id}

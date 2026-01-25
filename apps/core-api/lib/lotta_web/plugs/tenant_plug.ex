@@ -49,13 +49,14 @@ defmodule LottaWeb.TenantPlug do
 
       conn
       |> put_private(:lotta_tenant, tenant)
+      |> put_resp_header("x-lotta-tenant", "id:#{tenant.id}")
     else
       conn
     end
   end
 
   defp tenant_by_tenant_header(conn) do
-    case get_req_header(conn, "tenant") do
+    case get_req_header(conn, "x-lotta-tenant") do
       ["slug:" <> slug] ->
         Tenants.get_tenant_by_slug(slug)
 

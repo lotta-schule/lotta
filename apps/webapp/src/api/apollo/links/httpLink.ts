@@ -11,13 +11,7 @@ export const createHttpLink = ({
   requestExtraHeaders?: () => Record<string, string | null | undefined>;
 } = {}) => {
   const opts = {
-    uri: isBrowser()
-      ? '/api'
-      : (() => {
-          const url = new URL(API_URL);
-          url.pathname = '/api';
-          return url.toString();
-        })(),
+    uri: isBrowser() ? '/api' : (() => new URL('/api', API_URL).toString())(),
     fetch: createCustomFetch({ requestExtraHeaders }),
   };
   return createLink(opts);

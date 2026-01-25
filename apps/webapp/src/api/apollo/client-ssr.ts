@@ -11,7 +11,6 @@ import { TenantModel } from 'model';
 import { createErrorLink } from './links/errorLink';
 import { createAuthLink } from './links/authLink';
 import { createHttpLink } from './links/httpLink';
-import { createSentryTracingLink } from './links/sentryTracingLink';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 import { getMainDefinition } from '@apollo/client/utilities';
 
@@ -23,7 +22,7 @@ export const createSSRClient = (
   const websocketLink = createWebsocketLink(tenant, socketUrl, accessToken);
   const httpLink = createHttpLink({
     requestExtraHeaders: () => ({
-      tenant: `id:${tenant.id}`,
+      'x-lotta-tenant': `id:${tenant.id}`,
     }),
   });
   const networkLink = websocketLink
@@ -50,7 +49,6 @@ export const createSSRClient = (
         createAuthLink({
           initialToken: accessToken,
         }),
-        createSentryTracingLink(),
         new SSRMultipartLink({
           stripDefer: true,
         }),

@@ -35,13 +35,15 @@ import { useNewFeedbackCount } from 'util/feedback';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useRouter } from 'next/navigation';
+import { redirectTo } from 'util/browserLocation';
+import { useTenant } from 'util/tenant/useTenant';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import clsx from 'clsx';
 
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
 
 import styles from './UserNavigation.module.scss';
-import { redirectTo } from 'util/browserLocation';
 
 export const UserNavigation = React.memo(() => {
   const { t } = useTranslation();

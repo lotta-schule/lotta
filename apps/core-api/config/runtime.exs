@@ -48,7 +48,8 @@ defmodule SystemConfig do
   defp default("APP_ENVIRONMENT", _), do: "development"
   defp default("LOG_LEVEL", _), do: nil
   defp default("WEB_HOST", env) when env in [:dev, :test], do: "localhost"
-  defp default("BASE_URI_HOST", :dev), do: "local.lotta.schule,lotta.lvh.me,lotta.schule"
+  defp default("BASE_URI_HOST", :test), do: "local.lotta.schule,lotta.lvh.me,lotta.schule"
+  defp default("BASE_URI_HOST", :dev), do: "lotta.lvh.me,local.lotta.schule,lotta.schule"
   defp default("BASE_URI_HOST", _), do: "lotta.schule"
   defp default("BASE_URI_PORT", :dev), do: "3000"
   defp default("BASE_URI_PORT", _), do: nil
@@ -135,7 +136,7 @@ defmodule SystemConfig do
 
   defp default("SLACK_WEBHOOK_URL", _), do: nil
 
-  defp default("DISABLE_CHROMIC", :test), do: "true"
+  defp default("DISABLE_CHROMIC", env) when env in [:dev, :test], do: "true"
   defp default("DISABLE_CHROMIC", _), do: "false"
   defp default("DEBUG_CHROMIC", :prod), do: "false"
   defp default("DEBUG_CHROMIC", _), do: "true"

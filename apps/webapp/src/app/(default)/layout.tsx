@@ -16,9 +16,11 @@ export default async function DefaultLayout({
   const headerValues = await headers();
   const accessToken = getAuthTokenFromHeader(headerValues);
 
-  const tenant = await loadTenant();
-  const categories = await loadCategories().catch(() => []);
-  const currentUser = await loadCurrentUser().catch(() => null);
+  const [tenant, categories, currentUser] = await Promise.all([
+    loadTenant(),
+    loadCategories().catch(() => []),
+    loadCurrentUser().catch(() => null),
+  ]);
 
   return (
     <ApolloProvider

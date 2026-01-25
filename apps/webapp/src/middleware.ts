@@ -1,135 +1,83 @@
 import { sendRefreshRequest } from 'api/auth';
-import { serialize } from 'cookie-es';
+import { appConfig } from 'config';
 import { type NextRequest, NextResponse } from 'next/server';
-import { JWT } from 'util/auth/jwt';
-import { Logger } from 'util/logger';
 
-export const config = {
-  matcher: [
-    {
-      source:
-        '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|p/|stry/|api/|backend/|auth/storage/).*)',
-    },
-  ],
+const isRequestToApi = (pathname: string) => {
+  if (pathname === '/api') return true;
+  if (pathname.startsWith('/auth/')) return true;
+  if (pathname.startsWith('/storage/')) return true;
+  if (pathname.startsWith('/data/')) return true;
+  if (pathname.startsWith('/setup/')) return true;
+  return false;
+};
+
+const isStaticAssetRequest = (pathname: string) => {
+  return (
+    pathname.startsWith('/_next/static') ||
+    pathname.startsWith('/_next/image') ||
+    pathname.startsWith('/favicon.ico') ||
+    pathname.startsWith('/sitemap.xml') ||
+    pathname.startsWith('/robots.txt') ||
+    pathname.startsWith('/p/')
+  );
 };
 
 export async function middleware(request: NextRequest) {
-  let authInfo = {
-    refreshToken: null as string | null,
-    accessToken: request.cookies.get('SignInAccessToken')?.value ?? null,
-  };
-
-  const incomingRefreshToken = request.cookies.get('SignInRefreshToken')?.value;
-
-  if (!authInfo.accessToken && authHeader?.startsWith('Bearer ')) {
-    const accessToken = authHeader.slice(7);
-
-    let accessTokenJwt = null;
-    try {
-      accessTokenJwt = JWT.parse(accessToken);
-    } catch (error) {
-      Logger.error('Error parsing access token', { error });
-    }
-
-    if (!accessTokenJwt?.isValid()) {
-      Logger.warn('Access token is not valid!', { accessTokenJwt });
-    } else if (accessTokenJwt.isExpired(0)) {
-      Logger.warn('Access token is expired!');
-    } else {
-      authInfo.accessToken = accessToken;
-    }
+  if (isRequestToApi(request.nextUrl.pathname)) {
+    const targetUrl = request.nextUrl.clone();
+    targetUrl.host = new URL(appConfig.get('API_URL')).host;
+    return NextResponse.rewrite(targetUrl);
   }
 
-  if (incomingRefreshToken) {
-    let refreshTokenJwt = null;
-    try {
-      refreshTokenJwt = JWT.parse(incomingRefreshToken);
-    } catch (error) {
-      Logger.error('Error parsing refresh token', { error });
-    }
-
-    if (refreshTokenJwt?.isValid() && !refreshTokenJwt.isExpired(0)) {
-      const shouldRefresh =
-        refreshTokenJwt.body.expires.getTime() - Date.now() < 1000 * 60 * 5 ||
-        !authInfo.accessToken;
-
-      if (shouldRefresh) {
-        const updateRefreshTokenResult = await sendRefreshRequest({
-          'x-lotta-originary-host': request.headers.get('host'),
-          Cookie: serialize('SignInRefreshToken', incomingRefreshToken, {
-            sameSite: 'strict',
-            expires: refreshTokenJwt.body.expires,
-            secure: false,
-            httpOnly: true,
-          }),
-        });
-
-        if (updateRefreshTokenResult) {
-          authInfo = {
-            refreshToken: updateRefreshTokenResult.refreshToken,
-            accessToken: updateRefreshTokenResult.accessToken,
-          };
-        }
-      } else {
-        authInfo.refreshToken = incomingRefreshToken;
-      }
-    } else if (authHeader) {
-      Logger.warn('User does not have a refresh token');
-      const accessToken = authHeader.slice(7);
-      let accessTokenJwt = null;
-      try {
-        accessTokenJwt = JWT.parse(accessToken);
-      } catch (error) {
-        Logger.error('Error parsing access token', { error });
-      }
-
-      if (accessTokenJwt?.isValid() && !accessTokenJwt.isExpired(0)) {
-        authInfo.accessToken = accessToken;
-      }
-    }
+  if (isStaticAssetRequest(request.nextUrl.pathname)) {
+    return NextResponse.next();
   }
 
-  const requestHeaders = new Headers(request.headers);
-  if (authInfo.accessToken) {
-    requestHeaders.set('Authorization', `Bearer ${authInfo.accessToken}`);
+  const incomingRefreshToken =
+    request.cookies.get('SignInRefreshToken')?.value ?? null;
+
+  if (!incomingRefreshToken) {
+    // no refresh token, skip middleware
+    return NextResponse.next();
   }
 
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
-  if (authInfo.refreshToken) {
-    try {
-      const parsedRefreshToken = JWT.parse(authInfo.refreshToken);
-      response.cookies.set('SignInRefreshToken', authInfo.refreshToken, {
-        httpOnly: true,
-        sameSite: 'strict',
-        secure: process.env.NODE_ENV === 'production',
-        expires: parsedRefreshToken.body.expires,
-        path: '/',
-      });
+  const currentHost =
+    request.headers.get('x-forwarded-host') ||
+    request.headers.get('host') ||
+    request.nextUrl.host;
+  const { accessToken, refreshToken, tenant } = await sendRefreshRequest(
+    {
+      host: currentHost,
+    },
+    incomingRefreshToken,
+    appConfig.get('API_URL')
+  );
 
-      if (authInfo.accessToken) {
-        const parsedAccessToken = JWT.parse(authInfo.accessToken);
-        response.cookies.set('SignInAccessToken', authInfo.accessToken, {
-          httpOnly: false,
-          sameSite: 'strict',
-          secure: process.env.NODE_ENV === 'production',
-          expires: parsedAccessToken.body.expires,
-          path: '/',
-        });
-      }
-    } catch (e) {
-      Logger.error('Error parsing new token', { e });
-    }
+  const modifiedHeaders = new Headers(request.headers);
+  if (accessToken) {
+    modifiedHeaders.set('Authorization', `Bearer ${accessToken}`);
+  }
+  if (refreshToken) {
+    modifiedHeaders.set('SignInRefreshToken', refreshToken);
+  }
+  if (tenant) {
+    modifiedHeaders.set('x-lotta-tenant', tenant);
   } else {
-    // user has no valid refresh token
-    // remove the refresh token cookie
-    response.cookies.delete({
-      name: 'SignInRefreshToken',
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
+    modifiedHeaders.set('x-lotta-originaly-host', currentHost);
+  }
+
+  if (request.headers.get('referer')) {
+    // skip middleware for requests with referer (likely subsequent browser requests for assets)
+    return NextResponse.next({
+      request: {
+        headers: modifiedHeaders,
+      },
     });
   }
 
-  return response;
+  return NextResponse.next({
+    request: {
+      headers: modifiedHeaders,
+    },
+  });
 }

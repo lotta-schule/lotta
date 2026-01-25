@@ -15,42 +15,44 @@ const nextConfig = {
   transpilePackages: ['@lotta-schule/hubert'],
   allowedDevOrigins: ['localhost', '*.lotta.lvh.me', '*.local.lotta.schule'],
   async rewrites() {
-    return [
-      {
-        source: '/c/:path*',
-        destination: '/category/:path*',
-      },
-      {
-        source: '/auth/:path*',
-        destination: `/api/auth/:path*`,
-      },
-      {
-        source: '/storage/:path*',
-        destination: `/api/storage/:path*`,
-      },
-      {
-        source: '/data/:path*',
-        destination: `/api/data/:path*`,
-      },
-      {
-        source: '/api',
-        destination: `/api/api`,
-      },
-      // web manifest
-      {
-        source: '/manifest.json',
-        destination: '/api/manifest',
-      },
-      // Plausible Analytics
-      {
-        source: '/p/script.js',
-        destination: 'https://plausible.intern.lotta.schule/js/script.js',
-      },
-      {
-        source: '/p/e',
-        destination: 'https://plausible.intern.lotta.schule/api/event',
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: '/c/:path*',
+          destination: '/category/:path*',
+        },
+        {
+          source: '/auth/:path*',
+          destination: `/api/auth/:path*`,
+        },
+        {
+          source: '/storage/:path*',
+          destination: `/api/storage/:path*`,
+        },
+        {
+          source: '/data/:path*',
+          destination: `/api/data/:path*`,
+        },
+        {
+          source: '/api',
+          destination: `http://localhost:4000/api`,
+        },
+        // web manifest
+        {
+          source: '/manifest.json',
+          destination: '/api/manifest',
+        },
+        // Plausible Analytics
+        {
+          source: '/p/script.js',
+          destination: 'https://plausible.intern.lotta.schule/js/script.js',
+        },
+        {
+          source: '/p/e',
+          destination: 'https://plausible.intern.lotta.schule/api/event',
+        },
+      ],
+    };
   },
   async redirects() {
     return [

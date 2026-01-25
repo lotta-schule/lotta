@@ -46,6 +46,7 @@ interface ArticlePreviewProps {
   limitedHeight?: boolean;
   isEmbedded?: boolean;
   layout?: 'standard' | 'densed' | '2-columns';
+  loadImageEagerly?: boolean;
 }
 
 export const ArticlePreview = React.memo(
@@ -56,6 +57,7 @@ export const ArticlePreview = React.memo(
     disablePin,
     isEmbedded,
     layout,
+    loadImageEagerly,
     onUpdateArticle,
   }: ArticlePreviewProps) => {
     const currentUser = useCurrentUser();
@@ -147,7 +149,7 @@ export const ArticlePreview = React.memo(
                     className={styles.previewImage}
                     file={article.previewImageFile ?? undefined}
                     format="articlepreview"
-                    lazy
+                    lazy={!loadImageEagerly}
                     animateOnLoad
                     sizes="auto"
                     alt={`Vorschaubild zu ${article.title}`}

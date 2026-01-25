@@ -1,25 +1,49 @@
 import axios from 'axios';
-import { createHeaders } from './apollo/customFetch';
+import { parseSetCookie } from 'cookie-es';
 import { isBrowser } from 'util/isBrowser';
-import { appConfig } from 'config';
+import { Logger } from 'util/logger';
 
 export const sendRefreshRequest = async (
-  headers: Record<string, string | null> = {}
+  tenant: { id: string } | { slug: string } | { host: string },
+  token?: string,
+  baseURL?: string
 ) => {
   try {
-    const { data } = await axios.request<{
+    const result = await axios.request<{
       accessToken: string;
-      refreshToken: string;
     } | null>({
       method: 'post',
-      baseURL: isBrowser() ? '/' : appConfig.get('API_URL'),
+      baseURL,
       url: '/auth/token/refresh',
       withCredentials: isBrowser(),
-      headers: createHeaders(headers),
+      headers: {
+        'x-lotta-originary-host': 'host' in tenant ? tenant.host : undefined,
+        'x-lotta-tenant':
+          'host' in tenant
+            ? undefined
+            : 'id' in tenant
+              ? `id:${tenant.id}`
+              : `slug:${tenant.slug}`,
+      },
+      data: { token },
     });
-    return data;
+    const refreshToken = [result.headers['set-cookie']]
+      .filter((h) => !!h)
+      .flat()
+      .flatMap((cookieHeader) => parseSetCookie(cookieHeader))
+      ?.find((c) => c.name === 'SignInRefreshToken')?.value;
+    const resultTenantIdentifier = result.headers['x-lotta-tenant'];
+    return {
+      accessToken: result.data?.accessToken || null,
+      refreshToken,
+      tenant:
+        typeof resultTenantIdentifier === 'string' &&
+        resultTenantIdentifier?.length
+          ? resultTenantIdentifier
+          : null,
+    };
   } catch (e) {
-    console.error(e);
-    return null;
+    Logger.error('error getting an access token from refresh token', { e });
+    return { accessToken: null, refreshToken: null, tenant: null };
   }
 };
