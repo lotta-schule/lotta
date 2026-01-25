@@ -162,14 +162,14 @@ defmodule LottaWeb.OAuthController do
     end
 
     cond do
+      is_nil(tenant) and role != :teacher ->
+        {:error, :not_a_teacher}
+
       is_nil(tenant) ->
         {:error, :tenant_not_found}
 
       is_nil(eduplaces_id) ->
         {:error, :invalid_user_info}
-
-      role != :teacher ->
-        {:error, :not_a_teacher}
 
       true ->
         with {:ok, user} <- Accounts.get_or_create_eduplaces_user(tenant, user_info) do
