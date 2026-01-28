@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Button,
   Dialog,
@@ -32,6 +32,20 @@ export const UpdatePasswordDialog = React.memo(
     const [newPassword, setNewPassword] = React.useState('');
     const [newPasswordRepetition, setNewPasswordRepetition] =
       React.useState('');
+
+    const hasHisecToken = React.useMemo(() => {
+      if (typeof window === 'undefined') return false;
+      const cookies = document.cookie.split(';').reduce(
+        (acc, cookie) => {
+          const [key, value] = cookie.trim().split('=');
+          acc[key] = value;
+          return acc;
+        },
+        {} as Record<string, string>
+      );
+      return cookies['request_pw_reset'] === '1';
+    }, []);
+
     const resetForm = () => {
       setNewPassword('');
       setNewPasswordRepetition('');
@@ -40,7 +54,6 @@ export const UpdatePasswordDialog = React.memo(
       { updatePassword: boolean },
       { newPassword: string }
     >(UpdatePasswordMutation, {
-      variables: { newPassword },
       onCompleted: () => {
         resetForm();
         onRequestClose();
@@ -58,7 +71,11 @@ export const UpdatePasswordDialog = React.memo(
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              setShowRequestHisecToken(true);
+              if (hasHisecToken) {
+                updatePassword({ variables: { newPassword } });
+              } else {
+                setShowRequestHisecToken(true);
+              }
             }}
             data-testid="UpdatePasswordDialog"
           >
@@ -130,6 +147,7 @@ export const UpdatePasswordDialog = React.memo(
             setShowRequestHisecToken(false);
             if (authToken) {
               updatePassword({
+                variables: { newPassword },
                 context: { authToken },
               });
             }

@@ -3,11 +3,12 @@ import { Article } from './Article';
 import { ComputerExperten, VivaLaRevolucion } from 'test/fixtures';
 
 import GetArticleReactionCounts from 'api/query/GetArticleReactionCounts.graphql';
+import { MockLink } from '@apollo/client/testing';
 
 const articleWithReactionsEnabled = ComputerExperten;
 const articoleWithoutReactionsEnabled = VivaLaRevolucion;
 
-const additionalMocks = [
+const additionalMocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: GetArticleReactionCounts,
@@ -60,6 +61,7 @@ describe('Article', () => {
       );
 
       await waitFor(() => {
+        screen.rerender(<Article article={articleWithReactionsEnabled} />);
         expect(screen.getByTestId('ArticleReactions')).toBeVisible();
       });
     });

@@ -1,4 +1,4 @@
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { currentApolloCache, renderHook } from 'test/util';
 import { SomeUser, logosDirectory } from 'test/fixtures';
 import { DirectoryModel, FileModel } from 'model';
@@ -39,7 +39,7 @@ const additionalMocks = [
       },
     },
   },
-] satisfies MockedResponse[];
+] satisfies MockLink.MockedResponse[];
 
 describe('useCreateDirectory', () => {
   it('should create a new directory', async () => {

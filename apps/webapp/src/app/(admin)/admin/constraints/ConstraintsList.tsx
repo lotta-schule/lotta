@@ -1,5 +1,4 @@
 'use client';
-
 import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import { faSdCard } from '@fortawesome/free-solid-svg-icons';

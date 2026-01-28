@@ -26,6 +26,7 @@ services:
     image: bitnamilegacy/minio:2024
     ports:
       - 9000:9000
+      - 9001:9001
     environment:
       MINIO_SERVER_URL: http://127.0.0.1:9000
       MINIO_ROOT_USER: AKIAIOSFODNN7EXAMPLE

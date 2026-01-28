@@ -13,6 +13,8 @@
 
   .chartWrapper {
     height: 500px;
+    min-height: 0;
+    min-width: 300px;
     width: 100%;
   }
 }

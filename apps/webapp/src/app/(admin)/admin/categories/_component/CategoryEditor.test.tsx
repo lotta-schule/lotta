@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import {
   FaecherCategory,
   StartseiteCategory,
   KunstCategory,
   ComputerExperten,
 } from 'test/fixtures';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from 'test/util';
 import { CategoryEditor } from './CategoryEditor';
-import userEvent from '@testing-library/user-event';
 
 import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
@@ -16,7 +15,7 @@ import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graphql';
 
-const allWidgetsMock: MockedResponse = {
+const allWidgetsMock: MockLink.MockedResponse = {
   request: {
     query: GetWidgetsQuery,
     variables: {},
@@ -26,7 +25,7 @@ const allWidgetsMock: MockedResponse = {
 const getCategoryWidgetsMock = (
   categoryId: string,
   responseWidgets: any[] = []
-): MockedResponse => ({
+): MockLink.MockedResponse => ({
   request: {
     query: GetCategoryWidgetsQuery,
     variables: { categoryId },
@@ -36,7 +35,7 @@ const getCategoryWidgetsMock = (
 const getArticlesMock = (
   categoryId: string,
   responseArticles: any[] = []
-): MockedResponse => ({
+): MockLink.MockedResponse => ({
   request: {
     query: GetArticlesQuery,
     variables: { categoryId },
@@ -46,7 +45,7 @@ const getArticlesMock = (
 const getArticleForPreview = (
   articleId: string,
   responseArticle: any = null
-): MockedResponse => ({
+): MockLink.MockedResponse => ({
   request: {
     query: GetArticleForPreviewQuery,
     variables: { id: articleId },
@@ -468,10 +467,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       const categoryTitleInput = screen.getByRole('textbox', {
         name: /name der kategorie/i,
       }) as HTMLInputElement;
-      await user.type(categoryTitleInput, 'Neue Fächer', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: categoryTitleInput.value.length,
-      });
+      await user.fill(categoryTitleInput, 'Neue Fächer');
       await user.click(
         screen.getByRole('checkbox', {
           name: /auf der startseite verstecken/i,

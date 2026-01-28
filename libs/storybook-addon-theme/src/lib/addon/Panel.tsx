@@ -1,8 +1,8 @@
 import React from 'react';
-import { useGlobals } from '@storybook/manager-api';
-import { AddonPanel } from '@storybook/components';
-import { PureArgsTable } from '@storybook/blocks';
-import { styled } from '@storybook/theming';
+import { useGlobals } from 'storybook/manager-api';
+import { AddonPanel } from 'storybook/internal/components';
+import { PureArgsTable } from '@storybook/addon-docs/blocks';
+import { styled } from 'storybook/theming';
 import { DefaultThemes, schema } from '@lotta-schule/theme';
 import { generateArgsTableRows } from '../../util';
 
@@ -39,7 +39,7 @@ export const Panel = ({ active, key }: any) => {
         <PureArgsTable
           rows={rows}
           args={theme}
-          updateArgs={(args) => {
+          updateArgs={(args: Record<string, unknown>) => {
             updateTheme(args);
           }}
         />

@@ -39,9 +39,7 @@ jobs:
           commit-ish: 'HEAD~'
 
       - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8
+        uses: pnpm/action-setup@v4
 
       - name: Install node dependencies
         run: pnpm install

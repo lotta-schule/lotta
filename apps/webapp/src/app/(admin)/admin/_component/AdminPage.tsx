@@ -59,7 +59,6 @@ export const AdminPage = async ({
         )}
         <Button
           icon={<Close />}
-          component={Link}
           href={'/'}
           className={clsx(styles.logoLinkClose, {
             [styles.forceLogoLinkClose]: !tenant.logoImageFile,

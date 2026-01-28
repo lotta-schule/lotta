@@ -68,7 +68,7 @@ const AnimatedCircularProgress = motion.create(CircularProgress);
  * It can be used to show the user that an action is being executed,
  * or to show the result of an action.
  */
-export const LoadingButton = ({
+export const LoadingButton = <T = any,>({
   icon,
   disabled,
   label,
@@ -84,7 +84,7 @@ export const LoadingButton = ({
   onError,
   ref: propRef,
   ...props
-}: LoadingButtonProps) => {
+}: LoadingButtonProps<T>) => {
   const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const defaultRef = React.useRef<React.ComponentRef<'button'>>(null);
   const ref = propRef || defaultRef;

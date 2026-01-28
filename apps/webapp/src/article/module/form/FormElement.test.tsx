@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { commands } from '@vitest/browser/context';
+import { render, waitFor, userEvent } from 'test/util';
 import { FormElement } from './FormElement';
 import { imageFile, logosDirectory, SomeUser } from 'test/fixtures';
-import userEvent from '@testing-library/user-event';
 
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
@@ -175,15 +175,13 @@ describe('shared/article/module/form/FormElement', () => {
 
   describe('file element', () => {
     const user = { ...SomeUser };
-    let didCallFiles = false;
-    const filesMocks = [
+    const createFilesMocks = () => [
       {
         request: {
           query: GetDirectoriesAndFilesQuery,
           variables: { parentDirectoryId: null },
         },
-        result: () => {
-          didCallFiles = true;
+        result: vi.fn(() => {
           return {
             data: {
               files: [
@@ -206,7 +204,7 @@ describe('shared/article/module/form/FormElement', () => {
               ],
             },
           };
-        },
+        }),
       },
       {
         request: {
@@ -243,13 +241,11 @@ describe('shared/article/module/form/FormElement', () => {
       },
     ];
 
-    beforeEach(() => {
-      didCallFiles = false;
-    });
-
     it('should render a local file input and select a file as an anonymous userAvatar', async () => {
-      const fireEvent = userEvent.setup();
-      global.URL.createObjectURL = vi.fn(() => 'http://localhost/0');
+      vi.spyOn(URL, 'createObjectURL').mockReturnValueOnce(
+        'http://localhost/0'
+      );
+
       const setValueFn = vi.fn();
       const screen = render(
         <FormElement
@@ -263,10 +259,13 @@ describe('shared/article/module/form/FormElement', () => {
       );
       expect(screen.getAllByRole('button')).toHaveLength(1);
       expect(screen.getByRole('button')).toHaveTextContent(/datei hochladen/i);
-      await fireEvent.upload(
-        document.querySelector('input[type=file]')!,
-        new File(['hello world'], 'hello.txt', { type: 'text/plain' })
-      );
+      const uploadButton = document.querySelector('input[type=file]')!;
+      expect(uploadButton).toBeInTheDocument();
+      await commands.setFile('input[type=file]', {
+        name: 'hello.txt',
+        type: 'text/plain',
+        content: 'Hello World',
+      });
       await waitFor(() => {
         expect(setValueFn).toHaveBeenCalledWith(
           'file-upload://{"filesize":11,"filename":"hello.txt","filetype":"text/plain","blob":"http://localhost/0"}'
@@ -302,6 +301,7 @@ describe('shared/article/module/form/FormElement', () => {
     it('should render a userfile select button and select a file as a userAvatar', async () => {
       const fireEvent = userEvent.setup();
       const setValueFn = vi.fn();
+      const additionalMocks = createFilesMocks();
       const screen = render(
         <FormElement
           element={{
@@ -314,7 +314,7 @@ describe('shared/article/module/form/FormElement', () => {
         {},
         {
           currentUser: user,
-          additionalMocks: filesMocks,
+          additionalMocks,
         }
       );
       expect(
@@ -326,8 +326,12 @@ describe('shared/article/module/form/FormElement', () => {
       await fireEvent.click(
         screen.getByRole('button', { name: /meine dateien/i })
       );
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
-      await waitFor(() => expect(didCallFiles).toEqual(true));
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeVisible();
+      });
+      await waitFor(() => {
+        expect(additionalMocks[0].result).toHaveBeenCalled();
+      });
       await waitFor(() =>
         expect(screen.getByRole('option', { name: /logos/i })).toBeVisible()
       );

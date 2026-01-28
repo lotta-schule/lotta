@@ -2,12 +2,7 @@
 
 import * as React from 'react';
 import { ToggleProps } from '@react-types/checkbox';
-import {
-  AriaCheckboxProps,
-  VisuallyHidden,
-  useCheckbox,
-  useFocusRing,
-} from 'react-aria';
+import { AriaCheckboxProps, useCheckbox } from 'react-aria';
 import { useToggleState } from 'react-stately';
 import clsx from 'clsx';
 
@@ -33,30 +28,18 @@ export const Checkbox = React.forwardRef<HTMLLabelElement, CheckboxProps>(
 
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const state = useToggleState(props);
-    const { inputProps } = useCheckbox(props, state, inputRef);
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const { labelProps, inputProps } = useCheckbox(props, state, inputRef);
+    const defaultId = React.useId();
 
     return (
       <label
+        {...labelProps}
         style={{ ...style, ...customStyle }}
         className={clsx(className, styles.root, 'HubertCheckbox')}
         ref={ref}
+        id={props.id || defaultId}
       >
-        <VisuallyHidden>
-          <input
-            {...inputProps}
-            {...focusProps}
-            ref={inputRef}
-            className={clsx(className, styles.input)}
-          />
-        </VisuallyHidden>
-        <div
-          className={clsx(styles.controlIndicator, {
-            [styles.isSelected]: state.isSelected,
-            [styles.isFocusVisible]: isFocusVisible,
-            [styles.isDisabled]: props.isDisabled,
-          })}
-        />
+        <input type="checkbox" ref={inputRef} {...inputProps} />
         {props.children}
       </label>
     );

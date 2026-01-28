@@ -1,8 +1,7 @@
 import { ContentModuleType } from 'model';
-import { render } from 'test/util';
+import { render, userEvent } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { AddModuleBar } from './AddModuleBar';
-import userEvent from '@testing-library/user-event';
 
 describe('AddModuleBar', () => {
   const currentUser = SomeUser;

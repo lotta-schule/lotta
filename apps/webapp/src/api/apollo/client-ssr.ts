@@ -1,34 +1,32 @@
 'use client';
-
-import { ApolloLink, split } from '@apollo/client';
+import { ApolloLink } from '@apollo/client';
 import {
-  InMemoryCache,
   ApolloClient,
+  InMemoryCache,
   SSRMultipartLink,
-} from '@apollo/experimental-nextjs-app-support';
+} from '@apollo/client-integration-nextjs';
+import { Defer20220824Handler } from '@apollo/client/incremental';
 import { createWebsocketLink } from './links/websocketLink';
 import { TenantModel } from 'model';
 import { createErrorLink } from './links/errorLink';
 import { createAuthLink } from './links/authLink';
 import { createHttpLink } from './links/httpLink';
-import { createSentryTracingLink } from './links/sentryTracingLink';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { sendRefreshRequest } from 'api/auth';
 
 export const createSSRClient = (
   tenant: Pick<TenantModel, 'id'>,
   socketUrl?: string | null,
   accessToken?: string
-) => {
+): ApolloClient => {
   const websocketLink = createWebsocketLink(tenant, socketUrl, accessToken);
   const httpLink = createHttpLink({
     requestExtraHeaders: () => ({
-      tenant: `id:${tenant.id}`,
+      'x-lotta-tenant': `id:${tenant.id}`,
     }),
   });
   const networkLink = websocketLink
-    ? split(
+    ? ApolloLink.split(
         (operation) => {
           const definition = getMainDefinition(operation.query);
           return (
@@ -44,21 +42,13 @@ export const createSSRClient = (
 
   return new ApolloClient({
     cache: new InMemoryCache(),
+
     link: ApolloLink.from(
       [
         createErrorLink(),
         createAuthLink({
           initialToken: accessToken,
-          sendRefreshTokenRequest: async () => {
-            const res = await sendRefreshRequest({});
-
-            if (!res) {
-              throw new Error('Failed to refresh token');
-            }
-            return res.accessToken;
-          },
         }),
-        createSentryTracingLink(),
         new SSRMultipartLink({
           stripDefer: true,
         }),
@@ -66,5 +56,6 @@ export const createSSRClient = (
         networkLink,
       ].filter(Boolean)
     ),
+    incrementalHandler: new Defer20220824Handler(),
   });
 };

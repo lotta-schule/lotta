@@ -1,6 +1,4 @@
-import * as React from 'react';
-import * as Sentry from '@sentry/nextjs';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { graphql, ResultOf } from 'api/graphql';
 
 export const GET_CURRENT_USER = graphql(`
@@ -45,19 +43,5 @@ export type CurrentUser = NonNullable<
 export const useCurrentUser = () => {
   const { data } = useQuery(GET_CURRENT_USER);
 
-  const currentUser = data?.currentUser ?? null;
-
-  React.useEffect(() => {
-    if (currentUser) {
-      Sentry.setUser({
-        id: currentUser.id,
-        username: currentUser.nickname ?? currentUser.name ?? undefined,
-        email: currentUser.email ?? undefined,
-      });
-    } else {
-      Sentry.setUser(null);
-    }
-  }, [currentUser]);
-
-  return currentUser;
+  return data?.currentUser ?? null;
 };

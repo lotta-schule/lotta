@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useApolloClient, useQuery } from '@apollo/client';
+import { useApolloClient, useQuery } from '@apollo/client/react';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { ErrorMessage, SplitViewButton, Toolbar } from '@lotta-schule/hubert';
 import { ConversationModel } from 'model';

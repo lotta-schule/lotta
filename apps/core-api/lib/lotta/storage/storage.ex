@@ -111,7 +111,10 @@ defmodule Lotta.Storage do
     else
       error ->
         Logger.error("Error creating file: #{inspect(error)}")
-        FileData.clear(file_data)
+
+        if opts[:skip_cleanup] != true do
+          FileData.clear(file_data)
+        end
 
         error
     end

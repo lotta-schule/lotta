@@ -7,7 +7,10 @@ defmodule Lotta.Accounts.Authentication do
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.Repo
+  alias Lotta.Tenants.Tenant
   alias Lotta.Accounts.User
+
+  require Logger
 
   @typedoc """
   A token representing a user.
@@ -63,6 +66,7 @@ defmodule Lotta.Accounts.Authentication do
   def verify_user_pass(user, password) do
     cond do
       is_nil(user) ->
+        Logger.warning("User not found when trying to verify password.")
         false
 
       user.password_hash_format == 1 ->
@@ -106,10 +110,13 @@ defmodule Lotta.Accounts.Authentication do
   """
   @doc since: "2.0.0"
 
-  @spec create_user_tokens(User.t()) :: {:ok, access_token, refresh_token} | {:error, term()}
-  def create_user_tokens(user) do
+  @spec create_user_tokens(User.t(), keyword()) ::
+          {:ok, access_token, refresh_token} | {:error, term()}
+  def create_user_tokens(user, opts \\ []) do
+    token_type = Keyword.get(opts, :token_type, "access")
+
     with {:ok, access_token, _claims} <-
-           AccessToken.encode_and_sign(user, %{}, token_type: "access"),
+           AccessToken.encode_and_sign(user, %{}, token_type: token_type),
          {:ok, refresh_token, _claims} <-
            AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
       {:ok, access_token, refresh_token}

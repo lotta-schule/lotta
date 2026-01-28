@@ -1,6 +1,6 @@
 import React from 'react';
 import { CategoryModel } from 'model';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 
 export const useCategories = () => {
@@ -37,7 +37,7 @@ export const useCategories = () => {
             indentedLabel: indent + category.title,
           };
         }),
-    [data?.categories]
+    [categories]
   );
 
   const others = React.useMemo(

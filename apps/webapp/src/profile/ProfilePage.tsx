@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import {
   Box,
@@ -12,7 +13,7 @@ import {
   Label,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { UpdateEmailDialog } from 'shared/dialog/UpdateEmailDialog';
@@ -22,7 +23,7 @@ import { User } from 'util/model';
 import { UserModel, FileModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useGetFieldError } from 'util/useGetFieldError';
-import { LegacyHeader, Main } from 'layout';
+import { Header, Main } from 'layout';
 import Link from 'next/link';
 
 import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
@@ -61,9 +62,9 @@ export const ProfilePage = () => {
   return (
     !!currentUser && (
       <Main className={styles.root}>
-        <LegacyHeader bannerImageUrl={'/bannerProfil.png'}>
+        <Header bannerImageUrl={'/bannerProfil.png'}>
           <h2>Meine Daten</h2>
-        </LegacyHeader>
+        </Header>
 
         <Box className={styles.container}>
           <h4>Meine Daten</h4>

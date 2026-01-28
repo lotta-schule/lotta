@@ -3,20 +3,23 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "src/",
-
     "isolatedModules": true,
     "incremental": true,
     "resolveJsonModule": true,
-
     "module": "Preserve",
+    "moduleResolution": "bundler",
     "paths": {
       "@lotta-schule/hubert": ["../../../libs/hubert/src/index.ts"],
       "@lotta-schule/theme": ["../../../libs/theme/src/index.ts"]
     }
   },
   "references": [
-    { "path": "./tsconfig.test.json" },
-    { "path": "./tsconfig.app.json" }
+    {
+      "path": "./tsconfig.test.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
   ],
-  "include": [ ]
+  "include": []
 }

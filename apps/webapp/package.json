@@ -4,7 +4,7 @@
   "version": "6.1.18",
   "description": "Lotta Schule Webapp",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "start:prod": "next start",
     "build": "next build",
     "test": "vitest",
@@ -15,56 +15,77 @@
   },
   "type": "module",
   "dependencies": {
-    "@absinthe/socket": "^0.2.1",
-    "@absinthe/socket-apollo-link": "^0.2.1",
-    "@apollo/client": "^3.12.5",
-    "@apollo/experimental-nextjs-app-support": "^0.11.7",
-    "@apollo/link-error": "^2.0.0-beta.3",
-    "@epic-web/invariant": "^1.0.0",
-    "@fortawesome/fontawesome-svg-core": "^6.7.2",
-    "@fortawesome/free-regular-svg-icons": "^6.7.2",
-    "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@fortawesome/react-fontawesome": "^0.2.2",
-    "@opentelemetry/api": "^1.9.0",
-    "@ptitmouton/app-config": "^0.0.2",
-    "@sentry/nextjs": "^9.46.0",
-    "@vercel/otel": "^1.14.0",
-    "apollo-v3-absinthe-upload-link": "^1.6.0",
-    "axios": "^1.8.1",
-    "clsx": "^2.1.1",
-    "cookie-es": "^1.2.2",
-    "cookies": "^0.9.1",
-    "date-fns": "^3.6.0",
-    "file-saver": "^2.0.5",
-    "framer-motion": "^11.17.0",
-    "gql.tada": "^1.8.10",
-    "graphql": "^16.10.0",
-    "http-proxy-middleware": "^2.0.6",
-    "i18next": "^24.2.2",
-    "is-url": "^1.2.4",
-    "jwt-decode": "^4.0.0",
-    "lodash": "^4.17.21",
-    "next": "15.1.11",
-    "phoenix": "^1.7.18",
-    "react": "19.2.3",
-    "react-big-calendar": "^1.18.0",
-    "react-charts": "^3.0.0-beta.57",
-    "react-dom": "19.2.3",
-    "react-i18next": "^15.4.0",
-    "react-use": "^17.6.0",
-    "slate": "^0.76.0",
-    "slate-react": "^0.76.0",
-    "slugify": "^1.6.6"
+    "@absinthe/socket": "catalog:",
+    "@absinthe/socket-apollo-link": "catalog:",
+    "@apollo/client": "catalog:",
+    "@apollo/client-integration-nextjs": "catalog:",
+    "@epic-web/invariant": "catalog:",
+    "@fortawesome/fontawesome-svg-core": "catalog:",
+    "@fortawesome/free-regular-svg-icons": "catalog:",
+    "@fortawesome/free-solid-svg-icons": "catalog:",
+    "@fortawesome/react-fontawesome": "catalog:",
+    "@ptitmouton/app-config": "catalog:",
+    "@vercel/otel": "catalog:",
+    "apollo-v3-absinthe-upload-link": "catalog:",
+    "axios": "catalog:",
+    "chart.js": "^4.5.1",
+    "clsx": "catalog:",
+    "cookie-es": "catalog:",
+    "cookies": "catalog:",
+    "date-fns": "catalog:",
+    "file-saver": "catalog:",
+    "framer-motion": "catalog:",
+    "gql.tada": "catalog:",
+    "graphql": "catalog:",
+    "http-proxy-middleware": "catalog:",
+    "i18next": "catalog:",
+    "import-in-the-middle": "catalog:",
+    "is-url": "catalog:",
+    "jwt-decode": "catalog:",
+    "lodash": "catalog:",
+    "next": "catalog:",
+    "phoenix": "catalog:",
+    "react": "catalog:",
+    "react-big-calendar": "catalog:",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "catalog:",
+    "react-i18next": "catalog:",
+    "react-use": "catalog:",
+    "require-in-the-middle": "catalog:",
+    "slate": "catalog:",
+    "slate-react": "catalog:",
+    "slugify": "catalog:"
   },
   "devDependencies": {
-    "i18next-parser": "^9.0.1",
-    "ignore-loader": "^0.1.2"
+    "i18next-parser": "catalog:",
+    "ignore-loader": "catalog:",
+    "sass": "catalog:",
+    "vitest": "catalog:",
+    "vitest-browser-react": "^2.0.2"
   },
   "packageManager": "pnpm@10.14.0",
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@sentry/cli",
       "sharp"
+    ]
+  },
+  "lint-staged": {
+    "$schema": "https://json.schemastore.org/lint-staged",
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.{graphql,gql}": [
+      "prettier --write"
+    ],
+    "*.{html,xml}": [
+      "prettier --write"
     ]
   }
 }

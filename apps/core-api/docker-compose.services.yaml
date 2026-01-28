@@ -37,8 +37,10 @@ services:
       PGADMIN_SERVER_JSON_FILE: /tmp/server.json
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    restart: always
     ports:
-      - '8432:80'
+      - 8888:80
     volumes:
+      - /var/lib/pgadmin
+      - ./:/files
       - ./pgadmin.json:/tmp/server.json:ro
-      - ~/Downloads:/home/downloads:ro

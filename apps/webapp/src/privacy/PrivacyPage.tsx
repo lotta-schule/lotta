@@ -1,6 +1,8 @@
+'use client';
+
 import * as React from 'react';
 import { Box } from '@lotta-schule/hubert';
-import { LegacyHeader, Main, Sidebar } from 'layout';
+import { Header, Main, Sidebar } from 'layout';
 
 import styles from './PrivacyPage.module.scss';
 
@@ -8,11 +10,11 @@ export const PrivacyPage = () => {
   return (
     <>
       <Main className={styles.root}>
-        <LegacyHeader>
+        <Header>
           <Box>
             <h3>Datenschutzerklärung</h3>
           </Box>
-        </LegacyHeader>
+        </Header>
         <Box className={styles.box}>
           <h4>Einleitung</h4>
           <p>
@@ -232,21 +234,6 @@ export const PrivacyPage = () => {
             gespeichert.
           </p>
           <p>
-            Zum Auffinden von Fehlern nutzen wir die Cloud-Software
-            <a
-              href="https://sentry.io/security/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Sentry
-            </a>
-            , die bei Auftreten eines Fehlers damit im Zusammenhang stehende
-            Informationen speichert und für uns aufbereitet. Hier könnten unter
-            Umständen einige persönliche Daten wie IP-Adresse oder Email durch
-            Sentry verarbeitet werden. Diese Daten werden ausschließlich zum
-            Zweck der Fehlererkennung genutzt und nach 2 Wochen gelöscht.
-          </p>
-          <p>
             Wir erstellen momentan ein tägliches Backup unserer Datenbank, das
             wir für 2 Wochen aufheben.
           </p>
@@ -430,13 +417,6 @@ export const PrivacyPage = () => {
                 Bermingham Hosted by: SCALEWAY SAS BP 438 75366 PARIS CEDEX 08
                 FRANCE; Website: https://scaleway.org; Datenschutzerklärung:
                 https://www.scaleway.com/en/privacy-policy/;
-              </li>
-              <li>
-                <strong>Sentry:</strong> Exception Logging Dienstanbieter:
-                Functional Software, Inc., 45 Fremont Street, 8th Floor, San
-                Francisco, CA 94105, Vereinigte Staaten von Amerika Datenschutz:
-                https://sentry.io/privacy/ ; Security und Compliance:
-                https://sentry.io/security/
               </li>
               <li>
                 <strong>Mailgun:</strong> Transactional Emails Dienstanbieter:

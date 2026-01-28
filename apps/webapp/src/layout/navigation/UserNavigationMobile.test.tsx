@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import { render, waitFor } from 'test/util';
 import { UserNavigationMobile } from './UserNavigationMobile';
 import { SomeUser, adminGroup } from 'test/fixtures';
@@ -67,7 +67,7 @@ describe('shared/layouts/UserNavigationMobile', () => {
   });
 
   describe('admin user', () => {
-    const additionalMocks: MockedResponse[] = [
+    const additionalMocks: MockLink.MockedResponse[] = [
       {
         request: { query: GetUnpublishedArticlesQuery },
         result: { data: { articles: [] } },

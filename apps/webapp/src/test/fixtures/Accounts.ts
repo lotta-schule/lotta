@@ -7,6 +7,7 @@ import { DirectoryModel, FileModel, UserModel } from 'model';
  */
 
 export const adminGroup = {
+  __typename: 'UserGroup',
   id: '1',
   eduplacesId: null,
   insertedAt: '2015-01-01 00:00',
@@ -19,6 +20,7 @@ export const adminGroup = {
 };
 
 export const lehrerGroup = {
+  __typename: 'UserGroup',
   id: '4',
   eduplacesId: null,
   insertedAt: '2015-01-01 00:00',
@@ -31,6 +33,7 @@ export const lehrerGroup = {
 };
 
 export const elternGroup = {
+  __typename: 'UserGroup',
   id: '10',
   eduplacesId: null,
   insertedAt: '2015-01-10 11:00',
@@ -43,6 +46,7 @@ export const elternGroup = {
 };
 
 export const schuelerGroup = {
+  __typename: 'UserGroup',
   id: '5',
   eduplacesId: null,
   insertedAt: '2015-01-01 07:45',

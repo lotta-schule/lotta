@@ -39,6 +39,12 @@ export const loginUser = async (
   // await page.keyboard.press('Enter');
   await loginDialog.getByRole('button', { name: /anmelden/i }).click();
 
+  await page.waitForURL((url) => url.hostname === new URL(baseURL).hostname);
+  await expect(loginDialog).not.toBeVisible();
+
+  await page.waitForLoadState('domcontentloaded');
+  await expect(loginDialog).not.toBeVisible();
+
   return {
     loginDialog,
   };

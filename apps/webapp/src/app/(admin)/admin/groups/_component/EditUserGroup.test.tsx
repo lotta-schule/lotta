@@ -6,10 +6,9 @@ import {
   lehrerGroup,
   schuelerGroup,
 } from 'test/fixtures';
-import { render, waitFor, within } from 'test/util';
+import { render, waitFor, within, userEvent } from 'test/util';
 import { EditUserGroup } from './EditUserGroup';
 import { GET_USER_GROUPS, UPDATE_USER_GROUP } from '../_graphql';
-import userEvent from '@testing-library/user-event';
 
 const additionalMocks = [
   {
@@ -229,13 +228,9 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         });
 
         // Change the group name
-        await user.type(
+        await user.fill(
           await screen.findByRole('textbox', { name: /gruppenname/i }),
-          'Lehrer umbenannt',
-          {
-            initialSelectionStart: 0,
-            initialSelectionEnd: lehrerGroup.name.length,
-          }
+          'Lehrer umbenannt'
         );
 
         // allow read full name
@@ -284,7 +279,9 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroup', () => {
         await screen.findByRole('button', { name: /"lehrer" löschen/i })
       );
 
-      expect(screen.getByRole('dialog', { name: /löschen/i })).toBeVisible();
+      await waitFor(() => {
+        expect(screen.getByRole('dialog', { name: /löschen/i })).toBeVisible();
+      });
     });
 
     it('delete button should be disabled when group is sole admin group', async () => {

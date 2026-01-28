@@ -1,7 +1,6 @@
 'use client';
-
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Collapse,
   DraggableListItem,
@@ -51,11 +50,8 @@ export const CategoryNavigation = React.memo(() => {
   );
 
   const getSubcategoriesForCategory = React.useCallback(
-    (category: Partial<CategoryModel>) => {
-      return categories.filter(
-        (c) => c.category && c.category.id === category.id
-      );
-    },
+    (category: Partial<CategoryModel>) =>
+      categories.filter((c) => c.category && c.category.id === category.id),
     [categories]
   );
 
@@ -154,42 +150,52 @@ export const CategoryNavigation = React.memo(() => {
         onDragEnd={() => {
           setExpandedMainCategoryId(expandedMainCategoryToRestore);
         }}
-        items={mainCategories.map((c) => ({
-          id: c.id,
-          title: c.title,
-          icon:
-            getSubcategoriesForCategory(c).length > 0 ? (
-              <Icon
-                title="Unterkategorien anzeigen"
-                role={'button'}
-                icon={expandedMainCategoryId === c.id ? faCaretUp : faCaretDown}
-              />
-            ) : undefined,
-          onClickIcon: (e) => {
-            e.stopPropagation();
-            setExpandedMainCategoryId((categoryId) =>
-              categoryId === c.id ? null : c.id
-            );
-          },
-          selected: selectedCategory?.id === c.id,
-          onClick: () => onSelectCategory(c),
-          testId: 'main-category-item',
-          children: (
-            <Collapse isOpen={expandedMainCategoryId === c.id}>
-              <SortableDraggableList
-                id={`subcategories-for-c-${c.id}`}
-                className={styles.categoriesSublist}
-                items={getSubcategoriesForCategory(c).map((subcategory) => ({
-                  id: subcategory.id,
-                  title: subcategory.title,
-                  onClick: () => onSelectCategory(subcategory),
-                  selected: selectedCategory?.id === subcategory.id,
-                }))}
-                onChange={onChangeCategories}
-              />
-            </Collapse>
-          ),
-        }))}
+        items={mainCategories.map((c) => {
+          const subcategories = getSubcategoriesForCategory(c);
+          return {
+            id: c.id,
+            title: c.title,
+            icon:
+              subcategories.length > 0 ? (
+                <Icon
+                  title="Unterkategorien anzeigen"
+                  role={'button'}
+                  icon={
+                    expandedMainCategoryId === c.id ? faCaretUp : faCaretDown
+                  }
+                />
+              ) : undefined,
+            iconTitle: subcategories.length
+              ? expandedMainCategoryId === c.id
+                ? 'Unterkategorien ausblenden'
+                : 'Unterkategorien anzeigen'
+              : undefined,
+            onClickIcon: (e) => {
+              e.stopPropagation();
+              setExpandedMainCategoryId((categoryId) =>
+                categoryId === c.id ? null : c.id
+              );
+            },
+            selected: selectedCategory?.id === c.id,
+            onClick: () => onSelectCategory(c),
+            testId: 'main-category-item',
+            children: (
+              <Collapse isOpen={expandedMainCategoryId === c.id}>
+                <SortableDraggableList
+                  id={`subcategories-for-c-${c.id}`}
+                  className={styles.categoriesSublist}
+                  items={getSubcategoriesForCategory(c).map((subcategory) => ({
+                    id: subcategory.id,
+                    title: subcategory.title,
+                    onClick: () => onSelectCategory(subcategory),
+                    selected: selectedCategory?.id === subcategory.id,
+                  }))}
+                  onChange={onChangeCategories}
+                />
+              </Collapse>
+            ),
+          };
+        })}
       />
 
       <h5 className={styles.heading}>Randnavigation</h5>

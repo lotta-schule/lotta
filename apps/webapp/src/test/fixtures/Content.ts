@@ -8,9 +8,11 @@ import { ArticleModel, ContentModuleType } from 'model';
  *
  */
 export const ComputerExperten: ArticleModel = {
+  __typename: 'Article',
   id: '1',
   contentModules: [
     {
+      __typename: 'ContentModule',
       id: '7676765',
       configuration: {},
       files: [],
@@ -93,9 +95,11 @@ export const ComputerExperten: ArticleModel = {
 };
 
 export const VivaLaRevolucion: ArticleModel = {
+  __typename: 'Article',
   id: '2',
   contentModules: [
     {
+      __typename: 'ContentModule',
       id: '99100',
       sortKey: 0,
       type: ContentModuleType.TEXT,
@@ -182,9 +186,11 @@ export const VivaLaRevolucion: ArticleModel = {
 };
 
 export const Schulfest: ArticleModel = {
+  __typename: 'Article',
   id: '3',
   contentModules: [
     {
+      __typename: 'ContentModule',
       id: '100100',
       sortKey: 10,
       type: ContentModuleType.IMAGE_COLLECTION,
@@ -197,6 +203,7 @@ export const Schulfest: ArticleModel = {
       content: {},
     },
     {
+      __typename: 'ContentModule',
       id: '100101',
       sortKey: 0,
       type: ContentModuleType.TEXT,
@@ -265,6 +272,7 @@ export const Schulfest: ArticleModel = {
       },
     },
     {
+      __typename: 'ContentModule',
       id: '100102',
       sortKey: 30,
       type: ContentModuleType.VIDEO,
@@ -297,9 +305,11 @@ export const Schulfest: ArticleModel = {
 };
 
 export const Weihnachtsmarkt: ArticleModel = {
+  __typename: 'Article',
   id: '4',
   contentModules: [
     {
+      __typename: 'ContentModule',
       id: '101101',
       sortKey: 0,
       type: ContentModuleType.TEXT,
@@ -368,6 +378,7 @@ export const Weihnachtsmarkt: ArticleModel = {
       },
     },
     {
+      __typename: 'ContentModule',
       id: '101100',
       content: {},
       sortKey: 10,
@@ -380,6 +391,7 @@ export const Weihnachtsmarkt: ArticleModel = {
       },
     },
     {
+      __typename: 'ContentModule',
       id: '101102',
       sortKey: 20,
       type: ContentModuleType.VIDEO,
@@ -412,9 +424,11 @@ export const Weihnachtsmarkt: ArticleModel = {
 };
 
 export const Klausurenplan: ArticleModel = {
+  __typename: 'Article',
   id: '5',
   contentModules: [
     {
+      __typename: 'ContentModule',
       id: '10051',
       sortKey: 0,
       type: ContentModuleType.TITLE,
@@ -425,6 +439,7 @@ export const Klausurenplan: ArticleModel = {
       files: [],
     },
     {
+      __typename: 'ContentModule',
       id: '10052',
       sortKey: 10,
       type: ContentModuleType.DOWNLOAD,
@@ -453,9 +468,11 @@ export const Klausurenplan: ArticleModel = {
 };
 
 export const LehrerListe: ArticleModel = {
+  __typename: 'Article',
   id: '5',
   contentModules: [
     {
+      __typename: 'ContentModule',
       id: '10155',
       sortKey: 0,
       type: ContentModuleType.TABLE,

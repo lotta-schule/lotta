@@ -197,13 +197,23 @@ export const FormElement = React.memo<FormElementProps>(
                         } MB groß sein.`
                       );
                     } else {
-                      const fileWithoutFormatsAndMetadata = Object.fromEntries(
-                        Object.entries(file).filter(
-                          ([key]) => !['formats', 'metadata'].includes(key)
-                        )
-                      );
+                      const sanitizeObject = (obj: any): any => {
+                        if (typeof obj !== 'object' || obj === null) {
+                          return obj;
+                        }
+                        return Object.fromEntries(
+                          Object.entries(obj)
+                            .filter(
+                              ([key]) =>
+                                !['formats', 'metadata', '__typename'].includes(
+                                  key
+                                )
+                            )
+                            .map(([key, value]) => [key, sanitizeObject(value)])
+                        );
+                      };
                       onSetValue(
-                        `lotta-file-id://${JSON.stringify(fileWithoutFormatsAndMetadata)}`
+                        `lotta-file-id://${JSON.stringify(sanitizeObject(file))}`
                       );
                     }
                   }}

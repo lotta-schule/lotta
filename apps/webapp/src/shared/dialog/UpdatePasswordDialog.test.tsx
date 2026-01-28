@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from 'test/util';
+import { render, screen, waitFor, userEvent } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
-import { MockedResponse } from '@apollo/client/testing';
+import { MockLink } from '@apollo/client/testing';
 import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
 import UpdatePasswordMutation from 'api/mutation/UpdatePasswordMutation.graphql';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => {
   it('should show the shared if isOpen is true', async () => {
@@ -21,13 +20,13 @@ describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => 
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('should have the focus on the input field and the submit button disabled when open', () => {
+  it('should have the submit button disabled when open', () => {
     render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
     expect(screen.queryByLabelText('Neues Passwort:')).toBeInTheDocument();
     expect(
       screen.queryByLabelText('Wiederholung Neues Passwort:')
     ).toBeInTheDocument();
-    expect(screen.queryByLabelText('Neues Passwort:')).toHaveFocus();
+    expect(screen.getByRole('button', { name: /ändern/ })).toBeDisabled();
   });
 
   it('should have the autocomplete props on the inputs', () => {
@@ -76,13 +75,63 @@ describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => 
       );
       expect(screen.queryByRole('button', { name: /abbrechen/i })).toBeNull();
     });
+
+    it('should skip RequestHisecTokenDialog when request_pw_reset cookie is set', async () => {
+      const fireEvent = userEvent.setup();
+      document.cookie = 'request_pw_reset=1';
+      let updateMutationCalled = false;
+      const additionalMocks: MockLink.MockedResponse[] = [
+        {
+          request: {
+            query: UpdatePasswordMutation,
+            variables: {
+              newPassword: 'pw456',
+            },
+          },
+          result: () => {
+            updateMutationCalled = true;
+            return {
+              data: { updatePassword: { id: 1 } },
+            };
+          },
+        },
+      ];
+      const onClose = vi.fn();
+      render(
+        <UpdatePasswordDialog
+          isFirstPasswordChange
+          isOpen
+          onRequestClose={onClose}
+        />,
+        {},
+        { currentUser: SomeUser, additionalMocks }
+      );
+      await fireEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
+      await fireEvent.type(
+        screen.getByLabelText('Wiederholung Neues Passwort:'),
+        'pw456'
+      );
+      await fireEvent.click(screen.getByRole('button', { name: /ändern/ }));
+
+      await waitFor(() => {
+        expect(updateMutationCalled).toEqual(true);
+      });
+      await waitFor(() => {
+        expect(onClose).toHaveBeenCalled();
+      });
+      expect(
+        screen.queryByTestId('RequestHisecTokenDialog')
+      ).not.toBeInTheDocument();
+
+      document.cookie = 'request_pw_reset=; Max-Age=0';
+    });
   });
 
   describe('send form', () => {
     it('should create an article with the given title and then close the dialog', async () => {
       const fireEvent = userEvent.setup();
       let updateMutationCalled = false;
-      const additionalMocks: MockedResponse[] = [
+      const additionalMocks: MockLink.MockedResponse[] = [
         {
           request: {
             query: UpdatePasswordMutation,

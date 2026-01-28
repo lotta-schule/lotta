@@ -1,4 +1,4 @@
-import { FetchResult, NextLink, Observable, Operation } from '@apollo/client';
+import { Observable, ApolloLink } from '@apollo/client';
 import {
   createVariableInputMutationsLink,
   mutateVariableInputObject,
@@ -8,14 +8,15 @@ import { MockedFunction } from 'vitest';
 describe('createVariableInputMutationsLink', () => {
   it('should mutate variables in the operation', () => {
     const mockForward = vi.fn(
-      (operation: Operation) => operation as unknown as Observable<FetchResult>
-    ) as MockedFunction<NextLink>;
-    const mockOperation: Operation = {
+      (operation: ApolloLink.Operation) =>
+        operation as unknown as Observable<ApolloLink.Result>
+    ) as MockedFunction<ApolloLink.ForwardFunction>;
+    const mockOperation: ApolloLink.Operation = {
       variables: {
         key1: { __typename: 'TypeName', value: 'value1' },
         key2: 'value2',
       },
-    } as unknown as Operation;
+    } as unknown as ApolloLink.Operation;
 
     const link = createVariableInputMutationsLink();
     link.request(mockOperation, mockForward);

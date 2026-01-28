@@ -1,0 +1,36 @@
+.root {
+  .container {
+    display: block;
+  }
+  .stepNavigation {
+    width: 100%;
+    position: relative;
+    text-align: center;
+
+    & > div {
+      display: inline-flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: min(600px, 100%);
+      margin: var(--lotta-spacing) auto;
+    }
+  }
+  .paragraph {
+    max-width: 60em;
+    margin: calc(3 * var(--lotta-spacing)) 0;
+    text-align: justify;
+  }
+
+  .list {
+    list-style: initial;
+    padding-left: calc(2 * var(--lotta-spacing));
+  }
+
+  .deleteButton {
+    color: rgba(var(--lotta-error-color), 1);
+    border-color: rgba(var(--lotta-error-color), 1);
+    &:hover {
+      background-color: rgba(var(--lotta-error-color), 0.08);
+    }
+  }
+}

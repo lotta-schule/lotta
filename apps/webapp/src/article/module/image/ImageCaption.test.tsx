@@ -1,6 +1,6 @@
-import { render } from 'test/util';
+import { render, waitFor } from 'test/util';
+import { userEvent } from '@vitest/browser/context';
 import { ImageCaption } from './ImageCaption';
-import userEvent from '@testing-library/user-event';
 
 describe('ImageCaption', () => {
   it('should render the caption', () => {
@@ -25,9 +25,11 @@ describe('ImageCaption', () => {
 
     expect(screen.queryByRole('textbox')).toHaveValue('My Caption');
 
-    await user.type(screen.getByRole('textbox'), ' from test');
+    await user.type(screen.getByRole('textbox'), ' from test{Tab}');
     await user.tab();
 
-    expect(onUpdate).toHaveBeenCalledWith('My Caption from test');
+    await waitFor(() => {
+      expect(onUpdate).toHaveBeenCalledWith('My Caption from test');
+    });
   });
 });

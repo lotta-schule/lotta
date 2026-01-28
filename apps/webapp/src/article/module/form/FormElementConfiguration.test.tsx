@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { render } from 'test/util';
+import { render, userEvent } from 'test/util';
 import { FormElementConfiguration } from './FormElementConfiguration';
 import { FormElement } from './Form';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/article/module/form/FormElementConfiguration', () => {
   describe('configuring an input element', () => {
@@ -12,7 +11,7 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
       name: 'blabla',
     };
     it('should provide element, type, name, label, descriptionText, required and multiline options', async () => {
-      const fireEvent = userEvent.setup();
+      const user = userEvent.setup();
       const updateElementFn = vi.fn();
       const screen = render(
         <FormElementConfiguration
@@ -20,44 +19,33 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
           updateElement={updateElementFn}
         />
       );
-      await fireEvent.click(
+      await user.click(
         screen.getByRole('button', { name: /texteingabevariation/i })
       );
 
       await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation
 
-      await fireEvent.click(
-        await screen.findByRole('option', { name: /farbe/i })
-      );
+      await user.click(await screen.findByRole('option', { name: /farbe/i }));
       expect(updateElementFn).toHaveBeenLastCalledWith({ type: 'color' });
       const nameInput = screen.getByRole('textbox', {
         name: /name/i,
       }) as HTMLInputElement;
       expect(nameInput).toBeVisible();
-      await fireEvent.type(nameInput, '1', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: nameInput.value.length,
-      });
+      await user.fill(nameInput, '1');
       expect(updateElementFn).toHaveBeenLastCalledWith({ name: '1' });
 
       const aufschriftInput = screen.getByRole('textbox', {
         name: /aufschrift/i,
       }) as HTMLInputElement;
       expect(aufschriftInput).toBeVisible();
-      await fireEvent.type(aufschriftInput, '2', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: aufschriftInput.value.length,
-      });
+      await user.fill(aufschriftInput, '2');
       expect(updateElementFn).toHaveBeenLastCalledWith({ label: '2' });
 
       const descriptionTextInput = screen.getByRole('textbox', {
         name: /beschriftung/i,
       }) as HTMLInputElement;
       expect(descriptionTextInput).toBeVisible();
-      await fireEvent.type(descriptionTextInput, '3', {
-        initialSelectionStart: 0,
-        initialSelectionEnd: descriptionTextInput.value.length,
-      });
+      await user.fill(descriptionTextInput, '3');
       expect(updateElementFn).toHaveBeenLastCalledWith({
         descriptionText: '3',
       });
@@ -65,9 +53,7 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
       expect(
         screen.getByRole('checkbox', { name: /mehrzeilig/i })
       ).toBeInTheDocument();
-      await fireEvent.click(
-        screen.getByRole('checkbox', { name: /mehrzeilig/i })
-      );
+      await user.click(screen.getByRole('checkbox', { name: /mehrzeilig/i }));
       expect(updateElementFn).toHaveBeenLastCalledWith({
         multiline: true,
       });

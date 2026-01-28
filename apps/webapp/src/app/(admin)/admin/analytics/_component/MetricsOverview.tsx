@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useSuspenseQuery } from '@apollo/client';
+import { useSuspenseQuery } from '@apollo/client/react';
 import { Box } from '@lotta-schule/hubert';
 import { formatDate } from '../_util';
 import { Period } from '../Analytics';

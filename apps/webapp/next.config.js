@@ -1,9 +1,7 @@
 // @ts-check
 
 import { resolve } from 'node:path';
-import { env } from 'node:process';
 import { URL } from 'node:url';
-import { withSentryConfig } from '@sentry/nextjs';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 
@@ -15,32 +13,29 @@ const nextConfig = {
     externalDir: true,
   },
   transpilePackages: ['@lotta-schule/hubert'],
+  allowedDevOrigins: ['localhost', '*.lotta.lvh.me', '*.local.lotta.schule'],
   async rewrites() {
     return {
       beforeFiles: [
         {
-          source: '/',
-          destination: '/c/0',
-        },
-        {
-          source: '/setup/:path*',
-          destination: '/api/setup/:path*',
+          source: '/c/:path*',
+          destination: '/category/:path*',
         },
         {
           source: '/auth/:path*',
-          destination: '/api/auth/:path*',
+          destination: `/api/auth/:path*`,
         },
         {
           source: '/storage/:path*',
-          destination: '/api/storage/:path*',
+          destination: `/api/storage/:path*`,
         },
         {
           source: '/data/:path*',
-          destination: `${env.API_URL || ''}/data/:path*`,
+          destination: `/api/data/:path*`,
         },
         {
           source: '/api',
-          destination: '/api/backend',
+          destination: `http://localhost:4000/api`,
         },
         // web manifest
         {
@@ -57,8 +52,6 @@ const nextConfig = {
           destination: 'https://plausible.intern.lotta.schule/api/event',
         },
       ],
-      afterFiles: [],
-      fallback: [],
     };
   },
   async redirects() {
@@ -75,15 +68,30 @@ const nextConfig = {
       },
     ];
   },
+  turbopack: {
+    rules: {
+      '*.graphql': {
+        loaders: ['graphql-tag/loader'],
+        as: '*.cjs',
+      },
+    },
+    resolveExtensions: [
+      '.graphql',
+      '.gql',
+      '.js',
+      '.jsx',
+      '.ts',
+      '.tsx',
+      '.css',
+      '.scss',
+    ],
+  },
   sassOptions: {
-    includePaths: [
+    loadPaths: [
       resolve(__dirname, './src/styles/util'),
       resolve(__dirname, '../../libs/hubert/src/theme'),
     ],
     quietDeps: true,
-  },
-  eslint: {
-    dirs: ['src'],
   },
   generateEtags: false,
   webpack(config) {
@@ -108,32 +116,6 @@ const nextConfig = {
 
     return config;
   },
-  publicRuntimeConfig: {
-    appEnvironment: env.APP_ENVIRONMENT || env.NODE_ENV || 'development',
-    imageName: env.IMAGE_NAME || 'test',
-    sentryDsn: env.NEXT_PUBLIC_SENTRY_DSN,
-    tenantSlugOverwrite: env.FORCE_TENANT_SLUG,
-  },
 };
 
-// sentry should be last, wrapping the rest
-export default withSentryConfig(nextConfig, {
-  silent: true,
-
-  disableLogger: true,
-
-  release: { name: env.NEXT_PUBLIC_RELEASE_NAME },
-  org: 'lotta',
-  project: 'web',
-  widenClientFileUpload: true,
-
-  tunnelRoute: '/stry',
-
-  sourcemaps: {
-    deleteSourcemapsAfterUpload: false,
-  },
-
-  reactComponentAnnotation: {
-    enabled: true,
-  },
-});
+export default nextConfig;

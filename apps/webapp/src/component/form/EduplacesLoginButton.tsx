@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 
 import {
@@ -7,6 +9,7 @@ import {
 } from '@lotta-schule/hubert';
 import { useServerData } from 'shared/ServerDataContext';
 import { useTranslation } from 'react-i18next';
+import { redirectTo } from 'util/browserLocation';
 
 import styles from './EduplacesLoginButton.module.scss';
 import clsx from 'clsx';
@@ -37,7 +40,7 @@ export const EduplacesLoginButton = React.memo(
     }, [socketUrl]);
 
     const onClick = React.useCallback(() => {
-      window.location.href = loginUrl;
+      redirectTo(loginUrl);
     }, [loginUrl]);
 
     return (

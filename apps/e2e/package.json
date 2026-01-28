@@ -10,10 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@lhci/cli": "^0.15.1",
-    "@playwright/test": "^1.55.0",
-    "@types/node": "^22.13.8",
-    "playwright": "^1.55.0",
-    "ts-node": "^10.9.2"
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:"
   }
 }
