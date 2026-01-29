@@ -41,7 +41,7 @@ jobs:
       - name: Setup PNPM package manager
         uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 10.14.0
 
       - name: Install node dependencies
         run: pnpm install
