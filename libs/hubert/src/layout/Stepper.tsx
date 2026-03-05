@@ -41,11 +41,9 @@ export const Stepper = React.memo(
           onClick={() => onStep(currentStep - 1)}
           disabled={currentStep <= 0}
           aria-label={'Vorheriger Schritt'}
-          style={{ color: 'rgba(var(--lotta-text-color), 1)' }}
-        >
-          vorheriges
-        </NavigationButton>
-        <div>
+          className={clsx(styles.stepperNavButton)}
+        ></NavigationButton>
+        <div className={clsx(styles.currentStep)}>
           {currentStep + 1} / {maxSteps}
         </div>
         <NavigationButton
@@ -54,10 +52,8 @@ export const Stepper = React.memo(
           onClick={() => onStep(currentStep + 1)}
           disabled={currentStep >= maxSteps - 1}
           aria-label={'Nächster Schritt'}
-          style={{ color: 'rgba(var(--lotta-text-color), 1)' }}
-        >
-          nächstes
-        </NavigationButton>
+          className={clsx(styles.stepperNavButton)}
+        ></NavigationButton>
       </div>
     );
   }
