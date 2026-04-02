@@ -1,3 +1,13 @@
+## 6.1.19 (2026-04-02)
+
+### 🩹 Fixes
+
+- **core:** strip null bytes from metadata ([009766f6](https://github.com/lotta-schule/lotta/commit/009766f6))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
 ## 6.1.18 (2026-01-26)
 
 ### 🩹 Fixes
