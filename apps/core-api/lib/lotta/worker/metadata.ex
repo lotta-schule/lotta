@@ -85,13 +85,9 @@ defmodule Lotta.Worker.Metadata do
   def sanitize_values(list) when is_list(list), do: Enum.map(list, &sanitize_values/1)
 
   def sanitize_values(value) when is_binary(value) do
-    if String.contains?(value, "\u0000") do
-      value
-      |> to_charlist()
-      |> Enum.map(&Integer.to_string/1)
-    else
-      String.replace_invalid(value)
-    end
+    value
+    |> String.replace("\u0000", "")
+    |> String.replace_invalid()
   end
 
   def sanitize_values(value), do: value
