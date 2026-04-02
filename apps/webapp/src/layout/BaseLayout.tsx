@@ -1,9 +1,16 @@
 import * as React from 'react';
 import { Navbar } from './navigation/Navbar';
-import { Box, NoSsr, ScrollToTopButton } from '@lotta-schule/hubert';
+import {
+  Box,
+  NoSsr,
+  PillButton,
+  ScrollToTopButton,
+} from '@lotta-schule/hubert';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { TenantGlobalStyleTag } from './TenantGlobalStyleTag';
 import { useTenant } from 'util/tenant';
+import { faStopwatch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 
 import styles from './BaseLayout.module.scss';
@@ -17,6 +24,14 @@ export const BaseLayout = React.memo(({ children }: BaseLayoutProps) => {
   return (
     <Box className={styles.root}>
       {tenant && <TenantGlobalStyleTag tenant={tenant} />}
+      <div className={styles.counter}>
+        <PillButton
+          className={styles.pillButton}
+          icon={<FontAwesomeIcon icon={faStopwatch} />}
+        >
+          <div className={styles.count}>Noch 84 Tage</div>
+        </PillButton>
+      </div>
       <header className={styles.header}>
         <div className={styles.logoGridItem}>
           {tenant.logoImageFile && (
