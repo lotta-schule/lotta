@@ -6,7 +6,8 @@ defmodule CockpitWeb.Live.InvoiceLive do
       schema: Lotta.Billings.Invoice,
       repo: Lotta.Repo
     ],
-    layout: {CockpitWeb.Layouts, :admin}
+    layout: {CockpitWeb.Layouts, :admin},
+    init_order: %{by: :issued_at, direction: :desc}
 
   import Ecto.Query
 
