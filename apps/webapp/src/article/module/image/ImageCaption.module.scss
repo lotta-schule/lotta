@@ -3,6 +3,7 @@
   display: inline-flex;
   justify-content: space-between;
   width: 100%;
+  max-width: 108vh;
 }
 
 .figcaption {
@@ -10,7 +11,6 @@
   border-bottom: 1px solid rgb(var(--lotta-text-color));
   width: 50%;
   min-width: min(25em, 100%);
-  max-width: 100%;
   &[contenteditable] {
     width: 100%;
   }
