@@ -50,6 +50,36 @@ defmodule LottaWeb.OAuthControllerTest do
         assert conn.cookies["ep_login_state"]
       end
     end
+
+    test "sets mobile_app cookie when x-lotta-app-version header is present", %{conn: conn} do
+      with_mock(AuthCodeStrategy,
+        authorize_url!: fn _opts -> "https://eduplaces.com/oauth/authorize?state=some-state" end
+      ) do
+        conn =
+          conn
+          |> put_req_header("x-lotta-app-version", "1.0.0")
+          |> get("/auth/oauth/eduplaces/login")
+          |> fetch_cookies()
+
+        assert %{"mobile_app" => %{value: "true", http_only: true, same_site: "Lax"}} =
+                 get_resp_cookies(conn)
+      end
+    end
+
+    test "does not set mobile_app cookie when x-lotta-app-version header is absent", %{
+      conn: conn
+    } do
+      with_mock(AuthCodeStrategy,
+        authorize_url!: fn _opts -> "https://eduplaces.com/oauth/authorize?state=some-state" end
+      ) do
+        conn =
+          conn
+          |> get("/auth/oauth/eduplaces/login")
+          |> fetch_cookies()
+
+        refute Map.has_key?(get_resp_cookies(conn), "mobile_app")
+      end
+    end
   end
 
   describe "GET /auth/:provider/callback" do
@@ -285,6 +315,102 @@ defmodule LottaWeb.OAuthControllerTest do
 
         assert html_response(conn, 403) =~
                  "Nur eine Lehrkraft darf Lotta für eine Schule einrichten"
+      end
+    end
+
+    test "redirects to lotta:// URI with access and refresh tokens when mobile_app cookie is set",
+         %{conn: conn, tenant: tenant} do
+      user_info = %UserInfo{
+        id: "user123",
+        username: "Teacher User",
+        groups: [],
+        role: :teacher,
+        school: %SchoolInfo{
+          id: "school123",
+          name: "Test School",
+          official_id: "TS123",
+          schooling_level: "secondary"
+        }
+      }
+
+      tenant
+      |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
+      |> Repo.update!()
+
+      user = fixture(:registered_user, %{email: "hedwig@hogwarts.de", eduplaces_id: user_info.id})
+
+      with_mock(AuthCodeStrategy,
+        get_token!: fn _params -> {"fake_token", user_info} end
+      ) do
+        conn =
+          conn
+          |> put_req_cookie("mobile_app", "true")
+          |> put_req_cookie("ep_login_state", "valid_state")
+          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+
+        redirect_uri = redirected_to(conn)
+
+        %URI{scheme: "lotta", host: slug, path: "/auth/callback", query: query} =
+          URI.parse(redirect_uri)
+
+        assert slug == tenant.slug
+
+        query_params = URI.decode_query(query)
+
+        tenant_id = tenant.id
+        user_id = to_string(user.id)
+
+        assert {:ok, %{"tid" => ^tenant_id, "sub" => ^user_id, "typ" => "access"}} =
+                 AccessToken.decode_and_verify(query_params["token"])
+
+        assert {:ok, %{"tid" => ^tenant_id, "sub" => ^user_id, "typ" => "refresh"}} =
+                 AccessToken.decode_and_verify(query_params["refresh_token"], %{
+                   "typ" => "refresh"
+                 })
+
+        assert query_params["return_url"] == "/"
+      end
+    end
+
+    test "does not include refresh_token in redirect when mobile_app cookie is not set", %{
+      conn: conn,
+      tenant: tenant
+    } do
+      user_info = %UserInfo{
+        id: "user123",
+        username: "Teacher User",
+        groups: [],
+        role: :teacher,
+        school: %SchoolInfo{
+          id: "school123",
+          name: "Test School",
+          official_id: "TS123",
+          schooling_level: "secondary"
+        }
+      }
+
+      tenant
+      |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
+      |> Repo.update!()
+
+      _user =
+        fixture(:registered_user, %{email: "hedwig@hogwarts.de", eduplaces_id: user_info.id})
+
+      with_mock(AuthCodeStrategy,
+        get_token!: fn _params -> {"fake_token", user_info} end
+      ) do
+        conn =
+          conn
+          |> put_req_cookie("ep_login_state", "valid_state")
+          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+
+        redirect_uri = redirected_to(conn)
+        query_params = redirect_uri |> URI.parse() |> Map.get(:query) |> URI.decode_query()
+
+        refute Map.has_key?(query_params, "refresh_token")
+        assert Map.has_key?(query_params, "token")
+
+        assert {:ok, %{"typ" => "hisec"}} = AccessToken.decode_and_verify(query_params["token"])
       end
     end
   end
