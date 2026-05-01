@@ -236,7 +236,7 @@ defmodule CockpitWeb.Live.InvoiceLiveTest do
 
       # Verify iframe has correct styling
       assert html =~
-               ~s|style="width: min(80%, 794px); aspect-ratio: 210 / 297; border: none; zoom: .75; padding: 1em;"|
+               ~s|style="width: min(80%, 794px); aspect-ratio: 1 / 1.414; border: none; zoom: .75; padding: 1em;"|
 
       # Verify iframe has onLoad handler
       assert html =~
