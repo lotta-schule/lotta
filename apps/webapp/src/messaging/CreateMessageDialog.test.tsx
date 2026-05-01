@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { UserModel } from 'model';
-import { render, waitFor, userEvent, within } from 'test/util';
-import { SomeUser, SomeUserin, schuelerGroup } from 'test/fixtures';
-import { CreateMessageDialog } from './CreateMessageDialog';
+import { UserModel } from '#/model/index.js';
+import { render, waitFor, userEvent, within } from '#/test/util.js';
+import { SomeUser, SomeUserin, schuelerGroup } from '#/test/fixtures/index.js';
+import { CreateMessageDialog } from './CreateMessageDialog.js';
 
-import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
+import SearchUsersQuery from '#/api/query/SearchUsersQuery.graphql';
 
 const searchUsersMock = (searchTerm: string, results: UserModel[]) =>
   new Array(searchTerm.length).fill('').map((_, i) => ({

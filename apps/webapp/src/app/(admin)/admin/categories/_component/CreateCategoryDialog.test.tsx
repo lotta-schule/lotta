@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { render, screen, waitFor, within, userEvent } from 'test/util';
-import { FaecherCategory, SomeUser } from 'test/fixtures';
-import { CreateCategoryDialog } from './CreateCategoryDialog';
-import { CategoryModel } from 'model';
-import CreateCategoryMutation from 'api/mutation/CreateCategoryMutation.graphql';
+import { render, screen, waitFor, within, userEvent } from '#/test/util.js';
+import { FaecherCategory, SomeUser } from '#/test/fixtures/index.js';
+import { CreateCategoryDialog } from './CreateCategoryDialog.js';
+import { CategoryModel } from '#/model/index.js';
+import CreateCategoryMutation from '#/api/mutation/CreateCategoryMutation.graphql';
 
 const createMocks = (props?: Partial<CategoryModel>) => [
   {

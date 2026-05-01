@@ -6,9 +6,9 @@ import {
   TestBrowserWrapperProps,
   userEvent,
   waitFor,
-} from '../test-utils';
-import { NodeList, NodeListProps } from './NodeList';
-import { isDirectoryNode } from './utils';
+} from '../test-utils.js';
+import { NodeList, NodeListProps } from './NodeList.js';
+import { isDirectoryNode } from './utils.js';
 
 const defaultPath = fixtures.getPathForNode('8');
 const defaultNodes = fixtures.getChildNodes('8');

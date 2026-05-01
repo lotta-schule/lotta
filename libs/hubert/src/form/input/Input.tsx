@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Textarea, TextareaProps } from './Textarea';
+import { Textarea, TextareaProps } from './Textarea.js';
 import clsx from 'clsx';
 
 import styles from './Input.module.scss';

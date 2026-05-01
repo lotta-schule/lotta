@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { skipToken, useMutation, useQuery } from '@apollo/client/react';
 import { useTranslation } from 'react-i18next';
-import { ID, UserGroupModel, UserModel } from 'model';
+import { ID, UserGroupModel, UserModel } from '#/model/index.js';
 import {
   Button,
   Dialog,
@@ -12,12 +12,12 @@ import {
   LinearProgress,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { GroupSelect } from 'shared/edit/GroupSelect';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
-import { DeleteUserDialog } from './DeleteUserDialog';
+import { GroupSelect } from '#/shared/edit/GroupSelect.js';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
+import { DeleteUserDialog } from './DeleteUserDialog.js';
 
-import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
-import GetUserQuery from 'api/query/GetUserQuery.graphql';
+import UpdateUserMutation from '#/api/mutation/UpdateUserMutation.graphql';
+import GetUserQuery from '#/api/query/GetUserQuery.graphql';
 
 import styles from './EditUserPermissionDialog.module.scss';
 

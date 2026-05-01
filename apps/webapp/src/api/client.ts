@@ -3,7 +3,7 @@ import {
   ApolloClient,
   registerApolloClient,
 } from '@apollo/client-integration-nextjs';
-import { createRSCClient } from './apollo/client-rsc';
+import { createRSCClient } from './apollo/client-rsc.js';
 
 const registeredApolloClient = registerApolloClient(createRSCClient);
 

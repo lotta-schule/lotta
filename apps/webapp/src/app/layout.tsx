@@ -8,12 +8,12 @@ import {
   GlobalStyles,
   HubertProvider,
 } from '@lotta-schule/hubert';
-import { TenantNotFoundErrorPage } from 'layout/error/TenantNotFoundErrorPage';
-import { fonts } from 'styles/fonts';
-import { loadTenant } from 'loader';
-import { TranslationsProvider } from 'i18n/client';
-import { TenantGlobalStyleTag } from 'layout/TenantGlobalStyleTag';
-import { ServerDataContextProvider } from 'shared/ServerDataContext';
+import { TenantNotFoundErrorPage } from '#/layout/error/TenantNotFoundErrorPage.js';
+import { fonts } from '#/styles/fonts.js';
+import { loadTenant } from '#/loader/index.js';
+import { TranslationsProvider } from '#/i18n/client.js';
+import { TenantGlobalStyleTag } from '#/layout/TenantGlobalStyleTag.js';
+import { ServerDataContextProvider } from '#/shared/ServerDataContext.js';
 
 faConfig.autoAddCss = false;
 

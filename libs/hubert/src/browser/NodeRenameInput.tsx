@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { BrowserPath, useBrowserState } from './BrowserStateContext';
-import { Input } from '../form';
-import { CircularProgress } from '../progress';
-import { Popover, PopoverContent } from '../popover';
-import { ErrorMessage } from '../message';
+import { BrowserPath, useBrowserState } from './BrowserStateContext.js';
+import { Input } from '../form/index.js';
+import { CircularProgress } from '../progress/index.js';
+import { Popover, PopoverContent } from '../popover/index.js';
+import { ErrorMessage } from '../message/index.js';
 
 import styles from './NodeRenameInput.module.scss';
 

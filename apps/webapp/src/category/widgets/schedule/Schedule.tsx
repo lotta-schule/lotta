@@ -19,18 +19,18 @@ import {
   faChevronLeft,
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import { skipToken, useApolloClient, useQuery } from '@apollo/client/react';
-import { WidgetModel, ScheduleResult, WidgetModelType } from 'model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { SelectCoursesDialog } from './SelectCoursesDialog';
+import { WidgetModel, ScheduleResult, WidgetModelType } from '#/model/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { SelectCoursesDialog } from './SelectCoursesDialog.js';
 import Link from 'next/link';
 
 import clsx from 'clsx';
 
 import styles from './Schedule.module.scss';
 
-import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';
+import GetScheduleQuery from '#/api/query/GetScheduleQuery.graphql';
 
 export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { CategoryModel } from 'model';
+import { CategoryModel } from '#/model/index.js';
 
 const CategoriesContext = React.createContext<CategoryModel[]>([]);
 

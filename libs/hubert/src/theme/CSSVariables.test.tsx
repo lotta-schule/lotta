@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSVariables } from './CSSVariables';
+import { CSSVariables } from './CSSVariables.js';
 import { render } from '@testing-library/react';
 import { DefaultThemes } from '@lotta-schule/theme';
 

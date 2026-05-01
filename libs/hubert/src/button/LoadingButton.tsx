@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { Button, ButtonProps } from './Button';
-import { CircularProgress } from '../progress';
+import { Button, ButtonProps } from './Button.js';
+import { CircularProgress } from '../progress/index.js';
 import { motion } from 'framer-motion';
-import { Check, Close } from '../icon';
+import { Check, Close } from '../icon/index.js';
 import clsx from 'clsx';
 
 import styles from './LoadingButton.module.scss';

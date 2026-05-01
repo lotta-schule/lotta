@@ -1,18 +1,19 @@
-import { loadFeedback } from './loadFeedback';
-import { getClient } from 'api/client';
+import { loadFeedback } from './loadFeedback.js';
+import { getClient } from '#/api/client.js';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { LocalState } from '@apollo/client/local-state';
 import { Defer20220824Handler } from '@apollo/client/incremental';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
-import GetFeedbackQuery from 'api/query/GetFeedbackQuery.graphql';
+import GetFeedbackQuery from '#/api/query/GetFeedbackQuery.graphql';
 
-vi.mock('api/client');
+vi.mock('#/api/client.js');
 vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
   ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
-vi.mock('api/apollo/client-rsc', () => ({
+vi.mock('#/api/apollo/client-rsc.js', () => ({
   createRSCClient: vi.fn(),
 }));
 
@@ -25,6 +26,13 @@ describe('loadFeedback', () => {
       link: mockLink,
       cache: new InMemoryCache(),
       incrementalHandler: new Defer20220824Handler(),
+
+      /*
+      Inserted by Apollo Client 3->4 migration codemod.
+      If you are not using the `@client` directive in your application,
+      you can safely remove this option.
+      */
+      localState: new LocalState({}),
     });
   };
 

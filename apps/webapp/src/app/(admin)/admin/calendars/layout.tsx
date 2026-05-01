@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AdminPage } from '../_component/AdminPage';
+import { AdminPage } from '../_component/AdminPage.js';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 
 async function CalendarsLayout({

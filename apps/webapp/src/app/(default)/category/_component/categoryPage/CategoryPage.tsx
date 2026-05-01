@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { WidgetsList } from '../widgetsList/WidgetsList';
-import { ArticlePreview } from 'article/preview';
-import { CategoryHead } from './CategoryHead';
-import { ResultOf } from 'api/graphql';
-import { Header, Main, Sidebar } from 'layout';
-import { MoreArticlesLoader } from './MoreArticlesLoader';
-import { CategoryModel } from 'model';
-import { GET_ARTICLES_QUERY } from './_graphql/GET_ARTICLES_QUERY';
+import { WidgetsList } from '../widgetsList/WidgetsList.js';
+import { ArticlePreview } from '#/article/preview/index.js';
+import { ResultOf } from '#/api/graphql.js';
+import { Header, Main, Sidebar } from '#/layout/index.js';
+import { MoreArticlesLoader } from './MoreArticlesLoader.js';
+import { CategoryModel } from '#/model/index.js';
+import { GET_ARTICLES_QUERY } from './_graphql/GET_ARTICLES_QUERY.js';
 import clsx from 'clsx';
 
 import styles from './CategoryPage.module.scss';
@@ -24,7 +23,6 @@ export const CategoryPage = React.memo(
 
     return (
       <>
-        <CategoryHead category={category} />
         <Main>
           <Header bannerImage={category.bannerImageFile || undefined}>
             <h2 data-testid="title">{category.title}</h2>
@@ -50,17 +48,17 @@ export const CategoryPage = React.memo(
                 <MoreArticlesLoader
                   categoryId={category.id}
                   layout={category.layoutName ?? 'standard'}
-                  lastArticleDate={initialArticles.at(-1)?.updatedAt}
+                  lastArticleDate={initialArticles?.at(-1)?.updatedAt}
                 />
               </React.Suspense>
             )}
           </div>
         </Main>
         <React.Suspense
-          fallback={<Sidebar isEmpty={!category.widgets.length} />}
+          fallback={<Sidebar isEmpty={!category.widgets?.length} />}
         >
-          <Sidebar isEmpty={!category.widgets.length}>
-            {!!category.widgets.length && (
+          <Sidebar isEmpty={!category.widgets?.length}>
+            {!!category.widgets?.length && (
               <WidgetsList categoryId={category.id} />
             )}
           </Sidebar>

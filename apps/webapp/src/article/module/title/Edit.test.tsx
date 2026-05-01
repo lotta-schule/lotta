@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from 'test/util';
-import { Klausurenplan } from 'test/fixtures';
-import { Edit } from './Edit';
+import { render, userEvent, waitFor } from '#/test/util.js';
+import { Klausurenplan } from '#/test/fixtures/index.js';
+import { Edit } from './Edit.js';
 
 const titleContentModule = Klausurenplan.contentModules[0];
 

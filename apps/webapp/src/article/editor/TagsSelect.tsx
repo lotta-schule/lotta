@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Tag, ComboBox } from '@lotta-schule/hubert';
 import { useQuery } from '@apollo/client/react';
 
-import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
+import GetTagsQuery from '#/api/query/GetTagsQuery.graphql';
 
 import styles from './TagsSelect.module.scss';
 

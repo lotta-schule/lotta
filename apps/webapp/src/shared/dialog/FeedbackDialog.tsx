@@ -10,10 +10,10 @@ import {
 } from '@lotta-schule/hubert';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client/react';
-import { Icon } from 'shared/Icon';
-import { FeedbackModel } from 'model';
+import { Icon } from '#/shared/Icon.js';
+import { FeedbackModel } from '#/model/index.js';
 
-import CreateFeedbackMutation from 'api/mutation/CreateFeedbackMutation.graphql';
+import CreateFeedbackMutation from '#/api/mutation/CreateFeedbackMutation.graphql';
 
 export interface FeedbackDialogProps {
   isOpen: boolean;

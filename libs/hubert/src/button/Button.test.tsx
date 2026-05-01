@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Close } from '../icon';
-import { render, within } from '../test-utils';
-import { Button } from './Button';
+import { Close } from '../icon/index.js';
+import { render, within } from '../test-utils.js';
+import { Button } from './Button.js';
 
 describe('shared/Button', () => {
   it('should render Button with label', () => {

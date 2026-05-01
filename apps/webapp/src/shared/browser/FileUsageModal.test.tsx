@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor, within, userEvent } from 'test/util';
+import { render, waitFor, within, userEvent } from '#/test/util.js';
 import { MockLink } from '@apollo/client/testing';
 import {
   ComputerExperten,
@@ -7,10 +7,10 @@ import {
   SomeUser,
   imageFile,
   tenant,
-} from 'test/fixtures';
-import { FileUsageModal } from './FileUsageModal';
+} from '#/test/fixtures/index.js';
+import { FileUsageModal } from './FileUsageModal.js';
 
-import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
+import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';
 
 describe('FileUsageModal Component', () => {
   const usages = [

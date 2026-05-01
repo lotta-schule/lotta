@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
@@ -9,9 +9,9 @@ import {
   ErrorMessage,
 } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client/react';
-import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { redirectTo } from 'util/browserLocation';
+import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { redirectTo } from '#/util/browserLocation.js';
 
 import styles from '../DeleteUserProfilePage.module.scss';
 

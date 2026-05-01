@@ -1,12 +1,12 @@
 'use client';
 import * as React from 'react';
-import { Main } from 'layout';
+import { Main } from '#/layout/index.js';
 import { useRouter } from 'next/navigation';
 import { Box, Button, ErrorMessage, Input, Label } from '@lotta-schule/hubert';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import Link from 'next/link';
 
-import ResetPasswordMutation from 'api/mutation/ResetPasswordMutation.graphql';
+import ResetPasswordMutation from '#/api/mutation/ResetPasswordMutation.graphql';
 
 import styles from './RequestResetPage.module.scss';
 

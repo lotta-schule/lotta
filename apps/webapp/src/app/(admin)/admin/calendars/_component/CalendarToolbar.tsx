@@ -18,13 +18,13 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ToolbarProps } from 'react-big-calendar';
 import { useQuery } from '@apollo/client/react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import { de } from 'date-fns/locale';
 import { format } from 'date-fns';
-import { CreateEventDialog } from './CreateEventDialog';
-import { ManageCalendarsDialog } from './ManageCalendarsDialog';
-import { CalendarContext } from './CalendarContext';
-import { GET_CALENDARS } from '../_graphql';
+import { CreateEventDialog } from './CreateEventDialog.js';
+import { ManageCalendarsDialog } from './ManageCalendarsDialog.js';
+import { CalendarContext } from './CalendarContext.js';
+import { GET_CALENDARS } from '../_graphql/index.js';
 import clsx from 'clsx';
 
 import styles from './CalendarToolbar.module.scss';

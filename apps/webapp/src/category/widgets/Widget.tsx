@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { WidgetModel, WidgetModelType } from 'model';
-import { UserNavigationMobile } from 'layout/navigation/UserNavigationMobile';
+import { WidgetModel, WidgetModelType } from '#/model/index.js';
+import { UserNavigationMobile } from '#/layout/navigation/UserNavigationMobile.js';
 import { Box } from '@lotta-schule/hubert';
-import { Calendar } from './calendar/Calendar';
-import { Schedule } from './schedule/Schedule';
-import { IFrame } from './iframe/IFrame';
+import { Calendar } from './calendar/Calendar.js';
+import { Schedule } from './schedule/Schedule.js';
+import { IFrame } from './iframe/IFrame.js';
 
 import styles from './Widget.module.scss';
 

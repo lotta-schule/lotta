@@ -1,6 +1,6 @@
 import { addons, types } from 'storybook/manager-api';
-import { ADDON_ID, PANEL_ID } from './lib/constant';
-import { Panel } from './lib/addon/Panel';
+import { ADDON_ID, PANEL_ID } from './lib/constant/index.js';
+import { Panel } from './lib/addon/Panel.js';
 
 const addon = () => {
   // Register the tool

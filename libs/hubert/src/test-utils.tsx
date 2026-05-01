@@ -2,11 +2,11 @@ import * as React from 'react';
 import { DefaultThemes } from '@lotta-schule/theme';
 import { render, type RenderOptions } from '@testing-library/react';
 import { MotionConfig } from 'framer-motion';
-import { HubertProvider } from './HubertProvider';
-import { GlobalStyles } from './theme';
-import { BrowserNode, BrowserState, NodeList } from 'browser';
-import { BrowserStateContext } from 'browser/BrowserStateContext';
-import * as fixtures from 'test-fixtures';
+import { HubertProvider } from './HubertProvider.js';
+import { GlobalStyles } from './theme/index.js';
+import { BrowserNode, BrowserState, NodeList } from '#/browser';
+import { BrowserStateContext } from '#/browser/BrowserStateContext';
+import * as fixtures from '#/test-fixtures';
 
 const theme = DefaultThemes.standard;
 
@@ -133,4 +133,4 @@ export const TestBrowserWrapper = ({
 export const waitForPosition = () => React.act(async () => {});
 
 export { userEvent } from '@vitest/browser/context';
-export * as fixtures from './test-fixtures';
+export * as fixtures from './test-fixtures.js';

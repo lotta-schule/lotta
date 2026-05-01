@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from 'test/util';
-import { ContentModuleModel, ContentModuleType } from 'model';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { ContentModuleModel, ContentModuleType } from '#/model/index.js';
 import {
   Klausurenplan,
   ComputerExperten,
   SomeUser,
   SomeUserin,
-} from 'test/fixtures';
-import { ContentModule } from './ContentModule';
+} from '#/test/fixtures/index.js';
+import { ContentModule } from './ContentModule.js';
 
 import GetContentModuleResults from '../../api/query/GetContentModuleResults.graphql';
 

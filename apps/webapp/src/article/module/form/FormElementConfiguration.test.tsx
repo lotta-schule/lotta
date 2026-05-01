@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, userEvent } from 'test/util';
-import { FormElementConfiguration } from './FormElementConfiguration';
-import { FormElement } from './Form';
+import { render, userEvent } from '#/test/util.js';
+import { FormElementConfiguration } from './FormElementConfiguration.js';
+import { FormElement } from './Form.js';
 
 describe('shared/article/module/form/FormElementConfiguration', () => {
   describe('configuring an input element', () => {

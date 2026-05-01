@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from 'test/util';
-import { SomeUser } from 'test/fixtures';
-import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { SomeUser } from '#/test/fixtures/index.js';
+import { RequestHisecTokenDialog } from './RequestHisecTokenDialog.js';
 
-import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
+import RequestHisecTokenMutation from '#/api/mutation/RequestHisecTokenMutation.graphql';
 
 describe('shared/dialog/RequestHisecToken', () => {
   describe('show/hide', () => {

@@ -21,9 +21,12 @@ import {
   GET_CALENDAR_EVENTS,
   GET_CALENDARS,
   RECURRENCE_FRAGMENT,
-} from '../_graphql';
+} from '../_graphql/index.js';
 import { FragmentOf, ResultOf } from 'gql.tada';
-import { EditEventFormContent, EditEventInput } from './EditEventFormContent';
+import {
+  EditEventFormContent,
+  EditEventInput,
+} from './EditEventFormContent.js';
 
 export type CreateEventDialogProps = {
   isOpen: boolean;

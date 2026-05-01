@@ -4,12 +4,12 @@ import {
   GangamStyleWidget,
   VPLehrerWidget,
   VPSchuelerWidget,
-} from 'test/fixtures';
-import { render, waitFor, userEvent } from 'test/util';
-import { WidgetsNavigation } from './WidgetsNavigation';
-import { MockRouter } from 'test/mocks';
+} from '#/test/fixtures/index.js';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { WidgetsNavigation } from './WidgetsNavigation.js';
+import { MockRouter } from '#/test/mocks/index.js';
 
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 
 const widgets = [
   GangamStyleWidget,

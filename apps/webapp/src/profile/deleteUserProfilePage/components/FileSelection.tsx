@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Checkbox, Table, Tooltip } from '@lotta-schule/hubert';
-import { Article, Category } from 'util/model';
+import { Article, Category } from '#/util/model/index.js';
 import Link from 'next/link';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { RelevantFilesInUsage } from '..';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { RelevantFilesInUsage } from '../index.js';
 
 export interface FileSelectionProps {
   files: RelevantFilesInUsage;

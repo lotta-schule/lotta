@@ -5,11 +5,11 @@ import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
   userEvent,
-} from '../test-utils';
+} from '../test-utils.js';
 import {
   SearchResultNodeList,
   SearchResultNodeListProps,
-} from './SearchResultNodeList';
+} from './SearchResultNodeList.js';
 
 const defaultNodes = [
   fixtures.getNode('8'),

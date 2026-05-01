@@ -1,5 +1,5 @@
-import { Collapse } from './Collapse';
-import { render, waitFor } from '../test-utils';
+import { Collapse } from './Collapse.js';
+import { render, waitFor } from '../test-utils.js';
 import styles from './Collapse.module.scss';
 
 const Content = () => (

@@ -2,14 +2,14 @@ import * as AbsintheSocket from '@absinthe/socket';
 import { Mock, MockedFunction } from 'vitest';
 import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
 import { Socket as PhoenixSocket } from 'phoenix';
-import { createWebsocketLink } from './websocketLink';
-import { isBrowser } from 'util/isBrowser';
-import { TenantModel } from 'model';
+import { createWebsocketLink } from './websocketLink.js';
+import { isBrowser } from '#/util/isBrowser.js';
+import { TenantModel } from '#/model/index.js';
 
 vi.mock('@absinthe/socket');
 vi.mock('@absinthe/socket-apollo-link');
 vi.mock('phoenix');
-vi.mock('util/isBrowser');
+vi.mock('#/util/isBrowser.js');
 
 const isBrowserMock = isBrowser as MockedFunction<typeof isBrowser>;
 

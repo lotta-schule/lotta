@@ -1,11 +1,16 @@
 import * as React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { render, waitFor, userEvent } from 'test/util';
-import { SomeUser, adminGroup, lehrerGroup, elternGroup } from 'test/fixtures';
-import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import {
+  SomeUser,
+  adminGroup,
+  lehrerGroup,
+  elternGroup,
+} from '#/test/fixtures/index.js';
+import { EditUserPermissionsDialog } from './EditUserPermissionsDialog.js';
 
-import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
-import GetUserQuery from 'api/query/GetUserQuery.graphql';
+import UpdateUserMutation from '#/api/mutation/UpdateUserMutation.graphql';
+import GetUserQuery from '#/api/query/GetUserQuery.graphql';
 
 /* See https://github.com/lotta-schule/lotta/issues/528 */
 /* This component must vanish */

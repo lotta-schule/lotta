@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from 'react';
-import { type Tenant } from 'util/tenant';
+import React from 'react';
+import { type Tenant } from '#/util/tenant/index.js';
 
 const ServerDataContext = React.createContext({
   tenant: null as Tenant | null,
@@ -17,13 +17,8 @@ export const ServerDataContextProvider = ({
   socketUrl,
   children,
 }: ServerDataContextProviderProps) => {
-  const value = React.useMemo(
-    () => ({ tenant, socketUrl }),
-    [tenant, socketUrl]
-  );
-
   return (
-    <ServerDataContext.Provider value={value}>
+    <ServerDataContext.Provider value={{ socketUrl, tenant }}>
       {children}
     </ServerDataContext.Provider>
   );

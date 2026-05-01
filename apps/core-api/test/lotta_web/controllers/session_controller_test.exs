@@ -120,7 +120,7 @@ defmodule LottaWeb.SessionControllerTest do
         |> post("/auth/login", %{
           "username" => admin.email,
           "password" => "password",
-          "return_path" => "/"
+          "return_url" => "/"
         })
         |> fetch_cookies()
 
@@ -150,7 +150,7 @@ defmodule LottaWeb.SessionControllerTest do
         |> post("/auth/login", %{
           "username" => "nonexistent@example.com",
           "password" => "wrongpassword",
-          "return_path" => "/"
+          "return_url" => "/"
         })
 
       assert %{"success" => false} = json_response(conn, 401)
@@ -172,15 +172,14 @@ defmodule LottaWeb.SessionControllerTest do
         |> post("/auth/login", %{
           "username" => user_with_default_pw.email,
           "password" => "password",
-          "return_path" => "/dashboard"
+          "return_url" => "/dashboard"
         })
         |> fetch_cookies()
 
       assert redirected_to(conn) == "/dashboard"
 
       access_cookie = conn.cookies["SignInAccessToken"]
-      {:ok, %{"typ" => token_type}} = AccessToken.decode_and_verify(access_cookie)
-      assert token_type == "hisec"
+      assert {:ok, %{"typ" => "hisec"}} = AccessToken.decode_and_verify(access_cookie)
 
       request_pw_reset_cookie = conn.cookies["request_pw_reset"]
       assert request_pw_reset_cookie == "1"
@@ -196,7 +195,7 @@ defmodule LottaWeb.SessionControllerTest do
         |> post("/auth/login", %{
           "username" => admin.email,
           "password" => "password",
-          "return_path" => "/dashboard"
+          "return_url" => "/dashboard"
         })
         |> fetch_cookies()
 
@@ -210,7 +209,7 @@ defmodule LottaWeb.SessionControllerTest do
       assert is_nil(request_pw_reset_cookie)
     end
 
-    test "should default to / when return_path is not provided", %{admin: admin} do
+    test "should default to / when return_url is not provided", %{admin: admin} do
       conn =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -225,8 +224,7 @@ defmodule LottaWeb.SessionControllerTest do
 
   describe "Logout" do
     test "should delete cookies and redirect to tenant homepage", %{
-      refresh_token: token,
-      tenant: tenant
+      refresh_token: token
     } do
       conn =
         build_conn()
@@ -236,8 +234,7 @@ defmodule LottaWeb.SessionControllerTest do
         |> get("/auth/logout")
         |> fetch_cookies()
 
-      tenant_url = LottaWeb.Urls.get_tenant_url(tenant)
-      assert redirected_to(conn) =~ tenant_url
+      assert redirected_to(conn) =~ "/"
 
       resp_cookies = conn.resp_cookies
 

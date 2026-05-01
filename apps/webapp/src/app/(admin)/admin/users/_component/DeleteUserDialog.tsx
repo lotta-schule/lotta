@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArticleModel, UserModel } from 'model';
+import { ArticleModel, UserModel } from '#/model/index.js';
 import {
   Button,
   CircularProgress,
@@ -9,11 +9,11 @@ import {
   ErrorMessage,
 } from '@lotta-schule/hubert';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { Article } from 'util/model';
+import { Article } from '#/util/model/index.js';
 import Link from 'next/link';
-import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries';
+import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries.js';
 
-import GetArticlesWithUserFiles from 'api/query/GetArticlesWithUserFiles.graphql';
+import GetArticlesWithUserFiles from '#/api/query/GetArticlesWithUserFiles.graphql';
 
 enum DeleteUserDialogSteps {
   Start,

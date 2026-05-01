@@ -11,9 +11,9 @@ import {
   Label,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { useGetFieldError } from 'util/useGetFieldError';
+import { useGetFieldError } from '#/util/useGetFieldError.js';
 
-import RegisterMutation from 'api/mutation/RegisterMutation.graphql';
+import RegisterMutation from '#/api/mutation/RegisterMutation.graphql';
 
 import styles from './RegisterDialog.module.scss';
 

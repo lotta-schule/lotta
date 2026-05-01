@@ -1,13 +1,12 @@
 'use client'; // Error boundaries must be Client Components
 
-import * as React from 'react';
 import {
   HubertProvider,
   Button,
   GlobalStyles,
   DefaultThemes,
 } from '@lotta-schule/hubert';
-import { ServerDownErrorPage } from 'layout/error/ServerDownErrorPage';
+import { ServerDownErrorPage } from '#/layout/error/ServerDownErrorPage.js';
 
 export default function GlobalError({
   error,

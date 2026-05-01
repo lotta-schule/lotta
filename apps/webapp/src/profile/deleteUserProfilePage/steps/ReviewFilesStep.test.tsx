@@ -1,9 +1,13 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from 'test/util';
-import { ReviewFilesStep } from './ReviewFilesStep';
-import { GET_RELEVANT_FILES_IN_USAGE } from '../queries';
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import { documentFile, imageFile, otherImageFile } from 'test/fixtures';
+import { render, userEvent, waitFor } from '#/test/util.js';
+import { ReviewFilesStep } from './ReviewFilesStep.js';
+import { GET_RELEVANT_FILES_IN_USAGE } from '../queries.js';
+import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import {
+  documentFile,
+  imageFile,
+  otherImageFile,
+} from '#/test/fixtures/index.js';
 
 const createMockFile = (id: string, filename: string) => ({
   id,

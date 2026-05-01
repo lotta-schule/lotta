@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { SomeUser, SomeUserin } from 'test/fixtures';
-import { render, userEvent, waitFor } from 'test/util';
-import { AuthorAvatarsList } from './AuthorAvatarsList';
+import { SomeUser, SomeUserin } from '#/test/fixtures/index.js';
+import { render, userEvent, waitFor } from '#/test/util.js';
+import { AuthorAvatarsList } from './AuthorAvatarsList.js';
 
 describe('AuthorAvatarsList', () => {
   const users = [SomeUser, SomeUserin];

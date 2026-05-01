@@ -80,32 +80,28 @@ defmodule Lotta.Storage do
           do: [Metadata.await_completion_task(metadata_job)],
           else: []
 
-      file
-      |> AvailableFormats.get_immediate_formats()
-      # A good place for a metadata job
-      |> Enum.map(&Conversion.get_or_create_conversion_job(file, &1))
-      |> Enum.filter(&(elem(&1, 0) == :ok))
-      # they their own timeout
-      |> then(fn await_conversion_tasks ->
-        await_conversion_tasks =
-          if Keyword.get(opts, :skip_wait, false) do
-            []
-          else
-            await_conversion_tasks
-            |> Enum.map(&Conversion.await_completion_task(elem(&1, 1)))
-          end
+      skip_wait = Keyword.get(opts, :skip_wait, false)
 
-        await_conversion_tasks ++ await_metadata_tasks
-      end)
-      |> then(fn tasks ->
-        try do
-          Task.await_many(tasks, :timer.seconds(120))
-        catch
-          :exit, error ->
-            Logger.warning("Error awaiting conversion / metadata tasks: #{inspect(error)}")
-            []
+      conversion_jobs =
+        file
+        |> AvailableFormats.get_immediate_formats()
+        |> Enum.map(&Conversion.get_or_create_conversion_job(file, &1))
+        |> Enum.filter(&(elem(&1, 0) == :ok))
+
+      await_conversion_tasks =
+        if skip_wait do
+          []
+        else
+          Enum.map(conversion_jobs, &Conversion.await_completion_task(elem(&1, 1)))
         end
-      end)
+
+      try do
+        Task.await_many(await_conversion_tasks ++ await_metadata_tasks, :timer.seconds(120))
+      catch
+        :exit, error ->
+          Logger.warning("Error awaiting conversion / metadata tasks: #{inspect(error)}")
+          []
+      end
 
       {:ok, Repo.reload(file)}
     else

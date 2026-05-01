@@ -1,3 +1,3 @@
-export * from './Header';
-export * from './Main';
-export * from './Sidebar';
+export * from './Header.js';
+export * from './Main.js';
+export * from './Sidebar.js';

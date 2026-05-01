@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { saveAs } from 'file-saver';
-import { ContentModuleModel, ContentModuleType } from 'model';
-import { render, waitFor, userEvent } from 'test/util';
+import { ContentModuleModel, ContentModuleType } from '#/model/index.js';
+import { render, waitFor, userEvent } from '#/test/util.js';
 import { MockLink } from '@apollo/client/testing';
-import { FormResultsDialog } from './FormResultsDialog';
+import { FormResultsDialog } from './FormResultsDialog.js';
 
-import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
+import GetContentModuleResults from '#/api/query/GetContentModuleResults.graphql';
 
 describe('src/shared/article/module/form/FormResultsDialog', () => {
   const contentModule = {

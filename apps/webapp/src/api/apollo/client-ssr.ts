@@ -5,13 +5,14 @@ import {
   InMemoryCache,
   SSRMultipartLink,
 } from '@apollo/client-integration-nextjs';
+import { LocalState } from '@apollo/client/local-state';
 import { Defer20220824Handler } from '@apollo/client/incremental';
-import { createWebsocketLink } from './links/websocketLink';
-import { TenantModel } from 'model';
-import { createErrorLink } from './links/errorLink';
-import { createAuthLink } from './links/authLink';
-import { createHttpLink } from './links/httpLink';
-import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
+import { createWebsocketLink } from './links/websocketLink.js';
+import { TenantModel } from '#/model/index.js';
+import { createErrorLink } from './links/errorLink.js';
+import { createAuthLink } from './links/authLink.js';
+import { createHttpLink } from './links/httpLink.js';
+import { createVariableInputMutationsLink } from './links/variableInputMutationsLink.js';
 import { getMainDefinition } from '@apollo/client/utilities';
 
 export const createSSRClient = (
@@ -56,6 +57,14 @@ export const createSSRClient = (
         networkLink,
       ].filter(Boolean)
     ),
+
     incrementalHandler: new Defer20220824Handler(),
+
+    /*
+    Inserted by Apollo Client 3->4 migration codemod.
+    If you are not using the `@client` directive in your application,
+    you can safely remove this option.
+    */
+    localState: new LocalState({}),
   });
 };

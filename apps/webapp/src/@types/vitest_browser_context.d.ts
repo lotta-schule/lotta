@@ -1,4 +1,7 @@
-import type { FileDescriptor, DataTransferDescriptor } from '../test/commands';
+import type {
+  FileDescriptor,
+  DataTransferDescriptor,
+} from '../test/commands.js';
 export * from 'vitest/browser/context';
 
 declare module 'vitest/browser/context' {

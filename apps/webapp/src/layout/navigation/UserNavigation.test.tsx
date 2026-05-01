@@ -1,14 +1,13 @@
-import * as React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { render, waitFor, userEvent } from 'test/util';
-import { UserNavigation } from './UserNavigation';
-import { SomeUser, adminGroup } from 'test/fixtures';
-import { useRouter } from 'next/navigation';
-import { redirectTo } from 'util/browserLocation';
-import { MockRouter } from 'test/mocks';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { UserNavigation } from './UserNavigation.js';
+import { SomeUser, adminGroup, tenant } from '#/test/fixtures/index.js';
+import { useRouter } from 'next/navigation.js';
+import { redirectTo } from '#/util/browserLocation.js';
+import { MockRouter } from '#/test/mocks/index.js';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
-import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
+import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
+import GetFeedbackOverviewQuery from '#/api/query/GetFeedbackOverviewQuery.graphql';
 
 // eslint-disable-next-line react-hooks/rules-of-hooks
 const mockRouter = useRouter() as unknown as MockRouter;
@@ -51,7 +50,10 @@ describe('shared/layouts/UserNavigation', () => {
         {},
         {
           tenant: {
+            ...tenant,
             configuration: {
+              userMaxStorageConfig: null,
+              customTheme: {},
               isEmailRegistrationEnabled: false,
             },
           },
@@ -340,9 +342,7 @@ describe('shared/layouts/UserNavigation', () => {
         );
 
         await user.click(screen.getByRole('button', { name: /profil/i }));
-        await user.click(
-          screen.getByRole('menuitem', { name: /administrieren/i })
-        );
+        await user.click(screen.getByRole('menuitem', { name: /verwalten/i }));
 
         await waitFor(() => {
           expect(mockRouter._push).toHaveBeenCalledWith(
@@ -366,7 +366,7 @@ describe('shared/layouts/UserNavigation', () => {
 
         await user.click(screen.getByRole('button', { name: /profil/i }));
         await user.click(
-          screen.getByRole('menuitem', { name: /beiträge freigeben/i })
+          screen.getByRole('menuitem', { name: /veröffentlichen/i })
         );
 
         await waitFor(() => {

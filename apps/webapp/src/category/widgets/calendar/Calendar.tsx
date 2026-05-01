@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ErrorMessage, List, LinearProgress } from '@lotta-schule/hubert';
 import { useApolloClient } from '@apollo/client/react';
-import { CalendarEventModel } from 'model/CalendarEventModel';
+import { CalendarEventModel } from '#/model/CalendarEventModel.js';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import { addDays } from 'date-fns';
 import {
@@ -9,11 +9,11 @@ import {
   WidgetModelType,
   CalendarWidgetExternalCalendarConfig,
   CalendarWidgetInternalCalendarConfig,
-} from 'model';
-import { CalendarEntry } from './CalendarEntry';
-import { Icon } from 'shared/Icon';
-import { graphql } from 'api/graphql';
-import { useUnfoldedEvents } from 'app/(admin)/admin/calendars/_hook';
+} from '#/model/index.js';
+import { CalendarEntry } from './CalendarEntry.js';
+import { Icon } from '#/shared/Icon.js';
+import { graphql } from '#/api/graphql.js';
+import { useUnfoldedEvents } from '#/app/(admin)/admin/calendars/_hook/index.js';
 
 import styles from './Calendar.module.scss';
 

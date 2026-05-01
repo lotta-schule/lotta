@@ -5,15 +5,15 @@ import {
   StartseiteCategory,
   KunstCategory,
   ComputerExperten,
-} from 'test/fixtures';
-import { render, waitFor, userEvent } from 'test/util';
-import { CategoryEditor } from './CategoryEditor';
+} from '#/test/fixtures/index.js';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { CategoryEditor } from './CategoryEditor.js';
 
-import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
-import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
-import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
-import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graphql';
+import UpdateCategoryMutation from '#/api/mutation/UpdateCategoryMutation.graphql';
+import GetCategoryWidgetsQuery from '#/api/query/GetCategoryWidgetsQuery.graphql';
+import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
+import GetArticlesQuery from '#/api/query/GetArticlesQuery.graphql';
+import GetArticleForPreviewQuery from '#/api/query/GetArticleForPreviewQuery.graphql';
 
 const allWidgetsMock: MockLink.MockedResponse = {
   request: {

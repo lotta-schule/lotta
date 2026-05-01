@@ -7,17 +7,21 @@ import {
   useIsMobile,
 } from '@lotta-schule/hubert';
 import { ErrorMessage, LinearProgress } from '@lotta-schule/hubert';
-import { ConversationModel, MessageModel, NewMessageDestination } from 'model';
-import { ComposeMessage } from './ComposeMessage';
-import { ConversationPreview } from './ConversationPreview';
-import { MessagesThread } from './MessagesThread';
-import { MessageToolbar } from './MessageToolbar';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Message } from 'util/model/Message';
+import {
+  ConversationModel,
+  MessageModel,
+  NewMessageDestination,
+} from '#/model/index.js';
+import { ComposeMessage } from './ComposeMessage.js';
+import { ConversationPreview } from './ConversationPreview.js';
+import { MessagesThread } from './MessagesThread.js';
+import { MessageToolbar } from './MessageToolbar.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { Message } from '#/util/model/Message.js';
 
 import styles from './MessagingView.module.scss';
 
-import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
+import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
 
 export const MessagingView = React.memo(() => {
   const isMobile = useIsMobile();

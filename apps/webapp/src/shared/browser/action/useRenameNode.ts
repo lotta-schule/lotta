@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useMutation } from '@apollo/client/react';
 import { BrowserProps } from '@lotta-schule/hubert';
 
-import UpdateDirectoryMutation from 'api/mutation/UpdateDirectoryMutation.graphql';
-import UpdateFileMutation from 'api/mutation/UpdateFileMutation.graphql';
+import UpdateDirectoryMutation from '#/api/mutation/UpdateDirectoryMutation.graphql';
+import UpdateFileMutation from '#/api/mutation/UpdateFileMutation.graphql';
 
 export const useRenameNode = () => {
   const [updateFile] = useMutation(UpdateFileMutation);

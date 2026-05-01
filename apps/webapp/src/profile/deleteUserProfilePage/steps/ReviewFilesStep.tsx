@@ -1,15 +1,18 @@
 import * as React from 'react';
 import { Box, Tabbar, Tab } from '@lotta-schule/hubert';
 import { useSuspenseQuery } from '@apollo/client/react';
-import { UserBrowser } from 'shared/browser';
+import { UserBrowser } from '#/shared/browser/index.js';
 import {
   FileSelection,
   StepNavigation,
   StepNavigationProps,
-} from '../components';
-import { useTenant } from 'util/tenant';
-import { GET_RELEVANT_FILES_IN_USAGE, RelevantFilesInUsage } from '../queries';
-import { ProfileDeleteStep } from '../types';
+} from '../components/index.js';
+import { useTenant } from '#/util/tenant/index.js';
+import {
+  GET_RELEVANT_FILES_IN_USAGE,
+  RelevantFilesInUsage,
+} from '../queries.js';
+import { ProfileDeleteStep } from '../types.js';
 
 import styles from '../DeleteUserProfilePage.module.scss';
 

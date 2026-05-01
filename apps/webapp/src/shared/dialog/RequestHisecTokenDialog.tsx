@@ -10,7 +10,7 @@ import {
   Label,
 } from '@lotta-schule/hubert';
 
-import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
+import RequestHisecTokenMutation from '#/api/mutation/RequestHisecTokenMutation.graphql';
 
 export interface RequestHisecTokenDialogProps {
   isOpen: boolean;

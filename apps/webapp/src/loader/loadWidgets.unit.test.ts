@@ -1,19 +1,19 @@
-import { loadWidgets } from './loadWidgets';
-import { getClient } from 'api/client';
+import { loadWidgets } from './loadWidgets.js';
+import { getClient } from '#/api/client.js';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { Defer20220824Handler } from '@apollo/client/incremental';
 import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 
-vi.mock('api/client');
+vi.mock('#/api/client.js');
 vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
   ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
-vi.mock('api/apollo/client-rsc', () => ({
+vi.mock('#/api/apollo/client-rsc.js', () => ({
   createRSCClient: vi.fn(),
 }));
 

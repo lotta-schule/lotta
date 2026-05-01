@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor } from '#/test/util.js';
 import {
   Weihnachtsmarkt,
   ComputerExperten,
   VivaLaRevolucion,
-} from 'test/fixtures';
-import { ArticlesByTag } from './ArticlesByTag';
+} from '#/test/fixtures/index.js';
+import { ArticlesByTag } from './ArticlesByTag.js';
 import { ApolloLink } from '@apollo/client';
-import { ArticleModel } from 'model';
+import { ArticleModel } from '#/model/index.js';
 
-import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
+import GetArticlesForTag from '#/api/query/GetArticlesForTagQuery.graphql';
 
 describe('shared/article/ArticlesByTag', () => {
   const getAdditionalMocks = (

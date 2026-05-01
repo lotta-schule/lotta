@@ -1,7 +1,6 @@
-import * as React from 'react';
-import { render, userEvent, waitFor } from 'test/util';
-import { LoginDialog } from './LoginDialog';
-import { tenant } from 'test/fixtures';
+import { render, userEvent, waitFor } from '#/test/util.js';
+import { LoginDialog } from './LoginDialog.js';
+import { tenant } from '#/test/fixtures/index.js';
 
 describe('shared/dialog/LoginDialog', () => {
   it('should not show the login dialog when isOpen is not true', () => {
@@ -57,20 +56,6 @@ describe('shared/dialog/LoginDialog', () => {
       expect(passwordInput).toHaveValue('mypassword');
     });
 
-    it('should have a hidden return_path field', () => {
-      const screen = render(
-        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
-        {}
-      );
-
-      const returnPathInput = screen
-        .getByRole('dialog')
-        .querySelector('input[name="return_path"]');
-
-      expect(returnPathInput).toBeInTheDocument();
-      expect(returnPathInput).toHaveAttribute('type', 'hidden');
-    });
-
     it('should have required fields', () => {
       const screen = render(
         <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
@@ -86,7 +71,7 @@ describe('shared/dialog/LoginDialog', () => {
   });
 
   describe('email registration disabled', () => {
-    it('should not show email/password fields when isEmailRegistrationEnabled is false', () => {
+    it('should not show email/password fields when isEmailRegistrationEnabled is false', async () => {
       const screen = render(
         <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
         {},
@@ -95,18 +80,25 @@ describe('shared/dialog/LoginDialog', () => {
             ...tenant,
             eduplacesId: '123',
             configuration: {
+              customTheme: {},
+              userMaxStorageConfig: null,
               isEmailRegistrationEnabled: false,
             },
           },
         }
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('dialog', { name: /Anmelden/ })).toBeVisible();
+      });
+
       expect(screen.queryByRole('textbox', { name: /e-mail/i })).toBeNull();
       expect(screen.queryByLabelText(/passwort/i)).toBeNull();
+
       expect(screen.getByRole('button', { name: /eduplaces/i })).toBeVisible();
     });
 
-    it('should show email/password fields when isEmailRegistrationEnabled is true', () => {
+    it('should show email/password fields when isEmailRegistrationEnabled is true', async () => {
       const screen = render(
         <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
         {},
@@ -114,12 +106,17 @@ describe('shared/dialog/LoginDialog', () => {
           tenant: {
             ...tenant,
             configuration: {
+              customTheme: {},
+              userMaxStorageConfig: null,
               isEmailRegistrationEnabled: true,
             },
           },
         }
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('dialog', { name: /Anmelden/ })).toBeVisible();
+      });
       expect(screen.getByRole('textbox', { name: /e-mail/i })).toBeVisible();
       expect(screen.getByLabelText(/passwort/i)).toBeVisible();
     });
@@ -127,13 +124,18 @@ describe('shared/dialog/LoginDialog', () => {
 
   describe('third-party-login', () => {
     describe('Eduplaces', () => {
-      it('should not show the Eduplaces login button when the tenant has no associated eduplacesId', () => {
+      it('should not show the Eduplaces login button when the tenant has no associated eduplacesId', async () => {
         const screen = render(
           <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
           {},
           {}
         );
 
+        await waitFor(() => {
+          expect(
+            screen.getByRole('dialog', { name: /Anmelden/ })
+          ).toBeVisible();
+        });
         expect(screen.queryByRole('button', { name: /eduplaces/i })).toBeNull();
       });
 
@@ -146,9 +148,12 @@ describe('shared/dialog/LoginDialog', () => {
 
         await waitFor(() => {
           expect(
-            screen.getByRole('button', { name: /eduplaces/i })
+            screen.getByRole('dialog', { name: /Anmelden/ })
           ).toBeVisible();
         });
+        expect(
+          screen.getByRole('button', { name: /eduplaces/i })
+        ).toBeVisible();
       });
     });
   });

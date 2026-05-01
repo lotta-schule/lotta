@@ -1,12 +1,16 @@
-import { render, waitFor, userEvent } from 'test/util';
+import { render, waitFor, userEvent } from '#/test/util.js';
 import { MockLink } from '@apollo/client/testing';
-import { lehrerGroup, schuelerGroup, userGroups } from 'test/fixtures';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import {
+  lehrerGroup,
+  schuelerGroup,
+  userGroups,
+} from '#/test/fixtures/index.js';
+import { useParams, useRouter, useSearchParams } from 'next/navigation.js';
 import { Mock } from 'vitest';
-import { DraggableGroupList } from './DraggableGroupList';
-import { GET_USER_GROUPS } from '../_graphql';
+import { DraggableGroupList } from './DraggableGroupList.js';
+import { GET_USER_GROUPS } from '../_graphql/index.js';
 
-vi.mock('next/navigation', () => ({
+vi.mock('next/navigation.js', () => ({
   useRouter: vi.fn(),
   usePathname: vi.fn(),
   useSearchParams: vi.fn(),

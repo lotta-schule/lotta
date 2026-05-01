@@ -1,16 +1,16 @@
-import { render, fireEvent, waitFor, userEvent } from 'test/util';
-import { GroupListToolbar } from './GroupListToolbar';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { CreateUserGroupDialog } from './CreateUserGroupDialog';
+import { render, fireEvent, waitFor, userEvent } from '#/test/util.js';
+import { GroupListToolbar } from './GroupListToolbar.js';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation.js';
+import { CreateUserGroupDialog } from './CreateUserGroupDialog.js';
 import { Mock, MockedFunction } from 'vitest';
 
-vi.mock('next/navigation', () => ({
+vi.mock('next/navigation.js', () => ({
   useRouter: vi.fn(),
   usePathname: vi.fn(),
   useSearchParams: vi.fn(),
 }));
 
-vi.mock('./CreateUserGroupDialog', () => ({
+vi.mock('./CreateUserGroupDialog.js', () => ({
   CreateUserGroupDialog: vi.fn(() => null),
 }));
 

@@ -10,13 +10,13 @@ import {
 import { skipToken, useQuery } from '@apollo/client/react';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArticleModel, CategoryModel } from 'model';
-import { Icon } from 'shared/Icon';
-import { Header, Main, Sidebar } from 'layout';
-import { CategorySelect } from 'shared/categorySelect/CategorySelect';
-import { ArticlePreview } from 'article/preview';
+import { ArticleModel, CategoryModel } from '#/model/index.js';
+import { Icon } from '#/shared/Icon.js';
+import { Header, Main, Sidebar } from '#/layout/index.js';
+import { CategorySelect } from '#/shared/categorySelect/CategorySelect.js';
+import { ArticlePreview } from '#/article/preview/index.js';
 
-import SearchQuery from 'api/query/SearchQuery.graphql';
+import SearchQuery from '#/api/query/SearchQuery.graphql';
 
 import styles from './SearchPage.module.scss';
 

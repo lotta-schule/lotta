@@ -11,14 +11,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@apollo/client/react';
 import { useTranslation } from 'react-i18next';
-import { FileModel, ID, FileModelUsageLocation } from 'model';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Article, Category, User } from 'util/model';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { useTenant } from 'util/tenant/useTenant';
+import { FileModel, ID, FileModelUsageLocation } from '#/model/index.js';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { Article, Category, User } from '#/util/model/index.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { useTenant } from '#/util/tenant/useTenant.js';
 
-import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
+import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';
 
 import styles from './FileUsageModal.module.scss';
 

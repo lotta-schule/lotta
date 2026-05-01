@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
-import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
-import { AudioAudio } from './AudioAudio';
-import { useRequestConversion } from '../useRequestConversion';
-import { ConversionProgress } from '../ConversionProgress';
+import { ContentModuleModel } from '#/model/index.js';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
+import { AudioAudio } from './AudioAudio.js';
+import { useRequestConversion } from '../useRequestConversion.js';
+import { ConversionProgress } from '../ConversionProgress.js';
 
 import styles from './AudioAudio.module.scss';
 

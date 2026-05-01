@@ -1,25 +1,25 @@
 'use client';
 import * as React from 'react';
 import { useMutation, useSubscription } from '@apollo/client/react';
-import { ArticleModel, ID } from 'model';
+import { ArticleModel, ID } from '#/model/index.js';
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
 } from '@lotta-schule/hubert';
-import { AddModuleBar } from 'article/editor/AddModuleBar';
-import { ArticleEditable as Article } from 'article/ArticleEditable';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Article as ArticleUtil } from 'util/model/Article';
-import { EditArticleFooter } from './editor/EditArticleFooter';
-import { Main } from 'layout';
+import { AddModuleBar } from '#/article/editor/AddModuleBar.js';
+import { ArticleEditable as Article } from '#/article/ArticleEditable.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { Article as ArticleUtil } from '#/util/model/Article.js';
+import { EditArticleFooter } from './editor/EditArticleFooter.js';
+import { Main } from '#/layout/index.js';
 import { useRouter } from 'next/navigation';
 import omit from 'lodash/omit';
 
-import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';
-import UpdateArticleMutation from 'api/mutation/UpdateArticleMutation.graphql';
-import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
+import ArticleIsUpdatedSubscription from '#/api/subscription/GetArticleSubscription.graphql';
+import UpdateArticleMutation from '#/api/mutation/UpdateArticleMutation.graphql';
+import GetArticleQuery from '#/api/query/GetArticleQuery.graphql';
 
 export interface EditArticlePageProps {
   article: ArticleModel;

@@ -1,8 +1,8 @@
-import { query } from 'api/client';
-import { CategoryPage } from '../_component';
-import { loadCategories, loadTenant } from 'loader';
-import { notFound } from 'next/navigation';
-import { GET_ARTICLES_QUERY } from '../_component/categoryPage/_graphql';
+import { query } from '#/api/client.js';
+import { CategoryPage } from '../_component/index.js';
+import { loadCategories, loadTenant } from '#/loader/index.js';
+import { notFound } from 'next/navigation.js';
+import { GET_ARTICLES_QUERY } from '../_component/categoryPage/_graphql/index.js';
 
 export default async function CategoryRoute({
   params,

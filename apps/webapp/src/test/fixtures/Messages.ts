@@ -1,4 +1,8 @@
-import { ConversationModel, NewMessageDestination, UserModel } from 'model';
+import {
+  ConversationModel,
+  NewMessageDestination,
+  UserModel,
+} from '#/model/index.js';
 
 export const createConversation = (
   from: UserModel,

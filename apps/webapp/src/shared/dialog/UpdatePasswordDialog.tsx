@@ -9,9 +9,9 @@ import {
   Input,
   Label,
 } from '@lotta-schule/hubert';
-import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
+import { RequestHisecTokenDialog } from './RequestHisecTokenDialog.js';
 
-import UpdatePasswordMutation from 'api/mutation/UpdatePasswordMutation.graphql';
+import UpdatePasswordMutation from '#/api/mutation/UpdatePasswordMutation.graphql';
 
 export interface UpdatePasswordDialogProps {
   isOpen: boolean;

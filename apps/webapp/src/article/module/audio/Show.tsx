@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
-import { AudioAudio } from './AudioAudio';
+import { ContentModuleModel } from '#/model/index.js';
+import { AudioAudio } from './AudioAudio.js';
 
 interface ShowProps {
   contentModule: ContentModuleModel<{ captions: string[] }>;

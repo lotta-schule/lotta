@@ -2,6 +2,7 @@
 
 import { resolve } from 'node:path';
 import { URL } from 'node:url';
+import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 
@@ -105,6 +106,10 @@ const nextConfig = {
       loader: 'graphql-tag/loader',
     });
 
+    config.resolve.plugins = [
+      ...(config.resolve.plugins || []),
+      new TsconfigPathsPlugin(),
+    ];
     config.resolve.alias = {
       ...config.resolve.alias,
       '@lotta-schule/hubert': resolve(

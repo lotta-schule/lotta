@@ -1,11 +1,11 @@
-import { renderHook } from 'test/util';
-import { useUserGroups } from './useUserGroups';
+import { renderHook } from '#/test/util.js';
+import { useUserGroups } from './useUserGroups.js';
 import {
   adminGroup,
   lehrerGroup,
   schuelerGroup,
   elternGroup,
-} from 'test/fixtures';
+} from '#/test/fixtures/index.js';
 
 const mockUserGroupsWithEduplacesId = [
   adminGroup,

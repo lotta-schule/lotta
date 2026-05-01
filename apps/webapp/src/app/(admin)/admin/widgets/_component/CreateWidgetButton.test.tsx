@@ -1,9 +1,9 @@
-import { WidgetModelType } from 'model';
-import { render, waitFor, userEvent } from 'test/util';
-import { MockRouter } from 'test/mocks';
-import { CreateWidgetButton } from './CreateWidgetButton';
+import { WidgetModelType } from '#/model/index.js';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { MockRouter } from '#/test/mocks/index.js';
+import { CreateWidgetButton } from './CreateWidgetButton.js';
 
-import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';
+import CreateWidgetMutation from '#/api/mutation/CreateWidgetMutation.graphql';
 
 const newWidget = {
   id: 'new-calendar-widget',

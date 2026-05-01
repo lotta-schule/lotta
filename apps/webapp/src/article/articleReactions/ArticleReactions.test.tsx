@@ -1,10 +1,10 @@
-import { render, waitFor, userEvent } from 'test/util';
-import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
-import { ArticleReactions } from './ArticleReactions';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { SomeUser, Weihnachtsmarkt } from '#/test/fixtures/index.js';
+import { ArticleReactions } from './ArticleReactions.js';
 
-import GetArticleReactionCounts from 'api/query/GetArticleReactionCounts.graphql';
-import GetReactionUsersQuery from 'api/query/GetReactionUsersQuery.graphql';
-import ReactToArticleMutation from 'api/mutation/ReactToArticleMutation.graphql';
+import GetArticleReactionCounts from '#/api/query/GetArticleReactionCounts.graphql';
+import GetReactionUsersQuery from '#/api/query/GetReactionUsersQuery.graphql';
+import ReactToArticleMutation from '#/api/mutation/ReactToArticleMutation.graphql';
 
 const additionalMocks = [
   {

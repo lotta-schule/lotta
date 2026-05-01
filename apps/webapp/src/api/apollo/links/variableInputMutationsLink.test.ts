@@ -2,7 +2,7 @@ import { Observable, ApolloLink } from '@apollo/client';
 import {
   createVariableInputMutationsLink,
   mutateVariableInputObject,
-} from './variableInputMutationsLink'; // replace with actual module path
+} from './variableInputMutationsLink.js'; // replace with actual module path
 import { MockedFunction } from 'vitest';
 
 describe('createVariableInputMutationsLink', () => {

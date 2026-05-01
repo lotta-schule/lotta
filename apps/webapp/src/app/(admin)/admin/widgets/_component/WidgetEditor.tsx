@@ -1,7 +1,12 @@
 'use client';
 import * as React from 'react';
 import { useMutation } from '@apollo/client/react';
-import { ID, UserGroupModel, WidgetModel, WidgetModelType } from 'model';
+import {
+  ID,
+  UserGroupModel,
+  WidgetModel,
+  WidgetModelType,
+} from '#/model/index.js';
 import {
   Button,
   ErrorMessage,
@@ -11,17 +16,17 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { faFloppyDisk, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
-import { GroupSelect } from 'shared/edit/GroupSelect';
-import { IFrameWidgetConfiguration } from './configuration/IFrameWidgetConfiguration';
-import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
-import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
-import { AdminPageSection } from 'app/(admin)/admin/_component/AdminPageSection';
+import { Icon } from '#/shared/Icon.js';
+import { GroupSelect } from '#/shared/edit/GroupSelect.js';
+import { IFrameWidgetConfiguration } from './configuration/IFrameWidgetConfiguration.js';
+import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration.js';
+import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration.js';
+import { AdminPageSection } from '#/app/(admin)/admin/_component/AdminPageSection.js';
 import { useRouter } from 'next/navigation';
-import { DeleteWidgetDialog } from './DeleteWidgetDialog';
-import { WidgetIconSelection } from './WidgetIconSelection';
+import { DeleteWidgetDialog } from './DeleteWidgetDialog.js';
+import { WidgetIconSelection } from './WidgetIconSelection.js';
 
-import UpdateWidgetMutation from 'api/mutation/UpdateWidgetMutation.graphql';
+import UpdateWidgetMutation from '#/api/mutation/UpdateWidgetMutation.graphql';
 
 export interface WidgetEditorProps {
   widget: WidgetModel;

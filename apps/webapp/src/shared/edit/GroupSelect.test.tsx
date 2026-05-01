@@ -1,15 +1,13 @@
-import * as React from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import { UserGroupModel } from 'model';
-import { render, waitFor, within, userEvent } from 'test/util';
+import { UserGroupModel } from '#/model/index.js';
+import { render, waitFor, within, userEvent } from '#/test/util.js';
 import {
   adminGroup,
   lehrerGroup,
   schuelerGroup,
   elternGroup,
   userGroups,
-} from 'test/fixtures';
-import { GroupSelect } from './GroupSelect';
+} from '#/test/fixtures/index.js';
+import { GroupSelect } from './GroupSelect.js';
 
 describe('shared/editor/GroupSelect', () => {
   describe('label prop', () => {

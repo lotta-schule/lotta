@@ -1,8 +1,8 @@
-import { getClient } from 'api/client';
-import { ArticleModel } from 'model';
-import { ArticlesPage } from 'profile/ArticlesPage';
+import { getClient } from '#/api/client.js';
+import { ArticleModel } from '#/model/index.js';
+import { ArticlesPage } from '#/profile/ArticlesPage.js';
 
-import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
+import GetOwnArticlesQuery from '#/api/query/GetOwnArticles.graphql';
 
 export default async function ArticlesRoute() {
   const client = await getClient();

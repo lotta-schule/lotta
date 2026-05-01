@@ -3,7 +3,6 @@ defmodule LottaWeb.SessionController do
 
   require Logger
 
-  alias Lotta.Tenants.Tenant
   alias Lotta.Accounts.Authentication
   alias Plug.Conn
 
@@ -33,8 +32,6 @@ defmodule LottaWeb.SessionController do
   end
 
   def login(%Conn{} = conn, %{"username" => username, "password" => password} = params) do
-    tenant = conn.private[:lotta_tenant]
-
     username
     |> Authentication.login_with_username_pass(password)
     |> case do
@@ -45,12 +42,12 @@ defmodule LottaWeb.SessionController do
         {:ok, access_token, refresh_token} = Authentication.create_user_tokens(user, token_opts)
 
         return_uri =
-          get_return_uri(conn, params["return_url"])
-          |> IO.inspect(label: "return_uri")
+          get_return_uri(params["return_url"])
 
         conn
         |> put_refresh_token(refresh_token, is_first_login)
-        |> redirect(external: IO.inspect(URI.to_string(return_uri), label: "redirect_to"))
+        |> put_access_token(access_token, is_first_login)
+        |> redirect(external: URI.to_string(return_uri))
 
       {:error, reason} ->
         Logger.warning("Login failed for username: #{username}: #{inspect(reason)}")
@@ -59,27 +56,16 @@ defmodule LottaWeb.SessionController do
   end
 
   def logout(%Conn{} = conn, _params) do
-    tenant = conn.private[:lotta_tenant]
-
     conn
     |> delete_resp_cookie("SignInRefreshToken",
       http_only: true,
       same_site: "Lax"
     )
     |> delete_resp_cookie("SignInAccessToken", same_site: "Lax")
-    |> redirect(external: URI.to_string(get_return_uri(conn)))
+    |> redirect(external: URI.to_string(get_return_uri()))
   end
 
-  defp get_return_uri(%Conn{} = conn, return_url \\ nil) do
-    tenant = conn.private[:lotta_tenant]
-
-    current_host =
-      Enum.find_value(
-        ["x-lotta-originary-host", "x-forwarded-host", "host"],
-        &List.first(get_req_header(conn, &1))
-      )
-      |> IO.inspect(label: "current_host")
-
+  defp get_return_uri(return_url \\ nil) do
     case return_url do
       url when is_binary(url) ->
         URI.parse(url)
@@ -96,6 +82,16 @@ defmodule LottaWeb.SessionController do
       http_only: true,
       same_site: "Lax",
       max_age: 4 * 7 * 24 * 60 * 60
+    )
+  end
+
+  defp put_access_token(%Conn{} = conn, token, is_first_login) do
+    token_max_age = if is_first_login, do: 5 * 60, else: 60 * 60
+
+    conn
+    |> put_resp_cookie("SignInAccessToken", token,
+      same_site: "Lax",
+      max_age: token_max_age
     )
   end
 

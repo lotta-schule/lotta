@@ -1,9 +1,13 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { ScheduleResponse, SomeUserin, VPSchuelerWidget } from 'test/fixtures';
-import { Schedule } from './Schedule';
+import { render, waitFor } from '#/test/util.js';
+import {
+  ScheduleResponse,
+  SomeUserin,
+  VPSchuelerWidget,
+} from '#/test/fixtures/index.js';
+import { Schedule } from './Schedule.js';
 
-import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';
+import GetScheduleQuery from '#/api/query/GetScheduleQuery.graphql';
 
 describe('shared/widgets/Schedule', () => {
   const pupil = {

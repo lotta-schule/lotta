@@ -4,7 +4,7 @@ import { AddonPanel } from 'storybook/internal/components';
 import { PureArgsTable } from '@storybook/addon-docs/blocks';
 import { styled } from 'storybook/theming';
 import { DefaultThemes, schema } from '@lotta-schule/theme';
-import { generateArgsTableRows } from '../../util';
+import { generateArgsTableRows } from '../../util/index.js';
 
 export const Panel = ({ active, key }: any) => {
   const StyledHeader = styled.h2`

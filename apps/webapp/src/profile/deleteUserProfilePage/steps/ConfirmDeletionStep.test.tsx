@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from 'test/util';
-import { ConfirmDeletionStep } from './ConfirmDeletionStep';
+import { render, userEvent, waitFor } from '#/test/util.js';
+import { ConfirmDeletionStep } from './ConfirmDeletionStep.js';
 
 describe('profile/deleteUserProfilePage/steps/ConfirmDeletionStep', () => {
   it('should show what will be deleted', () => {

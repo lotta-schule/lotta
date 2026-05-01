@@ -1,18 +1,18 @@
-import { loadCurrentUser, UnauthenticatedError } from './loadCurrentUser';
-import { getClient } from 'api/client';
+import { loadCurrentUser, UnauthenticatedError } from './loadCurrentUser.js';
+import { getClient } from '#/api/client.js';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { Defer20220824Handler } from '@apollo/client/incremental';
 import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
-import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
+import { GET_CURRENT_USER } from '#/util/user/useCurrentUser.js';
 
-vi.mock('api/client');
+vi.mock('#/api/client.js');
 vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
   ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
-vi.mock('api/apollo/client-rsc', () => ({
+vi.mock('#/api/apollo/client-rsc.js', () => ({
   createRSCClient: vi.fn(),
 }));
 

@@ -4,14 +4,12 @@ import { playwright } from '@vitest/browser-playwright';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   root: __dirname,
   cacheDir: '.vite',
 
   plugins: [
-    tsconfigPaths(),
     react(),
     externalizeDeps({
       devDeps: true,
@@ -29,6 +27,7 @@ export default defineConfig({
     alias: {
       '@lotta-schule/theme': path.resolve(__dirname, '../theme'),
     },
+    tsconfigPaths: true,
   },
 
   build: {

@@ -1,4 +1,4 @@
-import { graphql, ResultOf } from 'api/graphql';
+import { graphql, ResultOf } from '#/api/graphql.js';
 
 export const GET_RELEVANT_FILES_IN_USAGE = graphql(`
   query GetRelevantFilesInUsage {

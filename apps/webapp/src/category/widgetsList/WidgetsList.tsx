@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { WidgetModel, WidgetModelType } from 'model';
+import { WidgetModel, WidgetModelType } from '#/model/index.js';
 import {
   Tabbar,
   Tab,
   SwipeableViews,
   useScrollEvent,
 } from '@lotta-schule/hubert';
-import { Widget } from 'category/widgets/Widget';
-import { Widget as WidgetUtil } from 'util/model';
-import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
-import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
-import { WidgetIcon } from 'category/widgets/WidgetIcon';
-import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { Widget } from '#/category/widgets/Widget.js';
+import { Widget as WidgetUtil } from '#/util/model/index.js';
+import { useCategoriesAncestorsForItem } from '#/util/categories/useCategoriesAncestorsForItem.js';
+import { useCurrentCategoryId } from '#/util/path/useCurrentCategoryId.js';
+import { WidgetIcon } from '#/category/widgets/WidgetIcon.js';
+import { CurrentUserAvatar } from '#/shared/userAvatar/UserAvatar.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import clsx from 'clsx';
 
 import styles from './WidgetsList.module.scss';

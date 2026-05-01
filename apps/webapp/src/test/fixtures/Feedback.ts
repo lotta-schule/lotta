@@ -1,4 +1,4 @@
-import { FeedbackModel } from 'model';
+import { FeedbackModel } from '#/model/index.js';
 
 export const newFeedback: FeedbackModel = {
   __typename: 'Feedback',

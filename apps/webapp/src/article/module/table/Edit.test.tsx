@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from 'test/util';
-import { LehrerListe } from 'test/fixtures';
-import { Edit } from './Edit';
-import { excelPasteTransfer, numbersPasteTransfer } from './mockData';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { LehrerListe } from '#/test/fixtures/index.js';
+import { Edit } from './Edit.js';
+import { excelPasteTransfer, numbersPasteTransfer } from './mockData.js';
 import { commands } from '@vitest/browser/context';
 
 const tableContentModule = LehrerListe.contentModules[0];

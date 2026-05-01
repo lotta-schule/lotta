@@ -1,10 +1,13 @@
 import React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { fireEvent, render, waitFor, userEvent } from 'test/util';
-import { GET_CALENDARS, UPDATE_CALENDAR_EVENT } from '../_graphql';
-import { EditEventDialog } from './EditEventDialog';
-import { createCalendarFixture, createEventFixture } from 'test/fixtures';
-import { ResultOf, VariablesOf } from 'api/graphql';
+import { fireEvent, render, waitFor, userEvent } from '#/test/util.js';
+import { GET_CALENDARS, UPDATE_CALENDAR_EVENT } from '../_graphql/index.js';
+import { EditEventDialog } from './EditEventDialog.js';
+import {
+  createCalendarFixture,
+  createEventFixture,
+} from '#/test/fixtures/index.js';
+import { ResultOf, VariablesOf } from '#/api/graphql.js';
 
 const calendars = [
   createCalendarFixture({ id: '1', name: 'Klausuren' }),

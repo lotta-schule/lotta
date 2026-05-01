@@ -1,10 +1,10 @@
-import { notFound } from 'next/navigation';
-import { getClient } from 'api/client';
-import { Main, Sidebar } from 'layout';
-import { ArticleModel, ID } from 'model';
-import { ArticlePage } from 'article/ArticlePage';
+import { notFound } from 'next/navigation.js';
+import { getClient } from '#/api/client.js';
+import { Main, Sidebar } from '#/layout/index.js';
+import { ArticleModel, ID } from '#/model/index.js';
+import { ArticlePage } from '#/article/ArticlePage.js';
 
-import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
+import GetArticleQuery from '#/api/query/GetArticleQuery.graphql';
 
 export default async function ArticleRoute({
   params,

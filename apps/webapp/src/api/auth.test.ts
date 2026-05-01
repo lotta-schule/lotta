@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { appConfig } from 'config';
+import { appConfig } from '#/config.js';
 import { Mocked, MockedFunction } from 'vitest';
-import { sendRefreshRequest } from './auth';
-import { isBrowser } from 'util/isBrowser';
+import { sendRefreshRequest } from './auth.js';
+import { isBrowser } from '#/util/isBrowser.js';
 
 vi.mock('axios');
-vi.mock('config');
-vi.mock('util/isBrowser');
+vi.mock('#/config.js');
+vi.mock('#/util/isBrowser.js');
 
 const mockAxios = axios as Mocked<typeof axios>;
 const mockAppConfig = appConfig as Mocked<typeof appConfig>;
@@ -21,25 +21,33 @@ describe('sendRefreshRequest', () => {
     const mockData = {
       accessToken: 'newAccessToken',
       refreshToken: 'newRefreshToken',
+      tenant: 'id:tenantId',
     };
     isBrowserMock.mockReturnValue(false);
-    mockAxios.request.mockResolvedValue({ data: mockData });
+    mockAxios.request.mockResolvedValue({
+      data: mockData,
+      headers: {
+        'set-cookie': 'SignInRefreshToken=newRefreshToken; Path=/; HttpOnly',
+        'x-lotta-tenant': 'id:tenantId',
+      },
+    });
     mockAppConfig.get.mockReturnValue('http://api.test');
 
-    const result = await sendRefreshRequest({
-      'Custom-Header': 'value',
-      Cookie: 'SignInRefreshToken=testToken',
-    });
+    const result = await sendRefreshRequest(
+      {
+        host: 'testHost',
+      },
+      'testToken',
+      appConfig.get('API_URL')
+    );
 
     expect(mockAxios.request).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'post',
         baseURL: 'http://api.test',
         url: '/auth/token/refresh',
-        headers: expect.objectContaining({
-          Cookie: 'SignInRefreshToken=testToken',
-          'Custom-Header': 'value',
-        }),
+        withCredentials: false,
+        data: { token: 'testToken' },
       })
     );
     expect(result).toEqual(mockData);
@@ -53,10 +61,14 @@ describe('sendRefreshRequest', () => {
 
     const result = await sendRefreshRequest({
       Cookie: 'SignInRefreshToken=testToken',
-    });
+    } as any);
 
     expect(mockAxios.request).toHaveBeenCalled();
-    expect(result).toBeNull();
+    expect(result).toEqual({
+      accessToken: null,
+      refreshToken: null,
+      tenant: null,
+    });
     expect(consoleErrorSpy).toHaveBeenCalled();
 
     consoleErrorSpy.mockRestore();

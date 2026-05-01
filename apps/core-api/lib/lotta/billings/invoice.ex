@@ -137,7 +137,7 @@ defmodule Lotta.Billings.Invoice do
         changes -> changes
       end
 
-    if length(items) < 1 do
+    if Enum.empty?(items) do
       add_error(changeset, :items, "must have at least one item")
     else
       changeset

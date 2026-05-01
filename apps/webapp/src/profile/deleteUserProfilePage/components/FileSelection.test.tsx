@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from 'test/util';
-import { FileSelection } from './FileSelection';
+import { render, userEvent, waitFor } from '#/test/util.js';
+import { FileSelection } from './FileSelection.js';
 
 const createMockFile = (id: string, filename: string, hasUsage = true) => ({
   id,

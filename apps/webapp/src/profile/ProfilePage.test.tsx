@@ -1,12 +1,17 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from 'test/util';
-import { SomeUser, adminGroup, elternGroup, lehrerGroup } from 'test/fixtures';
-import { ProfilePage } from './ProfilePage';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import {
+  SomeUser,
+  adminGroup,
+  elternGroup,
+  lehrerGroup,
+} from '#/test/fixtures/index.js';
+import { ProfilePage } from './ProfilePage.js';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
-import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
+import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import UpdateProfileMutation from '#/api/mutation/UpdateProfileMutation.graphql';
+import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
+import GetFeedbackOverviewQuery from '#/api/query/GetFeedbackOverviewQuery.graphql';
 
 describe('shared/layouts/profileLayout/ProfileData', () => {
   describe('show userAvatar data', () => {

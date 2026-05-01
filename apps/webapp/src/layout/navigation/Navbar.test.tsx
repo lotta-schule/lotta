@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { allCategories, FaecherCategory } from 'test/fixtures';
-import { render, waitFor, within } from 'test/util';
-import { MockRouter } from 'test/mocks';
-import { Navbar } from './Navbar';
+import { allCategories, FaecherCategory } from '#/test/fixtures/index.js';
+import { render, waitFor, within } from '#/test/util.js';
+import { MockRouter } from '#/test/mocks/index.js';
+import { Navbar } from './Navbar.js';
 
 // eslint-disable-next-line react-hooks/rules-of-hooks
 const mockRouter = useRouter() as unknown as MockRouter;

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, waitFor, within, userEvent } from 'test/util';
-import { Feedback } from './Feedback';
-import { feedbacks } from 'test/fixtures';
-import { DeleteFeedbackDialogProps } from './_component/DeleteFeedbackDialog';
+import { render, waitFor, within, userEvent } from '#/test/util.js';
+import { Feedback } from './Feedback.js';
+import { feedbacks } from '#/test/fixtures/index.js';
+import { DeleteFeedbackDialogProps } from './_component/DeleteFeedbackDialog.js';
 
 describe('Feedback', () => {
   it('should list all feedbacks', async () => {
@@ -35,19 +35,22 @@ describe('Feedback', () => {
   });
 
   it('should set the row inactive when onDelete was called', async () => {
-    vi.mock('./_component/DeleteFeedbackDialog', () => ({
-      DeleteFeedbackDialog: ({
-        isOpen,
-        onConfirm,
-      }: DeleteFeedbackDialogProps) => {
-        React.useEffect(() => {
-          if (isOpen) {
-            onConfirm();
-          }
-        }, [isOpen, onConfirm]);
-        return null;
-      },
-    }));
+    vi.mock('./_component/DeleteFeedbackDialog.js', async () => {
+      const React = await import('react');
+      return {
+        DeleteFeedbackDialog: ({
+          isOpen,
+          onConfirm,
+        }: DeleteFeedbackDialogProps) => {
+          React.useEffect(() => {
+            if (isOpen) {
+              onConfirm();
+            }
+          }, [isOpen, onConfirm]);
+          return null;
+        },
+      };
+    });
 
     const user = userEvent.setup();
     const screen = render(<Feedback feedbacks={feedbacks} />);

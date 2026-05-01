@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { userEvent } from 'test-utils';
+import { userEvent } from '#/test-utils';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
@@ -7,10 +7,10 @@ import {
   render,
   waitFor,
   waitForPosition,
-} from '../test-utils';
-import { NodeListItem, NodeListItemProps } from './NodeListItem';
+} from '../test-utils.js';
+import { NodeListItem, NodeListItemProps } from './NodeListItem.js';
 import { page } from '@vitest/browser/context';
-import { BrowserPath } from './BrowserStateContext';
+import { BrowserPath } from './BrowserStateContext.js';
 
 const directoryPath = fixtures.getPathForNode('8');
 const filePath = fixtures.getPathForNode('19');

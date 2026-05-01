@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { commands } from '@vitest/browser/context';
-import { render, waitFor, userEvent } from 'test/util';
-import { FormElement } from './FormElement';
-import { imageFile, logosDirectory, SomeUser } from 'test/fixtures';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { FormElement } from './FormElement.js';
+import { imageFile, logosDirectory, SomeUser } from '#/test/fixtures/index.js';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
+import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';
 
 describe('shared/article/module/form/FormElement', () => {
   describe('input element', () => {

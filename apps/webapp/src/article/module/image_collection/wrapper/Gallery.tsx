@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { Button, GridList, GridListItem } from '@lotta-schule/hubert';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { ContentModuleModel, FileModel } from 'model';
-import { SelectFileButton } from 'shared/edit/SelectFileButton';
-import { FileSorter } from '../Config';
-import { ImageImage } from '../../image/ImageImage';
-import { ImageOverlay, ImageOverlayProps } from '../imageOverlay/ImageOverlay';
+import { ContentModuleModel, FileModel } from '#/model/index.js';
+import { SelectFileButton } from '#/shared/edit/SelectFileButton.js';
+import { FileSorter } from '../Config.js';
+import { ImageImage } from '../../image/ImageImage.js';
+import {
+  ImageOverlay,
+  ImageOverlayProps,
+} from '../imageOverlay/ImageOverlay.js';
 import uniqBy from 'lodash/uniqBy';
 
 import styles from './Gallery.module.scss';

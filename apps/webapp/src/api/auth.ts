@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { parseSetCookie } from 'cookie-es';
-import { isBrowser } from 'util/isBrowser';
-import { Logger } from 'util/logger';
+import { isBrowser } from '#/util/isBrowser.js';
+import { Logger } from '#/util/logger.js';
 
 export const sendRefreshRequest = async (
   tenant: { id: string } | { slug: string } | { host: string },
@@ -31,7 +31,7 @@ export const sendRefreshRequest = async (
       .filter((h) => !!h)
       .flat()
       .flatMap((cookieHeader) => parseSetCookie(cookieHeader))
-      ?.find((c) => c.name === 'SignInRefreshToken')?.value;
+      ?.find((c) => c?.name === 'SignInRefreshToken')?.value;
     const resultTenantIdentifier = result.headers['x-lotta-tenant'];
     return {
       accessToken: result.data?.accessToken || null,

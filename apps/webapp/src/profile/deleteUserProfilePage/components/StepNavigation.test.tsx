@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from 'test/util';
-import { StepNavigation } from './StepNavigation';
-import { ProfileDeleteStep } from '../types';
+import { render, userEvent, waitFor } from '#/test/util.js';
+import { StepNavigation } from './StepNavigation.js';
+import { ProfileDeleteStep } from '../types.js';
 
 describe('profile/deleteUserProfilePage/components/StepNavigation', () => {
   it('should show only next button on first step', () => {

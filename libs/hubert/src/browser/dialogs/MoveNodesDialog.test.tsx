@@ -7,8 +7,8 @@ import {
   within,
   fixtures,
   userEvent,
-} from '../../test-utils';
-import { MoveNodesDialog } from './MoveNodesDialog';
+} from '../../test-utils.js';
+import { MoveNodesDialog } from './MoveNodesDialog.js';
 
 const WrappedMoveNodesDialog = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>

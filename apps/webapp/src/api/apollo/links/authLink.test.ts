@@ -1,7 +1,7 @@
 import { Mock } from 'vitest';
 import { Observable, ApolloLink } from '@apollo/client';
 import { waitFor } from '@testing-library/react';
-import { createAuthLink } from './authLink';
+import { createAuthLink } from './authLink.js';
 
 class MockObserver {
   next = vi.fn();

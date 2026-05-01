@@ -6,8 +6,8 @@ import {
   render,
   waitFor,
   within,
-} from '../test-utils';
-import { Explorer } from './Explorer';
+} from '../test-utils.js';
+import { Explorer } from './Explorer.js';
 
 const WrappedExplorer = ({ ...props }: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>

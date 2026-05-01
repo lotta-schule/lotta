@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Button } from '@lotta-schule/hubert';
 import { t } from 'i18next';
 import Link from 'next/link';
-import { ServerDownErrorPage } from 'layout/error/ServerDownErrorPage';
+import { ServerDownErrorPage } from '#/layout/error/ServerDownErrorPage.js';
 import clsx from 'clsx';
 
 import styles from './_component/AdminPage.module.scss';

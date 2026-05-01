@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { Button, FileSize } from '@lotta-schule/hubert';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
 import { format } from 'date-fns';
 import { faCloudArrowDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client/react';
-import { FileModel, MessageModel } from 'model';
-import { File, User } from 'util/model';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { Icon } from 'shared/Icon';
+import { FileModel, MessageModel } from '#/model/index.js';
+import { File, User } from '#/util/model/index.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { Icon } from '#/shared/Icon.js';
 import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 
-import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
+import DeleteMessageMutation from '#/api/mutation/DeleteMessageMutation.graphql';
 
 import styles from './MessageBubble.module.scss';
 

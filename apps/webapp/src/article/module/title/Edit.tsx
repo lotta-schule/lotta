@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
+import { ContentModuleModel } from '#/model/index.js';
 import get from 'lodash/get';
 import clsx from 'clsx';
 

@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { render, userEvent, waitFor, within } from 'test-utils';
-import { Upload } from '../upload/useUploadClient';
+import { render, userEvent, waitFor, within } from '#/test-utils';
+import { Upload } from '../upload/useUploadClient.js';
 import {
   ActiveUploadsDialog,
   ActiveUploadsDialogProps,
-} from './ActiveUploadsDialog';
-import { FileSize } from '../../util';
+} from './ActiveUploadsDialog.js';
+import { FileSize } from '../../util/index.js';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
   fixtures,
-} from 'test-utils';
+} from '#/test-utils';
 
 const parentNode = fixtures.getNode('8');
 

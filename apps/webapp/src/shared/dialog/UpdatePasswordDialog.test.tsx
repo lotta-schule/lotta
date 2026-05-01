@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor, userEvent } from 'test/util';
-import { SomeUser } from 'test/fixtures';
-import { UpdatePasswordDialog } from './UpdatePasswordDialog';
+import { render, screen, waitFor, userEvent } from '#/test/util.js';
+import { SomeUser } from '#/test/fixtures/index.js';
+import { UpdatePasswordDialog } from './UpdatePasswordDialog.js';
 import { MockLink } from '@apollo/client/testing';
-import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
-import UpdatePasswordMutation from 'api/mutation/UpdatePasswordMutation.graphql';
+import RequestHisecTokenMutation from '#/api/mutation/RequestHisecTokenMutation.graphql';
+import UpdatePasswordMutation from '#/api/mutation/UpdatePasswordMutation.graphql';
 
 describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => {
   it('should show the shared if isOpen is true', async () => {

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { MenuButton } from '../menu';
-import { BrowserPath } from './BrowserStateContext';
-import { MoreVert } from '../icon';
-import { useNodeMenuProps } from './useNodeMenuProps';
-import { isDirectoryNode } from './utils';
+import { MenuButton } from '../menu/index.js';
+import { BrowserPath } from './BrowserStateContext.js';
+import { MoreVert } from '../icon/index.js';
+import { useNodeMenuProps } from './useNodeMenuProps.js';
+import { isDirectoryNode } from './utils.js';
 
 export type NodeMenuButtonProps = {
   path: BrowserPath;

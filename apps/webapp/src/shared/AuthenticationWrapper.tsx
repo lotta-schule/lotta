@@ -3,13 +3,16 @@
 import * as React from 'react';
 import dynamic from 'next/dynamic';
 
-const DynamicAuthentication = dynamic(() => import('shared/Authentication'), {
-  ssr: false,
-});
+const DynamicAuthentication = dynamic(
+  () => import('#/shared/Authentication.js'),
+  {
+    ssr: false,
+  }
+);
 
 const DynamicUpdatePasswordDialog = dynamic(
   () =>
-    import('shared/dialog/UpdatePasswordDialog').then(
+    import('#/shared/dialog/UpdatePasswordDialog.js').then(
       (mod) => mod.UpdatePasswordDialog
     ),
   {

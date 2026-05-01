@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { fireEvent, render, waitFor, userEvent } from 'test/util';
-import { CalendarToolbar } from './CalendarToolbar';
-import { CalendarContext, CalendarProvider } from './CalendarContext';
-import { createCalendarFixture } from 'test/fixtures';
-import { ResultOf, VariablesOf } from 'api/graphql';
+import { fireEvent, render, waitFor, userEvent } from '#/test/util.js';
+import { CalendarToolbar } from './CalendarToolbar.js';
+import { CalendarContext, CalendarProvider } from './CalendarContext.js';
+import { createCalendarFixture } from '#/test/fixtures/index.js';
+import { ResultOf, VariablesOf } from '#/api/graphql.js';
 import {
   CREATE_CALENDAR_EVENT,
   GET_CALENDAR_EVENTS,
   GET_CALENDARS,
-} from '../_graphql';
+} from '../_graphql/index.js';
 import { MockLink } from '@apollo/client/testing';
 
 const defaultCalendars = [

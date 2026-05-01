@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { ComputerExperten, VivaLaRevolucion } from 'test/fixtures';
-import { render, userEvent, waitFor } from 'test/util';
-import { ReviewArticlesStep } from './ReviewArticlesStep';
-import { GET_OWN_ARTICLES } from '../queries';
+import { ComputerExperten, VivaLaRevolucion } from '#/test/fixtures/index.js';
+import { render, userEvent, waitFor } from '#/test/util.js';
+import { ReviewArticlesStep } from './ReviewArticlesStep.js';
+import { GET_OWN_ARTICLES } from '../queries.js';
 
 describe('profile/deleteUserProfilePage/steps/ReviewArticlesStep', () => {
   const mockArticles = [

@@ -70,5 +70,9 @@ export class MockRouter {
 
   refresh: () => void = vi.fn();
 
+  prefetch: () => Promise<void> = vi.fn().mockResolvedValue(undefined);
+
+  replace: (url: string) => Promise<boolean> = vi.fn().mockResolvedValue(true);
+
   events = this._emitter;
 }

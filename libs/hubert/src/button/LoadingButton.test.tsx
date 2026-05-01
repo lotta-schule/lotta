@@ -1,7 +1,13 @@
 import * as React from 'react';
-import { LoadingButton } from './LoadingButton';
-import { act, createPromise, render, userEvent, waitFor } from '../test-utils';
-import { KeyboardArrowLeft } from '../icon';
+import { LoadingButton } from './LoadingButton.js';
+import {
+  act,
+  createPromise,
+  render,
+  userEvent,
+  waitFor,
+} from '../test-utils.js';
+import { KeyboardArrowLeft } from '../icon/index.js';
 
 describe('LoadingButton', () => {
   beforeEach(() => {

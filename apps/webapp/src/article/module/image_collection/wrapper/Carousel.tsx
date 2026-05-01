@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
-import { ImageCarousel } from '../carousel/ImageCarousel';
-import { Gallery } from './Gallery';
+import { ContentModuleModel } from '#/model/index.js';
+import { ImageCarousel } from '../carousel/ImageCarousel.js';
+import { Gallery } from './Gallery.js';
 
 export interface CarouselProps {
   contentModule: ContentModuleModel;

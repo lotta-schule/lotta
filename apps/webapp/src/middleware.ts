@@ -1,6 +1,6 @@
-import { sendRefreshRequest } from 'api/auth';
-import { appConfig } from 'config';
-import { type NextRequest, NextResponse } from 'next/server';
+import { sendRefreshRequest } from '#/api/auth.js';
+import { appConfig } from '#/config.js';
+import { type NextRequest, NextResponse } from 'next/server.js';
 
 const isRequestToApi = (pathname: string) => {
   if (pathname === '/api') return true;
@@ -63,21 +63,27 @@ export async function middleware(request: NextRequest) {
   if (tenant) {
     modifiedHeaders.set('x-lotta-tenant', tenant);
   } else {
-    modifiedHeaders.set('x-lotta-originaly-host', currentHost);
+    modifiedHeaders.set('x-lotta-originary-host', currentHost);
   }
 
-  if (request.headers.get('referer')) {
-    // skip middleware for requests with referer (likely subsequent browser requests for assets)
-    return NextResponse.next({
-      request: {
-        headers: modifiedHeaders,
-      },
-    });
-  }
-
-  return NextResponse.next({
+  const response = NextResponse.next({
     request: {
       headers: modifiedHeaders,
     },
   });
+
+  if (accessToken) {
+    response.cookies.set('SignInAccessToken', accessToken, {
+      httpOnly: true,
+      sameSite: 'strict',
+    });
+  }
+  if (refreshToken) {
+    response.cookies.set('SignInRefreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'strict',
+    });
+  }
+
+  return response;
 }

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { render, waitFor } from '@testing-library/react';
-import { Toolbar } from './Toolbar';
+import { Toolbar } from './Toolbar.js';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
   fixtures,
   userEvent,
-} from 'test-utils';
-import { Upload } from 'browser';
+} from '#/test-utils';
+import { Upload } from '#/browser';
 
 const defaultPath = fixtures.getPathForNode('8');
 

@@ -8,14 +8,14 @@ import {
   SortableItem,
 } from '@lotta-schule/hubert';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
-import { ID, CategoryModel } from 'model';
+import { ID, CategoryModel } from '#/model/index.js';
 import { useParams, useRouter } from 'next/navigation';
-import { Icon } from 'shared/Icon';
-import { useCategories } from 'util/categories/useCategories';
+import { Icon } from '#/shared/Icon.js';
+import { useCategories } from '#/util/categories/useCategories.js';
 
 import styles from './CategoryNavigation.module.scss';
 
-import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
+import UpdateCategoryMutation from '#/api/mutation/UpdateCategoryMutation.graphql';
 
 export const CategoryNavigation = React.memo(() => {
   const router = useRouter();

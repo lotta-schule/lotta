@@ -8,9 +8,9 @@ import {
   Input,
 } from '@lotta-schule/hubert';
 import { useTranslation } from 'react-i18next';
-import { EduplacesLoginButton } from 'component/form';
-import { useTenant } from 'util/tenant';
-import Link from 'next/link';
+import { EduplacesLoginButton } from '#/component/form/index.js';
+import { useTenant } from '#/util/tenant/index.js';
+import Link from 'next/link.js';
 
 import styles from './LoginDialog.module.scss';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, userEvent, waitFor } from '../../test-utils';
-import { ComboBox } from './ComboBox';
+import { render, userEvent, waitFor } from '../../test-utils.js';
+import { ComboBox } from './ComboBox.js';
 
 import styles from './ComboBox.module.scss';
 

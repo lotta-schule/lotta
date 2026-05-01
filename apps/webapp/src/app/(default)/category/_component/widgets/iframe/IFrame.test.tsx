@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { GangamStyleWidget } from 'test/fixtures';
-import { render } from 'test/util';
-import { IFrame } from './IFrame';
+import { GangamStyleWidget } from '#/test/fixtures/index.js';
+import { render } from '#/test/util.js';
+import { IFrame } from './IFrame.js';
 
 describe('shared/widgets/IFrame', () => {
   it('should show an iframe with the correct url', () => {

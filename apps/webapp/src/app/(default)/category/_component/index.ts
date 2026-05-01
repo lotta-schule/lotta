@@ -1,2 +1,2 @@
-export * from './categoryPage/CategoryPage';
-export * from './widgetsList/WidgetsList';
+export * from './categoryPage/CategoryPage.js';
+export * from './widgetsList/WidgetsList.js';

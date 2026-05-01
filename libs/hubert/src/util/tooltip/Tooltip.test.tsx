@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
-import { Button } from '../../button/Button';
-import { Tooltip } from './Tooltip';
-import { userEvent } from 'test-utils';
+import { Button } from '../../button/Button.js';
+import { Tooltip } from './Tooltip.js';
+import { userEvent } from '#/test-utils';
 
 describe('util/Tooltip', () => {
   it('should render', () => {

@@ -1,6 +1,6 @@
-import { CategoryModel } from 'model';
-import { useCategories } from './useCategories';
-import { ID } from 'model/ID';
+import { CategoryModel } from '#/model/index.js';
+import { useCategories } from './useCategories.js';
+import { ID } from '#/model/ID.js';
 
 export const useCategory = (
   categoryId: ID | null | undefined

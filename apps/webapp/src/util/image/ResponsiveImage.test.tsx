@@ -1,6 +1,6 @@
-import { render, waitFor } from 'test/util';
-import { imageFile } from 'test/fixtures';
-import { ResponsiveImage } from './ResponsiveImage';
+import { render, waitFor } from '#/test/util.js';
+import { imageFile } from '#/test/fixtures/index.js';
+import { ResponsiveImage } from './ResponsiveImage.js';
 
 import styles from './ResponsiveImage.module.scss';
 

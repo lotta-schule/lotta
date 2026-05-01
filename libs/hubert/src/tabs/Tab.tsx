@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ButtonProps } from '../button/Button';
-import { NavigationButton } from '../button/NavigationButton';
+import { ButtonProps } from '../button/Button.js';
+import { NavigationButton } from '../button/NavigationButton.js';
 import clsx from 'clsx';
 
 import styles from './Tab.module.scss';

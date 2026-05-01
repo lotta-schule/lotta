@@ -1,9 +1,9 @@
 import { MockLink } from '@apollo/client/testing';
-import { renderHook, waitFor } from 'test/util';
-import { useNewFeedbackCount } from './useNewFeedbackCount';
-import { SomeUser, adminGroup } from 'test/fixtures';
+import { renderHook, waitFor } from '#/test/util.js';
+import { useNewFeedbackCount } from './useNewFeedbackCount.js';
+import { SomeUser, adminGroup } from '#/test/fixtures/index.js';
 
-import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
+import GetFeedbackOverviewQuery from '#/api/query/GetFeedbackOverviewQuery.graphql';
 
 describe('useNewFeedbackCount', () => {
   it('should return 0 if the user is not logged in', () => {

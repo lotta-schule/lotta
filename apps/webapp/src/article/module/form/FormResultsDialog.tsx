@@ -3,7 +3,11 @@ import { useQuery } from '@apollo/client/react';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { saveAs } from 'file-saver';
-import { ContentModuleModel, ID, ContentModuleResultModel } from 'model';
+import {
+  ContentModuleModel,
+  ID,
+  ContentModuleResultModel,
+} from '#/model/index.js';
 import {
   Button,
   Dialog,
@@ -11,9 +15,9 @@ import {
   ErrorMessage,
   LinearProgress,
 } from '@lotta-schule/hubert';
-import { FormConfiguration } from './Form';
+import { FormConfiguration } from './Form.js';
 
-import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
+import GetContentModuleResults from '#/api/query/GetContentModuleResults.graphql';
 
 export interface FormResultsDialogProps {
   isOpen: boolean;

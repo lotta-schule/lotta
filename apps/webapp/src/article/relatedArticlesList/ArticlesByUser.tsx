@@ -2,10 +2,10 @@ import * as React from 'react';
 import { useQuery } from '@apollo/client/react';
 import { LinearProgress } from '@lotta-schule/hubert';
 import { motion } from 'framer-motion';
-import { ArticlePreview } from 'article/preview';
-import { ArticleModel, UserModel } from 'model';
+import { ArticlePreview } from '#/article/preview/index.js';
+import { ArticleModel, UserModel } from '#/model/index.js';
 
-import GetArticlesByUserQuery from 'api/query/GetArticlesByUserQuery.graphql';
+import GetArticlesByUserQuery from '#/api/query/GetArticlesByUserQuery.graphql';
 
 export interface ArticlesByUserProps {
   user: UserModel;

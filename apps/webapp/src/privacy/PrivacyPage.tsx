@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Box } from '@lotta-schule/hubert';
-import { Header, Main, Sidebar } from 'layout';
+import { Header, Main, Sidebar } from '#/layout/index.js';
 
 import styles from './PrivacyPage.module.scss';
 

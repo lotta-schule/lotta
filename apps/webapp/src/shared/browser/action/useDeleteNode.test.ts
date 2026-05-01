@@ -1,13 +1,13 @@
 import { MockLink } from '@apollo/client/testing';
-import { currentApolloCache, renderHook } from 'test/util';
-import { SomeUser, imageFile, logosDirectory } from 'test/fixtures';
-import { DirectoryModel, FileModel } from 'model';
-import { BrowserNode } from '../../../../../../libs/hubert/src/browser';
-import { useDeleteNode } from './useDeleteNode';
+import { currentApolloCache, renderHook } from '#/test/util.js';
+import { SomeUser, imageFile, logosDirectory } from '#/test/fixtures/index.js';
+import { DirectoryModel, FileModel } from '#/model/index.js';
+import { BrowserNode } from '../../../../../../libs/hubert/src/browser/index.js';
+import { useDeleteNode } from './useDeleteNode.js';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import DeleteDirectoryMutation from 'api/mutation/DeleteDirectoryMutation.graphql';
-import DeleteFileMutation from 'api/mutation/DeleteFileMutation.graphql';
+import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import DeleteDirectoryMutation from '#/api/mutation/DeleteDirectoryMutation.graphql';
+import DeleteFileMutation from '#/api/mutation/DeleteFileMutation.graphql';
 
 const directory = {
   ...logosDirectory,

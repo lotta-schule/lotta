@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { render, within } from '@testing-library/react';
-import { FilePreview } from './FilePreview';
+import { FilePreview } from './FilePreview.js';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
   fixtures,
   userEvent,
-} from 'test-utils';
-import { BrowserPath } from './BrowserStateContext';
+} from '#/test-utils';
+import { BrowserPath } from './BrowserStateContext.js';
 
 const WrappedNodeListItem = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>

@@ -1,17 +1,17 @@
-import { loadTenantUsage, GET_USAGE } from './loadTenantUsage';
-import { getClient } from 'api/client';
+import { loadTenantUsage, GET_USAGE } from './loadTenantUsage.js';
+import { getClient } from '#/api/client.js';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { Defer20220824Handler } from '@apollo/client/incremental';
 import { LocalState } from '@apollo/client/local-state';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
-vi.mock('api/client');
+vi.mock('#/api/client.js');
 vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
   ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
-vi.mock('api/apollo/client-rsc', () => ({
+vi.mock('#/api/apollo/client-rsc.js', () => ({
   createRSCClient: vi.fn(),
 }));
 

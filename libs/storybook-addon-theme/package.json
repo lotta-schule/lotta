@@ -9,7 +9,7 @@
     "test": "vitest",
     "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit",
-    "build": "tsup"
+    "build": "tsdown"
   },
   "type": "module",
   "exports": {
@@ -28,16 +28,16 @@
   },
   "bundler": {
     "exportEntries": [
-      "src/index.ts"
+      "./src/index.ts"
     ],
     "managerEntries": [
-      "src/manager.ts"
+      "./src/manager.ts"
     ],
     "previewEntries": [
-      "src/preview.ts"
+      "./src/preview.ts"
     ],
     "nodeEntries": [
-      "src/preset.ts"
+      "./src/preset.ts"
     ]
   },
   "devDependencies": {
@@ -45,7 +45,7 @@
     "@types/node": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "tsup": "catalog:"
+    "tsdown": "^0.21.10"
   },
   "peerDependencies": {
     "storybook": "^10.1.10"

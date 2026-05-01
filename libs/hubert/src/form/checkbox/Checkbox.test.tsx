@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render, userEvent } from '../../test-utils';
-import { Checkbox } from './Checkbox';
+import { render, userEvent } from '../../test-utils.js';
+import { Checkbox } from './Checkbox.js';
 
 describe('shared/general/form/checkbox', () => {
   it('should show the correct label', () => {

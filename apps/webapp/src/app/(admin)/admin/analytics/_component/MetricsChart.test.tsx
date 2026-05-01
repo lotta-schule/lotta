@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { MetricsChart } from './MetricsChart';
-import { Period } from '../Analytics';
-import { GET_TENANT_TIMESERIES_ANALYTICS } from '../_graphql';
+import { render, waitFor } from '#/test/util.js';
+import { MetricsChart } from './MetricsChart.js';
+import { Period } from '../Analytics.js';
+import { GET_TENANT_TIMESERIES_ANALYTICS } from '../_graphql/index.js';
 
 vi.useFakeTimers({ shouldAdvanceTime: true, now: new Date('2024-03-16') });
 

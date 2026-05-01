@@ -1,4 +1,4 @@
-import { SearchPage } from 'search/SearchPage';
+import { SearchPage } from '#/search/SearchPage.js';
 
 export default function SearchRoute() {
   return <SearchPage />;

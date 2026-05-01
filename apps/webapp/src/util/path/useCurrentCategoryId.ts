@@ -1,10 +1,10 @@
 'use client';
-import { ArticleModel } from 'model';
-import { ID } from 'model/ID';
+import { ArticleModel } from '#/model/index.js';
+import { ID } from '#/model/ID.js';
 import { useQuery } from '@apollo/client/react';
 import { usePathname } from 'next/navigation';
 
-import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
+import GetArticleQuery from '#/api/query/GetArticleQuery.graphql';
 
 export const useCurrentCategoryId = (): ID | null => {
   const path = usePathname();

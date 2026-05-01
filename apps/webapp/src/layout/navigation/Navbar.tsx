@@ -3,13 +3,13 @@
 import * as React from 'react';
 import { Button, NavigationButton } from '@lotta-schule/hubert';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
-import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
-import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
-import { Category } from 'util/model';
-import { isMobileDrawerOpenVar } from 'api/apollo/cache';
+import { Icon } from '#/shared/Icon.js';
+import { useCategoriesAncestorsForItem } from '#/util/categories/useCategoriesAncestorsForItem.js';
+import { useCurrentCategoryId } from '#/util/path/useCurrentCategoryId.js';
+import { Category } from '#/util/model/index.js';
+import { isMobileDrawerOpenVar } from '#/api/apollo/cache.js';
 import { usePathname } from 'next/navigation';
-import { type loadCategories } from 'loader/loadCategories';
+import { type loadCategories } from '#/loader/loadCategories.js';
 import clsx from 'clsx';
 import Link from 'next/link';
 

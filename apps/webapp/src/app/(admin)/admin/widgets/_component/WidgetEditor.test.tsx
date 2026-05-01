@@ -3,11 +3,11 @@ import {
   CalendarKlassenarbeiten,
   GangamStyleWidget,
   VPSchuelerWidget,
-} from 'test/fixtures';
-import { render, waitFor, userEvent } from 'test/util';
-import { WidgetEditor } from './WidgetEditor';
+} from '#/test/fixtures/index.js';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { WidgetEditor } from './WidgetEditor.js';
 
-import UpdateWidgetMutation from 'api/mutation/UpdateWidgetMutation.graphql';
+import UpdateWidgetMutation from '#/api/mutation/UpdateWidgetMutation.graphql';
 
 describe("Administrators' WidgetEditor", () => {
   it("should have the widget's name in the name input field", () => {

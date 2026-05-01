@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, waitFor } from 'test/util';
-import { MetricsOverview } from './MetricsOverview';
-import { Period } from '../Analytics';
-import { GET_TENANT_AGGREGATE_ANALYTICS } from '../_graphql';
+import { render, waitFor } from '#/test/util.js';
+import { MetricsOverview } from './MetricsOverview.js';
+import { Period } from '../Analytics.js';
+import { GET_TENANT_AGGREGATE_ANALYTICS } from '../_graphql/index.js';
 import { MockLink } from '@apollo/client/testing';
 
 vi.useFakeTimers({

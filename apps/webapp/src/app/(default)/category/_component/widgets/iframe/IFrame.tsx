@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { WidgetModel, WidgetModelType } from 'model';
+import { WidgetModel, WidgetModelType } from '#/model/index.js';
 
 import styles from './IFrame.module.scss';
 

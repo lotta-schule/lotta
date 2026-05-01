@@ -2,11 +2,11 @@
 
 import * as React from 'react';
 import { Avatar, AvatarProps } from '@lotta-schule/hubert';
-import { UserModel } from 'model';
-import { User } from 'util/model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { UserModel } from '#/model/index.js';
+import { User } from '#/util/model/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import { useTranslation } from 'react-i18next';
-import { useResponsiveProps } from 'util/image/ResponsiveImage';
+import { useResponsiveProps } from '#/util/image/ResponsiveImage.js';
 
 export type UserAvatarProps = Omit<AvatarProps, 'src' | 'alt'> & {
   user: Pick<UserModel, 'avatarImageFile' | 'name' | 'nickname'>;

@@ -1,26 +1,26 @@
 import * as React from 'react';
 import { MockedFunction } from 'vitest';
-import { render, waitFor, userEvent } from 'test/util';
-import { Analytics } from './Analytics';
-import { PropertyBreakdown } from './_component';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { Analytics } from './Analytics.js';
+import { PropertyBreakdown } from './_component/index.js';
 import {
   GET_TENANT_AGGREGATE_ANALYTICS,
   GET_TENANT_BREAKDOWN_ANALYTICS,
   GET_TENANT_TIMESERIES_ANALYTICS,
-} from './_graphql';
+} from './_graphql/index.js';
 
 vi.useFakeTimers({
   shouldAdvanceTime: true,
   now: new Date('2025-08-16T12:00:00.000Z'),
 });
 
-beforeAll(() => import('./_component/MetricsChart'));
+beforeAll(() => import('./_component/MetricsChart.js'));
 
-vi.mock('./_component/PropertyBreakdown', () => ({
+vi.mock('./_component/PropertyBreakdown.js', () => ({
   PropertyBreakdown: vi.fn(() => <div data-testid="PropertyBreakdown"></div>),
 }));
 
-vi.mock('./_component/CurrentOnlineUserCounter', () => ({
+vi.mock('./_component/CurrentOnlineUserCounter.js', () => ({
   CurrentOnlineUserCounter: vi.fn(() => (
     <div data-testid="CurrentOnlineUserCounter"></div>
   )),

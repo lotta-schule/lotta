@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { ComboBox, LinearProgress } from '@lotta-schule/hubert';
 import { useLazyQuery, useQuery } from '@apollo/client/react';
-import { ArticlePreview } from 'article/preview';
-import { ArticleModel, ID } from 'model';
-import { Article } from 'util/model';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
+import { ArticlePreview } from '#/article/preview/index.js';
+import { ArticleModel, ID } from '#/model/index.js';
+import { Article } from '#/util/model/index.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
 
-import SearchQuery from 'api/query/SearchQuery.graphql';
-import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graphql';
+import SearchQuery from '#/api/query/SearchQuery.graphql';
+import GetArticleForPreviewQuery from '#/api/query/GetArticleForPreviewQuery.graphql';
 
 export interface CategoryArticleRedirectSelection {
   redirectPath: string;

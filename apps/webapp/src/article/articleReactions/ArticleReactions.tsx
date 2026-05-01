@@ -9,20 +9,20 @@ import {
   PopoverTrigger,
 } from '@lotta-schule/hubert';
 import { useMutation, useSuspenseQuery } from '@apollo/client/react';
-import { ArticleModel, ArticleReactionType } from 'model';
-import { Icon } from 'shared/Icon';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { ReactionCountButtons } from './ReactionCountButtons';
-import { iconForReactionType } from './supportedReactionIcons';
-import { ReactionUserList } from './RactionUserList';
+import { ArticleModel, ArticleReactionType } from '#/model/index.js';
+import { Icon } from '#/shared/Icon.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { ReactionCountButtons } from './ReactionCountButtons.js';
+import { iconForReactionType } from './supportedReactionIcons.js';
+import { ReactionUserList } from './RactionUserList.js';
 import dynamic from 'next/dynamic';
 
 import styles from './ArticleReactions.module.scss';
 
-import GetArticleReactionCounts from 'api/query/GetArticleReactionCounts.graphql';
-import ReactToArticleMutation from 'api/mutation/ReactToArticleMutation.graphql';
+import GetArticleReactionCounts from '#/api/query/GetArticleReactionCounts.graphql';
+import ReactToArticleMutation from '#/api/mutation/ReactToArticleMutation.graphql';
 
-const DynamicReactionSelector = dynamic(() => import('./ReactionSelector'));
+const DynamicReactionSelector = dynamic(() => import('./ReactionSelector.js'));
 
 export type ArticleReactionsProps = {
   article: ArticleModel;

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { imageFile, tenant } from 'test/fixtures';
-import { render, fireEvent, waitFor, userEvent } from 'test/util';
-import { TenantModel } from 'model';
-import { Presentation } from './Presentation';
+import { imageFile, tenant } from '#/test/fixtures/index.js';
+import { render, fireEvent, waitFor, userEvent } from '#/test/util.js';
+import { TenantModel } from '#/model/index.js';
+import { Presentation } from './Presentation.js';
 
-import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
+import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
 
 const mockTenant: TenantModel = {
   ...tenant,

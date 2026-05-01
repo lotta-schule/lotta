@@ -4,12 +4,12 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton, Item } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client/react';
 import { useRouter } from 'next/navigation';
-import { WidgetModel, WidgetModelType } from 'model';
-import { Widget } from 'util/model';
-import { Icon } from 'shared/Icon';
+import { WidgetModel, WidgetModelType } from '#/model/index.js';
+import { Widget } from '#/util/model/index.js';
+import { Icon } from '#/shared/Icon.js';
 
-import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import CreateWidgetMutation from '#/api/mutation/CreateWidgetMutation.graphql';
+import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 
 export const CreateWidgetButton = React.memo(() => {
   const router = useRouter();

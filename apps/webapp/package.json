@@ -4,11 +4,11 @@
   "version": "6.1.20",
   "description": "Lotta Schule Webapp",
   "scripts": {
-    "dev": "next dev --webpack",
+    "dev": "next dev",
     "start:prod": "next start",
     "build": "next build",
-    "test": "vitest",
-    "lint": "pnpm dlx eslint@^9 'src/**/*.*' --no-warn-ignored --fix",
+    "test": "vitest run",
+    "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit",
     "schema:download": "pnpm dlx get-graphql-schema http://127.0.0.1:4000/api > .tmp/schema.graphql",
     "translations:collect": "pnpm i18next"
@@ -60,8 +60,9 @@
     "i18next-parser": "catalog:",
     "ignore-loader": "catalog:",
     "sass": "catalog:",
+    "tsconfig-paths-webpack-plugin": "^4.2.0",
     "vitest": "catalog:",
-    "vitest-browser-react": "^2.0.2"
+    "vitest-browser-react": "^2.2.0"
   },
   "packageManager": "pnpm@10.14.0",
   "pnpm": {

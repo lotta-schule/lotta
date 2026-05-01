@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { loadTenant } from 'loader';
+import { loadTenant } from '#/loader/index.js';
 import type { MetadataRoute } from 'next';
 
 export async function GET() {

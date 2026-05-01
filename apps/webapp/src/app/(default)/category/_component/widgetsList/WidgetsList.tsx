@@ -2,21 +2,21 @@
 
 import * as React from 'react';
 import { useSuspenseQuery } from '@apollo/client/react';
-import { graphql } from 'api/graphql';
-import { WidgetModelType } from 'model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { graphql } from '#/api/graphql.js';
+import { WidgetModelType } from '#/model/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import {
   Tabbar,
   Tab,
   SwipeableViews,
   useScrollEvent,
 } from '@lotta-schule/hubert';
-import { Widget } from '../widgets/Widget';
-import { WidgetIcon } from '../widgets/WidgetIcon';
-import { User, Widget as WidgetUtil } from 'util/model';
-import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
-import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
-import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
+import { Widget } from '../widgets/Widget.js';
+import { WidgetIcon } from '../widgets/WidgetIcon.js';
+import { User, Widget as WidgetUtil } from '#/util/model/index.js';
+import { useCategoriesAncestorsForItem } from '#/util/categories/useCategoriesAncestorsForItem.js';
+import { useCurrentCategoryId } from '#/util/path/useCurrentCategoryId.js';
+import { CurrentUserAvatar } from '#/shared/userAvatar/UserAvatar.js';
 import clsx from 'clsx';
 
 import styles from './WidgetsList.module.scss';

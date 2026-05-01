@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { graphql, ResultOf } from 'api/graphql';
+import { graphql, ResultOf } from '#/api/graphql.js';
 
 export const GET_CURRENT_USER = graphql(`
   query GetCurrentUser {

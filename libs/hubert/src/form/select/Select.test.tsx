@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from '../../test-utils';
-import { Option, Select } from './Select';
+import { render, userEvent, waitFor } from '../../test-utils.js';
+import { Option, Select } from './Select.js';
 
 describe('shared/general/form/select', () => {
   it('should render and show options', async () => {

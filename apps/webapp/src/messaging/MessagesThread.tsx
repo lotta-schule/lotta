@@ -2,14 +2,14 @@ import * as React from 'react';
 import { useApolloClient, useQuery } from '@apollo/client/react';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { ErrorMessage, SplitViewButton, Toolbar } from '@lotta-schule/hubert';
-import { ConversationModel } from 'model';
-import { Icon } from 'shared/Icon';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { MessageBubble } from './MessageBubble';
+import { ConversationModel } from '#/model/index.js';
+import { Icon } from '#/shared/Icon.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { MessageBubble } from './MessageBubble.js';
 
 import styles from './MessagesThread.module.scss';
 
-import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
+import GetConversationQuery from '#/api/query/GetConversationQuery.graphql';
 
 export interface MessagesThreadProps {
   conversation: ConversationModel;

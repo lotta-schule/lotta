@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { render, waitFor, within, userEvent } from 'test/util';
-import { SelectFileOverlay } from './SelectFileOverlay';
+import { render, waitFor, within, userEvent } from '#/test/util.js';
+import { SelectFileOverlay } from './SelectFileOverlay.js';
 import { MockLink } from '@apollo/client/testing';
-import { imageFile, logosDirectory } from 'test/fixtures';
+import { imageFile, logosDirectory } from '#/test/fixtures/index.js';
 
-import GetDirectoriesAndFiles from 'api/query/GetDirectoriesAndFiles.graphql';
-import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
+import GetDirectoriesAndFiles from '#/api/query/GetDirectoriesAndFiles.graphql';
+import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';
 
 describe('SelectFileOverlay Component', () => {
   const additionalMocks: MockLink.MockedResponse[] = [

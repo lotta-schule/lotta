@@ -55,8 +55,13 @@ defmodule LottaWeb.TenantPlug do
     end
   end
 
-  defp tenant_by_tenant_header(conn) do
-    case get_req_header(conn, "x-lotta-tenant") do
+  defp tenant_by_tenant_header(conn),
+    do:
+      fetch_tenant_from_header(conn, "tenant") ||
+        fetch_tenant_from_header(conn, "x-lotta-tenant")
+
+  defp fetch_tenant_from_header(conn, header_name) do
+    case get_req_header(conn, header_name) do
       ["slug:" <> slug] ->
         Tenants.get_tenant_by_slug(slug)
 

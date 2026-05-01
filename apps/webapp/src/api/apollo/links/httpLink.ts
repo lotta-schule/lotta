@@ -1,7 +1,7 @@
 import { createLink } from 'apollo-v3-absinthe-upload-link';
-import { createCustomFetch } from '../customFetch';
-import { appConfig } from 'config';
-import { isBrowser } from 'util/isBrowser';
+import { createCustomFetch } from '../customFetch.js';
+import { appConfig } from '#/config.js';
+import { isBrowser } from '#/util/isBrowser.js';
 
 const API_URL = `${appConfig.get('API_URL')}/api`;
 

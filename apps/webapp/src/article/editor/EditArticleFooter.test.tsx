@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, waitFor, userEvent } from 'test/util';
-import { adminGroup, SomeUser, Weihnachtsmarkt } from 'test/fixtures';
-import { EditArticleFooter } from './EditArticleFooter';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import {
+  adminGroup,
+  SomeUser,
+  Weihnachtsmarkt,
+} from '#/test/fixtures/index.js';
+import { EditArticleFooter } from './EditArticleFooter.js';
 
-import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
+import DeleteArticleMutation from '#/api/mutation/DeleteArticleMutation.graphql';
 
 describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
   describe('dates button', () => {

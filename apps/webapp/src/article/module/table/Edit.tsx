@@ -8,16 +8,16 @@ import {
   Table,
   Tooltip,
 } from '@lotta-schule/hubert';
-import { ContentModuleModel } from 'model';
+import { ContentModuleModel } from '#/model/index.js';
 import {
   TableCell as TableCellInterface,
   TableContent,
   TableConfiguration,
-} from './Table';
+} from './Table.js';
 
 import styles from './Table.module.scss';
 import { faCircleMinus, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 
 interface EditProps {
   contentModule: ContentModuleModel<TableContent, TableConfiguration>;

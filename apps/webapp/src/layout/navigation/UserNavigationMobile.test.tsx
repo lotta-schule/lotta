@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { render, waitFor } from 'test/util';
-import { UserNavigationMobile } from './UserNavigationMobile';
-import { SomeUser, adminGroup } from 'test/fixtures';
+import { render, waitFor } from '#/test/util.js';
+import { UserNavigationMobile } from './UserNavigationMobile.js';
+import { SomeUser, adminGroup } from '#/test/fixtures/index.js';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
-import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
+import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
+import GetFeedbackOverviewQuery from '#/api/query/GetFeedbackOverviewQuery.graphql';
 
 describe('shared/layouts/UserNavigationMobile', () => {
   describe('logged out user', () => {

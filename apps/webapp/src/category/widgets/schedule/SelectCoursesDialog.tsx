@@ -7,7 +7,7 @@ import {
   DialogActions,
   DialogContent,
 } from '@lotta-schule/hubert';
-import { LOCALSTORAGE_KEY } from './Schedule';
+import { LOCALSTORAGE_KEY } from './Schedule.js';
 
 import styles from './SelectCoursesDialog.module.scss';
 

@@ -1,4 +1,4 @@
-import { ID } from './ID';
+import { ID } from './ID.js';
 
 export interface UserGroupModel {
   __typename?: 'UserGroup';

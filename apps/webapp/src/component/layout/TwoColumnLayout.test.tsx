@@ -1,9 +1,9 @@
-import { render } from 'test/util';
+import { render } from '#/test/util.js';
 import {
   TwoColumnLayout,
   TwoColumnLayoutContent,
   TwoColumnLayoutSidebar,
-} from './TwoColumnLayout';
+} from './TwoColumnLayout.js';
 
 describe('TwoColumnLayout', () => {
   it('should render successfully', () => {

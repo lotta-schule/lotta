@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from 'test/util';
-import { ComputerExperten, FaecherCategory } from 'test/fixtures';
-import { SearchPage } from './SearchPage';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { ComputerExperten, FaecherCategory } from '#/test/fixtures/index.js';
+import { SearchPage } from './SearchPage.js';
 
-import SearchQuery from 'api/query/SearchQuery.graphql';
+import SearchQuery from '#/api/query/SearchQuery.graphql';
 
 describe('pages/search', () => {
   describe('Search', () => {

@@ -1,4 +1,4 @@
-import { graphql } from 'api/graphql';
+import { graphql } from '#/api/graphql.js';
 
 export const GET_ARTICLES_QUERY = graphql(`
   query GetArticles($categoryId: ID!, $filter: ArticleFilter) {

@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 import { Box, ErrorMessage } from '@lotta-schule/hubert';
-import { ArticleModel } from 'model';
-import { Header, Main, Sidebar } from 'layout';
-import { ArticlesList } from 'shared/articlesList/ArticlesList';
+import { ArticleModel } from '#/model/index.js';
+import { Header, Main, Sidebar } from '#/layout/index.js';
+import { ArticlesList } from '#/shared/articlesList/ArticlesList.js';
 
 export interface UnpublishedArticlesPageProps {
   articles: ArticleModel[];

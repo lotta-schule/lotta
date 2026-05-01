@@ -5,16 +5,16 @@ import {
   KeinErSieEsUser,
   SomeUser,
   SomeUserin,
-} from 'test/fixtures';
-import { render, waitFor, userEvent } from 'test/util';
-import { MessagingView } from './MessagingView';
+} from '#/test/fixtures/index.js';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { MessagingView } from './MessagingView.js';
 
 import styles from './ConversationPreview.module.scss';
 
-import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
-import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
-import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
-import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
+import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
+import GetConversationQuery from '#/api/query/GetConversationQuery.graphql';
+import SearchUsersQuery from '#/api/query/SearchUsersQuery.graphql';
+import SendMessageMutation from '#/api/mutation/SendMessageMutation.graphql';
 
 describe('src/messaging/MessagingView', () => {
   const conversations = [

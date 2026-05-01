@@ -1,14 +1,13 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
-import { browserCommands } from './src/test/commands';
+import { browserCommands } from './src/test/commands.jsx';
 import react from '@vitejs/plugin-react';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import graphql from '@rollup/plugin-graphql';
 
 export default defineConfig({
   root: import.meta.dirname,
 
-  plugins: [tsconfigPaths(), react(), graphql({}), browserCommands()],
+  plugins: [react(), graphql({}), browserCommands()],
 
   define: {
     'process.env': JSON.stringify({}),
@@ -17,6 +16,7 @@ export default defineConfig({
   resolve: {
     conditions: ['module', 'browser', 'development|production|test'],
     dedupe: ['react', 'react-dom'],
+    tsconfigPaths: true,
   },
 
   ssr: {
@@ -35,25 +35,36 @@ export default defineConfig({
         test: {
           name: { label: 'component', color: 'cyan' },
           browser: {
-            provider: playwright(),
+            provider: playwright({
+              contextOptions: { locale: 'de-DE', timezoneId: 'Europe/Berlin' },
+            }),
             enabled: true,
             instances: [{ browser: 'chromium', headless: !!process.env.CI }],
             testerHtmlPath: 'src/test/browser-tester.html',
             viewport: { width: 1280, height: 720 },
             screenshotDirectory: '.test-reports/screenshots',
             trace: {
-              mode: 'on-first-retry',
+              mode: 'retain-on-failure',
               tracesDir: '.test-reports/traces',
             },
           },
 
           setupFiles: ['./src/test/component.setup.ts'],
-          retry: process.env.GITHUB_ACTIONS ? 3 : 1,
+          retry: process.env.CI ? 3 : 1,
           fileParallelism: !process.env.CI,
           maxConcurrency: process.env.CI ? 1 : 5,
           include: [
             'src/**/*.test.{ts,tsx}',
             '!src/**/*.{unit,rsc}.test.{ts,tsx}',
+          ],
+          exclude: [
+            '.vitest/**/*',
+            '.next/**/*',
+            '.test-reports/**/*',
+            '.vitest-attachments/**/*',
+            'coverage',
+            'dist',
+            'node_modules',
           ],
           testTimeout: 30_000, // default is 5000ms, increase for browser tests
         },
@@ -76,6 +87,7 @@ export default defineConfig({
       ? ['default', 'junit', 'github-actions']
       : ['default'],
     outputFile: 'coverage/junit.xml',
+    printConsoleTrace: true,
     coverage: {
       clean: true,
       reportsDirectory: 'coverage',

@@ -1,6 +1,6 @@
-import { render, waitFor } from 'test/util';
+import { render, waitFor } from '#/test/util.js';
 import { userEvent } from '@vitest/browser/context';
-import { ImageCaption } from './ImageCaption';
+import { ImageCaption } from './ImageCaption.js';
 
 describe('ImageCaption', () => {
   it('should render the caption', () => {

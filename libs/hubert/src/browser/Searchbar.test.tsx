@@ -4,8 +4,8 @@ import {
   TestBrowserWrapperProps,
   userEvent,
   waitFor,
-} from 'test-utils';
-import { Searchbar } from './Searchbar';
+} from '#/test-utils';
+import { Searchbar } from './Searchbar.js';
 
 const WrappedSearchbar = ({ ...props }: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>

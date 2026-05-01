@@ -1,5 +1,5 @@
-import { useServerData } from 'shared/ServerDataContext';
-import { graphql, ResultOf } from 'api/graphql';
+import { useServerData } from '#/shared/ServerDataContext.js';
+import { graphql, ResultOf } from '#/api/graphql.js';
 
 export const TENANT_COMMON_FIELDS = graphql(`
   fragment TenantCommonFields on Tenant @_unmask {

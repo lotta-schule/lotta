@@ -1,4 +1,4 @@
-import { DirectoryModel, FileModel, UserModel } from 'model';
+import { DirectoryModel, FileModel, UserModel } from '#/model/index.js';
 
 /*
  *

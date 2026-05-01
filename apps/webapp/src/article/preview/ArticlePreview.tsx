@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import {
   faCircle,
   faLocationDot,
@@ -9,11 +9,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { ArticleModel, ID, UserModel } from 'model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Article, User } from 'util/model';
+import { ArticleModel, ID, UserModel } from '#/model/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { Article, User } from '#/util/model/index.js';
 import { useMutation } from '@apollo/client/react';
-import { Article as ArticleUtil } from 'util/model/Article';
+import { Article as ArticleUtil } from '#/util/model/Article.js';
 import {
   Button,
   Box,
@@ -23,17 +23,17 @@ import {
   Input,
   Tag,
 } from '@lotta-schule/hubert';
-import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
-import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { TagsSelect } from '../editor/TagsSelect';
-import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { TagDetailsDialog } from 'article/tagDetailsDialog';
-import { UserArticlesDialog } from 'profile/userArticlesDialog';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
+import { TagsSelect } from '../editor/TagsSelect.js';
+import { AuthorAvatarsList } from '#/article/authorAvatarsList/AuthorAvatarsList.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { TagDetailsDialog } from '#/article/tagDetailsDialog/index.js';
+import { UserArticlesDialog } from '#/profile/userArticlesDialog/index.js';
 import Link from 'next/link';
 import clsx from 'clsx';
 
-import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
+import ToggleArticlePinMutation from '#/api/mutation/ToggleArticlePin.graphql';
 
 import styles from './ArticlePreview.module.scss';
 
