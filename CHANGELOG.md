@@ -1,3 +1,18 @@
+## 6.1.20 (2026-05-01)
+
+### 🚀 Features
+
+- **core:** cockpit: sort invoices by issuance by default ([61c3ee66](https://github.com/lotta-schule/lotta/commit/61c3ee66))
+- **core:** oauth callback: allow redirecting to lotta:// scheme if x-lotta-app-version header is set ([#536](https://github.com/lotta-schule/lotta/pull/536))
+
+### 🩹 Fixes
+
+- **cockpit:** show pdf invoices in correct size ([c24c92b8](https://github.com/lotta-schule/lotta/commit/c24c92b8))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.1.19 (2026-04-02)
 
 ### 🩹 Fixes
