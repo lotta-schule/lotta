@@ -1,3 +1,23 @@
+## 6.1.19 (2026-04-02)
+
+### 🩹 Fixes
+
+- **core:** strip null bytes from metadata ([009766f6](https://github.com/lotta-schule/lotta/commit/009766f6))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.18 (2026-01-26)
+
+### 🩹 Fixes
+
+- **core:** Allow eduplaces students to login when the tenant exists ([#530](https://github.com/lotta-schule/lotta/pull/530))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.1.17 (2026-01-10)
 
 This was a version bump only, there were no code changes.
