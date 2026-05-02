@@ -169,9 +169,17 @@ jobs:
           NODE_ENV: test
           MIX_ENV: test
 
+      - name: Check for test artifact output
+        id: output-check
+        run: |
+          if [ -d "apps/webapp/.test-reports/traces" ]; then echo "webapp_traces=1" >> $GITHUB_OUTPUT; fi
+          if [ -d "apps/webapp/.test-reports/screenshots" ]; then echo "webapp_screens=1" >> $GITHUB_OUTPUT; fi
+          if [ -d "libs/hubert/.test-reports/traces" ]; then echo "hubert_traces=1" >> $GITHUB_OUTPUT; fi
+          if [ -d "libs/hubert/.test-reports/screenshots" ]; then echo "hubert_screens=1" >> $GITHUB_OUTPUT; fi
+
       - name: Upload Test Traces for the webapp
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() && hashFiles('apps/webapp/.test-reports/traces/**') != '' }}
+        if: ${{ !cancelled() && steps.output-check.outputs.webapp_traces }}
         with:
           name: web-vitest-traces
           path: apps/webapp/.test-reports/traces
@@ -179,7 +187,7 @@ jobs:
 
       - name: Upload Test Screenshots for the webapp
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() && hashFiles('apps/webapp/.test-reports/screenshots/**') != '' }}
+        if: ${{ !cancelled() && steps.output-check.outputs.webapp_screens }}
         with:
           name: web-vitest-screenshots
           path: apps/webapp/.test-reports/screenshots/
@@ -187,7 +195,7 @@ jobs:
 
       - name: Upload Test Traces for the hubert
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.output-check.outputs.hubert_traces }}
         with:
           name: hubert-vitest-traces
           path: libs/hubert/.test-reports/traces
@@ -195,7 +203,7 @@ jobs:
 
       - name: Upload Test Screenshots for the hubert
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() && hashFiles('libs/hubert/.test-reports/screenshots/**') != '' }}
+        if: ${{ !cancelled() && steps.output-check.outputs.hubert_screens }}
         with:
           name: hubert-vitest-screenshots
           path: libs/hubert/.test-reports/screenshots/
