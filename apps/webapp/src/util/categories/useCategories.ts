@@ -37,7 +37,7 @@ export const useCategories = () => {
             indentedLabel: indent + category.title,
           };
         }),
-    [data?.categories]
+    [categories]
   );
 
   const others = React.useMemo(

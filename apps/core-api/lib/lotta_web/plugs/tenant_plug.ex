@@ -9,6 +9,7 @@ defmodule LottaWeb.TenantPlug do
   slug, matching <slug>.<base-domain> (eg <slug>.lotta.schule).
   """
   require OpenTelemetry.Tracer
+  require Logger
   import Plug.Conn
 
   alias Lotta.{Repo, Tenants}
@@ -44,6 +45,12 @@ defmodule LottaWeb.TenantPlug do
         "tenant.slug": tenant.slug,
         "tenant.prefix": tenant.prefix
       })
+
+      Logger.metadata(
+        tenant_id: tenant.id,
+        tenant_slug: tenant.slug,
+        tenant_prefix: tenant.prefix
+      )
 
       Repo.put_prefix(tenant.prefix)
 

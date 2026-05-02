@@ -2,6 +2,7 @@ import { ApolloClient, ApolloLink } from '@apollo/client';
 import { createCache } from './cache';
 import { createErrorLink } from './links/errorLink';
 import { createAuthLink } from './links/authLink';
+import { createOtelLink } from './links/otelLink';
 import { createHttpLink } from './links/httpLink';
 import { createSentryTracingLink } from './links/sentryTracingLink';
 import { headers } from 'next/headers';
@@ -22,6 +23,7 @@ export const createRSCClient = async () => {
   return new ApolloClient({
     cache: createCache(),
     link: ApolloLink.from([
+      createOtelLink(),
       createErrorLink(),
       createAuthLink({
         initialToken: getAuthTokenFromHeader(headerValues) ?? undefined,
