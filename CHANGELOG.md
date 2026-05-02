@@ -1,3 +1,14 @@
+## 6.1.21 (2026-05-02)
+
+### 🚀 Features
+
+- **core:** cockpit - sort invoices by created_at instead of issued_at ([e4a65cb8](https://github.com/lotta-schule/lotta/commit/e4a65cb8))
+- **core:** cockpit - allow banking data ingestion ([#537](https://github.com/lotta-schule/lotta/pull/537))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.1.20 (2026-05-01)
 
 ### 🚀 Features
