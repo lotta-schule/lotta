@@ -112,7 +112,7 @@ defmodule LottaWeb.FileResolver do
       end)
 
     processing_formats =
-      if length(requestable_formats) > 0 &&
+      if requestable_formats != [] &&
            Enum.any?(requestable_formats, fn {format_name, _} ->
              Enum.all?(conversions, &(&1.name != to_string(format_name)))
            end) do

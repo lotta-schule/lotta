@@ -72,7 +72,7 @@ defmodule Lotta.StorageTest do
       assert uploaded_file.remote_storage_entity.path ==
                "tenant_test/#{uploaded_file.id}/original"
 
-      assert Enum.count(file_conversions) > 0
+      assert file_conversions != []
     end
 
     test "copy_to_remote_storage/2 should reupload a file to new location", %{

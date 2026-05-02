@@ -75,17 +75,20 @@ defmodule Lotta.Repo.TenantMigrations.MakeConversionFormatsUnique do
         Logger.info("Removed file conversion #{file_conversion.id} from the database.")
         Repo.delete(remote_storage_entity, prefix: prefix())
         Logger.info("Removed remote_storage_entity #{file_conversion.id} from the database.")
-
-        if remote_storage_entity.store_name == RemoteStorage.default_store() do
-          with {:ok, _} <- RemoteStorage.delete(remote_storage_entity) do
-            Logger.info(
-              "Removed file #{remote_storage_entity.store_name}:#{remote_storage_entity.path} from storage."
-            )
-          end
-        end
+        maybe_delete_from_storage(remote_storage_entity)
 
       {:error, changeset} ->
         Logger.error("Failed to remove file conversion #{file_conversion.id}: #{changeset}")
+    end
+  end
+
+  defp maybe_delete_from_storage(remote_storage_entity) do
+    if remote_storage_entity.store_name == RemoteStorage.default_store() do
+      with {:ok, _} <- RemoteStorage.delete(remote_storage_entity) do
+        Logger.info(
+          "Removed file #{remote_storage_entity.store_name}:#{remote_storage_entity.path} from storage."
+        )
+      end
     end
   end
 end

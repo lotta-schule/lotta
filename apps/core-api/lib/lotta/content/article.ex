@@ -39,14 +39,15 @@ defmodule Lotta.Content.Article do
     field(:is_reactions_enabled, :boolean, default: false)
     field(:rank, :float, virtual: true)
 
-    belongs_to :category, Category, on_replace: :nilify
+    belongs_to(:category, Category, on_replace: :nilify)
 
-    belongs_to :preview_image_file, File,
+    belongs_to(:preview_image_file, File,
       on_replace: :nilify,
       type: :binary_id
+    )
 
-    has_many :content_modules, ContentModule, on_replace: :delete
-    has_many :reactions, ArticleReaction, on_replace: :delete
+    has_many(:content_modules, ContentModule, on_replace: :delete)
+    has_many(:reactions, ArticleReaction, on_replace: :delete)
 
     many_to_many(
       :groups,
@@ -169,17 +170,18 @@ defmodule Lotta.Content.Article do
   defp maybe_send_admin_notification(changeset) do
     if changeset.valid? && get_change(changeset, :ready_to_publish) do
       case apply_action(changeset, :update) do
-        {:ok, article} ->
-          for admin <- Accounts.list_admin_users() do
-            Email.article_ready_mail(admin, article)
-            |> Mailer.deliver_later()
-          end
-
-        {:error, _} ->
-          nil
+        {:ok, article} -> notify_admins(article)
+        {:error, _} -> nil
       end
     end
 
     changeset
+  end
+
+  defp notify_admins(article) do
+    for admin <- Accounts.list_admin_users() do
+      Email.article_ready_mail(admin, article)
+      |> Mailer.deliver_later()
+    end
   end
 end

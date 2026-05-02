@@ -454,14 +454,14 @@ defmodule Lotta.TenantsTest do
     test "returns monthly usage logs for a tenant", %{tenant: tenant} do
       logs = Tenants.get_monthly_usage_logs(tenant)
 
-      assert length(logs) > 0
+      assert logs != []
       assert Enum.all?(logs, fn log -> log.tenant_id == tenant.id end)
     end
 
     test "filters by type", %{tenant: tenant} do
       logs = Tenants.get_monthly_usage_logs(tenant, type: :active_user_count)
 
-      assert length(logs) > 0
+      assert logs != []
       assert Enum.all?(logs, fn log -> log.type == :active_user_count end)
     end
 
@@ -474,7 +474,7 @@ defmodule Lotta.TenantsTest do
           month: today.month
         )
 
-      assert length(logs) > 0
+      assert logs != []
       assert Enum.all?(logs, fn log -> log.year == today.year and log.month == today.month end)
     end
 
@@ -512,7 +512,7 @@ defmodule Lotta.TenantsTest do
         )
 
       # Should average 100 and 200 = 150
-      assert length(logs) > 0
+      assert logs != []
       log = hd(logs)
       assert Decimal.equal?(log.value, Decimal.new("150"))
     end
@@ -527,7 +527,7 @@ defmodule Lotta.TenantsTest do
           month: today.month
         )
 
-      assert length(logs) > 0
+      assert logs != []
       log = hd(logs)
       assert Decimal.equal?(log.value, Decimal.new("3600"))
     end
@@ -593,7 +593,7 @@ defmodule Lotta.TenantsTest do
       assert {:ok, result} = Usage.get_usage(tenant)
 
       assert is_list(result)
-      assert length(result) > 0
+      assert result != []
 
       # Check that each entry has the expected structure
       Enum.each(result, fn entry ->

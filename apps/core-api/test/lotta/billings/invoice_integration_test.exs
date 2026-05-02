@@ -121,7 +121,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
       assert is_binary(html)
       # Should contain plan information
       plan_items = Enum.filter(invoice.items, &(&1.type == "plan"))
-      assert length(plan_items) > 0
+      assert plan_items != []
     end
 
     test "renders invoice with customer information", %{tenant: tenant} do
