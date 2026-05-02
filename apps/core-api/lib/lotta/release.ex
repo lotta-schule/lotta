@@ -165,6 +165,10 @@ defmodule Lotta.Release do
 
     {:ok, count} = Oban.delete_all_jobs(Oban.Job)
     Logger.info("Deleted #{count} Oban jobs")
+  rescue
+    e ->
+      Logger.error("Failed to delete Oban jobs: #{inspect(e)}")
+      {:error, e}
   end
 
   defp on_each_tenant_repo(fun) do
