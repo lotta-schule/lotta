@@ -210,7 +210,7 @@ defmodule LottaWeb.MessagesResolverTest do
       conversation =
         all_conversations
         |> Enum.find(fn c ->
-          Enum.count(c.users) > 0 && Enum.all?(c.users, &(&1.id == user.id || &1.id == user2.id))
+          c.users != [] && Enum.all?(c.users, &(&1.id == user.id || &1.id == user2.id))
         end)
 
       assert conversation
