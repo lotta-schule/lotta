@@ -192,4 +192,17 @@ defmodule LottaWeb.StorageController do
 
   defp respond_with(conn, :internal_server_error),
     do: respond_with(conn, 500)
+
+  defp stream_body(body, conn) do
+    Enum.reduce_while(body, conn, fn chunk, conn ->
+      case chunk(conn, chunk) do
+        {:ok, conn} ->
+          {:cont, conn}
+
+        {:error, reason} ->
+          Logger.error("Failed to stream file to user: #{inspect(reason)}")
+          {:halt, conn}
+      end
+    end)
+  end
 end
