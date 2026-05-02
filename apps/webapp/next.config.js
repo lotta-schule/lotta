@@ -2,7 +2,6 @@
 
 import { resolve } from 'node:path';
 import { URL } from 'node:url';
-import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 
@@ -75,6 +74,13 @@ const nextConfig = {
         loaders: ['graphql-tag/loader'],
         as: '*.cjs',
       },
+      '*.gql': {
+        loaders: ['graphql-tag/loader'],
+        as: '*.cjs',
+      },
+    },
+    resolveAlias: {
+      '@lotta-schule/hubert': '../../libs/hubert/src/index.ts',
     },
     resolveExtensions: [
       '.graphql',
@@ -95,32 +101,6 @@ const nextConfig = {
     quietDeps: true,
   },
   generateEtags: false,
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.test.(t|j)sx?$/,
-      loader: 'ignore-loader',
-    });
-    config.module.rules.push({
-      test: /\.(graphql|gql)$/,
-      exclude: /node_modules/,
-      loader: 'graphql-tag/loader',
-    });
-
-    config.resolve.plugins = [
-      ...(config.resolve.plugins || []),
-      new TsconfigPathsPlugin(),
-    ];
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@lotta-schule/hubert': resolve(
-        __dirname,
-        '../../libs/hubert/src/index.ts'
-      ),
-      '@lotta-schule/hubert/*': resolve(__dirname, '../../libs/hubert/src/*'),
-    };
-
-    return config;
-  },
 };
 
 export default nextConfig;

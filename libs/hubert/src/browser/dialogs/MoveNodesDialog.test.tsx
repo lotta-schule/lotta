@@ -66,7 +66,7 @@ describe('Browser/MoveNodesDialog', () => {
     });
   });
 
-  it('should open the "create new directory" dialog when clicking "new directory", and create a new directory in the current path\'s parent', async () => {
+  it('should open "create directory" dialog on button click, then create directory in parent path', async () => {
     const user = userEvent.setup();
     const onMoveNode = vi.fn();
 
