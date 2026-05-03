@@ -65,11 +65,6 @@ export default defineConfig({
       enabled: true,
       instances: [{ browser: 'chromium', headless: !!process.env.CI }],
       viewport: { width: 1280, height: 720 },
-      screenshotDirectory: '.test-reports/screenshots',
-      trace: {
-        mode: 'on-first-retry',
-        tracesDir: '.test-reports/traces',
-      },
     },
 
     setupFiles: ['./test.setup.ts'],

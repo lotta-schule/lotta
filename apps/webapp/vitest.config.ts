@@ -42,11 +42,6 @@ export default defineConfig({
             instances: [{ browser: 'chromium', headless: !!process.env.CI }],
             testerHtmlPath: 'src/test/browser-tester.html',
             viewport: { width: 1280, height: 720 },
-            screenshotDirectory: '.test-reports/screenshots',
-            trace: {
-              mode: 'retain-on-failure',
-              tracesDir: '.test-reports/traces',
-            },
           },
 
           setupFiles: ['./src/test/component.setup.ts'],
@@ -60,8 +55,6 @@ export default defineConfig({
           exclude: [
             '.vitest/**/*',
             '.next/**/*',
-            '.test-reports/**/*',
-            '.vitest-attachments/**/*',
             'coverage',
             'dist',
             'node_modules',
