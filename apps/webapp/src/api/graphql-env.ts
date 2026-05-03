@@ -249,16 +249,10 @@ const introspection = {
           {
             "name": "contentModules",
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "ContentModule"
-                  }
-                }
+                "kind": "OBJECT",
+                "name": "ContentModule"
               }
             },
             "args": [],
@@ -267,16 +261,10 @@ const introspection = {
           {
             "name": "groups",
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "UserGroup"
-                  }
-                }
+                "kind": "OBJECT",
+                "name": "UserGroup"
               }
             },
             "args": [],
@@ -285,11 +273,8 @@ const introspection = {
           {
             "name": "id",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID"
-              }
+              "kind": "SCALAR",
+              "name": "ID"
             },
             "args": [],
             "isDeprecated": false
@@ -297,11 +282,8 @@ const introspection = {
           {
             "name": "insertedAt",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime"
-              }
+              "kind": "SCALAR",
+              "name": "DateTime"
             },
             "args": [],
             "isDeprecated": false
@@ -356,11 +338,8 @@ const introspection = {
             "type": {
               "kind": "LIST",
               "ofType": {
-                "kind": "NON_NULL",
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "ArticleReactionCount"
-                }
+                "kind": "OBJECT",
+                "name": "ArticleReactionCount"
               }
             },
             "args": [],
@@ -393,11 +372,8 @@ const introspection = {
           {
             "name": "title",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String"
-              }
+              "kind": "SCALAR",
+              "name": "String"
             },
             "args": [],
             "isDeprecated": false
@@ -405,11 +381,8 @@ const introspection = {
           {
             "name": "updatedAt",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime"
-              }
+              "kind": "SCALAR",
+              "name": "DateTime"
             },
             "args": [],
             "isDeprecated": false
@@ -417,16 +390,10 @@ const introspection = {
           {
             "name": "users",
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "User"
-                  }
-                }
+                "kind": "OBJECT",
+                "name": "User"
               }
             },
             "args": [],

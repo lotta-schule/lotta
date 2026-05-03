@@ -16,6 +16,7 @@ defmodule LottaWeb.SessionController do
            Authentication.refresh_token(token) do
       conn
       |> put_refresh_token(refresh_token)
+      |> put_access_token(access_token)
       |> render(:refresh,
         access_token: access_token
       )
@@ -85,7 +86,7 @@ defmodule LottaWeb.SessionController do
     )
   end
 
-  defp put_access_token(%Conn{} = conn, token, is_first_login) do
+  defp put_access_token(%Conn{} = conn, token, is_first_login \\ false) do
     token_max_age = if is_first_login, do: 5 * 60, else: 60 * 60
 
     conn

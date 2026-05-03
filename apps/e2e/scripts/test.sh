@@ -6,4 +6,4 @@ export ADMIN_USERNAME=${ADMIN_USERNAME:-"admin"}
 export ADMIN_PASSWORD=${ADMIN_PASSWORD:-"secretapikey"}
 
 
-pnpm exec playwright test $@
+playwright test $@

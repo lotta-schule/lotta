@@ -57,6 +57,14 @@ defmodule LottaWeb.SessionControllerTest do
         AccessToken.decode_and_verify(access_token, %{"typ" => "access"})
 
       assert email == "alexis.rinaldoni@lotta.schule"
+
+      access_cookie = conn.cookies["SignInAccessToken"]
+      refute is_nil(access_cookie)
+
+      {:ok, %{"email" => email}} =
+        AccessToken.decode_and_verify(access_cookie, %{"typ" => "access"})
+
+      assert email == "alexis.rinaldoni@lotta.schule"
     end
 
     test "should throw an error if refresh token is no valid token" do
