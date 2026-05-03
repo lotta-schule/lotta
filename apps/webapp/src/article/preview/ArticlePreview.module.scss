@@ -196,12 +196,9 @@
         width: 25px;
         height: 25px;
         min-height: 25px;
-        svg {
-          color: rgba(var(--lotta-primary-color), 0.5);
-        }
         &.active {
           svg {
-            color: rgb(var(--lotta-primary-color));
+            color: rgba(var(--lotta-primary-color), 0.5);
           }
         }
       }
@@ -339,9 +336,7 @@
     .titleGridItem {
       grid-column-start: 1;
       grid-column-end: 4;
-
       grid-row: 2;
-
       .title {
         padding: var(--lotta-spacing) 0;
       }
