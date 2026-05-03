@@ -14,6 +14,17 @@ defmodule Lotta.Release do
   alias Lotta.Storage
   alias Ecto.Migrator
 
+  @start_apps [
+    :logger,
+    :runtime_tools,
+    :crypto,
+    :ssl,
+    :inets,
+    :con_cache,
+    :timex,
+    :os_mon
+  ]
+
   def migrate do
     start_app()
 
@@ -187,5 +198,5 @@ defmodule Lotta.Release do
 
   defp repos, do: Application.fetch_env!(:lotta, :ecto_repos)
 
-  defp start_app(), do: Application.ensure_all_started(:lotta)
+  defp start_app(), do: Enum.map(@start_apps, &Application.ensure_all_started/1)
 end
