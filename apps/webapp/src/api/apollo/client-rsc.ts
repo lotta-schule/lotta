@@ -5,14 +5,23 @@ import { createCache } from './cache.js';
 import { createErrorLink } from './links/errorLink.js';
 import { createAuthLink } from './links/authLink.js';
 import { createHttpLink } from './links/httpLink.js';
-import { headers } from 'next/headers.js';
+import { cookies, headers } from 'next/headers.js';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink.js';
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers.js';
+import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies.js';
 
-export const getAuthTokenFromHeader = (headerValues: ReadonlyHeaders) => {
+export const getAuthTokenFromHeader = (
+  headerValues: ReadonlyHeaders,
+  cookieValues: ReadonlyRequestCookies
+) => {
   const authHeader = headerValues.get('authorization');
   if (authHeader?.startsWith('Bearer ')) {
     return authHeader.slice(7);
+  }
+
+  const authCookie = cookieValues.get('SignInAccessToken');
+  if (authCookie) {
+    return authCookie.value;
   }
 
   return null;
@@ -20,13 +29,15 @@ export const getAuthTokenFromHeader = (headerValues: ReadonlyHeaders) => {
 
 export const createRSCClient = async () => {
   const headerValues = await headers();
+  const cookieValues = await cookies();
   return new ApolloClient({
     cache: createCache(),
 
     link: ApolloLink.from([
       createErrorLink(),
       createAuthLink({
-        initialToken: getAuthTokenFromHeader(headerValues) ?? undefined,
+        initialToken:
+          getAuthTokenFromHeader(headerValues, cookieValues) ?? undefined,
       }),
       createVariableInputMutationsLink(),
       createHttpLink({

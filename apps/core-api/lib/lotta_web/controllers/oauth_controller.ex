@@ -120,11 +120,14 @@ defmodule LottaWeb.OAuthController do
           "/"
 
       conn
-      |> put_resp_cookie("SignInAccessToken", token, same_site: "Strict")
+      |> put_resp_cookie("SignInAccessToken", token,
+        same_site: "Lax",
+        max_age: 21 * 24 * 60 * 60
+      )
       |> put_resp_cookie("SignInRefreshToken", refresh_token,
         max_age: 21 * 24 * 60 * 60,
         http_only: true,
-        same_site: "Strict"
+        same_site: "Lax"
       )
       |> redirect(to: return_url)
     else
@@ -134,7 +137,7 @@ defmodule LottaWeb.OAuthController do
         conn
         |> put_status(:unauthorized)
         |> delete_resp_cookie("SignInAccessToken",
-          same_site: "Strict"
+          same_site: "Lax"
         )
         |> render(:bad_request,
           title: gettext("Unauthorized"),

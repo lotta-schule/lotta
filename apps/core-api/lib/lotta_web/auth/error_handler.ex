@@ -22,7 +22,7 @@ defmodule LottaWeb.Auth.ErrorHandler do
     conn
     |> delete_resp_cookie("SignInRefreshToken",
       http_only: true,
-      same_site: "Strict"
+      same_site: "Lax"
     )
   end
 end

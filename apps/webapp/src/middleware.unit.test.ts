@@ -223,12 +223,12 @@ describe('middleware', () => {
       expect(mockCookiesSet).toHaveBeenCalledWith(
         'SignInAccessToken',
         'new-access-token',
-        { sameSite: 'strict' }
+        { sameSite: 'lax', maxAge: 21 * 24 * 60 * 60 }
       );
       expect(mockCookiesSet).toHaveBeenCalledWith(
         'SignInRefreshToken',
         'new-refresh-token',
-        { httpOnly: true, sameSite: 'strict' }
+        { httpOnly: true, sameSite: 'lax', maxAge: 21 * 24 * 60 * 60 }
       );
     });
 

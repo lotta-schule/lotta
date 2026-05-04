@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { headers } from 'next/headers.js';
+import { cookies, headers } from 'next/headers.js';
 import { loadTenant, loadCategories, loadCurrentUser } from '#/loader/index.js';
 import { appConfig } from '#/config.js';
 import { getAuthTokenFromHeader } from '#/api/apollo/client-rsc.js';
@@ -23,7 +23,8 @@ export default async function DefaultLayout({
 }: React.PropsWithChildren) {
   const socketUrl = appConfig.get('API_SOCKET_URL');
   const headerValues = await headers();
-  const accessToken = getAuthTokenFromHeader(headerValues);
+  const cookieValues = await cookies();
+  const accessToken = getAuthTokenFromHeader(headerValues, cookieValues);
 
   const [tenant, categories, currentUser] = await Promise.all([
     loadTenant(),

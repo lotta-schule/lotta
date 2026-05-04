@@ -11,7 +11,7 @@ defmodule LottaWeb.Endpoint do
     store: :cookie,
     key: "_lotta_session",
     signing_salt: "liasho8f",
-    same_site: "Strict"
+    same_site: "Lax"
   ]
 
   plug(:fetch_cookies)

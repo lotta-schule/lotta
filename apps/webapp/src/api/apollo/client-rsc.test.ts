@@ -7,6 +7,10 @@ describe('Apollo RSC Client', () => {
       Promise.resolve({
         get: vi.fn().mockReturnValue('Bearer test-token'),
       }),
+    cookies: () =>
+      Promise.resolve({
+        get: vi.fn().mockReturnValue(undefined),
+      }),
   }));
 
   it('should create an ApolloClient', async () => {

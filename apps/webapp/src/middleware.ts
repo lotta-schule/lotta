@@ -107,13 +107,15 @@ export async function middleware(request: NextRequest) {
 
   if (accessToken) {
     response.cookies.set('SignInAccessToken', accessToken, {
-      sameSite: 'strict',
+      maxAge: 21 * 24 * 60 * 60, // 3 weeks
+      sameSite: 'lax',
     });
   }
   if (refreshToken) {
     response.cookies.set('SignInRefreshToken', refreshToken, {
+      maxAge: 21 * 24 * 60 * 60, // 3 weeks
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
     });
   }
 

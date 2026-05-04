@@ -10,7 +10,7 @@ defmodule CockpitWeb.Endpoint do
     store: :cookie,
     key: "_cockpit_session",
     signing_salt: "alsnhusd",
-    same_site: "Strict"
+    same_site: "Lax"
   ]
 
   socket("/live", Phoenix.LiveView.Socket,

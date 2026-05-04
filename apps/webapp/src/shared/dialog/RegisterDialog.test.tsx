@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, waitFor, userEvent } from '#/test/util.js';
 import { RegisterDialog } from './RegisterDialog.js';
 
