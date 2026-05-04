@@ -44,6 +44,7 @@ export async function middleware(request: NextRequest) {
     ? JWT.parse(incomingAccessToken)
     : null;
 
+  const modifiedHeaders = new Headers(request.headers);
   // We don't want to get a new token when
   // - there is no refresh token (=> noting to refresh with)
   // - the access token is not close to expiration (=> no need to refresh yet)
@@ -53,10 +54,16 @@ export async function middleware(request: NextRequest) {
     parsedIncomingAccessToken?.isExpired(30) === false ||
     parsedIncomingAccessToken?.body.type === 'high_security'
   ) {
-    return NextResponse.next();
+    if (incomingAccessToken) {
+      modifiedHeaders.set('Authorization', `Bearer ${incomingAccessToken}`);
+    }
+    return NextResponse.next({
+      request: {
+        headers: modifiedHeaders,
+      },
+    });
   }
 
-  const modifiedHeaders = new Headers(request.headers);
   if (!incomingAccessToken) {
     modifiedHeaders.delete('Authorization');
     return NextResponse.next({
@@ -100,7 +107,6 @@ export async function middleware(request: NextRequest) {
 
   if (accessToken) {
     response.cookies.set('SignInAccessToken', accessToken, {
-      httpOnly: true,
       sameSite: 'strict',
     });
   }

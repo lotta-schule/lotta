@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { headers } from 'next/headers';
+import { headers } from 'next/headers.js';
 import { loadTenant, loadCategories, loadCurrentUser } from '#/loader/index.js';
 import { appConfig } from '#/config.js';
 import { getAuthTokenFromHeader } from '#/api/apollo/client-rsc.js';
@@ -8,6 +8,15 @@ import { TenantLayout } from '#/layout/TenantLayout.js';
 import { CategoriesProvider } from '#/shared/CategoriesContext.js';
 import { CurrentUserProvider } from '#/shared/CurrentUserContext.js';
 import { AuthenticationWrapper } from '#/shared/AuthenticationWrapper.js';
+import { Metadata } from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const tenant = await loadTenant();
+
+  return {
+    title: tenant.title,
+  };
+}
 
 export default async function DefaultLayout({
   children,

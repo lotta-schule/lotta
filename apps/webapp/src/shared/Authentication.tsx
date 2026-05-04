@@ -1,9 +1,10 @@
 'use client';
+
 import * as React from 'react';
 import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import { ConversationModel, ID, MessageModel } from '#/model/index.js';
 import { useSubscription } from '@apollo/client/react';
-import pick from 'lodash/pick';
+import pick from 'lodash/pick.js';
 
 import ReceiveMessageSubscription from '#/api/subscription/ReceiveMessageSubscription.graphql';
 import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';

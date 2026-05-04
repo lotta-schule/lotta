@@ -21,31 +21,30 @@ import { UpdatePasswordDialog } from '#/shared/dialog/UpdatePasswordDialog.js';
 import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
 import { User } from '#/util/model/index.js';
 import { UserModel, FileModel } from '#/model/index.js';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import { useGetFieldError } from '#/util/useGetFieldError.js';
 import { Header, Main } from '#/layout/index.js';
-import Link from 'next/link';
+import Link from 'next/link.js';
 
 import UpdateProfileMutation from '#/api/mutation/UpdateProfileMutation.graphql';
 
 import styles from './ProfilePage.module.scss';
 
-export const ProfilePage = () => {
-  const currentUser = useCurrentUser()!;
+export type ProfilePageProps = {
+  user: UserModel;
+};
 
-  const [classOrShortName, setClassOrShortName] = React.useState(
-    currentUser?.class
-  );
-  const [name, setName] = React.useState(currentUser?.name);
-  const [nickname, setNickname] = React.useState(currentUser?.nickname);
+export const ProfilePage = ({ user }: ProfilePageProps) => {
+  const [classOrShortName, setClassOrShortName] = React.useState(user?.class);
+  const [name, setName] = React.useState(user?.name);
+  const [nickname, setNickname] = React.useState(user?.nickname);
   const [isHideFullName, setIsHideFullName] = React.useState(
-    currentUser?.hideFullName
+    user?.hideFullName
   );
   const [avatarImageFile, setAvatarImageFile] = React.useState(
-    currentUser?.avatarImageFile
+    user?.avatarImageFile
   );
   const [enrollmentTokens, setEnrollmentTokens] = React.useState<string[]>(
-    (currentUser?.enrollmentTokens ?? []).concat([''])
+    (user?.enrollmentTokens ?? []).concat([''])
   );
 
   const [isShowUpdatePasswordDialog, setIsShowUpdatePasswordDialog] =
@@ -60,188 +59,183 @@ export const ProfilePage = () => {
   const getFieldError = useGetFieldError(error);
 
   return (
-    !!currentUser && (
-      <Main className={styles.root}>
-        <Header bannerImageUrl={'/bannerProfil.png'}>
-          <h2>Meine Daten</h2>
-        </Header>
+    <Main className={styles.root}>
+      <Header bannerImageUrl={'/bannerProfil.png'}>
+        <h2>Meine Daten</h2>
+      </Header>
 
-        <Box className={styles.container}>
-          <h4>Meine Daten</h4>
-          <ErrorMessage error={error} />
-          <div className={styles.gridContainer}>
-            <aside>
-              <Deletable
-                title={'Profilbild löschen'}
-                onDelete={() => setAvatarImageFile(null)}
-              >
-                <UserAvatar
-                  user={currentUser}
-                  size={150}
-                  title={User.getNickname(currentUser)}
-                />
-              </Deletable>
-              <br />
-              <SelectFileButton
-                buttonComponentProps={{
-                  color: 'secondary',
-                  size: 'small',
-                  disabled: isLoading,
-                }}
-                fileFilter={(f) => f.fileType === 'IMAGE'}
-                label={'Profilbild ändern'}
-                onSelect={(file: FileModel) => setAvatarImageFile(file)}
+      <Box className={styles.container}>
+        <h4>Meine Daten</h4>
+        <ErrorMessage error={error} />
+        <div className={styles.gridContainer}>
+          <aside>
+            <Deletable
+              title={'Profilbild löschen'}
+              onDelete={() => setAvatarImageFile(null)}
+            >
+              <UserAvatar
+                user={user}
+                size={150}
+                title={User.getNickname(user)}
               />
-              <Label className={styles.subheader} label={'Meine Gruppen'}>
-                <List
-                  className={styles.groupList}
-                  data-testid="ProfileData-GroupsList"
-                >
-                  {[...currentUser.groups]
-                    .sort((g1, g2) => g2.sortKey - g1.sortKey)
-                    .map((group) => (
-                      <ListItem key={group.id}>{group.name}</ListItem>
-                    ))}
-                </List>
-              </Label>
-
-              <section className={styles.dangerSection}>
-                <Divider className={styles.divider} />
-                <Link href={'/profile/delete'} passHref legacyBehavior>
-                  <Button variant={'error'}>Benutzerkonto löschen</Button>
-                </Link>
-              </section>
-            </aside>
-            <section>
-              <Label label="Deine Email-Adresse:">
-                <Input
-                  autoFocus
-                  disabled
-                  id="email"
-                  value={currentUser.email || ''}
-                  placeholder="beispiel@medienportal.org"
-                  type="email"
-                  maxLength={100}
-                />
-              </Label>
-              <section className={styles.changePersonalData}>
-                <Button onClick={() => setIsShowUpdateEmailDialog(true)}>
-                  Email ändern
-                </Button>
-                <Button onClick={() => setIsShowUpdatePasswordDialog(true)}>
-                  Passwort ändern
-                </Button>
-              </section>
-              <Label label="Dein Vor- und Nachname">
-                <Input
-                  autoFocus
-                  id="name"
-                  placeholder="Minnie Musterchen"
-                  onChange={(e) => setName(e.currentTarget.value)}
-                  maxLength={100}
-                  disabled={isLoading}
-                  value={name || ''}
-                  type="name"
-                />
-              </Label>
-              <ErrorMessage error={getFieldError('name') || null} />
-              <Label label="Dein Spitzname">
-                <Input
-                  autoFocus
-                  id="nickname"
-                  value={nickname || ''}
-                  onChange={(e) => setNickname(e.currentTarget.value)}
-                  placeholder="El Professore"
-                  type="text"
-                  disabled={isLoading}
-                  maxLength={25}
-                />
-              </Label>
-              <ErrorMessage error={getFieldError('nickname') || null} />
-
-              <Checkbox
-                isSelected={isHideFullName!}
-                onChange={setIsHideFullName}
+            </Deletable>
+            <br />
+            <SelectFileButton
+              buttonComponentProps={{
+                color: 'secondary',
+                size: 'small',
+                disabled: isLoading,
+              }}
+              fileFilter={(f) => f.fileType === 'IMAGE'}
+              label={'Profilbild ändern'}
+              onSelect={(file: FileModel) => setAvatarImageFile(file)}
+            />
+            <Label className={styles.subheader} label={'Meine Gruppen'}>
+              <List
+                className={styles.groupList}
+                data-testid="ProfileData-GroupsList"
               >
-                Deinen vollständigen Namen öffentlich verstecken
-              </Checkbox>
+                {[...user.groups]
+                  .sort((g1, g2) => g2.sortKey - g1.sortKey)
+                  .map((group) => (
+                    <ListItem key={group.id}>{group.name}</ListItem>
+                  ))}
+              </List>
+            </Label>
 
-              <div>
-                <small>
-                  Verstecke deinen vollständigen Namen, damit er nur vom
-                  Administrator deiner Schule gesehen werden kann. Dein Name
-                  taucht nicht in den von dir erstellten Artikeln oder in deinem
-                  Profil auf. Stattdessen wird dein Spitzname angezeigt.
-                </small>
-              </div>
+            <section className={styles.dangerSection}>
               <Divider className={styles.divider} />
-              <h5>Meine Klasse / Mein Kürzel</h5>
-              <p>
-                Gib hier deine Klasse oder dein Kürzel ein. Damit kannst du
-                Zugriff auf deinen Stundenplan
-              </p>
-              <Label label="Deine Klasse / Dein Kürzel:">
-                <Input
-                  autoFocus
-                  id="classOrShortName"
-                  value={classOrShortName || ''}
-                  onChange={(e) => setClassOrShortName(e.currentTarget.value)}
-                  placeholder="7/4"
-                  disabled={isLoading}
-                  maxLength={25}
-                />
-              </Label>
-              <ErrorMessage error={getFieldError('class') || null} />
-
-              <h5>Meine Einschreibeschlüssel</h5>
-              <p>
-                <small>
-                  Nutze Einschreibeschlüssel, um dich selbst in Gruppen
-                  einzutragen.
-                </small>
-              </p>
-              <EnrollmentTokensEditor
-                disabled={isLoading}
-                tokens={enrollmentTokens}
-                setTokens={setEnrollmentTokens}
-              />
-              <Divider className={styles.divider} />
-
-              <LoadingButton
-                type={'submit'}
-                style={{ float: 'right' }}
-                onAction={async (e: SubmitEvent | React.MouseEvent) => {
-                  e.preventDefault();
-                  await updateProfile({
-                    variables: {
-                      user: {
-                        name,
-                        nickname,
-                        class: classOrShortName,
-                        hideFullName: isHideFullName,
-                        avatarImageFile: avatarImageFile
-                          ? { id: avatarImageFile.id }
-                          : null,
-                        enrollmentTokens: enrollmentTokens.filter((t) => t),
-                      },
-                    },
-                  });
-                }}
-              >
-                Speichern
-              </LoadingButton>
-              <UpdatePasswordDialog
-                isOpen={isShowUpdatePasswordDialog}
-                onRequestClose={() => setIsShowUpdatePasswordDialog(false)}
-              />
-              <UpdateEmailDialog
-                isOpen={isShowUpdateEmailDialog}
-                onRequestClose={() => setIsShowUpdateEmailDialog(false)}
-              />
+              <Link href={'/profile/delete'} passHref legacyBehavior>
+                <Button variant={'error'}>Benutzerkonto löschen</Button>
+              </Link>
             </section>
-          </div>
-        </Box>
-      </Main>
-    )
+          </aside>
+          <section>
+            <Label label="Deine Email-Adresse:">
+              <Input
+                autoFocus
+                disabled
+                id="email"
+                value={user.email || ''}
+                placeholder="beispiel@medienportal.org"
+                type="email"
+                maxLength={100}
+              />
+            </Label>
+            <section className={styles.changePersonalData}>
+              <Button onClick={() => setIsShowUpdateEmailDialog(true)}>
+                Email ändern
+              </Button>
+              <Button onClick={() => setIsShowUpdatePasswordDialog(true)}>
+                Passwort ändern
+              </Button>
+            </section>
+            <Label label="Dein Vor- und Nachname">
+              <Input
+                autoFocus
+                id="name"
+                placeholder="Minnie Musterchen"
+                onChange={(e) => setName(e.currentTarget.value)}
+                maxLength={100}
+                disabled={isLoading}
+                value={name || ''}
+                type="name"
+              />
+            </Label>
+            <ErrorMessage error={getFieldError('name') || null} />
+            <Label label="Dein Spitzname">
+              <Input
+                autoFocus
+                id="nickname"
+                value={nickname || ''}
+                onChange={(e) => setNickname(e.currentTarget.value)}
+                placeholder="El Professore"
+                type="text"
+                disabled={isLoading}
+                maxLength={25}
+              />
+            </Label>
+            <ErrorMessage error={getFieldError('nickname') || null} />
+
+            <Checkbox isSelected={isHideFullName!} onChange={setIsHideFullName}>
+              Deinen vollständigen Namen öffentlich verstecken
+            </Checkbox>
+
+            <div>
+              <small>
+                Verstecke deinen vollständigen Namen, damit er nur vom
+                Administrator deiner Schule gesehen werden kann. Dein Name
+                taucht nicht in den von dir erstellten Artikeln oder in deinem
+                Profil auf. Stattdessen wird dein Spitzname angezeigt.
+              </small>
+            </div>
+            <Divider className={styles.divider} />
+            <h5>Meine Klasse / Mein Kürzel</h5>
+            <p>
+              Gib hier deine Klasse oder dein Kürzel ein. Damit kannst du
+              Zugriff auf deinen Stundenplan
+            </p>
+            <Label label="Deine Klasse / Dein Kürzel:">
+              <Input
+                autoFocus
+                id="classOrShortName"
+                value={classOrShortName || ''}
+                onChange={(e) => setClassOrShortName(e.currentTarget.value)}
+                placeholder="7/4"
+                disabled={isLoading}
+                maxLength={25}
+              />
+            </Label>
+            <ErrorMessage error={getFieldError('class') || null} />
+
+            <h5>Meine Einschreibeschlüssel</h5>
+            <p>
+              <small>
+                Nutze Einschreibeschlüssel, um dich selbst in Gruppen
+                einzutragen.
+              </small>
+            </p>
+            <EnrollmentTokensEditor
+              disabled={isLoading}
+              tokens={enrollmentTokens}
+              setTokens={setEnrollmentTokens}
+            />
+            <Divider className={styles.divider} />
+
+            <LoadingButton
+              type={'submit'}
+              style={{ float: 'right' }}
+              onAction={async (e: SubmitEvent | React.MouseEvent) => {
+                e.preventDefault();
+                await updateProfile({
+                  variables: {
+                    user: {
+                      name,
+                      nickname,
+                      class: classOrShortName,
+                      hideFullName: isHideFullName,
+                      avatarImageFile: avatarImageFile
+                        ? { id: avatarImageFile.id }
+                        : null,
+                      enrollmentTokens: enrollmentTokens.filter((t) => t),
+                    },
+                  },
+                });
+              }}
+            >
+              Speichern
+            </LoadingButton>
+            <UpdatePasswordDialog
+              isOpen={isShowUpdatePasswordDialog}
+              onRequestClose={() => setIsShowUpdatePasswordDialog(false)}
+            />
+            <UpdateEmailDialog
+              isOpen={isShowUpdateEmailDialog}
+              onRequestClose={() => setIsShowUpdateEmailDialog(false)}
+            />
+          </section>
+        </div>
+      </Box>
+    </Main>
   );
 };

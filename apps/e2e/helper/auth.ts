@@ -16,6 +16,7 @@ export const loginUser = async (
   await page.waitForLoadState('domcontentloaded');
 
   if (isMobile) {
+    await page.waitForLoadState('networkidle');
     await expect(
       page.getByRole('button', { name: /nutzermenü öffnen/i })
     ).toBeVisible();

@@ -223,7 +223,7 @@ describe('middleware', () => {
       expect(mockCookiesSet).toHaveBeenCalledWith(
         'SignInAccessToken',
         'new-access-token',
-        { httpOnly: true, sameSite: 'strict' }
+        { sameSite: 'strict' }
       );
       expect(mockCookiesSet).toHaveBeenCalledWith(
         'SignInRefreshToken',

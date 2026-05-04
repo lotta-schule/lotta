@@ -42,7 +42,9 @@ describe('sendRefreshRequest', () => {
 
   it('should send refresh request and return data on success', async () => {
     isBrowserMock.mockReturnValue(false);
-    vi.mocked(JWT.parse).mockReturnValue({ body: { tid: 'tenantId' } } as any);
+    vi.mocked(JWT.parse).mockReturnValue({
+      body: { tenantId: 'tenantId' },
+    } as any);
     mockAxios.request.mockResolvedValue({
       data: { accessToken: 'newAccessToken' },
       headers: {

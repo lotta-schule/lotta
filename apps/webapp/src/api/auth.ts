@@ -2,7 +2,7 @@ import axios from 'axios';
 import { parseSetCookie } from 'cookie-es';
 import { isBrowser } from '#/util/isBrowser.js';
 import { Logger } from '#/util/logger.js';
-import { JWT, JWTBody } from '../util/auth/jwt.js';
+import { JWT } from '../util/auth/jwt.js';
 
 export const sendRefreshRequest = async (
   accessToken?: string,
@@ -10,8 +10,8 @@ export const sendRefreshRequest = async (
   { baseURL, originaryHost }: { baseURL?: string; originaryHost?: string } = {}
 ) => {
   const jwt = accessToken ? JWT.parse(accessToken) : undefined;
-  const payload = jwt?.body as JWTBody & { tid: string };
-  const tenant = { id: payload?.tid };
+  const payload = jwt?.body;
+  const tenant = { id: payload?.tenantId };
 
   if (!tenant.id) {
     Logger.error('tenant id not found in access token');

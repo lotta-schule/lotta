@@ -60,9 +60,9 @@ defmodule LottaWeb.SessionController do
     conn
     |> delete_resp_cookie("SignInRefreshToken",
       http_only: true,
-      same_site: "Lax"
+      same_site: "Strict"
     )
-    |> delete_resp_cookie("SignInAccessToken", same_site: "Lax")
+    |> delete_resp_cookie("SignInAccessToken", same_site: "Strict")
     |> redirect(external: URI.to_string(get_return_uri()))
   end
 
@@ -81,19 +81,14 @@ defmodule LottaWeb.SessionController do
     |> put_first_login_cookie(is_first_login)
     |> put_resp_cookie("SignInRefreshToken", token,
       http_only: true,
-      same_site: "Lax",
+      same_site: "Strict",
       max_age: 4 * 7 * 24 * 60 * 60
     )
   end
 
   defp put_access_token(%Conn{} = conn, token, is_first_login \\ false) do
-    token_max_age = if is_first_login, do: 5 * 60, else: 60 * 60
-
     conn
-    |> put_resp_cookie("SignInAccessToken", token,
-      same_site: "Lax",
-      max_age: token_max_age
-    )
+    |> put_resp_cookie("SignInAccessToken", token, same_site: "Strict")
   end
 
   defp put_first_login_cookie(%Conn{} = conn, false), do: conn

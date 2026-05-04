@@ -11,6 +11,7 @@ const __dirname = new URL('.', import.meta.url).pathname;
 const nextConfig = {
   experimental: {
     externalDir: true,
+    authInterrupts: true,
   },
   transpilePackages: ['@lotta-schule/hubert'],
   allowedDevOrigins: ['localhost', '*.lotta.lvh.me', '*.local.lotta.schule'],

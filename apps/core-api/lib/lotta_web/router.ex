@@ -124,12 +124,12 @@ defmodule LottaWeb.Router do
 
   def absinthe_before_send(conn, %{execution: %{context: %{refresh_token: token}}}) do
     if is_nil(token) do
-      delete_resp_cookie(conn, "SignInRefreshToken", http_only: true, same_site: "Lax")
+      delete_resp_cookie(conn, "SignInRefreshToken", http_only: true, same_site: "Strict")
     else
       put_resp_cookie(conn, "SignInRefreshToken", token,
         max_age: 21 * 24 * 60 * 60,
         http_only: true,
-        same_site: "Lax"
+        same_site: "Strict"
       )
     end
   end

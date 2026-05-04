@@ -23,10 +23,15 @@ services:
       file: './docker-compose.services.base.yaml'
       service: minio
     volumes:
-      - ./_data/minio:/bitnami/minio/data
+      - ./_data/minio:/data
     ports:
       - 9000:9000
       - 9001:9001
+
+  minio-setup:
+    extends:
+      file: './docker-compose.services.base.yaml'
+      service: minio-setup
 
   pgadmin:
     image: dpage/pgadmin4:latest

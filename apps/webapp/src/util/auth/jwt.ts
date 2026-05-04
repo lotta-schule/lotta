@@ -6,6 +6,8 @@ export interface JWTBody {
   expires: Date;
   issuedAt: Date;
   notBefore: Date;
+  tenantId: number;
+  groupIds: number[];
   type: 'access' | 'refresh' | 'high_security';
 }
 
@@ -33,6 +35,8 @@ export class JWT {
         issuer: body.iss,
         jwtId: body.jid,
         subject: body.sub,
+        tenantId: body.tid,
+        groupIds: body.gps,
         expires,
         notBefore,
         issuedAt: new Date(body.iat * 1000),
