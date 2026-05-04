@@ -170,7 +170,7 @@ defmodule Lotta.Content.Article do
   defp maybe_send_admin_notification(changeset) do
     if changeset.valid? && get_change(changeset, :ready_to_publish) do
       case apply_action(changeset, :update) do
-        {:ok, article} -> notify_admins(article)
+        {:ok, article} -> notify_admins_article_ready(article)
         {:error, _} -> nil
       end
     end
@@ -178,7 +178,7 @@ defmodule Lotta.Content.Article do
     changeset
   end
 
-  defp notify_admins(article) do
+  defp notify_admins_article_ready(article) do
     for admin <- Accounts.list_admin_users() do
       Email.article_ready_mail(admin, article)
       |> Mailer.deliver_later()

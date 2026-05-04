@@ -1,2 +1,2 @@
-export * from './ColorSettingsRow';
-export * from './SelectTemplateButton';
+export * from './ColorSettingsRow.js';
+export * from './SelectTemplateButton.js';

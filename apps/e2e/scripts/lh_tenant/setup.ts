@@ -1,6 +1,7 @@
+import * as process from 'node:process';
 import { chromium } from 'playwright';
-import { createTenantSetup } from '../../helper';
 import { Browser } from '@playwright/test';
+import { createTenantSetup } from '../../helper';
 
 const setupLighthouseTenant = async () => {
   const admin = {

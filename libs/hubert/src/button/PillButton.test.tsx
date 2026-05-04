@@ -1,6 +1,6 @@
-import { render } from 'test-utils';
-import { PillButton } from './PillButton';
-import { Close } from '../icon';
+import { render } from '#/test-utils';
+import { PillButton } from './PillButton.js';
+import { Close } from '../icon/index.js';
 
 describe('PillButton', () => {
   it('renders correctly', () => {

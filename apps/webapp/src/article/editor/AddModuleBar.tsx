@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import {
   faMusic,
   faImages,
@@ -12,9 +12,9 @@ import {
   faTable,
   faFont,
 } from '@fortawesome/free-solid-svg-icons';
-import { ContentModuleModel, ContentModuleType, ID } from 'model';
-import { AddModuleButton } from './AddModuleButton';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { ContentModuleModel, ContentModuleType, ID } from '#/model/index.js';
+import { AddModuleButton } from './AddModuleButton.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 
 import styles from './AddModuleBar.module.scss';
 

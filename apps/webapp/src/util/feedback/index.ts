@@ -1,1 +1,1 @@
-export * from './useNewFeedbackCount';
+export * from './useNewFeedbackCount.js';

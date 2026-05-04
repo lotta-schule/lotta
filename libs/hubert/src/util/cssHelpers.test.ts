@@ -1,4 +1,4 @@
-import { toCSSVariableName, toCSSVariableValue } from './cssHelpers';
+import { toCSSVariableName, toCSSVariableValue } from './cssHelpers.js';
 
 describe('cssHelpers', () => {
   describe('toCSSVariableName', () => {

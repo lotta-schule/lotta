@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Analytics } from './Analytics';
-import { AdminPage } from 'app/(admin)/admin/_component/AdminPage';
+import { Analytics } from './Analytics.js';
+import { AdminPage } from '#/app/(admin)/admin/_component/AdminPage.js';
 import { faChartLine } from '@fortawesome/free-solid-svg-icons';
 
 async function AnalyticsPage() {

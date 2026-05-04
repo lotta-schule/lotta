@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Show } from './Show';
-import { Edit } from './Edit';
-import { ContentModuleComponentProps } from '../ContentModule';
+import { Show } from './Show.js';
+import { Edit } from './Edit.js';
+import { ContentModuleComponentProps } from '../ContentModule.js';
 
 export const Audio = React.memo(
   ({

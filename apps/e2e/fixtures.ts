@@ -9,6 +9,17 @@ export const test = base.extend<
     admin: { name: string; email: string; password: string };
   }
 >({
+  context: async ({ context }, use) => {
+    await context.route('http://minio:9000/**', (route) =>
+      route.continue({
+        url: route
+          .request()
+          .url()
+          .replace('http://minio:9000', 'http://localhost:9000'),
+      })
+    );
+    await use(context);
+  },
   takeScreenshot: async ({ browserName, isMobile, page }, use) => {
     const fullBrowserName = isMobile ? `${browserName}-mobile` : browserName;
     await use(

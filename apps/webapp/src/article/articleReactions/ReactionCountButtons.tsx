@@ -1,7 +1,7 @@
-import { ArticleModel, ArticleReactionType } from 'model';
-import { iconForReactionType } from './supportedReactionIcons';
+import { ArticleModel, ArticleReactionType } from '#/model/index.js';
+import { iconForReactionType } from './supportedReactionIcons.js';
 import { PillButton, PopoverTrigger } from '@lotta-schule/hubert';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import * as React from 'react';
 
 import styles from './ReactionCountButtons.module.scss';
@@ -43,6 +43,7 @@ export const ReactionCountButtons = React.memo(
             icon={<Icon icon={icon!.icon} />}
             disabled={!count || !onSelect}
             onClick={() => onSelect?.(type)}
+            key={type}
           >
             <div className={styles.count}>{count}</div>
           </PillButton>

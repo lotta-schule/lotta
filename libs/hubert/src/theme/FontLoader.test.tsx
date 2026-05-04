@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
 import { DefaultThemes } from '@lotta-schule/theme';
-import { ExternalFont, FontLoader } from './FontLoader';
+import { ExternalFont, FontLoader } from './FontLoader.js';
 
 const theme = {
   ...DefaultThemes['standard'],

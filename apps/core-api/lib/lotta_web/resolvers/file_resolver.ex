@@ -175,7 +175,7 @@ defmodule LottaWeb.FileResolver do
       name: file_conversion.format,
       type: file_conversion.file_type,
       mime_type: file_conversion.mime_type,
-      url: Storage.get_http_url(file_conversion),
+      url: Storage.get_http_url(file_conversion) || "",
       availability: %{
         status: "ready",
         progress: 100

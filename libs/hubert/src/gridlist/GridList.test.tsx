@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils';
-import { GridList, GridListItem } from './GridList';
+import { render } from '../test-utils.js';
+import { GridList, GridListItem } from './GridList.js';
 
 describe('GridList', () => {
   it('should render a GridList', () => {
@@ -26,7 +26,7 @@ describe('GridList', () => {
 
     expect(screen.getByRole('list')).toMatchInlineSnapshot(`
       <ul
-        class="_root_3a93af"
+        class="_root_iu0h6_1"
       >
         <li>
           <img

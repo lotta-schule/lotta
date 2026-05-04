@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useCategories } from 'util/categories/useCategories';
-import { CategoryModel } from 'model';
+import { useCategories } from '#/util/categories/useCategories.js';
+import { CategoryModel } from '#/model/index.js';
 import { Option, Select } from '@lotta-schule/hubert';
 
 export interface CategorySelectProps {

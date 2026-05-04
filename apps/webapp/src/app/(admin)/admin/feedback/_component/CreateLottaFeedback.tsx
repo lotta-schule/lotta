@@ -1,14 +1,13 @@
 'use client';
-
 import * as React from 'react';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Button, ErrorMessage, Input, Label } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
-import { Icon } from 'shared/Icon';
+import { useMutation } from '@apollo/client/react';
+import { Icon } from '#/shared/Icon.js';
 
 import styles from './CreateLottaFeedback.module.scss';
 
-import CreateLottaFeedbackMutation from 'api/mutation/CreateLottaFeedbackMutation.graphql';
+import CreateLottaFeedbackMutation from '#/api/mutation/CreateLottaFeedbackMutation.graphql';
 
 export const CreateLottaFeedback = React.memo(() => {
   const [sendFeedback, { error, loading: isLoading }] = useMutation<

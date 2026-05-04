@@ -31,7 +31,7 @@ defmodule Lotta.Accounts.AuthenticationTest do
 
   describe "login_with_username_pass/2" do
     test "should login the user with correct username and password", %{tenant: t} do
-      assert {:ok, _} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test123", t)
+      assert {:ok, _} = login_with_username_pass("eike.wiewiorra@lotta.schule", "password", t)
     end
 
     test "should not login when the password is wrong", %{tenant: t} do
@@ -40,7 +40,7 @@ defmodule Lotta.Accounts.AuthenticationTest do
     end
 
     test "should login the user when he gave the email in mixed case", %{tenant: t} do
-      assert {:ok, _} = login_with_username_pass("Eike.WieWiorra@lotta.schule", "test123", t)
+      assert {:ok, _} = login_with_username_pass("Eike.WieWiorra@lotta.schule", "password", t)
     end
   end
 
@@ -102,7 +102,7 @@ defmodule Lotta.Accounts.AuthenticationTest do
     test "should NOT migrate the password hash to argon2 hash if password is already argon2 on login",
          %{user: user, tenant: t} do
       assert {:ok, saved_user} =
-               login_with_username_pass("eike.wiewiorra@lotta.schule", "test123", t)
+               login_with_username_pass("eike.wiewiorra@lotta.schule", "password", t)
 
       assert %{password_hash_format: 1} = saved_user
       assert user.updated_at == saved_user.updated_at

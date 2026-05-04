@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils';
-import { LinearProgress } from './LinearProgress';
+import { render } from '../test-utils.js';
+import { LinearProgress } from './LinearProgress.js';
 
 import styles from './LinearProgress.module.scss';
 

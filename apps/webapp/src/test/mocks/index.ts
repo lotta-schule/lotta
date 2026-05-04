@@ -1,4 +1,2 @@
-export * from './BlobPolyfill';
-export * from './MockRouter';
-export * from './ResizeObserverPolyfill';
-export * from './defaultApolloMocks';
+export * from './MockRouter.js';
+export * from './defaultApolloMocks.js';

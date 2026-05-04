@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
-import { ComputerExperten } from 'test/fixtures';
-import { MockedResponse } from '@apollo/client/testing';
-import userEvent from '@testing-library/user-event';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection.js';
+import { ComputerExperten } from '#/test/fixtures/index.js';
+import { MockLink } from '@apollo/client/testing';
 
-import SearchQuery from 'api/query/SearchQuery.graphql';
-import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graphql';
+import SearchQuery from '#/api/query/SearchQuery.graphql';
+import GetArticleForPreviewQuery from '#/api/query/GetArticleForPreviewQuery.graphql';
 
 describe('administration/categories/categories/CategoryArticleRedirectSelection', () => {
   it('should show a search field and select an article', async () => {
@@ -64,7 +63,7 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
     const onFetchArticle = vi.fn(() => ({
       data: { article: ComputerExperten },
     }));
-    const additionalMocks: MockedResponse[] = [
+    const additionalMocks: MockLink.MockedResponse[] = [
       {
         request: {
           query: GetArticleForPreviewQuery,

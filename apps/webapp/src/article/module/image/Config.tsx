@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Checkbox } from '@lotta-schule/hubert';
-import { ContentModuleConfigProps } from '../ContentModule';
+import { ContentModuleConfigProps } from '../ContentModule.js';
 
 export const Config = React.memo(
   ({

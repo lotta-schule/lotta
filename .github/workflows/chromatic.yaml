@@ -24,14 +24,12 @@ jobs:
           fetch-depth: 0
 
       - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24.5
           cache: 'pnpm'
 
       - name: Install npm dependencies

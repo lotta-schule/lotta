@@ -1,10 +1,10 @@
 import React from 'react';
-import { render } from 'test/util';
+import { render } from '#/test/util.js';
 import { describe, it, expect } from 'vitest';
 import {
   CurrentOnlineUserCounter,
   GET_TENANT_REALTIME_ANALYTICS,
-} from './CurrentOnlineUserCounter';
+} from './CurrentOnlineUserCounter.js';
 
 describe('CurrentOnlineUserCounter', () => {
   it('renders with no users online', async () => {

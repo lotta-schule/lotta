@@ -1,18 +1,18 @@
-import { MockedResponse } from '@apollo/client/testing';
-import { currentApolloCache, renderHook } from 'test/util';
+import { MockLink } from '@apollo/client/testing';
+import { currentApolloCache, renderHook } from '#/test/util.js';
 import {
   SomeUser,
   imageFile,
   logosDirectory,
   profilDirectory,
-} from 'test/fixtures';
-import { DirectoryModel, FileModel } from 'model';
-import { BrowserNode } from '../../../../../../libs/hubert/src/browser';
-import { useMoveNode } from './useMoveNode';
+} from '#/test/fixtures/index.js';
+import { DirectoryModel, FileModel } from '#/model/index.js';
+import { BrowserNode } from '@lotta-schule/hubert';
+import { useMoveNode } from './useMoveNode.js';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import UpdateDirectoryMutation from 'api/mutation/UpdateDirectoryMutation.graphql';
-import UpdateFileMutation from 'api/mutation/UpdateFileMutation.graphql';
+import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import UpdateDirectoryMutation from '#/api/mutation/UpdateDirectoryMutation.graphql';
+import UpdateFileMutation from '#/api/mutation/UpdateFileMutation.graphql';
 
 const targetDirectory = {
   ...profilDirectory,
@@ -53,7 +53,7 @@ const fileNode = {
   meta: file,
 } as BrowserNode<'file'>;
 
-export const additionalMocks: MockedResponse[] = [
+export const additionalMocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: GetDirectoriesAndFilesQuery,

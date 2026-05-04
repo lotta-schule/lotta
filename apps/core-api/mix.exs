@@ -119,7 +119,7 @@ defmodule Lotta.MixProject do
       {:image, "~> 0.55"},
       {:exile, "~> 0.12.0"},
       {:ffmpex, "~> 0.11"},
-      {:oban, "~> 2.19"},
+      {:oban, "~> 2.21"},
       {:oban_web, "~> 2.11"},
       {:backpex, "~> 0.16.3"},
       # Test

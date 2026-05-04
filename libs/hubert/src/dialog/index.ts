@@ -1,2 +1,2 @@
 'use client';
-export * from './Dialog';
+export * from './Dialog.js';

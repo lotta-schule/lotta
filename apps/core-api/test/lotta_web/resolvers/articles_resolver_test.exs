@@ -19,6 +19,9 @@ defmodule LottaWeb.ArticleResolverTest do
 
     Repo.put_prefix(@prefix)
 
+    start_category =
+      Repo.one!(from(c in Category, where: c.is_homepage == true), prefix: tenant.prefix)
+
     faecher_category =
       Repo.one!(from(c in Category, where: c.title == ^"Fächer"), prefix: tenant.prefix)
 
@@ -50,6 +53,7 @@ defmodule LottaWeb.ArticleResolverTest do
 
     {:ok,
      %{
+       start_category: start_category,
        faecher_category: faecher_category,
        projekt_category: projekt_category,
        admin: admin,
@@ -242,1015 +246,6 @@ defmodule LottaWeb.ArticleResolverTest do
   end
 
   describe "articles query" do
-    @query """
-    query articles {
-      articles {
-        title
-        preview
-        tags
-        readyToPublish
-        isPinnedToTop
-      }
-    }
-    """
-
-    test "homepage: returns a list of articles" do
-      res =
-        build_conn()
-        |> put_req_header("tenant", "slug:test")
-        |> get("/api", query: @query)
-        |> json_response(200)
-
-      assert res == %{
-               "data" => %{
-                 "articles" => [
-                   %{
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "title" => "Beitrag Projekt 3"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "title" => "Beitrag Projekt 2"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "title" => "Beitrag Projekt 1"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "preview" =>
-                       "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
-                     "title" => "„Nipple Jesus“- eine extreme Erfahrung"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "preview" =>
-                       "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
-                     "title" => "Landesfinale Volleyball WK IV"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "preview" => "Hallo hallo hallo",
-                     "title" => "And the oskar goes to ..."
-                   }
-                 ]
-               }
-             }
-    end
-
-    @query """
-    query articles {
-      articles {
-        title
-        preview
-        tags
-        readyToPublish
-        isPinnedToTop
-        groups {
-          name
-        }
-      }
-    }
-    """
-
-    test "homepage: returns a list of articles for user in lehrer group", %{
-      lehrer_jwt: lehrer_jwt
-    } do
-      res =
-        build_conn()
-        |> put_req_header("tenant", "slug:test")
-        |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
-        |> get("/api", query: @query)
-        |> json_response(200)
-
-      assert res == %{
-               "data" => %{
-                 "articles" => [
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 30 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 30 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 29 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 29 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 28 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 28 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 27 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 27 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 26 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 26 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 25 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 25 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 24 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 24 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 23 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 23 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 22 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 22 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 21 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 21 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 20 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 20 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 19 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 19 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 18 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 18 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 17 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 17 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 16 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 16 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 15 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 15 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 14 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 14 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 13 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 13 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 12 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 12 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 11 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 11 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 10 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 10 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 9 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 9 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 8 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 8 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 7 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 7 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 6 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 6 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 5 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 5 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 4 - nur für Schüler",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 4 - nur für Lehrer",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 3",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 2",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "title" => "Beitrag Projekt 1",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [],
-                     "isPinnedToTop" => false,
-                     "preview" =>
-                       "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
-                     "readyToPublish" => false,
-                     "title" => "„Nipple Jesus“- eine extreme Erfahrung",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [%{"name" => "Lehrer"}],
-                     "isPinnedToTop" => false,
-                     "preview" =>
-                       "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
-                     "readyToPublish" => false,
-                     "title" => "Der Vorausscheid",
-                     "tags" => ["KleinKunst 2018"]
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Lehrer"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" =>
-                       "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
-                     "readyToPublish" => false,
-                     "title" => "Der Podcast zum WB 2",
-                     "tags" => ["KleinKunst 2018"]
-                   },
-                   %{
-                     "groups" => [],
-                     "isPinnedToTop" => false,
-                     "preview" =>
-                       "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
-                     "readyToPublish" => false,
-                     "title" => "Landesfinale Volleyball WK IV",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [],
-                     "isPinnedToTop" => false,
-                     "preview" => "Hallo hallo hallo",
-                     "readyToPublish" => false,
-                     "title" => "And the oskar goes to ...",
-                     "tags" => nil
-                   }
-                 ]
-               }
-             }
-    end
-
-    test "homepage: returns a list of articles for user in schueler group", %{
-      schueler_jwt: schueler_jwt
-    } do
-      res =
-        build_conn()
-        |> put_req_header("tenant", "slug:test")
-        |> put_req_header("authorization", "Bearer #{schueler_jwt}")
-        |> get("/api", query: @query)
-        |> json_response(200)
-
-      assert res == %{
-               "data" => %{
-                 "articles" => [
-                   %{
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "title" => "Beitrag Projekt 30 - nur für Schüler"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "title" => "Beitrag Projekt 29 - nur für Schüler"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "title" => "Beitrag Projekt 28 - nur für Schüler"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "title" => "Beitrag Projekt 27 - nur für Schüler"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "title" => "Beitrag Projekt 26 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 25 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 24 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 23 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 22 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 21 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 20 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 19 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 18 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 17 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 16 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 15 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 14 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 13 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 12 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 11 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 10 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 9 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 8 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 7 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 6 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 5 - nur für Schüler"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "title" => "Beitrag Projekt 4 - nur für Schüler"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "groups" => [],
-                     "title" => "Beitrag Projekt 3"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "groups" => [],
-                     "title" => "Beitrag Projekt 2"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "preview" => "Lorem ipsum dolor sit amet.",
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "groups" => [],
-                     "title" => "Beitrag Projekt 1"
-                   },
-                   %{
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "tags" => nil,
-                     "groups" => [],
-                     "preview" =>
-                       "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
-                     "title" => "„Nipple Jesus“- eine extreme Erfahrung"
-                   },
-                   %{
-                     "groups" => [
-                       %{"name" => "Schüler"}
-                     ],
-                     "isPinnedToTop" => false,
-                     "readyToPublish" => false,
-                     "preview" =>
-                       "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
-                     "title" => "Der Podcast zum WB 2",
-                     "tags" => ["KleinKunst 2018"]
-                   },
-                   %{
-                     "groups" => [],
-                     "isPinnedToTop" => false,
-                     "preview" =>
-                       "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
-                     "readyToPublish" => false,
-                     "title" => "Landesfinale Volleyball WK IV",
-                     "tags" => nil
-                   },
-                   %{
-                     "groups" => [],
-                     "isPinnedToTop" => false,
-                     "preview" => "Hallo hallo hallo",
-                     "readyToPublish" => false,
-                     "title" => "And the oskar goes to ...",
-                     "tags" => nil
-                   }
-                 ]
-               }
-             }
-    end
-
     # This is a test failing because first is not correctly recognized
     # as integer.
     # Seems this should be fixed in absinthe_plug, or by providing an
@@ -1307,6 +302,781 @@ defmodule LottaWeb.ArticleResolverTest do
       }
     }
     """
+    test "homepage: returns a list of articles", %{start_category: start_category} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> get("/api", query: @query, variables: %{"category_id" => start_category.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "articles" => [
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "title" => "Beitrag Projekt 3"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "title" => "Beitrag Projekt 2"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "title" => "Beitrag Projekt 1"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "preview" =>
+                       "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
+                     "title" => "„Nipple Jesus“- eine extreme Erfahrung"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "preview" =>
+                       "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
+                     "title" => "Landesfinale Volleyball WK IV"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "preview" => "Hallo hallo hallo",
+                     "title" => "And the oskar goes to ..."
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "homepage: returns a list of articles for user in lehrer group", %{
+      lehrer_jwt: lehrer_jwt,
+      start_category: start_category
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
+        |> get("/api", query: @query, variables: %{"category_id" => start_category.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "articles" => [
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 30 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 30 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 29 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 29 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 28 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 28 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 27 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 27 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 26 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 26 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 25 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 25 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 24 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 24 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 23 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 23 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 22 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 22 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 21 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 21 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 20 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 20 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 19 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 19 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 18 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 18 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 17 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 17 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 16 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 16 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 15 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 15 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 14 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 14 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 13 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 13 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 12 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 12 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 11 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 11 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 10 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 10 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 9 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 9 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 8 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 8 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 7 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 7 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 6 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 6 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 5 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 5 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 4 - nur für Schüler",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 4 - nur für Lehrer",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 3",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 2",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "title" => "Beitrag Projekt 1",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" =>
+                       "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
+                     "readyToPublish" => false,
+                     "title" => "„Nipple Jesus“- eine extreme Erfahrung",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" =>
+                       "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
+                     "readyToPublish" => false,
+                     "title" => "Der Vorausscheid",
+                     "tags" => ["KleinKunst 2018"]
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" =>
+                       "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
+                     "readyToPublish" => false,
+                     "title" => "Der Podcast zum WB 2",
+                     "tags" => ["KleinKunst 2018"]
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" =>
+                       "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
+                     "readyToPublish" => false,
+                     "title" => "Landesfinale Volleyball WK IV",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Hallo hallo hallo",
+                     "readyToPublish" => false,
+                     "title" => "And the oskar goes to ...",
+                     "tags" => nil
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "homepage: returns a list of articles for user in schueler group", %{
+      schueler_jwt: schueler_jwt,
+      start_category: start_category
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{schueler_jwt}")
+        |> get("/api", query: @query, variables: %{"category_id" => start_category.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "articles" => [
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 30 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 29 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "title" => "Beitrag Projekt 28 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "title" => "Beitrag Projekt 27 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "title" => "Beitrag Projekt 26 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 25 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 24 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 23 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 22 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 21 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 20 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 19 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 18 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 17 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 16 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 15 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 14 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 13 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 12 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 11 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 10 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 9 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 8 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 7 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 6 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 5 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 4 - nur für Schüler"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 3"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 2"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Lorem ipsum dolor sit amet.",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "Beitrag Projekt 1"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "preview" =>
+                       "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
+                     "title" => "„Nipple Jesus“- eine extreme Erfahrung"
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "readyToPublish" => false,
+                     "preview" =>
+                       "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
+                     "title" => "Der Podcast zum WB 2",
+                     "tags" => ["KleinKunst 2018"]
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" =>
+                       "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
+                     "readyToPublish" => false,
+                     "title" => "Landesfinale Volleyball WK IV",
+                     "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Hallo hallo hallo",
+                     "readyToPublish" => false,
+                     "title" => "And the oskar goes to ...",
+                     "tags" => nil
+                   }
+                 ]
+               }
+             }
+    end
 
     test "category: returns a list of articles", %{projekt_category: projekt_category} do
       request = %{category_id: projekt_category.id}

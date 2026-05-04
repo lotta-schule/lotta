@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
-import { appConfig } from 'config';
+import { appConfig } from '#/config.js';
 
 export const onRequestError = Sentry.captureRequestError;
 
@@ -32,12 +32,10 @@ const setupLogging = async () => {
 const setupTracing = async () => {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     const { NodeSDK } = await import('@opentelemetry/sdk-node');
-    const { OTLPTraceExporter } = await import(
-      '@opentelemetry/exporter-trace-otlp-http'
-    );
-    const { getNodeAutoInstrumentations } = await import(
-      '@opentelemetry/auto-instrumentations-node'
-    );
+    const { OTLPTraceExporter } =
+      await import('@opentelemetry/exporter-trace-otlp-http');
+    const { getNodeAutoInstrumentations } =
+      await import('@opentelemetry/auto-instrumentations-node');
     const { resourceFromAttributes } = await import('@opentelemetry/resources');
     const {
       ATTR_SERVICE_NAME,

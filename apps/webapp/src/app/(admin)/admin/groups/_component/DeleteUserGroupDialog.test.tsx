@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
-import { render, screen, waitFor } from 'test/util';
+import { MockLink } from '@apollo/client/testing';
+import { render, screen, waitFor, userEvent } from '#/test/util.js';
 import {
   Weihnachtsmarkt,
   ComputerExperten,
   VivaLaRevolucion,
   lehrerGroup,
-} from 'test/fixtures';
+} from '#/test/fixtures/index.js';
 import {
   DeleteUserGroupDialog,
   DELETE_USER_GROUP,
-} from './DeleteUserGroupDialog';
-import userEvent from '@testing-library/user-event';
+} from './DeleteUserGroupDialog.js';
 
 describe('administration: DeleteUserGroupDialog', () => {
   it('should be hidden and open when "isOpen" is passed and close when cancelled', async () => {
@@ -57,7 +56,9 @@ describe('administration: DeleteUserGroupDialog', () => {
       />
     );
 
-    expect(screen.queryByRole('dialog')).toBeNull();
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).toBeNull();
+    });
   });
 
   it('should call onRequestClose when clicking the "Abort" button', async () => {
@@ -79,7 +80,7 @@ describe('administration: DeleteUserGroupDialog', () => {
 
   describe('send delete request', () => {
     it('delete the group and show a list of unpublished articles', async () => {
-      const mocks: MockedResponse[] = [
+      const mocks: MockLink.MockedResponse[] = [
         {
           request: {
             query: DELETE_USER_GROUP,
@@ -140,7 +141,7 @@ describe('administration: DeleteUserGroupDialog', () => {
     });
 
     it('should send onConfirm even when closing via dialogs "close" button', async () => {
-      const mocks: MockedResponse[] = [
+      const mocks: MockLink.MockedResponse[] = [
         {
           request: {
             query: DELETE_USER_GROUP,

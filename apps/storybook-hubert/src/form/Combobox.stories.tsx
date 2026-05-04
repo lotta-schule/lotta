@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { StoryObj, Meta } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { StoryObj, Meta } from '@storybook/react-vite';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
   Close,
   ComboBox,

@@ -2,17 +2,13 @@
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
   "compilerOptions": {
     "rootDir": ".",
-    "baseUrl": ".",
-    "lib": [
-      "dom",
-      "es2020"
-    ],
+    "lib": ["dom", "es2020"],
     "target": "ES2020",
     "sourceMap": true,
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "importHelpers": true,
     "esModuleInterop": true,
     "allowUmdGlobalAccess": false,
@@ -27,5 +23,5 @@
     "skipDefaultLibCheck": true
   },
   "include": [],
-  "files": [],
+  "files": []
 }

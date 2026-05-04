@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { FileModel } from 'model';
+import { FileModel } from '#/model/index.js';
 import {
   ResponsiveImage,
   ResponsiveImageProps,
-} from 'util/image/ResponsiveImage';
-import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
+} from '#/util/image/ResponsiveImage.js';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
 import clsx from 'clsx';
 
 import styles from './ImageContent.module.scss';

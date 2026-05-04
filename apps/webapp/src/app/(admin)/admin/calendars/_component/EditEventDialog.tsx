@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Dialog,
   DialogContent,
@@ -10,10 +10,16 @@ import {
 } from '@lotta-schule/hubert';
 import { isAfter, isSameDay } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { GET_CALENDAR_EVENTS, UPDATE_CALENDAR_EVENT } from '../_graphql';
-import { EditEventFormContent, EditEventInput } from './EditEventFormContent';
+import {
+  GET_CALENDAR_EVENTS,
+  UPDATE_CALENDAR_EVENT,
+} from '../_graphql/index.js';
+import {
+  EditEventFormContent,
+  EditEventInput,
+} from './EditEventFormContent.js';
 import { ResultOf } from 'gql.tada';
-import { DeleteEventConfirmationDialog } from './DeleteEventConfirmationDialog';
+import { DeleteEventConfirmationDialog } from './DeleteEventConfirmationDialog.js';
 
 export type EditEventDialogProps = {
   eventToBeEdited:

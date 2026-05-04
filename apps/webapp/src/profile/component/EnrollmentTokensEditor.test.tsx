@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { EnrollmentTokensEditor } from './EnrollmentTokensEditor';
-import userEvent from '@testing-library/user-event';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { EnrollmentTokensEditor } from './EnrollmentTokensEditor.js';
 
 // Wrapper component that simulates real parent component behavior
 const EnrollmentTokensEditorWrapper = ({

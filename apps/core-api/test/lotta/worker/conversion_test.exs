@@ -38,7 +38,9 @@ defmodule Lotta.Worker.ConversionTest do
 
       with_mock(
         Image,
-        open: fn _stream -> {:error, "Failed to create image from VipsSource"} end
+        open: fn _stream ->
+          {:error, %Image.Error{message: "Failed to create image from VipsSource"}}
+        end
       ) do
         assert {:cancel, _msg} =
                  perform_job(Conversion, %{
