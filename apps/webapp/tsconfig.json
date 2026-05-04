@@ -2,11 +2,12 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "src/",
+    "rootDir": ".",
     "isolatedModules": true,
     "incremental": true,
     "resolveJsonModule": true,
-    "module": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "lib": [
       "esnext",
       "dom",
@@ -14,10 +15,13 @@
     ],
     "paths": {
       "@lotta-schule/hubert": [
-        "../../../libs/hubert/src/index.ts"
+        "../../libs/hubert/src/index.js"
       ],
       "@lotta-schule/theme": [
-        "../../../libs/theme/src/index.ts"
+        "../../libs/theme/src/index.js"
+      ],
+      "#/*": [
+        "./src/*"
       ]
     },
     "plugins": [
@@ -30,7 +34,8 @@
         "tadaOutputLocation": "./src/api/graphql-env.ts"
       }
     ],
-    "noEmit": true
+    "noEmit": true,
+    "jsx": "react-jsx"
   },
   "references": [
     {

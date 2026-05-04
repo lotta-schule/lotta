@@ -1,10 +1,9 @@
-import { WidgetModelType } from 'model';
-import { render, waitFor } from 'test/util';
-import { MockRouter } from 'test/mocks';
-import { CreateWidgetButton } from './CreateWidgetButton';
-import userEvent from '@testing-library/user-event';
+import { WidgetModelType } from '#/model/index.js';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { MockRouter } from '#/test/mocks/index.js';
+import { CreateWidgetButton } from './CreateWidgetButton.js';
 
-import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';
+import CreateWidgetMutation from '#/api/mutation/CreateWidgetMutation.graphql';
 
 const newWidget = {
   id: 'new-calendar-widget',
@@ -115,8 +114,12 @@ describe('CreateWidgetButton', () => {
   it('should create an iframe widget', async () => {
     const user = userEvent.setup();
     const mockRouter = await vi
-      .importMock<{ useRouter: () => MockRouter }>('next/navigation')
-      .then((module) => module.useRouter());
+      .importMock<{
+        default: {
+          useRouter: () => MockRouter;
+        };
+      }>('next/navigation')
+      .then((module) => module.default.useRouter());
 
     const onCreateWidget = vi.fn(() => ({
       data: {

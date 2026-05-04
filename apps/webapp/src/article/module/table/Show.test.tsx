@@ -1,7 +1,7 @@
 import React from 'react';
-import { render } from 'test/util';
-import { LehrerListe } from 'test/fixtures';
-import { Show } from './Show';
+import { render } from '#/test/util.js';
+import { LehrerListe } from '#/test/fixtures/index.js';
+import { Show } from './Show.js';
 
 const tableContentModule = LehrerListe.contentModules[0];
 

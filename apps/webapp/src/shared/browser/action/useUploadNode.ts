@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useMutation, ApolloCache } from '@apollo/client';
+import { ApolloCache } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { BrowserNode, BrowserProps } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from 'model';
-import { graphql, ResultOf } from 'api/graphql';
+import { DirectoryModel, FileModel } from '#/model/index.js';
+import { graphql, ResultOf } from '#/api/graphql.js';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
+import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
 
 export const UPLOAD_FILE_MUTATION = graphql(`
   mutation UploadFile($file: Upload!, $parentDirectoryId: ID!) {

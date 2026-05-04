@@ -6,6 +6,8 @@ export interface JWTBody {
   expires: Date;
   issuedAt: Date;
   notBefore: Date;
+  tenantId: number;
+  groupIds: number[];
   type: 'access' | 'refresh' | 'high_security';
 }
 
@@ -33,6 +35,8 @@ export class JWT {
         issuer: body.iss,
         jwtId: body.jid,
         subject: body.sub,
+        tenantId: body.tid,
+        groupIds: body.gps,
         expires,
         notBefore,
         issuedAt: new Date(body.iat * 1000),
@@ -47,13 +51,31 @@ export class JWT {
     public header: JWTHeader = { algorithm: 'HS512', type: 'JWT' }
   ) {}
 
+  /**
+   * Checks if the token is expired, considering an optional buffer time.
+   *
+   * @param buffer - Time in milliseconds to subtract from the current time when checking expiration.
+   * This buffer allows you to consider a token as expired slightly before its actual expiration time, which can help prevent edge cases where a token expires during processing.
+   * Defaults to 30 seconds (30,000 ms).
+   *
+   * @return true if the token is expired (considering the buffer), false otherwise.
+   */
   isExpired(buffer = 30_000): boolean {
     const now = new Date().getTime() - buffer;
 
     return now >= this.body.expires.getTime();
   }
 
-  isValid(): boolean {
-    return new Date() >= this.body.notBefore;
+  /**
+   * Checks if the token is already valid, as defined by the "not before" (nbf) claim,
+   * as well as not being expired considering an optional buffer time (see isExpired.)
+   *
+   * @param buffer - Time in milliseconds to subtract from the current time when checking expiration.
+   * Defaults to 30 seconds (30,000 ms).
+   *
+   * @return true if the token is valid, false otherwise.
+   */
+  isValid(buffer = 30_000): boolean {
+    return new Date() >= this.body.notBefore && !this.isExpired(buffer);
   }
 }

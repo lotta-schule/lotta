@@ -4,7 +4,6 @@
   "extends": "./tsconfig.json",
 
   "compilerOptions": {
-    "baseUrl": "src/",
     "composite": true,
     "outDir": "../../dist/app/web/test",
     "types": ["vitest/globals", "vitest/importMeta", "vite/client", "vitest"],

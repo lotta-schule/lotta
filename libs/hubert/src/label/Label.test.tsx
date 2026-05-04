@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils';
-import { Label } from './Label';
+import { render } from '../test-utils.js';
+import { Label } from './Label.js';
 
 describe('shared/general/label', () => {
   it('should render', () => {

@@ -9,7 +9,7 @@
     "test": "vitest",
     "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
     "typecheck": "tsc --noEmit",
-    "build": "tsup"
+    "build": "tsdown"
   },
   "type": "module",
   "exports": {
@@ -28,32 +28,48 @@
   },
   "bundler": {
     "exportEntries": [
-      "src/index.ts"
+      "./src/index.ts"
     ],
     "managerEntries": [
-      "src/manager.ts"
+      "./src/manager.ts"
     ],
     "previewEntries": [
-      "src/preview.ts"
+      "./src/preview.ts"
     ],
     "nodeEntries": [
-      "src/preset.ts"
+      "./src/preset.ts"
     ]
   },
   "devDependencies": {
-    "@storybook/blocks": "^8.6.3",
-    "@storybook/components": "^8.6.3",
-    "@storybook/core-events": "^8.6.3",
-    "@storybook/manager-api": "^8.6.3",
-    "@storybook/preview-api": "^8.6.3",
-    "@storybook/theming": "^8.6.3",
-    "@storybook/types": "^8.6.3",
-    "@testing-library/jest-dom": "^6.4.8",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "tsup": "^8.4.0"
+    "@testing-library/jest-dom": "catalog:",
+    "@types/node": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tsdown": "^0.21.10"
   },
   "peerDependencies": {
-    "storybook": "^8.6.3"
+    "storybook": "^10.1.10"
+  },
+  "dependencies": {
+    "@storybook/addon-docs": "catalog:"
+  },
+  "lint-staged": {
+    "$schema": "https://json.schemastore.org/lint-staged",
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.{graphql,gql}": [
+      "prettier --write"
+    ],
+    "*.{html,xml}": [
+      "prettier --write"
+    ]
   }
 }

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Table } from '@lotta-schule/hubert';
 import { range } from 'lodash';
-import { ContentModuleModel } from 'model';
-import { TableContent, TableConfiguration } from './Table';
+import { ContentModuleModel } from '#/model/index.js';
+import { TableContent, TableConfiguration } from './Table.js';
 
 interface ShowProps {
   contentModule: ContentModuleModel<TableContent, TableConfiguration>;

@@ -1,1 +1,1 @@
-export * from './TagDetailsDialog';
+export * from './TagDetailsDialog.js';

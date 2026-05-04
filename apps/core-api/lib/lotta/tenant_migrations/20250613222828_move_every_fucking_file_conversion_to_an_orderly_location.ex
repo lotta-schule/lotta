@@ -106,7 +106,7 @@ defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyL
         Logger.info("Removed file conversion #{file_conversion.id} from the database.")
         Repo.delete(remote_storage_entity, prefix: prefix())
         Logger.info("Removed remote_storage_entity #{file_conversion.id} from the database.")
-        maybe_delete_from_storage(remote_storage_entity)
+        maybe_delete_from_remote_storage(remote_storage_entity)
 
       {:error, changeset} ->
         Logger.warning("Failed to remove file conversion #{file_conversion.id}: #{changeset}")
@@ -114,7 +114,7 @@ defmodule Lotta.Repo.TenantMigrations.MoveEveryFuckingFileConversionToAnOrderlyL
     end
   end
 
-  defp maybe_delete_from_storage(remote_storage_entity) do
+  defp maybe_delete_from_remote_storage(remote_storage_entity) do
     if remote_storage_entity.store_name == RemoteStorage.default_store() do
       with {:ok, _} <- RemoteStorage.delete(remote_storage_entity) do
         Logger.info(

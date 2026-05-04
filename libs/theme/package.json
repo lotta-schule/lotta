@@ -11,5 +11,24 @@
   },
   "type": "module",
   "main": "./src/index.ts",
-  "types": "./src/index.ts"
+  "types": "./src/index.ts",
+  "lint-staged": {
+    "$schema": "https://json.schemastore.org/lint-staged",
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.{graphql,gql}": [
+      "prettier --write"
+    ],
+    "*.{html,xml}": [
+      "prettier --write"
+    ]
+  }
 }

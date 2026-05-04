@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ContentModuleModel, ContentModuleType } from 'model';
-import { render } from 'test/util';
-import { Divider } from './Divider';
+import { ContentModuleModel, ContentModuleType } from '#/model/index.js';
+import { render } from '#/test/util.js';
+import { Divider } from './Divider.js';
 
 describe('shared/article/module/divider/Divider', () => {
   const dividerContentModule: ContentModuleModel = {

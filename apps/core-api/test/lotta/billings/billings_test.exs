@@ -699,7 +699,7 @@ defmodule Lotta.BillingsTest do
         Enum.filter(invoice.items, fn item -> item.type == "additional_item" end)
 
       assert additional_items != [],
-             "Expected at least 1 additional item"
+             "Expected at least 1 additional item, got #{inspect(additional_items)}"
 
       email_item =
         Enum.find(additional_items, fn item ->

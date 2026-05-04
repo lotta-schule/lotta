@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils';
-import { Divider } from './Divider';
+import { render } from '../test-utils.js';
+import { Divider } from './Divider.js';
 
 describe('general/divider', () => {
   it('should render correctly', () => {

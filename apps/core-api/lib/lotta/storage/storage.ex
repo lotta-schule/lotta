@@ -80,18 +80,20 @@ defmodule Lotta.Storage do
           do: [Metadata.await_completion_task(metadata_job)],
           else: []
 
-      conversion_tasks =
+      skip_wait = Keyword.get(opts, :skip_wait, false)
+
+      conversion_jobs =
         file
         |> AvailableFormats.get_immediate_formats()
-        # A good place for a metadata job
         |> Enum.map(&Conversion.get_or_create_conversion_job(file, &1))
         |> Enum.filter(&(elem(&1, 0) == :ok))
 
-      # they their own timeout
       await_conversion_tasks =
-        if Keyword.get(opts, :skip_wait, false),
-          do: [],
-          else: Enum.map(conversion_tasks, &Conversion.await_completion_task(elem(&1, 1)))
+        if skip_wait do
+          []
+        else
+          Enum.map(conversion_jobs, &Conversion.await_completion_task(elem(&1, 1)))
+        end
 
       try do
         Task.await_many(await_conversion_tasks ++ await_metadata_tasks, :timer.seconds(120))
@@ -105,7 +107,10 @@ defmodule Lotta.Storage do
     else
       error ->
         Logger.error("Error creating file: #{inspect(error)}")
-        FileData.clear(file_data)
+
+        if opts[:skip_cleanup] != true do
+          FileData.clear(file_data)
+        end
 
         error
     end

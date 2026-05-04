@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Message } from './Message';
-import { render, waitFor } from '../test-utils';
+import { Message } from './Message.js';
+import { render, waitFor } from '../test-utils.js';
 
 describe('util/Message', () => {
   it('should show a given message', async () => {

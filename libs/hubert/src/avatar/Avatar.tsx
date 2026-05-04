@@ -27,11 +27,14 @@ export const Avatar = React.memo(
       ?.split(',')
       .map((s) =>
         s
+          .trim()
           .split(' ')
           .map((part, i) => (i === 0 ? `url(${part})` : part))
           .join(' ')
       )
       .join(', ');
+
+    const backgroundImage = imageSet ? `image-set(${imageSet})` : `url(${src})`;
 
     return (
       <div
@@ -44,7 +47,7 @@ export const Avatar = React.memo(
         })}
         style={{
           ...style,
-          backgroundImage: imageSet ? `image-set(${imageSet})` : `url(${src})`,
+          backgroundImage,
         }}
       />
     );

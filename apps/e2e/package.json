@@ -1,19 +1,17 @@
 {
-  "name": "playwright",
+  "name": "playwright-e2e-tests",
   "version": "6.1.21",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "playwright": "./scripts/test.sh"
+    "e2e": "./scripts/test.sh"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@lhci/cli": "^0.15.1",
-    "@playwright/test": "^1.55.0",
-    "@types/node": "^22.13.8",
-    "playwright": "^1.55.0",
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
     "ts-node": "^10.9.2"
   }
 }

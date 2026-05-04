@@ -1,5 +1,5 @@
-import { render } from 'test/util';
-import { AdminPageSection } from './AdminPageSection';
+import { render } from '#/test/util.js';
+import { AdminPageSection } from './AdminPageSection.js';
 
 describe('AdminPageSection', () => {
   it('should render a section', () => {

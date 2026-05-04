@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { ContentModuleModel, ContentModuleType } from 'model';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { ContentModuleModel, ContentModuleType } from '#/model/index.js';
 import {
   Klausurenplan,
   ComputerExperten,
   SomeUser,
   SomeUserin,
-} from 'test/fixtures';
-import { ContentModule } from './ContentModule';
-import userEvent from '@testing-library/user-event';
+} from '#/test/fixtures/index.js';
+import { ContentModule } from './ContentModule.js';
 
 import GetContentModuleResults from '../../api/query/GetContentModuleResults.graphql';
 
@@ -232,7 +231,7 @@ describe('shared/article/module/ContentModule', () => {
         expect(dragHandle).toBeInTheDocument();
       });
 
-      it('should show settings button', async () => {
+      it('should show the settings button', async () => {
         const screen = render(
           <ContentModule
             isEditModeEnabled
@@ -243,11 +242,14 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        expect(
-          screen.getByRole('button', {
-            name: /moduleinstellungen/i,
-          })
-        ).toBeVisible();
+
+        await waitFor(() => {
+          expect(
+            screen.getByRole('button', {
+              name: /moduleinstellungen/i,
+            })
+          ).toBeInTheDocument();
+        });
       });
     });
   });

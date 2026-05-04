@@ -155,6 +155,19 @@ defmodule LottaWeb.StorageController do
     processing_options
   end
 
+  defp stream_body(body, conn) do
+    Enum.reduce_while(body, conn, fn chunk, conn ->
+      case chunk(conn, chunk) do
+        {:ok, conn} ->
+          {:cont, conn}
+
+        {:error, reason} ->
+          Logger.error("Failed to stream file to user: #{inspect(reason)}")
+          {:halt, conn}
+      end
+    end)
+  end
+
   defp copy_header(conn, header_list, key) do
     case Enum.find(header_list, &(elem(&1, 0) == key)) do
       nil -> conn

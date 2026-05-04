@@ -1,22 +1,21 @@
-import { render, within } from 'test/util';
-import { AdminPage } from './AdminPage';
+import { render, within } from '#/test/util.js';
+import { AdminPage } from './AdminPage.js';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
-import { loadTenant } from 'loader/loadTenant';
+import { loadTenant } from '#/loader/loadTenant.js';
 import { MockedFunction } from 'vitest';
 
-vi.mock('loader/loadTenant', async () => ({
+vi.mock('#/loader/loadTenant.js', async () => ({
   loadTenant: vi.fn(),
 }));
-vi.mock('helper');
+vi.mock('#/helper/index.js');
 
-vi.mock('next/link', () => ({
-  default: function NextLinkMock({
-    children,
-    ...props
-  }: React.PropsWithChildren) {
-    return <a {...props}>{children}</a>;
-  },
-}));
+vi.mock(
+  'next/link.js',
+  () =>
+    function NextLinkMock({ children, ...props }: React.PropsWithChildren) {
+      return <a {...props}>{children}</a>;
+    }
+);
 
 const loadTenantMock = loadTenant as MockedFunction<typeof loadTenant>;
 

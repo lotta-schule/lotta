@@ -14,6 +14,11 @@ defmodule LottaWeb.Endpoint do
     same_site: "Lax"
   ]
 
+  plug(:fetch_cookies)
+  plug(LottaWeb.TenantPlug)
+  plug(LottaWeb.Auth.Pipeline)
+  plug(LottaWeb.Context)
+
   socket("/api/user-socket", LottaWeb.UserSocket,
     websocket: [check_origin: false],
     longpoll: [check_origin: false]

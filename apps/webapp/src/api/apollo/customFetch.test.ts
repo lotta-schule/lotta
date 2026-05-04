@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Mocked, MockedFunction } from 'vitest';
-import { createHeaders, createCustomFetch } from './customFetch';
-import { appConfig } from 'config';
+import { createHeaders, createCustomFetch } from './customFetch.js';
+import { appConfig } from '#/config.js';
 
 vi.mock('axios');
 const appConfigGet = vi.spyOn(appConfig, 'get');

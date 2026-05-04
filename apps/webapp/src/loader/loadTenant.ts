@@ -1,7 +1,7 @@
 import { cache } from 'react';
-import { getClient } from '../api/client';
-import { GET_TENANT_QUERY, TENANT_COMMON_FIELDS } from 'util/tenant';
-import { graphql, ResultOf } from 'api/graphql';
+import { getClient } from '../api/client.js';
+import { GET_TENANT_QUERY, TENANT_COMMON_FIELDS } from '#/util/tenant/index.js';
+import { graphql, ResultOf } from '#/api/graphql.js';
 
 export const GET_TENANT_WITH_STATS_QUERY = graphql(
   `

@@ -1276,7 +1276,7 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
-          variables: %{username: "alexis.rinaldoni@lotta.schule", password: "test123"}
+          variables: %{username: "alexis.rinaldoni@lotta.schule", password: "password"}
         )
         |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
 
@@ -1306,7 +1306,7 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
-          variables: %{username: "zzzzzzzzzzzzzzzzzzzz@bbbbbbbbbbbbbbb.ddd", password: "test123"}
+          variables: %{username: "zzzzzzzzzzzzzzzzzzzz@bbbbbbbbbbbbbbb.ddd", password: "password"}
         )
         |> json_response(200)
 
@@ -1361,7 +1361,7 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{password: "test123"}
+          variables: %{password: "password"}
         )
 
       res =
@@ -1381,7 +1381,7 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
-          variables: %{password: "test123"}
+          variables: %{password: "password"}
         )
         |> json_response(200)
 

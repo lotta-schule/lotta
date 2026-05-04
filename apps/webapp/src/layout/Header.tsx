@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { FileModel } from 'model';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { FileModel } from '#/model/index.js';
+import { UserNavigation } from './navigation/UserNavigation.js';
 import clsx from 'clsx';
 
 import styles from './Header.module.scss';
@@ -32,9 +33,9 @@ export const Header = React.memo(
           {bannerImageUrl && <img src={bannerImageUrl} alt="" width={700} />}
           <div className={styles.headerContent}>{children}</div>
         </div>
-        {/*<div className={styles.userNavigationGridItem}>
+        <div className={styles.userNavigationGridItem}>
           <UserNavigation />
-        </div>*/}
+        </div>
       </section>
     );
   }

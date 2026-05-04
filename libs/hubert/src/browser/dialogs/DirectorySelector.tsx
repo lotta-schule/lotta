@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { BrowserNode, BrowserPath } from '../BrowserStateContext';
-import { Item, Menu } from '../../menu';
-import { Toolbar } from '../../layout/Toolbar';
-import { KeyboardArrowLeft } from '../../icon';
-import { isDirectoryNode } from '../utils';
-import { LinearProgress } from '../../progress';
+import { BrowserNode, BrowserPath } from '../BrowserStateContext.js';
+import { Item, Menu } from '../../menu/index.js';
+import { Toolbar } from '../../layout/Toolbar.js';
+import { KeyboardArrowLeft } from '../../icon/index.js';
+import { isDirectoryNode } from '../utils.js';
+import { LinearProgress } from '../../progress/index.js';
 
 export type DirectorySelector = {
   getNodesForParent(

@@ -1,6 +1,6 @@
 import { cache } from 'react';
-import { getClient } from 'api/client';
-import { GET_CURRENT_USER } from 'util/user/useCurrentUser';
+import { getClient } from '#/api/client.js';
+import { GET_CURRENT_USER } from '#/util/user/useCurrentUser.js';
 
 export class UnauthenticatedError extends Error {
   name = 'UnauthenticatedError';

@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 import { LinearProgress } from '@lotta-schule/hubert';
 
 export default {

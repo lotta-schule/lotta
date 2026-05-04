@@ -1,3 +1,3 @@
-export * from './CategoryNavigation';
-export * from './CategoryEditor';
-export * from './CategoryListToolbar';
+export * from './CategoryNavigation.js';
+export * from './CategoryEditor.js';
+export * from './CategoryListToolbar.js';

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { ButtonGroupContextProvider } from './ButtonGroupContext';
+import { ButtonGroupContextProvider } from './ButtonGroupContext.js';
 import clsx from 'clsx';
 
 import styles from './ButtonGroup.module.scss';

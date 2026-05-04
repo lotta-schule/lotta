@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Button, Close } from '@lotta-schule/hubert';
-import { loadTenant } from 'loader/loadTenant';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import Link from 'next/link';
+import { loadTenant } from '#/loader/loadTenant.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import Link from 'next/link.js';
 import clsx from 'clsx';
 
 import styles from './AdminPage.module.scss';
@@ -59,7 +59,6 @@ export const AdminPage = async ({
         )}
         <Button
           icon={<Close />}
-          component={Link}
           href={'/'}
           className={clsx(styles.logoLinkClose, {
             [styles.forceLogoLinkClose]: !tenant.logoImageFile,

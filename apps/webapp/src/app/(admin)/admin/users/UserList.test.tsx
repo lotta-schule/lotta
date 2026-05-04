@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from '#/test/util.js';
 import {
   SomeUser,
   SomeUserin,
   KeinErSieEsUser,
   adminGroup,
   tenant,
-} from 'test/fixtures';
-import { UserList } from './UserList';
-import userEvent from '@testing-library/user-event';
+} from '#/test/fixtures/index.js';
+import { UserList } from './UserList.js';
 
-import GetUserQuery from 'api/query/GetUserQuery.graphql';
-import SearchUsersQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
+import GetUserQuery from '#/api/query/GetUserQuery.graphql';
+import SearchUsersQuery from '#/api/query/SearchUsersAsAdminQuery.graphql';
 
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 

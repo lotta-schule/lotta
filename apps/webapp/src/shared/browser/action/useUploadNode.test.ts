@@ -1,11 +1,11 @@
-import { MockedResponse } from '@apollo/client/testing';
-import { currentApolloCache, renderHook, waitFor } from 'test/util';
-import { SomeUser, logosDirectory } from 'test/fixtures';
-import { DirectoryModel, FileModel } from 'model';
+import { MockLink } from '@apollo/client/testing';
+import { currentApolloCache, renderHook, waitFor } from '#/test/util.js';
+import { SomeUser, logosDirectory } from '#/test/fixtures/index.js';
+import { DirectoryModel, FileModel } from '#/model/index.js';
 import { BrowserNode, Upload } from '@lotta-schule/hubert';
-import { useUploadNode, UPLOAD_FILE_MUTATION } from './useUploadNode';
+import { useUploadNode, UPLOAD_FILE_MUTATION } from './useUploadNode.js';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
+import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
 
 const parentDirectoryNode = {
   id: logosDirectory.id,
@@ -15,14 +15,14 @@ const parentDirectoryNode = {
   parent: logosDirectory.parentDirectory?.id ?? null,
 } satisfies BrowserNode<'directory'>;
 
-export const additionalMocks: MockedResponse[] = [
+export const additionalMocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: UPLOAD_FILE_MUTATION,
+      variables: (vars) =>
+        vars.file instanceof File &&
+        vars.parentDirectoryId === logosDirectory.id,
     },
-    variableMatcher: (variables: any) =>
-      variables.file instanceof File &&
-      variables.parentDirectoryId === logosDirectory.id,
     result: (variables) => ({
       data: {
         file: {

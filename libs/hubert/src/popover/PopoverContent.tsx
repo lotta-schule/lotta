@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { usePopoverContext } from './Popover';
+import { usePopoverContext } from './Popover.js';
 import { useMergeRefs, FloatingFocusManager } from '@floating-ui/react';
-import { Overlay } from './Overlay';
+import { Overlay } from './Overlay.js';
 
 export const PopoverContent = ({
   style,

@@ -1,2 +1,2 @@
-export * from './SearchUserField';
-export * from './EduplacesLoginButton';
+export * from './SearchUserField.js';
+export * from './EduplacesLoginButton.js';

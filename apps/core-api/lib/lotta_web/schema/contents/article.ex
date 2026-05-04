@@ -38,10 +38,10 @@ defmodule LottaWeb.Schema.Contents.Article do
   end
 
   object :article do
-    field(:id, :id)
-    field(:inserted_at, :datetime)
-    field(:updated_at, :datetime)
-    field(:title, :string)
+    field(:id, non_null(:id))
+    field(:inserted_at, non_null(:datetime))
+    field(:updated_at, non_null(:datetime))
+    field(:title, non_null(:string))
     field(:preview, :string)
     field(:tags, list_of(non_null(:string)))
     field(:ready_to_publish, :boolean)
@@ -53,18 +53,21 @@ defmodule LottaWeb.Schema.Contents.Article do
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Storage)
     )
 
-    field(:groups, list_of(:user_group),
+    field(:groups, non_null(list_of(non_null(:user_group))),
       resolve: &LottaWeb.UserGroupResolver.resolve_model_groups/3
     )
 
-    field(:content_modules, list_of(:content_module),
+    field(:content_modules, non_null(list_of(non_null(:content_module))),
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Content)
     )
 
-    field(:users, list_of(:user), resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts))
+    field(:users, non_null(list_of(non_null(:user))),
+      resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts)
+    )
+
     field(:category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Tenants))
 
-    field(:reaction_counts, list_of(:article_reaction_count),
+    field(:reaction_counts, list_of(non_null(:article_reaction_count)),
       resolve: &LottaWeb.ArticleReactionResolver.resolve_article_reaction_counts/2
     )
   end

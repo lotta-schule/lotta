@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { describe, expect, it } from 'vitest';
 import { DefaultThemes } from '@lotta-schule/theme';
-import { render } from '../test-utils';
-import { GlobalStyles } from './GlobalStyles';
+import { render } from '../test-utils.js';
+import { GlobalStyles } from './GlobalStyles.js';
 
 describe('GlobalStyles', () => {
   it('smoke test', () => {
