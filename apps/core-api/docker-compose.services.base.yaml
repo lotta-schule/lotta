@@ -46,8 +46,9 @@ services:
   minio-setup:
     image: minio/mc:RELEASE.2025-08-13T08-35-41Z
     depends_on:
-      - minio
-    restart: on-failure
+      minio:
+        condition: service_healthy
+    restart: no
     entrypoint: >
       /bin/sh -c "
       sleep 5;

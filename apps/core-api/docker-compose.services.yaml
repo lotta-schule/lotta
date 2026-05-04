@@ -32,6 +32,8 @@ services:
     extends:
       file: './docker-compose.services.base.yaml'
       service: minio-setup
+    profiles:
+      - minio-setup
 
   pgadmin:
     image: dpage/pgadmin4:latest
