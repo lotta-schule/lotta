@@ -1,31 +1,36 @@
 ARG NODE_VERSION=24.5
-
 ARG RELEASE_NAME
 ARG SENTRY_DSN=""
 
-FROM node:${NODE_VERSION}-slim AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-
-RUN npm install corepack@latest -g
-RUN corepack enable
+#
+# BASE
+#
+FROM oven/bun:1-slim AS base
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
+#
+# DEPS
+#
 FROM base AS deps
-COPY pnpm-lock.yaml /app/pnpm-lock.yaml
-COPY pnpm-workspace.yaml /app/pnpm-workspace.yaml
-COPY tsconfig.base.json /app/tsconfig.base.json
-COPY libs /app/libs
-COPY apps/webapp /app/apps/webapp
 
-WORKDIR /app
+COPY bun.lock bunfig.toml package.json tsconfig.base.json ./
+COPY libs/hubert/package.json                libs/hubert/
+COPY libs/theme/package.json                 libs/theme/
+COPY libs/storybook-addon-theme/package.json libs/storybook-addon-theme/
+COPY apps/webapp/package.json                apps/webapp/
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter ./apps/webapp build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter ./apps/webapp deploy --prod pruned
+RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
+  bun install
 
-# Build the source code
+COPY libs      ./libs
+COPY apps/webapp ./apps/webapp
 
+#
+# BUILDER
+#
 FROM deps AS builder
 
 ARG RELEASE_NAME
@@ -35,9 +40,14 @@ ENV NODE_ENV=production
 ENV NEXT_PUBLIC_RELEASE_NAME=$RELEASE_NAME
 ENV SENTRY_DSN=$SENTRY_DSN
 ENV NEXT_PUBLIC_SENTRY_DSN=$SENTRY_DSN
+ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN apt-get update && apt-get install -y ca-certificates
+WORKDIR /app/apps/webapp
+RUN bun run build
 
+#
+# RUNNER - still node, maybe switch to bun in the future
+#
 FROM node:${NODE_VERSION}-alpine AS runner
 
 LABEL org.opencontainers.image.source="https://github.com/lotta-schule/lotta"
@@ -45,6 +55,7 @@ LABEL org.opencontainers.image.authors="Lotta Schule <kontakt@lotta.schule>"
 LABEL org.opencontainers.image.url="https://lotta.schule"
 
 RUN apk add --no-cache libc6-compat
+
 ARG RELEASE_NAME
 ARG SENTRY_DSN
 
@@ -54,16 +65,16 @@ ENV HOSTNAME="0.0.0.0"
 ENV SENTRY_RELEASE=$RELEASE_NAME
 ENV NEXT_PUBLIC_RELEASE_NAME=$RELEASE_NAME
 ENV NEXT_PUBLIC_SENTRY_DSN=$SENTRY_DSN
-
 ENV NEXT_TELEMETRY_DISABLED=1
 
 WORKDIR /app
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs \
+  && adduser  --system --uid 1001 nextjs
 
-COPY --from=builder /app/pruned /app
-RUN chown nextjs:nodejs /app
+COPY --from=builder --chown=nextjs:nodejs /app/apps/webapp/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/webapp/.next/static     apps/webapp/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/webapp/public            apps/webapp/public
 
 USER nextjs
 
@@ -72,4 +83,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
 
 EXPOSE 3000
 
-CMD ["node", "--run", "start:prod"]
+CMD ["node", "apps/webapp/server.js"]

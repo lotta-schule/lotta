@@ -38,19 +38,16 @@ jobs:
           include: 'v*'
           commit-ish: 'HEAD~'
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.14.0
-
-      - name: Install node dependencies
-        run: pnpm install
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.5
-          cache: 'pnpm'
+
+      - name: Install node dependencies
+        run: bun install
 
       - name: Setup Git User
         run: |
@@ -61,8 +58,8 @@ jobs:
         id: bump
         run: |
           LAST_TAG=$(echo ${{ steps.tagger.outputs.tag }} | cut -c 2-)
-          NEXT_VERSION=$(pnpm dlx semver -i ${{ inputs.release_level }} $LAST_TAG)
-          pnpm release:prepare $NEXT_VERSION
+          NEXT_VERSION=$(bunx semver -i ${{ inputs.release_level }} $LAST_TAG)
+          bun run release:prepare $NEXT_VERSION
           echo ::set-output name=version::$NEXT_VERSION
 
       - name: Push Git Tag

@@ -5,7 +5,7 @@
     "libs/*",
     "apps/*"
   ],
-  "npmClient": "npm",
+  "npmClient": "bun",
   "exact": true,
   "conventionalCommits": true,
   "changelogPreset": "angular",

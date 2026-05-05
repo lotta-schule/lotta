@@ -41,17 +41,17 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "catalog:",
-    "@types/node": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@types/node": "^25.6.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "tsdown": "^0.21.10"
   },
   "peerDependencies": {
     "storybook": "^10.1.10"
   },
   "dependencies": {
-    "@storybook/addon-docs": "catalog:"
+    "@storybook/addon-docs": "^10.3.6"
   },
   "lint-staged": {
     "$schema": "https://json.schemastore.org/lint-staged",

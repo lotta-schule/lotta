@@ -32,21 +32,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 25.2
-          cache: 'pnpm'
 
       - name: Install node dependencies
-        run: pnpm install
+        run: bun install
         working-directory: apps/e2e
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
+        run: bunx playwright install --with-deps
         working-directory: apps/e2e
 
       - name: Run lotta as a service from docker-compose.yml
@@ -61,7 +60,7 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          pnpm e2e --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          bun run e2e --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         working-directory: apps/e2e
 
       - uses: actions/upload-artifact@v4
@@ -88,17 +87,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 25.2
-          cache: 'pnpm'
 
       - name: Install node dependencies
-        run: pnpm install
+        run: bun install
         working-directory: apps/e2e
 
       - name: Download blob reports from GitHub Actions Artifacts
@@ -109,7 +107,7 @@ jobs:
           merge-multiple: true
 
       - name: Merge into HTML Report
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        run: bunx playwright merge-reports --reporter html ./all-blob-reports
         working-directory: apps/e2e
 
       - name: Upload HTML report
