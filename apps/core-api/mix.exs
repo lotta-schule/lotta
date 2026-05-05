@@ -156,7 +156,9 @@ defmodule Lotta.MixProject do
       {:opentelemetry_phoenix, "~> 2.0"},
       {:opentelemetry_tesla, "~> 2.4.0"},
       {:opentelemetry_semantic_conventions, "~> 1.27", override: true},
-      {:kadabra, github: "ptitmouton/kadabra", branch: "otp-28-support", override: true}
+      {:kadabra, github: "ptitmouton/kadabra", branch: "otp-28-support", override: true},
+      # logging
+      {:logger_json, "~> 7.0"}
     ]
   end
 

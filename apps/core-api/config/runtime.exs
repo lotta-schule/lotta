@@ -138,8 +138,7 @@ defmodule SystemConfig do
 
   defp default("DISABLE_CHROMIC", env) when env in [:dev, :test], do: "true"
   defp default("DISABLE_CHROMIC", _), do: "false"
-  defp default("DEBUG_CHROMIC", :prod), do: "false"
-  defp default("DEBUG_CHROMIC", _), do: "true"
+  defp default("DEBUG_CHROMIC", _), do: "false"
 
   defp default("SENTRY_DSN", _), do: nil
 
@@ -176,6 +175,7 @@ defmodule SystemConfig do
 end
 
 config :lotta, :environment, SystemConfig.get("APP_ENVIRONMENT", cast: :environment)
+config :lotta, :release_name, SystemConfig.get("IMAGE_NAME", cast: :docker_image_tag)
 
 [host | alias] = SystemConfig.get("BASE_URI_HOST", cast: :string_list)
 
@@ -233,11 +233,12 @@ config :opentelemetry, :resource,
   deployment: %{
     environment: SystemConfig.get("APP_ENVIRONMENT"),
     version: SystemConfig.get("IMAGE_NAME")
-  }
+  },
+  span_processor: :batch,
+  traces_exporter: :otlp
 
-config :opentelemetry,
-  span_processor: {Sentry.OpenTelemetry.SpanProcessor, []},
-  sampler: {Sentry.OpenTelemetry.Sampler, []}
+config :opentelemetry_exporter,
+  otlp_protocol: :http_protobuf
 
 config :lotta,
        Lotta.Repo,

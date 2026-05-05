@@ -34,6 +34,8 @@ defmodule LottaWeb.Endpoint do
     longpoll: [check_origin: false]
   )
 
+  plug(Plug.Telemetry, event_prefix: [:lotta, :plug])
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # When code reloading is disabled (e.g., in production),
