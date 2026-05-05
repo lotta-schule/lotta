@@ -13,6 +13,7 @@ WORKDIR /app
 
 FROM base AS deps
 COPY pnpm-lock.yaml /app/pnpm-lock.yaml
+COPY .npmrc /app/.npmrc
 COPY pnpm-workspace.yaml /app/pnpm-workspace.yaml
 COPY tsconfig.base.json /app/tsconfig.base.json
 COPY libs /app/libs
@@ -20,7 +21,7 @@ COPY apps/webapp /app/apps/webapp
 
 WORKDIR /app
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --node-linker=hoisted
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter ./apps/webapp build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter ./apps/webapp deploy --prod pruned
 

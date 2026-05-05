@@ -281,7 +281,7 @@ catalogs:
       specifier: ^0.1.2
       version: 0.1.2
     import-in-the-middle:
-      specifier: ^3.0.1
+      specifier: 3.0.1
       version: 3.0.1
     is-url:
       specifier: ^1.2.4

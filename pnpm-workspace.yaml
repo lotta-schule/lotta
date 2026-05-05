@@ -94,7 +94,7 @@ catalog:
   i18next: ^26.0.8
   i18next-parser: ^9.4.0
   ignore-loader: ^0.1.2
-  import-in-the-middle: ^3.0.1
+  import-in-the-middle: 3.0.1
   is-url: ^1.2.4
   jsdom: ^29.1.1
   jwt-decode: ^4.0.0
