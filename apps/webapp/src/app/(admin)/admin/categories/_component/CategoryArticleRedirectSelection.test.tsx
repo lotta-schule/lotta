@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, waitFor, userEvent } from '#/test/util.js';
 import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection.js';
 import { ComputerExperten } from '#/test/fixtures/index.js';
@@ -18,19 +17,17 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
       />,
       {},
       {
-        additionalMocks: [
-          ...['Test']
-            .map((fullTerm) => {
-              return new Array(fullTerm.length)
-                .fill(null)
-                .map((_, i) => fullTerm.slice(0, i + 1));
-            })
-            .flat()
-            .map((searchText) => ({
-              request: { query: SearchQuery, variables: { searchText } },
-              result: { data: { results: [ComputerExperten] } },
-            })),
-        ],
+        additionalMocks: ['Test']
+          .map((fullTerm) => {
+            return Array.from({ length: fullTerm.length })
+              .fill(0)
+              .map((_, i) => fullTerm.slice(0, i + 1));
+          })
+          .flat()
+          .map((searchText) => ({
+            request: { query: SearchQuery, variables: { searchText } },
+            result: { data: { results: [ComputerExperten] } },
+          })),
       }
     );
 

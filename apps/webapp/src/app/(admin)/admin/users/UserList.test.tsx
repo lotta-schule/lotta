@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, waitFor, userEvent } from '#/test/util.js';
 import {
   SomeUser,
@@ -21,7 +20,7 @@ const additionalMocks = [
   })),
   ...['Michel']
     .map((fullTerm) => {
-      return new Array(fullTerm.length)
+      return Array.from({ length: fullTerm.length })
         .fill(null)
         .map((_, i) => fullTerm.slice(0, i + 1));
     })

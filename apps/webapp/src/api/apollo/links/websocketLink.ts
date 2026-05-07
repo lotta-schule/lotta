@@ -7,7 +7,7 @@ import { TenantModel } from '#/model/index.js';
 import { isBrowser } from '#/util/isBrowser.js';
 
 const createAbsoluteSocketUrl = (urlString: string) => {
-  if (/^\//.test(urlString)) {
+  if (urlString.startsWith('/')) {
     const url = new URL(window.location.href);
     url.protocol = url.protocol.replace('http', 'ws');
     url.pathname = urlString;

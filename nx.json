@@ -17,9 +17,8 @@
     "lint": {
       "inputs": [
         "default",
-        "{projectRoot}/.eslintrc.json",
-        "{workspaceRoot}/.eslintrc.json",
-        "{workspaceRoot}/.eslintignore"
+        "{projectRoot}/oxlint.config.ts",
+        "{workspaceRoot}/oxlint.config.ts"
       ],
       "cache": true
     },
@@ -54,7 +53,7 @@
       "!{projectRoot}/src/test-setup.[jt]s",
       "!{projectRoot}/src/test/util.[jt]sx?",
       "!{projectRoot}/test-setup.[jt]s",
-      "!{projectRoot}/.eslintrc.json"
+      "!{projectRoot}/oxlint.config.ts"
     ],
     "sharedGlobals": [
       "{workspaceRoot}/tsconfig.base.json",

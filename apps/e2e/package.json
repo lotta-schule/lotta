@@ -10,8 +10,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "catalog:",
-    "@types/node": "catalog:",
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.6.0",
     "ts-node": "^10.9.2"
   }
 }

@@ -30,6 +30,7 @@ declare global {
   }
 }
 declare namespace globalThis {
+  // oxlint-disable-next-line no-unused-vars
   let mockRouter: MockRouter;
 }
 

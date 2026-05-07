@@ -1,14 +1,15 @@
 import { ApolloClient, ApolloLink } from '@apollo/client';
 import { LocalState } from '@apollo/client/local-state';
 import { Defer20220824Handler } from '@apollo/client/incremental';
+import { cookies, headers } from 'next/headers.js';
+import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers.js';
+import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies.js';
 import { createCache } from './cache.js';
 import { createErrorLink } from './links/errorLink.js';
 import { createAuthLink } from './links/authLink.js';
+import { createOtelLink } from './links/otelLink.js';
 import { createHttpLink } from './links/httpLink.js';
-import { cookies, headers } from 'next/headers.js';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink.js';
-import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers.js';
-import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies.js';
 
 export const getAuthTokenFromHeader = (
   headerValues: ReadonlyHeaders,
@@ -34,6 +35,7 @@ export const createRSCClient = async () => {
     cache: createCache(),
 
     link: ApolloLink.from([
+      createOtelLink(),
       createErrorLink(),
       createAuthLink({
         initialToken:

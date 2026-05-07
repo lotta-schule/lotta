@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { UserModel } from '#/model/index.js';
 import { render, waitFor, userEvent, within } from '#/test/util.js';
 import { SomeUser, SomeUserin, schuelerGroup } from '#/test/fixtures/index.js';
@@ -7,15 +6,17 @@ import { CreateMessageDialog } from './CreateMessageDialog.js';
 import SearchUsersQuery from '#/api/query/SearchUsersQuery.graphql';
 
 const searchUsersMock = (searchTerm: string, results: UserModel[]) =>
-  new Array(searchTerm.length).fill('').map((_, i) => ({
-    request: {
-      query: SearchUsersQuery,
-      variables: { searchtext: searchTerm.slice(0, i + 1) },
-    },
-    result: {
-      data: { users: i >= 2 ? results : [] },
-    },
-  }));
+  Array.from({ length: searchTerm.length })
+    .fill('')
+    .map((_, i) => ({
+      request: {
+        query: SearchUsersQuery,
+        variables: { searchtext: searchTerm.slice(0, i + 1) },
+      },
+      result: {
+        data: { users: i >= 2 ? results : [] },
+      },
+    }));
 
 describe('CreateMessageDialog', () => {
   afterEach(async () => {

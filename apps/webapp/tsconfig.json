@@ -8,21 +8,11 @@
     "resolveJsonModule": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["esnext", "dom", "dom.iterable"],
     "paths": {
-      "@lotta-schule/hubert": [
-        "../../libs/hubert/src/index.js"
-      ],
-      "@lotta-schule/theme": [
-        "../../libs/theme/src/index.js"
-      ],
-      "#/*": [
-        "./src/*"
-      ]
+      "@lotta-schule/hubert": ["../../libs/hubert/src/index.js"],
+      "@lotta-schule/theme": ["../../libs/theme/src/index.js"],
+      "#/*": ["./src/*"]
     },
     "plugins": [
       {

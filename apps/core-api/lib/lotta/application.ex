@@ -12,9 +12,7 @@ defmodule Lotta.Application do
     Lotta.Storage.FileData.create_cache_dir()
 
     setup_telemetry()
-    Logger.add_handlers(:lotta)
-
-    Oban.Telemetry.attach_default_logger()
+    setup_logger()
 
     # List all child processes to be supervised
     children =
@@ -46,6 +44,17 @@ defmodule Lotta.Application do
       strategy: :one_for_one,
       name: Lotta.Supervisor
     )
+  end
+
+  defp setup_logger() do
+    Logger.metadata(
+      version: Application.get_env(:lotta, :release_name),
+      env: Application.get_env(:lotta, :environment)
+    )
+
+    LoggerJSON.Ecto.attach("logger-json-queries", [:lotta, :repo, :query], :debug)
+    LoggerJSON.Plug.attach("logger-json-requests", [:lotta, :plug, :stop], :info)
+    Oban.Telemetry.attach_default_logger(events: [:job, :queue], level: :info)
   end
 
   defp setup_telemetry() do

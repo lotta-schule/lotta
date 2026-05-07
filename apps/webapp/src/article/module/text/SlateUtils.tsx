@@ -278,17 +278,17 @@ export const onKeyDownFactory =
       editor.insertText('\n');
     }
 
-    if (event.key == 'b' && (event.metaKey || event.metaKey)) {
+    if (event.key == 'b' && event.metaKey) {
       event.preventDefault();
       toggleMark(editor, 'bold');
     }
 
-    if (event.key == 'i' && (event.metaKey || event.metaKey)) {
+    if (event.key == 'i' && event.metaKey) {
       event.preventDefault();
       toggleMark(editor, 'italic');
     }
 
-    if (event.key == 'u' && (event.metaKey || event.metaKey)) {
+    if (event.key == 'u' && event.metaKey) {
       event.preventDefault();
       toggleMark(editor, 'underline');
     }

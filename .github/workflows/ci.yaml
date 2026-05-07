@@ -16,7 +16,7 @@ env:
   GITHUB_ACTIONS: true
 
 jobs:
-  pnpm-install:
+  bun-install:
     name: Install (and cache) dependencies
     runs-on: ubuntu-24.04
     steps:
@@ -25,22 +25,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 25.2
-          cache: 'pnpm'
 
-      - name: Install npm dependencies
-        run: pnpm install
+      - name: Install dependencies
+        run: bun install
 
   lint:
     name: Lint Code
     runs-on: ubuntu-24.04
-    needs: pnpm-install
+    needs: bun-install
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -54,14 +53,13 @@ jobs:
       - name: Setup NX
         uses: nrwl/nx-set-shas@v3
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.5
-          cache: 'pnpm'
 
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
@@ -69,19 +67,19 @@ jobs:
           otp-version: '28.0.2'
           elixir-version: '1.18.4'
 
-      - name: Install node dependencies
-        run: pnpm install
+      - name: Install dependencies
+        run: bun install
 
       - name: Lint
-        run: pnpm nx run-many -t lint
+        run: bunx nx run-many -t lint
 
       - name: Typecheck
-        run: pnpm nx run-many -t typecheck
+        run: bunx nx run-many -t typecheck
 
   tests:
     name: Run tests
     runs-on: ubuntu-24.04
-    needs: pnpm-install
+    needs: bun-install
     env:
       TZ: Europe/Berlin
       LOCALE: de_DE.UTF-8
@@ -123,14 +121,13 @@ jobs:
       - name: Setup NX
         uses: nrwl/nx-set-shas@v3
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.5
-          cache: 'pnpm'
 
       - uses: actions/cache@v4
         with:
@@ -156,15 +153,15 @@ jobs:
           mc mb minio/lotta-dev-ugc
           mc anonymous set download minio/lotta-dev-ugc
 
-      - name: Install npm dependencies
-        run: pnpm install
+      - name: Install dependencies
+        run: bun install
 
       - name: Install playwright browsers
         run: |
-          pnpm exec playwright install --with-deps chromium
+          bunx playwright install --with-deps chromium
 
       - name: Run Unit / Component tests
-        run: pnpm nx run-many -t test --configuration=coverage
+        run: bunx nx run-many -t test --configuration=coverage
         env:
           NODE_ENV: test
           MIX_ENV: test
@@ -330,7 +327,7 @@ jobs:
     # with the labels. Maybe github-api can be used to get the labels?
     name: Check the projects build
     runs-on: ubuntu-24.04
-    needs: pnpm-install
+    needs: bun-install
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -346,18 +343,15 @@ jobs:
         uses: nrwl/nx-set-shas@v3
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
-        with:
-          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
         with:
           node-version: 25.2
-          cache: 'pnpm'
 
       - name: Setup the BEAM and Elixir
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
@@ -366,10 +360,10 @@ jobs:
           otp-version: '28.0.2'
           elixir-version: '1.18.4'
 
-      - name: Install npm dependencies
+      - name: Install dependencies
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
-        run: pnpm install
+        run: bun install
 
       - name: Run build task
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
-        run: pnpm nx affected -t build
+        run: bunx nx affected -t build

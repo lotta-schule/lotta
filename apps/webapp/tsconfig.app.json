@@ -3,10 +3,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "types": [
-      "node",
-      "vite/client"
-    ],
+    "types": ["node", "vite/client"],
     "outDir": "../../dist/app/web/app"
   },
   "include": [
@@ -20,6 +17,6 @@
     "**/*.test.ts",
     "**/*.test.ts?",
     "src/test/**/*.ts",
-    "src/test/**/*.ts?",
-  ],
+    "src/test/**/*.ts?"
+  ]
 }

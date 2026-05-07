@@ -9,6 +9,7 @@ const __dirname = new URL('.', import.meta.url).pathname;
  * @type {import('next').NextConfig}
  **/
 const nextConfig = {
+  output: 'standalone',
   experimental: {
     externalDir: true,
     authInterrupts: true,

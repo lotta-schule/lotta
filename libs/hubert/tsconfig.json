@@ -4,22 +4,14 @@
   "compilerOptions": {
     "outDir": "dist/lib/hubert",
     "noEmit": true,
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["esnext", "dom", "dom.iterable"],
     "isolatedModules": true,
     "incremental": true,
     "resolveJsonModule": true,
     "module": "nodenext",
     "paths": {
-      "@lotta-schule/theme": [
-        "../theme/src/index.js"
-      ],
-      "#/*": [
-        "./src/*"
-      ]
+      "@lotta-schule/theme": ["../theme/src/index.js"],
+      "#/*": ["./src/*"]
     }
   },
   "references": [

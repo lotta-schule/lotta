@@ -11,9 +11,7 @@
     "moduleResolution": "nodenext",
     "target": "ESNext",
     "paths": {
-      "@lotta-schule/theme": [
-        "../theme/src/index.ts"
-      ]
+      "@lotta-schule/theme": ["../theme/src/index.ts"]
     }
   },
   "references": [
