@@ -79,7 +79,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/webapp/public            app
 USER nextjs
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/dbg/health || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/dbg/health || exit 1
 
 EXPOSE 3000
 
