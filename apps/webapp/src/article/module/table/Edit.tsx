@@ -77,14 +77,18 @@ export const Edit = React.memo<EditProps>(
 
     const contentRows = React.useMemo(
       () =>
-        new Array(rowCount).fill(0).map((_, rowIndex) =>
-          new Array(columnCount).fill(0).map(
-            (_, columnIndex) =>
-              contentModule.content?.rows?.[rowIndex]?.[columnIndex] ?? {
-                text: '',
-              }
-          )
-        ),
+        Array.from({ length: rowCount })
+          .fill(0)
+          .map((_, rowIndex) =>
+            Array.from({ length: columnCount })
+              .fill(0)
+              .map(
+                (_, columnIndex) =>
+                  contentModule.content?.rows?.[rowIndex]?.[columnIndex] ?? {
+                    text: '',
+                  }
+              )
+          ),
       [rowCount, columnCount, contentModule.content]
     );
 

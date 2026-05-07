@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { omit } from 'lodash';
 import { User } from '#/util/model/index.js';
 import { render, waitFor, userEvent } from '#/test/util.js';
@@ -20,24 +19,22 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
   });
 
   describe('searching users', () => {
-    const additionalMocks = [
-      ...['Michel']
-        .map((fullTerm) => {
-          return new Array(fullTerm.length)
-            .fill(null)
-            .map((_, i) => fullTerm.slice(0, i + 1));
-        })
-        .flat()
-        .concat([User.getName(KeinErSieEsUser)])
-        .map((searchtext) => ({
-          request: { query: SearchUsersQuery, variables: { searchtext } },
-          result: {
-            data: {
-              users: [KeinErSieEsUser],
-            },
+    const additionalMocks = ['Michel']
+      .map((fullTerm) => {
+        return Array.from({ from: fullTerm.length })
+          .fill(null)
+          .map((_, i) => fullTerm.slice(0, i + 1));
+      })
+      .flat()
+      .concat([User.getName(KeinErSieEsUser)])
+      .map((searchtext) => ({
+        request: { query: SearchUsersQuery, variables: { searchtext } },
+        result: {
+          data: {
+            users: [KeinErSieEsUser],
           },
-        })),
-    ];
+        },
+      }));
 
     it('should show the correct search results for a search term', async () => {
       const fireEvent = userEvent.setup();

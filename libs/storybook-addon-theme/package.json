@@ -7,7 +7,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "test": "vitest",
-    "lint": "eslint 'src/**/*.*' --no-warn-ignored --fix",
+    "lint": "oxlint --fix src/",
     "typecheck": "tsc --noEmit",
     "build": "tsdown"
   },
@@ -56,7 +56,7 @@
   "lint-staged": {
     "$schema": "https://json.schemastore.org/lint-staged",
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
+      "oxlint --fix",
       "prettier --write"
     ],
     "*.{css,scss}": [

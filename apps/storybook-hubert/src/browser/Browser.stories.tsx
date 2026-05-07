@@ -91,7 +91,7 @@ export const Select: StoryObj<typeof Browser> = {
     mode: 'select',
   },
   play: async ({ canvasElement }) => {
-    const user = await userEvent.setup({ delay: 25 });
+    const user = userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
     user.click(await screen.findByRole('option', { name: 'folder 1' }));
@@ -112,7 +112,7 @@ export const SelectMultiple: StoryObj<typeof Browser> = {
     mode: 'select-multiple',
   },
   play: async ({ canvasElement }) => {
-    const user = await userEvent.setup({ delay: 25 });
+    const user = userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
     user.click(await screen.findByRole('option', { name: 'folder 1' }));
@@ -127,7 +127,6 @@ export const SelectMultiple: StoryObj<typeof Browser> = {
   },
 };
 
-// eslint-disable-next-line no-var
 var browserNodes = [
   {
     id: '1',

@@ -94,7 +94,7 @@ export const EditArticlePage = React.memo(
               }
             );
             const newContentModules = editedArticle.contentModules.filter(
-              (_cm) => /^-/.test(_cm.id)
+              (_cm) => _cm.id.startsWith('-')
             );
             if (newContentModules.length || updatedContentModules.length) {
               setIsUpdatedArticleModalVisible(true);
@@ -174,7 +174,7 @@ export const EditArticlePage = React.memo(
                     contentModules: article.contentModules.map((cm) => ({
                       ...omit(
                         cm,
-                        ...(/^-/.test(cm.id) ? ['id'] : []),
+                        ...(cm.id.startsWith('-') ? ['id'] : []),
                         'updatedAt',
                         'insertedAt'
                       ),
