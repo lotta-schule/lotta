@@ -35,7 +35,7 @@ describe('src/messaging/MessagingView', () => {
     })),
     ...['Lui', 'Michel']
       .map((fullTerm) => {
-        return Array.from({ from: fullTerm.length })
+        return Array.from({ length: fullTerm.length })
           .fill(null)
           .map((_, i) => fullTerm.slice(0, i + 1));
       })
