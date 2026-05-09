@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ImageImage } from './ImageImage';
-import { ContentModuleComponentProps } from '../ContentModule';
+import { ImageImage } from './ImageImage.js';
+import { ContentModuleComponentProps } from '../ContentModule.js';
 
 export const Image = React.memo(
   ({

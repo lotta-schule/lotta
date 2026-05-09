@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
-import { UserGroupModel, ID, ArticleModel } from 'model';
+import { useMutation } from '@apollo/client/react';
+import { UserGroupModel, ID, ArticleModel } from '#/model/index.js';
 import {
   Button,
   Dialog,
@@ -11,10 +11,10 @@ import {
   ListItem,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { graphql } from 'api/graphql';
-import { UserGroup } from '../_graphql';
+import { graphql } from '#/api/graphql.js';
+import { UserGroup } from '../_graphql/index.js';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
+import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
 
 export const DELETE_USER_GROUP = graphql(`
   mutation DeleteUserGroup($id: ID!) {

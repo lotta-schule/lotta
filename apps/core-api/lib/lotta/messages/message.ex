@@ -13,13 +13,15 @@ defmodule Lotta.Messages.Message do
   schema "messages" do
     field(:content, :string)
 
-    belongs_to :user, User
-    belongs_to :conversation, Conversation, type: :binary_id, on_replace: :delete
+    belongs_to(:user, User)
+    belongs_to(:conversation, Conversation, type: :binary_id, on_replace: :delete)
 
-    many_to_many :files,
-                 File,
-                 join_through: "message_file",
-                 on_replace: :delete
+    many_to_many(
+      :files,
+      File,
+      join_through: "message_file",
+      on_replace: :delete
+    )
 
     timestamps()
   end
@@ -40,7 +42,7 @@ defmodule Lotta.Messages.Message do
   @spec validate_required_either_content_or_files(Ecto.Changeset.t(t())) :: Ecto.Changeset.t(t())
   defp validate_required_either_content_or_files(changeset) do
     case get_field(changeset, :files) do
-      files when is_nil(files) or length(files) < 1 ->
+      files when is_nil(files) or files == [] ->
         validate_required(changeset, :content)
 
       _ ->

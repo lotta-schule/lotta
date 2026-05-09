@@ -16,11 +16,6 @@ msgstr ""
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#: lib/lotta_web/components/core_components.ex:284
-#, elixir-autogen, elixir-format
-msgid "Actions"
-msgstr "Aktionen"
-
 #: lib/lotta_web/controllers/oauth_controller.ex:213
 #, elixir-autogen, elixir-format
 msgid "An error occurred while creating your tenant. Please contact support."
@@ -127,3 +122,47 @@ msgstr "Lotta wird für deine Schule eingerichtet..."
 #, elixir-autogen, elixir-format
 msgid "You will be redirected in a few moments."
 msgstr "Du wirst in wenigen Augenblicken weitergeleitet."
+
+#: lib/cockpit_web/components/core_components.ex:346
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr "Aktionen"
+
+#: lib/cockpit_web/components/tenant_components.ex:21
+#, elixir-autogen, elixir-format
+msgid "active users"
+msgstr "aktive Nutzer"
+
+#: lib/cockpit_web/components/core_components.ex:74
+#: lib/cockpit_web/components/core_components.ex:420
+#: lib/cockpit_web/components/core_components.ex:428
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr "schließen"
+
+#: lib/cockpit_web/components/tenant_components.ex:23
+#, elixir-autogen, elixir-format
+msgid "media conversion"
+msgstr "Medienumwandlung"
+
+#: lib/cockpit_web/components/tenant_components.ex:20
+#, elixir-autogen, elixir-format
+msgid "month"
+msgstr "Monat"
+
+#: lib/cockpit_web/components/core_components.ex:415
+#: lib/cockpit_web/components/tenant_components.ex:17
+#: lib/cockpit_web/live/tenant_live.ex:124
+#, elixir-autogen, elixir-format
+msgid "monthly usage logs"
+msgstr "monatliche Nutzung"
+
+#: lib/cockpit_web/components/tenant_components.ex:22
+#, elixir-autogen, elixir-format
+msgid "total storage"
+msgstr "Gesamtspeicher"
+
+#: lib/cockpit_web/components/tenant_components.ex:20
+#, elixir-autogen, elixir-format
+msgid "year"
+msgstr "Jahr"

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { User } from 'util/model';
-import { loadCurrentUser } from 'loader';
-import { ForbiddenErrorPage } from 'layout/error/ForbiddenErrorPage';
+import { User } from '#/util/model/index.js';
+import { loadCurrentUser } from '#/loader/index.js';
+import { ForbiddenErrorPage } from '#/layout/error/ForbiddenErrorPage.js';
 
 interface AdminPageProps {
   children: React.ReactNode;

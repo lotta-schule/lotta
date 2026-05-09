@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { FullErrorPage } from './FullErrorPage';
+import { FullErrorPage } from './FullErrorPage.js';
 
 export const PageNotFoundErrorPage = React.memo(() => {
   return (

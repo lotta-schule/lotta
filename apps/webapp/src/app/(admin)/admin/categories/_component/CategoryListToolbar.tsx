@@ -2,10 +2,10 @@
 
 import * as React from 'react';
 import { Button, Toolbar } from '@lotta-schule/hubert';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { CreateCategoryDialog } from './CreateCategoryDialog';
-import { useRouter } from 'next/navigation';
+import { CreateCategoryDialog } from './CreateCategoryDialog.js';
+import { useRouter } from 'next/navigation.js';
 
 export const CategoryListToolbar = () => {
   const router = useRouter();

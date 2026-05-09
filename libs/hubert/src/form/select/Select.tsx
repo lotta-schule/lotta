@@ -1,4 +1,3 @@
-/* eslint-disable react-compiler/react-compiler */
 'use client';
 
 import * as React from 'react';
@@ -7,11 +6,15 @@ import { HiddenSelect, useButton, useSelect } from 'react-aria';
 import {
   ListItemFactory,
   ListItemPreliminaryItem,
-} from '../../list/ListItemFactory';
-import { ExpandMore } from '../../icon';
-import { Popover, PopoverContent, PopoverTrigger } from '../../popover';
-import { ListBox } from '../../menu/ListBox';
-import { Label } from '../../label/Label';
+} from '../../list/ListItemFactory.js';
+import { ExpandMore } from '../../icon/index.js';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '../../popover/index.js';
+import { ListBox } from '../../menu/ListBox.js';
+import { Label } from '../../label/Label.js';
 import clsx from 'clsx';
 
 import styles from './select.module.scss';
@@ -41,7 +44,7 @@ export type SelectProps = React.AriaAttributes &
     children: React.ReactNode | React.ReactNode[];
   };
 
-export type OptionProps = {
+export type OptionProps = React.PropsWithRef<{
   children?: React.ReactNode | React.ReactNode[];
 
   value: string;
@@ -53,7 +56,7 @@ export type OptionProps = {
   leftSection?: React.ReactNode;
 
   rightSection?: React.ReactNode;
-};
+}>;
 export const Option = (_props: OptionProps) => null;
 
 export const Select = ({

@@ -1,4 +1,4 @@
-import { ID } from './ID';
+import { ID } from './ID.js';
 
 export interface UserGroupModel {
   __typename?: 'UserGroup';
@@ -9,7 +9,7 @@ export interface UserGroupModel {
   name: string;
   isAdminGroup: boolean;
   sortKey: number;
-  canReadFullName: boolean | null;
+  canReadFullName: boolean;
   enrollmentTokens: string[];
 }
 
@@ -17,6 +17,6 @@ export interface UserGroupInputModel {
   name: string;
   isAdminGroup?: boolean;
   sortKey?: number;
-  canReadFullName?: boolean | null;
+  canReadFullName?: boolean;
   enrollmentTokens?: string[];
 }

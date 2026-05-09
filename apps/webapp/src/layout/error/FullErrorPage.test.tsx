@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { FullErrorPage, SecondaryErrorText } from './FullErrorPage';
+import { FullErrorPage, SecondaryErrorText } from './FullErrorPage.js';
 
 describe('FullErrorPage', () => {
   it('renders the title correctly', () => {

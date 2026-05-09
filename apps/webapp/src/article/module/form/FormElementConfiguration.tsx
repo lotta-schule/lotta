@@ -8,8 +8,8 @@ import {
   Select,
 } from '@lotta-schule/hubert';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
-import { FormElement, FormElementOption } from './Form';
+import { Icon } from '#/shared/Icon.js';
+import { FormElement, FormElementOption } from './Form.js';
 
 import styles from './FormElementConfiguration.module.scss';
 

@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
-import { useRouter } from 'next/navigation';
-import { ForbiddenErrorPage } from './ForbiddenErrorPage';
+import { useRouter } from 'next/navigation.js';
+import { ForbiddenErrorPage } from './ForbiddenErrorPage.js';
 import { MockedFunction } from 'vitest';
 
 describe('ForbiddenErrorPage', () => {

@@ -1,17 +1,18 @@
+'use client';
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import {
   faCaretDown,
   faCalendar,
   faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
-import { useMutation } from '@apollo/client';
-import { CategorySelect } from '../../shared/categorySelect/CategorySelect';
-import { ArticleModel, ID, UserGroupModel } from 'model';
-import { Category, User } from 'util/model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { ArticleStateEditor } from 'article/editor/ArticleStateEditor';
-import { GroupSelect } from 'shared/edit/GroupSelect';
+import { useMutation } from '@apollo/client/react';
+import { CategorySelect } from '../../shared/categorySelect/CategorySelect.js';
+import { ArticleModel, ID, UserGroupModel } from '#/model/index.js';
+import { Category, User } from '#/util/model/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { ArticleStateEditor } from '#/article/editor/ArticleStateEditor.js';
+import { GroupSelect } from '#/shared/edit/GroupSelect.js';
 import {
   Button,
   ButtonGroup,
@@ -23,11 +24,11 @@ import {
   Item,
   Checkbox,
 } from '@lotta-schule/hubert';
-import { ArticleDatesEditor } from './ArticleDatesEditor';
-import { useRouter } from 'next/router';
+import { ArticleDatesEditor } from './ArticleDatesEditor.js';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 
-import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
+import DeleteArticleMutation from '#/api/mutation/DeleteArticleMutation.graphql';
 
 import styles from './EditArticleFooter.module.scss';
 
@@ -195,7 +196,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                 className={'is-last-button-group-button'}
                 variant={'fill'}
                 disabled={isLoading}
-                onClick={() => onSave()}
+                onClick={onSave}
               >
                 speichern
               </Button>

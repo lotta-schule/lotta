@@ -1,1 +1,1 @@
-export * from './TwoColumnLayout';
+export * from './TwoColumnLayout.js';

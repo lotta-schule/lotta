@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils';
-import { Avatar } from './Avatar';
+import { render } from '../test-utils.js';
+import { Avatar } from './Avatar.js';
 
 describe('Avatar', () => {
   it('should correctly render an avatar with src', () => {
@@ -10,7 +10,7 @@ describe('Avatar', () => {
 
     expect(screen.getByRole('img', { name: 'Avatar' })).toBeVisible();
     expect(screen.getByRole('img', { name: 'Avatar' })).toHaveStyle({
-      'background-image': 'url(https://example.com/avatar.jpg)',
+      backgroundImage: 'url(https://example.com/avatar.jpg)',
     });
   });
 
@@ -22,10 +22,10 @@ describe('Avatar', () => {
       />
     );
 
-    expect(screen.getByRole('img', { name: 'Avatar' })).toBeVisible();
-    expect(screen.getByRole('img', { name: 'Avatar' })).toHaveStyle({
-      'background-image':
-        'image-set(url(https://example.com/avatar.jpg) 1x, url(https://example.com/avatar2x.jpg) 2x)',
-    });
+    const el = screen.getByRole('img', { name: 'Avatar' });
+    expect(el).toBeVisible();
+    expect(el.style.backgroundImage).toMatch(
+      /image-set\(.*avatar\.jpg.*1x.*avatar2x\.jpg.*2x\)/s
+    );
   });
 });

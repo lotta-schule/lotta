@@ -43,13 +43,13 @@ exports[`list/ListItemFactory > create Item > should render an item with complet
 
 exports[`list/ListItemFactory > create ListItem > should render a listItem with complete information from an item with description 1`] = `
 <li
-  class="_li_5a05a4"
+  class="_li_1ah4z_8"
 >
   <div>
     <span />
   </div>
   <div
-    class="_mainSection_5a05a4"
+    class="_mainSection_1ah4z_14"
   >
     <div>
       <span>
@@ -62,13 +62,13 @@ exports[`list/ListItemFactory > create ListItem > should render a listItem with 
 
 exports[`list/ListItemFactory > create ListItem > should render a listItem with complete information from an item with icons 1`] = `
 <li
-  class="_li_5a05a4"
+  class="_li_1ah4z_8"
 >
   <div>
     <span>
       <svg
         aria-hidden="true"
-        class="_root_2ade80"
+        class="_root_1lr2i_1"
         data-testid="close-icon"
         focusable="false"
         viewBox="0 0 24 24"
@@ -81,7 +81,7 @@ exports[`list/ListItemFactory > create ListItem > should render a listItem with 
     </span>
   </div>
   <div
-    class="_mainSection_5a05a4"
+    class="_mainSection_1ah4z_14"
   >
     <div>
       <span>
@@ -95,7 +95,7 @@ exports[`list/ListItemFactory > create ListItem > should render a listItem with 
   <div>
     <svg
       aria-hidden="true"
-      class="_root_2ade80"
+      class="_root_1lr2i_1"
       data-testid="chevron-right-icon"
       focusable="false"
       viewBox="0 0 24 24"

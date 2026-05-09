@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils';
-import { ScrollToTopButton } from './ScrollToTopButton';
+import { render } from '../test-utils.js';
+import { ScrollToTopButton } from './ScrollToTopButton.js';
 
 describe('shared/general/ScrollToTopButton', () => {
   it('should render without errors', () => {

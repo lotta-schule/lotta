@@ -1,7 +1,7 @@
 import React from 'react';
 import { EventWrapperProps } from 'react-big-calendar';
-import { useUnfoldedEvents } from '../_hook';
-import { CalendarContext } from './CalendarContext';
+import { useUnfoldedEvents } from '../_hook/index.js';
+import { CalendarContext } from './CalendarContext.js';
 
 type UnfoldedEvent = ReturnType<typeof useUnfoldedEvents>[0] & {
   calendar: { id: string };

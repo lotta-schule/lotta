@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { BrowserState, NodeList } from '@lotta-schule/hubert';
 import {
   makeBrowserNodes,
   GetDirectoriesAndFilesQueryResult,
-} from './makeBrowserNodes';
+} from './makeBrowserNodes.js';
 
 import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
 

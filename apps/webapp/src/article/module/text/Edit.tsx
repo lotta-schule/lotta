@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
+import { ContentModuleModel } from '#/model/index.js';
 import { Slate, withReact, Editable } from 'slate-react';
-import { Node } from './SlateCustomTypes';
+import { Node } from './SlateCustomTypes.js';
 import { createEditor, Descendant } from 'slate';
 import {
   renderElement,
@@ -10,8 +10,8 @@ import {
   withLinks,
   getNormalizedSlateState,
   onKeyDownFactory,
-} from './SlateUtils';
-import { EditToolbar } from './EditToolbar';
+} from './SlateUtils.js';
+import { EditToolbar } from './EditToolbar.js';
 
 interface EditProps {
   contentModule: ContentModuleModel<{ nodes: Node[] }>;

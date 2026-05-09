@@ -5,12 +5,12 @@ import { faCommentDots } from '@fortawesome/free-regular-svg-icons';
 import { faShare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@lotta-schule/hubert';
 import { format } from 'date-fns';
-import { FeedbackModel } from 'model';
-import { Icon } from 'shared/Icon';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
-import { DeleteFeedbackDialog } from './DeleteFeedbackDialog';
-import { ForwardFeedbackDialog } from './ForwardFeedbackDialog';
-import { RespondToFeedbackDialog } from './RespondToFeedbackDialog';
+import { FeedbackModel } from '#/model/index.js';
+import { Icon } from '#/shared/Icon.js';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
+import { DeleteFeedbackDialog } from './DeleteFeedbackDialog.js';
+import { ForwardFeedbackDialog } from './ForwardFeedbackDialog.js';
+import { RespondToFeedbackDialog } from './RespondToFeedbackDialog.js';
 import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 

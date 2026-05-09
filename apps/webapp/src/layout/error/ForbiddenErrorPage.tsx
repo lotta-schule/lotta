@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { FullErrorPage } from './FullErrorPage';
+import { FullErrorPage } from './FullErrorPage.js';
 
 export const ForbiddenErrorPage = React.memo(() => {
   const router = useRouter();

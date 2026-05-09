@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, within } from '../test-utils';
-import { ButtonGroup } from './ButtonGroup';
-import { Button } from './Button';
+import { render, within } from '../test-utils.js';
+import { ButtonGroup } from './ButtonGroup.js';
+import { Button } from './Button.js';
 
 describe('ButtonGroup', () => {
   it('should render ButtonGroup with 3 buttons', () => {

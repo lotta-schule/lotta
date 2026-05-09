@@ -1,5 +1,5 @@
-import { StoryObj, Meta } from '@storybook/react';
-import { expect, fireEvent, waitFor, within } from '@storybook/test';
+import { StoryObj, Meta } from '@storybook/react-vite';
+import { expect, fireEvent, waitFor, within } from 'storybook/test';
 import { Checkbox } from '@lotta-schule/hubert';
 
 export default {

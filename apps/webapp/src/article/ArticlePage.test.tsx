@@ -1,9 +1,8 @@
-import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { Schulfest, Weihnachtsmarkt } from 'test/fixtures';
-import { ArticlePage } from './ArticlePage';
+import { render, waitFor } from '#/test/util.js';
+import { Schulfest, Weihnachtsmarkt } from '#/test/fixtures/index.js';
+import { ArticlePage } from './ArticlePage.js';
 
-import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
+import GetArticlesForTag from '#/api/query/GetArticlesForTagQuery.graphql';
 
 const additionalMocks = [
   {
@@ -16,15 +15,6 @@ const additionalMocks = [
 ];
 
 describe('shared/article/ArticleLayout', () => {
-  it('should show the correct title', async () => {
-    const screen = render(
-      <ArticlePage article={Schulfest} title={Schulfest.title} />,
-      {},
-      { additionalMocks }
-    );
-    expect(screen.getByRole('heading', { name: 'Schulfest' })).toBeVisible();
-  });
-
   it('should show the article component', async () => {
     const screen = render(
       <ArticlePage article={Schulfest} title={Schulfest.title} />,

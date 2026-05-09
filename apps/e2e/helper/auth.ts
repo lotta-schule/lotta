@@ -16,6 +16,7 @@ export const loginUser = async (
   await page.waitForLoadState('domcontentloaded');
 
   if (isMobile) {
+    await page.waitForLoadState('networkidle');
     await expect(
       page.getByRole('button', { name: /nutzermenü öffnen/i })
     ).toBeVisible();
@@ -38,6 +39,12 @@ export const loginUser = async (
 
   // await page.keyboard.press('Enter');
   await loginDialog.getByRole('button', { name: /anmelden/i }).click();
+
+  await page.waitForURL((url) => url.hostname === new URL(baseURL).hostname);
+  await expect(loginDialog).not.toBeVisible();
+
+  await page.waitForLoadState('domcontentloaded');
+  await expect(loginDialog).not.toBeVisible();
 
   return {
     loginDialog,

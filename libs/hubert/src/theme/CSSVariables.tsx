@@ -1,6 +1,6 @@
 import { Theme } from '@lotta-schule/theme';
 import * as React from 'react';
-import { toCSSVariableName, toCSSVariableValue } from '../util';
+import { toCSSVariableName, toCSSVariableValue } from '../util/index.js';
 
 export type CSSVariablesProps = {
   theme: Theme;

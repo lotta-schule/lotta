@@ -48,28 +48,29 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
   def process_multiple(%FileData{} = file_data, %File{} = file, formats_args) do
     with {:ok, image} <- get_image_from_file_data(file_data) do
       formats_args
-      |> Enum.map(fn {format, args} ->
-        {size_string, vips_args} = parse_args(args)
-
-        with {format, file_data} when format != :error <-
-               create_thumbnail_stream(format, image, size_string, vips_args),
-             {:ok, file_conversion} <-
-               Storage.create_file_conversion(
-                 file_data,
-                 file,
-                 to_string(format)
-               ) do
-          Conversion.report_progress(file, file_conversion)
-
-          {format, file_conversion}
-        else
-          {:error, error} ->
-            Logger.error("Failed to process image: #{inspect(error)}")
-            nil
-        end
-      end)
+      |> Enum.map(&process_format(image, &1, file))
       |> Enum.filter(&(not is_nil(&1)))
       |> then(&{:ok, &1})
+    end
+  end
+
+  defp process_format(image, {format, args}, file) do
+    {size_string, vips_args} = parse_args(args)
+
+    with {format, file_data} when format != :error <-
+           create_thumbnail_stream(format, image, size_string, vips_args),
+         {:ok, file_conversion} <-
+           Storage.create_file_conversion(
+             file_data,
+             file,
+             to_string(format)
+           ) do
+      Conversion.report_progress(file, file_conversion)
+      {format, file_conversion}
+    else
+      {:error, error} ->
+        Logger.error("Failed to process image: #{inspect(error)}")
+        nil
     end
   end
 

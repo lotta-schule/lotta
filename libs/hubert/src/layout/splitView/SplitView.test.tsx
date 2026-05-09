@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
-import { render, waitFor } from '../../test-utils';
-import { SplitView } from './SplitView';
-import { SplitViewButton } from './SplitViewButton';
-import { SplitViewContent } from './SplitViewContent';
-import { SplitViewNavigation } from './SplitViewNavigation';
-import userEvent from '@testing-library/user-event';
+import { render, userEvent, waitFor } from '../../test-utils.js';
+import { SplitView } from './SplitView.js';
+import { SplitViewButton } from './SplitViewButton.js';
+import { SplitViewContent } from './SplitViewContent.js';
+import { SplitViewNavigation } from './SplitViewNavigation.js';
 
 describe('SplitView', () => {
   describe('desktop', () => {

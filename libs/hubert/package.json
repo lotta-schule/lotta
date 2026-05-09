@@ -1,13 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "@lotta-schule/hubert",
-  "version": "6.1.5",
+  "version": "6.1.21",
   "description": "Component Library for lotta",
   "author": "Alexis Rinaldoni <alexis.rinaldoni@einsa.net>",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "test": "vitest --coverage",
-    "lint": "pnpm dlx eslint 'src/**/*.*' --no-warn-ignored --fix",
+    "lint": "oxlint --fix src/",
     "typecheck": "tsc --noEmit"
   },
   "type": "module",
@@ -18,19 +18,38 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@epic-web/invariant": "^1.0.0",
-    "@floating-ui/react": "^0.27.5",
+    "@floating-ui/react": "^0.27.19",
     "clsx": "^2.1.1",
-    "colorjs.io": "^0.5.2",
-    "lodash": "^4.17.21",
-    "react-aria": "^3.36.0",
-    "react-dropzone": "^14.3.8",
-    "react-stately": "^3.34.0",
+    "colorjs.io": "^0.6.1",
+    "lodash": "^4.18.1",
+    "react-aria": "^3.48.0",
+    "react-dropzone": "^15.0.0",
+    "react-stately": "^3.46.0",
     "react-use": "^17.6.0"
   },
   "peerDependencies": {
     "framer-motion": ">= 6.3.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "sass": "^1.54.3"
+  },
+  "lint-staged": {
+    "$schema": "https://json.schemastore.org/lint-staged",
+    "*.{js,jsx,ts,tsx}": [
+      "oxlint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.{graphql,gql}": [
+      "prettier --write"
+    ],
+    "*.{html,xml}": [
+      "prettier --write"
+    ]
   }
 }

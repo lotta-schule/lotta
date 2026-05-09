@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ArticleModel } from 'model';
-import { ContentModule } from './module/ContentModule';
-import { ArticleTitle } from './ArticleTitle';
-import { ArticleReactions } from './articleReactions';
-import { ReactionCountButtons } from './articleReactions/ReactionCountButtons';
+import { ArticleModel } from '#/model/index.js';
+import { ContentModule } from './module/ContentModule.js';
+import { ArticleTitle } from './ArticleTitle.js';
+import { ArticleReactions } from './articleReactions/index.js';
+import { ReactionCountButtons } from './articleReactions/ReactionCountButtons.js';
 
 import styles from './Article.module.scss';
 

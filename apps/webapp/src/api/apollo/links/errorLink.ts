@@ -1,15 +1,23 @@
-import { onError } from '@apollo/link-error';
+import { CombinedGraphQLErrors, CombinedProtocolErrors } from '@apollo/client';
+import { ErrorLink } from '@apollo/client/link/error';
 
 export const createErrorLink = () =>
-  onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors) {
-      graphQLErrors.forEach(({ message, locations, path }) => {
-        console.error(
+  new ErrorLink(({ error }) => {
+    if (CombinedGraphQLErrors.is(error)) {
+      error.errors.forEach(({ message, locations, path }) =>
+        console.log(
           `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-        );
-      });
-    }
-    if (networkError) {
-      console.error(`[Network error]: ${networkError}`);
+        )
+      );
+    } else if (CombinedProtocolErrors.is(error)) {
+      error.errors.forEach(({ message, extensions }) =>
+        console.log(
+          `[Protocol error]: Message: ${message}, Extensions: ${JSON.stringify(
+            extensions
+          )}`
+        )
+      );
+    } else {
+      console.error(`[Network error]: ${error}`);
     }
   });

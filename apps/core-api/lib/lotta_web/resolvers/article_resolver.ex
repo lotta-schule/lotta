@@ -6,7 +6,7 @@ defmodule LottaWeb.ArticleResolver do
   import Lotta.Accounts.Permissions
   import LottaWeb.ErrorHelpers
 
-  alias Lotta.{Accounts, Content, Repo}
+  alias Lotta.{Accounts, Content, Tenants, Repo}
 
   def get(%{id: id}, %{context: %{current_user: current_user}}) do
     with {id, _} <- Integer.parse(id, 10),
@@ -34,22 +34,19 @@ defmodule LottaWeb.ArticleResolver do
     {:ok, Content.list_all_tags(current_user)}
   end
 
-  def all(args, %{context: %{current_user: current_user}}) do
-    category_id =
-      with category_id when not is_nil(category_id) <- args[:category_id],
-           {category_id, _} <- Integer.parse(category_id) do
-        category_id
-      else
-        :error -> {:error, "Beitrag nicht gefunden."}
-        nil -> nil
-      end
+  def all(%{category_id: category_id} = args, %{context: %{current_user: current_user}}) do
+    case Integer.parse(category_id) do
+      {category_id, _} ->
+        {:ok,
+         Content.list_articles(
+           Tenants.get_category(category_id),
+           current_user,
+           args[:filter]
+         )}
 
-    {:ok,
-     Content.list_articles(
-       category_id,
-       current_user,
-       args[:filter]
-     )}
+      :error ->
+        {:error, "Beitrag nicht gefunden."}
+    end
   end
 
   def all_unpublished(_args, _info) do

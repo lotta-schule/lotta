@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { Button, ErrorMessage, Input } from '@lotta-schule/hubert';
@@ -9,15 +9,15 @@ import {
   ConversationModel,
   ID,
   FileModel,
-} from 'model';
-import { SelectFileButton } from 'shared/edit/SelectFileButton';
-import { Icon } from 'shared/Icon';
+} from '#/model/index.js';
+import { SelectFileButton } from '#/shared/edit/SelectFileButton.js';
+import { Icon } from '#/shared/Icon.js';
 import pick from 'lodash/pick';
 import uniqBy from 'lodash/uniqBy';
 
-import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
-import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
-import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
+import SendMessageMutation from '#/api/mutation/SendMessageMutation.graphql';
+import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
+import GetConversationQuery from '#/api/query/GetConversationQuery.graphql';
 
 import styles from './ComposeMessage.module.scss';
 

@@ -1,10 +1,10 @@
 import { renderHook, act } from '@testing-library/react';
-import { useNodeMenuProps } from './useNodeMenuProps';
+import { useNodeMenuProps } from './useNodeMenuProps.js';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,
   fixtures,
-} from 'test-utils';
+} from '#/test-utils';
 
 describe('browser/useNodeMenuProps', () => {
   const nodePaths = [fixtures.getPathForNode('20')];

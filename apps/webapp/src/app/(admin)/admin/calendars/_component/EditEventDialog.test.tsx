@@ -1,11 +1,13 @@
 import React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
-import { fireEvent, render, waitFor } from 'test/util';
-import { GET_CALENDARS, UPDATE_CALENDAR_EVENT } from '../_graphql';
-import { EditEventDialog } from './EditEventDialog';
-import userEvent from '@testing-library/user-event';
-import { createCalendarFixture, createEventFixture } from 'test/fixtures';
-import { ResultOf, VariablesOf } from 'api/graphql';
+import { MockLink } from '@apollo/client/testing';
+import { fireEvent, render, waitFor, userEvent } from '#/test/util.js';
+import { GET_CALENDARS, UPDATE_CALENDAR_EVENT } from '../_graphql/index.js';
+import { EditEventDialog } from './EditEventDialog.js';
+import {
+  createCalendarFixture,
+  createEventFixture,
+} from '#/test/fixtures/index.js';
+import { ResultOf, VariablesOf } from '#/api/graphql.js';
 
 const calendars = [
   createCalendarFixture({ id: '1', name: 'Klausuren' }),
@@ -33,7 +35,7 @@ const additionalMocks = [
       },
     },
   },
-] satisfies MockedResponse[];
+] satisfies MockLink.MockedResponse[];
 
 const eventToBeEdited = createEventFixture(calendars[1]);
 
@@ -124,7 +126,7 @@ describe('EditEventDialog', () => {
         },
       }));
 
-      const mock: MockedResponse<
+      const mock: MockLink.MockedResponse<
         ResultOf<typeof UPDATE_CALENDAR_EVENT>,
         VariablesOf<typeof UPDATE_CALENDAR_EVENT>
       > = {

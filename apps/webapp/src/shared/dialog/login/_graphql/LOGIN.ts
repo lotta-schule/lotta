@@ -1,4 +1,4 @@
-import { graphql } from 'api/graphql';
+import { graphql } from '#/api/graphql.js';
 
 export const LOGIN = graphql(`
   mutation Login($username: String!, $password: String!) {

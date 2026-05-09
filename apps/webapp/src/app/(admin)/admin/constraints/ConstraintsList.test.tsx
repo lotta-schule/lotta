@@ -1,10 +1,9 @@
 import * as React from 'react';
-import userEvent from '@testing-library/user-event';
-import { render, waitFor } from 'test/util';
-import { adminGroup, SomeUser, tenant } from 'test/fixtures';
-import { ConstraintList } from './ConstraintsList';
+import { userEvent, render, waitFor } from '#/test/util.js';
+import { adminGroup, SomeUser, tenant } from '#/test/fixtures/index.js';
+import { ConstraintList } from './ConstraintsList.js';
 
-import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
+import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
 
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 

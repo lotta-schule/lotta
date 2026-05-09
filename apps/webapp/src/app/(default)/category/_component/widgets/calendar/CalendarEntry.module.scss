@@ -1,0 +1,47 @@
+.root {
+  .tableline {
+    justify-content: flex-start;
+    font-size: 0.85rem;
+    line-height: 1.43;
+    &:hover {
+      background-color: rgba(var(--lotta-highlight-color), 0.3);
+    }
+
+    .summary {
+      font-weight: bolder;
+    }
+    .time {
+      font-size: 0.9em;
+      font-style: italic;
+    }
+  }
+
+  .listItemTextDate {
+    width: 7.5em;
+    flex-shrink: 0;
+    &.has-dot {
+      padding-left: 1em;
+      & > svg {
+        margin-left: -1em;
+      }
+    }
+  }
+
+  .calendarColorDot {
+    vertical-align: sub;
+    padding-right: 0.5em;
+    font-size: 0.5em;
+    vertical-align: baseline;
+  }
+
+  .listItemTextEventDescription {
+    padding-left: 0.5em;
+    text-align: right;
+    hyphens: auto;
+    word-break: break-word;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+}

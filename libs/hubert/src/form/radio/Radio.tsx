@@ -29,7 +29,6 @@ export const Radio = React.forwardRef<any, RadioProps>(
           className={clsx(className, styles.root)}
           type={'radio'}
         />
-        <div className={styles.controlIndicator} />
       </label>
     );
   }

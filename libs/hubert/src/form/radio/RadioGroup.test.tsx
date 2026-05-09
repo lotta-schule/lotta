@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render } from '../../test-utils';
-import { Radio } from './Radio';
-import { RadioGroup } from './RadioGroup';
-import userEvent from '@testing-library/user-event';
+import { render, userEvent } from '../../test-utils.js';
+import { Radio } from './Radio.js';
+import { RadioGroup } from './RadioGroup.js';
 
 describe('shared/general/form/radio', () => {
   it('should render with correct name', () => {

@@ -143,7 +143,13 @@ export const createTenantTeardown = async ({
 export const createTenantFixture =
   (getTenantData: () => { name: string; slug: string }) =>
   async (
-    { admin, browser },
+    {
+      admin,
+      browser,
+    }: {
+      admin: { name: string; email: string; password: string };
+      browser: Browser;
+    },
     use: (t: { name: string; slug: string; id: string }) => Promise<void>
   ) => {
     const { tenant } = await createTenantSetup(

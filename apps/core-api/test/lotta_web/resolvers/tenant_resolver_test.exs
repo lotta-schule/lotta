@@ -213,7 +213,7 @@ defmodule LottaWeb.TenantResolverTest do
 
       # Verify we have a list of usage periods
       assert is_list(usage_periods)
-      assert length(usage_periods) > 0
+      assert usage_periods != []
 
       # Verify structure of a usage period
       [first_period | _] = usage_periods

@@ -1,4 +1,4 @@
-import { CategoryModel } from 'model';
+import { CategoryModel } from '#/model/index.js';
 import slugify from 'slugify';
 
 export enum RedirectType {
@@ -20,10 +20,10 @@ export const Category = {
     ) {
       return RedirectType.None;
     }
-    if (/^\/c/.test(category.redirect)) {
+    if (category.redirect.startsWith('/c')) {
       return RedirectType.InternalCategory;
     }
-    if (/^\/a/.test(category.redirect)) {
+    if (category.redirect.startsWith('/a')) {
       return RedirectType.InternalArticle;
     }
     return RedirectType.Extern;

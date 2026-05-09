@@ -1,4 +1,4 @@
-import { graphql } from 'api/graphql';
+import { graphql } from '#/api/graphql.js';
 
 export const UPDATE_USER_GROUP = graphql(`
   mutation UpdateUserGroup($id: ID!, $group: UserGroupInput!) {

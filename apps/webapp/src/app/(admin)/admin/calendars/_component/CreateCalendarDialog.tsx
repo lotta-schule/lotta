@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Button,
   Dialog,
@@ -9,9 +9,9 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { useRouter } from 'next/navigation';
-import { CREATE_CALENDAR, GET_CALENDARS } from '../_graphql';
+import { CREATE_CALENDAR, GET_CALENDARS } from '../_graphql/index.js';
 import { useTranslation } from 'react-i18next';
-import { BasicCalendarFormElement } from './BasicCalendarFormElement';
+import { BasicCalendarFormElement } from './BasicCalendarFormElement.js';
 
 export interface CreateCalendarDialogProps {
   isOpen: boolean;

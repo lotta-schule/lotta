@@ -1,6 +1,6 @@
-import { WidgetModel, WidgetModelType } from 'model';
+import { WidgetModel, WidgetModelType } from '#/model/index.js';
 import * as React from 'react';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
 
 export const Widget = {
   getIcon(widget: WidgetModel) {

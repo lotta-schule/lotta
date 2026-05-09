@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { SomeUser } from 'test/fixtures';
-import { CreateLottaFeedback } from './CreateLottaFeedback';
-import userEvent from '@testing-library/user-event';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { SomeUser } from '#/test/fixtures/index.js';
+import { CreateLottaFeedback } from './CreateLottaFeedback.js';
 
-import CreateLottaFeedbackMutation from 'api/mutation/CreateLottaFeedbackMutation.graphql';
+import CreateLottaFeedbackMutation from '#/api/mutation/CreateLottaFeedbackMutation.graphql';
 
 describe('CreateLottaFeedback', () => {
   it('should have a form with topic, content and metadata and send these information', async () => {

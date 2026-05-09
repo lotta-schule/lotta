@@ -1,0 +1,11 @@
+[install]
+# Equivalent of pnpm.onlyBuiltDependencies — packages allowed to run postinstall scripts.
+trustedDependencies = [
+  "@parcel/watcher",
+  "@sentry/cli",
+  "@swc/core",
+  "esbuild",
+  "nx",
+  "sharp",
+  "unrs-resolver",
+]

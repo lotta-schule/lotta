@@ -7,10 +7,10 @@ import {
   ErrorMessage,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
-import { FeedbackModel } from 'model';
+import { useMutation } from '@apollo/client/react';
+import { FeedbackModel } from '#/model/index.js';
 
-import DeleteFeedbackMutation from 'api/mutation/DeleteFeedbackMutation.graphql';
+import DeleteFeedbackMutation from '#/api/mutation/DeleteFeedbackMutation.graphql';
 
 export interface DeleteFeedbackDialogProps {
   feedback: FeedbackModel;

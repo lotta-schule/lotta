@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { useSuspenseQuery } from '@apollo/client';
+import { useSuspenseQuery } from '@apollo/client/react';
 import { Table } from '@lotta-schule/hubert';
-import { formatDate } from '../_util';
-import { Period } from '../Analytics';
-import { gqlCompatibleMetricType, MetricType } from './MetricType';
-import { PropertyIcon } from './PropertyIcon';
+import { formatDate } from '../_util/index.js';
+import { Period } from '../Analytics.js';
+import { gqlCompatibleMetricType, MetricType } from './MetricType.js';
+import { PropertyIcon } from './PropertyIcon.js';
 import { t } from 'i18next';
 
 import styles from './PropertyBreakdown.module.scss';
 
-import { GET_TENANT_BREAKDOWN_ANALYTICS } from '../_graphql';
+import { GET_TENANT_BREAKDOWN_ANALYTICS } from '../_graphql/index.js';
 
 export type PropertyBreakdownProps = {
   period: Period;

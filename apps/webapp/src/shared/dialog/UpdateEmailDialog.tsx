@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Button,
   Dialog,
@@ -9,9 +9,9 @@ import {
   Input,
   Label,
 } from '@lotta-schule/hubert';
-import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
+import { RequestHisecTokenDialog } from './RequestHisecTokenDialog.js';
 
-import UpdateEmailMutation from 'api/mutation/UpdateEmailMutation.graphql';
+import UpdateEmailMutation from '#/api/mutation/UpdateEmailMutation.graphql';
 
 export interface UpdateEmailDialogProps {
   isOpen: boolean;

@@ -6,9 +6,9 @@ import {
   waitFor,
   within,
   fixtures,
-} from '../../test-utils';
-import { MoveNodesDialog } from './MoveNodesDialog';
-import userEvent from '@testing-library/user-event';
+  userEvent,
+} from '../../test-utils.js';
+import { MoveNodesDialog } from './MoveNodesDialog.js';
 
 const WrappedMoveNodesDialog = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>
@@ -66,7 +66,7 @@ describe('Browser/MoveNodesDialog', () => {
     });
   });
 
-  it('should open the "create new directory" dialog when clicking "new directory", and create a new directory in the current path\'s parent', async () => {
+  it('should open "create directory" dialog on button click, then create directory in parent path', async () => {
     const user = userEvent.setup();
     const onMoveNode = vi.fn();
 
@@ -95,7 +95,7 @@ describe('Browser/MoveNodesDialog', () => {
       expect(createNewDirectoryDialog).toBeVisible();
     });
 
-    await user.type(
+    await user.fill(
       within(createNewDirectoryDialog).getByLabelText(/name des ordners/i),
       'bla'
     );

@@ -7,8 +7,6 @@ defmodule Lotta.Tenants do
   import Ecto.Query
 
   alias LottaWeb.Schema.Tenants.Tenant
-  alias Lotta.Administration.Cockpit
-  alias LottaWeb.Schema.Tenants.Tenant
   alias Ecto.Multi
   alias Lotta.{Accounts, Email, Mailer, Repo, Storage}
   alias Lotta.Accounts.{User, UserGroup}
@@ -160,10 +158,27 @@ defmodule Lotta.Tenants do
     |> Multi.put(:user_params, user_params)
     |> Multi.insert(:new_tenant_without_prefix, Tenant.create_changeset(tenant_params))
     |> Multi.update(:new_tenant, fn %{new_tenant_without_prefix: tenant} ->
-      Ecto.Changeset.change(tenant, prefix: "tenant_#{tenant.id}")
+      Ecto.Changeset.change(tenant,
+        prefix: "tenant_#{tenant.id}"
+      )
     end)
     |> Multi.update(:tenant, fn %{new_tenant: tenant} ->
-      Tenant.update_changeset(tenant, %{prefix: tenant.prefix || "tenant_#{tenant.id}"})
+      {plan_name, plan} = Lotta.Billings.Plans.get_default()
+
+      plan_expires_at =
+        with %{default_duration: duration} <- plan do
+          Date.utc_today()
+          |> Date.shift(month: 1)
+          |> Date.beginning_of_month()
+          |> Date.shift(duration)
+        end
+
+      tenant
+      |> Tenant.update_by_admin_changeset(%{
+        current_plan_name: plan_name,
+        current_plan_expires_at: plan_expires_at,
+        next_plan_name: plan[:default_next_plan]
+      })
     end)
     |> Multi.run(:migrations, fn _repo, %{tenant: tenant} ->
       TenantDbManager.create_tenant_database_schema(tenant)
@@ -813,15 +828,28 @@ defmodule Lotta.Tenants do
   @spec send_feedback_to_lotta(Feedback.t(), binary() | nil) ::
           {:ok, Feedback.t()} | {:error, Ecto.Changeset.t()}
   def send_feedback_to_lotta(feedback, user, message \\ nil) do
+    tenant =
+      feedback
+      |> Ecto.get_meta(:prefix)
+      |> get_tenant_by_prefix()
+
     Ecto.Multi.new()
     |> Ecto.Multi.update(:feedback, Ecto.Changeset.change(feedback, is_forwarded: true))
     |> Ecto.Multi.run(:send_feedback, fn _repo, %{feedback: feedback} ->
-      case Cockpit.send_feedback(feedback) do
+      Cockpit.Feedback.Feedback.new(
+        name: user.name,
+        email: user.email,
+        message: feedback.content
+      )
+      |> Cockpit.Feedback.Feedback.set_tenant(tenant)
+      |> Cockpit.Feedback.Feedback.set_title("FWD: #{feedback.topic}")
+      |> Cockpit.Feedback.Zammad.create_ticket()
+      |> case do
         :ok ->
           {:ok, feedback}
 
         {:error, error} ->
-          Logger.error("Error sending feedback to lotta team:", %{sentry: %{error: error}})
+          Logger.error("Error sending feedback to lotta team: #{inspect(error)}")
 
           feedback
           |> Email.send_feedback_to_lotta_mail(user, message)
@@ -845,12 +873,24 @@ defmodule Lotta.Tenants do
   @spec create_feedback_for_lotta(binary(), binary() | nil, User.t()) ::
           :ok | :error
   def create_feedback_for_lotta(subject, message, user) do
-    case Cockpit.send_message(user, subject, message) do
+    tenant =
+      Repo.get_prefix()
+      |> get_tenant_by_prefix()
+
+    Cockpit.Feedback.Feedback.new(
+      name: user.name,
+      email: user.email,
+      message: message
+    )
+    |> Cockpit.Feedback.Feedback.set_title(subject)
+    |> Cockpit.Feedback.Feedback.set_tenant(tenant)
+    |> Cockpit.Feedback.Zammad.create_ticket()
+    |> case do
       :ok ->
         :ok
 
       {:error, error} ->
-        Logger.error("Error sending feedback to lotta team:", %{sentry: %{error: error}})
+        Logger.error("Error sending feedback to lotta team: #{inspect(error)}")
 
         Email.create_feedback_for_lotta(subject, message, user)
         |> Mailer.deliver_now()
@@ -859,7 +899,7 @@ defmodule Lotta.Tenants do
             :ok
 
           {:error, error} ->
-            Logger.error("Error sending feedback to lotta team:", %{sentry: %{error: error}})
+            Logger.error("Error sending feedback to lotta team: #{inspect(error)}")
             :error
         end
     end

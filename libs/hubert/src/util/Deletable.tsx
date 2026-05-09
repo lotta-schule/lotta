@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button } from '../button/Button';
-import { Close } from '../icon';
+import { Button } from '../button/Button.js';
+import { Close } from '../icon/index.js';
 import clsx from 'clsx';
 
 import styles from './Deletable.module.scss';

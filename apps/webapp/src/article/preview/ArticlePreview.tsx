@@ -1,5 +1,7 @@
+'use client';
+
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import {
   faCircle,
   faLocationDot,
@@ -7,11 +9,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { ArticleModel, ID, UserModel } from 'model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Article, User } from 'util/model';
-import { useMutation } from '@apollo/client';
-import { Article as ArticleUtil } from 'util/model/Article';
+import { ArticleModel, ID, UserModel } from '#/model/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { Article, User } from '#/util/model/index.js';
+import { useMutation } from '@apollo/client/react';
+import { Article as ArticleUtil } from '#/util/model/Article.js';
 import {
   Button,
   Box,
@@ -21,17 +23,17 @@ import {
   Input,
   Tag,
 } from '@lotta-schule/hubert';
-import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
-import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { TagsSelect } from '../editor/TagsSelect';
-import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { TagDetailsDialog } from 'article/tagDetailsDialog';
-import { UserArticlesDialog } from 'profile/userArticlesDialog';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
+import { TagsSelect } from '../editor/TagsSelect.js';
+import { AuthorAvatarsList } from '#/article/authorAvatarsList/AuthorAvatarsList.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { TagDetailsDialog } from '#/article/tagDetailsDialog/index.js';
+import { UserArticlesDialog } from '#/profile/userArticlesDialog/index.js';
 import Link from 'next/link';
 import clsx from 'clsx';
 
-import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
+import ToggleArticlePinMutation from '#/api/mutation/ToggleArticlePin.graphql';
 
 import styles from './ArticlePreview.module.scss';
 
@@ -44,6 +46,7 @@ interface ArticlePreviewProps {
   limitedHeight?: boolean;
   isEmbedded?: boolean;
   layout?: 'standard' | 'densed' | '2-columns';
+  loadImageEagerly?: boolean;
 }
 
 export const ArticlePreview = React.memo(
@@ -54,6 +57,7 @@ export const ArticlePreview = React.memo(
     disablePin,
     isEmbedded,
     layout,
+    loadImageEagerly,
     onUpdateArticle,
   }: ArticlePreviewProps) => {
     const currentUser = useCurrentUser();
@@ -81,9 +85,7 @@ export const ArticlePreview = React.memo(
     const [toggleArticlePin] = useMutation<
       { article: ArticleModel },
       { id: ID }
-    >(ToggleArticlePinMutation, {
-      variables: { id: article.id },
-    });
+    >(ToggleArticlePinMutation);
 
     const maybeLinked = (content: any) =>
       disableLink ? (
@@ -147,7 +149,7 @@ export const ArticlePreview = React.memo(
                     className={styles.previewImage}
                     file={article.previewImageFile ?? undefined}
                     format="articlepreview"
-                    lazy
+                    lazy={!loadImageEagerly}
                     animateOnLoad
                     sizes="auto"
                     alt={`Vorschaubild zu ${article.title}`}
@@ -337,7 +339,9 @@ export const ArticlePreview = React.memo(
                       className={clsx(styles.pinButton, {
                         [styles.active]: article.isPinnedToTop,
                       })}
-                      onClick={() => toggleArticlePin()}
+                      onClick={() =>
+                        toggleArticlePin({ variables: { id: article.id } })
+                      }
                       icon={<Icon icon={faLocationDot} size={'lg'} />}
                     />
                   )}

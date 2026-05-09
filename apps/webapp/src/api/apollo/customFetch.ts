@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { appConfig } from 'config';
-import { isBrowser } from 'util/isBrowser';
+import { appConfig } from '#/config.js';
+import { isBrowser } from '#/util/isBrowser.js';
 
 export const createHeaders = (headers: Record<string, string | null> = {}) => {
   const tenantSlugOverwrite = appConfig.get('FORCE_TENANT_SLUG');

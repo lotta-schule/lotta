@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Carousel } from './wrapper/Carousel';
-import { Gallery } from './wrapper/Gallery';
-import { ImageStyle } from './Config';
-import { ContentModuleComponentProps } from '../ContentModule';
+import { Carousel } from './wrapper/Carousel.js';
+import { Gallery } from './wrapper/Gallery.js';
+import { ImageStyle } from './Config.js';
+import { ContentModuleComponentProps } from '../ContentModule.js';
 
 import styles from './ImageCollection.module.scss';
 

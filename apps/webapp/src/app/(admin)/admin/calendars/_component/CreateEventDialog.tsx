@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation, useSuspenseQuery } from '@apollo/client';
+import { useMutation, useSuspenseQuery } from '@apollo/client/react';
 import {
   Dialog,
   DialogContent,
@@ -21,9 +21,12 @@ import {
   GET_CALENDAR_EVENTS,
   GET_CALENDARS,
   RECURRENCE_FRAGMENT,
-} from '../_graphql';
+} from '../_graphql/index.js';
 import { FragmentOf, ResultOf } from 'gql.tada';
-import { EditEventFormContent, EditEventInput } from './EditEventFormContent';
+import {
+  EditEventFormContent,
+  EditEventInput,
+} from './EditEventFormContent.js';
 
 export type CreateEventDialogProps = {
   isOpen: boolean;
@@ -56,22 +59,7 @@ export const CreateEventDialog = React.memo(
     const [eventData, setEventData] = React.useState(EMPTY_EVENT);
 
     const [createEvent, { loading: isLoading, error }] = useMutation(
-      CREATE_CALENDAR_EVENT,
-      {
-        variables: {
-          data: {
-            summary: eventData.summary,
-            description: eventData.description,
-            start: eventData.start.toISOString(),
-            end: eventData.end.toISOString(),
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            isFullDay: eventData.isFullDay,
-            recurrence: eventData.recurrence,
-            calendarId: eventData.calendarId ?? null!,
-          },
-        },
-        refetchQueries: [GET_CALENDAR_EVENTS],
-      }
+      CREATE_CALENDAR_EVENT
     );
 
     const isMultipleDays = React.useMemo(
@@ -120,7 +108,22 @@ export const CreateEventDialog = React.memo(
               type="submit"
               onAction={async (e: SubmitEvent | React.MouseEvent) => {
                 e.preventDefault();
-                const result = await createEvent();
+                const result = await createEvent({
+                  variables: {
+                    data: {
+                      summary: eventData.summary,
+                      description: eventData.description,
+                      start: eventData.start.toISOString(),
+                      end: eventData.end.toISOString(),
+                      timezone:
+                        Intl.DateTimeFormat().resolvedOptions().timeZone,
+                      isFullDay: eventData.isFullDay,
+                      recurrence: eventData.recurrence,
+                      calendarId: eventData.calendarId ?? null!,
+                    },
+                  },
+                  refetchQueries: [GET_CALENDAR_EVENTS],
+                });
                 return result.data?.event;
               }}
               onComplete={(

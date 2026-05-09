@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { render, waitFor, within } from 'test/util';
-import { MockedResponse } from '@apollo/client/testing';
+import { render, waitFor, within, userEvent } from '#/test/util.js';
+import { MockLink } from '@apollo/client/testing';
 import {
   ComputerExperten,
   FaecherCategory,
   SomeUser,
   imageFile,
   tenant,
-} from 'test/fixtures';
-import { FileUsageModal } from './FileUsageModal';
-import userEvent from '@testing-library/user-event';
+} from '#/test/fixtures/index.js';
+import { FileUsageModal } from './FileUsageModal.js';
 
-import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
+import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';
 
 describe('FileUsageModal Component', () => {
   const usages = [
@@ -29,7 +28,7 @@ describe('FileUsageModal Component', () => {
     { __typename: 'FileUserUsageLocation', usage: 'avatar', user: SomeUser },
   ];
 
-  const additionalMocks: MockedResponse[] = [
+  const additionalMocks: MockLink.MockedResponse[] = [
     {
       request: { query: GetFileDetailsQuery, variables: { id: imageFile.id } },
       result: {

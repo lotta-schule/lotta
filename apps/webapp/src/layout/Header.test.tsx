@@ -1,6 +1,6 @@
-import { render } from 'test/util';
-import { Header } from './Header';
-import { imageFile } from 'test/fixtures';
+import { render } from '#/test/util.js';
+import { Header } from './Header.js';
+import { imageFile } from '#/test/fixtures/index.js';
 
 describe('Header', () => {
   it('renders the header content correctly', () => {

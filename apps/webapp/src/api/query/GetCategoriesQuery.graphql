@@ -29,5 +29,21 @@ query categories {
       title
       hideArticlesFromHomepage
     }
+    widgets {
+      id
+      title
+      iconImageFile {
+        id
+        formats(category: "ICON") {
+          name
+          url
+          type
+          availability {
+            status
+          }
+        }
+      }
+      configuration
+    }
   }
 }

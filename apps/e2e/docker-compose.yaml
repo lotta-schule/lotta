@@ -22,6 +22,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      minio:
-        condition: service_healthy
+      minio-setup:
+        condition: service_completed_successfully
     env_file: env-file

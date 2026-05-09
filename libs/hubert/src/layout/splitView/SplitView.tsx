@@ -6,8 +6,8 @@ import {
   SplitViewProvider,
   SplitViewProviderProps,
   useSplitView,
-} from './SplitViewContext';
-import { useElementFullWindowHeight } from '../../util';
+} from './SplitViewContext.js';
+import { useElementFullWindowHeight } from '../../util/index.js';
 import clsx from 'clsx';
 
 import styles from './SplitView.module.scss';

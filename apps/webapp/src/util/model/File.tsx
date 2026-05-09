@@ -1,5 +1,5 @@
-import { DirectoryModel, FileModel } from 'model';
-import { User } from './User';
+import { DirectoryModel, FileModel } from '#/model/index.js';
+import { User } from './User.js';
 
 export const File = {
   canEditDirectory(

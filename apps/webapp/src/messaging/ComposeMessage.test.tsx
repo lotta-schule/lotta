@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from '#/test/util.js';
 import {
   SomeUser,
   SomeUserin,
   imageFile as mockImageFile,
-} from 'test/fixtures';
-import { UserBrowser, UserBrowserProps } from 'shared/browser';
-import { ComposeMessage } from './ComposeMessage';
-import { MessageModel } from 'model';
-import userEvent from '@testing-library/user-event';
+} from '#/test/fixtures/index.js';
+import { UserBrowser, UserBrowserProps } from '#/shared/browser/index.js';
+import { ComposeMessage } from './ComposeMessage.js';
+import { MessageModel } from '#/model/index.js';
 
-import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
+import SendMessageMutation from '#/api/mutation/SendMessageMutation.graphql';
 
-vi.mock('shared/browser', async (importOriginal) => {
+vi.mock('#/shared/browser/index.js', async (importOriginal) => {
   const originalModule: typeof UserBrowser = await importOriginal();
   return {
     __esModule: true,

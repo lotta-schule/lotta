@@ -8,6 +8,11 @@ config :lotta,
       default_duration: [month: 3],
       default_next_plan: nil
     },
+    "free" => %{
+      title: "Free",
+      default_duration: [month: 12],
+      default_next_plan: "free"
+    },
     # specials
     "ehrenberg" => %{
       title: "Lotta",
@@ -42,7 +47,7 @@ config :lotta,
       default_duration: [month: 1],
       default_next_plan: "supporter"
     },
-    # // specials
+    # standard plans
     "default_2025" => %{
       title: "Lotta",
       base_price: "39.00",

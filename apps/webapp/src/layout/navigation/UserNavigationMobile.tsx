@@ -1,9 +1,10 @@
+'use client';
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { Badge, BaseButton, Button } from '@lotta-schule/hubert';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { useTenant } from 'util/tenant/useTenant';
-import { Icon } from 'shared/Icon';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { useTenant } from '#/util/tenant/useTenant.js';
+import { Icon } from '#/shared/Icon.js';
 import {
   faComments,
   faFolder,
@@ -18,19 +19,18 @@ import {
   faCommentDots,
 } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
-import { ArticleModel } from 'model';
-import { User, Article } from 'util/model';
-import { useOnLogout } from 'util/user/useOnLogout';
-import { isMobileDrawerOpenVar } from 'api/apollo/cache';
-import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
-import { LoginDialog } from 'shared/dialog/login';
-import { RegisterDialog } from 'shared/dialog/RegisterDialog';
-import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
-import { useNewFeedbackCount } from 'util/feedback';
-import { useRouter } from 'next/router';
+import { ArticleModel } from '#/model/index.js';
+import { User, Article } from '#/util/model/index.js';
+import { isMobileDrawerOpenVar } from '#/api/apollo/cache.js';
+import { CreateArticleDialog } from '#/shared/dialog/CreateArticleDialog.js';
+import { LoginDialog } from '#/shared/dialog/login/index.js';
+import { RegisterDialog } from '#/shared/dialog/RegisterDialog.js';
+import { FeedbackDialog } from '#/shared/dialog/FeedbackDialog.js';
+import { useNewFeedbackCount } from '#/util/feedback/index.js';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
+import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
 
 import styles from './UserNavigationMobile.module.scss';
 
@@ -41,7 +41,6 @@ export const UserNavigationMobile = React.memo(() => {
   const tenant = useTenant();
   const newMessagesBadgeNumber = currentUser?.unreadMessages ?? 0;
   const newFeedbackBadgeNumber = useNewFeedbackCount();
-  const onLogout = useOnLogout();
 
   const { data: unpublishedArticlesData } = useQuery<{
     articles: ArticleModel[];
@@ -63,17 +62,16 @@ export const UserNavigationMobile = React.memo(() => {
       {!!currentUser && (
         <>
           <nav className={styles.root}>
-            <BaseButton
-              variant={'borderless'}
-              className={styles.button}
-              onClick={() => {
-                onLogout();
-              }}
-              data-testid="LogoutButton"
-            >
-              <Icon icon={faArrowRightFromBracket} size="xl" />
-              <span className={styles.label}>{t('logout')}</span>
-            </BaseButton>
+            <Link href="/auth/logout" passHref legacyBehavior>
+              <BaseButton
+                variant={'borderless'}
+                className={styles.button}
+                data-testid="LogoutButton"
+              >
+                <Icon icon={faArrowRightFromBracket} size="xl" />
+                <span className={styles.label}>Abmelden</span>
+              </BaseButton>
+            </Link>
             <BaseButton
               variant={'borderless'}
               className={styles.button}

@@ -1,5 +1,5 @@
-import { render } from '../test-utils';
-import { Badge } from './Badge';
+import { render } from '../test-utils.js';
+import { Badge } from './Badge.js';
 
 describe('shared/general/badge', () => {
   it('should render a given number in a badge', () => {

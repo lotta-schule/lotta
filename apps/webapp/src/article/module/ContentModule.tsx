@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import {
   faTrash,
   faGear,
@@ -12,23 +12,27 @@ import {
   DialogActions,
   DialogContent,
 } from '@lotta-schule/hubert';
-import { ArticleModel, ContentModuleModel, ContentModuleType } from 'model';
-import { Text } from './text/Text';
-import { Title } from './title/Title';
-import { Config as TitleConfig } from './title/Config';
-import { Config as DownloadConfig } from './download/Config';
-import { Image as ImageModule } from './image/Image';
-import { Config as ImageConfig } from './image/Config';
-import { ImageCollection } from './image_collection/ImageCollection';
-import { Config as ImageCollectionConfig } from './image_collection/Config';
-import { Video } from './video/Video';
-import { Audio } from './audio/Audio';
-import { Download } from './download/Download';
-import { Form } from './form/Form';
-import { Table } from './table/Table';
-import { Divider as DividerCM } from './divider/Divider';
-import { User } from 'util/model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import {
+  ArticleModel,
+  ContentModuleModel,
+  ContentModuleType,
+} from '#/model/index.js';
+import { Text } from './text/Text.js';
+import { Title } from './title/Title.js';
+import { Config as TitleConfig } from './title/Config.js';
+import { Config as DownloadConfig } from './download/Config.js';
+import { Image as ImageModule } from './image/Image.js';
+import { Config as ImageConfig } from './image/Config.js';
+import { ImageCollection } from './image_collection/ImageCollection.js';
+import { Config as ImageCollectionConfig } from './image_collection/Config.js';
+import { Video } from './video/Video.js';
+import { Audio } from './audio/Audio.js';
+import { Download } from './download/Download.js';
+import { Form } from './form/Form.js';
+import { Table } from './table/Table.js';
+import { Divider as DividerCM } from './divider/Divider.js';
+import { User } from '#/util/model/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import clsx from 'clsx';
 
 import styles from './ContentModule.module.scss';

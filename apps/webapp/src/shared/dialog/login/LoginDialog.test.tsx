@@ -1,22 +1,6 @@
-import * as React from 'react';
-import { act, render, waitFor, within } from 'test/util';
-import { LoginDialog } from './LoginDialog';
-import { SomeUser, tenant } from 'test/fixtures';
-import { LOGIN } from './_graphql';
-import userEvent from '@testing-library/user-event';
-
-const additionalMocks = [
-  {
-    request: {
-      query: LOGIN,
-      variables: {
-        username: 'nutzer@email.de',
-        password: 'password',
-      },
-    },
-    result: { data: { login: { accessToken: 'abc' } } },
-  },
-];
+import { render, userEvent, waitFor } from '#/test/util.js';
+import { LoginDialog } from './LoginDialog.js';
+import { tenant } from '#/test/fixtures/index.js';
 
 describe('shared/dialog/LoginDialog', () => {
   it('should not show the login dialog when isOpen is not true', () => {
@@ -29,87 +13,65 @@ describe('shared/dialog/LoginDialog', () => {
   });
 
   it('should close the dialog when clicking on cancel', async () => {
-    const fireEvent = userEvent.setup();
+    const user = userEvent.setup();
     const onRequestClose = vi.fn();
     const screen = render(
       <LoginDialog isOpen={true} onRequestClose={onRequestClose} />,
       {}
     );
-    await fireEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
+    await user.click(screen.getByRole('button', { name: /abbrechen/i }));
     expect(onRequestClose).toHaveBeenCalled();
   });
 
   describe('fields', () => {
-    afterEach(() => {
-      vi.useRealTimers();
-    });
-
-    it('should send a complete login, then show a confirm message', async () => {
-      const fireEvent = userEvent.setup();
-      const onRequestClose = vi.fn();
-      const screen = render(
-        <LoginDialog isOpen={true} onRequestClose={onRequestClose} />,
-        {},
-        { additionalMocks, currentUser: SomeUser }
-      );
-      await fireEvent.type(
-        screen.getByRole('textbox', { name: /e-mail/i }),
-        'nutzer@email.de'
-      );
-      await fireEvent.type(screen.getByLabelText(/passwort/i), 'password');
-
-      vi.useFakeTimers({ shouldAdvanceTime: true });
-
-      await fireEvent.click(
-        screen.getByRole('button', { name: /^anmelden$/i })
-      );
-
-      await waitFor(() => {
-        expect(
-          within(
-            screen.getByRole('button', { name: /^anmelden$/i })
-          ).getByTestId('SuccessIcon')
-        ).toBeVisible();
-      });
-
-      await act(() => vi.advanceTimersByTimeAsync(2000));
-
-      await waitFor(() => {
-        expect(onRequestClose).toHaveBeenCalled();
-      });
-    });
-
-    it('should send a complete login, then show the password change dialog if the userAvatar logs in for the first time', async () => {
-      const fireEvent = userEvent.setup();
+    it('should render a form with action /auth/login', () => {
       const screen = render(
         <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
-        {},
-        {
-          additionalMocks,
-          currentUser: {
-            ...SomeUser,
-            hasChangedDefaultPassword: false,
-          },
-        }
+        {}
       );
-      await fireEvent.type(
-        screen.getByRole('textbox', { name: /e-mail/i }),
-        'nutzer@email.de'
+
+      const form = screen.getByRole('dialog').querySelector('form');
+      expect(form).toHaveAttribute('action', '/auth/login');
+      expect(form).toHaveAttribute('method', 'POST');
+    });
+
+    it('should have username and password fields with correct names', async () => {
+      const user = userEvent.setup();
+      const screen = render(
+        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+        {}
       );
-      await fireEvent.type(screen.getByLabelText(/passwort/i), 'password');
-      await fireEvent.click(
-        screen.getByRole('button', { name: /^anmelden$/i })
+
+      const emailInput = screen.getByRole('textbox', { name: /e-mail/i });
+      const passwordInput = screen.getByLabelText(/passwort/i);
+
+      expect(emailInput).toHaveAttribute('name', 'username');
+      expect(passwordInput).toHaveAttribute('name', 'password');
+      expect(passwordInput).toHaveAttribute('type', 'password');
+
+      await user.fill(emailInput, 'test@example.com');
+      await user.fill(passwordInput, 'mypassword');
+
+      expect(emailInput).toHaveValue('test@example.com');
+      expect(passwordInput).toHaveValue('mypassword');
+    });
+
+    it('should have required fields', () => {
+      const screen = render(
+        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+        {}
       );
-      await waitFor(() => {
-        expect(
-          screen.queryByRole('heading', { name: /passwort ändern/i })
-        ).not.toBeNull();
-      });
+
+      const emailInput = screen.getByRole('textbox', { name: /e-mail/i });
+      const passwordInput = screen.getByLabelText(/passwort/i);
+
+      expect(emailInput).toBeRequired();
+      expect(passwordInput).toBeRequired();
     });
   });
 
   describe('email registration disabled', () => {
-    it('should not show email/password fields when isEmailRegistrationEnabled is false', () => {
+    it('should not show email/password fields when isEmailRegistrationEnabled is false', async () => {
       const screen = render(
         <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
         {},
@@ -118,18 +80,25 @@ describe('shared/dialog/LoginDialog', () => {
             ...tenant,
             eduplacesId: '123',
             configuration: {
+              customTheme: {},
+              userMaxStorageConfig: null,
               isEmailRegistrationEnabled: false,
             },
           },
         }
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('dialog', { name: /Anmelden/ })).toBeVisible();
+      });
+
       expect(screen.queryByRole('textbox', { name: /e-mail/i })).toBeNull();
       expect(screen.queryByLabelText(/passwort/i)).toBeNull();
+
       expect(screen.getByRole('button', { name: /eduplaces/i })).toBeVisible();
     });
 
-    it('should show email/password fields when isEmailRegistrationEnabled is true', () => {
+    it('should show email/password fields when isEmailRegistrationEnabled is true', async () => {
       const screen = render(
         <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
         {},
@@ -137,12 +106,17 @@ describe('shared/dialog/LoginDialog', () => {
           tenant: {
             ...tenant,
             configuration: {
+              customTheme: {},
+              userMaxStorageConfig: null,
               isEmailRegistrationEnabled: true,
             },
           },
         }
       );
 
+      await waitFor(() => {
+        expect(screen.getByRole('dialog', { name: /Anmelden/ })).toBeVisible();
+      });
       expect(screen.getByRole('textbox', { name: /e-mail/i })).toBeVisible();
       expect(screen.getByLabelText(/passwort/i)).toBeVisible();
     });
@@ -150,23 +124,33 @@ describe('shared/dialog/LoginDialog', () => {
 
   describe('third-party-login', () => {
     describe('Eduplaces', () => {
-      it('should not show the Eduplaces login button when the tenant has no associated eduplacesId', () => {
+      it('should not show the Eduplaces login button when the tenant has no associated eduplacesId', async () => {
         const screen = render(
           <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
           {},
-          { additionalMocks }
+          {}
         );
 
+        await waitFor(() => {
+          expect(
+            screen.getByRole('dialog', { name: /Anmelden/ })
+          ).toBeVisible();
+        });
         expect(screen.queryByRole('button', { name: /eduplaces/i })).toBeNull();
       });
 
-      it('should render the Eduplaces login button when tenant has eduplacesId', () => {
+      it('should render the Eduplaces login button when tenant has eduplacesId', async () => {
         const screen = render(
           <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
           {},
-          { additionalMocks, tenant: { ...tenant, eduplacesId: '123' } }
+          { tenant: { ...tenant, eduplacesId: '123' } }
         );
 
+        await waitFor(() => {
+          expect(
+            screen.getByRole('dialog', { name: /Anmelden/ })
+          ).toBeVisible();
+        });
         expect(
           screen.getByRole('button', { name: /eduplaces/i })
         ).toBeVisible();

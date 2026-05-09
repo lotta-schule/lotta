@@ -4,10 +4,10 @@ import { Editor, Element, Range, Text, Transforms, Node } from 'slate';
 import {
   SlatePre050Document,
   SlatePre050Node,
-} from './interface/SlatePre050Document';
-import { SlateImage } from './elements/SlateImage';
-import { BlockElement, CustomText, Image, Link } from './SlateCustomTypes';
-import { FileModel } from 'model';
+} from './interface/SlatePre050Document.js';
+import { SlateImage } from './elements/SlateImage.js';
+import { BlockElement, CustomText, Image, Link } from './SlateCustomTypes.js';
+import { FileModel } from '#/model/index.js';
 import isUrl from 'is-url';
 
 export const renderElement =
@@ -278,17 +278,17 @@ export const onKeyDownFactory =
       editor.insertText('\n');
     }
 
-    if (event.key == 'b' && (event.metaKey || event.metaKey)) {
+    if (event.key == 'b' && event.metaKey) {
       event.preventDefault();
       toggleMark(editor, 'bold');
     }
 
-    if (event.key == 'i' && (event.metaKey || event.metaKey)) {
+    if (event.key == 'i' && event.metaKey) {
       event.preventDefault();
       toggleMark(editor, 'italic');
     }
 
-    if (event.key == 'u' && (event.metaKey || event.metaKey)) {
+    if (event.key == 'u' && event.metaKey) {
       event.preventDefault();
       toggleMark(editor, 'underline');
     }

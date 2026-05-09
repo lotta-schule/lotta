@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import { faImage } from '@fortawesome/free-solid-svg-icons';
 import { Range } from 'slate';
 import { useSlate } from 'slate-react';
-import { FileModel } from 'model';
+import { FileModel } from '#/model/index.js';
 import { Button } from '@lotta-schule/hubert';
-import { insertImage } from './SlateUtils';
-import { SelectFileButton } from 'shared/edit/SelectFileButton';
+import { insertImage } from './SlateUtils.js';
+import { SelectFileButton } from '#/shared/edit/SelectFileButton.js';
 
 export interface EditToolbarImageButtonProps {
   onImageAdded?(): void;

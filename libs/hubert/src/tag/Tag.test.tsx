@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils';
-import { Tag } from './Tag';
-import userEvent from '@testing-library/user-event';
+import { render, userEvent } from '../test-utils.js';
+import { Tag } from './Tag.js';
 
 describe('Tag', () => {
   it('should correctly render a tag', () => {

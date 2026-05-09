@@ -1,5 +1,5 @@
 import { InMemoryCache } from '@apollo/client';
-import { isMobileDrawerOpenVar, createCache } from './cache';
+import { isMobileDrawerOpenVar, createCache } from './cache.js';
 
 describe('Apollo Client Cache', () => {
   beforeEach(() => {

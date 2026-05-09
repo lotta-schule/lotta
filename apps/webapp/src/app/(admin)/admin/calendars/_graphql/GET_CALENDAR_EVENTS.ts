@@ -1,4 +1,4 @@
-import { graphql } from 'api/graphql';
+import { graphql } from '#/api/graphql.js';
 
 export const RECURRENCE_FRAGMENT = graphql(`
   fragment RecurrenceFragment on CalendarEventRecurrence @_unmask {

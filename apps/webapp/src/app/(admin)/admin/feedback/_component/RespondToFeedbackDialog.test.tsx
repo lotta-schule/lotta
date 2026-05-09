@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { SomeUser } from 'test/fixtures';
-import { FeedbackModel } from 'model';
-import { RespondToFeedbackDialog } from './RespondToFeedbackDialog';
-import userEvent from '@testing-library/user-event';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { SomeUser } from '#/test/fixtures/index.js';
+import { FeedbackModel } from '#/model/index.js';
+import { RespondToFeedbackDialog } from './RespondToFeedbackDialog.js';
 
-import RespondToFeedbackMutation from 'api/mutation/RespondToFeedbackMutation.graphql';
+import RespondToFeedbackMutation from '#/api/mutation/RespondToFeedbackMutation.graphql';
 
 const metadata = [
   `User-Agent: ${navigator.userAgent}`,
@@ -89,10 +88,7 @@ describe('RespondToFeedbackDialog', () => {
     const subjectInput = screen.getByLabelText('Betreff') as HTMLInputElement;
     const messageInput = screen.getByLabelText('Antwort') as HTMLInputElement;
 
-    await fireEvent.type(subjectInput, 'Kurze Antwort', {
-      initialSelectionStart: 0,
-      initialSelectionEnd: subjectInput.value.length,
-    });
+    await fireEvent.fill(subjectInput, 'Kurze Antwort');
     await fireEvent.type(messageInput, 'Lange Antwort Inhalt bla bla');
 
     await fireEvent.click(screen.getByRole('button', { name: /senden/ }));

@@ -1,11 +1,11 @@
-import { AdminPage } from 'app/(admin)/admin/_component/AdminPage';
+import { AdminPage } from '#/app/(admin)/admin/_component/AdminPage.js';
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import {
   TwoColumnLayout,
   TwoColumnLayoutContent,
   TwoColumnLayoutSidebar,
-} from 'component/layout';
-import { CategoryListToolbar, CategoryNavigation } from './_component';
+} from '#/component/layout/index.js';
+import { CategoryListToolbar, CategoryNavigation } from './_component/index.js';
 
 async function CategoriesLayout({
   children,

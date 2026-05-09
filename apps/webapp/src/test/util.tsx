@@ -1,6 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { pick } from 'lodash';
-import { HubertProvider } from '@lotta-schule/hubert';
+import {
+  DefaultThemes,
+  GlobalStyles,
+  HubertProvider,
+} from '@lotta-schule/hubert';
 import { InMemoryCache } from '@apollo/client';
 import {
   render,
@@ -10,15 +14,18 @@ import {
   queries,
   RenderHookOptions,
 } from '@testing-library/react';
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { ApolloMocksOptions, getDefaultApolloMocks } from 'test/mocks';
-import { TranslationsProvider } from 'i18n/client';
-import { ServerDataContextProvider } from 'shared/ServerDataContext';
-import { tenant } from './fixtures';
+import { MockLink } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
+import {
+  ApolloMocksOptions,
+  getDefaultApolloMocks,
+} from '#/test/mocks/index.js';
+import { TranslationsProvider } from '#/i18n/client.js';
+import { ServerDataContextProvider } from '#/shared/ServerDataContext.js';
+import { tenant } from './fixtures/index.js';
 
 export type TestSetupOptions = {
-  additionalMocks?: MockedResponse[];
-  addTypename?: boolean;
+  additionalMocks?: MockLink.MockedResponse[];
 } & ApolloMocksOptions;
 
 export let currentApolloCache: null | InMemoryCache = null;
@@ -40,6 +47,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
 
     return (
       <TranslationsProvider>
+        <GlobalStyles theme={DefaultThemes.standard} />
         <ServerDataContextProvider
           tenant={options.tenant ?? tenant}
           socketUrl={'ws://localhost:4000'}
@@ -47,7 +55,6 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
           <HubertProvider>
             <MockedProvider
               mocks={[...defaultMocks, ...(options.additionalMocks || [])]}
-              addTypename={options.addTypename}
               cache={cache}
             >
               <React.Suspense
@@ -114,3 +121,4 @@ export const getMetaTagValue = (metaName: string) => {
 // override render method
 export { customRender as render };
 export { customRenderHook as renderHook };
+export { userEvent } from 'vitest/browser';

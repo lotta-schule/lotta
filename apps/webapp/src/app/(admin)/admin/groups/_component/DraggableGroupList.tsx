@@ -1,16 +1,15 @@
 'use client';
-
 import * as React from 'react';
 import {
   Eduplaces as EduplacesIcon,
   SortableDraggableList,
 } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
-import { ID, UserGroupInputModel, UserGroupModel } from 'model';
-import { useUserGroups } from 'util/tenant/useUserGroups';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import { isBrowser } from 'util/isBrowser';
-import { UPDATE_USER_GROUP } from '../_graphql';
+import { useMutation } from '@apollo/client/react';
+import { ID, UserGroupInputModel, UserGroupModel } from '#/model/index.js';
+import { useUserGroups } from '#/util/tenant/useUserGroups.js';
+import { useRouter, useParams, useSearchParams } from 'next/navigation.js';
+import { isBrowser } from '#/util/isBrowser.js';
+import { UPDATE_USER_GROUP } from '../_graphql/index.js';
 
 import styles from './DraggableGroupList.module.scss';
 

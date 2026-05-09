@@ -4,14 +4,14 @@ import * as React from 'react';
 import { CollectionChildren } from '@react-types/shared';
 import { useMenuTriggerState } from 'react-stately';
 import { mergeProps, useButton, useMenuTrigger } from 'react-aria';
-import { ButtonProps } from '../button/Button';
+import { ButtonProps } from '../button/Button.js';
 import {
   Popover,
   PopoverProps,
   PopoverContent,
   PopoverTrigger,
-} from '../popover';
-import { Menu, WithDescription } from './Menu';
+} from '../popover/index.js';
+import { Menu, WithDescription } from './Menu.js';
 
 import styles from './MenuButton.module.scss';
 

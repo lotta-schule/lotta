@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils';
-import { Button } from './Button';
+import { render } from '../test-utils.js';
+import { Button } from './Button.js';
 
 describe('button/BaseButton', () => {
   it('should render Button with label', () => {

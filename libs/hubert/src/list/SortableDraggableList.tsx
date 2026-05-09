@@ -17,8 +17,8 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { invariant } from '@epic-web/invariant';
-import { DraggableListItem } from './DraggableListItem';
-import { List, ListProps } from './List';
+import { DraggableListItem } from './DraggableListItem.js';
+import { List, ListProps } from './List.js';
 import { flushSync } from 'react-dom';
 
 export type SortableItem = {
@@ -27,6 +27,7 @@ export type SortableItem = {
   description?: string;
   selected?: boolean;
   icon?: React.ReactNode;
+  iconTitle?: string;
   testId?: string;
   children?: React.ReactNode | React.ReactNode[];
   onClick?: () => void;
@@ -110,6 +111,7 @@ export const SortableDraggableList = ({
                 title,
                 selected,
                 icon,
+                iconTitle,
                 onClick,
                 onClickIcon,
                 testId,
@@ -121,6 +123,7 @@ export const SortableDraggableList = ({
                 key={i}
                 id={id}
                 icon={icon}
+                iconTitle={iconTitle}
                 title={title}
                 isDraggable={!disabled}
                 selected={selected}

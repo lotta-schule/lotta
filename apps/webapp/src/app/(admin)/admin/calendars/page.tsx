@@ -1,12 +1,12 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { getClient } from 'api/client';
-import { GET_CALENDARS } from './_graphql';
+import { getClient } from '#/api/client.js';
+import { GET_CALENDARS } from './_graphql/index.js';
 import { CircularProgress } from '@lotta-schule/hubert';
 import { t } from 'i18next';
 
 const DynamicCalendarView = dynamic(
-  () => import('./_component/CalendarWrapper')
+  () => import('./_component/CalendarWrapper.js')
 );
 
 async function CalendarPage() {

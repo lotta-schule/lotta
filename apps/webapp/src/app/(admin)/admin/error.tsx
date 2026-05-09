@@ -1,11 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import * as Sentry from '@sentry/nextjs';
 import { Button } from '@lotta-schule/hubert';
 import { t } from 'i18next';
 import Link from 'next/link';
-import { ServerDownErrorPage } from 'layout/error/ServerDownErrorPage';
+import { ServerDownErrorPage } from '#/layout/error/ServerDownErrorPage.js';
 import clsx from 'clsx';
 
 import styles from './_component/AdminPage.module.scss';
@@ -15,10 +14,6 @@ export default function Error({
 }: {
   error: Error & { digest?: string };
 }) {
-  React.useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
-
   return (
     <div className={clsx(styles.root, styles.isRootPage)}>
       <div className={clsx(styles.contentSection, styles.takesFullSpace)}>

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { StoryFn, Meta } from '@storybook/react';
+import { StoryFn, Meta } from '@storybook/react-vite';
 import { Item, Menu } from '@lotta-schule/hubert';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
 
 export default {
   title: 'menus/Menu',

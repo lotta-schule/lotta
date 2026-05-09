@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { PageNotFoundErrorPage } from 'layout/error/PageNotFoundErrorPage';
-import { AdminPage } from './admin/_component/AdminPage';
-import { serverTranslations } from 'i18n/server';
+import { PageNotFoundErrorPage } from '#/layout/error/PageNotFoundErrorPage.js';
+import { AdminPage } from './admin/_component/AdminPage.js';
+import { serverTranslations } from '#/i18n/server.js';
 
 export default async function AdminPageNotFound() {
   const { t } = await serverTranslations();

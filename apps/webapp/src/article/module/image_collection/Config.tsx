@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Option, Select } from '@lotta-schule/hubert';
-import { ContentModuleModel, FileModel } from 'model';
-import { ContentModuleConfigProps } from '../ContentModule';
+import { ContentModuleModel, FileModel } from '#/model/index.js';
+import { ContentModuleConfigProps } from '../ContentModule.js';
 
 import styles from '../Config.module.scss';
 

@@ -117,7 +117,6 @@ defmodule Lotta.Tenants.Tenant do
       :type,
       :logo_image_file_id,
       :background_image_file_id,
-      :customer_no,
       :billing_address,
       :contact_name,
       :contact_email,
@@ -125,6 +124,33 @@ defmodule Lotta.Tenants.Tenant do
     ])
     |> validate_required([:title, :slug, :prefix])
     |> unique_constraint(:slug)
+    |> maybe_put_embed(:configuration, attrs[:configuration])
+  end
+
+  @doc """
+  Changeset to be used for updating tenant configuration by lotta administration.
+  """
+  @spec update_by_admin_changeset(t(), map()) :: Ecto.Changeset.t()
+  def update_by_admin_changeset(tenant, attrs) do
+    tenant
+    |> cast(attrs, [
+      :title,
+      :address,
+      :type,
+      :logo_image_file_id,
+      :background_image_file_id,
+      :customer_no,
+      :billing_address,
+      :contact_name,
+      :contact_email,
+      :contact_phone,
+      :current_plan_name,
+      :current_plan_expires_at,
+      :next_plan_name
+    ])
+    |> validate_required([:title, :slug, :prefix])
+    |> unique_constraint(:slug)
+    |> unique_constraint(:customer_no)
     |> maybe_put_embed(:configuration, attrs[:configuration])
   end
 

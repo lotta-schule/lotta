@@ -1,3 +1,3 @@
-export * from './Theme';
-export * from './default';
-export * from './schema';
+export * from './Theme.js';
+export * from './default/index.js';
+export * from './schema.js';

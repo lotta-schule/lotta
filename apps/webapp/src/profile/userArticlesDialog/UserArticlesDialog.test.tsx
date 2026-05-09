@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from '#/test/util.js';
 import {
   SomeUser,
   SomeUserin,
   KeinErSieEsUser,
   Weihnachtsmarkt,
   Klausurenplan,
-} from 'test/fixtures';
-import { UserArticlesDialog } from './UserArticlesDialog';
-import userEvent from '@testing-library/user-event';
+} from '#/test/fixtures/index.js';
+import { UserArticlesDialog } from './UserArticlesDialog.js';
 
-import GetArticlesByUserQuery from 'api/query/GetArticlesByUserQuery.graphql';
+import GetArticlesByUserQuery from '#/api/query/GetArticlesByUserQuery.graphql';
 
 describe('UserArticlesDialog', () => {
   const additionalMocks = [

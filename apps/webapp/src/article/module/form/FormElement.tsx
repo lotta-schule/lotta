@@ -10,12 +10,12 @@ import {
   Option,
   Select,
 } from '@lotta-schule/hubert';
-import { SelectFileButton } from 'shared/edit/SelectFileButton';
-import { FormElement as FormElementInterface } from './Form';
-import { FileModel } from 'model';
+import { SelectFileButton } from '#/shared/edit/SelectFileButton.js';
+import { FormElement as FormElementInterface } from './Form.js';
+import { FileModel } from '#/model/index.js';
 
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Icon } from 'shared/Icon';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { Icon } from '#/shared/Icon.js';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 export interface FormElementProps {
@@ -197,13 +197,23 @@ export const FormElement = React.memo<FormElementProps>(
                         } MB groß sein.`
                       );
                     } else {
-                      const fileWithoutFormatsAndMetadata = Object.fromEntries(
-                        Object.entries(file).filter(
-                          ([key]) => !['formats', 'metadata'].includes(key)
-                        )
-                      );
+                      const sanitizeObject = (obj: any): any => {
+                        if (typeof obj !== 'object' || obj === null) {
+                          return obj;
+                        }
+                        return Object.fromEntries(
+                          Object.entries(obj)
+                            .filter(
+                              ([key]) =>
+                                !['formats', 'metadata', '__typename'].includes(
+                                  key
+                                )
+                            )
+                            .map(([key, value]) => [key, sanitizeObject(value)])
+                        );
+                      };
                       onSetValue(
-                        `lotta-file-id://${JSON.stringify(fileWithoutFormatsAndMetadata)}`
+                        `lotta-file-id://${JSON.stringify(sanitizeObject(file))}`
                       );
                     }
                   }}

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from 'test/util';
-import { Icon } from './Icon';
+import { render } from '#/test/util.js';
+import { Icon } from './Icon.js';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 
 describe('Icon', () => {

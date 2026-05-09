@@ -1,8 +1,7 @@
-import { render } from 'test-utils';
-import { DraggableListItem } from './DraggableListItem';
+import { render, userEvent } from '#/test-utils';
+import { DraggableListItem } from './DraggableListItem.js';
 
 import styles from './DraggableListItem.module.scss';
-import userEvent from '@testing-library/user-event';
 
 describe('DraggableListItem', () => {
   it('should render the title', () => {

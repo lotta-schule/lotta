@@ -1,4 +1,4 @@
-import { TenantModel } from 'model';
+import { TenantModel } from '#/model/index.js';
 
 export const Tenant = {
   getMainUrl(tenant: TenantModel) {

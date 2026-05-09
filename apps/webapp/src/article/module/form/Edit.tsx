@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -10,10 +10,10 @@ import {
   Label,
   SortableDraggableList,
 } from '@lotta-schule/hubert';
-import { ContentModuleModel } from 'model';
-import { FormConfiguration } from './Form';
-import { FormElement } from './FormElement';
-import { FormElementConfiguration } from './FormElementConfiguration';
+import { ContentModuleModel } from '#/model/index.js';
+import { FormConfiguration } from './Form.js';
+import { FormElement } from './FormElement.js';
+import { FormElementConfiguration } from './FormElementConfiguration.js';
 
 import styles from './Edit.module.scss';
 

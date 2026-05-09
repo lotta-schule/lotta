@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { WidgetIconModel } from 'model';
-import { iconNameMapping, WidgetIcon } from 'category/widgets/WidgetIcon';
+import { WidgetIconModel } from '#/model/index.js';
+import { iconNameMapping, WidgetIcon } from '#/category/widgets/WidgetIcon.js';
 import { Button, Input, Label, Option, Select } from '@lotta-schule/hubert';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 
 import styles from './WidgetIconSelection.module.scss';
 

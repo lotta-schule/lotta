@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from '#/test/util.js';
 import {
   SomeUser,
   SomeUserin,
   createConversation,
   imageFile,
   documentFile,
-} from 'test/fixtures';
-import { FileModel } from 'model';
-import { MessageBubble } from './MessageBubble';
-import userEvent from '@testing-library/user-event';
+} from '#/test/fixtures/index.js';
+import { FileModel } from '#/model/index.js';
+import { MessageBubble } from './MessageBubble.js';
 
-import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
+import DeleteMessageMutation from '#/api/mutation/DeleteMessageMutation.graphql';
 
 const message = {
   ...createConversation(SomeUser, { user: SomeUserin }).messages[0],

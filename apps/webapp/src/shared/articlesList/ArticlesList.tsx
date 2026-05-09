@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Table } from '@lotta-schule/hubert';
-import { ArticleModel } from 'model';
-import { User, Article, Category } from 'util/model';
+import { ArticleModel } from '#/model/index.js';
+import { User, Article, Category } from '#/util/model/index.js';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
 import Link from 'next/link';
 
 import styles from './ArticlesList.module.scss';

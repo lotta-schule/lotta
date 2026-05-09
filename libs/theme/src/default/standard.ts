@@ -1,4 +1,4 @@
-import { Theme } from '../Theme';
+import { Theme } from '../Theme.js';
 
 export const standardTheme: Theme = {
   primaryColor: '#ff5722',

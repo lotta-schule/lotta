@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, waitFor } from '../test-utils';
-import { Drawer } from './Drawer';
-import userEvent from '@testing-library/user-event';
+import { render, userEvent, waitFor } from '../test-utils.js';
+import { Drawer } from './Drawer.js';
 
 describe('general/Drawer', () => {
   it('should not show drawer when not open', async () => {

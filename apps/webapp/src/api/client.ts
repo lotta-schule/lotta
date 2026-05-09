@@ -1,7 +1,13 @@
 import { cache } from 'react';
-import { registerApolloClient } from '@apollo/experimental-nextjs-app-support';
-import { createRSCClient } from './apollo/client-rsc';
+import {
+  ApolloClient,
+  registerApolloClient,
+} from '@apollo/client-integration-nextjs';
+import { createRSCClient } from './apollo/client-rsc.js';
 
 const registeredApolloClient = registerApolloClient(createRSCClient);
 
 export const getClient = cache(() => registeredApolloClient.getClient());
+
+export const query: ApolloClient['query'] = async (options) =>
+  (await getClient()).query(options);

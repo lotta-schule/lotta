@@ -1,5 +1,5 @@
-import { FileModel } from './FileModel';
-import { ID } from './ID';
+import { FileModel } from './FileModel.js';
+import { ID } from './ID.js';
 
 export enum ContentModuleType {
   TITLE = 'TITLE',

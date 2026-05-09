@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Box, FileSize } from '@lotta-schule/hubert';
 import { format, isSameMonth } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { TenantModel } from 'model';
-import { type TenantUsage } from 'loader';
+import { TenantModel } from '#/model/index.js';
+import { type TenantUsage } from '#/loader/index.js';
 import clsx from 'clsx';
 
 import styles from './Usage.module.scss';

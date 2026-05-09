@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Edit } from './Edit';
-import { Show } from './Show';
+import { Edit } from './Edit.js';
+import { Show } from './Show.js';
 
 import styles from './Text.module.scss';
-import { ContentModuleComponentProps } from '../ContentModule';
+import { ContentModuleComponentProps } from '../ContentModule.js';
 
 export const Text = React.memo(
   ({

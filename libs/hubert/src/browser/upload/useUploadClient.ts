@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BrowserNode, BrowserState } from '../BrowserStateContext';
+import { BrowserNode, BrowserState } from '../BrowserStateContext.js';
 
 export type Upload = {
   __id: number;

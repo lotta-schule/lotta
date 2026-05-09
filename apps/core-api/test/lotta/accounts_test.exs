@@ -258,7 +258,7 @@ defmodule Lotta.AccountsTest do
 
       results = Accounts.search_user("exact@test.com", nil, nil)
 
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.email == "exact@test.com"))
     end
 
@@ -655,8 +655,8 @@ defmodule Lotta.AccountsTest do
       admin_groups = Enum.filter(groups, & &1.is_admin_group)
       regular_groups = Enum.filter(groups, &(!&1.is_admin_group))
 
-      assert length(admin_groups) >= 1
-      assert length(regular_groups) >= 1
+      assert admin_groups != []
+      assert regular_groups != []
     end
 
     test "list_groups_for_enrollment_token/1 finds groups with specific token" do

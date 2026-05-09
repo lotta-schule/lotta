@@ -1,159 +1,121 @@
-import * as Sentry from '@sentry/nextjs';
-import { sendRefreshRequest } from 'api/auth';
-import { serialize } from 'cookie-es';
-import { NextResponse } from 'next/server';
-import { JWT } from 'util/auth/jwt';
-import { Logger } from 'util/logger';
+import { sendRefreshRequest } from '#/api/auth.js';
+import { appConfig } from '#/config.js';
+import { type NextRequest, NextResponse } from 'next/server.js';
+import { JWT } from './util/auth/jwt.js';
 
-import type { NextRequest } from 'next/server';
-
-export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|font|favicon.ico|favicon|p/|stry/).*)',
-  ],
+const isRequestToApi = (pathname: string) => {
+  if (pathname === '/api') return true;
+  if (pathname.startsWith('/auth/')) return true;
+  if (pathname.startsWith('/storage/')) return true;
+  if (pathname.startsWith('/data/')) return true;
+  if (pathname.startsWith('/setup/')) return true;
+  return false;
 };
 
-// This function can be marked `async` if using `await` inside
+const isStaticAssetRequest = (pathname: string) => {
+  return (
+    pathname.startsWith('/_next/static') ||
+    pathname.startsWith('/_next/image') ||
+    pathname.startsWith('/favicon.ico') ||
+    pathname.startsWith('/sitemap.xml') ||
+    pathname.startsWith('/robots.txt') ||
+    pathname.startsWith('/p/')
+  );
+};
+
 export async function middleware(request: NextRequest) {
+  if (isRequestToApi(request.nextUrl.pathname)) {
+    const targetUrl = request.nextUrl.clone();
+    targetUrl.host = new URL(appConfig.get('API_URL')).host;
+    return NextResponse.rewrite(targetUrl);
+  }
+
+  if (isStaticAssetRequest(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+
+  const incomingAccessToken =
+    request.cookies.get('SignInAccessToken')?.value ?? null;
+
+  const incomingRefreshToken =
+    request.cookies.get('SignInRefreshToken')?.value ?? null;
+
+  const parsedIncomingAccessToken = incomingAccessToken
+    ? JWT.parse(incomingAccessToken)
+    : null;
+
+  const modifiedHeaders = new Headers(request.headers);
+  // We don't want to get a new token when
+  // - there is no refresh token (=> noting to refresh with)
+  // - the access token is not close to expiration (=> no need to refresh yet)
+  // - the access token is of type "high_security" (=> should not be refreshed automatically)
   if (
-    /\.(png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot)$/.test(
-      request.nextUrl.pathname
-    ) ||
-    /^\/(api|backend|auth|storage)/.test(request.nextUrl.pathname)
+    !incomingRefreshToken ||
+    parsedIncomingAccessToken?.isExpired(30) === false ||
+    parsedIncomingAccessToken?.body.type === 'high_security'
   ) {
-    // do not execute on static files
-    return NextResponse.next({ request });
+    if (incomingAccessToken) {
+      modifiedHeaders.set('Authorization', `Bearer ${incomingAccessToken}`);
+    }
+    return NextResponse.next({
+      request: {
+        headers: modifiedHeaders,
+      },
+    });
   }
 
-  const authInfo = {
-    refreshToken: null as string | null,
-    accessToken: request.cookies.get('SignInAccessToken')?.value ?? null,
-  };
-
-  const incomingRefreshToken = request.cookies.get('SignInRefreshToken')?.value;
-  const authHeader = request.headers.get('Authorization');
-
-  if (!authInfo.accessToken && authHeader?.startsWith('Bearer ')) {
-    const accessToken = authHeader.slice(7);
-
-    let accessTokenJwt = null;
-    try {
-      accessTokenJwt = JWT.parse(accessToken);
-    } catch (error) {
-      Logger.error('Error parsing access token', { error });
-    }
-
-    if (!accessTokenJwt?.isValid()) {
-      Logger.warn('Access token is not valid!', { accessTokenJwt });
-    } else if (accessTokenJwt.isExpired(0)) {
-      Logger.warn('Access token is expired!');
-    } else {
-      authInfo.accessToken = accessToken;
-    }
+  if (!incomingAccessToken) {
+    modifiedHeaders.delete('Authorization');
+    return NextResponse.next({
+      request: {
+        headers: modifiedHeaders,
+      },
+    });
   }
 
-  if (incomingRefreshToken) {
-    let refreshTokenJwt = null;
-    try {
-      refreshTokenJwt = JWT.parse(incomingRefreshToken);
-    } catch (error) {
-      Logger.error('Error parsing refresh token', { error });
+  const currentHost =
+    request.headers.get('x-forwarded-host') ||
+    request.headers.get('host') ||
+    request.nextUrl.host;
+
+  const { accessToken, refreshToken, tenant } = await sendRefreshRequest(
+    incomingAccessToken,
+    incomingRefreshToken,
+    {
+      baseURL: appConfig.get('API_URL'),
+      originaryHost: currentHost,
     }
+  );
 
-    if (
-      refreshTokenJwt?.isValid() &&
-      // we do not need to check if the refresh token is expired (or will expire in the next seconds)
-      !refreshTokenJwt.isExpired(0)
-    ) {
-      if (
-        // refresh the token if it expires in the next 5 minutes or if the access token is not set
-        refreshTokenJwt.body.expires.getTime() - Date.now() < 1000 * 60 * 5 ||
-        !authInfo.accessToken
-      ) {
-        const updateRefreshTokenResult = await sendRefreshRequest({
-          'x-lotta-originary-host': request.headers.get('host'),
-          Cookie: serialize('SignInRefreshToken', incomingRefreshToken, {
-            sameSite: 'strict',
-            expires: refreshTokenJwt.body.expires,
-            secure: false,
-            httpOnly: true,
-          }),
-        });
-
-        if (updateRefreshTokenResult) {
-          const { accessToken, refreshToken: updatedRefreshToken } =
-            updateRefreshTokenResult;
-
-          authInfo.refreshToken = updatedRefreshToken;
-          authInfo.accessToken = accessToken;
-        }
-      } else {
-        authInfo.refreshToken = incomingRefreshToken;
-      }
-    } else if (authHeader) {
-      Logger.warn('User does not have a refresh token');
-      const accessToken = authHeader.slice(7);
-      let accessTokenJwt = null;
-      try {
-        accessTokenJwt = JWT.parse(accessToken);
-      } catch (error) {
-        Logger.error('Error parsing access token', { error });
-      }
-
-      if (accessTokenJwt?.isValid() && !accessTokenJwt.isExpired(0)) {
-        authInfo.accessToken = accessToken;
-      }
-    }
+  if (accessToken) {
+    modifiedHeaders.set('Authorization', `Bearer ${accessToken}`);
   }
-
-  const requestHeaders = new Headers(request.headers);
-  if (authInfo.accessToken) {
-    requestHeaders.set('Authorization', `Bearer ${authInfo.accessToken}`);
+  if (refreshToken) {
+    modifiedHeaders.set('SignInRefreshToken', refreshToken);
   }
-
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
-  if (authInfo.refreshToken) {
-    try {
-      const parsedRefreshToken = JWT.parse(authInfo.refreshToken);
-      response.cookies.set('SignInRefreshToken', authInfo.refreshToken, {
-        httpOnly: true,
-        sameSite: 'strict',
-        secure: process.env.NODE_ENV === 'production',
-        expires: parsedRefreshToken.body.expires,
-        path: '/',
-      });
-
-      // TODO:
-      // I do not think saving the access token in a cookie is a good idea
-      // I think a better approach would be passing it along from server components to
-      // the Apollo client WITHOUT passing via a cookie
-      // We only want to set the access token cookie if a new access token was
-      // generated.
-      // This is the case when a new refresh token (authInfo.refreshToken !== null) was
-      // issued
-      if (authInfo.accessToken) {
-        const parsedAccessToken = JWT.parse(authInfo.accessToken);
-        response.cookies.set('SignInAccessToken', authInfo.accessToken, {
-          httpOnly: false,
-          sameSite: 'strict',
-          secure: process.env.NODE_ENV === 'production',
-          expires: parsedAccessToken.body.expires,
-          path: '/',
-        });
-      }
-    } catch (e) {
-      Sentry.captureException(e);
-      Logger.error('Error parsing new token', { e });
-    }
+  if (tenant) {
+    modifiedHeaders.set('x-lotta-tenant', tenant);
   } else {
-    // user has no valid refresh token
-    // remove the refresh token cookie
-    response.cookies.delete({
-      name: 'SignInRefreshToken',
+    modifiedHeaders.set('x-lotta-originary-host', currentHost);
+  }
+
+  const response = NextResponse.next({
+    request: {
+      headers: modifiedHeaders,
+    },
+  });
+
+  if (accessToken) {
+    response.cookies.set('SignInAccessToken', accessToken, {
+      maxAge: 21 * 24 * 60 * 60, // 3 weeks
+      sameSite: 'lax',
+    });
+  }
+  if (refreshToken) {
+    response.cookies.set('SignInRefreshToken', refreshToken, {
+      maxAge: 21 * 24 * 60 * 60, // 3 weeks
       httpOnly: true,
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
+      sameSite: 'lax',
     });
   }
 

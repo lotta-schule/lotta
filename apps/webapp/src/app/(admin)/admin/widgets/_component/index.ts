@@ -1,3 +1,3 @@
-export * from './CreateWidgetButton';
-export * from './WidgetEditor';
-export * from './WidgetsNavigation';
+export * from './CreateWidgetButton.js';
+export * from './WidgetEditor.js';
+export * from './WidgetsNavigation.js';

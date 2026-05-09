@@ -3,9 +3,9 @@
 import * as React from 'react';
 import { motion } from 'framer-motion';
 import { mergeProps, useModal, useOverlay } from 'react-aria';
-import { usePreventScroll } from '../util';
-import { ChevronRight } from '../icon';
-import { Button } from '../button';
+import { usePreventScroll } from '../util/index.js';
+import { ChevronRight } from '../icon/index.js';
+import { Button } from '../button/index.js';
 
 import styles from './Drawer.module.scss';
 

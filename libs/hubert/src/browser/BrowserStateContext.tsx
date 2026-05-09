@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Upload, useUploadClient } from './upload/useUploadClient';
+import { Upload, useUploadClient } from './upload/useUploadClient.js';
 
 export interface DefaultFileMetadata {
   mimeType: string;

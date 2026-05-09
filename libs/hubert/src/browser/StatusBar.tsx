@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Home } from '../icon';
-import { BrowserPath, useBrowserState } from './BrowserStateContext';
-import { isDirectoryNode, isFileNode } from './utils';
+import { Home } from '../icon/index.js';
+import { BrowserPath, useBrowserState } from './BrowserStateContext.js';
+import { isDirectoryNode, isFileNode } from './utils.js';
 import clsx from 'clsx';
 
 import styles from './StatusBar.module.scss';

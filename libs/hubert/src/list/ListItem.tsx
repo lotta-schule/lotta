@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Divider } from '../divider/Divider';
+import { Divider } from '../divider/Divider.js';
 import clsx from 'clsx';
 
 import styles from './List.module.scss';

@@ -51,6 +51,8 @@ defmodule Lotta.Billings.Invoice do
     field(:due_date, :date)
     field(:paid_at, :utc_datetime)
 
+    field(:period, :string, virtual: true)
+
     field(:status, Ecto.Enum,
       values: [:draft, :issued, :paid, :overdue, :cancelled],
       default: :draft
@@ -135,7 +137,7 @@ defmodule Lotta.Billings.Invoice do
         changes -> changes
       end
 
-    if length(items) < 1 do
+    if Enum.empty?(items) do
       add_error(changeset, :items, "must have at least one item")
     else
       changeset

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button } from '../button';
-import { CircularProgress } from '../progress';
+import { Button } from '../button/index.js';
+import { CircularProgress } from '../progress/index.js';
 import {
   Check,
   Close,
@@ -8,10 +8,10 @@ import {
   CreateNewFolder,
   Home,
   KeyboardArrowLeft,
-} from '../icon';
-import { useBrowserState } from './BrowserStateContext';
-import { ActiveUploadsDialog } from './dialogs/ActiveUploadsDialog';
-import { Searchbar } from './Searchbar';
+} from '../icon/index.js';
+import { useBrowserState } from './BrowserStateContext.js';
+import { ActiveUploadsDialog } from './dialogs/ActiveUploadsDialog.js';
+import { Searchbar } from './Searchbar.js';
 import clsx from 'clsx';
 
 import styles from './Toolbar.module.scss';

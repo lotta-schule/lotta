@@ -508,7 +508,7 @@ defmodule Lotta.Eduplaces.SyncerTest do
     test "returns only tenants with eduplaces_id set", %{tenant: tenant} do
       tenants = Syncer.list_eduplaces_tenants()
 
-      assert length(tenants) >= 1
+      assert tenants != []
       assert Enum.all?(tenants, &(&1.eduplaces_id != nil))
       assert Enum.any?(tenants, &(&1.eduplaces_id == tenant.eduplaces_id))
     end

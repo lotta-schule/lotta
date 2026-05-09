@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useMutation, ApolloCache } from '@apollo/client';
+import { ApolloCache } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { BrowserNode, BrowserProps } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from 'model';
+import { DirectoryModel, FileModel } from '#/model/index.js';
 
-import DeleteDirectoryMutation from 'api/mutation/DeleteDirectoryMutation.graphql';
-import DeleteFileMutation from 'api/mutation/DeleteFileMutation.graphql';
+import DeleteDirectoryMutation from '#/api/mutation/DeleteDirectoryMutation.graphql';
+import DeleteFileMutation from '#/api/mutation/DeleteFileMutation.graphql';
 
 const updateCache = (client: ApolloCache<any>, node: BrowserNode) => {
   const normalizedId = client.identify(node.meta as any);

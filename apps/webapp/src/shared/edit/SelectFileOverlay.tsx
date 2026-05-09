@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { FileModel } from 'model';
+import { FileModel } from '#/model/index.js';
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
 } from '@lotta-schule/hubert';
-import { UserBrowser } from 'shared/browser';
-import { EditOverlay } from './EditOverlay';
+import { UserBrowser } from '#/shared/browser/index.js';
+import { EditOverlay } from './EditOverlay.js';
 
 export type SelectFileOverlayProps = {
   label: string;

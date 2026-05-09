@@ -7,82 +7,78 @@
   padding-top: 0.2em;
   cursor: pointer;
   font-size: 1rem;
-  input {
-    position: absolute;
-    z-index: -1;
-    opacity: 0;
-  }
-  .controlIndicator {
-    position: absolute;
-    top: 0.1em;
-    left: 0;
+
+  input[type="radio"] {
+    appearance: none;
+    display: grid;
+    place-content: center;
+
     height: 1.2em;
     width: 1.2em;
+    padding: 0;
+
     background: rgba(var(--lotta-box-background-color), 1);
     border: 1px solid rgba(var(--lotta-label-text-color), 1);
-  }
-  &:hover input ~ .controlIndicator,
-  input:focus ~ .controlIndicator {
-    background: rgba(var(--lotta-page-background-color), 0.7);
+    border-radius: 50%;
+    transform: translateY(-0.075em);
+
+    &::before {
+      animation: s-ripple 400ms ease-out;
+      content: "";
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2rem;
+      height: 2rem;
+      margin-left: -0.5rem;
+      margin-top: -0.5rem;
+      background: rgba(var(--control-indicator-color), 0.5);
+      border-radius: 3rem;
+      opacity: 0.3;
+      z-index: 1;
+      transform: scale(0);
+      box-shadow: 0px 0px 5px rgba(var(--control-indicator-color), 0.8);
+    }
+    &::after {
+      box-sizing: unset;
+      content: "";
+      position: absolute;
+      display: none;
+
+      background: rgba(var(--control-indicator-color), 1);
+      transition: background 250ms;
+
+      left: 0.2em;
+      top: 0.2em;
+      height: 0.7em;
+      width: 0.7em;
+      border-radius: 50%;
+    }
+
+    &:focus,
+    &:is(.root:hover > input:not(:disabled)) {
+      background: rgba(var(--lotta-page-background-color), 0.7);
+    }
+
+    &:checked {
+      &::before {
+        animation-name: s-ripple-dup;
+      }
+      &::after {
+        display: block;
+      }
+    }
+    &:disabled {
+      background: rgba(var(--lotta-page-background-color), 0.7);
+      opacity: 0.6;
+      pointer-events: none;
+      &::after {
+        background: rgba(var(--lotta-disabled-color), 1);
+      }
+    }
   }
 
-  input:checked ~ .controlIndicator {
-    background: rgba(var(--lotta-box-background-color), 1);
-  }
-  &:hover input:not([disabled]):checked ~ .controlIndicator,
-  input:checked:focus ~ .controlIndicator {
-    background: rgba(var(--lotta-box-background-color), 0.7);
-  }
-  input:disabled ~ .controlIndicator {
-    background: rgba(var(--lotta-page-background-color), 0.7);
-    opacity: 0.6;
-    pointer-events: none;
-  }
-  .controlIndicator:after {
-    box-sizing: unset;
-    content: "";
-    position: absolute;
-    display: none;
-  }
-  input:checked ~ .controlIndicator:after {
-    display: block;
-  }
-  .controlIndicator {
-    border-radius: 50%;
-  }
-
-  .controlIndicator:after {
-    left: 0.2em;
-    top: 0.2em;
-    height: 0.7em;
-    width: 0.7em;
-    border-radius: 50%;
-    background: rgba(var(--control-indicator-color), 1);
-    transition: background 250ms;
-  }
-  input:disabled ~ .controlIndicator:after {
-    background: rgba(var(--lotta-disabled-color), 1);
-  }
-  .controlIndicator::before {
-    content: "";
-    display: block;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 2rem;
-    height: 2rem;
-    margin-left: -0.5rem;
-    margin-top: -0.5rem;
-    background: rgba(var(--control-indicator-color), 0.5);
-    border-radius: 3rem;
-    opacity: 0.3;
-    z-index: 1;
-    transform: scale(0);
-    box-shadow: 0px 0px 5px rgba(var(--control-indicator-color), 0.8);
-  }
-  input + .controlIndicator::before {
-    animation: s-ripple 400ms ease-out;
-  }
   @keyframes s-ripple {
     0% {
       opacity: 0;
@@ -110,12 +106,5 @@
       opacity: 0;
       transform: scale(1);
     }
-  }
-  input + .lotta-radio__control-indicator::before {
-    animation: s-ripple 400ms ease-out;
-  }
-
-  input:checked + .lotta-radio__control-indicator::before {
-    animation-name: s-ripple-dup;
   }
 }

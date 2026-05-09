@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { createEditor, Descendant } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
-import { Node } from './SlateCustomTypes';
+import { Node } from './SlateCustomTypes.js';
 import {
   renderElement,
   renderLeaf,
   withImages,
   withLinks,
   getNormalizedSlateState,
-} from './SlateUtils';
-import { ContentModuleModel } from '../../../model';
+} from './SlateUtils.js';
+import { ContentModuleModel } from '../../../model/index.js';
 
 interface ShowProps {
   contentModule: ContentModuleModel<{ nodes: Node[] }>;

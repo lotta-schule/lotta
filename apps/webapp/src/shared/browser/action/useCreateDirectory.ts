@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useMutation, ApolloCache } from '@apollo/client';
+import { ApolloCache } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { BrowserProps } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from 'model';
+import { DirectoryModel, FileModel } from '#/model/index.js';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import CreateDirectoryMutation from 'api/mutation/CreateDirectoryMutation.graphql';
+import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import CreateDirectoryMutation from '#/api/mutation/CreateDirectoryMutation.graphql';
 
 const updateCache = (
   client: ApolloCache<any>,

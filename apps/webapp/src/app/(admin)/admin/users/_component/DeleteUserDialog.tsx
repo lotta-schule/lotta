@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArticleModel, UserModel } from 'model';
+import { ArticleModel, UserModel } from '#/model/index.js';
 import {
   Button,
   CircularProgress,
@@ -8,12 +8,12 @@ import {
   DialogActions,
   ErrorMessage,
 } from '@lotta-schule/hubert';
-import { useMutation, useQuery } from '@apollo/client';
-import { Article } from 'util/model';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { Article } from '#/util/model/index.js';
 import Link from 'next/link';
+import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries.js';
 
-import GetArticlesWithUserFiles from 'api/query/GetArticlesWithUserFiles.graphql';
-import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
+import GetArticlesWithUserFiles from '#/api/query/GetArticlesWithUserFiles.graphql';
 
 enum DeleteUserDialogSteps {
   Start,
@@ -40,7 +40,7 @@ export const DeleteUserDialog = React.memo<DeleteUserDialogProps>(
       nextFetchPolicy: 'cache-first',
     });
 
-    const [destroyAccount] = useMutation(DestroyAccountMutation, {
+    const [destroyAccount] = useMutation(PERMANENTLY_DELETE_USER_ACCOUNT, {
       variables: { userId: user.id, transferFileIds: [] },
       onCompleted: () => onConfirm?.(),
     });

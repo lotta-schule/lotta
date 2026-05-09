@@ -1,9 +1,9 @@
-import { ID } from './ID';
-import { UserModel } from './UserModel';
-import { TenantModel } from './TenantModel';
-import { ArticleModel } from './ArticleModel';
-import { ContentModuleModel } from './ContentModuleModel';
-import { CategoryModel } from './CategoryModel';
+import { ID } from './ID.js';
+import { UserModel } from './UserModel.js';
+import { TenantModel } from './TenantModel.js';
+import { ArticleModel } from './ArticleModel.js';
+import { ContentModuleModel } from './ContentModuleModel.js';
+import { CategoryModel } from './CategoryModel.js';
 
 export interface DirectoryModel {
   __typename?: 'Directory';

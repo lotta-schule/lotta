@@ -1,6 +1,6 @@
-import { render } from 'test/util';
-import { createFormats } from 'test/fixtures';
-import { Image } from './Image';
+import { render } from '#/test/util.js';
+import { createFormats } from '#/test/fixtures/index.js';
+import { Image } from './Image.js';
 
 describe('Image ContentModule', () => {
   it('should render an image with caption when a file is set', () => {

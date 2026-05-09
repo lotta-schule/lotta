@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { BaseButton, BaseButtonProps } from './BaseButton';
-import { useButtonGroupContext } from './ButtonGroupContext';
+import { BaseButton, BaseButtonProps } from './BaseButton.js';
+import { useButtonGroupContext } from './ButtonGroupContext.js';
 import clsx from 'clsx';
 
 import styles from './Button.module.scss';

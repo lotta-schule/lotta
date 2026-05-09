@@ -43,16 +43,19 @@ defmodule Lotta.Worker.Conversion do
       nil ->
         {:error, "File not found"}
 
+      {:error, %Image.Error{message: message} = error}
+      when message == "Failed to create image from VipsSource" ->
+        Oban.Notifier.notify(Oban, :conversion_jobs, %{"error" => job_id})
+        Logger.error("Error converting file: #{inspect(error)}")
+
+        # File is corrupted or not supported, so we can cancel the job
+        {:cancel, message}
+
       {:error, error} ->
         Oban.Notifier.notify(Oban, :conversion_jobs, %{"error" => job_id})
         Logger.error("Error converting file: #{inspect(error)}")
 
-        if to_string(error) == "Failed to create image from VipsSource" do
-          # File is corrupted or not supported, so we can cancel the job
-          {:cancel, to_string(error)}
-        else
-          {:error, "Error converting file: #{error}"}
-        end
+        {:error, "Error converting file: #{inspect(error)}"}
     end
   end
 

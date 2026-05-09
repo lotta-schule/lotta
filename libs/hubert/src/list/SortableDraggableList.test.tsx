@@ -1,6 +1,9 @@
-import { render } from 'test-utils';
+import { render } from '#/test-utils';
 import { describe, it, expect, vi } from 'vitest';
-import { SortableDraggableList, SortableItem } from './SortableDraggableList';
+import {
+  SortableDraggableList,
+  SortableItem,
+} from './SortableDraggableList.js';
 
 describe('SortableDraggableList', () => {
   const items = [
