@@ -7,9 +7,7 @@ import {
 } from 'component/layout';
 import { CategoryListToolbar, CategoryNavigation } from './_component';
 
-async function CategoriesLayout({
-  children,
-}: React.PropsWithChildren<{ params: { groupId?: string } }>) {
+async function CategoriesLayout({ children }: React.PropsWithChildren) {
   return (
     <AdminPage
       icon={faUserGroup}

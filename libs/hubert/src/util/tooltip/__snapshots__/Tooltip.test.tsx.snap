@@ -3,20 +3,20 @@
 exports[`util/Tooltip > should render 1`] = `
 <div>
   <div
-    class="_root_2e247f"
+    class="_root_a55cea"
   >
     <div
-      class="_trigger_2e247f"
+      class="_trigger_a55cea"
     >
       <button
         aria-current="false"
-        class="_root_0977c5 _root_3de4f3"
+        class="_root_64ffb3 _root_d5edcf"
         data-variant="default"
         role="button"
         type="button"
       >
         <span
-          class="_label_3de4f3"
+          class="_label_d5edcf"
         >
           Test
         </span>

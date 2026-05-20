@@ -10,9 +10,7 @@ import {
 } from 'component/layout';
 import { LinearProgress } from '@lotta-schule/hubert';
 
-async function GroupsLayout({
-  children,
-}: React.PropsWithChildren<{ params: { groupId?: string } }>) {
+async function GroupsLayout({ children }: React.PropsWithChildren) {
   return (
     <AdminPage icon={faUserGroup} title={'Gruppen'} hasHomeLink takesFullSpace>
       <TwoColumnLayout>

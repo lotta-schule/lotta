@@ -2,10 +2,10 @@
 
 exports[`list/ListItem > should render a list item 1`] = `
 <li
-  class="_li_5a05a4"
+  class="_li_b04820"
 >
   <div
-    class="_mainSection_5a05a4"
+    class="_mainSection_b04820"
   >
     Item
   </div>

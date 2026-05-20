@@ -11,13 +11,13 @@ describe('shared/Button', () => {
     expect(screen.getByRole('button')).toMatchInlineSnapshot(`
       <button
         aria-current="false"
-        class="_root_0977c5 _root_3de4f3"
+        class="_root_64ffb3 _root_d5edcf"
         data-variant="default"
         role="button"
         type="button"
       >
         <span
-          class="_label_3de4f3"
+          class="_label_d5edcf"
         >
           Click
         </span>
