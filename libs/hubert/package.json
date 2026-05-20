@@ -18,13 +18,13 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@epic-web/invariant": "^1.0.0",
-    "@floating-ui/react": "^0.27.5",
+    "@floating-ui/react": "^0.27.19",
     "clsx": "^2.1.1",
     "colorjs.io": "^0.5.2",
-    "lodash": "^4.17.21",
-    "react-aria": "^3.36.0",
-    "react-dropzone": "^14.3.8",
-    "react-stately": "^3.34.0",
+    "lodash": "^4.18.1",
+    "react-aria": "^3.48.0",
+    "react-dropzone": "^14.4.1",
+    "react-stately": "^3.46.0",
     "react-use": "^17.6.0"
   },
   "peerDependencies": {
