@@ -57,7 +57,7 @@ export const ProfileDeleteFileSelection =
                         label={
                           <ResponsiveImage
                             file={file}
-                            alt={file.filename}
+                            alt={file.filename ?? ''}
                             format="preview"
                           />
                         }
