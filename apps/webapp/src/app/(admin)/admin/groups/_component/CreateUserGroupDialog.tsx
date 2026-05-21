@@ -24,6 +24,7 @@ export const CREATE_USER_GROUP = graphql(`
       canReadFullName
       sortKey
       enrollmentTokens
+      eduplacesId
     }
   }
 `);
