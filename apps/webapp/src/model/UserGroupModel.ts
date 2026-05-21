@@ -9,7 +9,7 @@ export interface UserGroupModel {
   name: string;
   isAdminGroup: boolean;
   sortKey: number;
-  canReadFullName: boolean;
+  canReadFullName?: boolean | null;
   enrollmentTokens?: string[];
 }
 
