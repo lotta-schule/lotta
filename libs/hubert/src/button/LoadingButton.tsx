@@ -11,7 +11,7 @@ import styles from './LoadingButton.module.scss';
 
 export type LoadingButtonState = 'idle' | 'loading' | 'success' | 'error';
 
-export type LoadingButtonProps<T = unknown> = Omit<
+export type LoadingButtonProps<T = any> = Omit<
   ButtonProps,
   'onlyIcon' | 'classes'
 > & {
