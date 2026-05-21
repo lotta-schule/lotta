@@ -1,6 +1,6 @@
 import { cache } from 'react';
 import { getClient } from '../api/client';
-import { GET_TENANT_QUERY, TENANT_COMMON_FIELDS } from 'util/tenant';
+import { GET_TENANT_QUERY, TENANT_COMMON_FIELDS, Tenant } from 'util/tenant';
 import { graphql, ResultOf } from 'api/graphql';
 
 export const GET_TENANT_WITH_STATS_QUERY = graphql(
@@ -30,12 +30,8 @@ export class TenantNotFoundError extends Error {
   }
 }
 
-export type LoadTenantParams = {
-  includeStats?: boolean;
-};
-
-export const loadTenant = cache(
-  async ({ includeStats = false }: LoadTenantParams = {}) => {
+const loadTenantInternal = cache(
+  async (includeStats: boolean): Promise<Tenant | TenantWithStats> => {
     const client = await getClient();
     return await client
       .query({
@@ -50,3 +46,15 @@ export const loadTenant = cache(
       });
   }
 );
+
+export function loadTenant(params: {
+  includeStats: true;
+}): Promise<TenantWithStats>;
+export function loadTenant(params?: {
+  includeStats?: false | boolean;
+}): Promise<Tenant>;
+export function loadTenant(
+  params: { includeStats?: boolean } = {}
+): Promise<Tenant | TenantWithStats> {
+  return loadTenantInternal(params.includeStats ?? false);
+}
