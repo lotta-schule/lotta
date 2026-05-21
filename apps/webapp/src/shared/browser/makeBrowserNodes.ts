@@ -21,7 +21,12 @@ const makeFileNode = (file: FileModel): BrowserNode<'file'> => ({
   name: file.filename ?? file.id,
   type: 'file',
   parent: file.parentDirectory?.id ?? null,
-  meta: file,
+  meta: {
+    ...file,
+    mimeType: file.mimeType ?? '',
+    size: file.filesize ?? 0,
+    metadata: {},
+  },
 });
 
 export const makeBrowserNodes = (result?: {
