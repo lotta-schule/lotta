@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { type CollectionChildren } from '@react-types/shared';
 import { Delete, Download, Edit, OpenWith } from '../icon';
 import { Item } from '../menu';
 import { BrowserPath, useBrowserState } from './BrowserStateContext';
@@ -58,7 +59,7 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
             Löschen
           </Item>
         ),
-    ].filter(Boolean) as React.ReactElement[];
+    ].filter(Boolean) as unknown as CollectionChildren<object>;
   }, [deleteNode, downloadUrl, moveNode, nodePaths, renameNode]);
 
   const onAction = React.useCallback(
