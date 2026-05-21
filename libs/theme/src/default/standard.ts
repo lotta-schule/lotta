@@ -22,4 +22,8 @@ export const standardTheme: Theme = {
 
   textFontFamily: 'Muli',
   titleFontFamily: "'Schoolbell', cursive",
+
+  /* component-specific styles */
+  badgeBackgroundColor: '#ff5722',
+  badgeTextColor: '#ffffff',
 };
