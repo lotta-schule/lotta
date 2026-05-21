@@ -18,5 +18,5 @@ export interface UserModel {
   groups: UserGroupModel[];
   avatarImageFile?: FileModel | null;
   enrollmentTokens?: string[];
-  hasChangedDefaultPassword?: boolean;
+  hasChangedDefaultPassword?: boolean | null;
 }
