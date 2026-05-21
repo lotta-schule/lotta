@@ -28,7 +28,7 @@ describe('/api/auth/callback', () => {
   });
 
   it('should export correct Next.js API config', async () => {
-    const callbackModule = await import('./callback');
+    const callbackModule = await import('pages/api/auth/callback');
 
     expect(callbackModule.config).toEqual({
       api: {
