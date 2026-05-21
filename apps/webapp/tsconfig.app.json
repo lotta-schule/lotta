@@ -4,10 +4,8 @@
   "compilerOptions": {
     "baseUrl": "src/",
     "composite": true,
-    "types": [
-      "node",
-      "vite/client"
-    ],
+    "noEmit": false,
+    "types": ["node", "vite/client"],
     "outDir": "../../dist/app/web/app"
   },
   "include": [
@@ -21,6 +19,6 @@
     "**/*.test.ts",
     "**/*.test.ts?",
     "src/test/**/*.ts",
-    "src/test/**/*.ts?",
-  ],
+    "src/test/**/*.ts?"
+  ]
 }

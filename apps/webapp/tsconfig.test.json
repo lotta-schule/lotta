@@ -6,8 +6,9 @@
   "compilerOptions": {
     "baseUrl": "src/",
     "composite": true,
+    "noEmit": false,
     "outDir": "../../dist/app/web/test",
-    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "vitest"],
+    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "vitest"]
   },
   "include": [
     "vite.config.ts",
@@ -22,6 +23,6 @@
     "src/test/**/*.tsx",
     "**/*.d.ts",
     "**/*.graphql",
-    "src/**/*.json",
+    "src/**/*.json"
   ]
 }
