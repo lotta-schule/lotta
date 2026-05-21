@@ -1,3 +1,15 @@
+## 6.1.22 (2026-05-21)
+
+### 🩹 Fixes
+
+- align react peer deps and calendar layout type for CI ([3f26960c](https://github.com/lotta-schule/lotta/commit/3f26960c))
+- make CI build and tests pass after package update ([#540](https://github.com/lotta-schule/lotta/pull/540))
+- **webapp,hubert:** fix Next.js 15 params types and update snapshots ([52aa97ae](https://github.com/lotta-schule/lotta/commit/52aa97ae))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.1.21 (2026-05-02)
 
 ### 🚀 Features
