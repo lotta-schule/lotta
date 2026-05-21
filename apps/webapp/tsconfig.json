@@ -38,6 +38,6 @@
     }
   ],
   "files": [],
-  "include": [],
+  "include": ["src/**/*.d.ts"],
   "exclude": []
 }
