@@ -17,7 +17,7 @@ describe('/api/auth/callback', () => {
   it('should create proxy middleware with correct configuration', async () => {
     const { createProxyMiddleware } = await import('http-proxy-middleware');
 
-    await import('./callback');
+    await import('pages/api/auth/callback');
 
     expect(createProxyMiddleware).toHaveBeenCalledWith({
       target: 'http://localhost:4000',
@@ -41,7 +41,7 @@ describe('/api/auth/callback', () => {
   it('should use API_URL from app config', async () => {
     const { appConfig } = await import('config');
 
-    await import('./callback');
+    await import('pages/api/auth/callback');
 
     expect(appConfig.get).toHaveBeenCalledWith('API_URL');
   });
