@@ -3,9 +3,9 @@ import { ID } from './ID';
 export interface UserGroupModel {
   __typename?: 'UserGroup';
   id: ID;
-  eduplacesId?: string | null;
-  insertedAt?: string;
-  updatedAt?: string;
+  eduplacesId: string | null;
+  insertedAt: string;
+  updatedAt: string;
   name: string;
   isAdminGroup: boolean;
   sortKey: number;

@@ -1,7 +1,6 @@
 import { cache } from 'react';
 import { getClient } from 'api/client';
 import { graphql } from 'api/graphql';
-import { UserGroupModel } from 'model';
 
 export const GET_GROUP_QUERY = graphql(`
   query GetGroup($id: ID!) {
@@ -17,10 +16,10 @@ export const GET_GROUP_QUERY = graphql(`
   }
 `);
 
-export const loadUserGroup = cache(async (id: UserGroupModel['id']) => {
+export const loadUserGroup = cache(async (id: string) => {
   const client = await getClient();
   return await client
-    .query<{ group: UserGroupModel }>({
+    .query({
       query: GET_GROUP_QUERY,
       variables: { id },
     })
