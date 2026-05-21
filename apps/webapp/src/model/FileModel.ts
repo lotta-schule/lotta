@@ -81,7 +81,7 @@ export interface FileModel {
   parentDirectory?: Partial<DirectoryModel>;
   formats: {
     name: AvailableFormat;
-    url: string;
+    url: string | null;
     type: FileModelType;
     mimeType?: string;
     availability: {
