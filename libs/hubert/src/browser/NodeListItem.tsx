@@ -233,14 +233,13 @@ export const NodeListItem = React.memo(
         <VirtualTrigger {...contextMenuPosition} />
         <PopoverContent>
           <Menu
-            aria-label="Kontextmenü"
+            {...(menuProps as any)}
             onAction={(key) => {
               setIsContextMenuOpen(false);
               return menuProps.onAction(key);
             }}
-          >
-            {menuProps.children}
-          </Menu>
+            aria-label="Kontextmenü"
+          />
         </PopoverContent>
       </Popover>
     );
