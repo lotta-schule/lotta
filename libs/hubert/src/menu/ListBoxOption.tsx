@@ -18,11 +18,11 @@ export const ListBoxOption = React.memo(
   React.forwardRef(
     (
       { item, state }: ListBoxOptionProps,
-      forwardedRef: React.Ref<HTMLLIElement | null>
+      forwardedRef: React.Ref<HTMLLIElement>
     ) => {
       const ref = React.useRef<HTMLLIElement>(null);
 
-      React.useImperativeHandle(forwardedRef, () => ref.current);
+      React.useImperativeHandle(forwardedRef, () => ref.current!);
 
       const { optionProps, isSelected, isFocused, isDisabled } = useOption(
         { key: item.key },
