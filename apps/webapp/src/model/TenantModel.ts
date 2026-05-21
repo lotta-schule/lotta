@@ -10,8 +10,8 @@ export interface TenantStatsModel {
 export interface TenantModel {
   __typename?: 'Tenant';
   id: string;
-  insertedAt: string;
-  updatedAt: string;
+  insertedAt?: string;
+  updatedAt?: string;
   slug: string;
   title: string;
   host: string;
