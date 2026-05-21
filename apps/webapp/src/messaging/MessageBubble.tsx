@@ -98,7 +98,7 @@ export const MessageBubble = React.memo(
                       </Button>
                     </div>
                     <div className={styles.filesize}>
-                      {new FileSize(file.filesize).humanize()}
+                      {new FileSize(file.filesize ?? 0).humanize()}
                     </div>
                   </div>
                 ))}

@@ -52,7 +52,7 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
           if (a.mimeType === b.mimeType) {
             return b.resolution - a.resolution;
           }
-          return b.mimeType.localeCompare(a.mimeType);
+          return (b.mimeType ?? '').localeCompare(a.mimeType ?? '');
         })
         .filter((f) => f.resolution > 200),
     [videoFormats, getSourceMediaQuery]
