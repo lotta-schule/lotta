@@ -78,20 +78,27 @@ export const ProfileDeleteFileSelection =
               const fileUsageCell = (() => (
                 <td>
                   {file.usage
-                    ?.filter((u) => u.category || u.article)
+                    ?.filter(
+                      (u) =>
+                        ('category' in u && u.category) ||
+                        ('article' in u && u.article)
+                    )
                     .map((usage, i) => {
+                      const category =
+                        'category' in usage ? usage.category : undefined;
+                      const article =
+                        'article' in usage ? usage.article : undefined;
                       const linkTarget = (() => {
-                        if (usage.category) {
-                          return Category.getPath(usage.category);
-                        } else if (usage.article) {
-                          return Article.getPath(usage.article);
+                        if (category) {
+                          return Category.getPath(category);
+                        } else if (article) {
+                          return Article.getPath(article);
                         } else {
                           return '/';
                         }
                       })();
                       const linkText =
-                        (usage.category ?? usage.article)?.title ??
-                        '[ Logo der Seite ]';
+                        (category ?? article)?.title ?? '[ Logo der Seite ]';
                       return (
                         <li key={i}>
                           <Link href={linkTarget} passHref target={'_blank'}>
