@@ -82,7 +82,7 @@ export interface FileModel {
   formats: {
     name: AvailableFormat;
     url: string | null;
-    type: FileModelType;
+    type?: FileModelType;
     mimeType?: string;
     availability: {
       status: 'READY' | 'AVAILABLE' | 'REQUESTABLE' | 'PROCESSING' | 'FAILED';
