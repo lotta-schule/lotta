@@ -207,7 +207,7 @@ export const ArticlePreview = React.memo(
                   onChange={(e) => {
                     onUpdateArticle({
                       ...article,
-                      preview: (e.target as HTMLInputElement).value,
+                      preview: (e.target as HTMLTextAreaElement).value,
                     });
                   }}
                   className={styles.previewSection}
