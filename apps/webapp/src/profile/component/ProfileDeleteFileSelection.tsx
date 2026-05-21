@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Checkbox, Table, Tooltip } from '@lotta-schule/hubert';
 import { Article, Category } from 'util/model';
+import { ArticleModel } from 'model/ArticleModel';
+import { CategoryModel } from 'model/CategoryModel';
 import Link from 'next/link';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { RelevantFilesInUsage } from '../DeletePage';
@@ -90,9 +92,13 @@ export const ProfileDeleteFileSelection =
                         'article' in usage ? usage.article : undefined;
                       const linkTarget = (() => {
                         if (category) {
-                          return Category.getPath(category);
+                          return Category.getPath(
+                            category as unknown as CategoryModel
+                          );
                         } else if (article) {
-                          return Article.getPath(article);
+                          return Article.getPath(
+                            article as unknown as ArticleModel
+                          );
                         } else {
                           return '/';
                         }
