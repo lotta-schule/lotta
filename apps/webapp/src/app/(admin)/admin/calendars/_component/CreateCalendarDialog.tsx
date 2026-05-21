@@ -90,7 +90,7 @@ export const CreateCalendarDialog = React.memo(
             </Button>
             <LoadingButton
               type="submit"
-              onAction={async (e) => {
+              onAction={async (e: SubmitEvent | React.MouseEvent) => {
                 e.preventDefault();
                 await createCalendar();
               }}
