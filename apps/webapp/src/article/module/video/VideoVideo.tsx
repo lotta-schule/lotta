@@ -73,7 +73,7 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
       {validVideoFiles.map((vf) => (
         <source
           key={vf.name}
-          src={vf.url}
+          src={vf.url ?? undefined}
           type={vf.mimeType}
           media={vf.media}
         />
