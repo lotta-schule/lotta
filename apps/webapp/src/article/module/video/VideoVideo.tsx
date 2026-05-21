@@ -67,7 +67,7 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
       data-testid="video"
       playsInline
       controls
-      poster={posterFileUrl}
+      poster={posterFileUrl ?? undefined}
       className={styles.Video}
     >
       {validVideoFiles.map((vf) => (
