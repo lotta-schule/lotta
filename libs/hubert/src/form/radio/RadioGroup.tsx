@@ -27,14 +27,17 @@ export const RadioGroup = React.forwardRef<any, RadioGroupProps>(
     };
     return (
       <div ref={ref} role={'radiogroup'} {...props} className={className}>
-        {React.Children.map(children as any, (child: React.ReactElement) => {
-          const props: RadioProps = child.props;
-          return React.cloneElement(child, {
-            name,
-            onChange: (e: any) => onChangeInput(e, props),
-            checked: props.checked ?? props.value === value,
-          });
-        })}
+        {React.Children.map(
+          children as any,
+          (child: React.ReactElement<RadioProps>) => {
+            const props = child.props;
+            return React.cloneElement(child, {
+              name,
+              onChange: (e: any) => onChangeInput(e, props),
+              checked: props.checked ?? props.value === value,
+            });
+          }
+        )}
       </div>
     );
   }

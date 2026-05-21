@@ -35,8 +35,11 @@ export type AvailableFormat =
   | 'BANNER_660'
   | 'BANNER_990'
   | 'BANNER_1320'
+  | 'ARTICLEPREVIEW_99'
+  | 'ARTICLEPREVIEW_165'
   | 'ARTICLEPREVIEW_330'
   | 'ARTICLEPREVIEW_660'
+  | 'ARTICLEPREVIEW_990'
   | 'PAGEBG_1024'
   | 'PAGEBG_1280'
   | 'PAGEBG_1920'
@@ -78,7 +81,7 @@ export interface FileModel {
   parentDirectory?: Partial<DirectoryModel>;
   formats: {
     name: AvailableFormat;
-    url: string;
+    url: string | null;
     type?: FileModelType;
     mimeType?: string;
     availability: {

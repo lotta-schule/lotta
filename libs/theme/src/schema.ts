@@ -85,4 +85,12 @@ export const schema: Record<
     type: 'font-family',
     description: 'font family for titles',
   },
+  badgeBackgroundColor: {
+    type: 'color',
+    description: 'Badge background color',
+  },
+  badgeTextColor: {
+    type: 'color',
+    description: 'Badge text color',
+  },
 };

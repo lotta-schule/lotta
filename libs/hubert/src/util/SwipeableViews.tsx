@@ -44,13 +44,12 @@ export const SwipeableViews = ({
         }}
         transition={{
           left: {
-            transition: 'ease',
+            type: 'tween',
             ease: 'easeOut',
-            damping: 25,
           },
           x: {
-            type: 'easeInOut',
-            damping: 25,
+            type: 'tween',
+            ease: 'easeInOut',
           },
         }}
         drag={'x'}

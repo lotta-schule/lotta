@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
+import { AnimatePresence, motion, type MotionProps } from 'framer-motion';
 import { Folder, FolderOpen } from '../icon';
 import { useBrowserState } from './BrowserStateContext';
 import { isFileNode } from './utils';
@@ -54,7 +54,7 @@ export const FilePreviewPreview = ({ className }: FilePreviewPreviewProps) => {
       return customIcon;
     }
 
-    const animationProps: AnimationProps = {
+    const animationProps: Pick<MotionProps, 'initial' | 'animate' | 'exit'> = {
       initial: { opacity: 0 },
       animate: { opacity: 1 },
       exit: { opacity: 0 },

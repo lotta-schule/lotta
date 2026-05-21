@@ -199,7 +199,8 @@ export const FormElement = React.memo<FormElementProps>(
                     } else {
                       const fileWithoutFormatsAndMetadata = Object.fromEntries(
                         Object.entries(file).filter(
-                          ([key]) => !['formats', 'metadata'].includes(key)
+                          ([key]) =>
+                            !['formats', 'metadata', 'size'].includes(key)
                         )
                       );
                       onSetValue(

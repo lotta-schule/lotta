@@ -139,7 +139,7 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
                     />
                   ) : undefined
                 }
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent) => {
                   e.preventDefault();
                   setIsActiveUploadsDialogOpen(true);
                 }}

@@ -233,7 +233,7 @@ export const NodeListItem = React.memo(
         <VirtualTrigger {...contextMenuPosition} />
         <PopoverContent>
           <Menu
-            {...menuProps}
+            {...(menuProps as any)}
             onAction={(key) => {
               setIsContextMenuOpen(false);
               return menuProps.onAction(key);

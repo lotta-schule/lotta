@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Checkbox, Table, Tooltip } from '@lotta-schule/hubert';
 import { Article, Category } from 'util/model';
+import { ArticleModel } from 'model/ArticleModel';
+import { CategoryModel } from 'model/CategoryModel';
 import Link from 'next/link';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { RelevantFilesInUsage } from '../DeletePage';
@@ -57,7 +59,7 @@ export const ProfileDeleteFileSelection =
                         label={
                           <ResponsiveImage
                             file={file}
-                            alt={file.filename}
+                            alt={file.filename ?? ''}
                             format="preview"
                           />
                         }
@@ -78,20 +80,31 @@ export const ProfileDeleteFileSelection =
               const fileUsageCell = (() => (
                 <td>
                   {file.usage
-                    ?.filter((u) => u.category || u.article)
+                    ?.filter(
+                      (u) =>
+                        ('category' in u && u.category) ||
+                        ('article' in u && u.article)
+                    )
                     .map((usage, i) => {
+                      const category =
+                        'category' in usage ? usage.category : undefined;
+                      const article =
+                        'article' in usage ? usage.article : undefined;
                       const linkTarget = (() => {
-                        if (usage.category) {
-                          return Category.getPath(usage.category);
-                        } else if (usage.article) {
-                          return Article.getPath(usage.article);
+                        if (category) {
+                          return Category.getPath(
+                            category as unknown as CategoryModel
+                          );
+                        } else if (article) {
+                          return Article.getPath(
+                            article as unknown as ArticleModel
+                          );
                         } else {
                           return '/';
                         }
                       })();
                       const linkText =
-                        (usage.category ?? usage.article)?.title ??
-                        '[ Logo der Seite ]';
+                        (category ?? article)?.title ?? '[ Logo der Seite ]';
                       return (
                         <li key={i}>
                           <Link href={linkTarget} passHref target={'_blank'}>

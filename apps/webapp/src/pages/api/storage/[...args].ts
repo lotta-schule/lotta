@@ -1,5 +1,6 @@
 import { appConfig } from 'config';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import type { NextApiHandler } from 'next';
 
 export default createProxyMiddleware({
   target: appConfig.get('API_URL'),
@@ -7,7 +8,7 @@ export default createProxyMiddleware({
   pathRewrite: { '^/api/storage': '/storage' },
   xfwd: true,
   logLevel: 'debug',
-});
+}) as unknown as NextApiHandler;
 
 export const config = {
   api: {

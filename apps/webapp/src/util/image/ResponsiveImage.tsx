@@ -8,10 +8,10 @@ import styles from './ResponsiveImage.module.scss';
 import clsx from 'clsx';
 
 type FileInput = Pick<FileModel, '__typename'> & {
-  formats: Pick<
-    FileModel['formats'][number],
-    'name' | 'availability' | 'url'
-  >[];
+  formats: (Omit<
+    Pick<FileModel['formats'][number], 'name' | 'availability' | 'url'>,
+    'url'
+  > & { url: string | null })[];
 };
 
 export type ResponsiveImageProps = {
