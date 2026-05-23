@@ -1,2 +1,2 @@
-export * from './UPDATE_USER_GROUP';
-export * from './GET_USER_GROUPS';
+export * from './UPDATE_USER_GROUP.js';
+export * from './GET_USER_GROUPS.js';

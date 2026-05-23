@@ -112,7 +112,7 @@ defmodule LottaWeb.FileResolver do
       end)
 
     processing_formats =
-      if length(requestable_formats) > 0 &&
+      if requestable_formats != [] &&
            Enum.any?(requestable_formats, fn {format_name, _} ->
              Enum.all?(conversions, &(&1.name != to_string(format_name)))
            end) do
@@ -175,7 +175,7 @@ defmodule LottaWeb.FileResolver do
       name: file_conversion.format,
       type: file_conversion.file_type,
       mime_type: file_conversion.mime_type,
-      url: Storage.get_http_url(file_conversion),
+      url: Storage.get_http_url(file_conversion) || "",
       availability: %{
         status: "ready",
         progress: 100

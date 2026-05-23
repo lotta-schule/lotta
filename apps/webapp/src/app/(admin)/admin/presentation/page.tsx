@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { DefaultThemes } from '@lotta-schule/hubert';
 import { faPalette } from '@fortawesome/free-solid-svg-icons';
-import { AdminPage } from '../_component/AdminPage';
-import { loadTenant } from 'loader';
-import * as themes from './_theme';
-import { Presentation } from './Presentation';
+import { AdminPage } from '../_component/AdminPage.js';
+import { loadTenant } from '#/loader/index.js';
+import * as themes from './_theme/index.js';
+import { Presentation } from './Presentation.js';
 
 const defaultTheme = DefaultThemes.standard;
 

@@ -4,23 +4,12 @@ defmodule LottaWeb.Router do
   """
   use LottaWeb, :router
 
+  import Phoenix.LiveView.Router
   import Phoenix.LiveDashboard.Router
   import Oban.Web.Router
 
-  pipeline :tenant do
-    plug(LottaWeb.TenantPlug)
-  end
-
-  pipeline :auth do
-    plug(LottaWeb.Auth.Pipeline)
-  end
-
-  pipeline :context do
-    plug(LottaWeb.Context)
-  end
-
   pipeline :browser do
-    plug(:accepts, ~w(html))
+    plug(:accepts, ["html"])
     plug(:put_root_layout, html: {LottaWeb.Layouts, :root})
   end
 
@@ -36,8 +25,6 @@ defmodule LottaWeb.Router do
     scope "/" do
       pipe_through(:browser)
 
-      pipe_through([:tenant, :auth])
-
       get("/callback", LottaWeb.OAuthController, :tenant_callback)
     end
 
@@ -52,23 +39,26 @@ defmodule LottaWeb.Router do
     end
 
     scope "/token" do
-      pipe_through([:tenant, :auth, :json_api])
+      pipe_through(:json_api)
 
-      post("/refresh", LottaWeb.TokenController, :refresh)
+      post("/refresh", LottaWeb.SessionController, :refresh)
+    end
+
+    scope "/" do
+      pipe_through([:browser, :json_api])
+
+      post("/login", LottaWeb.SessionController, :login)
+      get("/logout", LottaWeb.SessionController, :logout)
     end
   end
 
   # /storage endpoint could (and probably should) be moved to /data/storage
   scope "/storage" do
-    pipe_through([:tenant, :auth])
-
     get("/f/:id", LottaWeb.StorageController, :get_file)
     get("/fc/:id", LottaWeb.StorageController, :get_file_conversion)
   end
 
   scope "/data" do
-    pipe_through([:tenant, :auth])
-
     forward("/sitemap.xml", LottaWeb.SitemapPlug)
 
     scope "/storage" do
@@ -89,8 +79,6 @@ defmodule LottaWeb.Router do
     end
 
     scope "/" do
-      pipe_through([:tenant, :auth, :context])
-
       forward("/", Absinthe.Plug,
         schema: LottaWeb.Schema,
         before_send: {__MODULE__, :absinthe_before_send}
@@ -99,21 +87,14 @@ defmodule LottaWeb.Router do
   end
 
   scope "/setup" do
-    pipe_through([:browser, :tenant])
+    pipe_through(:browser)
 
     get("/status", LottaWeb.SetupController, :status)
   end
 
-  scope "/admin-api" do
-    pipe_through([:admin_auth, :json_api])
-
-    post("/create-test", LottaWeb.TenantController, :create_test)
-    post("/delete-tenant", LottaWeb.TenantController, :delete_tenant)
-  end
-
   scope "/admin" do
     scope "/api" do
-      pipe_through(:json_api)
+      pipe_through([:admin_auth, :json_api])
 
       post("/create-test", LottaWeb.TenantController, :create_test)
       post("/delete-tenant", LottaWeb.TenantController, :delete_tenant)

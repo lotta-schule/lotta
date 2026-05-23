@@ -1,4 +1,8 @@
-import { ConversationModel, NewMessageDestination, UserModel } from 'model';
+import {
+  ConversationModel,
+  NewMessageDestination,
+  UserModel,
+} from '#/model/index.js';
 
 export const createConversation = (
   from: UserModel,
@@ -6,6 +10,7 @@ export const createConversation = (
   unreadMessages = 0
 ): ConversationModel => {
   return {
+    __typename: 'Conversation',
     id: String(Math.floor(Math.random() * 10_000)),
     insertedAt: '2020-11-28T07:37:02',
     updatedAt: '2020-11-28T07:37:02',
@@ -14,6 +19,7 @@ export const createConversation = (
     groups: group ? [group] : [],
     messages: [
       {
+        __typename: 'Message',
         id: String(Math.floor(Math.random() * 10_000)),
         insertedAt: '2020-11-28T07:37:02',
         updatedAt: '2020-11-28T07:37:02',
@@ -22,6 +28,7 @@ export const createConversation = (
         files: [],
       },
       {
+        __typename: 'Message',
         id: String(Math.floor(Math.random() * 10_000)),
         insertedAt: '2020-11-28T07:32:14',
         updatedAt: '2020-11-28T07:32:14',
@@ -30,6 +37,7 @@ export const createConversation = (
         files: [],
       },
       {
+        __typename: 'Message',
         id: String(Math.floor(Math.random() * 1000)),
         insertedAt: '2020-11-28T07:29:31',
         updatedAt: '2020-11-28T07:29:31',
@@ -38,6 +46,7 @@ export const createConversation = (
         files: [],
       },
       {
+        __typename: 'Message',
         id: String(Math.floor(Math.random() * 10_000)),
         insertedAt: '2020-11-28T07:19:17',
         updatedAt: '2020-11-28T07:19:17',
@@ -46,6 +55,7 @@ export const createConversation = (
         files: [],
       },
       {
+        __typename: 'Message',
         id: String(Math.floor(Math.random() * 10_000)),
         insertedAt: '2020-11-28T07:00:09',
         updatedAt: '2020-11-28T07:00:09',

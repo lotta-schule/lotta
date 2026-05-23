@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "2": {
+      "Name": "Lotta",
+      "Group": "Lotta - Local Development",
+      "Port": 5432,
+      "Host": "postgres",
+      "Username": "lotta",
+      "PasswordExecCommand": "echo 'lotta'",
+      "SSLMode": "prefer",
+      "MaintenanceDB": "postgres"
+    }
+  }
+}

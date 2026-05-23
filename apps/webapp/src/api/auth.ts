@@ -1,39 +1,68 @@
-import * as Sentry from '@sentry/nextjs';
-import { trace } from '@opentelemetry/api';
 import axios from 'axios';
-import { createHeaders } from './apollo/customFetch';
-import { isBrowser } from 'util/isBrowser';
-import { appConfig } from 'config';
+import { parseSetCookie } from 'cookie-es';
+import { isBrowser } from '#/util/isBrowser.js';
+import { Logger } from '#/util/logger.js';
+import { JWT } from '../util/auth/jwt.js';
 
-export const sendRefreshRequest = (
-  headers: Record<string, string | null> = {}
-) =>
-  trace
-    .getTracer('lotta-web')
-    .startActiveSpan('sendRefreshRequest', async () => {
-      try {
-        Sentry.addBreadcrumb({
-          category: 'auth',
-          message: 'trying to refresh token.',
-          data: {
-            headers,
-            isBrowser: isBrowser(),
-          },
-        });
-        const { data } = await axios.request<{
-          accessToken: string;
-          refreshToken: string;
-        } | null>({
-          method: 'post',
-          baseURL: isBrowser() ? '/' : appConfig.get('API_URL'),
-          url: '/auth/token/refresh',
-          withCredentials: isBrowser(),
-          headers: createHeaders(headers),
-        });
-        return data;
-      } catch (e) {
-        Sentry.captureException(e);
-        console.error(e);
-        return null;
-      }
+export const sendRefreshRequest = async (
+  accessToken?: string,
+  refreshToken?: string,
+  { baseURL, originaryHost }: { baseURL?: string; originaryHost?: string } = {}
+) => {
+  const jwt = accessToken ? JWT.parse(accessToken) : undefined;
+  const payload = jwt?.body;
+  const tenant = { id: payload?.tenantId };
+
+  if (!tenant.id) {
+    Logger.error('tenant id not found in access token');
+    return { accessToken: null, refreshToken: null, tenant: null };
+  }
+
+  try {
+    const result = await axios.request<{
+      accessToken: string;
+      refreshToken: string;
+    } | null>({
+      method: 'post',
+      baseURL,
+      url: '/auth/token/refresh',
+      withCredentials: isBrowser(),
+      headers: {
+        'x-originary-host': originaryHost,
+        'x-lotta-tenant': `id:${tenant.id}`,
+      },
+      data: { accessToken, refreshToken },
     });
+    const newRefreshToken = [result.headers['set-cookie']]
+      .filter((h) => !!h)
+      .flat()
+      .flatMap((cookieHeader) => parseSetCookie(cookieHeader))
+      ?.find((c) => c?.name === 'SignInRefreshToken')?.value;
+
+    const resultTenantIdentifier = result.headers['x-lotta-tenant'];
+
+    if (!result.data?.accessToken || !newRefreshToken) {
+      Logger.error(
+        'access token or refresh token not found in refresh response',
+        {
+          accessToken: result.data?.accessToken,
+          refreshToken: newRefreshToken,
+        }
+      );
+      return { accessToken: null, refreshToken: null, tenant: null };
+    }
+
+    return {
+      accessToken: result.data?.accessToken,
+      refreshToken: newRefreshToken,
+      tenant:
+        typeof resultTenantIdentifier === 'string' &&
+        resultTenantIdentifier?.length
+          ? resultTenantIdentifier
+          : null,
+    };
+  } catch (e) {
+    Logger.error('error getting an access token from refresh token', { e });
+    return { accessToken: null, refreshToken: null, tenant: null };
+  }
+};

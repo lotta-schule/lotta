@@ -1,3 +1,170 @@
+## 6.1.21 (2026-05-02)
+
+### 🚀 Features
+
+- **core:** cockpit - sort invoices by created_at instead of issued_at ([e4a65cb8](https://github.com/lotta-schule/lotta/commit/e4a65cb8))
+- **core:** cockpit - allow banking data ingestion ([#537](https://github.com/lotta-schule/lotta/pull/537))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.1.20 (2026-05-01)
+
+### 🚀 Features
+
+- **core:** cockpit: sort invoices by issuance by default ([61c3ee66](https://github.com/lotta-schule/lotta/commit/61c3ee66))
+- **core:** oauth callback: allow redirecting to lotta:// scheme if x-lotta-app-version header is set ([#536](https://github.com/lotta-schule/lotta/pull/536))
+
+### 🩹 Fixes
+
+- **cockpit:** show pdf invoices in correct size ([c24c92b8](https://github.com/lotta-schule/lotta/commit/c24c92b8))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.1.19 (2026-04-02)
+
+### 🩹 Fixes
+
+- **core:** strip null bytes from metadata ([009766f6](https://github.com/lotta-schule/lotta/commit/009766f6))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.18 (2026-01-26)
+
+### 🩹 Fixes
+
+- **core:** Allow eduplaces students to login when the tenant exists ([#530](https://github.com/lotta-schule/lotta/pull/530))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.1.17 (2026-01-10)
+
+This was a version bump only, there were no code changes.
+
+## 6.1.16 (2026-01-09)
+
+### 🩹 Fixes
+
+- **core:** eduplaces - add fallback to 'school' prop for official_id ([6ab9c933](https://github.com/lotta-schule/lotta/commit/6ab9c933))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.15 (2026-01-09)
+
+### 🩹 Fixes
+
+- **core:** Add eduplaces prod issuer ([30c3036c](https://github.com/lotta-schule/lotta/commit/30c3036c))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.14 (2026-01-02)
+
+### 🩹 Fixes
+
+- **core:** fix tenant worker uniqueness bug ([67883b16](https://github.com/lotta-schule/lotta/commit/67883b16))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.13 (2025-12-24)
+
+### 🩹 Fixes
+
+- **webapp:** udpate next ([c21c118a](https://github.com/lotta-schule/lotta/commit/c21c118a))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.12 (2025-12-24)
+
+### 🩹 Fixes
+
+- update react ([9a1f9030](https://github.com/lotta-schule/lotta/commit/9a1f9030))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.11 (2025-12-05)
+
+### 🩹 Fixes
+
+- **core:** output correct invoice pdf data ([bfb9d501](https://github.com/lotta-schule/lotta/commit/bfb9d501))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.10 (2025-12-02)
+
+### 🚀 Features
+
+- **core:** issue invoices from cockpit ([#524](https://github.com/lotta-schule/lotta/pull/524))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.1.9 (2025-11-29)
+
+### 🚀 Features
+
+- **core:** redesign usage overview in cockpit ([327bab20](https://github.com/lotta-schule/lotta/commit/327bab20))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.8 (2025-11-29)
+
+### 🩹 Fixes
+
+- **core:** fix cockpit plan selection ([eed1f269](https://github.com/lotta-schule/lotta/commit/eed1f269))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.7 (2025-11-29)
+
+### 🚀 Features
+
+- **core:** add internal free plan, make address nullable ([d46d28f9](https://github.com/lotta-schule/lotta/commit/d46d28f9))
+
+### 🩹 Fixes
+
+- **core:** include image assets to bundle ([b93dc529](https://github.com/lotta-schule/lotta/commit/b93dc529))
+- **core:** fix cockpit image asset path ([f18a25d2](https://github.com/lotta-schule/lotta/commit/f18a25d2))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.6 (2025-11-29)
+
+### 🚀 Features
+
+- **core:** Generate pdf invoices ([#520](https://github.com/lotta-schule/lotta/pull/520))
+- **core:** add an admin-interface over backpex for middle-term cockpit replacement ([#521](https://github.com/lotta-schule/lotta/pull/521))
+- **core:** move zammad ticket creation into core ([#523](https://github.com/lotta-schule/lotta/pull/523))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.1.5 (2025-11-19)
 
 ### 🚀 Features

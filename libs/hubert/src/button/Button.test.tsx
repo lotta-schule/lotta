@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Close } from '../icon';
-import { render, within } from '../test-utils';
-import { Button } from './Button';
+import { Close } from '../icon/index.js';
+import { render, within } from '../test-utils.js';
+import { Button } from './Button.js';
 
 describe('shared/Button', () => {
   it('should render Button with label', () => {
@@ -11,13 +11,13 @@ describe('shared/Button', () => {
     expect(screen.getByRole('button')).toMatchInlineSnapshot(`
       <button
         aria-current="false"
-        class="_root_0977c5 _root_3de4f3"
+        class="_root_ybf73_1 _root_z0q9c_1"
         data-variant="default"
         role="button"
         type="button"
       >
         <span
-          class="_label_3de4f3"
+          class="_label_z0q9c_14"
         >
           Click
         </span>

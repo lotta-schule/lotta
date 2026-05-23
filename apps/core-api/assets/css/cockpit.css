@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@plugin "../vendor/daisyui";
+@plugin "./tailwind_heroicons.js";
+
+@source "../../deps/backpex/**/*.*ex";
+@source "../../deps/backpex/assets/js/**/*.*js";

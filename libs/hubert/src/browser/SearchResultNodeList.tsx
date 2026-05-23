@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { BrowserPath, useBrowserState } from './BrowserStateContext';
-import { NodeListItem } from './NodeListItem';
-import { isFileNode } from './utils';
+import { BrowserPath, useBrowserState } from './BrowserStateContext.js';
+import { NodeListItem } from './NodeListItem.js';
+import { isFileNode } from './utils.js';
 import clsx from 'clsx';
 
 import styles from './NodeList.module.scss';

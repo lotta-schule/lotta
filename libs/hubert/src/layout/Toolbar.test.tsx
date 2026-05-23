@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils';
-import { Toolbar } from './Toolbar';
+import { render } from '../test-utils.js';
+import { Toolbar } from './Toolbar.js';
 
 describe('Toolbar', () => {
   it('should render', () => {

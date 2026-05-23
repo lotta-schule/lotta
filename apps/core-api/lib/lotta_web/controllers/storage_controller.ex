@@ -29,16 +29,7 @@ defmodule LottaWeb.StorageController do
         |> put_resp_header("cache-control", "max-age=604800")
         |> send_chunked(200)
 
-      Enum.reduce_while(env.body, conn, fn chunk, conn ->
-        case chunk(conn, chunk) do
-          {:ok, conn} ->
-            {:cont, conn}
-
-          {:error, reason} ->
-            Logger.error("Failed to stream file to user: #{inspect(reason)}")
-            {:halt, conn}
-        end
-      end)
+      stream_body(env.body, conn)
     else
       error ->
         Logger.error("Failed to download file: #{inspect(error)}")
@@ -73,16 +64,7 @@ defmodule LottaWeb.StorageController do
         |> put_resp_header("cache-control", "max-age=604800")
         |> send_chunked(200)
 
-      Enum.reduce_while(env.body, conn, fn chunk, conn ->
-        case chunk(conn, chunk) do
-          {:ok, conn} ->
-            {:cont, conn}
-
-          {:error, reason} ->
-            Logger.error("Failed to stream file to user: #{inspect(reason)}")
-            {:halt, conn}
-        end
-      end)
+      stream_body(env.body, conn)
     else
       nil ->
         conn
@@ -173,6 +155,19 @@ defmodule LottaWeb.StorageController do
     processing_options
   end
 
+  defp stream_body(body, conn) do
+    Enum.reduce_while(body, conn, fn chunk, conn ->
+      case chunk(conn, chunk) do
+        {:ok, conn} ->
+          {:cont, conn}
+
+        {:error, reason} ->
+          Logger.error("Failed to stream file to user: #{inspect(reason)}")
+          {:halt, conn}
+      end
+    end)
+  end
+
   defp copy_header(conn, header_list, key) do
     case Enum.find(header_list, &(elem(&1, 0) == key)) do
       nil -> conn
@@ -197,4 +192,17 @@ defmodule LottaWeb.StorageController do
 
   defp respond_with(conn, :internal_server_error),
     do: respond_with(conn, 500)
+
+  defp stream_body(body, conn) do
+    Enum.reduce_while(body, conn, fn chunk, conn ->
+      case chunk(conn, chunk) do
+        {:ok, conn} ->
+          {:cont, conn}
+
+        {:error, reason} ->
+          Logger.error("Failed to stream file to user: #{inspect(reason)}")
+          {:halt, conn}
+      end
+    end)
+  end
 end

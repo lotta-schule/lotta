@@ -23,7 +23,31 @@ services:
       file: './docker-compose.services.base.yaml'
       service: minio
     volumes:
-      - ./_data/minio:/bitnami/minio/data
+      - ./_data/minio:/data
     ports:
       - 9000:9000
       - 9001:9001
+
+  minio-setup:
+    extends:
+      file: './docker-compose.services.base.yaml'
+      service: minio-setup
+    profiles:
+      - minio-setup
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DISABLE_POSTFIX: 'true'
+      PGADMIN_DEFAULT_EMAIL: lotta@lotta.schule
+      PGADMIN_DEFAULT_PASSWORD: lotta
+      PGADMIN_SERVER_JSON_FILE: /tmp/server.json
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    restart: always
+    ports:
+      - 8888:80
+    volumes:
+      - /var/lib/pgadmin
+      - ./:/files
+      - ./pgadmin.json:/tmp/server.json:ro

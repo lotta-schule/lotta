@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { renderToString } from 'react-dom/server';
-import { render } from '../test-utils';
-import { NoSsr } from './NoSsr';
+import { render } from '../test-utils.js';
+import { NoSsr } from './NoSsr.js';
 
 describe('NoSsr', () => {
   it('should not render children at init', () => {

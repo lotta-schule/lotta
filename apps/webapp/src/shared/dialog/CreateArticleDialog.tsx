@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Button,
   Dialog,
@@ -9,10 +9,10 @@ import {
   ErrorMessage,
   Label,
 } from '@lotta-schule/hubert';
-import { ArticleModel, ArticleModelInput } from 'model';
+import { ArticleModel, ArticleModelInput } from '#/model/index.js';
 
-import CreateArticleMutation from 'api/mutation/CreateArticleMutation.graphql';
-import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
+import CreateArticleMutation from '#/api/mutation/CreateArticleMutation.graphql';
+import GetOwnArticlesQuery from '#/api/query/GetOwnArticles.graphql';
 
 export interface CreateArticleDialogProps {
   isOpen: boolean;

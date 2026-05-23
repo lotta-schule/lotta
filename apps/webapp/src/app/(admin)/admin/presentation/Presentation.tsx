@@ -12,20 +12,20 @@ import {
   Select,
   useTheme,
 } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
-import { AdminPageSection } from '../_component/AdminPageSection';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
-import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { ColorSettingRow, SelectTemplateButton } from './_component';
-import { TenantModel } from 'model';
-import { headerFonts, textFonts } from 'styles/fonts';
+import { useMutation } from '@apollo/client/react';
+import { AdminPageSection } from '../_component/AdminPageSection.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
+import { ColorSettingRow, SelectTemplateButton } from './_component/index.js';
+import { TenantModel } from '#/model/index.js';
+import { headerFonts, textFonts } from '#/styles/fonts.js';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 
 import styles from './Presentation.module.scss';
 
-import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
+import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
 
 const defaultTheme = DefaultThemes.standard;
 

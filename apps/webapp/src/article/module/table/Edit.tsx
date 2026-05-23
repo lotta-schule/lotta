@@ -8,16 +8,16 @@ import {
   Table,
   Tooltip,
 } from '@lotta-schule/hubert';
-import { ContentModuleModel } from 'model';
+import { ContentModuleModel } from '#/model/index.js';
 import {
   TableCell as TableCellInterface,
   TableContent,
   TableConfiguration,
-} from './Table';
+} from './Table.js';
 
 import styles from './Table.module.scss';
 import { faCircleMinus, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 
 interface EditProps {
   contentModule: ContentModuleModel<TableContent, TableConfiguration>;
@@ -26,8 +26,10 @@ interface EditProps {
   ): void;
 }
 
-export interface EditTableCellProps
-  extends Omit<InputProps, 'value' | 'style' | 'onChange'> {
+export interface EditTableCellProps extends Omit<
+  InputProps,
+  'value' | 'style' | 'onChange'
+> {
   cell: TableCellInterface;
   onChange(cell: TableCellInterface): void;
   position: { row: number; column: number };
@@ -75,14 +77,18 @@ export const Edit = React.memo<EditProps>(
 
     const contentRows = React.useMemo(
       () =>
-        range(rowCount).map((rowIndex) =>
-          range(columnCount).map(
-            (columnIndex) =>
-              contentModule.content?.rows?.[rowIndex]?.[columnIndex] ?? {
-                text: '',
-              }
-          )
-        ),
+        Array.from({ length: rowCount })
+          .fill(0)
+          .map((_, rowIndex) =>
+            Array.from({ length: columnCount })
+              .fill(0)
+              .map(
+                (_, columnIndex) =>
+                  contentModule.content?.rows?.[rowIndex]?.[columnIndex] ?? {
+                    text: '',
+                  }
+              )
+          ),
       [rowCount, columnCount, contentModule.content]
     );
 

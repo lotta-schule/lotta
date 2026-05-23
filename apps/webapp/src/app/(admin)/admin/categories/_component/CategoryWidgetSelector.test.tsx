@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { render, screen, waitFor } from 'test/util';
-import { CategoryWidgetSelector } from './CategoryWidgetSelector';
-import { WidgetModel, WidgetModelType } from 'model';
-import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor, userEvent } from '#/test/util.js';
+import { CategoryWidgetSelector } from './CategoryWidgetSelector.js';
+import { WidgetModel, WidgetModelType } from '#/model/index.js';
 
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 
 const widgets: WidgetModel[] = [
   {

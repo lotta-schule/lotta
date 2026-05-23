@@ -3,7 +3,7 @@
 exports[`TenantNotFoundErrorPage > should render the TenantNotFoundErrorPage component 1`] = `
 <div>
   <section
-    class="_error_42c9b3"
+    class="_error_1ef3h_1"
   >
     <h1>
       Es gibt kein Lotta unter dieser Adresse
@@ -18,7 +18,7 @@ exports[`TenantNotFoundErrorPage > should render the TenantNotFoundErrorPage com
         Unter dieser Adresse ist aktuell keine lotta-Plattform zu erreichen. Überprüfe die Adresse in der Adressleiste.
       </p>
       <p
-        class="_secondary_42c9b3"
+        class="_secondary_1ef3h_21"
       >
         Sie haben Interesse, ein eigenes lotta unter dieser Adresse anzubieten? Weitere Informationen gibt es auf
          

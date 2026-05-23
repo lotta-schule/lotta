@@ -1,6 +1,6 @@
 {
   "permissions": {
-    "allow": ["Bash(mix test:*)", "Bash(mix credo:*)"],
+    "allow": ["Bash(mix test:*)", "Bash(mix credo:*)", "Bash(git show:*)"],
     "deny": [],
     "ask": []
   }

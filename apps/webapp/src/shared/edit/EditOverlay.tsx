@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@lotta-schule/hubert';
 

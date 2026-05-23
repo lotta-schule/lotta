@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '../icon';
-import { NavigationButton } from '../button';
+import { KeyboardArrowLeft, KeyboardArrowRight } from '../icon/index.js';
+import { NavigationButton } from '../button/index.js';
 import clsx from 'clsx';
 
 import styles from './Stepper.module.scss';

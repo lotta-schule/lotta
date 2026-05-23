@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { StoryObj } from '@storybook/react';
-import { useArgs } from '@storybook/preview-api';
-import { expect, fireEvent, fn, waitFor, within } from '@storybook/test';
+import { StoryObj } from '@storybook/react-vite';
+import { useArgs } from 'storybook/preview-api';
+import { expect, fireEvent, fn, waitFor, within } from 'storybook/test';
 import {
   Button,
   SwipeableViews,

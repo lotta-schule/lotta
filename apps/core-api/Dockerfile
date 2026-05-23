@@ -34,6 +34,8 @@ RUN set -xe && \
   libssl3 \
   libstdc++ \
   build-base \
+  # chromium
+  chromium \
   # ffmpeg
   ffmpeg \
   # For libvips
@@ -223,6 +225,7 @@ RUN set -xe && \
   apk upgrade --no-cache && \
   apk add --no-cache --virtual .build-deps \
   git \
+  nodejs npm \
   rust cargo \
   build-base
 
@@ -232,21 +235,29 @@ RUN mix local.hex --force && \
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
+RUN mix deps.get --only $MIX_ENV
 COPY config config
-RUN mix deps.get --only prod && \
-  mix deps.compile
 
-# build project
+RUN mix deps.compile
+
 COPY priv priv
 COPY lib lib
+COPY assets assets
+
+RUN mix assets.deploy
+RUN mix compile
 
 COPY rel rel
 
-RUN mix compile
-
 # Compress source code for sentry
 RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
-  mix sentry.package_source_code || false
+  /bin/sh -c '\
+  if [ -n "$SENTRY_AUTH_TOKEN" ]; then \
+  echo "Sentry auth token found, uploading source code..."; \
+  mix sentry.package_source_code \
+  else \
+  echo "No Sentry auth token found, skipping source code upload."; \
+  fi'
 
 # build release
 RUN mix release
@@ -262,6 +273,7 @@ LABEL org.opencontainers.image.authors="Lotta Schule <kontakt@lotta.schule>"
 LABEL org.opencontainers.image.url="https://lotta.schule"
 
 EXPOSE 4000
+EXPOSE 4010
 EXPOSE 4321
 
 RUN mkdir -p /app

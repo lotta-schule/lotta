@@ -1,7 +1,7 @@
-import { UserGroupModel } from './UserGroupModel';
-import { UserModel } from './UserModel';
-import { ID } from './ID';
-import { FileModel } from './FileModel';
+import { UserGroupModel } from './UserGroupModel.js';
+import { UserModel } from './UserModel.js';
+import { ID } from './ID.js';
+import { FileModel } from './FileModel.js';
 
 export type NewMessageDestination =
   | { group: UserGroupModel; user?: never }

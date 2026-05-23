@@ -4,12 +4,12 @@ import {
   render,
   TestBrowserWrapper,
   TestBrowserWrapperProps,
-} from '../test-utils';
-import userEvent from '@testing-library/user-event';
+  userEvent,
+} from '../test-utils.js';
 import {
   SearchResultNodeList,
   SearchResultNodeListProps,
-} from './SearchResultNodeList';
+} from './SearchResultNodeList.js';
 
 const defaultNodes = [
   fixtures.getNode('8'),

@@ -1,22 +1,21 @@
 'use client';
-
 import * as React from 'react';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client/react';
 import {
   Browser,
   BrowserMode,
   BrowserNode,
   BrowserProps,
+  FileSize,
   isDirectoryNode,
   isFileNode,
 } from '@lotta-schule/hubert';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
-import { DirectoryModel, FileModel } from 'model';
-import { File, User } from 'util/model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { FileSize } from '@lotta-schule/hubert';
+import { DirectoryModel, FileModel } from '#/model/index.js';
+import { File, User } from '#/util/model/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
@@ -27,13 +26,13 @@ import {
   useRenameNode,
   useSearchNodes,
   useUploadNode,
-} from './action';
+} from './action/index.js';
 import {
   GetDirectoriesAndFilesQueryResult,
   makeBrowserNodes,
-} from './makeBrowserNodes';
-import { RenderNodeList } from './RenderNodeList';
-import { FileUsageOverview } from './FileUsageOverview';
+} from './makeBrowserNodes.js';
+import { RenderNodeList } from './RenderNodeList.js';
+import { FileUsageOverview } from './FileUsageOverview.js';
 
 import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
 
@@ -70,16 +69,24 @@ export const UserBrowser = React.memo(
     const onRequestChildNodes: BrowserProps['onRequestChildNodes'] =
       React.useCallback(
         async (node, options) => {
-          const result = await fetchDirectoriesAndFiles({
-            variables: { parentDirectoryId: node?.id ?? null },
-            fetchPolicy: options?.refetch ? 'network-only' : 'cache-first',
-          });
+          try {
+            const result = await fetchDirectoriesAndFiles({
+              variables: { parentDirectoryId: node?.id ?? null },
+              fetchPolicy: options?.refetch ? 'network-only' : 'cache-first',
+            });
 
-          if (result.error) {
-            throw result.error;
+            return makeBrowserNodes(result.data) ?? [];
+          } catch (error: unknown) {
+            if (
+              Error.isError(error) &&
+              'code' in error &&
+              error.code === DOMException.ABORT_ERR
+            ) {
+              console.warn('file fetching aborted');
+              return [];
+            }
+            throw error;
           }
-
-          return makeBrowserNodes(result.data) ?? [];
         },
         [fetchDirectoriesAndFiles]
       );

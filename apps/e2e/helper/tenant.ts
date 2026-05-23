@@ -2,7 +2,7 @@ import { waitForSentMail } from './mail';
 import { loginUserRequiringPWUpdate } from './auth';
 import { Browser, expect } from '@playwright/test';
 
-const adminUrl = `${process.env.CORE_URL}/admin-api`;
+const adminUrl = `${process.env.CORE_URL}/admin/api`;
 
 const username = process.env.ADMIN_USERNAME as string;
 const password = process.env.ADMIN_PASSWORD as string;
@@ -143,7 +143,13 @@ export const createTenantTeardown = async ({
 export const createTenantFixture =
   (getTenantData: () => { name: string; slug: string }) =>
   async (
-    { admin, browser },
+    {
+      admin,
+      browser,
+    }: {
+      admin: { name: string; email: string; password: string };
+      browser: Browser;
+    },
     use: (t: { name: string; slug: string; id: string }) => Promise<void>
   ) => {
     const { tenant } = await createTenantSetup(

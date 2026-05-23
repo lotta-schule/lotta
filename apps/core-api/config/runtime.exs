@@ -46,6 +46,9 @@ defmodule SystemConfig do
   end
 
   defp default("APP_ENVIRONMENT", _), do: "development"
+  defp default("LOG_LEVEL", _), do: nil
+  defp default("WEB_HOST", env) when env in [:dev, :test], do: "localhost"
+  defp default("BASE_URI_HOST", :test), do: "lotta.schule"
   defp default("BASE_URI_HOST", :dev), do: "local.lotta.schule,lotta.lvh.me,lotta.schule"
   defp default("BASE_URI_HOST", _), do: "lotta.schule"
   defp default("BASE_URI_PORT", :dev), do: "3000"
@@ -59,7 +62,9 @@ defmodule SystemConfig do
   defp default("NAMESPACE", _), do: nil
   defp default("PHX_SERVER", :dev), do: "true"
   defp default("PHX_SERVER", _), do: "false"
-  defp default("SECRET_KEY_BASE", env) when env in [:dev, :test], do: "123"
+
+  defp default("SECRET_KEY_BASE", env) when env in [:dev, :test],
+    do: "XrmuJRXNUaYf6nvFypMQi3bQ7CycRw3m6PPdbppXZcCiWDMjyHpGtkzW3umXKRAvaL"
 
   defp default("SECRET_KEY_JWT", env) when env in [:dev, :test],
     do: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
@@ -120,9 +125,20 @@ defmodule SystemConfig do
 
   defp default("COCKPIT_ADMIN_API_USERNAME", _), do: "admin"
   defp default("COCKPIT_ADMIN_API_KEY", env) when env in [:dev, :test], do: "test123"
-  defp default("COCKPIT_ENDPOINT", _), do: "http://localhost:4040"
+  defp default("COCKPIT_HOST", _), do: "localhost"
+
+  defp default("ZAMMAD_ENDPOINT", :test), do: "https://zammad.example.com"
+  defp default("ZAMMAD_ENDPOINT", _), do: nil
+  defp default("ZAMMAD_USERNAME", :test), do: "test_user"
+  defp default("ZAMMAD_USERNAME", _), do: nil
+  defp default("ZAMMAD_PASSWORD", :test), do: "test_password"
+  defp default("ZAMMAD_PASSWORD", _), do: nil
 
   defp default("SLACK_WEBHOOK_URL", _), do: nil
+
+  defp default("DISABLE_CHROMIC", env) when env in [:dev, :test], do: "true"
+  defp default("DISABLE_CHROMIC", _), do: "false"
+  defp default("DEBUG_CHROMIC", _), do: "false"
 
   defp default("SENTRY_DSN", _), do: nil
 
@@ -147,6 +163,8 @@ defmodule SystemConfig do
   defp default("EDUPLACES_CLIENT_ID", _), do: ""
   defp default("EDUPLACES_CLIENT_SECRET", _), do: ""
 
+  defp default("ENABLE_BILLING_NOTIFICATIONS", _), do: "true"
+
   defp default(key, env),
     do:
       raise("""
@@ -157,6 +175,7 @@ defmodule SystemConfig do
 end
 
 config :lotta, :environment, SystemConfig.get("APP_ENVIRONMENT", cast: :environment)
+config :lotta, :release_name, SystemConfig.get("IMAGE_NAME", cast: :docker_image_tag)
 
 [host | alias] = SystemConfig.get("BASE_URI_HOST", cast: :string_list)
 
@@ -169,11 +188,42 @@ config :lotta, :base_uri,
 # The secret key base is used to sign/encrypt cookies and other secrets.
 config :lotta, LottaWeb.Endpoint,
   secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
+  url: [host: SystemConfig.get("WEB_HOST")],
   server: SystemConfig.get("PHX_SERVER", cast: :boolean)
+
+config :lotta, CockpitWeb.Endpoint,
+  secret_key_base: SystemConfig.get("SECRET_KEY_BASE"),
+  url: [host: SystemConfig.get("COCKPIT_HOST")],
+  server: SystemConfig.get("PHX_SERVER", cast: :boolean)
+
+if config_env() == :dev do
+  config :lotta, LottaWeb.Endpoint,
+    watchers: [
+      # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
+      esbuild: {Esbuild, :install_and_run, [:lotta, ~w(--sourcemap=inline --watch)]}
+    ]
+
+  config :lotta, CockpitWeb.Endpoint,
+    watchers: [
+      # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
+      esbuild: {Esbuild, :install_and_run, [:cockpit, ~w(--sourcemap=inline --watch)]},
+      tailwind: {Tailwind, :install_and_run, [:cockpit, ~w(--watch)]}
+    ]
+end
 
 config :lotta, Lotta.TCPHealthCheck,
   enabled: SystemConfig.get("TCP_HEALTH_CHECK_ENABLED", cast: :boolean),
   config: [port: SystemConfig.get("TCP_HEALTH_CHECK_PORT", cast: :integer)]
+
+case SystemConfig.get("LOG_LEVEL") do
+  "all" -> config :logger, level: :all
+  "debug" -> config :logger, level: :debug
+  "notice" -> config :logger, level: :notice
+  "info" -> config :logger, level: :info
+  "warn" -> config :logger, level: :warn
+  "error" -> config :logger, level: :error
+  _ -> :ok
+end
 
 config :opentelemetry, :resource,
   service: %{
@@ -183,11 +233,12 @@ config :opentelemetry, :resource,
   deployment: %{
     environment: SystemConfig.get("APP_ENVIRONMENT"),
     version: SystemConfig.get("IMAGE_NAME")
-  }
+  },
+  span_processor: :batch,
+  traces_exporter: :otlp
 
-config :opentelemetry,
-  span_processor: {Sentry.OpenTelemetry.SpanProcessor, []},
-  sampler: {Sentry.OpenTelemetry.Sampler, []}
+config :opentelemetry_exporter,
+  otlp_protocol: :http_protobuf
 
 config :lotta,
        Lotta.Repo,
@@ -251,12 +302,25 @@ config :lotta, LottaWeb.Auth.AccessToken,
   issuer: "lotta"
 
 config :lotta, :cockpit,
-  endpoint: SystemConfig.get("COCKPIT_ENDPOINT"),
+  endpoint: SystemConfig.get("COCKPIT_HOST"),
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
 
+config :lotta, :zammad,
+  endpoint: SystemConfig.get("ZAMMAD_ENDPOINT"),
+  username: SystemConfig.get("ZAMMAD_USERNAME"),
+  password: SystemConfig.get("ZAMMAD_PASSWORD")
+
+config :joken, default_signer: SystemConfig.get("SECRET_KEY_JWT")
+
 config :lotta, Lotta.Administration.Notification.Slack,
   webhook: SystemConfig.get("SLACK_WEBHOOK_URL")
+
+config :lotta, ChromicPDF,
+  disabled: SystemConfig.get("DISABLE_CHROMIC", cast: :boolean),
+  config: [
+    discard_stderr: SystemConfig.get("DEBUG_CHROMIC", cast: :boolean) == false
+  ]
 
 config :lotta,
        Lotta.Mailer,
@@ -358,3 +422,6 @@ config :lotta, Eduplaces,
   redirect_uri: SystemConfig.get("EDUPLACES_REDIRECT_URI", cast: :url_with_scheme),
   client_id: SystemConfig.get("EDUPLACES_CLIENT_ID"),
   client_secret: SystemConfig.get("EDUPLACES_CLIENT_SECRET")
+
+config :lotta, Lotta.Billings,
+  enable_billing_notifications: SystemConfig.get("ENABLE_BILLING_NOTIFICATIONS", cast: :boolean)

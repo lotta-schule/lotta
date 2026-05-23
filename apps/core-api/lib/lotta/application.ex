@@ -12,9 +12,7 @@ defmodule Lotta.Application do
     Lotta.Storage.FileData.create_cache_dir()
 
     setup_telemetry()
-    Logger.add_handlers(:lotta)
-
-    Oban.Telemetry.attach_default_logger()
+    setup_logger()
 
     # List all child processes to be supervised
     children =
@@ -33,6 +31,8 @@ defmodule Lotta.Application do
          name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)},
         {Lotta.Eduplaces.Syncer, Application.get_env(:lotta, Lotta.Eduplaces.Syncer, [])},
         {Oban, Application.fetch_env!(:lotta, Oban)},
+        CockpitWeb.Endpoint,
+        get_chromic_app_child(),
         get_tcp_healthcheck_app_child()
       ]
 
@@ -44,6 +44,17 @@ defmodule Lotta.Application do
       strategy: :one_for_one,
       name: Lotta.Supervisor
     )
+  end
+
+  defp setup_logger() do
+    Logger.metadata(
+      version: Application.get_env(:lotta, :release_name),
+      env: Application.get_env(:lotta, :environment)
+    )
+
+    LoggerJSON.Ecto.attach("logger-json-queries", [:lotta, :repo, :query], :debug)
+    LoggerJSON.Plug.attach("logger-json-requests", [:lotta, :plug, :stop], :info)
+    Oban.Telemetry.attach_default_logger(events: [:job, :queue], level: :info)
   end
 
   defp setup_telemetry() do
@@ -62,17 +73,25 @@ defmodule Lotta.Application do
     end
   end
 
+  defp get_chromic_app_child() do
+    config = Application.get_env(:lotta, ChromicPDF, [])
+
+    if Keyword.get(config, :disabled) != true,
+      do: {ChromicPDF, Keyword.get(config, :config)}
+  end
+
   defp get_tcp_healthcheck_app_child() do
     config = Application.get_env(:lotta, Lotta.TCPHealthCheck, [])
 
-    if Keyword.get(config, :enabled),
-      do: {TcpHealthCheck, Keyword.get(config, :config)}
+    if Keyword.get(config, :disabled) != true,
+      do: {TcpHealthCheck, Keyword.get(config, :config, [])}
   end
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   def config_change(changed, _new, removed) do
     LottaWeb.Endpoint.config_change(changed, removed)
+    CockpitWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 end

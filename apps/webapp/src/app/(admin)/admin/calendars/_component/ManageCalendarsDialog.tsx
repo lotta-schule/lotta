@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import {
   Button,
   Dialog,
@@ -9,12 +9,12 @@ import {
   List,
   ListItem,
 } from '@lotta-schule/hubert';
-import { CALENDAR_FRAGMENT, GET_CALENDARS } from '../_graphql';
+import { CALENDAR_FRAGMENT, GET_CALENDARS } from '../_graphql/index.js';
 import { t } from 'i18next';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import { faAdd, faCircle, faEdit } from '@fortawesome/free-solid-svg-icons';
-import { CreateCalendarDialog } from './CreateCalendarDialog';
-import { CalendarEditor } from './CalendarEditor';
+import { CreateCalendarDialog } from './CreateCalendarDialog.js';
+import { CalendarEditor } from './CalendarEditor.js';
 import { FragmentOf } from 'gql.tada';
 
 export interface ManageCalendarsDialogProps {

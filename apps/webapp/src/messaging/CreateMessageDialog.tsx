@@ -10,12 +10,12 @@ import {
 } from '@lotta-schule/hubert';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
-import { NewMessageDestination, UserGroupModel } from 'model';
-import { SearchUserField } from 'component/form';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Icon } from 'shared/Icon';
-import { GroupSelect } from 'shared/edit/GroupSelect';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
+import { NewMessageDestination, UserGroupModel } from '#/model/index.js';
+import { SearchUserField } from '#/component/form/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { Icon } from '#/shared/Icon.js';
+import { GroupSelect } from '#/shared/edit/GroupSelect.js';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
 
 import styles from './CreateMessageDialog.module.scss';
 
