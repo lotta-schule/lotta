@@ -1,104 +1,135 @@
-import axios from 'axios';
-import { Mocked, MockedFunction } from 'vitest';
+import { MockedFunction } from 'vitest';
 import { sendRefreshRequest } from './auth.js';
 import { isBrowser } from '#/util/isBrowser.js';
 import { JWT } from '#/util/auth/jwt.js';
 
-vi.mock('axios');
 vi.mock('#/util/isBrowser.js');
 vi.mock('#/util/auth/jwt.js');
 
-const mockAxios = axios as Mocked<typeof axios>;
 const isBrowserMock = isBrowser as MockedFunction<typeof isBrowser>;
 
+const makeFetchResponse = (
+  body: object | null,
+  headers: Record<string, string> = {},
+  ok = true
+): Response =>
+  ({
+    ok,
+    status: ok ? 200 : 401,
+    json: () => Promise.resolve(body),
+    headers: {
+      get: (key: string) => headers[key] ?? null,
+    },
+  }) as unknown as Response;
+
 describe('sendRefreshRequest', () => {
+  let fetchMock: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
     vi.resetAllMocks();
+    fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
   });
 
-  it('should return null values when no access token is provided', async () => {
-    const result = await sendRefreshRequest(undefined, 'refreshToken');
-
-    expect(mockAxios.request).not.toHaveBeenCalled();
-    expect(result).toEqual({
-      accessToken: null,
-      refreshToken: null,
-      tenant: null,
-    });
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
-  it('should return null values when access token has no tenant id', async () => {
-    vi.mocked(JWT.parse).mockReturnValue({ body: {} } as any);
-
-    const result = await sendRefreshRequest('accessToken', 'refreshToken');
-
-    expect(mockAxios.request).not.toHaveBeenCalled();
-    expect(result).toEqual({
-      accessToken: null,
-      refreshToken: null,
-      tenant: null,
-    });
-  });
-
-  it('should send refresh request and return data on success', async () => {
+  it('should attempt refresh even without an access token (RFC 6749)', async () => {
     isBrowserMock.mockReturnValue(false);
-    vi.mocked(JWT.parse).mockReturnValue({
-      body: { tenantId: 'tenantId' },
-    } as any);
-    mockAxios.request.mockResolvedValue({
-      data: { accessToken: 'newAccessToken' },
-      headers: {
-        'set-cookie': 'SignInRefreshToken=newRefreshToken; Path=/; HttpOnly',
-        'x-lotta-tenant': 'id:tenantId',
-      },
-    });
-
-    const result = await sendRefreshRequest(
-      'oldAccessToken',
-      'oldRefreshToken',
-      {
-        baseURL: 'http://api.test',
-        originaryHost: 'testHost',
-      }
+    fetchMock.mockResolvedValue(
+      makeFetchResponse(
+        { accessToken: 'newAccessToken' },
+        { 'set-cookie': 'SignInRefreshToken=newRefreshToken; Path=/; HttpOnly' }
+      )
     );
 
-    expect(mockAxios.request).toHaveBeenCalledWith(
+    const result = await sendRefreshRequest(null, 'refreshToken', {
+      originaryHost: 'testHost',
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/auth/token/refresh',
       expect.objectContaining({
-        method: 'post',
-        baseURL: 'http://api.test',
-        url: '/auth/token/refresh',
-        withCredentials: false,
+        method: 'POST',
         headers: expect.objectContaining({
-          'x-originary-host': 'testHost',
-          'x-lotta-tenant': 'id:tenantId',
+          'x-lotta-originary-host': 'testHost',
         }),
-        data: {
-          accessToken: 'oldAccessToken',
-          refreshToken: 'oldRefreshToken',
-        },
       })
     );
     expect(result).toEqual({
       accessToken: 'newAccessToken',
       refreshToken: 'newRefreshToken',
-      tenant: 'id:tenantId',
+      tenant: null,
     });
+  });
+
+  it('uses x-lotta-tenant header when tenantId is extractable from access token', async () => {
+    isBrowserMock.mockReturnValue(false);
+    vi.mocked(JWT.parse).mockReturnValue({
+      body: { tenantId: 42 },
+    } as any);
+    fetchMock.mockResolvedValue(
+      makeFetchResponse(
+        { accessToken: 'newAccessToken' },
+        {
+          'set-cookie': 'SignInRefreshToken=newRefreshToken; Path=/; HttpOnly',
+          'x-lotta-tenant': 'id:42',
+        }
+      )
+    );
+
+    const result = await sendRefreshRequest('oldAccessToken', 'oldRefreshToken', {
+      baseURL: 'http://api.test',
+      originaryHost: 'testHost',
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://api.test/auth/token/refresh',
+      expect.objectContaining({
+        method: 'POST',
+        credentials: 'omit',
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+          'x-lotta-tenant': 'id:42',
+        }),
+        body: JSON.stringify({ token: 'oldRefreshToken' }),
+      })
+    );
+    expect(result).toEqual({
+      accessToken: 'newAccessToken',
+      refreshToken: 'newRefreshToken',
+      tenant: 'id:42',
+    });
+  });
+
+  it('uses credentials: include in the browser', async () => {
+    isBrowserMock.mockReturnValue(true);
+    fetchMock.mockResolvedValue(
+      makeFetchResponse(
+        { accessToken: 'newAccessToken' },
+        { 'set-cookie': 'SignInRefreshToken=newRefreshToken; Path=/; HttpOnly' }
+      )
+    );
+
+    await sendRefreshRequest(null, null);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/auth/token/refresh',
+      expect.objectContaining({ credentials: 'include' })
+    );
   });
 
   it('should return null values when response is missing access token', async () => {
     isBrowserMock.mockReturnValue(false);
-    vi.mocked(JWT.parse).mockReturnValue({ body: { tid: 'tenantId' } } as any);
-    mockAxios.request.mockResolvedValue({
-      data: { accessToken: null },
-      headers: {
-        'set-cookie': 'SignInRefreshToken=newRefreshToken; Path=/; HttpOnly',
-      },
-    });
-
-    const result = await sendRefreshRequest(
-      'oldAccessToken',
-      'oldRefreshToken'
+    fetchMock.mockResolvedValue(
+      makeFetchResponse(
+        { accessToken: null },
+        { 'set-cookie': 'SignInRefreshToken=newRefreshToken; Path=/; HttpOnly' }
+      )
     );
+
+    const result = await sendRefreshRequest('oldAccessToken', 'oldRefreshToken');
 
     expect(result).toEqual({
       accessToken: null,
@@ -109,16 +140,11 @@ describe('sendRefreshRequest', () => {
 
   it('should return null values when response is missing refresh token cookie', async () => {
     isBrowserMock.mockReturnValue(false);
-    vi.mocked(JWT.parse).mockReturnValue({ body: { tid: 'tenantId' } } as any);
-    mockAxios.request.mockResolvedValue({
-      data: { accessToken: 'newAccessToken' },
-      headers: {},
-    });
-
-    const result = await sendRefreshRequest(
-      'oldAccessToken',
-      'oldRefreshToken'
+    fetchMock.mockResolvedValue(
+      makeFetchResponse({ accessToken: 'newAccessToken' }, {})
     );
+
+    const result = await sendRefreshRequest('oldAccessToken', 'oldRefreshToken');
 
     expect(result).toEqual({
       accessToken: null,
@@ -127,17 +153,26 @@ describe('sendRefreshRequest', () => {
     });
   });
 
-  it('should return null values and log error on request failure', async () => {
+  it('should return null values when server responds with an error status', async () => {
+    isBrowserMock.mockReturnValue(false);
+    fetchMock.mockResolvedValue(makeFetchResponse(null, {}, false));
+
+    const result = await sendRefreshRequest('oldAccessToken', 'oldRefreshToken');
+
+    expect(result).toEqual({
+      accessToken: null,
+      refreshToken: null,
+      tenant: null,
+    });
+  });
+
+  it('should return null values and log error on network failure', async () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {});
-    vi.mocked(JWT.parse).mockReturnValue({ body: { tid: 'tenantId' } } as any);
-    mockAxios.request.mockRejectedValue(new Error('Network Error'));
+    fetchMock.mockRejectedValue(new Error('Network Error'));
 
-    const result = await sendRefreshRequest(
-      'oldAccessToken',
-      'oldRefreshToken'
-    );
+    const result = await sendRefreshRequest('oldAccessToken', 'oldRefreshToken');
 
     expect(result).toEqual({
       accessToken: null,

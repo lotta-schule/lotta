@@ -45,27 +45,19 @@ export async function middleware(request: NextRequest) {
     : null;
 
   const modifiedHeaders = new Headers(request.headers);
-  // We don't want to get a new token when
-  // - there is no refresh token (=> noting to refresh with)
-  // - the access token is not close to expiration (=> no need to refresh yet)
-  // - the access token is of type "high_security" (=> should not be refreshed automatically)
-  if (
-    !incomingRefreshToken ||
-    parsedIncomingAccessToken?.isExpired(30) === false ||
-    parsedIncomingAccessToken?.body.type === 'high_security'
-  ) {
+
+  // Refresh when: refresh token exists AND (access token missing OR expired) AND not a hisec token.
+  // Hisec tokens are intentionally short-lived and must not be auto-refreshed.
+  // RFC 6749 §6: only the refresh token is needed; the access token is used only as an expiry signal.
+  const shouldRefresh =
+    !!incomingRefreshToken &&
+    (!parsedIncomingAccessToken || parsedIncomingAccessToken.isExpired()) &&
+    parsedIncomingAccessToken?.body.type !== 'hisec';
+
+  if (!shouldRefresh) {
     if (incomingAccessToken) {
       modifiedHeaders.set('Authorization', `Bearer ${incomingAccessToken}`);
     }
-    return NextResponse.next({
-      request: {
-        headers: modifiedHeaders,
-      },
-    });
-  }
-
-  if (!incomingAccessToken) {
-    modifiedHeaders.delete('Authorization');
     return NextResponse.next({
       request: {
         headers: modifiedHeaders,
@@ -107,15 +99,20 @@ export async function middleware(request: NextRequest) {
 
   if (accessToken) {
     response.cookies.set('SignInAccessToken', accessToken, {
-      maxAge: 21 * 24 * 60 * 60, // 3 weeks
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 21 * 24 * 60 * 60,
       sameSite: 'lax',
+      path: '/',
     });
   }
   if (refreshToken) {
     response.cookies.set('SignInRefreshToken', refreshToken, {
-      maxAge: 21 * 24 * 60 * 60, // 3 weeks
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 21 * 24 * 60 * 60,
       sameSite: 'lax',
+      path: '/',
     });
   }
 
