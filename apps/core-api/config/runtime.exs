@@ -82,6 +82,7 @@ defmodule SystemConfig do
   defp default("POSTGRES_DB", :test), do: "api_test"
   defp default("POSTGRES_DB", :dev), do: "lotta"
   defp default("POSTGRES_HOST", _), do: "localhost"
+  defp default("POSTGRES_POOL_SIZE", :test), do: "100"
   defp default("POSTGRES_POOL_SIZE", _), do: "50"
 
   defp default("REDIS_HOST", env) when env in [:dev, :test], do: "localhost"
@@ -284,7 +285,6 @@ config :lotta, Lotta.Storage.RemoteStorage,
               access_key_id: System.get_env("REMOTE_STORAGE_#{env_name}_ACCESS_KEY_ID"),
               secret_access_key: System.get_env("REMOTE_STORAGE_#{env_name}_SECRET_ACCESS_KEY")
             }
-            |> IO.inspect(label: "Storage config for #{storage_name}")
             |> Map.reject(fn {_k, v} -> v in [nil, ""] end)
         })
       end)

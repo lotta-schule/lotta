@@ -4,7 +4,7 @@ defmodule LottaWeb.FileResolverTest do
   use LottaWeb.ConnCase
   use Lotta.WorkerCase
 
-  import Mock
+  import Mox
   import Ecto.Query
   import Lotta.Factory
 
@@ -15,6 +15,8 @@ defmodule LottaWeb.FileResolverTest do
   alias Lotta.Storage.{File, FileConversion, Directory}
 
   @prefix "tenant_test"
+
+  setup :verify_on_exit!
 
   setup do
     Repo.put_prefix(@prefix)
@@ -261,21 +263,22 @@ defmodule LottaWeb.FileResolverTest do
           }
       end)
 
-      with_mock(
-        Exile,
-        stream!: fn _cmd, _opts ->
-          create_file_stream("test/support/fixtures/eoa2.mp3")
-          |> Stream.map(&{:stdout, &1})
-        end
-      ) do
-        {:ok, job} =
-          Conversion.get_or_create_conversion_job(
-            file,
-            "audioplay"
-          )
+      Application.put_env(:lotta, :exile_module, Lotta.ExileMock)
+      on_exit(fn -> Application.delete_env(:lotta, :exile_module) end)
 
-        assert job.state == "completed"
-      end
+      stub(Lotta.ExileMock, :stream!, fn _cmd, _opts ->
+        create_file_stream("test/support/fixtures/eoa2.mp3")
+        |> Stream.map(&{:stdout, &1})
+      end)
+
+      {:ok, job} =
+        Conversion.get_or_create_conversion_job(
+          file,
+          "audioplay"
+        )
+
+      assert job.state == "completed"
+      Application.delete_env(:lotta, :exile_module)
 
       res =
         build_tenant_conn()
@@ -355,21 +358,22 @@ defmodule LottaWeb.FileResolverTest do
           }
       end)
 
-      with_mock(
-        Exile,
-        stream!: fn _cmd, _opts ->
-          create_file_stream("test/support/fixtures/pc3.m4v")
-          |> Stream.map(&{:stdout, &1})
-        end
-      ) do
-        {:ok, job} =
-          Conversion.get_or_create_conversion_job(
-            file,
-            "videoplay"
-          )
+      Application.put_env(:lotta, :exile_module, Lotta.ExileMock)
+      on_exit(fn -> Application.delete_env(:lotta, :exile_module) end)
 
-        assert job.state == "completed"
-      end
+      stub(Lotta.ExileMock, :stream!, fn _cmd, _opts ->
+        create_file_stream("test/support/fixtures/pc3.m4v")
+        |> Stream.map(&{:stdout, &1})
+      end)
+
+      {:ok, job} =
+        Conversion.get_or_create_conversion_job(
+          file,
+          "videoplay"
+        )
+
+      assert job.state == "completed"
+      Application.delete_env(:lotta, :exile_module)
 
       res =
         build_tenant_conn()

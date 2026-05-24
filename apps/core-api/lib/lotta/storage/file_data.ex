@@ -181,7 +181,7 @@ defmodule Lotta.Storage.FileData do
   def create_cache_dir(), do: File.mkdir_p!(Path.join(System.tmp_dir(), "ugc"))
 
   defp cache_path(%Storage.File{} = file) do
-    if tmp_path = System.tmp_dir() do
+    if tmp_path = tmp_dir_fn().() do
       filename =
         Enum.join(
           [
@@ -195,6 +195,8 @@ defmodule Lotta.Storage.FileData do
       Path.join([tmp_path, "ugc", filename])
     end
   end
+
+  defp tmp_dir_fn, do: Application.get_env(:lotta, :tmp_dir_fn, &System.tmp_dir/0)
 end
 
 defimpl String.Chars, for: Lotta.Storage.FileData do

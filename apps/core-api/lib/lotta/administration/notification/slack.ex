@@ -2,6 +2,8 @@ defmodule Lotta.Administration.Notification.Slack do
   @moduledoc """
   Send notifications to Slack for Lotta administrative events.
   """
+  @behaviour Lotta.Administration.Notification.SlackBehaviour
+
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
   alias Lotta.Billings.Invoice
@@ -49,7 +51,7 @@ defmodule Lotta.Administration.Notification.Slack do
                 emoji: true,
                 text: "Lotta öffnen"
               },
-              url: Urls.get_tenant_url(tenant)
+              url: urls_module().get_tenant_url(tenant)
             }
           },
           %{
@@ -147,6 +149,8 @@ defmodule Lotta.Administration.Notification.Slack do
   defp config do
     Application.get_env(:lotta, Lotta.Administration.Notification.Slack, [])
   end
+
+  defp urls_module, do: Application.get_env(:lotta, :urls_module, LottaWeb.Urls)
 
   defp environment_name do
     Application.get_env(:lotta, :environment, "development")

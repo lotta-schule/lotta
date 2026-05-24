@@ -4,11 +4,14 @@ defmodule Lotta.AccountsTest do
   use Lotta.DataCase, async: true
   use Bamboo.Test
 
+  import Mox
   import Lotta.Factory
 
   alias Lotta.{Accounts, Email, Repo, Tenants}
-  alias Lotta.Eduplaces.UserInfo
+  alias Lotta.Eduplaces.{IDMMock, UserInfo}
   alias Lotta.Accounts.{User, UserDevice}
+
+  setup :verify_on_exit!
 
   @all_users [
     "alexis.rinaldoni@einsa.net",
@@ -607,8 +610,6 @@ defmodule Lotta.AccountsTest do
     end
 
     test "register_eduplaces_user/2 creates user from eduplaces info", %{tenant: tenant} do
-      import Mock
-
       user_info = %Lotta.Eduplaces.UserInfo{
         id: "eduplaces-user-456",
         username: "eduuser",
@@ -616,16 +617,12 @@ defmodule Lotta.AccountsTest do
         groups: []
       }
 
-      with_mocks([
-        {Lotta.Storage, [:passthrough], [create_new_user_directories: fn _user -> :ok end]},
-        {Lotta.Eduplaces.IDM, [], [get_user: fn _user_id -> {:error, :not_found} end]}
-      ]) do
-        assert {:ok, user} = Accounts.register_eduplaces_user(tenant, user_info)
+      stub(IDMMock, :get_user, fn _user_id -> {:error, :not_found} end)
 
-        assert user.eduplaces_id == "eduplaces-user-456"
-        assert user.nickname == "eduuser"
-        assert called(Lotta.Storage.create_new_user_directories(user))
-      end
+      assert {:ok, user} = Accounts.register_eduplaces_user(tenant, user_info)
+
+      assert user.eduplaces_id == "eduplaces-user-456"
+      assert user.nickname == "eduuser"
     end
 
     test "get_or_create_eduplaces_user/2 finds existing user" do

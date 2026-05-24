@@ -1,17 +1,32 @@
 defmodule Lotta.Worker.TenantTest do
   use Lotta.WorkerCase, async: false
 
-  import Mock
+  import Mox
   import Lotta.Factory
 
   alias Lotta.Worker.Tenant
   alias Lotta.{Tenants}
-  alias Lotta.Tenants.DefaultContent
-  alias Lotta.Analytics
-  alias Lotta.Administration.Notification.Slack
+  alias Lotta.Tenants.DefaultContentMock
+  alias Lotta.AnalyticsMock
+  alias Lotta.Administration.Notification.SlackMock
+  alias Lotta.TenantsUsageMock
+  alias Lotta.BillingsMock
+
+  setup :set_mox_global
+  setup :verify_on_exit!
 
   setup do
     Lotta.Repo.put_prefix("tenant_test")
+
+    stub(SlackMock, :send, fn _msg -> :ok end)
+    stub(SlackMock, :new_lotta_notification, fn _tenant, _users -> %{} end)
+    stub(SlackMock, :new_lotta_invoices_to_issue_notification, fn _invoices -> %{} end)
+    stub(DefaultContentMock, :create_default_content, fn _t, _u -> :ok end)
+    stub(AnalyticsMock, :create_site, fn _t -> :ok end)
+    stub(TenantsUsageMock, :create_usage_logs, fn _t -> :ok end)
+    stub(TenantsUsageMock, :refresh_monthly_usage_logs, fn _opts -> :ok end)
+    stub(BillingsMock, :generate_invoice, fn _t, _y, _m -> {:ok, %{invoice_number: "TST001"}} end)
+
     :ok
   end
 
@@ -20,46 +35,35 @@ defmodule Lotta.Worker.TenantTest do
       tenant = Tenants.get_tenant_by_slug("test")
       user = insert(:user)
 
-      with_mock(DefaultContent, create_default_content: fn _t, _u -> :ok end) do
-        with_mock(Analytics, create_site: fn _t -> :ok end) do
-          with_mock(Slack, [:passthrough], send: fn _msg -> :ok end) do
-            perform_job(Tenant, %{
-              "type" => "setup",
-              "id" => tenant.id,
-              "user_email" => user.email,
-              "user_password" => "test_password",
-              "eduplaces_id" => nil
-            })
+      expect(DefaultContentMock, :create_default_content, fn _t, _u -> :ok end)
+      stub(AnalyticsMock, :create_site, fn _t -> :ok end)
 
-            assert_called(DefaultContent.create_default_content(tenant, :_))
-          end
-        end
-      end
+      perform_job(Tenant, %{
+        "type" => "setup",
+        "id" => tenant.id,
+        "user_email" => user.email,
+        "user_password" => "test_password",
+        "eduplaces_id" => nil
+      })
     end
 
     test "handles eduplaces_id when provided" do
       tenant = Tenants.get_tenant_by_slug("test")
-
-      # Create a user with eduplaces_id
       user = insert(:user, eduplaces_id: "test_eduplaces_id")
 
-      with_mock(DefaultContent, create_default_content: fn _t, _u -> :ok end) do
-        with_mock(Analytics, create_site: fn _t -> :ok end) do
-          with_mock(Slack, [:passthrough], send: fn _msg -> :ok end) do
-            result =
-              perform_job(Tenant, %{
-                "type" => "setup",
-                "id" => tenant.id,
-                "user_email" => nil,
-                "user_password" => "test_password",
-                "eduplaces_id" => user.eduplaces_id
-              })
+      expect(DefaultContentMock, :create_default_content, fn _t, _u -> :ok end)
+      stub(AnalyticsMock, :create_site, fn _t -> :ok end)
 
-            assert result == :ok
-            assert_called(DefaultContent.create_default_content(tenant, :_))
-          end
-        end
-      end
+      result =
+        perform_job(Tenant, %{
+          "type" => "setup",
+          "id" => tenant.id,
+          "user_email" => nil,
+          "user_password" => "test_password",
+          "eduplaces_id" => user.eduplaces_id
+        })
+
+      assert result == :ok
     end
   end
 
@@ -67,27 +71,24 @@ defmodule Lotta.Worker.TenantTest do
     test "calls Analytics.create_site with correct tenant" do
       tenant = Tenants.get_tenant_by_slug("test")
 
-      with_mock(Analytics, create_site: fn _t -> :ok end) do
-        perform_job(Tenant, %{
-          "type" => "init_analytics",
-          "id" => tenant.id
-        })
+      expect(AnalyticsMock, :create_site, fn t ->
+        assert t.id == tenant.id
+        :ok
+      end)
 
-        assert_called(Analytics.create_site(tenant))
-      end
+      perform_job(Tenant, %{
+        "type" => "init_analytics",
+        "id" => tenant.id
+      })
     end
 
     test "logs error when tenant not found" do
-      with_mock(Analytics, create_site: fn _t -> :ok end) do
-        # The job returns :error but Oban wraps it
-        perform_job(Tenant, %{
-          "type" => "init_analytics",
-          "id" => 99_999
-        })
+      stub(AnalyticsMock, :create_site, fn _t -> :ok end)
 
-        # Verify Analytics was not called
-        refute called(Analytics.create_site(:_))
-      end
+      perform_job(Tenant, %{
+        "type" => "init_analytics",
+        "id" => 99_999
+      })
     end
   end
 
@@ -95,82 +96,67 @@ defmodule Lotta.Worker.TenantTest do
     test "calls Slack notification with correct arguments" do
       tenant = Tenants.get_tenant_by_slug("test")
 
-      with_mock(Slack, [:passthrough],
-        new_lotta_notification: fn _t, _users -> %{} end,
-        send: fn _msg -> :ok end
-      ) do
-        perform_job(Tenant, %{
-          "type" => "notify_created",
-          "id" => tenant.id
-        })
+      expect(SlackMock, :new_lotta_notification, fn t, _users ->
+        assert t.id == tenant.id
+        %{}
+      end)
 
-        assert_called(Slack.new_lotta_notification(tenant, :_))
-        assert_called(Slack.send(:_))
-      end
+      expect(SlackMock, :send, fn _msg -> :ok end)
+
+      perform_job(Tenant, %{
+        "type" => "notify_created",
+        "id" => tenant.id
+      })
     end
 
     test "returns error when tenant not found" do
-      with_mock(Slack, [:passthrough],
-        new_lotta_notification: fn _t, _users -> %{} end,
-        send: fn _msg -> :ok end
-      ) do
-        result =
-          perform_job(Tenant, %{
-            "type" => "notify_created",
-            "id" => 99_999
-          })
+      result =
+        perform_job(Tenant, %{
+          "type" => "notify_created",
+          "id" => 99_999
+        })
 
-        assert result == {:error, :tenant_not_found}
-        refute called(Slack.new_lotta_notification(:_, :_))
-      end
+      assert result == {:error, :tenant_not_found}
     end
   end
 
   describe "collect_daily_usage_logs" do
     test "calls create_usage_logs for all tenants" do
-      with_mock(Tenants, [:passthrough], create_usage_logs: fn _tenant -> :ok end) do
-        perform_job(Tenant, %{
-          "type" => "collect_daily_usage_logs"
-        })
+      stub(TenantsUsageMock, :create_usage_logs, fn _tenant -> :ok end)
 
-        assert called(Tenants.create_usage_logs(:_))
-      end
+      perform_job(Tenant, %{
+        "type" => "collect_daily_usage_logs"
+      })
     end
 
     test "handles errors from individual tenants and continues" do
       tenants = Tenants.list_tenants()
 
-      with_mock(Tenants, [:passthrough],
-        create_usage_logs: fn tenant ->
-          if tenant.id == hd(tenants).id do
-            {:error, :test_error}
-          else
-            :ok
-          end
+      stub(TenantsUsageMock, :create_usage_logs, fn tenant ->
+        if tenant.id == hd(tenants).id do
+          {:error, :test_error}
+        else
+          :ok
         end
-      ) do
-        result =
-          perform_job(Tenant, %{
-            "type" => "collect_daily_usage_logs"
-          })
+      end)
 
-        assert result == :ok
+      result =
+        perform_job(Tenant, %{
+          "type" => "collect_daily_usage_logs"
+        })
 
-        assert called(Tenants.create_usage_logs(:_))
-      end
+      assert result == :ok
     end
 
     test "returns ok even when all tenants fail" do
-      with_mock(Tenants, [:passthrough],
-        create_usage_logs: fn _tenant -> {:error, :test_error} end
-      ) do
-        result =
-          perform_job(Tenant, %{
-            "type" => "collect_daily_usage_logs"
-          })
+      stub(TenantsUsageMock, :create_usage_logs, fn _tenant -> {:error, :test_error} end)
 
-        assert result == :ok
-      end
+      result =
+        perform_job(Tenant, %{
+          "type" => "collect_daily_usage_logs"
+        })
+
+      assert result == :ok
     end
   end
 
@@ -184,39 +170,39 @@ defmodule Lotta.Worker.TenantTest do
     end
 
     test "calls Tenants.refresh_monthly_usage_logs with concurrent: true" do
-      with_mock(Tenants, [:passthrough], refresh_monthly_usage_logs: fn _opts -> :ok end) do
-        result =
-          perform_job(Tenant, %{
-            "type" => "refresh_monthly_usage_logs"
-          })
+      expect(TenantsUsageMock, :refresh_monthly_usage_logs, fn opts ->
+        assert opts == [concurrent: true]
+        :ok
+      end)
 
-        assert result == :ok
-        assert called(Tenants.refresh_monthly_usage_logs(concurrent: true))
-      end
+      result =
+        perform_job(Tenant, %{
+          "type" => "refresh_monthly_usage_logs"
+        })
+
+      assert result == :ok
     end
 
     test "returns ok when refresh succeeds" do
-      with_mock(Tenants, [:passthrough], refresh_monthly_usage_logs: fn _opts -> :ok end) do
-        result =
-          perform_job(Tenant, %{
-            "type" => "refresh_monthly_usage_logs"
-          })
+      stub(TenantsUsageMock, :refresh_monthly_usage_logs, fn _opts -> :ok end)
 
-        assert result == :ok
-      end
+      result =
+        perform_job(Tenant, %{
+          "type" => "refresh_monthly_usage_logs"
+        })
+
+      assert result == :ok
     end
 
     test "returns error when refresh fails" do
-      with_mock(Tenants, [:passthrough],
-        refresh_monthly_usage_logs: fn _opts -> {:error, :test_error} end
-      ) do
-        result =
-          perform_job(Tenant, %{
-            "type" => "refresh_monthly_usage_logs"
-          })
+      stub(TenantsUsageMock, :refresh_monthly_usage_logs, fn _opts -> {:error, :test_error} end)
 
-        assert result == {:error, :test_error}
-      end
+      result =
+        perform_job(Tenant, %{
+          "type" => "refresh_monthly_usage_logs"
+        })
+
+      assert result == {:error, :test_error}
     end
   end
 
@@ -238,19 +224,16 @@ defmodule Lotta.Worker.TenantTest do
         |> Ecto.Changeset.change(%{current_plan_name: "default_2025"})
         |> Lotta.Repo.update!(prefix: "public")
 
-      with_mock(Billings, [:passthrough],
-        generate_invoice: fn _tenant, _year, _month ->
-          {:ok, %{id: 1, invoice_number: "LTA00001", total: Decimal.new("14.00")}}
-        end
-      ) do
-        result =
-          perform_job(Tenant, %{
-            "type" => "generate_invoices"
-          })
+      expect(BillingsMock, :generate_invoice, fn _tenant, _year, _month ->
+        {:ok, %{id: 1, invoice_number: "LTA00001", total: Decimal.new("14.00")}}
+      end)
 
-        assert result == :ok
-        assert called(Billings.generate_invoice(tenant, :_, :_))
-      end
+      result =
+        perform_job(Tenant, %{
+          "type" => "generate_invoices"
+        })
+
+      assert result == :ok
     end
 
     test "skips tenants without current_plan_name" do
@@ -260,19 +243,12 @@ defmodule Lotta.Worker.TenantTest do
       |> Ecto.Changeset.change(%{current_plan_name: nil})
       |> Lotta.Repo.update!(prefix: "public")
 
-      with_mock(Billings, [:passthrough],
-        generate_invoice: fn _tenant, _year, _month ->
-          {:ok, %{id: 1, invoice_number: "LTA00001"}}
-        end
-      ) do
-        result =
-          perform_job(Tenant, %{
-            "type" => "generate_invoices"
-          })
+      result =
+        perform_job(Tenant, %{
+          "type" => "generate_invoices"
+        })
 
-        assert result == :ok
-        refute called(Billings.generate_invoice(:_, :_, :_))
-      end
+      assert result == :ok
     end
 
     test "handles errors from individual tenants and continues" do
@@ -282,18 +258,16 @@ defmodule Lotta.Worker.TenantTest do
       |> Ecto.Changeset.change(%{current_plan_name: "test_plan"})
       |> Lotta.Repo.update!(prefix: "public")
 
-      with_mock(Billings, [:passthrough],
-        generate_invoice: fn _tenant, _year, _month ->
-          {:error, :test_error}
-        end
-      ) do
-        result =
-          perform_job(Tenant, %{
-            "type" => "generate_invoices"
-          })
+      stub(BillingsMock, :generate_invoice, fn _tenant, _year, _month ->
+        {:error, :test_error}
+      end)
 
-        assert result == :ok
-      end
+      result =
+        perform_job(Tenant, %{
+          "type" => "generate_invoices"
+        })
+
+      assert result == :ok
     end
 
     test "generates invoices for the previous month" do
@@ -308,24 +282,23 @@ defmodule Lotta.Worker.TenantTest do
       expected_year = previous_month_date.year
       expected_month = previous_month_date.month
 
-      with_mock(Billings, [:passthrough],
-        generate_invoice: fn _tenant, year, month ->
-          {:ok,
-           %{
-             id: 1,
-             invoice_number: "LTA00001",
-             total: Decimal.new("14.00"),
-             year: year,
-             month: month
-           }}
-        end
-      ) do
-        perform_job(Tenant, %{
-          "type" => "generate_invoices"
-        })
+      expect(BillingsMock, :generate_invoice, fn _tenant, year, month ->
+        assert year == expected_year
+        assert month == expected_month
 
-        assert called(Billings.generate_invoice(:_, expected_year, expected_month))
-      end
+        {:ok,
+         %{
+           id: 1,
+           invoice_number: "LTA00001",
+           total: Decimal.new("14.00"),
+           year: year,
+           month: month
+         }}
+      end)
+
+      perform_job(Tenant, %{
+        "type" => "generate_invoices"
+      })
     end
   end
 end

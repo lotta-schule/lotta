@@ -1,13 +1,15 @@
 defmodule Lotta.RemoteStorageTest do
   @moduledoc false
 
-  use Lotta.DataCase, async: false
+  use Lotta.DataCase, async: true
 
-  import Mock
+  import Mox
 
   alias Lotta.Storage.{FileData, RemoteStorage, RemoteStorageEntity}
 
-  describe "RemoteStorage" do
+  setup :verify_on_exit!
+
+  describe "RemoteStorage config" do
     test "config_for_store/1 should return the config for the given store" do
       assert {:ok,
               %{
@@ -39,40 +41,39 @@ defmodule Lotta.RemoteStorageTest do
     test "get_strategy/1 should return the strategy for the default store if no config name is given" do
       assert RemoteStorage.get_strategy() == {:ok, RemoteStorage.Strategy.S3}
     end
+  end
+
+  describe "RemoteStorage strategy delegation" do
+    setup do
+      original_config = Application.get_env(:lotta, Lotta.Storage.RemoteStorage)
+      on_exit(fn -> Application.put_env(:lotta, Lotta.Storage.RemoteStorage, original_config) end)
+
+      new_storages =
+        Map.new(original_config[:storages], fn {name, cfg} ->
+          {name, Map.put(cfg, :type, Lotta.Storage.RemoteStorage.StrategyMock)}
+        end)
+
+      Application.put_env(
+        :lotta,
+        Lotta.Storage.RemoteStorage,
+        Keyword.put(original_config, :storages, new_storages)
+      )
+
+      :ok
+    end
 
     test "create/1 should call corresponding strategy" do
-      with_mock RemoteStorage.Strategy.S3,
-        create: fn _, path, config, _metadata ->
-          {:ok,
-           %RemoteStorageEntity{
-             path: path,
-             store_name: config[:name]
-           }}
-        end do
-        RemoteStorage.create(%FileData{}, "/")
+      expect(Lotta.Storage.RemoteStorage.StrategyMock, :create, fn _file, path, config, _meta ->
+        {:ok, %RemoteStorageEntity{path: path, store_name: config[:name]}}
+      end)
 
-        assert called(
-                 RemoteStorage.Strategy.S3.create(
-                   :_,
-                   :_,
-                   %{
-                     type: RemoteStorage.Strategy.S3
-                   },
-                   []
-                 )
-               )
-      end
+      assert {:ok, _} = RemoteStorage.create(%FileData{}, "/")
     end
 
     test "delete/1 should call correct strategy for the identifier" do
-      with_mock RemoteStorage.Strategy.S3,
-        delete: fn entity, _ ->
-          {:ok, entity}
-        end do
-        entity = %RemoteStorageEntity{store_name: "minio", path: "/some"}
-        RemoteStorage.delete(entity)
-        assert called(RemoteStorage.Strategy.S3.delete(:_, :_))
-      end
+      entity = %RemoteStorageEntity{store_name: "minio", path: "/some"}
+      expect(Lotta.Storage.RemoteStorage.StrategyMock, :delete, fn _path, _config -> :ok end)
+      assert {:ok, ^entity} = RemoteStorage.delete(entity)
     end
 
     test "delete/1 should return an error tuple if store does not exist" do
@@ -84,14 +85,9 @@ defmodule Lotta.RemoteStorageTest do
     end
 
     test "exists?/1 should call correct strategy for the identifier" do
-      with_mock RemoteStorage.Strategy.S3,
-        exists?: fn _, _ ->
-          true
-        end do
-        entity = %RemoteStorageEntity{store_name: "minio", path: "/some"}
-        RemoteStorage.exists?(entity)
-        assert called(RemoteStorage.Strategy.S3.exists?(:_, :_))
-      end
+      entity = %RemoteStorageEntity{store_name: "minio", path: "/some"}
+      expect(Lotta.Storage.RemoteStorage.StrategyMock, :exists?, fn _entity, _config -> true end)
+      assert RemoteStorage.exists?(entity)
     end
 
     test "exists?/1 should return :unknown if it's from another store" do
@@ -103,14 +99,13 @@ defmodule Lotta.RemoteStorageTest do
     end
 
     test "get_http_url/1 should call correct strategy's get_http_url" do
-      with_mock RemoteStorage.Strategy.S3,
-        get_http_url: fn entity, _options, _config ->
-          "http://" <> entity.path
-        end do
-        entity = %RemoteStorageEntity{store_name: "minio", path: "/some"}
-        RemoteStorage.get_http_url(entity)
-        assert called(RemoteStorage.Strategy.S3.get_http_url(:_, :_, :_))
-      end
+      entity = %RemoteStorageEntity{store_name: "minio", path: "/some"}
+
+      expect(Lotta.Storage.RemoteStorage.StrategyMock, :get_http_url, fn e, _config, _opts ->
+        "http://" <> e.path
+      end)
+
+      assert "http:///some" = RemoteStorage.get_http_url(entity)
     end
 
     test "get_http_url/1 should return nil if the given store does not exist" do

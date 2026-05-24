@@ -47,7 +47,6 @@ defmodule Lotta.Eduplaces.Syncer do
 
   alias Lotta.{Accounts, Repo, Tenants}
   alias Lotta.Accounts.UserGroup
-  alias Lotta.Eduplaces.IDM
   alias Lotta.Tenants.Tenant
 
   @default_interval :timer.minutes(30)
@@ -207,8 +206,10 @@ defmodule Lotta.Eduplaces.Syncer do
     end
   end
 
+  defp idm_module, do: Application.get_env(:lotta, :idm_module, Lotta.Eduplaces.IDM)
+
   defp fetch_eduplaces_groups(%Tenant{} = tenant) do
-    case IDM.list_groups(tenant) do
+    case idm_module().list_groups(tenant) do
       {:ok, groups} when is_list(groups) ->
         {:ok, groups}
 
@@ -282,7 +283,7 @@ defmodule Lotta.Eduplaces.Syncer do
       eduplaces_id: id
     }
 
-    case Accounts.create_user_group(attrs) do
+    case accounts_group_module().create_user_group(attrs) do
       {:ok, _group} ->
         Logger.debug(
           "[Eduplaces.Syncer] Created group '#{group_data["name"]}' for tenant #{tenant.slug}"
@@ -319,7 +320,7 @@ defmodule Lotta.Eduplaces.Syncer do
   defp do_update_group(tenant, eduplaces_group, existing_group, count) do
     attrs = %{name: eduplaces_group["name"]}
 
-    case Accounts.update_user_group(existing_group, attrs) do
+    case accounts_group_module().update_user_group(existing_group, attrs) do
       {:ok, _group} ->
         Logger.debug(
           "[Eduplaces.Syncer] Updated group '#{existing_group.name}' -> '#{eduplaces_group["name"]}' for tenant #{tenant.slug}"
@@ -340,7 +341,7 @@ defmodule Lotta.Eduplaces.Syncer do
     Enum.reduce(ids, 0, fn id, count ->
       group = existing_map[id]
 
-      case Accounts.delete_user_group(group) do
+      case accounts_group_module().delete_user_group(group) do
         {:ok, _group} ->
           Logger.debug(
             "[Eduplaces.Syncer] Deleted group '#{group.name}' for tenant #{tenant.slug}"
@@ -382,7 +383,7 @@ defmodule Lotta.Eduplaces.Syncer do
   end
 
   defp fetch_group_details(%UserGroup{} = group) do
-    case IDM.get_group(group) do
+    case idm_module().get_group(group) do
       {:ok, group_details} when is_map(group_details) ->
         {:ok, group_details}
 
@@ -409,7 +410,7 @@ defmodule Lotta.Eduplaces.Syncer do
     current_members = current_group.users
     current_member_ids = MapSet.new(current_members, & &1.id)
 
-    eduplaces_users = Accounts.list_users_by_eduplaces_ids(member_eduplaces_ids)
+    eduplaces_users = accounts_group_module().list_users_by_eduplaces_ids(member_eduplaces_ids)
     eduplaces_user_ids = MapSet.new(eduplaces_users, & &1.id)
 
     existing_eduplaces_ids = MapSet.new(eduplaces_users, & &1.eduplaces_id)
@@ -426,7 +427,7 @@ defmodule Lotta.Eduplaces.Syncer do
     to_remove_count = MapSet.size(MapSet.difference(current_member_ids, eduplaces_user_ids))
 
     if to_add_count > 0 or to_remove_count > 0 do
-      case Accounts.set_group_members(group, eduplaces_users) do
+      case accounts_group_module().set_group_members(group, eduplaces_users) do
         {:ok, _updated_group} ->
           {:ok, %{added: to_add_count, removed: to_remove_count}}
 
@@ -488,6 +489,9 @@ defmodule Lotta.Eduplaces.Syncer do
        }}
     end
   end
+
+  defp accounts_group_module,
+    do: Application.get_env(:lotta, :accounts_group_module, Lotta.Accounts)
 
   defp emit_telemetry(
          duration,

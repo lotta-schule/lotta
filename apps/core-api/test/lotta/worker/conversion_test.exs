@@ -1,11 +1,13 @@
 defmodule Lotta.Worker.ConversionTest do
   use Lotta.WorkerCase, async: false
 
-  import Mock
+  import Mox
   import Lotta.Factory
 
   alias Lotta.Repo
   alias Lotta.Worker.Conversion
+
+  setup :verify_on_exit!
 
   @prefix "tenant_test"
 
@@ -41,19 +43,19 @@ defmodule Lotta.Worker.ConversionTest do
     test "cancel a job when a format was passed vips cannot read" do
       file = real_file(insert(:user))
 
-      with_mock(
-        Image,
-        open: fn _stream ->
-          {:error, %Image.Error{message: "Failed to create image from VipsSource"}}
-        end
-      ) do
-        assert {:cancel, _msg} =
-                 perform_job(Conversion, %{
-                   "prefix" => "tenant_test",
-                   "file_id" => file.id,
-                   "format_category" => "preview"
-                 })
-      end
+      Application.put_env(:lotta, :image_module, Lotta.ImageMock)
+      on_exit(fn -> Application.delete_env(:lotta, :image_module) end)
+
+      stub(Lotta.ImageMock, :open, fn _stream ->
+        {:error, %Image.Error{message: "Failed to create image from VipsSource"}}
+      end)
+
+      assert {:cancel, _msg} =
+               perform_job(Conversion, %{
+                 "prefix" => "tenant_test",
+                 "file_id" => file.id,
+                 "format_category" => "preview"
+               })
     end
 
     test "should get an existing job after calling get_or_create_conversion_job with args of existing job" do

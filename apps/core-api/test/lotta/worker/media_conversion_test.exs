@@ -1,7 +1,7 @@
 defmodule Lotta.Worker.MediaConversionTest do
   use Lotta.WorkerCase, async: false
 
-  import Mock
+  import Mox
   import Lotta.Factory
 
   alias Lotta.Repo
@@ -10,6 +10,8 @@ defmodule Lotta.Worker.MediaConversionTest do
   alias Lotta.Storage.{File, FileConversion}
 
   @prefix "tenant_test"
+
+  setup :verify_on_exit!
 
   setup do
     Repo.put_prefix(@prefix)
@@ -74,6 +76,9 @@ defmodule Lotta.Worker.MediaConversionTest do
 
   describe "Worker.Conversion" do
     setup do
+      Application.put_env(:lotta, :exile_module, Lotta.ExileMock)
+      on_exit(fn -> Application.delete_env(:lotta, :exile_module) end)
+
       Tesla.Mock.mock(fn
         %{method: :get} ->
           %Tesla.Env{
@@ -81,115 +86,102 @@ defmodule Lotta.Worker.MediaConversionTest do
             body: create_file_stream("test/support/fixtures/eoa2.mp3")
           }
       end)
+
+      :ok
     end
 
     test "Create a single new audio conversion" do
       file = real_audio_file(insert(:user))
 
-      with_mock(
-        Exile,
-        stream!: fn _cmd, _opts ->
-          create_file_stream("test/support/fixtures/eoa2.mp3")
-          |> Stream.map(&{:stdout, &1})
-        end
-      ) do
-        :ok =
-          perform_job(MediaConversion, %{
-            "prefix" => @prefix,
-            "file_id" => file.id,
-            "format_name" => "audioplay_aac"
-          })
+      stub(Lotta.ExileMock, :stream!, fn _cmd, _opts ->
+        create_file_stream("test/support/fixtures/eoa2.mp3")
+        |> Stream.map(&{:stdout, &1})
+      end)
 
-        assert Mock.called(Exile.stream!(:_, :_))
+      :ok =
+        perform_job(MediaConversion, %{
+          "prefix" => @prefix,
+          "file_id" => file.id,
+          "format_name" => "audioplay_aac"
+        })
 
-        assert [%FileConversion{format: "audioplay_aac", file_type: "audio"}] =
-                 file
-                 |> Repo.reload()
-                 |> Repo.preload(:file_conversions)
-                 |> Map.get(:file_conversions)
-      end
+      assert [%FileConversion{format: "audioplay_aac", file_type: "audio"}] =
+               file
+               |> Repo.reload()
+               |> Repo.preload(:file_conversions)
+               |> Map.get(:file_conversions)
     end
 
     test "Create multiple new audio conversions" do
       file = real_audio_file(insert(:user))
 
-      with_mock(
-        Exile,
-        stream!: fn _cmd, _opts ->
-          create_file_stream("test/support/fixtures/eoa2.mp3")
-          |> Stream.map(&{:stdout, &1})
-        end
-      ) do
-        :ok =
-          perform_job(MediaConversion, %{
-            "prefix" => @prefix,
-            "file_id" => file.id,
-            "format_names" => ["audioplay_aac", "audioplay_ogg", "preview_200"]
-          })
+      stub(Lotta.ExileMock, :stream!, fn _cmd, _opts ->
+        create_file_stream("test/support/fixtures/eoa2.mp3")
+        |> Stream.map(&{:stdout, &1})
+      end)
 
-        Mock.assert_called_exactly(Exile.stream!(:_, :_), 3)
+      :ok =
+        perform_job(MediaConversion, %{
+          "prefix" => @prefix,
+          "file_id" => file.id,
+          "format_names" => ["audioplay_aac", "audioplay_ogg", "preview_200"]
+        })
 
-        file_conversions =
-          file
-          |> Repo.reload()
-          |> Repo.preload(:file_conversions)
-          |> Map.get(:file_conversions)
+      file_conversions =
+        file
+        |> Repo.reload()
+        |> Repo.preload(:file_conversions)
+        |> Map.get(:file_conversions)
 
-        assert Enum.count(file_conversions) == 3
+      assert Enum.count(file_conversions) == 3
 
-        assert Enum.any?(file_conversions, fn fc ->
-                 fc.format == "audioplay_aac" and fc.file_type == "audio"
-               end)
+      assert Enum.any?(file_conversions, fn fc ->
+               fc.format == "audioplay_aac" and fc.file_type == "audio"
+             end)
 
-        assert Enum.any?(file_conversions, fn fc ->
-                 fc.format == "audioplay_ogg" and fc.file_type == "audio"
-               end)
+      assert Enum.any?(file_conversions, fn fc ->
+               fc.format == "audioplay_ogg" and fc.file_type == "audio"
+             end)
 
-        assert Enum.any?(file_conversions, fn fc ->
-                 fc.format == "preview_200" and fc.file_type == "image"
-               end)
-      end
+      assert Enum.any?(file_conversions, fn fc ->
+               fc.format == "preview_200" and fc.file_type == "image"
+             end)
     end
 
     test "Create multiple new video conversions" do
       file = real_video_file(insert(:user))
 
-      with_mock(
-        Exile,
-        stream!: fn _cmd, _opts ->
-          create_file_stream("test/support/fixtures/pc3.m4v")
-          |> Stream.map(&{:stdout, &1})
-        end
-      ) do
-        :ok =
-          perform_job(MediaConversion, %{
-            "prefix" => @prefix,
-            "file_id" => file.id,
-            "format_names" => ["videoplay_480p-webm", "preview_200", "poster_1080p"]
-          })
+      stub(Lotta.ExileMock, :stream!, fn _cmd, _opts ->
+        create_file_stream("test/support/fixtures/pc3.m4v")
+        |> Stream.map(&{:stdout, &1})
+      end)
 
-        Mock.assert_called_exactly(Exile.stream!(:_, :_), 3)
+      :ok =
+        perform_job(MediaConversion, %{
+          "prefix" => @prefix,
+          "file_id" => file.id,
+          "format_names" => ["videoplay_480p-webm", "preview_200", "poster_1080p"]
+        })
 
-        file_conversions =
-          file
-          |> Repo.reload()
-          |> Repo.preload(:file_conversions)
-          |> Map.get(:file_conversions)
+      file_conversions =
+        file
+        |> Repo.reload()
+        |> Repo.preload(:file_conversions)
+        |> Map.get(:file_conversions)
 
-        assert Enum.count(file_conversions) == 3
+      assert Enum.count(file_conversions) == 3
 
-        assert Enum.any?(file_conversions, fn fc ->
-                 fc.format == "videoplay_480p-webm" and fc.file_type == "video"
-               end)
+      assert Enum.any?(file_conversions, fn fc ->
+               fc.format == "videoplay_480p-webm" and fc.file_type == "video"
+             end)
 
-        assert Enum.any?(file_conversions, fn fc ->
-                 fc.format == "preview_200" and fc.file_type == "image"
-               end)
+      assert Enum.any?(file_conversions, fn fc ->
+               fc.format == "preview_200" and fc.file_type == "image"
+             end)
 
-        assert Enum.any?(file_conversions, fn fc ->
-                 fc.format == "poster_1080p" and fc.file_type == "image"
-               end)
-      end
+      assert Enum.any?(file_conversions, fn fc ->
+               fc.format == "poster_1080p" and fc.file_type == "image"
+             end)
     end
   end
 

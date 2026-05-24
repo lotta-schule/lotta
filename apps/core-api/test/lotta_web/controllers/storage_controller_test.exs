@@ -5,12 +5,14 @@ defmodule LottaWeb.StorageControllerTest do
   use Lotta.WorkerCase
 
   import Phoenix.ConnTest
-  import Mock
+  import Mox
   import Lotta.Factory
 
   alias Lotta.Repo
 
   @prefix "tenant_test"
+
+  setup :verify_on_exit!
 
   setup do
     Repo.put_prefix(@prefix)
@@ -58,29 +60,29 @@ defmodule LottaWeb.StorageControllerTest do
     test "Should respond with the correct existing file_conversion generated if requested" do
       file = real_audio_file(insert(:user))
 
-      with_mock(
-        Exile,
-        stream!: fn _cmd, _opts ->
-          create_file_stream("test/support/fixtures/eoa2.mp3")
-          |> Stream.map(&{:stdout, &1})
-        end
-      ) do
-        assert {:ok, conversion} =
-                 file
-                 |> Lotta.Storage.get_file_conversion("audioplay_aac")
+      Application.put_env(:lotta, :exile_module, Lotta.ExileMock)
+      on_exit(fn -> Application.delete_env(:lotta, :exile_module) end)
 
-        conversion =
-          Lotta.Repo.preload(conversion, :remote_storage_entity)
+      stub(Lotta.ExileMock, :stream!, fn _cmd, _opts ->
+        create_file_stream("test/support/fixtures/eoa2.mp3")
+        |> Stream.map(&{:stdout, &1})
+      end)
 
-        assert not is_nil(conversion)
-        assert not is_nil(conversion.remote_storage_entity)
+      assert {:ok, conversion} =
+               file
+               |> Lotta.Storage.get_file_conversion("audioplay_aac")
 
-        conn =
-          build_tenant_conn()
-          |> get("/data/storage/f/#{file.id}/audioplay_aac")
+      conversion =
+        Lotta.Repo.preload(conversion, :remote_storage_entity)
 
-        assert response(conn, 200)
-      end
+      assert not is_nil(conversion)
+      assert not is_nil(conversion.remote_storage_entity)
+
+      conn =
+        build_tenant_conn()
+        |> get("/data/storage/f/#{file.id}/audioplay_aac")
+
+      assert response(conn, 200)
     end
 
     test "Should respond with the original format if requested" do

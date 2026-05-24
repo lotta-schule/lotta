@@ -2,6 +2,7 @@
 services:
   postgres:
     image: postgres:15.1
+    command: -c 'max_connections=1000'
     environment:
       POSTGRES_USER: lotta
       POSTGRES_PASSWORD: lotta
@@ -23,7 +24,7 @@ services:
       retries: 7
 
   minio:
-    image: 'minio/minio:RELEASE.2025-09-07T16-13-09Z'
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     ports:
       - '9000:9000'
       - '9001:9001'

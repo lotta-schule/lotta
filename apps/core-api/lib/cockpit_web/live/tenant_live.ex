@@ -134,9 +134,12 @@ defmodule CockpitWeb.Live.TenantLive do
   end
 
   defp fetch_current_tenant_usage(assigns, tenant) do
-    case Lotta.Tenants.Usage.get_usage(tenant) do
+    case usage_query_module().get_usage(tenant) do
       {:ok, usages} -> assign(assigns, :usages, usages)
       _ -> assign(assigns, :usages, [])
     end
   end
+
+  defp usage_query_module,
+    do: Application.get_env(:lotta, :usage_query_module, Lotta.Tenants.Usage)
 end

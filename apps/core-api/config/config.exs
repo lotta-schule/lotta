@@ -28,3 +28,6 @@ import_config("config/tzdata.exs")
 #
 import_config("config/plans.exs")
 import_config("config/billing.exs")
+import_config("config/eduplaces.exs")
+import_config("config/lotta_web.exs")
+import_config("config/worker.exs")

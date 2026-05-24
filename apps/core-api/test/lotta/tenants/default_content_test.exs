@@ -5,15 +5,32 @@ defmodule Lotta.Tenants.DefaultContentTest do
   use Bamboo.Test
 
   import Ecto.Query
+  import Mox
 
   alias Lotta.{Tenants, Repo}
-  alias Lotta.Tenants.{Category, Tenant}
+  alias Lotta.Tenants.{Category, DefaultContent, Tenant}
   alias Lotta.Content.Article
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.{File, Directory}
   alias Lotta.Accounts.Authentication
 
+  setup :verify_on_exit!
+
   setup do
+    stub_with(Lotta.Tenants.DefaultContentMock, DefaultContent)
+    stub(Lotta.AnalyticsMock, :create_site, fn _tenant -> :ok end)
+    stub(Lotta.Administration.Notification.SlackMock, :send, fn _msg -> {:ok, nil} end)
+
+    stub(Lotta.Administration.Notification.SlackMock, :new_lotta_notification, fn _t, _u ->
+      %{}
+    end)
+
+    stub(
+      Lotta.Administration.Notification.SlackMock,
+      :new_lotta_invoices_to_issue_notification,
+      fn _i -> %{} end
+    )
+
     Tesla.Mock.mock(fn
       %{url: "https://plausible.io/" <> _rest} = env ->
         %Tesla.Env{env | status: 200, body: "OK"}
