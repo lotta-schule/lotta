@@ -461,6 +461,12 @@ defmodule LottaWeb.OAuthControllerTest do
 
       {:ok, _} = Lotta.Tenants.TenantDbManager.create_tenant_database_schema(other)
 
+      on_exit(fn ->
+        Lotta.Repo.with_new_dynamic_repo(fn _ ->
+          Lotta.Repo.query!("DROP SCHEMA IF EXISTS \"#{other.prefix}\" CASCADE")
+        end)
+      end)
+
       user =
         %User{}
         |> Map.merge(fixture(:valid_eduplace_user_attrs))

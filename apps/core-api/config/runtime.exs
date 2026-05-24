@@ -90,16 +90,16 @@ defmodule SystemConfig do
   defp default("UGC_S3_COMPAT_ENDPOINT", env) when env in [:dev, :test],
     do: "http://localhost:9000"
 
-  defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "AKIAIOSFODNN7EXAMPLE"
+  defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "minio"
 
   defp default("AWS_SECRET_ACCESS_KEY", env) when env in [:dev, :test],
-    do: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+    do: "miniosecret"
 
   defp default("REMOTE_STORAGE_DEFAULT_STORE", env) when env in [:dev, :test], do: "minio"
   defp default("REMOTE_STORAGE_PREFIX", _), do: nil
   defp default("REMOTE_STORAGE_STORES", env) when env in [:dev, :test], do: "minio"
-  defp default("REMOTE_STORAGE_MINIO_ENDPOINT", _), do: "http://localhost:9000/lotta-dev-ugc"
-  defp default("REMOTE_STORAGE_MINIO_BUCKET", _), do: "lotta-dev-ugc"
+  defp default("REMOTE_STORAGE_MINIO_ENDPOINT", env), do: "http://localhost:9000/lotta-#{env}"
+  defp default("REMOTE_STORAGE_MINIO_BUCKET", env), do: "lotta-#{env}"
 
   defp default("MAILER_ADAPTER", :test), do: "test"
   defp default("MAILER_ADAPTER", _), do: "local"
@@ -284,6 +284,7 @@ config :lotta, Lotta.Storage.RemoteStorage,
               access_key_id: System.get_env("REMOTE_STORAGE_#{env_name}_ACCESS_KEY_ID"),
               secret_access_key: System.get_env("REMOTE_STORAGE_#{env_name}_SECRET_ACCESS_KEY")
             }
+            |> IO.inspect(label: "Storage config for #{storage_name}")
             |> Map.reject(fn {_k, v} -> v in [nil, ""] end)
         })
       end)

@@ -1,7 +1,7 @@
 defmodule Lotta.Accounts.AuthenticationTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   import Lotta.Accounts.Authentication
 

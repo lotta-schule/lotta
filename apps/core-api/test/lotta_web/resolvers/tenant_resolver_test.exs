@@ -1,7 +1,7 @@
 defmodule LottaWeb.TenantResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase, async: false
+  use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
 

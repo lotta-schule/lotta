@@ -1,7 +1,7 @@
 defmodule Lotta.Accounts.FileManagmentTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   import Ecto.Query
 

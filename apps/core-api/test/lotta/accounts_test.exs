@@ -1,7 +1,7 @@
 defmodule Lotta.AccountsTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
   use Bamboo.Test
 
   alias Lotta.{Accounts, Email, Fixtures, Repo, Tenants}

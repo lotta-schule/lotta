@@ -1,7 +1,7 @@
 defmodule Lotta.SlugifierTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
   alias Lotta.Slugifier
 
   describe "slugifier" do

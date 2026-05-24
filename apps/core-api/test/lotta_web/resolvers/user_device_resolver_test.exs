@@ -1,5 +1,5 @@
 defmodule LottaWeb.UserDeviceResolverTest do
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
 

@@ -1,7 +1,7 @@
 defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   import Ecto.Query
   import Lotta.Storage.Conversion.AvailableFormats, only: [is_valid_category?: 1]

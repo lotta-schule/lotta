@@ -1,9 +1,9 @@
 defmodule Lotta.Repo.Seeder do
-  alias ExAws.S3
   alias Ecto.Changeset
   alias Lotta.{Accounts, Tenants, Repo}
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.{Directory, File, FileData, RemoteStorage}
+  alias ExAws.S3
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Tenants.{Category, Tenant, TenantDbManager, Widget}
@@ -1273,7 +1273,7 @@ defmodule Lotta.Repo.Seeder do
     {:ok, config} = RemoteStorage.config_for_store(default_store())
     bucket_name = config[:config][:bucket]
 
-    remote_path = "tenant_test/#{file.id}"
+    remote_path = "tenant_test/#{file.id}/original"
     local_path = "test/support/fixtures/#{file.filename}"
 
     {:ok, %{body: _response, status_code: 200}} =
@@ -1291,12 +1291,14 @@ defmodule Lotta.Repo.Seeder do
     |> Repo.preload(:remote_storage_entity)
     |> Changeset.change()
     |> Changeset.put_assoc(:remote_storage_entity, %{
-      store_name: "minio",
+      store_name: default_store(),
       path: remote_path
     })
     |> Repo.update!()
   end
 
-  defp default_store, do: config()[:default_store] || "minio"
-  defp config, do: Application.get_env(:lotta, Lotta.Storage.RemoteStorage)
+  defp default_store do
+    config = Application.get_env(:lotta, Lotta.Storage.RemoteStorage)
+    config[:default_store] || "minio"
+  end
 end

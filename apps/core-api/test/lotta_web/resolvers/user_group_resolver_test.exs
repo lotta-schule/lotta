@@ -1,7 +1,7 @@
 defmodule LottaWeb.UserGroupResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
 
@@ -9,7 +9,7 @@ defmodule LottaWeb.UserGroupResolverTest do
   alias Lotta.{Accounts, Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Content.Article
-  alias Lotta.Fixtures
+  import Lotta.Factory
   alias Ecto.Changeset
 
   @prefix "tenant_test"
@@ -408,7 +408,7 @@ defmodule LottaWeb.UserGroupResolverTest do
 
     test "should return an error if group is eduplaces group", %{admin_jwt: admin_jwt} do
       group =
-        Fixtures.fixture(:user_group, is_admin_group: false)
+        insert(:group)
         |> Ecto.Changeset.change(%{eduplaces_id: "eduplaces-group-123"})
         |> Repo.update!()
 

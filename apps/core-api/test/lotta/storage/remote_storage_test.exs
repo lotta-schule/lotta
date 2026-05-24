@@ -11,12 +11,13 @@ defmodule Lotta.RemoteStorageTest do
     test "config_for_store/1 should return the config for the given store" do
       assert {:ok,
               %{
-                type: RemoteStorage.Strategy.S3,
-                config: %{bucket: "lotta-dev-ugc", endpoint: endpoint},
+                type: Lotta.Storage.RemoteStorage.Strategy.S3,
+                config: %{bucket: bucket, endpoint: endpoint},
                 name: "minio"
               }} = RemoteStorage.config_for_store("minio")
 
-      assert endpoint =~ ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000/
+      assert bucket =~ ~r/^lotta-/
+      assert endpoint =~ ~r/http:\/\/(minio|localhost|127\.0\.0\.1)/
     end
 
     test "config_for_store/1 should return an error tuple if the given name does not exist" do

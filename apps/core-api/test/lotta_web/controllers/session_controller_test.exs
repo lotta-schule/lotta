@@ -1,7 +1,7 @@
 defmodule LottaWeb.SessionControllerTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   import Lotta.Accounts.Authentication
   import Phoenix.ConnTest

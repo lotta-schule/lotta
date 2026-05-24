@@ -1,7 +1,7 @@
 defmodule Lotta.ContentTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   alias Lotta.{Content, Fixtures, Repo}
   alias Lotta.Accounts.UserGroup

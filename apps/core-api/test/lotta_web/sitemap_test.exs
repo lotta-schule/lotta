@@ -1,6 +1,6 @@
 defmodule LottaWeb.SitemapTest do
   @moduledoc false
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   describe "sitemaps" do
     test "returns an index sitemap" do

@@ -8,7 +8,7 @@ defmodule LottaWeb.DirectoryResolverTest do
   alias Lotta.Accounts.User
   alias Lotta.Storage.Directory
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   @prefix "tenant_test"
 

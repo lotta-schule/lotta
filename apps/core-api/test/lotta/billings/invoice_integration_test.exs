@@ -4,7 +4,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
   generation, rendering, and QR code creation.
   """
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   alias Lotta.{Billings, Repo, Tenants}
   alias Lotta.Billings.Invoice

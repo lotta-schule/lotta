@@ -25,6 +25,12 @@ defmodule Lotta.Eduplaces.SyncerTest do
     {:ok, _} = TenantDbManager.create_tenant_database_schema(tenant)
     Repo.put_prefix(@test_prefix)
 
+    on_exit(fn ->
+      Lotta.Repo.with_new_dynamic_repo(fn _ ->
+        Lotta.Repo.query!("DROP SCHEMA IF EXISTS \"#{@test_prefix}\" CASCADE")
+      end)
+    end)
+
     {:ok, %{tenant: tenant}}
   end
 

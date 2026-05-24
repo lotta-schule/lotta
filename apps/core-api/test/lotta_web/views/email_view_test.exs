@@ -1,7 +1,7 @@
 defmodule LottaWeb.EmailViewTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   alias Lotta.{Repo, Tenants}
   alias Lotta.Storage.File

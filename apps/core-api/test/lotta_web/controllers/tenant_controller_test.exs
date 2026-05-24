@@ -19,6 +19,12 @@ defmodule LottaWeb.TenantControllerTest do
 
     Lotta.Tenants.TenantDbManager.create_tenant_database_schema(new_tenant)
 
+    on_exit(fn ->
+      Lotta.Repo.with_new_dynamic_repo(fn _ ->
+        Lotta.Repo.query!("DROP SCHEMA IF EXISTS \"tenant_test2\" CASCADE")
+      end)
+    end)
+
     email = "alexis.rinaldoni@einsa.net"
 
     {:ok, _} =

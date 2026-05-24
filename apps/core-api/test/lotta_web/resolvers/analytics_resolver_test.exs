@@ -1,7 +1,7 @@
 defmodule LottaWeb.AnalyticsResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
 
