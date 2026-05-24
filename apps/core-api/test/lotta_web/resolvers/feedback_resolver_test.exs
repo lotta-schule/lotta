@@ -1,7 +1,7 @@
 defmodule LottaWeb.FeedbackResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
   use Bamboo.Test
 
   import Ecto.Query

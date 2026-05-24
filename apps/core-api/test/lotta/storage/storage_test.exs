@@ -99,18 +99,7 @@ defmodule Lotta.StorageTest do
       {:ok, user_file} = Storage.create_file(file, directory, user)
 
       user_file = Repo.preload(user_file, :remote_storage_entity)
-
-      current_file_datetime =
-        ExAws.S3.head_object(bucket_name, user_file.remote_storage_entity.path)
-        |> ExAws.request!(config)
-        |> Map.fetch!(:headers)
-        |> Enum.find_value(fn {key, val} ->
-          if key == "date", do: val
-        end)
-        |> Timex.parse!("{RFC1123}")
-
-      # wait 1 seconds in order to enforce new DateTime
-      :timer.sleep(1000)
+      old_entity_id = user_file.remote_storage_entity.id
 
       {:ok, user_file} =
         user_file
@@ -118,16 +107,12 @@ defmodule Lotta.StorageTest do
 
       assert %File{} = user_file
 
-      new_file_datetime =
-        ExAws.S3.head_object(bucket_name, user_file.remote_storage_entity.path)
-        |> ExAws.request!(config)
-        |> Map.fetch!(:headers)
-        |> Enum.find_value(fn {key, val} ->
-          if key == "date", do: val
-        end)
-        |> Timex.parse!("{RFC1123}")
+      user_file = Repo.preload(user_file, :remote_storage_entity)
+      assert user_file.remote_storage_entity.id != old_entity_id
 
-      assert DateTime.compare(new_file_datetime, current_file_datetime) == :gt
+      assert ExAws.S3.head_object(bucket_name, user_file.remote_storage_entity.path)
+             |> ExAws.request!(config)
+             |> Map.fetch!(:status_code) == 200
     end
 
     test "delete_file/1 should delete file in the database" do
