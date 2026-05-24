@@ -6,7 +6,7 @@ defmodule LottaWeb.OAuthController do
   alias Lotta.Tenants.Tenant
   alias Lotta.Eduplaces.{AuthCodeStrategy, UserInfo}
   alias LottaWeb.Urls
-  alias LottaWeb.Auth.AccessToken
+  alias LottaWeb.Auth.{AccessToken, CookieHelper}
 
   require Logger
 
@@ -113,22 +113,13 @@ defmodule LottaWeb.OAuthController do
     with {:ok, claims} <- AccessToken.decode_and_verify(token, %{"typ" => "hisec"}),
          {:ok, user} <- AccessToken.resource_from_claims(claims),
          true <- claims["tid"] == tenant.id || {:error, :no_tenant_match},
-         {:ok, refresh_token, _claims} <-
-           AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
-      return_url =
-        params["return_url"] ||
-          "/"
+         {:ok, access_token, _} <- AccessToken.encode_and_sign(user, %{}, token_type: "access"),
+         {:ok, refresh_token, _} <- AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
+      return_url = params["return_url"] || "/"
 
       conn
-      |> put_resp_cookie("SignInAccessToken", token,
-        same_site: "Lax",
-        max_age: 21 * 24 * 60 * 60
-      )
-      |> put_resp_cookie("SignInRefreshToken", refresh_token,
-        max_age: 21 * 24 * 60 * 60,
-        http_only: true,
-        same_site: "Lax"
-      )
+      |> CookieHelper.put_access_token(access_token)
+      |> CookieHelper.put_refresh_token(refresh_token)
       |> redirect(to: return_url)
     else
       {:error, reason} ->
@@ -136,9 +127,7 @@ defmodule LottaWeb.OAuthController do
 
         conn
         |> put_status(:unauthorized)
-        |> delete_resp_cookie("SignInAccessToken",
-          same_site: "Lax"
-        )
+        |> CookieHelper.delete_tokens()
         |> render(:bad_request,
           title: gettext("Unauthorized"),
           message: gettext("You are not authorized to access this resource.")
