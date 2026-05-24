@@ -16,6 +16,7 @@ defmodule LottaWeb.Endpoint do
 
   plug(:fetch_cookies)
   plug(LottaWeb.TenantPlug)
+  plug(LottaWeb.Plugs.InjectAccessTokenFromCookie)
   plug(LottaWeb.Auth.Pipeline)
   plug(LottaWeb.Context)
 

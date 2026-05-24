@@ -4,22 +4,22 @@ defmodule LottaWeb.SessionController do
   require Logger
 
   alias Lotta.Accounts.Authentication
+  alias LottaWeb.Auth.CookieHelper
   alias Plug.Conn
 
   action_fallback(LottaWeb.FallbackController)
 
   def refresh(%Conn{} = conn, params) do
-    token = params["token"] || conn.cookies["SignInRefreshToken"]
+    token =
+      params["token"] || params["refreshToken"] || conn.cookies[CookieHelper.refresh_cookie()]
 
     with token when not is_nil(token) <- token,
          {:ok, access_token, refresh_token} <-
            Authentication.refresh_token(token) do
       conn
-      |> put_refresh_token(refresh_token)
-      |> put_access_token(access_token)
-      |> render(:refresh,
-        access_token: access_token
-      )
+      |> CookieHelper.put_refresh_token(refresh_token)
+      |> CookieHelper.put_access_token(access_token)
+      |> render(:refresh, access_token: access_token)
     else
       nil ->
         Logger.warning("Refresh token not found in request or cookies.")
@@ -27,7 +27,6 @@ defmodule LottaWeb.SessionController do
 
       {:error, reason} ->
         Logger.warning("Error when requesting refresh token exchange: #{inspect(reason)}")
-
         {:error, :unauthorized}
     end
   end
@@ -42,12 +41,12 @@ defmodule LottaWeb.SessionController do
         token_opts = if is_first_login, do: [token_type: "hisec"], else: []
         {:ok, access_token, refresh_token} = Authentication.create_user_tokens(user, token_opts)
 
-        return_uri =
-          get_return_uri(params["return_url"])
+        return_uri = get_return_uri(params["return_url"])
 
         conn
-        |> put_refresh_token(refresh_token, is_first_login)
-        |> put_access_token(access_token, is_first_login)
+        |> put_first_login_cookie(is_first_login)
+        |> CookieHelper.put_refresh_token(refresh_token)
+        |> CookieHelper.put_access_token(access_token)
         |> redirect(external: URI.to_string(return_uri))
 
       {:error, reason} ->
@@ -58,40 +57,15 @@ defmodule LottaWeb.SessionController do
 
   def logout(%Conn{} = conn, _params) do
     conn
-    |> delete_resp_cookie("SignInRefreshToken",
-      http_only: true,
-      same_site: "Lax"
-    )
-    |> delete_resp_cookie("SignInAccessToken", same_site: "Lax")
+    |> CookieHelper.delete_tokens()
     |> redirect(external: URI.to_string(get_return_uri()))
   end
 
   defp get_return_uri(return_url \\ nil) do
     case return_url do
-      url when is_binary(url) ->
-        URI.parse(url)
-
-      _ ->
-        nil
+      url when is_binary(url) -> URI.parse(url)
+      _ -> nil
     end || URI.parse("/")
-  end
-
-  defp put_refresh_token(%Conn{} = conn, token, is_first_login \\ false) do
-    conn
-    |> put_first_login_cookie(is_first_login)
-    |> put_resp_cookie("SignInRefreshToken", token,
-      http_only: true,
-      same_site: "Lax",
-      max_age: 21 * 7 * 24 * 60 * 60
-    )
-  end
-
-  defp put_access_token(%Conn{} = conn, token, is_first_login \\ false) do
-    conn
-    |> put_resp_cookie("SignInAccessToken", token,
-      max_age: 21 * 7 * 24 * 60 * 60,
-      same_site: "Lax"
-    )
   end
 
   defp put_first_login_cookie(%Conn{} = conn, false), do: conn

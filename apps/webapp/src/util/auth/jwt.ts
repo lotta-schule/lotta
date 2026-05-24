@@ -8,7 +8,7 @@ export interface JWTBody {
   notBefore: Date;
   tenantId: number;
   groupIds: number[];
-  type: 'access' | 'refresh' | 'high_security';
+  type: 'access' | 'refresh' | 'hisec';
 }
 
 export interface JWTHeader {

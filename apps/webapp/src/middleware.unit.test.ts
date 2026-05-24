@@ -29,7 +29,7 @@ const mockNextResponseNext = vi.mocked(NextResponse.next);
 const createToken = (
   overrides: {
     exp?: number;
-    typ?: 'access' | 'refresh' | 'high_security';
+    typ?: 'access' | 'refresh' | 'hisec';
     tid?: string;
   } = {}
 ) => {
@@ -158,10 +158,10 @@ describe('middleware', () => {
       expect(mockSendRefreshRequest).not.toHaveBeenCalled();
     });
 
-    it('passes through when access token type is high_security', async () => {
+    it('passes through when access token type is hisec', async () => {
       const accessToken = createToken({
         exp: Math.floor(Date.now() / 1000) - 60,
-        typ: 'high_security',
+        typ: 'hisec',
       });
       const request = createMockRequest('http://localhost:3000/dashboard', {
         SignInAccessToken: accessToken,
@@ -174,6 +174,23 @@ describe('middleware', () => {
   });
 
   describe('token refresh is performed', () => {
+    it('calls sendRefreshRequest when refresh token is present but access token is absent (RFC 6749)', async () => {
+      mockSendRefreshRequest.mockResolvedValue({
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
+        tenant: null,
+      });
+      const request = createMockRequest('http://localhost:3000/dashboard', {
+        SignInRefreshToken: 'valid-refresh-token',
+      });
+      await middleware(request);
+      expect(mockSendRefreshRequest).toHaveBeenCalledWith(
+        null,
+        'valid-refresh-token',
+        expect.objectContaining({ baseURL: 'http://api.example.com' })
+      );
+    });
+
     it('calls sendRefreshRequest with tokens and API URL when access token is expired', async () => {
       const accessToken = createToken({
         exp: Math.floor(Date.now() / 1000) - 60,
@@ -223,12 +240,24 @@ describe('middleware', () => {
       expect(mockCookiesSet).toHaveBeenCalledWith(
         'SignInAccessToken',
         'new-access-token',
-        { sameSite: 'lax', maxAge: 21 * 24 * 60 * 60 }
+        {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'lax',
+          maxAge: 21 * 24 * 60 * 60,
+          path: '/',
+        }
       );
       expect(mockCookiesSet).toHaveBeenCalledWith(
         'SignInRefreshToken',
         'new-refresh-token',
-        { httpOnly: true, sameSite: 'lax', maxAge: 21 * 24 * 60 * 60 }
+        {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'lax',
+          maxAge: 21 * 24 * 60 * 60,
+          path: '/',
+        }
       );
     });
 
