@@ -3,8 +3,10 @@ import clsx from 'clsx';
 
 import styles from './Avatar.module.scss';
 
-export interface AvatarProps
-  extends Omit<React.HTMLProps<HTMLDivElement>, 'ref'> {
+export interface AvatarProps extends Omit<
+  React.HTMLProps<HTMLDivElement>,
+  'ref'
+> {
   /**
    * The avatar image source
    */

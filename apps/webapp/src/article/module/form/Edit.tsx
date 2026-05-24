@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon.js';
 import {
   faArrowsUpDown,
   faCircleExclamation,
@@ -7,28 +7,75 @@ import {
   faTrash,
   faGear,
 } from '@fortawesome/free-solid-svg-icons';
-
 import {
-  Button,
   Checkbox,
   Input,
+  Item,
   Label,
+  MenuButton,
   SortableDraggableList,
 } from '@lotta-schule/hubert';
 import { ContentModuleModel } from '#/model/index.js';
-import { FormConfiguration } from './Form.js';
+import {
+  FormConfiguration,
+  FormElement as FormElementInterface,
+} from './Form.js';
 import { FormElement } from './FormElement.js';
-import { FormElementConfiguration } from './FormElementConfiguration.js';
 
 import styles from './Edit.module.scss';
 
-export interface EditProps {
+export type EditProps = {
   contentModule: ContentModuleModel;
   onUpdateModule(contentModule: ContentModuleModel): void;
-}
+};
 
 export const Edit = React.memo(
   ({ contentModule, onUpdateModule }: EditProps) => {
+    const defaultElements = {
+      input: {
+        name: 'Textfeld',
+        element: 'input',
+        type: 'text',
+      } as FormElementInterface,
+      textarea: {
+        name: 'Textbereich',
+        element: 'input',
+        multiline: true,
+      } as FormElementInterface,
+      checkbox: {
+        name: 'Checkbox',
+        element: 'selection',
+        type: 'checkbox',
+        options: [
+          { label: 'Option 1', value: 'option1', selected: false },
+          { label: 'Option 2', value: 'option2', selected: false },
+        ],
+      } as FormElementInterface,
+      radio: {
+        name: 'Auswahl',
+        element: 'selection',
+        type: 'radio',
+        options: [
+          { label: 'Option 1', value: 'option1', selected: false },
+          { label: 'Option 2', value: 'option2', selected: false },
+        ],
+      } as FormElementInterface,
+      select: {
+        name: 'Dropdown',
+        element: 'selection',
+        type: 'select',
+        options: [
+          { label: 'Option 1', value: 'option1', selected: false },
+          { label: 'Option 2', value: 'option2', selected: false },
+        ],
+      } as FormElementInterface,
+      file: {
+        name: 'Datei-Upload',
+        element: 'file',
+        type: '',
+      } as FormElementInterface,
+    };
+
     const configuration: FormConfiguration = {
       destination: '',
       elements: [],
@@ -80,7 +127,7 @@ export const Edit = React.memo(
                     <Icon icon={faCircleExclamation} size={'lg'} />{' '}
                     <Icon icon={faTrash} size={'lg'} />
                   </div>
-                  {/* <FormElementConfiguration
+                  {/*<FormElementConfiguration
                     element={element}
                     updateElement={(updatedElementOptions) =>
                       updateConfiguration({
@@ -95,31 +142,55 @@ export const Edit = React.memo(
                         }),
                       })
                     }
-                  /> */}
+                  />*/}
                 </div>
               </div>
             ),
           }))}
         />
-        <Button
-          style={{ margin: '0 auto' }}
-          variant={'fill'}
-          icon={<Icon icon={faPlus} size={'lg'} />}
-          onClick={() =>
+        <MenuButton
+          title="Feld hinzufügen"
+          buttonProps={{
+            label: 'Feld hinzufügen',
+            style: { margin: '0 auto' },
+            variant: 'fill',
+            icon: <Icon icon={faPlus} size={'lg'} />,
+          }}
+          onAction={(key) => {
+            const newElement =
+              defaultElements[key as keyof typeof defaultElements];
+            if (!newElement) {
+              return;
+            }
             updateConfiguration({
               elements: [
                 ...configuration.elements,
-                {
+                Object.assign({}, newElement, {
                   name: `feld${configuration.elements.length + 1}`,
-                  element: 'input',
-                  type: 'text',
-                },
+                }),
               ],
-            })
-          }
+            });
+          }}
         >
-          Feld hinzufügen
-        </Button>
+          <Item key={'input'} title="Textfeld">
+            Textfeld
+          </Item>
+          <Item key={'textarea'} title="Textbereich">
+            Textbereich
+          </Item>
+          <Item key={'checkbox'} title="Checkbox">
+            Checkbox
+          </Item>
+          <Item key={'radio'} title="Auswahl">
+            Auswahl
+          </Item>
+          <Item key={'select'} title="Dropdown">
+            Dropdown
+          </Item>
+          <Item key={'file'} title="Datei-Upload">
+            Datei-Upload
+          </Item>
+        </MenuButton>
         <div className={styles.settingsWrapper}>
           <div>
             <Icon icon={faGear} size={'xl'} />

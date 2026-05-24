@@ -25,7 +25,7 @@
       }
     ],
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "preserve"
   },
   "references": [
     {
@@ -36,6 +36,6 @@
     }
   ],
   "files": [],
-  "include": [],
+  "include": [".next/types/**/*.ts"],
   "exclude": []
 }

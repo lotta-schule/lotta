@@ -142,15 +142,15 @@
         "require-in-the-middle": "^8.0.1",
         "slate": "^0.76.1",
         "slate-react": "^0.76.1",
-        "slugify": "^1.6.9",
+        "slugify": "^1.6.9"
       },
       "devDependencies": {
         "i18next-parser": "^9.4.0",
         "ignore-loader": "^0.1.2",
         "sass": "^1.99.0",
         "vitest": "^4.1.5",
-        "vitest-browser-react": "^2.2.0",
-      },
+        "vitest-browser-react": "^2.2.0"
+      }
     },
     "libs/hubert": {
       "name": "@lotta-schule/hubert",
@@ -167,41 +167,41 @@
         "react-aria": "^3.48.0",
         "react-dropzone": "^15.0.0",
         "react-stately": "^3.46.0",
-        "react-use": "^17.6.0",
+        "react-use": "^17.6.0"
       },
       "peerDependencies": {
         "framer-motion": ">= 6.3.0",
         "react": "^19.2.5",
         "react-dom": "^19.2.5",
-        "sass": "^1.54.3",
-      },
+        "sass": "^1.54.3"
+      }
     },
     "libs/storybook-addon-theme": {
       "name": "@lotta-schule/storybook-addon-theme",
       "version": "6.1.21",
       "dependencies": {
-        "@storybook/addon-docs": "^10.3.6",
+        "@storybook/addon-docs": "^10.3.6"
       },
       "devDependencies": {
         "@testing-library/jest-dom": "^6.9.1",
         "@types/node": "^25.6.0",
         "react": "^19.2.5",
         "react-dom": "^19.2.5",
-        "tsdown": "^0.21.10",
+        "tsdown": "^0.21.10"
       },
       "peerDependencies": {
-        "storybook": "^10.1.10",
+        "storybook": "^10.1.10"
       },
     },
     "libs/theme": {
       "name": "@lotta-schule/theme",
-      "version": "6.1.21",
+      "version": "6.1.21"
     },
   },
   "overrides": {
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-is": "^19.2.3",
+    "react-is": "^19.2.3"
   },
   "packages": {
     "@0no-co/graphql.web": ["@0no-co/graphql.web@1.2.0", "", { "peerDependencies": { "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0" }, "optionalPeers": ["graphql"] }, "sha512-/1iHy9TTr63gE1YcR5idjx8UREz1s0kFhydf3bBLCXyqjhkIc6igAzTOx3zPifCwFR87tsh/4Pa9cNts6d2otw=="],
