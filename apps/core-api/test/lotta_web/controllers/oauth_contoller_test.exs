@@ -3,7 +3,7 @@ defmodule LottaWeb.OAuthControllerTest do
 
   import Mock
   import Plug.Conn
-  import Lotta.Fixtures
+  import Lotta.Factory
 
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.User
@@ -15,6 +15,8 @@ defmodule LottaWeb.OAuthControllerTest do
 
   setup ctx do
     tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+    Repo.put_prefix(@prefix)
 
     Tesla.Mock.mock(fn
       %{url: "https://plausible.io/" <> _rest} = env ->
@@ -124,7 +126,7 @@ defmodule LottaWeb.OAuthControllerTest do
       |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
       |> Repo.update!()
 
-      user = fixture(:registered_user, %{email: "hedwig@hogwarts.de", eduplaces_id: user_info.id})
+      user = insert(:user, email: "hedwig@hogwarts.de", eduplaces_id: user_info.id)
 
       with_mock(AuthCodeStrategy,
         get_token!: fn _params -> {"fake_token", user_info} end
@@ -337,7 +339,7 @@ defmodule LottaWeb.OAuthControllerTest do
       |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
       |> Repo.update!()
 
-      user = fixture(:registered_user, %{email: "hedwig@hogwarts.de", eduplaces_id: user_info.id})
+      user = insert(:user, email: "hedwig@hogwarts.de", eduplaces_id: user_info.id)
 
       with_mock(AuthCodeStrategy,
         get_token!: fn _params -> {"fake_token", user_info} end
@@ -394,7 +396,7 @@ defmodule LottaWeb.OAuthControllerTest do
       |> Repo.update!()
 
       _user =
-        fixture(:registered_user, %{email: "hedwig@hogwarts.de", eduplaces_id: user_info.id})
+        insert(:user, email: "hedwig@hogwarts.de", eduplaces_id: user_info.id)
 
       with_mock(AuthCodeStrategy,
         get_token!: fn _params -> {"fake_token", user_info} end
@@ -420,7 +422,7 @@ defmodule LottaWeb.OAuthControllerTest do
       conn: conn,
       tenant: tenant
     } do
-      user = fixture(:registered_user, %{eduplaces_id: "user123"})
+      user = insert(:user, eduplaces_id: "user123")
 
       {:ok, token, _} = AccessToken.encode_and_sign(user, %{}, token_type: "hisec")
 
@@ -455,9 +457,13 @@ defmodule LottaWeb.OAuthControllerTest do
 
     test "returns unauthorized when tenant ID mismatches", %{conn: conn, tenant: tenant} do
       other =
-        %Tenant{}
-        |> Map.merge(fixture(:valid_tenant_attrs))
-        |> Repo.insert!()
+        Repo.insert!(%Tenant{
+          title: "Meine andere Schule",
+          slug: "meine-andere-schule",
+          prefix: "t_other",
+          logo_image_file_id: nil,
+          background_image_file_id: nil
+        })
 
       {:ok, _} = Lotta.Tenants.TenantDbManager.create_tenant_database_schema(other)
 
@@ -468,9 +474,16 @@ defmodule LottaWeb.OAuthControllerTest do
       end)
 
       user =
-        %User{}
-        |> Map.merge(fixture(:valid_eduplace_user_attrs))
-        |> Repo.insert!(prefix: other.prefix)
+        Repo.insert!(
+          %User{
+            email: "some@email.de",
+            name: "Alberta Smith",
+            nickname: "TheNick",
+            class: "5",
+            hide_full_name: false
+          },
+          prefix: other.prefix
+        )
 
       {:ok, token, _} =
         AccessToken.encode_and_sign(

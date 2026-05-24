@@ -6,9 +6,10 @@ defmodule LottaWeb.FileResolverTest do
 
   import Mock
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
-  alias Lotta.{Fixtures, Repo, Storage, Tenants}
+  alias Lotta.{Repo, Storage, Tenants}
   alias Lotta.Accounts.User
   alias Lotta.Worker.Conversion
   alias Lotta.Storage.{File, FileConversion, Directory}
@@ -16,6 +17,7 @@ defmodule LottaWeb.FileResolverTest do
   @prefix "tenant_test"
 
   setup do
+    Repo.put_prefix(@prefix)
     tenant = Tenants.get_tenant_by_prefix(@prefix)
 
     admin =
@@ -212,7 +214,7 @@ defmodule LottaWeb.FileResolverTest do
     test "returns file with correct immediatly available files for audios", %{
       user2_account: user
     } do
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(user)
 
       res =
         build_tenant_conn()
@@ -306,7 +308,7 @@ defmodule LottaWeb.FileResolverTest do
     test "returns file with correct immediatly available files for videos", %{
       user2_account: user
     } do
-      file = Fixtures.fixture(:real_video_file, user)
+      file = real_video_file(user)
 
       res =
         build_tenant_conn()

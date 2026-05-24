@@ -3,8 +3,10 @@ defmodule Lotta.StorageTest do
 
   use Lotta.WorkerCase
 
+  import Lotta.Factory
+
   alias Lotta.Accounts.User
-  alias Lotta.{Fixtures, Repo, Storage, Tenants}
+  alias Lotta.{Repo, Storage, Tenants}
   alias Lotta.Storage.{Directory, File, FileData, RemoteStorage, RemoteStorageEntity}
   alias Lotta.Tenants.UsageLog
 
@@ -116,8 +118,8 @@ defmodule Lotta.StorageTest do
     end
 
     test "delete_file/1 should delete file in the database" do
-      user = Fixtures.fixture(:registered_user)
-      file = Fixtures.fixture(:file, user)
+      user = insert(:user)
+      file = insert(:file, user_id: user.id)
 
       Storage.delete_file(file)
 
@@ -129,8 +131,8 @@ defmodule Lotta.StorageTest do
     test "delete_file/1 should remove the corresponding tenant's logo_image_file_id, if set" do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
-      user = Fixtures.fixture(:registered_user)
-      file = Fixtures.fixture(:file, user)
+      user = insert(:user)
+      file = insert(:file, user_id: user.id)
 
       tenant =
         tenant
@@ -215,14 +217,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "video",
-             media_duration: 120.5,
-             filename: "test_video.mp4"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "video",
+          media_duration: 120.5,
+          filename: "test_video.mp4"
         )
 
       assert :ok = Storage.create_conversion_log(file)
@@ -246,14 +245,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "audio",
-             media_duration: 45.8,
-             filename: "test_audio.mp3"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "audio",
+          media_duration: 45.8,
+          filename: "test_audio.mp3"
         )
 
       assert :ok = Storage.create_conversion_log(file)
@@ -275,14 +271,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "video",
-             media_duration: 0.0,
-             filename: "zero_duration.mp4"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "video",
+          media_duration: 0.0,
+          filename: "zero_duration.mp4"
         )
 
       assert :ok = Storage.create_conversion_log(file)
@@ -302,14 +295,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "video",
-             media_duration: nil,
-             filename: "nil_duration.mp4"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "video",
+          media_duration: nil,
+          filename: "nil_duration.mp4"
         )
 
       assert :ok = Storage.create_conversion_log(file)
@@ -329,14 +319,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "image",
-             media_duration: nil,
-             filename: "image.png"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "image",
+          media_duration: nil,
+          filename: "image.png"
         )
 
       assert :ok = Storage.create_conversion_log(file)
@@ -356,14 +343,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "video",
-             media_duration: 60.0,
-             filename: "duplicate_test.mp4"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "video",
+          media_duration: 60.0,
+          filename: "duplicate_test.mp4"
         )
 
       # Create the log first time

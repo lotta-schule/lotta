@@ -2,14 +2,19 @@ defmodule Lotta.Worker.MediaConversionTest do
   use Lotta.WorkerCase, async: false
 
   import Mock
-
-  alias Lotta.Fixtures
-  alias Lotta.Worker.MediaConversion
+  import Lotta.Factory
 
   alias Lotta.Repo
+  alias Lotta.Worker.MediaConversion
+
   alias Lotta.Storage.{File, FileConversion}
 
   @prefix "tenant_test"
+
+  setup do
+    Repo.put_prefix(@prefix)
+    :ok
+  end
 
   describe "check_args/1" do
     test "returns error if file not found" do
@@ -23,16 +28,14 @@ defmodule Lotta.Worker.MediaConversionTest do
     end
 
     test "returns error if neither format_name nor format_names are provided" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(insert(:user))
 
       assert {:error, _} =
                MediaConversion.check_args(%{"prefix" => @prefix, "file_id" => file.id})
     end
 
     test "returns error if both format_name and format_names are provided" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(insert(:user))
 
       assert {:error, _} =
                MediaConversion.check_args(%{
@@ -44,8 +47,7 @@ defmodule Lotta.Worker.MediaConversionTest do
     end
 
     test "returns ok for single format" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(insert(:user))
 
       args = %{
         "prefix" => @prefix,
@@ -57,8 +59,7 @@ defmodule Lotta.Worker.MediaConversionTest do
     end
 
     test "returns ok for multiple formats" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(insert(:user))
 
       args = %{
         "prefix" => @prefix,
@@ -83,8 +84,7 @@ defmodule Lotta.Worker.MediaConversionTest do
     end
 
     test "Create a single new audio conversion" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(insert(:user))
 
       with_mock(
         Exile,
@@ -111,8 +111,7 @@ defmodule Lotta.Worker.MediaConversionTest do
     end
 
     test "Create multiple new audio conversions" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(insert(:user))
 
       with_mock(
         Exile,
@@ -153,8 +152,7 @@ defmodule Lotta.Worker.MediaConversionTest do
     end
 
     test "Create multiple new video conversions" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_video_file, user)
+      file = real_video_file(insert(:user))
 
       with_mock(
         Exile,

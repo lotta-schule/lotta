@@ -294,9 +294,13 @@ config :lotta,
        :schedule_provider_url,
        SystemConfig.get("SCHEDULE_PROVIDER_URL", cast: :url_with_scheme)
 
-config :lotta, :analytics,
-  endpoint: SystemConfig.get("ANALYTICS_ENDPOINT"),
-  api_key: SystemConfig.get("ANALYTICS_API_KEY")
+if config_env() == :test do
+  config :lotta, :analytics, endpoint: "https://plausible.io", api_key: "test"
+else
+  config :lotta, :analytics,
+    endpoint: SystemConfig.get("ANALYTICS_ENDPOINT"),
+    api_key: SystemConfig.get("ANALYTICS_API_KEY")
+end
 
 config :lotta, LottaWeb.Auth.AccessToken,
   secret_key: SystemConfig.get("SECRET_KEY_JWT"),

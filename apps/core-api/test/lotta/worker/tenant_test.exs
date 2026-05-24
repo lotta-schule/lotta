@@ -2,17 +2,23 @@ defmodule Lotta.Worker.TenantTest do
   use Lotta.WorkerCase, async: false
 
   import Mock
+  import Lotta.Factory
 
   alias Lotta.Worker.Tenant
-  alias Lotta.{Fixtures, Tenants}
+  alias Lotta.{Tenants}
   alias Lotta.Tenants.DefaultContent
   alias Lotta.Analytics
   alias Lotta.Administration.Notification.Slack
 
+  setup do
+    Lotta.Repo.put_prefix("tenant_test")
+    :ok
+  end
+
   describe "setup" do
     test "calls DefaultContent.create_default_content with correct arguments" do
       tenant = Tenants.get_tenant_by_slug("test")
-      user = Fixtures.fixture(:registered_user)
+      user = insert(:user)
 
       with_mock(DefaultContent, create_default_content: fn _t, _u -> :ok end) do
         with_mock(Analytics, create_site: fn _t -> :ok end) do
@@ -35,10 +41,7 @@ defmodule Lotta.Worker.TenantTest do
       tenant = Tenants.get_tenant_by_slug("test")
 
       # Create a user with eduplaces_id
-      user =
-        Fixtures.fixture(:registered_eduplace_user, %{
-          eduplaces_id: "test_eduplaces_id"
-        })
+      user = insert(:user, eduplaces_id: "test_eduplaces_id")
 
       with_mock(DefaultContent, create_default_content: fn _t, _u -> :ok end) do
         with_mock(Analytics, create_site: fn _t -> :ok end) do

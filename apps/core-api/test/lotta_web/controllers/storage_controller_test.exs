@@ -6,10 +6,15 @@ defmodule LottaWeb.StorageControllerTest do
 
   import Phoenix.ConnTest
   import Mock
+  import Lotta.Factory
 
-  alias Lotta.Fixtures
+  alias Lotta.Repo
+
+  @prefix "tenant_test"
 
   setup do
+    Repo.put_prefix(@prefix)
+
     Tesla.Mock.mock(fn
       %{method: :get} ->
         %Tesla.Env{
@@ -21,8 +26,7 @@ defmodule LottaWeb.StorageControllerTest do
 
   describe "File / FileConversion proxy" do
     test "Should return a cache-control header" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_image_file, user)
+      file = real_image_file(insert(:user))
 
       conn =
         build_tenant_conn()
@@ -32,8 +36,7 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should redirect to the file when requested" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_image_file, user)
+      file = real_image_file(insert(:user))
 
       conn =
         build_tenant_conn()
@@ -43,8 +46,7 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should respond with the correct format generated if requested" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_image_file, user)
+      file = real_image_file(insert(:user))
 
       conn =
         build_tenant_conn()
@@ -54,8 +56,7 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should respond with the correct existing file_conversion generated if requested" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(insert(:user))
 
       with_mock(
         Exile,
@@ -83,8 +84,7 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should respond with the original format if requested" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_image_file, user)
+      file = real_image_file(insert(:user))
 
       conn =
         build_tenant_conn()
@@ -108,8 +108,7 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should respond with a 404 if the format does not exist" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_image_file, user)
+      file = real_image_file(insert(:user))
 
       conn =
         build_tenant_conn()
@@ -125,8 +124,7 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should respond with a 428 if a format neither ready nor available is requested" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(insert(:user))
 
       conn =
         build_tenant_conn()

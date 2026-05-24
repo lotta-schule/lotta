@@ -1,8 +1,9 @@
 defmodule Lotta.Storage.FileProcessor.ImageProcessorTest do
   use Lotta.DataCase
   import Mock
+  import Lotta.Factory
 
-  alias Lotta.{Fixtures, Repo, Tenants}
+  alias Lotta.{Repo, Tenants}
   alias Lotta.Storage.FileData
   alias Lotta.Storage.Conversion.AvailableFormats
   alias Lotta.Storage.FileProcessor.ImageProcessor
@@ -11,6 +12,7 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessorTest do
 
   describe "read_metadata/1" do
     setup do
+      Repo.put_prefix(@prefix)
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       {:ok,
@@ -60,8 +62,8 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessorTest do
     test "process_multiple/3 should correctly process files" do
       {:ok, file_data} = FileData.from_path("test/support/fixtures/image_file.png")
 
-      user = Fixtures.fixture(:registered_user)
-      file = Fixtures.fixture(:file, user)
+      user = insert(:user)
+      file = insert(:file, user_id: user.id)
 
       # Mocking the call chain
       with_mock(

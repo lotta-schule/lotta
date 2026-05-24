@@ -1,11 +1,10 @@
 defmodule Lotta.Eduplaces.SyncerTest do
   import Mock
   import ExUnit.CaptureLog
-  import Lotta.Fixtures
+  import Lotta.Factory
 
   alias Lotta.Eduplaces.{Syncer, IDM}
   alias Lotta.{Accounts, Repo}
-  alias Lotta.Accounts.User
   alias Lotta.Tenants.{Tenant, TenantDbManager}
 
   use Lotta.DataCase, async: false
@@ -230,25 +229,8 @@ defmodule Lotta.Eduplaces.SyncerTest do
       {:ok, group} =
         Accounts.create_user_group(%{name: "Test Group", eduplaces_id: "group-1", sort_key: 10})
 
-      user1 =
-        %User{}
-        |> Map.merge(
-          Lotta.Fixtures.fixture(:valid_eduplace_user_attrs, %{
-            eduplaces_id: "user-1",
-            email: "user1@sync-test.com"
-          })
-        )
-        |> Repo.insert!(prefix: @test_prefix)
-
-      user2 =
-        %User{}
-        |> Map.merge(
-          Lotta.Fixtures.fixture(:valid_eduplace_user_attrs, %{
-            eduplaces_id: "user-2",
-            email: "user2@sync-test.com"
-          })
-        )
-        |> Repo.insert!(prefix: @test_prefix)
+      user1 = insert(:user, eduplaces_id: "user-1", email: "user1@sync-test.com")
+      user2 = insert(:user, eduplaces_id: "user-2", email: "user2@sync-test.com")
 
       group_details = %{
         "id" => "group-1",
@@ -276,35 +258,9 @@ defmodule Lotta.Eduplaces.SyncerTest do
       {:ok, group} =
         Accounts.create_user_group(%{name: "Test Group", eduplaces_id: "group-1", sort_key: 10})
 
-      user1 =
-        %User{}
-        |> Map.merge(
-          Lotta.Fixtures.fixture(:valid_eduplace_user_attrs, %{
-            eduplaces_id: "user-1",
-            email: "user1-add-remove@test.com"
-          })
-        )
-        |> Repo.insert!(prefix: @test_prefix)
-
-      user2 =
-        %User{}
-        |> Map.merge(
-          Lotta.Fixtures.fixture(:valid_eduplace_user_attrs, %{
-            eduplaces_id: "user-2",
-            email: "user2-add-remove@test.com"
-          })
-        )
-        |> Repo.insert!(prefix: @test_prefix)
-
-      user3 =
-        %User{}
-        |> Map.merge(
-          Lotta.Fixtures.fixture(:valid_eduplace_user_attrs, %{
-            eduplaces_id: "user-3",
-            email: "user3-add-remove@test.com"
-          })
-        )
-        |> Repo.insert!(prefix: @test_prefix)
+      user1 = insert(:user, eduplaces_id: "user-1", email: "user1-add-remove@test.com")
+      user2 = insert(:user, eduplaces_id: "user-2", email: "user2-add-remove@test.com")
+      user3 = insert(:user, eduplaces_id: "user-3", email: "user3-add-remove@test.com")
 
       Accounts.set_group_members(group, [user1, user2])
 
@@ -334,15 +290,7 @@ defmodule Lotta.Eduplaces.SyncerTest do
       {:ok, group} =
         Accounts.create_user_group(%{name: "Test Group", eduplaces_id: "group-1", sort_key: 10})
 
-      user1 =
-        %User{}
-        |> Map.merge(
-          Lotta.Fixtures.fixture(:valid_eduplace_user_attrs, %{
-            eduplaces_id: "user-1",
-            email: "user1-orphan@test.com"
-          })
-        )
-        |> Repo.insert!(prefix: @test_prefix)
+      user1 = insert(:user, eduplaces_id: "user-1", email: "user1-orphan@test.com")
 
       group_details = %{
         "id" => "group-1",
@@ -375,15 +323,7 @@ defmodule Lotta.Eduplaces.SyncerTest do
       {:ok, group} =
         Accounts.create_user_group(%{name: "Empty Group", eduplaces_id: "group-1", sort_key: 10})
 
-      user1 =
-        %User{}
-        |> Map.merge(
-          fixture(:valid_eduplace_user_attrs, %{
-            eduplaces_id: "user-1",
-            email: "user1-empty@test.com"
-          })
-        )
-        |> Repo.insert!(prefix: @test_prefix)
+      user1 = insert(:user, eduplaces_id: "user-1", email: "user1-empty@test.com")
 
       Accounts.set_group_members(group, [user1])
 
@@ -424,14 +364,7 @@ defmodule Lotta.Eduplaces.SyncerTest do
       {:ok, group} =
         Accounts.create_user_group(%{name: "Test Group", eduplaces_id: "group-1", sort_key: 10})
 
-      user1 =
-        %User{}
-        |> Map.merge(
-          fixture(:valid_eduplace_user_attrs, %{
-            eduplaces_id: "user-1"
-          })
-        )
-        |> Repo.insert!(prefix: @test_prefix)
+      user1 = insert(:user, eduplaces_id: "user-1")
 
       Accounts.set_group_members(group, [user1])
 
@@ -453,23 +386,8 @@ defmodule Lotta.Eduplaces.SyncerTest do
 
   describe "sync_tenant_groups/1 with members" do
     test "syncs both groups and members in one call", %{tenant: tenant} do
-      user1 =
-        %User{}
-        |> Map.merge(fixture(:valid_eduplace_user_attrs))
-        |> Map.merge(%{
-          eduplaces_id: "user-1",
-          email: "user1-integration@test.com"
-        })
-        |> Repo.insert!(prefix: @test_prefix)
-
-      user2 =
-        %User{}
-        |> Map.merge(fixture(:valid_eduplace_user_attrs))
-        |> Map.merge(%{
-          eduplaces_id: "user-2",
-          email: "user2-integration@test.com"
-        })
-        |> Repo.insert!(prefix: @test_prefix)
+      user1 = insert(:user, eduplaces_id: "user-1", email: "user1-integration@test.com")
+      user2 = insert(:user, eduplaces_id: "user-2", email: "user2-integration@test.com")
 
       eduplaces_groups = [
         %{"id" => "group-1", "name" => "Class 5A", "status" => "ACTIVE"}

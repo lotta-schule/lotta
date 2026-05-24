@@ -26,7 +26,7 @@ defmodule Lotta.Factory do
   alias Lotta.{Calendar, Accounts}
   alias Lotta.Tenants.{Category, Widget}
   alias Lotta.Content.{Article, ContentModule}
-  alias Lotta.Storage.{Directory, File}
+  alias Lotta.Storage.{Directory, File, FileData, RemoteStorage}
   alias Lotta.Messages.{Conversation, Message}
 
   # --- Accounts ---
@@ -96,7 +96,7 @@ defmodule Lotta.Factory do
   end
 
   def unpublished_article_factory do
-    struct!(article_factory(), ready_to_publish: false, published: false, category: nil)
+    struct!(article_factory(), ready_to_publish: true, published: false, category: nil)
   end
 
   def content_module_factory do
@@ -135,6 +135,69 @@ defmodule Lotta.Factory do
     %Message{
       content: sequence(:content, &"message content #{&1}")
     }
+  end
+
+  # --- Helpers ---
+
+  @doc """
+  Adds users (many_to_many) to an article or content-module after it is persisted.
+  ExMachina does not insert join-table rows automatically for many_to_many.
+  """
+  def with_users(record, users) do
+    record
+    |> Lotta.Repo.preload(:users)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:users, users)
+    |> Lotta.Repo.update!()
+  end
+
+  @doc "Uploads a local file to remote storage and attaches it to a `%File{}` record."
+  def with_remote_storage(file, local_path) do
+    {:ok, file_data} = FileData.from_path(local_path)
+    storage_path = Enum.join([Lotta.Repo.get_prefix(), file.id, "original"], "/")
+    {:ok, entity_data} = RemoteStorage.create(file_data, storage_path)
+
+    file
+    |> Lotta.Repo.preload(:remote_storage_entity)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:remote_storage_entity, entity_data)
+    |> Lotta.Repo.update!()
+  end
+
+  def real_file(user) do
+    insert(:file, user_id: user.id)
+    |> with_remote_storage("test/support/fixtures/secrets.zip")
+  end
+
+  def real_image_file(user) do
+    insert(:file, user_id: user.id, file_type: "image", mime_type: "image/jpeg")
+    |> with_remote_storage("test/support/fixtures/image_file.png")
+  end
+
+  def real_audio_file(user) do
+    dir = insert(:directory, user_id: user.id)
+
+    insert(:file,
+      user_id: user.id,
+      filename: "some_filename",
+      file_type: "audio",
+      mime_type: "audio/mp3",
+      parent_directory_id: dir.id
+    )
+    |> with_remote_storage("test/support/fixtures/eoa2.mp3")
+  end
+
+  def real_video_file(user) do
+    dir = insert(:directory, user_id: user.id)
+
+    insert(:file,
+      user_id: user.id,
+      filename: "some_filename",
+      file_type: "video",
+      mime_type: "video/mp4",
+      parent_directory_id: dir.id
+    )
+    |> with_remote_storage("test/support/fixtures/pc3.m4v")
   end
 
   # --- Calendar ---

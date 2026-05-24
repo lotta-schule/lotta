@@ -2,18 +2,23 @@ defmodule Lotta.Worker.ConversionTest do
   use Lotta.WorkerCase, async: false
 
   import Mock
+  import Lotta.Factory
 
-  alias Lotta.Fixtures
+  alias Lotta.Repo
   alias Lotta.Worker.Conversion
 
+  @prefix "tenant_test"
+
   setup do
+    Repo.put_prefix(@prefix)
+
     Tesla.Mock.mock(fn
       %{method: :get} ->
         %Tesla.Env{
           status: 200,
           body:
             "test/support/fixtures/image_file.png"
-            |> File.open!()
+            |> Elixir.File.open!()
             |> IO.binstream(5 * 1024 * 1024)
         }
     end)
@@ -21,7 +26,7 @@ defmodule Lotta.Worker.ConversionTest do
 
   describe "Worker.Conversion" do
     test "Create a new image conversion" do
-      file = Fixtures.fixture(:real_image_file, Fixtures.fixture(:admin_user))
+      file = real_image_file(insert(:user))
 
       {:ok, conversions} =
         perform_job(Conversion, %{
@@ -34,7 +39,7 @@ defmodule Lotta.Worker.ConversionTest do
     end
 
     test "cancel a job when a format was passed vips cannot read" do
-      file = Fixtures.fixture(:real_file, Fixtures.fixture(:admin_user))
+      file = real_file(insert(:user))
 
       with_mock(
         Image,
@@ -53,7 +58,7 @@ defmodule Lotta.Worker.ConversionTest do
 
     test "should get an existing job after calling get_or_create_conversion_job with args of existing job" do
       with_testing_mode(:manual, fn ->
-        file = Fixtures.fixture(:real_image_file, Fixtures.fixture(:admin_user))
+        file = real_image_file(insert(:user))
 
         assert {:ok, _job} =
                  Conversion.get_or_create_conversion_job(file, "preview")

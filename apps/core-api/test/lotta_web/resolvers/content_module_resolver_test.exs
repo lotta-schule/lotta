@@ -4,15 +4,13 @@ defmodule LottaWeb.ContentModuleResolverTest do
   use LottaWeb.ConnCase, async: true
   use Bamboo.Test
 
-  import Ecto.Query
-  import Lotta.Fixtures
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
 
-  alias Lotta.{Repo, Tenants}
-  alias Lotta.Accounts.User
+  alias Lotta.{Repo, Tenants, Accounts}
   alias Lotta.Content.ContentModule
-  alias Lotta.Storage.File
+  alias Lotta.Storage.FileData
 
   @prefix "tenant_test"
 
@@ -21,39 +19,116 @@ defmodule LottaWeb.ContentModuleResolverTest do
 
     Repo.put_prefix(@prefix)
 
-    query =
-      from(cm in ContentModule,
-        where: fragment("?->>? = ?", cm.content, "value", "Pizza Test-Formular")
-      )
+    admin_group = insert(:admin_group)
+    {:ok, admin} = insert(:user) |> Accounts.update_user(%{groups: [admin_group]})
 
-    test_formular = Repo.one!(query, prefix: tenant.prefix)
+    user = insert(:user)
 
-    admin =
-      Repo.one!(
-        from(u in User,
-          where: u.email == ^"alexis.rinaldoni@lotta.schule"
-        ),
-        prefix: tenant.prefix
-      )
+    admin_dir = insert(:directory, user_id: admin.id)
+    admin_file = insert(:file, user_id: admin.id, parent_directory_id: admin_dir.id)
 
-    user =
-      Repo.one!(
-        from(u in User,
-          where: u.email == ^"eike.wiewiorra@lotta.schule"
-        ),
-        prefix: tenant.prefix
-      )
+    article = insert(:article) |> with_users([user])
+
+    test_formular =
+      %ContentModule{
+        article_id: article.id,
+        type: "text",
+        content: %{"value" => "Pizza Test-Formular"},
+        configuration: %{
+          "destination" => admin.email,
+          "save_internally" => true,
+          "elements" => [
+            %{
+              "descriptionText" => "Halli, hallo, wir sind da, du bist hier, dadub dadumm.",
+              "element" => "input",
+              "label" => "Name",
+              "name" => "name",
+              "required" => true,
+              "type" => "text"
+            },
+            %{
+              "descriptionText" =>
+                "Falls du ein Gutschein hast, fotografier ihn und füge ihn hier an.",
+              "element" => "file",
+              "label" => "Coupon",
+              "name" => "coupon",
+              "required" => true,
+              "maxSize" => 1_048_576
+            },
+            %{
+              "descriptionText" => "",
+              "element" => "selection",
+              "label" => "PizzaGröße",
+              "name" => "größe",
+              "required" => true,
+              "type" => "radio",
+              "options" => [
+                %{"label" => "klein (22cm Durchmesser)", "selected" => true, "value" => "klein"},
+                %{"label" => "groß (28cm Durchmesser)", "selected" => false, "value" => "groß"},
+                %{"label" => "Familienpizza (50x60cm)", "selected" => false, "value" => "familie"}
+              ]
+            },
+            %{
+              "descriptionText" => "",
+              "element" => "selection",
+              "label" => "Zutat",
+              "name" => "feld3",
+              "required" => true,
+              "type" => "checkbox",
+              "options" => [
+                %{
+                  "label" => "zusätzliche Peperoni",
+                  "selected" => false,
+                  "value" => "peperoni"
+                },
+                %{"label" => "Zusätzlicher Käse", "selected" => true, "value" => "käse"},
+                %{"label" => "Pilze", "selected" => true, "value" => "pilze"},
+                %{"label" => "Gorgonzola", "value" => "gorgonzola"},
+                %{
+                  "label" => "Ananas (Bestellung wird sofort verworfen)",
+                  "value" => "ananas"
+                }
+              ]
+            },
+            %{
+              "descriptionText" => "",
+              "element" => "selection",
+              "label" => "Bei Abholung 10% Rabat",
+              "name" => "transport",
+              "required" => true,
+              "type" => "select",
+              "options" => [
+                %{"label" => "Abholung", "selected" => false, "value" => "abholung"},
+                %{"label" => "Lieferung", "selected" => true, "value" => "lieferung"}
+              ]
+            },
+            %{
+              "element" => "input",
+              "label" => "Weitere Informationen",
+              "multiline" => true,
+              "name" => "beschreibung",
+              "type" => "text"
+            }
+          ]
+        }
+      }
+      |> Repo.insert!(prefix: @prefix)
+
+    test_formular
+    |> Ecto.build_assoc(:results,
+      result: %{
+        "responses" => %{
+          "beschreibung" => "",
+          "feld3" => ["käse", "pilze"],
+          "größe" => "klein",
+          "name" => "Test",
+          "transport" => "lieferung"
+        }
+      }
+    )
+    |> Repo.insert!(prefix: @prefix)
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
-
-    admin_file =
-      Repo.one!(
-        from(f in File,
-          where: f.filename == ^"irgendwas.png"
-        ),
-        prefix: tenant.prefix
-      )
-
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
     {:ok,
@@ -61,6 +136,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
        test_formular: test_formular,
        admin: admin,
        admin_jwt: admin_jwt,
+       admin_email: admin.email,
        admin_file: admin_file,
        user: user,
        user_jwt: user_jwt,
@@ -195,7 +271,8 @@ defmodule LottaWeb.ContentModuleResolverTest do
     end
 
     test "sends an uploaded file in the email response and save its filename to database", %{
-      test_formular: test_formular
+      test_formular: test_formular,
+      admin_email: admin_email
     } do
       res =
         build_conn()
@@ -240,7 +317,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
              }
 
       assert_delivered_email_matches(%{
-        to: [{_, "alexis.rinaldoni@lotta.schule"}],
+        to: [{_, ^admin_email}],
         text_body: text_body,
         html_body: html_body,
         attachments: [%{filename: "coupon.png"}]
@@ -252,10 +329,25 @@ defmodule LottaWeb.ContentModuleResolverTest do
 
     test "sends lotta file and save its filename to database", %{
       test_formular: test_formular,
-      admin: admin
+      admin: admin,
+      admin_email: admin_email
     } do
-      admin_file = fixture(:real_file, admin)
-      filename = admin_file.filename
+      {:ok, file_data} = FileData.from_path("test/support/fixtures/secrets.zip")
+
+      admin_real_file =
+        insert(:file, user_id: admin.id)
+        |> then(fn file ->
+          path = Enum.join([@prefix, file.id, "original"], "/")
+          {:ok, entity_data} = Lotta.Storage.RemoteStorage.create(file_data, path)
+
+          file
+          |> Repo.preload(:remote_storage_entity)
+          |> Ecto.Changeset.change()
+          |> Ecto.Changeset.put_assoc(:remote_storage_entity, entity_data)
+          |> Repo.update!()
+        end)
+
+      filename = admin_real_file.filename
 
       res =
         build_tenant_conn()
@@ -271,7 +363,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
           \"dieses_feld_existiert_nicht\": \"abcABC\",
           \"transport\": \"lieferung\",
           \"beschreibung\": \"\",
-          \"coupon\": \"lotta-file-id://{\\\"filename\\\":\\\"#{filename}\\\",\\\"filesize\\\":#{admin_file.filesize},\\\"filetype\\\":\\\"#{admin_file.mime_type}\\\",\\\"id\\\":\\\"#{admin_file.id}\\\"}\"
+          \"coupon\": \"lotta-file-id://{\\\"filename\\\":\\\"#{filename}\\\",\\\"filesize\\\":#{admin_real_file.filesize},\\\"filetype\\\":\\\"#{admin_real_file.mime_type}\\\",\\\"id\\\":\\\"#{admin_real_file.id}\\\"}\"
         }"
           }
         )
@@ -300,7 +392,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
              }
 
       assert_delivered_email_matches(%{
-        to: [{_, "alexis.rinaldoni@lotta.schule"}],
+        to: [{_, ^admin_email}],
         text_body: text_body,
         html_body: html_body,
         attachments: [%{filename: ^filename}]
@@ -313,7 +405,8 @@ defmodule LottaWeb.ContentModuleResolverTest do
     test "sends empty file value if user has no rights to access file", %{
       test_formular: test_formular,
       user_jwt: user_jwt,
-      admin_file: admin_file
+      admin_file: admin_file,
+      admin_email: admin_email
     } do
       res =
         build_conn()
@@ -330,7 +423,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
           \"dieses_feld_existiert_nicht\": \"abcABC\",
           \"transport\": \"lieferung\",
           \"beschreibung\": \"\",
-          \"coupon\": \"lotta-file-id://{\\\"filename\\\":\\\"irgendwas.png\\\",\\\"filesize\\\":713,\\\"filetype\\\":\\\"image/png\\\",\\\"id\\\":\\\"#{admin_file.id}\\\"}\"
+          \"coupon\": \"lotta-file-id://{\\\"filename\\\":\\\"#{admin_file.filename}\\\",\\\"filesize\\\":#{admin_file.filesize},\\\"filetype\\\":\\\"#{admin_file.mime_type}\\\",\\\"id\\\":\\\"#{admin_file.id}\\\"}\"
         }"
           }
         )
@@ -359,7 +452,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
              }
 
       assert_delivered_email_matches(%{
-        to: [{_, "alexis.rinaldoni@lotta.schule"}],
+        to: [{_, ^admin_email}],
         text_body: text_body,
         html_body: html_body,
         attachments: []
@@ -481,15 +574,8 @@ defmodule LottaWeb.ContentModuleResolverTest do
     end
 
     test "return an error user is not author", %{test_formular: test_formular} do
-      user =
-        Repo.one!(
-          from(u in User,
-            where: u.email == ^"billy@lotta.schule"
-          ),
-          prefix: @prefix
-        )
-
-      {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
+      not_author = insert(:user)
+      {:ok, user_jwt, _} = AccessToken.encode_and_sign(not_author)
 
       res =
         build_conn()
