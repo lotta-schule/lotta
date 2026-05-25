@@ -47,7 +47,7 @@ defmodule LottaWeb.SessionController do
 
         conn
         |> put_refresh_token(refresh_token, is_first_login)
-        |> put_access_token(access_token, is_first_login)
+        |> put_access_token(access_token)
         |> redirect(external: URI.to_string(return_uri))
 
       {:error, reason} ->
@@ -86,7 +86,7 @@ defmodule LottaWeb.SessionController do
     )
   end
 
-  defp put_access_token(%Conn{} = conn, token, is_first_login \\ false) do
+  defp put_access_token(%Conn{} = conn, token) do
     conn
     |> put_resp_cookie("SignInAccessToken", token,
       max_age: 21 * 7 * 24 * 60 * 60,

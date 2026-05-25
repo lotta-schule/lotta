@@ -5,7 +5,7 @@ defmodule Lotta.Repo.Seeder do
   alias Lotta.Storage.{Directory, File, FileData, RemoteStorage}
   alias ExAws.S3
   alias Lotta.Content.{Article, ContentModule}
-  alias Lotta.Tenants.{Category, Tenant, TenantDbManager, Widget}
+  alias Lotta.Tenants.{Category, Tenant, TenantDbManager}
 
   def seed do
     # Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
@@ -435,7 +435,7 @@ defmodule Lotta.Repo.Seeder do
         |> upload_test_file!()
       end)
 
-    homepage = Repo.insert!(%Category{title: "Start", is_homepage: true}, prefix: tenant.prefix)
+    _homepage = Repo.insert!(%Category{title: "Start", is_homepage: true}, prefix: tenant.prefix)
 
     profil =
       Repo.insert!(
@@ -568,19 +568,6 @@ defmodule Lotta.Repo.Seeder do
       },
       prefix: tenant.prefix
     )
-
-    # Kalender-Widgets
-    widget1 = Repo.insert!(%Widget{title: "Kalender", type: "calendar"}, prefix: tenant.prefix)
-    widget2 = Repo.insert!(%Widget{title: "Kalender", type: "calendar"}, prefix: tenant.prefix)
-    widget3 = Repo.insert!(%Widget{title: "Kalender", type: "calendar"}, prefix: tenant.prefix)
-    assign_groups(widget2, [verwaltung_group, lehrer_group])
-    assign_groups(widget3, [verwaltung_group, lehrer_group])
-
-    homepage
-    |> Repo.preload(:widgets)
-    |> Changeset.change()
-    |> Changeset.put_assoc(:widgets, [widget1, widget2, widget3])
-    |> Repo.update!(prefix: tenant.prefix)
 
     # Articles
 

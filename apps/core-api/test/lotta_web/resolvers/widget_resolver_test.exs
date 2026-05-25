@@ -4,11 +4,11 @@ defmodule LottaWeb.WidgetResolverTest do
   use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
-  alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Tenants.{Category, Widget}
+  alias Lotta.Accounts.UserGroup
 
   @prefix "tenant_test"
 
@@ -17,26 +17,39 @@ defmodule LottaWeb.WidgetResolverTest do
 
     Repo.put_prefix(@prefix)
 
-    admin =
-      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
-        prefix: tenant.prefix
-      )
+    admin = insert(:admin_user)
 
-    user =
-      Repo.one!(from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: tenant.prefix
-      )
+    lehrer_group =
+      Repo.one!(from(g in UserGroup, where: g.name == ^"Lehrer"), prefix: tenant.prefix)
 
-    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
-
-    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
-
-    widget = Repo.one!(from(Widget, limit: 1), prefix: tenant.prefix)
+    verwaltung_group =
+      Repo.one!(from(g in UserGroup, where: g.name == ^"Verwaltung"), prefix: tenant.prefix)
 
     schueler_group =
       Repo.one!(from(g in UserGroup, where: g.name == ^"Schüler"), prefix: tenant.prefix)
 
-    homepage = Repo.one!(from(c in Category, where: c.is_homepage == true), prefix: tenant.prefix)
+    user = insert(:user) |> with_groups([lehrer_group])
+
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
+
+    homepage = insert(:homepage_category)
+
+    widget1 = insert(:widget, title: "Kalender", type: "calendar")
+
+    widget2 =
+      insert(:widget, title: "Kalender", type: "calendar")
+      |> with_groups([verwaltung_group, lehrer_group])
+
+    widget3 =
+      insert(:widget, title: "Kalender", type: "calendar")
+      |> with_groups([verwaltung_group, lehrer_group])
+
+    homepage
+    |> Repo.preload(:widgets)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:widgets, [widget1, widget2, widget3])
+    |> Repo.update!()
 
     {:ok,
      %{
@@ -44,7 +57,7 @@ defmodule LottaWeb.WidgetResolverTest do
        admin_jwt: admin_jwt,
        user_account: user,
        user_jwt: user_jwt,
-       widget: widget,
+       widget: widget1,
        homepage: homepage,
        schueler_group: schueler_group
      }}

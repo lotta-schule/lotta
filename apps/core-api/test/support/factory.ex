@@ -2,12 +2,13 @@ defmodule Lotta.Factory do
   @moduledoc false
   use ExMachina.Ecto, repo: Lotta.Repo
 
-  # Override insert/1 to automatically inject the process-local tenant prefix.
+  # Override insert/1,2,3 to automatically inject the process-local tenant prefix.
   # This is required because ExMachina calls Repo.insert! without a prefix option,
   # but Repo.prepare_query (which handles prefix injection) is only called for
   # query operations — not for schema-level inserts. Overriding here ensures that
-  # insert(:user) respects Repo.put_prefix("tenant_test") set in test setup.
-  defoverridable insert: 1
+  # insert(:user) and insert(:user, name: "foo") both respect
+  # Repo.put_prefix("tenant_test") set in test setup.
+  defoverridable insert: 1, insert: 2
 
   def insert(factory_name) when is_atom(factory_name) do
     case Lotta.Repo.get_prefix() do
@@ -21,6 +22,17 @@ defmodule Lotta.Factory do
       nil -> super(record)
       prefix -> insert(record, prefix: prefix)
     end
+  end
+
+  def insert(factory_name, attrs) when is_atom(factory_name) do
+    case Lotta.Repo.get_prefix() do
+      nil -> super(factory_name, attrs)
+      prefix -> insert(factory_name, attrs, prefix: prefix)
+    end
+  end
+
+  def insert(%{__meta__: _} = record, opts) when is_list(opts) do
+    super(record, opts)
   end
 
   alias Lotta.{Calendar, Accounts}
