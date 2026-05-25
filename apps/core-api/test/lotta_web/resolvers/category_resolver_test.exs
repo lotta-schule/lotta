@@ -4,10 +4,11 @@ defmodule LottaWeb.CategoryResolverTest do
   use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
-  alias Lotta.Accounts.User
+  alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Tenants.Category
   alias Lotta.Content.Article
 
@@ -18,13 +19,52 @@ defmodule LottaWeb.CategoryResolverTest do
 
     Repo.put_prefix(@prefix)
 
-    faecher_category =
-      Repo.one!(
-        from(c in Category,
-          where: c.title == ^"Fächer"
-        ),
-        prefix: tenant.prefix
-      )
+    verwaltung_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Verwaltung"), prefix: @prefix)
+
+    lehrer_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Lehrer"), prefix: @prefix)
+
+    schueler_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Schüler"), prefix: @prefix)
+
+    # Top-level categories. Profil is inserted before Fächer so profil.id < faecher.id,
+    # which determines the child-category sort order in list_categories
+    # (order_by: [asc: sort_key, asc: category_id], NULLs last).
+    insert(:category, title: "Start", sort_key: 0, is_homepage: true)
+
+    profil_cat =
+      insert(:category, title: "Profil", sort_key: 10)
+      |> with_groups([verwaltung_group])
+
+    insert(:category, title: "GTA", sort_key: 20)
+    |> with_groups([verwaltung_group, lehrer_group, schueler_group])
+
+    insert(:category, title: "Projekt", sort_key: 30)
+
+    faecher_cat =
+      insert(:category, title: "Fächer", sort_key: 40)
+      |> with_groups([verwaltung_group, lehrer_group, schueler_group])
+
+    insert(:category, title: "Material", sort_key: 50)
+    |> with_groups([verwaltung_group, lehrer_group])
+
+    insert(:category, title: "Galerien", sort_key: 60)
+    insert(:category, title: "Impressum", sort_key: 70, is_sidenav: true)
+
+    # Profil children (no group restrictions)
+    insert(:category, title: "Podcast", sort_key: 10, category_id: profil_cat.id)
+    insert(:category, title: "Offene Kunst-AG", sort_key: 20, category_id: profil_cat.id)
+    insert(:category, title: "Schülerzeitung", sort_key: 30, category_id: profil_cat.id)
+    insert(:category, title: "Oskar-Reime-Chor", sort_key: 40, category_id: profil_cat.id)
+    insert(:category, title: "Schüler-Radio", sort_key: 50, category_id: profil_cat.id)
+
+    # Fächer children
+    insert(:category, title: "Sport", sort_key: 10, category_id: faecher_cat.id)
+    insert(:category, title: "Kunst", sort_key: 20, category_id: faecher_cat.id)
+
+    insert(:category, title: "Sprache", sort_key: 30, category_id: faecher_cat.id)
+    |> with_groups([verwaltung_group, lehrer_group])
 
     emails = [
       "alexis.rinaldoni@lotta.schule",
@@ -37,9 +77,7 @@ defmodule LottaWeb.CategoryResolverTest do
       Enum.map(emails, fn email ->
         user =
           Repo.one!(
-            from(u in User,
-              where: u.email == ^email
-            ),
+            from(u in User, where: u.email == ^email),
             prefix: tenant.prefix
           )
 
@@ -49,7 +87,7 @@ defmodule LottaWeb.CategoryResolverTest do
 
     {:ok,
      %{
-       faecher_category: faecher_category,
+       faecher_category: faecher_cat,
        admin: admin,
        admin_jwt: admin_jwt,
        lehrer: lehrer,

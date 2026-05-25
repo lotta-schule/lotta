@@ -8,9 +8,7 @@ defmodule LottaWeb.UserGroupResolverTest do
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Accounts, Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Content.Article
   import Lotta.Factory
-  alias Ecto.Changeset
 
   @prefix "tenant_test"
 
@@ -360,25 +358,16 @@ defmodule LottaWeb.UserGroupResolverTest do
       schueler_group: schueler_group
     } do
       oskar_goes_to =
-        from(a in Article,
-          where: a.title == ^"And the oskar goes to ..."
-        )
-        |> Repo.one!(prefix: @prefix)
-        |> assign_groups([lehrer_group])
+        insert(:article, title: "And the oskar goes to ...", published: true)
+        |> with_groups([lehrer_group])
 
       kleinkunst_wb2 =
-        from(a in Article,
-          where: a.title == ^"Der Podcast zum WB 2"
-        )
-        |> Repo.one!(prefix: @prefix)
-        |> assign_groups([lehrer_group])
+        insert(:article, title: "Der Podcast zum WB 2", published: true)
+        |> with_groups([lehrer_group])
 
       vorausscheid =
-        from(a in Article,
-          where: a.title == ^"Der Vorausscheid"
-        )
-        |> Repo.one!(prefix: @prefix)
-        |> assign_groups([lehrer_group, schueler_group])
+        insert(:article, title: "Der Vorausscheid", published: true)
+        |> with_groups([lehrer_group, schueler_group])
 
       res =
         build_conn()
@@ -593,13 +582,5 @@ defmodule LottaWeb.UserGroupResolverTest do
                ]
              } = res
     end
-  end
-
-  defp assign_groups(model, groups) do
-    model
-    |> Repo.preload(:groups)
-    |> Changeset.change()
-    |> Changeset.put_assoc(:groups, groups)
-    |> Repo.update!(prefix: Ecto.get_meta(model, :prefix))
   end
 end

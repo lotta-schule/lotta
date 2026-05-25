@@ -4,22 +4,20 @@ defmodule LottaWeb.UrlsTest do
   use Lotta.DataCase, async: true
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias Lotta.Tenants
   alias Lotta.Accounts.User
-  alias Lotta.Content.Article
-  alias Lotta.Tenants.Category
   alias LottaWeb.Urls
 
   @prefix "tenant_test"
 
   setup do
+    Repo.put_prefix(@prefix)
+
     tenant = Tenants.get_tenant_by_slug("test")
 
-    category = Repo.one!(from(c in Category, where: c.title == ^"Fächer"), prefix: @prefix)
-
-    article =
-      Repo.one!(from(a in Article, where: a.title == ^"Der Podcast zum WB 2"), prefix: @prefix)
+    article = insert(:article, title: "Der Podcast zum WB 2")
 
     user = Repo.one!(from(u in User, where: u.email == ^"maxi@lotta.schule"), prefix: @prefix)
 
@@ -27,7 +25,6 @@ defmodule LottaWeb.UrlsTest do
      %{
        tenant: tenant,
        article: article,
-       category: category,
        user: user
      }}
   end

@@ -151,8 +151,8 @@ defmodule LottaWeb.TenantResolverTest do
                  "tenant" => %{
                    "stats" => %{
                      "userCount" => 8,
-                     "articleCount" => 65,
-                     "categoryCount" => 16,
+                     "articleCount" => 0,
+                     "categoryCount" => 0,
                      "fileCount" => _
                    }
                  }

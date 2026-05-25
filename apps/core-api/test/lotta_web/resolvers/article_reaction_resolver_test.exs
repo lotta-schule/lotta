@@ -4,13 +4,13 @@ defmodule LottaWeb.ArticleReactionResolverTest do
   use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias Lotta.Content.ArticleReaction
   alias Lotta.Content
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.User
-  alias Lotta.Content.Article
 
   @prefix "tenant_test"
 
@@ -33,10 +33,7 @@ defmodule LottaWeb.ArticleReactionResolverTest do
         {user, jwt}
       end)
 
-    article =
-      Repo.one!(from(a in Article, where: a.title == "Der Podcast zum WB 2"),
-        prefix: tenant.prefix
-      )
+    article = insert(:article, title: "Der Podcast zum WB 2", published: true)
 
     {:ok,
      %{
