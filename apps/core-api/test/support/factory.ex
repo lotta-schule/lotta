@@ -140,7 +140,7 @@ defmodule Lotta.Factory do
   # --- Helpers ---
 
   @doc """
-  Adds users (many_to_many) to an article or content-module after it is persisted.
+  Adds users (many_to_many) to an article, conversation, or content-module after it is persisted.
   ExMachina does not insert join-table rows automatically for many_to_many.
   """
   def with_users(record, users) do
@@ -148,6 +148,15 @@ defmodule Lotta.Factory do
     |> Lotta.Repo.preload(:users)
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:users, users)
+    |> Lotta.Repo.update!()
+  end
+
+  @doc "Adds groups (many_to_many) to a conversation after it is persisted."
+  def with_groups(record, groups) do
+    record
+    |> Lotta.Repo.preload(:groups)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:groups, groups)
     |> Lotta.Repo.update!()
   end
 

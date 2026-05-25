@@ -5,7 +5,6 @@ defmodule Lotta.Repo.Seeder do
   alias Lotta.Storage.{Directory, File, FileData, RemoteStorage}
   alias ExAws.S3
   alias Lotta.Content.{Article, ContentModule}
-  alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Tenants.{Category, Tenant, TenantDbManager, Widget}
 
   def seed do
@@ -435,78 +434,6 @@ defmodule Lotta.Repo.Seeder do
         |> Repo.insert!(prefix: tenant.prefix)
         |> upload_test_file!()
       end)
-
-    con_eikealexis =
-      %Conversation{}
-      |> Changeset.change(%{
-        inserted_at: ~U[2020-11-01 10:00:00Z],
-        updated_at: ~U[2020-11-01 10:00:00Z]
-      })
-      |> Changeset.put_assoc(:users, [eike, alexis])
-      |> Repo.insert!(prefix: tenant.prefix)
-
-    [
-      %Message{
-        user_id: alexis.id,
-        inserted_at: ~U[2020-11-01 10:00:00Z],
-        updated_at: ~U[2020-11-01 10:00:00Z],
-        content: "OK, alles bereit?",
-        files: [List.first(alexis_files)]
-      },
-      %Message{
-        user_id: eike.id,
-        inserted_at: ~U[2020-11-01 12:30:00Z],
-        updated_at: ~U[2020-11-01 12:30:00Z],
-        content: "Was meinst du damit?"
-      },
-      %Message{
-        user_id: alexis.id,
-        inserted_at: ~U[2020-11-01 12:32:00Z],
-        updated_at: ~U[2020-11-01 12:32:00Z],
-        content: "Bereit für das Deployment"
-      },
-      %Message{
-        user_id: eike.id,
-        inserted_at: ~U[2020-11-01 13:12:00Z],
-        updated_at: ~U[2020-11-01 13:12:00Z],
-        content: "Ich frag mal in die Gruppe"
-      }
-    ]
-    |> Enum.each(fn msg ->
-      con_eikealexis
-      |> Ecto.build_assoc(:messages, msg)
-      |> Repo.insert!(prefix: tenant.prefix)
-    end)
-
-    %Conversation{}
-    |> Changeset.change(%{
-      inserted_at: ~U[2020-11-05 13:12:46Z],
-      updated_at: ~U[2020-11-05 13:12:46Z]
-    })
-    |> Changeset.put_assoc(:groups, [lehrer_group])
-    |> Repo.insert!(prefix: tenant.prefix)
-    |> Ecto.build_assoc(:messages, %{
-      user_id: eike.id,
-      inserted_at: ~U[2020-11-05 13:12:46Z],
-      updated_at: ~U[2020-11-05 13:12:46Z],
-      content: "Alles bereit hier? Wir würden deployen."
-    })
-    |> Repo.insert!(prefix: tenant.prefix)
-
-    %Conversation{}
-    |> Changeset.change(%{
-      inserted_at: ~U[2020-11-10 21:01:44Z],
-      updated_at: ~U[2020-11-10 21:01:44Z]
-    })
-    |> Changeset.put_assoc(:users, [alexis, billy])
-    |> Repo.insert!(prefix: tenant.prefix)
-    |> Ecto.build_assoc(:messages, %{
-      user_id: billy.id,
-      inserted_at: ~U[2020-11-10 21:01:44Z],
-      updated_at: ~U[2020-11-10 21:01:44Z],
-      content: "Bist du da?"
-    })
-    |> Repo.insert!(prefix: tenant.prefix)
 
     homepage = Repo.insert!(%Category{title: "Start", is_homepage: true}, prefix: tenant.prefix)
 

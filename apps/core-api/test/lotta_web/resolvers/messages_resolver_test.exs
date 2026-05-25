@@ -4,11 +4,13 @@ defmodule LottaWeb.MessagesResolverTest do
   use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Messages.{Conversation, Message}
+  alias Lotta.Messages.Message
+  alias Lotta.Storage.File
 
   @prefix "tenant_test"
 
@@ -17,57 +19,97 @@ defmodule LottaWeb.MessagesResolverTest do
 
     Repo.put_prefix(@prefix)
 
-    emails = [
-      "alexis.rinaldoni@lotta.schule",
-      "eike.wiewiorra@lotta.schule"
-    ]
+    # Phase 6e will replace these email lookups with factory users
+    user =
+      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    [{user, user_jwt}, {user2, user2_jwt}] =
-      Enum.map(emails, fn email ->
-        user =
-          Repo.one!(
-            from(u in User,
-              where: u.email == ^email
-            ),
-            prefix: tenant.prefix
-          )
+    user2 =
+      Repo.one!(from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-        {:ok, jwt, _} = AccessToken.encode_and_sign(user)
-        {user, jwt}
-      end)
+    # Phase 6e will replace this
+    billy =
+      Repo.one!(from(u in User, where: u.email == ^"billy@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
+    {:ok, user2_jwt, _} = AccessToken.encode_and_sign(user2)
+
+    # Phase 6c will replace these file lookups with factory helpers
     user2_file =
-      Lotta.Repo.get_by!(Lotta.Storage.File, [user_id: user2.id, filename: "wieartig1.jpg"],
-        prefix: tenant.prefix
-      )
+      Repo.get_by!(File, [user_id: user2.id, filename: "wieartig1.jpg"], prefix: tenant.prefix)
 
+    user_file =
+      Repo.one!(from(f in File, where: f.filename == ^"ich_schoen.jpg"), prefix: tenant.prefix)
+
+    # Groups stay in seeder permanently
     lehrer_group =
-      Repo.one!(
-        from(ug in UserGroup, where: ug.name == ^"Lehrer"),
-        prefix: tenant.prefix
-      )
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Lehrer"), prefix: tenant.prefix)
 
     schueler_group =
-      Repo.one!(
-        from(ug in UserGroup,
-          where: ug.name == ^"Schüler"
-        ),
-        prefix: tenant.prefix
-      )
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Schüler"), prefix: tenant.prefix)
 
-    all_conversations =
-      Conversation
-      |> Repo.all(prefix: tenant.prefix)
-      |> Enum.map(&Repo.preload(&1, [:users, :groups]))
+    # --- Factory conversations (replacing seeder) ---
+
+    # Conversation 1: user (alexis) + user2 (eike), 4 messages, first has a file
+    con_user_user2 = insert(:conversation) |> with_users([user, user2])
 
     message =
-      Repo.one!(
-        from(c in Message,
-          where: c.content == "OK, alles bereit?"
-        ),
-        prefix: tenant.prefix
-      )
+      con_user_user2
+      |> Ecto.build_assoc(:messages, %Message{
+        user_id: user.id,
+        content: "OK, alles bereit?",
+        files: [user_file]
+      })
+      |> Repo.insert!(prefix: @prefix)
       |> Repo.preload(:files)
+
+    con_user_user2
+    |> Ecto.build_assoc(:messages, %Message{
+      user_id: user2.id,
+      content: "Was meinst du damit?"
+    })
+    |> Repo.insert!(prefix: @prefix)
+
+    con_user_user2
+    |> Ecto.build_assoc(:messages, %Message{
+      user_id: user.id,
+      content: "Bereit für das Deployment"
+    })
+    |> Repo.insert!(prefix: @prefix)
+
+    con_user_user2
+    |> Ecto.build_assoc(:messages, %Message{
+      user_id: user2.id,
+      content: "Ich frag mal in die Gruppe"
+    })
+    |> Repo.insert!(prefix: @prefix)
+
+    # Conversation 2: lehrer group, 1 message from user2 (eike)
+    con_lehrer =
+      insert(:conversation)
+      |> with_groups([lehrer_group])
+
+    con_lehrer
+    |> Ecto.build_assoc(:messages, %Message{
+      user_id: user2.id,
+      content: "Alles bereit hier? Wir würden deployen."
+    })
+    |> Repo.insert!(prefix: @prefix)
+
+    # Conversation 3: user (alexis) + billy, 1 message from billy
+    con_user_billy = insert(:conversation) |> with_users([user, billy])
+
+    con_user_billy
+    |> Ecto.build_assoc(:messages, %Message{
+      user_id: billy.id,
+      content: "Bist du da?"
+    })
+    |> Repo.insert!(prefix: @prefix)
 
     {:ok,
      %{
@@ -78,7 +120,9 @@ defmodule LottaWeb.MessagesResolverTest do
        user2_file: user2_file,
        lehrer_group: lehrer_group,
        schueler_group: schueler_group,
-       all_conversations: all_conversations,
+       con_user_user2: con_user_user2,
+       con_lehrer: con_lehrer,
+       con_user_billy: con_user_billy,
        message: message,
        tenant: tenant
      }}
@@ -105,32 +149,25 @@ defmodule LottaWeb.MessagesResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert %{
-               "data" => %{
-                 "conversations" => [
-                   %{
-                     "users" => conversation1_users,
-                     "groups" => []
-                   },
-                   %{
-                     "users" => conversation2_users,
-                     "groups" => []
-                   }
-                 ]
-               }
-             } = res
+      assert %{"data" => %{"conversations" => conversations}} = res
+      assert length(conversations) == 2
 
-      assert length(conversation1_users) == 2
+      billy_conv =
+        Enum.find(conversations, fn c ->
+          Enum.any?(c["users"], &(&1["name"] == "Christopher Bill"))
+        end)
 
-      assert Enum.all?(conversation1_users, fn %{"name" => name} ->
-               name == "Christopher Bill" || name == "Alexis Rinaldoni"
-             end)
+      eike_conv =
+        Enum.find(conversations, fn c ->
+          Enum.any?(c["users"], &(&1["name"] == "Eike Wiewiorra"))
+        end)
 
-      assert length(conversation2_users) == 2
-
-      assert Enum.all?(conversation2_users, fn %{"name" => name} ->
-               name == "Eike Wiewiorra" || name == "Alexis Rinaldoni"
-             end)
+      assert billy_conv != nil
+      assert eike_conv != nil
+      assert length(billy_conv["users"]) == 2
+      assert length(eike_conv["users"]) == 2
+      assert billy_conv["groups"] == []
+      assert eike_conv["groups"] == []
     end
 
     test "returns all conversations for another user", %{user2_jwt: user2_jwt} do
@@ -141,20 +178,23 @@ defmodule LottaWeb.MessagesResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert res == %{
-               "data" => %{
-                 "conversations" => [
-                   %{
-                     "users" => [],
-                     "groups" => [%{"name" => "Lehrer"}]
-                   },
-                   %{
-                     "users" => [%{"name" => "Eike Wiewiorra"}, %{"name" => "Alexis Rinaldoni"}],
-                     "groups" => []
-                   }
-                 ]
-               }
-             }
+      assert %{"data" => %{"conversations" => conversations}} = res
+      assert length(conversations) == 2
+
+      lehrer_conv = Enum.find(conversations, fn c -> c["groups"] != [] end)
+      user_conv = Enum.find(conversations, fn c -> c["users"] != [] end)
+
+      assert lehrer_conv != nil
+      assert user_conv != nil
+      assert lehrer_conv["groups"] == [%{"name" => "Lehrer"}]
+      assert lehrer_conv["users"] == []
+
+      assert Enum.sort_by(user_conv["users"], & &1["name"]) == [
+               %{"name" => "Alexis Rinaldoni"},
+               %{"name" => "Eike Wiewiorra"}
+             ]
+
+      assert user_conv["groups"] == []
     end
 
     test "return an error if user is not logged in" do
@@ -203,23 +243,13 @@ defmodule LottaWeb.MessagesResolverTest do
     """
     test "returns all messages for a conversation with a user", %{
       user_jwt: user_jwt,
-      user: user,
-      user2: user2,
-      all_conversations: all_conversations
+      con_user_user2: con_user_user2
     } do
-      conversation =
-        all_conversations
-        |> Enum.find(fn c ->
-          c.users != [] && Enum.all?(c.users, &(&1.id == user.id || &1.id == user2.id))
-        end)
-
-      assert conversation
-
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: conversation.id})
+        |> get("/api", query: @query, variables: %{id: con_user_user2.id})
         |> json_response(200)
 
       assert res == %{
@@ -256,22 +286,13 @@ defmodule LottaWeb.MessagesResolverTest do
 
     test "returns all messages for a conversation with a group", %{
       user2_jwt: user2_jwt,
-      lehrer_group: lehrer_group,
-      all_conversations: all_conversations
+      con_lehrer: con_lehrer
     } do
-      conversation =
-        all_conversations
-        |> Enum.find(fn c ->
-          Enum.count(c.groups) == 1 && List.first(c.groups).id == lehrer_group.id
-        end)
-
-      assert conversation
-
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
-        |> get("/api", query: @query, variables: %{id: conversation.id})
+        |> get("/api", query: @query, variables: %{id: con_lehrer.id})
         |> json_response(200)
 
       assert res == %{
@@ -295,26 +316,15 @@ defmodule LottaWeb.MessagesResolverTest do
              }
     end
 
-    test "returns an error when requesting a conversation between 2 other users", %{
+    test "returns an error when requesting a conversation the user is not part of", %{
       user_jwt: user_jwt,
-      user2: user2,
-      all_conversations: all_conversations
+      con_lehrer: con_lehrer
     } do
-      [user | _] = Repo.all(from(User, where: [email: "billy@lotta.schule"]), prefix: @prefix)
-
-      conversation =
-        all_conversations
-        |> Enum.find(fn c ->
-          Enum.count(c.users) && Enum.all?(c.users, &(&1.id == user2.id || &1.id == user.id))
-        end)
-
-      assert conversation
-
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: conversation.id})
+        |> get("/api", query: @query, variables: %{id: con_lehrer.id})
         |> json_response(200)
 
       assert res == %{
@@ -334,22 +344,13 @@ defmodule LottaWeb.MessagesResolverTest do
     test "returns an error when requesting a conversation for a group the user is not member of",
          %{
            user_jwt: user_jwt,
-           lehrer_group: lehrer_group,
-           all_conversations: all_conversations
+           con_lehrer: con_lehrer
          } do
-      conversation =
-        all_conversations
-        |> Enum.find(fn c ->
-          Enum.count(c.groups) == 1 && List.first(c.groups).id == lehrer_group.id
-        end)
-
-      assert conversation
-
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: conversation.id})
+        |> get("/api", query: @query, variables: %{id: con_lehrer.id})
         |> json_response(200)
 
       assert res == %{
@@ -366,11 +367,11 @@ defmodule LottaWeb.MessagesResolverTest do
              }
     end
 
-    test "return an error if user is not logged in", %{all_conversations: [conversation | _]} do
+    test "return an error if user is not logged in", %{con_user_user2: con_user_user2} do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
-        |> get("/api", query: @query, variables: %{id: conversation.id})
+        |> get("/api", query: @query, variables: %{id: con_user_user2.id})
         |> json_response(200)
 
       assert res == %{
