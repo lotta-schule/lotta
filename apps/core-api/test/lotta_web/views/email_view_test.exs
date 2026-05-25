@@ -3,8 +3,9 @@ defmodule LottaWeb.EmailViewTest do
 
   use Lotta.DataCase, async: true
 
+  import Lotta.Factory
+
   alias Lotta.{Repo, Tenants}
-  alias Lotta.Storage.File
   alias LottaWeb.EmailView
 
   @prefix "tenant_test"
@@ -31,13 +32,7 @@ defmodule LottaWeb.EmailViewTest do
     end
 
     test "should return its url if a file is set as logo", %{tenant: t} do
-      file =
-        Repo.one!(
-          from(f in File,
-            where: f.filename == "logo1.jpg"
-          ),
-          prefix: t.prefix
-        )
+      file = insert(:file) |> with_remote_storage("test/support/fixtures/image_file.png")
 
       {:ok, tenant} = Tenants.update_tenant(t, %{logo_image_file_id: file.id})
       assert EmailView.logo_url(tenant) =~ ~r/http:\/\/(minio|localhost|127\.0\.0\.1)/

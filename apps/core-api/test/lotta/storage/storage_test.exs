@@ -5,9 +5,8 @@ defmodule Lotta.StorageTest do
 
   import Lotta.Factory
 
-  alias Lotta.Accounts.User
   alias Lotta.{Repo, Storage, Tenants}
-  alias Lotta.Storage.{Directory, File, FileData, RemoteStorage, RemoteStorageEntity}
+  alias Lotta.Storage.{File, FileData, RemoteStorage, RemoteStorageEntity}
   alias Lotta.Tenants.UsageLog
 
   @prefix "tenant_test"
@@ -15,25 +14,18 @@ defmodule Lotta.StorageTest do
   setup do
     Repo.put_prefix(@prefix)
 
-    user =
-      Repo.one!(
-        from(u in User,
-          where: u.email == ^"eike.wiewiorra@lotta.schule"
-        ),
-        prefix: @prefix
-      )
+    user = insert(:user)
+    user_directory = insert(:directory, name: "ehrenberg-on-air", user_id: user.id)
 
     user_file =
-      Repo.one!(
-        from(f in File, where: f.filename == ^"eoa3.mp3"),
-        prefix: @prefix
+      insert(:file,
+        user_id: user.id,
+        parent_directory_id: user_directory.id,
+        filename: "eoa3.mp3",
+        file_type: "audio",
+        mime_type: "audio/mp3"
       )
-
-    user_directory =
-      Repo.one!(
-        from(d in Directory, where: d.name == ^"ehrenberg-on-air"),
-        prefix: @prefix
-      )
+      |> with_remote_storage("test/support/fixtures/eoa2.mp3")
 
     {:ok,
      %{

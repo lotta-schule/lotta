@@ -6,6 +6,7 @@ defmodule LottaWeb.UserResolverTest do
 
   import Ecto.Query
   import Lotta.Accounts.Authentication
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Accounts, Repo, Tenants}
@@ -43,11 +44,7 @@ defmodule LottaWeb.UserResolverTest do
         prefix: tenant.prefix
       )
 
-    user_relevant_file =
-      Repo.one!(
-        from(f in File, where: f.filename == ^"wieartig1.jpg"),
-        prefix: tenant.prefix
-      )
+    user_relevant_file = insert(:file, user_id: user.id)
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 

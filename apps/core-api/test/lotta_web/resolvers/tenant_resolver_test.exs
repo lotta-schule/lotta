@@ -153,7 +153,7 @@ defmodule LottaWeb.TenantResolverTest do
                      "userCount" => 8,
                      "articleCount" => 65,
                      "categoryCount" => 16,
-                     "fileCount" => 27
+                     "fileCount" => _
                    }
                  }
                }

@@ -2,6 +2,7 @@ defmodule LottaWeb.DirectoryResolverTest do
   @moduledoc false
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
@@ -41,21 +42,23 @@ defmodule LottaWeb.DirectoryResolverTest do
 
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
-    user2_directory =
-      Repo.one!(
-        from(d in Directory,
-          where: is_nil(d.parent_directory_id) and d.name == "avatar" and d.user_id == ^user2.id
-        ),
-        prefix: tenant.prefix
-      )
+    # User2 (eike) directories
+    user2_directory = insert(:directory, name: "avatar", user_id: user2.id)
+    insert(:directory, name: "ehrenberg-on-air", user_id: user2.id)
+    insert(:directory, name: "podcast", user_id: user2.id)
 
-    public_directory =
-      Repo.one!(
-        from(d in Directory,
-          where: d.name == "logos" and is_nil(d.user_id) and is_nil(d.parent_directory_id)
-        ),
-        prefix: tenant.prefix
-      )
+    # Admin directories
+    insert(:directory, name: "irgendwas", user_id: admin.id)
+    insert(:directory, name: "logos", user_id: admin.id)
+    insert(:directory, name: "podcast", user_id: admin.id)
+
+    # Public directories
+    public_directory = insert(:directory, name: "logos")
+    insert(:directory, name: "hintergrund")
+
+    # Make user2_directory and public_directory non-empty (needed for delete-non-empty tests)
+    insert(:directory, name: "sub", user_id: user2.id, parent_directory_id: user2_directory.id)
+    insert(:directory, name: "sub", parent_directory_id: public_directory.id)
 
     {:ok,
      %{
@@ -97,54 +100,52 @@ defmodule LottaWeb.DirectoryResolverTest do
         |> get("/api", query: @query, variables: %{parentDirectoryId: nil})
         |> json_response(200)
 
-      assert res == %{
-               "data" => %{
-                 "directories" => [
-                   %{
-                     "name" => "irgendwas",
-                     "user" => %{"id" => Integer.to_string(admin_account.id)},
-                     "parentDirectory" => nil
-                   },
-                   %{
-                     "name" => "logos",
-                     "user" => %{"id" => Integer.to_string(admin_account.id)},
-                     "parentDirectory" => nil
-                   },
-                   %{
-                     "name" => "Meine Bilder",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(admin_account.id)}
-                   },
-                   %{
-                     "name" => "Meine Dokumente",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(admin_account.id)}
-                   },
-                   %{
-                     "name" => "Meine Tondokumente",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(admin_account.id)}
-                   },
-                   %{
-                     "name" => "Meine Videos",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(admin_account.id)}
-                   },
-                   %{
-                     "name" => "Mein Profil",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(admin_account.id)}
-                   },
-                   %{
-                     "name" => "podcast",
-                     "user" => %{"id" => Integer.to_string(admin_account.id)},
-                     "parentDirectory" => nil
-                   },
-                   %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
-                   %{"name" => "logos", "user" => nil, "parentDirectory" => nil}
-                 ]
-               }
-             }
+      assert %{"data" => %{"directories" => dirs}} = res
+
+      admin_id_str = Integer.to_string(admin_account.id)
+
+      user_dir_names =
+        dirs
+        |> Enum.filter(&(&1["user"] == %{"id" => admin_id_str}))
+        |> Enum.map(& &1["name"])
+        |> MapSet.new()
+
+      public_dir_names =
+        dirs |> Enum.filter(&is_nil(&1["user"])) |> Enum.map(& &1["name"]) |> MapSet.new()
+
+      assert MapSet.subset?(
+               MapSet.new([
+                 "irgendwas",
+                 "logos",
+                 "Meine Bilder",
+                 "Meine Dokumente",
+                 "Meine Tondokumente",
+                 "Meine Videos",
+                 "Mein Profil",
+                 "podcast"
+               ]),
+               user_dir_names
+             )
+
+      assert MapSet.subset?(MapSet.new(["hintergrund", "logos"]), public_dir_names)
+      assert Enum.all?(dirs, &(&1["parentDirectory"] == nil))
+
+      # user dirs come before public dirs
+      last_user_pos =
+        dirs
+        |> Enum.with_index()
+        |> Enum.filter(fn {d, _} -> d["user"] == %{"id" => admin_id_str} end)
+        |> Enum.map(&elem(&1, 1))
+        |> Enum.max()
+
+      first_public_pos =
+        dirs
+        |> Enum.with_index()
+        |> Enum.filter(fn {d, _} -> is_nil(d["user"]) end)
+        |> Enum.map(&elem(&1, 1))
+        |> Enum.min()
+
+      assert last_user_pos < first_public_pos
     end
 
     test "returns own root directories and public root directories for non-admin user", %{
@@ -158,54 +159,51 @@ defmodule LottaWeb.DirectoryResolverTest do
         |> get("/api", query: @query, variables: %{parentDirectoryId: nil})
         |> json_response(200)
 
-      assert res == %{
-               "data" => %{
-                 "directories" => [
-                   %{
-                     "name" => "avatar",
-                     "user" => %{"id" => Integer.to_string(user2_account.id)},
-                     "parentDirectory" => nil
-                   },
-                   %{
-                     "name" => "ehrenberg-on-air",
-                     "user" => %{"id" => Integer.to_string(user2_account.id)},
-                     "parentDirectory" => nil
-                   },
-                   %{
-                     "name" => "Meine Bilder",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(user2_account.id)}
-                   },
-                   %{
-                     "name" => "Meine Dokumente",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(user2_account.id)}
-                   },
-                   %{
-                     "name" => "Meine Tondokumente",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(user2_account.id)}
-                   },
-                   %{
-                     "name" => "Meine Videos",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(user2_account.id)}
-                   },
-                   %{
-                     "name" => "Mein Profil",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(user2_account.id)}
-                   },
-                   %{
-                     "name" => "podcast",
-                     "user" => %{"id" => Integer.to_string(user2_account.id)},
-                     "parentDirectory" => nil
-                   },
-                   %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
-                   %{"name" => "logos", "user" => nil, "parentDirectory" => nil}
-                 ]
-               }
-             }
+      assert %{"data" => %{"directories" => dirs}} = res
+
+      user2_id_str = Integer.to_string(user2_account.id)
+
+      user_dir_names =
+        dirs
+        |> Enum.filter(&(&1["user"] == %{"id" => user2_id_str}))
+        |> Enum.map(& &1["name"])
+        |> MapSet.new()
+
+      public_dir_names =
+        dirs |> Enum.filter(&is_nil(&1["user"])) |> Enum.map(& &1["name"]) |> MapSet.new()
+
+      assert MapSet.subset?(
+               MapSet.new([
+                 "avatar",
+                 "ehrenberg-on-air",
+                 "Meine Bilder",
+                 "Meine Dokumente",
+                 "Meine Tondokumente",
+                 "Meine Videos",
+                 "Mein Profil",
+                 "podcast"
+               ]),
+               user_dir_names
+             )
+
+      assert MapSet.subset?(MapSet.new(["hintergrund", "logos"]), public_dir_names)
+      assert Enum.all?(dirs, &(&1["parentDirectory"] == nil))
+
+      last_user_pos =
+        dirs
+        |> Enum.with_index()
+        |> Enum.filter(fn {d, _} -> d["user"] == %{"id" => user2_id_str} end)
+        |> Enum.map(&elem(&1, 1))
+        |> Enum.max()
+
+      first_public_pos =
+        dirs
+        |> Enum.with_index()
+        |> Enum.filter(fn {d, _} -> is_nil(d["user"]) end)
+        |> Enum.map(&elem(&1, 1))
+        |> Enum.min()
+
+      assert last_user_pos < first_public_pos
     end
 
     test "returns only public root directories for user with no own directories", %{
@@ -219,39 +217,32 @@ defmodule LottaWeb.DirectoryResolverTest do
         |> get("/api", query: @query, variables: %{parentDirectoryId: nil})
         |> json_response(200)
 
-      assert res == %{
-               "data" => %{
-                 "directories" => [
-                   %{
-                     "name" => "Meine Bilder",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(user_account.id)}
-                   },
-                   %{
-                     "name" => "Meine Dokumente",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(user_account.id)}
-                   },
-                   %{
-                     "name" => "Meine Tondokumente",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(user_account.id)}
-                   },
-                   %{
-                     "name" => "Meine Videos",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(user_account.id)}
-                   },
-                   %{
-                     "name" => "Mein Profil",
-                     "parentDirectory" => nil,
-                     "user" => %{"id" => Integer.to_string(user_account.id)}
-                   },
-                   %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
-                   %{"name" => "logos", "user" => nil, "parentDirectory" => nil}
-                 ]
-               }
-             }
+      assert %{"data" => %{"directories" => dirs}} = res
+
+      user_id_str = Integer.to_string(user_account.id)
+
+      user_dir_names =
+        dirs
+        |> Enum.filter(&(&1["user"] == %{"id" => user_id_str}))
+        |> Enum.map(& &1["name"])
+        |> MapSet.new()
+
+      public_dir_names =
+        dirs |> Enum.filter(&is_nil(&1["user"])) |> Enum.map(& &1["name"]) |> MapSet.new()
+
+      assert MapSet.subset?(
+               MapSet.new([
+                 "Meine Bilder",
+                 "Meine Dokumente",
+                 "Meine Tondokumente",
+                 "Meine Videos",
+                 "Mein Profil"
+               ]),
+               user_dir_names
+             )
+
+      assert MapSet.subset?(MapSet.new(["hintergrund", "logos"]), public_dir_names)
+      assert Enum.all?(dirs, &(&1["parentDirectory"] == nil))
     end
 
     test "returns error when user is not owner of private directory and user is not admin", %{

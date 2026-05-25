@@ -10,7 +10,6 @@ defmodule LottaWeb.MessagesResolverTest do
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Messages.Message
-  alias Lotta.Storage.File
 
   @prefix "tenant_test"
 
@@ -39,12 +38,8 @@ defmodule LottaWeb.MessagesResolverTest do
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
     {:ok, user2_jwt, _} = AccessToken.encode_and_sign(user2)
 
-    # Phase 6c will replace these file lookups with factory helpers
-    user2_file =
-      Repo.get_by!(File, [user_id: user2.id, filename: "wieartig1.jpg"], prefix: tenant.prefix)
-
-    user_file =
-      Repo.one!(from(f in File, where: f.filename == ^"ich_schoen.jpg"), prefix: tenant.prefix)
+    user2_file = insert(:file, user_id: user2.id)
+    user_file = insert(:file, user_id: user.id, filename: "ich_schoen.jpg")
 
     # Groups stay in seeder permanently
     lehrer_group =
@@ -252,36 +247,33 @@ defmodule LottaWeb.MessagesResolverTest do
         |> get("/api", query: @query, variables: %{id: con_user_user2.id})
         |> json_response(200)
 
-      assert res == %{
-               "data" => %{
-                 "conversation" => %{
-                   "users" => [%{"name" => "Eike Wiewiorra"}, %{"name" => "Alexis Rinaldoni"}],
-                   "groups" => [],
-                   "messages" => [
-                     %{
-                       "content" => "Ich frag mal in die Gruppe",
-                       "user" => %{"name" => "Eike Wiewiorra"},
-                       "files" => []
-                     },
-                     %{
-                       "content" => "Bereit für das Deployment",
-                       "user" => %{"name" => "Alexis Rinaldoni"},
-                       "files" => []
-                     },
-                     %{
-                       "user" => %{"name" => "Eike Wiewiorra"},
-                       "content" => "Was meinst du damit?",
-                       "files" => []
-                     },
-                     %{
-                       "user" => %{"name" => "Alexis Rinaldoni"},
-                       "content" => "OK, alles bereit?",
-                       "files" => [%{"filename" => "ich_schoen.jpg"}]
-                     }
-                   ]
-                 }
+      assert %{"data" => %{"conversation" => conv}} = res
+      assert conv["groups"] == []
+      user_names = conv["users"] |> Enum.map(& &1["name"]) |> MapSet.new()
+      assert user_names == MapSet.new(["Eike Wiewiorra", "Alexis Rinaldoni"])
+
+      assert conv["messages"] == [
+               %{
+                 "content" => "Ich frag mal in die Gruppe",
+                 "user" => %{"name" => "Eike Wiewiorra"},
+                 "files" => []
+               },
+               %{
+                 "content" => "Bereit für das Deployment",
+                 "user" => %{"name" => "Alexis Rinaldoni"},
+                 "files" => []
+               },
+               %{
+                 "content" => "Was meinst du damit?",
+                 "user" => %{"name" => "Eike Wiewiorra"},
+                 "files" => []
+               },
+               %{
+                 "content" => "OK, alles bereit?",
+                 "user" => %{"name" => "Alexis Rinaldoni"},
+                 "files" => [%{"filename" => "ich_schoen.jpg"}]
                }
-             }
+             ]
     end
 
     test "returns all messages for a conversation with a group", %{
@@ -455,26 +447,15 @@ defmodule LottaWeb.MessagesResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
-               "data" => %{
-                 "createMessage" => %{
-                   "content" => "Hallo.",
-                   "files" => [%{"filename" => user2_file.filename}],
-                   "user" => %{"email" => "alexis.rinaldoni@lotta.schule"},
-                   "conversation" => %{
-                     "users" => [
-                       %{
-                         "email" => "eike.wiewiorra@lotta.schule"
-                       },
-                       %{
-                         "email" => "alexis.rinaldoni@lotta.schule"
-                       }
-                     ],
-                     "groups" => []
-                   }
-                 }
-               }
-             }
+      assert %{"data" => %{"createMessage" => msg}} = res
+      assert msg["content"] == "Hallo."
+      assert msg["files"] == [%{"filename" => user2_file.filename}]
+      assert msg["user"] == %{"email" => "alexis.rinaldoni@lotta.schule"}
+      assert msg["conversation"]["groups"] == []
+      conv_user_emails = msg["conversation"]["users"] |> Enum.map(& &1["email"]) |> MapSet.new()
+
+      assert conv_user_emails ==
+               MapSet.new(["eike.wiewiorra@lotta.schule", "alexis.rinaldoni@lotta.schule"])
     end
 
     test "send a message to a group", %{

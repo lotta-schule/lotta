@@ -4,11 +4,11 @@ defmodule LottaWeb.ArticleResolverTest do
   use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.User
-  alias Lotta.Storage.File
   alias Lotta.Content.Article
   alias Lotta.Tenants.Category
 
@@ -2137,6 +2137,18 @@ defmodule LottaWeb.ArticleResolverTest do
     }
     """
 
+    setup %{lehrer: lehrer, oskar: oskar, tenant: t} do
+      lehrer_dir = insert(:directory, user_id: lehrer.id)
+      lehrer_file = insert(:file, user_id: lehrer.id, parent_directory_id: lehrer_dir.id)
+
+      oskar
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_change(:preview_image_file_id, lehrer_file.id)
+      |> Repo.update!(prefix: t.prefix)
+
+      :ok
+    end
+
     test "it should return an error when user is not logged in" do
       res =
         build_conn()
@@ -2583,14 +2595,8 @@ defmodule LottaWeb.ArticleResolverTest do
     }
     """
 
-    test "updates an article if user is admin", %{admin_jwt: admin_jwt, draft: draft, tenant: t} do
-      file =
-        Repo.one!(
-          from(f in File,
-            where: f.filename == ^"ich_haesslich.jpg"
-          ),
-          prefix: t.prefix
-        )
+    test "updates an article if user is admin", %{admin_jwt: admin_jwt, draft: draft} do
+      file = insert(:file)
 
       res =
         build_conn()

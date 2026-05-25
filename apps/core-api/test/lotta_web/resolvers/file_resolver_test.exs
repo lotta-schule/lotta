@@ -41,35 +41,133 @@ defmodule LottaWeb.FileResolverTest do
       )
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
-
     {:ok, user2_jwt, _} = AccessToken.encode_and_sign(user2)
-
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
-    user2_directory =
-      Repo.one!(from(d in Directory, where: d.name == "ehrenberg-on-air"), prefix: tenant.prefix)
+    # Directories
+    user2_avatar_dir = insert(:directory, name: "avatar", user_id: user2.id)
+    user2_directory = insert(:directory, name: "ehrenberg-on-air", user_id: user2.id)
+    user2_podcast_dir = insert(:directory, name: "podcast", user_id: user2.id)
+    admin_logos_dir = insert(:directory, name: "logos", user_id: admin.id)
+    admin_podcast_dir = insert(:directory, name: "podcast", user_id: admin.id)
+    public_directory = insert(:directory, name: "logos")
 
+    # Admin file (ich_schoen.jpg) with remote storage; set as admin avatar
     admin_file =
-      Repo.one!(from(f in File, where: f.filename == ^"ich_schoen.jpg"), prefix: tenant.prefix)
+      insert(:file,
+        user_id: admin.id,
+        filename: "ich_schoen.jpg",
+        file_type: "image",
+        mime_type: "image/jpg",
+        parent_directory_id: admin_logos_dir.id
+      )
+      |> with_remote_storage("test/support/fixtures/image_file.png")
 
+    admin
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_change(:avatar_image_file_id, admin_file.id)
+    |> Repo.update!(prefix: @prefix)
+
+    # User2 file (wieartig1.jpg) with remote storage
     user2_file =
-      Repo.one!(from(f in File, where: f.filename == ^"wieartig1.jpg"), prefix: tenant.prefix)
-
-    public_directory =
-      Repo.one!(
-        from(d in Directory,
-          where: d.name == "logos" and is_nil(d.user_id) and is_nil(d.parent_directory_id)
-        ),
-        prefix: tenant.prefix
+      insert(:file,
+        user_id: user2.id,
+        filename: "wieartig1.jpg",
+        file_type: "image",
+        mime_type: "image/jpg",
+        parent_directory_id: user2_avatar_dir.id
       )
+      |> with_remote_storage("test/support/fixtures/image_file.png")
 
+    # Public logos directory files
     public_file =
-      Repo.one!(
-        from(f in File,
-          where: f.filename == ^"logo1.jpg" and f.parent_directory_id == ^public_directory.id
-        ),
-        prefix: tenant.prefix
+      insert(:file,
+        user_id: admin.id,
+        filename: "logo1.jpg",
+        file_type: "image",
+        mime_type: "image/jpg",
+        parent_directory_id: public_directory.id
       )
+
+    insert(:file,
+      user_id: admin.id,
+      filename: "logo2.jpg",
+      file_type: "image",
+      mime_type: "image/jpg",
+      parent_directory_id: public_directory.id
+    )
+
+    insert(:file,
+      user_id: admin.id,
+      filename: "logo3.png",
+      file_type: "image",
+      mime_type: "image/png",
+      parent_directory_id: public_directory.id
+    )
+
+    insert(:file,
+      user_id: admin.id,
+      filename: "logo4.png",
+      file_type: "image",
+      mime_type: "image/png",
+      parent_directory_id: public_directory.id
+    )
+
+    # Admin podcast directory files
+    insert(:file,
+      user_id: admin.id,
+      filename: "pc3.m4v",
+      file_type: "video",
+      mime_type: "video/m4v",
+      parent_directory_id: admin_podcast_dir.id
+    )
+
+    insert(:file,
+      user_id: admin.id,
+      filename: "podcast1.mp4",
+      file_type: "video",
+      mime_type: "video/mp4",
+      parent_directory_id: admin_podcast_dir.id
+    )
+
+    insert(:file,
+      user_id: admin.id,
+      filename: "podcast2.mov",
+      file_type: "video",
+      mime_type: "video/mov",
+      parent_directory_id: admin_podcast_dir.id
+    )
+
+    # Articles referencing user2_file for usage tests (with seeder-matching timestamps)
+    insert(:article,
+      preview_image_file_id: user2_file.id,
+      title: "And the oskar goes to ...",
+      updated_at: ~U[2019-09-01 10:08:00Z]
+    )
+
+    insert(:article,
+      preview_image_file_id: user2_file.id,
+      title: "Draft1",
+      updated_at: ~U[2019-09-01 10:00:00Z]
+    )
+
+    insert(:article,
+      preview_image_file_id: user2_file.id,
+      title: "Draft2",
+      updated_at: ~U[2019-09-01 10:05:00Z]
+    )
+
+    insert(:article,
+      preview_image_file_id: user2_file.id,
+      title: "Fertiger Artikel zum Konzert",
+      updated_at: ~U[2019-09-01 10:06:00Z]
+    )
+
+    # Categories referencing public_file for usage tests
+    insert(:category, banner_image_file_id: public_file.id, title: "Fächer")
+    insert(:category, banner_image_file_id: public_file.id, title: "GTA")
+    insert(:category, banner_image_file_id: public_file.id, title: "Profil")
+    insert(:category, banner_image_file_id: public_file.id, title: "Projekt")
 
     image_upload = %Plug.Upload{
       path: "test/support/fixtures/image_file.png",
@@ -636,43 +734,27 @@ defmodule LottaWeb.FileResolverTest do
         |> get("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
 
-      assert %{
-               "data" => %{
-                 "file" => %{
-                   "filename" => "wieartig1.jpg",
-                   "usage" => [
-                     %{
-                       "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => _},
-                         "title" => "And the oskar goes to ..."
-                       },
-                       "usage" => "preview"
-                     },
-                     %{
-                       "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => _},
-                         "title" => "Fertiger Artikel zum Konzert"
-                       },
-                       "usage" => "preview"
-                     },
-                     %{
-                       "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => _},
-                         "title" => "Draft2"
-                       },
-                       "usage" => "preview"
-                     },
-                     %{
-                       "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => _},
-                         "title" => "Draft1"
-                       },
-                       "usage" => "preview"
-                     }
-                   ]
-                 }
-               }
-             } = res
+      assert %{"data" => %{"file" => %{"filename" => "wieartig1.jpg", "usage" => usage}}} = res
+      assert length(usage) == 4
+      assert Enum.all?(usage, &(&1["usage"] == "preview"))
+
+      assert Enum.all?(usage, fn %{
+                                   "article" => %{
+                                     "previewImageFile" => %{"remoteLocation" => loc}
+                                   }
+                                 } ->
+               is_binary(loc)
+             end)
+
+      titles = usage |> Enum.map(& &1["article"]["title"]) |> MapSet.new()
+
+      assert titles ==
+               MapSet.new([
+                 "And the oskar goes to ...",
+                 "Fertiger Artikel zum Konzert",
+                 "Draft2",
+                 "Draft1"
+               ])
     end
 
     test "returns public file's usage for admin user", %{
@@ -723,19 +805,11 @@ defmodule LottaWeb.FileResolverTest do
         |> get("/api", query: @query, variables: %{id: public_file.id})
         |> json_response(200)
 
-      assert res == %{
-               "data" => %{
-                 "file" => %{
-                   "filename" => "logo1.jpg",
-                   "usage" => [
-                     %{"category" => %{"title" => "Fächer"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "GTA"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "Profil"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "Projekt"}, "usage" => "banner"}
-                   ]
-                 }
-               }
-             }
+      assert %{"data" => %{"file" => %{"filename" => "logo1.jpg", "usage" => usage}}} = res
+      assert length(usage) == 4
+      assert Enum.all?(usage, &(&1["usage"] == "banner"))
+      titles = usage |> Enum.map(& &1["category"]["title"]) |> MapSet.new()
+      assert titles == MapSet.new(["Fächer", "GTA", "Profil", "Projekt"])
     end
   end
 

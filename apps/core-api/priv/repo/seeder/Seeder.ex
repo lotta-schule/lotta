@@ -2,14 +2,12 @@ defmodule Lotta.Repo.Seeder do
   alias Ecto.Changeset
   alias Lotta.{Accounts, Tenants, Repo}
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Storage.{Directory, File, FileData, RemoteStorage}
-  alias ExAws.S3
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Tenants.{Category, Tenant, TenantDbManager}
 
   def seed do
     # Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
-    FileData.create_cache_dir()
+    Lotta.Storage.FileData.create_cache_dir()
 
     prefix = "tenant_test"
 
@@ -169,280 +167,13 @@ defmodule Lotta.Repo.Seeder do
     {:ok, alexis} = Accounts.update_user(alexis, %{groups: [admin_group]})
     {:ok, eike} = Accounts.update_user(eike, %{groups: [lehrer_group]})
 
-    # public files
-    public_logos = %Directory{name: "logos"} |> Repo.insert!(prefix: tenant.prefix)
-
-    public_logos_podcast =
-      %Directory{name: "podcast", parent_directory_id: public_logos.id}
-      |> Repo.insert!(prefix: tenant.prefix)
-
-    public_logos_chamaeleon =
-      %Directory{
-        name: "chamaeleon",
-        parent_directory_id: public_logos.id
-      }
-      |> Repo.insert!(prefix: tenant.prefix)
-
-    public_hintergrund = %Directory{name: "hintergrund"} |> Repo.insert!(prefix: tenant.prefix)
-
-    public_files =
-      [
-        %File{
-          parent_directory_id: public_logos.id,
-          filename: "logo1.jpg",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/jpg"
-        },
-        %File{
-          parent_directory_id: public_logos.id,
-          filename: "logo2.jpg",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/jpg"
-        },
-        %File{
-          parent_directory_id: public_logos.id,
-          filename: "logo3.png",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/png"
-        },
-        %File{
-          parent_directory_id: public_logos.id,
-          filename: "logo4.png",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/png"
-        },
-        %File{
-          parent_directory_id: public_logos_podcast.id,
-          filename: "podcast1.png",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/png"
-        },
-        %File{
-          parent_directory_id: public_logos_podcast.id,
-          filename: "podcast2.png",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/png"
-        },
-        %File{
-          parent_directory_id: public_logos_chamaeleon.id,
-          filename: "chamaeleon.png",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/png"
-        },
-        %File{
-          parent_directory_id: public_hintergrund.id,
-          filename: "hg_dunkel.jpg",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/jpg"
-        },
-        %File{
-          parent_directory_id: public_hintergrund.id,
-          filename: "hg_hell.jpg",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/jpg"
-        },
-        %File{
-          parent_directory_id: public_hintergrund.id,
-          filename: "hg_comic.png",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/png"
-        },
-        %File{
-          parent_directory_id: public_hintergrund.id,
-          filename: "hg_grafik.png",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/png"
-        }
-      ]
-      |> Enum.map(fn file ->
-        file
-        |> Map.put(:user_id, alexis.id)
-        |> Repo.insert!(prefix: tenant.prefix)
-        |> upload_test_file!()
-      end)
-
-    # alexis' files
-    avatar_directory =
-      %Directory{name: "logos", user_id: alexis.id} |> Repo.insert!(prefix: tenant.prefix)
-
-    irgendwas_directory =
-      %Directory{name: "irgendwas", user_id: alexis.id}
-      |> Repo.insert!(prefix: tenant.prefix)
-
-    podcast_directory =
-      %Directory{name: "podcast", user_id: alexis.id} |> Repo.insert!(prefix: tenant.prefix)
-
-    alexis_files =
-      [
-        %File{
-          parent_directory_id: avatar_directory.id,
-          filename: "ich_schoen.jpg",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/jpg"
-        },
-        %File{
-          parent_directory_id: avatar_directory.id,
-          filename: "ich_haesslich.jpg",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/jpg"
-        },
-        %File{
-          parent_directory_id: irgendwas_directory.id,
-          filename: "irgendwas.png",
-          filesize: 713,
-          file_type: "image",
-          mime_type: "image/png"
-        },
-        %File{
-          parent_directory_id: irgendwas_directory.id,
-          filename: "wasanderes.png",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/png"
-        },
-        %File{
-          parent_directory_id: podcast_directory.id,
-          filename: "podcast1.mp4",
-          filesize: 12288,
-          media_duration: 152.5,
-          file_type: "video",
-          mime_type: "video/mp4"
-        },
-        %File{
-          parent_directory_id: podcast_directory.id,
-          filename: "podcast2.mov",
-          filesize: 12288,
-          media_duration: 69.1,
-          file_type: "video",
-          mime_type: "video/mov"
-        },
-        %File{
-          parent_directory_id: podcast_directory.id,
-          filename: "pc3.m4v",
-          filesize: 12288,
-          media_duration: 259.3,
-          file_type: "video",
-          mime_type: "video/m4v"
-        },
-        %File{
-          parent_directory_id: irgendwas_directory.id,
-          filename: "secrets.zip",
-          filesize: 4096,
-          file_type: "binary",
-          mime_type: "application/zip"
-        }
-      ]
-      |> Enum.map(fn file ->
-        file
-        |> Map.put(:user_id, alexis.id)
-        |> Repo.insert!(prefix: tenant.prefix)
-        |> upload_test_file!()
-      end)
-
-    alexis
-    |> Repo.preload(:avatar_image_file)
-    |> Changeset.change()
-    |> Changeset.put_assoc(:avatar_image_file, List.first(alexis_files))
-    |> Repo.update!()
-
-    # Eike' files
-    avatar_directory =
-      %Directory{name: "avatar", user_id: eike.id} |> Repo.insert!(prefix: tenant.prefix)
-
-    eoa_directory =
-      %Directory{name: "ehrenberg-on-air", user_id: eike.id}
-      |> Repo.insert!(prefix: tenant.prefix)
-
-    podcast_directory =
-      %Directory{name: "podcast", user_id: eike.id} |> Repo.insert!(prefix: tenant.prefix)
-
-    eike_files =
-      [
-        %File{
-          parent_directory_id: avatar_directory.id,
-          filename: "wieartig1.jpg",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/jpg"
-        },
-        %File{
-          parent_directory_id: avatar_directory.id,
-          filename: "wieartig2.jpg",
-          filesize: 12288,
-          file_type: "image",
-          mime_type: "image/jpg"
-        },
-        %File{
-          parent_directory_id: eoa_directory.id,
-          filename: "eoa2.mp3",
-          filesize: 12288,
-          file_type: "audio",
-          mime_type: "audio/mp3"
-        },
-        %File{
-          parent_directory_id: eoa_directory.id,
-          filename: "eoa3.mp3",
-          filesize: 12288,
-          file_type: "audio",
-          mime_type: "audio/mp3"
-        },
-        %File{
-          parent_directory_id: podcast_directory.id,
-          filename: "podcast5.mp4",
-          filesize: 12288,
-          file_type: "video",
-          mime_type: "video/mp4"
-        },
-        %File{
-          parent_directory_id: podcast_directory.id,
-          filename: "podcast6.mov",
-          filesize: 12288,
-          file_type: "video",
-          mime_type: "video/mov"
-        },
-        %File{
-          parent_directory_id: podcast_directory.id,
-          filename: "pocst7.m4v",
-          filesize: 12288,
-          file_type: "video",
-          mime_type: "video/m4v"
-        },
-        %File{
-          parent_directory_id: podcast_directory.id,
-          filename: "wettbewerb.pdf",
-          filesize: 16_777_232,
-          file_type: "binary",
-          mime_type: "application/pdf"
-        }
-      ]
-      |> Enum.map(fn file ->
-        file
-        |> Map.put(:user_id, eike.id)
-        |> Repo.insert!(prefix: tenant.prefix)
-        |> upload_test_file!()
-      end)
-
     _homepage = Repo.insert!(%Category{title: "Start", is_homepage: true}, prefix: tenant.prefix)
 
     profil =
       Repo.insert!(
         %Category{
           sort_key: 10,
-          title: "Profil",
-          banner_image_file_id: List.first(public_files).id
+          title: "Profil"
         },
         prefix: tenant.prefix
       )
@@ -451,8 +182,7 @@ defmodule Lotta.Repo.Seeder do
       Repo.insert!(
         %Category{
           sort_key: 20,
-          title: "GTA",
-          banner_image_file_id: List.first(public_files).id
+          title: "GTA"
         },
         prefix: tenant.prefix
       )
@@ -461,8 +191,7 @@ defmodule Lotta.Repo.Seeder do
       Repo.insert!(
         %Category{
           sort_key: 30,
-          title: "Projekt",
-          banner_image_file_id: List.first(public_files).id
+          title: "Projekt"
         },
         prefix: tenant.prefix
       )
@@ -471,8 +200,7 @@ defmodule Lotta.Repo.Seeder do
       Repo.insert!(
         %Category{
           sort_key: 40,
-          title: "Fächer",
-          banner_image_file_id: List.first(public_files).id
+          title: "Fächer"
         },
         prefix: tenant.prefix
       )
@@ -576,8 +304,7 @@ defmodule Lotta.Repo.Seeder do
         title: "Draft1",
         preview: "Entwurf Artikel zu I",
         inserted_at: ~U[2019-09-01 10:00:00Z],
-        updated_at: ~U[2019-09-01 10:00:00Z],
-        preview_image_file_id: List.first(eike_files).id
+        updated_at: ~U[2019-09-01 10:00:00Z]
       },
       prefix: tenant.prefix
     )
@@ -591,8 +318,7 @@ defmodule Lotta.Repo.Seeder do
         title: "Draft2",
         preview: "Entwurf Artikel zu XYZ",
         inserted_at: ~U[2019-09-01 10:05:00Z],
-        updated_at: ~U[2019-09-01 10:05:00Z],
-        preview_image_file_id: List.first(eike_files).id
+        updated_at: ~U[2019-09-01 10:05:00Z]
       },
       prefix: tenant.prefix
     )
@@ -607,8 +333,7 @@ defmodule Lotta.Repo.Seeder do
         preview: "Entwurf Artikel zu XYZ",
         ready_to_publish: true,
         inserted_at: ~U[2019-09-01 10:06:00Z],
-        updated_at: ~U[2019-09-01 10:06:00Z],
-        preview_image_file_id: List.first(eike_files).id
+        updated_at: ~U[2019-09-01 10:06:00Z]
       },
       prefix: tenant.prefix
     )
@@ -625,8 +350,7 @@ defmodule Lotta.Repo.Seeder do
           title: "And the oskar goes to ...",
           preview: "Hallo hallo hallo",
           inserted_at: ~U[2019-09-01 10:08:00Z],
-          updated_at: ~U[2019-09-01 10:08:00Z],
-          preview_image_file_id: List.first(eike_files).id
+          updated_at: ~U[2019-09-01 10:08:00Z]
         },
         prefix: tenant.prefix
       )
@@ -1181,38 +905,5 @@ defmodule Lotta.Repo.Seeder do
     |> Changeset.change()
     |> Changeset.put_assoc(:groups, groups)
     |> Repo.update!(prefix: Ecto.get_meta(model, :prefix))
-  end
-
-  defp upload_test_file!(file) do
-    {:ok, config} = RemoteStorage.config_for_store(default_store())
-    bucket_name = config[:config][:bucket]
-
-    remote_path = "tenant_test/#{file.id}/original"
-    local_path = "test/support/fixtures/#{file.filename}"
-
-    {:ok, %{body: _response, status_code: 200}} =
-      local_path
-      |> S3.Upload.stream_file()
-      |> S3.upload(bucket_name, remote_path)
-      |> ExAws.request(
-        config[:config][:api_endpoint]
-        |> URI.parse()
-        |> Map.take([:scheme, :host, :port])
-        |> Map.to_list()
-      )
-
-    file
-    |> Repo.preload(:remote_storage_entity)
-    |> Changeset.change()
-    |> Changeset.put_assoc(:remote_storage_entity, %{
-      store_name: default_store(),
-      path: remote_path
-    })
-    |> Repo.update!()
-  end
-
-  defp default_store do
-    config = Application.get_env(:lotta, Lotta.Storage.RemoteStorage)
-    config[:default_store] || "minio"
   end
 end
