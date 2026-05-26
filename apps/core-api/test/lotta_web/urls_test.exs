@@ -3,11 +3,9 @@ defmodule LottaWeb.UrlsTest do
 
   use Lotta.DataCase, async: true
 
-  import Ecto.Query
   import Lotta.Factory
 
   alias Lotta.Tenants
-  alias Lotta.Accounts.User
   alias LottaWeb.Urls
 
   @prefix "tenant_test"
@@ -19,7 +17,7 @@ defmodule LottaWeb.UrlsTest do
 
     article = insert(:article, title: "Der Podcast zum WB 2")
 
-    user = Repo.one!(from(u in User, where: u.email == ^"maxi@lotta.schule"), prefix: @prefix)
+    user = insert(:user, email: "url-maxi@lotta.schule", name: "Max Mustermann", nickname: "MaXi")
 
     {:ok,
      %{
@@ -61,7 +59,7 @@ defmodule LottaWeb.UrlsTest do
                query: query
              } = Urls.get_password_reset_uri(u, token)
 
-      assert %{"e" => "bWF4aUBsb3R0YS5zY2h1bGU=", "t" => "abcdef"} = URI.decode_query(query)
+      assert %{"e" => "dXJsLW1heGlAbG90dGEuc2NodWxl", "t" => "abcdef"} = URI.decode_query(query)
     end
 
     test "should return the correct password reset url", %{user: u} do
@@ -74,7 +72,7 @@ defmodule LottaWeb.UrlsTest do
                query: query
              } = URI.parse(Urls.get_password_reset_url(u, token))
 
-      assert %{"e" => "bWF4aUBsb3R0YS5zY2h1bGU=", "t" => "abcdef"} = URI.decode_query(query)
+      assert %{"e" => "dXJsLW1heGlAbG90dGEuc2NodWxl", "t" => "abcdef"} = URI.decode_query(query)
     end
 
     test "should return the correct hostname", %{tenant: t} do

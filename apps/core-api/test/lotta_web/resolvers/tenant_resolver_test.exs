@@ -4,6 +4,7 @@ defmodule LottaWeb.TenantResolverTest do
   use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.Accounts.User
@@ -22,11 +23,7 @@ defmodule LottaWeb.TenantResolverTest do
         prefix: tenant.prefix
       )
 
-    user =
-      Repo.one!(
-        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: tenant.prefix
-      )
+    user = insert(:user, email: "tn-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
@@ -150,7 +147,7 @@ defmodule LottaWeb.TenantResolverTest do
                "data" => %{
                  "tenant" => %{
                    "stats" => %{
-                     "userCount" => 8,
+                     "userCount" => 2,
                      "articleCount" => 0,
                      "categoryCount" => 0,
                      "fileCount" => _

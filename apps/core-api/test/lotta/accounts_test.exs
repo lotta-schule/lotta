@@ -13,16 +13,6 @@ defmodule Lotta.AccountsTest do
 
   setup :verify_on_exit!
 
-  @all_users [
-    "alexis.rinaldoni@einsa.net",
-    "alexis.rinaldoni@lotta.schule",
-    "billy@lotta.schule",
-    "eike.wiewiorra@lotta.schule",
-    "drevil@lotta.schule",
-    "maxi@lotta.schule",
-    "doro@lotta.schule",
-    "mcurie@lotta.schule"
-  ]
   @prefix "tenant_test"
 
   setup do
@@ -36,12 +26,11 @@ defmodule Lotta.AccountsTest do
 
   describe "users" do
     test "list_users/0 returns all users" do
-      assert Enum.all?(
-               Accounts.list_users(),
-               fn %{email: email} ->
-                 Enum.member?(@all_users, email)
-               end
-             )
+      user1 = insert(:user)
+      user2 = insert(:user)
+      listed = Accounts.list_users()
+      assert Enum.any?(listed, fn u -> u.id == user1.id end)
+      assert Enum.any?(listed, fn u -> u.id == user2.id end)
     end
 
     test "get_user/1 returns the user with given id" do

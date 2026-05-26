@@ -1,4 +1,5 @@
 defmodule Lotta.Storage.RemoteStorage.Strategy do
+  @moduledoc false
   alias Lotta.Storage.{FileData, RemoteStorage, RemoteStorageEntity}
 
   @callback create(

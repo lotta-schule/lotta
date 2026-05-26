@@ -6,8 +6,8 @@ IO.inspect(config_env(), label: "Config environment")
 
 default_log_level =
   cond do
-    json_logging -> :warn
-    config_env() == :test -> :warn
+    json_logging -> :warning
+    config_env() == :test -> :warning
     true -> :debug
   end
 

@@ -7,7 +7,6 @@ defmodule Lotta.Administration.Notification.Slack do
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
   alias Lotta.Billings.Invoice
-  alias LottaWeb.Urls
 
   require Logger
 

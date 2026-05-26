@@ -9,7 +9,6 @@ defmodule LottaWeb.ArticleResolverTest do
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Content.Article
 
   @prefix "tenant_test"
 
@@ -18,20 +17,12 @@ defmodule LottaWeb.ArticleResolverTest do
 
     Repo.put_prefix(@prefix)
 
-    [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] =
-      Enum.map(
-        [
-          "alexis.rinaldoni@lotta.schule",
-          "eike.wiewiorra@lotta.schule",
-          "billy@lotta.schule",
-          "maxi@lotta.schule"
-        ],
-        fn email ->
-          u = Repo.one!(from(u in User, where: u.email == ^email), prefix: tenant.prefix)
-          {:ok, jwt, _} = AccessToken.encode_and_sign(u)
-          {u, jwt}
-        end
+    admin =
+      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
       )
+
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
     verwaltung_group =
       Repo.one!(from(ug in UserGroup, where: ug.name == ^"Verwaltung"), prefix: @prefix)
@@ -41,6 +32,25 @@ defmodule LottaWeb.ArticleResolverTest do
 
     schueler_group =
       Repo.one!(from(ug in UserGroup, where: ug.name == ^"Schüler"), prefix: @prefix)
+
+    lehrer =
+      insert(:user,
+        email: "eike.wiewiorra@lotta.schule",
+        name: "Eike Wiewiorra",
+        nickname: "Chef"
+      )
+
+    {:ok, lehrer} = Lotta.Accounts.update_user(lehrer, %{groups: [lehrer_group]})
+    {:ok, lehrer_jwt, _} = AccessToken.encode_and_sign(lehrer)
+
+    schueler =
+      insert(:user, email: "billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
+
+    {:ok, schueler} = Lotta.Accounts.update_user(schueler, %{groups: [schueler_group]})
+    {:ok, schueler_jwt, _} = AccessToken.encode_and_sign(schueler)
+
+    user = insert(:user, email: "maxi@lotta.schule", name: "Max Mustermann", nickname: "MaXi")
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
     start_category = insert(:category, title: "Start", is_homepage: true, sort_key: 0)
     profil_category = insert(:category, title: "Profil", sort_key: 10)
@@ -411,51 +421,6 @@ defmodule LottaWeb.ArticleResolverTest do
   end
 
   describe "articles query" do
-    # This is a test failing because first is not correctly recognized
-    # as integer.
-    # Seems this should be fixed in absinthe_plug, or by providing an
-    # own parsing pipeline
-    #
-    # @query """
-    # query getArticles($filter: ArticleFilter) {
-    #   articles(filter: $filter) {
-    #     title
-    #     preview
-    #     tags
-    #     readyToPublish
-    #     isPinnedToTop
-    #   }
-    # }
-    # """
-
-    # test "homepage: returns a list of articles, but limit to 2" do
-    #   res =
-    #     build_conn()
-    #     |> get("/api", query: @query, variables: %{"filter" => %{"first" => 2}})
-    #     |> json_response(200)
-
-    #   assert res == %{
-    #            "data" => %{
-    #              "articles" => [
-    #                %{
-    #                  "isPinnedToTop" => false,
-    #                  "readyToPublish" => false,
-    #                  "tags" => nil,
-    #                  "preview" => "Lorem ipsum dolor sit amet.",
-    #                  "title" => "Beitrag Projekt 3"
-    #                },
-    #                %{
-    #                  "isPinnedToTop" => false,
-    #                  "readyToPublish" => false,
-    #                  "tags" => nil,
-    #                  "preview" => "Lorem ipsum dolor sit amet.",
-    #                  "title" => "Beitrag Projekt 2"
-    #                }
-    #              ]
-    #            }
-    #          }
-    # end
-
     @query """
     query getArticles($category_id: ID!) {
       articles(categoryID: $category_id) {

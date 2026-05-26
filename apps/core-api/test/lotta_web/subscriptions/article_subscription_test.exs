@@ -16,30 +16,39 @@ defmodule LottaWeb.ArticleSubscriptionTest do
   setup do
     Repo.put_prefix(@prefix)
 
-    emails = [
-      "alexis.rinaldoni@lotta.schule",
-      "eike.wiewiorra@lotta.schule",
-      "billy@lotta.schule",
-      "maxi@lotta.schule"
-    ]
-
     tenant = Tenants.get_tenant_by_prefix(@prefix)
 
-    [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] =
-      Enum.map(emails, fn email ->
-        u =
-          Repo.one!(
-            from(u in User, where: u.email == ^email),
-            prefix: tenant.prefix
-          )
+    admin =
+      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-        {:ok, jwt, _} = AccessToken.encode_and_sign(u)
-
-        {u, jwt}
-      end)
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
     lehrer_group =
       Repo.one!(from(ug in UserGroup, where: ug.name == ^"Lehrer"), prefix: @prefix)
+
+    schueler_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Schüler"), prefix: @prefix)
+
+    lehrer =
+      insert(:user,
+        email: "eike.wiewiorra@lotta.schule",
+        name: "Eike Wiewiorra",
+        nickname: "Chef"
+      )
+
+    {:ok, lehrer} = Lotta.Accounts.update_user(lehrer, %{groups: [lehrer_group]})
+    {:ok, lehrer_jwt, _} = AccessToken.encode_and_sign(lehrer)
+
+    schueler =
+      insert(:user, email: "billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
+
+    {:ok, schueler} = Lotta.Accounts.update_user(schueler, %{groups: [schueler_group]})
+    {:ok, schueler_jwt, _} = AccessToken.encode_and_sign(schueler)
+
+    user = insert(:user, email: "maxi@lotta.schule", name: "Max Mustermann", nickname: "MaXi")
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
     draft =
       insert(:article,

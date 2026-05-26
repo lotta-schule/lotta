@@ -19,17 +19,17 @@ defmodule LottaWeb.ArticleReactionResolverTest do
 
     Repo.put_prefix(@prefix)
 
-    emails = [
-      "alexis.rinaldoni@lotta.schule",
-      "eike.wiewiorra@lotta.schule"
-    ]
+    user1 =
+      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
+      )
+
+    user2 =
+      insert(:user, email: "arr-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
 
     [{user1, user1_jwt}, {user2, user2_jwt}] =
-      Enum.map(emails, fn email ->
-        user = Repo.one!(from(u in User, where: u.email == ^email), prefix: tenant.prefix)
-
+      Enum.map([user1, user2], fn user ->
         {:ok, jwt, _} = AccessToken.encode_and_sign(user)
-
         {user, jwt}
       end)
 
@@ -156,7 +156,7 @@ defmodule LottaWeb.ArticleReactionResolverTest do
                "data" => %{
                  "getReactionUsers" => [
                    %{
-                     "email" => "eike.wiewiorra@lotta.schule"
+                     "email" => "arr-eike@lotta.schule"
                    }
                  ]
                }

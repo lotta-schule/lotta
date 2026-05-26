@@ -45,7 +45,7 @@ defmodule Lotta.Eduplaces.Syncer do
 
   import Ecto.Query
 
-  alias Lotta.{Accounts, Repo, Tenants}
+  alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.UserGroup
   alias Lotta.Tenants.Tenant
 

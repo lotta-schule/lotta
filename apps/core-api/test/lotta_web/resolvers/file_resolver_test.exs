@@ -12,7 +12,7 @@ defmodule LottaWeb.FileResolverTest do
   alias Lotta.{Repo, Storage, Tenants}
   alias Lotta.Accounts.User
   alias Lotta.Worker.Conversion
-  alias Lotta.Storage.{File, FileConversion, Directory}
+  alias Lotta.Storage.{FileConversion, Directory}
 
   @prefix "tenant_test"
 
@@ -29,16 +29,13 @@ defmodule LottaWeb.FileResolverTest do
       )
 
     user2 =
-      Repo.one!(
-        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: @prefix
+      insert(:user,
+        email: "eike.wiewiorra@lotta.schule",
+        name: "Eike Wiewiorra",
+        nickname: "Chef"
       )
 
-    user =
-      Repo.one!(
-        from(u in User, where: u.email == ^"billy@lotta.schule"),
-        prefix: @prefix
-      )
+    user = insert(:user, email: "billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
     {:ok, user2_jwt, _} = AccessToken.encode_and_sign(user2)
@@ -47,7 +44,7 @@ defmodule LottaWeb.FileResolverTest do
     # Directories
     user2_avatar_dir = insert(:directory, name: "avatar", user_id: user2.id)
     user2_directory = insert(:directory, name: "ehrenberg-on-air", user_id: user2.id)
-    user2_podcast_dir = insert(:directory, name: "podcast", user_id: user2.id)
+    insert(:directory, name: "podcast", user_id: user2.id)
     admin_logos_dir = insert(:directory, name: "logos", user_id: admin.id)
     admin_podcast_dir = insert(:directory, name: "podcast", user_id: admin.id)
     public_directory = insert(:directory, name: "logos")

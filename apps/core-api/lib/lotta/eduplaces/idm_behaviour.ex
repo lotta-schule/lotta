@@ -1,4 +1,5 @@
 defmodule Lotta.Eduplaces.IDMBehaviour do
+  @moduledoc false
   alias Lotta.Accounts.UserGroup
   alias Lotta.Tenants.Tenant
 
