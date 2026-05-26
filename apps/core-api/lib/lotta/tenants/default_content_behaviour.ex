@@ -1,4 +1,5 @@
 defmodule Lotta.Tenants.DefaultContentBehaviour do
+  @moduledoc false
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
 

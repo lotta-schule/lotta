@@ -207,8 +207,6 @@ defmodule Lotta.Worker.TenantTest do
   end
 
   describe "generate_invoices" do
-    alias Lotta.Billings
-
     test "generate_invoices/0 should create the correct job instance" do
       assert {:ok, job} = Tenant.generate_invoices()
 
@@ -219,10 +217,9 @@ defmodule Lotta.Worker.TenantTest do
     test "calls Billings.generate_invoice for all tenants with valid and not-free current_plan_name" do
       tenant = Tenants.get_tenant_by_slug("test")
 
-      tenant =
-        tenant
-        |> Ecto.Changeset.change(%{current_plan_name: "default_2025"})
-        |> Lotta.Repo.update!(prefix: "public")
+      tenant
+      |> Ecto.Changeset.change(%{current_plan_name: "default_2025"})
+      |> Lotta.Repo.update!(prefix: "public")
 
       expect(BillingsMock, :generate_invoice, fn _tenant, _year, _month ->
         {:ok, %{id: 1, invoice_number: "LTA00001", total: Decimal.new("14.00")}}

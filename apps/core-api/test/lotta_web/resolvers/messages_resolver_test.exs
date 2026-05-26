@@ -18,35 +18,28 @@ defmodule LottaWeb.MessagesResolverTest do
 
     Repo.put_prefix(@prefix)
 
-    # Phase 6e will replace these email lookups with factory users
     user =
       Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
         prefix: tenant.prefix
       )
 
-    user2 =
-      Repo.one!(from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: tenant.prefix
-      )
+    lehrer_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Lehrer"), prefix: tenant.prefix)
 
-    # Phase 6e will replace this
+    schueler_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Schüler"), prefix: tenant.prefix)
+
+    user2 = insert(:user, email: "mr-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
+    {:ok, user2} = Lotta.Accounts.update_user(user2, %{groups: [lehrer_group]})
+
     billy =
-      Repo.one!(from(u in User, where: u.email == ^"billy@lotta.schule"),
-        prefix: tenant.prefix
-      )
+      insert(:user, email: "mr-billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
 
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
     {:ok, user2_jwt, _} = AccessToken.encode_and_sign(user2)
 
     user2_file = insert(:file, user_id: user2.id)
     user_file = insert(:file, user_id: user.id, filename: "ich_schoen.jpg")
-
-    # Groups stay in seeder permanently
-    lehrer_group =
-      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Lehrer"), prefix: tenant.prefix)
-
-    schueler_group =
-      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Schüler"), prefix: tenant.prefix)
 
     # --- Factory conversations (replacing seeder) ---
 
@@ -455,7 +448,7 @@ defmodule LottaWeb.MessagesResolverTest do
       conv_user_emails = msg["conversation"]["users"] |> Enum.map(& &1["email"]) |> MapSet.new()
 
       assert conv_user_emails ==
-               MapSet.new(["eike.wiewiorra@lotta.schule", "alexis.rinaldoni@lotta.schule"])
+               MapSet.new(["mr-eike@lotta.schule", "alexis.rinaldoni@lotta.schule"])
     end
 
     test "send a message to a group", %{
@@ -484,7 +477,7 @@ defmodule LottaWeb.MessagesResolverTest do
                  "createMessage" => %{
                    "content" => "Hallo.",
                    "files" => [%{"filename" => user2_file.filename}],
-                   "user" => %{"email" => "eike.wiewiorra@lotta.schule"},
+                   "user" => %{"email" => "mr-eike@lotta.schule"},
                    "conversation" => %{
                      "users" => [],
                      "groups" => [%{"name" => "Lehrer"}]

@@ -24,20 +24,20 @@ defmodule LottaWeb.SearchResolverTest do
         prefix: @prefix
       )
 
-    lehrer =
-      Repo.one!(
-        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: @prefix
-      )
-
-    user =
-      Repo.one!(
-        from(u in User, where: u.email == ^"doro@lotta.schule"),
-        prefix: @prefix
-      )
-
     lehrer_group =
       Repo.one!(from(ug in UserGroup, where: ug.name == ^"Lehrer"), prefix: @prefix)
+
+    lehrer =
+      insert(:user,
+        email: "eike.wiewiorra@lotta.schule",
+        name: "Eike Wiewiorra",
+        nickname: "Chef"
+      )
+
+    {:ok, lehrer} = Lotta.Accounts.update_user(lehrer, %{groups: [lehrer_group]})
+
+    user =
+      insert(:user, email: "doro@lotta.schule", name: "Dorothea Musterfrau", nickname: "Doro")
 
     search_category = insert(:category, title: "Suche")
 

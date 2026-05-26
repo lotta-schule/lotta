@@ -1,4 +1,5 @@
 defmodule Lotta.AccountsGroupBehaviour do
+  @moduledoc false
   alias Lotta.Accounts.{User, UserGroup}
 
   @callback create_user_group(map()) :: {:ok, UserGroup.t()} | {:error, Ecto.Changeset.t()}

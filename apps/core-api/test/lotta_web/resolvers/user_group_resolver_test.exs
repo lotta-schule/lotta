@@ -22,13 +22,15 @@ defmodule LottaWeb.UserGroupResolverTest do
         prefix: tenant.prefix
       )
 
-    user =
-      Repo.one!(from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: tenant.prefix
-      )
+    user = insert(:user, email: "ugr-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
 
     user2 =
-      Repo.one!(from(u in User, where: u.email == ^"mcurie@lotta.schule"), prefix: tenant.prefix)
+      insert(:user,
+        email: "ugr-mcurie@lotta.schule",
+        name: "Marie Curie",
+        nickname: "Polonium",
+        hide_full_name: true
+      )
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
@@ -49,6 +51,8 @@ defmodule LottaWeb.UserGroupResolverTest do
         ),
         prefix: tenant.prefix
       )
+
+    {:ok, user} = Accounts.update_user(user, %{groups: [lehrer_group]})
 
     {:ok,
      %{

@@ -221,7 +221,7 @@ case SystemConfig.get("LOG_LEVEL") do
   "debug" -> config :logger, level: :debug
   "notice" -> config :logger, level: :notice
   "info" -> config :logger, level: :info
-  "warn" -> config :logger, level: :warn
+  "warn" -> config :logger, level: :warning
   "error" -> config :logger, level: :error
   _ -> :ok
 end

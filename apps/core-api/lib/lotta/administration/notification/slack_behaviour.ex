@@ -1,4 +1,5 @@
 defmodule Lotta.Administration.Notification.SlackBehaviour do
+  @moduledoc false
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
 

@@ -86,7 +86,8 @@ jobs:
       LANGUAGE: de
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:15.1
+        command: -c 'max_connections=1500'
         ports:
           - 5432:5432
         options: >-
@@ -103,8 +104,8 @@ jobs:
         ports:
           - 9000:9000
         env:
-          MINIO_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
-          MINIO_SECRET_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+          MINIO_ACCESS_KEY: minio
+          MINIO_SECRET_KEY: miniosecret
         options: >-
           --name minio
           --health-cmd "curl http://localhost:9000/minio/health/live"
@@ -146,12 +147,15 @@ jobs:
         with:
           alias-name: minio
           alias-url: http://localhost:9000
-          alias-access-key: AKIAIOSFODNN7EXAMPLE
-          alias-secret-key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+          alias-access-key: minio
+          alias-secret-key: miniosecret
 
       - run: |
-          mc mb minio/lotta-dev-ugc
-          mc anonymous set download minio/lotta-dev-ugc
+          mc mb minio/lotta-dev
+          mc anonymous set download minio/lotta-dev
+
+          mc mb minio/lotta-test
+          mc anonymous set download minio/lotta-test
 
       - name: Install dependencies
         run: bun install

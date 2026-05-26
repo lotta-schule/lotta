@@ -5,7 +5,7 @@ defmodule LottaWeb.DirectoryResolverTest do
   import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
-  alias Lotta.{Repo, Tenants}
+  alias Lotta.{Repo, Tenants, Storage}
   alias Lotta.Accounts.User
   alias Lotta.Storage.Directory
 
@@ -25,16 +25,14 @@ defmodule LottaWeb.DirectoryResolverTest do
       )
 
     user2 =
-      Repo.one!(
-        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: tenant.prefix
-      )
+      insert(:user, email: "dir-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
+
+    Storage.create_new_user_directories(user2)
 
     user =
-      Repo.one!(
-        from(u in User, where: u.email == ^"billy@lotta.schule"),
-        prefix: tenant.prefix
-      )
+      insert(:user, email: "dir-billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
+
+    Storage.create_new_user_directories(user)
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 

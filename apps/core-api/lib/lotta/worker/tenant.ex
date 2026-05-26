@@ -3,9 +3,8 @@ defmodule Lotta.Worker.Tenant do
   Worker for fetching a files metadata.
   """
   alias Lotta.Accounts.User
-  alias Lotta.{Accounts, Analytics, Billings, Tenants}
-  alias Lotta.Tenants.{DefaultContent, Tenant}
-  alias Lotta.Administration.Notification.Slack
+  alias Lotta.{Accounts, Billings, Tenants}
+  alias Lotta.Tenants.Tenant
 
   use Oban.Worker,
     queue: :tenant,

@@ -4,6 +4,7 @@ defmodule LottaWeb.SessionControllerTest do
   use LottaWeb.ConnCase, async: true
 
   import Lotta.Accounts.Authentication
+  import Lotta.Factory
   import Phoenix.ConnTest
   import Ecto.Query
 
@@ -17,6 +18,8 @@ defmodule LottaWeb.SessionControllerTest do
     tenant = Tenants.get_tenant_by_prefix(@prefix)
     email = "alexis.rinaldoni@lotta.schule"
 
+    Repo.put_prefix(@prefix)
+
     admin =
       Repo.one!(
         from(u in User, where: u.email == ^email),
@@ -24,6 +27,17 @@ defmodule LottaWeb.SessionControllerTest do
       )
 
     {:ok, _access_token, refresh_token} = create_user_tokens(admin)
+
+    # A user with default (unchanged) password is needed for session tests.
+    # insert(:user) skips update_password_changeset so has_changed_default_password stays false.
+    _user_with_default_pw =
+      insert(:user, email: "default.pw@lotta.schule")
+      |> Ecto.Changeset.change(%{
+        password_hash: Argon2.hash_pwd_salt("password"),
+        password_hash_format: 1,
+        has_changed_default_password: false
+      })
+      |> Repo.update!()
 
     %{refresh_token: refresh_token, admin: admin, tenant: tenant}
   end

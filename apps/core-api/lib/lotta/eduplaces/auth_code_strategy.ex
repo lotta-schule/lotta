@@ -6,7 +6,6 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
 
   use OAuth2.Strategy
 
-  alias JOSE.JWT
   alias Lotta.Eduplaces.UserInfo
 
   require Logger

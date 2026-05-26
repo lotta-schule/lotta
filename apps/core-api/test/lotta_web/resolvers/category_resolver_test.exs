@@ -66,24 +66,27 @@ defmodule LottaWeb.CategoryResolverTest do
     insert(:category, title: "Sprache", sort_key: 30, category_id: faecher_cat.id)
     |> with_groups([verwaltung_group, lehrer_group])
 
-    emails = [
-      "alexis.rinaldoni@lotta.schule",
-      "eike.wiewiorra@lotta.schule",
-      "billy@lotta.schule",
-      "maxi@lotta.schule"
-    ]
+    admin =
+      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] =
-      Enum.map(emails, fn email ->
-        user =
-          Repo.one!(
-            from(u in User, where: u.email == ^email),
-            prefix: tenant.prefix
-          )
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
-        {:ok, jwt, _} = AccessToken.encode_and_sign(user)
-        {user, jwt}
-      end)
+    lehrer =
+      insert(:user, email: "cat-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
+
+    {:ok, lehrer} = Lotta.Accounts.update_user(lehrer, %{groups: [lehrer_group]})
+    {:ok, lehrer_jwt, _} = AccessToken.encode_and_sign(lehrer)
+
+    schueler =
+      insert(:user, email: "cat-billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
+
+    {:ok, schueler} = Lotta.Accounts.update_user(schueler, %{groups: [schueler_group]})
+    {:ok, schueler_jwt, _} = AccessToken.encode_and_sign(schueler)
+
+    user = insert(:user, email: "cat-maxi@lotta.schule", name: "Max Mustermann", nickname: "MaXi")
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
     {:ok,
      %{

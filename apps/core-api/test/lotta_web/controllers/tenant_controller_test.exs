@@ -55,6 +55,13 @@ defmodule LottaWeb.TenantControllerTest do
         password: "test123"
       })
 
+    {:ok, _} =
+      Accounts.register_user_by_mail(Tenants.get_tenant_by_prefix("tenant_test"), %{
+        name: "Alexis Rinaldoni",
+        email: email,
+        password: "test123"
+      })
+
     tenants = Tenants.list_tenants()
 
     %{email: email, tenants: tenants}

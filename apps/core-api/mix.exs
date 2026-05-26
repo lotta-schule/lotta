@@ -27,7 +27,6 @@ defmodule Lotta.MixProject do
       ],
       preferred_cli_env: [
         test: :test,
-        "test.reset": :test,
         coveralls: :test,
         "coveralls.json": :test,
         "coveralls.detail": :test,
@@ -175,8 +174,7 @@ defmodule Lotta.MixProject do
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test.reset": ["ecto.reset", "test"],
-      test: ["test"],
+      test: ["ecto.reset", "test"],
       translations: [
         "gettext.extract",
         "gettext.merge priv/gettext/de/LC_MESSAGES/default.po priv/gettext/default.pot"

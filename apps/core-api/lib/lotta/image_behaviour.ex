@@ -1,4 +1,5 @@
 defmodule Lotta.ImageBehaviour do
+  @moduledoc false
   @callback open(term()) :: {:ok, term()} | {:error, term()}
   @callback shape(term()) :: {integer(), integer(), integer()}
   @callback pages(term()) :: integer()
