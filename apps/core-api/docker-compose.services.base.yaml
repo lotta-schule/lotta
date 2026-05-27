@@ -2,7 +2,7 @@
 services:
   postgres:
     image: postgres:15.1
-    command: -c 'max_connections=1500'
+    command: -c 'max_connections=500'
     environment:
       POSTGRES_USER: lotta
       POSTGRES_PASSWORD: lotta
