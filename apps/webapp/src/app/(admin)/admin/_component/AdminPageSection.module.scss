@@ -1,6 +1,6 @@
 .root {
   &:not(:last-child) {
-    margin-bottom: calc(2 * var(--lotta-spacing));
+    margin: calc(2 * var(--lotta-spacing));
   }
 
   &:not(.bottomToolbar) > * {

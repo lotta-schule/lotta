@@ -6,5 +6,12 @@
   "textColor": "#212121",
   "primaryContrastTextColor": "#ffffff",
   "errorColor": "#ff4579",
-  "successColor": "#28b164"
+  "successColor": "#28b164",
+  "bannerBackgroundColor": "#d1c7dd",
+  "textFontFamily": "Krub",
+  "titleFontFamily": "DM Serif Display",
+  "borderRadius": "8px",
+  "dividerColor": "#e2e2e2",
+  "badgeBackgroundColor": "#ffe889",
+  "badgeTextColor": "#444950"
 }
