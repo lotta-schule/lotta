@@ -55,3 +55,6 @@ nx-cloud.env
 # Next.js
 .next
 out
+
+# AI
+**/.claude/worktrees

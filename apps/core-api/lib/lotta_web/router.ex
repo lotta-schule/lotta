@@ -122,19 +122,29 @@ defmodule LottaWeb.Router do
     end
   end
 
-  def absinthe_before_send(conn, %{execution: %{context: %{refresh_token: token}}}) do
-    if is_nil(token) do
-      delete_resp_cookie(conn, "SignInRefreshToken", http_only: true, same_site: "Lax")
-    else
-      put_resp_cookie(conn, "SignInRefreshToken", token,
-        max_age: 21 * 24 * 60 * 60,
-        http_only: true,
-        same_site: "Lax"
-      )
-    end
+  def absinthe_before_send(conn, %{execution: %{context: context}}) do
+    conn
+    |> handle_access_cookie(context)
+    |> handle_refresh_cookie(context)
   end
 
   def absinthe_before_send(conn, _blueprint), do: conn
+
+  defp handle_access_cookie(conn, %{access_token: nil}),
+    do: LottaWeb.Auth.CookieHelper.delete_access_token(conn)
+
+  defp handle_access_cookie(conn, %{access_token: token}),
+    do: LottaWeb.Auth.CookieHelper.put_access_token(conn, token)
+
+  defp handle_access_cookie(conn, _), do: conn
+
+  defp handle_refresh_cookie(conn, %{refresh_token: nil}),
+    do: LottaWeb.Auth.CookieHelper.delete_refresh_token(conn)
+
+  defp handle_refresh_cookie(conn, %{refresh_token: token}),
+    do: LottaWeb.Auth.CookieHelper.put_refresh_token(conn, token)
+
+  defp handle_refresh_cookie(conn, _), do: conn
 
   defp admin_auth(conn, _opts) do
     conn
