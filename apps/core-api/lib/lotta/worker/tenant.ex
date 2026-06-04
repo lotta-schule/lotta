@@ -3,9 +3,8 @@ defmodule Lotta.Worker.Tenant do
   Worker for fetching a files metadata.
   """
   alias Lotta.Accounts.User
-  alias Lotta.{Accounts, Analytics, Billings, Tenants}
-  alias Lotta.Tenants.{DefaultContent, Tenant}
-  alias Lotta.Administration.Notification.Slack
+  alias Lotta.{Accounts, Billings, Tenants}
+  alias Lotta.Tenants.Tenant
 
   use Oban.Worker,
     queue: :tenant,
@@ -50,7 +49,7 @@ defmodule Lotta.Worker.Tenant do
       |> Lotta.Repo.get_by!(where_clause, prefix: tenant.prefix)
       |> Map.put(:password, password)
 
-    with :ok <- DefaultContent.create_default_content(tenant, user) do
+    with :ok <- default_content_module().create_default_content(tenant, user) do
       init_analytics(tenant)
       notify_created(tenant)
       :ok
@@ -67,7 +66,7 @@ defmodule Lotta.Worker.Tenant do
         {:error, :tenant_not_found}
 
       tenant ->
-        Analytics.create_site(tenant)
+        analytics_module().create_site(tenant)
     end
   end
 
@@ -79,8 +78,8 @@ defmodule Lotta.Worker.Tenant do
       admin_users = Accounts.list_admin_users(tenant)
 
       tenant
-      |> Slack.new_lotta_notification(admin_users)
-      |> Slack.send()
+      |> slack_module().new_lotta_notification(admin_users)
+      |> slack_module().send()
     else
       Logger.error("Tenant with ID #{tenant_id} not found for creation notification")
       {:error, :tenant_not_found}
@@ -97,7 +96,7 @@ defmodule Lotta.Worker.Tenant do
 
     results =
       Enum.map(tenants, fn tenant ->
-        case Tenants.create_usage_logs(tenant) do
+        case tenants_usage_module().create_usage_logs(tenant) do
           :ok ->
             Logger.debug("Successfully created usage logs for tenant #{tenant.slug}")
             {:ok, tenant.id}
@@ -125,7 +124,7 @@ defmodule Lotta.Worker.Tenant do
         id: _job_id,
         args: %{"type" => "refresh_monthly_usage_logs"}
       }) do
-    case Tenants.refresh_monthly_usage_logs(concurrent: true) do
+    case tenants_usage_module().refresh_monthly_usage_logs(concurrent: true) do
       :ok ->
         Logger.info("Successfully refreshed monthly usage logs materialized view")
         :ok
@@ -163,7 +162,7 @@ defmodule Lotta.Worker.Tenant do
 
     results =
       Enum.map(tenants, fn tenant ->
-        case Billings.generate_invoice(tenant, year, month) do
+        case billings_module().generate_invoice(tenant, year, month) do
           {:ok, invoice} ->
             Logger.debug(
               "Successfully generated invoice #{invoice.invoice_number} for tenant #{tenant.slug}"
@@ -203,8 +202,8 @@ defmodule Lotta.Worker.Tenant do
 
         successful_invoices ->
           successful_invoices
-          |> Slack.new_lotta_invoices_to_issue_notification()
-          |> Slack.send()
+          |> slack_module().new_lotta_invoices_to_issue_notification()
+          |> slack_module().send()
       end
     end
 
@@ -213,6 +212,21 @@ defmodule Lotta.Worker.Tenant do
 
   @impl Oban.Worker
   def timeout(_job), do: :timer.minutes(5)
+
+  defp default_content_module,
+    do: Application.get_env(:lotta, :default_content_module, Lotta.Tenants.DefaultContent)
+
+  defp analytics_module,
+    do: Application.get_env(:lotta, :analytics_module, Lotta.Analytics)
+
+  defp slack_module,
+    do: Application.get_env(:lotta, :slack_module, Lotta.Administration.Notification.Slack)
+
+  defp tenants_usage_module,
+    do: Application.get_env(:lotta, :tenants_usage_module, Lotta.Tenants)
+
+  defp billings_module,
+    do: Application.get_env(:lotta, :billings_module, Lotta.Billings)
 
   @spec setup_default_content(Tenant.t(), User.t()) ::
           {:ok, Oban.Job.t()} | {:error, String.t()}

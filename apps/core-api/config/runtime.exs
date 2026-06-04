@@ -82,6 +82,7 @@ defmodule SystemConfig do
   defp default("POSTGRES_DB", :test), do: "api_test"
   defp default("POSTGRES_DB", :dev), do: "lotta"
   defp default("POSTGRES_HOST", _), do: "localhost"
+  defp default("POSTGRES_POOL_SIZE", :test), do: "100"
   defp default("POSTGRES_POOL_SIZE", _), do: "50"
 
   defp default("REDIS_HOST", env) when env in [:dev, :test], do: "localhost"
@@ -90,16 +91,16 @@ defmodule SystemConfig do
   defp default("UGC_S3_COMPAT_ENDPOINT", env) when env in [:dev, :test],
     do: "http://localhost:9000"
 
-  defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "AKIAIOSFODNN7EXAMPLE"
+  defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "minio"
 
   defp default("AWS_SECRET_ACCESS_KEY", env) when env in [:dev, :test],
-    do: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+    do: "miniosecret"
 
   defp default("REMOTE_STORAGE_DEFAULT_STORE", env) when env in [:dev, :test], do: "minio"
   defp default("REMOTE_STORAGE_PREFIX", _), do: nil
   defp default("REMOTE_STORAGE_STORES", env) when env in [:dev, :test], do: "minio"
-  defp default("REMOTE_STORAGE_MINIO_ENDPOINT", _), do: "http://localhost:9000/lotta-dev-ugc"
-  defp default("REMOTE_STORAGE_MINIO_BUCKET", _), do: "lotta-dev-ugc"
+  defp default("REMOTE_STORAGE_MINIO_ENDPOINT", env), do: "http://localhost:9000/lotta-#{env}"
+  defp default("REMOTE_STORAGE_MINIO_BUCKET", env), do: "lotta-#{env}"
 
   defp default("MAILER_ADAPTER", :test), do: "test"
   defp default("MAILER_ADAPTER", _), do: "local"
@@ -220,7 +221,7 @@ case SystemConfig.get("LOG_LEVEL") do
   "debug" -> config :logger, level: :debug
   "notice" -> config :logger, level: :notice
   "info" -> config :logger, level: :info
-  "warn" -> config :logger, level: :warn
+  "warn" -> config :logger, level: :warning
   "error" -> config :logger, level: :error
   _ -> :ok
 end
@@ -293,9 +294,13 @@ config :lotta,
        :schedule_provider_url,
        SystemConfig.get("SCHEDULE_PROVIDER_URL", cast: :url_with_scheme)
 
-config :lotta, :analytics,
-  endpoint: SystemConfig.get("ANALYTICS_ENDPOINT"),
-  api_key: SystemConfig.get("ANALYTICS_API_KEY")
+if config_env() == :test do
+  config :lotta, :analytics, endpoint: "https://plausible.io", api_key: "test"
+else
+  config :lotta, :analytics,
+    endpoint: SystemConfig.get("ANALYTICS_ENDPOINT"),
+    api_key: SystemConfig.get("ANALYTICS_API_KEY")
+end
 
 config :lotta, LottaWeb.Auth.AccessToken,
   secret_key: SystemConfig.get("SECRET_KEY_JWT"),

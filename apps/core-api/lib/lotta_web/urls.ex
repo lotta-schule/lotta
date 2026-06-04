@@ -7,6 +7,8 @@ defmodule LottaWeb.Urls do
   emails and notifications or the sitemap
   for example.
   """
+  @behaviour LottaWeb.UrlsBehaviour
+
   alias Lotta.{Slugifier, Tenants}
   alias Lotta.Accounts.User
   alias Lotta.Content.Article

@@ -1,7 +1,7 @@
 defmodule CockpitWeb.BankingApiControllerTest do
   @moduledoc false
 
-  use CockpitWeb.ConnCase
+  use CockpitWeb.ConnCase, async: true
 
   @auth_header "Basic " <> Base.encode64("admin:test123")
 

@@ -5,7 +5,7 @@ defmodule Lotta.Storage.FileData do
   alias Lotta.Storage
   require Logger
 
-  defstruct [:stream, :_path, :metadata]
+  defstruct [:stream, :_path, :metadata, owned: false]
 
   @type metadata() :: [
           filename: String.t(),
@@ -18,7 +18,8 @@ defmodule Lotta.Storage.FileData do
           %__MODULE__{
             stream: Enumerable.t(),
             _path: String.t() | nil,
-            metadata: metadata()
+            metadata: metadata(),
+            owned: boolean()
           }
 
   @spec from_stream(
@@ -101,14 +102,16 @@ defmodule Lotta.Storage.FileData do
     |> Stream.into(File.stream!(path))
     |> Stream.run()
     |> then(fn :ok ->
-      from_path(path, file_data.metadata)
+      with {:ok, fd} <- from_path(path, file_data.metadata) do
+        {:ok, %__MODULE__{fd | owned: true}}
+      end
     end)
   end
 
   def copy_to_file(%__MODULE__{_path: path} = file_data, new_path) when not is_nil(path) do
     case File.cp(path, new_path) do
       :ok ->
-        {:ok, %__MODULE__{file_data | _path: new_path}}
+        {:ok, %__MODULE__{file_data | _path: new_path, owned: true}}
 
       error ->
         Logger.error("Failed to copy file: #{inspect(error)}")
@@ -166,7 +169,7 @@ defmodule Lotta.Storage.FileData do
   Deletes a cached file object from disk, if it exists
   """
   @spec clear(t() | [{:for, Storage.File.t()}]) :: :ok | {:error, File.posix()}
-  def clear(%__MODULE__{_path: path}) when is_binary(path), do: File.rm(path)
+  def clear(%__MODULE__{_path: path, owned: true}) when is_binary(path), do: File.rm(path)
   def clear(%__MODULE__{}), do: :ok
 
   def clear({:for, %Storage.File{} = file}) do
@@ -178,7 +181,7 @@ defmodule Lotta.Storage.FileData do
   def create_cache_dir(), do: File.mkdir_p!(Path.join(System.tmp_dir(), "ugc"))
 
   defp cache_path(%Storage.File{} = file) do
-    if tmp_path = System.tmp_dir() do
+    if tmp_path = tmp_dir_fn().() do
       filename =
         Enum.join(
           [
@@ -192,6 +195,8 @@ defmodule Lotta.Storage.FileData do
       Path.join([tmp_path, "ugc", filename])
     end
   end
+
+  defp tmp_dir_fn, do: Application.get_env(:lotta, :tmp_dir_fn, &System.tmp_dir/0)
 end
 
 defimpl String.Chars, for: Lotta.Storage.FileData do
