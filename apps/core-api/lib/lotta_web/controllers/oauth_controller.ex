@@ -4,7 +4,7 @@ defmodule LottaWeb.OAuthController do
   alias Lotta.{Accounts, Tenants, Repo}
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
-  alias Lotta.Eduplaces.{AuthCodeStrategy, UserInfo}
+  alias Lotta.Eduplaces.UserInfo
   alias LottaWeb.Urls
   alias LottaWeb.Auth.{AccessToken, CookieHelper}
 
@@ -23,7 +23,8 @@ defmodule LottaWeb.OAuthController do
       max_age: 10 * 60
     )
     |> redirect(
-      external: AuthCodeStrategy.authorize_url!(state: state, login_hint: params["login_hint"])
+      external:
+        auth_code_strategy().authorize_url!(state: state, login_hint: params["login_hint"])
     )
   end
 
@@ -176,7 +177,7 @@ defmodule LottaWeb.OAuthController do
           Plug.Conn.t() | {:error, any()}
   defp receive_valid_eduplaces_callback(conn, params) do
     {_token, user} =
-      AuthCodeStrategy.get_token!(params)
+      auth_code_strategy().get_token!(params)
 
     Logger.info("Received Eduplaces callback for user #{inspect(user)}")
 
@@ -245,6 +246,9 @@ defmodule LottaWeb.OAuthController do
         )
     end
   end
+
+  defp auth_code_strategy,
+    do: Application.get_env(:lotta, :auth_code_strategy_module, Lotta.Eduplaces.AuthCodeStrategy)
 
   defp maybe_put_mobile_app_cookie(conn) do
     if (get_req_header(conn, "x-lotta-app-version") || []) != [] do

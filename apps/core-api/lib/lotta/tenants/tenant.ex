@@ -174,7 +174,7 @@ defmodule Lotta.Tenants.Tenant do
     end
   end
 
-  def generate_slug(title) do
+  def generate_slug(title, slug_available_fn \\ &Tenants.slug_available?/1) do
     base_slug =
       title
       |> String.downcase()
@@ -184,7 +184,7 @@ defmodule Lotta.Tenants.Tenant do
     Enum.reduce_while(1..1000, nil, fn i, _acc ->
       slug = if i == 1, do: base_slug, else: "#{base_slug}-#{i}"
 
-      if Tenants.slug_available?(slug),
+      if slug_available_fn.(slug),
         do: {:halt, slug},
         else: {:cont, nil}
     end)

@@ -1,5 +1,5 @@
 defmodule Lotta.Worker.MetadataTest do
-  use Lotta.WorkerCase, async: false
+  use Lotta.WorkerCase, async: true
 
   describe "MetadataWorker" do
     test "sanitize invalid metadata" do

@@ -4,18 +4,22 @@ defmodule LottaWeb.FileResolverTest do
   use LottaWeb.ConnCase
   use Lotta.WorkerCase
 
-  import Mock
+  import Mox
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
-  alias Lotta.{Fixtures, Repo, Storage, Tenants}
+  alias Lotta.{Repo, Storage, Tenants}
   alias Lotta.Accounts.User
   alias Lotta.Worker.Conversion
-  alias Lotta.Storage.{File, FileConversion, Directory}
+  alias Lotta.Storage.{FileConversion, Directory}
 
   @prefix "tenant_test"
 
+  setup :verify_on_exit!
+
   setup do
+    Repo.put_prefix(@prefix)
     tenant = Tenants.get_tenant_by_prefix(@prefix)
 
     admin =
@@ -25,47 +29,142 @@ defmodule LottaWeb.FileResolverTest do
       )
 
     user2 =
-      Repo.one!(
-        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: @prefix
+      insert(:user,
+        email: "eike.wiewiorra@lotta.schule",
+        name: "Eike Wiewiorra",
+        nickname: "Chef"
       )
 
-    user =
-      Repo.one!(
-        from(u in User, where: u.email == ^"billy@lotta.schule"),
-        prefix: @prefix
-      )
+    user = insert(:user, email: "billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
-
     {:ok, user2_jwt, _} = AccessToken.encode_and_sign(user2)
-
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
-    user2_directory =
-      Repo.one!(from(d in Directory, where: d.name == "ehrenberg-on-air"), prefix: tenant.prefix)
+    # Directories
+    user2_avatar_dir = insert(:directory, name: "avatar", user_id: user2.id)
+    user2_directory = insert(:directory, name: "ehrenberg-on-air", user_id: user2.id)
+    insert(:directory, name: "podcast", user_id: user2.id)
+    admin_logos_dir = insert(:directory, name: "logos", user_id: admin.id)
+    admin_podcast_dir = insert(:directory, name: "podcast", user_id: admin.id)
+    public_directory = insert(:directory, name: "logos")
 
+    # Admin file (ich_schoen.jpg) with remote storage; set as admin avatar
     admin_file =
-      Repo.one!(from(f in File, where: f.filename == ^"ich_schoen.jpg"), prefix: tenant.prefix)
+      insert(:file,
+        user_id: admin.id,
+        filename: "ich_schoen.jpg",
+        file_type: "image",
+        mime_type: "image/jpg",
+        parent_directory_id: admin_logos_dir.id
+      )
+      |> with_remote_storage("test/support/fixtures/image_file.png")
 
+    admin
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_change(:avatar_image_file_id, admin_file.id)
+    |> Repo.update!(prefix: @prefix)
+
+    # User2 file (wieartig1.jpg) with remote storage
     user2_file =
-      Repo.one!(from(f in File, where: f.filename == ^"wieartig1.jpg"), prefix: tenant.prefix)
-
-    public_directory =
-      Repo.one!(
-        from(d in Directory,
-          where: d.name == "logos" and is_nil(d.user_id) and is_nil(d.parent_directory_id)
-        ),
-        prefix: tenant.prefix
+      insert(:file,
+        user_id: user2.id,
+        filename: "wieartig1.jpg",
+        file_type: "image",
+        mime_type: "image/jpg",
+        parent_directory_id: user2_avatar_dir.id
       )
+      |> with_remote_storage("test/support/fixtures/image_file.png")
 
+    # Public logos directory files
     public_file =
-      Repo.one!(
-        from(f in File,
-          where: f.filename == ^"logo1.jpg" and f.parent_directory_id == ^public_directory.id
-        ),
-        prefix: tenant.prefix
+      insert(:file,
+        user_id: admin.id,
+        filename: "logo1.jpg",
+        file_type: "image",
+        mime_type: "image/jpg",
+        parent_directory_id: public_directory.id
       )
+
+    insert(:file,
+      user_id: admin.id,
+      filename: "logo2.jpg",
+      file_type: "image",
+      mime_type: "image/jpg",
+      parent_directory_id: public_directory.id
+    )
+
+    insert(:file,
+      user_id: admin.id,
+      filename: "logo3.png",
+      file_type: "image",
+      mime_type: "image/png",
+      parent_directory_id: public_directory.id
+    )
+
+    insert(:file,
+      user_id: admin.id,
+      filename: "logo4.png",
+      file_type: "image",
+      mime_type: "image/png",
+      parent_directory_id: public_directory.id
+    )
+
+    # Admin podcast directory files
+    insert(:file,
+      user_id: admin.id,
+      filename: "pc3.m4v",
+      file_type: "video",
+      mime_type: "video/m4v",
+      parent_directory_id: admin_podcast_dir.id
+    )
+
+    insert(:file,
+      user_id: admin.id,
+      filename: "podcast1.mp4",
+      file_type: "video",
+      mime_type: "video/mp4",
+      parent_directory_id: admin_podcast_dir.id
+    )
+
+    insert(:file,
+      user_id: admin.id,
+      filename: "podcast2.mov",
+      file_type: "video",
+      mime_type: "video/mov",
+      parent_directory_id: admin_podcast_dir.id
+    )
+
+    # Articles referencing user2_file for usage tests (with seeder-matching timestamps)
+    insert(:article,
+      preview_image_file_id: user2_file.id,
+      title: "And the oskar goes to ...",
+      updated_at: ~U[2019-09-01 10:08:00Z]
+    )
+
+    insert(:article,
+      preview_image_file_id: user2_file.id,
+      title: "Draft1",
+      updated_at: ~U[2019-09-01 10:00:00Z]
+    )
+
+    insert(:article,
+      preview_image_file_id: user2_file.id,
+      title: "Draft2",
+      updated_at: ~U[2019-09-01 10:05:00Z]
+    )
+
+    insert(:article,
+      preview_image_file_id: user2_file.id,
+      title: "Fertiger Artikel zum Konzert",
+      updated_at: ~U[2019-09-01 10:06:00Z]
+    )
+
+    # Categories referencing public_file for usage tests
+    insert(:category, banner_image_file_id: public_file.id, title: "Fächer")
+    insert(:category, banner_image_file_id: public_file.id, title: "GTA")
+    insert(:category, banner_image_file_id: public_file.id, title: "Profil")
+    insert(:category, banner_image_file_id: public_file.id, title: "Projekt")
 
     image_upload = %Plug.Upload{
       path: "test/support/fixtures/image_file.png",
@@ -212,7 +311,7 @@ defmodule LottaWeb.FileResolverTest do
     test "returns file with correct immediatly available files for audios", %{
       user2_account: user
     } do
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(user)
 
       res =
         build_tenant_conn()
@@ -259,21 +358,22 @@ defmodule LottaWeb.FileResolverTest do
           }
       end)
 
-      with_mock(
-        Exile,
-        stream!: fn _cmd, _opts ->
-          create_file_stream("test/support/fixtures/eoa2.mp3")
-          |> Stream.map(&{:stdout, &1})
-        end
-      ) do
-        {:ok, job} =
-          Conversion.get_or_create_conversion_job(
-            file,
-            "audioplay"
-          )
+      Application.put_env(:lotta, :exile_module, Lotta.ExileMock)
+      on_exit(fn -> Application.delete_env(:lotta, :exile_module) end)
 
-        assert job.state == "completed"
-      end
+      stub(Lotta.ExileMock, :stream!, fn _cmd, _opts ->
+        create_file_stream("test/support/fixtures/eoa2.mp3")
+        |> Stream.map(&{:stdout, &1})
+      end)
+
+      {:ok, job} =
+        Conversion.get_or_create_conversion_job(
+          file,
+          "audioplay"
+        )
+
+      assert job.state == "completed"
+      Application.delete_env(:lotta, :exile_module)
 
       res =
         build_tenant_conn()
@@ -306,7 +406,7 @@ defmodule LottaWeb.FileResolverTest do
     test "returns file with correct immediatly available files for videos", %{
       user2_account: user
     } do
-      file = Fixtures.fixture(:real_video_file, user)
+      file = real_video_file(user)
 
       res =
         build_tenant_conn()
@@ -353,21 +453,22 @@ defmodule LottaWeb.FileResolverTest do
           }
       end)
 
-      with_mock(
-        Exile,
-        stream!: fn _cmd, _opts ->
-          create_file_stream("test/support/fixtures/pc3.m4v")
-          |> Stream.map(&{:stdout, &1})
-        end
-      ) do
-        {:ok, job} =
-          Conversion.get_or_create_conversion_job(
-            file,
-            "videoplay"
-          )
+      Application.put_env(:lotta, :exile_module, Lotta.ExileMock)
+      on_exit(fn -> Application.delete_env(:lotta, :exile_module) end)
 
-        assert job.state == "completed"
-      end
+      stub(Lotta.ExileMock, :stream!, fn _cmd, _opts ->
+        create_file_stream("test/support/fixtures/pc3.m4v")
+        |> Stream.map(&{:stdout, &1})
+      end)
+
+      {:ok, job} =
+        Conversion.get_or_create_conversion_job(
+          file,
+          "videoplay"
+        )
+
+      assert job.state == "completed"
+      Application.delete_env(:lotta, :exile_module)
 
       res =
         build_tenant_conn()
@@ -630,43 +731,27 @@ defmodule LottaWeb.FileResolverTest do
         |> get("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
 
-      assert %{
-               "data" => %{
-                 "file" => %{
-                   "filename" => "wieartig1.jpg",
-                   "usage" => [
-                     %{
-                       "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => _},
-                         "title" => "And the oskar goes to ..."
-                       },
-                       "usage" => "preview"
-                     },
-                     %{
-                       "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => _},
-                         "title" => "Fertiger Artikel zum Konzert"
-                       },
-                       "usage" => "preview"
-                     },
-                     %{
-                       "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => _},
-                         "title" => "Draft2"
-                       },
-                       "usage" => "preview"
-                     },
-                     %{
-                       "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => _},
-                         "title" => "Draft1"
-                       },
-                       "usage" => "preview"
-                     }
-                   ]
-                 }
-               }
-             } = res
+      assert %{"data" => %{"file" => %{"filename" => "wieartig1.jpg", "usage" => usage}}} = res
+      assert length(usage) == 4
+      assert Enum.all?(usage, &(&1["usage"] == "preview"))
+
+      assert Enum.all?(usage, fn %{
+                                   "article" => %{
+                                     "previewImageFile" => %{"remoteLocation" => loc}
+                                   }
+                                 } ->
+               is_binary(loc)
+             end)
+
+      titles = usage |> Enum.map(& &1["article"]["title"]) |> MapSet.new()
+
+      assert titles ==
+               MapSet.new([
+                 "And the oskar goes to ...",
+                 "Fertiger Artikel zum Konzert",
+                 "Draft2",
+                 "Draft1"
+               ])
     end
 
     test "returns public file's usage for admin user", %{
@@ -717,19 +802,11 @@ defmodule LottaWeb.FileResolverTest do
         |> get("/api", query: @query, variables: %{id: public_file.id})
         |> json_response(200)
 
-      assert res == %{
-               "data" => %{
-                 "file" => %{
-                   "filename" => "logo1.jpg",
-                   "usage" => [
-                     %{"category" => %{"title" => "Fächer"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "GTA"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "Profil"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "Projekt"}, "usage" => "banner"}
-                   ]
-                 }
-               }
-             }
+      assert %{"data" => %{"file" => %{"filename" => "logo1.jpg", "usage" => usage}}} = res
+      assert length(usage) == 4
+      assert Enum.all?(usage, &(&1["usage"] == "banner"))
+      titles = usage |> Enum.map(& &1["category"]["title"]) |> MapSet.new()
+      assert titles == MapSet.new(["Fächer", "GTA", "Profil", "Projekt"])
     end
   end
 

@@ -2,6 +2,8 @@ defmodule Lotta.Eduplaces.IDM do
   @moduledoc """
   IDM client for Eduplaces. Get user information and schedule data.
   """
+  @behaviour Lotta.Eduplaces.IDMBehaviour
+
   alias Lotta.Accounts.UserGroup
   alias Lotta.Tenants.Tenant
 
@@ -20,8 +22,8 @@ defmodule Lotta.Eduplaces.IDM do
   @spec get(path :: String.t()) ::
           {:ok, OAuth2.Response} | {:error, any()}
   def get(path) do
-    Lotta.Eduplaces.ClientCredentialStrategy.client()
-    |> OAuth2.Client.get(path)
+    client_credential_strategy_module().client()
+    |> oauth2_client_module().get(path)
     |> response_handler()
   end
 
@@ -78,4 +80,15 @@ defmodule Lotta.Eduplaces.IDM do
           {:ok, group_detail_response()} | {:error, any()}
   def get_group(%UserGroup{eduplaces_id: group_id}), do: get_group(group_id)
   def get_group(group_id), do: get("/groups/#{group_id}")
+
+  defp client_credential_strategy_module,
+    do:
+      Application.get_env(
+        :lotta,
+        :client_credential_strategy_module,
+        Lotta.Eduplaces.ClientCredentialStrategy
+      )
+
+  defp oauth2_client_module,
+    do: Application.get_env(:lotta, :oauth2_client_module, OAuth2.Client)
 end

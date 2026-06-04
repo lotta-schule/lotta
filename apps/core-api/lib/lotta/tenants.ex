@@ -2,6 +2,9 @@ defmodule Lotta.Tenants do
   @moduledoc """
   This module is for managing the tenants.
   """
+  @behaviour Lotta.TenantsUsageBehaviour
+  @behaviour Lotta.Tenants.AdminBehaviour
+
   require Logger
 
   import Ecto.Query

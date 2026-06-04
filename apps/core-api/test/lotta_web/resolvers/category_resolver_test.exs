@@ -1,13 +1,14 @@
 defmodule LottaWeb.CategoryResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
-  alias Lotta.Accounts.User
+  alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Tenants.Category
   alias Lotta.Content.Article
 
@@ -18,38 +19,78 @@ defmodule LottaWeb.CategoryResolverTest do
 
     Repo.put_prefix(@prefix)
 
-    faecher_category =
-      Repo.one!(
-        from(c in Category,
-          where: c.title == ^"Fächer"
-        ),
+    verwaltung_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Verwaltung"), prefix: @prefix)
+
+    lehrer_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Lehrer"), prefix: @prefix)
+
+    schueler_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Schüler"), prefix: @prefix)
+
+    # Top-level categories. Profil is inserted before Fächer so profil.id < faecher.id,
+    # which determines the child-category sort order in list_categories
+    # (order_by: [asc: sort_key, asc: category_id], NULLs last).
+    insert(:category, title: "Start", sort_key: 0, is_homepage: true)
+
+    profil_cat =
+      insert(:category, title: "Profil", sort_key: 10)
+      |> with_groups([verwaltung_group])
+
+    insert(:category, title: "GTA", sort_key: 20)
+    |> with_groups([verwaltung_group, lehrer_group, schueler_group])
+
+    insert(:category, title: "Projekt", sort_key: 30)
+
+    faecher_cat =
+      insert(:category, title: "Fächer", sort_key: 40)
+      |> with_groups([verwaltung_group, lehrer_group, schueler_group])
+
+    insert(:category, title: "Material", sort_key: 50)
+    |> with_groups([verwaltung_group, lehrer_group])
+
+    insert(:category, title: "Galerien", sort_key: 60)
+    insert(:category, title: "Impressum", sort_key: 70, is_sidenav: true)
+
+    # Profil children (no group restrictions)
+    insert(:category, title: "Podcast", sort_key: 10, category_id: profil_cat.id)
+    insert(:category, title: "Offene Kunst-AG", sort_key: 20, category_id: profil_cat.id)
+    insert(:category, title: "Schülerzeitung", sort_key: 30, category_id: profil_cat.id)
+    insert(:category, title: "Oskar-Reime-Chor", sort_key: 40, category_id: profil_cat.id)
+    insert(:category, title: "Schüler-Radio", sort_key: 50, category_id: profil_cat.id)
+
+    # Fächer children
+    insert(:category, title: "Sport", sort_key: 10, category_id: faecher_cat.id)
+    insert(:category, title: "Kunst", sort_key: 20, category_id: faecher_cat.id)
+
+    insert(:category, title: "Sprache", sort_key: 30, category_id: faecher_cat.id)
+    |> with_groups([verwaltung_group, lehrer_group])
+
+    admin =
+      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
         prefix: tenant.prefix
       )
 
-    emails = [
-      "alexis.rinaldoni@lotta.schule",
-      "eike.wiewiorra@lotta.schule",
-      "billy@lotta.schule",
-      "maxi@lotta.schule"
-    ]
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
-    [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] =
-      Enum.map(emails, fn email ->
-        user =
-          Repo.one!(
-            from(u in User,
-              where: u.email == ^email
-            ),
-            prefix: tenant.prefix
-          )
+    lehrer =
+      insert(:user, email: "cat-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
 
-        {:ok, jwt, _} = AccessToken.encode_and_sign(user)
-        {user, jwt}
-      end)
+    {:ok, lehrer} = Lotta.Accounts.update_user(lehrer, %{groups: [lehrer_group]})
+    {:ok, lehrer_jwt, _} = AccessToken.encode_and_sign(lehrer)
+
+    schueler =
+      insert(:user, email: "cat-billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
+
+    {:ok, schueler} = Lotta.Accounts.update_user(schueler, %{groups: [schueler_group]})
+    {:ok, schueler_jwt, _} = AccessToken.encode_and_sign(schueler)
+
+    user = insert(:user, email: "cat-maxi@lotta.schule", name: "Max Mustermann", nickname: "MaXi")
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
     {:ok,
      %{
-       faecher_category: faecher_category,
+       faecher_category: faecher_cat,
        admin: admin,
        admin_jwt: admin_jwt,
        lehrer: lehrer,

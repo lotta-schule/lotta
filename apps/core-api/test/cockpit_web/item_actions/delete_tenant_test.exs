@@ -1,13 +1,17 @@
 defmodule CockpitWeb.ItemActions.DeleteTenantTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: false
 
-  import Mock
+  import Mox
   import Phoenix.LiveViewTest
 
   alias CockpitWeb.ItemActions.DeleteTenant
+  alias Lotta.TenantsAdminMock
   alias Lotta.Tenants.Tenant
+
+  setup :set_mox_global
+  setup :verify_on_exit!
 
   describe "icon/2" do
     test "renders trash icon" do
@@ -54,43 +58,35 @@ defmodule CockpitWeb.ItemActions.DeleteTenantTest do
       tenant: tenant,
       socket: socket
     } do
-      with_mock Lotta.Tenants, [:passthrough], delete_tenant: fn ^tenant -> {:ok, tenant} end do
-        {:ok, updated_socket} = DeleteTenant.handle(socket, [tenant], %{})
+      expect(TenantsAdminMock, :delete_tenant, fn ^tenant -> {:ok, tenant} end)
 
-        assert called(Lotta.Tenants.delete_tenant(tenant))
+      {:ok, updated_socket} = DeleteTenant.handle(socket, [tenant], %{})
 
-        assert Phoenix.Flash.get(updated_socket.assigns.flash, :info) ==
-                 "Tenant successfully deleted."
-      end
+      assert Phoenix.Flash.get(updated_socket.assigns.flash, :info) ==
+               "Tenant successfully deleted."
     end
 
     test "returns error changeset when deletion fails", %{tenant: tenant, socket: socket} do
       error_reason = "Database constraint violation"
 
-      with_mock Lotta.Tenants, [:passthrough],
-        delete_tenant: fn ^tenant -> {:error, error_reason} end do
-        {:error, changeset} = DeleteTenant.handle(socket, [tenant], %{})
+      expect(TenantsAdminMock, :delete_tenant, fn ^tenant -> {:error, error_reason} end)
 
-        assert called(Lotta.Tenants.delete_tenant(tenant))
-        assert changeset.data == tenant
-        assert changeset.errors[:base] != nil
+      {:error, changeset} = DeleteTenant.handle(socket, [tenant], %{})
 
-        {message, _} = changeset.errors[:base]
-        assert message =~ "Failed to delete tenant"
-        assert message =~ inspect(error_reason)
-      end
+      assert changeset.data == tenant
+      assert changeset.errors[:base] != nil
+
+      {message, _} = changeset.errors[:base]
+      assert message =~ "Failed to delete tenant"
+      assert message =~ inspect(error_reason)
     end
 
     test "handles multiple items but only processes first", %{tenant: tenant, socket: socket} do
       tenant2 = %Tenant{id: 2, title: "Another Tenant", slug: "another", prefix: "tenant_2"}
 
-      with_mock Lotta.Tenants, [:passthrough], delete_tenant: fn ^tenant -> {:ok, tenant} end do
-        {:ok, _updated_socket} = DeleteTenant.handle(socket, [tenant, tenant2], %{})
+      expect(TenantsAdminMock, :delete_tenant, fn ^tenant -> {:ok, tenant} end)
 
-        # Should only be called once with the first tenant
-        assert called(Lotta.Tenants.delete_tenant(tenant))
-        refute called(Lotta.Tenants.delete_tenant(tenant2))
-      end
+      {:ok, _updated_socket} = DeleteTenant.handle(socket, [tenant, tenant2], %{})
     end
   end
 

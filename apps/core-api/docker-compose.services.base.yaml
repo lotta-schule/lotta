@@ -2,6 +2,7 @@
 services:
   postgres:
     image: postgres:15.1
+    command: -c 'max_connections=500'
     environment:
       POSTGRES_USER: lotta
       POSTGRES_PASSWORD: lotta
@@ -21,8 +22,9 @@ services:
       interval: 20s
       timeout: 10s
       retries: 7
+
   minio:
-    image: 'minio/minio:RELEASE.2025-09-07T16-13-09Z'
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     ports:
       - '9000:9000'
       - '9001:9001'
@@ -52,6 +54,14 @@ services:
     entrypoint: >
       /bin/sh -c "
       sleep 5;
+      /usr/bin/mc alias set dockerminio http://minio:9000 minio miniosecret;
+      /usr/bin/mc mb dockerminio/lotta-dev;
+      /usr/bin/mc anonymous set download dockerminio/lotta-dev;
+
+      /usr/bin/mc alias set dockerminio http://minio:9000 minio miniosecret;
+      /usr/bin/mc mb dockerminio/lotta-test;
+      /usr/bin/mc anonymous set download dockerminio/lotta-test;
+
       /usr/bin/mc alias set dockerminio http://minio:9000 minio miniosecret;
       /usr/bin/mc mb dockerminio/lotta-e2e;
       /usr/bin/mc anonymous set download dockerminio/lotta-e2e;

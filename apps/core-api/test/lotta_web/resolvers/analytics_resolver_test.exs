@@ -1,37 +1,27 @@
 defmodule LottaWeb.AnalyticsResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
-  import Ecto.Query
+  import Lotta.Factory
 
   alias Lotta.{Tenants, Repo}
-  alias Lotta.Accounts.User
   alias LottaWeb.Auth.AccessToken
 
   @prefix "tenant_test"
 
   setup do
-    tenant = Tenants.get_tenant_by_prefix(@prefix)
+    Tenants.get_tenant_by_prefix(@prefix)
 
     Repo.put_prefix(@prefix)
 
-    admin =
-      from(u in User, where: u.email == ^"alexis.rinaldoni@einsa.net")
-      |> Repo.one!(prefix: tenant.prefix)
-
-    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
-
-    user =
-      from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule")
-      |> Repo.one!(prefix: tenant.prefix)
+    user = insert(:user, email: "an-eike@lotta.schule", name: "Eike Wiewiorra")
 
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
     {:ok,
      %{
-       user_jwt: user_jwt,
-       admin_jwt: admin_jwt
+       user_jwt: user_jwt
      }}
   end
 

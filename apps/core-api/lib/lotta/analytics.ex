@@ -2,6 +2,8 @@ defmodule Lotta.Analytics do
   @moduledoc """
   Communicates with Plausible Analytics to get analytics data
   """
+  @behaviour Lotta.AnalyticsBehaviour
+
   alias LottaWeb.Urls
   alias Lotta.Tenants.Tenant
 

@@ -33,11 +33,26 @@ defmodule Lotta.WorkerCase do
         :ok
 
       {:already, _} ->
-        # If the sandbox is already checked out, we can continue without changing the mode
         :ok
 
       error ->
         error
+    end
+
+    if tags[:creates_tenant] do
+      on_exit(fn ->
+        Lotta.Repo.with_new_dynamic_repo(fn _ ->
+          {:ok, %{rows: rows}} =
+            Lotta.Repo.query("""
+            SELECT schema_name FROM information_schema.schemata
+            WHERE schema_name LIKE 'tenant_%' AND schema_name != 'tenant_test'
+            """)
+
+          Enum.each(rows, fn [schema] ->
+            Lotta.Repo.query!("DROP SCHEMA \"#{schema}\" CASCADE")
+          end)
+        end)
+      end)
     end
 
     :ok

@@ -2,6 +2,7 @@ defmodule Lotta.Tenants.DefaultContent do
   @moduledoc """
   All the data for adding default content to a new instance
   """
+  @behaviour Lotta.Tenants.DefaultContentBehaviour
 
   require Logger
 

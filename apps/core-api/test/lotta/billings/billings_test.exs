@@ -1,7 +1,7 @@
 defmodule Lotta.BillingsTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   alias Lotta.{Billings, Tenants, Repo}
   alias Lotta.Billings.{AdditionalItem, Invoice}

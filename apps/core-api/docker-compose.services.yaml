@@ -10,6 +10,9 @@ services:
     ports:
       - '5432:5432'
       - '5433:5433'
+    depends_on:
+      minio-setup:
+        condition: service_completed_successfully
 
   redis:
     extends:
@@ -32,8 +35,6 @@ services:
     extends:
       file: './docker-compose.services.base.yaml'
       service: minio-setup
-    profiles:
-      - minio-setup
 
   pgadmin:
     image: dpage/pgadmin4:latest

@@ -79,10 +79,14 @@ describe('sendRefreshRequest', () => {
       )
     );
 
-    const result = await sendRefreshRequest('oldAccessToken', 'oldRefreshToken', {
-      baseURL: 'http://api.test',
-      originaryHost: 'testHost',
-    });
+    const result = await sendRefreshRequest(
+      'oldAccessToken',
+      'oldRefreshToken',
+      {
+        baseURL: 'http://api.test',
+        originaryHost: 'testHost',
+      }
+    );
 
     expect(fetchMock).toHaveBeenCalledWith(
       'http://api.test/auth/token/refresh',
@@ -129,7 +133,10 @@ describe('sendRefreshRequest', () => {
       )
     );
 
-    const result = await sendRefreshRequest('oldAccessToken', 'oldRefreshToken');
+    const result = await sendRefreshRequest(
+      'oldAccessToken',
+      'oldRefreshToken'
+    );
 
     expect(result).toEqual({
       accessToken: null,
@@ -144,7 +151,10 @@ describe('sendRefreshRequest', () => {
       makeFetchResponse({ accessToken: 'newAccessToken' }, {})
     );
 
-    const result = await sendRefreshRequest('oldAccessToken', 'oldRefreshToken');
+    const result = await sendRefreshRequest(
+      'oldAccessToken',
+      'oldRefreshToken'
+    );
 
     expect(result).toEqual({
       accessToken: null,
@@ -157,7 +167,10 @@ describe('sendRefreshRequest', () => {
     isBrowserMock.mockReturnValue(false);
     fetchMock.mockResolvedValue(makeFetchResponse(null, {}, false));
 
-    const result = await sendRefreshRequest('oldAccessToken', 'oldRefreshToken');
+    const result = await sendRefreshRequest(
+      'oldAccessToken',
+      'oldRefreshToken'
+    );
 
     expect(result).toEqual({
       accessToken: null,
@@ -172,7 +185,10 @@ describe('sendRefreshRequest', () => {
       .mockImplementation(() => {});
     fetchMock.mockRejectedValue(new Error('Network Error'));
 
-    const result = await sendRefreshRequest('oldAccessToken', 'oldRefreshToken');
+    const result = await sendRefreshRequest(
+      'oldAccessToken',
+      'oldRefreshToken'
+    );
 
     expect(result).toEqual({
       accessToken: null,

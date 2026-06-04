@@ -2,9 +2,10 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
   @moduledoc """
   OAuth2 strategy for Eduplaces login
   """
+  @behaviour Lotta.Eduplaces.AuthCodeStrategyBehaviour
+
   use OAuth2.Strategy
 
-  alias JOSE.JWT
   alias Lotta.Eduplaces.UserInfo
 
   require Logger
@@ -59,7 +60,7 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
 
   def get_token!(params \\ [], headers \\ [], opts \\ []) do
     client()
-    |> get_token!(params, headers, opts)
+    |> oauth2_client_module().get_token!(params, headers, opts)
     |> Map.get(:token)
     |> then(&{&1, read_id_token(&1)})
   end
@@ -79,8 +80,14 @@ defmodule Lotta.Eduplaces.AuthCodeStrategy do
   end
 
   def read_id_token(%{other_params: %{"id_token" => id_token}}) do
-    UserInfo.from_jwt_info(JWT.peek(id_token).fields)
+    UserInfo.from_jwt_info(jose_jwt_module().peek(id_token).fields)
   end
+
+  defp oauth2_client_module,
+    do: Application.get_env(:lotta, :oauth2_client_module, OAuth2.Client)
+
+  defp jose_jwt_module,
+    do: Application.get_env(:lotta, :jose_jwt_module, JOSE.JWT)
 
   defp as_keyword_list(map),
     do:

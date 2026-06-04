@@ -1,7 +1,7 @@
 defmodule Lotta.Billings.InvoiceTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   alias Lotta.Billings.Invoice
   alias Lotta.Tenants
@@ -768,7 +768,15 @@ defmodule Lotta.Billings.InvoiceTest do
   end
 
   describe "to_pdf/1" do
-    import Mock
+    import Mox
+
+    setup :verify_on_exit!
+
+    setup do
+      Application.put_env(:lotta, :chromic_pdf_module, Lotta.ChromicPDFMock)
+      on_exit(fn -> Application.delete_env(:lotta, :chromic_pdf_module) end)
+      :ok
+    end
 
     setup %{tenant: tenant} do
       {:ok, invoice} =
@@ -811,48 +819,41 @@ defmodule Lotta.Billings.InvoiceTest do
     test "generates PDF binary", %{invoice: invoice} do
       mock_pdf_binary = <<"%PDF-1.4\n">>
 
-      with_mock ChromicPDF,
-        print_to_pdf: fn {:html, _html}, _opts -> {:ok, mock_pdf_binary} end do
-        pdf = Invoice.to_pdf(invoice)
+      expect(Lotta.ChromicPDFMock, :print_to_pdf, fn {:html, _html}, _opts ->
+        {:ok, mock_pdf_binary}
+      end)
 
-        assert is_binary(pdf)
-        assert pdf == mock_pdf_binary
-        # Verify ChromicPDF was called
-        assert called(ChromicPDF.print_to_pdf(:_, :_))
-      end
+      pdf = Invoice.to_pdf(invoice)
+
+      assert is_binary(pdf)
+      assert pdf == mock_pdf_binary
     end
 
     test "calls ChromicPDF with correct HTML content", %{invoice: invoice} do
       mock_pdf_binary = <<"%PDF-1.4\n">>
 
-      with_mock ChromicPDF,
-        print_to_pdf: fn {:html, html}, _opts ->
-          # Verify HTML contains invoice data
-          assert is_binary(html)
-          assert String.contains?(html, invoice.invoice_number)
-          {:ok, mock_pdf_binary}
-        end do
-        pdf = Invoice.to_pdf(invoice)
+      expect(Lotta.ChromicPDFMock, :print_to_pdf, fn {:html, html}, _opts ->
+        assert is_binary(html)
+        assert String.contains?(html, invoice.invoice_number)
+        {:ok, mock_pdf_binary}
+      end)
 
-        assert pdf == mock_pdf_binary
-      end
+      pdf = Invoice.to_pdf(invoice)
+
+      assert pdf == mock_pdf_binary
     end
 
     test "calls ChromicPDF with header and footer configuration", %{invoice: invoice} do
       mock_pdf_binary = <<"%PDF-1.4\n">>
 
-      with_mock ChromicPDF,
-        print_to_pdf: fn {:html, _html}, opts ->
-          # Verify print options are passed
-          assert opts[:print_to_pdf][:displayHeaderFooter] == true
-          assert is_binary(opts[:print_to_pdf][:footerTemplate])
-          assert opts[:print_to_pdf][:headerTemplate] == "<span></span>"
-          {:ok, mock_pdf_binary}
-        end do
-        Invoice.to_pdf(invoice)
+      expect(Lotta.ChromicPDFMock, :print_to_pdf, fn {:html, _html}, opts ->
+        assert opts[:print_to_pdf][:displayHeaderFooter] == true
+        assert is_binary(opts[:print_to_pdf][:footerTemplate])
+        assert opts[:print_to_pdf][:headerTemplate] == "<span></span>"
+        {:ok, mock_pdf_binary}
+      end)
 
-        assert called(ChromicPDF.print_to_pdf(:_, :_))
-      end
+      Invoice.to_pdf(invoice)
     end
 
     test "handles invoice with all customer information", %{tenant: tenant} do
@@ -886,21 +887,19 @@ defmodule Lotta.Billings.InvoiceTest do
       invoice_with_customer = Repo.preload(invoice_with_customer, :items)
       mock_pdf_binary = <<"%PDF-1.4\n">>
 
-      with_mock ChromicPDF,
-        print_to_pdf: fn {:html, html}, _opts ->
-          # Verify customer info is in HTML
-          assert is_binary(html)
-          assert String.contains?(html, "Full Customer Info")
+      expect(Lotta.ChromicPDFMock, :print_to_pdf, fn {:html, html}, _opts ->
+        assert is_binary(html)
+        assert String.contains?(html, "Full Customer Info")
 
-          assert String.contains?(html, "john@example.com") or
-                   String.contains?(html, "CUST-001")
+        assert String.contains?(html, "john@example.com") or
+                 String.contains?(html, "CUST-001")
 
-          {:ok, mock_pdf_binary}
-        end do
-        pdf = Invoice.to_pdf(invoice_with_customer)
+        {:ok, mock_pdf_binary}
+      end)
 
-        assert is_binary(pdf)
-      end
+      pdf = Invoice.to_pdf(invoice_with_customer)
+
+      assert is_binary(pdf)
     end
 
     test "works with invoice containing no customer information", %{tenant: tenant} do
@@ -931,13 +930,14 @@ defmodule Lotta.Billings.InvoiceTest do
       invoice_no_customer = Repo.preload(invoice_no_customer, :items)
       mock_pdf_binary = <<"%PDF-1.4\n">>
 
-      with_mock ChromicPDF,
-        print_to_pdf: fn {:html, _html}, _opts -> {:ok, mock_pdf_binary} end do
-        pdf = Invoice.to_pdf(invoice_no_customer)
+      expect(Lotta.ChromicPDFMock, :print_to_pdf, fn {:html, _html}, _opts ->
+        {:ok, mock_pdf_binary}
+      end)
 
-        assert is_binary(pdf)
-        assert pdf == mock_pdf_binary
-      end
+      pdf = Invoice.to_pdf(invoice_no_customer)
+
+      assert is_binary(pdf)
+      assert pdf == mock_pdf_binary
     end
   end
 end

@@ -1,7 +1,7 @@
 defmodule Lotta.Messages.ConversationTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Messages.Conversation

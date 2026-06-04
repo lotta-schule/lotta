@@ -1,7 +1,7 @@
 defmodule Cockpit.BankingTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   alias Cockpit.Banking
   alias Cockpit.Banking.Ingestion

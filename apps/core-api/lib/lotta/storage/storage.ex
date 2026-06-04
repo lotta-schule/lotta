@@ -2,6 +2,9 @@ defmodule Lotta.Storage do
   @moduledoc """
   Handles storage for files uploaded by the user.
   """
+
+  @behaviour Lotta.StorageBehaviour
+
   require Logger
 
   import Ecto.Query

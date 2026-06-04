@@ -11,17 +11,17 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
 
   @spec read_metadata(FileData.t()) :: {:ok, map()} | {:error, String.t()}
   def read_metadata(%FileData{} = file_data) do
-    case Image.open(FileData.stream!(file_data)) do
+    case image_module().open(FileData.stream!(file_data)) do
       {:ok, image} ->
         exif = extract_exif(image)
         dominant_color = extract_dominant_color(image)
-        {width, height, channels} = Image.shape(image)
+        {width, height, channels} = image_module().shape(image)
 
         {:ok,
          %{
            exif: exif,
            dominant_color: dominant_color,
-           pages: Image.pages(image),
+           pages: image_module().pages(image),
            width: width,
            height: height,
            channels: channels
@@ -75,7 +75,7 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
   end
 
   defp create_thumbnail_stream(format, image, size_string, vips_args) do
-    with {:ok, image} <- Image.thumbnail(image, size_string, vips_args),
+    with {:ok, image} <- image_module().thumbnail(image, size_string, vips_args),
          {:ok, file_data} <-
            get_file_data_from_image(image, "image.webp", mime_type: "image/webp") do
       {format, file_data}
@@ -89,14 +89,14 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
   end
 
   defp get_image_from_file_data(%FileData{_path: path}),
-    do: Image.open(path)
+    do: image_module().open(path)
 
   defp get_image_from_file_data(%FileData{} = file_data),
-    do: Image.open(FileData.stream!(file_data))
+    do: image_module().open(FileData.stream!(file_data))
 
   defp get_file_data_from_image(image, filename, opts) do
     image
-    |> Image.stream!(
+    |> image_module().stream!(
       buffer_size: 8 * 1024 * 1024,
       strip_metadata: true,
       minimize_file_size: true,
@@ -136,14 +136,14 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
   end
 
   defp extract_exif(image) do
-    case Image.exif(image) do
+    case image_module().exif(image) do
       {:ok, exif} -> exif
       _error -> nil
     end
   end
 
   defp extract_dominant_color(image) do
-    case Image.dominant_color(image) do
+    case image_module().dominant_color(image) do
       {:ok, color} ->
         to_hex_color(color)
 
@@ -177,4 +177,6 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
 
     Keyword.merge(default_args, args)
   end
+
+  defp image_module, do: Application.get_env(:lotta, :image_module, Image)
 end

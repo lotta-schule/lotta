@@ -1,16 +1,14 @@
 defmodule LottaWeb.UserGroupResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Accounts, Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Content.Article
-  alias Lotta.Fixtures
-  alias Ecto.Changeset
+  import Lotta.Factory
 
   @prefix "tenant_test"
 
@@ -24,13 +22,15 @@ defmodule LottaWeb.UserGroupResolverTest do
         prefix: tenant.prefix
       )
 
-    user =
-      Repo.one!(from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: tenant.prefix
-      )
+    user = insert(:user, email: "ugr-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
 
     user2 =
-      Repo.one!(from(u in User, where: u.email == ^"mcurie@lotta.schule"), prefix: tenant.prefix)
+      insert(:user,
+        email: "ugr-mcurie@lotta.schule",
+        name: "Marie Curie",
+        nickname: "Polonium",
+        hide_full_name: true
+      )
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
@@ -51,6 +51,8 @@ defmodule LottaWeb.UserGroupResolverTest do
         ),
         prefix: tenant.prefix
       )
+
+    {:ok, user} = Accounts.update_user(user, %{groups: [lehrer_group]})
 
     {:ok,
      %{
@@ -360,25 +362,16 @@ defmodule LottaWeb.UserGroupResolverTest do
       schueler_group: schueler_group
     } do
       oskar_goes_to =
-        from(a in Article,
-          where: a.title == ^"And the oskar goes to ..."
-        )
-        |> Repo.one!(prefix: @prefix)
-        |> assign_groups([lehrer_group])
+        insert(:article, title: "And the oskar goes to ...", published: true)
+        |> with_groups([lehrer_group])
 
       kleinkunst_wb2 =
-        from(a in Article,
-          where: a.title == ^"Der Podcast zum WB 2"
-        )
-        |> Repo.one!(prefix: @prefix)
-        |> assign_groups([lehrer_group])
+        insert(:article, title: "Der Podcast zum WB 2", published: true)
+        |> with_groups([lehrer_group])
 
       vorausscheid =
-        from(a in Article,
-          where: a.title == ^"Der Vorausscheid"
-        )
-        |> Repo.one!(prefix: @prefix)
-        |> assign_groups([lehrer_group, schueler_group])
+        insert(:article, title: "Der Vorausscheid", published: true)
+        |> with_groups([lehrer_group, schueler_group])
 
       res =
         build_conn()
@@ -408,7 +401,7 @@ defmodule LottaWeb.UserGroupResolverTest do
 
     test "should return an error if group is eduplaces group", %{admin_jwt: admin_jwt} do
       group =
-        Fixtures.fixture(:user_group, is_admin_group: false)
+        insert(:group)
         |> Ecto.Changeset.change(%{eduplaces_id: "eduplaces-group-123"})
         |> Repo.update!()
 
@@ -593,13 +586,5 @@ defmodule LottaWeb.UserGroupResolverTest do
                ]
              } = res
     end
-  end
-
-  defp assign_groups(model, groups) do
-    model
-    |> Repo.preload(:groups)
-    |> Changeset.change()
-    |> Changeset.put_assoc(:groups, groups)
-    |> Repo.update!(prefix: Ecto.get_meta(model, :prefix))
   end
 end
