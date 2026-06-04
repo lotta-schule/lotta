@@ -1,9 +1,9 @@
-import { renderHook, waitFor } from 'test/util';
-import { movieFile } from 'test/fixtures';
+import { renderHook, waitFor } from '#/test/util.js';
+import { movieFile } from '#/test/fixtures/index.js';
 import {
   REQUEST_FILE_CONVERSION,
   useRequestConversion,
-} from './useRequestConversion';
+} from './useRequestConversion.js';
 
 describe('util/userAvatar/useCurrentUser', () => {
   it('should request a file to be converted', async () => {

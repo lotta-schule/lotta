@@ -9,8 +9,6 @@ export type BaseButtonProps = {
    */
   selected?: boolean;
 
-  as?: React.ElementType;
-
   /**
    * Chose from different styles
    */

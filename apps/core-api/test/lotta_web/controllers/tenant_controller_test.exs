@@ -5,9 +5,30 @@ defmodule LottaWeb.TenantControllerTest do
 
   import Phoenix.ConnTest
   import Tesla.Mock
+  import Mox
 
   alias Lotta.{Accounts, Tenants, Repo}
   alias Lotta.Tenants.Tenant
+
+  setup :verify_on_exit!
+
+  setup do
+    stub(Lotta.Tenants.DefaultContentMock, :create_default_content, fn _t, _u -> :ok end)
+    stub(Lotta.AnalyticsMock, :create_site, fn _t -> :ok end)
+    stub(Lotta.Administration.Notification.SlackMock, :send, fn _msg -> {:ok, nil} end)
+
+    stub(Lotta.Administration.Notification.SlackMock, :new_lotta_notification, fn _t, _u ->
+      %{}
+    end)
+
+    stub(
+      Lotta.Administration.Notification.SlackMock,
+      :new_lotta_invoices_to_issue_notification,
+      fn _i -> %{} end
+    )
+
+    :ok
+  end
 
   setup do
     new_tenant =
@@ -19,10 +40,23 @@ defmodule LottaWeb.TenantControllerTest do
 
     Lotta.Tenants.TenantDbManager.create_tenant_database_schema(new_tenant)
 
+    on_exit(fn ->
+      Lotta.Repo.with_new_dynamic_repo(fn _ ->
+        Lotta.Repo.query!("DROP SCHEMA IF EXISTS \"tenant_test2\" CASCADE")
+      end)
+    end)
+
     email = "alexis.rinaldoni@einsa.net"
 
     {:ok, _} =
       Accounts.register_user_by_mail(new_tenant, %{
+        name: "Alexis Rinaldoni",
+        email: email,
+        password: "test123"
+      })
+
+    {:ok, _} =
+      Accounts.register_user_by_mail(Tenants.get_tenant_by_prefix("tenant_test"), %{
         name: "Alexis Rinaldoni",
         email: email,
         password: "test123"

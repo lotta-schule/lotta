@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 import { Close, NavigationButton } from '@lotta-schule/hubert';
 
 export default {

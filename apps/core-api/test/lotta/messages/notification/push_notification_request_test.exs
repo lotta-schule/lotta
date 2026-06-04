@@ -1,7 +1,7 @@
 defmodule Lotta.PushNotification.RequestTest do
   alias Lotta.PushNotification.Request
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   @prefix "tenant_test"
 

@@ -4,8 +4,8 @@ import * as React from 'react';
 import { CollectionChildren } from '@react-types/shared';
 import { useTreeState } from 'react-stately';
 import { mergeProps, useMenu } from 'react-aria';
-import { MenuItem } from './MenuItem';
-import { List, ListProps } from '../list';
+import { MenuItem } from './MenuItem.js';
+import { List, ListProps } from '../list/index.js';
 import clsx from 'clsx';
 
 import styles from './Menu.module.scss';

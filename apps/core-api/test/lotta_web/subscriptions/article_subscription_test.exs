@@ -4,11 +4,11 @@ defmodule LottaWeb.ArticleSubscriptionTest do
   use LottaWeb.SubscriptionCase
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.Repo
-  alias Lotta.Accounts.User
-  alias Lotta.Content.Article
+  alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Tenants
 
   @prefix "tenant_test"
@@ -16,39 +16,55 @@ defmodule LottaWeb.ArticleSubscriptionTest do
   setup do
     Repo.put_prefix(@prefix)
 
-    emails = [
-      "alexis.rinaldoni@lotta.schule",
-      "eike.wiewiorra@lotta.schule",
-      "billy@lotta.schule",
-      "maxi@lotta.schule"
-    ]
-
     tenant = Tenants.get_tenant_by_prefix(@prefix)
 
-    [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] =
-      Enum.map(emails, fn email ->
-        user =
-          Repo.one!(
-            from(u in User, where: u.email == ^email),
-            prefix: tenant.prefix
-          )
+    admin =
+      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-        {:ok, jwt, _} = AccessToken.encode_and_sign(user)
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
-        {user, jwt}
-      end)
+    lehrer_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Lehrer"), prefix: @prefix)
 
-    titles = ["Der Vorausscheid", "Draft2"]
+    schueler_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Schüler"), prefix: @prefix)
 
-    [vorausscheid, draft] =
-      Enum.map(titles, fn title ->
-        Repo.one!(
-          from(a in Article,
-            where: a.title == ^title
-          ),
-          prefix: tenant.prefix
-        )
-      end)
+    lehrer =
+      insert(:user,
+        email: "eike.wiewiorra@lotta.schule",
+        name: "Eike Wiewiorra",
+        nickname: "Chef"
+      )
+
+    {:ok, lehrer} = Lotta.Accounts.update_user(lehrer, %{groups: [lehrer_group]})
+    {:ok, lehrer_jwt, _} = AccessToken.encode_and_sign(lehrer)
+
+    schueler =
+      insert(:user, email: "billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
+
+    {:ok, schueler} = Lotta.Accounts.update_user(schueler, %{groups: [schueler_group]})
+    {:ok, schueler_jwt, _} = AccessToken.encode_and_sign(schueler)
+
+    user = insert(:user, email: "maxi@lotta.schule", name: "Max Mustermann", nickname: "MaXi")
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
+
+    draft =
+      insert(:article,
+        title: "Draft2",
+        published: false,
+        ready_to_publish: false
+      )
+      |> with_users([lehrer])
+
+    vorausscheid =
+      insert(:article,
+        title: "Der Vorausscheid",
+        published: true,
+        ready_to_publish: false
+      )
+      |> with_groups([lehrer_group])
 
     {:ok,
      %{
@@ -103,7 +119,7 @@ defmodule LottaWeb.ArticleSubscriptionTest do
       {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
       ref = push_doc(socket, @subscription, variables: %{id: to_string(draft.id)})
-      assert_reply ref, :ok, %{subscriptionId: _subscription_id}
+      assert_reply(ref, :ok, %{subscriptionId: _subscription_id})
 
       res =
         build_conn()
@@ -137,7 +153,7 @@ defmodule LottaWeb.ArticleSubscriptionTest do
       {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
       ref = push_doc(socket, @subscription, variables: %{id: draft.id})
-      assert_reply ref, :ok, %{subscriptionId: _subscription_id}
+      assert_reply(ref, :ok, %{subscriptionId: _subscription_id})
     end
 
     test "returns an error if user is not author", %{
@@ -152,9 +168,9 @@ defmodule LottaWeb.ArticleSubscriptionTest do
 
       ref = push_doc(socket, @subscription, variables: %{id: vorausscheid.id})
 
-      assert_reply ref, :error, %{
+      assert_reply(ref, :error, %{
         errors: [%{message: "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}]
-      }
+      })
     end
 
     test "returns an error if article id does not exist", %{user_jwt: user_jwt, tenant: t} do
@@ -164,7 +180,7 @@ defmodule LottaWeb.ArticleSubscriptionTest do
       {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
       ref = push_doc(socket, @subscription, variables: %{id: "0"})
-      assert_reply ref, :error, %{errors: [%{message: "Beitrag nicht gefunden."}]}
+      assert_reply(ref, :error, %{errors: [%{message: "Beitrag nicht gefunden."}]})
     end
   end
 end

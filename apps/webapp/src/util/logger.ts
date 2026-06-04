@@ -1,36 +1,18 @@
-import * as Sentry from '@sentry/nextjs';
-
 type LogLevel = 'debug' | 'info' | 'warning' | 'error';
 
 type LogContext = {
   [key: string]: any;
 };
 
-const addTraceContext = (context: LogContext = {}): LogContext => {
-  const span = Sentry.getActiveSpan();
-  if (span) {
-    const { traceId, spanId } = span.spanContext();
-    return {
-      ...context,
-      traceId,
-      spanId,
-    };
-  }
-  return context;
-};
-
 const log = (level: LogLevel, message: string, context?: LogContext) => {
-  const enrichedContext = addTraceContext(context);
-
-  Sentry.addBreadcrumb({
-    level,
-    message,
-    data: enrichedContext,
-  });
-
   const fnName = level === 'warning' ? 'warn' : level;
 
-  console[fnName](message, enrichedContext);
+  console[fnName]({
+    level,
+    message,
+    context: context || {},
+    timestamp: new Date().toISOString(),
+  });
 };
 
 export const Logger = {

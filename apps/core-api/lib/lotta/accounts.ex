@@ -3,6 +3,8 @@ defmodule Lotta.Accounts do
   The Accounts context.
   """
 
+  @behaviour Lotta.AccountsGroupBehaviour
+
   require Logger
 
   import Ecto.Query
@@ -166,6 +168,7 @@ defmodule Lotta.Accounts do
     |> search_user_apply_searchtext_filter(searchtext)
     |> search_user_apply_group_ids_filter(group_ids)
     |> search_user_apply_last_seen_filter(last_seen)
+    |> order_by([u], [u.name, u.email])
     |> Repo.all()
   end
 
@@ -303,7 +306,7 @@ defmodule Lotta.Accounts do
 
     case Repo.insert(changeset) do
       {:ok, user} ->
-        Storage.create_new_user_directories(user)
+        storage_module().create_new_user_directories(user)
 
         {:ok, Map.put(user, :password, generated_pw)}
 
@@ -341,7 +344,7 @@ defmodule Lotta.Accounts do
           {:ok, User.t(), String.t()} | {:error, Changeset.t()}
   def register_eduplaces_user(tenant, user_info) do
     user_info =
-      Lotta.Eduplaces.IDM.get_user(user_info.id)
+      idm_module().get_user(user_info.id)
       |> case do
         {:ok, user_data} -> Eduplaces.UserInfo.from_idm_details(user_data)
         {:error, _reason} -> user_info
@@ -370,7 +373,7 @@ defmodule Lotta.Accounts do
     |> Repo.insert(prefix: tenant.prefix)
     |> case do
       {:ok, user} ->
-        Storage.create_new_user_directories(user)
+        storage_module().create_new_user_directories(user)
         {:ok, user}
 
       {:error, changeset} ->
@@ -663,4 +666,7 @@ defmodule Lotta.Accounts do
   def delete_device(device) do
     Repo.delete(device)
   end
+
+  defp idm_module, do: Application.get_env(:lotta, :idm_module, Lotta.Eduplaces.IDM)
+  defp storage_module, do: Application.get_env(:lotta, :storage_module, Lotta.Storage)
 end

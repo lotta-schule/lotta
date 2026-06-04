@@ -1,0 +1,48 @@
+@use "breakpoints" as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+
+  @media screen and (min-width: $min-md) {
+    position: sticky;
+    top: 72px;
+
+    &.hasSecondNavigation {
+      // TODO: Are these hardcoded values fallen from heaven really clever?
+      top: 112px;
+    }
+  }
+
+  @media screen and (max-width: $max-sm) {
+    margin-bottom: calc(1em + var(--lotta-spacing)); // make space for footer
+    height: calc(100% - calc(1em + var(--lotta-spacing)));
+  }
+
+  .WidgetTabbar {
+    height: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background-color: rgba(var(--lotta-box-background-color), 1);
+
+    .WidgetTab {
+      border-radius: 0 !important;
+      margin-bottom: 0;
+
+      &:not([aria-selected="true"]) {
+        filter: grayscale(0.9);
+        opacity: 0.5;
+      }
+    }
+  }
+
+  .swipeableViewsContainer {
+    flex-grow: 1;
+    flex-shrink: 1;
+
+    & > div {
+      height: calc(100% - calc(var(--lotta-spacing) / 2));
+    }
+  }
+}

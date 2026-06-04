@@ -1,1 +1,1 @@
-export * from './UserArticlesDialog';
+export * from './UserArticlesDialog.js';

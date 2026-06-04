@@ -1,5 +1,5 @@
-import { render } from 'test/util';
-import { AdminPageTitle } from './AdminPageTitle';
+import { render } from '#/test/util.js';
+import { AdminPageTitle } from './AdminPageTitle.js';
 
 vi.mock('@fortawesome/react-fontawesome', async () => ({
   ...vi.importActual('@fortawesome/react-fontawesome'),

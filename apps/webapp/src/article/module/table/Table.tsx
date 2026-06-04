@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Edit } from './Edit';
-import { Show } from './Show';
-import { ContentModuleComponentProps } from '../ContentModule';
+import { Edit } from './Edit.js';
+import { Show } from './Show.js';
+import { ContentModuleComponentProps } from '../ContentModule.js';
 
 import styles from './Table.module.scss';
 

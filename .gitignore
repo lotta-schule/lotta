@@ -7,6 +7,8 @@ npm-debug.log*
 # testing
 coverage/
 .auth/
+__screenshots__/
+.vitest/
 
 # caches
 .eslintcache
@@ -53,3 +55,6 @@ nx-cloud.env
 # Next.js
 .next
 out
+
+# AI
+**/.claude/worktrees

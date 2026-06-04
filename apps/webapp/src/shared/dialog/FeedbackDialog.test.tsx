@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { SomeUser } from 'test/fixtures';
-import { FeedbackDialog } from './FeedbackDialog';
-import userEvent from '@testing-library/user-event';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { SomeUser } from '#/test/fixtures/index.js';
+import { FeedbackDialog } from './FeedbackDialog.js';
 
-import CreateFeedbackMutation from 'api/mutation/CreateFeedbackMutation.graphql';
+import CreateFeedbackMutation from '#/api/mutation/CreateFeedbackMutation.graphql';
 
 const metadata = [
   `User-Agent: ${navigator.userAgent}`,

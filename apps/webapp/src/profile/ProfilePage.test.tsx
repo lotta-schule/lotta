@@ -1,25 +1,37 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { SomeUser, adminGroup, elternGroup, lehrerGroup } from 'test/fixtures';
-import { ProfilePage } from './ProfilePage';
-import userEvent from '@testing-library/user-event';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import {
+  SomeUser,
+  adminGroup,
+  elternGroup,
+  lehrerGroup,
+} from '#/test/fixtures/index.js';
+import { ProfilePage } from './ProfilePage.js';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
-import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
+import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import UpdateProfileMutation from '#/api/mutation/UpdateProfileMutation.graphql';
+import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
+import GetFeedbackOverviewQuery from '#/api/query/GetFeedbackOverviewQuery.graphql';
 
 describe('shared/layouts/profileLayout/ProfileData', () => {
   describe('show userAvatar data', () => {
     it('should show an input with the username', async () => {
-      const screen = render(<ProfilePage />, {}, { currentUser: SomeUser });
+      const screen = render(
+        <ProfilePage user={SomeUser} />,
+        {},
+        { currentUser: SomeUser }
+      );
       expect(await screen.findByLabelText(/vor- und nachname/i)).toHaveValue(
         'Ernesto Guevara'
       );
     });
 
     it("should show a disabled input with the userAvatar's email", async () => {
-      const screen = render(<ProfilePage />, {}, { currentUser: SomeUser });
+      const screen = render(
+        <ProfilePage user={SomeUser} />,
+        {},
+        { currentUser: SomeUser }
+      );
       expect(await screen.findByLabelText(/Email-Adresse/i)).toHaveValue(
         'userAvatar@lotta.schule'
       );
@@ -27,7 +39,11 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
     });
 
     it("should show an input with the userAvatar's name, nickname and class", async () => {
-      const screen = render(<ProfilePage />, {}, { currentUser: SomeUser });
+      const screen = render(
+        <ProfilePage user={SomeUser} />,
+        {},
+        { currentUser: SomeUser }
+      );
       expect(await screen.findByLabelText(/vor- und nachname/i)).toHaveValue(
         'Ernesto Guevara'
       );
@@ -36,7 +52,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
 
     it('should check the corresponding checkbox if userAvatar is hiding his full name', async () => {
       const screen = render(
-        <ProfilePage />,
+        <ProfilePage user={{ ...SomeUser, hideFullName: true }} />,
         {},
         {
           currentUser: { ...SomeUser, hideFullName: true },
@@ -85,7 +101,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
         },
       ];
       const screen = render(
-        <ProfilePage />,
+        <ProfilePage user={SomeUser} />,
         {},
         {
           currentUser: SomeUser,
@@ -122,7 +138,13 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
   describe('User groups', () => {
     it("should show all the userAvatar's groups", async () => {
       const screen = render(
-        <ProfilePage />,
+        <ProfilePage
+          user={{
+            ...SomeUser,
+            groups: [adminGroup, lehrerGroup, elternGroup],
+            assignedGroups: [adminGroup, lehrerGroup],
+          }}
+        />,
         {},
         {
           currentUser: {
@@ -158,7 +180,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
     it('should open the file selection dialog when "Change profile picture" is selected', async () => {
       const fireEvent = userEvent.setup();
       const screen = render(
-        <ProfilePage />,
+        <ProfilePage user={{ ...SomeUser, hideFullName: true }} />,
         {},
         {
           currentUser: { ...SomeUser, hideFullName: true },
@@ -190,7 +212,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
     it('should open the change password dialog when the change password button is clicked', async () => {
       const fireEvent = userEvent.setup();
       const screen = render(
-        <ProfilePage />,
+        <ProfilePage user={{ ...SomeUser, hideFullName: true }} />,
         {},
         {
           currentUser: { ...SomeUser, hideFullName: true },
@@ -215,7 +237,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
     it('should open the change email dialog when the change email button is clicked', async () => {
       const fireEvent = userEvent.setup();
       const screen = render(
-        <ProfilePage />,
+        <ProfilePage user={SomeUser} />,
         {},
         {
           currentUser: SomeUser,

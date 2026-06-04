@@ -9,13 +9,13 @@ import {
   Label,
 } from '@lotta-schule/hubert';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { useMutation } from '@apollo/client';
-import { FeedbackModel } from 'model';
-import { Icon } from 'shared/Icon';
+import { useMutation } from '@apollo/client/react';
+import { FeedbackModel } from '#/model/index.js';
+import { Icon } from '#/shared/Icon.js';
 
 import styles from './RespondToFeedbackDialog.module.scss';
 
-import RespondToFeedbackMutation from 'api/mutation/RespondToFeedbackMutation.graphql';
+import RespondToFeedbackMutation from '#/api/mutation/RespondToFeedbackMutation.graphql';
 
 export interface RespondToFeedbackDialogProps {
   feedback: FeedbackModel;

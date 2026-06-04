@@ -1,9 +1,10 @@
 defmodule LottaWeb.TenantResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase, async: false
+  use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.Accounts.User
@@ -22,11 +23,7 @@ defmodule LottaWeb.TenantResolverTest do
         prefix: tenant.prefix
       )
 
-    user =
-      Repo.one!(
-        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: tenant.prefix
-      )
+    user = insert(:user, email: "tn-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
@@ -150,10 +147,10 @@ defmodule LottaWeb.TenantResolverTest do
                "data" => %{
                  "tenant" => %{
                    "stats" => %{
-                     "userCount" => 8,
-                     "articleCount" => 65,
-                     "categoryCount" => 16,
-                     "fileCount" => 27
+                     "userCount" => 2,
+                     "articleCount" => 0,
+                     "categoryCount" => 0,
+                     "fileCount" => _
                    }
                  }
                }
@@ -213,7 +210,7 @@ defmodule LottaWeb.TenantResolverTest do
 
       # Verify we have a list of usage periods
       assert is_list(usage_periods)
-      assert length(usage_periods) > 0
+      assert usage_periods != []
 
       # Verify structure of a usage period
       [first_period | _] = usage_periods

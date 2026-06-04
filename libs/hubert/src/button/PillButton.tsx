@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from './Button';
+import { Button, ButtonProps } from './Button.js';
 import clsx from 'clsx';
 
 import styles from './PillButton.module.scss';

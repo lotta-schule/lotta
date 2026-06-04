@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/alexis/development/lotta/lotta/**)",
+      "Bash(bun test:*)",
+      "Bash(bun lint:*)",
+      "Bash(bun typecheck:*)",
+      "Bash(find:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -51,6 +51,6 @@ defmodule LottaWeb.ConnCase do
   """
   def build_tenant_conn([slug: slug] \\ [slug: "test"]) do
     Phoenix.ConnTest.build_conn()
-    |> Plug.Conn.put_req_header("tenant", "slug:#{slug}")
+    |> Plug.Conn.put_req_header("x-lotta-tenant", "slug:#{slug}")
   end
 end

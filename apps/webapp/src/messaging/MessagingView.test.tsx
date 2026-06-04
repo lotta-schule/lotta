@@ -5,18 +5,16 @@ import {
   KeinErSieEsUser,
   SomeUser,
   SomeUserin,
-} from 'test/fixtures';
-import { render, waitFor } from 'test/util';
-import { MessagingView } from './MessagingView';
-
-import userEvent from '@testing-library/user-event';
+} from '#/test/fixtures/index.js';
+import { render, waitFor, userEvent } from '#/test/util.js';
+import { MessagingView } from './MessagingView.js';
 
 import styles from './ConversationPreview.module.scss';
 
-import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
-import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
-import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
-import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
+import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
+import GetConversationQuery from '#/api/query/GetConversationQuery.graphql';
+import SearchUsersQuery from '#/api/query/SearchUsersQuery.graphql';
+import SendMessageMutation from '#/api/mutation/SendMessageMutation.graphql';
 
 describe('src/messaging/MessagingView', () => {
   const conversations = [
@@ -37,7 +35,7 @@ describe('src/messaging/MessagingView', () => {
     })),
     ...['Lui', 'Michel']
       .map((fullTerm) => {
-        return new Array(fullTerm.length)
+        return Array.from({ length: fullTerm.length })
           .fill(null)
           .map((_, i) => fullTerm.slice(0, i + 1));
       })

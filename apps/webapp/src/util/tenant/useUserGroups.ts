@@ -1,5 +1,5 @@
-import { useSuspenseQuery } from '@apollo/client';
-import { graphql, ResultOf } from 'api/graphql';
+import { useSuspenseQuery } from '@apollo/client/react';
+import { graphql, ResultOf } from '#/api/graphql.js';
 
 export const GET_USER_GROUPS = graphql(`
   query GetUserGroups {

@@ -121,7 +121,7 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
       assert is_binary(html)
       # Should contain plan information
       plan_items = Enum.filter(invoice.items, &(&1.type == "plan"))
-      assert length(plan_items) > 0
+      assert plan_items != []
     end
 
     test "renders invoice with customer information", %{tenant: tenant} do
@@ -239,13 +239,14 @@ defmodule Lotta.Billings.InvoiceIntegrationTest do
       {:ok, invoice2} = Billings.generate_invoice(tenant, 2025, 11)
       {:ok, invoice3} = Billings.generate_invoice(tenant, 2025, 12)
 
-      # Extract numbers
+      # Extract numbers — verify monotonically increasing (not necessarily +1 since
+      # the sequence is shared across concurrent test transactions)
       num1 = String.replace(invoice1.invoice_number, "LTA", "") |> String.to_integer()
       num2 = String.replace(invoice2.invoice_number, "LTA", "") |> String.to_integer()
       num3 = String.replace(invoice3.invoice_number, "LTA", "") |> String.to_integer()
 
-      assert num2 == num1 + 1
-      assert num3 == num2 + 1
+      assert num2 > num1
+      assert num3 > num2
     end
 
     test "invoice numbers are unique across tenants", %{tenant: _tenant} do

@@ -1,5 +1,4 @@
 'use client';
-
 import * as React from 'react';
 import {
   format,
@@ -16,15 +15,15 @@ import { de } from 'date-fns/locale';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { invariant } from '@epic-web/invariant';
 import { useTranslation } from 'react-i18next';
-import { CalendarToolbar } from './CalendarToolbar';
-import { useLazyQuery, useApolloClient } from '@apollo/client';
-import { CalendarContext } from './CalendarContext';
-import { useUnfoldedEvents } from '../_hook';
-import { ResultOf } from 'api/graphql';
-import { EditEventDialog } from './EditEventDialog';
-import { CalendarEventWrapper } from './CalendarEventWrapper';
+import { CalendarToolbar } from './CalendarToolbar.js';
+import { useApolloClient, useLazyQuery } from '@apollo/client/react';
+import { CalendarContext } from './CalendarContext.js';
+import { useUnfoldedEvents } from '../_hook/index.js';
+import { ResultOf } from '#/api/graphql.js';
+import { EditEventDialog } from './EditEventDialog.js';
+import { CalendarEventWrapper } from './CalendarEventWrapper.js';
 
-import { GET_CALENDAR_EVENTS, GET_CALENDARS } from '../_graphql';
+import { GET_CALENDAR_EVENTS, GET_CALENDARS } from '../_graphql/index.js';
 
 import './CalendarView.scss';
 

@@ -4,9 +4,9 @@ defmodule LottaWeb.OAuthController do
   alias Lotta.{Accounts, Tenants, Repo}
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
-  alias Lotta.Eduplaces.{AuthCodeStrategy, UserInfo}
+  alias Lotta.Eduplaces.UserInfo
   alias LottaWeb.Urls
-  alias LottaWeb.Auth.AccessToken
+  alias LottaWeb.Auth.{AccessToken, CookieHelper}
 
   require Logger
 
@@ -14,6 +14,7 @@ defmodule LottaWeb.OAuthController do
     state = UUID.uuid4()
 
     conn
+    |> maybe_put_mobile_app_cookie()
     |> put_resp_cookie("ep_login_state", state,
       http_only: true,
       signed: true,
@@ -22,7 +23,8 @@ defmodule LottaWeb.OAuthController do
       max_age: 10 * 60
     )
     |> redirect(
-      external: AuthCodeStrategy.authorize_url!(state: state, login_hint: params["login_hint"])
+      external:
+        auth_code_strategy().authorize_url!(state: state, login_hint: params["login_hint"])
     )
   end
 
@@ -112,21 +114,13 @@ defmodule LottaWeb.OAuthController do
     with {:ok, claims} <- AccessToken.decode_and_verify(token, %{"typ" => "hisec"}),
          {:ok, user} <- AccessToken.resource_from_claims(claims),
          true <- claims["tid"] == tenant.id || {:error, :no_tenant_match},
-         {:ok, refresh_token, _claims} <-
-           AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
-      return_url =
-        params["return_url"] ||
-          "/"
+         {:ok, access_token, _} <- AccessToken.encode_and_sign(user, %{}, token_type: "access"),
+         {:ok, refresh_token, _} <- AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
+      return_url = params["return_url"] || "/"
 
       conn
-      |> delete_resp_cookie("SignInAccessToken",
-        same_site: "Lax"
-      )
-      |> put_resp_cookie("SignInRefreshToken", refresh_token,
-        max_age: 21 * 24 * 60 * 60,
-        http_only: true,
-        same_site: "Lax"
-      )
+      |> CookieHelper.put_access_token(access_token)
+      |> CookieHelper.put_refresh_token(refresh_token)
       |> redirect(to: return_url)
     else
       {:error, reason} ->
@@ -134,6 +128,7 @@ defmodule LottaWeb.OAuthController do
 
         conn
         |> put_status(:unauthorized)
+        |> CookieHelper.delete_tokens()
         |> render(:bad_request,
           title: gettext("Unauthorized"),
           message: gettext("You are not authorized to access this resource.")
@@ -162,14 +157,14 @@ defmodule LottaWeb.OAuthController do
     end
 
     cond do
+      is_nil(tenant) and role != :teacher ->
+        {:error, :not_a_teacher}
+
       is_nil(tenant) ->
         {:error, :tenant_not_found}
 
       is_nil(eduplaces_id) ->
         {:error, :invalid_user_info}
-
-      role != :teacher ->
-        {:error, :not_a_teacher}
 
       true ->
         with {:ok, user} <- Accounts.get_or_create_eduplaces_user(tenant, user_info) do
@@ -182,7 +177,7 @@ defmodule LottaWeb.OAuthController do
           Plug.Conn.t() | {:error, any()}
   defp receive_valid_eduplaces_callback(conn, params) do
     {_token, user} =
-      AuthCodeStrategy.get_token!(params)
+      auth_code_strategy().get_token!(params)
 
     Logger.info("Received Eduplaces callback for user #{inspect(user)}")
 
@@ -252,20 +247,42 @@ defmodule LottaWeb.OAuthController do
     end
   end
 
-  defp login_on_tenant(conn, user, tenant, return_url \\ nil) do
-    AccessToken.encode_and_sign(user, %{}, token_type: "hisec")
-    |> case do
-      {:ok, token, _claims} ->
-        target_uri =
+  defp auth_code_strategy,
+    do: Application.get_env(:lotta, :auth_code_strategy_module, Lotta.Eduplaces.AuthCodeStrategy)
+
+  defp maybe_put_mobile_app_cookie(conn) do
+    if (get_req_header(conn, "x-lotta-app-version") || []) != [] do
+      put_resp_cookie(conn, "mobile_app", "true",
+        http_only: true,
+        same_site: "Lax",
+        max_age: 365 * 24 * 60 * 60
+      )
+    else
+      conn
+    end
+  end
+
+  defp login_on_tenant(conn, user, tenant, return_path \\ nil) do
+    is_mobile_app = mobile_app?(conn)
+
+    case get_user_tokens(user, is_mobile_app) do
+      {:ok, {token, refresh_token}} ->
+        redirect_url =
           tenant
-          |> Urls.get_tenant_uri()
+          |> get_target_base_uri(is_mobile_app)
           |> URI.append_path("/auth/callback")
           |> URI.append_query("token=#{token}")
-          |> URI.append_query("return_url=#{URI.encode(return_url || "/")}")
+          |> then(fn
+            uri when not is_nil(refresh_token) ->
+              URI.append_query(uri, "refresh_token=#{refresh_token}")
+
+            uri ->
+              uri
+          end)
+          |> URI.append_query("return_url=#{URI.encode(return_path || "/")}")
           |> URI.to_string()
 
-        conn
-        |> redirect(external: target_uri)
+        redirect(conn, external: redirect_url)
 
       {:error, reason} ->
         Logger.error("Failed to generate access token: #{inspect(reason)}")
@@ -278,4 +295,28 @@ defmodule LottaWeb.OAuthController do
         )
     end
   end
+
+  defp mobile_app?(conn),
+    do:
+      conn
+      |> fetch_cookies()
+      |> Map.get(:cookies, %{})
+      |> Map.get("mobile_app") == "true"
+
+  defp get_user_tokens(user, true) do
+    with {:ok, token, _claims} <- AccessToken.encode_and_sign(user, %{}, token_type: "access"),
+         {:ok, refresh_token, _claims} <-
+           AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
+      {:ok, {token, refresh_token}}
+    end
+  end
+
+  defp get_user_tokens(user, false) do
+    with {:ok, token, _claims} <- AccessToken.encode_and_sign(user, %{}, token_type: "hisec") do
+      {:ok, {token, nil}}
+    end
+  end
+
+  defp get_target_base_uri(tenant, true), do: URI.new!("lotta://#{tenant.slug}")
+  defp get_target_base_uri(tenant, false), do: Urls.get_tenant_uri(tenant)
 end

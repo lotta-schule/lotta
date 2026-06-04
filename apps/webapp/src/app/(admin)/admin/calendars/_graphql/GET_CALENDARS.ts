@@ -1,4 +1,4 @@
-import { graphql } from 'api/graphql';
+import { graphql } from '#/api/graphql.js';
 
 export const CALENDAR_FRAGMENT = graphql(`
   fragment CalendarFragment on Calendar @_unmask {

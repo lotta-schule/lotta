@@ -6,7 +6,8 @@ defmodule CockpitWeb.Live.InvoiceLive do
       schema: Lotta.Billings.Invoice,
       repo: Lotta.Repo
     ],
-    layout: {CockpitWeb.Layouts, :admin}
+    layout: {CockpitWeb.Layouts, :admin},
+    init_order: %{by: :created_at, direction: :desc}
 
   import Ecto.Query
 
@@ -91,7 +92,7 @@ defmodule CockpitWeb.Live.InvoiceLive do
     <iframe
       src={get_html_src(@item)}
       onLoad="this.style.height=this.contentWindow.document.body.scrollHeight +'px';"
-      style="width: min(80%, 794px); aspect-ratio: 210 / 297; border: none; zoom: .75; padding: 1em;"
+      style="width: min(80%, 794px); aspect-ratio: 1 / 1.414; border: none; zoom: .75; padding: 1em;"
     />
     """
   end
@@ -102,7 +103,7 @@ defmodule CockpitWeb.Live.InvoiceLive do
     ~H"""
     <iframe
       src={@pdf_src}
-      style="width: min(80%, 794px); border: none; zoom: .75; padding: 1em;"
+      style="width: min(80%, 794px); aspect-ratio: 1 / 1.414; border: none; padding: 1em;"
     />
     <a
       :if={String.starts_with?(@pdf_src, "data:application")}

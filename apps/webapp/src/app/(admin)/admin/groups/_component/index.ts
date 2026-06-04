@@ -1,3 +1,3 @@
-export * from './CreateUserGroupDialog';
-export * from './EditUserGroup';
-export * from './DeleteUserGroupDialog';
+export * from './CreateUserGroupDialog.js';
+export * from './EditUserGroup.js';
+export * from './DeleteUserGroupDialog.js';

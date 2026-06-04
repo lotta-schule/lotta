@@ -1,32 +1,54 @@
 import Config
 
-format =
-  case config_env() do
-    :test -> "[$level] $message\n"
-    :dev -> "[$level] $message\n"
-    _ -> "$time $metadata[$level] $message\n"
+json_logging = config_env() not in [:dev, :test]
+
+IO.inspect(config_env(), label: "Config environment")
+
+default_log_level =
+  cond do
+    json_logging -> :warning
+    config_env() == :test -> :warning
+    true -> :debug
   end
 
-level =
-  case config_env() do
-    :dev -> :debug
-    _ -> :warning
-  end
-
-config :logger, :console,
-  format: format,
-  level: level,
-  metadata: [:request_id, :trace_id, :span_id],
-  backends: [:console, Sentry.LoggerBackend]
-
-config :lotta, :logger, [
-  {:handler, :sentry, Sentry.LoggerHandler,
-   %{
-     config: %{
-       metadata: [:file, :line, :request_id, :trace_id, :span_id],
-       rate_limiting: [max_events: 10, interval: _1_second = 1_000],
-       capture_log_messages: true,
-       level: :error
-     }
-   }}
+metadata_keys = [
+  :version,
+  :env,
+  :application,
+  :registered_name,
+  :initial_call,
+  :pid,
+  :mfa,
+  :module,
+  :function,
+  :file,
+  :line,
+  :domain,
+  :crash_reason,
+  :error,
+  :reason,
+  :tenant_id,
+  :tenant_slug,
+  :tenant_prefix,
+  :user_id,
+  :request_id,
+  :message_id,
+  :conversation_id
 ]
+
+config :logger,
+  handle_otp_reports: true,
+  handle_sasl_reports: true
+
+config :logger_json, encoder: JSON
+
+if not json_logging do
+  config :logger, level: default_log_level
+
+  config :logger, :default_formatter,
+    format: "[$level] $message\n",
+    metadata: metadata_keys
+else
+  config :logger, :default_handler,
+    formatter: {LoggerJSON.Formatters.Basic, [metadata: metadata_keys, level: default_log_level]}
+end

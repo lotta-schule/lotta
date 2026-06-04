@@ -14,6 +14,12 @@ defmodule LottaWeb.Endpoint do
     same_site: "Lax"
   ]
 
+  plug(:fetch_cookies)
+  plug(LottaWeb.TenantPlug)
+  plug(LottaWeb.Plugs.InjectAccessTokenFromCookie)
+  plug(LottaWeb.Auth.Pipeline)
+  plug(LottaWeb.Context)
+
   socket("/api/user-socket", LottaWeb.UserSocket,
     websocket: [check_origin: false],
     longpoll: [check_origin: false]
@@ -28,6 +34,8 @@ defmodule LottaWeb.Endpoint do
     websocket: [check_origin: false],
     longpoll: [check_origin: false]
   )
+
+  plug(Plug.Telemetry, event_prefix: [:lotta, :plug])
 
   # Serve at "/" the static files from "priv/static" directory.
   #

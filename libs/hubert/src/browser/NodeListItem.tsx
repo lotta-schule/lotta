@@ -1,21 +1,21 @@
 import * as React from 'react';
 import { useDropzone } from 'react-dropzone';
-import { PopoverContent } from '../popover';
-import { Menu } from '../menu';
-import { Folder, FolderOpen } from '../icon';
-import { Checkbox } from '../form';
-import { Popover, VirtualTrigger } from '../popover';
-import { useIsMobile } from '../util';
-import { FileIcon } from './FileIcon';
+import { PopoverContent } from '../popover/index.js';
+import { Menu } from '../menu/index.js';
+import { Folder, FolderOpen } from '../icon/index.js';
+import { Checkbox } from '../form/index.js';
+import { Popover, VirtualTrigger } from '../popover/index.js';
+import { useIsMobile } from '../util/index.js';
+import { FileIcon } from './FileIcon.js';
 import {
   BrowserNode,
   BrowserPath,
   useBrowserState,
-} from './BrowserStateContext';
-import { NodeRenameInput } from './NodeRenameInput';
-import { NodeMenuButton } from './NodeMenuButton';
-import { isDirectoryNode } from './utils';
-import { useNodeMenuProps } from './useNodeMenuProps';
+} from './BrowserStateContext.js';
+import { NodeRenameInput } from './NodeRenameInput.js';
+import { NodeMenuButton } from './NodeMenuButton.js';
+import { isDirectoryNode } from './utils.js';
+import { useNodeMenuProps } from './useNodeMenuProps.js';
 import { type ClientRectObject } from '@floating-ui/react';
 import clsx from 'clsx';
 

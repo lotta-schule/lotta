@@ -9,7 +9,7 @@ import {
   FileTable,
   FileText,
   FileVideo,
-} from '../icon';
+} from '../icon/index.js';
 
 export type FileIconProps = {
   mimeType?: string;

@@ -1,4 +1,4 @@
-import { graphql } from 'api/graphql';
+import { graphql } from '#/api/graphql.js';
 
 export const DELETE_CALENDAR_EVENT = graphql(`
   mutation DELETE_CALENDAR_EVENT($id: ID!) {

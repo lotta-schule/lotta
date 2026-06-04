@@ -4,7 +4,7 @@ defmodule Lotta.MixProject do
   def project do
     [
       app: :lotta,
-      version: "6.1.17",
+      version: "6.1.21",
       name: "Lotta API Server",
       source_url: "https://github.com/lotta-schule/core",
       homepage_url: "https://lotta.schule",
@@ -26,6 +26,7 @@ defmodule Lotta.MixProject do
         output: "coverage"
       ],
       preferred_cli_env: [
+        test: :test,
         coveralls: :test,
         "coveralls.json": :test,
         "coveralls.detail": :test,
@@ -119,14 +120,14 @@ defmodule Lotta.MixProject do
       {:image, "~> 0.55"},
       {:exile, "~> 0.12.0"},
       {:ffmpex, "~> 0.11"},
-      {:oban, "~> 2.19"},
+      {:oban, "~> 2.21"},
       {:oban_web, "~> 2.11"},
       {:backpex, "~> 0.16.3"},
       # Test
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.14", only: :test},
       {:junit_formatter, "~> 3.2", only: :test},
-      {:mock, "~> 0.3", only: :test},
+      {:mox, "~> 1.0", only: :test},
       # Development
       {:phoenix_live_reload, "~> 1.6", only: :dev},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
@@ -156,7 +157,9 @@ defmodule Lotta.MixProject do
       {:opentelemetry_phoenix, "~> 2.0"},
       {:opentelemetry_tesla, "~> 2.4.0"},
       {:opentelemetry_semantic_conventions, "~> 1.27", override: true},
-      {:kadabra, github: "ptitmouton/kadabra", branch: "otp-28-support", override: true}
+      {:kadabra, github: "ptitmouton/kadabra", branch: "otp-28-support", override: true},
+      # logging
+      {:logger_json, "~> 7.0"}
     ]
   end
 

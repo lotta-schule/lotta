@@ -1,13 +1,13 @@
 import { Mock, MockedFunction } from 'vitest';
 import { createLink } from 'apollo-v3-absinthe-upload-link';
-import { createCustomFetch } from '../customFetch';
-import { appConfig } from 'config';
-import { isBrowser } from 'util/isBrowser';
-import { createHttpLink } from './httpLink';
+import { createCustomFetch } from '../customFetch.js';
+import { appConfig } from '#/config.js';
+import { isBrowser } from '#/util/isBrowser.js';
+import { createHttpLink } from './httpLink.js';
 
 vi.mock('apollo-v3-absinthe-upload-link');
-vi.mock('../customFetch');
-vi.mock('util/isBrowser');
+vi.mock('../customFetch.js');
+vi.mock('#/util/isBrowser.js');
 
 const appConfigGet = vi.spyOn(appConfig, 'get');
 
@@ -34,7 +34,7 @@ describe('createHttpLink', () => {
       requestExtraHeaders: requestExtraHeadersMock,
     });
     expect(mockCreateLink).toHaveBeenCalledWith({
-      uri: 'http://localhost:4000/api',
+      uri: '/api',
       fetch: customFetchMock,
     });
     expect(result).toBe(mockCreateLink.mock.results[0].value);

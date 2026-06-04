@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import {
   faCirclePlus,
@@ -22,25 +23,25 @@ import {
   MenuButton,
   Item,
 } from '@lotta-schule/hubert';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
+import { Icon } from '#/shared/Icon.js';
+import { ArticleModel } from '#/model/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { Article, User } from '#/util/model/index.js';
+import { LoginDialog } from '#/shared/dialog/login/index.js';
+import { RegisterDialog } from '#/shared/dialog/RegisterDialog.js';
+import { FeedbackDialog } from '#/shared/dialog/FeedbackDialog.js';
+import { useNewFeedbackCount } from '#/util/feedback/index.js';
+import { CreateArticleDialog } from '#/shared/dialog/CreateArticleDialog.js';
+import { CurrentUserAvatar } from '#/shared/userAvatar/UserAvatar.js';
+import { useRouter } from 'next/navigation.js';
+import { redirectTo } from '#/util/browserLocation.js';
+import { useTenant } from '#/util/tenant/useTenant.js';
 import { useTranslation } from 'react-i18next';
-import { Icon } from 'shared/Icon';
-import { ArticleModel } from 'model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Article, User } from 'util/model';
-import { LoginDialog } from 'shared/dialog/login';
-import { RegisterDialog } from 'shared/dialog/RegisterDialog';
-import { FeedbackDialog } from 'shared/dialog/FeedbackDialog';
-import { useOnLogout } from 'util/user/useOnLogout';
-import { useNewFeedbackCount } from 'util/feedback';
-import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
-import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
-import { useTenant } from 'util/tenant';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
+import Link from 'next/link.js';
 import clsx from 'clsx';
 
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticlesQuery.graphql';
+import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
 
 import styles from './UserNavigation.module.scss';
 
@@ -59,8 +60,6 @@ export const UserNavigation = React.memo(() => {
 
   const newFeedbackBadgeNumber = useNewFeedbackCount();
 
-  const onLogout = useOnLogout();
-
   const [loginModalIsOpen, setLoginModalIsOpen] = React.useState(false);
   const [feedbackModalIsOpen, setFeedbackModalIsOpen] = React.useState(false);
   const [registerModalIsOpen, setRegisterModalIsOpen] = React.useState(false);
@@ -76,30 +75,28 @@ export const UserNavigation = React.memo(() => {
       switch (action) {
         case 'profile':
           router.push('/profile');
-          break;
+          return;
         case 'files':
           router.push('/profile/files');
-          break;
+          return;
         case 'own-articles':
           router.push('/profile/articles');
-          break;
+          return;
         case 'feedback':
           setFeedbackModalIsOpen(true);
-          break;
+          return;
         case 'administration':
           router.push('/admin');
-          break;
+          return;
         case 'unpublished':
           router.push('/unpublished');
-          break;
+          return;
         case 'logout':
-          onLogout();
-          break;
-        default:
-          throw new Error('Action is not supported!');
+          redirectTo('/auth/logout');
+          return;
       }
     },
-    [router, onLogout]
+    [router]
   );
 
   const nav = React.useMemo(() => {
@@ -107,7 +104,7 @@ export const UserNavigation = React.memo(() => {
       return (
         <div className={styles.loggedInContainer}>
           <div className={styles.avatarContainer}>
-            <CurrentUserAvatar size={100} />
+            <CurrentUserAvatar size={90} />
           </div>
           <nav>
             <NavigationButton

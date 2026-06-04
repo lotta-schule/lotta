@@ -1,3 +1,3 @@
-export * from './MenuButton';
-export { Item } from './MenuItem';
-export * from './Menu';
+export * from './MenuButton.js';
+export { Item } from './MenuItem.js';
+export * from './Menu.js';

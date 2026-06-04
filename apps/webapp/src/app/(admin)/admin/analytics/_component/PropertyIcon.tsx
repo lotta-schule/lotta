@@ -1,5 +1,5 @@
 import React from 'react';
-import { propertyIconData } from './propertyIconData';
+import { propertyIconData } from './propertyIconData.js';
 
 export type PropertyIconProps = {
   name: keyof typeof propertyIconData;

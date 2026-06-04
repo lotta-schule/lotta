@@ -10,6 +10,9 @@ services:
     ports:
       - '5432:5432'
       - '5433:5433'
+    depends_on:
+      minio-setup:
+        condition: service_completed_successfully
 
   redis:
     extends:
@@ -23,10 +26,15 @@ services:
       file: './docker-compose.services.base.yaml'
       service: minio
     volumes:
-      - ./_data/minio:/bitnami/minio/data
+      - ./_data/minio:/data
     ports:
       - 9000:9000
       - 9001:9001
+
+  minio-setup:
+    extends:
+      file: './docker-compose.services.base.yaml'
+      service: minio-setup
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -37,8 +45,10 @@ services:
       PGADMIN_SERVER_JSON_FILE: /tmp/server.json
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    restart: always
     ports:
-      - '8432:80'
+      - 8888:80
     volumes:
+      - /var/lib/pgadmin
+      - ./:/files
       - ./pgadmin.json:/tmp/server.json:ro
-      - ~/Downloads:/home/downloads:ro

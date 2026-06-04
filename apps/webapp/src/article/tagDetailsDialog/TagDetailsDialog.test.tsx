@@ -1,8 +1,8 @@
-import { render, waitFor } from 'test/util';
-import { Weihnachtsmarkt } from 'test/fixtures';
-import { TagDetailsDialog } from './TagDetailsDialog';
+import { render, waitFor } from '#/test/util.js';
+import { Weihnachtsmarkt } from '#/test/fixtures/index.js';
+import { TagDetailsDialog } from './TagDetailsDialog.js';
 
-import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
+import GetArticlesForTag from '#/api/query/GetArticlesForTagQuery.graphql';
 
 describe('TagDetailsDialog', () => {
   const additionalMocks = [

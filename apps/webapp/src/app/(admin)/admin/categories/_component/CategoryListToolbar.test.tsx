@@ -1,17 +1,16 @@
-import * as React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { Mock, vi } from 'vitest';
-import { CategoryListToolbar } from './CategoryListToolbar';
-import { useRouter } from 'next/navigation';
-import { CreateCategoryDialogProps } from './CreateCategoryDialog';
+import { CategoryListToolbar } from './CategoryListToolbar.js';
+import { useRouter } from 'next/navigation.js';
+import { CreateCategoryDialogProps } from './CreateCategoryDialog.js';
 
 // Mock the router
-vi.mock('next/navigation', () => ({
+vi.mock('next/navigation.js', () => ({
   useRouter: vi.fn(),
 }));
 
 // Mock the CreateCategoryDialog component
-vi.mock('./CreateCategoryDialog', () => ({
+vi.mock('./CreateCategoryDialog.js', () => ({
   CreateCategoryDialog: ({
     isOpen,
     onAbort,

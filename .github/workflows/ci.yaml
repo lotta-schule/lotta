@@ -16,7 +16,7 @@ env:
   GITHUB_ACTIONS: true
 
 jobs:
-  pnpm-install:
+  bun-install:
     name: Install (and cache) dependencies
     runs-on: ubuntu-24.04
     steps:
@@ -25,24 +25,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24.5
-          cache: 'pnpm'
+          node-version: 25.2
 
-      - name: Install npm dependencies
-        run: pnpm install
+      - name: Install dependencies
+        run: bun install
 
   lint:
     name: Lint Code
     runs-on: ubuntu-24.04
-    needs: pnpm-install
+    needs: bun-install
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -56,16 +53,13 @@ jobs:
       - name: Setup NX
         uses: nrwl/nx-set-shas@v3
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.5
-          cache: 'pnpm'
 
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
@@ -73,22 +67,27 @@ jobs:
           otp-version: '28.0.2'
           elixir-version: '1.18.4'
 
-      - name: Install node dependencies
-        run: pnpm install
+      - name: Install dependencies
+        run: bun install
 
       - name: Lint
-        run: pnpm nx run-many -t lint
+        run: bunx nx run-many -t lint
 
       - name: Typecheck
-        run: pnpm nx run-many -t typecheck
+        run: bunx nx run-many -t typecheck
 
   tests:
     name: Run tests
     runs-on: ubuntu-24.04
-    needs: pnpm-install
+    needs: bun-install
+    env:
+      TZ: Europe/Berlin
+      LOCALE: de_DE.UTF-8
+      LANGUAGE: de
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:15.1
+        command: -c max_connections=500
         ports:
           - 5432:5432
         options: >-
@@ -105,8 +104,8 @@ jobs:
         ports:
           - 9000:9000
         env:
-          MINIO_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
-          MINIO_SECRET_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+          MINIO_ACCESS_KEY: minio
+          MINIO_SECRET_KEY: miniosecret
         options: >-
           --name minio
           --health-cmd "curl http://localhost:9000/minio/health/live"
@@ -123,16 +122,13 @@ jobs:
       - name: Setup NX
         uses: nrwl/nx-set-shas@v3
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.5
-          cache: 'pnpm'
 
       - uses: actions/cache@v4
         with:
@@ -151,26 +147,28 @@ jobs:
         with:
           alias-name: minio
           alias-url: http://localhost:9000
-          alias-access-key: AKIAIOSFODNN7EXAMPLE
-          alias-secret-key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+          alias-access-key: minio
+          alias-secret-key: miniosecret
 
       - run: |
-          mc mb minio/lotta-dev-ugc
-          mc anonymous set download minio/lotta-dev-ugc
+          mc mb minio/lotta-dev
+          mc anonymous set download minio/lotta-dev
 
-      - name: Install npm dependencies
-        run: pnpm install
+          mc mb minio/lotta-test
+          mc anonymous set download minio/lotta-test
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Install playwright browsers
+        run: |
+          bunx playwright install --with-deps chromium
 
       - name: Run Unit / Component tests
-        run: pnpm nx run-many -t test --configuration=coverage
+        run: bunx nx run-many -t test --configuration=coverage
         env:
           NODE_ENV: test
           MIX_ENV: test
-
-      # - name: Run end-to-end tests
-      #   run: |
-      #     pnpm exec playwright install --with-deps chromium
-      #     pnpm nx affected -t e2e --configuration=ci
 
       - name: Upload Tests for storybook-addon-theme
         uses: codecov/codecov-action@v5
@@ -208,6 +206,124 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
+  upload-report:
+    runs-on: ubuntu-24.04
+    if: ${{ always() }}
+    continue-on-error: true
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    needs:
+      - tests
+
+    strategy:
+      matrix:
+        project:
+          - app: apps/webapp
+            traces-artifact: web-vitest-traces
+            screenshot-artifact: web-vitest-screenshots
+          - app: libs/hubert
+            traces-artifact: hubert-vitest-traces
+            screenshot-artifact: hubert-vitest-screenshots
+    steps:
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@v1.9.0
+        with:
+          provider: scaleway
+          region: 'nl-ams'
+          access_key: ${{ secrets.PUBLIC_BUCKET_AWS_ACCESS_KEY_ID }}
+          secret_key: ${{ secrets.PUBLIC_BUCKET_AWS_SECRET_ACCESS_KEY }}
+
+      - name: Download traces reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ${{ matrix.project.traces-artifact }}
+          path: /tmp
+
+      - name: zip traces
+        if: hashFiles(format('/tmp/{0}/**/*.*', matrix.project.traces-artifact)) != ''
+        run: |
+          if [ -d "${{matrix.project.traces-artifact}}" ]; then
+            zip -r ${{matrix.project.traces-artifact}}.zip ${{matrix.project.traces-artifact}}
+          fi
+        working-directory: /tmp
+
+      - name: Upload HTML report to S3
+        id: upload-traces
+        run: |
+          export FILENAME="${{matrix.project.traces-artifact}}.zip"
+          export REPORT_PATH="/test/${{ github.base_ref || github.ref_name }}"
+          if [ ! -f /tmp/$FILENAME ]; then
+            echo "No traces to upload"
+            exit 0
+          fi
+
+          s3cmd put --acl-public --no-mime-magic --guess-mime-type  \
+            /tmp/$FILENAME \
+            s3://public-lotta-assets$REPORT_PATH/
+
+          echo "url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud$REPORT_PATH/$FILENAME" >> $GITHUB_OUTPUT
+
+      - name: Download screenshot reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp
+          pattern: ${{ matrix.project.screenshot-artifact }}
+          merge-multiple: true
+
+      - name: Upload Screenshots to S3
+        id: upload-screenshots
+        if: hashFiles(format('/tmp/{0}/*', matrix.project.screenshot-artifact)) != ''
+        run: |
+          export REPORT_PATH="/test/${{ github.base_ref || github.ref_name }}/${{ matrix.project.screenshot-artifact }}"
+          if [ ! -d /tmp/${{matrix.project.screenshot-artifact}} ]; then
+            echo "No screenshots to upload"
+            exit 0
+          fi
+
+          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
+            /tmp/${{matrix.project.screenshot-artifact}}/ \
+            s3://public-lotta-assets$REPORT_PATH/
+
+          echo "url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud$REPORT_PATH" >> $GITHUB_OUTPUT
+
+      - name: Create status comment
+        id: status-comment
+        run: |
+          OUTPUT_TEXT=""
+          if [ ! -z "${{ steps.upload-traces.outputs.url }}" ]; then
+            echo "### Traces" >> $OUTPUT_TEXT
+            echo "- [Playwright-style traces](${{ steps.upload-traces.outputs.url }})" >> $OUTPUT_TEXT
+          fi
+          if [ ! -z "${{ steps.upload-screenshots.outputs.url }}" ]; then
+            if [ ! -z "$OUTPUT_TEXT" ]; then
+              echo "" >> $OUTPUT_TEXT
+            fi
+            echo "### Screenshots" >> $OUTPUT_TEXT
+            echo "- [Screenshots](${{ steps.upload-screenshots.outputs.url }})" >> $OUTPUT_TEXT
+          fi
+
+          if [ ! -z "$OUTPUT_TEXT" ]; then
+            echo "### Component Test Report ${{ matrix.project.app }}" >> $OUTPUT_TEXT
+            echo "" >> $OUTPUT_TEXT
+          echo "text=$OUTPUT_TEXT" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment PR with execution number
+        uses: thollander/actions-comment-pull-request@v3
+        if: ${{ github.event_name == 'pull_request' && steps.status-comment.outputs.text != '' }}
+        with:
+          message: ${{ steps.status-comment.outputs.text }}
+          comment-tag: playwright-report
+
+      - name: Create commit comment
+        uses: peter-evans/commit-comment@v3
+        if: ${{ github.event_name == 'push' && steps.status-comment.outputs.text != '' }}
+        with:
+          body: ${{ steps.status-comment.outputs.text }}
+
   check-build:
     # We do not need to check the build for environments that are
     # to be deployed to a preview (or staging) environment shortly
@@ -215,7 +331,7 @@ jobs:
     # with the labels. Maybe github-api can be used to get the labels?
     name: Check the projects build
     runs-on: ubuntu-24.04
-    needs: pnpm-install
+    needs: bun-install
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -231,18 +347,15 @@ jobs:
         uses: nrwl/nx-set-shas@v3
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
-        with:
-          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
         with:
-          node-version: 24.5
-          cache: 'pnpm'
+          node-version: 25.2
 
       - name: Setup the BEAM and Elixir
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
@@ -251,10 +364,10 @@ jobs:
           otp-version: '28.0.2'
           elixir-version: '1.18.4'
 
-      - name: Install npm dependencies
+      - name: Install dependencies
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
-        run: pnpm install
+        run: bun install
 
       - name: Run build task
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
-        run: pnpm nx affected -t build
+        run: bunx nx affected -t build
