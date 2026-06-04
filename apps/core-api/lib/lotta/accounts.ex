@@ -168,6 +168,7 @@ defmodule Lotta.Accounts do
     |> search_user_apply_searchtext_filter(searchtext)
     |> search_user_apply_group_ids_filter(group_ids)
     |> search_user_apply_last_seen_filter(last_seen)
+    |> order_by([u], [u.name, u.email])
     |> Repo.all()
   end
 

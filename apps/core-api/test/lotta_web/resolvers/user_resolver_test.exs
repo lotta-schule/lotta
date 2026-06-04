@@ -811,24 +811,24 @@ defmodule LottaWeb.UserResolverTest do
                      "nickname" => nil
                    },
                    %{
-                     "email" => "ur-drevil@lotta.schule",
-                     "name" => "Dr Evil",
-                     "nickname" => "drEvil"
-                   },
-                   %{
-                     "email" => "ur-maxi@lotta.schule",
-                     "name" => "Max Mustermann",
-                     "nickname" => "MaXi"
-                   },
-                   %{
                      "email" => "ur-doro@lotta.schule",
                      "name" => "Dorothea Musterfrau",
                      "nickname" => "Doro"
                    },
                    %{
+                     "email" => "ur-drevil@lotta.schule",
+                     "name" => "Dr Evil",
+                     "nickname" => "drEvil"
+                   },
+                   %{
                      "email" => "ur-mcurie@lotta.schule",
                      "name" => "Marie Curie",
                      "nickname" => "Polonium"
+                   },
+                   %{
+                     "email" => "ur-maxi@lotta.schule",
+                     "name" => "Max Mustermann",
+                     "nickname" => "MaXi"
                    }
                  ]
                }
@@ -858,9 +858,9 @@ defmodule LottaWeb.UserResolverTest do
                      "nickname" => nil
                    },
                    %{
-                     "email" => "ur-eike@lotta.schule",
-                     "name" => "Eike Wiewiorra",
-                     "nickname" => "Chef"
+                     "email" => "ur-doro@lotta.schule",
+                     "name" => "Dorothea Musterfrau",
+                     "nickname" => "Doro"
                    },
                    %{
                      "email" => "ur-drevil@lotta.schule",
@@ -868,19 +868,19 @@ defmodule LottaWeb.UserResolverTest do
                      "nickname" => "drEvil"
                    },
                    %{
-                     "email" => "ur-maxi@lotta.schule",
-                     "name" => "Max Mustermann",
-                     "nickname" => "MaXi"
-                   },
-                   %{
-                     "email" => "ur-doro@lotta.schule",
-                     "name" => "Dorothea Musterfrau",
-                     "nickname" => "Doro"
+                     "email" => "ur-eike@lotta.schule",
+                     "name" => "Eike Wiewiorra",
+                     "nickname" => "Chef"
                    },
                    %{
                      "email" => "ur-mcurie@lotta.schule",
                      "name" => "Marie Curie",
                      "nickname" => "Polonium"
+                   },
+                   %{
+                     "email" => "ur-maxi@lotta.schule",
+                     "name" => "Max Mustermann",
+                     "nickname" => "MaXi"
                    }
                  ]
                }

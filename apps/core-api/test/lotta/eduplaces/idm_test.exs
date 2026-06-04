@@ -1,7 +1,6 @@
 defmodule Lotta.Eduplaces.IDMTest do
   use ExUnit.Case, async: false
   import Mox
-  import Tesla.Mock
 
   alias Lotta.Eduplaces.IDM
 
