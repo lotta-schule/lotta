@@ -33,7 +33,7 @@ export const mutateVariableInputObject = (
       }
       if (
         typeof obj[key] === 'object' &&
-        !(isBrowser && obj[key] instanceof File)
+        !(isBrowser() && obj[key] instanceof File)
       ) {
         return {
           ...newObj,

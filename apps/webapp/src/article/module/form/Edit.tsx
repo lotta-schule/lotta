@@ -7,13 +7,22 @@ import {
   faTrash,
   faGear,
 } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 import {
+  AttachFile as AttachFileIcon,
+  Button,
   Checkbox,
+  CheckboxIcon,
+  Checklist as ChecklistIcon,
   Input,
   Item,
   Label,
+  Mail as MailIcon,
   MenuButton,
+  RadioButton as RadioButtonIcon,
   SortableDraggableList,
+  TextFormat as TextFormatIcon,
+  TextLines as TextLinesIcon,
 } from '@lotta-schule/hubert';
 import { ContentModuleModel } from '#/model/index.js';
 import {
@@ -31,11 +40,22 @@ export type EditProps = {
 
 export const Edit = React.memo(
   ({ contentModule, onUpdateModule }: EditProps) => {
+    const { t } = useTranslation();
     const defaultElements = {
       input: {
         name: 'Textfeld',
         element: 'input',
         type: 'text',
+      } as FormElementInterface,
+      email: {
+        name: 'Textfeld',
+        element: 'input',
+        type: 'email',
+      } as FormElementInterface,
+      date: {
+        name: 'Textfeld',
+        element: 'input',
+        type: 'date',
       } as FormElementInterface,
       textarea: {
         name: 'Textbereich',
@@ -123,10 +143,43 @@ export const Edit = React.memo(
                   />
                 </div>
                 <div className={styles.iconWrapper}>
-                  <div>
-                    <Icon icon={faCircleExclamation} size={'lg'} />{' '}
-                    <Icon icon={faTrash} size={'lg'} />
-                  </div>
+                  <Button
+                    title={element.required ? t('not required') : t('required')}
+                    aria-checked={element.required}
+                    role={'checkbox'}
+                    icon={
+                      <Icon
+                        icon={faCircleExclamation}
+                        size={'lg'}
+                        color={element.required ? 'secondary' : 'primary'}
+                      />
+                    }
+                    onClick={() =>
+                      updateConfiguration({
+                        elements: configuration.elements.map((el, i) => {
+                          if (i === index) {
+                            return {
+                              ...element,
+                              required: !element.required,
+                            };
+                          }
+                          return el;
+                        }),
+                      })
+                    }
+                  />
+                  <Button
+                    type={'submit'}
+                    title={t('delete field')}
+                    icon={<Icon icon={faTrash} size={'lg'} />}
+                    onClick={() =>
+                      updateConfiguration({
+                        elements: configuration.elements.filter(
+                          (_el, i) => i !== index
+                        ),
+                      })
+                    }
+                  />
                   {/*<FormElementConfiguration
                     element={element}
                     updateElement={(updatedElementOptions) =>
@@ -172,23 +225,51 @@ export const Edit = React.memo(
             });
           }}
         >
-          <Item key={'input'} title="Textfeld">
-            Textfeld
+          <Item key={'email'} textValue="E-Mail-Adresse">
+            <div>
+              <MailIcon />
+            </div>
+            <span>E-Mail-Adresse</span>
           </Item>
-          <Item key={'textarea'} title="Textbereich">
-            Textbereich
+          <Item key={'input'} textValue="Textzeile">
+            <div>
+              <TextFormatIcon />
+            </div>
+            <span>Textzeile</span>
           </Item>
-          <Item key={'checkbox'} title="Checkbox">
-            Checkbox
+          <Item key={'textarea'} textValue="Textbereich">
+            <div>
+              <TextLinesIcon />
+            </div>
+            <span>Textbereich</span>
           </Item>
-          <Item key={'radio'} title="Auswahl">
-            Auswahl
+          <Item key={'date'} title="Datum">
+            <div></div>
+            <span>Datum</span>
           </Item>
-          <Item key={'select'} title="Dropdown">
-            Dropdown
+          <Item key={'checkbox'} textValue="Checkbox">
+            <div>
+              <CheckboxIcon />
+            </div>
+            <span>Checkbox</span>
           </Item>
-          <Item key={'file'} title="Datei-Upload">
-            Datei-Upload
+          <Item key={'radio'} textValue="Auswahl">
+            <div>
+              <RadioButtonIcon />
+            </div>
+            <span>Auswahl</span>
+          </Item>
+          <Item key={'select'} textValue="Dropdown">
+            <div>
+              <ChecklistIcon />
+            </div>
+            <span>Dropdown</span>
+          </Item>
+          <Item key={'file'} textValue="Datei-Upload">
+            <div>
+              <AttachFileIcon />
+            </div>
+            <span>Datei-Upload</span>
           </Item>
         </MenuButton>
         <div className={styles.settingsWrapper}>

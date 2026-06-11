@@ -4,7 +4,10 @@ import * as Icons from './index.js';
 describe('Icon Components', () => {
   const iconComponents = [
     'ArrowUpwardRounded',
+    'AttachFile',
     'Check',
+    'CheckboxIcon',
+    'Checklist',
     'ChevronRight',
     'Close',
     'CloudUpload',
@@ -31,9 +34,14 @@ describe('Icon Components', () => {
     'Home',
     'KeyboardArrowLeft',
     'KeyboardArrowRight',
+    'Mail',
     'MoreVert',
     'MoveArrow',
     'OpenWith',
+    'Person',
+    'RadioButton',
+    'TextFormat',
+    'TextLines',
   ] as const;
 
   iconComponents.forEach((iconName) => {
