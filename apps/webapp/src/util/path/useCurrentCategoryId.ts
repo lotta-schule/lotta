@@ -2,7 +2,7 @@
 import { ArticleModel } from '#/model/index.js';
 import { ID } from '#/model/ID.js';
 import { useQuery } from '@apollo/client/react';
-import { usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation.js';
 
 import GetArticleQuery from '#/api/query/GetArticleQuery.graphql';
 

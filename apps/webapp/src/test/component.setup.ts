@@ -50,9 +50,9 @@ vi.mock('next/config.js', () => ({
   }),
 }));
 
-// Both 'next/navigation' and 'next/navigation.js' mocks share the same vi.fn() instances
+// Both 'next/navigation.js' and 'next/navigation.js' mocks share the same vi.fn() instances
 // so that tests importing one path can mock the router used by components importing the other.
-vi.mock('next/navigation', async () => {
+vi.mock('next/navigation.js', async () => {
   const { MockRouter } = await import('#/test/mocks/MockRouter.js');
   globalThis.mockRouter ||= new MockRouter();
   (globalThis as any).__mockNavigationFns ||= {

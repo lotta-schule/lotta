@@ -8,7 +8,7 @@ import {
   ErrorMessage,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import { CREATE_CALENDAR, GET_CALENDARS } from '../_graphql/index.js';
 import { useTranslation } from 'react-i18next';
 import { BasicCalendarFormElement } from './BasicCalendarFormElement.js';

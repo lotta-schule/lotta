@@ -6,7 +6,7 @@ import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers'
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
 // import { resetApolloClientSingletons } from '@apollo/client-integration-nextjs';
 import { MockRouter } from './mocks/index.js';
-import { NEXT_DATA } from 'next/dist/shared/lib/utils';
+import { NEXT_DATA } from 'next/dist/shared/lib/utils.js';
 import { DirectoryModel, FileModel } from '../model/index.js';
 
 // afterEach(resetApolloClientSingletons);

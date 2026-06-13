@@ -9,7 +9,7 @@ import {
 } from '@lotta-schule/hubert';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { ID, CategoryModel } from '#/model/index.js';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation.js';
 import { Icon } from '#/shared/Icon.js';
 import { useCategories } from '#/util/categories/useCategories.js';
 

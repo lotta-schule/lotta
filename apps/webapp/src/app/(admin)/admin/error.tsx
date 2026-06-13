@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button } from '@lotta-schule/hubert';
 import { t } from 'i18next';
-import Link from 'next/link';
+import Link from 'next/link.js';
 import { ServerDownErrorPage } from '#/layout/error/ServerDownErrorPage.js';
 import clsx from 'clsx';
 

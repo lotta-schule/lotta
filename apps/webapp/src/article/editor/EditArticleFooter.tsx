@@ -25,7 +25,7 @@ import {
   Checkbox,
 } from '@lotta-schule/hubert';
 import { ArticleDatesEditor } from './ArticleDatesEditor.js';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import clsx from 'clsx';
 
 import DeleteArticleMutation from '#/api/mutation/DeleteArticleMutation.graphql';

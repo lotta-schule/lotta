@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound } from 'next/navigation.js';
 import { getClient } from '#/api/client.js';
 import { Main, Sidebar } from '#/layout/index.js';
 import { ArticleModel, ID } from '#/model/index.js';

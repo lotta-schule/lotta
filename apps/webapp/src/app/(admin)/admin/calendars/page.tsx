@@ -1,5 +1,5 @@
 import React from 'react';
-import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic.js';
 import { getClient } from '#/api/client.js';
 import { GET_CALENDARS } from './_graphql/index.js';
 import { CircularProgress } from '@lotta-schule/hubert';

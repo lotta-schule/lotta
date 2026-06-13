@@ -15,7 +15,7 @@ import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import { ReactionCountButtons } from './ReactionCountButtons.js';
 import { iconForReactionType } from './supportedReactionIcons.js';
 import { ReactionUserList } from './RactionUserList.js';
-import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic.js';
 
 import styles from './ArticleReactions.module.scss';
 

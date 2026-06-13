@@ -3,7 +3,7 @@ import * as React from 'react';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton, Item } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client/react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import { WidgetModel, WidgetModelType } from '#/model/index.js';
 import { Widget } from '#/util/model/index.js';
 import { Icon } from '#/shared/Icon.js';

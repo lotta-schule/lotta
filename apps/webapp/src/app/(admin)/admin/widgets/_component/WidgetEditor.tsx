@@ -22,7 +22,7 @@ import { IFrameWidgetConfiguration } from './configuration/IFrameWidgetConfigura
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration.js';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration.js';
 import { AdminPageSection } from '#/app/(admin)/admin/_component/AdminPageSection.js';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog.js';
 import { WidgetIconSelection } from './WidgetIconSelection.js';
 

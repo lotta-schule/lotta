@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, waitFor, within, userEvent } from '#/test/util.js';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation.js';
 import {
   allCategories,
   DatenschutzCategory,

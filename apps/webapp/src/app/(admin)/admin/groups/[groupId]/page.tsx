@@ -2,7 +2,7 @@ import * as React from 'react';
 import { EditUserGroup } from '../_component/index.js';
 import { AdminPageTitle } from '../../_component/AdminPageTitle.js';
 import { loadUserGroup } from '#/loader/index.js';
-import { notFound } from 'next/navigation';
+import { notFound } from 'next/navigation.js';
 
 async function GroupPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;

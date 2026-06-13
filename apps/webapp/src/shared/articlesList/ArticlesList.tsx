@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
 import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import Link from 'next/link';
+import Link from 'next/link.js';
 
 import styles from './ArticlesList.module.scss';
 import clsx from 'clsx';

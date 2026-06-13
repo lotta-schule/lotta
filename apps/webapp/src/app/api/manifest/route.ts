@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server.js';
 import { loadTenant } from '#/loader/index.js';
 import type { MetadataRoute } from 'next';
 

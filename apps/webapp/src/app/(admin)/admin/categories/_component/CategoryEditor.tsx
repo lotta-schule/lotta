@@ -18,7 +18,7 @@ import {
   LinearProgress,
 } from '@lotta-schule/hubert';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import {
   CategoryModel,
   WidgetModel,

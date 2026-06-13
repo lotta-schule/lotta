@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import { allCategories, FaecherCategory } from '#/test/fixtures/index.js';
 import { render, waitFor, within } from '#/test/util.js';
 import { MockRouter } from '#/test/mocks/index.js';

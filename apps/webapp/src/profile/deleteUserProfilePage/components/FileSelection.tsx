@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Checkbox, Table, Tooltip } from '@lotta-schule/hubert';
 import { Article, Category } from '#/util/model/index.js';
-import Link from 'next/link';
+import Link from 'next/link.js';
 import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
 import { RelevantFilesInUsage } from '../index.js';
 

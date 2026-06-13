@@ -1,33 +1,33 @@
 'use client';
 import * as React from 'react';
 import { Main } from '#/layout/index.js';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation.js';
 import { Box, Button, ErrorMessage, Input, Label } from '@lotta-schule/hubert';
 import { useApolloClient, useMutation } from '@apollo/client/react';
-import Link from 'next/link';
-
-import ResetPasswordMutation from '#/api/mutation/ResetPasswordMutation.graphql';
+import { RESET_PASSWORD } from './_graphql/index.js';
+import Link from 'next/link.js';
 
 import styles from './RequestResetPage.module.scss';
 
 export const ResetPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [data, setData] = React.useState<{ resetPassword: boolean }>();
+  const [data, setData] =
+    React.useState<Awaited<ReturnType<typeof sendResetPassword>>['data']>();
   const apolloClient = useApolloClient();
-  const [sendResetPassword, { error, loading: isLoading }] = useMutation<
-    { resetPassword: boolean },
-    { email: string; password: string; token: string }
-  >(ResetPasswordMutation, {
-    errorPolicy: 'all',
-    onCompleted: (data) => {
-      if (data['resetPassword']) {
-        apolloClient.resetStore();
-        setData(data);
-        router.replace('/');
-      }
-    },
-  });
+  const [sendResetPassword, { error, loading: isLoading }] = useMutation(
+    RESET_PASSWORD,
+    {
+      errorPolicy: 'all',
+      onCompleted: (data) => {
+        if (data['resetPassword']) {
+          apolloClient.resetStore();
+          setData(data);
+          router.replace('/');
+        }
+      },
+    }
+  );
   const [password, setPassword] = React.useState('');
   const [mutationError, setError] = React.useState<string | null>(null);
   const [passwordRepetition, setPasswordRepetition] = React.useState('');

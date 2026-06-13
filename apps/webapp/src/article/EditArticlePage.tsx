@@ -14,7 +14,7 @@ import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import { Article as ArticleUtil } from '#/util/model/Article.js';
 import { EditArticleFooter } from './editor/EditArticleFooter.js';
 import { Main } from '#/layout/index.js';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import omit from 'lodash/omit';
 
 import ArticleIsUpdatedSubscription from '#/api/subscription/GetArticleSubscription.graphql';

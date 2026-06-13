@@ -1,18 +1,17 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "./tsconfig.json",
-  // Type-checking config, decoupled from the build.
+  // Whole-`src` type-check under `moduleResolution: bundler`.
   //
-  // The build (`next build` / Turbopack) uses `tsconfig.json` with
-  // `moduleResolution: nodenext` — required so Turbopack rewrites the `.js`
-  // import specifiers used by the source-consumed `hubert`/`theme` libs.
-  // tsc under nodenext, however, cannot resolve Next 16's `exports`-less
-  // `next/*` subpaths, so the build's inline type-check is disabled
-  // (`typescript.ignoreBuildErrors` in next.config.js) and real type-checking
-  // happens here under `moduleResolution: bundler`, which resolves `next/*`,
-  // the workspace libs, and `.js`→`.ts` correctly.
-  //
-  // See TYPECHECK_MIGRATION_PLAN.md for the full rationale.
+  // The build (`next build` / Turbopack) uses `tsconfig.json` with nodenext —
+  // required so Turbopack rewrites the `.js` specifiers of the source-consumed
+  // `hubert`/`theme` libs. tsc under nodenext, however, can't type-check Next code:
+  // even with explicit `.js` on `next/*` imports (which makes them *resolve*),
+  // Next's own `.d.ts` files use extensionless relative imports that nodenext
+  // can't follow, breaking the types of Next's default exports (e.g. `next/link`).
+  // So the build's inline type-check stays disabled (`ignoreBuildErrors`) and real
+  // type-checking happens here under `bundler`, which handles `next/*`, the
+  // workspace libs, and `.js`→`.ts` correctly. See TYPECHECK_MIGRATION_PLAN.md.
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "bundler",

@@ -13,7 +13,7 @@ import {
 import { EnrollmentTokensEditor } from '#/profile/component/EnrollmentTokensEditor.js';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog.js';
 import { AdminPageSection } from '#/app/(admin)/admin/_component/AdminPageSection.js';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import { UPDATE_USER_GROUP } from '../_graphql/index.js';
 import { ResultOf } from 'gql.tada';
 import { type GET_GROUP_QUERY } from '#/loader/index.js';

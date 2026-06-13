@@ -1,7 +1,7 @@
 'use client';
 import * as React from 'react';
 import { useQuery } from '@apollo/client/react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';

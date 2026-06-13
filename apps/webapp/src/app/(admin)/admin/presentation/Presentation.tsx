@@ -20,7 +20,7 @@ import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
 import { ColorSettingRow, SelectTemplateButton } from './_component/index.js';
 import { TenantModel } from '#/model/index.js';
 import { headerFonts, textFonts } from '#/styles/fonts.js';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import clsx from 'clsx';
 
 import styles from './Presentation.module.scss';

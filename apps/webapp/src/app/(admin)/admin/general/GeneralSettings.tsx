@@ -18,7 +18,7 @@ import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
 import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
 import { AdminPageSection } from '../_component/AdminPageSection.js';
 import { useRouter } from 'next/navigation.js';
-import Link from 'next/link';
+import Link from 'next/link.js';
 
 import styles from './GeneralSettings.module.scss';
 

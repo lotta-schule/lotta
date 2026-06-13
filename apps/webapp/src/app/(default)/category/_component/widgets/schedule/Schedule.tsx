@@ -20,7 +20,7 @@ import { useApolloClient, useLazyQuery } from '@apollo/client/react';
 import { WidgetModel, ScheduleResult, WidgetModelType } from '#/model/index.js';
 import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import { SelectCoursesDialog } from './SelectCoursesDialog.js';
-import Link from 'next/link';
+import Link from 'next/link.js';
 
 import clsx from 'clsx';
 

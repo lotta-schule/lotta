@@ -10,7 +10,7 @@ import {
 } from '@lotta-schule/hubert';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { Article } from '#/util/model/index.js';
-import Link from 'next/link';
+import Link from 'next/link.js';
 import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries.js';
 
 import GetArticlesWithUserFiles from '#/api/query/GetArticlesWithUserFiles.graphql';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { loadWidgets } from '#/loader/index.js';
-import { notFound } from 'next/navigation';
+import { notFound } from 'next/navigation.js';
 import { AdminPageTitle } from '../../_component/AdminPageTitle.js';
 import { WidgetEditor } from '../_component/WidgetEditor.js';
 import { serverTranslations } from '#/i18n/server.js';

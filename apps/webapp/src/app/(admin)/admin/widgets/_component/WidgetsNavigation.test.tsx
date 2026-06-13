@@ -50,7 +50,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetsNavigation', () =
         default: {
           useRouter: () => MockRouter;
         };
-      }>('next/navigation')
+      }>('next/navigation.js')
       .then((module) => module.default.useRouter());
 
     const screen = render(<WidgetsNavigation />, {}, { additionalMocks });

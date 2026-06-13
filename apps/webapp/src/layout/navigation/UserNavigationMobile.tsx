@@ -27,8 +27,8 @@ import { LoginDialog } from '#/shared/dialog/login/index.js';
 import { RegisterDialog } from '#/shared/dialog/RegisterDialog.js';
 import { FeedbackDialog } from '#/shared/dialog/FeedbackDialog.js';
 import { useNewFeedbackCount } from '#/util/feedback/index.js';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation.js';
+import Link from 'next/link.js';
 
 import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
 

@@ -8,10 +8,10 @@ import { useCategoriesAncestorsForItem } from '#/util/categories/useCategoriesAn
 import { useCurrentCategoryId } from '#/util/path/useCurrentCategoryId.js';
 import { Category } from '#/util/model/index.js';
 import { isMobileDrawerOpenVar } from '#/api/apollo/cache.js';
-import { usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation.js';
 import { type loadCategories } from '#/loader/loadCategories.js';
 import clsx from 'clsx';
-import Link from 'next/link';
+import Link from 'next/link.js';
 
 import styles from './Navbar.module.scss';
 

@@ -118,7 +118,7 @@ describe('CreateWidgetButton', () => {
         default: {
           useRouter: () => MockRouter;
         };
-      }>('next/navigation')
+      }>('next/navigation.js')
       .then((module) => module.default.useRouter());
 
     const onCreateWidget = vi.fn(() => ({

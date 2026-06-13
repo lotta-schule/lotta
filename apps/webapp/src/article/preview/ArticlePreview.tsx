@@ -35,7 +35,7 @@ import { AuthorAvatarsList } from '#/article/authorAvatarsList/AuthorAvatarsList
 import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
 import { TagDetailsDialog } from '#/article/tagDetailsDialog/index.js';
 import { UserArticlesDialog } from '#/profile/userArticlesDialog/index.js';
-import Link from 'next/link';
+import Link from 'next/link.js';
 import clsx from 'clsx';
 
 import ToggleArticlePinMutation from '#/api/mutation/ToggleArticlePin.graphql';

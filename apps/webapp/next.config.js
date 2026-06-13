@@ -10,6 +10,12 @@ const __dirname = new URL('.', import.meta.url).pathname;
  **/
 const nextConfig = {
   output: 'standalone',
+  // Build-time type-checking is disabled because the build uses
+  // `moduleResolution: nodenext` (required by Turbopack for the source-consumed
+  // `hubert`/`theme` libs), and Next 16's own `.d.ts` files use extensionless
+  // relative imports that nodenext can't resolve — breaking the types of Next's
+  // default exports (e.g. `next/link`). Real type-checking runs separately under
+  // `moduleResolution: bundler` via `bun run typecheck`. See TYPECHECK_MIGRATION_PLAN.md.
   typescript: { ignoreBuildErrors: true },
   experimental: {
     externalDir: true,
