@@ -1,20 +1,40 @@
 defmodule LottaWeb.OAuthControllerTest do
   use LottaWeb.ConnCase
 
-  import Mock
+  import Mox
   import Plug.Conn
-  import Lotta.Fixtures
+  import Lotta.Factory
 
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
   alias LottaWeb.Auth.AccessToken
-  alias Lotta.Eduplaces.{UserInfo, AuthCodeStrategy, SchoolInfo}
+  alias Lotta.Eduplaces.{UserInfo, AuthCodeStrategyMock, SchoolInfo}
 
   @prefix "tenant_test"
 
+  setup :set_mox_global
+  setup :verify_on_exit!
+
+  setup do
+    alias Lotta.Tenants.DefaultContentMock
+    alias Lotta.AnalyticsMock
+    alias Lotta.Administration.Notification.SlackMock
+
+    stub(DefaultContentMock, :create_default_content, fn _t, _u -> :ok end)
+    stub(AnalyticsMock, :create_site, fn _t -> :ok end)
+    stub(SlackMock, :send, fn _msg -> :ok end)
+    stub(SlackMock, :new_lotta_notification, fn _t, _users -> %{} end)
+    stub(SlackMock, :new_lotta_invoices_to_issue_notification, fn _invoices -> %{} end)
+    stub(Lotta.Eduplaces.IDMMock, :get_user, fn _id -> {:error, :not_found} end)
+
+    :ok
+  end
+
   setup ctx do
     tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+    Repo.put_prefix(@prefix)
 
     Tesla.Mock.mock(fn
       %{url: "https://plausible.io/" <> _rest} = env ->
@@ -34,51 +54,48 @@ defmodule LottaWeb.OAuthControllerTest do
     test "sets ep_login_state cookie and redirects to provider URL", %{conn: conn} do
       authorize_url = "https://eduplaces.com/oauth/authorize?state=some-state"
 
-      # Mock the strategy authorize URL
-      with_mock(AuthCodeStrategy,
-        authorize_url!: fn opts ->
-          assert Keyword.has_key?(opts, :state)
-          authorize_url
-        end
-      ) do
-        conn =
-          conn
-          |> get("/auth/oauth/eduplaces/login")
-          |> fetch_cookies()
+      expect(AuthCodeStrategyMock, :authorize_url!, fn opts ->
+        assert Keyword.has_key?(opts, :state)
+        authorize_url
+      end)
 
-        assert redirected_to(conn) =~ "https://eduplaces.com/oauth/authorize"
-        assert conn.cookies["ep_login_state"]
-      end
+      conn =
+        conn
+        |> get("/auth/oauth/eduplaces/login")
+        |> fetch_cookies()
+
+      assert redirected_to(conn) =~ "https://eduplaces.com/oauth/authorize"
+      assert conn.cookies["ep_login_state"]
     end
 
     test "sets mobile_app cookie when x-lotta-app-version header is present", %{conn: conn} do
-      with_mock(AuthCodeStrategy,
-        authorize_url!: fn _opts -> "https://eduplaces.com/oauth/authorize?state=some-state" end
-      ) do
-        conn =
-          conn
-          |> put_req_header("x-lotta-app-version", "1.0.0")
-          |> get("/auth/oauth/eduplaces/login")
-          |> fetch_cookies()
+      stub(AuthCodeStrategyMock, :authorize_url!, fn _opts ->
+        "https://eduplaces.com/oauth/authorize?state=some-state"
+      end)
 
-        assert %{"mobile_app" => %{value: "true", http_only: true, same_site: "Lax"}} =
-                 get_resp_cookies(conn)
-      end
+      conn =
+        conn
+        |> put_req_header("x-lotta-app-version", "1.0.0")
+        |> get("/auth/oauth/eduplaces/login")
+        |> fetch_cookies()
+
+      assert %{"mobile_app" => %{value: "true", http_only: true, same_site: "Lax"}} =
+               get_resp_cookies(conn)
     end
 
     test "does not set mobile_app cookie when x-lotta-app-version header is absent", %{
       conn: conn
     } do
-      with_mock(AuthCodeStrategy,
-        authorize_url!: fn _opts -> "https://eduplaces.com/oauth/authorize?state=some-state" end
-      ) do
-        conn =
-          conn
-          |> get("/auth/oauth/eduplaces/login")
-          |> fetch_cookies()
+      stub(AuthCodeStrategyMock, :authorize_url!, fn _opts ->
+        "https://eduplaces.com/oauth/authorize?state=some-state"
+      end)
 
-        refute Map.has_key?(get_resp_cookies(conn), "mobile_app")
-      end
+      conn =
+        conn
+        |> get("/auth/oauth/eduplaces/login")
+        |> fetch_cookies()
+
+      refute Map.has_key?(get_resp_cookies(conn), "mobile_app")
     end
   end
 
@@ -124,33 +141,31 @@ defmodule LottaWeb.OAuthControllerTest do
       |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
       |> Repo.update!()
 
-      user = fixture(:registered_user, %{email: "hedwig@hogwarts.de", eduplaces_id: user_info.id})
+      user = insert(:user, email: "hedwig@hogwarts.de", eduplaces_id: user_info.id)
 
-      with_mock(AuthCodeStrategy,
-        get_token!: fn _params -> {"fake_token", user_info} end
-      ) do
-        conn =
-          conn
-          |> put_req_cookie("ep_login_state", "valid_state")
-          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+      stub(AuthCodeStrategyMock, :get_token!, fn _params -> {"fake_token", user_info} end)
 
-        assert redirect_uri = redirected_to(conn)
+      conn =
+        conn
+        |> put_req_cookie("ep_login_state", "valid_state")
+        |> get("/auth/oauth/eduplaces/callback?state=valid_state")
 
-        assert "https://test.lotta.schule/auth/callback?token=" <> token =
-                 String.replace_suffix(redirect_uri, "&return_url=/", "")
+      assert redirect_uri = redirected_to(conn)
 
-        tenant_id = tenant.id
-        user_id = to_string(user.id)
-        email = user.email
+      assert "https://test.lotta.schule/auth/callback?token=" <> token =
+               String.replace_suffix(redirect_uri, "&return_url=/", "")
 
-        assert {:ok,
-                %{
-                  "tid" => ^tenant_id,
-                  "sub" => ^user_id,
-                  "typ" => "hisec",
-                  "email" => ^email
-                }} = AccessToken.decode_and_verify(token)
-      end
+      tenant_id = tenant.id
+      user_id = to_string(user.id)
+      email = user.email
+
+      assert {:ok,
+              %{
+                "tid" => ^tenant_id,
+                "sub" => ^user_id,
+                "typ" => "hisec",
+                "email" => ^email
+              }} = AccessToken.decode_and_verify(token)
     end
 
     test "creates new tenant when no tenant exists with this eduplaces_id", %{conn: conn} do
@@ -167,19 +182,16 @@ defmodule LottaWeb.OAuthControllerTest do
         }
       }
 
-      with_mock(AuthCodeStrategy,
-        get_token!: fn _params -> {"token", user_info} end
-      ) do
-        conn =
-          conn
-          |> put_req_cookie("ep_login_state", "valid_state")
-          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+      stub(AuthCodeStrategyMock, :get_token!, fn _params -> {"token", user_info} end)
 
-        # Should redirect to tenant URI with token and return_url pointing to /setup
-        redirect_path = redirected_to(conn)
-        assert redirect_path =~ "https://test-school.lotta.schule/auth/callback?token="
-        assert redirect_path =~ "return_url=/setup/status"
-      end
+      conn =
+        conn
+        |> put_req_cookie("ep_login_state", "valid_state")
+        |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+
+      redirect_path = redirected_to(conn)
+      assert redirect_path =~ "https://test-school.lotta.schule/auth/callback?token="
+      assert redirect_path =~ "return_url=/setup/status"
     end
 
     test "Creates a teacher user when no user exists with this eduplaces_id", %{
@@ -203,36 +215,34 @@ defmodule LottaWeb.OAuthControllerTest do
       |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
       |> Repo.update!()
 
-      with_mock(AuthCodeStrategy,
-        get_token!: fn _params -> {"token", user_info} end
-      ) do
-        conn =
-          conn
-          |> put_req_cookie("ep_login_state", "valid_state")
-          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
-          |> fetch_cookies()
+      stub(AuthCodeStrategyMock, :get_token!, fn _params -> {"token", user_info} end)
 
-        assert redirect_uri = redirected_to(conn)
+      conn =
+        conn
+        |> put_req_cookie("ep_login_state", "valid_state")
+        |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+        |> fetch_cookies()
 
-        assert "https://test.lotta.schule/auth/callback?token=" <> token =
-                 String.replace_suffix(redirect_uri, "&return_url=/", "")
+      assert redirect_uri = redirected_to(conn)
 
-        tenant_id = tenant.id
+      assert "https://test.lotta.schule/auth/callback?token=" <> token =
+               String.replace_suffix(redirect_uri, "&return_url=/", "")
 
-        assert {:ok,
-                %{
-                  "tid" => ^tenant_id,
-                  "sub" => user_id,
-                  "typ" => "hisec"
-                }} = AccessToken.decode_and_verify(token)
+      tenant_id = tenant.id
 
-        assert user =
-                 Repo.get_by(Lotta.Accounts.User,
-                   eduplaces_id: user_info.id
-                 )
+      assert {:ok,
+              %{
+                "tid" => ^tenant_id,
+                "sub" => user_id,
+                "typ" => "hisec"
+              }} = AccessToken.decode_and_verify(token)
 
-        assert user.id == String.to_integer(user_id)
-      end
+      assert user =
+               Repo.get_by(Lotta.Accounts.User,
+                 eduplaces_id: user_info.id
+               )
+
+      assert user.id == String.to_integer(user_id)
     end
 
     test "Creates a student user when no user exists with this eduplaces_id", %{
@@ -256,36 +266,34 @@ defmodule LottaWeb.OAuthControllerTest do
       |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
       |> Repo.update!()
 
-      with_mock(AuthCodeStrategy,
-        get_token!: fn _params -> {"token", user_info} end
-      ) do
-        conn =
-          conn
-          |> put_req_cookie("ep_login_state", "valid_state")
-          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
-          |> fetch_cookies()
+      stub(AuthCodeStrategyMock, :get_token!, fn _params -> {"token", user_info} end)
 
-        assert redirect_uri = redirected_to(conn)
+      conn =
+        conn
+        |> put_req_cookie("ep_login_state", "valid_state")
+        |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+        |> fetch_cookies()
 
-        assert "https://test.lotta.schule/auth/callback?token=" <> token =
-                 String.replace_suffix(redirect_uri, "&return_url=/", "")
+      assert redirect_uri = redirected_to(conn)
 
-        tenant_id = tenant.id
+      assert "https://test.lotta.schule/auth/callback?token=" <> token =
+               String.replace_suffix(redirect_uri, "&return_url=/", "")
 
-        assert {:ok,
-                %{
-                  "tid" => ^tenant_id,
-                  "sub" => user_id,
-                  "typ" => "hisec"
-                }} = AccessToken.decode_and_verify(token)
+      tenant_id = tenant.id
 
-        assert user =
-                 Repo.get_by(Lotta.Accounts.User,
-                   eduplaces_id: user_info.id
-                 )
+      assert {:ok,
+              %{
+                "tid" => ^tenant_id,
+                "sub" => user_id,
+                "typ" => "hisec"
+              }} = AccessToken.decode_and_verify(token)
 
-        assert user.id == String.to_integer(user_id)
-      end
+      assert user =
+               Repo.get_by(Lotta.Accounts.User,
+                 eduplaces_id: user_info.id
+               )
+
+      assert user.id == String.to_integer(user_id)
     end
 
     test "returns forbidden error when user is not a teacher and the school does not exist yet",
@@ -303,19 +311,17 @@ defmodule LottaWeb.OAuthControllerTest do
         }
       }
 
-      with_mock(AuthCodeStrategy,
-        get_token!: fn _params -> {"token", user_info} end
-      ) do
-        conn =
-          conn
-          |> put_req_cookie("ep_login_state", "valid_state")
-          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+      stub(AuthCodeStrategyMock, :get_token!, fn _params -> {"token", user_info} end)
 
-        assert html_response(conn, 403) =~ "Zugriff verweigert"
+      conn =
+        conn
+        |> put_req_cookie("ep_login_state", "valid_state")
+        |> get("/auth/oauth/eduplaces/callback?state=valid_state")
 
-        assert html_response(conn, 403) =~
-                 "Nur eine Lehrkraft darf Lotta für eine Schule einrichten"
-      end
+      assert html_response(conn, 403) =~ "Zugriff verweigert"
+
+      assert html_response(conn, 403) =~
+               "Nur eine Lehrkraft darf Lotta für eine Schule einrichten"
     end
 
     test "redirects to lotta:// URI with access and refresh tokens when mobile_app cookie is set",
@@ -337,39 +343,37 @@ defmodule LottaWeb.OAuthControllerTest do
       |> Ecto.Changeset.change(%{eduplaces_id: user_info.school.id})
       |> Repo.update!()
 
-      user = fixture(:registered_user, %{email: "hedwig@hogwarts.de", eduplaces_id: user_info.id})
+      user = insert(:user, email: "hedwig@hogwarts.de", eduplaces_id: user_info.id)
 
-      with_mock(AuthCodeStrategy,
-        get_token!: fn _params -> {"fake_token", user_info} end
-      ) do
-        conn =
-          conn
-          |> put_req_cookie("mobile_app", "true")
-          |> put_req_cookie("ep_login_state", "valid_state")
-          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+      stub(AuthCodeStrategyMock, :get_token!, fn _params -> {"fake_token", user_info} end)
 
-        redirect_uri = redirected_to(conn)
+      conn =
+        conn
+        |> put_req_cookie("mobile_app", "true")
+        |> put_req_cookie("ep_login_state", "valid_state")
+        |> get("/auth/oauth/eduplaces/callback?state=valid_state")
 
-        %URI{scheme: "lotta", host: slug, path: "/auth/callback", query: query} =
-          URI.parse(redirect_uri)
+      redirect_uri = redirected_to(conn)
 
-        assert slug == tenant.slug
+      %URI{scheme: "lotta", host: slug, path: "/auth/callback", query: query} =
+        URI.parse(redirect_uri)
 
-        query_params = URI.decode_query(query)
+      assert slug == tenant.slug
 
-        tenant_id = tenant.id
-        user_id = to_string(user.id)
+      query_params = URI.decode_query(query)
 
-        assert {:ok, %{"tid" => ^tenant_id, "sub" => ^user_id, "typ" => "access"}} =
-                 AccessToken.decode_and_verify(query_params["token"])
+      tenant_id = tenant.id
+      user_id = to_string(user.id)
 
-        assert {:ok, %{"tid" => ^tenant_id, "sub" => ^user_id, "typ" => "refresh"}} =
-                 AccessToken.decode_and_verify(query_params["refresh_token"], %{
-                   "typ" => "refresh"
-                 })
+      assert {:ok, %{"tid" => ^tenant_id, "sub" => ^user_id, "typ" => "access"}} =
+               AccessToken.decode_and_verify(query_params["token"])
 
-        assert query_params["return_url"] == "/"
-      end
+      assert {:ok, %{"tid" => ^tenant_id, "sub" => ^user_id, "typ" => "refresh"}} =
+               AccessToken.decode_and_verify(query_params["refresh_token"], %{
+                 "typ" => "refresh"
+               })
+
+      assert query_params["return_url"] == "/"
     end
 
     test "does not include refresh_token in redirect when mobile_app cookie is not set", %{
@@ -394,24 +398,22 @@ defmodule LottaWeb.OAuthControllerTest do
       |> Repo.update!()
 
       _user =
-        fixture(:registered_user, %{email: "hedwig@hogwarts.de", eduplaces_id: user_info.id})
+        insert(:user, email: "hedwig@hogwarts.de", eduplaces_id: user_info.id)
 
-      with_mock(AuthCodeStrategy,
-        get_token!: fn _params -> {"fake_token", user_info} end
-      ) do
-        conn =
-          conn
-          |> put_req_cookie("ep_login_state", "valid_state")
-          |> get("/auth/oauth/eduplaces/callback?state=valid_state")
+      stub(AuthCodeStrategyMock, :get_token!, fn _params -> {"fake_token", user_info} end)
 
-        redirect_uri = redirected_to(conn)
-        query_params = redirect_uri |> URI.parse() |> Map.get(:query) |> URI.decode_query()
+      conn =
+        conn
+        |> put_req_cookie("ep_login_state", "valid_state")
+        |> get("/auth/oauth/eduplaces/callback?state=valid_state")
 
-        refute Map.has_key?(query_params, "refresh_token")
-        assert Map.has_key?(query_params, "token")
+      redirect_uri = redirected_to(conn)
+      query_params = redirect_uri |> URI.parse() |> Map.get(:query) |> URI.decode_query()
 
-        assert {:ok, %{"typ" => "hisec"}} = AccessToken.decode_and_verify(query_params["token"])
-      end
+      refute Map.has_key?(query_params, "refresh_token")
+      assert Map.has_key?(query_params, "token")
+
+      assert {:ok, %{"typ" => "hisec"}} = AccessToken.decode_and_verify(query_params["token"])
     end
   end
 
@@ -420,7 +422,7 @@ defmodule LottaWeb.OAuthControllerTest do
       conn: conn,
       tenant: tenant
     } do
-      user = fixture(:registered_user, %{eduplaces_id: "user123"})
+      user = insert(:user, eduplaces_id: "user123")
 
       {:ok, token, _} = AccessToken.encode_and_sign(user, %{}, token_type: "hisec")
 
@@ -455,16 +457,33 @@ defmodule LottaWeb.OAuthControllerTest do
 
     test "returns unauthorized when tenant ID mismatches", %{conn: conn, tenant: tenant} do
       other =
-        %Tenant{}
-        |> Map.merge(fixture(:valid_tenant_attrs))
-        |> Repo.insert!()
+        Repo.insert!(%Tenant{
+          title: "Meine andere Schule",
+          slug: "meine-andere-schule",
+          prefix: "t_other",
+          logo_image_file_id: nil,
+          background_image_file_id: nil
+        })
 
       {:ok, _} = Lotta.Tenants.TenantDbManager.create_tenant_database_schema(other)
 
+      on_exit(fn ->
+        Lotta.Repo.with_new_dynamic_repo(fn _ ->
+          Lotta.Repo.query!("DROP SCHEMA IF EXISTS \"#{other.prefix}\" CASCADE")
+        end)
+      end)
+
       user =
-        %User{}
-        |> Map.merge(fixture(:valid_eduplace_user_attrs))
-        |> Repo.insert!(prefix: other.prefix)
+        Repo.insert!(
+          %User{
+            email: "some@email.de",
+            name: "Alberta Smith",
+            nickname: "TheNick",
+            class: "5",
+            hide_full_name: false
+          },
+          prefix: other.prefix
+        )
 
       {:ok, token, _} =
         AccessToken.encode_and_sign(

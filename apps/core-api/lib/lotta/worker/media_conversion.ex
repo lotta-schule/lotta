@@ -141,7 +141,7 @@ defmodule Lotta.Worker.MediaConversion do
     |> tap(fn commandlist ->
       Logger.warning("Running FFmpeg command: #{inspect(commandlist)}")
     end)
-    |> Exile.stream!(stderr: :consume)
+    |> exile_module().stream!(stderr: :consume)
     |> Stream.map(fn
       {:stdout, data} ->
         data
@@ -322,4 +322,6 @@ defmodule Lotta.Worker.MediaConversion do
 
   def await_completion(%Oban.Job{} = job),
     do: Task.await(await_completion_task(job), timeout(job))
+
+  defp exile_module, do: Application.get_env(:lotta, :exile_module, Exile)
 end

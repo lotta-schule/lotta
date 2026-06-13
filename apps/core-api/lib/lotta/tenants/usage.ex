@@ -4,6 +4,8 @@ defmodule Lotta.Tenants.Usage do
   from the monthly usage logs materialized view.
   """
 
+  @behaviour Lotta.Tenants.UsageQueryBehaviour
+
   alias Lotta.Tenants
   alias Lotta.Tenants.Tenant
 

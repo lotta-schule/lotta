@@ -157,7 +157,7 @@ defmodule Lotta.Billings.Invoice do
     html = to_html(invoice)
 
     {:ok, pdf} =
-      ChromicPDF.print_to_pdf({:html, html},
+      chromic_pdf_module().print_to_pdf({:html, html},
         print_to_pdf: %{
           displayHeaderFooter: true,
           footerTemplate: BillingView.invoice_footer(),
@@ -167,6 +167,8 @@ defmodule Lotta.Billings.Invoice do
 
     pdf
   end
+
+  defp chromic_pdf_module, do: Application.get_env(:lotta, :chromic_pdf_module, ChromicPDF)
 
   # Validates that period_start is the first day of the month
   # and period_end is the last day of the month

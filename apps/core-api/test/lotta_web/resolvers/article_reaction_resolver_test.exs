@@ -1,16 +1,16 @@
 defmodule LottaWeb.ArticleReactionResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias Lotta.Content.ArticleReaction
   alias Lotta.Content
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.User
-  alias Lotta.Content.Article
 
   @prefix "tenant_test"
 
@@ -19,24 +19,21 @@ defmodule LottaWeb.ArticleReactionResolverTest do
 
     Repo.put_prefix(@prefix)
 
-    emails = [
-      "alexis.rinaldoni@lotta.schule",
-      "eike.wiewiorra@lotta.schule"
-    ]
+    user1 =
+      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
+      )
+
+    user2 =
+      insert(:user, email: "arr-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
 
     [{user1, user1_jwt}, {user2, user2_jwt}] =
-      Enum.map(emails, fn email ->
-        user = Repo.one!(from(u in User, where: u.email == ^email), prefix: tenant.prefix)
-
+      Enum.map([user1, user2], fn user ->
         {:ok, jwt, _} = AccessToken.encode_and_sign(user)
-
         {user, jwt}
       end)
 
-    article =
-      Repo.one!(from(a in Article, where: a.title == "Der Podcast zum WB 2"),
-        prefix: tenant.prefix
-      )
+    article = insert(:article, title: "Der Podcast zum WB 2", published: true)
 
     {:ok,
      %{
@@ -159,7 +156,7 @@ defmodule LottaWeb.ArticleReactionResolverTest do
                "data" => %{
                  "getReactionUsers" => [
                    %{
-                     "email" => "eike.wiewiorra@lotta.schule"
+                     "email" => "arr-eike@lotta.schule"
                    }
                  ]
                }

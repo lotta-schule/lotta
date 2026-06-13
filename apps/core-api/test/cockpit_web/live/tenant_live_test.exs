@@ -1,14 +1,16 @@
 defmodule CockpitWeb.Live.TenantLiveTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: false
 
-  import Mock
+  import Mox
   import Phoenix.LiveViewTest
 
   alias CockpitWeb.Live.TenantLive
-  alias Lotta.Tenants
-  alias Lotta.Tenants.Tenant
+  alias Lotta.Tenants.{Tenant, UsageMock}
+
+  setup :set_mox_global
+  setup :verify_on_exit!
 
   describe "update_changeset/3" do
     setup do
@@ -60,8 +62,6 @@ defmodule CockpitWeb.Live.TenantLiveTest do
 
       changeset = TenantLive.update_changeset(tenant, params)
 
-      # Note: Actual validation depends on Tenant.update_changeset implementation
-      # This test documents expected behavior
       assert changeset.data == tenant
     end
   end
@@ -92,11 +92,9 @@ defmodule CockpitWeb.Live.TenantLiveTest do
     test "generates slug from title when slug is not provided" do
       params = %{"title" => "Test School Name"}
 
-      with_mock Tenants, [:passthrough], slug_available?: fn _ -> true end do
-        changeset = TenantLive.create_changeset(nil, params)
+      changeset = TenantLive.create_changeset(nil, params)
 
-        assert get_change(changeset, :slug) != nil
-      end
+      assert get_change(changeset, :slug) != nil
     end
 
     test "validates required title field" do
@@ -111,12 +109,9 @@ defmodule CockpitWeb.Live.TenantLiveTest do
     test "assigns default plan on create" do
       params = %{"title" => "New School"}
 
-      with_mock Tenants, [:passthrough], slug_available?: fn _ -> true end do
-        changeset = TenantLive.create_changeset(nil, params)
+      changeset = TenantLive.create_changeset(nil, params)
 
-        # Default plan assignment is part of create_changeset
-        assert get_change(changeset, :current_plan_name) != nil
-      end
+      assert get_change(changeset, :current_plan_name) != nil
     end
   end
 
@@ -139,17 +134,16 @@ defmodule CockpitWeb.Live.TenantLiveTest do
         }
       ]
 
-      with_mock Lotta.Tenants.Usage,
-        get_usage: fn ^tenant -> {:ok, usages} end do
-        assigns = %{item: tenant, __changed__: nil}
+      expect(UsageMock, :get_usage, fn ^tenant -> {:ok, usages} end)
 
-        html =
-          rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
+      assigns = %{item: tenant, __changed__: nil}
 
-        assert html =~ ~s|id="usage-dialog-t42"|
-        assert html =~ "monatliche Nutzung"
-        assert html =~ "hero-presentation-chart-line"
-      end
+      html =
+        rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
+
+      assert html =~ ~s|id="usage-dialog-t42"|
+      assert html =~ "monatliche Nutzung"
+      assert html =~ "hero-presentation-chart-line"
     end
 
     test "handles empty usage data gracefully" do
@@ -160,16 +154,15 @@ defmodule CockpitWeb.Live.TenantLiveTest do
         prefix: "tenant_99"
       }
 
-      with_mock Lotta.Tenants.Usage,
-        get_usage: fn ^tenant -> {:ok, []} end do
-        assigns = %{item: tenant, __changed__: nil}
+      expect(UsageMock, :get_usage, fn ^tenant -> {:ok, []} end)
 
-        html =
-          rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
+      assigns = %{item: tenant, __changed__: nil}
 
-        assert html =~ ~s|id="usage-dialog-t99"|
-        assert html =~ "monatliche Nutzung"
-      end
+      html =
+        rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
+
+      assert html =~ ~s|id="usage-dialog-t99"|
+      assert html =~ "monatliche Nutzung"
     end
 
     test "handles usage fetch error" do
@@ -180,17 +173,15 @@ defmodule CockpitWeb.Live.TenantLiveTest do
         prefix: "tenant_77"
       }
 
-      with_mock Lotta.Tenants.Usage,
-        get_usage: fn ^tenant -> {:error, :not_found} end do
-        assigns = %{item: tenant, __changed__: nil}
+      expect(UsageMock, :get_usage, fn ^tenant -> {:error, :not_found} end)
 
-        html =
-          rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
+      assigns = %{item: tenant, __changed__: nil}
 
-        # Should still render dialog button even when usage fetch fails
-        assert html =~ ~s|id="usage-dialog-t77"|
-        assert html =~ "monatliche Nutzung"
-      end
+      html =
+        rendered_to_string(TenantLive.render_resource_slot(assigns, :show, :before_main))
+
+      assert html =~ ~s|id="usage-dialog-t77"|
+      assert html =~ "monatliche Nutzung"
     end
   end
 
@@ -228,7 +219,6 @@ defmodule CockpitWeb.Live.TenantLiveTest do
 
       assert is_list(fields)
 
-      # Check that key fields are present
       assert Keyword.has_key?(fields, :title)
       assert Keyword.has_key?(fields, :slug)
       assert Keyword.has_key?(fields, :customer_no)

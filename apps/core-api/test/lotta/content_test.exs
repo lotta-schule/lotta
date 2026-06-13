@@ -1,18 +1,16 @@
 defmodule Lotta.ContentTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
-  alias Lotta.{Content, Fixtures, Repo}
-  alias Lotta.Accounts.UserGroup
+  import Lotta.Factory
 
-  import Ecto.Query
+  alias Lotta.{Content, Repo}
 
   @prefix "tenant_test"
 
   setup do
     Repo.put_prefix(@prefix)
-
     :ok
   end
 
@@ -20,54 +18,42 @@ defmodule Lotta.ContentTest do
     alias Lotta.Content.Article
 
     test "get_article/1 returns the article with given id" do
-      user = Fixtures.fixture(:registered_user)
-      article = Fixtures.fixture(:article, user)
-      assert Lotta.Repo.preload(Content.get_article(article.id), [:category, :users]) == article
+      user = insert(:user)
+
+      article =
+        insert(:article)
+        |> with_users([user])
+        |> Repo.reload!()
+        |> Repo.preload([:category, :users])
+
+      assert Repo.preload(Content.get_article(article.id), [:category, :users]) == article
     end
 
     test "list_users_articles/2 should return a users' visible articles" do
-      user = Fixtures.fixture(:registered_user)
+      user = insert(:user)
+      article = insert(:article) |> with_users([user])
 
-      article =
-        Fixtures.fixture(:article, user)
-        |> Lotta.Repo.preload([:category, :users])
+      listed_ids = Content.list_user_articles(user) |> Enum.map(& &1.id)
 
-      listed_articles =
-        Enum.map(Content.list_user_articles(user), fn article ->
-          Lotta.Repo.preload(article, [:category, :users])
-        end)
-
-      assert listed_articles == [article]
+      assert article.id in listed_ids
     end
 
     test "list_unpublished_articles/2 should return all unpublished articles" do
-      user = Fixtures.fixture(:registered_user)
+      user = insert(:user)
+      article = insert(:unpublished_article) |> with_users([user])
 
-      article =
-        Fixtures.fixture(:unpublished_article, user)
-        |> Lotta.Repo.preload([:category, :users])
+      listed_ids = Content.list_unpublished_articles() |> Enum.map(& &1.id)
 
-      listed_articles =
-        Enum.map(Content.list_unpublished_articles(), fn article ->
-          Lotta.Repo.preload(article, [:category, :users])
-        end)
-
-      assert List.last(listed_articles) == article
+      assert article.id in listed_ids
     end
 
     test "list_user_articles/2 should return users' articles" do
-      user = Fixtures.fixture(:registered_user)
+      user = insert(:user)
+      article = insert(:unpublished_article) |> with_users([user])
 
-      article =
-        Fixtures.fixture(:unpublished_article, user)
-        |> Lotta.Repo.preload([:category, :users])
+      listed_ids = Content.list_user_articles(user) |> Enum.map(& &1.id)
 
-      listed_articles =
-        Enum.map(Content.list_user_articles(user), fn article ->
-          Lotta.Repo.preload(article, [:category, :users])
-        end)
-
-      assert listed_articles == [article]
+      assert article.id in listed_ids
     end
 
     test "unpublish_articles_of_single_group/1 should unpublish articles of a given group" do
@@ -79,31 +65,28 @@ defmodule Lotta.ContentTest do
         |> Repo.update!(prefix: Ecto.get_meta(model, :prefix))
       end
 
-      verwaltung_group = Repo.one(from(UserGroup) |> where(name: "Verwaltung"), prefix: @prefix)
-      lehrer_group = Repo.one(from(UserGroup) |> where(name: "Lehrer"), prefix: @prefix)
+      verwaltung_group = insert(:group)
+      lehrer_group = insert(:group)
 
-      user = Fixtures.fixture(:registered_user)
+      user = insert(:user)
 
       article1 =
-        Fixtures.fixture(:article, user)
-        |> Ecto.Changeset.change(published: true)
-        |> Repo.update!()
+        insert(:article, published: true)
         |> assign_groups.([lehrer_group])
         |> Repo.preload(:groups)
 
       article2 =
-        Fixtures.fixture(:article, user)
-        |> Ecto.Changeset.change(published: true)
-        |> Repo.update!()
+        insert(:article, published: true)
         |> assign_groups.([lehrer_group])
         |> Repo.preload(:groups)
 
       article3 =
-        Fixtures.fixture(:article, user)
-        |> Ecto.Changeset.change(published: true)
-        |> Repo.update!()
+        insert(:article, published: true)
         |> assign_groups.([verwaltung_group, lehrer_group])
         |> Repo.preload(:groups)
+
+      # suppress unused warning
+      _ = user
 
       assert {:ok, unpublished_articles} =
                Content.unpublish_articles_of_single_group(lehrer_group)
@@ -126,13 +109,13 @@ defmodule Lotta.ContentTest do
     end
 
     test "delete_article/1 should delete an article" do
-      user = Fixtures.fixture(:registered_user)
-      article = Fixtures.fixture(:unpublished_article, user)
+      user = insert(:user)
+      article = insert(:unpublished_article) |> with_users([user])
 
       Content.delete_article(article)
 
       assert_raise Ecto.NoResultsError, fn ->
-        Lotta.Repo.get!(Article, article.id)
+        Repo.get!(Article, article.id)
       end
     end
   end

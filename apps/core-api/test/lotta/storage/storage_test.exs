@@ -3,9 +3,10 @@ defmodule Lotta.StorageTest do
 
   use Lotta.WorkerCase
 
-  alias Lotta.Accounts.User
-  alias Lotta.{Fixtures, Repo, Storage, Tenants}
-  alias Lotta.Storage.{Directory, File, FileData, RemoteStorage, RemoteStorageEntity}
+  import Lotta.Factory
+
+  alias Lotta.{Repo, Storage, Tenants}
+  alias Lotta.Storage.{File, FileData, RemoteStorage, RemoteStorageEntity}
   alias Lotta.Tenants.UsageLog
 
   @prefix "tenant_test"
@@ -13,25 +14,18 @@ defmodule Lotta.StorageTest do
   setup do
     Repo.put_prefix(@prefix)
 
-    user =
-      Repo.one!(
-        from(u in User,
-          where: u.email == ^"eike.wiewiorra@lotta.schule"
-        ),
-        prefix: @prefix
-      )
+    user = insert(:user)
+    user_directory = insert(:directory, name: "ehrenberg-on-air", user_id: user.id)
 
     user_file =
-      Repo.one!(
-        from(f in File, where: f.filename == ^"eoa3.mp3"),
-        prefix: @prefix
+      insert(:file,
+        user_id: user.id,
+        parent_directory_id: user_directory.id,
+        filename: "eoa3.mp3",
+        file_type: "audio",
+        mime_type: "audio/mp3"
       )
-
-    user_directory =
-      Repo.one!(
-        from(d in Directory, where: d.name == ^"ehrenberg-on-air"),
-        prefix: @prefix
-      )
+      |> with_remote_storage("test/support/fixtures/eoa2.mp3")
 
     {:ok,
      %{
@@ -99,18 +93,7 @@ defmodule Lotta.StorageTest do
       {:ok, user_file} = Storage.create_file(file, directory, user)
 
       user_file = Repo.preload(user_file, :remote_storage_entity)
-
-      current_file_datetime =
-        ExAws.S3.head_object(bucket_name, user_file.remote_storage_entity.path)
-        |> ExAws.request!(config)
-        |> Map.fetch!(:headers)
-        |> Enum.find_value(fn {key, val} ->
-          if key == "date", do: val
-        end)
-        |> Timex.parse!("{RFC1123}")
-
-      # wait 1 seconds in order to enforce new DateTime
-      :timer.sleep(1000)
+      old_entity_id = user_file.remote_storage_entity.id
 
       {:ok, user_file} =
         user_file
@@ -118,21 +101,17 @@ defmodule Lotta.StorageTest do
 
       assert %File{} = user_file
 
-      new_file_datetime =
-        ExAws.S3.head_object(bucket_name, user_file.remote_storage_entity.path)
-        |> ExAws.request!(config)
-        |> Map.fetch!(:headers)
-        |> Enum.find_value(fn {key, val} ->
-          if key == "date", do: val
-        end)
-        |> Timex.parse!("{RFC1123}")
+      user_file = Repo.preload(user_file, :remote_storage_entity)
+      assert user_file.remote_storage_entity.id != old_entity_id
 
-      assert DateTime.compare(new_file_datetime, current_file_datetime) == :gt
+      assert ExAws.S3.head_object(bucket_name, user_file.remote_storage_entity.path)
+             |> ExAws.request!(config)
+             |> Map.fetch!(:status_code) == 200
     end
 
     test "delete_file/1 should delete file in the database" do
-      user = Fixtures.fixture(:registered_user)
-      file = Fixtures.fixture(:file, user)
+      user = insert(:user)
+      file = insert(:file, user_id: user.id)
 
       Storage.delete_file(file)
 
@@ -144,8 +123,8 @@ defmodule Lotta.StorageTest do
     test "delete_file/1 should remove the corresponding tenant's logo_image_file_id, if set" do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
-      user = Fixtures.fixture(:registered_user)
-      file = Fixtures.fixture(:file, user)
+      user = insert(:user)
+      file = insert(:file, user_id: user.id)
 
       tenant =
         tenant
@@ -183,14 +162,14 @@ defmodule Lotta.StorageTest do
 
     test "should call get_http_url", %{user_file: user_file} do
       assert Storage.get_http_url(user_file) =~
-               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\//
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-test\/tenant_test\//
     end
 
     test "should call get_http_url with download path, but do nothing of it", %{
       user_file: user_file
     } do
       assert Storage.get_http_url(user_file) =~
-               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\/.*/
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-test\/tenant_test\/.*/
     end
 
     test "should generate a presigned URL when signed option is true", %{
@@ -199,7 +178,7 @@ defmodule Lotta.StorageTest do
       url = Storage.get_http_url(user_file, signed: true)
 
       assert url =~
-               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\/.*/
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-test\/tenant_test\/.*/
 
       assert url =~ ~r/X-Amz-Algorithm=/
       assert url =~ ~r/X-Amz-Credential=/
@@ -230,14 +209,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "video",
-             media_duration: 120.5,
-             filename: "test_video.mp4"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "video",
+          media_duration: 120.5,
+          filename: "test_video.mp4"
         )
 
       assert :ok = Storage.create_conversion_log(file)
@@ -261,14 +237,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "audio",
-             media_duration: 45.8,
-             filename: "test_audio.mp3"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "audio",
+          media_duration: 45.8,
+          filename: "test_audio.mp3"
         )
 
       assert :ok = Storage.create_conversion_log(file)
@@ -290,14 +263,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "video",
-             media_duration: 0.0,
-             filename: "zero_duration.mp4"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "video",
+          media_duration: 0.0,
+          filename: "zero_duration.mp4"
         )
 
       assert :ok = Storage.create_conversion_log(file)
@@ -317,14 +287,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "video",
-             media_duration: nil,
-             filename: "nil_duration.mp4"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "video",
+          media_duration: nil,
+          filename: "nil_duration.mp4"
         )
 
       assert :ok = Storage.create_conversion_log(file)
@@ -344,14 +311,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "image",
-             media_duration: nil,
-             filename: "image.png"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "image",
+          media_duration: nil,
+          filename: "image.png"
         )
 
       assert :ok = Storage.create_conversion_log(file)
@@ -371,14 +335,11 @@ defmodule Lotta.StorageTest do
       tenant = Tenants.get_tenant_by_prefix(@prefix)
 
       file =
-        Fixtures.fixture(
-          :file,
-          {user,
-           %{
-             file_type: "video",
-             media_duration: 60.0,
-             filename: "duplicate_test.mp4"
-           }}
+        insert(:file,
+          user_id: user.id,
+          file_type: "video",
+          media_duration: 60.0,
+          filename: "duplicate_test.mp4"
         )
 
       # Create the log first time

@@ -26,6 +26,7 @@ defmodule Lotta.MixProject do
         output: "coverage"
       ],
       preferred_cli_env: [
+        test: :test,
         coveralls: :test,
         "coveralls.json": :test,
         "coveralls.detail": :test,
@@ -126,7 +127,7 @@ defmodule Lotta.MixProject do
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.14", only: :test},
       {:junit_formatter, "~> 3.2", only: :test},
-      {:mock, "~> 0.3", only: :test},
+      {:mox, "~> 1.0", only: :test},
       # Development
       {:phoenix_live_reload, "~> 1.6", only: :dev},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
