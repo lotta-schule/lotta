@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useNodeMenuProps } from './useNodeMenuProps.js';
+import { useNodeMenuProps } from './useNodeMenuProps';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,

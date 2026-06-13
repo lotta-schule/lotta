@@ -1,4 +1,4 @@
-import { ArticleModel, ContentModuleType } from '#/model/index.js';
+import { ArticleModel, ContentModuleType } from '#/model';
 /**
  *
  *

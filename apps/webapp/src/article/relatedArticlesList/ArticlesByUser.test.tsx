@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { render, waitFor } from '#/test/util.js';
+import { render, waitFor } from '#/test/util';
 import {
   Weihnachtsmarkt,
   ComputerExperten,
   VivaLaRevolucion,
   SomeUser,
-} from '#/test/fixtures/index.js';
-import { ArticlesByUser } from './ArticlesByUser.js';
+} from '#/test/fixtures';
+import { ArticlesByUser } from './ArticlesByUser';
 import { ApolloLink } from '@apollo/client';
-import { ArticleModel } from '#/model/index.js';
+import { ArticleModel } from '#/model';
 
 import GetArticlesByUser from '#/api/query/GetArticlesByUserQuery.graphql';
 

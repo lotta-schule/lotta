@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useIsMobile } from '../util/index.js';
-import { useBrowserState } from './BrowserStateContext.js';
-import { FilePreview } from './FilePreview.js';
-import { SearchResultNodeList } from './SearchResultNodeList.js';
+import { useIsMobile } from '../util';
+import { useBrowserState } from './BrowserStateContext';
+import { FilePreview } from './FilePreview';
+import { SearchResultNodeList } from './SearchResultNodeList';
 import clsx from 'clsx';
 
 import styles from './Explorer.module.scss';

@@ -9,9 +9,9 @@ import {
   ConversationModel,
   ID,
   FileModel,
-} from '#/model/index.js';
-import { SelectFileButton } from '#/shared/edit/SelectFileButton.js';
-import { Icon } from '#/shared/Icon.js';
+} from '#/model';
+import { SelectFileButton } from '#/shared/edit/SelectFileButton';
+import { Icon } from '#/shared/Icon';
 import pick from 'lodash/pick';
 import uniqBy from 'lodash/uniqBy';
 

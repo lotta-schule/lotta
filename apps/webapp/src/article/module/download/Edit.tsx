@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Input, SortableDraggableList } from '@lotta-schule/hubert';
-import { ContentModuleModel, FileModel } from '#/model/index.js';
-import { SelectFileButton } from '#/shared/edit/SelectFileButton.js';
+import { ContentModuleModel, FileModel } from '#/model';
+import { SelectFileButton } from '#/shared/edit/SelectFileButton';
 
 import styles from './Download.module.scss';
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
+import { render, waitFor, userEvent } from '#/test/util';
 import {
   adminGroup,
   imageFile,
@@ -7,8 +7,8 @@ import {
   SomeUser,
   SomeUserin,
   Weihnachtsmarkt,
-} from '#/test/fixtures/index.js';
-import { ArticlePreview } from './ArticlePreview.js';
+} from '#/test/fixtures';
+import { ArticlePreview } from './ArticlePreview';
 
 describe('shared/article/ArticlePreview', () => {
   describe('should render title', () => {

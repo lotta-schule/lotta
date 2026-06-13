@@ -5,9 +5,9 @@ import { configure } from '@testing-library/react';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
 // import { resetApolloClientSingletons } from '@apollo/client-integration-nextjs';
-import { MockRouter } from './mocks/index.js';
+import { MockRouter } from './mocks';
 import { NEXT_DATA } from 'next/dist/shared/lib/utils.js';
-import { DirectoryModel, FileModel } from '../model/index.js';
+import { DirectoryModel, FileModel } from '../model';
 
 // afterEach(resetApolloClientSingletons);
 
@@ -76,7 +76,7 @@ beforeAll(() => {
   }));
 
   vi.mock('next/navigation.js', async () => {
-    const { MockRouter } = await import('./mocks/MockRouter.js');
+    const { MockRouter } = await import('./mocks/MockRouter');
     const mockParams = {};
     globalThis.mockRouter ||= new MockRouter();
     return {

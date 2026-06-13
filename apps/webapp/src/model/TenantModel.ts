@@ -1,4 +1,4 @@
-import { FileModel } from './FileModel.js';
+import { FileModel } from './FileModel';
 
 export interface TenantStatsModel {
   articleCount?: number;

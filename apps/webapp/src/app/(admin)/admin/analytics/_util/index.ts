@@ -1,1 +1,1 @@
-export * from './formatDate.js';
+export * from './formatDate';

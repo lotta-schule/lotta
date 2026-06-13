@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { describe, expect, it } from 'vitest';
-import { render } from '#/test/util.js';
-import {
-  CalendarKlassenarbeiten,
-  CalendarResponse,
-} from '#/test/fixtures/index.js';
-import { Calendar, GET_EXTERNAL_CALENDAR_EVENTS } from './Calendar.js';
+import { render } from '#/test/util';
+import { CalendarKlassenarbeiten, CalendarResponse } from '#/test/fixtures';
+import { Calendar, GET_EXTERNAL_CALENDAR_EVENTS } from './Calendar';
 
 describe('shared/widgets/Calendar', () => {
   const mocks = [

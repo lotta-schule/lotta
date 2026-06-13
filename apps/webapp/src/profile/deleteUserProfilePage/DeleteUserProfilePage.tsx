@@ -1,15 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { Main, Sidebar } from '#/layout/index.js';
-import { RelevantFilesInUsage } from './queries.js';
-import { StartStep } from './steps/StartStep.js';
-import { ReviewArticlesStep } from './steps/ReviewArticlesStep.js';
-import { ReviewFilesStep } from './steps/ReviewFilesStep.js';
-import { ConfirmDeletionStep } from './steps/ConfirmDeletionStep.js';
-import { DeleteConfirmationDialog } from './components/index.js';
-import { ErrorBoundary } from './components/index.js';
-import { ProfileDeleteStep } from './types.js';
+import { Main, Sidebar } from '#/layout';
+import { RelevantFilesInUsage } from './queries';
+import { StartStep } from './steps/StartStep';
+import { ReviewArticlesStep } from './steps/ReviewArticlesStep';
+import { ReviewFilesStep } from './steps/ReviewFilesStep';
+import { ConfirmDeletionStep } from './steps/ConfirmDeletionStep';
+import { DeleteConfirmationDialog } from './components';
+import { ErrorBoundary } from './components';
+import { ProfileDeleteStep } from './types';
 
 import styles from './DeleteUserProfilePage.module.scss';
 

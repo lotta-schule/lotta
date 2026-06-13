@@ -7,7 +7,7 @@ import { mergeProps, useFocusRing, useOption } from 'react-aria';
 import {
   ListItemFactory,
   ListItemPreliminaryItem,
-} from '../list/ListItemFactory.js';
+} from '../list/ListItemFactory';
 
 export type ListBoxOptionProps = {
   item: Node<ListItemPreliminaryItem>;

@@ -1,4 +1,4 @@
-import { Theme } from './Theme.js';
+import { Theme } from './Theme';
 
 export type CSSType = 'value' | 'number' | 'length' | 'color' | 'font-family';
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ApolloCache } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
 import { BrowserNode, BrowserProps } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from '#/model/index.js';
+import { DirectoryModel, FileModel } from '#/model';
 
 import DeleteDirectoryMutation from '#/api/mutation/DeleteDirectoryMutation.graphql';
 import DeleteFileMutation from '#/api/mutation/DeleteFileMutation.graphql';

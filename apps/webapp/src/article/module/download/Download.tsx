@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Show } from './Show.js';
-import { Edit } from './Edit.js';
-import { ContentModuleComponentProps } from '../ContentModule.js';
+import { Show } from './Show';
+import { Edit } from './Edit';
+import { ContentModuleComponentProps } from '../ContentModule';
 
 export const Download = React.memo(
   ({

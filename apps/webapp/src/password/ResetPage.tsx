@@ -1,10 +1,10 @@
 'use client';
 import * as React from 'react';
-import { Main } from '#/layout/index.js';
+import { Main } from '#/layout';
 import { useRouter, useSearchParams } from 'next/navigation.js';
 import { Box, Button, ErrorMessage, Input, Label } from '@lotta-schule/hubert';
 import { useApolloClient, useMutation } from '@apollo/client/react';
-import { RESET_PASSWORD } from './_graphql/index.js';
+import { RESET_PASSWORD } from './_graphql';
 import Link from 'next/link.js';
 
 import styles from './RequestResetPage.module.scss';

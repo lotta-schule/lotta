@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Category, RedirectType } from '#/util/model/index.js';
-import { useCategories } from '#/util/categories/useCategories.js';
+import { Category, RedirectType } from '#/util/model';
+import { useCategories } from '#/util/categories/useCategories';
 import Link from 'next/link.js';
 
 import styles from './Footer.module.scss';

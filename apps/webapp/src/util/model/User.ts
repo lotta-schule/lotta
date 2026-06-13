@@ -1,4 +1,4 @@
-import { ArticleModel } from '#/model/index.js';
+import { ArticleModel } from '#/model';
 
 export const User = {
   getName(

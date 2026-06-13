@@ -5,8 +5,8 @@ import {
   DialogActions,
   DialogContent,
 } from '@lotta-schule/hubert';
-import { ArticlesByTag } from '../relatedArticlesList/index.js';
-import { isBrowser } from '#/util/isBrowser.js';
+import { ArticlesByTag } from '../relatedArticlesList';
+import { isBrowser } from '#/util/isBrowser';
 
 import styles from './TagDetailsDialog.module.scss';
 

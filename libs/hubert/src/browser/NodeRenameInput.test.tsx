@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from '../test-utils.js';
+import { render, userEvent, waitFor } from '../test-utils';
 import {
   BrowserPath,
   BrowserStateProvider,
   BrowserStateProviderProps,
-} from './BrowserStateContext.js';
-import { NodeRenameInput, NodeRenameInputProps } from './NodeRenameInput.js';
+} from './BrowserStateContext';
+import { NodeRenameInput, NodeRenameInputProps } from './NodeRenameInput';
 
 type WrappedNodeRenameInputProps = NodeRenameInputProps & {
   renameNode: BrowserStateProviderProps['renameNode'];

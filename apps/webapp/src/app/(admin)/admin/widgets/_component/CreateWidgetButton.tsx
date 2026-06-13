@@ -4,9 +4,9 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton, Item } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client/react';
 import { useRouter } from 'next/navigation.js';
-import { WidgetModel, WidgetModelType } from '#/model/index.js';
-import { Widget } from '#/util/model/index.js';
-import { Icon } from '#/shared/Icon.js';
+import { WidgetModel, WidgetModelType } from '#/model';
+import { Widget } from '#/util/model';
+import { Icon } from '#/shared/Icon';
 
 import CreateWidgetMutation from '#/api/mutation/CreateWidgetMutation.graphql';
 import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';

@@ -4,9 +4,9 @@ import '@testing-library/jest-dom/vitest';
 import { configure } from '@testing-library/react';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
 import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
-import { MockRouter } from '#/test/mocks/index.js';
+import { MockRouter } from '#/test/mocks';
 import { NEXT_DATA } from 'next/dist/shared/lib/utils.js';
-import { DirectoryModel, FileModel } from '#/model/index.js';
+import { DirectoryModel, FileModel } from '#/model';
 
 declare module 'vitest' {
   interface Assertion<T = any> extends TestingLibraryMatchers<
@@ -34,7 +34,7 @@ declare namespace globalThis {
   let mockRouter: MockRouter;
 }
 
-vi.mock('#/util/browserLocation.js', () => ({
+vi.mock('#/util/browserLocation', () => ({
   redirectTo: vi.fn(),
   reload: vi.fn(),
 }));
@@ -53,7 +53,7 @@ vi.mock('next/config.js', () => ({
 // Both 'next/navigation.js' and 'next/navigation.js' mocks share the same vi.fn() instances
 // so that tests importing one path can mock the router used by components importing the other.
 vi.mock('next/navigation.js', async () => {
-  const { MockRouter } = await import('#/test/mocks/MockRouter.js');
+  const { MockRouter } = await import('#/test/mocks/MockRouter');
   globalThis.mockRouter ||= new MockRouter();
   (globalThis as any).__mockNavigationFns ||= {
     useRouter: vi.fn(() => globalThis.mockRouter),
@@ -68,7 +68,7 @@ vi.mock('next/navigation.js', async () => {
 });
 
 vi.mock('next/navigation.js', async () => {
-  const { MockRouter } = await import('#/test/mocks/MockRouter.js');
+  const { MockRouter } = await import('#/test/mocks/MockRouter');
   globalThis.mockRouter ||= new MockRouter();
   (globalThis as any).__mockNavigationFns ||= {
     useRouter: vi.fn(() => globalThis.mockRouter),

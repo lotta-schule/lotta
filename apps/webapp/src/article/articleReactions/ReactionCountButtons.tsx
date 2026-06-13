@@ -1,7 +1,7 @@
-import { ArticleModel, ArticleReactionType } from '#/model/index.js';
-import { iconForReactionType } from './supportedReactionIcons.js';
+import { ArticleModel, ArticleReactionType } from '#/model';
+import { iconForReactionType } from './supportedReactionIcons';
 import { PillButton, PopoverTrigger } from '@lotta-schule/hubert';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import * as React from 'react';
 
 import styles from './ReactionCountButtons.module.scss';

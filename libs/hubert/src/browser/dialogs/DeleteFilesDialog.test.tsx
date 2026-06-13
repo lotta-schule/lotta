@@ -7,8 +7,8 @@ import {
   userEvent,
   waitFor,
   within,
-} from '../../test-utils.js';
-import { DeleteFilesDialog } from './DeleteFilesDialog.js';
+} from '../../test-utils';
+import { DeleteFilesDialog } from './DeleteFilesDialog';
 
 const WrappedDeleteDirectoryDialog = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>

@@ -1,5 +1,5 @@
 import { BrowserNode, BrowserPath } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from '#/model/index.js';
+import { DirectoryModel, FileModel } from '#/model';
 
 export type GetDirectoriesAndFilesQueryResult = {
   directories: DirectoryModel[];

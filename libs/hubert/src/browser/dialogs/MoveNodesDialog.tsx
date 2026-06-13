@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog.js';
-import { Dialog, DialogActions, DialogContent } from '../../dialog/index.js';
-import { BrowserPath, useBrowserState } from '../BrowserStateContext.js';
-import { ErrorMessage } from '../../message/index.js';
-import { Tooltip } from '../../util/index.js';
-import { Button, LoadingButton } from '../../button/index.js';
-import { CreateNewFolder } from '../../icon/index.js';
-import { DirectorySelector } from './DirectorySelector.js';
-import { isDirectoryNode, isFileNode } from '../utils.js';
+import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
+import { Dialog, DialogActions, DialogContent } from '../../dialog';
+import { BrowserPath, useBrowserState } from '../BrowserStateContext';
+import { ErrorMessage } from '../../message';
+import { Tooltip } from '../../util';
+import { Button, LoadingButton } from '../../button';
+import { CreateNewFolder } from '../../icon';
+import { DirectorySelector } from './DirectorySelector';
+import { isDirectoryNode, isFileNode } from '../utils';
 
 export const MoveNodesDialog = React.memo(() => {
   const { currentAction, resetAction, moveNode, onRequestChildNodes, canEdit } =

@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { Button } from './Button.js';
-import { ArrowUpwardRounded } from '../icon/index.js';
+import { Button } from './Button';
+import { ArrowUpwardRounded } from '../icon';
 import { motion } from 'framer-motion';
-import { useScrollEvent, useWindowSize } from '../util/index.js';
+import { useScrollEvent, useWindowSize } from '../util';
 
 import styles from './ScrollToTopButton.module.scss';
 

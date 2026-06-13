@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { mergeProps, useTooltipTrigger } from 'react-aria';
 import { useTooltipTriggerState } from 'react-stately';
-import { TooltipOverlay } from './TooltipOverlay.js';
+import { TooltipOverlay } from './TooltipOverlay';
 
 import styles from './Tooltip.module.scss';
 

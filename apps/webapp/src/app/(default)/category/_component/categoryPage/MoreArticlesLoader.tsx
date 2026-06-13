@@ -2,9 +2,9 @@
 
 import { useQuery } from '@apollo/client/react';
 import * as React from 'react';
-import { ArticlePreview } from '#/article/preview/ArticlePreview.js';
+import { ArticlePreview } from '#/article/preview/ArticlePreview';
 import { useScrollEvent } from '@lotta-schule/hubert';
-import { GET_ARTICLES_QUERY } from './_graphql/GET_ARTICLES_QUERY.js';
+import { GET_ARTICLES_QUERY } from './_graphql/GET_ARTICLES_QUERY';
 import clsx from 'clsx';
 
 import styles from './CategoryPage.module.scss';

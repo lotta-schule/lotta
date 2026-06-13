@@ -1,4 +1,4 @@
-import { CategoryModel } from '#/model/index.js';
+import { CategoryModel } from '#/model';
 import slugify from 'slugify';
 
 export enum RedirectType {

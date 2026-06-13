@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RadioProps } from './Radio.js';
+import { RadioProps } from './Radio';
 
 export type RadioGroupProps = {
   name: string;

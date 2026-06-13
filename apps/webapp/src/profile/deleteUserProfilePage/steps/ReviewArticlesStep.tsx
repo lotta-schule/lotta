@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Box } from '@lotta-schule/hubert';
 import { useSuspenseQuery } from '@apollo/client/react';
-import { ArticlesList } from '#/shared/articlesList/ArticlesList.js';
-import { useTenant } from '#/util/tenant/index.js';
-import { StepNavigation, StepNavigationProps } from '../components/index.js';
-import { GET_OWN_ARTICLES } from '../queries.js';
+import { ArticlesList } from '#/shared/articlesList/ArticlesList';
+import { useTenant } from '#/util/tenant';
+import { StepNavigation, StepNavigationProps } from '../components';
+import { GET_OWN_ARTICLES } from '../queries';
 
 import styles from '../DeleteUserProfilePage.module.scss';
-import { ProfileDeleteStep } from '../types.js';
+import { ProfileDeleteStep } from '../types';
 
 export type ReviewArticlesStepProps = Omit<
   StepNavigationProps<[]>,

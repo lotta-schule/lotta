@@ -1,6 +1,6 @@
-import { UserGroupModel } from './UserGroupModel.js';
-import { ID } from './ID.js';
-import { FileModel } from '#/model/index.js';
+import { UserGroupModel } from './UserGroupModel';
+import { ID } from './ID';
+import { FileModel } from '#/model';
 
 export interface UserModel {
   __typename?: 'User';

@@ -1,1 +1,1 @@
-export * from './GridList.js';
+export * from './GridList';

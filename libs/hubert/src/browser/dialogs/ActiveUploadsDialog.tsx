@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Dialog, DialogContent } from '../../dialog/index.js';
-import { List, ListItem, ListItemSecondaryText } from '../../list/index.js';
-import { CircularProgress } from '../../progress/index.js';
-import { useBrowserState } from '../BrowserStateContext.js';
-import { Check, Close } from '../../icon/index.js';
-import { FileSize } from '../../util/index.js';
+import { Dialog, DialogContent } from '../../dialog';
+import { List, ListItem, ListItemSecondaryText } from '../../list';
+import { CircularProgress } from '../../progress';
+import { useBrowserState } from '../BrowserStateContext';
+import { Check, Close } from '../../icon';
+import { FileSize } from '../../util';
 import clsx from 'clsx';
 
 import styles from './ActiveUploadsDialog.module.scss';

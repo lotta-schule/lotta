@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Theme } from '@lotta-schule/theme';
-import { CSSVariables } from './CSSVariables.js';
-import { ExternalFont, FontLoader } from './FontLoader.js';
+import { CSSVariables } from './CSSVariables';
+import { ExternalFont, FontLoader } from './FontLoader';
 
 export type GlobalStylesProps = {
   theme: Theme;

@@ -1,5 +1,5 @@
 import { ApolloLink } from '@apollo/client';
-import { isBrowser } from '#/util/isBrowser.js';
+import { isBrowser } from '#/util/isBrowser';
 
 export const createVariableInputMutationsLink = () =>
   new ApolloLink((operation, forward) => {

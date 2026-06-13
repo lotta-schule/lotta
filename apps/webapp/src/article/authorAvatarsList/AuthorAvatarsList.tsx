@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { UserPreviewModel } from '#/model/index.js';
+import { UserPreviewModel } from '#/model';
 import { AvatarGroup, Deletable, Tooltip } from '@lotta-schule/hubert';
-import { User } from '#/util/model/index.js';
-import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
-import { SearchUserField } from '#/component/form/index.js';
+import { User } from '#/util/model';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
+import { SearchUserField } from '#/component/form';
 import clsx from 'clsx';
 
 import styles from './AuthorAvatarsList.module.scss';

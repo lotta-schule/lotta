@@ -5,9 +5,9 @@ import {
   StartseiteCategory,
   KunstCategory,
   ComputerExperten,
-} from '#/test/fixtures/index.js';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { CategoryEditor } from './CategoryEditor.js';
+} from '#/test/fixtures';
+import { render, waitFor, userEvent } from '#/test/util';
+import { CategoryEditor } from './CategoryEditor';
 
 import UpdateCategoryMutation from '#/api/mutation/UpdateCategoryMutation.graphql';
 import GetCategoryWidgetsQuery from '#/api/query/GetCategoryWidgetsQuery.graphql';

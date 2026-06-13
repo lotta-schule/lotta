@@ -2,7 +2,7 @@ import { ResultOf } from 'gql.tada';
 import {
   GET_CALENDARS,
   GET_CALENDAR_EVENTS,
-} from '#/app/(admin)/admin/calendars/_graphql/index.js';
+} from '#/app/(admin)/admin/calendars/_graphql';
 import { addHours, endOfDay, startOfDay, startOfHour } from 'date-fns';
 
 export const createCalendarFixture = (

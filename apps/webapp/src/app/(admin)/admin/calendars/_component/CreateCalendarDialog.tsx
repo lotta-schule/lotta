@@ -9,9 +9,9 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { useRouter } from 'next/navigation.js';
-import { CREATE_CALENDAR, GET_CALENDARS } from '../_graphql/index.js';
+import { CREATE_CALENDAR, GET_CALENDARS } from '../_graphql';
 import { useTranslation } from 'react-i18next';
-import { BasicCalendarFormElement } from './BasicCalendarFormElement.js';
+import { BasicCalendarFormElement } from './BasicCalendarFormElement';
 
 export interface CreateCalendarDialogProps {
   isOpen: boolean;

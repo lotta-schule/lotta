@@ -13,9 +13,9 @@ import {
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
-import { DirectoryModel, FileModel } from '#/model/index.js';
-import { File, User } from '#/util/model/index.js';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { DirectoryModel, FileModel } from '#/model';
+import { File, User } from '#/util/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
@@ -26,13 +26,13 @@ import {
   useRenameNode,
   useSearchNodes,
   useUploadNode,
-} from './action/index.js';
+} from './action';
 import {
   GetDirectoriesAndFilesQueryResult,
   makeBrowserNodes,
-} from './makeBrowserNodes.js';
-import { RenderNodeList } from './RenderNodeList.js';
-import { FileUsageOverview } from './FileUsageOverview.js';
+} from './makeBrowserNodes';
+import { RenderNodeList } from './RenderNodeList';
+import { FileUsageOverview } from './FileUsageOverview';
 
 import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
 

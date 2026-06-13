@@ -3,9 +3,9 @@ import * as React from 'react';
 import { Label } from '@lotta-schule/hubert';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@apollo/client/react';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import { t } from 'i18next';
-import { graphql } from '#/api/graphql.js';
+import { graphql } from '#/api/graphql';
 
 export const GET_TENANT_REALTIME_ANALYTICS = graphql(`
   query GetTenantRealtimeAnalytics {

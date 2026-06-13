@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, userEvent } from '#/test/util.js';
-import { ContentModuleModel, ContentModuleType } from '#/model/index.js';
-import { FormConfiguration } from './Form.js';
-import { Edit } from './Edit.js';
+import { render, userEvent } from '#/test/util';
+import { ContentModuleModel, ContentModuleType } from '#/model';
+import { FormConfiguration } from './Form';
+import { Edit } from './Edit';
 
 describe('shared/article/modules/form/Edit', () => {
   const contentModule: ContentModuleModel<any, FormConfiguration> = {

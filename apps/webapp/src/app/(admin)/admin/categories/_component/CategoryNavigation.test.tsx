@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor, within, userEvent } from '#/test/util.js';
+import { render, waitFor, within, userEvent } from '#/test/util';
 import { useParams, useRouter } from 'next/navigation.js';
 import {
   allCategories,
@@ -7,9 +7,9 @@ import {
   FaecherCategory,
   StartseiteCategory,
   MatheCategory,
-} from '#/test/fixtures/index.js';
-import { CategoryNavigation } from './CategoryNavigation.js';
-import { type MockRouter } from '#/test/mocks/index.js';
+} from '#/test/fixtures';
+import { CategoryNavigation } from './CategoryNavigation';
+import { type MockRouter } from '#/test/mocks';
 import { MockedFunction } from 'vitest';
 
 describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNavigation', () => {

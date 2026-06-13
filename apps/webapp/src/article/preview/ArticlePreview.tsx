@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import {
   faCircle,
   faLocationDot,
@@ -14,11 +14,11 @@ import {
   ArticlePreviewModel,
   ID,
   UserPreviewModel,
-} from '#/model/index.js';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
-import { Article, User } from '#/util/model/index.js';
+} from '#/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { Article, User } from '#/util/model';
 import { useMutation } from '@apollo/client/react';
-import { Article as ArticleUtil } from '#/util/model/Article.js';
+import { Article as ArticleUtil } from '#/util/model/Article';
 import {
   Button,
   Box,
@@ -28,13 +28,13 @@ import {
   Input,
   Tag,
 } from '@lotta-schule/hubert';
-import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
-import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
-import { TagsSelect } from '../editor/TagsSelect.js';
-import { AuthorAvatarsList } from '#/article/authorAvatarsList/AuthorAvatarsList.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import { TagDetailsDialog } from '#/article/tagDetailsDialog/index.js';
-import { UserArticlesDialog } from '#/profile/userArticlesDialog/index.js';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage';
+import { TagsSelect } from '../editor/TagsSelect';
+import { AuthorAvatarsList } from '#/article/authorAvatarsList/AuthorAvatarsList';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { TagDetailsDialog } from '#/article/tagDetailsDialog';
+import { UserArticlesDialog } from '#/profile/userArticlesDialog';
 import Link from 'next/link.js';
 import clsx from 'clsx';
 

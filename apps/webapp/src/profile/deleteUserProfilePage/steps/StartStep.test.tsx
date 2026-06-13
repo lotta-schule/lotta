@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from '#/test/util.js';
-import { StartStep } from './StartStep.js';
+import { render, userEvent, waitFor } from '#/test/util';
+import { StartStep } from './StartStep';
 
 describe('profile/deleteUserProfilePage/steps/StartStep', () => {
   it('should render welcome content with tenant name', () => {

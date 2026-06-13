@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation.js';
-import { getClient } from '#/api/client.js';
-import { Main, Sidebar } from '#/layout/index.js';
-import { ArticleModel, ID } from '#/model/index.js';
-import { EditArticlePageWrapper } from '#/article/EditArticlePageWrapper.js';
-import { loadCurrentUser } from '#/loader/index.js';
-import { User } from '#/util/model/index.js';
+import { getClient } from '#/api/client';
+import { Main, Sidebar } from '#/layout';
+import { ArticleModel, ID } from '#/model';
+import { EditArticlePageWrapper } from '#/article/EditArticlePageWrapper';
+import { loadCurrentUser } from '#/loader';
+import { User } from '#/util/model';
 
 import GetArticleQuery from '#/api/query/GetArticleQuery.graphql';
 

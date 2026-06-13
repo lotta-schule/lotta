@@ -12,10 +12,10 @@ import {
   LoadingButton,
   SuccessMessage,
 } from '@lotta-schule/hubert';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import { useTranslation } from 'react-i18next';
-import { CALENDAR_FRAGMENT, UPDATE_CALENDAR } from '../_graphql/index.js';
-import { BasicCalendarFormElement } from './BasicCalendarFormElement.js';
+import { CALENDAR_FRAGMENT, UPDATE_CALENDAR } from '../_graphql';
+import { BasicCalendarFormElement } from './BasicCalendarFormElement';
 import { FragmentOf } from 'gql.tada';
 import { useMutation } from '@apollo/client/react';
 import { invariant } from '@epic-web/invariant';

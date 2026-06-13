@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { AnimatePresence, MotionProps, motion } from 'framer-motion';
-import { Folder, FolderOpen } from '../icon/index.js';
-import { useBrowserState } from './BrowserStateContext.js';
-import { isFileNode } from './utils.js';
-import { FileIcon } from './FileIcon.js';
+import { Folder, FolderOpen } from '../icon';
+import { useBrowserState } from './BrowserStateContext';
+import { isFileNode } from './utils';
+import { FileIcon } from './FileIcon';
 import clsx from 'clsx';
 
 import styles from './FilePreviewPreview.module.scss';

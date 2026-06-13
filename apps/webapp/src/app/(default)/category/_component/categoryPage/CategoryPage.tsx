@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { WidgetsList } from '../widgetsList/WidgetsList.js';
-import { ArticlePreview } from '#/article/preview/index.js';
-import { ResultOf } from '#/api/graphql.js';
-import { Header, Main, Sidebar } from '#/layout/index.js';
-import { MoreArticlesLoader } from './MoreArticlesLoader.js';
-import { CategoryModel } from '#/model/index.js';
-import { GET_ARTICLES_QUERY } from './_graphql/GET_ARTICLES_QUERY.js';
+import { WidgetsList } from '../widgetsList/WidgetsList';
+import { ArticlePreview } from '#/article/preview';
+import { ResultOf } from '#/api/graphql';
+import { Header, Main, Sidebar } from '#/layout';
+import { MoreArticlesLoader } from './MoreArticlesLoader';
+import { CategoryModel } from '#/model';
+import { GET_ARTICLES_QUERY } from './_graphql/GET_ARTICLES_QUERY';
 import clsx from 'clsx';
 
 import styles from './CategoryPage.module.scss';

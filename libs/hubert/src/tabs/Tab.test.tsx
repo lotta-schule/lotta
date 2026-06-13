@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils.js';
-import { Tab } from './Tab.js';
+import { render } from '../test-utils';
+import { Tab } from './Tab';
 
 describe('tabs/Tab', () => {
   it('should render a Tab button', () => {

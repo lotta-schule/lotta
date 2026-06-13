@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
+import { render, waitFor, userEvent } from '#/test/util';
 import {
   SomeUser,
   adminGroup,
   elternGroup,
   lehrerGroup,
-} from '#/test/fixtures/index.js';
-import { ProfilePage } from './ProfilePage.js';
+} from '#/test/fixtures';
+import { ProfilePage } from './ProfilePage';
 
 import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
 import UpdateProfileMutation from '#/api/mutation/UpdateProfileMutation.graphql';

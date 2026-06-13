@@ -10,8 +10,8 @@ import {
 } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client/react';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { FeedbackModel } from '#/model/index.js';
-import { Icon } from '#/shared/Icon.js';
+import { FeedbackModel } from '#/model';
+import { Icon } from '#/shared/Icon';
 
 import SendFeedbackToLottaMutation from '#/api/mutation/SendFeedbackToLottaMutation.graphql';
 

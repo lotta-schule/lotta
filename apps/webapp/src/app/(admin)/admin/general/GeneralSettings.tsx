@@ -11,12 +11,12 @@ import {
   ListItem,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { FileModel } from '#/model/index.js';
-import { Tenant } from '#/util/tenant/index.js';
-import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
-import { AdminPageSection } from '../_component/AdminPageSection.js';
+import { FileModel } from '#/model';
+import { Tenant } from '#/util/tenant';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage';
+import { AdminPageSection } from '../_component/AdminPageSection';
 import { useRouter } from 'next/navigation.js';
 import Link from 'next/link.js';
 

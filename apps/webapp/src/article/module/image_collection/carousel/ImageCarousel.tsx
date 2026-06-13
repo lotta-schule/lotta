@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Stepper, SwipeableViews } from '@lotta-schule/hubert';
-import { ContentModuleModel, FileModel } from '#/model/index.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import { FileSorter } from '../Config.js';
+import { ContentModuleModel, FileModel } from '#/model';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { FileSorter } from '../Config';
 
 import styles from './ImageCarousel.module.scss';
 

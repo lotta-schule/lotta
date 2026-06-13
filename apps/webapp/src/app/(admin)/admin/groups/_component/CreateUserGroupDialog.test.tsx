@@ -1,11 +1,11 @@
-import { render, waitFor, userEvent } from '#/test/util.js';
+import { render, waitFor, userEvent } from '#/test/util';
 import {
   CREATE_USER_GROUP,
   CreateUserGroupDialog,
-} from './CreateUserGroupDialog.js';
+} from './CreateUserGroupDialog';
 import { MockLink } from '@apollo/client/testing';
-import { lehrerGroup } from '#/test/fixtures/index.js';
-import { GET_USER_GROUPS } from '../_graphql/index.js';
+import { lehrerGroup } from '#/test/fixtures';
+import { GET_USER_GROUPS } from '../_graphql';
 
 const userGroupMock = {
   ...lehrerGroup,

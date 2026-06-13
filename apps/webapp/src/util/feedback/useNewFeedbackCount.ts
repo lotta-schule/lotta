@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client/react';
-import { FeedbackModel } from '#/model/index.js';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
-import { User } from '#/util/model/index.js';
+import { FeedbackModel } from '#/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { User } from '#/util/model';
 
 import GetFeedbackOverviewQuery from '#/api/query/GetFeedbackOverviewQuery.graphql';
 

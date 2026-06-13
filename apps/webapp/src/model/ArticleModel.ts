@@ -1,12 +1,9 @@
-import { CategoryModel } from './CategoryModel.js';
-import {
-  ContentModuleModel,
-  ContentModuleInput,
-} from './ContentModuleModel.js';
-import { UserModel, UserPreviewModel } from './UserModel.js';
-import { FileModel } from './FileModel.js';
-import { ID } from './ID.js';
-import { UserGroupModel } from './UserGroupModel.js';
+import { CategoryModel } from './CategoryModel';
+import { ContentModuleModel, ContentModuleInput } from './ContentModuleModel';
+import { UserModel, UserPreviewModel } from './UserModel';
+import { FileModel } from './FileModel';
+import { ID } from './ID';
+import { UserGroupModel } from './UserGroupModel';
 
 export type ArticleReactionType =
   | 'HEART'

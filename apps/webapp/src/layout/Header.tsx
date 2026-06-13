@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import { FileModel } from '#/model/index.js';
-import { UserNavigation } from './navigation/UserNavigation.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { FileModel } from '#/model';
+import { UserNavigation } from './navigation/UserNavigation';
 import clsx from 'clsx';
 
 import styles from './Header.module.scss';

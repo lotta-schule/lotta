@@ -10,13 +10,13 @@ import {
   LoadingButton,
   Eduplaces as EduplacesIcon,
 } from '@lotta-schule/hubert';
-import { EnrollmentTokensEditor } from '#/profile/component/EnrollmentTokensEditor.js';
-import { DeleteUserGroupDialog } from './DeleteUserGroupDialog.js';
-import { AdminPageSection } from '#/app/(admin)/admin/_component/AdminPageSection.js';
+import { EnrollmentTokensEditor } from '#/profile/component/EnrollmentTokensEditor';
+import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
+import { AdminPageSection } from '#/app/(admin)/admin/_component/AdminPageSection';
 import { useRouter } from 'next/navigation.js';
-import { UPDATE_USER_GROUP } from '../_graphql/index.js';
+import { UPDATE_USER_GROUP } from '../_graphql';
 import { ResultOf } from 'gql.tada';
-import { type GET_GROUP_QUERY } from '#/loader/index.js';
+import { type GET_GROUP_QUERY } from '#/loader';
 
 import styles from './EditUserGroup.module.scss';
 

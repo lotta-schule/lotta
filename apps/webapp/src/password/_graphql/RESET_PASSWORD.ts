@@ -1,4 +1,4 @@
-import { graphql } from '#/api/graphql.js';
+import { graphql } from '#/api/graphql';
 
 export const RESET_PASSWORD = graphql(`
   mutation ResetPassword($email: String!, $password: String!, $token: String!) {

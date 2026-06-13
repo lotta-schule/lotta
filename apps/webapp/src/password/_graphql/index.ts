@@ -1,1 +1,1 @@
-export * from './RESET_PASSWORD.js';
+export * from './RESET_PASSWORD';

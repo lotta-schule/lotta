@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import { faFloppyDisk, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
@@ -19,22 +19,17 @@ import {
 } from '@lotta-schule/hubert';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation.js';
-import {
-  CategoryModel,
-  WidgetModel,
-  ID,
-  UserGroupModel,
-} from '#/model/index.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import { useCategories } from '#/util/categories/useCategories.js';
-import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
-import { GroupSelect } from '#/shared/edit/GroupSelect.js';
-import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
-import { DeleteCategoryDialog } from './DeleteCategoryDialog.js';
-import { Category, RedirectType } from '#/util/model/index.js';
-import { CategoryWidgetSelector } from './CategoryWidgetSelector.js';
-import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection.js';
-import { AdminPageSection } from '../../_component/AdminPageSection.js';
+import { CategoryModel, WidgetModel, ID, UserGroupModel } from '#/model';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { useCategories } from '#/util/categories/useCategories';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay';
+import { GroupSelect } from '#/shared/edit/GroupSelect';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage';
+import { DeleteCategoryDialog } from './DeleteCategoryDialog';
+import { Category, RedirectType } from '#/util/model';
+import { CategoryWidgetSelector } from './CategoryWidgetSelector';
+import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
+import { AdminPageSection } from '../../_component/AdminPageSection';
 
 import UpdateCategoryMutation from '#/api/mutation/UpdateCategoryMutation.graphql';
 import GetCategoryWidgetsQuery from '#/api/query/GetCategoryWidgetsQuery.graphql';

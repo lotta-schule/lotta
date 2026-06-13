@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ContentModuleModel } from '#/model/index.js';
-import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
+import { ContentModuleModel } from '#/model';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage';
 import styles from './VideoVideo.module.scss';
 
 type VideoVideoProps = {

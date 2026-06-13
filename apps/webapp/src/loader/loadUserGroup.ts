@@ -1,6 +1,6 @@
 import { cache } from 'react';
-import { getClient } from '#/api/client.js';
-import { graphql } from '#/api/graphql.js';
+import { getClient } from '#/api/client';
+import { graphql } from '#/api/graphql';
 
 export const GET_GROUP_QUERY = graphql(`
   query GetGroup($id: ID!) {

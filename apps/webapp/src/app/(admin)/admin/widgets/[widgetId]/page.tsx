@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { loadWidgets } from '#/loader/index.js';
+import { loadWidgets } from '#/loader';
 import { notFound } from 'next/navigation.js';
-import { AdminPageTitle } from '../../_component/AdminPageTitle.js';
-import { WidgetEditor } from '../_component/WidgetEditor.js';
-import { serverTranslations } from '#/i18n/server.js';
+import { AdminPageTitle } from '../../_component/AdminPageTitle';
+import { WidgetEditor } from '../_component/WidgetEditor';
+import { serverTranslations } from '#/i18n/server';
 
 async function GroupPage({
   params,

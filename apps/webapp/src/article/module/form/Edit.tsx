@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import {
   faArrowsUpDown,
   faCircleExclamation,
@@ -24,12 +24,9 @@ import {
   TextFormat as TextFormatIcon,
   TextLines as TextLinesIcon,
 } from '@lotta-schule/hubert';
-import { ContentModuleModel } from '#/model/index.js';
-import {
-  FormConfiguration,
-  FormElement as FormElementInterface,
-} from './Form.js';
-import { FormElement } from './FormElement.js';
+import { ContentModuleModel } from '#/model';
+import { FormConfiguration, FormElement as FormElementInterface } from './Form';
+import { FormElement } from './FormElement';
 
 import styles from './Edit.module.scss';
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useSplitView } from './SplitViewContext.js';
+import { useSplitView } from './SplitViewContext';
 import clsx from 'clsx';
 
 import styles from './SplitView.module.scss';

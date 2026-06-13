@@ -1,6 +1,6 @@
 'use client';
-import { ArticleModel } from '#/model/index.js';
-import { ID } from '#/model/ID.js';
+import { ArticleModel } from '#/model';
+import { ID } from '#/model/ID';
 import { useQuery } from '@apollo/client/react';
 import { usePathname } from 'next/navigation.js';
 

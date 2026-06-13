@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ContentModuleModel } from '#/model/index.js';
-import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
-import { VideoVideo } from './VideoVideo.js';
-import { useRequestConversion } from '../useRequestConversion.js';
-import { ConversionProgress } from '../ConversionProgress.js';
+import { ContentModuleModel } from '#/model';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay';
+import { VideoVideo } from './VideoVideo';
+import { useRequestConversion } from '../useRequestConversion';
+import { ConversionProgress } from '../ConversionProgress';
 
 import styles from './Video.module.scss';
 

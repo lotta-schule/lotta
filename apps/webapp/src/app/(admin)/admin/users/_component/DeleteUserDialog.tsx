@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArticleModel, UserModel } from '#/model/index.js';
+import { ArticleModel, UserModel } from '#/model';
 import {
   Button,
   CircularProgress,
@@ -9,9 +9,9 @@ import {
   ErrorMessage,
 } from '@lotta-schule/hubert';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { Article } from '#/util/model/index.js';
+import { Article } from '#/util/model';
 import Link from 'next/link.js';
-import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries.js';
+import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries';
 
 import GetArticlesWithUserFiles from '#/api/query/GetArticlesWithUserFiles.graphql';
 

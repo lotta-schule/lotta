@@ -1,18 +1,18 @@
 'use client';
 import * as React from 'react';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import {
   faCaretDown,
   faCalendar,
   faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client/react';
-import { CategorySelect } from '../../shared/categorySelect/CategorySelect.js';
-import { ArticleModel, ID, UserGroupModel } from '#/model/index.js';
-import { Category, User } from '#/util/model/index.js';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
-import { ArticleStateEditor } from '#/article/editor/ArticleStateEditor.js';
-import { GroupSelect } from '#/shared/edit/GroupSelect.js';
+import { CategorySelect } from '../../shared/categorySelect/CategorySelect';
+import { ArticleModel, ID, UserGroupModel } from '#/model';
+import { Category, User } from '#/util/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { ArticleStateEditor } from '#/article/editor/ArticleStateEditor';
+import { GroupSelect } from '#/shared/edit/GroupSelect';
 import {
   Button,
   ButtonGroup,
@@ -24,7 +24,7 @@ import {
   Item,
   Checkbox,
 } from '@lotta-schule/hubert';
-import { ArticleDatesEditor } from './ArticleDatesEditor.js';
+import { ArticleDatesEditor } from './ArticleDatesEditor';
 import { useRouter } from 'next/navigation.js';
 import clsx from 'clsx';
 

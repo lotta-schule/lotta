@@ -1,12 +1,12 @@
 import React from 'react';
-import { render } from '#/test/util.js';
+import { render } from '#/test/util';
 import {
   Klausurenplan,
   imageFile,
   otherImageFile,
   documentFile,
-} from '#/test/fixtures/index.js';
-import { Download } from './Download.js';
+} from '#/test/fixtures';
+import { Download } from './Download';
 
 const downloadContentModule = {
   ...Klausurenplan.contentModules[1],

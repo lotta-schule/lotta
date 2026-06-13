@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button, ButtonProps } from '../button/Button.js';
-import { Close } from '../icon/index.js';
+import { Button, ButtonProps } from '../button/Button';
+import { Close } from '../icon';
 import clsx from 'clsx';
 
 import styles from './tag.module.scss';

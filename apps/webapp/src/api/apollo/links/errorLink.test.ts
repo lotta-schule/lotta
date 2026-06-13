@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createErrorLink } from './errorLink.js';
+import { createErrorLink } from './errorLink';
 
 describe('createErrorLink', () => {
   const consoleErrorSpy = vi.spyOn(console, 'error');
