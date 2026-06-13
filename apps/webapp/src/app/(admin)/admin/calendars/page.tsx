@@ -11,11 +11,10 @@ const DynamicCalendarView = dynamic(
 
 async function CalendarPage() {
   const client = await getClient();
-  const {
-    data: { calendars },
-  } = await client.query({
+  const { data } = await client.query({
     query: GET_CALENDARS,
   });
+  const calendars = data?.calendars ?? [];
 
   return (
     <div

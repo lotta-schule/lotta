@@ -8,7 +8,7 @@ import {
   Tab,
   Tabbar,
 } from '@lotta-schule/hubert';
-import { UserModel } from '#/model/index.js';
+import { UserPreviewModel } from '#/model/index.js';
 import { User } from '#/util/model/index.js';
 import { ArticlesByUser } from '#/article/relatedArticlesList/index.js';
 import { isBrowser } from '#/util/isBrowser.js';
@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import styles from './UserArticlesDialog.module.scss';
 
 export interface UserArticlesDialogProps {
-  users: UserModel[] | null;
+  users: UserPreviewModel[] | null;
   onRequestClose(): void;
 }
 

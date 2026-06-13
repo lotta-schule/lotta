@@ -18,5 +18,15 @@ export interface UserModel {
   groups: UserGroupModel[];
   avatarImageFile?: FileModel | null;
   enrollmentTokens?: string[];
-  hasChangedDefaultPassword?: boolean;
+  hasChangedDefaultPassword?: boolean | null;
 }
+
+/**
+ * The light user shape selected by *preview* queries (article authors, message
+ * senders, …). A full `UserModel` is assignable to this, so preview components
+ * (`UserAvatar`, `AuthorAvatarsList`, …) should accept `UserPreviewModel`.
+ */
+export type UserPreviewModel = Pick<
+  UserModel,
+  '__typename' | 'id' | 'name' | 'nickname' | 'avatarImageFile'
+>;

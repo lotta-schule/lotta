@@ -20,6 +20,9 @@ export type CategoryPageProps = {
 export const CategoryPage = React.memo(
   ({ category, initialArticles }: CategoryPageProps) => {
     const twoColumnsLayout = category?.layoutName === '2-columns';
+    const articles =
+      initialArticles?.filter((article) => article !== null) ?? [];
+    const lastArticleDate = articles.at(-1)?.updatedAt;
 
     return (
       <>
@@ -28,7 +31,7 @@ export const CategoryPage = React.memo(
             <h2 data-testid="title">{category.title}</h2>
           </Header>
           <div className={styles.articles}>
-            {initialArticles?.map((article) => (
+            {articles.map((article) => (
               <div
                 className={clsx(styles.gridItem, {
                   [styles['two-columns']]: twoColumnsLayout,
@@ -43,12 +46,12 @@ export const CategoryPage = React.memo(
                 />
               </div>
             ))}
-            {initialArticles!.length >= PREFETCH_COUNT && (
+            {articles.length >= PREFETCH_COUNT && lastArticleDate && (
               <React.Suspense fallback={null}>
                 <MoreArticlesLoader
                   categoryId={category.id}
                   layout={category.layoutName ?? 'standard'}
-                  lastArticleDate={initialArticles?.at(-1)?.updatedAt}
+                  lastArticleDate={lastArticleDate}
                 />
               </React.Suspense>
             )}

@@ -31,6 +31,8 @@ export const GET_CURRENT_USER = graphql(`
         name
         isAdminGroup
         sortKey
+        canReadFullName
+        eduplacesId
       }
     }
   }

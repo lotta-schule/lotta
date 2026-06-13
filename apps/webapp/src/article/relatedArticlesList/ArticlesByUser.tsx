@@ -8,7 +8,7 @@ import { ArticleModel, UserModel } from '#/model/index.js';
 import GetArticlesByUserQuery from '#/api/query/GetArticlesByUserQuery.graphql';
 
 export interface ArticlesByUserProps {
-  user: UserModel;
+  user: Pick<UserModel, 'id'>;
 }
 
 export const ArticlesByUser = React.memo(({ user }: ArticlesByUserProps) => {

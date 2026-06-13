@@ -219,7 +219,10 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
             <Button onClick={() => setIsDeleteModalOpen(false)}>
               Beitrag behalten
             </Button>
-            <Button variant={'error'} onClick={() => deleteArticle()}>
+            <Button
+              variant={'error'}
+              onClick={() => deleteArticle({ variables: { id: article.id } })}
+            >
               Beitrag endgültig löschen
             </Button>
           </DialogActions>

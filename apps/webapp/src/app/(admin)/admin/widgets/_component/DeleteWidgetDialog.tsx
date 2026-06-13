@@ -60,7 +60,7 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
           </Button>
           <LoadingButton
             onAction={async () => {
-              await deleteWidget();
+              await deleteWidget({ variables: { id: widget.id } });
             }}
             onComplete={onConfirm}
           >

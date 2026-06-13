@@ -64,15 +64,17 @@ export const UserBrowser = React.memo(
 
     const [fetchDirectoriesAndFiles] =
       useLazyQuery<GetDirectoriesAndFilesQueryResult>(
-        GetDirectoriesAndFilesQuery
+        GetDirectoriesAndFilesQuery,
+        // Apollo v4 dropped per-exec `fetchPolicy`; the mutation `update` handlers keep
+        // this query's cache in sync, so cache-first reflects writes without a refetch.
+        { fetchPolicy: 'cache-first' }
       );
     const onRequestChildNodes: BrowserProps['onRequestChildNodes'] =
       React.useCallback(
-        async (node, options) => {
+        async (node) => {
           try {
             const result = await fetchDirectoriesAndFiles({
               variables: { parentDirectoryId: node?.id ?? null },
-              fetchPolicy: options?.refetch ? 'network-only' : 'cache-first',
             });
 
             return makeBrowserNodes(result.data) ?? [];

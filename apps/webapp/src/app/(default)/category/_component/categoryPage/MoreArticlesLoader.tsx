@@ -11,7 +11,7 @@ import styles from './CategoryPage.module.scss';
 
 export type MoreArticlesLoaderProps = {
   lastArticleDate: string;
-  layout: string;
+  layout: 'standard' | 'densed' | '2-columns';
   categoryId: string;
 };
 
@@ -51,21 +51,23 @@ export const MoreArticlesLoader = React.memo(
 
     return (
       <>
-        {data?.articles?.map((article) => (
-          <div
-            className={clsx(styles.gridItem, {
-              [styles['two-columns']]: layout === '2-columns',
-            })}
-            key={article.id}
-          >
-            <ArticlePreview article={article} limitedHeight layout={layout} />
-          </div>
-        ))}
+        {data?.articles
+          ?.filter((article) => article !== null)
+          .map((article) => (
+            <div
+              className={clsx(styles.gridItem, {
+                [styles['two-columns']]: layout === '2-columns',
+              })}
+              key={article.id}
+            >
+              <ArticlePreview article={article} limitedHeight layout={layout} />
+            </div>
+          ))}
         {!isLoading &&
           shouldFetchEvenMore &&
           !error &&
           lastFetchedArticleDate &&
-          data?.articles.length >= FETCH_COUNT && (
+          (data?.articles?.length ?? 0) >= FETCH_COUNT && (
             <React.Suspense>
               <MoreArticlesLoader
                 lastArticleDate={lastFetchedArticleDate}

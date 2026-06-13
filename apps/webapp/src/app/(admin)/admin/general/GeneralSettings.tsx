@@ -11,6 +11,7 @@ import {
   ListItem,
   LoadingButton,
 } from '@lotta-schule/hubert';
+import { FileModel } from '#/model/index.js';
 import { Tenant } from '#/util/tenant/index.js';
 import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
 import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
@@ -30,7 +31,9 @@ export type GeneralSettingsProps = {
 export const GeneralSettings = ({ tenant }: GeneralSettingsProps) => {
   const router = useRouter();
   const [title, setTitle] = React.useState(tenant.title);
-  const [logo, setLogo] = React.useState(tenant.logoImageFile);
+  const [logo, setLogo] = React.useState<FileModel | null>(
+    tenant.logoImageFile
+  );
 
   const [updateTenant, { error }] = useMutation(UpdateTenantMutation);
 

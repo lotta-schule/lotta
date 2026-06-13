@@ -11,6 +11,9 @@ export default async function UnpublishedRoute() {
   });
 
   return (
-    <UnpublishedArticlesPage articles={data?.articles} error={error ?? null} />
+    <UnpublishedArticlesPage
+      articles={data?.articles ?? []}
+      error={error ?? null}
+    />
   );
 }

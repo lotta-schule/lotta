@@ -88,6 +88,7 @@ export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
             setShowRequestHisecToken(false);
             if (authToken) {
               updateEmail({
+                variables: { newEmail },
                 context: { authToken },
               });
             }

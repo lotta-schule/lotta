@@ -69,13 +69,12 @@ export const CategoryEditor = React.memo(
         },
       ],
     });
-    const { data: currentWidgetsData, error: currentWidgetsError } = useQuery(
-      GetCategoryWidgetsQuery,
-      {
-        variables: { categoryId: categoryOptions?.id },
-        skip: !categoryOptions?.id,
-      }
-    );
+    const { data: currentWidgetsData, error: currentWidgetsError } = useQuery<{
+      widgets: WidgetModel[];
+    }>(GetCategoryWidgetsQuery, {
+      variables: { categoryId: categoryOptions?.id },
+      skip: !categoryOptions?.id,
+    });
     React.useEffect(() => {
       if (currentWidgetsData) {
         setSelectedWidgets(currentWidgetsData.widgets);

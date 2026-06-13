@@ -86,7 +86,7 @@ export const ReviewFilesStep = ({
           wenden müssen.
         </p>
         <FileSelection
-          files={relevantFiles}
+          files={relevantFiles ?? []}
           selectedFiles={selectedFilesToTransfer}
           onSelectFiles={onFilesChange}
         />

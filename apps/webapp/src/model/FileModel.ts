@@ -1,9 +1,21 @@
+import { graphql, type ResultOf } from '#/api/graphql.js';
 import { ID } from './ID.js';
 import { UserModel } from './UserModel.js';
 import { TenantModel } from './TenantModel.js';
 import { ArticleModel } from './ArticleModel.js';
 import { ContentModuleModel } from './ContentModuleModel.js';
 import { CategoryModel } from './CategoryModel.js';
+
+// Source the format/type enums from the GraphQL schema (via gql.tada) instead of
+// re-maintaining them by hand — the hand-written unions had drifted from the schema.
+// Step toward replacing FileModel entirely with GraphQL-derived types.
+const _availableFormatFields = graphql(`
+  fragment AvailableFormatFields on AvailableFormat {
+    name
+    type
+  }
+`);
+type _AvailableFormatFields = ResultOf<typeof _availableFormatFields>;
 
 export interface DirectoryModel {
   __typename?: 'Directory';
@@ -15,54 +27,9 @@ export interface DirectoryModel {
   parentDirectory?: Partial<DirectoryModel> | null;
 }
 
-export type AvailableFormat =
-  | 'ORIGINAL'
-  | 'PREVIEW_200'
-  | 'PREVIEW_400'
-  | 'PREVIEW_800'
-  | 'PRESENT_1200'
-  | 'PRESENT_1600'
-  | 'PRESENT_2400'
-  | 'PRESENT_3200'
-  | 'AVATAR_50'
-  | 'AVATAR_100'
-  | 'AVATAR_250'
-  | 'AVATAR_500'
-  | 'AVATAR_1000'
-  | 'LOGO_300'
-  | 'LOGO_600'
-  | 'BANNER_330'
-  | 'BANNER_660'
-  | 'BANNER_990'
-  | 'BANNER_1320'
-  | 'ARTICLEPREVIEW_330'
-  | 'ARTICLEPREVIEW_660'
-  | 'PAGEBG_1024'
-  | 'PAGEBG_1280'
-  | 'PAGEBG_1920'
-  | 'PAGEBG_2560'
-  | 'ICON_64'
-  | 'ICON_128'
-  | 'ICON_256'
-  | 'POSTER_1080P'
-  | 'VIDEOPLAY_200P_WEBM'
-  | 'VIDEOPLAY_480P_WEBM'
-  | 'VIDEOPLAY_720P_WEBM'
-  | 'VIDEOPLAY_1080P_WEBM'
-  | 'VIDEOPLAY_200P_MP4'
-  | 'VIDEOPLAY_480P_MP4'
-  | 'VIDEOPLAY_720P_MP4'
-  | 'VIDEOPLAY_1080P_MP4'
-  | 'AUDIOPLAY_AAC'
-  | 'AUDIOPLAY_OGG';
+export type AvailableFormat = _AvailableFormatFields['name'];
 
-export type FileModelType =
-  | 'PDF'
-  | 'IMAGE'
-  | 'VIDEO'
-  | 'AUDIO'
-  | 'BINARY'
-  | 'MISC';
+export type FileModelType = _AvailableFormatFields['type'];
 
 export interface FileModel {
   __typename?: 'File';
@@ -78,7 +45,7 @@ export interface FileModel {
   parentDirectory?: Partial<DirectoryModel>;
   formats: {
     name: AvailableFormat;
-    url: string;
+    url: string | null;
     type?: FileModelType;
     mimeType?: string;
     availability: {

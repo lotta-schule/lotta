@@ -53,7 +53,7 @@ export const Edit = React.memo<EditProps>(
           id={`downloads-${contentModule.id}`}
           items={sortedFiles.map((f) => ({
             id: f.id,
-            title: f.filename,
+            title: f.filename ?? '',
             children: (
               <div style={{ opacity: isDragging ? 0.5 : 1 }}>
                 <Input

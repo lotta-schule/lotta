@@ -58,7 +58,7 @@ export const User = {
         }
       | null
       | undefined,
-    article: ArticleModel
+    article: { users?: { id: string }[] }
   ) {
     return User.isAdmin(user) || this.isAuthor(user, article);
   },

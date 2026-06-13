@@ -22,6 +22,10 @@ export type TenantWithStats = NonNullable<
   ResultOf<typeof GET_TENANT_WITH_STATS_QUERY>['tenant']
 >;
 
+export type TenantWithoutStats = NonNullable<
+  ResultOf<typeof GET_TENANT_QUERY>['tenant']
+>;
+
 export class TenantNotFoundError extends Error {
   name = 'TenantNotFoundError';
 
@@ -34,7 +38,7 @@ export type LoadTenantParams = {
   includeStats?: boolean;
 };
 
-export const loadTenant = cache(
+const loadTenantImpl = cache(
   async ({ includeStats = false }: LoadTenantParams = {}) => {
     const client = await getClient();
     return await client
@@ -50,3 +54,14 @@ export const loadTenant = cache(
       });
   }
 );
+
+// Overloads so the return type reflects `includeStats` (the runtime picks the query).
+export function loadTenant(
+  params: LoadTenantParams & { includeStats: true }
+): Promise<TenantWithStats>;
+export function loadTenant(
+  params?: LoadTenantParams
+): Promise<TenantWithoutStats>;
+export function loadTenant(params: LoadTenantParams = {}) {
+  return loadTenantImpl(params);
+}

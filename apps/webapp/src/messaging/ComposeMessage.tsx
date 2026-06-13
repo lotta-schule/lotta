@@ -28,7 +28,7 @@ export interface ComposeMessageProps {
 
 export const ComposeMessage = React.memo(
   ({ destination, onSent }: ComposeMessageProps) => {
-    const inputRef = React.useRef<HTMLInputElement>(null);
+    const inputRef = React.useRef<HTMLTextAreaElement>(null);
     const [shouldSetAutofocus, setShouldSetAutofocus] = React.useState(true);
     const [content, setContent] = React.useState('');
 

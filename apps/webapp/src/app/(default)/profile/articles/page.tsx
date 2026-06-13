@@ -10,5 +10,5 @@ export default async function ArticlesRoute() {
     query: GetOwnArticlesQuery,
   });
 
-  return <ArticlesPage articles={data?.articles} error={error ?? null} />;
+  return <ArticlesPage articles={data?.articles ?? []} error={error ?? null} />;
 }

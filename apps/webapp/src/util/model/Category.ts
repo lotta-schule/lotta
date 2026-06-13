@@ -9,8 +9,8 @@ export enum RedirectType {
 }
 
 export const Category = {
-  getPath(category: CategoryModel) {
-    return `/c/${category.id}-${slugify(category.title)}`;
+  getPath(category: { id: string | null; title?: string | null }) {
+    return `/c/${category.id}-${slugify(category.title ?? '')}`;
   },
   getRedirectType(category?: CategoryModel | null): RedirectType {
     if (

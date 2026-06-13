@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UserModel } from '#/model/index.js';
+import { UserPreviewModel } from '#/model/index.js';
 import { AvatarGroup, Deletable, Tooltip } from '@lotta-schule/hubert';
 import { User } from '#/util/model/index.js';
 import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
@@ -9,17 +9,17 @@ import clsx from 'clsx';
 import styles from './AuthorAvatarsList.module.scss';
 
 export interface AuthorAvatarsListProps {
-  users: UserModel[];
+  users: UserPreviewModel[];
   className?: string;
   max?: number;
-  onClick?: (user: UserModel) => void;
-  onUpdate?: (users: UserModel[]) => void;
+  onClick?: (user: UserPreviewModel) => void;
+  onUpdate?: (users: UserPreviewModel[]) => void;
 }
 
 export const AuthorAvatarsList = React.memo(
   ({ users, className, max, onClick, onUpdate }: AuthorAvatarsListProps) => {
     const getAvatar = React.useCallback(
-      (user: UserModel) => {
+      (user: UserPreviewModel) => {
         return (
           <Deletable
             title={`Autor ${User.getNickname(user)} entfernen`}

@@ -27,7 +27,7 @@ export const SearchPage = () => {
   const [category, setCategory] = React.useState<CategoryModel | null>(null);
   const debouncedSearchtext = useDebounce(searchText, 500);
 
-  const { data, loading: isLoading } = useQuery(
+  const { data, loading: isLoading } = useQuery<{ results: ArticleModel[] }>(
     SearchQuery,
     debouncedSearchtext
       ? {

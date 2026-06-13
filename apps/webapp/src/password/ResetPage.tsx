@@ -1,7 +1,7 @@
 'use client';
 import * as React from 'react';
 import { Main } from '#/layout/index.js';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Box, Button, ErrorMessage, Input, Label } from '@lotta-schule/hubert';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import Link from 'next/link';
@@ -12,26 +12,28 @@ import styles from './RequestResetPage.module.scss';
 
 export const ResetPage = () => {
   const router = useRouter();
-  const [data, setData] = React.useState();
+  const searchParams = useSearchParams();
+  const [data, setData] = React.useState<{ resetPassword: boolean }>();
   const apolloClient = useApolloClient();
-  const [sendResetPassword, { error, loading: isLoading }] = useMutation(
-    ResetPasswordMutation,
-    {
-      errorPolicy: 'all',
-      onCompleted: (data) => {
-        if (data['resetPassword']) {
-          apolloClient.resetStore();
-          setData(data);
-          router.replace('/');
-        }
-      },
-    }
-  );
+  const [sendResetPassword, { error, loading: isLoading }] = useMutation<
+    { resetPassword: boolean },
+    { email: string; password: string; token: string }
+  >(ResetPasswordMutation, {
+    errorPolicy: 'all',
+    onCompleted: (data) => {
+      if (data['resetPassword']) {
+        apolloClient.resetStore();
+        setData(data);
+        router.replace('/');
+      }
+    },
+  });
   const [password, setPassword] = React.useState('');
   const [mutationError, setError] = React.useState<string | null>(null);
   const [passwordRepetition, setPasswordRepetition] = React.useState('');
-  const { e, t: token } = router.query;
-  const email = e && atob(e as string);
+  const e = searchParams.get('e');
+  const token = searchParams.get('t');
+  const email = e && atob(e);
 
   const linkToRequestResetPasswordPage = (
     <Link href={'/password/request-reset'}>

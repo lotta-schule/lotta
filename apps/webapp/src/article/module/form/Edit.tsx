@@ -150,9 +150,13 @@ export const Edit = React.memo(
         <SortableDraggableList
           id={`from-${contentModule.id}`}
           onChange={(updatedItems) => {
-            const elements = updatedItems.map((item) =>
-              configuration.elements.at(parseInt(item.id.replace('field-', '')))
-            );
+            const elements = updatedItems
+              .map((item) =>
+                configuration.elements.at(
+                  parseInt(item.id.replace('field-', ''))
+                )
+              )
+              .filter((element) => element !== undefined);
             updateConfiguration({ elements });
           }}
           items={configuration.elements.map((element, index) => ({

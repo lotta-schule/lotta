@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useSuspenseQuery } from '@apollo/client/react';
 import { graphql } from '#/api/graphql.js';
-import { WidgetModelType } from '#/model/index.js';
+import { WidgetModel, WidgetModelType } from '#/model/index.js';
 import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import {
   Tabbar,
@@ -69,7 +69,9 @@ export const WidgetsList = ({ children, categoryId }: WidgetsListProps) => {
     skip: !categoryId,
   });
 
-  const widgets = (data?.widgets ?? []).filter((widget) => {
+  // The GraphQL `configuration` is an untyped `Json` blob the app interprets as the
+  // typed (discriminated) WidgetModel; cast at this boundary.
+  const widgets = ((data?.widgets ?? []) as WidgetModel[]).filter((widget) => {
     if (User.isAdmin(currentUser)) {
       return !!currentUser!.groups.find(
         (g) =>

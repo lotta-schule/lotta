@@ -57,8 +57,17 @@ export const GET_OWN_ARTICLES = graphql(`
       tags
       readyToPublish
       published
+      isPinnedToTop
       previewImageFile {
         id
+        formats(category: "ARTICLEPREVIEW") {
+          name
+          url
+          type
+          availability {
+            status
+          }
+        }
       }
       category {
         id

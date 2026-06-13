@@ -23,6 +23,7 @@ export const CREATE_USER_GROUP = graphql(`
       isAdminGroup
       canReadFullName
       sortKey
+      eduplacesId
       enrollmentTokens
     }
   }

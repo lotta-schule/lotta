@@ -27,18 +27,18 @@ export const FileSorter =
     const sorting = contendModule.configuration?.sorting ?? Sorting.NONE;
     switch (sorting) {
       case Sorting.FILENAME_ASC:
-        return file1.filename.localeCompare(file2.filename);
+        return (file1.filename ?? '').localeCompare(file2.filename ?? '');
       case Sorting.FILENAME_DESC:
-        return file2.filename.localeCompare(file1.filename);
+        return (file2.filename ?? '').localeCompare(file1.filename ?? '');
       case Sorting.FILE_UPLOAD_DATE_ASC:
         return (
-          new Date(file1.insertedAt).getTime() -
-          new Date(file2.insertedAt).getTime()
+          new Date(file1.insertedAt ?? 0).getTime() -
+          new Date(file2.insertedAt ?? 0).getTime()
         );
       case Sorting.FILE_UPLOAD_DATE_DESC:
         return (
-          new Date(file2.insertedAt).getTime() -
-          new Date(file1.insertedAt).getTime()
+          new Date(file2.insertedAt ?? 0).getTime() -
+          new Date(file1.insertedAt ?? 0).getTime()
         );
       default:
         return (

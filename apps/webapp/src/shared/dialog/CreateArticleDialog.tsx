@@ -65,7 +65,7 @@ export const CreateArticleDialog = React.memo(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            createArticle();
+            createArticle({ variables: { article: { title } } });
           }}
         >
           <DialogContent>

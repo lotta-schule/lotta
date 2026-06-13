@@ -9,7 +9,7 @@ import UpdateDirectoryMutation from '#/api/mutation/UpdateDirectoryMutation.grap
 import UpdateFileMutation from '#/api/mutation/UpdateFileMutation.graphql';
 
 const updateCache = <T extends FileModel | DirectoryModel>(
-  client: ApolloCache<any>,
+  client: ApolloCache,
   initialModel: T,
   updateResult: T extends FileModel
     ? { file: FileModel }

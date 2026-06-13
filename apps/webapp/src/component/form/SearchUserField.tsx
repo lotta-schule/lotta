@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ComboBox, NoSsr } from '@lotta-schule/hubert';
 import { useLazyQuery } from '@apollo/client/react';
 import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
-import { UserModel } from '#/model/index.js';
+import { UserModel, UserPreviewModel } from '#/model/index.js';
 import { User } from '#/util/model/index.js';
 import clsx from 'clsx';
 
@@ -23,7 +23,7 @@ export interface SearchUserFieldProps {
    * Only needed when the users should be marked as 'selected'
    * on the search results listbox.
    */
-  selectedUsers?: UserModel[];
+  selectedUsers?: UserPreviewModel[];
 
   onSelectUser(user: UserModel): void;
 }

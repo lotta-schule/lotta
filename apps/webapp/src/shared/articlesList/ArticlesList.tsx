@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Table } from '@lotta-schule/hubert';
-import { ArticleModel } from '#/model/index.js';
+import { ArticlePreviewModel } from '#/model/index.js';
 import { User, Article, Category } from '#/util/model/index.js';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -12,12 +12,12 @@ import styles from './ArticlesList.module.scss';
 import clsx from 'clsx';
 
 export interface ArticlesListProps {
-  articles: ArticleModel[];
+  articles: ArticlePreviewModel[];
 }
 
 export const ArticlesList = React.memo(({ articles }: ArticlesListProps) => {
   const articleSorter = React.useCallback(
-    (article1: ArticleModel, article2: ArticleModel) =>
+    (article1: ArticlePreviewModel, article2: ArticlePreviewModel) =>
       new Date(article2.updatedAt).getTime() -
       new Date(article1.updatedAt).getTime(),
     []

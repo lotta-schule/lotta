@@ -24,29 +24,34 @@ export const MessagesThread = React.memo(
       {
         variables: { id: conversation.id },
         fetchPolicy: 'cache-and-network',
-        onCompleted: ({ conversation }) => {
-          const { cache } = apolloClient;
-          let readCount: number;
-          cache.modify({
-            id: cache.identify(conversation as any),
-            fields: {
-              unreadMessages: (_ref, _helpers) => {
-                readCount = _ref ?? 0;
-                return 0;
-              },
-            },
-          });
-          cache.modify({
-            id: cache.identify(currentUser as any),
-            fields: {
-              unreadMessages: (ref, _helpers) => {
-                return ref - readCount;
-              },
-            },
-          });
-        },
       }
     );
+
+    // Apollo v4 removed `onCompleted` from `useQuery`; mark the conversation read as a
+    // side-effect of the data arriving instead.
+    const loadedConversation = data?.conversation;
+    React.useEffect(() => {
+      if (!loadedConversation) {
+        return;
+      }
+      const { cache } = apolloClient;
+      let readCount = 0;
+      cache.modify({
+        id: cache.identify(loadedConversation as any),
+        fields: {
+          unreadMessages: (ref: any) => {
+            readCount = ref ?? 0;
+            return 0;
+          },
+        },
+      });
+      cache.modify({
+        id: cache.identify(currentUser as any),
+        fields: {
+          unreadMessages: (ref: any) => ref - readCount,
+        },
+      });
+    }, [loadedConversation, apolloClient, currentUser]);
     const messages = Array.from(data?.conversation?.messages ?? []).reverse();
 
     const wrapperRef = React.useRef<HTMLDivElement>(null);

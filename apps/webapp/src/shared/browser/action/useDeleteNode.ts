@@ -7,7 +7,7 @@ import { DirectoryModel, FileModel } from '#/model/index.js';
 import DeleteDirectoryMutation from '#/api/mutation/DeleteDirectoryMutation.graphql';
 import DeleteFileMutation from '#/api/mutation/DeleteFileMutation.graphql';
 
-const updateCache = (client: ApolloCache<any>, node: BrowserNode) => {
+const updateCache = (client: ApolloCache, node: BrowserNode) => {
   const normalizedId = client.identify(node.meta as any);
   if (normalizedId) {
     client.evict({ id: normalizedId });

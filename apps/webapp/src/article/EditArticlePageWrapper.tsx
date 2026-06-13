@@ -19,9 +19,12 @@ export const EditArticlePageWrapper = ({
 }: {
   article: ArticleModel;
 }) => {
-  const { data } = useQuery(GetArticleQuery, {
-    variables: { id: initialArticle.id },
-  });
+  const { data } = useQuery<{ article: ArticleModel }, { id: string }>(
+    GetArticleQuery,
+    {
+      variables: { id: initialArticle.id },
+    }
+  );
 
   return <DynamicEditArticlePage article={data?.article ?? initialArticle} />;
 };

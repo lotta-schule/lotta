@@ -8,7 +8,7 @@ import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.grap
 import CreateDirectoryMutation from '#/api/mutation/CreateDirectoryMutation.graphql';
 
 const updateCache = (
-  client: ApolloCache<any>,
+  client: ApolloCache,
   parentDirectoryId: string | null,
   directory: DirectoryModel
 ) => {

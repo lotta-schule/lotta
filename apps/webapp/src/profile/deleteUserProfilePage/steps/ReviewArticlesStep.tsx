@@ -39,7 +39,7 @@ export const ReviewArticlesStep = (props: ReviewArticlesStepProps) => {
         Du bist bei <strong>{publishedArticlesCount}</strong> veröffentlichten
         Beiträgen auf <em>{tenant.title}</em> als Autor eingetragen.
       </p>
-      <ArticlesList articles={articles} />
+      <ArticlesList articles={articles?.filter((a) => a !== null) ?? []} />
       <StepNavigation
         currentStep={ProfileDeleteStep.ReviewArticles}
         {...props}

@@ -37,7 +37,7 @@ export const UPLOAD_FILE_MUTATION = graphql(`
 `);
 
 const updateCache = (
-  client: ApolloCache<any>,
+  client: ApolloCache,
   parentNode: BrowserNode<'directory'>,
   file: NonNullable<ResultOf<typeof UPLOAD_FILE_MUTATION>['file']>
 ) => {
