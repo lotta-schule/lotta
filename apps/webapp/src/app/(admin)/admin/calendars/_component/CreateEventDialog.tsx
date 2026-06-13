@@ -124,7 +124,7 @@ export const CreateEventDialog = React.memo(
                   },
                   refetchQueries: [GET_CALENDAR_EVENTS],
                 });
-                return result.data?.event;
+                return result.data!.event;
               }}
               onComplete={(
                 event: ResultOf<typeof CREATE_CALENDAR_EVENT>['event']

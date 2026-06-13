@@ -33,7 +33,6 @@ export const UserAvatar = React.memo(
 
     return (
       <Avatar
-        loading="lazy"
         data-testid={'Avatar'}
         src={User.getDefaultAvatarUrl(user)}
         style={size ? { width: size, height: size } : {}}

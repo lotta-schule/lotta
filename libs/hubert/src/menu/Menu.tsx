@@ -21,7 +21,7 @@ export type WithDescription =
   | { 'aria-label': string }
   | { 'aria-labelledby': string };
 
-export type MenuProps = ListProps &
+export type MenuProps = Omit<ListProps, 'children'> &
   WithDescription & {
     children: CollectionChildren<object>;
     ref?: React.Ref<HTMLElement>;
@@ -74,7 +74,7 @@ export const Menu = ({
           onClose={onClose}
         />
       ))}
-      {props.children}
+      {props.children as React.ReactNode}
     </List>
   );
 };

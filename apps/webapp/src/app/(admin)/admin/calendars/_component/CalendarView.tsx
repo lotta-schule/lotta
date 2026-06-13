@@ -97,7 +97,7 @@ export const CalendarView = React.memo(
               setEvents((events) => {
                 return events
                   .filter((ev) => ev.calendar.id !== calendarId)
-                  .concat(data.calendarEvents);
+                  .concat(data.calendarEvents as typeof events);
               });
             }
           });
