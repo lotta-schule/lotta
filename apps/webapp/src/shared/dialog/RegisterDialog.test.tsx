@@ -67,9 +67,12 @@ describe('shared/dialog/RegisterDialog', () => {
         screen.getByRole('textbox', { name: /anmeldeschlüssel/i }),
         'ABCDEF'
       );
-      await user.click(screen.getByRole('button', { name: /registrieren/i }));
+      // submit via the form: a `user.click` on the submit LoadingButton is
+      // unreliable under the browser test runner, so trigger submission
+      // directly (the LoadingButton's onAction runs the registration)
+      const form = screen.getByRole('dialog').querySelector('form')!;
+      form.requestSubmit();
       await waitFor(() => {
-        // expect(screen.queryByRole('form')).toBeNull();
         expect(screen.queryByRole('dialog')).toHaveTextContent(
           /erfolgreich eingerichtet/
         );

@@ -41,60 +41,93 @@ export type EditProps = {
 export const Edit = React.memo(
   ({ contentModule, onUpdateModule }: EditProps) => {
     const { t } = useTranslation();
-    const defaultElements = {
-      input: {
-        name: 'Textfeld',
-        element: 'input',
-        type: 'text',
-      } as FormElementInterface,
-      email: {
-        name: 'Textfeld',
-        element: 'input',
-        type: 'email',
-      } as FormElementInterface,
-      date: {
-        name: 'Textfeld',
-        element: 'input',
-        type: 'date',
-      } as FormElementInterface,
-      textarea: {
-        name: 'Textbereich',
-        element: 'input',
-        multiline: true,
-      } as FormElementInterface,
-      checkbox: {
-        name: 'Checkbox',
-        element: 'selection',
-        type: 'checkbox',
-        options: [
-          { label: 'Option 1', value: 'option1', selected: false },
-          { label: 'Option 2', value: 'option2', selected: false },
-        ],
-      } as FormElementInterface,
-      radio: {
-        name: 'Auswahl',
-        element: 'selection',
-        type: 'radio',
-        options: [
-          { label: 'Option 1', value: 'option1', selected: false },
-          { label: 'Option 2', value: 'option2', selected: false },
-        ],
-      } as FormElementInterface,
-      select: {
-        name: 'Dropdown',
-        element: 'selection',
-        type: 'select',
-        options: [
-          { label: 'Option 1', value: 'option1', selected: false },
-          { label: 'Option 2', value: 'option2', selected: false },
-        ],
-      } as FormElementInterface,
-      file: {
-        name: 'Datei-Upload',
-        element: 'file',
-        type: '',
-      } as FormElementInterface,
-    };
+    const defaultElements: {
+      key: string;
+      label: string;
+      icon: React.ReactNode;
+      element: FormElementInterface;
+    }[] = [
+      {
+        key: 'email',
+        label: t('email address'),
+        icon: <MailIcon />,
+        element: { name: 'Textfeld', element: 'input', type: 'email' },
+      },
+      {
+        key: 'input',
+        label: t('text field'),
+        icon: <TextFormatIcon />,
+        element: { name: 'Textfeld', element: 'input', type: 'text' },
+      },
+      {
+        key: 'textarea',
+        label: t('text area'),
+        icon: <TextLinesIcon />,
+        element: { name: 'Textbereich', element: 'input', multiline: true },
+      },
+      {
+        key: 'date',
+        label: t('date field'),
+        icon: null,
+        element: { name: 'Textfeld', element: 'input', type: 'date' },
+      },
+      {
+        key: 'checkbox',
+        label: t('checkbox'),
+        icon: <CheckboxIcon />,
+        element: {
+          name: 'Checkbox',
+          element: 'selection',
+          type: 'checkbox',
+          options: [
+            { label: 'Option 1', value: 'option1', selected: false },
+            { label: 'Option 2', value: 'option2', selected: false },
+          ],
+        },
+      },
+      {
+        key: 'radio',
+        label: t('radio buttons'),
+        icon: <RadioButtonIcon />,
+        element: {
+          name: 'Auswahl',
+          element: 'selection',
+          type: 'radio',
+          options: [
+            { label: 'Option 1', value: 'option1', selected: false },
+            { label: 'Option 2', value: 'option2', selected: false },
+          ],
+        },
+      },
+      {
+        key: 'select',
+        label: t('dropdown'),
+        icon: <ChecklistIcon />,
+        element: {
+          name: 'Dropdown',
+          element: 'selection',
+          type: 'select',
+          options: [
+            { label: 'Option 1', value: 'option1', selected: false },
+            { label: 'Option 2', value: 'option2', selected: false },
+          ],
+        },
+      },
+      {
+        key: 'file',
+        label: t('file upload'),
+        icon: <AttachFileIcon />,
+        element: { name: 'Datei-Upload', element: 'file', type: '' },
+      },
+    ];
+
+    const getElementIcon = (element: FormElementInterface) =>
+      defaultElements.find(
+        ({ element: defaultElement }) =>
+          defaultElement.element === element.element &&
+          defaultElement.type === element.type &&
+          !!defaultElement.multiline === !!element.multiline
+      )?.icon ?? <Icon icon={faArrowsUpDown} size={'lg'} />;
 
     const configuration: FormConfiguration = {
       destination: '',
@@ -109,16 +142,21 @@ export const Edit = React.memo(
 
     return (
       <div className={styles.root}>
+        {configuration.elements.length > 0 && (
+          <div className={styles.listHeader}>
+            <span>{t('required?')}</span>
+          </div>
+        )}
         <SortableDraggableList
           id={`from-${contentModule.id}`}
           onChange={(updatedItems) => {
-            const elements = updatedItems.map(
-              (item) => configuration.elements[Number(item.id)]
+            const elements = updatedItems.map((item) =>
+              configuration.elements.at(parseInt(item.id.replace('field-', '')))
             );
             updateConfiguration({ elements });
           }}
           items={configuration.elements.map((element, index) => ({
-            id: String(index),
+            id: `field-${index}`,
             title: element.name,
             icon: <Icon icon={faTrash} />,
             onClickIcon: () => {
@@ -132,7 +170,7 @@ export const Edit = React.memo(
               <div className={styles.inputWrapper}>
                 <div className={styles.iconWrapper}>
                   {' '}
-                  <Icon icon={faArrowsUpDown} size={'lg'} />
+                  {getElementIcon(element)}
                 </div>
                 <div>
                   <FormElement
@@ -140,6 +178,13 @@ export const Edit = React.memo(
                     isEditModeEnabled
                     value={''}
                     onSetValue={() => {}}
+                    onUpdateElement={(updatedElement) =>
+                      updateConfiguration({
+                        elements: configuration.elements.map((el, i) =>
+                          i === index ? { ...el, ...updatedElement } : el
+                        ),
+                      })
+                    }
                   />
                 </div>
                 <div className={styles.iconWrapper}>
@@ -168,50 +213,23 @@ export const Edit = React.memo(
                       })
                     }
                   />
-                  <Button
-                    type={'submit'}
-                    title={t('delete field')}
-                    icon={<Icon icon={faTrash} size={'lg'} />}
-                    onClick={() =>
-                      updateConfiguration({
-                        elements: configuration.elements.filter(
-                          (_el, i) => i !== index
-                        ),
-                      })
-                    }
-                  />
-                  {/*<FormElementConfiguration
-                    element={element}
-                    updateElement={(updatedElementOptions) =>
-                      updateConfiguration({
-                        elements: configuration.elements.map((el, i) => {
-                          if (i === index) {
-                            return {
-                              ...element,
-                              ...updatedElementOptions,
-                            };
-                          }
-                          return el;
-                        }),
-                      })
-                    }
-                  />*/}
                 </div>
               </div>
             ),
           }))}
         />
         <MenuButton
-          title="Feld hinzufügen"
+          title={t('add field')}
           buttonProps={{
-            label: 'Feld hinzufügen',
+            label: t('add field'),
             style: { margin: '0 auto' },
             variant: 'fill',
             icon: <Icon icon={faPlus} size={'lg'} />,
           }}
           onAction={(key) => {
-            const newElement =
-              defaultElements[key as keyof typeof defaultElements];
+            const newElement = defaultElements.find(
+              (el) => el.key === key
+            )?.element;
             if (!newElement) {
               return;
             }
@@ -225,59 +243,19 @@ export const Edit = React.memo(
             });
           }}
         >
-          <Item key={'email'} textValue="E-Mail-Adresse">
-            <div>
-              <MailIcon />
-            </div>
-            <span>E-Mail-Adresse</span>
-          </Item>
-          <Item key={'input'} textValue="Textzeile">
-            <div>
-              <TextFormatIcon />
-            </div>
-            <span>Textzeile</span>
-          </Item>
-          <Item key={'textarea'} textValue="Textbereich">
-            <div>
-              <TextLinesIcon />
-            </div>
-            <span>Textbereich</span>
-          </Item>
-          <Item key={'date'} title="Datum">
-            <div></div>
-            <span>Datum</span>
-          </Item>
-          <Item key={'checkbox'} textValue="Checkbox">
-            <div>
-              <CheckboxIcon />
-            </div>
-            <span>Checkbox</span>
-          </Item>
-          <Item key={'radio'} textValue="Auswahl">
-            <div>
-              <RadioButtonIcon />
-            </div>
-            <span>Auswahl</span>
-          </Item>
-          <Item key={'select'} textValue="Dropdown">
-            <div>
-              <ChecklistIcon />
-            </div>
-            <span>Dropdown</span>
-          </Item>
-          <Item key={'file'} textValue="Datei-Upload">
-            <div>
-              <AttachFileIcon />
-            </div>
-            <span>Datei-Upload</span>
-          </Item>
+          {defaultElements.map(({ key, label, icon }) => (
+            <Item key={key} textValue={label}>
+              <div>{icon}</div>
+              <span>{label}</span>
+            </Item>
+          ))}
         </MenuButton>
         <div className={styles.settingsWrapper}>
           <div>
             <Icon icon={faGear} size={'xl'} />
           </div>
           <div>
-            <h3>Formular Einstellungen</h3>
+            <h3>{t('Form settings')}</h3>
             <Checkbox
               isSelected={configuration.destination !== undefined}
               onChange={(isSelected) =>
@@ -286,9 +264,9 @@ export const Edit = React.memo(
                 })
               }
             >
-              Formulardaten per Email versenden
+              {t('send form data by email')}
             </Checkbox>
-            <Label label={'Formular an folgende Email senden:'}>
+            <Label label={t('Send form to the following mail address:')}>
               <Input
                 id={'form-destination'}
                 value={configuration.destination ?? ''}
@@ -307,18 +285,17 @@ export const Edit = React.memo(
                   save_internally: isSelected,
                 })
               }
-              aria-label={'Formulardaten speichern'}
+              aria-label={t('save form data')}
             >
               <div>
-                <span style={{ display: 'block' }}>
-                  Formulardaten speichern
-                </span>
+                <span style={{ display: 'block' }}>{t('save form data')}</span>
                 {!!configuration.elements.find(
                   (el) => el.element === 'file'
                 ) && (
                   <small>
-                    Datei-Anhänge werden nur per Email versandt und nicht
-                    gespeichert.
+                    {t(
+                      'file attachments are only sent by email and not stored'
+                    )}
                   </small>
                 )}
               </div>

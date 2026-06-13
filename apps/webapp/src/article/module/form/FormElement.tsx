@@ -11,32 +11,153 @@ import {
   Select,
 } from '@lotta-schule/hubert';
 import { SelectFileButton } from '#/shared/edit/SelectFileButton.js';
-import { FormElement as FormElementInterface } from './Form.js';
+import {
+  FormElement as FormElementInterface,
+  FormElementOption,
+} from './Form.js';
 import { FileModel } from '#/model/index.js';
 
 import { useCurrentUser } from '#/util/user/useCurrentUser.js';
 import { Icon } from '#/shared/Icon.js';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCirclePlus,
+  faPencil,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
+
+import styles from './FormElement.module.scss';
 
 export interface FormElementProps {
   element: FormElementInterface;
   isEditModeEnabled?: boolean;
   value: string | string[];
   onSetValue(value: string | string[]): void;
+  onUpdateElement?(element: Partial<FormElementInterface>): void;
 }
 
+const EditableText = ({
+  value,
+  ariaLabel,
+  onChange,
+}: {
+  value: string;
+  ariaLabel?: string;
+  onChange(value: string): void;
+}) => {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [draft, setDraft] = React.useState(value);
+
+  React.useEffect(() => {
+    if (!isEditing) {
+      setDraft(value);
+    }
+  }, [value, isEditing]);
+
+  const commit = () => {
+    setIsEditing(false);
+    const next = draft.trim();
+    if (next && next !== value) {
+      onChange(next);
+    } else {
+      setDraft(value);
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <Input
+        inline
+        autoFocus
+        className={styles.editableInput}
+        aria-label={ariaLabel}
+        value={draft}
+        onClick={(e: any) => e.stopPropagation()}
+        onChange={(e: any) => setDraft(e.currentTarget.value)}
+        onBlur={commit}
+        onKeyDown={(e: any) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            commit();
+          } else if (e.key === 'Escape') {
+            setDraft(value);
+            setIsEditing(false);
+          }
+        }}
+      />
+    );
+  }
+
+  return (
+    <span className={styles.editableText}>
+      {value}
+      <Button
+        small
+        className={styles.editButton}
+        title={'bearbeiten'}
+        icon={<Icon icon={faPencil} color={'secondary'} />}
+        onClick={(e: any) => {
+          e.stopPropagation();
+          e.preventDefault();
+          setIsEditing(true);
+        }}
+      />
+    </span>
+  );
+};
+
 export const FormElement = React.memo<FormElementProps>(
-  ({ element, isEditModeEnabled, value, onSetValue }) => {
+  ({ element, isEditModeEnabled, value, onSetValue, onUpdateElement }) => {
     const currentUser = useCurrentUser();
+    const isEditable = !!isEditModeEnabled && !!onUpdateElement;
+
+    const updateOption = (index: number, partial: Partial<FormElementOption>) =>
+      onUpdateElement?.({
+        options: element.options?.map((o, i) =>
+          i === index ? { ...o, ...partial } : o
+        ),
+      });
+
+    const addOption = () =>
+      onUpdateElement?.({
+        options: [
+          ...(element.options ?? []),
+          {
+            label: `Option ${(element.options?.length ?? 0) + 1}`,
+            value: `option${(element.options?.length ?? 0) + 1}`,
+          },
+        ],
+      });
+
+    const addOptionButton = (
+      <Button
+        small
+        className={styles.addOptionButton}
+        title={'Option hinzufügen'}
+        icon={<Icon icon={faCirclePlus} size={'lg'} color={'secondary'} />}
+        onClick={addOption}
+      />
+    );
+
     const formElement = (() => {
-      const label = element.label ?? element.name ?? 'Beschreibung';
+      const labelText = element.label ?? element.name ?? 'Beschreibung';
+      // hubert's `Label` types `label` as `ReactNode & string` (it extends
+      // HTMLProps), so a JSX node has to be cast through to satisfy it.
+      const label = (isEditable ? (
+        <EditableText
+          value={labelText}
+          ariaLabel={'Bezeichnung'}
+          onChange={(label) => onUpdateElement!({ label })}
+        />
+      ) : (
+        labelText
+      )) as unknown as string;
       if (element.element === 'selection') {
         if (element.type === 'checkbox') {
           return (
             <Label label={label}>
-              <div>
+              <div className={isEditable ? styles.optionList : undefined}>
                 {element.options?.map((option, i) => {
-                  const label = option.label ?? option.value;
+                  const optionLabel = option.label ?? option.value;
                   const optionValue = option.value ?? option.label ?? i;
                   return (
                     <Checkbox
@@ -44,7 +165,7 @@ export const FormElement = React.memo<FormElementProps>(
                       name={element.name}
                       value={optionValue}
                       isDisabled={isEditModeEnabled}
-                      aria-label={label}
+                      aria-label={optionLabel}
                       isSelected={
                         value instanceof Array
                           ? value.indexOf(optionValue) > -1
@@ -61,17 +182,26 @@ export const FormElement = React.memo<FormElementProps>(
                         }
                       }}
                     >
-                      {label}
+                      {isEditable ? (
+                        <EditableText
+                          value={optionLabel}
+                          ariaLabel={'Option'}
+                          onChange={(label) => updateOption(i, { label })}
+                        />
+                      ) : (
+                        optionLabel
+                      )}
                     </Checkbox>
                   );
                 })}
+                {isEditable && addOptionButton}
               </div>
             </Label>
           );
         } else if (element.type === 'radio') {
           return (
             <Label label={label}>
-              <div>
+              <div className={isEditable ? styles.optionList : undefined}>
                 <RadioGroup
                   name={element.name}
                   value={value ?? ''}
@@ -79,27 +209,37 @@ export const FormElement = React.memo<FormElementProps>(
                   required={element.required}
                 >
                   {element.options?.map((option, i) => {
-                    const label = option.label ?? option.value;
-                    const value = option.value ?? option.label ?? i;
+                    const optionLabel = option.label ?? option.value;
+                    const optionValue = option.value ?? option.label ?? i;
                     return (
                       <Radio
                         key={i}
                         name={element.name}
-                        value={value}
-                        label={label}
+                        value={optionValue}
+                        label={isEditable ? undefined : optionLabel}
+                        aria-label={optionLabel}
                         disabled={isEditModeEnabled}
-                      />
+                      >
+                        {isEditable && (
+                          <EditableText
+                            value={optionLabel}
+                            ariaLabel={'Option'}
+                            onChange={(label) => updateOption(i, { label })}
+                          />
+                        )}
+                      </Radio>
                     );
                   })}
                 </RadioGroup>
+                {isEditable && addOptionButton}
               </div>
             </Label>
           );
         } else if (element.type === 'select') {
-          return (
+          const selectField = (
             <Select
               fullWidth
-              title={label}
+              title={labelText}
               value={
                 (value as string) ??
                 element.options?.find((o) => o.selected)?.value ??
@@ -110,15 +250,36 @@ export const FormElement = React.memo<FormElementProps>(
               id={`form-select-${element.name!}`}
             >
               {element.options?.map((option, i) => {
-                const label = option.label ?? option.value;
-                const value = option.value ?? option.label ?? i;
+                const optionLabel = option.label ?? option.value;
+                const optionValue = option.value ?? option.label ?? i;
                 return (
-                  <Option key={i} value={value}>
-                    {label}
+                  <Option key={i} value={optionValue}>
+                    {optionLabel}
                   </Option>
                 );
               })}
             </Select>
+          );
+          if (!isEditable) {
+            return selectField;
+          }
+          return (
+            <Label label={label}>
+              <div>
+                {selectField}
+                <div className={styles.optionList}>
+                  {element.options?.map((option, i) => (
+                    <EditableText
+                      key={i}
+                      value={option.label ?? option.value}
+                      ariaLabel={'Option'}
+                      onChange={(label) => updateOption(i, { label })}
+                    />
+                  ))}
+                  {addOptionButton}
+                </div>
+              </div>
+            </Label>
           );
         }
       }

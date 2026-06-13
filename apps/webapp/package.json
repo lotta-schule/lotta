@@ -73,7 +73,7 @@
     "vitest": "^4.1.5",
     "vitest-browser-react": "^2.2.0"
   },
-  "packageManager": "bun@1.3.13",
+  "packageManager": "bun@1.3.14",
   "lint-staged": {
     "$schema": "https://json.schemastore.org/lint-staged",
     "*.{js,jsx,ts,tsx}": [
