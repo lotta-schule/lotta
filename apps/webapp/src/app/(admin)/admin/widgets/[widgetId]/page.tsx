@@ -6,10 +6,11 @@ import { WidgetEditor } from '../_component/WidgetEditor.js';
 import { serverTranslations } from '#/i18n/server.js';
 
 async function GroupPage({
-  params: { widgetId },
+  params,
 }: {
-  params: { widgetId: string };
+  params: Promise<{ widgetId: string }>;
 }) {
+  const { widgetId } = await params;
   const widgets = await loadWidgets();
   const { t } = await serverTranslations();
 
