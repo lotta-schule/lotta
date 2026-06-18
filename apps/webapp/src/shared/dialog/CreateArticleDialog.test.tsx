@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, screen, waitFor, userEvent } from '#/test/util.js';
-import { SomeUser } from '#/test/fixtures/index.js';
-import { CreateArticleDialog } from './CreateArticleDialog.js';
+import { render, screen, waitFor, userEvent } from '#/test/util';
+import { SomeUser } from '#/test/fixtures';
+import { CreateArticleDialog } from './CreateArticleDialog';
 import CreateArticleMutation from '#/api/mutation/CreateArticleMutation.graphql';
 
 describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {

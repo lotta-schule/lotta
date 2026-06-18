@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Button, Close } from '@lotta-schule/hubert';
-import { loadTenant } from '#/loader/loadTenant.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { loadTenant } from '#/loader/loadTenant';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
 import Link from 'next/link.js';
 import clsx from 'clsx';
 

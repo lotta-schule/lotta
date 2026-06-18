@@ -1,18 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic.js';
 
-const DynamicAuthentication = dynamic(
-  () => import('#/shared/Authentication.js'),
-  {
-    ssr: false,
-  }
-);
+const DynamicAuthentication = dynamic(() => import('#/shared/Authentication'), {
+  ssr: false,
+});
 
 const DynamicUpdatePasswordDialog = dynamic(
   () =>
-    import('#/shared/dialog/UpdatePasswordDialog.js').then(
+    import('#/shared/dialog/UpdatePasswordDialog').then(
       (mod) => mod.UpdatePasswordDialog
     ),
   {

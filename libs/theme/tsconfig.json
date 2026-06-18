@@ -3,10 +3,11 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/lib/theme",
-    "module": "nodenext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "declaration": false,
     "paths": {
-      "@lotta-schule/theme": ["./src/index.js"],
+      "@lotta-schule/theme": ["./src/index.ts"],
       "#/*": ["./src/*"]
     }
   },

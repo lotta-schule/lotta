@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import { faBookmark, faFolder } from '@fortawesome/free-regular-svg-icons';
 import {
   faBookOpen,
@@ -20,7 +20,7 @@ import {
   faVolleyball,
 } from '@fortawesome/free-solid-svg-icons';
 
-import { WidgetIconModel } from '#/model/index.js';
+import { WidgetIconModel } from '#/model';
 import clsx from 'clsx';
 
 import styles from './WidgetIcon.module.scss';

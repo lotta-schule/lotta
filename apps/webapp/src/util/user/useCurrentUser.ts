@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { graphql, ResultOf } from '#/api/graphql.js';
+import { graphql, ResultOf } from '#/api/graphql';
 
 export const GET_CURRENT_USER = graphql(`
   query GetCurrentUser {
@@ -31,6 +31,8 @@ export const GET_CURRENT_USER = graphql(`
         name
         isAdminGroup
         sortKey
+        canReadFullName
+        eduplacesId
       }
     }
   }

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { type Tenant } from '#/util/tenant/index.js';
+import { type Tenant } from '#/util/tenant';
 
 const ServerDataContext = React.createContext({
   tenant: null as Tenant | null,

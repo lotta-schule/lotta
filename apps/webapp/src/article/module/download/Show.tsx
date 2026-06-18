@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { Button, FileSize } from '@lotta-schule/hubert';
-import { ContentModuleModel, FileModel } from '#/model/index.js';
-import { File } from '#/util/model/index.js';
-import { Icon } from '#/shared/Icon.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { ContentModuleModel, FileModel } from '#/model';
+import { File } from '#/util/model';
+import { Icon } from '#/shared/Icon';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
 
 import styles from './Download.module.scss';
 

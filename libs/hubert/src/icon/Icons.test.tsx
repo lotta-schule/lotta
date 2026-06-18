@@ -1,5 +1,5 @@
-import { render } from '../test-utils.js';
-import * as Icons from './index.js';
+import { render } from '../test-utils';
+import * as Icons from '.';
 
 describe('Icon Components', () => {
   const iconComponents = [

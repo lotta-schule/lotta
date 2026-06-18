@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Delete, Download, Edit, OpenWith } from '../icon/index.js';
-import { List, ListItem } from '../list/index.js';
-import { Button } from '../button/index.js';
-import { isDirectoryNode, isFileNode } from './utils.js';
-import { BrowserPath, useBrowserState } from './BrowserStateContext.js';
-import { FilePreviewPreview } from './FilePreviewPreview.js';
-import { useNodeMenuProps } from './useNodeMenuProps.js';
+import { Delete, Download, Edit, OpenWith } from '../icon';
+import { List, ListItem } from '../list';
+import { Button } from '../button';
+import { isDirectoryNode, isFileNode } from './utils';
+import { BrowserPath, useBrowserState } from './BrowserStateContext';
+import { FilePreviewPreview } from './FilePreviewPreview';
+import { useNodeMenuProps } from './useNodeMenuProps';
 import clsx from 'clsx';
 
 import styles from './FilePreview.module.scss';

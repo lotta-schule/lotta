@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { FullErrorPage, SecondaryErrorText } from './FullErrorPage.js';
+import { FullErrorPage, SecondaryErrorText } from './FullErrorPage';
 
 export const TenantNotFoundErrorPage = React.memo(() => {
   return (

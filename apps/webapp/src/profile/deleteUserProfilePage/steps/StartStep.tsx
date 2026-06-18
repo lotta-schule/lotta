@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Box } from '@lotta-schule/hubert';
-import { useTenant } from '#/util/tenant/index.js';
-import { StepNavigation, StepNavigationProps } from '../components/index.js';
-import { ProfileDeleteStep } from '../types.js';
+import { useTenant } from '#/util/tenant';
+import { StepNavigation, StepNavigationProps } from '../components';
+import { ProfileDeleteStep } from '../types';
 import clsx from 'clsx';
 
 import styles from '../DeleteUserProfilePage.module.scss';

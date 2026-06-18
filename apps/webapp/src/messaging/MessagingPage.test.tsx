@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { render } from '#/test/util.js';
+import { render } from '#/test/util';
 import {
   SomeUser,
   SomeUserin,
   createConversation,
   elternGroup,
-} from '#/test/fixtures/index.js';
-import { MessagingPage } from './MessagingPage.js';
+} from '#/test/fixtures';
+import { MessagingPage } from './MessagingPage';
 
 import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
 import GetConversationQuery from '#/api/query/GetConversationQuery.graphql';

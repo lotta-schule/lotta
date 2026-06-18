@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, userEvent } from '../test-utils.js';
-import { Tab } from './Tab.js';
-import { Tabbar } from './Tabbar.js';
+import { render, userEvent } from '../test-utils';
+import { Tab } from './Tab';
+import { Tabbar } from './Tabbar';
 
 describe('tabs/Tabbar', () => {
   it('snapshot test', () => {

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Button } from '@lotta-schule/hubert';
-import { FormResultsDialog } from './FormResultsDialog.js';
-import { Show } from './Show.js';
-import { Edit } from './Edit.js';
+import { FormResultsDialog } from './FormResultsDialog';
+import { Show } from './Show';
+import { Edit } from './Edit';
 import { faInbox } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from '#/shared/Icon.js';
-import { ContentModuleComponentProps } from '../ContentModule.js';
+import { Icon } from '#/shared/Icon';
+import { ContentModuleComponentProps } from '../ContentModule';
 
 export interface FormElementOption {
   selected?: boolean;

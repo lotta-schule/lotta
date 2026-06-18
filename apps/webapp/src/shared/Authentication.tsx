@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
-import { ConversationModel, ID, MessageModel } from '#/model/index.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { ConversationModel, ID, MessageModel } from '#/model';
 import { useSubscription } from '@apollo/client/react';
 import pick from 'lodash/pick.js';
 

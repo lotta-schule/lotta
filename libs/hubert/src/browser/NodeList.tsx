@@ -4,10 +4,10 @@ import {
   useBrowserState,
   BrowserNode,
   BrowserPath,
-} from './BrowserStateContext.js';
-import { NodeListItem } from './NodeListItem.js';
-import { isDirectoryNode } from './utils.js';
-import { useIsMobile } from '../util/index.js';
+} from './BrowserStateContext';
+import { NodeListItem } from './NodeListItem';
+import { isDirectoryNode } from './utils';
+import { useIsMobile } from '../util';
 import clsx from 'clsx';
 
 import styles from './NodeList.module.scss';

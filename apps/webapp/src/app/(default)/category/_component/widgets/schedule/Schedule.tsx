@@ -17,10 +17,10 @@ import {
   Tooltip,
 } from '@lotta-schule/hubert';
 import { useApolloClient, useLazyQuery } from '@apollo/client/react';
-import { WidgetModel, ScheduleResult, WidgetModelType } from '#/model/index.js';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
-import { SelectCoursesDialog } from './SelectCoursesDialog.js';
-import Link from 'next/link';
+import { WidgetModel, ScheduleResult, WidgetModelType } from '#/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { SelectCoursesDialog } from './SelectCoursesDialog';
+import Link from 'next/link.js';
 
 import clsx from 'clsx';
 
@@ -32,7 +32,7 @@ import {
   faChevronLeft,
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 
 export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 

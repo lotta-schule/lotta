@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '#/test/util.js';
+import { renderHook, waitFor } from '#/test/util';
 import {
   StartseiteCategory,
   FaecherCategory,
@@ -8,8 +8,8 @@ import {
   MatheCategory,
   SportCategory,
   KunstCategory,
-} from '#/test/fixtures/index.js';
-import { useCategories } from './useCategories.js';
+} from '#/test/fixtures';
+import { useCategories } from './useCategories';
 
 describe('useCategories', () => {
   describe('category sorting', () => {

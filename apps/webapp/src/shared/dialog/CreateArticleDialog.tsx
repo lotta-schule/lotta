@@ -9,7 +9,7 @@ import {
   ErrorMessage,
   Label,
 } from '@lotta-schule/hubert';
-import { ArticleModel, ArticleModelInput } from '#/model/index.js';
+import { ArticleModel, ArticleModelInput } from '#/model';
 
 import CreateArticleMutation from '#/api/mutation/CreateArticleMutation.graphql';
 import GetOwnArticlesQuery from '#/api/query/GetOwnArticles.graphql';
@@ -65,7 +65,7 @@ export const CreateArticleDialog = React.memo(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            createArticle();
+            createArticle({ variables: { article: { title } } });
           }}
         >
           <DialogContent>

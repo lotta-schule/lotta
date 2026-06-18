@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Theme } from '@lotta-schule/theme';
-import { extractFontNamesFromTheme } from '../util/index.js';
+import { extractFontNamesFromTheme } from '../util';
 
 export type ExternalFont = {
   /**

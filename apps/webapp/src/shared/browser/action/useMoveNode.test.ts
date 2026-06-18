@@ -1,14 +1,14 @@
 import { MockLink } from '@apollo/client/testing';
-import { currentApolloCache, renderHook } from '#/test/util.js';
+import { currentApolloCache, renderHook } from '#/test/util';
 import {
   SomeUser,
   imageFile,
   logosDirectory,
   profilDirectory,
-} from '#/test/fixtures/index.js';
-import { DirectoryModel, FileModel } from '#/model/index.js';
+} from '#/test/fixtures';
+import { DirectoryModel, FileModel } from '#/model';
 import { BrowserNode } from '@lotta-schule/hubert';
-import { useMoveNode } from './useMoveNode.js';
+import { useMoveNode } from './useMoveNode';
 
 import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
 import UpdateDirectoryMutation from '#/api/mutation/UpdateDirectoryMutation.graphql';

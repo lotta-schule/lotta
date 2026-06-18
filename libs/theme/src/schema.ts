@@ -1,4 +1,4 @@
-import { Theme } from './Theme.js';
+import { Theme } from './Theme';
 
 export type CSSType = 'value' | 'number' | 'length' | 'color' | 'font-family';
 
@@ -84,5 +84,13 @@ export const schema: Record<
   titleFontFamily: {
     type: 'font-family',
     description: 'font family for titles',
+  },
+  badgeBackgroundColor: {
+    type: 'color',
+    description: 'Badge background color',
+  },
+  badgeTextColor: {
+    type: 'color',
+    description: 'Badge text color',
   },
 };

@@ -1,8 +1,8 @@
-import { ID } from './ID.js';
-import { FileModel } from './FileModel.js';
-import { UserGroupModel } from './UserGroupModel.js';
-import { GET_CALENDAR_EVENTS } from '#/app/(admin)/admin/calendars/_graphql/index.js';
-import { ResultOf } from '#/api/graphql.js';
+import { ID } from './ID';
+import { FileModel } from './FileModel';
+import { UserGroupModel } from './UserGroupModel';
+import { GET_CALENDAR_EVENTS } from '#/app/(admin)/admin/calendars/_graphql';
+import { ResultOf } from '#/api/graphql';
 
 export enum WidgetModelType {
   UserNavigationMobile = '{0}',

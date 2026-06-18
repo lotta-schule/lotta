@@ -1,21 +1,14 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "./tsconfig.json",
-  // Type-checking config, decoupled from the build.
+  // Structural shim for standalone `tsc` type-checking.
   //
-  // The build (`next build` / Turbopack) uses `tsconfig.json` with
-  // `moduleResolution: nodenext` — required so Turbopack rewrites the `.js`
-  // import specifiers used by the source-consumed `hubert`/`theme` libs.
-  // tsc under nodenext, however, cannot resolve Next 16's `exports`-less
-  // `next/*` subpaths, so the build's inline type-check is disabled
-  // (`typescript.ignoreBuildErrors` in next.config.js) and real type-checking
-  // happens here under `moduleResolution: bundler`, which resolves `next/*`,
-  // the workspace libs, and `.js`→`.ts` correctly.
-  //
-  // See TYPECHECK_MIGRATION_PLAN.md for the full rationale.
+  // `tsconfig.json` is a composite "solution" config with `references` pointing at
+  // `tsconfig.app.json` / `tsconfig.test.json`. Running `tsc -p tsconfig.json`
+  // directly requires those referenced projects to have been built first (TS6305/TS6310).
+  // This config flattens that by clearing the references and including src directly,
+  // while inheriting the now-unified `moduleResolution: bundler` from the parent.
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "bundler",
     "noEmit": true,
     "composite": false,
     "declaration": false,

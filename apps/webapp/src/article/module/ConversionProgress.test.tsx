@@ -1,9 +1,9 @@
-import { render } from '#/test/util.js';
+import { render } from '#/test/util';
 import {
   ConversionProgress,
   GET_FILE_FORMATS_QUERY,
-} from './ConversionProgress.js';
-import { ResultOf } from '#/api/graphql.js';
+} from './ConversionProgress';
+import { ResultOf } from '#/api/graphql';
 
 type NonNull<T> = Exclude<T, null | undefined>;
 

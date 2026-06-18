@@ -4,7 +4,7 @@ import * as React from 'react';
 import { mergeProps, useFocus, useMenuItem } from 'react-aria';
 import { TreeState, Item as AriaItem } from 'react-stately';
 import { Node } from '@react-types/shared';
-import { ListItem } from '../list/index.js';
+import { ListItem } from '../list';
 
 import styles from './Menu.module.scss';
 

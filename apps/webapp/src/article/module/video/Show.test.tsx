@@ -1,7 +1,7 @@
-import { render } from '#/test/util.js';
-import { Show as ShowVideo } from './Show.js';
-import { ContentModuleType } from '#/model/index.js';
-import { movieFile } from '#/test/fixtures/index.js';
+import { render } from '#/test/util';
+import { Show as ShowVideo } from './Show';
+import { ContentModuleType } from '#/model';
+import { movieFile } from '#/test/fixtures';
 
 describe('Video ContentModule (non-editable)', () => {
   it('should render a video with caption when a file is set', () => {

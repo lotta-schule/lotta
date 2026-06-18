@@ -10,15 +10,12 @@ import {
   Option,
   Select,
 } from '@lotta-schule/hubert';
-import { SelectFileButton } from '#/shared/edit/SelectFileButton.js';
-import {
-  FormElement as FormElementInterface,
-  FormElementOption,
-} from './Form.js';
-import { FileModel } from '#/model/index.js';
+import { SelectFileButton } from '#/shared/edit/SelectFileButton';
+import { FormElement as FormElementInterface, FormElementOption } from './Form';
+import { FileModel } from '#/model';
 
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
-import { Icon } from '#/shared/Icon.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { Icon } from '#/shared/Icon';
 import {
   faCirclePlus,
   faPencil,

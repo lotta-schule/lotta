@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client/react';
-import { WidgetModel, ID } from '#/model/index.js';
+import { WidgetModel, ID } from '#/model';
 import {
   Button,
   LoadingButton,
@@ -60,7 +60,7 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
           </Button>
           <LoadingButton
             onAction={async () => {
-              await deleteWidget();
+              await deleteWidget({ variables: { id: widget.id } });
             }}
             onComplete={onConfirm}
           >

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, waitFor, within, userEvent } from '#/test/util.js';
-import { SelectFileOverlay } from './SelectFileOverlay.js';
+import { render, waitFor, within, userEvent } from '#/test/util';
+import { SelectFileOverlay } from './SelectFileOverlay';
 import { MockLink } from '@apollo/client/testing';
-import { imageFile, logosDirectory } from '#/test/fixtures/index.js';
+import { imageFile, logosDirectory } from '#/test/fixtures';
 
 import GetDirectoriesAndFiles from '#/api/query/GetDirectoriesAndFiles.graphql';
 import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';

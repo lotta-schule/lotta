@@ -16,10 +16,10 @@ import {
   faCalendar,
 } from '@fortawesome/free-solid-svg-icons';
 import { BaseButton } from '@lotta-schule/hubert';
-import { serverTranslations } from '#/i18n/server.js';
-import { Icon } from '#/shared/Icon.js';
-import { NewFeedbackCountBadge } from '#/component/feedback/NewFeedbackCountBadge.js';
-import { AdminPage } from './_component/AdminPage.js';
+import { serverTranslations } from '#/i18n/server';
+import { Icon } from '#/shared/Icon';
+import { NewFeedbackCountBadge } from '#/component/feedback/NewFeedbackCountBadge';
+import { AdminPage } from './_component/AdminPage';
 import Link from 'next/link.js';
 
 import styles from './page.module.scss';

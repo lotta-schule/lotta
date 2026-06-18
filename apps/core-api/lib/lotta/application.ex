@@ -52,10 +52,21 @@ defmodule Lotta.Application do
       env: Application.get_env(:lotta, :environment)
     )
 
-    LoggerJSON.Ecto.attach("logger-json-queries", [:lotta, :repo, :query], :debug)
+    :telemetry.attach(
+      "logger-json-queries",
+      [:lotta, :repo, :query],
+      &__MODULE__.handle_repo_query/4,
+      :debug
+    )
+
     LoggerJSON.Plug.attach("logger-json-requests", [:lotta, :plug, :stop], :info)
-    Oban.Telemetry.attach_default_logger(events: [:job, :queue], level: :info)
+    Oban.Telemetry.attach_default_logger(events: [:job, :queue], level: :warning)
   end
+
+  def handle_repo_query(_event, _measurements, %{source: "oban" <> _}, _config), do: :ok
+
+  def handle_repo_query(event, measurements, metadata, config),
+    do: LoggerJSON.Ecto.handle_event(event, measurements, metadata, config)
 
   defp setup_telemetry() do
     OpentelemetryOban.setup()

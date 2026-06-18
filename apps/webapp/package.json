@@ -3,6 +3,9 @@
   "name": "@lotta-schule/webapp",
   "version": "6.1.21",
   "description": "Lotta Schule Webapp",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "scripts": {
     "dev": "next dev",
     "start:prod": "next start",

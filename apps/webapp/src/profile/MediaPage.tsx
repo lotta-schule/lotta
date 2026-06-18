@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import { Box } from '@lotta-schule/hubert';
-import { Header, Main } from '#/layout/index.js';
-import { UserBrowser } from '#/shared/browser/index.js';
+import { Header, Main } from '#/layout';
+import { UserBrowser } from '#/shared/browser';
 
 import styles from './MediaPage.module.scss';
 

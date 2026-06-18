@@ -16,13 +16,10 @@ import {
 } from '@testing-library/react';
 import { MockLink } from '@apollo/client/testing';
 import { MockedProvider } from '@apollo/client/testing/react';
-import {
-  ApolloMocksOptions,
-  getDefaultApolloMocks,
-} from '#/test/mocks/index.js';
-import { TranslationsProvider } from '#/i18n/client.js';
-import { ServerDataContextProvider } from '#/shared/ServerDataContext.js';
-import { tenant } from './fixtures/index.js';
+import { ApolloMocksOptions, getDefaultApolloMocks } from '#/test/mocks';
+import { TranslationsProvider } from '#/i18n/client';
+import { ServerDataContextProvider } from '#/shared/ServerDataContext';
+import { tenant } from './fixtures';
 
 export type TestSetupOptions = {
   additionalMocks?: MockLink.MockedResponse[];

@@ -1,4 +1,4 @@
-import { graphql } from '#/api/graphql.js';
+import { graphql } from '#/api/graphql';
 
 export const GET_TENANT_TIMESERIES_ANALYTICS = graphql(`
   query GetTenantTimeseriesAnalytics(

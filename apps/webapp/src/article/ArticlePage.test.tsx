@@ -1,6 +1,6 @@
-import { render, waitFor } from '#/test/util.js';
-import { Schulfest, Weihnachtsmarkt } from '#/test/fixtures/index.js';
-import { ArticlePage } from './ArticlePage.js';
+import { render, waitFor } from '#/test/util';
+import { Schulfest, Weihnachtsmarkt } from '#/test/fixtures';
+import { ArticlePage } from './ArticlePage';
 
 import GetArticlesForTag from '#/api/query/GetArticlesForTagQuery.graphql';
 

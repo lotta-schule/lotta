@@ -9,7 +9,7 @@ import {
   Input,
   Label,
 } from '@lotta-schule/hubert';
-import { RequestHisecTokenDialog } from './RequestHisecTokenDialog.js';
+import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 
 import UpdatePasswordMutation from '#/api/mutation/UpdatePasswordMutation.graphql';
 

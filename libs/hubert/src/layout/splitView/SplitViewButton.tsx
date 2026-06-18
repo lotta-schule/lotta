@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button, ButtonProps } from '../../button/index.js';
-import { useSplitView } from './SplitViewContext.js';
+import { Button, ButtonProps } from '../../button';
+import { useSplitView } from './SplitViewContext';
 import clsx from 'clsx';
 
 import styles from './SplitView.module.scss';

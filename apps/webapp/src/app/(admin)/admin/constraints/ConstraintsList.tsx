@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import { faSdCard } from '@fortawesome/free-solid-svg-icons';
 import {
   Checkbox,
@@ -12,12 +12,12 @@ import {
 import { t } from 'i18next';
 import { useMutation } from '@apollo/client/react';
 import { motion } from 'framer-motion';
-import { Tenant } from '#/util/tenant/index.js';
+import { Tenant } from '#/util/tenant';
 
 import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
 
 import styles from './ConstraintsList.module.scss';
-import { AdminPageSection } from '../_component/AdminPageSection.js';
+import { AdminPageSection } from '../_component/AdminPageSection';
 
 const MEGABYTE = 1024 * 1024;
 

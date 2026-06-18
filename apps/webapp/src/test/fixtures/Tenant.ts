@@ -1,5 +1,5 @@
-import { WidgetModel, WidgetModelType } from '#/model/index.js';
-import { Tenant } from '#/util/tenant/index.js';
+import { WidgetModel, WidgetModelType } from '#/model';
+import { Tenant } from '#/util/tenant';
 
 /**
  *

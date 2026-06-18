@@ -5,8 +5,8 @@ import {
   ServerError,
 } from '@apollo/client/errors';
 import { onError } from '@apollo/client/link/error';
-import { sendRefreshRequest } from '#/api/auth.js';
-import { appConfig } from '#/config.js';
+import { sendRefreshRequest } from '#/api/auth';
+import { appConfig } from '#/config';
 
 // Single-flight: deduplicates parallel 401s so only one refresh call is made.
 let pendingRefresh: Promise<string | null> | null = null;

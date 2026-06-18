@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
+import { render, waitFor, userEvent } from '#/test/util';
 import {
   SomeUser,
   SomeUserin,
   createConversation,
   imageFile,
   documentFile,
-} from '#/test/fixtures/index.js';
-import { FileModel } from '#/model/index.js';
-import { MessageBubble } from './MessageBubble.js';
+} from '#/test/fixtures';
+import { FileModel } from '#/model';
+import { MessageBubble } from './MessageBubble';
 
 import DeleteMessageMutation from '#/api/mutation/DeleteMessageMutation.graphql';
 

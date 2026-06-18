@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Checkbox } from '@lotta-schule/hubert';
-import { ContentModuleModel } from '#/model/index.js';
+import { ContentModuleModel } from '#/model';
 import get from 'lodash/get';
 
 interface ConfigProps {

@@ -10,7 +10,6 @@ const __dirname = new URL('.', import.meta.url).pathname;
  **/
 const nextConfig = {
   output: 'standalone',
-  typescript: { ignoreBuildErrors: true },
   experimental: {
     externalDir: true,
     authInterrupts: true,

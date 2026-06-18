@@ -1,5 +1,5 @@
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { RegisterDialog } from './RegisterDialog.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { RegisterDialog } from './RegisterDialog';
 
 import RegisterMutation from '#/api/mutation/RegisterMutation.graphql';
 

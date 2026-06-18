@@ -2,10 +2,10 @@
 import * as React from 'react';
 import { Drawer, NoSsr, useIsMobile } from '@lotta-schule/hubert';
 import { useReactiveVar } from '@apollo/client/react';
-import { Footer } from './navigation/Footer.js';
-import { WidgetsList } from '#/category/widgetsList/WidgetsList.js';
-import { isMobileDrawerOpenVar } from '#/api/apollo/cache.js';
-import { usePathname } from 'next/navigation';
+import { Footer } from './navigation/Footer';
+import { WidgetsList } from '#/category/widgetsList/WidgetsList';
+import { isMobileDrawerOpenVar } from '#/api/apollo/cache';
+import { usePathname } from 'next/navigation.js';
 
 import styles from './Sidebar.module.scss';
 import clsx from 'clsx';
