@@ -3,9 +3,9 @@ import {
   CalendarKlassenarbeiten,
   GangamStyleWidget,
   VPSchuelerWidget,
-} from '#/test/fixtures/index.js';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { WidgetEditor } from './WidgetEditor.js';
+} from '#/test/fixtures';
+import { render, waitFor, userEvent } from '#/test/util';
+import { WidgetEditor } from './WidgetEditor';
 
 import UpdateWidgetMutation from '#/api/mutation/UpdateWidgetMutation.graphql';
 

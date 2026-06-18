@@ -11,7 +11,7 @@ import {
   Label,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { useGetFieldError } from '#/util/useGetFieldError.js';
+import { useGetFieldError } from '#/util/useGetFieldError';
 
 import RegisterMutation from '#/api/mutation/RegisterMutation.graphql';
 
@@ -38,6 +38,21 @@ export const RegisterDialog = React.memo(
     const [isHideFullName, setIsHideFullName] = React.useState(false);
     const [formError, setFormError] = React.useState<string | null>(null);
 
+    const onRegister = async () => {
+      setFormError(null);
+      await register({
+        variables: {
+          user: {
+            email,
+            name: `${firstName} ${lastName}`,
+            nickname,
+            hideFullName: isHideFullName,
+          },
+          groupKey,
+        },
+      });
+    };
+
     const content = data?.register ? (
       <>
         <DialogContent>
@@ -58,19 +73,9 @@ export const RegisterDialog = React.memo(
       <form
         className={styles.form}
         onSubmit={(e) => {
+          // submission is handled by the LoadingButton's onAction so that it
+          // can drive its own loading/success/error state
           e.preventDefault();
-          setFormError(null);
-          register({
-            variables: {
-              user: {
-                email,
-                name: `${firstName} ${lastName}`,
-                nickname,
-                hideFullName: isHideFullName,
-              },
-              groupKey,
-            },
-          });
         }}
       >
         <DialogContent>
@@ -189,7 +194,7 @@ export const RegisterDialog = React.memo(
           >
             Abbrechen
           </Button>
-          <LoadingButton type={'submit'} state={isLoading ? 'loading' : 'idle'}>
+          <LoadingButton type={'submit'} onAction={onRegister}>
             Registrieren
           </LoadingButton>
         </DialogActions>

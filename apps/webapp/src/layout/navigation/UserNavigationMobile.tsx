@@ -2,9 +2,9 @@
 import * as React from 'react';
 import { useQuery } from '@apollo/client/react';
 import { Badge, BaseButton, Button } from '@lotta-schule/hubert';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
-import { useTenant } from '#/util/tenant/useTenant.js';
-import { Icon } from '#/shared/Icon.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { useTenant } from '#/util/tenant/useTenant';
+import { Icon } from '#/shared/Icon';
 import {
   faComments,
   faFolder,
@@ -19,16 +19,16 @@ import {
   faCommentDots,
 } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
-import { ArticleModel } from '#/model/index.js';
-import { User, Article } from '#/util/model/index.js';
-import { isMobileDrawerOpenVar } from '#/api/apollo/cache.js';
-import { CreateArticleDialog } from '#/shared/dialog/CreateArticleDialog.js';
-import { LoginDialog } from '#/shared/dialog/login/index.js';
-import { RegisterDialog } from '#/shared/dialog/RegisterDialog.js';
-import { FeedbackDialog } from '#/shared/dialog/FeedbackDialog.js';
-import { useNewFeedbackCount } from '#/util/feedback/index.js';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { ArticleModel } from '#/model';
+import { User, Article } from '#/util/model';
+import { isMobileDrawerOpenVar } from '#/api/apollo/cache';
+import { CreateArticleDialog } from '#/shared/dialog/CreateArticleDialog';
+import { LoginDialog } from '#/shared/dialog/login';
+import { RegisterDialog } from '#/shared/dialog/RegisterDialog';
+import { FeedbackDialog } from '#/shared/dialog/FeedbackDialog';
+import { useNewFeedbackCount } from '#/util/feedback';
+import { useRouter } from 'next/navigation.js';
+import Link from 'next/link.js';
 
 import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client/react';
-import { CategoryModel } from '#/model/index.js';
+import { CategoryModel } from '#/model';
 import {
   Button,
   Collapse,
@@ -14,7 +14,7 @@ import {
   Radio,
   RadioGroup,
 } from '@lotta-schule/hubert';
-import { CategorySelect } from '#/shared/categorySelect/CategorySelect.js';
+import { CategorySelect } from '#/shared/categorySelect/CategorySelect';
 
 import CreateCategoryMutation from '#/api/mutation/CreateCategoryMutation.graphql';
 import GetCategoriesQuery from '#/api/query/GetCategoriesQuery.graphql';

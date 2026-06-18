@@ -1,11 +1,11 @@
-import { NewMessageDestination } from '#/model/index.js';
+import { NewMessageDestination } from '#/model';
 import {
   createConversation,
   elternGroup,
   SomeUser,
   SomeUserin,
-} from '#/test/fixtures/index.js';
-import { Message } from './Message.js';
+} from '#/test/fixtures';
+import { Message } from './Message';
 
 describe('util/model/Message', () => {
   it('should show the correct user name if Destination object describes a user', () => {

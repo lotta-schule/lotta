@@ -1,13 +1,13 @@
 'use client';
 import * as React from 'react';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
 import { useIsMobile } from '@lotta-schule/hubert';
 import { useApolloClient } from '@apollo/client/react';
 import { useRouter } from 'next/navigation.js';
-import { Header, Main, Sidebar } from '#/layout/index.js';
-import { isBrowser } from '#/util/isBrowser.js';
-import { ConversationModel } from '#/model/index.js';
-import { MessagingView } from './MessagingView.js';
+import { Header, Main, Sidebar } from '#/layout';
+import { isBrowser } from '#/util/isBrowser';
+import { ConversationModel } from '#/model';
+import { MessagingView } from './MessagingView';
 
 import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
 

@@ -6,5 +6,5 @@ declare module 'apollo-v3-absinthe-upload-link' {
     fetch: typeof fetch;
   };
 
-  export function createLink(options: CreateLinkOptions): ApolloLink;
+  export function createLink(options: LinkOptions): ApolloLink;
 }

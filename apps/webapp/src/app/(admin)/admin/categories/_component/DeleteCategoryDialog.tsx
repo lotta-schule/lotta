@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { ArticleModel, CategoryModel, ID } from '#/model/index.js';
+import { ArticleModel, CategoryModel, ID } from '#/model';
 import {
   Button,
   Dialog,
@@ -10,7 +10,7 @@ import {
   LinearProgress,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { useCategories } from '#/util/categories/useCategories.js';
+import { useCategories } from '#/util/categories/useCategories';
 
 import DeleteCategoryMutation from '#/api/mutation/DeleteCategoryMutation.graphql';
 import GetArticlesQuery from '#/api/query/GetArticlesQuery.graphql';

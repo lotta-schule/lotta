@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Button, LoadingButton } from '../../button/index.js';
-import { Dialog, DialogActions, DialogContent } from '../../dialog/index.js';
-import { isDirectoryNode, isFileNode } from '../utils.js';
-import { ErrorMessage } from '../../message/index.js';
-import { LinearProgress } from '../../progress/index.js';
-import { List, ListItem } from '../../list/index.js';
-import { BrowserNode, useBrowserState } from '../BrowserStateContext.js';
+import { Button, LoadingButton } from '../../button';
+import { Dialog, DialogActions, DialogContent } from '../../dialog';
+import { isDirectoryNode, isFileNode } from '../utils';
+import { ErrorMessage } from '../../message';
+import { LinearProgress } from '../../progress';
+import { List, ListItem } from '../../list';
+import { BrowserNode, useBrowserState } from '../BrowserStateContext';
 
 import styles from './DeleteDirectoryDialog.module.scss';
 

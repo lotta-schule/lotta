@@ -1,6 +1,6 @@
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection.js';
-import { ComputerExperten } from '#/test/fixtures/index.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
+import { ComputerExperten } from '#/test/fixtures';
 import { MockLink } from '@apollo/client/testing';
 
 import SearchQuery from '#/api/query/SearchQuery.graphql';

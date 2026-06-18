@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { loadFeedback } from '#/loader/index.js';
-import { Feedback } from './Feedback.js';
-import { AdminPage } from '#/app/(admin)/admin/_component/AdminPage.js';
+import { loadFeedback } from '#/loader';
+import { Feedback } from './Feedback';
+import { AdminPage } from '#/app/(admin)/admin/_component/AdminPage';
 import { faCommentDots } from '@fortawesome/free-solid-svg-icons';
 
 async function FeedbackPage() {

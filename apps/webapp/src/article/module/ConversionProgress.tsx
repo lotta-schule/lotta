@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 import { CircularProgress } from '@lotta-schule/hubert';
 import { useTranslation } from 'react-i18next';
-import { graphql } from '#/api/graphql.js';
+import { graphql } from '#/api/graphql';
 import * as React from 'react';
 
 import styles from './ConversionProgress.module.scss';

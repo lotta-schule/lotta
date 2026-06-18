@@ -2,16 +2,16 @@
 
 import { useQuery } from '@apollo/client/react';
 import * as React from 'react';
-import { ArticlePreview } from '#/article/preview/ArticlePreview.js';
+import { ArticlePreview } from '#/article/preview/ArticlePreview';
 import { useScrollEvent } from '@lotta-schule/hubert';
-import { GET_ARTICLES_QUERY } from './_graphql/GET_ARTICLES_QUERY.js';
+import { GET_ARTICLES_QUERY } from './_graphql/GET_ARTICLES_QUERY';
 import clsx from 'clsx';
 
 import styles from './CategoryPage.module.scss';
 
 export type MoreArticlesLoaderProps = {
   lastArticleDate: string;
-  layout: string;
+  layout: 'standard' | 'densed' | '2-columns';
   categoryId: string;
 };
 
@@ -51,21 +51,23 @@ export const MoreArticlesLoader = React.memo(
 
     return (
       <>
-        {data?.articles?.map((article) => (
-          <div
-            className={clsx(styles.gridItem, {
-              [styles['two-columns']]: layout === '2-columns',
-            })}
-            key={article.id}
-          >
-            <ArticlePreview article={article} limitedHeight layout={layout} />
-          </div>
-        ))}
+        {data?.articles
+          ?.filter((article) => article !== null)
+          .map((article) => (
+            <div
+              className={clsx(styles.gridItem, {
+                [styles['two-columns']]: layout === '2-columns',
+              })}
+              key={article.id}
+            >
+              <ArticlePreview article={article} limitedHeight layout={layout} />
+            </div>
+          ))}
         {!isLoading &&
           shouldFetchEvenMore &&
           !error &&
           lastFetchedArticleDate &&
-          data?.articles.length >= FETCH_COUNT && (
+          (data?.articles?.length ?? 0) >= FETCH_COUNT && (
             <React.Suspense>
               <MoreArticlesLoader
                 lastArticleDate={lastFetchedArticleDate}

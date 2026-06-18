@@ -1,18 +1,15 @@
 import * as React from 'react';
 import { Box, Tabbar, Tab } from '@lotta-schule/hubert';
 import { useSuspenseQuery } from '@apollo/client/react';
-import { UserBrowser } from '#/shared/browser/index.js';
+import { UserBrowser } from '#/shared/browser';
 import {
   FileSelection,
   StepNavigation,
   StepNavigationProps,
-} from '../components/index.js';
-import { useTenant } from '#/util/tenant/index.js';
-import {
-  GET_RELEVANT_FILES_IN_USAGE,
-  RelevantFilesInUsage,
-} from '../queries.js';
-import { ProfileDeleteStep } from '../types.js';
+} from '../components';
+import { useTenant } from '#/util/tenant';
+import { GET_RELEVANT_FILES_IN_USAGE, RelevantFilesInUsage } from '../queries';
+import { ProfileDeleteStep } from '../types';
 
 import styles from '../DeleteUserProfilePage.module.scss';
 
@@ -86,7 +83,7 @@ export const ReviewFilesStep = ({
           wenden müssen.
         </p>
         <FileSelection
-          files={relevantFiles}
+          files={relevantFiles ?? []}
           selectedFiles={selectedFilesToTransfer}
           onSelectFiles={onFilesChange}
         />

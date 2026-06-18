@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { mergeProps, useTooltipTrigger } from 'react-aria';
 import { useTooltipTriggerState } from 'react-stately';
-import { TooltipOverlay } from './TooltipOverlay.js';
+import { TooltipOverlay } from './TooltipOverlay';
 
 import styles from './Tooltip.module.scss';
 
@@ -22,7 +22,7 @@ export const Tooltip = React.forwardRef(
     forwardedRef: React.Ref<HTMLDivElement | null>
   ) => {
     const ref = React.useRef<HTMLDivElement>(null);
-    React.useImperativeHandle(forwardedRef, () => ref.current);
+    React.useImperativeHandle(forwardedRef, () => ref.current!);
 
     const isDisabled = ref.current?.getAttribute('disabled') !== null;
 

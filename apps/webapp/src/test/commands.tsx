@@ -1,6 +1,11 @@
-import { type Locator } from 'playwright';
+import type { Locator, Page, BrowserContext } from 'playwright';
 import type { Plugin } from 'vitest/config';
-import type { BrowserCommand } from 'vitest/node';
+import type { BrowserCommand, BrowserCommandContext } from 'vitest/node';
+
+type PlaywrightContext = BrowserCommandContext & {
+  iframe: Page;
+  context: BrowserContext;
+};
 
 export type FileDescriptor = {
   name: string;
@@ -12,7 +17,8 @@ export type DataTransferDescriptor = Record<string, string>;
 
 export const setFiles: BrowserCommand<
   [locator: Locator | string, files: FileDescriptor[]]
-> = async ({ iframe, provider }, locator, fileDescriptors) => {
+> = async (rawCtx, locator, fileDescriptors) => {
+  const { iframe, provider } = rawCtx as PlaywrightContext;
   if (provider.name === 'playwright') {
     const pageLocator =
       typeof locator === 'string' ? iframe.locator(locator) : locator;
@@ -34,14 +40,18 @@ export const setFile: BrowserCommand<
 > = (ctx, locator, fileDescriptor) => setFiles(ctx, locator, [fileDescriptor]);
 
 export const paste: BrowserCommand<[transfer: DataTransferDescriptor]> = async (
-  { context, iframe, provider },
+  rawCtx,
   transfer
 ) => {
+  const { context, iframe, provider } = rawCtx as PlaywrightContext;
   if (provider.name === 'playwright') {
     await context.grantPermissions(['clipboard-read']);
 
     await iframe.locator('body').evaluate(
-      (body, { transfer }) => {
+      (
+        body: HTMLBodyElement,
+        { transfer }: { transfer: DataTransferDescriptor }
+      ) => {
         const element = body.ownerDocument.activeElement || body;
         const clipboardData = {
           _data: transfer,

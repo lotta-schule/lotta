@@ -1,13 +1,13 @@
-import { loadTenant, TenantNotFoundError } from './loadTenant.js';
-import { getClient } from '#/api/client.js';
+import { loadTenant, TenantNotFoundError } from './loadTenant';
+import { getClient } from '#/api/client';
 import { vi } from 'vitest';
 
-vi.mock('#/api/client.js');
+vi.mock('#/api/client');
 vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
   ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
-vi.mock('#/api/apollo/client-rsc.js', () => ({
+vi.mock('#/api/apollo/client-rsc', () => ({
   createRSCClient: vi.fn(),
 }));
 

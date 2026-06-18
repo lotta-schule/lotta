@@ -4,7 +4,7 @@ import { BrowserState, NodeList } from '@lotta-schule/hubert';
 import {
   makeBrowserNodes,
   GetDirectoriesAndFilesQueryResult,
-} from './makeBrowserNodes.js';
+} from './makeBrowserNodes';
 
 import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
 

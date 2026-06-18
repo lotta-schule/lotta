@@ -1,5 +1,11 @@
 import { ApolloLink, Observable } from '@apollo/client';
-import { context, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
+import {
+  context,
+  propagation,
+  SpanKind,
+  SpanStatusCode,
+  trace,
+} from '@opentelemetry/api';
 
 const tracer = trace.getTracer('lotta-webapp-apollo');
 
@@ -20,6 +26,20 @@ export const createOtelLink = () =>
       // Make this span active so the http instrumentation's axios span
       // becomes a child of it — this is what produces the nested tree
       const activeCtx = trace.setSpan(context.active(), span);
+
+      // Explicitly inject W3C traceparent/tracestate into the request headers
+      // so the receiving service can link its spans to this one.
+      const propagationHeaders: Record<string, string> = {};
+      propagation.inject(activeCtx, propagationHeaders);
+      operation.setContext(
+        ({
+          headers: existingHeaders = {},
+        }: {
+          headers?: Record<string, string>;
+        }) => ({
+          headers: { ...existingHeaders, ...propagationHeaders },
+        })
+      );
 
       let sub: ReturnType<typeof forward>['subscribe'] extends (
         observer: any

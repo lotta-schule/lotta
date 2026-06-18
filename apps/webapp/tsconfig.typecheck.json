@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.json",
+  // Structural shim for standalone `tsc` type-checking.
+  //
+  // `tsconfig.json` is a composite "solution" config with `references` pointing at
+  // `tsconfig.app.json` / `tsconfig.test.json`. Running `tsc -p tsconfig.json`
+  // directly requires those referenced projects to have been built first (TS6305/TS6310).
+  // This config flattens that by clearing the references and including src directly,
+  // while inheriting the now-unified `moduleResolution: bundler` from the parent.
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "declaration": false,
+    "rootDir": "../..",
+    "types": ["node"]
+  },
+  "references": [],
+  "files": [],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "src/test/**"]
+}

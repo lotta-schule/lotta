@@ -1,1 +1,1 @@
-export * from './LoginDialog.js';
+export * from './LoginDialog';

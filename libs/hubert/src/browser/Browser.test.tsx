@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, userEvent, waitFor, within } from '../test-utils.js';
-import { Browser } from './Browser.js';
-import { NodeList } from './NodeList.js';
-import { BrowserNode } from './BrowserStateContext.js';
+import { render, userEvent, waitFor, within } from '../test-utils';
+import { Browser } from './Browser';
+import { NodeList } from './NodeList';
+import { BrowserNode } from './BrowserStateContext';
 
 describe('Browser', () => {
   it('should render the Browser', async () => {

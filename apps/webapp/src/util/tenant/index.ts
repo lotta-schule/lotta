@@ -1,2 +1,2 @@
-export * from './useTenant.js';
-export * from './useUserGroups.js';
+export * from './useTenant';
+export * from './useUserGroups';

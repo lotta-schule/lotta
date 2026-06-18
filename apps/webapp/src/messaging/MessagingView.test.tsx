@@ -5,9 +5,9 @@ import {
   KeinErSieEsUser,
   SomeUser,
   SomeUserin,
-} from '#/test/fixtures/index.js';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { MessagingView } from './MessagingView.js';
+} from '#/test/fixtures';
+import { render, waitFor, userEvent } from '#/test/util';
+import { MessagingView } from './MessagingView';
 
 import styles from './ConversationPreview.module.scss';
 

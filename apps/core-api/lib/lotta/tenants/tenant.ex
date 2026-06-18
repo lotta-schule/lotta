@@ -50,6 +50,8 @@ defmodule Lotta.Tenants.Tenant do
           contact_phone: String.t() | nil
         }
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "tenants" do
     field(:title, :string)
     field(:slug, :string)

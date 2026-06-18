@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
-import { TenantGlobalStyleTag } from './TenantGlobalStyleTag.js';
-import { Tenant } from '#/util/tenant/index.js';
-import { imageFile, tenant } from '#/test/fixtures/index.js';
+import { TenantGlobalStyleTag } from './TenantGlobalStyleTag';
+import { Tenant } from '#/util/tenant';
+import { imageFile, tenant } from '#/test/fixtures';
 
 describe('TenantGlobalStyleTag', () => {
   beforeEach(() => {

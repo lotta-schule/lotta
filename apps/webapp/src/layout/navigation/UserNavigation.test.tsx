@@ -1,10 +1,10 @@
 import { MockLink } from '@apollo/client/testing';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { UserNavigation } from './UserNavigation.js';
-import { SomeUser, adminGroup, tenant } from '#/test/fixtures/index.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { UserNavigation } from './UserNavigation';
+import { SomeUser, adminGroup, tenant } from '#/test/fixtures';
 import { useRouter } from 'next/navigation.js';
-import { redirectTo } from '#/util/browserLocation.js';
-import { MockRouter } from '#/test/mocks/index.js';
+import { redirectTo } from '#/util/browserLocation';
+import { MockRouter } from '#/test/mocks';
 
 import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
 import GetFeedbackOverviewQuery from '#/api/query/GetFeedbackOverviewQuery.graphql';

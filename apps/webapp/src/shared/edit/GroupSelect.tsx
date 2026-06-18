@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Checkbox, ComboBox, NoSsr, Tag } from '@lotta-schule/hubert';
-import { useUserGroups } from '#/util/tenant/useUserGroups.js';
+import { useUserGroups } from '#/util/tenant/useUserGroups';
 import clsx from 'clsx';
 
 import styles from './GroupSelect.module.scss';

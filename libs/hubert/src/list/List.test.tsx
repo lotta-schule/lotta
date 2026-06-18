@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { render } from '../test-utils.js';
-import { Avatar } from '../avatar/Avatar.js';
-import { Button } from '../button/Button.js';
-import { List } from './List.js';
-import { ListItem } from './ListItem.js';
+import { render } from '../test-utils';
+import { Avatar } from '../avatar/Avatar';
+import { Button } from '../button/Button';
+import { List } from './List';
+import { ListItem } from './ListItem';
 
 describe('List', () => {
   it('should render', () => {

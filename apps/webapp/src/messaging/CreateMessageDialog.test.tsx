@@ -1,7 +1,7 @@
-import { UserModel } from '#/model/index.js';
-import { render, waitFor, userEvent, within } from '#/test/util.js';
-import { SomeUser, SomeUserin, schuelerGroup } from '#/test/fixtures/index.js';
-import { CreateMessageDialog } from './CreateMessageDialog.js';
+import { UserModel } from '#/model';
+import { render, waitFor, userEvent, within } from '#/test/util';
+import { SomeUser, SomeUserin, schuelerGroup } from '#/test/fixtures';
+import { CreateMessageDialog } from './CreateMessageDialog';
 
 import SearchUsersQuery from '#/api/query/SearchUsersQuery.graphql';
 

@@ -1,23 +1,23 @@
 import * as React from 'react';
 import { Table } from '@lotta-schule/hubert';
-import { ArticleModel } from '#/model/index.js';
-import { User, Article, Category } from '#/util/model/index.js';
+import { ArticlePreviewModel } from '#/model';
+import { User, Article, Category } from '#/util/model';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import Link from 'next/link';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import Link from 'next/link.js';
 
 import styles from './ArticlesList.module.scss';
 import clsx from 'clsx';
 
 export interface ArticlesListProps {
-  articles: ArticleModel[];
+  articles: ArticlePreviewModel[];
 }
 
 export const ArticlesList = React.memo(({ articles }: ArticlesListProps) => {
   const articleSorter = React.useCallback(
-    (article1: ArticleModel, article2: ArticleModel) =>
+    (article1: ArticlePreviewModel, article2: ArticlePreviewModel) =>
       new Date(article2.updatedAt).getTime() -
       new Date(article1.updatedAt).getTime(),
     []

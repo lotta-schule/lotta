@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, waitFor } from '@testing-library/react';
-import { SwipeableViews } from './SwipeableViews.js';
+import { SwipeableViews } from './SwipeableViews';
 
 import styles from './SwipeableViews.module.scss';
 

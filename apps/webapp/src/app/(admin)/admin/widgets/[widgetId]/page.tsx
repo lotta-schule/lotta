@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { loadWidgets } from '#/loader/index.js';
-import { notFound } from 'next/navigation';
-import { AdminPageTitle } from '../../_component/AdminPageTitle.js';
-import { WidgetEditor } from '../_component/WidgetEditor.js';
-import { serverTranslations } from '#/i18n/server.js';
+import { loadWidgets } from '#/loader';
+import { notFound } from 'next/navigation.js';
+import { AdminPageTitle } from '../../_component/AdminPageTitle';
+import { WidgetEditor } from '../_component/WidgetEditor';
+import { serverTranslations } from '#/i18n/server';
 
 async function GroupPage({
-  params: { widgetId },
+  params,
 }: {
-  params: { widgetId: string };
+  params: Promise<{ widgetId: string }>;
 }) {
+  const { widgetId } = await params;
   const widgets = await loadWidgets();
   const { t } = await serverTranslations();
 

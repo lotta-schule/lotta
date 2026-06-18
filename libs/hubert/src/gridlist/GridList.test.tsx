@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils.js';
-import { GridList, GridListItem } from './GridList.js';
+import { render } from '../test-utils';
+import { GridList, GridListItem } from './GridList';
 
 describe('GridList', () => {
   it('should render a GridList', () => {

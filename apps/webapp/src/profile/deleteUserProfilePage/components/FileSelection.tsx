@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Checkbox, Table, Tooltip } from '@lotta-schule/hubert';
-import { Article, Category } from '#/util/model/index.js';
-import Link from 'next/link';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import { RelevantFilesInUsage } from '../index.js';
+import { Article, Category } from '#/util/model';
+import Link from 'next/link.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { RelevantFilesInUsage } from '..';
 
 export interface FileSelectionProps {
   files: RelevantFilesInUsage;
@@ -82,20 +82,18 @@ export const FileSelection = React.memo<FileSelectionProps>(
             const fileUsageCell = (() => (
               <td>
                 {file.usage
-                  ?.filter((u) => u.category || u.article)
+                  ?.filter((u) => 'category' in u || 'article' in u)
                   .map((usage, i) => {
-                    const linkTarget = (() => {
-                      if (usage.category) {
-                        return Category.getPath(usage.category);
-                      } else if (usage.article) {
-                        return Article.getPath(usage.article);
-                      } else {
-                        return '/';
-                      }
-                    })();
+                    const category =
+                      'category' in usage ? usage.category : null;
+                    const article = 'article' in usage ? usage.article : null;
+                    const linkTarget = category
+                      ? Category.getPath(category)
+                      : article
+                        ? Article.getPath(article)
+                        : '/';
                     const linkText =
-                      (usage.category ?? usage.article)?.title ??
-                      '[ Logo der Seite ]';
+                      (category ?? article)?.title ?? '[ Logo der Seite ]';
                     return (
                       <li key={i}>
                         <Link href={linkTarget} passHref target={'_blank'}>

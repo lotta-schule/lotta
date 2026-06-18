@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import CalendarView from './CalendarView.js';
-import { CalendarProvider } from './CalendarContext.js';
+import CalendarView from './CalendarView';
+import { CalendarProvider } from './CalendarContext';
 
 export const CalendarWrapper = React.memo(
   ({

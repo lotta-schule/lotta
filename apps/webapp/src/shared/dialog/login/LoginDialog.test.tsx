@@ -1,6 +1,6 @@
-import { render, userEvent, waitFor } from '#/test/util.js';
-import { LoginDialog } from './LoginDialog.js';
-import { tenant } from '#/test/fixtures/index.js';
+import { render, userEvent, waitFor } from '#/test/util';
+import { LoginDialog } from './LoginDialog';
+import { tenant } from '#/test/fixtures';
 
 describe('shared/dialog/LoginDialog', () => {
   it('should not show the login dialog when isOpen is not true', () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CategoryModel } from '#/model/index.js';
+import { CategoryModel } from '#/model';
 import { useQuery } from '@apollo/client/react';
 import GetCategoriesQuery from '#/api/query/GetCategoriesQuery.graphql';
 

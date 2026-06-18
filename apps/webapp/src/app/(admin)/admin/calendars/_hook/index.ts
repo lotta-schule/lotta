@@ -1,1 +1,1 @@
-export * from './useUnfoldedEvents.js';
+export * from './useUnfoldedEvents';

@@ -1,14 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import { Toolbar } from './Toolbar.js';
-import { MainView } from './MainView.js';
-import { StatusBar } from './StatusBar.js';
+import { Toolbar } from './Toolbar';
+import { MainView } from './MainView';
+import { StatusBar } from './StatusBar';
 import {
   BrowserStateProvider,
   BrowserStateProviderProps,
-} from './BrowserStateContext.js';
-import { DialogsContainer } from './DialogsContainer.js';
+} from './BrowserStateContext';
+import { DialogsContainer } from './DialogsContainer';
 import clsx from 'clsx';
 
 import styles from './Browser.module.scss';

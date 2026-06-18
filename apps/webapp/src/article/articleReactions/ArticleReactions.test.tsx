@@ -1,6 +1,6 @@
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { SomeUser, Weihnachtsmarkt } from '#/test/fixtures/index.js';
-import { ArticleReactions } from './ArticleReactions.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { SomeUser, Weihnachtsmarkt } from '#/test/fixtures';
+import { ArticleReactions } from './ArticleReactions';
 
 import GetArticleReactionCounts from '#/api/query/GetArticleReactionCounts.graphql';
 import GetReactionUsersQuery from '#/api/query/GetReactionUsersQuery.graphql';

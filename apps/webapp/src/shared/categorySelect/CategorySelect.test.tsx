@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { FaecherCategory, MaterialCategory } from '#/test/fixtures/index.js';
-import { CategorySelect } from './CategorySelect.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { FaecherCategory, MaterialCategory } from '#/test/fixtures';
+import { CategorySelect } from './CategorySelect';
 
 describe('shared/layouts/editArticleLayout/CategorySelect', () => {
   it('should render the thing', async () => {

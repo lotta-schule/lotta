@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from '../test-utils.js';
-import { Popover } from './Popover.js';
-import { PopoverTrigger } from './PopoverTrigger.js';
-import { PopoverContent } from './PopoverContent.js';
+import { render, userEvent, waitFor } from '../test-utils';
+import { Popover } from './Popover';
+import { PopoverTrigger } from './PopoverTrigger';
+import { PopoverContent } from './PopoverContent';
 
 describe('Popover', () => {
   it('should render a button and not the content, and open the popover on button click', async () => {

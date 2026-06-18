@@ -1,4 +1,4 @@
-import { Theme } from '../Theme.js';
+import { Theme } from '../Theme';
 
 export const standardTheme: Theme = {
   primaryColor: '#ff5722',
@@ -22,4 +22,7 @@ export const standardTheme: Theme = {
 
   textFontFamily: 'Muli',
   titleFontFamily: "'Schoolbell', cursive",
+
+  badgeBackgroundColor: '#ff5722',
+  badgeTextColor: '#ffffff',
 };

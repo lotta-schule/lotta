@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, userEvent } from '#/test/util.js';
-import { ErrorBoundary } from './ErrorBoundary.js';
-import * as browserLocation from '#/util/browserLocation.js';
+import { render, userEvent } from '#/test/util';
+import { ErrorBoundary } from './ErrorBoundary';
+import * as browserLocation from '#/util/browserLocation';
 
 const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
   if (shouldThrow) {

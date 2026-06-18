@@ -4,8 +4,8 @@ import * as React from 'react';
 import { CollectionChildren } from '@react-types/shared';
 import { useTreeState } from 'react-stately';
 import { mergeProps, useMenu } from 'react-aria';
-import { MenuItem } from './MenuItem.js';
-import { List, ListProps } from '../list/index.js';
+import { MenuItem } from './MenuItem';
+import { List, ListProps } from '../list';
 import clsx from 'clsx';
 
 import styles from './Menu.module.scss';
@@ -21,7 +21,7 @@ export type WithDescription =
   | { 'aria-label': string }
   | { 'aria-labelledby': string };
 
-export type MenuProps = ListProps &
+export type MenuProps = Omit<ListProps, 'children'> &
   WithDescription & {
     children: CollectionChildren<object>;
     ref?: React.Ref<HTMLElement>;
@@ -74,7 +74,7 @@ export const Menu = ({
           onClose={onClose}
         />
       ))}
-      {props.children}
+      {props.children as React.ReactNode}
     </List>
   );
 };

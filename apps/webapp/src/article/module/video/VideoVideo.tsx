@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ContentModuleModel } from '#/model/index.js';
-import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
+import { ContentModuleModel } from '#/model';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage';
 import styles from './VideoVideo.module.scss';
 
 type VideoVideoProps = {
@@ -52,7 +52,7 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
           if (a.mimeType === b.mimeType) {
             return b.resolution - a.resolution;
           }
-          return b.mimeType.localeCompare(a.mimeType);
+          return (b.mimeType ?? '').localeCompare(a.mimeType ?? '');
         })
         .filter((f) => f.resolution > 200),
     [videoFormats, getSourceMediaQuery]
@@ -67,13 +67,13 @@ export const VideoVideo = React.memo(({ contentModule }: VideoVideoProps) => {
       data-testid="video"
       playsInline
       controls
-      poster={posterFileUrl}
+      poster={posterFileUrl ?? undefined}
       className={styles.Video}
     >
       {validVideoFiles.map((vf) => (
         <source
           key={vf.name}
-          src={vf.url}
+          src={vf.url ?? undefined}
           type={vf.mimeType}
           media={vf.media}
         />

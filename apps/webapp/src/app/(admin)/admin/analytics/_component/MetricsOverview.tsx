@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useSuspenseQuery } from '@apollo/client/react';
 import { Box } from '@lotta-schule/hubert';
-import { formatDate } from '../_util/index.js';
-import { Period } from '../Analytics.js';
+import { formatDate } from '../_util';
+import { Period } from '../Analytics';
 import { t } from 'i18next';
-import { GET_TENANT_AGGREGATE_ANALYTICS } from '../_graphql/index.js';
+import { GET_TENANT_AGGREGATE_ANALYTICS } from '../_graphql';
 
 import styles from './MetricsOverview.module.scss';
 

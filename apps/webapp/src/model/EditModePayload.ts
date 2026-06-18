@@ -1,4 +1,4 @@
-import { ID } from './ID.js';
+import { ID } from './ID';
 
 export enum EditModeType {
   Page,

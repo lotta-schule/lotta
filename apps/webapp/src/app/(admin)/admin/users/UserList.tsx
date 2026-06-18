@@ -1,13 +1,13 @@
 'use client';
 import * as React from 'react';
 import { useQuery } from '@apollo/client/react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { UserModel, UserGroupModel } from '#/model/index.js';
-import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
-import { GroupSelect } from '#/shared/edit/GroupSelect.js';
+import { UserModel, UserGroupModel } from '#/model';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
+import { GroupSelect } from '#/shared/edit/GroupSelect';
 import {
   Input,
   Label,
@@ -18,8 +18,8 @@ import {
   Toolbar,
   useDebounce,
 } from '@lotta-schule/hubert';
-import { EditUserPermissionsDialog } from './_component/index.js';
-import { type TenantWithStats } from '#/loader/index.js';
+import { EditUserPermissionsDialog } from './_component';
+import { type TenantWithStats } from '#/loader';
 import clsx from 'clsx';
 
 import SearchUsersAsAdminQuery from '#/api/query/SearchUsersAsAdminQuery.graphql';

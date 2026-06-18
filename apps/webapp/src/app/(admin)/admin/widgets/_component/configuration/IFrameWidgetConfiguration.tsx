@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IFrameWidgetConfig } from '#/model/index.js';
+import { IFrameWidgetConfig } from '#/model';
 import { Input, Label } from '@lotta-schule/hubert';
 
 import styles from './WidgetConfiguration.module.scss';

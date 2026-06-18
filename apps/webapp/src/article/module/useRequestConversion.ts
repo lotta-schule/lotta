@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMutation, useSubscription } from '@apollo/client/react';
-import { graphql } from '#/api/graphql.js';
-import { FileModel } from '#/model/index.js';
+import { graphql } from '#/api/graphql';
+import { FileModel } from '#/model';
 
 export const REQUEST_FILE_CONVERSION = graphql(`
   mutation requestFileConversion($id: ID!, $category: String!) {

@@ -1,1 +1,1 @@
-export * from './UserBrowser.js';
+export * from './UserBrowser';

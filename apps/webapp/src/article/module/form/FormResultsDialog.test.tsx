@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { saveAs } from 'file-saver';
-import { ContentModuleModel, ContentModuleType } from '#/model/index.js';
-import { render, waitFor, userEvent } from '#/test/util.js';
+import { ContentModuleModel, ContentModuleType } from '#/model';
+import { render, waitFor, userEvent } from '#/test/util';
 import { MockLink } from '@apollo/client/testing';
-import { FormResultsDialog } from './FormResultsDialog.js';
+import { FormResultsDialog } from './FormResultsDialog';
 
 import GetContentModuleResults from '#/api/query/GetContentModuleResults.graphql';
 

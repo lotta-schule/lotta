@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { describe, expect, it } from 'vitest';
-import { render } from '../../test-utils.js';
-import { Input } from './Input.js';
+import { render } from '../../test-utils';
+import { Input } from './Input';
 
 describe('shared/general/form/input', () => {
   it('should render a textarea when multine prop is given', () => {

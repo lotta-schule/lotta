@@ -2,14 +2,14 @@ import * as React from 'react';
 import { ApolloCache } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
 import { BrowserProps } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from '#/model/index.js';
+import { DirectoryModel, FileModel } from '#/model';
 
 import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
 import UpdateDirectoryMutation from '#/api/mutation/UpdateDirectoryMutation.graphql';
 import UpdateFileMutation from '#/api/mutation/UpdateFileMutation.graphql';
 
 const updateCache = <T extends FileModel | DirectoryModel>(
-  client: ApolloCache<any>,
+  client: ApolloCache,
   initialModel: T,
   updateResult: T extends FileModel
     ? { file: FileModel }

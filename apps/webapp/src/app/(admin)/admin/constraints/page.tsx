@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { loadTenant } from '#/loader/index.js';
-import { ConstraintList } from './ConstraintsList.js';
+import { loadTenant } from '#/loader';
+import { ConstraintList } from './ConstraintsList';
 import { faExpand } from '@fortawesome/free-solid-svg-icons';
-import { AdminPage } from '#/app/(admin)/admin/_component/AdminPage.js';
+import { AdminPage } from '#/app/(admin)/admin/_component/AdminPage';
 import { t } from 'i18next';
 
 async function ConstraintsListPage() {
