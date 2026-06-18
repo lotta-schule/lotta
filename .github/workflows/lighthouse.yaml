@@ -41,7 +41,7 @@ jobs:
         working-directory: apps/e2e
 
       - name: Install Playwright Browsers
-        run: bunx playwright install --with-deps
+        run: ./node_modules/.bin/playwright install --with-deps
         working-directory: apps/e2e
 
       - name: Run lotta as a service from docker-compose.yml
