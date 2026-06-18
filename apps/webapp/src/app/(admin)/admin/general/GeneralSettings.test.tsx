@@ -1,10 +1,10 @@
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { GeneralSettings } from './GeneralSettings.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { GeneralSettings } from './GeneralSettings';
 import { useRouter } from 'next/navigation.js';
 import { Mock, vi } from 'vitest';
-import { SelectFileOverlayProps } from '#/shared/edit/SelectFileOverlay.js';
-import { imageFile, tenant } from '#/test/fixtures/index.js';
-import { ResponsiveImageProps } from '#/util/image/ResponsiveImage.js';
+import { SelectFileOverlayProps } from '#/shared/edit/SelectFileOverlay';
+import { imageFile, tenant } from '#/test/fixtures';
+import { ResponsiveImageProps } from '#/util/image/ResponsiveImage';
 import { MockLink } from '@apollo/client/testing';
 
 import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
@@ -13,7 +13,7 @@ vi.mock('next/navigation.js', () => ({
   useRouter: vi.fn(),
 }));
 
-vi.mock('#/shared/edit/SelectFileOverlay.js', () => ({
+vi.mock('#/shared/edit/SelectFileOverlay', () => ({
   SelectFileOverlay: ({
     children,
     onSelectFile,

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { SomeUser } from '#/test/fixtures/index.js';
-import { FeedbackDialog } from './FeedbackDialog.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { SomeUser } from '#/test/fixtures';
+import { FeedbackDialog } from './FeedbackDialog';
 
 import CreateFeedbackMutation from '#/api/mutation/CreateFeedbackMutation.graphql';
 

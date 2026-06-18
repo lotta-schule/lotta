@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { render, waitFor } from '#/test/util.js';
-import { UserNavigationMobile } from './UserNavigationMobile.js';
-import { SomeUser, adminGroup } from '#/test/fixtures/index.js';
+import { render, waitFor } from '#/test/util';
+import { UserNavigationMobile } from './UserNavigationMobile';
+import { SomeUser, adminGroup } from '#/test/fixtures';
 
 import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
 import GetFeedbackOverviewQuery from '#/api/query/GetFeedbackOverviewQuery.graphql';

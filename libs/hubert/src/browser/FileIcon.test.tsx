@@ -1,5 +1,5 @@
 import { render } from '#/test-utils';
-import { FileIcon } from './FileIcon.js';
+import { FileIcon } from './FileIcon';
 
 describe('browser/FileIcon', () => {
   it('should render the correct icon for a pdf file', () => {

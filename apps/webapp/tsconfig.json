@@ -2,16 +2,16 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": ".",
+    "rootDir": "../..",
     "isolatedModules": true,
     "incremental": true,
     "resolveJsonModule": true,
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "lib": ["esnext", "dom", "dom.iterable"],
     "paths": {
-      "@lotta-schule/hubert": ["../../libs/hubert/src/index.js"],
-      "@lotta-schule/theme": ["../../libs/theme/src/index.js"],
+      "@lotta-schule/hubert": ["../../libs/hubert/src/index.ts"],
+      "@lotta-schule/theme": ["../../libs/theme/src/index.ts"],
       "#/*": ["./src/*"]
     },
     "plugins": [
@@ -25,7 +25,7 @@
       }
     ],
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "preserve"
   },
   "references": [
     {
@@ -36,6 +36,6 @@
     }
   ],
   "files": [],
-  "include": [],
+  "include": [".next/types/**/*.ts", "src/**/*.d.ts"],
   "exclude": []
 }

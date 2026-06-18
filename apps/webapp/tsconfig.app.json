@@ -3,6 +3,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "composite": true,
+    "rootDir": "../..",
     "types": ["node", "vite/client"],
     "outDir": "../../dist/app/web/app"
   },

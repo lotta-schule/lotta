@@ -1,4 +1,4 @@
-import { BrowserNode } from './BrowserStateContext.js';
+import { BrowserNode } from './BrowserStateContext';
 
 export const isFileNode = (
   node: BrowserNode | null | undefined

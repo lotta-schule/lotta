@@ -8,9 +8,10 @@
     "isolatedModules": true,
     "incremental": true,
     "resolveJsonModule": true,
-    "module": "nodenext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "paths": {
-      "@lotta-schule/theme": ["../theme/src/index.js"],
+      "@lotta-schule/theme": ["../theme/src/index.ts"],
       "#/*": ["./src/*"]
     }
   },

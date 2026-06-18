@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Input } from '../form/index.js';
-import { useBrowserState } from './BrowserStateContext.js';
-import { useDebounce } from '../util/index.js';
+import { Input } from '../form';
+import { useBrowserState } from './BrowserStateContext';
+import { useDebounce } from '../util';
 import clsx from 'clsx';
 
 import styles from './Searchbar.module.scss';

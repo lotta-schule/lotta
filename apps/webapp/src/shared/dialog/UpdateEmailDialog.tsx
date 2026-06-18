@@ -9,7 +9,7 @@ import {
   Input,
   Label,
 } from '@lotta-schule/hubert';
-import { RequestHisecTokenDialog } from './RequestHisecTokenDialog.js';
+import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 
 import UpdateEmailMutation from '#/api/mutation/UpdateEmailMutation.graphql';
 
@@ -88,6 +88,7 @@ export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
             setShowRequestHisecToken(false);
             if (authToken) {
               updateEmail({
+                variables: { newEmail },
                 context: { authToken },
               });
             }

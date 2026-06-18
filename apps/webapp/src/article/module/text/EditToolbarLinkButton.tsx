@@ -3,9 +3,9 @@ import { useSlate } from 'slate-react';
 import { Range } from 'slate';
 
 import { Button } from '@lotta-schule/hubert';
-import { isLinkActive, unwrapLink, insertLink } from './SlateUtils.js';
+import { isLinkActive, unwrapLink, insertLink } from './SlateUtils';
 import { faLink } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 
 export const EditToolbarLinkButton: React.FC = () => {
   const editor = useSlate();

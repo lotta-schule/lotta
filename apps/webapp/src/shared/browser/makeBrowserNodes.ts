@@ -1,5 +1,5 @@
 import { BrowserNode, BrowserPath } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from '#/model/index.js';
+import { DirectoryModel, FileModel } from '#/model';
 
 export type GetDirectoriesAndFilesQueryResult = {
   directories: DirectoryModel[];
@@ -18,10 +18,19 @@ const makeDirectoryNode = (
 
 const makeFileNode = (file: FileModel): BrowserNode<'file'> => ({
   id: file.id,
-  name: file.filename,
+  name: file.filename ?? '',
   type: 'file',
   parent: file.parentDirectory?.id ?? null,
-  meta: file,
+  // hubert's BrowserNode<'file'> meta is DefaultFileMetadata (mimeType/size/metadata).
+  // Map the FileModel onto it while keeping the full file accessible (downstream code
+  // reads `node.meta as FileModel`). Making BrowserNode generic over its meta type is a
+  // hubert-side change tracked under the lib bucket.
+  meta: {
+    ...file,
+    mimeType: file.mimeType ?? '',
+    size: file.filesize ?? 0,
+    metadata: {},
+  },
 });
 
 export const makeBrowserNodes = (result?: {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client/react';
-import { UserGroupModel } from '#/model/index.js';
+import { UserGroupModel } from '#/model';
 import {
   Button,
   Dialog,
@@ -10,8 +10,8 @@ import {
   Input,
   Label,
 } from '@lotta-schule/hubert';
-import { graphql } from '#/api/graphql.js';
-import { GET_USER_GROUPS } from '../_graphql/index.js';
+import { graphql } from '#/api/graphql';
+import { GET_USER_GROUPS } from '../_graphql';
 
 export const CREATE_USER_GROUP = graphql(`
   mutation CreateUserGroup($group: UserGroupInput!) {
@@ -23,6 +23,7 @@ export const CREATE_USER_GROUP = graphql(`
       isAdminGroup
       canReadFullName
       sortKey
+      eduplacesId
       enrollmentTokens
     }
   }

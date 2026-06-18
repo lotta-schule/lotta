@@ -1,9 +1,5 @@
-import {
-  ConversationModel,
-  NewMessageDestination,
-  UserModel,
-} from '#/model/index.js';
-import { User } from './User.js';
+import { ConversationModel, NewMessageDestination, UserModel } from '#/model';
+import { User } from './User';
 
 export const Message = {
   getDestinationName(destination: NewMessageDestination) {

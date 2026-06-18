@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useIsMobile } from '../../util/index.js';
+import { useIsMobile } from '../../util';
 
 export type SplitViewContextType = {
   isSidebarVisible: boolean;

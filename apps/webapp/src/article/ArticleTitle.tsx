@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { ArticleModel } from '#/model/index.js';
-import { Header } from '#/layout/index.js';
-import { User } from '#/util/model/index.js';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
+import { ArticleModel } from '#/model';
+import { Header } from '#/layout';
+import { User } from '#/util/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
 import { Box } from '@lotta-schule/hubert';
-import { ArticlePreview } from '#/article/preview/ArticlePreview.js';
+import { ArticlePreview } from '#/article/preview/ArticlePreview';
 
 export interface ArticleTitleProps {
   article: ArticleModel;

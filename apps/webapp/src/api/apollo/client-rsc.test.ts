@@ -1,5 +1,5 @@
 import { ApolloClient } from '@apollo/client';
-import { createRSCClient } from './client-rsc.js';
+import { createRSCClient } from './client-rsc';
 
 describe('Apollo RSC Client', () => {
   vi.mock('next/headers.js', () => ({

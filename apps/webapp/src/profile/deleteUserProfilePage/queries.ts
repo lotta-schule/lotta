@@ -1,4 +1,4 @@
-import { graphql, ResultOf } from '#/api/graphql.js';
+import { graphql, ResultOf } from '#/api/graphql';
 
 export const GET_RELEVANT_FILES_IN_USAGE = graphql(`
   query GetRelevantFilesInUsage {
@@ -57,8 +57,17 @@ export const GET_OWN_ARTICLES = graphql(`
       tags
       readyToPublish
       published
+      isPinnedToTop
       previewImageFile {
         id
+        formats(category: "ARTICLEPREVIEW") {
+          name
+          url
+          type
+          availability {
+            status
+          }
+        }
       }
       category {
         id

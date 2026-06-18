@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
-import { Upload, useUploadClient } from './useUploadClient.js';
-import { BrowserNode } from '../BrowserStateContext.js';
+import { Upload, useUploadClient } from './useUploadClient';
+import { BrowserNode } from '../BrowserStateContext';
 
 describe('useUploadClient', () => {
   const uploadNode = vi.fn();

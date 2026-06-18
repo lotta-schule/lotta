@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Button, PopoverContent } from '@lotta-schule/hubert';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import {
   supportedReactionIconNames,
   supportedReactionIcons,
-} from './supportedReactionIcons.js';
+} from './supportedReactionIcons';
 
 import styles from './ReactionSelector.module.scss';
 

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Dialog, DialogActions, DialogContent } from '../../dialog/index.js';
-import { ErrorMessage } from '../../message/index.js';
-import { List, ListItem } from '../../list/index.js';
-import { Button, LoadingButton } from '../../button/index.js';
-import { BrowserNode, useBrowserState } from '../BrowserStateContext.js';
+import { Dialog, DialogActions, DialogContent } from '../../dialog';
+import { ErrorMessage } from '../../message';
+import { List, ListItem } from '../../list';
+import { Button, LoadingButton } from '../../button';
+import { BrowserNode, useBrowserState } from '../BrowserStateContext';
 
 import styles from './DeleteFilesDialog.module.scss';
 

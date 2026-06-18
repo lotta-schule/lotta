@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Button, SplitViewButton, Toolbar } from '@lotta-schule/hubert';
 import { faAdd, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import { NewMessageDestination } from '#/model/index.js';
-import { Icon } from '#/shared/Icon.js';
-import { CreateMessageDialog } from './CreateMessageDialog.js';
+import { NewMessageDestination } from '#/model';
+import { Icon } from '#/shared/Icon';
+import { CreateMessageDialog } from './CreateMessageDialog';
 
 import styles from './MessageToolbar.module.scss';
 

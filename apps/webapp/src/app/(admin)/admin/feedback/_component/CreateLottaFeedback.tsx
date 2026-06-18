@@ -3,7 +3,7 @@ import * as React from 'react';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Button, ErrorMessage, Input, Label } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client/react';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 
 import styles from './CreateLottaFeedback.module.scss';
 

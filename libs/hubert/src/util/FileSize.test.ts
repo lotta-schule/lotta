@@ -1,4 +1,4 @@
-import { FileSize, FileSizeUnit } from './FileSize.js';
+import { FileSize, FileSizeUnit } from './FileSize';
 
 describe('FileSize', () => {
   it('should correctly initialize', () => {

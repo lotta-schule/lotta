@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { CalendarEventModel } from '#/model/CalendarEventModel.js';
+import { CalendarEventModel } from '#/model/CalendarEventModel';
 import { Divider, ListItem } from '@lotta-schule/hubert';
 import { format, intervalToDuration, isSameMinute } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
-import { useUnfoldedEvents } from '#/app/(admin)/admin/calendars/_hook/index.js';
-import { CalendarWidgetCalendarConfig, WidgetModel } from '#/model/index.js';
+import { useUnfoldedEvents } from '#/app/(admin)/admin/calendars/_hook';
+import { CalendarWidgetCalendarConfig, WidgetModel } from '#/model';
 import clsx from 'clsx';
 
 import styles from './CalendarEntry.module.scss';

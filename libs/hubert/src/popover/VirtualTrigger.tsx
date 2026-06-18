@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ClientRectObject } from '@floating-ui/react';
-import { usePopoverContext } from './Popover.js';
+import { usePopoverContext } from './Popover';
 
 export type VirtualTriggerProps = ClientRectObject;
 

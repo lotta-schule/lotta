@@ -7,17 +7,13 @@ import { useDebounce } from 'react-use';
 import {
   ListItemFactory,
   ListItemPreliminaryItem,
-} from '../../list/ListItemFactory.js';
-import { Input } from '../input/index.js';
-import { Label } from '../../label/index.js';
-import { ListBox } from '../../menu/ListBox.js';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '../../popover/index.js';
-import { CircularProgress } from '../../progress/index.js';
-import { ExpandMore } from '../../icon/index.js';
+} from '../../list/ListItemFactory';
+import { Input } from '../input';
+import { Label } from '../../label';
+import { ListBox } from '../../menu/ListBox';
+import { Popover, PopoverContent, PopoverTrigger } from '../../popover';
+import { CircularProgress } from '../../progress';
+import { ExpandMore } from '../../icon';
 import clsx from 'clsx';
 
 import styles from './ComboBox.module.scss';

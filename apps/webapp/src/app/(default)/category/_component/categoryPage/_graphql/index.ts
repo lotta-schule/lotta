@@ -1,1 +1,1 @@
-export * from './GET_ARTICLES_QUERY.js';
+export * from './GET_ARTICLES_QUERY';

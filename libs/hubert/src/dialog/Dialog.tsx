@@ -1,11 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { usePreventScroll } from '../util/index.js';
-import { Divider } from '../divider/index.js';
-import { Button } from '../button/index.js';
-import { Close } from '../icon/index.js';
-import { ButtonGroupContextProvider } from '../button/ButtonGroupContext.js';
+import { usePreventScroll } from '../util';
+import { Divider } from '../divider';
+import { Button } from '../button';
+import { Close } from '../icon';
+import { ButtonGroupContextProvider } from '../button/ButtonGroupContext';
 import clsx from 'clsx';
 
 import styles from './Dialog.module.scss';

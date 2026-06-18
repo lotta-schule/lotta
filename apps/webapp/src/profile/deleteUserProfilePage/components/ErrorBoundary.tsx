@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Box, Button } from '@lotta-schule/hubert';
-import { ServerDownErrorPage } from '#/layout/error/ServerDownErrorPage.js';
-import { reload } from '#/util/browserLocation.js';
+import { ServerDownErrorPage } from '#/layout/error/ServerDownErrorPage';
+import { reload } from '#/util/browserLocation';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;

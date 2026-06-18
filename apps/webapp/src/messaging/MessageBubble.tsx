@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Button, FileSize } from '@lotta-schule/hubert';
-import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
 import { format } from 'date-fns';
 import { faCloudArrowDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client/react';
-import { FileModel, MessageModel } from '#/model/index.js';
-import { File, User } from '#/util/model/index.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import { Icon } from '#/shared/Icon.js';
+import { FileModel, MessageModel } from '#/model';
+import { File, User } from '#/util/model';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { Icon } from '#/shared/Icon';
 import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 
@@ -22,25 +22,28 @@ export interface MessageBubbleProps {
 
 export const MessageBubble = React.memo(
   ({ active, message }: MessageBubbleProps) => {
-    const [deleteMessage] = useMutation(DeleteMessageMutation, {
+    const [deleteMessage] = useMutation<
+      { message: MessageModel },
+      { id: string }
+    >(DeleteMessageMutation, {
       variables: { id: message.id },
       update: (client, { data }) => {
         if (data?.message) {
-          const normalizedId = client.identify(data.message);
+          const normalizedId = client.identify(data.message as any);
 
           if (normalizedId) {
             client.evict({ id: normalizedId });
           }
         }
       },
-      optimisticResponse: ({ id }) => {
-        return {
+      // Only id + __typename are needed to evict; cast since it's not a full message.
+      optimisticResponse: ({ id }) =>
+        ({
           message: {
             __typename: 'Message',
             id,
           },
-        };
-      },
+        }) as { message: MessageModel },
     });
 
     const hasPreviewImage = (file: FileModel) => {
@@ -98,7 +101,7 @@ export const MessageBubble = React.memo(
                       </Button>
                     </div>
                     <div className={styles.filesize}>
-                      {new FileSize(file.filesize).humanize()}
+                      {new FileSize(file.filesize ?? 0).humanize()}
                     </div>
                   </div>
                 ))}
@@ -114,7 +117,7 @@ export const MessageBubble = React.memo(
                 small
                 icon={<Icon icon={faTrash} />}
                 title={'Nachricht löschen'}
-                onClick={() => deleteMessage()}
+                onClick={() => deleteMessage({ variables: { id: message.id } })}
               />
             )}
             <span>

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { SomeUser } from '#/test/fixtures/index.js';
-import { UpdateEmailDialog } from './UpdateEmailDialog.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { SomeUser } from '#/test/fixtures';
+import { UpdateEmailDialog } from './UpdateEmailDialog';
 import { MockLink } from '@apollo/client/testing';
 
 import RequestHisecTokenMutation from '#/api/mutation/RequestHisecTokenMutation.graphql';

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { SomeUser } from '#/test/fixtures/index.js';
-import { CreateLottaFeedback } from './CreateLottaFeedback.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { SomeUser } from '#/test/fixtures';
+import { CreateLottaFeedback } from './CreateLottaFeedback';
 
 import CreateLottaFeedbackMutation from '#/api/mutation/CreateLottaFeedbackMutation.graphql';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from '../test-utils.js';
-import { MenuButton } from './MenuButton.js';
-import { Item } from './MenuItem.js';
+import { render, userEvent, waitFor } from '../test-utils';
+import { MenuButton } from './MenuButton';
+import { Item } from './MenuItem';
 
 describe('Menu', () => {
   it('should render a Menu button', async () => {

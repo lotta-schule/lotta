@@ -1,6 +1,6 @@
-import { getClient } from '#/api/client.js';
-import { ConversationModel } from '#/model/index.js';
-import { MessagingPage } from '#/messaging/MessagingPage.js';
+import { getClient } from '#/api/client';
+import { ConversationModel } from '#/model';
+import { MessagingPage } from '#/messaging/MessagingPage';
 
 import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
 

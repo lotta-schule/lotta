@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render, userEvent, waitFor } from '../test-utils.js';
-import { Deletable } from './Deletable.js';
+import { render, userEvent, waitFor } from '../test-utils';
+import { Deletable } from './Deletable';
 
 describe('shared/general/util/Deletable', () => {
   it('should show a Delete button when onDelete is given', async () => {

@@ -1,7 +1,7 @@
-import { sendRefreshRequest } from '#/api/auth.js';
-import { appConfig } from '#/config.js';
+import { sendRefreshRequest } from '#/api/auth';
+import { appConfig } from '#/config';
 import { type NextRequest, NextResponse } from 'next/server.js';
-import { JWT } from './util/auth/jwt.js';
+import { JWT } from './util/auth/jwt';
 
 const isRequestToApi = (pathname: string) => {
   if (pathname === '/api') return true;

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Logger } from './logger.js';
+import { Logger } from './logger';
 
 describe('logger', () => {
   beforeEach(() => {

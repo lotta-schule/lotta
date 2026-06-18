@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ComboBox, NoSsr } from '@lotta-schule/hubert';
 import { useLazyQuery } from '@apollo/client/react';
-import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
-import { UserModel } from '#/model/index.js';
-import { User } from '#/util/model/index.js';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
+import { UserModel, UserPreviewModel } from '#/model';
+import { User } from '#/util/model';
 import clsx from 'clsx';
 
 import styles from './SearchUserField.module.scss';
@@ -23,7 +23,7 @@ export interface SearchUserFieldProps {
    * Only needed when the users should be marked as 'selected'
    * on the search results listbox.
    */
-  selectedUsers?: UserModel[];
+  selectedUsers?: UserPreviewModel[];
 
   onSelectUser(user: UserModel): void;
 }

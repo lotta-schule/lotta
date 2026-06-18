@@ -1,12 +1,12 @@
-import { AdminPage } from '#/app/(admin)/admin/_component/AdminPage.js';
+import { AdminPage } from '#/app/(admin)/admin/_component/AdminPage';
 import { faSquareCaretRight } from '@fortawesome/free-solid-svg-icons';
 import {
   TwoColumnLayout,
   TwoColumnLayoutContent,
   TwoColumnLayoutSidebar,
-} from '#/component/layout/index.js';
+} from '#/component/layout';
 import { Toolbar } from '@lotta-schule/hubert';
-import { CreateWidgetButton, WidgetsNavigation } from './_component/index.js';
+import { CreateWidgetButton, WidgetsNavigation } from './_component';
 
 async function WidgetsLayout({
   children,

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { SomeUser } from '#/test/fixtures/index.js';
-import { render, userEvent, waitFor } from '#/test/util.js';
-import { DeleteConfirmationDialog } from './DeleteConfirmationDialog.js';
-import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries.js';
-import * as browserLocation from '#/util/browserLocation.js';
+import { SomeUser } from '#/test/fixtures';
+import { render, userEvent, waitFor } from '#/test/util';
+import { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
+import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries';
+import * as browserLocation from '#/util/browserLocation';
 
 describe('profile/deleteUserProfilePage/components/DeleteConfirmationDialog', () => {
   beforeEach(() => {

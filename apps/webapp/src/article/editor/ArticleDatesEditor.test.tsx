@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Weihnachtsmarkt } from '#/test/fixtures/index.js';
-import { render, userEvent } from '#/test/util.js';
-import { ArticleDatesEditor } from './ArticleDatesEditor.js';
+import { Weihnachtsmarkt } from '#/test/fixtures';
+import { render, userEvent } from '#/test/util';
+import { ArticleDatesEditor } from './ArticleDatesEditor';
 
 describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
   it('should show the the inserted at date input with correct value', () => {

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useQuery } from '@apollo/client/react';
 import { LinearProgress } from '@lotta-schule/hubert';
 import { motion } from 'framer-motion';
-import { ArticlePreview } from '#/article/preview/index.js';
-import { ArticleModel } from '#/model/index.js';
+import { ArticlePreview } from '#/article/preview';
+import { ArticleModel } from '#/model';
 
 import GetArticlesForTag from '#/api/query/GetArticlesForTagQuery.graphql';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, waitFor } from '@testing-library/react';
-import { Toolbar } from './Toolbar.js';
+import { Toolbar } from './Toolbar';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,

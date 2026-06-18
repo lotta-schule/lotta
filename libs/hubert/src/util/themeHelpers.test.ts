@@ -1,5 +1,5 @@
 import { DefaultThemes } from '@lotta-schule/theme';
-import { extractFontNamesFromTheme } from './themeHelpers.js';
+import { extractFontNamesFromTheme } from './themeHelpers';
 
 describe('themeHelpers', () => {
   describe('extractFontNamesFromTheme', () => {

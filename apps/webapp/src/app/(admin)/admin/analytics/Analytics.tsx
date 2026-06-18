@@ -5,18 +5,18 @@ import { LinearProgress, Option, Select, Toolbar } from '@lotta-schule/hubert';
 import { addMonths, format, isSameMonth } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { de } from 'date-fns/locale';
-import { AdminPageSection } from '../_component/AdminPageSection.js';
+import { AdminPageSection } from '../_component/AdminPageSection';
 import {
   MetricsOverview,
   PropertyBreakdown,
   CurrentOnlineUserCounter,
   MetricType,
-} from './_component/index.js';
-import { formatDate } from './_util/index.js';
+} from './_component';
+import { formatDate } from './_util';
 
 import styles from './Analytics.module.scss';
 
-const MetricsChart = React.lazy(() => import('./_component/MetricsChart.js'));
+const MetricsChart = React.lazy(() => import('./_component/MetricsChart'));
 
 export type Period = ({ type: 'month'; date: Date } | { type: '30d' }) & {
   key: string;

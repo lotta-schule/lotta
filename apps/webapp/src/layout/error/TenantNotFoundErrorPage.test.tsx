@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { TenantNotFoundErrorPage } from './TenantNotFoundErrorPage.js';
+import { TenantNotFoundErrorPage } from './TenantNotFoundErrorPage';
 
 describe('TenantNotFoundErrorPage', () => {
   it('should render the TenantNotFoundErrorPage component', () => {

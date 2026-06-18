@@ -1,11 +1,11 @@
 import type { MockedFunction } from 'vitest';
 import type { NextRequest } from 'next/server.js';
 import { NextResponse } from 'next/server.js';
-import { sendRefreshRequest } from '#/api/auth.js';
-import { middleware } from './middleware.js';
+import { sendRefreshRequest } from '#/api/auth';
+import { middleware } from './middleware';
 
-vi.mock('#/api/auth.js');
-vi.mock('#/config.js', () => ({
+vi.mock('#/api/auth');
+vi.mock('#/config', () => ({
   appConfig: {
     get: vi.fn((key: string) => {
       if (key === 'API_URL') return 'http://api.example.com';

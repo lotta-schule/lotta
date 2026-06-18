@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Badge, Button } from '@lotta-schule/hubert';
-import { ConversationModel } from '#/model/index.js';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
-import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
-import { User } from '#/util/model/index.js';
+import { ConversationModel } from '#/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
+import { User } from '#/util/model';
 import { format } from 'date-fns';
-import { Message } from '#/util/model/Message.js';
+import { Message } from '#/util/model/Message';
 import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 

@@ -1,5 +1,5 @@
 import { render, userEvent } from '#/test-utils';
-import { DraggableListItem } from './DraggableListItem.js';
+import { DraggableListItem } from './DraggableListItem';
 
 import styles from './DraggableListItem.module.scss';
 

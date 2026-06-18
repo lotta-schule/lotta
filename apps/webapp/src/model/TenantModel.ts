@@ -1,4 +1,4 @@
-import { FileModel } from './FileModel.js';
+import { FileModel } from './FileModel';
 
 export interface TenantStatsModel {
   articleCount?: number;
@@ -11,7 +11,6 @@ export interface TenantModel {
   __typename?: 'Tenant';
   id: string;
   insertedAt: string;
-  updatedAt: string;
   slug: string;
   title: string;
   host: string;
@@ -19,7 +18,7 @@ export interface TenantModel {
   logoImageFile?: FileModel | null;
   backgroundImageFile?: FileModel | null;
   configuration: {
-    userMaxStorageConfig: string;
+    userMaxStorageConfig: string | null;
     customTheme?: any;
   };
   stats?: TenantStatsModel;

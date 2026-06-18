@@ -4,11 +4,11 @@ import { useSuspenseQuery } from '@apollo/client/react';
 import { Box } from '@lotta-schule/hubert';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
-import { formatDate } from '../_util/index.js';
+import { formatDate } from '../_util';
 import { de } from 'date-fns/locale';
-import { Period } from '../Analytics.js';
-import { gqlCompatibleMetricType, MetricType } from './MetricType.js';
-import { GET_TENANT_TIMESERIES_ANALYTICS } from '../_graphql/index.js';
+import { Period } from '../Analytics';
+import { gqlCompatibleMetricType, MetricType } from './MetricType';
+import { GET_TENANT_TIMESERIES_ANALYTICS } from '../_graphql';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,

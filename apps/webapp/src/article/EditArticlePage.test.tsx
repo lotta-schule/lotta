@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { SomeUser, Weihnachtsmarkt } from '#/test/fixtures/index.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { SomeUser, Weihnachtsmarkt } from '#/test/fixtures';
 import { MockLink } from '@apollo/client/testing';
-import { EditArticlePage } from './EditArticlePage.js';
-import { ContentModuleType } from '#/model/index.js';
+import { EditArticlePage } from './EditArticlePage';
+import { ContentModuleType } from '#/model';
 
 import ArticleIsUpdatedSubscription from '#/api/subscription/GetArticleSubscription.graphql';
 import UpdateArticleMutation from '#/api/mutation/UpdateArticleMutation.graphql';

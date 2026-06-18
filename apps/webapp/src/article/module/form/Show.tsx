@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ContentModuleModel } from '#/model/index.js';
-import { FormConfiguration } from './Form.js';
-import { FormElement } from './FormElement.js';
+import { ContentModuleModel } from '#/model';
+import { FormConfiguration } from './Form';
+import { FormElement } from './FormElement';
 import { useMutation } from '@apollo/client/react';
 import { Button, SuccessMessage } from '@lotta-schule/hubert';
 import SendFormResponseMutation from '#/api/mutation/SendFormResponseMutation.graphql';

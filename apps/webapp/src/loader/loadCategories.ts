@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { getClient } from '#/api/client.js';
-import { CategoryModel } from '#/model/index.js';
+import { getClient } from '#/api/client';
+import { CategoryModel } from '#/model';
 
 import GetCategoriesQuery from '#/api/query/GetCategoriesQuery.graphql';
 

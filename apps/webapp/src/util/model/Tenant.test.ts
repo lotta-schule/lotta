@@ -1,5 +1,5 @@
-import { tenant } from '#/test/fixtures/index.js';
-import { Tenant } from './Tenant.js';
+import { tenant } from '#/test/fixtures';
+import { Tenant } from './Tenant';
 
 describe('util/model/Tenant', () => {
   it("Should give the tnenat's url", () => {

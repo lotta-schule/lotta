@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Usage } from './Usage.js';
-import { loadTenant, loadTenantUsage } from '#/loader/index.js';
+import { Usage } from './Usage';
+import { loadTenant, loadTenantUsage } from '#/loader';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
-import { AdminPage } from '../_component/AdminPage.js';
+import { AdminPage } from '../_component/AdminPage';
 
 async function UsagePage() {
   const [tenant, usage] = await Promise.all([loadTenant(), loadTenantUsage()]);

@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useTheme } from '../theme/index.js';
-import { Message } from './Message.js';
+import { useTheme } from '../theme';
+import { Message } from './Message';
 
 export interface ErrorMessageProps {
   error?: Error | string | null;

@@ -1,1 +1,1 @@
-export * from './EditUserPermissionsDialog.js';
+export * from './EditUserPermissionsDialog';

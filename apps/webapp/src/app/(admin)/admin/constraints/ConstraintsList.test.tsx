@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { userEvent, render, waitFor } from '#/test/util.js';
-import { adminGroup, SomeUser, tenant } from '#/test/fixtures/index.js';
-import { ConstraintList } from './ConstraintsList.js';
+import { userEvent, render, waitFor } from '#/test/util';
+import { adminGroup, SomeUser, tenant } from '#/test/fixtures';
+import { ConstraintList } from './ConstraintsList';
 
 import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
 

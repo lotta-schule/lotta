@@ -1,13 +1,13 @@
-import { UserGroupModel } from '#/model/index.js';
-import { render, waitFor, within, userEvent } from '#/test/util.js';
+import { UserGroupModel } from '#/model';
+import { render, waitFor, within, userEvent } from '#/test/util';
 import {
   adminGroup,
   lehrerGroup,
   schuelerGroup,
   elternGroup,
   userGroups,
-} from '#/test/fixtures/index.js';
-import { GroupSelect } from './GroupSelect.js';
+} from '#/test/fixtures';
+import { GroupSelect } from './GroupSelect';
 
 describe('shared/editor/GroupSelect', () => {
   describe('label prop', () => {

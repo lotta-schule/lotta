@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { Klausurenplan } from '#/test/fixtures/index.js';
-import { Config } from './Config.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { Klausurenplan } from '#/test/fixtures';
+import { Config } from './Config';
 
 const downloadContentModule = {
   ...Klausurenplan.contentModules[1],

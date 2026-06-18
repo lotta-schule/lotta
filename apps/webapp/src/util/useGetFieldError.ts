@@ -1,19 +1,15 @@
 import * as React from 'react';
-import { ApolloError } from '@apollo/client/v4-migration';
+import type { ErrorLike } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 
-export const useGetFieldError = (error?: ApolloError) => {
+export const useGetFieldError = (error?: ErrorLike | null) => {
   return React.useCallback(
     (fieldName: string): string | false => {
-      if (error) {
-        const messages: string[] | undefined =
-          error.graphQLErrors &&
-          (error.graphQLErrors.map(
-            (graphQLError: any) =>
-              graphQLError &&
-              graphQLError.details &&
-              graphQLError.details[fieldName]
-          ) as string[] | undefined);
-        if (messages) {
+      if (error && CombinedGraphQLErrors.is(error)) {
+        const messages = error.errors
+          .map((graphQLError: any) => graphQLError?.details?.[fieldName])
+          .filter(Boolean) as string[];
+        if (messages.length) {
           return messages[0];
         }
       }

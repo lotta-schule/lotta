@@ -1,5 +1,5 @@
-import { loadCurrentUser } from '#/loader/loadCurrentUser.js';
-import { ProfilePage } from '#/profile/ProfilePage.js';
+import { loadCurrentUser } from '#/loader/loadCurrentUser';
+import { ProfilePage } from '#/profile/ProfilePage';
 import { unauthorized } from 'next/navigation.js';
 
 export default async function ProfileRoute() {

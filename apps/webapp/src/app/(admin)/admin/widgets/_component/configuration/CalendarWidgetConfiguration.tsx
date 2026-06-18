@@ -1,15 +1,12 @@
 import * as React from 'react';
-import {
-  CalendarWidgetCalendarConfig,
-  CalendarWidgetConfig,
-} from '#/model/index.js';
+import { CalendarWidgetCalendarConfig, CalendarWidgetConfig } from '#/model';
 import { Button, Divider, ErrorMessage } from '@lotta-schule/hubert';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import { useTranslation } from 'react-i18next';
-import { CalendarConfiguration } from './CalendarConfiguration.js';
+import { CalendarConfiguration } from './CalendarConfiguration';
 import { useQuery } from '@apollo/client/react';
-import { GET_CALENDARS } from '#/app/(admin)/admin/calendars/_graphql/index.js';
+import { GET_CALENDARS } from '#/app/(admin)/admin/calendars/_graphql';
 
 export interface CalendarWidgetConfigurationProps {
   configuration: CalendarWidgetConfig;

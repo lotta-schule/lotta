@@ -11,13 +11,14 @@ import {
   ListItem,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { Tenant } from '#/util/tenant/index.js';
-import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
-import { AdminPageSection } from '../_component/AdminPageSection.js';
+import { FileModel } from '#/model';
+import { Tenant } from '#/util/tenant';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage';
+import { AdminPageSection } from '../_component/AdminPageSection';
 import { useRouter } from 'next/navigation.js';
-import Link from 'next/link';
+import Link from 'next/link.js';
 
 import styles from './GeneralSettings.module.scss';
 
@@ -30,7 +31,9 @@ export type GeneralSettingsProps = {
 export const GeneralSettings = ({ tenant }: GeneralSettingsProps) => {
   const router = useRouter();
   const [title, setTitle] = React.useState(tenant.title);
-  const [logo, setLogo] = React.useState(tenant.logoImageFile);
+  const [logo, setLogo] = React.useState<FileModel | null>(
+    tenant.logoImageFile
+  );
 
   const [updateTenant, { error }] = useMutation(UpdateTenantMutation);
 

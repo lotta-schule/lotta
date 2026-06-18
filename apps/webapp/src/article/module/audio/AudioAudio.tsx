@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContentModuleModel } from '#/model/index.js';
+import { ContentModuleModel } from '#/model';
 
 type AudioAudioProps = {
   contentModule: ContentModuleModel;
@@ -24,7 +24,7 @@ export const AudioAudio = React.memo(({ contentModule }: AudioAudioProps) => {
       data-testid="audio"
     >
       {validAudioFiles?.map((af) => (
-        <source key={af.name} src={af.url} type={af.mimeType} />
+        <source key={af.name} src={af.url ?? undefined} type={af.mimeType} />
       ))}
     </audio>
   );

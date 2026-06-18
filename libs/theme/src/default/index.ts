@@ -1,4 +1,4 @@
-import { standardTheme } from './standard.js';
+import { standardTheme } from './standard';
 
 export const DefaultThemes = {
   standard: standardTheme,

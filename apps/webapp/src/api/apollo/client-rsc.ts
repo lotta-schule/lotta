@@ -4,12 +4,12 @@ import { Defer20220824Handler } from '@apollo/client/incremental';
 import { cookies, headers } from 'next/headers.js';
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers.js';
 import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies.js';
-import { createCache } from './cache.js';
-import { createErrorLink } from './links/errorLink.js';
-import { createAuthLink } from './links/authLink.js';
-import { createOtelLink } from './links/otelLink.js';
-import { createHttpLink } from './links/httpLink.js';
-import { createVariableInputMutationsLink } from './links/variableInputMutationsLink.js';
+import { createCache } from './cache';
+import { createErrorLink } from './links/errorLink';
+import { createAuthLink } from './links/authLink';
+import { createOtelLink } from './links/otelLink';
+import { createHttpLink } from './links/httpLink';
+import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 
 export const getAuthTokenFromHeader = (
   headerValues: ReadonlyHeaders,

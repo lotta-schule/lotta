@@ -1,6 +1,6 @@
-import { render } from '#/test/util.js';
-import { Show as ShowAudio } from './Show.js';
-import { ContentModuleType } from '#/model/index.js';
+import { render } from '#/test/util';
+import { Show as ShowAudio } from './Show';
+import { ContentModuleType } from '#/model';
 
 describe('Audio ContentModule (non-editable)', () => {
   it('should render a video with caption when a file is set', () => {

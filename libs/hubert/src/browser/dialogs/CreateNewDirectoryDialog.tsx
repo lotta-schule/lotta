@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Button, LoadingButton } from '../../button/index.js';
-import { Dialog, DialogActions, DialogContent } from '../../dialog/index.js';
-import { ErrorMessage } from '../../message/index.js';
-import { Label } from '../../label/index.js';
-import { Input } from '../../form/index.js';
-import { BrowserNode, useBrowserState } from '../BrowserStateContext.js';
+import { Button, LoadingButton } from '../../button';
+import { Dialog, DialogActions, DialogContent } from '../../dialog';
+import { ErrorMessage } from '../../message';
+import { Label } from '../../label';
+import { Input } from '../../form';
+import { BrowserNode, useBrowserState } from '../BrowserStateContext';
 
 export interface CreateNewFolderDialogProps {
   parentNode: BrowserNode<'directory'> | null;

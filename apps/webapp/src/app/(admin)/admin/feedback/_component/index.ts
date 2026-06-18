@@ -1,2 +1,2 @@
-export * from './FeedbackRow.js';
-export * from './CreateLottaFeedback.js';
+export * from './FeedbackRow';
+export * from './CreateLottaFeedback';

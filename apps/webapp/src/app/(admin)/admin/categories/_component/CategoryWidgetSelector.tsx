@@ -1,9 +1,9 @@
 'use client';
 import * as React from 'react';
 import { Checkbox, ErrorMessage, LinearProgress } from '@lotta-schule/hubert';
-import { WidgetModel } from '#/model/index.js';
+import { WidgetModel } from '#/model';
 import { useQuery } from '@apollo/client/react';
-import { WidgetIcon } from '#/category/widgets/WidgetIcon.js';
+import { WidgetIcon } from '#/category/widgets/WidgetIcon';
 
 import styles from './CategoryWidgetSelector.module.scss';
 

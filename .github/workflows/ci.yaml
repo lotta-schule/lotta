@@ -73,6 +73,11 @@ jobs:
       - name: Lint
         run: bunx nx run-many -t lint
 
+      - name: Generate Next.js route types
+        working-directory: apps/webapp
+        run: bunx next typegen
+        continue-on-error: true
+
       - name: Typecheck
         run: bunx nx run-many -t typecheck
 

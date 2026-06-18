@@ -1,10 +1,10 @@
 import { MockedFunction } from 'vitest';
-import { sendRefreshRequest } from './auth.js';
-import { isBrowser } from '#/util/isBrowser.js';
-import { JWT } from '#/util/auth/jwt.js';
+import { sendRefreshRequest } from './auth';
+import { isBrowser } from '#/util/isBrowser';
+import { JWT } from '#/util/auth/jwt';
 
-vi.mock('#/util/isBrowser.js');
-vi.mock('#/util/auth/jwt.js');
+vi.mock('#/util/isBrowser');
+vi.mock('#/util/auth/jwt');
 
 const isBrowserMock = isBrowser as MockedFunction<typeof isBrowser>;
 

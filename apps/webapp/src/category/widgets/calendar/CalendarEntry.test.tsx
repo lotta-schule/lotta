@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '#/test/util.js';
-import { CalendarEntry } from './CalendarEntry.js';
+import { render } from '#/test/util';
+import { CalendarEntry } from './CalendarEntry';
 
 describe('CalendarEntry', () => {
   it('should show date and start + end time for one-day-event', () => {

@@ -1,2 +1,2 @@
-export * from './Radio.js';
-export * from './RadioGroup.js';
+export * from './Radio';
+export * from './RadioGroup';

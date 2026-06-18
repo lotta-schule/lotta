@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { render } from '../test-utils.js';
-import { Avatar } from './Avatar.js';
+import { render } from '../test-utils';
+import { Avatar } from './Avatar';
 
 describe('Avatar', () => {
   it('should correctly render an avatar with src', () => {

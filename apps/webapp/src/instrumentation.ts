@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
-import { appConfig } from '#/config.js';
+import { appConfig } from '#/config';
 
 export const onRequestError = Sentry.captureRequestError;
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, screen, waitFor, userEvent } from '#/test/util.js';
-import { SomeUser } from '#/test/fixtures/index.js';
-import { FeedbackModel } from '#/model/index.js';
-import { DeleteFeedbackDialog } from './DeleteFeedbackDialog.js';
+import { render, screen, waitFor, userEvent } from '#/test/util';
+import { SomeUser } from '#/test/fixtures';
+import { FeedbackModel } from '#/model';
+import { DeleteFeedbackDialog } from './DeleteFeedbackDialog';
 
 import DeleteFeedbackMutation from '#/api/mutation/DeleteFeedbackMutation.graphql';
 

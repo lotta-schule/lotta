@@ -1,9 +1,9 @@
 import { MockLink } from '@apollo/client/testing';
-import { currentApolloCache, renderHook } from '#/test/util.js';
-import { SomeUser, logosDirectory } from '#/test/fixtures/index.js';
-import { DirectoryModel, FileModel } from '#/model/index.js';
-import { BrowserNode } from '../../../../../../libs/hubert/src/browser/index.js';
-import { useCreateDirectory } from './useCreateDirectory.js';
+import { currentApolloCache, renderHook } from '#/test/util';
+import { SomeUser, logosDirectory } from '#/test/fixtures';
+import { DirectoryModel, FileModel } from '#/model';
+import { BrowserNode } from '../../../../../../libs/hubert/src/browser';
+import { useCreateDirectory } from './useCreateDirectory';
 
 import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
 import CreateDirectoryMutation from '#/api/mutation/CreateDirectoryMutation.graphql';

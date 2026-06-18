@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { commands } from '@vitest/browser/context';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { FormElement } from './FormElement.js';
-import { imageFile, logosDirectory, SomeUser } from '#/test/fixtures/index.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { FormElement } from './FormElement';
+import { imageFile, logosDirectory, SomeUser } from '#/test/fixtures';
 
 import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
 import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';
@@ -349,7 +349,7 @@ describe('shared/article/module/form/FormElement', () => {
         'lotta-file-id://' +
           '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15",' +
           '"filename":"Dateiname.jpg","filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
-          '"userId":"1","parentDirectory":{"id":"8743"}}'
+          '"userId":"1","parentDirectory":{"id":"8743"},"size":123123}'
       );
     });
 

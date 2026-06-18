@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useBrowserState } from './BrowserStateContext.js';
-import { Explorer } from './Explorer.js';
-import { SearchResults } from './SearchResults.js';
+import { useBrowserState } from './BrowserStateContext';
+import { Explorer } from './Explorer';
+import { SearchResults } from './SearchResults';
 
 export type MainViewProps = {
   className?: string;

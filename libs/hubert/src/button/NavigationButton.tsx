@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, ButtonProps } from './Button.js';
+import { Button, ButtonProps } from './Button';
 import clsx from 'clsx';
 
 import styles from './NavigationButton.module.scss';

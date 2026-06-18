@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { render, waitFor } from '#/test/util.js';
+import { render, waitFor } from '#/test/util';
 import {
   Weihnachtsmarkt,
   ComputerExperten,
   VivaLaRevolucion,
-} from '#/test/fixtures/index.js';
-import { ArticlesByTag } from './ArticlesByTag.js';
+} from '#/test/fixtures';
+import { ArticlesByTag } from './ArticlesByTag';
 import { ApolloLink } from '@apollo/client';
-import { ArticleModel } from '#/model/index.js';
+import { ArticleModel } from '#/model';
 
 import GetArticlesForTag from '#/api/query/GetArticlesForTagQuery.graphql';
 

@@ -1,2 +1,2 @@
-export * from './CircularProgress.js';
-export * from './LinearProgress.js';
+export * from './CircularProgress';
+export * from './LinearProgress';

@@ -5,8 +5,8 @@ import {
   fixtures,
   render,
   userEvent,
-} from '../test-utils.js';
-import { StatusBar } from './StatusBar.js';
+} from '../test-utils';
+import { StatusBar } from './StatusBar';
 
 const defaultPath = fixtures.getPathForNode('14');
 

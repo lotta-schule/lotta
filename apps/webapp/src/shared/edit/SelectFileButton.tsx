@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FileModel } from '#/model/index.js';
+import { FileModel } from '#/model';
 import {
   Button,
   ButtonProps,
@@ -7,7 +7,7 @@ import {
   DialogActions,
   DialogContent,
 } from '@lotta-schule/hubert';
-import { UserBrowser, UserBrowserProps } from '#/shared/browser/index.js';
+import { UserBrowser, UserBrowserProps } from '#/shared/browser';
 import { useTranslation } from 'react-i18next';
 
 interface SelectFileButtonProps<Multiple extends boolean> {

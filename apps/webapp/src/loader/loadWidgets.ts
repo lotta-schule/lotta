@@ -1,6 +1,6 @@
 import { cache } from 'react';
-import { getClient } from '#/api/client.js';
-import { WidgetModel } from '#/model/index.js';
+import { getClient } from '#/api/client';
+import { WidgetModel } from '#/model';
 
 import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 

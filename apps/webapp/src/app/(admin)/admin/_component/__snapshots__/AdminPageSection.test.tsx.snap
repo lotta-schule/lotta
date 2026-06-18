@@ -24,6 +24,8 @@ exports[`AdminPageSection > should render a bottomtoolbar section 1`] = `
     --lotta-border-radius: 4px;
     --lotta-text-font-family: Muli;
     --lotta-title-font-family: 'Schoolbell', cursive;
+    --lotta-badge-background-color: 255, 87, 34;
+    --lotta-badge-text-color: 255, 255, 255;
 }
 </style>
 `;

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { cookies, headers } from 'next/headers.js';
-import { loadTenant, loadCategories, loadCurrentUser } from '#/loader/index.js';
-import { appConfig } from '#/config.js';
-import { getAuthTokenFromHeader } from '#/api/apollo/client-rsc.js';
-import { ApolloProvider } from '#/component/provider/ApolloProvider.js';
-import { TenantLayout } from '#/layout/TenantLayout.js';
-import { CategoriesProvider } from '#/shared/CategoriesContext.js';
-import { CurrentUserProvider } from '#/shared/CurrentUserContext.js';
-import { AuthenticationWrapper } from '#/shared/AuthenticationWrapper.js';
+import { loadTenant, loadCategories, loadCurrentUser } from '#/loader';
+import { appConfig } from '#/config';
+import { getAuthTokenFromHeader } from '#/api/apollo/client-rsc';
+import { ApolloProvider } from '#/component/provider/ApolloProvider';
+import { TenantLayout } from '#/layout/TenantLayout';
+import { CategoriesProvider } from '#/shared/CategoriesContext';
+import { CurrentUserProvider } from '#/shared/CurrentUserContext';
+import { AuthenticationWrapper } from '#/shared/AuthenticationWrapper';
 import { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {

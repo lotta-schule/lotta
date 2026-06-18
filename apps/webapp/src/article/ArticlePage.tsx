@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { Article } from '#/article/Article.js';
-import { ArticleModel } from '#/model/index.js';
-import { ArticlesByTag } from '#/article/relatedArticlesList/index.js';
+import { Article } from '#/article/Article';
+import { ArticleModel } from '#/model';
+import { ArticlesByTag } from '#/article/relatedArticlesList';
 
 import styles from './ArticlePage.module.scss';
 

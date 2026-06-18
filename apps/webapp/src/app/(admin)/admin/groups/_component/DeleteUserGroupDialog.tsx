@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client/react';
-import { UserGroupModel, ID, ArticleModel } from '#/model/index.js';
+import { UserGroupModel, ID, ArticleModel } from '#/model';
 import {
   Button,
   Dialog,
@@ -11,8 +11,8 @@ import {
   ListItem,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { graphql } from '#/api/graphql.js';
-import { UserGroup } from '../_graphql/index.js';
+import { graphql } from '#/api/graphql';
+import { UserGroup } from '../_graphql';
 
 import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
 

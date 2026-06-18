@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { render, waitFor, userEvent } from '#/test/util.js';
+import { render, waitFor, userEvent } from '#/test/util';
 import {
   SomeUser,
   adminGroup,
   lehrerGroup,
   elternGroup,
-} from '#/test/fixtures/index.js';
-import { EditUserPermissionsDialog } from './EditUserPermissionsDialog.js';
+} from '#/test/fixtures';
+import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 
 import UpdateUserMutation from '#/api/mutation/UpdateUserMutation.graphql';
 import GetUserQuery from '#/api/query/GetUserQuery.graphql';

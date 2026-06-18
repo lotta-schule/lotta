@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { render, screen, waitFor, userEvent } from '#/test/util.js';
+import { render, screen, waitFor, userEvent } from '#/test/util';
 import {
   Weihnachtsmarkt,
   ComputerExperten,
   VivaLaRevolucion,
   lehrerGroup,
-} from '#/test/fixtures/index.js';
+} from '#/test/fixtures';
 import {
   DeleteUserGroupDialog,
   DELETE_USER_GROUP,
-} from './DeleteUserGroupDialog.js';
+} from './DeleteUserGroupDialog';
 
 describe('administration: DeleteUserGroupDialog', () => {
   it('should be hidden and open when "isOpen" is passed and close when cancelled', async () => {

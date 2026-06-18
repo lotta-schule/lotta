@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TabProps } from './Tab.js';
+import { TabProps } from './Tab';
 import clsx from 'clsx';
 
 import styles from './Tab.module.scss';

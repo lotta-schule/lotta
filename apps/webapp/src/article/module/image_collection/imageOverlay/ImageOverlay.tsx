@@ -5,10 +5,10 @@ import {
   faChevronRight,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { FileModel } from '#/model/index.js';
-import { useLockBodyScroll } from '#/util/useLockBodyScroll.js';
-import { Icon } from '#/shared/Icon.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { FileModel } from '#/model';
+import { useLockBodyScroll } from '#/util/useLockBodyScroll';
+import { Icon } from '#/shared/Icon';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
 
 import styles from './ImageOverlay.module.scss';
 

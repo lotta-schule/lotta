@@ -1,5 +1,5 @@
-import { ID } from './ID.js';
-import { UserModel } from './UserModel.js';
+import { ID } from './ID';
+import { UserModel } from './UserModel';
 
 export type FeedbackModel = {
   __typename?: 'Feedback';

@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
+import { render, waitFor, userEvent } from '#/test/util';
 import {
   SomeUser,
   SomeUserin,
   KeinErSieEsUser,
   Weihnachtsmarkt,
   Klausurenplan,
-} from '#/test/fixtures/index.js';
-import { UserArticlesDialog } from './UserArticlesDialog.js';
+} from '#/test/fixtures';
+import { UserArticlesDialog } from './UserArticlesDialog';
 
 import GetArticlesByUserQuery from '#/api/query/GetArticlesByUserQuery.graphql';
 

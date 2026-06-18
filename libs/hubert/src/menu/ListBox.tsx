@@ -3,9 +3,9 @@
 import * as React from 'react';
 import { useListBox, AriaListBoxOptions } from 'react-aria';
 import { ComboBoxState, SelectState } from 'react-stately';
-import { List, ListProps } from '../list/index.js';
-import { ListBoxOption, ListBoxOptionProps } from './ListBoxOption.js';
-import { ListItemPreliminaryItem } from '../list/ListItemFactory.js';
+import { List, ListProps } from '../list';
+import { ListBoxOption, ListBoxOptionProps } from './ListBoxOption';
+import { ListItemPreliminaryItem } from '../list/ListItemFactory';
 import { useMergeRefs } from '@floating-ui/react';
 
 export type ListBoxProps = ListProps &

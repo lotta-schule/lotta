@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react';
-import { DirectorySelector } from './DirectorySelector.js'; // Adjust the import path as necessary
+import { DirectorySelector } from './DirectorySelector'; // Adjust the import path as necessary
 import { BrowserNode, BrowserPath } from '#/browser/BrowserStateContext';
 import { fixtures, userEvent } from '#/test-utils';
 

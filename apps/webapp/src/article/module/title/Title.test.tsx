@@ -1,7 +1,7 @@
 import React from 'react';
-import { render } from '#/test/util.js';
-import { Klausurenplan } from '#/test/fixtures/index.js';
-import { Title } from './Title.js';
+import { render } from '#/test/util';
+import { Klausurenplan } from '#/test/fixtures';
+import { Title } from './Title';
 
 const titleContentModule = Klausurenplan.contentModules[0];
 

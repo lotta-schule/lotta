@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { usePopoverContext } from './Popover.js';
+import { usePopoverContext } from './Popover';
 import { useMergeRefs } from '@floating-ui/react';
-import { Button, ButtonProps } from '../button/index.js';
+import { Button, ButtonProps } from '../button';
 
 export type PopoverTriggerProps<T = ButtonProps> = React.PropsWithChildren<
   {

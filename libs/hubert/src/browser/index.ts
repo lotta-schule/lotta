@@ -1,5 +1,5 @@
 'use client';
-export * from './Browser.js';
+export * from './Browser';
 export {
   useBrowserState,
   type BrowserState,
@@ -9,7 +9,7 @@ export {
   type BrowserPath,
   type BrowserMode,
   type BrowserAction,
-} from './BrowserStateContext.js';
-export { type Upload } from './upload/useUploadClient.js';
-export * from './NodeList.js';
-export * from './utils.js';
+} from './BrowserStateContext';
+export { type Upload } from './upload/useUploadClient';
+export * from './NodeList';
+export * from './utils';

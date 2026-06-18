@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useBrowserState } from './BrowserStateContext.js';
+import { useBrowserState } from './BrowserStateContext';
 import {
   CreateNewDirectoryDialog,
   DeleteDirectoryDialog,
   DeleteFilesDialog,
   MoveNodesDialog,
-} from './dialogs/index.js';
+} from './dialogs';
 
 export const DialogsContainer = React.memo(() => {
   const { currentAction, setCurrentAction } = useBrowserState();

@@ -7,12 +7,12 @@ import {
 } from '@apollo/client-integration-nextjs';
 import { LocalState } from '@apollo/client/local-state';
 import { Defer20220824Handler } from '@apollo/client/incremental';
-import { createWebsocketLink } from './links/websocketLink.js';
-import { TenantModel } from '#/model/index.js';
-import { createErrorLink } from './links/errorLink.js';
-import { createAuthLink } from './links/authLink.js';
-import { createHttpLink } from './links/httpLink.js';
-import { createVariableInputMutationsLink } from './links/variableInputMutationsLink.js';
+import { createWebsocketLink } from './links/websocketLink';
+import { TenantModel } from '#/model';
+import { createErrorLink } from './links/errorLink';
+import { createAuthLink } from './links/authLink';
+import { createHttpLink } from './links/httpLink';
+import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 import { getMainDefinition } from '@apollo/client/utilities';
 
 export const createSSRClient = (

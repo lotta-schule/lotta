@@ -27,7 +27,7 @@ import {
 import { invariant } from '@epic-web/invariant';
 import { useTranslation } from 'react-i18next';
 import { FragmentOf } from 'gql.tada';
-import { GET_CALENDARS, RECURRENCE_FRAGMENT } from '../_graphql/index.js';
+import { GET_CALENDARS, RECURRENCE_FRAGMENT } from '../_graphql';
 import clsx from 'clsx';
 
 import styles from './EditEventFormContent.module.scss';

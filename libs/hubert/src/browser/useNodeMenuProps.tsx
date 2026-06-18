@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Delete, Download, Edit, OpenWith } from '../icon/index.js';
-import { Item } from '../menu/index.js';
-import { BrowserPath, useBrowserState } from './BrowserStateContext.js';
-import { isDirectoryNode, isFileNode } from './utils.js';
+import { CollectionChildren } from '@react-types/shared';
+import { Delete, Download, Edit, OpenWith } from '../icon';
+import { Item } from '../menu';
+import { BrowserPath, useBrowserState } from './BrowserStateContext';
+import { isDirectoryNode, isFileNode } from './utils';
 
 export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
   const nodePaths = React.useMemo(
@@ -58,7 +59,7 @@ export const useNodeMenuProps = (nodePath: BrowserPath | BrowserPath[]) => {
             Löschen
           </Item>
         ),
-    ].filter(Boolean) as React.ReactElement[];
+    ].filter(Boolean) as unknown as CollectionChildren<object>;
   }, [deleteNode, downloadUrl, moveNode, nodePaths, renameNode]);
 
   const onAction = React.useCallback(

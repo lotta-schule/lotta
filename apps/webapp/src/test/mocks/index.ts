@@ -1,2 +1,2 @@
-export * from './MockRouter.js';
-export * from './defaultApolloMocks.js';
+export * from './MockRouter';
+export * from './defaultApolloMocks';

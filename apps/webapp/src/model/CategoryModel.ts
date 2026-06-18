@@ -1,7 +1,7 @@
-import { FileModel } from './FileModel.js';
-import { UserGroupModel } from './UserGroupModel.js';
-import { WidgetModel } from './WidgetModel.js';
-import { ID } from './ID.js';
+import { FileModel } from './FileModel';
+import { UserGroupModel } from './UserGroupModel';
+import { WidgetModel } from './WidgetModel';
+import { ID } from './ID';
 
 export interface CategoryModel {
   __typename?: 'Category';

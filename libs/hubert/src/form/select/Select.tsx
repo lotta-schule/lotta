@@ -6,15 +6,11 @@ import { HiddenSelect, useButton, useSelect } from 'react-aria';
 import {
   ListItemFactory,
   ListItemPreliminaryItem,
-} from '../../list/ListItemFactory.js';
-import { ExpandMore } from '../../icon/index.js';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '../../popover/index.js';
-import { ListBox } from '../../menu/ListBox.js';
-import { Label } from '../../label/Label.js';
+} from '../../list/ListItemFactory';
+import { ExpandMore } from '../../icon';
+import { Popover, PopoverContent, PopoverTrigger } from '../../popover';
+import { ListBox } from '../../menu/ListBox';
+import { Label } from '../../label/Label';
 import clsx from 'clsx';
 
 import styles from './select.module.scss';

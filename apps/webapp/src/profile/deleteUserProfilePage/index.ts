@@ -1,6 +1,6 @@
-export { DeleteUserProfilePage } from './DeleteUserProfilePage.js';
+export { DeleteUserProfilePage } from './DeleteUserProfilePage';
 export {
   GET_RELEVANT_FILES_IN_USAGE,
   type RelevantFilesInUsage,
-} from './queries.js';
-export * from './types.js';
+} from './queries';
+export * from './types';

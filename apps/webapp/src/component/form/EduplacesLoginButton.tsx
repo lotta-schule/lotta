@@ -7,9 +7,9 @@ import {
   ButtonProps,
   Eduplaces as EduplacesIcon,
 } from '@lotta-schule/hubert';
-import { useServerData } from '#/shared/ServerDataContext.js';
+import { useServerData } from '#/shared/ServerDataContext';
 import { useTranslation } from 'react-i18next';
-import { redirectTo } from '#/util/browserLocation.js';
+import { redirectTo } from '#/util/browserLocation';
 
 import styles from './EduplacesLoginButton.module.scss';
 import clsx from 'clsx';

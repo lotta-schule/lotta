@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useSuspenseQuery } from '@apollo/client/react';
 import { List, ListItem, Overlay } from '@lotta-schule/hubert';
-import { ArticleModel, ArticleReactionType, UserModel } from '#/model/index.js';
-import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
+import { ArticleModel, ArticleReactionType, UserModel } from '#/model';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
 
 import GetReactionUsersQuery from '#/api/query/GetReactionUsersQuery.graphql';
 

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { cookies, headers } from 'next/headers.js';
-import { loadTenant } from '#/loader/index.js';
-import { appConfig } from '#/config.js';
-import { getAuthTokenFromHeader } from '#/api/apollo/client-rsc.js';
-import { ApolloProvider } from '#/component/provider/ApolloProvider.js';
-import { TenantLayout } from '#/layout/TenantLayout.js';
+import { loadTenant } from '#/loader';
+import { appConfig } from '#/config';
+import { getAuthTokenFromHeader } from '#/api/apollo/client-rsc';
+import { ApolloProvider } from '#/component/provider/ApolloProvider';
+import { TenantLayout } from '#/layout/TenantLayout';
 
 export default async function AdminLayout({
   children,

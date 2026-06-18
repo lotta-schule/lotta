@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render } from '#/test/util.js';
+import { render } from '#/test/util';
 import {
   ComputerExperten,
   VivaLaRevolucion,
@@ -8,8 +8,8 @@ import {
   Klausurenplan,
   imageFile,
   KunstCategory,
-} from '#/test/fixtures/index.js';
-import { ArticlesList } from './ArticlesList.js';
+} from '#/test/fixtures';
+import { ArticlesList } from './ArticlesList';
 
 describe('shared/articlesList/ArticlesList', () => {
   const allArticles = [

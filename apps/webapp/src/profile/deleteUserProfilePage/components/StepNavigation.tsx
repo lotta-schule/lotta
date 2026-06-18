@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import {
   faTriangleExclamation,
   faAngleLeft,
@@ -8,7 +8,7 @@ import {
 import { Button, Box } from '@lotta-schule/hubert';
 
 import styles from '../DeleteUserProfilePage.module.scss';
-import { ProfileDeleteStep } from '../types.js';
+import { ProfileDeleteStep } from '../types';
 
 export type StepNavigationProps<
   NextArgs extends Array<any>,

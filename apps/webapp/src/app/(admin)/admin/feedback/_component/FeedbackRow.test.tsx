@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { FeedbackModel } from '#/model/index.js';
-import { FeedbackRow } from './FeedbackRow.js';
-import { SomeUser } from '#/test/fixtures/index.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { FeedbackModel } from '#/model';
+import { FeedbackRow } from './FeedbackRow';
+import { SomeUser } from '#/test/fixtures';
 
 import DeleteFeedbackMutation from '#/api/mutation/DeleteFeedbackMutation.graphql';
 

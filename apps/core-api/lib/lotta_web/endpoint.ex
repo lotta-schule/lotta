@@ -98,7 +98,9 @@ defmodule LottaWeb.Endpoint do
       "X-Requested-With",
       "If-Modified-Since",
       "X-CSRF-Token",
-      "tenant"
+      "tenant",
+      "traceparent",
+      "tracestate"
     ],
     allow_credentials: true
   )

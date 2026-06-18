@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Box, NoSsr, ScrollToTopButton } from '@lotta-schule/hubert';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import { loadTenant } from '../loader/loadTenant.js';
-import { loadCategories } from '../loader/loadCategories.js';
-import { Navbar } from './navigation/Navbar.js';
-import Link from 'next/link';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { loadTenant } from '../loader/loadTenant';
+import { loadCategories } from '../loader/loadCategories';
+import { Navbar } from './navigation/Navbar';
+import Link from 'next/link.js';
 import clsx from 'clsx';
 
 import styles from './TenantLayout.module.scss';

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor, userEvent } from '#/test/util.js';
-import { SomeUser } from '#/test/fixtures/index.js';
-import { UpdatePasswordDialog } from './UpdatePasswordDialog.js';
+import { render, screen, waitFor, userEvent } from '#/test/util';
+import { SomeUser } from '#/test/fixtures';
+import { UpdatePasswordDialog } from './UpdatePasswordDialog';
 import { MockLink } from '@apollo/client/testing';
 import RequestHisecTokenMutation from '#/api/mutation/RequestHisecTokenMutation.graphql';
 import UpdatePasswordMutation from '#/api/mutation/UpdatePasswordMutation.graphql';

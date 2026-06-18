@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { ComputerExperten, SomeUser } from '#/test/fixtures/index.js';
-import { render, userEvent, waitFor } from '#/test/util.js';
-import { redirectTo } from '#/util/browserLocation.js';
-import { DeleteUserProfilePage } from './DeleteUserProfilePage.js';
+import { ComputerExperten, SomeUser } from '#/test/fixtures';
+import { render, userEvent, waitFor } from '#/test/util';
+import { redirectTo } from '#/util/browserLocation';
+import { DeleteUserProfilePage } from './DeleteUserProfilePage';
 import {
   GET_OWN_ARTICLES,
   GET_RELEVANT_FILES_IN_USAGE,
   PERMANENTLY_DELETE_USER_ACCOUNT,
-} from './queries.js';
+} from './queries';
 
 import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
 

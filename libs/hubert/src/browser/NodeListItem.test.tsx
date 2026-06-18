@@ -7,10 +7,10 @@ import {
   render,
   waitFor,
   waitForPosition,
-} from '../test-utils.js';
-import { NodeListItem, NodeListItemProps } from './NodeListItem.js';
+} from '../test-utils';
+import { NodeListItem, NodeListItemProps } from './NodeListItem';
 import { page } from '@vitest/browser/context';
-import { BrowserPath } from './BrowserStateContext.js';
+import { BrowserPath } from './BrowserStateContext';
 
 const directoryPath = fixtures.getPathForNode('8');
 const filePath = fixtures.getPathForNode('19');

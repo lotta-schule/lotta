@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { render, screen, waitFor, userEvent } from '#/test/util.js';
-import { CategoryWidgetSelector } from './CategoryWidgetSelector.js';
-import { WidgetModel, WidgetModelType } from '#/model/index.js';
+import { render, screen, waitFor, userEvent } from '#/test/util';
+import { CategoryWidgetSelector } from './CategoryWidgetSelector';
+import { WidgetModel, WidgetModelType } from '#/model';
 
 import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 

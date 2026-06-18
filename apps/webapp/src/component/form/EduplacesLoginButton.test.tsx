@@ -1,6 +1,6 @@
-import { render, userEvent, waitFor } from '#/test/util.js';
-import { EduplacesLoginButton } from './EduplacesLoginButton.js';
-import { redirectTo } from '#/util/browserLocation.js';
+import { render, userEvent, waitFor } from '#/test/util';
+import { EduplacesLoginButton } from './EduplacesLoginButton';
+import { redirectTo } from '#/util/browserLocation';
 
 describe('EduplacesLoginButton', () => {
   it('should render the button', async () => {

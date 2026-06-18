@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ItemProps } from '@react-types/shared';
-import { Close, ChevronRight } from '../icon/index.js';
-import { Item } from '../menu/index.js';
-import { render } from '../test-utils.js';
-import { ListItemFactory, ListItemPreliminaryItem } from './ListItemFactory.js';
+import { Close, ChevronRight } from '../icon';
+import { Item } from '../menu';
+import { render } from '../test-utils';
+import { ListItemFactory, ListItemPreliminaryItem } from './ListItemFactory';
 
 describe('list/ListItemFactory', () => {
   describe('create Item', () => {

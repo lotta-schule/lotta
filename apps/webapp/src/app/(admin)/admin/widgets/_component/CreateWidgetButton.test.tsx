@@ -1,7 +1,7 @@
-import { WidgetModelType } from '#/model/index.js';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { MockRouter } from '#/test/mocks/index.js';
-import { CreateWidgetButton } from './CreateWidgetButton.js';
+import { WidgetModelType } from '#/model';
+import { render, waitFor, userEvent } from '#/test/util';
+import { MockRouter } from '#/test/mocks';
+import { CreateWidgetButton } from './CreateWidgetButton';
 
 import CreateWidgetMutation from '#/api/mutation/CreateWidgetMutation.graphql';
 
@@ -118,7 +118,7 @@ describe('CreateWidgetButton', () => {
         default: {
           useRouter: () => MockRouter;
         };
-      }>('next/navigation')
+      }>('next/navigation.js')
       .then((module) => module.default.useRouter());
 
     const onCreateWidget = vi.fn(() => ({

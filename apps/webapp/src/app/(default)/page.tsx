@@ -1,7 +1,7 @@
-import { query } from '#/api/client.js';
-import { CategoryPage } from './category/_component/index.js';
-import { GET_ARTICLES_QUERY } from './category/_component/categoryPage/_graphql/index.js';
-import { loadTenant, loadCategories } from '#/loader/index.js';
+import { query } from '#/api/client';
+import { CategoryPage } from './category/_component';
+import { GET_ARTICLES_QUERY } from './category/_component/categoryPage/_graphql';
+import { loadTenant, loadCategories } from '#/loader';
 
 export default async function HomeRoute() {
   const [, categories] = await Promise.all([loadTenant(), loadCategories()]);

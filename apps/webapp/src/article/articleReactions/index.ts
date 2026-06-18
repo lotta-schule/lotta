@@ -1,1 +1,1 @@
-export * from './ArticleReactions.js';
+export * from './ArticleReactions';

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Box } from '@lotta-schule/hubert';
-import { RelevantFilesInUsage } from '../queries.js';
-import { useTenant } from '#/util/tenant/index.js';
+import { RelevantFilesInUsage } from '../queries';
+import { useTenant } from '#/util/tenant';
 import clsx from 'clsx';
 
 import styles from '../DeleteUserProfilePage.module.scss';
-import { StepNavigation, StepNavigationProps } from '../components/index.js';
-import { ProfileDeleteStep } from '../types.js';
+import { StepNavigation, StepNavigationProps } from '../components';
+import { ProfileDeleteStep } from '../types';
 
 export type ConfirmDeletionStepProps = Omit<
   StepNavigationProps<[]>,

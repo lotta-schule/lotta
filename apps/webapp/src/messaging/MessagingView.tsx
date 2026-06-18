@@ -11,13 +11,13 @@ import {
   ConversationModel,
   MessageModel,
   NewMessageDestination,
-} from '#/model/index.js';
-import { ComposeMessage } from './ComposeMessage.js';
-import { ConversationPreview } from './ConversationPreview.js';
-import { MessagesThread } from './MessagesThread.js';
-import { MessageToolbar } from './MessageToolbar.js';
-import { useCurrentUser } from '#/util/user/useCurrentUser.js';
-import { Message } from '#/util/model/Message.js';
+} from '#/model';
+import { ComposeMessage } from './ComposeMessage';
+import { ConversationPreview } from './ConversationPreview';
+import { MessagesThread } from './MessagesThread';
+import { MessageToolbar } from './MessageToolbar';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { Message } from '#/util/model/Message';
 
 import styles from './MessagingView.module.scss';
 

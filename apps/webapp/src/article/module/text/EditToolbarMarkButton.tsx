@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useSlate } from 'slate-react';
 import { Button } from '@lotta-schule/hubert';
-import { isMarkActive, toggleMark } from './SlateUtils.js';
-import { FormattedText } from './SlateCustomTypes.js';
+import { isMarkActive, toggleMark } from './SlateUtils';
+import { FormattedText } from './SlateCustomTypes';
 
 export interface EditToolbarMarkButtonProps {
   mark: keyof Omit<FormattedText, 'text'>;

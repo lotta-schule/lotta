@@ -1,8 +1,8 @@
 import { omit } from 'lodash';
-import { User } from '#/util/model/index.js';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { KeinErSieEsUser, SomeUser } from '#/test/fixtures/index.js';
-import { SearchUserField } from './SearchUserField.js';
+import { User } from '#/util/model';
+import { render, waitFor, userEvent } from '#/test/util';
+import { KeinErSieEsUser, SomeUser } from '#/test/fixtures';
+import { SearchUserField } from './SearchUserField';
 
 import SearchUsersQuery from '#/api/query/SearchUsersQuery.graphql';
 

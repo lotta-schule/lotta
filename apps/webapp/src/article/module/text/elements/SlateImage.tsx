@@ -6,14 +6,14 @@ import {
   useSlateStatic,
 } from 'slate-react';
 import { Button, ButtonGroup } from '@lotta-schule/hubert';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import { faAlignLeft, faAlignRight } from '@fortawesome/free-solid-svg-icons';
 import { Element, Transforms } from 'slate';
-import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay.js';
-import { Image } from '../SlateCustomTypes.js';
-import { graphql } from '#/api/graphql.js';
+import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
+import { Image } from '../SlateCustomTypes';
+import { graphql } from '#/api/graphql';
 import { useQuery } from '@apollo/client/react';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
 import clsx from 'clsx';
 
 import styles from './SlateImage.module.scss';

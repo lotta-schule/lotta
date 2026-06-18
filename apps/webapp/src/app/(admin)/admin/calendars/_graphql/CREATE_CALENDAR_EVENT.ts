@@ -1,5 +1,5 @@
-import { graphql } from '#/api/graphql.js';
-import { RECURRENCE_FRAGMENT } from './GET_CALENDAR_EVENTS.js';
+import { graphql } from '#/api/graphql';
+import { RECURRENCE_FRAGMENT } from './GET_CALENDAR_EVENTS';
 
 export const CREATE_CALENDAR_EVENT = graphql(
   `

@@ -1,5 +1,5 @@
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { TagsSelect } from './TagsSelect.js';
+import { render, waitFor, userEvent } from '#/test/util';
+import { TagsSelect } from './TagsSelect';
 
 describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
   it('should render an empty TagsSelect', async () => {

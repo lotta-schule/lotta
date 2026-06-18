@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
-import { FullErrorPage } from './FullErrorPage.js';
+import { useRouter } from 'next/navigation.js';
+import { FullErrorPage } from './FullErrorPage';
 
 export const ForbiddenErrorPage = React.memo(() => {
   const router = useRouter();

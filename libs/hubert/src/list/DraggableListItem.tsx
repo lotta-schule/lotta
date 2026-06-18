@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { MoveArrow } from '../icon/index.js';
+import { MoveArrow } from '../icon';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import clsx from 'clsx';

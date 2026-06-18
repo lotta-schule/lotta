@@ -5,10 +5,10 @@ import {
   elternGroup,
   lehrerGroup,
   schuelerGroup,
-} from '#/test/fixtures/index.js';
-import { render, waitFor, within, userEvent } from '#/test/util.js';
-import { EditUserGroup } from './EditUserGroup.js';
-import { GET_USER_GROUPS, UPDATE_USER_GROUP } from '../_graphql/index.js';
+} from '#/test/fixtures';
+import { render, waitFor, within, userEvent } from '#/test/util';
+import { EditUserGroup } from './EditUserGroup';
+import { GET_USER_GROUPS, UPDATE_USER_GROUP } from '../_graphql';
 
 const additionalMocks = [
   {

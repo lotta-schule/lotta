@@ -36,11 +36,6 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24.5
-
       - name: Install node dependencies
         run: bun install
         working-directory: apps/e2e
@@ -62,7 +57,7 @@ jobs:
       - name: Setup lighthouse-tenant
         run: |
           if [ -n "${{ inputs.image_tag }}" ]; then
-            node -r ts-node/register scripts/lh_tenant/setup
+            bun run scripts/lh_tenant/setup.ts
           fi
         env:
           BASE_URI_HOST: local.lotta.schule

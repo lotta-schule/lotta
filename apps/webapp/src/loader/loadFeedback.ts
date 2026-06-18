@@ -1,6 +1,6 @@
 import { cache } from 'react';
-import { getClient } from '#/api/client.js';
-import { FeedbackModel } from '#/model/index.js';
+import { getClient } from '#/api/client';
+import { FeedbackModel } from '#/model';
 
 import GetFeedbackQuery from '#/api/query/GetFeedbackQuery.graphql';
 

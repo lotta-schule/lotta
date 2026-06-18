@@ -1,12 +1,12 @@
-import { render, waitFor, userEvent } from '#/test/util.js';
+import { render, waitFor, userEvent } from '#/test/util';
 import {
   SomeUser,
   SomeUserin,
   KeinErSieEsUser,
   adminGroup,
   tenant,
-} from '#/test/fixtures/index.js';
-import { UserList } from './UserList.js';
+} from '#/test/fixtures';
+import { UserList } from './UserList';
 
 import GetUserQuery from '#/api/query/GetUserQuery.graphql';
 import SearchUsersQuery from '#/api/query/SearchUsersAsAdminQuery.graphql';

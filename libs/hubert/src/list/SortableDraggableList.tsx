@@ -17,8 +17,8 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { invariant } from '@epic-web/invariant';
-import { DraggableListItem } from './DraggableListItem.js';
-import { List, ListProps } from './List.js';
+import { DraggableListItem } from './DraggableListItem';
+import { List, ListProps } from './List';
 import { flushSync } from 'react-dom';
 
 export type SortableItem = {

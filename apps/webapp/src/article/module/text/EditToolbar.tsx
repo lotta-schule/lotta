@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from '#/shared/Icon.js';
+import { Icon } from '#/shared/Icon';
 import {
   faBold,
   faDownLeftAndUpRightToCenter,
@@ -11,10 +11,10 @@ import {
 import { ButtonGroup, Toolbar } from '@lotta-schule/hubert';
 import { useFocused } from 'slate-react';
 import { motion } from 'framer-motion';
-import { EditToolbarMarkButton } from './EditToolbarMarkButton.js';
-import { EditToolbarLinkButton } from './EditToolbarLinkButton.js';
-import { EditToolbarBlockButton } from './EditToolbarBlockButton.js';
-import { EditToolbarImageButton } from './EditToolbarImageButton.js';
+import { EditToolbarMarkButton } from './EditToolbarMarkButton';
+import { EditToolbarLinkButton } from './EditToolbarLinkButton';
+import { EditToolbarBlockButton } from './EditToolbarBlockButton';
+import { EditToolbarImageButton } from './EditToolbarImageButton';
 
 import styles from './EditToolbar.module.scss';
 import navbarStyles from '../../../layout/navigation/Navbar.module.scss';

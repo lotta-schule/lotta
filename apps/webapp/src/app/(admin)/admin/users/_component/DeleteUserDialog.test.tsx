@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { ComputerExperten, SomeUser } from '#/test/fixtures/index.js';
-import { render, waitFor, userEvent } from '#/test/util.js';
-import { DeleteUserDialog } from './DeleteUserDialog.js';
-import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries.js';
+import { ComputerExperten, SomeUser } from '#/test/fixtures';
+import { render, waitFor, userEvent } from '#/test/util';
+import { DeleteUserDialog } from './DeleteUserDialog';
+import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries';
 
 import GetArticlesWithUserFiles from '#/api/query/GetArticlesWithUserFiles.graphql';
 

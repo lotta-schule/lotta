@@ -6,7 +6,7 @@ import {
   GlobalStyles,
   DefaultThemes,
 } from '@lotta-schule/hubert';
-import { ServerDownErrorPage } from '#/layout/error/ServerDownErrorPage.js';
+import { ServerDownErrorPage } from '#/layout/error/ServerDownErrorPage';
 
 export default function GlobalError({
   error,

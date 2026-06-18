@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { FullErrorPage } from './FullErrorPage.js';
+import { FullErrorPage } from './FullErrorPage';
 
 export interface ServerDownErrorProps {
   error: Error;

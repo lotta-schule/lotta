@@ -1,6 +1,6 @@
-import { File } from '#/util/model/index.js';
+import { File } from '#/util/model';
 import * as React from 'react';
-import { Tenant } from '#/util/tenant/index.js';
+import { Tenant } from '#/util/tenant';
 
 export type TenantGlobalStyleTagProps = {
   tenant: Tenant;

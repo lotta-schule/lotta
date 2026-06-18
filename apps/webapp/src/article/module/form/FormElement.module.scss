@@ -1,0 +1,29 @@
+.editableText {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--lotta-spacing) / 2);
+}
+
+.editButton {
+  padding: 0;
+  .root {
+    padding: 0;
+  }
+}
+
+.editableInput {
+  display: inline-block;
+  width: auto;
+  min-width: 8em;
+}
+
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--lotta-spacing) / 2);
+  margin-top: calc(var(--lotta-spacing) / 2);
+}
+
+.addOptionButton {
+  align-self: flex-start;
+}

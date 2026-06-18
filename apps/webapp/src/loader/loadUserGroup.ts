@@ -1,7 +1,6 @@
 import { cache } from 'react';
-import { getClient } from '#/api/client.js';
-import { graphql } from '#/api/graphql.js';
-import { UserGroupModel } from '#/model/index.js';
+import { getClient } from '#/api/client';
+import { graphql } from '#/api/graphql';
 
 export const GET_GROUP_QUERY = graphql(`
   query GetGroup($id: ID!) {
@@ -17,10 +16,12 @@ export const GET_GROUP_QUERY = graphql(`
   }
 `);
 
-export const loadUserGroup = cache(async (id: UserGroupModel['id']) => {
+export const loadUserGroup = cache(async (id: string) => {
   const client = await getClient();
+  // Let gql.tada infer the result from GET_GROUP_QUERY rather than overriding it
+  // with the hand-written UserGroupModel.
   return await client
-    .query<{ group: UserGroupModel }>({
+    .query({
       query: GET_GROUP_QUERY,
       variables: { id },
     })

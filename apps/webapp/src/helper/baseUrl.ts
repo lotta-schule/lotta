@@ -1,7 +1,7 @@
 import { headers } from 'next/headers.js';
-import { loadTenant } from '../loader/index.js';
+import { loadTenant } from '../loader';
 import { cache } from 'react';
-import { appConfig } from '#/config.js';
+import { appConfig } from '#/config';
 
 export const getBaseUrlString = cache(async () => {
   const forcedBaseUrl = appConfig.get('FORCE_BASE_URL');

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ResultOf } from '#/api/graphql.js';
+import { ResultOf } from '#/api/graphql';
 
-import { GET_CALENDAR_EVENTS, GET_CALENDARS } from '../_graphql/index.js';
+import { GET_CALENDAR_EVENTS, GET_CALENDARS } from '../_graphql';
 
 export const CalendarContext = React.createContext<{
   activeCalendarIds: string[];

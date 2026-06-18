@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ArticleModel, ContentModuleModel } from '#/model/index.js';
-import { ArticleTitle } from './ArticleTitle.js';
-import { ContentModule } from './module/ContentModule.js';
+import { ArticleModel, ContentModuleModel } from '#/model';
+import { ArticleTitle } from './ArticleTitle';
+import { ContentModule } from './module/ContentModule';
 
 import styles from './ArticleEditable.module.scss';
 

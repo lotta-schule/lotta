@@ -3,8 +3,8 @@
 import * as AbsintheSocket from '@absinthe/socket';
 import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
 import { Socket as PhoenixSocket } from 'phoenix';
-import { TenantModel } from '#/model/index.js';
-import { isBrowser } from '#/util/isBrowser.js';
+import { TenantModel } from '#/model';
+import { isBrowser } from '#/util/isBrowser';
 
 const createAbsoluteSocketUrl = (urlString: string) => {
   if (urlString.startsWith('/')) {

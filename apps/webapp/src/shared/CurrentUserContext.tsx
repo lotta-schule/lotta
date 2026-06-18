@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { CurrentUser } from '#/util/user/useCurrentUser.js';
+import { CurrentUser } from '#/util/user/useCurrentUser';
 
 const CurrentUserContext = React.createContext<CurrentUser | null>(null);
 

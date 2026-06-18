@@ -1,4 +1,4 @@
-import { DeleteUserProfilePage } from '#/profile/deleteUserProfilePage/index.js';
+import { DeleteUserProfilePage } from '#/profile/deleteUserProfilePage';
 
 export default function DeleteRoute() {
   return <DeleteUserProfilePage />;

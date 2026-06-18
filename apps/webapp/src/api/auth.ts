@@ -1,7 +1,7 @@
 import { parseSetCookie } from 'cookie-es';
-import { isBrowser } from '#/util/isBrowser.js';
-import { Logger } from '#/util/logger.js';
-import { JWT } from '../util/auth/jwt.js';
+import { isBrowser } from '#/util/isBrowser';
+import { Logger } from '#/util/logger';
+import { JWT } from '../util/auth/jwt';
 
 const tryParseJWT = (token: string): JWT | null => {
   try {

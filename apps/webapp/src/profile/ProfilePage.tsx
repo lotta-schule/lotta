@@ -14,15 +14,15 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client/react';
-import { EnrollmentTokensEditor } from '#/profile/component/EnrollmentTokensEditor.js';
-import { SelectFileButton } from '#/shared/edit/SelectFileButton.js';
-import { UpdateEmailDialog } from '#/shared/dialog/UpdateEmailDialog.js';
-import { UpdatePasswordDialog } from '#/shared/dialog/UpdatePasswordDialog.js';
-import { UserAvatar } from '#/shared/userAvatar/UserAvatar.js';
-import { User } from '#/util/model/index.js';
-import { UserModel, FileModel } from '#/model/index.js';
-import { useGetFieldError } from '#/util/useGetFieldError.js';
-import { Header, Main } from '#/layout/index.js';
+import { EnrollmentTokensEditor } from '#/profile/component/EnrollmentTokensEditor';
+import { SelectFileButton } from '#/shared/edit/SelectFileButton';
+import { UpdateEmailDialog } from '#/shared/dialog/UpdateEmailDialog';
+import { UpdatePasswordDialog } from '#/shared/dialog/UpdatePasswordDialog';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
+import { User } from '#/util/model';
+import { UserModel, FileModel } from '#/model';
+import { useGetFieldError } from '#/util/useGetFieldError';
+import { Header, Main } from '#/layout';
 import Link from 'next/link.js';
 
 import UpdateProfileMutation from '#/api/mutation/UpdateProfileMutation.graphql';

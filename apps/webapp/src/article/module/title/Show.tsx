@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContentModuleModel } from '#/model/index.js';
+import { ContentModuleModel } from '#/model';
 import get from 'lodash/get';
 
 interface ShowProps {

@@ -1,13 +1,13 @@
-import { render, within } from '#/test/util.js';
-import { AdminPage } from './AdminPage.js';
+import { render, within } from '#/test/util';
+import { AdminPage } from './AdminPage';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
-import { loadTenant } from '#/loader/loadTenant.js';
+import { loadTenant } from '#/loader/loadTenant';
 import { MockedFunction } from 'vitest';
 
-vi.mock('#/loader/loadTenant.js', async () => ({
+vi.mock('#/loader/loadTenant', async () => ({
   loadTenant: vi.fn(),
 }));
-vi.mock('#/helper/index.js');
+vi.mock('#/helper');
 
 vi.mock(
   'next/link.js',

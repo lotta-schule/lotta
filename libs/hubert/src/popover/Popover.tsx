@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { PopoverProps, usePopover } from './usePopover.js';
+import { PopoverProps, usePopover } from './usePopover';
 import { ReferenceElement } from '@floating-ui/react';
 
 type ContextType =

@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util.js';
+import { render, waitFor, userEvent } from '#/test/util';
 import { MockLink } from '@apollo/client/testing';
-import { DeleteEventConfirmationDialog } from './DeleteEventConfirmationDialog.js';
-import { DELETE_CALENDAR_EVENT } from '../_graphql/index.js';
+import { DeleteEventConfirmationDialog } from './DeleteEventConfirmationDialog';
+import { DELETE_CALENDAR_EVENT } from '../_graphql';
 import { vi } from 'vitest';
-import {
-  createCalendarFixture,
-  createEventFixture,
-} from '#/test/fixtures/index.js';
+import { createCalendarFixture, createEventFixture } from '#/test/fixtures';
 import { ResultOf, VariablesOf } from 'gql.tada';
 
 describe('DeleteEventConfirmationDialog', () => {

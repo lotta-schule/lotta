@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useIsMobile } from '../util/index.js';
-import { useBrowserState } from './BrowserStateContext.js';
-import { FilePreview } from './FilePreview.js';
+import { useIsMobile } from '../util';
+import { useBrowserState } from './BrowserStateContext';
+import { FilePreview } from './FilePreview';
 import clsx from 'clsx';
 
 import styles from './Explorer.module.scss';

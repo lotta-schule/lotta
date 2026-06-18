@@ -1,6 +1,6 @@
-import { render, userEvent } from '#/test/util.js';
-import { Config } from './Config.js';
-import { ContentModuleModel } from '#/model/index.js';
+import { render, userEvent } from '#/test/util';
+import { Config } from './Config';
+import { ContentModuleModel } from '#/model';
 
 describe('ImageConfig Component', () => {
   const mockOnUpdateModule = vi.fn();

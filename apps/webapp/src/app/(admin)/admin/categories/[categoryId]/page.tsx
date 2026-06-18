@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { loadCategories } from '#/loader/index.js';
-import { notFound } from 'next/navigation';
-import { AdminPageTitle } from '../../_component/AdminPageTitle.js';
-import { CategoryEditor } from '../_component/index.js';
+import { loadCategories } from '#/loader';
+import { notFound } from 'next/navigation.js';
+import { AdminPageTitle } from '../../_component/AdminPageTitle';
+import { CategoryEditor } from '../_component';
 
 async function GroupPage({
   params,

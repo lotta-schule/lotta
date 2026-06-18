@@ -1,5 +1,5 @@
-import { loadFeedback } from './loadFeedback.js';
-import { getClient } from '#/api/client.js';
+import { loadFeedback } from './loadFeedback';
+import { getClient } from '#/api/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { LocalState } from '@apollo/client/local-state';
 import { Defer20220824Handler } from '@apollo/client/incremental';
@@ -8,12 +8,12 @@ import { vi } from 'vitest';
 
 import GetFeedbackQuery from '#/api/query/GetFeedbackQuery.graphql';
 
-vi.mock('#/api/client.js');
+vi.mock('#/api/client');
 vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
   ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
-vi.mock('#/api/apollo/client-rsc.js', () => ({
+vi.mock('#/api/apollo/client-rsc', () => ({
   createRSCClient: vi.fn(),
 }));
 

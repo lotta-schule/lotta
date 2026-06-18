@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { render, userEvent, waitFor, within } from '#/test-utils';
-import { Upload } from '../upload/useUploadClient.js';
+import { Upload } from '../upload/useUploadClient';
 import {
   ActiveUploadsDialog,
   ActiveUploadsDialogProps,
-} from './ActiveUploadsDialog.js';
-import { FileSize } from '../../util/index.js';
+} from './ActiveUploadsDialog';
+import { FileSize } from '../../util';
 import {
   TestBrowserWrapper,
   TestBrowserWrapperProps,

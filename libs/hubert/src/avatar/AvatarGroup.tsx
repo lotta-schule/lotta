@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AvatarProps } from './Avatar.js';
+import { AvatarProps } from './Avatar';
 import clsx from 'clsx';
 
 import styles from './AvatarGroup.module.scss';

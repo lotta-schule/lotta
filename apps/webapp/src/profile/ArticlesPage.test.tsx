@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { render, within } from '#/test/util.js';
+import { render, within } from '#/test/util';
 import {
   ComputerExperten,
   VivaLaRevolucion,
   Schulfest,
   Weihnachtsmarkt,
   Klausurenplan,
-} from '#/test/fixtures/index.js';
-import { ArticlesPage } from './ArticlesPage.js';
+} from '#/test/fixtures';
+import { ArticlesPage } from './ArticlesPage';
 
 describe('pages/profiles/articles', () => {
   it('should render a ProfileArticles without error', async () => {

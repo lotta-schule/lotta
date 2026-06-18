@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScheduleWidgetConfig } from '#/model/index.js';
+import { ScheduleWidgetConfig } from '#/model';
 import { Input, Label, Option, Select } from '@lotta-schule/hubert';
 
 import styles from './WidgetConfiguration.module.scss';

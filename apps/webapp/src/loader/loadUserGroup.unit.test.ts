@@ -1,17 +1,17 @@
-import { loadUserGroup, GET_GROUP_QUERY } from './loadUserGroup.js';
-import { getClient } from '#/api/client.js';
+import { loadUserGroup, GET_GROUP_QUERY } from './loadUserGroup';
+import { getClient } from '#/api/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { LocalState } from '@apollo/client/local-state';
 import { Defer20220824Handler } from '@apollo/client/incremental';
 import { MockLink } from '@apollo/client/testing';
 import { vi } from 'vitest';
 
-vi.mock('#/api/client.js');
+vi.mock('#/api/client');
 vi.mock('@apollo/client-integration-nextjs', async (importOriginal) => ({
   ...(await importOriginal<any>()),
   registerApolloClient: vi.fn(),
 }));
-vi.mock('#/api/apollo/client-rsc.js', () => ({
+vi.mock('#/api/apollo/client-rsc', () => ({
   createRSCClient: vi.fn(),
 }));
 

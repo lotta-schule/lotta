@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useLazyQuery } from '@apollo/client/react';
-import { makeDirectoryPaths } from '../makeBrowserNodes.js';
-import { DirectoryModel, FileModel } from '#/model/index.js';
+import { makeDirectoryPaths } from '../makeBrowserNodes';
+import { DirectoryModel, FileModel } from '#/model';
 
 import SearchDirectoriesAndFilesQuery from '#/api/query/SearchDirectoriesAndFiles.graphql';
 

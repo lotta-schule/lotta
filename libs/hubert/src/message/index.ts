@@ -1,3 +1,3 @@
-export * from './ErrorMessage.js';
-export * from './Message.js';
-export * from './SuccessMessage.js';
+export * from './ErrorMessage';
+export * from './Message';
+export * from './SuccessMessage';

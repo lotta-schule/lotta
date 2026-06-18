@@ -1,7 +1,7 @@
-import { ArticleModel } from './ArticleModel.js';
-import { CategoryModel } from './CategoryModel.js';
-import { ContentModuleModel } from './ContentModuleModel.js';
-import { ID } from './ID.js';
+import { ArticleModel } from './ArticleModel';
+import { CategoryModel } from './CategoryModel';
+import { ContentModuleModel } from './ContentModuleModel';
+import { ID } from './ID';
 
 export interface PageModel {
   __typename?: 'Page';

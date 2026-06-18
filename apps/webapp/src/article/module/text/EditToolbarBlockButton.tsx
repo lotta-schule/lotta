@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useSlate } from 'slate-react';
 import { Button } from '@lotta-schule/hubert';
-import { isBlockActive, toggleBlock } from './SlateUtils.js';
-import { BlockElement } from './SlateCustomTypes.js';
+import { isBlockActive, toggleBlock } from './SlateUtils';
+import { BlockElement } from './SlateCustomTypes';
 
 export interface EditToolbarMarkButtonProps {
   mark: BlockElement['type'];

@@ -1,2 +1,2 @@
-export * from './ArticlesByTag.js';
-export * from './ArticlesByUser.js';
+export * from './ArticlesByTag';
+export * from './ArticlesByUser';
