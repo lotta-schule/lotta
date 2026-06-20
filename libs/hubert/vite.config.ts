@@ -76,12 +76,22 @@ export default defineConfig({
       : ['default'],
     outputFile: 'coverage/junit.xml',
     coverage: {
-      enabled: !!process.env.CI,
+      enabled: true,
       clean: true,
       reportsDirectory: 'coverage',
       provider: 'istanbul',
-      reporter: ['json'],
+      reporter: ['json', 'html'],
       exclude: ['test-utils.tsx', 'test.setup.ts', 'test-fixtures.ts'],
+      // Initial thresholds - will be increased gradually as tests are added
+      // Current coverage: ~25% statements, ~26% lines, ~21% functions, ~15% branches
+      thresholds: {
+        global: {
+          statements: 20,
+          branches: 10,
+          functions: 20,
+          lines: 25,
+        },
+      },
     },
 
     env: {
