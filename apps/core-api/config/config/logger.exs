@@ -33,7 +33,9 @@ metadata_keys = [
   :user_id,
   :request_id,
   :message_id,
-  :conversation_id
+  :conversation_id,
+  :trace_id,
+  :span_id
 ]
 
 config :logger,

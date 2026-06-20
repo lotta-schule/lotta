@@ -6,6 +6,7 @@ defmodule Lotta.Messages do
   import Ecto.Query
 
   require Logger
+  require OpenTelemetry.Tracer
 
   alias Lotta.{Accounts, PushNotification, Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
@@ -180,6 +181,7 @@ defmodule Lotta.Messages do
     rescue
       e ->
         Logger.error(Exception.format(:error, e, __STACKTRACE__))
+        OpenTelemetry.Tracer.record_exception(e, __STACKTRACE__)
         Sentry.capture_exception(e)
         :error
     end

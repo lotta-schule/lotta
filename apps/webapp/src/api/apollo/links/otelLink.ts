@@ -65,6 +65,19 @@ export const createOtelLink = ({
                 'graphql.errors',
                 JSON.stringify(result.errors)
               );
+              for (const graphqlError of result.errors) {
+                const stacktrace = (
+                  graphqlError.extensions?.exception as
+                    | { stacktrace?: string[] }
+                    | undefined
+                )?.stacktrace;
+
+                span.recordException({
+                  name: 'GraphQLError',
+                  message: graphqlError.message,
+                  stack: stacktrace?.join('\n'),
+                });
+              }
             }
             observer.next(result);
           },
@@ -73,6 +86,7 @@ export const createOtelLink = ({
               code: SpanStatusCode.ERROR,
               message: err.message,
             });
+            span.recordException(err);
             span.end();
             observer.error(err);
           },
