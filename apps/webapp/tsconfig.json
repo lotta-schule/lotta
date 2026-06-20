@@ -20,7 +20,7 @@
       },
       {
         "name": "gql.tada/ts-plugin",
-        "schema": "http://127.0.0.1:4000/api",
+        "schema": "${GRAPHQL_SCHEMA_URL:-http://127.0.0.1:4000/api}",
         "tadaOutputLocation": "./src/api/graphql-env.ts"
       }
     ],

@@ -18,7 +18,7 @@ export default async function HomeRoute() {
       categoryId: category.id,
       filter: { first: 10 },
     },
-  }).then((result: any) => result.data.articles ?? []);
+  }).then((result) => result.data?.articles ?? []);
 
   return <CategoryPage initialArticles={articles} category={category} />;
 }

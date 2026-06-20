@@ -67,21 +67,6 @@ vi.mock('next/navigation.js', async () => {
   };
 });
 
-vi.mock('next/navigation.js', async () => {
-  const { MockRouter } = await import('#/test/mocks/MockRouter');
-  globalThis.mockRouter ||= new MockRouter();
-  (globalThis as any).__mockNavigationFns ||= {
-    useRouter: vi.fn(() => globalThis.mockRouter),
-    useParams: vi.fn(() => ({})),
-    usePathname: vi.fn(() => globalThis.mockRouter._pathname),
-    useSearchParams: vi.fn(() => new URLSearchParams()),
-  };
-  return {
-    mockRouter: globalThis.mockRouter,
-    ...(globalThis as any).__mockNavigationFns,
-  };
-});
-
 self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ };
 configure({
   asyncUtilTimeout: 2500,
