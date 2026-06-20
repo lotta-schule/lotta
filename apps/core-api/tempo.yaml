@@ -1,0 +1,76 @@
+# Tempo configuration for local development
+# Monolithic mode - all components run in a single process
+
+server:
+  http_listen_port: 3200
+  grpc_listen_port: 9095
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /tmp/tempo/blocks
+    wal:
+      path: /tmp/tempo/wal
+      ingestion_time_range_slack: 2m
+    block:
+      version: vParquet4
+      bloom_filter_false_positive: 0.01
+      parquet_row_group_size_bytes: 104857600
+
+metrics_generator:
+  storage:
+    path: /tmp/tempo/metrics-generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true
+  registry:
+    collection_interval: 15s
+  processor:
+    span_metrics:
+      histogram_buckets:
+        [
+          0.002,
+          0.004,
+          0.008,
+          0.016,
+          0.032,
+          0.064,
+          0.128,
+          0.256,
+          0.512,
+          1.024,
+          2.048,
+          4.096,
+          8.192,
+          16.384,
+        ]
+      intrinsic_dimensions:
+        service: true
+        span_name: true
+        span_kind: true
+        status_code: true
+    service_graphs:
+      wait: 10s
+      max_items: 10000
+      histogram_buckets: [0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8]
+
+overrides:
+  defaults:
+    ingestion:
+      rate_limit_bytes: 30000000
+      burst_size_bytes: 30000000
+      max_traces_per_user: 10000
+    global:
+      max_bytes_per_trace: 5000000
+    compaction:
+      block_retention: 48h

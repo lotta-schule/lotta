@@ -1,0 +1,125 @@
+// Alloy configuration matching production k8s-monitoring chart
+// Receives OTLP traces, scrapes metrics, collects logs
+
+// OTLP Receiver for traces (matches production applicationObservability)
+otelcol.receiver.otlp "default" {
+	grpc {
+		endpoint = "0.0.0.0:4317"
+	}
+
+	http {
+		endpoint = "0.0.0.0:4318"
+	}
+
+	output {
+		traces = [otelcol.processor.tail_sampling.default.input]
+	}
+}
+
+// Tail-based sampling processor (mirrors production configuration)
+otelcol.processor.tail_sampling "default" {
+	decision_wait = "30s"
+	num_traces    = 50000
+
+	// Sampling policies (same as production)
+	policy {
+		name = "staging-always"
+		type = "string_attribute"
+
+		string_attribute {
+			key                    = "server.address"
+			values                 = [".*\\.staging\\.lotta\\.schule"]
+			enabled_regex_matching = true
+		}
+	}
+
+	policy {
+		name = "slow-traces"
+		type = "latency"
+
+		latency {
+			threshold_ms = 2000
+		}
+	}
+
+	policy {
+		name = "errors"
+		type = "status_code"
+
+		status_code {
+			status_codes = ["ERROR"]
+		}
+	}
+
+	policy {
+		name = "prod-sample"
+		type = "probabilistic"
+
+		probabilistic {
+			sampling_percentage = 1
+		}
+	}
+
+	output {
+		traces = [otelcol.exporter.otlp.tempo.input]
+	}
+}
+
+// Export traces to Tempo
+otelcol.exporter.otlp "tempo" {
+	client {
+		endpoint = "tempo:4317"
+
+		tls {
+			insecure = true
+		}
+	}
+}
+
+// Prometheus scraping (matches production clusterMetrics)
+discovery.docker "containers" {
+	host = "unix:///var/run/docker.sock"
+}
+
+prometheus.scrape "default" {
+	targets    = discovery.docker.containers.targets
+	forward_to = [prometheus.relabel.metrics.receiver]
+	job_name   = "docker"
+}
+
+prometheus.relabel "metrics" {
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "container"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+		target_label  = "service"
+	}
+	forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.remote_write "default" {
+	endpoint {
+		url = "http://prometheus:9090/api/v1/write"
+	}
+}
+
+// Docker log collection (matches production nodeLogs)
+loki.source.docker "containers" {
+	host       = "unix:///var/run/docker.sock"
+	targets    = discovery.docker.containers.targets
+	forward_to = [loki.process.default.receiver]
+}
+
+loki.process "default" {
+	forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+	endpoint {
+		url = "http://loki:3100/loki/api/v1/push"
+	}
+}
