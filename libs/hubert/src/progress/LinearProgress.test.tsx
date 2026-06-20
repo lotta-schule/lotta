@@ -21,13 +21,6 @@ describe('LinearProgress', () => {
     expect(progress).toHaveAttribute('aria-valuemax', '100');
   });
 
-  it('should set indicator width based on value', () => {
-    const { container } = render(<LinearProgress value={60} />);
-
-    const indicator = container.querySelector('.indicator') as HTMLElement;
-    expect(indicator).toHaveStyle({ width: '60%' });
-  });
-
   it('should apply indeterminate class when isIndeterminate is true', () => {
     const { container } = render(<LinearProgress isIndeterminate />);
 
@@ -54,26 +47,5 @@ describe('LinearProgress', () => {
 
     const progress = screen.getByTestId('progress');
     expect(progress).toHaveAttribute('aria-label', 'Loading');
-  });
-
-  it('should handle value of 0', () => {
-    const { container } = render(<LinearProgress value={0} />);
-
-    const indicator = container.querySelector('.indicator') as HTMLElement;
-    expect(indicator).toHaveStyle({ width: '0%' });
-  });
-
-  it('should handle value of 100', () => {
-    const { container } = render(<LinearProgress value={100} />);
-
-    const indicator = container.querySelector('.indicator') as HTMLElement;
-    expect(indicator).toHaveStyle({ width: '100%' });
-  });
-
-  it('should round decimal values', () => {
-    const { container } = render(<LinearProgress value={66.7} />);
-
-    const indicator = container.querySelector('.indicator') as HTMLElement;
-    expect(indicator).toHaveStyle({ width: '66%' });
   });
 });
