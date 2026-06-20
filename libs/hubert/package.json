@@ -51,5 +51,8 @@
     "*.{html,xml}": [
       "prettier --write"
     ]
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "4.1.5"
   }
 }

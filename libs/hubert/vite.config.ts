@@ -38,12 +38,9 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     lib: {
-      // Could also be a dictionary or array of multiple entry points.
       entry: path.resolve(__dirname, './src/index.ts'),
       name: 'hubert',
       fileName: (_format, entryName) => `${entryName}.js`,
-      // Change this to the formats you want to support.
-      // Don't forget to update your package.json as well.
       formats: ['es'],
     },
   },
@@ -79,17 +76,15 @@ export default defineConfig({
       enabled: true,
       clean: true,
       reportsDirectory: 'coverage',
-      provider: 'istanbul',
+      provider: 'v8',
       reporter: ['json', 'html'],
-      exclude: ['test-utils.tsx', 'test.setup.ts', 'test-fixtures.ts'],
-      // Initial thresholds - will be increased gradually as tests are added
-      // Current coverage: ~25% statements, ~26% lines, ~21% functions, ~15% branches
+      exclude: ['test-utils.tsx', 'test.setup.ts', 'test-fixtures.ts', '.vite'],
       thresholds: {
         global: {
-          statements: 20,
-          branches: 10,
-          functions: 20,
-          lines: 25,
+          statements: 90,
+          branches: 70,
+          functions: 90,
+          lines: 90,
         },
       },
     },
