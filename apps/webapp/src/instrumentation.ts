@@ -7,17 +7,25 @@ export async function register() {
   const dsn = appConfig.get('NEXT_PUBLIC_SENTRY_DSN');
   const release = appConfig.get('NEXT_PUBLIC_RELEASE_NAME');
 
+  if (!dsn) {
+    console.warn('Sentry DSN not configured, error tracking disabled');
+  }
+
   await Promise.all([setupLogging(), setupTracing()]);
 
   if (dsn) {
-    Sentry.init({
-      dsn,
+    try {
+      Sentry.init({
+        dsn,
 
-      environment: appConfig.get('APP_ENVIRONMENT'),
-      release,
-      enabled: appConfig.get('NODE_ENV') === 'production',
-      skipOpenTelemetrySetup: true,
-    });
+        environment: appConfig.get('APP_ENVIRONMENT'),
+        release,
+        enabled: appConfig.get('NODE_ENV') === 'production',
+        skipOpenTelemetrySetup: true,
+      });
+    } catch (error) {
+      console.error('Sentry initialization failed:', error);
+    }
   }
 }
 
