@@ -231,6 +231,100 @@ defmodule LottaWeb.WidgetResolverTest do
     end
   end
 
+  describe "category widgets field (batched)" do
+    # Exercises LottaWeb.CategoryResolver.resolve_widgets/2, which batches the
+    # per-category widget lookups into a single query. Asserts that each
+    # category receives its own widgets (no cross-category bleed) and that the
+    # per-user group visibility is preserved.
+    @query """
+    {
+      categories {
+        id
+        widgets {
+          title
+        }
+      }
+    }
+    """
+
+    test "resolves every category's widgets with a single batched query", %{
+      admin_jwt: admin_jwt,
+      homepage: homepage
+    } do
+      # A second category with its own widget, so the test exercises grouping
+      # across multiple categories (cross-category isolation) rather than a
+      # single one.
+      other_category = insert(:category, title: "Zweite Kategorie")
+      other_widget = insert(:widget, title: "Anderes Widget", type: "calendar")
+
+      other_category
+      |> Repo.preload(:widgets)
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:widgets, [other_widget])
+      |> Repo.update!()
+
+      # Capture every query that hits the widgets table whose parameters contain
+      # *both* category ids in a single list. Under the batched resolver this
+      # fires exactly once; an N+1 resolver could never put both ids in one query.
+      # Filtering on the two freshly-inserted ids keeps this immune to queries
+      # from other concurrently-running async tests.
+      test_pid = self()
+      handler_id = "batched-widgets-query-#{System.unique_integer([:positive])}"
+
+      :telemetry.attach(
+        handler_id,
+        [:lotta, :repo, :query],
+        fn _event, _measurements, metadata, _config ->
+          if metadata[:source] == "widgets" and
+               Enum.any?(metadata[:params] || [], fn param ->
+                 is_list(param) and homepage.id in param and other_category.id in param
+               end) do
+            send(test_pid, :batched_widgets_query)
+          end
+        end,
+        nil
+      )
+
+      on_exit(fn -> :telemetry.detach(handler_id) end)
+
+      categories =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> get("/api", query: @query)
+        |> json_response(200)
+        |> get_in(["data", "categories"])
+
+      widgets_for = fn category_id ->
+        categories
+        |> Enum.find(&(&1["id"] == to_string(category_id)))
+        |> Map.get("widgets")
+      end
+
+      # each category receives its own widgets, with no cross-category bleed
+      assert length(widgets_for.(homepage.id)) == 3
+      assert widgets_for.(other_category.id) == [%{"title" => "Anderes Widget"}]
+
+      # all categories were resolved in one query rather than one-per-category
+      assert_received :batched_widgets_query
+      refute_received :batched_widgets_query
+    end
+
+    test "hides group-restricted widgets from an anonymous user", %{homepage: homepage} do
+      homepage_widgets =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> get("/api", query: @query)
+        |> json_response(200)
+        |> get_in(["data", "categories"])
+        |> Enum.find(&(&1["id"] == to_string(homepage.id)))
+        |> Map.get("widgets")
+
+      # only the unrestricted widget is visible without authentication
+      assert length(homepage_widgets) == 1
+    end
+  end
+
   describe "createWidget mutation" do
     @query """
     mutation createWidget($title: String!, $type: WidgetType!) {

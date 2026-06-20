@@ -62,7 +62,7 @@ export const UserNavigationMobile = React.memo(() => {
       {!!currentUser && (
         <>
           <nav className={styles.root}>
-            <Link href="/auth/logout" passHref legacyBehavior>
+            <Link href="/auth/logout" prefetch={false} passHref legacyBehavior>
               <BaseButton
                 variant={'borderless'}
                 className={styles.button}

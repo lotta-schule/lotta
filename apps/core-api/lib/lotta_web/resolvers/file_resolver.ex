@@ -4,6 +4,7 @@ defmodule LottaWeb.FileResolver do
   require Logger
 
   import Ecto.Query
+  import Absinthe.Resolution.Helpers, only: [batch: 3]
   import Lotta.Accounts.Permissions
   import Lotta.Storage.Conversion.AvailableFormats, only: [is_valid_category?: 1]
   import LottaWeb.ErrorHelpers
@@ -80,6 +81,25 @@ defmodule LottaWeb.FileResolver do
   end
 
   def resolve_available_formats(file, args, _info) do
+    # Batch the conversion preloads for every file in the resolution into a
+    # single query (preloading the nested `remote_storage_entity` too, which
+    # `Storage.get_http_url/1` would otherwise load one-by-one). This removes
+    # the per-file `file_conversions` and per-conversion `remote_storage_entity`
+    # N+1s observed in the staging traces.
+    batch({__MODULE__, :batch_preload_file_conversions}, file, fn files_by_id ->
+      file = Map.get(files_by_id, file.id, file)
+      {:ok, build_available_formats(file, args)}
+    end)
+  end
+
+  @doc false
+  def batch_preload_file_conversions(_batch_info, files) do
+    files
+    |> Repo.preload(file_conversions: :remote_storage_entity)
+    |> Map.new(&{&1.id, &1})
+  end
+
+  defp build_available_formats(file, args) do
     category_filter = args[:category]
 
     category_filter_fn = fn format_name ->
@@ -95,9 +115,7 @@ defmodule LottaWeb.FileResolver do
       end)
 
     conversions =
-      file
-      |> Repo.preload(:file_conversions)
-      |> Map.get(:file_conversions, [])
+      file.file_conversions
       |> Enum.filter(fn file_conversion ->
         category_filter_fn.(file_conversion.format) &&
           file_conversion.remote_storage_entity_id != nil
@@ -145,7 +163,7 @@ defmodule LottaWeb.FileResolver do
       end)
       |> Enum.map(&map_possible_format_to_available_format(file, &1))
 
-    {:ok, conversions ++ available_formats ++ processing_formats}
+    conversions ++ available_formats ++ processing_formats
   end
 
   defp map_job_to_available_format({job, formats}) do

@@ -10,7 +10,7 @@ import {
 } from '@lotta-schule/hubert';
 import { TenantNotFoundErrorPage } from '#/layout/error/TenantNotFoundErrorPage';
 import { fonts } from '#/styles/fonts';
-import { loadTenant } from '#/loader';
+import { loadTenant, loadCategories, loadCurrentUser } from '#/loader';
 import { TranslationsProvider } from '#/i18n/client';
 import { TenantGlobalStyleTag } from '#/layout/TenantGlobalStyleTag';
 import { ServerDataContextProvider } from '#/shared/ServerDataContext';
@@ -20,6 +20,14 @@ faConfig.autoAddCss = false;
 export default async function RootLayout({
   children,
 }: React.PropsWithChildren) {
+  // Preload the data the nested layouts need so it fetches concurrently with the
+  // tenant instead of in a later serial tier. These are `React.cache()`-wrapped,
+  // so the awaits in `(default)/layout.tsx` reuse these in-flight requests. The
+  // `.catch` keeps the fire-and-forget promises from surfacing as unhandled
+  // rejections; the consumers attach their own error handling.
+  void loadCategories().catch(() => {});
+  void loadCurrentUser().catch(() => {});
+
   const tenant = await loadTenant().catch(() => null);
 
   const customTheme = tenant?.configuration.customTheme as

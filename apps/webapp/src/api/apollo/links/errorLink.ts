@@ -1,9 +1,5 @@
 import { Observable } from '@apollo/client';
-import {
-  CombinedGraphQLErrors,
-  CombinedProtocolErrors,
-  ServerError,
-} from '@apollo/client/errors';
+import { ServerError } from '@apollo/client/errors';
 import { onError } from '@apollo/client/link/error';
 import { sendRefreshRequest } from '#/api/auth';
 import { appConfig } from '#/config';

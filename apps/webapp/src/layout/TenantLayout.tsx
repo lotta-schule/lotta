@@ -22,7 +22,10 @@ export const TenantLayout = async ({
   children,
   fullSizeScrollable,
 }: TenantLayoutProps) => {
-  const [tenant, categories] = [await loadTenant(), await loadCategories()];
+  const [tenant, categories] = await Promise.all([
+    loadTenant(),
+    loadCategories(),
+  ]);
 
   return (
     <Box

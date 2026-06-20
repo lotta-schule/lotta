@@ -711,6 +711,48 @@ defmodule Lotta.Tenants do
   end
 
   @doc """
+  Returns the visible widgets for many categories at once, grouped by category id.
+
+  This is the batched counterpart of `list_widgets_by_category/2`: instead of one
+  query per category (an N+1 when resolving the `widgets` field for a list of
+  categories), it loads every category's widgets in a single query and returns a
+  `%{category_id => [Widget.t()]}` map. The same per-user group visibility rules
+  are applied.
+
+  ## Examples
+
+      iex> list_widgets_by_categories([1, 2], %User{id: 1})
+      %{1 => [%Widget{}, ...], 2 => [%Widget{}, ...]}
+
+  """
+  @spec list_widgets_by_categories(list(integer()), User.t() | nil, String.t() | nil) ::
+          %{optional(integer()) => list(Widget.t())}
+  def list_widgets_by_categories(category_ids, user, prefix \\ Repo.get_prefix()) do
+    groups = if user, do: user.all_groups, else: []
+    is_admin = if user, do: user.is_admin?, else: false
+    group_ids = Enum.map(groups, & &1.id)
+
+    from(w in Widget,
+      left_join: wug in "widgets_user_groups",
+      on: wug.widget_id == w.id,
+      join: cw in "categories_widgets",
+      on: cw.widget_id == w.id,
+      where:
+        cw.category_id in ^category_ids and
+          (is_nil(wug.group_id) or ^is_admin or wug.group_id in ^group_ids),
+      distinct: [cw.category_id, w.id],
+      select: {cw.category_id, w}
+    )
+    # The tenant prefix must be passed explicitly: this is invoked from an
+    # Absinthe batch, which runs outside the request process where
+    # `Repo.prepare_query/3` would otherwise inject the process-local prefix.
+    |> Repo.all(prefix: prefix)
+    |> Enum.group_by(fn {category_id, _widget} -> category_id end, fn {_category_id, widget} ->
+      widget
+    end)
+  end
+
+  @doc """
   Gets a single widget by id.
   Returns `nil` if the widget is not found.
 

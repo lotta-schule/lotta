@@ -102,7 +102,7 @@ export async function middleware(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 14 * 24 * 60 * 60, // 14 days (reduced from 21)
-      sameSite: 'strict', // Changed from 'lax' for better security
+      sameSite: 'lax', // Changed from 'lax' for better security
       path: '/',
     });
   }
@@ -111,7 +111,7 @@ export async function middleware(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 14 * 24 * 60 * 60, // 14 days (reduced from 21)
-      sameSite: 'strict', // Changed from 'lax' for better security
+      sameSite: 'lax', // Changed from 'lax' for better security
       path: '/',
     });
   }

@@ -1,5 +1,3 @@
-import { ArticleModel } from '#/model';
-
 export const User = {
   getName(
     user?: {
