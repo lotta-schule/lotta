@@ -180,8 +180,7 @@ export const ComboBox = React.memo(
           state.selectionManager.setFocusedKey(item.key as string | number);
         }
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state.inputValue]);
+    }, [state.inputValue, findItem, state.selectionManager]);
 
     const inputRef = React.useRef<HTMLInputElement>(null);
     const buttonRef = React.useRef<HTMLButtonElement>(null);
