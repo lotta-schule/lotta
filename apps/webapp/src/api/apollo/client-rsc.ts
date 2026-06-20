@@ -28,6 +28,14 @@ export const getAuthTokenFromHeader = (
   return null;
 };
 
+const getForwardedHeaders = (headerValues: ReadonlyHeaders) => ({
+  'x-lotta-tenant': headerValues.get('x-lotta-tenant'),
+  'x-lotta-originary-host':
+    headerValues.get('x-lotta-originary-host') ||
+    headerValues.get('x-forwarded-host') ||
+    headerValues.get('host'),
+});
+
 export const createRSCClient = async () => {
   const headerValues = await headers();
   const cookieValues = await cookies();
@@ -35,7 +43,12 @@ export const createRSCClient = async () => {
     cache: createCache(),
 
     link: ApolloLink.from([
-      createOtelLink(),
+      createOtelLink({
+        headers: {
+          ...getForwardedHeaders(headerValues),
+          'user-agent': headerValues.get('user-agent'),
+        },
+      }),
       createErrorLink(),
       createAuthLink({
         initialToken:
@@ -44,12 +57,7 @@ export const createRSCClient = async () => {
       createVariableInputMutationsLink(),
       createHttpLink({
         requestExtraHeaders: () => ({
-          'x-lotta-tenant': headerValues.get('x-lotta-tenant'),
-          'x-lotta-originary-host':
-            headerValues.get('x-lotta-originary-host') ||
-            headerValues.get('x-forwarded-host') ||
-            headerValues.get('host') ||
-            undefined,
+          ...getForwardedHeaders(headerValues),
           'user-agent': [
             process.env.npm_package_name,
             process.env.npm_package_version,
