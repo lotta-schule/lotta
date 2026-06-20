@@ -9,7 +9,11 @@ import {
 
 const tracer = trace.getTracer('lotta-webapp-apollo');
 
-export const createOtelLink = () =>
+export const createOtelLink = ({
+  headers = {},
+}: {
+  headers?: Record<string, string | null | undefined>;
+} = {}) =>
   new ApolloLink((operation, forward) => {
     const operationName = operation.operationName ?? 'anonymous';
 
@@ -20,6 +24,11 @@ export const createOtelLink = () =>
           'graphql.operation.name': operationName,
           // Lets you see the full query in Grafana for slow/failing requests
           'graphql.document': operation.query.loc?.source.body,
+          ...Object.fromEntries(
+            Object.entries(headers)
+              .filter(([, value]) => value != null)
+              .map(([key, value]) => [`http.request.header.${key}`, value])
+          ),
         },
       });
 
