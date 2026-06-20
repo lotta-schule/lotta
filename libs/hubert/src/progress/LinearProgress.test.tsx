@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 import { LinearProgress } from './LinearProgress';
+import styles from './LinearProgress.module.scss';
 
 describe('LinearProgress', () => {
   it('should render with default props', () => {
@@ -31,14 +32,14 @@ describe('LinearProgress', () => {
     const { container } = render(<LinearProgress isIndeterminate />);
 
     const root = container.firstChild as HTMLElement;
-    expect(root).toHaveClass('indeterminate');
+    expect(root).toHaveClass(styles.indeterminate);
   });
 
   it('should not apply indeterminate class when isIndeterminate is false', () => {
     const { container } = render(<LinearProgress isIndeterminate={false} />);
 
     const root = container.firstChild as HTMLElement;
-    expect(root).not.toHaveClass('indeterminate');
+    expect(root).not.toHaveClass(styles.indeterminate);
   });
 
   it('should apply custom className', () => {

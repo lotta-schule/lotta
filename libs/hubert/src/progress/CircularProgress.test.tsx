@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 import { CircularProgress } from './CircularProgress';
+import styles from './CircularProgress.module.scss';
 
 describe('CircularProgress', () => {
   it('should render with default props', () => {
@@ -52,14 +53,14 @@ describe('CircularProgress', () => {
     const { container } = render(<CircularProgress isIndeterminate />);
 
     const root = container.firstChild as HTMLElement;
-    expect(root).toHaveClass('indeterminate');
+    expect(root).toHaveClass(styles.indeterminate);
   });
 
   it('should not apply indeterminate class when isIndeterminate is false', () => {
     const { container } = render(<CircularProgress isIndeterminate={false} />);
 
     const root = container.firstChild as HTMLElement;
-    expect(root).not.toHaveClass('indeterminate');
+    expect(root).not.toHaveClass(styles.indeterminate);
   });
 
   it('should apply custom className', () => {

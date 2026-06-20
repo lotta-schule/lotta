@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useWindowSize } from './useWindowSize';
 
 describe('useWindowSize', () => {
@@ -19,7 +19,7 @@ describe('useWindowSize', () => {
     const initialSize = { ...result.current };
 
     // Simulate resize
-    act(() => {
+    await act(async () => {
       window.innerWidth = 1920;
       window.innerHeight = 1080;
       window.dispatchEvent(new Event('resize'));
