@@ -1,5 +1,8 @@
 import { defineConfig } from 'oxlint';
 
+const isCI =
+  !!process.env.CI && process.env.CI !== 'false' && process.env.CI !== '0';
+
 export default defineConfig({
   plugins: [
     'eslint',
@@ -15,6 +18,7 @@ export default defineConfig({
   },
   options: {
     typeAware: true,
+    denyWarnings: isCI,
   },
   ignorePatterns: ['dist/**/*', '.next/**/*', 'assets/vendor/**/*'],
   rules: {

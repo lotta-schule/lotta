@@ -11,7 +11,7 @@
     "start:prod": "next start",
     "build": "next build",
     "test": "vitest run",
-    "lint": "oxlint --fix src/",
+    "lint": "oxlint --fix src/ --format $([[ -n $GITHUB_ACTIONS ]] && echo 'github' || echo 'default')",
     "typecheck": "tsc -p tsconfig.typecheck.json",
     "schema:download": "bunx get-graphql-schema http://127.0.0.1:4000/api > .tmp/schema.graphql",
     "translations:collect": "bunx i18next"
