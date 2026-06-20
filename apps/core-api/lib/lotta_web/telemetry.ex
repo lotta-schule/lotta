@@ -57,13 +57,13 @@ defmodule LottaWeb.Telemetry do
         unit: {:native, :millisecond}
       ),
 
-      # # Absinthe Metrics
-      # summary("absinthe.execute.operation.stop.duration",
-      #   tag_values: fn %{metadata: %{options: options}} ->
-      #     Enum.into(options, %{})
-      #   end,
-      #   unit: {:native, :millisecond}
-      # ),
+      # Absinthe Metrics
+      distribution("absinthe.execute.operation.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:operation_name, :operation_type],
+        tag_values: &absinthe_operation_tags/1,
+        reporter_options: [buckets: [10, 50, 100, 250, 500, 1_000, 2_500, 5_000]]
+      ),
 
       # Ecto Metrics
       summary("lotta.repo.query.total_time", unit: {:native, :millisecond}),
@@ -72,8 +72,39 @@ defmodule LottaWeb.Telemetry do
       summary("lotta.repo.query.queue_time", unit: {:native, :millisecond}),
       summary("lotta.repo.query.idle_time", unit: {:native, :millisecond}),
 
+      # Same as above, tagged by table (`:source` in Ecto's telemetry metadata)
+      # for a "slowest tables" panel. Cardinality is bounded by the (small,
+      # fixed) number of DB tables, unlike tenant-level tagging — see
+      # docs/observability-improvements.md for why tenant tagging was not
+      # added here.
+      summary("lotta.repo.query.total_time.by_source",
+        event_name: [:lotta, :repo, :query],
+        measurement: :total_time,
+        tags: [:source],
+        unit: {:native, :millisecond}
+      ),
+
+      # Oban Metrics
+      distribution("oban.job.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:queue, :worker, :state],
+        tag_values: &oban_job_tags/1,
+        reporter_options: [buckets: [10, 100, 500, 1_000, 5_000, 10_000, 30_000, 60_000]]
+      ),
+      counter("oban.job.stop.count",
+        tags: [:queue, :worker, :state],
+        tag_values: &oban_job_tags/1
+      ),
+      counter("oban.job.exception.count",
+        tags: [:queue, :worker, :state],
+        tag_values: &oban_job_tags/1
+      ),
+
       # Custom Metrics
       last_value("lotta.tenant_count.count"),
+      last_value("lotta.active_tenant_count.count"),
+      last_value("lotta.active_user_count.count"),
+      last_value("lotta.total_storage_bytes.count"),
       counter("lotta.push_notification.message_sent.sent.system_time",
         tag_values: fn %{
                          tenant: tenant,
@@ -93,15 +124,50 @@ defmodule LottaWeb.Telemetry do
     ]
   end
 
+  defp oban_job_tags(%{job: job, state: state}) do
+    %{queue: job.queue, worker: job.worker, state: state}
+  end
+
+  defp absinthe_operation_tags(%{blueprint: blueprint}) do
+    case Absinthe.Blueprint.current_operation(blueprint) do
+      %{name: name, type: type} -> %{operation_name: name || "anonymous", operation_type: type}
+      nil -> %{operation_name: "unknown", operation_type: "unknown"}
+    end
+  end
+
   defp periodic_lotta_measurements,
     do: [
-      {__MODULE__, :dispatch_tenant_count, []}
+      {__MODULE__, :dispatch_tenant_count, []},
+      {__MODULE__, :dispatch_active_tenant_count, []},
+      {__MODULE__, :dispatch_active_user_count, []},
+      {__MODULE__, :dispatch_total_storage_bytes, []}
     ]
 
   def dispatch_tenant_count do
     :telemetry.execute(
       [:lotta, :tenant_count],
       %{count: Lotta.Administration.Measurements.count_tenants()}
+    )
+  end
+
+  def dispatch_active_tenant_count do
+    :telemetry.execute(
+      [:lotta, :active_tenant_count],
+      %{count: Lotta.Administration.Measurements.count_active_tenants()}
+    )
+  end
+
+  def dispatch_active_user_count do
+    :telemetry.execute(
+      [:lotta, :active_user_count],
+      %{count: Lotta.Administration.Measurements.count_active_users()}
+    )
+  end
+
+  def dispatch_total_storage_bytes do
+    :telemetry.execute(
+      [:lotta, :total_storage_bytes],
+      %{count: Lotta.Administration.Measurements.total_storage_bytes()}
     )
   end
 
