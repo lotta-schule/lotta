@@ -10,6 +10,8 @@ import { createAuthLink } from './links/authLink';
 import { createOtelLink } from './links/otelLink';
 import { createHttpLink } from './links/httpLink';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
+import { CustomFetchAgents } from './customFetch';
+import { isBrowser } from '#/util/isBrowser';
 
 export const getAuthTokenFromHeader = (
   headerValues: ReadonlyHeaders,
@@ -28,6 +30,42 @@ export const getAuthTokenFromHeader = (
   return null;
 };
 
+/**
+ * Lazily-created keep-alive agents shared across every server-side request to
+ * the core API. Reusing one connection pool removes the ~200ms `tcp.connect`
+ * that the staging traces showed on every GraphQL POST.
+ *
+ * The `node:http`/`node:https` modules are imported dynamically and only when
+ * running server-side, so they never reach the browser bundle (this module is
+ * server-only in Next.js, but the test runner evaluates it in a browser
+ * environment, where the guard short-circuits before the import).
+ */
+const keepAliveAgentOptions = {
+  keepAlive: true,
+  keepAliveMsecs: 1000,
+  maxSockets: 64,
+  maxFreeSockets: 16,
+  timeout: 60_000,
+};
+
+let serverAgentsPromise: Promise<CustomFetchAgents> | undefined;
+
+const getServerAgents = async (): Promise<CustomFetchAgents | undefined> => {
+  if (isBrowser()) {
+    return undefined;
+  }
+  if (!serverAgentsPromise) {
+    serverAgentsPromise = Promise.all([
+      import('node:http'),
+      import('node:https'),
+    ]).then(([http, https]) => ({
+      httpAgent: new http.Agent(keepAliveAgentOptions),
+      httpsAgent: new https.Agent(keepAliveAgentOptions),
+    }));
+  }
+  return serverAgentsPromise;
+};
+
 const getForwardedHeaders = (headerValues: ReadonlyHeaders) => ({
   'x-lotta-tenant': headerValues.get('x-lotta-tenant'),
   'x-lotta-originary-host':
@@ -39,6 +77,7 @@ const getForwardedHeaders = (headerValues: ReadonlyHeaders) => ({
 export const createRSCClient = async () => {
   const headerValues = await headers();
   const cookieValues = await cookies();
+  const agents = await getServerAgents();
   return new ApolloClient({
     cache: createCache(),
 
@@ -56,6 +95,7 @@ export const createRSCClient = async () => {
       }),
       createVariableInputMutationsLink(),
       createHttpLink({
+        agents,
         requestExtraHeaders: () => ({
           ...getForwardedHeaders(headerValues),
           'user-agent': [

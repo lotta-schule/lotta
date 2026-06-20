@@ -2,7 +2,9 @@ defmodule LottaWeb.CategoryResolver do
   @moduledoc false
 
   import LottaWeb.ErrorHelpers
+  import Absinthe.Resolution.Helpers, only: [batch: 3]
 
+  alias Lotta.Repo
   alias Lotta.Tenants
   alias Lotta.Tenants.Category
 
@@ -10,7 +12,25 @@ defmodule LottaWeb.CategoryResolver do
         context: %{current_user: user},
         source: %Category{} = category
       }) do
-    {:ok, Tenants.list_widgets_by_category(category, user)}
+    # Batch the widget lookups for every category in the same resolution into a
+    # single query (the current user is constant within a request, so it is part
+    # of the batch key), avoiding an N+1 of one `widgets` query per category.
+    #
+    # The tenant prefix is captured here (in the request process) and threaded
+    # through the batch key, because the batch function runs in a separate
+    # process where the process-local prefix is no longer available.
+    batch(
+      {__MODULE__, :batch_widgets_by_category, {user, Repo.get_prefix()}},
+      category.id,
+      fn widgets_by_category_id ->
+        {:ok, Map.get(widgets_by_category_id, category.id, [])}
+      end
+    )
+  end
+
+  @doc false
+  def batch_widgets_by_category({user, prefix}, category_ids) do
+    Tenants.list_widgets_by_categories(category_ids, user, prefix)
   end
 
   def all(_args, %{context: %{current_user: current_user}}) do
