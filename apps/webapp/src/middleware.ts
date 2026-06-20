@@ -101,8 +101,8 @@ export async function middleware(request: NextRequest) {
     response.cookies.set('SignInAccessToken', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 21 * 24 * 60 * 60,
-      sameSite: 'lax',
+      maxAge: 14 * 24 * 60 * 60, // 14 days (reduced from 21)
+      sameSite: 'strict', // Changed from 'lax' for better security
       path: '/',
     });
   }
@@ -110,8 +110,8 @@ export async function middleware(request: NextRequest) {
     response.cookies.set('SignInRefreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 21 * 24 * 60 * 60,
-      sameSite: 'lax',
+      maxAge: 14 * 24 * 60 * 60, // 14 days (reduced from 21)
+      sameSite: 'strict', // Changed from 'lax' for better security
       path: '/',
     });
   }

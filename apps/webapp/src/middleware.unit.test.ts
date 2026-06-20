@@ -243,8 +243,8 @@ describe('middleware', () => {
         {
           httpOnly: true,
           secure: false,
-          sameSite: 'lax',
-          maxAge: 21 * 24 * 60 * 60,
+          sameSite: 'strict',
+          maxAge: 14 * 24 * 60 * 60,
           path: '/',
         }
       );
@@ -254,8 +254,8 @@ describe('middleware', () => {
         {
           httpOnly: true,
           secure: false,
-          sameSite: 'lax',
-          maxAge: 21 * 24 * 60 * 60,
+          sameSite: 'strict',
+          maxAge: 14 * 24 * 60 * 60,
           path: '/',
         }
       );
