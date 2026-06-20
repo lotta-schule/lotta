@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'core-api'
+    static_configs:
+      - targets: ['host.docker.internal:9567']
+    metrics_path: '/metrics'
+
+  - job_name: 'alloy'
+    static_configs:
+      - targets: ['alloy:12345']
+    metrics_path: '/metrics'
+
+  - job_name: 'tempo'
+    static_configs:
+      - targets: ['tempo:3200']
+
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']
+
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:9187']
