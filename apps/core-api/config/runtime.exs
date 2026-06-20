@@ -362,7 +362,6 @@ config :sentry,
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()],
   filter: Lotta.SentryFilter,
-  traces_sample_rate: 0.15,
   integrations: [
     oban: [
       capture_errors: true,

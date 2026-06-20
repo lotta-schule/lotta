@@ -34,6 +34,10 @@ const setupTracing = async () => {
     const { NodeSDK } = await import('@opentelemetry/sdk-node');
     const { OTLPTraceExporter } =
       await import('@opentelemetry/exporter-trace-otlp-http');
+    const { OTLPMetricExporter } =
+      await import('@opentelemetry/exporter-metrics-otlp-http');
+    const { PeriodicExportingMetricReader } =
+      await import('@opentelemetry/sdk-metrics');
     const { getNodeAutoInstrumentations } =
       await import('@opentelemetry/auto-instrumentations-node');
     const { resourceFromAttributes } = await import('@opentelemetry/resources');
@@ -50,6 +54,9 @@ const setupTracing = async () => {
         [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: appConfig.get('APP_ENVIRONMENT'),
       }),
       traceExporter: new OTLPTraceExporter(),
+      metricReader: new PeriodicExportingMetricReader({
+        exporter: new OTLPMetricExporter(),
+      }),
       instrumentations: [
         getNodeAutoInstrumentations({
           // File system instrumentation is extremely noisy in Next.js, skip it

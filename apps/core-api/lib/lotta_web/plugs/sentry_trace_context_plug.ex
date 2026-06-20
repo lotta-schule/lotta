@@ -1,6 +1,7 @@
 defmodule LottaWeb.Plugs.SentryTraceContextPlug do
   @moduledoc """
-  Adds OpenTelemetry trace context to Sentry events for distributed tracing correlation.
+  Adds OpenTelemetry trace context to Sentry events and Logger metadata,
+  so traces, logs and Sentry errors for a request can be correlated in Grafana.
   """
   require OpenTelemetry.Tracer
 
@@ -12,13 +13,11 @@ defmodule LottaWeb.Plugs.SentryTraceContextPlug do
         conn
 
       span_ctx ->
-        trace_id = :otel_span.trace_id(span_ctx)
-        span_id = :otel_span.span_id(span_ctx)
+        trace_id = format_trace_id(:otel_span.trace_id(span_ctx))
+        span_id = format_span_id(:otel_span.span_id(span_ctx))
 
-        Sentry.Context.set_tags_context(%{
-          trace_id: format_trace_id(trace_id),
-          span_id: format_span_id(span_id)
-        })
+        Sentry.Context.set_tags_context(%{trace_id: trace_id, span_id: span_id})
+        Logger.metadata(trace_id: trace_id, span_id: span_id)
 
         conn
     end
