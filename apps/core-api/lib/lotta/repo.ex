@@ -9,7 +9,7 @@ defmodule Lotta.Repo do
   def prepare_query(_operation, query, opts) do
     prefix = get_prefix()
 
-    if opts[:prefix] || is_nil(prefix) do
+    if Keyword.has_key?(opts, :prefix) || is_nil(prefix) do
       {query, opts}
     else
       {query, Keyword.put(opts, :prefix, prefix)}
