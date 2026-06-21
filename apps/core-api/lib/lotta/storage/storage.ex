@@ -34,7 +34,7 @@ defmodule Lotta.Storage do
   end
 
   def query(FileConversion, _params) do
-    File
+    FileConversion
     |> preload([:remote_storage_entity])
   end
 
