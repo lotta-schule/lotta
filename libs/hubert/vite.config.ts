@@ -38,12 +38,9 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     lib: {
-      // Could also be a dictionary or array of multiple entry points.
       entry: path.resolve(__dirname, './src/index.ts'),
       name: 'hubert',
       fileName: (_format, entryName) => `${entryName}.js`,
-      // Change this to the formats you want to support.
-      // Don't forget to update your package.json as well.
       formats: ['es'],
     },
   },
@@ -76,12 +73,20 @@ export default defineConfig({
       : ['default'],
     outputFile: 'coverage/junit.xml',
     coverage: {
-      enabled: !!process.env.CI,
+      enabled: true,
       clean: true,
       reportsDirectory: 'coverage',
-      provider: 'istanbul',
-      reporter: ['json'],
-      exclude: ['test-utils.tsx', 'test.setup.ts', 'test-fixtures.ts'],
+      provider: 'v8',
+      reporter: ['json', 'html'],
+      exclude: ['test-utils.tsx', 'test.setup.ts', 'test-fixtures.ts', '.vite'],
+      thresholds: {
+        global: {
+          statements: 90,
+          branches: 70,
+          functions: 90,
+          lines: 90,
+        },
+      },
     },
 
     env: {
