@@ -9,6 +9,7 @@ export default async function CategoryRoute({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  loadTenant();
   const { slug } = await params;
   const rawCategoryId = slug?.replace(/^(\d+).*/, '$1');
 
@@ -16,21 +17,24 @@ export default async function CategoryRoute({
     throw notFound();
   }
 
-  const [, categories] = await Promise.all([loadTenant(), loadCategories()]);
-
+  const categories = await loadCategories(); // TODO: We probably need much less about these categories here
   const category = categories.find((cat) => cat.id === rawCategoryId);
 
   if (!category) {
     throw notFound();
   }
 
-  const articles = await query({
+  const articlesPromise = query({
     query: GET_ARTICLES_QUERY,
     variables: {
       categoryId: category.id,
       filter: { first: 10 },
     },
-  }).then((result) => result.data?.articles ?? []);
+  });
+
+  const articles = await articlesPromise.then(
+    (result) => result.data?.articles ?? []
+  );
 
   return <CategoryPage initialArticles={articles} category={category} />;
 }
