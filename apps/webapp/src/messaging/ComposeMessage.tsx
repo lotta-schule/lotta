@@ -3,27 +3,30 @@ import { useMutation } from '@apollo/client/react';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { Button, ErrorMessage, Input } from '@lotta-schule/hubert';
-import {
-  NewMessageDestination,
-  MessageModel,
-  ConversationModel,
-  ID,
-  FileModel,
-} from '#/model';
+import { FragmentOf } from '#/api/graphql';
+import { FileModel } from '#/model';
+import { NewMessageDestination } from './Message';
 import { SelectFileButton } from '#/shared/edit/SelectFileButton';
 import { Icon } from '#/shared/Icon';
-import pick from 'lodash/pick';
-import uniqBy from 'lodash/uniqBy';
 
-import SendMessageMutation from '#/api/mutation/SendMessageMutation.graphql';
-import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
-import GetConversationQuery from '#/api/query/GetConversationQuery.graphql';
+import { SEND_MESSAGE_MUTATION } from './_graphql/SendMessageMutation';
+import { GET_CONVERSATIONS_QUERY } from './_graphql/GetConversationsQuery';
+import { GET_CONVERSATION_QUERY } from './_graphql/GetConversationQuery';
+import {
+  CONVERSATION_FRAGMENT,
+  LIVE_MESSAGES_FILTER,
+  MESSAGE_FRAGMENT,
+} from './_graphql/fragments';
 
 import styles from './ComposeMessage.module.scss';
 
 export interface ComposeMessageProps {
   destination: NewMessageDestination;
-  onSent?: (message: MessageModel) => void;
+  onSent?: (
+    message: FragmentOf<typeof MESSAGE_FRAGMENT> & {
+      conversation: FragmentOf<typeof CONVERSATION_FRAGMENT>;
+    }
+  ) => void;
 }
 
 export const ComposeMessage = React.memo(
@@ -32,75 +35,83 @@ export const ComposeMessage = React.memo(
     const [shouldSetAutofocus, setShouldSetAutofocus] = React.useState(true);
     const [content, setContent] = React.useState('');
 
-    const [createMessage, { loading: isLoading, error }] = useMutation<{
-      message: Partial<MessageModel>;
-    }>(SendMessageMutation, {
-      errorPolicy: 'all',
-      variables: {
-        message: {
-          content,
-          recipientUser: destination.user && pick(destination.user, 'id'),
-          recipientGroup: destination.group && pick(destination.group, 'id'),
+    const [createMessage, { loading: isLoading, error }] = useMutation(
+      SEND_MESSAGE_MUTATION,
+      {
+        errorPolicy: 'all',
+        variables: {
+          message: {
+            content,
+            recipientUser:
+              destination.user?.id !== undefined
+                ? { id: destination.user.id }
+                : undefined,
+            recipientGroup:
+              destination.group?.id !== undefined
+                ? { id: destination.group.id }
+                : undefined,
+          },
         },
-      },
-      update: (cache, { data }) => {
-        if (data && data.message) {
-          const readConversationResult = cache.readQuery<
-            { conversation: ConversationModel },
-            { id: ID }
-          >({
-            query: GetConversationQuery,
-            variables: { id: data.message.conversation!.id },
-          });
-          const conversation = {
-            ...data.message.conversation,
-            ...readConversationResult?.conversation,
-            unreadMessages: 0,
-            messages: uniqBy(
-              [
-                data.message,
-                ...(readConversationResult?.conversation.messages ?? []),
+        update: (cache, { data }) => {
+          if (data && data.message) {
+            const conversationId = data.message.conversation.id!;
+            const readConversationResult = cache.readQuery({
+              query: GET_CONVERSATION_QUERY,
+              variables: {
+                id: conversationId,
+                filter: LIVE_MESSAGES_FILTER,
+              },
+            });
+            const conversation = {
+              ...data.message.conversation,
+              ...readConversationResult?.conversation,
+              id: conversationId,
+              unreadMessages: 0,
+              messages: [
+                ...new Map(
+                  [
+                    data.message,
+                    ...(readConversationResult?.conversation?.messages ?? []),
+                  ].map((message) => [message.id, message])
+                ).values(),
               ],
-              'id'
-            ),
-          };
-          cache.writeQuery({
-            query: GetConversationQuery,
-            variables: { id: conversation.id },
-            data: { conversation },
-          });
-          const readConversationsResult = cache.readQuery<{
-            conversations: ConversationModel[];
-          }>({ query: GetConversationsQuery });
-          cache.writeQuery({
-            query: GetConversationsQuery,
-            data: {
-              conversations: [
-                {
-                  ...conversation,
-                  messages: conversation.messages.map((c) =>
-                    pick(c, ['id', '__typename'])
-                  ),
-                },
-                ...(readConversationsResult?.conversations?.filter(
-                  (c) => c.id !== conversation.id
-                ) ?? []),
-              ].filter(Boolean),
-            },
-            broadcast: true,
-          });
-        }
-      },
-      onCompleted: ({ message }) => {
-        if (!message.files?.length) {
-          setContent('');
-        }
-        setTimeout(() => {
-          inputRef.current?.focus();
-        }, 500);
-        onSent?.(message as MessageModel);
-      },
-    });
+            };
+            cache.writeQuery({
+              query: GET_CONVERSATION_QUERY,
+              variables: { id: conversationId, filter: LIVE_MESSAGES_FILTER },
+              data: { conversation },
+            });
+            const readConversationsResult = cache.readQuery({
+              query: GET_CONVERSATIONS_QUERY,
+            });
+            cache.writeQuery({
+              query: GET_CONVERSATIONS_QUERY,
+              data: {
+                conversations: [
+                  conversation,
+                  ...(readConversationsResult?.conversations?.filter(
+                    (c) => c?.id !== conversationId
+                  ) ?? []),
+                ].filter(Boolean),
+              },
+              broadcast: true,
+            });
+          }
+        },
+        onCompleted: ({ message }) => {
+          if (!message) {
+            return;
+          }
+          if (!message.files?.length) {
+            setContent('');
+          }
+          setTimeout(() => {
+            inputRef.current?.focus();
+          }, 500);
+          onSent?.(message);
+        },
+      }
+    );
 
     React.useEffect(() => {
       if (shouldSetAutofocus) {
@@ -140,9 +151,17 @@ export const ComposeMessage = React.memo(
                     })),
 
                     recipientUser:
-                      destination.user && pick(destination.user, 'id'),
+                      destination.user?.id !== undefined
+                        ? {
+                            id: destination.user.id,
+                          }
+                        : undefined,
                     recipientGroup:
-                      destination.group && pick(destination.group, 'id'),
+                      destination.group?.id !== undefined
+                        ? {
+                            id: destination.group.id,
+                          }
+                        : undefined,
                   },
                 },
                 onCompleted: () => {

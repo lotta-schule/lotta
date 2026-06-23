@@ -6,13 +6,14 @@ import { useApolloClient } from '@apollo/client/react';
 import { useRouter } from 'next/navigation.js';
 import { Header, Main, Sidebar } from '#/layout';
 import { isBrowser } from '#/util/isBrowser';
-import { ConversationModel } from '#/model';
+import { FragmentOf } from '#/api/graphql';
 import { MessagingView } from './MessagingView';
 
-import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
+import { GET_CONVERSATIONS_QUERY } from './_graphql/GetConversationsQuery';
+import { CONVERSATION_FRAGMENT } from './_graphql/fragments';
 
 export interface MessagingPageProps {
-  conversations?: ConversationModel[];
+  conversations?: FragmentOf<typeof CONVERSATION_FRAGMENT>[];
 }
 
 export const MessagingPage = React.memo(
@@ -26,7 +27,7 @@ export const MessagingPage = React.memo(
 
     if (isBrowser() && conversations && !didWriteCache.current) {
       apolloClient.writeQuery({
-        query: GetConversationsQuery,
+        query: GET_CONVERSATIONS_QUERY,
         data: {
           conversations,
         },

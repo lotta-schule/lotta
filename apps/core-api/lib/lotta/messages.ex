@@ -17,10 +17,29 @@ defmodule Lotta.Messages do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
-  def query(queryable, _params) do
+  def query(queryable, params) do
     queryable
-    |> order_by(desc: :updated_at, desc: :inserted_at, desc: :id)
+    |> order_by(desc: :id)
+    |> filter_query(params[:filter] || %{})
   end
+
+  defp filter_query(query, filter) when map_size(filter) == 0, do: query
+
+  defp filter_query(query, filter) do
+    query
+    |> maybe_filter_before(filter[:before])
+    |> maybe_filter_first(filter[:first])
+  end
+
+  defp maybe_filter_before(query, nil), do: query
+
+  defp maybe_filter_before(query, before_id) do
+    before_id = String.to_integer(to_string(before_id))
+    from(q in query, where: q.id < ^before_id)
+  end
+
+  defp maybe_filter_first(query, nil), do: query
+  defp maybe_filter_first(query, limit), do: from(q in query, limit: ^limit)
 
   @doc """
   Returns a list of active conversations for a given user

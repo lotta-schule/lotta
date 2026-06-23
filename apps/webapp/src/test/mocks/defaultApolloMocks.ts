@@ -8,7 +8,7 @@ import { GET_USER_GROUPS } from '#/util/tenant/useUserGroups';
 
 import GetCategoriesQuery from '#/api/query/GetCategoriesQuery.graphql';
 import GetTagsQuery from '#/api/query/GetTagsQuery.graphql';
-import ReceiveMessageSubscription from '#/api/subscription/ReceiveMessageSubscription.graphql';
+import { RECEIVE_MESSAGE_SUBSCRIPTION } from '#/messaging/_graphql/ReceiveMessageSubscription';
 
 export interface ApolloMocksOptions {
   currentUser?: CurrentUser;
@@ -56,7 +56,7 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
       },
     },
     {
-      request: { query: ReceiveMessageSubscription },
+      request: { query: RECEIVE_MESSAGE_SUBSCRIPTION },
       result: {},
     },
   ];
