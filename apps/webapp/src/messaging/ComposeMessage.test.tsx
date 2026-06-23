@@ -7,9 +7,8 @@ import {
 } from '#/test/fixtures';
 import { UserBrowser, UserBrowserProps } from '#/shared/browser';
 import { ComposeMessage } from './ComposeMessage';
-import { MessageModel } from '#/model';
 
-import SendMessageMutation from '#/api/mutation/SendMessageMutation.graphql';
+import { SEND_MESSAGE_MUTATION } from './_graphql/SendMessageMutation';
 
 vi.mock('#/shared/browser', async (importOriginal) => {
   const originalModule: typeof UserBrowser = await importOriginal();
@@ -68,7 +67,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
       const additionalMocks = [
         {
           request: {
-            query: SendMessageMutation,
+            query: SEND_MESSAGE_MUTATION,
             variables: {
               message: {
                 content: 'Hallo!',
@@ -131,7 +130,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
       const additionalMocks = [
         {
           request: {
-            query: SendMessageMutation,
+            query: SEND_MESSAGE_MUTATION,
             variables: {
               message: {
                 content: '',
@@ -204,7 +203,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
       const additionalMocks = [
         {
           request: {
-            query: SendMessageMutation,
+            query: SEND_MESSAGE_MUTATION,
             variables: {
               message: {
                 content: 'Hallo!',
@@ -239,7 +238,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
           },
         },
       ];
-      const onSent = vi.fn((message: MessageModel) => {
+      const onSent = vi.fn((message: { id: string | number }) => {
         expect(message.id).toEqual(1);
       });
       const screen = render(

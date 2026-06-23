@@ -1,13 +1,12 @@
-import { NewMessageDestination } from '#/model';
 import {
   createConversation,
   elternGroup,
   SomeUser,
   SomeUserin,
 } from '#/test/fixtures';
-import { Message } from './Message';
+import { Message, NewMessageDestination } from './Message';
 
-describe('util/model/Message', () => {
+describe('messaging/Message', () => {
   it('should show the correct user name if Destination object describes a user', () => {
     const destination: NewMessageDestination = {
       user: SomeUserin,

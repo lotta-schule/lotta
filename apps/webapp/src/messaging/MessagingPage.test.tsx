@@ -8,8 +8,9 @@ import {
 } from '#/test/fixtures';
 import { MessagingPage } from './MessagingPage';
 
-import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
-import GetConversationQuery from '#/api/query/GetConversationQuery.graphql';
+import { GET_CONVERSATIONS_QUERY } from './_graphql/GetConversationsQuery';
+import { GET_CONVERSATION_QUERY } from './_graphql/GetConversationQuery';
+import { LIVE_MESSAGES_FILTER } from './_graphql/fragments';
 
 describe('pages/messaging', () => {
   const conversations = [
@@ -19,13 +20,13 @@ describe('pages/messaging', () => {
 
   const additionalMocks = [
     {
-      request: { query: GetConversationsQuery },
+      request: { query: GET_CONVERSATIONS_QUERY },
       result: { data: { conversations } },
     },
     ...conversations.map((conversation) => ({
       request: {
-        query: GetConversationQuery,
-        variables: { id: conversation.id },
+        query: GET_CONVERSATION_QUERY,
+        variables: { id: conversation.id, filter: LIVE_MESSAGES_FILTER },
       },
       result: { data: { conversation } },
     })),

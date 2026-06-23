@@ -1,18 +1,19 @@
 import * as React from 'react';
 import { Badge, Button } from '@lotta-schule/hubert';
-import { ConversationModel } from '#/model';
+import { FragmentOf } from '#/api/graphql';
 import { useCurrentUser } from '#/util/user/useCurrentUser';
 import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
 import { User } from '#/util/model';
 import { format } from 'date-fns';
-import { Message } from '#/util/model/Message';
+import { Message } from './Message';
+import { CONVERSATION_FRAGMENT } from './_graphql/fragments';
 import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 
 import styles from './ConversationPreview.module.scss';
 
 export interface ConversationPreviewProps {
-  conversation: ConversationModel;
+  conversation: FragmentOf<typeof CONVERSATION_FRAGMENT>;
   selected?: boolean;
   className?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -28,10 +29,12 @@ export const ConversationPreview = React.memo(
     const currentUser = useCurrentUser()!;
 
     const user = React.useMemo(
-      () => conversation.users.find((u) => u.id !== currentUser?.id) ?? null,
+      () =>
+        (conversation.users ?? []).find((u) => u.id !== currentUser?.id) ??
+        null,
       [conversation, currentUser]
     );
-    const group = conversation.groups[0] ?? null;
+    const group = conversation.groups?.[0] ?? null;
 
     if (!currentUser) {
       return null;
@@ -55,12 +58,16 @@ export const ConversationPreview = React.memo(
             {user && User.getName(user)}
             {group?.name}
           </strong>
-          <Badge value={conversation.unreadMessages} />
+          <Badge value={conversation.unreadMessages ?? 0} />
         </div>
         <div className={styles.dateLabel}>
-          {format(new Date(conversation.updatedAt), 'P', {
-            locale: de,
-          })}
+          {format(
+            new Date(conversation.updatedAt ?? conversation.insertedAt!),
+            'P',
+            {
+              locale: de,
+            }
+          )}
         </div>
       </Button>
     );

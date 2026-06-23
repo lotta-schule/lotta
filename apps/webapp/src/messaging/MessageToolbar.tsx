@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, SplitViewButton, Toolbar } from '@lotta-schule/hubert';
 import { faAdd, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import { NewMessageDestination } from '#/model';
+import { NewMessageDestination } from './Message';
 import { Icon } from '#/shared/Icon';
 import { CreateMessageDialog } from './CreateMessageDialog';
 

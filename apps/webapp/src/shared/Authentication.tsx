@@ -2,61 +2,60 @@
 
 import * as React from 'react';
 import { useCurrentUser } from '#/util/user/useCurrentUser';
-import { ConversationModel, ID, MessageModel } from '#/model';
 import { useSubscription } from '@apollo/client/react';
-import pick from 'lodash/pick.js';
+import uniqBy from 'lodash/uniqBy';
 
-import ReceiveMessageSubscription from '#/api/subscription/ReceiveMessageSubscription.graphql';
-import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
-import GetConversationQuery from '#/api/query/GetConversationQuery.graphql';
+import { RECEIVE_MESSAGE_SUBSCRIPTION } from '#/messaging/_graphql/ReceiveMessageSubscription';
+import { GET_CONVERSATIONS_QUERY } from '#/messaging/_graphql/GetConversationsQuery';
+import { GET_CONVERSATION_QUERY } from '#/messaging/_graphql/GetConversationQuery';
+import { LIVE_MESSAGES_FILTER } from '#/messaging/_graphql/fragments';
 
 const Authentication = React.memo(() => {
   const currentUser = useCurrentUser();
 
-  useSubscription<{ message: MessageModel }>(ReceiveMessageSubscription, {
+  useSubscription(RECEIVE_MESSAGE_SUBSCRIPTION, {
     skip: typeof window === 'undefined' || !currentUser,
     onData: ({ client, data }) => {
       const message = data.data?.message;
-      if (message && currentUser && message.user.id !== currentUser.id) {
-        const readConversationResult = client.readQuery<
-          { conversation: ConversationModel },
-          { id: ID }
-        >({
-          query: GetConversationQuery,
-          variables: { id: message.conversation!.id },
+      if (message && currentUser && message.user?.id !== currentUser.id) {
+        const conversationId = message.conversation.id!;
+        const readConversationResult = client.readQuery({
+          query: GET_CONVERSATION_QUERY,
+          variables: { id: conversationId, filter: LIVE_MESSAGES_FILTER },
         });
         const conversation = {
           ...readConversationResult?.conversation,
           ...message.conversation,
-          messages: [
-            message,
-            ...(readConversationResult?.conversation.messages ?? []),
-          ],
+          id: conversationId,
+          messages: uniqBy(
+            [
+              message,
+              ...(readConversationResult?.conversation?.messages ?? []),
+            ],
+            'id'
+          ),
         };
         client.writeQuery({
-          query: GetConversationQuery,
-          variables: { id: conversation.id },
+          query: GET_CONVERSATION_QUERY,
+          variables: { id: conversationId, filter: LIVE_MESSAGES_FILTER },
           data: { conversation },
         });
-        const readConversationsResult = client.readQuery<{
-          conversations: ConversationModel[];
-        }>({ query: GetConversationsQuery });
+        const readConversationsResult = client.readQuery({
+          query: GET_CONVERSATIONS_QUERY,
+        });
         client.writeQuery({
-          query: GetConversationsQuery,
+          query: GET_CONVERSATIONS_QUERY,
           data: {
             conversations: [
               {
                 ...conversation,
                 unreadMessages:
                   (readConversationsResult?.conversations?.find(
-                    (c) => c.id === message.conversation!.id
+                    (c) => c?.id === conversationId
                   )?.unreadMessages ?? 0) + 1,
-                messages: conversation.messages.map((c) =>
-                  pick(c, ['id', '__typename'])
-                ),
               },
               ...(readConversationsResult?.conversations?.filter(
-                (c) => c.id !== conversation.id
+                (c) => c?.id !== conversationId
               ) ?? []),
             ].filter(Boolean),
           },
