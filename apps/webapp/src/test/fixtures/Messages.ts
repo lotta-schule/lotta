@@ -1,10 +1,18 @@
-import { ConversationModel, NewMessageDestination, UserModel } from '#/model';
+import { UserModel } from '#/model';
+import { FragmentOf } from '#/api/graphql';
+import { NewMessageDestination } from '#/messaging/Message';
+import {
+  CONVERSATION_FRAGMENT,
+  MESSAGE_FRAGMENT,
+} from '#/messaging/_graphql/fragments';
 
 export const createConversation = (
   from: UserModel,
   { user, group }: NewMessageDestination,
   unreadMessages = 0
-): ConversationModel => {
+): FragmentOf<typeof CONVERSATION_FRAGMENT> & {
+  messages: FragmentOf<typeof MESSAGE_FRAGMENT>[];
+} => {
   return {
     __typename: 'Conversation',
     id: String(Math.floor(Math.random() * 10_000)),

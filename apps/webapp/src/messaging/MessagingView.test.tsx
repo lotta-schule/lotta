@@ -11,10 +11,11 @@ import { MessagingView } from './MessagingView';
 
 import styles from './ConversationPreview.module.scss';
 
-import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
-import GetConversationQuery from '#/api/query/GetConversationQuery.graphql';
+import { GET_CONVERSATIONS_QUERY } from './_graphql/GetConversationsQuery';
+import { GET_CONVERSATION_QUERY } from './_graphql/GetConversationQuery';
+import { LIVE_MESSAGES_FILTER } from './_graphql/fragments';
+import { SEND_MESSAGE_MUTATION } from './_graphql/SendMessageMutation';
 import SearchUsersQuery from '#/api/query/SearchUsersQuery.graphql';
-import SendMessageMutation from '#/api/mutation/SendMessageMutation.graphql';
 
 describe('src/messaging/MessagingView', () => {
   const conversations = [
@@ -23,13 +24,13 @@ describe('src/messaging/MessagingView', () => {
   ];
   const additionalMocks = [
     {
-      request: { query: GetConversationsQuery },
+      request: { query: GET_CONVERSATIONS_QUERY },
       result: { data: { conversations } },
     },
     ...conversations.map((conversation) => ({
       request: {
-        query: GetConversationQuery,
-        variables: { id: conversation.id },
+        query: GET_CONVERSATION_QUERY,
+        variables: { id: conversation.id, filter: LIVE_MESSAGES_FILTER },
       },
       result: { data: { conversation } },
     })),
@@ -147,7 +148,7 @@ describe('src/messaging/MessagingView', () => {
       const createMsgMock = [
         {
           request: {
-            query: SendMessageMutation,
+            query: SEND_MESSAGE_MUTATION,
             variables: {
               message: {
                 content: 'Hallo!',

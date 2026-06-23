@@ -1579,7 +1579,15 @@ const introspection = {
                 }
               }
             },
-            "args": [],
+            "args": [
+              {
+                "name": "filter",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "MessageFilter"
+                }
+              }
+            ],
             "isDeprecated": false
           },
           {
@@ -2865,6 +2873,27 @@ const introspection = {
           }
         ],
         "interfaces": []
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "MessageFilter",
+        "inputFields": [
+          {
+            "name": "before",
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID"
+            }
+          },
+          {
+            "name": "first",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int"
+            }
+          }
+        ],
+        "isOneOf": false
       },
       {
         "kind": "INPUT_OBJECT",

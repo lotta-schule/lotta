@@ -6,9 +6,11 @@ defmodule LottaWeb.Schema.Messages.Conversation do
   object :conversation do
     field(:id, :id)
 
-    field(:messages, list_of(non_null(:message)),
-      resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Messages)
-    )
+    field(:messages, list_of(non_null(:message))) do
+      arg(:filter, :message_filter)
+
+      resolve(Absinthe.Resolution.Helpers.dataloader(Lotta.Messages))
+    end
 
     field(:users, list_of(non_null(:user)),
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts)

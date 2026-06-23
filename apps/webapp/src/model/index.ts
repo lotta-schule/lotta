@@ -5,7 +5,6 @@ export * from './ContentModuleModel';
 export * from './EditModePayload';
 export * from './FeedbackModel';
 export * from './FileModel';
-export * from './MessageModel';
 export * from './PageModel';
 export * from './ScheduleResult';
 export * from './TenantModel';

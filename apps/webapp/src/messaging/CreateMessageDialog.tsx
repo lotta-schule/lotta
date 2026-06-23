@@ -10,7 +10,8 @@ import {
 } from '@lotta-schule/hubert';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
-import { NewMessageDestination, UserGroupModel } from '#/model';
+import { UserGroupModel } from '#/model';
+import { NewMessageDestination } from './Message';
 import { SearchUserField } from '#/component/form';
 import { useCurrentUser } from '#/util/user/useCurrentUser';
 import { Icon } from '#/shared/Icon';

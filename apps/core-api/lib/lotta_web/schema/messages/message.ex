@@ -10,6 +10,14 @@ defmodule LottaWeb.Schema.Messages.Message do
     field(:recipient_group, :select_user_group_input)
   end
 
+  input_object :message_filter do
+    field(:before, :id,
+      description: "Return only messages with an id lower than this (older than)"
+    )
+
+    field(:first, :integer, description: "Limit the number of results to return")
+  end
+
   object :message do
     field(:id, non_null(:id))
     field(:user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts))

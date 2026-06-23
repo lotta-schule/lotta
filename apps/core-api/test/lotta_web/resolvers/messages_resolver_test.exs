@@ -396,6 +396,97 @@ defmodule LottaWeb.MessagesResolverTest do
     end
   end
 
+  describe "conversation messages pagination" do
+    @query """
+    query GetConversation($id: ID!, $filter: MessageFilter) {
+      conversation(id: $id) {
+        messages(filter: $filter) {
+          id
+          content
+        }
+      }
+    }
+    """
+
+    test "limits the number of returned messages with filter.first, newest first", %{
+      user_jwt: user_jwt,
+      con_user_user2: con_user_user2
+    } do
+      # POST (not GET) because nested Int args (`filter.first`) inside GraphQL variables
+      # don't survive GET's query-string encoding/decoding round trip in this test setup
+      # (the same limitation that left a similar ArticleFilter test commented out in
+      # articles_resolver_test.exs) -- POST sends variables as a real JSON body, so the
+      # `Int` stays an integer instead of becoming the string "2".
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{id: con_user_user2.id, filter: %{first: 2}}
+        )
+        |> json_response(200)
+
+      assert %{"data" => %{"conversation" => %{"messages" => messages}}} = res
+
+      assert Enum.map(messages, & &1["content"]) == [
+               "Ich frag mal in die Gruppe",
+               "Bereit für das Deployment"
+             ]
+    end
+
+    test "paginates older messages using filter.before without overlap or gaps", %{
+      user_jwt: user_jwt,
+      con_user_user2: con_user_user2
+    } do
+      conn =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+
+      %{"data" => %{"conversation" => %{"messages" => page1}}} =
+        conn
+        |> post("/api", query: @query, variables: %{id: con_user_user2.id, filter: %{first: 2}})
+        |> json_response(200)
+
+      last_id_of_page1 = page1 |> List.last() |> Map.fetch!("id")
+
+      %{"data" => %{"conversation" => %{"messages" => page2}}} =
+        conn
+        |> post("/api",
+          query: @query,
+          variables: %{
+            id: con_user_user2.id,
+            filter: %{first: 2, before: last_id_of_page1}
+          }
+        )
+        |> json_response(200)
+
+      assert Enum.map(page2, & &1["content"]) == [
+               "Was meinst du damit?",
+               "OK, alles bereit?"
+             ]
+
+      all_ids = Enum.map(page1 ++ page2, & &1["id"])
+      assert Enum.uniq(all_ids) == all_ids
+    end
+
+    test "returns all messages when no filter is given (back-compat)", %{
+      user_jwt: user_jwt,
+      con_user_user2: con_user_user2
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query, variables: %{id: con_user_user2.id})
+        |> json_response(200)
+
+      assert %{"data" => %{"conversation" => %{"messages" => messages}}} = res
+      assert length(messages) == 4
+    end
+  end
+
   describe "create message mutation" do
     @query """
     mutation CreateMessage($message: MessageInput!) {

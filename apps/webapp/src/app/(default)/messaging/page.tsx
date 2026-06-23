@@ -1,16 +1,17 @@
 import { getClient } from '#/api/client';
-import { ConversationModel } from '#/model';
 import { MessagingPage } from '#/messaging/MessagingPage';
 
-import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
+import { GET_CONVERSATIONS_QUERY } from '#/messaging/_graphql/GetConversationsQuery';
 
 export default async function MessagingRoute() {
   const client = await getClient();
-  const { data } = await client.query<{
-    conversations: ConversationModel[];
-  }>({
-    query: GetConversationsQuery,
+  const { data } = await client.query({
+    query: GET_CONVERSATIONS_QUERY,
   });
 
-  return <MessagingPage conversations={data?.conversations} />;
+  const conversations = data?.conversations?.filter(
+    (c): c is NonNullable<typeof c> => c != null
+  );
+
+  return <MessagingPage conversations={conversations} />;
 }

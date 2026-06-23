@@ -7,44 +7,44 @@ import {
   useIsMobile,
 } from '@lotta-schule/hubert';
 import { ErrorMessage, LinearProgress } from '@lotta-schule/hubert';
-import {
-  ConversationModel,
-  MessageModel,
-  NewMessageDestination,
-} from '#/model';
+import { FragmentOf } from '#/api/graphql';
 import { ComposeMessage } from './ComposeMessage';
 import { ConversationPreview } from './ConversationPreview';
 import { MessagesThread } from './MessagesThread';
 import { MessageToolbar } from './MessageToolbar';
 import { useCurrentUser } from '#/util/user/useCurrentUser';
-import { Message } from '#/util/model/Message';
+import { Message, NewMessageDestination } from './Message';
+
+import { GET_CONVERSATIONS_QUERY } from './_graphql/GetConversationsQuery';
+import { CONVERSATION_FRAGMENT } from './_graphql/fragments';
 
 import styles from './MessagingView.module.scss';
 
-import GetConversationsQuery from '#/api/query/GetConversationsQuery.graphql';
+type ConversationFragment = FragmentOf<typeof CONVERSATION_FRAGMENT>;
 
 export const MessagingView = React.memo(() => {
   const isMobile = useIsMobile();
   const currentUser = useCurrentUser()!;
 
-  const {
-    data,
-    loading: isLoading,
-    error,
-  } = useQuery<{ conversations: ConversationModel[] }>(GetConversationsQuery);
+  const { data, loading: isLoading, error } = useQuery(GET_CONVERSATIONS_QUERY);
 
-  const conversations = data?.conversations ?? [];
+  const conversations = (data?.conversations ?? []).filter(
+    (c): c is NonNullable<typeof c> => c != null
+  );
 
   const [selectedConversation, setSelectedConversation] =
-    React.useState<ConversationModel | null>(null);
+    React.useState<ConversationFragment | null>(null);
   const [createMessageDestination, setCreateMessageDestination] =
     React.useState<NewMessageDestination | null>(null);
 
-  const onMessageSent = React.useCallback((msg: MessageModel) => {
-    if (msg.conversation) {
-      setSelectedConversation(msg.conversation);
-    }
-  }, []);
+  const onMessageSent = React.useCallback(
+    (msg: { conversation: ConversationFragment }) => {
+      if (msg.conversation) {
+        setSelectedConversation(msg.conversation);
+      }
+    },
+    []
+  );
 
   React.useEffect(() => {
     if (createMessageDestination) {
@@ -90,13 +90,13 @@ export const MessagingView = React.memo(() => {
                 const conversation = conversations.find((c) => {
                   if (
                     destination.group &&
-                    c.groups[0]?.id == destination.group.id
+                    c.groups?.[0]?.id == destination.group.id
                   ) {
                     return true;
                   }
                   if (
                     destination.user &&
-                    c.users.find((u) => u.id === destination.user.id)
+                    c.users?.find((u) => u.id === destination.user.id)
                   ) {
                     return true;
                   }
@@ -114,7 +114,10 @@ export const MessagingView = React.memo(() => {
             {conversations.map((conversation) => (
               <ConversationPreview
                 className={styles.conversationPreview}
-                key={[...conversation.users, ...conversation.groups]
+                key={[
+                  ...(conversation.users ?? []),
+                  ...(conversation.groups ?? []),
+                ]
                   .map(({ id }) => id)
                   .join('-')}
                 conversation={conversation}
@@ -128,19 +131,10 @@ export const MessagingView = React.memo(() => {
           </SplitViewNavigation>
           <SplitViewContent>
             {selectedConversation && (
-              <>
-                {selectedConversation?.messages?.length ? (
-                  <MessagesThread
-                    conversation={selectedConversation}
-                    key={selectedConversation.id}
-                  />
-                ) : (
-                  <div className={styles.noMessagesWrapper}>
-                    In dieser Unterhaltung wurden noch keine Nachrichten
-                    geschrieben.
-                  </div>
-                )}
-              </>
+              <MessagesThread
+                conversation={selectedConversation}
+                key={selectedConversation.id}
+              />
             )}
             {createMessageDestination?.user && (
               <div className={styles.noMessagesWrapper}>
