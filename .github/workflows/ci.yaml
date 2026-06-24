@@ -107,7 +107,7 @@ jobs:
       minio:
         image: lazybit/minio
         ports:
-          - 9000:9000
+          - 9100:9000
         env:
           MINIO_ACCESS_KEY: minio
           MINIO_SECRET_KEY: miniosecret
@@ -151,7 +151,7 @@ jobs:
       - uses: hostwithquantum/setup-mc@main
         with:
           alias-name: minio
-          alias-url: http://localhost:9000
+          alias-url: http://localhost:9100
           alias-access-key: minio
           alias-secret-key: miniosecret
 

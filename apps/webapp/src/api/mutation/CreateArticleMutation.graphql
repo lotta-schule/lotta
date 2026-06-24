@@ -44,6 +44,17 @@ mutation CreateArticle($article: ArticleInput!) {
       id
       nickname
       name
+      avatarImageFile {
+        id
+        formats(category: "AVATAR") {
+          name
+          url
+          type
+          availability {
+            status
+          }
+        }
+      }
     }
   }
 }
