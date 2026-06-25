@@ -162,14 +162,14 @@ defmodule Lotta.StorageTest do
 
     test "should call get_http_url", %{user_file: user_file} do
       assert Storage.get_http_url(user_file) =~
-               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-test\/tenant_test\//
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9100\/lotta-test\/tenant_test\//
     end
 
     test "should call get_http_url with download path, but do nothing of it", %{
       user_file: user_file
     } do
       assert Storage.get_http_url(user_file) =~
-               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-test\/tenant_test\/.*/
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9100\/lotta-test\/tenant_test\/.*/
     end
 
     test "should generate a presigned URL when signed option is true", %{
@@ -178,7 +178,7 @@ defmodule Lotta.StorageTest do
       url = Storage.get_http_url(user_file, signed: true)
 
       assert url =~
-               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-test\/tenant_test\/.*/
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9100\/lotta-test\/tenant_test\/.*/
 
       assert url =~ ~r/X-Amz-Algorithm=/
       assert url =~ ~r/X-Amz-Credential=/

@@ -89,7 +89,7 @@ defmodule SystemConfig do
   defp default("REDIS_PASSWORD", env) when env in [:dev, :test], do: "lotta"
 
   defp default("UGC_S3_COMPAT_ENDPOINT", env) when env in [:dev, :test],
-    do: "http://localhost:9000"
+    do: "http://localhost:9100"
 
   defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "minio"
 
@@ -99,7 +99,7 @@ defmodule SystemConfig do
   defp default("REMOTE_STORAGE_DEFAULT_STORE", env) when env in [:dev, :test], do: "minio"
   defp default("REMOTE_STORAGE_PREFIX", _), do: nil
   defp default("REMOTE_STORAGE_STORES", env) when env in [:dev, :test], do: "minio"
-  defp default("REMOTE_STORAGE_MINIO_ENDPOINT", env), do: "http://localhost:9000/lotta-#{env}"
+  defp default("REMOTE_STORAGE_MINIO_ENDPOINT", env), do: "http://localhost:9100/lotta-#{env}"
   defp default("REMOTE_STORAGE_MINIO_BUCKET", env), do: "lotta-#{env}"
 
   defp default("MAILER_ADAPTER", :test), do: "test"
