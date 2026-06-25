@@ -5079,7 +5079,15 @@ const introspection = {
                 "name": "Article"
               }
             },
-            "args": [],
+            "args": [
+              {
+                "name": "filter",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "ArticleFilter"
+                }
+              }
+            ],
             "isDeprecated": false
           },
           {

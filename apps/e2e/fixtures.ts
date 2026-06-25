@@ -10,12 +10,12 @@ export const test = base.extend<
   }
 >({
   context: async ({ context }, use) => {
-    await context.route('http://minio:9000/**', (route) =>
+    await context.route('http://minio:9100/**', (route) =>
       route.continue({
         url: route
           .request()
           .url()
-          .replace('http://minio:9000', 'http://localhost:9000'),
+          .replace('http://minio:9100', 'http://localhost:9100'),
       })
     );
     await use(context);

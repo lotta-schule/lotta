@@ -1,8 +1,18 @@
 import * as React from 'react';
-import { render, screen, waitFor, userEvent } from '#/test/util';
+import {
+  render,
+  screen,
+  waitFor,
+  userEvent,
+  currentApolloCache,
+} from '#/test/util';
 import { SomeUser } from '#/test/fixtures';
 import { CreateArticleDialog } from './CreateArticleDialog';
 import CreateArticleMutation from '#/api/mutation/CreateArticleMutation.graphql';
+import {
+  GET_OWN_ARTICLES_QUERY,
+  OWN_ARTICLES_INITIAL_FILTER,
+} from '#/profile/_graphql/GetOwnArticles';
 
 describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {
   it('should show the dialog if isOpen is true', async () => {
@@ -98,6 +108,27 @@ describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {
 
       await waitFor(() => {
         expect(onConfirm).toHaveBeenCalled();
+      });
+    });
+
+    it('should write the created article into the GetOwnArticles cache slot the profile articles page reads from', async () => {
+      const fireEvent = userEvent.setup();
+      render(
+        <CreateArticleDialog isOpen onConfirm={() => {}} onAbort={() => {}} />,
+        {},
+        { currentUser: SomeUser, additionalMocks: mocks }
+      );
+      await fireEvent.type(screen.getByRole('textbox'), 'Test');
+      await fireEvent.click(screen.getByRole('button', { name: /erstellen/ }));
+
+      await waitFor(() => {
+        const cached = currentApolloCache?.readQuery({
+          query: GET_OWN_ARTICLES_QUERY,
+          variables: { filter: OWN_ARTICLES_INITIAL_FILTER },
+        });
+        expect(cached?.articles).toEqual([
+          expect.objectContaining({ id: 666, title: 'Test' }),
+        ]);
       });
     });
 

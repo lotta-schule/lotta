@@ -69,8 +69,8 @@ defmodule LottaWeb.ArticleResolver do
     end
   end
 
-  def own(_args, %{context: %{current_user: current_user}}) do
-    {:ok, Content.list_user_articles(current_user)}
+  def own(args, %{context: %{current_user: current_user}}) do
+    {:ok, Content.list_user_articles(current_user, filter: args[:filter])}
   end
 
   def by_tag(%{tag: tag}, %{context: context}) do

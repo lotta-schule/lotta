@@ -147,17 +147,23 @@ defmodule Lotta.Content do
   """
   @doc since: "1.0.0"
   @spec list_user_articles(User.t()) :: list(Article.t())
-  @spec list_user_articles(User.t(), [{:base_query, Ecto.Query.t()}]) :: list(Article.t())
+  @spec list_user_articles(User.t(), [{:base_query, Ecto.Query.t()} | {:filter, filter()}]) ::
+          list(Article.t())
   def list_user_articles(user, opts \\ []) do
     base_query = Keyword.get(opts, :base_query, Article)
+    filter = Keyword.get(opts, :filter)
 
-    from(a in base_query,
-      join: au in "article_users",
-      on: au.article_id == a.id,
-      where: au.user_id == ^user.id,
-      order_by: [desc: :updated_at, desc: :id],
-      limit: 75
-    )
+    query =
+      from(a in base_query,
+        join: au in "article_users",
+        on: au.article_id == a.id,
+        where: au.user_id == ^user.id
+      )
+
+    case filter do
+      nil -> from(q in query, order_by: [desc: :updated_at, desc: :id], limit: 75)
+      filter -> filter_query(query, filter)
+    end
     |> Repo.all()
   end
 

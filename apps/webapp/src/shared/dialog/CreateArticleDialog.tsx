@@ -10,9 +10,12 @@ import {
   Label,
 } from '@lotta-schule/hubert';
 import { ArticleModel, ArticleModelInput } from '#/model';
+import {
+  GET_OWN_ARTICLES_QUERY,
+  OWN_ARTICLES_INITIAL_FILTER,
+} from '#/profile/_graphql/GetOwnArticles';
 
 import CreateArticleMutation from '#/api/mutation/CreateArticleMutation.graphql';
-import GetOwnArticlesQuery from '#/api/query/GetOwnArticles.graphql';
 
 export interface CreateArticleDialogProps {
   isOpen: boolean;
@@ -34,7 +37,10 @@ export const CreateArticleDialog = React.memo(
           try {
             const readOwnArticlesResult = cache.readQuery<{
               articles: ArticleModel[];
-            }>({ query: GetOwnArticlesQuery });
+            }>({
+              query: GET_OWN_ARTICLES_QUERY,
+              variables: { filter: OWN_ARTICLES_INITIAL_FILTER },
+            });
             if (readOwnArticlesResult && readOwnArticlesResult.articles) {
               ownArticles = [...readOwnArticlesResult.articles];
             }
@@ -42,7 +48,8 @@ export const CreateArticleDialog = React.memo(
             console.debug(e);
           }
           cache.writeQuery<{ articles: ArticleModel[] }>({
-            query: GetOwnArticlesQuery,
+            query: GET_OWN_ARTICLES_QUERY,
+            variables: { filter: OWN_ARTICLES_INITIAL_FILTER },
             data: {
               articles: [...ownArticles, data.article],
             },

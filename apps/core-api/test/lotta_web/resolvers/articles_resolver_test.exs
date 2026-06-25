@@ -2432,6 +2432,117 @@ defmodule LottaWeb.ArticleResolverTest do
     end
   end
 
+  describe "ownArticles query with a filter" do
+    @query """
+    query ownArticles($filter: ArticleFilter) {
+      ownArticles(filter: $filter) {
+        id
+        title
+        updatedAt
+      }
+    }
+    """
+
+    # `get/3`'s `variables` get query-string-encoded, which stringifies nested
+    # values (an existing, previously-worked-around limitation — see the
+    # commented-out "category: returns a list of articles, but limit to 2"
+    # test above) and Absinthe then rejects `"first": "2"` as not an Int.
+    # Posting a JSON body instead preserves the actual types.
+    defp graphql_post(conn, query, variables) do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api", Jason.encode!(%{query: query, variables: variables}))
+    end
+
+    test "limits the number of results when :first is given", %{lehrer_jwt: lehrer_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
+        |> graphql_post(@query, %{"filter" => %{"first" => 2}})
+        |> json_response(200)
+
+      assert %{"data" => %{"ownArticles" => articles}} = res
+      assert length(articles) == 2
+    end
+
+    test "pages through results with :first and :updatedBefore without overlap or gaps" do
+      # Deliberately uses its own user/articles with explicit, well-separated
+      # `updated_at` values rather than the shared `lehrer` fixtures from
+      # `setup/0` above: those are created via `insert(:article, updated_at: ...)
+      # |> with_users([lehrer])`, and `with_users/2` re-touches the record via
+      # `Repo.update!/1` afterwards, which re-triggers the schema's `timestamps()`
+      # autogeneration and silently overwrites `updated_at` to "now" for all of
+      # them — they end up with effectively the same timestamp, which would make
+      # `updatedBefore` cursoring degenerate (a strict `<` cursor can't split a
+      # tie). Applying `updated_at` in a separate update *after* `with_users/2`
+      # avoids that.
+      user = insert(:user)
+      {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
+
+      articles =
+        for i <- 1..4 do
+          insert(:article)
+          |> with_users([user])
+          |> Ecto.Changeset.change(
+            updated_at: ~U[2024-01-01 00:00:00Z] |> DateTime.add(i, :minute)
+          )
+          |> Repo.update!()
+        end
+
+      conn =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+
+      %{"data" => %{"ownArticles" => all_articles}} =
+        conn |> get("/api", query: @query) |> json_response(200)
+
+      assert length(all_articles) == length(articles)
+
+      %{"data" => %{"ownArticles" => page1}} =
+        conn
+        |> graphql_post(@query, %{"filter" => %{"first" => 2}})
+        |> json_response(200)
+
+      assert length(page1) == 2
+      cursor = page1 |> List.last() |> Map.fetch!("updatedAt")
+
+      %{"data" => %{"ownArticles" => page2}} =
+        conn
+        |> graphql_post(@query, %{"filter" => %{"first" => 2, "updatedBefore" => cursor}})
+        |> json_response(200)
+
+      assert length(page2) == 2
+
+      page1_ids = Enum.map(page1, & &1["id"])
+      page2_ids = Enum.map(page2, & &1["id"])
+
+      assert MapSet.disjoint?(MapSet.new(page1_ids), MapSet.new(page2_ids))
+      assert Enum.sort(page1_ids ++ page2_ids) == Enum.sort(Enum.map(all_articles, & &1["id"]))
+    end
+
+    test "omitting the filter preserves the existing unbounded behavior", %{
+      lehrer_jwt: lehrer_jwt
+    } do
+      conn =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
+
+      %{"data" => %{"ownArticles" => without_filter}} =
+        conn |> get("/api", query: @query) |> json_response(200)
+
+      %{"data" => %{"ownArticles" => with_nil_filter}} =
+        conn
+        |> graphql_post(@query, %{"filter" => nil})
+        |> json_response(200)
+
+      assert without_filter == with_nil_filter
+      assert length(without_filter) == 4
+    end
+  end
+
   describe "get tags query" do
     @query """
     query tags {
