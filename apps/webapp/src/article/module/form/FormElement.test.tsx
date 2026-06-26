@@ -4,7 +4,7 @@ import { render, waitFor, userEvent } from '#/test/util';
 import { FormElement } from './FormElement';
 import { imageFile, logosDirectory, SomeUser } from '#/test/fixtures';
 
-import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import { GetDirectoriesAndFilesQuery } from '#/shared/browser/_graphql/GetDirectoriesAndFiles';
 import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';
 
 describe('shared/article/module/form/FormElement', () => {
@@ -179,7 +179,7 @@ describe('shared/article/module/form/FormElement', () => {
       {
         request: {
           query: GetDirectoriesAndFilesQuery,
-          variables: { parentDirectoryId: null },
+          variables: { parentDirectoryId: null, filter: { first: 25 } },
         },
         result: vi.fn(() => {
           return {
@@ -207,9 +207,32 @@ describe('shared/article/module/form/FormElement', () => {
         }),
       },
       {
+        // onRequestChildNodes in UserBrowser fires without a filter (cache-first, for tree walk)
         request: {
           query: GetDirectoriesAndFilesQuery,
-          variables: { parentDirectoryId: '8743' },
+          variables: { parentDirectoryId: null },
+        },
+        result: vi.fn(() => ({
+          data: {
+            files: [
+              {
+                ...imageFile,
+                userId: user.id,
+                parentDirectory: {
+                  ...logosDirectory,
+                  user,
+                  parentDirectory: null,
+                },
+              },
+            ],
+            directories: [{ ...logosDirectory, user, parentDirectory: null }],
+          },
+        })),
+      },
+      {
+        request: {
+          query: GetDirectoriesAndFilesQuery,
+          variables: { parentDirectoryId: '8743', filter: { first: 25 } },
         },
         result: () => {
           return {
@@ -219,6 +242,14 @@ describe('shared/article/module/form/FormElement', () => {
             },
           };
         },
+      },
+      {
+        // onRequestChildNodes for logosDirectory fires without filter (cache-first)
+        request: {
+          query: GetDirectoriesAndFilesQuery,
+          variables: { parentDirectoryId: '8743' },
+        },
+        result: () => ({ data: { files: [], directories: [] } }),
       },
       {
         request: {
@@ -347,7 +378,7 @@ describe('shared/article/module/form/FormElement', () => {
       await fireEvent.click(screen.getByRole('button', { name: /auswählen/ }));
       expect(setValueFn).toHaveBeenCalledWith(
         'lotta-file-id://' +
-          '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15",' +
+          '{"id":"123","insertedAt":"2001-01-01 14:15",' +
           '"filename":"Dateiname.jpg","filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
           '"userId":"1","parentDirectory":{"id":"8743"},"size":123123}'
       );

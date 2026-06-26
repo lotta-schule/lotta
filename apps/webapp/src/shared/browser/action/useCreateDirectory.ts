@@ -2,20 +2,19 @@ import * as React from 'react';
 import { ApolloCache } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
 import { BrowserProps } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from '#/model';
 
-import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
 import CreateDirectoryMutation from '#/api/mutation/CreateDirectoryMutation.graphql';
+import {
+  BrowserDirectoryData,
+  GetDirectoriesAndFilesQuery,
+} from '../_graphql/GetDirectoriesAndFiles';
 
 const updateCache = (
   client: ApolloCache,
   parentDirectoryId: string | null,
-  directory: DirectoryModel
+  directory: BrowserDirectoryData
 ) => {
-  const cached = client.readQuery<{
-    directories: DirectoryModel[];
-    files: FileModel[];
-  }>({
+  const cached = client.readQuery({
     query: GetDirectoriesAndFilesQuery,
     variables: { parentDirectoryId },
   });
@@ -31,7 +30,7 @@ const updateCache = (
 
 export const useCreateDirectory = () => {
   const [createDirectory] = useMutation<{
-    directory: DirectoryModel;
+    directory: BrowserDirectoryData;
   }>(CreateDirectoryMutation);
 
   return React.useCallback<Required<BrowserProps>['createDirectory']>(
