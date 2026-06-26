@@ -2,9 +2,9 @@
 import { ApolloLink } from '@apollo/client';
 import {
   ApolloClient,
-  InMemoryCache,
   SSRMultipartLink,
 } from '@apollo/client-integration-nextjs';
+import { createCache } from './cache';
 import { Defer20220824Handler } from '@apollo/client/incremental';
 import { createWebsocketLink } from './links/websocketLink';
 import { TenantModel } from '#/model';
@@ -41,7 +41,7 @@ export const createSSRClient = (
     : httpLink;
 
   return new ApolloClient({
-    cache: new InMemoryCache(),
+    cache: createCache(),
 
     link: ApolloLink.from(
       [

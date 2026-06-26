@@ -1,15 +1,10 @@
 import * as React from 'react';
 import { useLazyQuery } from '@apollo/client/react';
 import { makeDirectoryPaths } from '../makeBrowserNodes';
-import { DirectoryModel, FileModel } from '#/model';
-
-import SearchDirectoriesAndFilesQuery from '#/api/query/SearchDirectoriesAndFiles.graphql';
+import { SearchDirectoriesAndFilesQuery } from '../_graphql/SearchDirectoriesAndFiles';
 
 export const useSearchNodes = () => {
-  const [runSearch] = useLazyQuery<{
-    directories: (DirectoryModel & { path: DirectoryModel[] })[];
-    files: (FileModel & { path: DirectoryModel[] })[];
-  }>(SearchDirectoriesAndFilesQuery);
+  const [runSearch] = useLazyQuery(SearchDirectoriesAndFilesQuery);
 
   return React.useCallback(
     (searchterm: string) =>

@@ -15,9 +15,10 @@ import styles from './NodeList.module.scss';
 export type NodeListProps = {
   path: BrowserPath<'directory'>;
   nodes: null | BrowserNode[];
+  footer?: React.ReactNode;
 };
 
-export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
+export const NodeList = React.memo(({ path, nodes, footer }: NodeListProps) => {
   const isMobile = useIsMobile();
   const [isMounted, setIsMounted] = React.useState(false);
 
@@ -396,6 +397,11 @@ export const NodeList = React.memo(({ path, nodes }: NodeListProps) => {
           />
         );
       })}
+      {footer !== undefined && (
+        <li key="__footer" aria-hidden="true" role="presentation">
+          {footer}
+        </li>
+      )}
     </ul>
   );
 });

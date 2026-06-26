@@ -2,26 +2,25 @@ import * as React from 'react';
 import { ApolloCache } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
 import { BrowserProps } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from '#/model';
 
-import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import { GetDirectoriesAndFilesQuery } from '../_graphql/GetDirectoriesAndFiles';
+import { BrowserDirectoryData, BrowserFileData } from '../makeBrowserNodes';
 import UpdateDirectoryMutation from '#/api/mutation/UpdateDirectoryMutation.graphql';
 import UpdateFileMutation from '#/api/mutation/UpdateFileMutation.graphql';
 
-const updateCache = <T extends FileModel | DirectoryModel>(
+const updateCache = <T extends BrowserFileData | BrowserDirectoryData>(
   client: ApolloCache,
   initialModel: T,
-  updateResult: T extends FileModel
-    ? { file: FileModel }
-    : { directory: DirectoryModel }
+  updateResult: T extends BrowserFileData
+    ? { file: BrowserFileData }
+    : { directory: BrowserDirectoryData }
 ) => {
   const currentParentId = initialModel.parentDirectory?.id ?? null;
-  client.updateQuery<{ files: FileModel[]; directories: DirectoryModel[] }>(
+
+  client.updateQuery(
     {
       query: GetDirectoriesAndFilesQuery,
-      variables: {
-        parentDirectoryId: currentParentId,
-      },
+      variables: { parentDirectoryId: currentParentId },
       overwrite: true,
     },
     (data) =>
@@ -29,11 +28,11 @@ const updateCache = <T extends FileModel | DirectoryModel>(
         files:
           'file' in updateResult
             ? data.files.filter((f) => f.id !== initialModel.id)
-            : (data?.files ?? []),
+            : data.files,
         directories:
           'directory' in updateResult
             ? data.directories.filter((d) => d.id !== initialModel.id)
-            : (data?.directories ?? []),
+            : data.directories,
       }
   );
 
@@ -44,55 +43,42 @@ const updateCache = <T extends FileModel | DirectoryModel>(
         ? updateResult.file.parentDirectory?.id
         : null) ?? null;
 
-  client.updateQuery<{
-    files: FileModel[];
-    directories: DirectoryModel[];
-  }>(
+  client.updateQuery(
     {
       query: GetDirectoriesAndFilesQuery,
-      variables: {
-        parentDirectoryId: newParentId,
-      },
+      variables: { parentDirectoryId: newParentId },
     },
     (data) => {
-      if (!data) {
-        return null;
-      }
+      if (!data) return null;
 
-      const currentFiles = data?.files ?? [];
-      const currentDirectories = data?.directories ?? [];
-      const updated = {
+      return {
         files:
           'file' in updateResult
             ? [
-                ...currentFiles,
-                { ...(initialModel as FileModel), ...updateResult.file },
+                ...data.files,
+                { ...(initialModel as BrowserFileData), ...updateResult.file },
               ]
-            : currentFiles,
+            : data.files,
         directories:
           'directory' in updateResult
             ? [
-                ...currentDirectories,
+                ...data.directories,
                 {
-                  ...(initialModel as DirectoryModel),
+                  ...(initialModel as BrowserDirectoryData),
                   ...updateResult.directory,
                 },
               ]
-            : currentDirectories,
+            : data.directories,
       };
-
-      return updated;
     }
   );
 };
 
 export const useMoveNode = () => {
-  const [moveDirectory] = useMutation<{
-    directory: DirectoryModel;
-  }>(UpdateDirectoryMutation);
-  const [moveFile] = useMutation<{
-    file: FileModel;
-  }>(UpdateFileMutation);
+  const [moveDirectory] = useMutation<{ directory: BrowserDirectoryData }>(
+    UpdateDirectoryMutation
+  );
+  const [moveFile] = useMutation<{ file: BrowserFileData }>(UpdateFileMutation);
 
   return React.useCallback<Required<BrowserProps>['moveNode']>(
     async (node, newParent) => {

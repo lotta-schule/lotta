@@ -248,7 +248,7 @@ defmodule LottaWeb.FileResolver do
     end
   end
 
-  def files(%{parent_directory_id: parent_directory_id}, %{
+  def files(%{parent_directory_id: parent_directory_id} = args, %{
         context: %{current_user: current_user}
       })
       when not is_nil(parent_directory_id) do
@@ -262,7 +262,7 @@ defmodule LottaWeb.FileResolver do
         {:error, "Du hast nicht die Rechte, diesen Ordner zu lesen."}
 
       true ->
-        {:ok, Storage.list_files(parent_directory)}
+        {:ok, Storage.list_files(parent_directory, args[:filter])}
     end
   end
 

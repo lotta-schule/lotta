@@ -9,7 +9,7 @@ import {
   PERMANENTLY_DELETE_USER_ACCOUNT,
 } from './queries';
 
-import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import { GetDirectoriesAndFilesQuery } from '#/shared/browser/_graphql/GetDirectoriesAndFiles';
 
 const createMockFile = (id: string, filename: string) => ({
   id,
@@ -56,7 +56,7 @@ describe('profile/deleteUserProfilePage/DeleteUserProfilePage', () => {
     ...Array.from({ length: 3 }).fill({
       request: {
         query: GetDirectoriesAndFilesQuery,
-        variables: { parentDirectoryId: null },
+        variables: { parentDirectoryId: null, filter: { first: 25 } },
       },
       result: {
         data: {

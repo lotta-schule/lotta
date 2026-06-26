@@ -3,6 +3,15 @@ defmodule LottaWeb.Schema.Accounts.File do
 
   use Absinthe.Schema.Notation
 
+  input_object :file_filter do
+    field(:first, :integer)
+
+    field(:after_id, :id,
+      description:
+        "Keyset cursor: ID of the last file in the previous page (files sorted by filename ASC, id ASC)"
+    )
+  end
+
   input_object :create_file_input do
     field(:filename, non_null(:string))
     field(:parent_directory_id, :id)

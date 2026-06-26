@@ -8,7 +8,7 @@ import {
 } from '#/test/fixtures';
 import { ProfilePage } from './ProfilePage';
 
-import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import { GetDirectoriesAndFilesQuery } from '#/shared/browser/_graphql/GetDirectoriesAndFiles';
 import UpdateProfileMutation from '#/api/mutation/UpdateProfileMutation.graphql';
 import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
 import GetFeedbackOverviewQuery from '#/api/query/GetFeedbackOverviewQuery.graphql';
@@ -188,7 +188,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
             {
               request: {
                 query: GetDirectoriesAndFilesQuery,
-                variables: { parentDirectoryId: null },
+                variables: { parentDirectoryId: null, filter: { first: 25 } },
               },
               result: { data: { files: [], directories: [] } },
             },

@@ -6,11 +6,10 @@ import {
   logosDirectory,
   profilDirectory,
 } from '#/test/fixtures';
-import { DirectoryModel, FileModel } from '#/model';
 import { BrowserNode } from '@lotta-schule/hubert';
 import { useMoveNode } from './useMoveNode';
 
-import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import { GetDirectoriesAndFilesQuery } from '../_graphql/GetDirectoriesAndFiles';
 import UpdateDirectoryMutation from '#/api/mutation/UpdateDirectoryMutation.graphql';
 import UpdateFileMutation from '#/api/mutation/UpdateFileMutation.graphql';
 
@@ -147,10 +146,7 @@ describe('useMoveNode', () => {
 
     await result.current(directoryNode, targetDirectoryNode);
 
-    const fromCache = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const fromCache = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: null },
     });
@@ -161,10 +157,7 @@ describe('useMoveNode', () => {
 
     expect(cachedFromDirectory).toBeUndefined();
 
-    const targetCached = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const targetCached = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: targetDirectory.id },
     });
@@ -203,10 +196,7 @@ describe('useMoveNode', () => {
 
     await result.current(fileNode, targetDirectoryNode);
 
-    const fromCache = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const fromCache = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: directory.id },
     });
@@ -215,10 +205,7 @@ describe('useMoveNode', () => {
 
     expect(cachedFromFile).toBeUndefined();
 
-    const targetCached = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const targetCached = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: targetDirectory.id },
     });
