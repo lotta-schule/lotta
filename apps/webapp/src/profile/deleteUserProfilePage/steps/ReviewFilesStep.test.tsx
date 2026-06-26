@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render, userEvent, waitFor } from '#/test/util';
 import { ReviewFilesStep } from './ReviewFilesStep';
 import { GET_RELEVANT_FILES_IN_USAGE } from '../queries';
-import GetDirectoriesAndFilesQuery from '#/api/query/GetDirectoriesAndFiles.graphql';
+import { GetDirectoriesAndFilesQuery } from '#/shared/browser/_graphql/GetDirectoriesAndFiles';
 import { documentFile, imageFile, otherImageFile } from '#/test/fixtures';
 
 const createMockFile = (id: string, filename: string) => ({
@@ -46,7 +46,7 @@ describe('profile/deleteUserProfilePage/steps/ReviewFilesStep', () => {
       {
         request: {
           query: GetDirectoriesAndFilesQuery,
-          variables: { parentDirectoryId: null },
+          variables: { parentDirectoryId: null, filter: { first: 25 } },
         },
         result: {
           data: {

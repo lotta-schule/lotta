@@ -4,7 +4,7 @@ import { SelectFileOverlay } from './SelectFileOverlay';
 import { MockLink } from '@apollo/client/testing';
 import { imageFile, logosDirectory } from '#/test/fixtures';
 
-import GetDirectoriesAndFiles from '#/api/query/GetDirectoriesAndFiles.graphql';
+import { GetDirectoriesAndFilesQuery as GetDirectoriesAndFiles } from '#/shared/browser/_graphql/GetDirectoriesAndFiles';
 import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';
 
 describe('SelectFileOverlay Component', () => {
@@ -14,7 +14,21 @@ describe('SelectFileOverlay Component', () => {
         query: GetDirectoriesAndFiles,
         variables: {
           parentDirectoryId: null,
+          filter: { first: 25 },
         },
+      },
+      result: {
+        data: {
+          directories: [{ ...logosDirectory, user: null }],
+          files: [{ ...imageFile, userId: null, parentDirectory: null }],
+        },
+      },
+    },
+    {
+      // onRequestChildNodes in UserBrowser fires without a filter (cache-first, for tree walk)
+      request: {
+        query: GetDirectoriesAndFiles,
+        variables: { parentDirectoryId: null },
       },
       result: {
         data: {

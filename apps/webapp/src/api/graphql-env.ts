@@ -458,6 +458,27 @@ const introspection = {
       },
       {
         "kind": "INPUT_OBJECT",
+        "name": "FileFilter",
+        "inputFields": [
+          {
+            "name": "first",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int"
+            }
+          },
+          {
+            "name": "afterId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID"
+            }
+          }
+        ],
+        "isOneOf": false
+      },
+      {
+        "kind": "INPUT_OBJECT",
         "name": "ArticleInput",
         "inputFields": [
           {
@@ -5012,6 +5033,13 @@ const introspection = {
                 "type": {
                   "kind": "SCALAR",
                   "name": "ID"
+                }
+              },
+              {
+                "name": "filter",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "FileFilter"
                 }
               }
             ],

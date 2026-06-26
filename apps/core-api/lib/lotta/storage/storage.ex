@@ -427,13 +427,41 @@ defmodule Lotta.Storage do
 
   """
   @doc since: "2.5.0"
-  @spec list_files(Directory.t()) :: [Directory.t()]
-  def list_files(%Directory{} = parent_directory) do
+  @spec list_files(Directory.t(), filter :: map() | nil) :: [File.t()]
+  def list_files(%Directory{} = parent_directory, filter \\ nil) do
     from(f in File,
       where: f.parent_directory_id == ^parent_directory.id,
-      order_by: [:filename]
+      order_by: [:filename, :id]
     )
+    |> apply_file_filter(filter)
     |> Repo.all()
+  end
+
+  defp apply_file_filter(query, nil), do: query
+
+  defp apply_file_filter(query, filter) when is_map(filter) do
+    query
+    |> maybe_limit_files(filter[:first])
+    |> maybe_after_id_files(filter[:after_id])
+  end
+
+  defp maybe_limit_files(query, nil), do: query
+  defp maybe_limit_files(query, first), do: from(q in query, limit: ^first)
+
+  defp maybe_after_id_files(query, nil), do: query
+
+  defp maybe_after_id_files(query, after_id) do
+    case Repo.get(File, after_id) do
+      nil ->
+        query
+
+      cursor ->
+        from(q in query,
+          where:
+            q.filename > ^cursor.filename or
+              (q.filename == ^cursor.filename and q.id > ^after_id)
+        )
+    end
   end
 
   @doc """

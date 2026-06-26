@@ -71,6 +71,7 @@ defmodule LottaWeb.Schema.Accounts do
 
     field(:files, non_null(list_of(non_null(:file)))) do
       arg(:parent_directory_id, :id)
+      arg(:filter, :file_filter)
 
       resolve(&LottaWeb.FileResolver.files/2)
     end

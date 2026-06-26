@@ -2,7 +2,6 @@ import * as React from 'react';
 import { ApolloCache } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
 import { BrowserNode, BrowserProps } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from '#/model';
 
 import DeleteDirectoryMutation from '#/api/mutation/DeleteDirectoryMutation.graphql';
 import DeleteFileMutation from '#/api/mutation/DeleteFileMutation.graphql';
@@ -11,22 +10,15 @@ const updateCache = (client: ApolloCache, node: BrowserNode) => {
   const normalizedId = client.identify(node.meta as any);
   if (normalizedId) {
     client.evict({ id: normalizedId });
+    // gc() clears the dangling ref left in the paginated files array by the
+    // cache field policy merge function (see Decision 4 in the feature plan).
+    client.gc();
   }
 };
 
 export const useDeleteNode = () => {
-  const [deleteDirectory] = useMutation<
-    {
-      directory: DirectoryModel;
-    },
-    { id: string }
-  >(DeleteDirectoryMutation);
-  const [deleteFile] = useMutation<
-    {
-      file: FileModel;
-    },
-    { id: string }
-  >(DeleteFileMutation);
+  const [deleteDirectory] = useMutation(DeleteDirectoryMutation);
+  const [deleteFile] = useMutation(DeleteFileMutation);
 
   return React.useCallback<Required<BrowserProps>['deleteNode']>(
     async (node) => {
