@@ -6,7 +6,6 @@ defmodule CockpitWeb.Live.InvoiceLive do
       schema: Lotta.Billings.Invoice,
       repo: Lotta.Repo
     ],
-    layout: {CockpitWeb.Layouts, :admin},
     init_order: %{by: :created_at, direction: :desc}
 
   import Ecto.Query
@@ -21,6 +20,9 @@ defmodule CockpitWeb.Live.InvoiceLive do
 
   @impl Backpex.LiveResource
   def plural_name, do: "Invoices"
+
+  @impl Backpex.LiveResource
+  def layout(_assigns), do: {CockpitWeb.Layouts, :admin}
 
   @impl Backpex.LiveResource
   def fields do
