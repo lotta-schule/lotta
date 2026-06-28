@@ -326,9 +326,6 @@ export const Presentation = React.memo(
         </AdminPageSection>
 
         <AdminPageSection title="Schriftarten">
-          {headerFonts.concat(textFonts).map(({ url }) => (
-            <link rel={'stylesheet'} href={url} key={url} />
-          ))}
           <div className={styles.grid}>
             <div>
               <Select

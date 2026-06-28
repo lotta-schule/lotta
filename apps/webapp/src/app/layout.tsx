@@ -1,4 +1,5 @@
 import '../styles/globals.scss';
+import '../styles/fonts.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 
 import * as React from 'react';
@@ -9,7 +10,6 @@ import {
   HubertProvider,
 } from '@lotta-schule/hubert';
 import { TenantNotFoundErrorPage } from '#/layout/error/TenantNotFoundErrorPage';
-import { fonts } from '#/styles/fonts';
 import { loadTenant, loadCategories, loadCurrentUser } from '#/loader';
 import { TranslationsProvider } from '#/i18n/client';
 import { TenantGlobalStyleTag } from '#/layout/TenantGlobalStyleTag';
@@ -84,7 +84,7 @@ export default async function RootLayout({
           </>
         )}
         {tenant && <TenantGlobalStyleTag tenant={tenant} />}
-        <GlobalStyles theme={theme} supportedFonts={fonts} />
+        <GlobalStyles theme={theme} />
       </head>
       <body>
         <HubertProvider>
