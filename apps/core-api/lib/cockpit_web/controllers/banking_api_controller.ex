@@ -12,11 +12,6 @@ defmodule CockpitWeb.BankingApiController do
         conn
         |> put_status(:unprocessable_entity)
         |> json(%{status: "error", reason: "Invalid JSON format. Expected accountInfo key."})
-
-      {:error, reason} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> json(%{status: "error", reason: inspect(reason)})
     end
   end
 end

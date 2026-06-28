@@ -66,7 +66,7 @@ defmodule Lotta.Application do
   def handle_repo_query(_event, _measurements, %{source: "oban" <> _}, _config), do: :ok
 
   def handle_repo_query(event, measurements, metadata, config),
-    do: LoggerJSON.Ecto.handle_event(event, measurements, metadata, config)
+    do: LoggerJSON.Ecto.telemetry_logging_handler(event, measurements, metadata, config)
 
   defp setup_telemetry() do
     OpentelemetryOban.setup()

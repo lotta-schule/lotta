@@ -9,7 +9,6 @@ defmodule LottaWeb.TenantPlug do
   slug, matching <slug>.<base-domain> (eg <slug>.lotta.schule).
   """
   require OpenTelemetry.Tracer
-  require Logger
   import Plug.Conn
 
   alias Lotta.{Repo, Tenants}
