@@ -44,7 +44,6 @@ export const Dialog = ({
   return (
     <ButtonGroupContextProvider reset>
       <dialog
-        role="dialog"
         ref={dialogRef}
         title={title}
         onClose={(e) => {

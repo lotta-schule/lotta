@@ -1,5 +1,5 @@
 import { defineConfig } from 'oxlint';
-import baseConfig from '../../oxlint.config';
+import baseConfig from '../../oxlint.config.ts';
 
 export default defineConfig({
   extends: [baseConfig],
@@ -17,17 +17,17 @@ export default defineConfig({
     {
       files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
       excludeFiles: ['**/*.unit.test.ts', '**/*.unit.test.tsx'],
+      plugins: [
+        ...baseConfig.plugins,
+        'react',
+        'react-perf',
+        'jsx-a11y',
+        'nextjs',
+      ],
+      jsPlugins: ['eslint-plugin-react-compiler'],
       env: {
-        plugins: [
-          ...baseConfig.plugins,
-          'react',
-          'react-perf',
-          'jsx-a11y',
-          'nextjs',
-        ],
         ...baseConfig.env,
         vitest: true,
-        jsPlugins: ['eslint-plugin-react-compiler'],
         browser: true,
       },
     },
