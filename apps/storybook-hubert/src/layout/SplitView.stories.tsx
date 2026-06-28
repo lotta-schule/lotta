@@ -80,7 +80,7 @@ export const Default: Story = {
     });
     await expect(closeButton).toBeVisible();
 
-    fireEvent.click(closeButton);
+    void fireEvent.click(closeButton);
 
     await waitFor(async () => {
       await expect(
@@ -93,10 +93,10 @@ export const Default: Story = {
     const openButton = screen.getByRole('button', {
       name: /öffnen/,
     });
-    fireEvent.click(openButton);
+    void fireEvent.click(openButton);
 
     await waitFor(async () => {
-      expect(openButton).not.toBeVisible();
+      void expect(openButton).not.toBeVisible();
       await expect(
         screen.getByRole('button', {
           name: /schließen/,

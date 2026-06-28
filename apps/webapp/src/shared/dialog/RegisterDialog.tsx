@@ -19,7 +19,7 @@ import styles from './RegisterDialog.module.scss';
 
 export interface RegisterDialogProps {
   isOpen: boolean;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const RegisterDialog = React.memo(

@@ -10,7 +10,7 @@ describe('SortableDraggableList', () => {
   ] satisfies SortableItem[];
 
   it('should render all the items', () => {
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     render(
       <SortableDraggableList id="test-list" items={items} onChange={onChange} />
     );
@@ -21,7 +21,7 @@ describe('SortableDraggableList', () => {
   });
 
   it('should call onChange when provided', () => {
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     render(
       <SortableDraggableList id="test-list" items={items} onChange={onChange} />
     );
@@ -31,8 +31,8 @@ describe('SortableDraggableList', () => {
   });
 
   it('should handle onDragStart callback', () => {
-    const onChange = vi.fn();
-    const onDragStart = vi.fn();
+    const onChange = vi.fn<() => void>();
+    const onDragStart = vi.fn<() => void>();
     render(
       <SortableDraggableList
         id="test-list"
@@ -46,8 +46,8 @@ describe('SortableDraggableList', () => {
   });
 
   it('should handle onDragEnd callback', () => {
-    const onChange = vi.fn();
-    const onDragEnd = vi.fn();
+    const onChange = vi.fn<() => void>();
+    const onDragEnd = vi.fn<() => void>();
     render(
       <SortableDraggableList
         id="test-list"
@@ -61,7 +61,7 @@ describe('SortableDraggableList', () => {
   });
 
   it('should apply disabled state', () => {
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     render(
       <SortableDraggableList
         id="test-list"
@@ -75,7 +75,7 @@ describe('SortableDraggableList', () => {
   });
 
   it('should pass custom className', () => {
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     render(
       <SortableDraggableList
         id="test-list"
@@ -99,7 +99,7 @@ describe('SortableDraggableList', () => {
       },
     ] satisfies SortableItem[];
 
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     render(
       <SortableDraggableList
         id="test-list"
@@ -113,7 +113,7 @@ describe('SortableDraggableList', () => {
   });
 
   it('should handle empty items list', () => {
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     render(
       <SortableDraggableList id="test-list" items={[]} onChange={onChange} />
     );
@@ -122,7 +122,7 @@ describe('SortableDraggableList', () => {
   });
 
   it('should handle single item', () => {
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     const singleItem = [
       { id: '1', title: 'Single Item' },
     ] satisfies SortableItem[];

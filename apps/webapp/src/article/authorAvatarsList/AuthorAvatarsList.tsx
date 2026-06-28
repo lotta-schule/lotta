@@ -33,7 +33,7 @@ export const AuthorAvatarsList = React.memo(
             <Tooltip label={User.getNickname(user)}>
               <UserAvatar
                 user={user}
-                onClick={() => onClick?.(user)}
+                onClick={onClick ? () => onClick(user) : undefined}
                 size={30}
               />
             </Tooltip>

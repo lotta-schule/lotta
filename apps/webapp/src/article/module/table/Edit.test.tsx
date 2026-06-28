@@ -89,6 +89,7 @@ describe('shared/article/module/table/Edit', () => {
         const callback = vi.fn((cm) => {
           if (!didCallCallback) {
             // There is a second occurence AFTER test is finished because of blur
+            // oxlint-disable-next-line vitest/no-conditional-expect
             expect(cm.content.rows).toHaveLength(8);
             contentModule = cm;
             didCallCallback = true;

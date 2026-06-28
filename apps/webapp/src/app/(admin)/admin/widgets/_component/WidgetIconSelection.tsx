@@ -8,7 +8,7 @@ import styles from './WidgetIconSelection.module.scss';
 
 export interface WidgetIconSelectionProps {
   icon: WidgetIconModel;
-  onSelectIcon(icon: WidgetIconModel): void;
+  onSelectIcon: (icon: WidgetIconModel) => void;
 }
 
 export const WidgetIconSelection = React.memo(

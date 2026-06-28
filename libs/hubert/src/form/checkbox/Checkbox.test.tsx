@@ -10,7 +10,7 @@ describe('shared/general/form/checkbox', () => {
 
   it('should show a selected checkbox and unselect it on click', async () => {
     const fireEvent = userEvent.setup();
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     const screen = render(
       <Checkbox isSelected onChange={onChange}>
         A label

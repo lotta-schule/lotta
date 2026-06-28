@@ -10,7 +10,7 @@ export interface CategorySelectProps {
   hideSubCategories?: boolean;
   hideSidenav?: boolean;
   selectedCategory: CategoryModel | null;
-  onSelectCategory(category: CategoryModel | null): void;
+  onSelectCategory: (category: CategoryModel | null) => void;
 }
 
 export const CategorySelect = React.memo(

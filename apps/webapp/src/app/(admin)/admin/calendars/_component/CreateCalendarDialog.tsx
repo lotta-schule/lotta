@@ -15,7 +15,7 @@ import { BasicCalendarFormElement } from './BasicCalendarFormElement';
 
 export interface CreateCalendarDialogProps {
   isOpen: boolean;
-  onClose(): void;
+  onClose: () => void;
 }
 
 export const CreateCalendarDialog = React.memo(

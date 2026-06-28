@@ -24,7 +24,7 @@ import styles from './CalendarEditor.module.scss';
 
 export type CalendarEditorProps = {
   calendar: FragmentOf<typeof CALENDAR_FRAGMENT>;
-  onClose(): void;
+  onClose: () => void;
 };
 
 export const CalendarEditor = React.memo(
@@ -90,7 +90,7 @@ export const CalendarEditor = React.memo(
                             calendar.subscriptionUrl,
                             'subscriptionUrl is missing'
                           );
-                          navigator.clipboard.writeText(
+                          void navigator.clipboard.writeText(
                             calendar.subscriptionUrl
                           );
                         }}

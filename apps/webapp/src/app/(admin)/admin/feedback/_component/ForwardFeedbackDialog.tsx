@@ -18,7 +18,7 @@ import SendFeedbackToLottaMutation from '#/api/mutation/SendFeedbackToLottaMutat
 export interface ForwardFeedbackDialogProps {
   isOpen: boolean;
   feedback: FeedbackModel;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const ForwardFeedbackDialog = React.memo(
@@ -37,7 +37,7 @@ export const ForwardFeedbackDialog = React.memo(
           onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
-            forwardFeedback({
+            void forwardFeedback({
               variables: {
                 id: feedback.id,
                 message: formData.get('message') || undefined,

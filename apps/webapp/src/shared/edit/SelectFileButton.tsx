@@ -15,9 +15,9 @@ interface SelectFileButtonProps<Multiple extends boolean> {
   buttonComponent?: any;
   buttonComponentProps?: any;
   multiple?: Multiple;
-  fileFilter?(file: FileModel): boolean;
-  onSelect?(file: Multiple extends true ? FileModel[] : FileModel): void;
-  onChangeFileExplorerVisibility?(isFileExplorerVisible: boolean): void;
+  fileFilter?: (file: FileModel) => boolean;
+  onSelect?: (file: Multiple extends true ? FileModel[] : FileModel) => void;
+  onChangeFileExplorerVisibility?: (isFileExplorerVisible: boolean) => void;
 }
 
 export const UnmemoedSelectFileButton = <Multiple extends boolean | undefined>({

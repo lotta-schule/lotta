@@ -25,7 +25,7 @@ export interface SearchUserFieldProps {
    */
   selectedUsers?: UserPreviewModel[];
 
-  onSelectUser(user: UserModel): void;
+  onSelectUser: (user: UserModel) => void;
 }
 
 export const SearchUserField = React.memo(

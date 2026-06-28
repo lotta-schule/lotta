@@ -22,8 +22,8 @@ import styles from './CreateMessageDialog.module.scss';
 
 export interface CreateMessageDialogProps {
   isOpen: boolean;
-  onConfirm(subject: NewMessageDestination): void;
-  onAbort(): void;
+  onConfirm: (subject: NewMessageDestination) => void;
+  onAbort: () => void;
 }
 
 export const CreateMessageDialog = React.memo(

@@ -7,7 +7,9 @@ import styles from './Title.module.scss';
 
 interface EditProps {
   contentModule: ContentModuleModel<{ title: string }>;
-  onUpdateModule(contentModule: ContentModuleModel<{ title: string }>): void;
+  onUpdateModule: (
+    contentModule: ContentModuleModel<{ title: string }>
+  ) => void;
 }
 
 export const Edit = React.memo(
@@ -39,9 +41,7 @@ export const Edit = React.memo(
     };
 
     const variant = `h${get(contentModule.configuration, 'level', 4)}` as
-      | 'h4'
-      | 'h5'
-      | 'h6';
+      'h4' | 'h5' | 'h6';
 
     return (
       <input

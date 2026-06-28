@@ -26,7 +26,7 @@ export const Tag = React.memo(
           <Button
             small
             className={styles.deleteButton}
-            aria-label={`Tag ${children} löschen`}
+            aria-label={`Tag ${typeof children === 'string' ? children : ''} löschen`.trim()}
             onClick={onDelete}
             icon={<Close />}
           />

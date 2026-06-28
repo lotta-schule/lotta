@@ -36,8 +36,8 @@ interface EditArticleFooterProps {
   article: ArticleModel;
   isLoading?: boolean;
   style?: React.CSSProperties;
-  onUpdate(article: ArticleModel): void;
-  onSave(additionalProps?: Partial<ArticleModel>): void;
+  onUpdate: (article: ArticleModel) => void;
+  onSave: (additionalProps?: Partial<ArticleModel>) => void;
 }
 
 export const EditArticleFooter = React.memo<EditArticleFooterProps>(

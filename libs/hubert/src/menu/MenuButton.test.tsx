@@ -6,7 +6,7 @@ import { Item } from './MenuItem';
 describe('Menu', () => {
   it('should render a Menu button', async () => {
     const fireEvent = userEvent.setup();
-    const onOpenChange = vi.fn();
+    const onOpenChange = vi.fn<() => void>();
     const screen = render(
       <MenuButton
         title={'Test Menu'}

@@ -15,9 +15,9 @@ interface ImageImageProps extends Omit<
   file?: FileModel | null;
   caption: string;
   isUsingFullHeight?: boolean;
-  onUpdateFile(file: FileModel): void;
-  onUpdateCaption(caption: string): void;
-  onSelect?(e: React.MouseEvent<HTMLImageElement>): void;
+  onUpdateFile: (file: FileModel) => void;
+  onUpdateCaption: (caption: string) => void;
+  onSelect?: (e: React.MouseEvent<HTMLImageElement>) => void;
 }
 
 export const ImageImage = React.memo(

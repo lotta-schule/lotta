@@ -45,29 +45,33 @@ export const StatusBar = React.memo(({ className }: StatusBarProps) => {
   );
 
   React.useEffect(() => {
-    onRequestChildNodes(currentPath.at(-1) ?? null).then((childNodes) => {
+    void onRequestChildNodes(currentPath.at(-1) ?? null).then((childNodes) => {
       setChildDirectoriesCount(childNodes.filter(isDirectoryNode).length);
       setChildFilesCount(childNodes.filter(isFileNode).length);
     });
   }, [onRequestChildNodes, currentPath]);
 
   return (
-    <div className={clsx(styles.root, className)} role="navigation">
+    <nav className={clsx(styles.root, className)}>
       <div className={styles.currentPath}>
-        <a href="#" title="Wurzelverzeichnis" onClick={onClickLink([])}>
+        <button
+          type="button"
+          title="Wurzelverzeichnis"
+          onClick={onClickLink([])}
+        >
           <Home />
-        </a>
+        </button>
         {currentPath.map((node, i) => (
           <React.Fragment key={node.id}>
             <span className={styles.separator}>/</span>
-            <a
+            <button
+              type="button"
               className={styles.pathComponent}
-              href={'#'}
               key={node.id}
               onClick={onClickLink(currentPath.slice(0, i + 1))}
             >
               {node.name}
-            </a>
+            </button>
           </React.Fragment>
         ))}
         {selected.length === 1 && isFileNode(selected.at(-1)?.at(-1)) && (
@@ -94,7 +98,7 @@ export const StatusBar = React.memo(({ className }: StatusBarProps) => {
           {!!searchFilesCount && <span>Dateien: {searchFilesCount}</span>}
         </div>
       )}
-    </div>
+    </nav>
   );
 });
 StatusBar.displayName = 'StatusBar';

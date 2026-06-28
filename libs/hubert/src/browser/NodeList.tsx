@@ -239,7 +239,7 @@ export const NodeList = React.memo(({ path, nodes, footer }: NodeListProps) => {
       disabled: !isUploadAllowed,
       onDropAccepted(files) {
         for (const file of files) {
-          uploadClient?.addFile?.(file, path.at(-1)!);
+          void uploadClient?.addFile?.(file, path.at(-1)!);
         }
       },
     });

@@ -107,6 +107,7 @@ describe('CreateMessageDialog', () => {
     });
 
     // See https://github.com/lotta-schule/lotta/issues/528
+    // oxlint-disable-next-line vitest/no-disabled-tests
     it.skip('should select a group and call the onConfirm with it', async () => {
       const user = userEvent.setup();
       const onConfirm = vi.fn((destination) => {

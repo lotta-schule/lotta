@@ -1,6 +1,11 @@
 import { renderHook } from '@testing-library/react';
 import { usePreventScroll } from './usePreventScroll';
 
+vi.mock('./usePreventScroll', async () => {
+  const actual = await vi.importActual('./usePreventScroll');
+  return { ...actual, preventScrollCount: 0 };
+});
+
 describe('usePreventScroll', () => {
   let originalOverflow: string;
   let originalPaddingRight: string;
@@ -8,11 +13,6 @@ describe('usePreventScroll', () => {
   beforeEach(() => {
     originalOverflow = document.documentElement.style.overflow;
     originalPaddingRight = document.documentElement.style.paddingRight;
-    // Reset preventScrollCount
-    vi.mock('./usePreventScroll', async () => {
-      const actual = await vi.importActual('./usePreventScroll');
-      return { ...actual, preventScrollCount: 0 };
-    });
   });
 
   afterEach(() => {

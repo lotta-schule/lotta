@@ -155,7 +155,7 @@ defmodule LottaWeb.CalendarResolver do
          {"Accept-Charset", "utf-8"},
          {"User-Agent", "Lotta"}
        ]},
-      Tesla.Middleware.DecompressResponse
+      {Tesla.Middleware.DecompressResponse, max_body_size: 10 * 1024 * 1024}
     ]
 
     Lotta.Tesla.create_client(middleware)

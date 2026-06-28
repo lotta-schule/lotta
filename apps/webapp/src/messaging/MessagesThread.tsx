@@ -75,7 +75,10 @@ export const MessagesThread = React.memo(
       });
     }, [loadedConversation, apolloClient, currentUser]);
 
-    const liveMessages: MessageFragment[] = data?.conversation?.messages ?? [];
+    const liveMessages: MessageFragment[] = React.useMemo(
+      () => data?.conversation?.messages ?? [],
+      [data?.conversation?.messages]
+    );
 
     // Older pages are intentionally *not* routed through Apollo's normalized cache: they're
     // immutable history that no mutation or subscription will ever target, so keeping them in
@@ -202,7 +205,7 @@ export const MessagesThread = React.memo(
         ([entry]) => {
           if (entry.isIntersecting && hasMoreOlder && !isLoadingOlder) {
             scrollHeightBeforeOlderLoadRef.current = wrapper.scrollHeight;
-            loadOlderMessages();
+            void loadOlderMessages();
           }
         },
         { root: wrapper, threshold: 0 }

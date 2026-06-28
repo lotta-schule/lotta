@@ -16,7 +16,7 @@ export const TenantGlobalStyleTag = ({ tenant }: TenantGlobalStyleTagProps) => {
       const urls = [defaultWidth, retinaWidth].map((width) => ({
         url: File.getRemoteUrl(tenant.backgroundImageFile!, 'pagebg', width),
       }));
-      return `background-image: image-set(${urls.map(({ url }, i) => `url(${url}) ${i + 1}x`)});`;
+      return `background-image: image-set(${urls.map(({ url }, i) => `url(${url}) ${i + 1}x`).join(', ')});`;
     },
     [tenant.backgroundImageFile]
   );

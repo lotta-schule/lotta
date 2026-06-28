@@ -15,7 +15,9 @@ import { EditToolbar } from './EditToolbar';
 
 interface EditProps {
   contentModule: ContentModuleModel<{ nodes: Node[] }>;
-  onUpdateModule(contentModule: ContentModuleModel<{ nodes: Node[] }>): void;
+  onUpdateModule: (
+    contentModule: ContentModuleModel<{ nodes: Node[] }>
+  ) => void;
 }
 
 export const Edit = React.memo<EditProps>(

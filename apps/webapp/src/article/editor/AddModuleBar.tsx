@@ -19,7 +19,7 @@ import { useCurrentUser } from '#/util/user/useCurrentUser';
 import styles from './AddModuleBar.module.scss';
 
 export interface AddModuleBarProps {
-  onAddModule(module: ContentModuleModel): void;
+  onAddModule: (module: ContentModuleModel) => void;
 }
 
 export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {

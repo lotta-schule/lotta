@@ -35,7 +35,7 @@ export const RenderNodeList: BrowserState['renderNodeList'] = React.memo(
           if (entry.isIntersecting) {
             // fetchMore re-fetches the full query (directories + files); the
             // directories result is small and will simply replace the cache entry.
-            fetchMore({
+            void fetchMore({
               variables: {
                 parentDirectoryId,
                 filter: { first: FILES_PAGE_SIZE, afterId: lastFileId },
