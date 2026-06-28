@@ -10,17 +10,18 @@ import {
 import { UserBrowser, UserBrowserProps } from '#/shared/browser';
 import { useTranslation } from 'react-i18next';
 
-interface SelectFileButtonProps<Multiple extends boolean> {
+type SelectFileButtonProps = {
   label: string | React.ReactNode;
   buttonComponent?: any;
   buttonComponentProps?: any;
-  multiple?: Multiple;
   fileFilter?: (file: FileModel) => boolean;
-  onSelect?: (file: Multiple extends true ? FileModel[] : FileModel) => void;
   onChangeFileExplorerVisibility?: (isFileExplorerVisible: boolean) => void;
-}
+} & (
+  | { multiple: true; onSelect?: (files: FileModel[]) => void }
+  | { multiple?: false; onSelect?: (file: FileModel) => void }
+);
 
-export const UnmemoedSelectFileButton = <Multiple extends boolean | undefined>({
+export const UnmemoedSelectFileButton = ({
   label,
   fileFilter,
   multiple,
@@ -28,7 +29,7 @@ export const UnmemoedSelectFileButton = <Multiple extends boolean | undefined>({
   buttonComponent,
   buttonComponentProps,
   onChangeFileExplorerVisibility,
-}: SelectFileButtonProps<Multiple extends undefined ? false : Multiple>) => {
+}: SelectFileButtonProps) => {
   const { t } = useTranslation();
   const [selectedFiles, setSelectedFiles] = React.useState<FileModel[]>([]);
   const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] =

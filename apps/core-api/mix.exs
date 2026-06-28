@@ -186,7 +186,7 @@ defmodule Lotta.MixProject do
       sentry_recompile: ["compile", "deps.compile sentry --force"],
       "assets.copy": [
         "cmd mkdir -p priv/static/images",
-        "cmd cp assets/images/* priv/static/images/"
+        "cmd --shell cp assets/images/* priv/static/images/"
       ],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": [
