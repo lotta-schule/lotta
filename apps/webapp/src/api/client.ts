@@ -9,5 +9,5 @@ const registeredApolloClient = registerApolloClient(createRSCClient);
 
 export const getClient = cache(() => registeredApolloClient.getClient());
 
-export const query: ApolloClient['query'] = async (options) =>
+export const query: ApolloClient['query'] = async (options: any) =>
   (await getClient()).query(options);

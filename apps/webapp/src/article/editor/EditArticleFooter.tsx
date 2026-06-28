@@ -82,8 +82,8 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                   label={undefined}
                   aria-label={'Gruppenauswahl'}
                   selectedGroups={article.groups}
-                  onSelectGroups={(groups: UserGroupModel[]) =>
-                    onUpdate({ ...article, groups })
+                  onSelectGroups={(groups) =>
+                    onUpdate({ ...article, groups: groups as UserGroupModel[] })
                   }
                 />
               </React.Suspense>
