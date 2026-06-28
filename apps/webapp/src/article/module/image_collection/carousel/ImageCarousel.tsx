@@ -46,12 +46,11 @@ export const ImageCarousel = React.memo(
           currentStep={activeStep}
           onStep={handleStepChange}
           maxSteps={maxSteps}
-          className={styles.header}
         />
         <SwipeableViews
           selectedIndex={activeStep}
           onChange={handleStepChange}
-          style={{ paddingBottom: '0.5em' }}
+          style={{ paddingBottom: '0.5em', marginTop: '-50px' }}
         >
           {sortedFiles.map((file, index) => (
             <div key={file.id} className={styles.imgContainer}>

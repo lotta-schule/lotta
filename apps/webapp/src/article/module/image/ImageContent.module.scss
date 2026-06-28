@@ -5,6 +5,8 @@
 
   &:not(.isUsingFullHeight) {
     max-height: 80vh;
+    display: flex;
+    margin: 0 auto;
   }
 
   &.isClickable {
