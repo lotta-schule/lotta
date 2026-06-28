@@ -459,6 +459,62 @@ export const Presentation = React.memo(
             ))}
           </div>
         </AdminPageSection>
+        <AdminPageSection title="Schriftarten">
+          <div className={styles.grid}>
+            <div>
+              <Select
+                fullWidth
+                title={'Überschriften'}
+                value={customTheme.titleFontFamily}
+                onChange={(titleFontFamily) => {
+                  updateThemeProperties({
+                    titleFontFamily,
+                  });
+                }}
+              >
+                {headerFonts.concat(textFonts).map(({ name }) => (
+                  <Option
+                    value={name}
+                    aria-label={name}
+                    key={name}
+                    style={{
+                      fontFamily: name,
+                    }}
+                  >
+                    {name}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+            <div>
+              <Select
+                fullWidth
+                title={'Fließtext'}
+                value={customTheme.textFontFamily}
+                onChange={(textFontFamily) =>
+                  updateThemeProperties({
+                    textFontFamily,
+                  })
+                }
+              >
+                {textFonts.map(({ name }) => (
+                  <Option
+                    value={name}
+                    aria-label={name}
+                    key={name}
+                    style={{
+                      fontFamily: name,
+                    }}
+                  >
+                    {name}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+          </div>
+        </AdminPageSection>
+          </div>
+        </AdminPageSection>
 
         <AdminPageSection bottomToolbar>
           <div />
