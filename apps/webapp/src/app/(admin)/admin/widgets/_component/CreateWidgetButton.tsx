@@ -24,7 +24,7 @@ export const CreateWidgetButton = React.memo(() => {
   });
 
   const onClickCreateWidget = (title: string, type: WidgetModelType) => {
-    createWidget({
+    void createWidget({
       variables: {
         title,
         type,

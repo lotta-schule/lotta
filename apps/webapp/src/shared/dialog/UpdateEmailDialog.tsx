@@ -15,7 +15,7 @@ import UpdateEmailMutation from '#/api/mutation/UpdateEmailMutation.graphql';
 
 export interface UpdateEmailDialogProps {
   isOpen: boolean;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
@@ -87,7 +87,7 @@ export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
           onRequestClose={(authToken) => {
             setShowRequestHisecToken(false);
             if (authToken) {
-              updateEmail({
+              void updateEmail({
                 variables: { newEmail },
                 context: { authToken },
               });

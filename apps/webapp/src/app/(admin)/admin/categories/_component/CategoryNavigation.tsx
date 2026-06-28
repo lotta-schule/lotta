@@ -100,7 +100,7 @@ export const CategoryNavigation = React.memo(() => {
             categories.find((c) => c.id === category.id)?.sortKey
         )
         .forEach((category) => {
-          updateCategory({
+          void updateCategory({
             variables: {
               id: category.id,
               category: {

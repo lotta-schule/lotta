@@ -23,7 +23,7 @@ import styles from './EditUserPermissionDialog.module.scss';
 
 export interface EditUserPermissionsDialogProps {
   selectedUser: UserModel | null;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const EditUserPermissionsDialog = React.memo(

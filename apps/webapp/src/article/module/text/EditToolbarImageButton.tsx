@@ -9,7 +9,7 @@ import { insertImage } from './SlateUtils';
 import { SelectFileButton } from '#/shared/edit/SelectFileButton';
 
 export interface EditToolbarImageButtonProps {
-  onImageAdded?(): void;
+  onImageAdded?: () => void;
 }
 
 export const EditToolbarImageButton = ({

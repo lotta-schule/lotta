@@ -5,6 +5,7 @@
 
   "compilerOptions": {
     "composite": true,
+    "noEmit": false,
     "outDir": "../../dist/app/web/test",
     "types": ["vitest/globals", "vitest/importMeta", "vite/client", "vitest"]
   },

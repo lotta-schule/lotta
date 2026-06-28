@@ -7,9 +7,9 @@ import { isDirectoryNode } from '../utils';
 import { LinearProgress } from '../../progress';
 
 export type DirectorySelector = {
-  getNodesForParent(
+  getNodesForParent: (
     parent: BrowserNode<'directory'> | null
-  ): Promise<BrowserNode[]>;
+  ) => Promise<BrowserNode[]>;
   value: BrowserPath<'directory'>;
   onChange: (value: BrowserPath<'directory'>) => void;
   filter?: (node: BrowserPath<'directory'>) => boolean;
@@ -34,7 +34,7 @@ export const DirectorySelector = React.memo(
 
     React.useEffect(() => {
       setIsLoading(true);
-      getNodesForParent(currentNode)
+      void getNodesForParent(currentNode)
         .then((newNodes) => {
           setChildNodes(
             newNodes.filter(

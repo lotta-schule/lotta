@@ -42,7 +42,7 @@ describe('Browser', () => {
         className="test"
         renderNodeList={({ path }) => <NodeList path={path} nodes={[]} />}
         onRequestChildNodes={async () => []}
-        searchNodes={vi.fn().mockResolvedValue([])}
+        searchNodes={vi.fn<() => Promise<any>>().mockResolvedValue([])}
       />
     );
     await user.fill(

@@ -54,7 +54,7 @@ describe('DraggableGroupList', () => {
       expect(screen.getByRole('list')).toBeVisible();
     });
 
-    expect(screen.getAllByRole('button')).toHaveLength(userGroups.length);
+    expect(screen.getAllByRole('listitem')).toHaveLength(userGroups.length);
   });
 
   it('should have the current group selected', async () => {
@@ -146,7 +146,7 @@ describe('DraggableGroupList', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getAllByRole('button')).toHaveLength(userGroups.length);
+      expect(screen.getAllByRole('listitem')).toHaveLength(userGroups.length);
     });
 
     const lehrerGroupItem = screen.getByTitle('Lehrer');

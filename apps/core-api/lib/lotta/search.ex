@@ -2,8 +2,6 @@ defmodule Lotta.Search do
   @moduledoc """
     Module for executing a search request.
   """
-  require Logger
-
   import Ecto.Query
 
   alias Lotta.Content.ContentModule

@@ -84,7 +84,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
       }
       transformedResponse[key] = value;
     }
-    sendFormResponse({
+    void sendFormResponse({
       variables: {
         id: contentModule.id,
         response: JSON.stringify(transformedResponse),

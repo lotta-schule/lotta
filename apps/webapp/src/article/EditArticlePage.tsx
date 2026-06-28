@@ -166,7 +166,7 @@ export const EditArticlePage = React.memo(
                   configuration: JSON.stringify(cm.configuration || {}),
                 })),
               };
-              saveArticle({
+              void saveArticle({
                 variables: {
                   id: article.id,
                   article: {

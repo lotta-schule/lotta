@@ -128,8 +128,11 @@ export const CategoryEditor = React.memo(
             >
               <GroupSelect
                 selectedGroups={categoryOptions.groups || []}
-                onSelectGroups={(groups: UserGroupModel[]) => {
-                  setCategoryOptions({ ...categoryOptions, groups });
+                onSelectGroups={(groups) => {
+                  setCategoryOptions({
+                    ...categoryOptions,
+                    groups: groups as UserGroupModel[],
+                  });
                 }}
               />
             </React.Suspense>

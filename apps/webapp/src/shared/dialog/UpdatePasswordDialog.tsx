@@ -17,7 +17,7 @@ export interface UpdatePasswordDialogProps {
   isOpen: boolean;
   isFirstPasswordChange?: boolean;
   withCurrentPassword?: string;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const UpdatePasswordDialog = React.memo(
@@ -72,7 +72,7 @@ export const UpdatePasswordDialog = React.memo(
             onSubmit={(e) => {
               e.preventDefault();
               if (hasHisecToken) {
-                updatePassword({ variables: { newPassword } });
+                void updatePassword({ variables: { newPassword } });
               } else {
                 setShowRequestHisecToken(true);
               }
@@ -146,7 +146,7 @@ export const UpdatePasswordDialog = React.memo(
           onRequestClose={(authToken) => {
             setShowRequestHisecToken(false);
             if (authToken) {
-              updatePassword({
+              void updatePassword({
                 variables: { newPassword },
                 context: { authToken },
               });

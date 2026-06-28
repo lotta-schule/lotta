@@ -45,7 +45,7 @@ export const RequestResetPage = () => {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  sendPasswordResetRequest({
+                  void sendPasswordResetRequest({
                     variables: { email },
                   });
                 }}

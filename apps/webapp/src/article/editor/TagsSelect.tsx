@@ -8,7 +8,7 @@ import styles from './TagsSelect.module.scss';
 
 export interface TagsSelectProps {
   value: string[];
-  onChange(value: string[]): void;
+  onChange: (value: string[]) => void;
 }
 
 export const TagsSelect = React.memo(({ value, onChange }: TagsSelectProps) => {

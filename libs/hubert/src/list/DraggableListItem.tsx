@@ -55,9 +55,23 @@ export const DraggableListItem = ({
         [styles.isClickable]: onClick,
       })}
     >
-      <li title={title} onClick={onClick}>
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- <li> is the interactive surface; a nested button would require significant DOM restructuring */}
+      <li
+        title={title}
+        onClick={onClick}
+        onKeyDown={
+          onClick
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onClick(e as unknown as React.MouseEvent<HTMLLIElement>);
+                }
+              }
+            : undefined
+        }
+      >
         {isDraggable && (
-          <div
+          <button
+            type="button"
             className={styles.dragHandle}
             aria-label="Reihenfolge ändern"
             data-testid="drag-handle"
@@ -65,12 +79,18 @@ export const DraggableListItem = ({
             onClick={(e) => {
               e.stopPropagation();
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation();
+              }
+            }}
           >
             <MoveArrow className={styles.moveCategoryHandlerIcon} />
-          </div>
+          </button>
         )}
         <div className={styles.titleWrapper}>{title}</div>
         {icon && (
+          // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- role and handlers are conditionally set together; linter can't evaluate ternary
           <div
             className={clsx(styles.icon, {
               [styles.isIconClickable]: onClickIcon,
@@ -78,12 +98,26 @@ export const DraggableListItem = ({
             role={onClickIcon ? 'button' : undefined}
             tabIndex={onClickIcon ? 0 : undefined}
             aria-label={iconTitle}
-            onClick={(e) => {
-              if (onClickIcon) {
-                e.stopPropagation();
-                onClickIcon(e);
-              }
-            }}
+            onClick={
+              onClickIcon
+                ? (e) => {
+                    e.stopPropagation();
+                    onClickIcon(e);
+                  }
+                : undefined
+            }
+            onKeyDown={
+              onClickIcon
+                ? (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.stopPropagation();
+                      onClickIcon(
+                        e as unknown as React.MouseEvent<HTMLDivElement>
+                      );
+                    }
+                  }
+                : undefined
+            }
           >
             {icon}
           </div>

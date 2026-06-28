@@ -4,8 +4,6 @@ defmodule LottaWeb.Context do
     Will provide user account information
   """
 
-  require Logger
-
   alias Lotta.Repo
   alias Lotta.Accounts
   alias Lotta.Accounts.User

@@ -15,8 +15,8 @@ import DeleteFeedbackMutation from '#/api/mutation/DeleteFeedbackMutation.graphq
 export interface DeleteFeedbackDialogProps {
   feedback: FeedbackModel;
   isOpen: boolean;
-  onRequestClose(): void;
-  onConfirm(): void;
+  onRequestClose: () => void;
+  onConfirm: () => void;
 }
 
 export const DeleteFeedbackDialog = React.memo(
@@ -51,7 +51,7 @@ export const DeleteFeedbackDialog = React.memo(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            deleteFeedback({
+            void deleteFeedback({
               variables: {
                 id: feedback.id,
               },

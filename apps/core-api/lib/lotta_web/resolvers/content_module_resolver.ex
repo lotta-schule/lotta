@@ -97,9 +97,8 @@ defmodule LottaWeb.ContentModuleResolver do
                Storage.get_file(file_id),
              true <-
                can_read?(user, file),
-             {:ok, status, _headers, client_ref} when status < 400 <-
-               :hackney.get(Storage.get_http_url(file, signed: true)),
-             {:ok, data} <- :hackney.body(client_ref) do
+             {:ok, status, _headers, data} when status < 400 <-
+               :hackney.get(Storage.get_http_url(file, signed: true)) do
           {file.filename,
            %Attachment{
              content_id: file_id,

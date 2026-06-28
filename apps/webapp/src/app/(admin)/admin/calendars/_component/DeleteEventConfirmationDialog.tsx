@@ -16,9 +16,8 @@ import styles from './DeleteEventConfirmationDialog.module.scss';
 
 export type DeleteEventConfirmationDialogProps = {
   eventToDelete:
-    | ResultOf<typeof GET_CALENDAR_EVENTS>['calendarEvents'][number]
-    | null;
-  onClose(deleted: boolean): void;
+    ResultOf<typeof GET_CALENDAR_EVENTS>['calendarEvents'][number] | null;
+  onClose: (deleted: boolean) => void;
 };
 
 export const DeleteEventConfirmationDialog = React.memo(

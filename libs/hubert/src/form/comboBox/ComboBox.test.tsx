@@ -57,7 +57,9 @@ describe('Combobox', () => {
 
   describe('With fetched items', () => {
     it('should hide button when items is a function', () => {
-      const onItems = vi.fn(async () => [{ key: 'A', label: 'A' }]);
+      const onItems = vi.fn<() => Promise<any>>(async () => [
+        { key: 'A', label: 'A' },
+      ]);
 
       const screen = render(
         <ComboBox title={'Choose something'} items={onItems} />
@@ -67,7 +69,7 @@ describe('Combobox', () => {
     });
 
     it('should show all options when clicking on the button', async () => {
-      const onItems = vi.fn(async () => defaultItems);
+      const onItems = vi.fn<() => Promise<any>>(async () => defaultItems);
 
       const user = userEvent.setup();
 
@@ -111,7 +113,7 @@ describe('Combobox', () => {
   describe('onSelect', () => {
     it('should be possible to add a custom value', async () => {
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
 
       const screen = render(
         <ComboBox
@@ -127,7 +129,7 @@ describe('Combobox', () => {
     });
     it('should call onSelect with item key when a proposed option is selected', async () => {
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
 
       const screen = render(
         <ComboBox
@@ -150,7 +152,7 @@ describe('Combobox', () => {
 
     it('should call onSelect with item key when the value of a proposed item is typed', async () => {
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
 
       const screen = render(
         <ComboBox
@@ -169,7 +171,7 @@ describe('Combobox', () => {
 
     it('should call onSelect when typing a key from the "additionalConfirmChars" array', async () => {
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
 
       const screen = render(
         <ComboBox
@@ -188,7 +190,7 @@ describe('Combobox', () => {
 
     it('should not call onSelect when the value of an unpropsed item is entered', async () => {
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
 
       const screen = render(
         <ComboBox
@@ -206,7 +208,7 @@ describe('Combobox', () => {
     describe('custom properties', () => {
       it('should call onSelect when selecting an unpropsed item when allowsCustomValue is passed', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
 
         const screen = render(
           <ComboBox
@@ -229,7 +231,7 @@ describe('Combobox', () => {
     describe('closing the listbox', () => {
       it('should close the listbox on select when predefined items are passed (as array)', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
 
         const screen = render(
           <ComboBox

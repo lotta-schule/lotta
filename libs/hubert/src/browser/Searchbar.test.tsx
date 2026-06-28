@@ -15,7 +15,7 @@ const WrappedSearchbar = ({ ...props }: TestBrowserWrapperProps) => (
 
 describe('Browser Searchbar', () => {
   it('should send a search request', async () => {
-    const onSearchNodes = vi.fn().mockResolvedValue([]);
+    const onSearchNodes = vi.fn<() => Promise<any>>().mockResolvedValue([]);
     const user = userEvent.setup();
 
     const screen = render(
@@ -30,8 +30,8 @@ describe('Browser Searchbar', () => {
   });
 
   it('should close the search results when input field loses focus while not having results', async () => {
-    const onSearchNodes = vi.fn().mockResolvedValue([]);
-    const onSetCurrentSearchResults = vi.fn();
+    const onSearchNodes = vi.fn<() => Promise<any>>().mockResolvedValue([]);
+    const onSetCurrentSearchResults = vi.fn<() => void>();
     const user = userEvent.setup();
 
     const screen = render(

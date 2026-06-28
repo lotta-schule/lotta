@@ -7,6 +7,10 @@ import { FormResultsDialog } from './FormResultsDialog';
 
 import GetContentModuleResults from '#/api/query/GetContentModuleResults.graphql';
 
+vi.mock('file-saver', async () => ({
+  saveAs: vi.fn(),
+}));
+
 describe('src/shared/article/module/form/FormResultsDialog', () => {
   const contentModule = {
     id: '31415',
@@ -108,9 +112,6 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
 
   it('should generate and download a csv when the button is clicked', async () => {
     vi.spyOn(URL, 'createObjectURL').mockReturnValueOnce('http://localhost/0');
-    vi.mock('file-saver', async (_importActual) => ({
-      saveAs: vi.fn(),
-    }));
 
     const fireEvent = userEvent.setup();
     URL.createObjectURL = vi.fn(() => 'http://localhost/0');

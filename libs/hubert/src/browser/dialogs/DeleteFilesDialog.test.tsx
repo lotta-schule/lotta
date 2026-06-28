@@ -23,7 +23,7 @@ const filePaths = files.map((file) => fixtures.getPathForNode(file.id));
 
 describe('Browser/DeleteFilesDialog', () => {
   it('should open the dialog on action and close it when aborted', async () => {
-    const onSetCurrentAction = vi.fn();
+    const onSetCurrentAction = vi.fn<() => void>();
     const user = userEvent.setup();
     const screen = render(<WrappedDeleteDirectoryDialog />);
 
@@ -61,8 +61,8 @@ describe('Browser/DeleteFilesDialog', () => {
   it('should delete one node', async () => {
     const user = userEvent.setup();
 
-    const onDeleteNode = vi.fn().mockResolvedValue(null);
-    const onSetCurrentAction = vi.fn();
+    const onDeleteNode = vi.fn<() => Promise<any>>().mockResolvedValue(null);
+    const onSetCurrentAction = vi.fn<() => void>();
 
     const screen = render(
       <WrappedDeleteDirectoryDialog
@@ -105,8 +105,8 @@ describe('Browser/DeleteFilesDialog', () => {
   it('should delete multiple nodes', async () => {
     const user = userEvent.setup();
 
-    const onDeleteNode = vi.fn().mockResolvedValue(null);
-    const onSetCurrentAction = vi.fn();
+    const onDeleteNode = vi.fn<() => Promise<any>>().mockResolvedValue(null);
+    const onSetCurrentAction = vi.fn<() => void>();
 
     const screen = render(
       <WrappedDeleteDirectoryDialog

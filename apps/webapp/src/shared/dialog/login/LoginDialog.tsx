@@ -16,7 +16,7 @@ import styles from './LoginDialog.module.scss';
 
 export interface LoginDialogProps {
   isOpen: boolean;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const LoginDialog = React.memo(

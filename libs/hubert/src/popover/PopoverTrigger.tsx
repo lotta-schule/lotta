@@ -22,7 +22,7 @@ export const PopoverTrigger = ({
   const ref = useMergeRefs([context.refs.setReference, refProp, childrenRef]);
 
   // `asChild` allows the user to pass any element as the anchor
-  if (asChild && React.isValidElement<HTMLElement>(children)) {
+  if (asChild && React.isValidElement<Record<string, unknown>>(children)) {
     return React.cloneElement(
       children,
       context.getReferenceProps({

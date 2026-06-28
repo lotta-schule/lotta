@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     'eslint',
     'typescript',
-    'typescript',
+    'react',
     'oxc',
     'import',
     'promise',
@@ -24,5 +24,6 @@ export default defineConfig({
   rules: {
     'no-debugger': 'error',
     'no-shadow-restricted-names': ['warn', { reportGlobalThis: false }],
+    'vitest/require-mock-type-parameters': 'off',
   },
 });

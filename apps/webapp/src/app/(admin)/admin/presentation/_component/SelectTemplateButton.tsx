@@ -6,7 +6,7 @@ import styles from './SelectTemplateButton.module.scss';
 export interface SelectTemplateButtonProps {
   title: string;
   theme: Partial<ReturnType<typeof useTheme>>;
-  onClick?(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
 export const SelectTemplateButton = React.memo(

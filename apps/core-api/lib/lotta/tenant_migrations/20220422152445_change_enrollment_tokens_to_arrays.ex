@@ -68,11 +68,11 @@ defmodule Lotta.Repo.TenantMigrations.ChangeEnrollmentTokensToArrays do
     flush()
 
     alter table(:users) do
-      drop(:enrollment_tokens)
+      remove(:enrollment_tokens)
     end
 
     alter table(:user_groups) do
-      drop(:enrollment_tokens)
+      remove(:enrollment_tokens)
     end
   end
 end

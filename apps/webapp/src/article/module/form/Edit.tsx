@@ -32,7 +32,7 @@ import styles from './Edit.module.scss';
 
 export type EditProps = {
   contentModule: ContentModuleModel;
-  onUpdateModule(contentModule: ContentModuleModel): void;
+  onUpdateModule: (contentModule: ContentModuleModel) => void;
 };
 
 export const Edit = React.memo(

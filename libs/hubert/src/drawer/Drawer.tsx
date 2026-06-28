@@ -12,7 +12,7 @@ import styles from './Drawer.module.scss';
 export type DrawerProps = {
   children?: React.ReactNode;
   isOpen?: boolean;
-  onClose?(): void;
+  onClose?: () => void;
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'ref'>;
 
 export const Drawer = ({

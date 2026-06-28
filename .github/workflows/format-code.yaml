@@ -19,7 +19,7 @@ jobs:
     uses: lotta-schule/github-actions/.github/workflows/run-formatter.yaml@main
     with:
       package-manager: 'bun'
-      otp-version: '28.0.2'
-      elixir-version: '1.18.4'
+      otp-version: '29.0.2'
+      elixir-version: '1.20.2'
       node-version: '24.5'
       bun-version: '1'

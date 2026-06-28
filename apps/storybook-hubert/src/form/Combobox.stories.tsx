@@ -57,7 +57,7 @@ export const WithPredefinedItems: StoryObj<typeof ComboBox> = {
 
     await fireEvent.click(canvas.getByRole('button'));
     await waitFor(() => {
-      expect(canvas.getByRole('listbox')).toBeVisible();
+      void expect(canvas.getByRole('listbox')).toBeVisible();
     });
 
     await new Promise((resolve) => setTimeout(resolve, 500)); // wait for animation to finish
@@ -90,21 +90,21 @@ export const WithRequestedItems: StoryObj<typeof ComboBox> = {
     await fireEvent.keyboard('yoda');
 
     await waitFor(() => {
-      expect(canvas.getByRole('listbox')).toBeVisible();
+      void expect(canvas.getByRole('listbox')).toBeVisible();
     });
 
     await new Promise((resolve) => setTimeout(resolve, 400)); // wait for animation to finish
 
     await waitFor(() => {
-      expect(canvas.getAllByRole('option')).toHaveLength(1);
+      void expect(canvas.getAllByRole('option')).toHaveLength(1);
     });
 
     await fireEvent.click(canvas.getByRole('option', { name: 'Yoda' }));
 
     await waitFor(() => {
-      expect(canvas.queryByRole('listbox')).toBeNull();
+      void expect(canvas.queryByRole('listbox')).toBeNull();
     });
-    expect(args.onSelect).toHaveBeenCalledWith('Yoda');
+    void expect(args.onSelect).toHaveBeenCalledWith('Yoda');
   },
 
   parameters: {

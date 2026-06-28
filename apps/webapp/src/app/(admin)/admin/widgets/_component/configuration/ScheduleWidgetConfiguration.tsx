@@ -6,7 +6,7 @@ import styles from './WidgetConfiguration.module.scss';
 
 export interface ScheduleWidgetConfigurationProps {
   configuration: ScheduleWidgetConfig;
-  setConfiguration(configuration: ScheduleWidgetConfig): void;
+  setConfiguration: (configuration: ScheduleWidgetConfig) => void;
 }
 
 export const ScheduleWidgetConfiguration =

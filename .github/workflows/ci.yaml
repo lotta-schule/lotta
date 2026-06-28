@@ -64,8 +64,8 @@ jobs:
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '28.0.2'
-          elixir-version: '1.18.4'
+          otp-version: '29.0.2'
+          elixir-version: '1.20.2'
 
       - name: Install dependencies
         run: bun install
@@ -145,8 +145,8 @@ jobs:
       - name: Setup the BEAM and Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '28.0.2'
-          elixir-version: '1.18.4'
+          otp-version: '29.0.2'
+          elixir-version: '1.20.2'
 
       - uses: hostwithquantum/setup-mc@main
         with:
@@ -366,8 +366,8 @@ jobs:
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '28.0.2'
-          elixir-version: '1.18.4'
+          otp-version: '29.0.2'
+          elixir-version: '1.20.2'
 
       - name: Install dependencies
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}

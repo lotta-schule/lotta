@@ -20,6 +20,7 @@ vi.mock('#/shared/edit/SelectFileOverlay', () => ({
     label,
     allowDeletion: _allowDeletion,
   }: SelectFileOverlayProps) => (
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       data-testid="select-file-overlay"
       onClick={() => onSelectFile(imageFile)}
@@ -32,6 +33,7 @@ vi.mock('#/shared/edit/SelectFileOverlay', () => ({
 
 vi.mock('util/image/ResponsiveImage.js', () => ({
   ResponsiveImage: ({ src, alt }: ResponsiveImageProps) => (
+    // oxlint-disable-next-line next/no-img-element
     <img src={src} alt={alt} data-testid="responsive-image" />
   ),
 }));

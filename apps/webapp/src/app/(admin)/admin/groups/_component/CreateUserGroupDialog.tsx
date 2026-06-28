@@ -31,8 +31,8 @@ export const CREATE_USER_GROUP = graphql(`
 
 export interface CreateUserGroupDialogProps {
   isOpen: boolean;
-  onAbort(): void;
-  onConfirm(group: UserGroupModel): void;
+  onAbort: () => void;
+  onConfirm: (group: UserGroupModel) => void;
 }
 
 export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
@@ -74,7 +74,7 @@ export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            createUserGroup({
+            void createUserGroup({
               variables: {
                 group: {
                   name,

@@ -45,7 +45,4 @@ defmodule CockpitWeb.ItemActions.IssueInvoice do
 
   @impl Backpex.ItemAction
   def confirm_label(_assigns), do: "Issue"
-
-  @impl Backpex.ItemAction
-  def cancel_label(_assigns), do: "Cancel"
 end

@@ -19,7 +19,7 @@ import { FragmentOf } from 'gql.tada';
 
 export interface ManageCalendarsDialogProps {
   isOpen: boolean;
-  onClose(): void;
+  onClose: () => void;
 }
 
 export const ManageCalendarsDialog = React.memo(

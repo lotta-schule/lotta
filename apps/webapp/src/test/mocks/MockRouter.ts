@@ -60,7 +60,7 @@ export class MockRouter {
   }
 
   push(pathname: string, asPath: string = pathname, options?: any) {
-    this._push(pathname, asPath, options);
+    void this._push(pathname, asPath, options);
     this._pathname = pathname;
     this._history.add(pathname);
     this._emitter.emit('routeChangeStart', pathname);

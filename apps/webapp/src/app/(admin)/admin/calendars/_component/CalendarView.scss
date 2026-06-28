@@ -33,13 +33,15 @@
   $today-highlight-bg: #eaf6ff !default;
 */
 
-@use 'react-big-calendar/lib/sass/styles' with ($out-of-range-color: rgb(var(--lotta-disabled-color)),
+@use "react-big-calendar/lib/sass/variables" with (
+  $out-of-range-color: rgb(var(--lotta-disabled-color)),
   $out-of-range-bg-color: rgba(var(--lotta-disabled-color), 0.125),
   $event-border-radius: var(--lotta-border-radius),
-  $event-padding: calc(0.25 * var(--lotta-spacing)) calc(0.5 * var(--lotta-spacing)),
-
-  $today-highlight-bg: rgba(var(--lotta-primary-color), 0.1),
+  $event-padding: calc(0.25 * var(--lotta-spacing))
+    calc(0.5 * var(--lotta-spacing)),
+  $today-highlight-bg: rgba(var(--lotta-primary-color), 0.1)
 );
+@use "react-big-calendar/lib/sass/styles";
 
 .rbc-date-cell button {
   font: inherit;

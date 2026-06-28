@@ -863,8 +863,7 @@ defmodule Lotta.BillingsTest do
       custom_time = DateTime.utc_now() |> DateTime.add(-1, :day)
       {:ok, paid} = Billings.mark_as_paid(invoice, custom_time)
 
-      # Compare dates/times with truncation since DB may truncate microseconds
-      assert DateTime.diff(paid.paid_at, custom_time, :second) == 0
+      assert paid.paid_at == DateTime.truncate(custom_time, :second)
     end
 
     test "fails to mark draft invoice as paid", %{tenant: tenant} do

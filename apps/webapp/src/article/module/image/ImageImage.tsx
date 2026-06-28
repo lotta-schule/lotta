@@ -15,9 +15,9 @@ interface ImageImageProps extends Omit<
   file?: FileModel | null;
   caption: string;
   isUsingFullHeight?: boolean;
-  onUpdateFile(file: FileModel): void;
-  onUpdateCaption(caption: string): void;
-  onSelect?(e: React.MouseEvent<HTMLImageElement>): void;
+  onUpdateFile: (file: FileModel) => void;
+  onUpdateCaption: (caption: string) => void;
+  onSelect?: (e: React.MouseEvent<HTMLImageElement>) => void;
 }
 
 export const ImageImage = React.memo(
@@ -37,7 +37,7 @@ export const ImageImage = React.memo(
           <SelectFileOverlay
             label={'Bild wechseln'}
             fileFilter={(f) => f.fileType === 'IMAGE'}
-            onSelectFile={onUpdateFile}
+            onSelectFile={(file) => file && onUpdateFile(file)}
           >
             <ImageContent alt={caption} file={file} {...otherProps} />
           </SelectFileOverlay>

@@ -27,7 +27,7 @@ import { EditEventFormContent, EditEventInput } from './EditEventFormContent';
 
 export type CreateEventDialogProps = {
   isOpen: boolean;
-  onClose(event?: ResultOf<typeof CREATE_CALENDAR_EVENT>['event']): void;
+  onClose: (event?: ResultOf<typeof CREATE_CALENDAR_EVENT>['event']) => void;
 };
 
 export const CreateEventDialog = React.memo(

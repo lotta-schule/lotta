@@ -8,7 +8,7 @@ import { RelevantFilesInUsage } from '..';
 export interface FileSelectionProps {
   files: RelevantFilesInUsage;
   selectedFiles: RelevantFilesInUsage;
-  onSelectFiles(files: RelevantFilesInUsage): void;
+  onSelectFiles: (files: RelevantFilesInUsage) => void;
 }
 
 export const FileSelection = React.memo<FileSelectionProps>(

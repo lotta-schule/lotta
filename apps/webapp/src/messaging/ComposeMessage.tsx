@@ -122,12 +122,12 @@ export const ComposeMessage = React.memo(
 
     const onSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      createMessage();
+      void createMessage();
     };
     const onKeypress = (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        createMessage();
+        void createMessage();
       }
     };
     return (
@@ -142,7 +142,7 @@ export const ComposeMessage = React.memo(
               ['aria-label']: 'Datei anhängen.',
             }}
             onSelect={(files: FileModel[]) => {
-              createMessage({
+              void createMessage({
                 variables: {
                   message: {
                     content: '',

@@ -20,7 +20,7 @@ import RespondToFeedbackMutation from '#/api/mutation/RespondToFeedbackMutation.
 export interface RespondToFeedbackDialogProps {
   feedback: FeedbackModel;
   isOpen: boolean;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const RespondToFeedbackDialog = React.memo(
@@ -42,7 +42,7 @@ export const RespondToFeedbackDialog = React.memo(
           onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
-            sendFeedback({
+            void sendFeedback({
               variables: {
                 id: feedback.id,
                 subject: formData.get('subject') as string,

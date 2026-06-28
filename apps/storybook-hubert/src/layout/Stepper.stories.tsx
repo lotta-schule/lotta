@@ -20,7 +20,7 @@ const Template: StoryFn<{
       <Stepper currentStep={step} onStep={setStep} {...args} />
       <img
         src={getRandomAvatarUrl(step)}
-        alt={`Image Step ${step}`}
+        alt={`Step ${step}`}
         style={{ width: 300 }}
       />
     </div>
