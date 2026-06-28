@@ -46,9 +46,6 @@ defmodule CockpitWeb.ItemActions.DeleteTenant do
   @impl Backpex.ItemAction
   def confirm_label(_assigns), do: "Delete"
 
-  @impl Backpex.ItemAction
-  def cancel_label(_assigns), do: "Cancel"
-
   defp tenants_admin_module,
     do: Application.get_env(:lotta, :tenants_admin_module, Lotta.Tenants)
 end

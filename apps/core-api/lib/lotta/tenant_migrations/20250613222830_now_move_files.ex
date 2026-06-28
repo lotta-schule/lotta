@@ -12,8 +12,6 @@ defmodule Lotta.Repo.TenantMigrations.NowMoveFiles do
   # alias Lotta.{Repo, Storage}
   # alias Lotta.Storage.{File, RemoteStorage, RemoteStorageEntity}
 
-  require Logger
-
   def up do
     # This really is to slow in this state and not necessary enough
     # to jsutify.

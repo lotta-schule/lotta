@@ -8,7 +8,7 @@ defmodule Lotta.MixProject do
       name: "Lotta API Server",
       source_url: "https://github.com/lotta-schule/core",
       homepage_url: "https://lotta.schule",
-      elixir: "~> 1.18",
+      elixir: "~> 1.20",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers() ++ [:phoenix_live_view, :rambo],
       listeners: [Phoenix.CodeReloader],
@@ -25,14 +25,6 @@ defmodule Lotta.MixProject do
         tool: ExCoveralls,
         output: "coverage"
       ],
-      preferred_cli_env: [
-        test: :test,
-        coveralls: :test,
-        "coveralls.json": :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test
-      ],
       docs: [
         main: "Lotta",
         logo: "priv/static/logo.png",
@@ -41,6 +33,18 @@ defmodule Lotta.MixProject do
       dialyzer: []
     ]
   end
+
+  def cli,
+    do: [
+      preferred_cli_env: [
+        test: :test,
+        coveralls: :test,
+        "coveralls.json": :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
+    ]
 
   # Configuration for the OTP application.
   #

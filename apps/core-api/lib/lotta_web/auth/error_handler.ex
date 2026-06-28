@@ -3,8 +3,6 @@ defmodule LottaWeb.Auth.ErrorHandler do
     Authentication error handler for Guardian
   """
 
-  require Logger
-
   alias LottaWeb.Auth.CookieHelper
 
   @behaviour Guardian.Plug.ErrorHandler
