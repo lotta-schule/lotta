@@ -83,8 +83,8 @@ export const DELETE_USER_GROUP = graphql(`
 
 export type DeleteUserGroupDialogProps = {
   group: UserGroup | null;
-  onRequestClose(): void;
-  onConfirm(): void;
+  onRequestClose: () => void;
+  onConfirm: () => void;
 };
 
 export const DeleteUserGroupDialog = React.memo(

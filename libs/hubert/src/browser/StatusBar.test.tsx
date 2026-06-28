@@ -22,25 +22,25 @@ const WrappedStatusBar = ({
 describe('Browser/StatusBar', () => {
   it('should render correctly on home path', () => {
     const screen = render(<WrappedStatusBar currentPath={[]} />);
-    expect(screen.getAllByRole('link')).toHaveLength(1);
+    expect(screen.getAllByRole('button')).toHaveLength(1);
     expect(
-      screen.getByRole('link', { name: 'Wurzelverzeichnis' })
+      screen.getByRole('button', { name: 'Wurzelverzeichnis' })
     ).toBeVisible();
   });
 
   it('should render correctly on a complex path', () => {
     const screen = render(<WrappedStatusBar />);
-    expect(screen.getAllByRole('link')).toHaveLength(4); // Home + 3 directories
-    expect(screen.getAllByRole('link')[1]).toHaveTextContent('folder 1');
-    expect(screen.getAllByRole('link')[2]).toHaveTextContent('folder 8');
-    expect(screen.getAllByRole('link')[3]).toHaveTextContent('folder 14');
+    expect(screen.getAllByRole('button')).toHaveLength(4); // Home + 3 directories
+    expect(screen.getAllByRole('button')[1]).toHaveTextContent('folder 1');
+    expect(screen.getAllByRole('button')[2]).toHaveTextContent('folder 8');
+    expect(screen.getAllByRole('button')[3]).toHaveTextContent('folder 14');
   });
 
   it('should select a path on click', async () => {
-    const onNavigate = vi.fn();
+    const onNavigate = vi.fn<() => void>();
     const user = userEvent.setup();
     const screen = render(<WrappedStatusBar onNavigate={onNavigate} />);
-    await user.click(screen.getByRole('link', { name: 'folder 8' }));
+    await user.click(screen.getByRole('button', { name: 'folder 8' }));
 
     expect(onNavigate).toHaveBeenCalledWith(fixtures.getPathForNode('8'));
   });
@@ -72,8 +72,8 @@ describe('Browser/StatusBar', () => {
 
     it('should close the search window and select path when clicking path segment', async () => {
       const user = userEvent.setup();
-      const onNavigate = vi.fn();
-      const onSetCurrentSearchResults = vi.fn();
+      const onNavigate = vi.fn<() => void>();
+      const onSetCurrentSearchResults = vi.fn<() => void>();
       const screen = render(
         <WrappedStatusBar
           selected={[fixtures.getPathForNode('19')]}
@@ -88,7 +88,7 @@ describe('Browser/StatusBar', () => {
       );
 
       await user.click(
-        screen.getByRole('link', {
+        screen.getByRole('button', {
           name: 'folder 14',
         })
       );

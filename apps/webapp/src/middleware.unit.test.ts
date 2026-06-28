@@ -23,7 +23,9 @@ vi.mock('next/server.js', () => ({
 const mockSendRefreshRequest = sendRefreshRequest as MockedFunction<
   typeof sendRefreshRequest
 >;
+// oxlint-disable-next-line typescript/unbound-method
 const mockNextResponseRewrite = vi.mocked(NextResponse.rewrite);
+// oxlint-disable-next-line typescript/unbound-method
 const mockNextResponseNext = vi.mocked(NextResponse.next);
 
 const createToken = (

@@ -9,9 +9,9 @@ import styles from './Video.module.scss';
 
 interface EditProps {
   contentModule: ContentModuleModel<{ captions: string[] }>;
-  onUpdateModule(
+  onUpdateModule: (
     contentModule: ContentModuleModel<{ captions: string[] }>
-  ): void;
+  ) => void;
 }
 
 export const Edit = React.memo(
@@ -33,7 +33,7 @@ export const Edit = React.memo(
               files: file ? [file] : [],
             });
             if (file) {
-              requestFileConversion(file);
+              void requestFileConversion(file);
             }
           }}
         >

@@ -62,7 +62,7 @@ export const Complex: StoryObj<typeof BaseButton> = {
     children: (
       <div style={{ display: 'flex' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label>Der Vorteil am BaseButton</label>
+          <span>Der Vorteil am BaseButton</span>
           <strong>Er ist sehr flexibel</strong>
         </div>
         <div

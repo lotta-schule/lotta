@@ -79,7 +79,7 @@ export const ArticleReactions = React.memo(
             <DynamicReactionSelector
               onSelect={(reaction) => {
                 if (reaction) {
-                  reactToArticle({
+                  void reactToArticle({
                     variables: {
                       id: article.id,
                       reaction: reaction.toUpperCase(),

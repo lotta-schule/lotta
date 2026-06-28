@@ -21,9 +21,9 @@ import { Icon } from '#/shared/Icon';
 
 interface EditProps {
   contentModule: ContentModuleModel<TableContent, TableConfiguration>;
-  onUpdateModule(
+  onUpdateModule: (
     contentModule: ContentModuleModel<TableContent, TableConfiguration>
-  ): void;
+  ) => void;
 }
 
 export interface EditTableCellProps extends Omit<
@@ -31,7 +31,7 @@ export interface EditTableCellProps extends Omit<
   'value' | 'style' | 'onChange'
 > {
   cell: TableCellInterface;
-  onChange(cell: TableCellInterface): void;
+  onChange: (cell: TableCellInterface) => void;
   position: { row: number; column: number };
 }
 

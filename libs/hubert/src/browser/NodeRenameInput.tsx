@@ -65,6 +65,7 @@ export const NodeRenameInput = React.memo(
           }}
         >
           <Input
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- intentional for inline rename UX
             autoFocus
             title={`${node.name} umbenennen`}
             ref={setRenamingInput}

@@ -6,7 +6,7 @@ const DEFAULT_LEVEL = 4;
 
 interface ConfigProps {
   contentModule: ContentModuleModel;
-  onUpdateModule(contentModule: ContentModuleModel): void;
+  onUpdateModule: (contentModule: ContentModuleModel) => void;
 }
 
 export const Config = React.memo<ConfigProps>(

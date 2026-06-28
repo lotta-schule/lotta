@@ -10,7 +10,7 @@ describe('browser/useNodeMenuProps', () => {
   const nodePaths = [fixtures.getPathForNode('20')];
   describe('for files', () => {
     test('returns correct menu items for one selected file nodes', () => {
-      const onSetCurrentAction = vi.fn();
+      const onSetCurrentAction = vi.fn<() => void>();
       const { result } = renderHook(() => useNodeMenuProps(nodePaths), {
         wrapper: ({ children }: TestBrowserWrapperProps) => (
           <TestBrowserWrapper setCurrentAction={onSetCurrentAction}>
@@ -57,7 +57,7 @@ describe('browser/useNodeMenuProps', () => {
         fixtures.getPathForNode('20'),
         fixtures.getPathForNode('21'),
       ];
-      const onSetCurrentAction = vi.fn();
+      const onSetCurrentAction = vi.fn<() => void>();
       const { result } = renderHook(() => useNodeMenuProps(nodePaths), {
         wrapper: ({ children }: TestBrowserWrapperProps) => (
           <TestBrowserWrapper setCurrentAction={onSetCurrentAction}>
@@ -102,7 +102,7 @@ describe('browser/useNodeMenuProps', () => {
   describe('for directories', () => {
     const nodePaths = [fixtures.getPathForNode('8')];
     test('returns correct menu items for one selected directory nodes', () => {
-      const onSetCurrentAction = vi.fn();
+      const onSetCurrentAction = vi.fn<() => void>();
       const { result } = renderHook(() => useNodeMenuProps(nodePaths), {
         wrapper: ({ children }: TestBrowserWrapperProps) => (
           <TestBrowserWrapper setCurrentAction={onSetCurrentAction}>
@@ -149,7 +149,7 @@ describe('browser/useNodeMenuProps', () => {
         fixtures.getPathForNode('8'),
         fixtures.getPathForNode('9'),
       ];
-      const onSetCurrentAction = vi.fn();
+      const onSetCurrentAction = vi.fn<() => void>();
       const { result } = renderHook(() => useNodeMenuProps(nodePaths), {
         wrapper: ({ children }: TestBrowserWrapperProps) => (
           <TestBrowserWrapper setCurrentAction={onSetCurrentAction}>

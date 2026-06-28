@@ -11,7 +11,7 @@ describe('Tag', () => {
 
   it('should show a Delete Button when a onDelete prop is given', async () => {
     const fireEvent = userEvent.setup({ delay: 100 });
-    const onDelete = vi.fn();
+    const onDelete = vi.fn<() => void>();
 
     const screen = render(<Tag onDelete={onDelete}>Tag</Tag>);
 

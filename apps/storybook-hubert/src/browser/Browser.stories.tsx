@@ -55,9 +55,9 @@ export const Default: StoryObj<typeof Browser> = {
     const user = userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
-    user.click(await screen.findByRole('option', { name: 'folder 1' }));
-    user.click(await screen.findByRole('option', { name: 'folder 8' }));
-    user.click(await screen.findByRole('option', { name: 'ich.jpg' }));
+    void user.click(await screen.findByRole('option', { name: 'folder 1' }));
+    void user.click(await screen.findByRole('option', { name: 'folder 8' }));
+    void user.click(await screen.findByRole('option', { name: 'ich.jpg' }));
 
     await waitFor(async () => {
       await expect(
@@ -94,9 +94,9 @@ export const Select: StoryObj<typeof Browser> = {
     const user = userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
-    user.click(await screen.findByRole('option', { name: 'folder 1' }));
-    user.click(await screen.findByRole('option', { name: 'folder 8' }));
-    user.click(await screen.findByRole('option', { name: 'ich.jpg' }));
+    void user.click(await screen.findByRole('option', { name: 'folder 1' }));
+    void user.click(await screen.findByRole('option', { name: 'folder 8' }));
+    void user.click(await screen.findByRole('option', { name: 'ich.jpg' }));
 
     await waitFor(async () => {
       await expect(
@@ -115,9 +115,9 @@ export const SelectMultiple: StoryObj<typeof Browser> = {
     const user = userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
-    user.click(await screen.findByRole('option', { name: 'folder 1' }));
-    user.click(await screen.findByRole('option', { name: 'folder 8' }));
-    user.click(await screen.findByLabelText(/ich\.jpg/i));
+    void user.click(await screen.findByRole('option', { name: 'folder 1' }));
+    void user.click(await screen.findByRole('option', { name: 'folder 8' }));
+    void user.click(await screen.findByLabelText(/ich\.jpg/i));
 
     await waitFor(async () => {
       await expect(

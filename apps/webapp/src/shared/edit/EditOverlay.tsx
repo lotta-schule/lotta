@@ -9,8 +9,8 @@ interface EditOverlayProps {
   label: string;
   description?: string;
   style?: React.CSSProperties;
-  onClick(event: React.MouseEvent<HTMLButtonElement>): void;
-  onClickRemove?(event: React.MouseEvent<HTMLButtonElement>): void;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickRemove?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   children?: any;
 }
 

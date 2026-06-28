@@ -5,8 +5,8 @@ import get from 'lodash/get';
 
 interface ConfigProps {
   contentModule: ContentModuleModel;
-  onUpdateModule(contentModule: ContentModuleModel): void;
-  onRequestClose(): void;
+  onUpdateModule: (contentModule: ContentModuleModel) => void;
+  onRequestClose: () => void;
 }
 
 export const Config = React.memo<ConfigProps>(

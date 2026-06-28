@@ -61,7 +61,7 @@ export const useUploadNode = () => {
 
   return React.useCallback<Required<BrowserProps>['uploadNode']>(
     (upload, parent, update) => {
-      uploadFile({
+      void uploadFile({
         variables: {
           parentDirectoryId: parent.id,
           file: upload.file,

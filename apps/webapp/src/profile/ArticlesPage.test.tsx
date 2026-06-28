@@ -37,7 +37,11 @@ describe('pages/profiles/articles', () => {
 
   it('does not fetch more articles on scroll when fewer than a full page was initially loaded', async () => {
     const articles = [Weihnachtsmarkt, Klausurenplan];
-    render(<ArticlesPage initialArticles={articles} error={null} />, {}, {});
+    const screen = render(
+      <ArticlesPage initialArticles={articles} error={null} />,
+      {},
+      {}
+    );
 
     Object.defineProperty(window, 'innerHeight', {
       value: 800,
@@ -57,6 +61,7 @@ describe('pages/profiles/articles', () => {
     // guard (gated on the initial page being a full page) didn't suppress the
     // fetch, MockedProvider would throw on the unmatched request and fail this test.
     await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(screen.getByRole('table')).toBeInTheDocument();
   });
 
   it('fetches and appends older articles when scrolling near the bottom of a full initial page', async () => {

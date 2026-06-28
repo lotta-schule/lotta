@@ -17,9 +17,8 @@ import { DeleteEventConfirmationDialog } from './DeleteEventConfirmationDialog';
 
 export type EditEventDialogProps = {
   eventToBeEdited:
-    | ResultOf<typeof GET_CALENDAR_EVENTS>['calendarEvents'][number]
-    | null;
-  onClose(): void;
+    ResultOf<typeof GET_CALENDAR_EVENTS>['calendarEvents'][number] | null;
+  onClose: () => void;
 };
 
 export const EditEventDialog = React.memo(

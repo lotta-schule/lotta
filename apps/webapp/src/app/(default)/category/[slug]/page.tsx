@@ -9,7 +9,7 @@ export default async function CategoryRoute({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  loadTenant();
+  void loadTenant();
   const { slug } = await params;
   const rawCategoryId = slug?.replace(/^(\d+).*/, '$1');
 

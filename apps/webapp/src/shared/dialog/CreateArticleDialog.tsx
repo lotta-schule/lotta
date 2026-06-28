@@ -19,8 +19,8 @@ import CreateArticleMutation from '#/api/mutation/CreateArticleMutation.graphql'
 
 export interface CreateArticleDialogProps {
   isOpen: boolean;
-  onConfirm(article: ArticleModel): void;
-  onAbort(): void;
+  onConfirm: (article: ArticleModel) => void;
+  onAbort: () => void;
 }
 
 export const CreateArticleDialog = React.memo(
@@ -72,7 +72,7 @@ export const CreateArticleDialog = React.memo(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            createArticle({ variables: { article: { title } } });
+            void createArticle({ variables: { article: { title } } });
           }}
         >
           <DialogContent>

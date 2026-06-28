@@ -28,8 +28,8 @@ export interface FormElementProps {
   element: FormElementInterface;
   isEditModeEnabled?: boolean;
   value: string | string[];
-  onSetValue(value: string | string[]): void;
-  onUpdateElement?(element: Partial<FormElementInterface>): void;
+  onSetValue: (value: string | string[]) => void;
+  onUpdateElement?: (element: Partial<FormElementInterface>) => void;
 }
 
 const EditableText = ({
@@ -39,7 +39,7 @@ const EditableText = ({
 }: {
   value: string;
   ariaLabel?: string;
-  onChange(value: string): void;
+  onChange: (value: string) => void;
 }) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [draft, setDraft] = React.useState(value);

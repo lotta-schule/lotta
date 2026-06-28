@@ -17,7 +17,7 @@ import CreateFeedbackMutation from '#/api/mutation/CreateFeedbackMutation.graphq
 
 export interface FeedbackDialogProps {
   isOpen: boolean;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const FeedbackDialog = React.memo(
@@ -53,7 +53,7 @@ export const FeedbackDialog = React.memo(
           onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
-            createFeedback({
+            void createFeedback({
               variables: {
                 feedback: {
                   topic: formData.get('topic') as string,

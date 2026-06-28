@@ -78,7 +78,7 @@ defmodule Lotta.Storage.FileData do
 
   @spec stream!(t(), integer()) :: Enumerable.t()
   def stream!(%__MODULE__{_path: path}, chunk_size) when is_binary(path) do
-    File.stream!(path, [], chunk_size)
+    File.stream!(path, chunk_size, [])
   end
 
   def stream!(%__MODULE__{stream: stream}, chunk_size) when not is_nil(stream) do

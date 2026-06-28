@@ -9,7 +9,7 @@ import styles from './EnrollmentTokensEditor.module.scss';
 export interface EnrollmentTokensEditorProps {
   disabled?: boolean;
   tokens: string[];
-  setTokens(tokens: string[]): void;
+  setTokens: (tokens: string[]) => void;
 }
 
 const AnimatedTag = motion.create(Tag);

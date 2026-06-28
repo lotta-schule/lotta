@@ -22,7 +22,7 @@ export const CreateLottaFeedback = React.memo(() => {
           e.preventDefault();
           const form = e.currentTarget;
           const formData = new FormData(form);
-          sendFeedback({
+          void sendFeedback({
             variables: {
               subject: formData.get('subject') as string,
               message: formData.get('message') as string,
