@@ -184,7 +184,12 @@ defmodule Lotta.Release do
 
   defp on_each_tenant_repo(fun) do
     Repo.with_new_dynamic_repo(fn pid ->
-      customers = Repo.all(Tenant, prefix: "public", dynamic_repo: pid)
+      customers =
+        Repo.all(Tenant,
+          select: [:id, :title, :prefix, :slug],
+          prefix: "public",
+          dynamic_repo: pid
+        )
 
       Logger.notice(
         "Executing database operation on #{Enum.count(customers)} customer schemas ..."
