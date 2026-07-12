@@ -458,27 +458,6 @@ const introspection = {
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "FileFilter",
-        "inputFields": [
-          {
-            "name": "first",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int"
-            }
-          },
-          {
-            "name": "afterId",
-            "type": {
-              "kind": "SCALAR",
-              "name": "ID"
-            }
-          }
-        ],
-        "isOneOf": false
-      },
-      {
-        "kind": "INPUT_OBJECT",
         "name": "ArticleInput",
         "inputFields": [
           {
@@ -2621,6 +2600,27 @@ const introspection = {
           }
         ],
         "interfaces": []
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "FileFilter",
+        "inputFields": [
+          {
+            "name": "afterId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID"
+            }
+          },
+          {
+            "name": "first",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int"
+            }
+          }
+        ],
+        "isOneOf": false
       },
       {
         "kind": "OBJECT",
@@ -5029,17 +5029,17 @@ const introspection = {
             },
             "args": [
               {
-                "name": "parentDirectoryId",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "ID"
-                }
-              },
-              {
                 "name": "filter",
                 "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "FileFilter"
+                }
+              },
+              {
+                "name": "parentDirectoryId",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID"
                 }
               }
             ],
@@ -6425,6 +6425,15 @@ const introspection = {
                 "kind": "SCALAR",
                 "name": "DateTime"
               }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "usedStorageSize",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int"
             },
             "args": [],
             "isDeprecated": false

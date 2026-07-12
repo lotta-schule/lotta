@@ -7,3 +7,12 @@ export const PERMANENTLY_DELETE_USER_ACCOUNT = graphql(`
     }
   }
 `);
+
+export const GET_ARTICLES_WITH_USER_FILES = graphql(`
+  query GetArticlesWithUserFiles($userId: ID!) {
+    articles: articlesWithUserFiles(userId: $userId) {
+      id
+      title
+    }
+  }
+`);

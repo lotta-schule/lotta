@@ -13,7 +13,7 @@
     "test": "vitest run",
     "lint": "oxlint --fix src/ --format $([[ -n $GITHUB_ACTIONS ]] && echo 'github' || echo 'default')",
     "typecheck": "tsc -p tsconfig.typecheck.json",
-    "schema:download": "bunx get-graphql-schema http://127.0.0.1:4000/api > .tmp/schema.graphql",
+    "schema:download": "bunx get-graphql-schema http://127.0.0.1:4000/api > ./src/api/graphql-schema.graphql",
     "translations:collect": "bunx i18next"
   },
   "type": "module",
@@ -72,6 +72,7 @@
     "slugify": "^1.6.9"
   },
   "devDependencies": {
+    "@0no-co/graphqlsp": "^1.17.3",
     "i18next-parser": "^9.4.0",
     "ignore-loader": "^0.1.2",
     "sass": "^1.101.0",

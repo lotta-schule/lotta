@@ -1,0 +1,833 @@
+schema {
+  query: RootQueryType
+  mutation: RootMutationType
+  subscription: RootSubscriptionType
+}
+
+"""
+The @oneOf built-in directive is used within the type system definition language
+to indicate an Input Object is a OneOf Input Object.
+
+A OneOf Input Object is a special variant of Input Object where exactly one
+field must be set and non-null, all others being omitted.
+This is useful for representing situations where an input may be one of many different options.
+"""
+directive @oneOf on INPUT_OBJECT
+
+"""Exposes a URL that specifies the behavior of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behavior of this scalar."""
+  url: String!
+) on SCALAR
+
+enum AnalyticsMetric {
+  BOUNCE_RATE
+  PAGEVIEWS
+  VIEWS_PER_VISIT
+  VISIT_DURATION
+  VISITORS
+  VISITS
+}
+
+type AnalyticsMetrics {
+  bounceRate: Int!
+  pageviews: Int!
+  viewsPerVisit: Float!
+  visitDuration: Int!
+  visitors: Int!
+  visits: Int!
+}
+
+"""The `AnalyticsPeriod` scalar type is a description of a period of time"""
+scalar AnalyticsPeriod
+
+enum AnalyticsProperty {
+  EVENT_GOAL
+  EVENT_HOSTNAME
+  EVENT_PAGE
+  VISIT_BROWSER
+  VISIT_BROWSER_VERSION
+  VISIT_CITY
+  VISIT_COUNTRY
+  VISIT_DEVICE
+  VISIT_ENTRY_PAGE
+  VISIT_EXIT_PAGE
+  VISIT_OS
+  VISIT_OS_VERSION
+  VISIT_REFERRER
+  VISIT_REGION
+  VISIT_SOURCE
+  VISIT_UTM_CAMPAIGN
+  VISIT_UTM_CONTENT
+  VISIT_UTM_MEDIUM
+  VISIT_UTM_SOURCE
+  VISIT_UTM_TERM
+}
+
+type Article {
+  category: Category
+  contentModules: [ContentModule!]!
+  groups: [UserGroup!]!
+  id: ID!
+  insertedAt: DateTime!
+  isPinnedToTop: Boolean
+  isReactionsEnabled: Boolean
+  preview: String
+  previewImageFile: File
+  published: Boolean
+  reactionCounts: [ArticleReactionCount!]
+  readyToPublish: Boolean
+  tags: [String!]
+  title: String!
+  updatedAt: DateTime!
+  users: [User!]!
+}
+
+"""Filtering options for the article list"""
+input ArticleFilter {
+  """Limit the number of results to return"""
+  first: Int
+
+  """Return only results updated before than a given date"""
+  updatedBefore: DateTime
+}
+
+input ArticleInput {
+  category: SelectCategoryInput
+  contentModules: [ContentModuleInput]
+  groups: [SelectUserGroupInput]
+  insertedAt: DateTime
+  isReactionsEnabled: Boolean
+  preview: String
+  previewImageFile: SelectFileInput
+  published: Boolean
+  readyToPublish: Boolean
+  tags: [String!]
+  title: String!
+  updatedAt: DateTime
+  users: [SelectUserInput]
+}
+
+type ArticleReactionCount {
+  count: Int
+  type: ArticleReactionType
+}
+
+enum ArticleReactionType {
+  FACE_FLUSHED
+  FACE_SMILE
+  HEART
+  HEART_CRACK
+  LEMON
+  PEPPER
+  SKULL
+  THUMB_UP
+}
+
+type Authresult {
+  accessToken: String
+  refreshToken: String
+}
+
+type AvailableFormat {
+  availability: FormatAvailability!
+  mimeType: String!
+  name: ConversionFormat!
+  type: FileType!
+  url: String
+}
+
+type BreakdownMetrics {
+  metrics: [MetricResult!]!
+  property: String!
+}
+
+type Calendar {
+  color: String!
+  events: [CalendarEvent!]!
+  id: ID!
+  isPubliclyAvailable: Boolean!
+  name: String!
+  subscriptionUrl: String
+}
+
+type CalendarEvent {
+  calendar: Calendar!
+  description: String
+  end: DateTime!
+  id: ID!
+  isFullDay: Boolean!
+  recurrence: CalendarEventRecurrence
+  start: DateTime!
+  summary: String!
+}
+
+input CalendarEventInput {
+  calendarId: ID!
+  description: String
+  end: DateTime!
+  isFullDay: Boolean!
+  recurrence: RecurrenceInput
+  start: DateTime!
+  summary: String!
+  timezone: String
+}
+
+type CalendarEventRecurrence {
+  daysOfMonth: [Int!]
+  daysOfWeek: [String!]
+  frequency: CalendarEventRecurrenceFrequency!
+  interval: Int!
+  occurrences: Int
+  until: DateTime
+}
+
+enum CalendarEventRecurrenceFrequency {
+  DAILY
+  MONTHLY
+  WEEKLY
+  YEARLY
+}
+
+input CalendarInput {
+  color: String
+  isPubliclyAvailable: Boolean! = false
+  name: String!
+}
+
+type Category {
+  bannerImageFile: File
+  category: Category
+  groups: [UserGroup]
+  hideArticlesFromHomepage: Boolean
+  id: ID
+  insertedAt: DateTime
+  isHomepage: Boolean
+  isSidenav: Boolean
+  layoutName: String
+  redirect: String
+  sortKey: Int
+  title: String
+  updatedAt: DateTime
+  widgets: [Widget]
+}
+
+type ContentModule {
+  configuration: Json
+  content: Json
+  files: [File]
+  id: ID
+  insertedAt: DateTime
+  sortKey: Int
+  type: ContentModuleType
+  updatedAt: DateTime
+}
+
+input ContentModuleInput {
+  configuration: Json
+  content: Json
+  files: [SelectFileInput]
+  id: ID
+  sortKey: Int
+  type: ContentModuleType = TEXT
+}
+
+type ContentModuleResult {
+  id: ID
+  insertedAt: DateTime
+  result: Json
+  updatedAt: DateTime
+  user: User
+}
+
+enum ContentModuleType {
+  AUDIO
+  DIVIDER
+  DOWNLOAD
+  FORM
+  IMAGE
+  IMAGE_COLLECTION
+  TABLE
+  TEXT
+  TITLE
+  VIDEO
+}
+
+type Conversation {
+  groups: [UserGroup!]
+  id: ID
+  insertedAt: DateTime
+  messages(filter: MessageFilter): [Message!]
+  unreadMessages: Int
+  updatedAt: DateTime
+  users: [User!]
+}
+
+enum ConversionFormat {
+  ARTICLEPREVIEW_165
+  ARTICLEPREVIEW_330
+  ARTICLEPREVIEW_660
+  ARTICLEPREVIEW_99
+  ARTICLEPREVIEW_990
+  AUDIOPLAY_AAC
+  AUDIOPLAY_OGG
+  AVATAR_100
+  AVATAR_1000
+  AVATAR_250
+  AVATAR_50
+  AVATAR_500
+  BANNER_1320
+  BANNER_330
+  BANNER_660
+  BANNER_990
+  ICON_128
+  ICON_256
+  ICON_64
+  LOGO_300
+  LOGO_600
+  ORIGINAL
+  PAGEBG_1024
+  PAGEBG_1280
+  PAGEBG_1920
+  PAGEBG_2560
+  POSTER_1080P
+  PRESENT_1200
+  PRESENT_1600
+  PRESENT_2400
+  PRESENT_3200
+  PREVIEW_200
+  PREVIEW_400
+  PREVIEW_800
+  VIDEOPLAY_1080P_MP4
+  VIDEOPLAY_1080P_WEBM
+  VIDEOPLAY_200P_MP4
+  VIDEOPLAY_200P_WEBM
+  VIDEOPLAY_480P_MP4
+  VIDEOPLAY_480P_WEBM
+  VIDEOPLAY_720P_MP4
+  VIDEOPLAY_720P_WEBM
+}
+
+input CreateCategoryInput {
+  category: SelectCategoryInput
+  isSidenav: Boolean = false
+  title: String!
+}
+
+input CreateFeedbackInput {
+  content: String!
+  metadata: String
+  topic: String!
+}
+
+type CustomDomain {
+  host: String
+  id: ID
+  insertedAt: DateTime
+  isMainDomain: Boolean
+  updatedAt: DateTime
+}
+
+"""
+The `Date` scalar type represents a date. The Date appears in a JSON
+response as an ISO8601 formatted string, without a time component.
+"""
+scalar Date
+
+"""
+The `DateTime` scalar type represents a date and time in the UTC
+timezone. The DateTime appears in a JSON response as an ISO8601 formatted
+string, including UTC timezone ("Z"). The parsed date and time string will
+be converted to UTC if there is an offset.
+"""
+scalar DateTime
+
+type DeleteUserGroupResult {
+  unpublishedArticles: [Article!]!
+  userGroup: UserGroup!
+}
+
+type Device {
+  customName: String
+  deviceType: String
+  id: ID
+  insertedAt: DateTime
+  lastUsed: DateTime
+  modelName: String
+  operatingSystem: String
+  platformId: String
+  updatedAt: DateTime
+}
+
+type Directory {
+  id: ID!
+  insertedAt: DateTime!
+  name: String!
+  parentDirectory: Directory
+  path: [Directory!]!
+  updatedAt: DateTime!
+  user: User
+}
+
+type ExternalCalendarEvent {
+  description: String
+  end: DateTime
+  start: DateTime
+  summary: String
+  uid: String
+}
+
+type Feedback {
+  content: String
+  id: ID
+  insertedAt: DateTime
+  isForwarded: Boolean
+  isNew: Boolean
+  isResponded: Boolean
+  metadata: String
+  topic: String
+  updatedAt: DateTime
+  user: User
+}
+
+type File {
+  fileType: FileType!
+  filename: String!
+  filesize: Int!
+  formats(
+    """Return only formats with this availability status"""
+    availability: FormatAvailabilityStatus
+
+    """Return only formats for this category"""
+    category: String
+  ): [AvailableFormat!]!
+  id: ID!
+  insertedAt: DateTime!
+  metadata: Json
+  mimeType: String
+  parentDirectory: Directory
+  path: [Directory!]!
+  remoteLocation: String!
+  updatedAt: DateTime!
+  usage: [FileUsageLocation!]!
+  user: User
+  userId: ID
+}
+
+type FileArticleUsageLocation {
+  article: Article!
+  usage: String!
+}
+
+type FileCategoryUsageLocation {
+  category: Category!
+  usage: String!
+}
+
+type FileContentModuleUsageLocation {
+  article: Article!
+  contentModule: ContentModule!
+  usage: String!
+}
+
+input FileFilter {
+  """
+  Keyset cursor: ID of the last file in the previous page (files sorted by filename ASC, id ASC)
+  """
+  afterId: ID
+  first: Int
+}
+
+type FileSystemUsageLocation {
+  usage: String!
+}
+
+enum FileType {
+  AUDIO
+  BINARY
+  IMAGE
+  MISC
+  PDF
+  VIDEO
+}
+
+union FileUsageLocation = FileArticleUsageLocation | FileCategoryUsageLocation | FileContentModuleUsageLocation | FileSystemUsageLocation | FileUserUsageLocation
+
+type FileUserUsageLocation {
+  usage: String!
+  user: User!
+}
+
+type FormatAvailability {
+  error: String
+  progress: Int
+  status: FormatAvailabilityStatus!
+}
+
+enum FormatAvailabilityStatus {
+  AVAILABLE
+  FAILED
+  PROCESSING
+  READY
+  REQUESTABLE
+}
+
+"""
+The `Json` scalar type represents arbitrary json string data, represented as UTF-8
+character sequences. The Json type is most often used to represent a free-form
+human-readable json string.
+"""
+scalar Json
+
+type Message {
+  content: String
+  conversation: Conversation!
+  files: [File!]
+  id: ID!
+  insertedAt: DateTime!
+  updatedAt: DateTime!
+  user: User
+}
+
+input MessageFilter {
+  """Return only messages with an id lower than this (older than)"""
+  before: ID
+
+  """Limit the number of results to return"""
+  first: Int
+}
+
+input MessageInput {
+  content: String
+  files: [SelectFileInput!]
+  recipientGroup: SelectUserGroupInput
+  recipientUser: SelectUserInput
+}
+
+type MetricResult {
+  metric: AnalyticsMetric!
+  value: Int!
+}
+
+"""Monthly usage statistics for a specific month, grouped by usage type"""
+type MonthlyUsagePeriod {
+  activeUserCount: UsageTypeData
+  mediaConversionSeconds: UsageTypeData
+  month: Int!
+  totalStorageCount: UsageTypeData
+  year: Int!
+}
+
+input RecurrenceInput {
+  daysOfMonth: [Int!]
+  daysOfWeek: [String!]
+  frequency: CalendarEventRecurrenceFrequency!
+  interval: Int!
+  occurrences: Int
+  until: DateTime
+}
+
+input RegisterDeviceInput {
+  customName: String
+  deviceType: String
+  modelName: String
+  operatingSystem: String
+  platformId: String!
+  pushToken: String
+}
+
+input RegisterUserParams {
+  email: String!
+  hideFullName: Boolean
+  name: String!
+  nickname: String
+}
+
+type RootMutationType {
+  createArticle(article: ArticleInput!): Article
+  createCalendar(data: CalendarInput!): Calendar!
+  createCalendarEvent(data: CalendarEventInput!): CalendarEvent!
+  createCategory(category: CreateCategoryInput!): Category!
+  createDirectory(isPublic: Boolean, name: String!, parentDirectoryId: ID): Directory
+  createFeedback(feedback: CreateFeedbackInput!): Feedback!
+  createLottaFeedback(message: String!, subject: String): Boolean!
+  createMessage(message: MessageInput!): Message
+  createUserGroup(group: UserGroupInput!): UserGroup!
+  createWidget(title: String!, type: WidgetType!): Widget!
+  deleteArticle(id: ID!): Article
+  deleteCalendarEvent(id: ID!): CalendarEvent!
+  deleteCategory(id: ID!): Category!
+  deleteDevice(id: ID!): Device
+  deleteDirectory(id: ID!): Directory
+  deleteFeedback(id: ID!): Feedback!
+  deleteFile(id: ID!): File
+  deleteMessage(id: ID!): Message
+  deleteUserGroup(id: ID!): DeleteUserGroupResult!
+  deleteWidget(id: ID!): Widget!
+  destroyAccount(transferFileIds: [ID!], userId: ID!): User
+  login(password: String, username: String): Authresult
+  logout: Authresult
+  reactToArticle(articleId: ID!, type: ArticleReactionType!): Article
+  register(groupKey: String, user: RegisterUserParams!): Boolean
+  registerDevice(device: RegisterDeviceInput!): Device
+  requestFileConversion(category: String!, id: ID!): Boolean
+  requestHisecToken(password: String): String
+  requestPasswordReset(email: String!): Boolean
+  resetPassword(email: String!, password: String!, token: String!): Authresult
+  respondToFeedback(id: ID!, message: String!, subject: String): Feedback!
+  sendFeedbackToLotta(id: ID!, message: String): Feedback!
+  sendFormResponse(contentModuleId: ID!, response: Json!): Boolean
+  toggleArticlePin(id: ID!): Article
+  updateArticle(article: ArticleInput!, id: ID!): Article
+  updateCalendar(data: CalendarInput!, id: ID!): Calendar!
+  updateCalendarEvent(data: CalendarEventInput!, id: ID!): CalendarEvent!
+  updateCategory(category: UpdateCategoryInput!, id: ID!): Category!
+  updateDevice(device: UpdateDeviceInput!, id: ID!): Device
+  updateDirectory(id: ID!, name: String, parentDirectoryId: ID): Directory
+  updateEmail(newEmail: String!): User
+  updateFile(filename: String, id: ID!, parentDirectoryId: ID): File
+  updatePassword(newPassword: String!): User
+  updateProfile(user: UpdateUserParams!): User
+  updateTenant(tenant: TenantInput!): Tenant!
+  updateUser(groups: [SelectUserGroupInput!], id: ID!): User
+  updateUserGroup(group: UserGroupInput!, id: ID!): UserGroup!
+  updateWidget(id: ID!, widget: WidgetInput!): Widget!
+  uploadFile(file: Upload!, parentDirectoryId: ID!): File
+}
+
+type RootQueryType {
+  aggregateAnalytics(date: Date!, period: AnalyticsPeriod!): AnalyticsMetrics!
+  article(id: ID!): Article
+  articles(categoryId: ID, filter: ArticleFilter): [Article]
+  articlesByTag(tag: String!): [Article!]
+  articlesByUser(id: ID!): [Article!]
+  articlesWithUserFiles(userId: ID!): [Article]
+  breakdownAnalytics(date: Date!, metrics: [AnalyticsMetric!]!, period: AnalyticsPeriod!, property: AnalyticsProperty!): [BreakdownMetrics!]!
+  calendarEvents(calendarId: ID!, from: DateTime!, latest: DateTime, limit: Int, timezone: String): [CalendarEvent!]!
+  calendars: [Calendar!]!
+  categories: [Category!]!
+  contentModuleResults(contentModuleId: ID!): [ContentModuleResult]
+  conversation(id: ID!, markAsRead: Boolean): Conversation
+  conversations: [Conversation]
+  currentUser: User
+  devices: [Device!]!
+  directories(parentDirectoryId: ID): [Directory!]!
+  directory(id: ID): Directory
+  externalCalendarEvents(days: Int, url: String!): [ExternalCalendarEvent!]!
+  feedbacks: [Feedback!]!
+  file(id: ID): File
+  files(filter: FileFilter, parentDirectoryId: ID): [File!]!
+  getReactionUsers(id: ID!, type: ArticleReactionType!): [User]
+  group(id: ID!): UserGroup
+  ownArticles(filter: ArticleFilter): [Article]
+  realtimeAnalytics: Int!
+  relevantFilesInUsage: [File!]
+  schedule(date: Date, widgetId: ID!): Json
+  search(options: SearchOptions, searchText: String!): [Article]
+  searchDirectories(searchterm: String): [Directory!]!
+  searchFiles(searchterm: String): [File!]!
+  searchUsers(groups: [SelectUserGroupInput], lastSeen: Int, searchtext: String): [User!]!
+  tags: [String!]
+  tenant(slug: String): Tenant
+  timeseriesAnalytics(date: Date!, metric: AnalyticsMetric!, period: AnalyticsPeriod!): [TimeseriesMetrics!]!
+  unpublishedArticles: [Article]
+  usage: [MonthlyUsagePeriod!]!
+  user(id: ID!): User
+  userGroups: [UserGroup!]!
+  users: [User!]!
+  widgets(categoryId: ID): [Widget!]!
+}
+
+type RootSubscriptionType {
+  articleIsUpdated(id: ID!): Article
+  conversionProgress(fileId: ID!): File
+  receiveMessage: Message
+}
+
+input SearchOptions {
+  categoryId: ID
+}
+
+input SelectCategoryInput {
+  id: ID
+}
+
+input SelectFileInput {
+  id: ID!
+}
+
+input SelectUserGroupInput {
+  id: ID!
+}
+
+input SelectUserInput {
+  id: ID!
+}
+
+input SelectWidgetInput {
+  id: ID!
+}
+
+type Tenant {
+  address: String!
+  backgroundImageFile: File
+  configuration: TenantConfiguration!
+  customDomains: [CustomDomain!]!
+  eduplacesId: String
+  host: String!
+  id: ID!
+  identifier: String!
+  insertedAt: DateTime!
+  logoImageFile: File
+  slug: String!
+  state: TenantState!
+  stats: TenantStats
+  title: String!
+  type: String
+}
+
+type TenantConfiguration {
+  backgroundImageFile: File
+  customTheme: Json
+  isEmailRegistrationEnabled: Boolean
+  logoImageFile: File
+  userMaxStorageConfig: String
+}
+
+input TenantConfigurationInput {
+  customTheme: Json
+  isEmailRegistrationEnabled: Boolean
+  userMaxStorageConfig: String
+}
+
+input TenantInput {
+  backgroundImageFileId: ID
+  configuration: TenantConfigurationInput
+  logoImageFileId: ID
+  title: String
+}
+
+enum TenantState {
+  """Tenant is active and operational"""
+  ACTIVE
+
+  """Tenant is being initialized"""
+  INIT
+
+  """Tenant is in read-only mode"""
+  READONLY
+}
+
+type TenantStats {
+  articleCount: Int
+  categoryCount: Int
+  fileCount: Int
+  userCount: Int
+}
+
+type TimeseriesMetrics {
+  date: String!
+  value: Float
+}
+
+input UpdateCategoryInput {
+  bannerImageFile: SelectFileInput
+  category: SelectCategoryInput
+  groups: [SelectUserGroupInput]
+  hideArticlesFromHomepage: Boolean
+  isSidenav: Boolean
+  layoutName: String
+  redirect: String
+  sortKey: Int
+  title: String
+  widgets: [SelectWidgetInput] = []
+}
+
+input UpdateDeviceInput {
+  customName: String
+  deviceType: String
+  pushToken: String
+}
+
+input UpdateUserParams {
+  avatarImageFile: SelectFileInput
+  class: String
+  enrollmentTokens: [String!]
+  hideFullName: Boolean
+  name: String
+  nickname: String
+}
+
+"""Represents an uploaded file."""
+scalar Upload
+
+"""Usage data for a specific usage type with value and timestamp"""
+type UsageTypeData {
+  updatedAt: DateTime!
+  value: Float!
+}
+
+type User {
+  articles: [Article!]!
+  assignedGroups: [UserGroup!]!
+  avatarImageFile: File
+  class: String
+  email: String
+  enrollmentTokens: [String!]!
+  groups: [UserGroup!]!
+  hasChangedDefaultPassword: Boolean
+  hideFullName: Boolean!
+  id: ID!
+  insertedAt: DateTime!
+  lastSeen: DateTime
+  name: String
+  nickname: String
+  unreadMessages: Int
+  updatedAt: DateTime!
+  usedStorageSize: Int
+}
+
+type UserGroup {
+  canReadFullName: Boolean!
+  eduplacesId: String
+  enrollmentTokens: [String!]!
+  id: ID!
+  insertedAt: DateTime!
+  isAdminGroup: Boolean!
+  name: String!
+  sortKey: Int!
+  updatedAt: DateTime!
+}
+
+input UserGroupInput {
+  canReadFullName: Boolean
+  enrollmentTokens: [String!]
+  isAdminGroup: Boolean
+  name: String!
+  sortKey: Int
+}
+
+type Widget {
+  calendarEvents: [CalendarEvent!]
+  configuration: Json
+  groups: [UserGroup]
+  iconImageFile: File
+  id: ID
+  title: String
+  type: WidgetType
+}
+
+input WidgetInput {
+  configuration: Json
+  groups: [SelectUserGroupInput!]
+  iconImageFile: SelectFileInput
+  title: String!
+}
+
+enum WidgetType {
+  CALENDAR
+  IFRAME
+  SCHEDULE
+  TAGCLOUD
+}
+

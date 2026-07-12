@@ -5,9 +5,12 @@ import { useRouter } from 'next/navigation.js';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { UserModel, UserGroupModel } from '#/model';
+import { UserModel } from '#/model';
 import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
-import { GroupSelect } from '#/shared/edit/GroupSelect';
+import {
+  GroupSelect,
+  type BaseUserGroupModel,
+} from '#/shared/edit/GroupSelect';
 import {
   Input,
   Label,
@@ -19,10 +22,12 @@ import {
   useDebounce,
 } from '@lotta-schule/hubert';
 import { EditUserPermissionsDialog } from './_component';
+import {
+  SEARCH_USERS,
+  SEARCH_USERS_RESULT,
+} from './_graphql/SearchUsersAsAdmin';
 import { type TenantWithStats } from '#/loader';
 import clsx from 'clsx';
-
-import SearchUsersAsAdminQuery from '#/api/query/SearchUsersAsAdminQuery.graphql';
 
 import styles from './UserList.module.scss';
 
@@ -37,13 +42,13 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
 
   const [searchText, setSearchText] = React.useState('');
   const debouncedSearchtext = useDebounce(searchText, 500);
-  const [selectedUser, setSelectedUser] = React.useState<UserModel | null>(
-    null
+  const [selectedUser, setSelectedUser] = React.useState(
+    null as SEARCH_USERS_RESULT[number] | null
   );
 
   const [searchFilter, setSearchFilter] = React.useState<{
     name: string;
-    groups: (UserGroupModel | null)[];
+    groups: BaseUserGroupModel[];
     lastSeen: number | null;
   }>({
     name: '',
@@ -61,19 +66,16 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
     searchFilter.groups.length ||
     searchFilter.lastSeen;
 
-  const { data, loading: isLoading } = useQuery<{ users: UserModel[] }>(
-    SearchUsersAsAdminQuery,
-    {
-      variables: {
-        searchtext: searchFilter.name || null,
-        groups: searchFilter.groups.length
-          ? searchFilter.groups.map((g) => g && { id: g?.id })
-          : null,
-        lastSeen: searchFilter.lastSeen,
-      },
-      skip: !searchIsValid,
-    }
-  );
+  const { data, loading: isLoading } = useQuery(SEARCH_USERS, {
+    variables: {
+      searchtext: searchFilter.name || null,
+      groups: searchFilter.groups.length
+        ? searchFilter.groups.map((g) => g && { id: g?.id })
+        : null,
+      lastSeen: searchFilter.lastSeen,
+    },
+    skip: !searchIsValid,
+  });
 
   const totalUsers = tenant.stats?.userCount;
 
@@ -124,7 +126,10 @@ export const UserList = React.memo(({ currentUser, tenant }: UserListProps) => {
             label={t('Filter by group')}
             selectedGroups={searchFilter.groups ?? []}
             onSelectGroups={(groups) =>
-              setSearchFilter({ ...searchFilter, groups })
+              setSearchFilter({
+                ...searchFilter,
+                groups: groups.filter((g) => !!g),
+              })
             }
             className={styles.filter}
           />
