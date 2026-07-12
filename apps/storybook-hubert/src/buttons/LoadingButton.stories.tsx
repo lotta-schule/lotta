@@ -66,10 +66,10 @@ export const SuccessAction: StoryObj<typeof LoadingButton> = {
       await screen.findByRole('button', { name: /let me succeed/i })
     );
 
-    expect(onAction).toHaveBeenCalled();
+    void expect(onAction).toHaveBeenCalled();
 
     await waitFor(() => {
-      expect(
+      void expect(
         screen.queryByRole('progressbar'),
         'progressbar not visible'
       ).toBeVisible();
@@ -77,15 +77,15 @@ export const SuccessAction: StoryObj<typeof LoadingButton> = {
 
     await waitFor(
       () => {
-        expect(screen.queryByRole('progressbar')).toBeNull();
+        void expect(screen.queryByRole('progressbar')).toBeNull();
       },
       { timeout: 2000 }
     );
 
-    expect(onComplete).toHaveBeenCalled();
+    void expect(onComplete).toHaveBeenCalled();
 
     await waitFor(() => {
-      expect(screen.getByTestId('SuccessIcon')).toBeVisible();
+      void expect(screen.getByTestId('SuccessIcon')).toBeVisible();
     });
   },
 };
@@ -99,14 +99,14 @@ export const ErrorAction: StoryObj<typeof LoadingButton> = {
   play: async ({ canvasElement, args: { onAction, onError } }) => {
     const screen = within(canvasElement);
 
-    fireEvent.click(
+    void fireEvent.click(
       await screen.findByRole('button', { name: /let me fail/i })
     );
 
-    expect(onAction).toHaveBeenCalled();
+    void expect(onAction).toHaveBeenCalled();
 
     await waitFor(() => {
-      expect(
+      void expect(
         screen.queryByRole('progressbar'),
         'progressbar should be visible'
       ).toBeVisible();
@@ -114,15 +114,15 @@ export const ErrorAction: StoryObj<typeof LoadingButton> = {
 
     await waitFor(
       () => {
-        expect(screen.queryByRole('progressbar')).toBeNull();
+        void expect(screen.queryByRole('progressbar')).toBeNull();
       },
       { timeout: 2000 }
     );
 
-    expect(onError).toHaveBeenCalled();
+    void expect(onError).toHaveBeenCalled();
 
     await waitFor(() => {
-      expect(screen.getByTestId('ErrorIcon')).toBeVisible();
+      void expect(screen.getByTestId('ErrorIcon')).toBeVisible();
     });
   },
 };

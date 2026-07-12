@@ -28,7 +28,7 @@ describe('Browser/MoveNodesDialog', () => {
     vi.useRealTimers();
   });
   it('should open the dialog on action and close it when aborted', async () => {
-    const onSetCurrentAction = vi.fn();
+    const onSetCurrentAction = vi.fn<() => void>();
     const user = userEvent.setup();
     const screen = render(<WrappedMoveNodesDialog />);
 
@@ -68,7 +68,7 @@ describe('Browser/MoveNodesDialog', () => {
 
   it('should open "create directory" dialog on button click, then create directory in parent path', async () => {
     const user = userEvent.setup();
-    const onMoveNode = vi.fn();
+    const onMoveNode = vi.fn<() => void>();
 
     const screen = render(
       <WrappedMoveNodesDialog
@@ -160,8 +160,8 @@ describe('Browser/MoveNodesDialog', () => {
   it('should move the nodes', async () => {
     const user = userEvent.setup();
 
-    const onMoveNode = vi.fn();
-    const onSetCurrentAction = vi.fn();
+    const onMoveNode = vi.fn<() => void>();
+    const onSetCurrentAction = vi.fn<() => void>();
 
     const screen = render(
       <WrappedMoveNodesDialog

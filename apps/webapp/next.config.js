@@ -13,6 +13,13 @@ const nextConfig = {
   experimental: {
     externalDir: true,
     authInterrupts: true,
+    optimizePackageImports: [
+      '@lotta-schule/hubert',
+      '@apollo/client',
+      '@fortawesome/fontawesome-svg-core',
+      '@fortawesome/free-solid-svg-icons',
+      '@fortawesome/react-fontawesome',
+    ],
   },
   transpilePackages: ['@lotta-schule/hubert'],
   allowedDevOrigins: ['localhost', '*.lotta.lvh.me', '*.local.lotta.schule'],

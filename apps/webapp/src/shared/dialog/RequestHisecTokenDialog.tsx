@@ -15,7 +15,7 @@ import RequestHisecTokenMutation from '#/api/mutation/RequestHisecTokenMutation.
 export interface RequestHisecTokenDialogProps {
   isOpen: boolean;
   withCurrentPassword?: string;
-  onRequestClose(token: string | null): void;
+  onRequestClose: (token: string | null) => void;
 }
 
 export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
@@ -35,7 +35,7 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
     }, [isOpen]);
     React.useEffect(() => {
       if (isOpen && withCurrentPassword) {
-        requestHisecToken({
+        void requestHisecToken({
           variables: { password: withCurrentPassword },
         });
       }
@@ -50,7 +50,7 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            requestHisecToken({
+            void requestHisecToken({
               variables: { password },
             });
           }}

@@ -11,7 +11,7 @@ import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 
 export interface CategoryWidgetSelectorProps {
   selectedWidgets: WidgetModel[];
-  setSelectedWidgets(widgets: WidgetModel[]): void;
+  setSelectedWidgets: (widgets: WidgetModel[]) => void;
 }
 
 export const CategoryWidgetSelector = React.memo<CategoryWidgetSelectorProps>(

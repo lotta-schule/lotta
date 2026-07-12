@@ -6,7 +6,6 @@ defmodule Lotta.Messages do
   import Ecto.Query
 
   require Logger
-  require OpenTelemetry.Tracer
 
   alias Lotta.{Accounts, PushNotification, Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}

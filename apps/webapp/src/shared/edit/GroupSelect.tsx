@@ -90,8 +90,8 @@ export interface GroupSelectProps<
   row?: boolean;
 
   selectedGroups: Model[];
-  suggestionFilter?(group: Model, i: number, allGroups: Model[]): boolean;
-  onSelectGroups(groups: Model[]): void;
+  suggestionFilter?: (group: Model, i: number, allGroups: Model[]) => boolean;
+  onSelectGroups: (groups: Model[]) => void;
 }
 
 export const GroupSelect = React.memo(

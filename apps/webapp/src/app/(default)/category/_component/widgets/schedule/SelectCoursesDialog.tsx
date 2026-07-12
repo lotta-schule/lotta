@@ -16,7 +16,7 @@ const COLUMNS_COUNT = 2;
 export interface SelectCoursesDialogProps {
   isOpen: boolean;
   possibleCourses: string[];
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const SelectCoursesDialog = React.memo<SelectCoursesDialogProps>(

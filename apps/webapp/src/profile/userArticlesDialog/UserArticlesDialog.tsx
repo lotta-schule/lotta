@@ -19,7 +19,7 @@ import styles from './UserArticlesDialog.module.scss';
 
 export interface UserArticlesDialogProps {
   users: UserPreviewModel[] | null;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const UserArticlesDialog = React.memo(

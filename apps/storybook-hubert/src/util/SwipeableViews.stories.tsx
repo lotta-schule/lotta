@@ -85,19 +85,19 @@ export const Default: StoryObj<typeof SwipeableViews> = {
     const previousButton = screen.getByRole('button', { name: 'previous' });
     const swipeableViews = screen.getByTestId('movingStrip');
 
-    expect(swipeableViews).toHaveStyle('left: 0px');
+    void expect(swipeableViews).toHaveStyle('left: 0px');
 
-    fireEvent.click(nextButton);
+    void fireEvent.click(nextButton);
 
     await waitFor(() => {
-      expect(swipeableViews).not.toHaveStyle('left: 0px');
+      void expect(swipeableViews).not.toHaveStyle('left: 0px');
     });
 
     await new Promise((reslve) => setTimeout(reslve, 500));
-    fireEvent.click(previousButton);
+    void fireEvent.click(previousButton);
 
     await waitFor(() => {
-      expect(swipeableViews).toHaveStyle('left: 0px');
+      void expect(swipeableViews).toHaveStyle('left: 0px');
     });
   },
 };

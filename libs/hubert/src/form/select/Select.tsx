@@ -109,7 +109,7 @@ export const Select = ({
   return (
     <Popover
       open={state.isOpen}
-      onOpenChange={state.setOpen}
+      onOpenChange={(open) => state.setOpen(open)}
       placement="bottom-end"
     >
       <Label

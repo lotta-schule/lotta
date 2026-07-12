@@ -12,14 +12,17 @@ defmodule ExAws.Request.Finch do
   The default config handles setting the above.
   """
 
-  @default_opts [receive_timeout: 90_000]
+  @default_receive_timeout 90_000
 
   @impl true
   def request(method, url, body \\ "", headers \\ [], http_opts \\ []) do
-    opts = Keyword.merge(@default_opts, http_opts)
+    merged = Keyword.merge([receive_timeout: @default_receive_timeout], http_opts)
 
-    Finch.build(method, url, headers, body, opts)
-    |> Finch.request(Lotta.Finch)
+    {request_opts, build_opts} =
+      Keyword.split(merged, [:receive_timeout, :pool_timeout, :raw_headers])
+
+    Finch.build(method, url, headers, body, build_opts)
+    |> Finch.request(Lotta.Finch, request_opts)
     |> case do
       {:ok, %{status: status, headers: headers, body: body}} ->
         {:ok, %{status_code: status, headers: lowercase_headers(headers), body: body}}

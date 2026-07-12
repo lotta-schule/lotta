@@ -170,7 +170,7 @@ export const LoadingButton = <T = any,>({
     const form = ref.current?.closest('form');
     if (form) {
       const callback = (e: SubmitEvent) => {
-        executeHandler(e);
+        void executeHandler(e);
       };
 
       form.addEventListener('submit', callback);

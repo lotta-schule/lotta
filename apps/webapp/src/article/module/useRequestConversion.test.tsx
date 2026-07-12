@@ -29,7 +29,7 @@ describe('util/userAvatar/useCurrentUser', () => {
 
     expect(onRequestResult).not.toHaveBeenCalled();
 
-    requestFileConversion(movieFile);
+    void requestFileConversion(movieFile);
     await waitFor(() => {
       expect(onRequestResult).toHaveBeenCalledWith({
         id: movieFile.id,

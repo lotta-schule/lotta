@@ -5,9 +5,7 @@ import { usePopoverContext } from './Popover';
 export type VirtualTriggerProps = ClientRectObject;
 
 export const VirtualTrigger = React.memo((props: VirtualTriggerProps) => {
-  const {
-    refs: { setReference },
-  } = usePopoverContext();
+  const { refs } = usePopoverContext();
 
   const virtualElement = React.useMemo(
     () => ({
@@ -17,12 +15,12 @@ export const VirtualTrigger = React.memo((props: VirtualTriggerProps) => {
   );
 
   React.useEffect(() => {
-    setReference(virtualElement);
+    refs.setReference(virtualElement);
 
     return () => {
-      setReference(null);
+      refs.setReference(null);
     };
-  }, [virtualElement, setReference]);
+  }, [virtualElement, refs]);
 
   return null;
 });

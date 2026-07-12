@@ -34,7 +34,7 @@ export const Default: StoryObj<typeof Input> = {
     await fireEvent.click(canvas.getByRole('textbox'));
     await fireEvent.keyboard('sample text');
 
-    expect(canvas.getByRole('textbox')).toHaveValue('sample text');
+    void expect(canvas.getByRole('textbox')).toHaveValue('sample text');
   },
 };
 
@@ -59,10 +59,10 @@ export const Multiline: StoryObj<typeof Input> = {
     await fireEvent.keyboard('sample text\nwith newline');
 
     const textarea = canvas.getByRole('textbox');
-    expect(textarea).toHaveValue('sample text\nwith newline');
+    void expect(textarea).toHaveValue('sample text\nwith newline');
 
     await waitFor(() => {
-      expect(textarea.scrollHeight).toEqual(textarea.clientHeight);
+      void expect(textarea.scrollHeight).toEqual(textarea.clientHeight);
     });
   },
 };

@@ -10,7 +10,7 @@ import { GET_CALENDARS } from '#/app/(admin)/admin/calendars/_graphql';
 
 export interface CalendarWidgetConfigurationProps {
   configuration: CalendarWidgetConfig;
-  setConfiguration(configuration: CalendarWidgetConfig): void;
+  setConfiguration: (configuration: CalendarWidgetConfig) => void;
 }
 
 export const CalendarWidgetConfiguration = React.memo(

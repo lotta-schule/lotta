@@ -23,7 +23,7 @@ export const createErrorLink = () =>
       }
 
       return new Observable((observer) => {
-        pendingRefresh!.then((newToken) => {
+        void pendingRefresh!.then((newToken) => {
           if (!newToken) {
             observer.error(error);
             return;

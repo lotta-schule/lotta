@@ -25,7 +25,7 @@ describe('Deletable', () => {
 
   it('should render delete button when onDelete is provided', () => {
     render(
-      <Deletable onDelete={vi.fn()}>
+      <Deletable onDelete={vi.fn<() => void>()}>
         <span>Content</span>
       </Deletable>
     );
@@ -34,7 +34,7 @@ describe('Deletable', () => {
   });
 
   it('should call onDelete when button is clicked', () => {
-    const onDelete = vi.fn();
+    const onDelete = vi.fn<() => void>();
 
     render(
       <Deletable onDelete={onDelete}>

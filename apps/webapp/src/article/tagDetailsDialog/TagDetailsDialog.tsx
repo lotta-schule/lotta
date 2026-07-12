@@ -12,7 +12,7 @@ import styles from './TagDetailsDialog.module.scss';
 
 export interface TagDetailsDialogProps {
   tag: string | null;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const TagDetailsDialog = React.memo(

@@ -47,11 +47,22 @@ export const Avatar = React.memo(
     const backgroundImage = imageSet ? `image-set(${imageSet})` : `url(${src})`;
 
     return (
+      // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- role is always set ('button' when onClick, 'img' otherwise); linter can't evaluate the ternary expression
       <div
         {...props}
-        role={role || 'img'}
+        role={role || (onClick ? 'button' : 'img')}
+        tabIndex={!role && onClick ? 0 : undefined}
         title={title}
         onClick={onClick}
+        onKeyDown={
+          onClick
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onClick(e as unknown as React.MouseEvent<HTMLDivElement>);
+                }
+              }
+            : undefined
+        }
         className={clsx(styles.root, className, {
           [styles.clickable]: !!onClick,
         })}

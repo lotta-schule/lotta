@@ -7,7 +7,7 @@ export interface ColorSettingRowProps {
   label: string;
   hint?: string;
   value: string;
-  onChange(value: string): void;
+  onChange: (value: string) => void;
 }
 
 export const ColorSettingRow = React.memo<ColorSettingRowProps>(

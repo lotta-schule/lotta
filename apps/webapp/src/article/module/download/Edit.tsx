@@ -9,7 +9,7 @@ import styles from './Download.module.scss';
 
 export interface EditProps {
   contentModule: ContentModuleModel;
-  onUpdateModule(contentModule: ContentModuleModel): void;
+  onUpdateModule: (contentModule: ContentModuleModel) => void;
 }
 
 export const Edit = React.memo<EditProps>(

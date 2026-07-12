@@ -14,6 +14,7 @@ import GetUserQuery from '#/api/query/GetUserQuery.graphql';
 
 /* See https://github.com/lotta-schule/lotta/issues/528 */
 /* This component must vanish */
+// oxlint-disable-next-line vitest/no-disabled-tests
 describe.skip('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', () => {
   const mocks = (user: any) =>
     [

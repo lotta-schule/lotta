@@ -16,8 +16,8 @@ import GetCategoriesQuery from '#/api/query/GetCategoriesQuery.graphql';
 export interface DeleteWidgetDialogProps {
   isOpen: boolean;
   widget: WidgetModel;
-  onRequestClose(): void;
-  onConfirm(): void;
+  onRequestClose: () => void;
+  onConfirm: () => void;
 }
 
 export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(

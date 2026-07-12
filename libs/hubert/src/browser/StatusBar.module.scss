@@ -20,7 +20,14 @@
       margin: 0 0.25em;
     }
 
-    a {
+    a,
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
+      padding: 0;
       text-decoration: none;
       &:hover:not(.home) {
         text-decoration: underline;

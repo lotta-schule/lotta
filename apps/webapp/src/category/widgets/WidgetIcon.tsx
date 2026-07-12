@@ -25,26 +25,7 @@ import clsx from 'clsx';
 
 import styles from './WidgetIcon.module.scss';
 
-export const iconNameMapping: Record<
-  string,
-  | typeof faCircle
-  | typeof faBookmark
-  | typeof faCalendar
-  | typeof faCircleUser
-  | typeof faCircleCheck
-  | typeof faBriefcase
-  | typeof faComment
-  | typeof faFolder
-  | typeof faGraduationCap
-  | typeof faCloud
-  | typeof faBookOpen
-  | typeof faTag
-  | typeof faVolleyball
-  | typeof faFile
-  | typeof faMagnifyingGlass
-  | typeof faPuzzlePiece
-  | typeof faHeart
-> = {
+export const iconNameMapping: Record<string, typeof faCircle> = {
   lens: faCircle,
   bookmark: faBookmark,
   calendartoday: faCalendar,

@@ -3,8 +3,6 @@ defmodule LottaWeb.Plugs.SentryTraceContextPlug do
   Adds OpenTelemetry trace context to Sentry events and Logger metadata,
   so traces, logs and Sentry errors for a request can be correlated in Grafana.
   """
-  require OpenTelemetry.Tracer
-
   def init(opts), do: opts
 
   def call(conn, _opts) do

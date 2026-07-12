@@ -66,6 +66,7 @@ describe('sendRefreshRequest', () => {
 
   it('uses x-lotta-tenant header when tenantId is extractable from access token', async () => {
     isBrowserMock.mockReturnValue(false);
+    // oxlint-disable-next-line typescript/unbound-method
     vi.mocked(JWT.parse).mockReturnValue({
       body: { tenantId: 42 },
     } as any);

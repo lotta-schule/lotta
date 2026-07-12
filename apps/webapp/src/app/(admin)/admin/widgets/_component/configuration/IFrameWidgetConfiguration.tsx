@@ -6,7 +6,7 @@ import styles from './WidgetConfiguration.module.scss';
 
 export interface IFrameWidgetConfigurationProps {
   configuration: IFrameWidgetConfig;
-  setConfiguration(configuration: IFrameWidgetConfig): void;
+  setConfiguration: (configuration: IFrameWidgetConfig) => void;
 }
 
 export const IFrameWidgetConfiguration =

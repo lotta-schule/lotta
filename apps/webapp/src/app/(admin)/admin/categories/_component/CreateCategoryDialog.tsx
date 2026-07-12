@@ -29,8 +29,8 @@ enum CategoryPosition {
 
 export interface CreateCategoryDialogProps {
   isOpen: boolean;
-  onAbort(): void;
-  onConfirm(category: CategoryModel): void;
+  onAbort: () => void;
+  onConfirm: (category: CategoryModel) => void;
 }
 
 export const CreateCategoryDialog = React.memo(

@@ -17,7 +17,7 @@ import GetContentModuleResults from '#/api/query/GetContentModuleResults.graphql
 
 export interface FormResultsDialogProps {
   isOpen: boolean;
-  onRequestClose(): void;
+  onRequestClose: () => void;
   contentModule: ContentModuleModel<Record<string, string>, FormConfiguration>;
 }
 

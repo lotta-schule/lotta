@@ -43,7 +43,6 @@ export type TypedWidgetConfiguration<
         configuration?: CalendarWidgetConfig;
       }
     | { type: WidgetModelType.UserNavigationMobile }
-    | never
   );
 
 export interface CalendarWidgetConfig {
@@ -51,8 +50,7 @@ export interface CalendarWidgetConfig {
 }
 
 export type CalendarWidgetCalendarConfig =
-  | CalendarWidgetInternalCalendarConfig
-  | CalendarWidgetExternalCalendarConfig;
+  CalendarWidgetInternalCalendarConfig | CalendarWidgetExternalCalendarConfig;
 
 export type CalendarWidgetExternalCalendarConfig = {
   type?: 'external';

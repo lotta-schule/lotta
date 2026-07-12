@@ -23,7 +23,7 @@ const WrappedNodeListItem = ({
     .getPathForNode(node)
     .slice(0, -1) as BrowserPath<'directory'>,
   currentPath = parentPath,
-  onClick = vi.fn(),
+  onClick = vi.fn<() => void>(),
   isDisabled,
   isSelected,
   isEditingDisabled,
@@ -81,7 +81,7 @@ describe('Browser/NodeListItem', () => {
     describe('onClick', () => {
       it('should call onClick handler', async () => {
         const user = userEvent.setup();
-        const onClick = vi.fn();
+        const onClick = vi.fn<() => void>();
 
         const screen = render(
           <WrappedNodeListItem node={filePath.at(-1)!} onClick={onClick} />
@@ -93,7 +93,7 @@ describe('Browser/NodeListItem', () => {
       });
 
       it('should not call onClick handler when disabled', async () => {
-        const onClick = vi.fn();
+        const onClick = vi.fn<() => void>();
 
         const screen = render(
           <WrappedNodeListItem
@@ -311,7 +311,7 @@ describe('Browser/NodeListItem', () => {
     it('should show a checkbox on files in "select-multiple" mode and add to selection when selected', async () => {
       const otherNodePath = fixtures.getPathForNode('20');
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
       const screen = render(
         <WrappedNodeListItem
           node={filePath.at(-1)!}
@@ -331,7 +331,7 @@ describe('Browser/NodeListItem', () => {
     it('should show a selected checkbox on selected files in "select-multiple" mode and remove from selection when selected', async () => {
       const otherNodePath = fixtures.getPathForNode('20');
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
       const screen = render(
         <WrappedNodeListItem
           node={filePath.at(-1)!}

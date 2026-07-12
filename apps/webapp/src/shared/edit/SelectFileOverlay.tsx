@@ -15,8 +15,8 @@ export type SelectFileOverlayProps = {
   allowDeletion?: boolean;
   style?: React.CSSProperties;
   children?: React.ReactNode | Iterable<React.ReactNode>;
-  fileFilter?(file: FileModel): boolean;
-  onSelectFile(file: FileModel | null): void;
+  fileFilter?: (file: FileModel) => boolean;
+  onSelectFile: (file: FileModel | null) => void;
 };
 
 export const SelectFileOverlay = ({
