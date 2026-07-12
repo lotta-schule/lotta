@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ArticleModel, UserModel } from '#/model';
 import {
   Button,
   CircularProgress,
@@ -10,30 +9,33 @@ import {
 } from '@lotta-schule/hubert';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { Article } from '#/util/model';
+import {
+  GET_ARTICLES_WITH_USER_FILES,
+  PERMANENTLY_DELETE_USER_ACCOUNT,
+} from '../queries';
+
 import Link from 'next/link.js';
-import { PERMANENTLY_DELETE_USER_ACCOUNT } from '../queries';
 
-import GetArticlesWithUserFiles from '#/api/query/GetArticlesWithUserFiles.graphql';
-
-enum DeleteUserDialogSteps {
+const enum DeleteUserDialogSteps {
   Start,
   Review,
   Confirm,
 }
 
-export interface DeleteUserDialogProps {
-  user: UserModel;
+export type DeleteUserDialogProps = {
+  user: { id: string; name: string | null };
   onConfirm?: () => void;
   onRequestClose?: () => void;
-}
-export const DeleteUserDialog = React.memo<DeleteUserDialogProps>(
-  ({ user, onRequestClose, onConfirm }) => {
+};
+
+export const DeleteUserDialog = React.memo(
+  ({ user, onRequestClose, onConfirm }: DeleteUserDialogProps) => {
     const [step, setStep] = React.useState(DeleteUserDialogSteps.Start);
     const {
       data: articlesWithUse,
       loading: articlesWithUseIsLoading,
       error: articlesWithUseError,
-    } = useQuery<{ articles: ArticleModel[] }>(GetArticlesWithUserFiles, {
+    } = useQuery(GET_ARTICLES_WITH_USER_FILES, {
       skip: step !== DeleteUserDialogSteps.Review,
       variables: { userId: user.id },
       fetchPolicy: 'network-only',
@@ -73,29 +75,34 @@ export const DeleteUserDialog = React.memo<DeleteUserDialogProps>(
                   label={'Beiträge mit Dateien des Nutzers werden ermittelt.'}
                 />
               )}
-              {articlesWithUse?.articles.length === 0 && (
+              {articlesWithUse?.articles?.length === 0 && (
                 <p>
                   Es konnten <strong>keine Dateien</strong> von {user.name} in
                   öffentlichen Beiträgen gefunden werden.
                 </p>
               )}
-              {Boolean(articlesWithUse?.articles.length) && (
+              {!!articlesWithUse?.articles?.length && (
                 <>
                   <p>
                     Es konnten{' '}
-                    <strong>{articlesWithUse!.articles.length}</strong>
+                    <strong>{articlesWithUse.articles?.length}</strong>
                     Beiträge gefunden werden, die Dateien von {user.name}{' '}
                     enthalten.
                   </p>
                   <p>Folgende Beiträge enthalten Dateien des Nutzers:</p>
                   <ul>
-                    {articlesWithUse!.articles.map((article) => (
-                      <li key={article.id}>
-                        <Link href={Article.getPath(article)} target={'_blank'}>
-                          {article.title}
-                        </Link>
-                      </li>
-                    ))}
+                    {articlesWithUse!.articles
+                      ?.filter((a) => !!a)
+                      .map((article) => (
+                        <li key={article.id}>
+                          <Link
+                            href={Article.getPath(article)}
+                            target={'_blank'}
+                          >
+                            {article.title}
+                          </Link>
+                        </li>
+                      ))}
                   </ul>
                 </>
               )}

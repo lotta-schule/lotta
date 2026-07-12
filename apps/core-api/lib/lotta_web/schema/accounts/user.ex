@@ -40,6 +40,10 @@ defmodule LottaWeb.Schema.Accounts.User do
     field(:hide_full_name, non_null(:boolean))
     field(:has_changed_default_password, :boolean)
 
+    field(:used_storage_size, :integer,
+      resolve: &LottaWeb.UserResolver.resolve_used_storage_size/3
+    )
+
     field(:unread_messages, :integer, resolve: &LottaWeb.UserResolver.resolve_unread_messages/3)
 
     field(:avatar_image_file, :file,
