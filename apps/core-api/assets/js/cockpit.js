@@ -9,6 +9,7 @@ import { Hooks as BackpexHooks } from 'backpex';
 // TODO: I have to figure out why this import doesn't work with the new colocated hooks
 // import {hooks as colocatedHooks} from "phoenix-colocated/lotta"
 import topbar from '../vendor/topbar';
+import BalanceChart from './hooks/balance_chart';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -16,7 +17,7 @@ const csrfToken = document
 const liveSocket = new LiveSocket('/live', Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
-  hooks: { ...BackpexHooks },
+  hooks: { ...BackpexHooks, BalanceChart },
 });
 
 // Show progress bar on live navigation and form submits

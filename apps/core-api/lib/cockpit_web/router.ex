@@ -64,6 +64,10 @@ defmodule CockpitWeb.Router do
         live("/", CockpitWeb.Live.IndexLive)
         live_resources("/tenants", CockpitWeb.Live.TenantLive)
         live_resources("/invoices", CockpitWeb.Live.InvoiceLive)
+
+        live_resources("/bank-transactions", CockpitWeb.Live.BankTransactionLive,
+          only: [:index, :show]
+        )
       end
     end
   end

@@ -265,7 +265,7 @@ defmodule CockpitWeb.Live.TenantLiveTest do
       plan_config = Keyword.get(fields, :current_plan_name)
 
       assert is_list(plan_config.options)
-      assert Enum.all?(plan_config.options, fn {title, key} -> is_binary(title) end)
+      assert Enum.all?(plan_config.options, fn {title, _} -> is_binary(title) end)
     end
 
     test "textarea fields are excluded from index" do
