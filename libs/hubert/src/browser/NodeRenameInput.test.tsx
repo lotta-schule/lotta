@@ -32,8 +32,8 @@ describe('Browser/NodeRenameInput', () => {
   it('should render an input and have focus', () => {
     const screen = render(
       <WrappedNodeRenameInput
-        renameNode={vi.fn()}
-        onRequestClose={vi.fn()}
+        renameNode={vi.fn<() => void>()}
+        onRequestClose={vi.fn<() => void>()}
         path={filePath}
       />
     );
@@ -45,10 +45,10 @@ describe('Browser/NodeRenameInput', () => {
   it('should rename the file, then call onRequestClose', async () => {
     const user = userEvent.setup();
     let resolve = () => {};
-    const renameNode = vi.fn(
+    const renameNode = vi.fn<() => Promise<any>>(
       () => new Promise<void>((r) => (resolve = r)) as any
     );
-    const onRequestClose = vi.fn();
+    const onRequestClose = vi.fn<() => void>();
     const screen = render(
       <WrappedNodeRenameInput
         renameNode={renameNode}
@@ -77,8 +77,10 @@ describe('Browser/NodeRenameInput', () => {
   it('should show the error message when there was a problem', async () => {
     const user = userEvent.setup();
     let reject = (_reason?: Error) => {};
-    const renameNode = vi.fn(() => new Promise((_, r) => (reject = r)) as any);
-    const onRequestClose = vi.fn();
+    const renameNode = vi.fn<() => Promise<any>>(
+      () => new Promise((_, r) => (reject = r)) as any
+    );
+    const onRequestClose = vi.fn<() => void>();
     const screen = render(
       <WrappedNodeRenameInput
         renameNode={renameNode}

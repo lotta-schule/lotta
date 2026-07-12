@@ -45,7 +45,7 @@ describe('NodeList component', () => {
     describe('down arrow', () => {
       it('should keep selection when first entry is selected', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         render(
           <WrappedSearchResultsNodeList
             selected={[defaultNodesPaths.at(-1)!]}
@@ -60,12 +60,12 @@ describe('NodeList component', () => {
 
       it('should select the next item if there is one', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         const screen = render(
           <WrappedSearchResultsNodeList
             selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
-            onNavigate={vi.fn()}
+            onNavigate={vi.fn<() => void>()}
           />
         );
 
@@ -82,12 +82,12 @@ describe('NodeList component', () => {
     describe('keyboard up', () => {
       it('should keep selection when last entry is selected', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         render(
           <WrappedSearchResultsNodeList
             selected={[defaultNodesPaths.at(0)!]}
             onSelect={onSelect}
-            onNavigate={vi.fn()}
+            onNavigate={vi.fn<() => void>()}
           />
         );
 
@@ -98,13 +98,13 @@ describe('NodeList component', () => {
 
       it('should not select the previous item if there is one', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         const screen = render(
           <WrappedSearchResultsNodeList
             results={defaultNodesPaths}
             selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
-            onNavigate={vi.fn()}
+            onNavigate={vi.fn<() => void>()}
           />
         );
 

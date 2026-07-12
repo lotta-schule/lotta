@@ -129,6 +129,7 @@ describe('profile/deleteUserProfilePage/steps/ReviewFilesStep', () => {
       await fireEvent.click(tab);
 
       await waitFor(() => {
+        // oxlint-disable-next-line vitest/no-conditional-expect
         expect(
           screen.getByText(/Du kannst Dateien.*herunterladen/i)
         ).toBeVisible();

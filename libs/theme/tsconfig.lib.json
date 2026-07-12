@@ -3,18 +3,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "types": [
-      "node",
-      "vite/client"
-    ],
+    "declaration": true,
+    "types": ["node", "vite/client"],
     "outDir": "../../dist/lib/theme/lib"
   },
-  "exclude": [
-    "**/*.test.ts",
-    "**/*.test.tsx",
-  ],
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ]
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

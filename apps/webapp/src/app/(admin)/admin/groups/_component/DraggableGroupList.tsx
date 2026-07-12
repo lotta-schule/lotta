@@ -88,7 +88,7 @@ export const DraggableGroupList = () => {
         );
 
         groupsToUpdate.map((group) => {
-          updateGroup({
+          void updateGroup({
             variables: {
               id: group.id,
               group: {

@@ -8,7 +8,7 @@ type AuthLinkParams = {
 export const createAuthLink = ({ initialToken }: AuthLinkParams) =>
   new ApolloLink((operation, forward) => {
     if (initialToken) {
-      operation.setContext(({ headers = {}, authToken = undefined }) => ({
+      operation.setContext(({ headers = {}, authToken }) => ({
         headers: {
           ...headers,
           authorization: `Bearer ${authToken || initialToken}`,

@@ -32,7 +32,7 @@ describe('FilePreview Component', () => {
 
     it('should show file action buttons and exec action onClick', async () => {
       const user = userEvent.setup();
-      const onAction = vi.fn();
+      const onAction = vi.fn<() => void>();
       const screen = render(
         <WrappedNodeListItem
           selected={[nodePath]}
@@ -172,7 +172,7 @@ describe('FilePreview Component', () => {
 
     it('should show a "show" button', async () => {
       const user = userEvent.setup();
-      const onSetCurrentSearchResults = vi.fn();
+      const onSetCurrentSearchResults = vi.fn<() => void>();
 
       const screen = render(
         <WrappedNodeListItem

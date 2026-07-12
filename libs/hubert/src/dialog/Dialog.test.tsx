@@ -36,7 +36,7 @@ describe('general/dialog', () => {
 
     it('should show the close button when "onRequestClose" prop is set', async () => {
       const user = userEvent.setup();
-      const onClose = vi.fn();
+      const onClose = vi.fn<() => void>();
 
       const screen = render(
         <Dialog title={'Achtung!'} open onRequestClose={onClose}>
@@ -52,7 +52,7 @@ describe('general/dialog', () => {
     });
 
     it('should call "onRequestClose" prop when dialog closes', async () => {
-      const onClose = vi.fn();
+      const onClose = vi.fn<() => void>();
 
       const screen = render(
         <Dialog title={'Achtung!'} open onRequestClose={onClose}>

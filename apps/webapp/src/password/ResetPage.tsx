@@ -21,7 +21,7 @@ export const ResetPage = () => {
       errorPolicy: 'all',
       onCompleted: (data) => {
         if (data['resetPassword']) {
-          apolloClient.resetStore();
+          void apolloClient.resetStore();
           setData(data);
           router.replace('/');
         }
@@ -90,7 +90,7 @@ export const ResetPage = () => {
                   setError('Passwort und Wiederholung sind nicht gleich.');
                   return;
                 }
-                sendResetPassword({
+                void sendResetPassword({
                   variables: {
                     email,
                     password,

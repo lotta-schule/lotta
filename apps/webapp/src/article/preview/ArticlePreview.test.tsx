@@ -279,9 +279,9 @@ describe('shared/article/ArticlePreview', () => {
         { currentUser: SomeUser }
       );
       expect(screen.getByTestId('AuthorAvatarsList')).toBeVisible();
-      expect(screen.getAllByRole('img', { name: /profilbild/i })).toHaveLength(
-        2
-      );
+      expect(
+        screen.getAllByRole('button', { name: /profilbild/i })
+      ).toHaveLength(2);
     });
 
     describe('EditMode', () => {
@@ -311,7 +311,7 @@ describe('shared/article/ArticlePreview', () => {
           { currentUser: KeinErSieEsUser }
         );
         await user.hover(
-          screen.getByRole('img', { name: 'Profilbild von Che' }),
+          screen.getByRole('button', { name: 'Profilbild von Che' }),
           { force: true }
         );
         await waitFor(() => {
@@ -342,7 +342,7 @@ describe('shared/article/ArticlePreview', () => {
             { currentUser: SomeUser }
           );
           await user.hover(
-            screen.getByRole('img', { name: 'Profilbild von Che' }),
+            screen.getByRole('button', { name: 'Profilbild von Che' }),
             { force: true }
           );
           await user.click(
@@ -377,7 +377,7 @@ describe('shared/article/ArticlePreview', () => {
             { currentUser: SomeUser }
           );
           await user.hover(
-            screen.getByRole('img', { name: 'Profilbild von Che' }),
+            screen.getByRole('button', { name: 'Profilbild von Che' }),
             { force: true }
           );
           await user.click(

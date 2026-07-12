@@ -98,8 +98,11 @@ export const WidgetEditor = React.memo(({ widget }: WidgetEditorProps) => {
           <GroupSelect
             selectedGroups={widgetConfig.groups || []}
             disableAdminGroupsExclusivity
-            onSelectGroups={(groups: UserGroupModel[]) => {
-              setWidgetConfig({ ...widgetConfig, groups });
+            onSelectGroups={(groups) => {
+              setWidgetConfig({
+                ...widgetConfig,
+                groups: groups as UserGroupModel[],
+              });
             }}
           />
         </React.Suspense>

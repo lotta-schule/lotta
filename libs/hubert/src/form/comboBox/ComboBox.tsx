@@ -97,9 +97,11 @@ export const ComboBox = React.memo(
       ) => {
         const rightValue = searchText.toLocaleLowerCase();
         const results = allItems.filter((item) => {
-          const leftValue = (item.textValue ?? item.label)
-            ?.toString()
-            .toLocaleLowerCase();
+          const rawValue = item.textValue ?? item.label;
+          const leftValue =
+            typeof rawValue === 'string' || typeof rawValue === 'number'
+              ? String(rawValue).toLocaleLowerCase()
+              : undefined;
 
           if (!leftValue) {
             return false;
@@ -158,7 +160,7 @@ export const ComboBox = React.memo(
         }
 
         setIsLoading(true);
-        items(state.inputValue)
+        void items(state.inputValue)
           .then((newItems) => {
             setCalculatedItems(newItems);
             if (newItems.length) {
@@ -256,7 +258,7 @@ export const ComboBox = React.memo(
     return (
       <Popover
         open={state.isOpen}
-        onOpenChange={state.setOpen}
+        onOpenChange={(open) => state.setOpen(open)}
         placement={'bottom-end'}
       >
         <Label
@@ -303,6 +305,7 @@ export const ComboBox = React.memo(
             className={styles.listbox}
             aria-label={title}
             {...listBoxProps}
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- intentional in combobox listbox per WAI-ARIA
             autoFocus={!!listBoxProps.autoFocus}
             ref={listBoxRef}
             label={title}

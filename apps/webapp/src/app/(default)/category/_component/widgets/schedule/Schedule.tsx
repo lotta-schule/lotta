@@ -98,7 +98,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
 
   React.useEffect(() => {
     if (currentUser?.class) {
-      getCurrentScheduleData({
+      void getCurrentScheduleData({
         variables: { widgetId: widget.id, date: currentDate },
       }).then(({ data }) => {
         if (data?.schedule) {
@@ -123,13 +123,13 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
 
   React.useEffect(() => {
     if (currentDate) {
-      getLastSchedule({
+      void getLastSchedule({
         variables: {
           widgetId: widget.id,
           date: dateToDateString(getAvailableDate('previous', currentDate)),
         },
       });
-      getNextSchedule({
+      void getNextSchedule({
         variables: {
           widgetId: widget.id,
           date: dateToDateString(getAvailableDate('next', currentDate)),

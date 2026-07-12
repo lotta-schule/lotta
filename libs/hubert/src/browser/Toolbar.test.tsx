@@ -28,7 +28,7 @@ describe('browser/Toolbar', () => {
 
   it('calls onClick when "Zurück" button is clicked', async () => {
     const user = userEvent.setup();
-    const onNavigate = vi.fn();
+    const onNavigate = vi.fn<() => void>();
 
     const screen = render(<WrappedToolbar onNavigate={onNavigate} />);
 
@@ -39,10 +39,10 @@ describe('browser/Toolbar', () => {
   describe('Directory creation', () => {
     it('calls should show the "create directory" button when user can create a directory and set the currentAction on click', async () => {
       const user = userEvent.setup();
-      const setCurrentAction = vi.fn();
+      const setCurrentAction = vi.fn<() => void>();
       const screen = render(
         <WrappedToolbar
-          createDirectory={vi.fn()}
+          createDirectory={vi.fn<() => void>()}
           setCurrentAction={setCurrentAction}
         />
       );
@@ -51,10 +51,10 @@ describe('browser/Toolbar', () => {
     });
 
     it('should not show the button when user is not allowed to create a directory in his current path.', async () => {
-      const canEdit = vi.fn(() => false);
+      const canEdit = vi.fn<() => boolean>(() => false);
       const screen = render(
         <WrappedToolbar
-          createDirectory={vi.fn()}
+          createDirectory={vi.fn<() => void>()}
           canEdit={canEdit}
           setCurrentAction={canEdit}
         />
@@ -71,7 +71,7 @@ describe('browser/Toolbar', () => {
   describe('Upload', () => {
     const uploadClient = {
       currentUploads: [],
-      addFile: vi.fn(),
+      addFile: vi.fn<() => void>(),
       currentProgress: 0,
       hasErrors: false,
       isUploading: false,
@@ -108,7 +108,7 @@ describe('browser/Toolbar', () => {
       });
 
       it('should not show the upload button when the user is not allowed to edit parent directory', async () => {
-        const canEdit = vi.fn(() => false);
+        const canEdit = vi.fn<() => boolean>(() => false);
         const screen = render(
           <WrappedToolbar canEdit={canEdit} uploadClient={uploadClient} />
         );
@@ -153,7 +153,7 @@ describe('browser/Toolbar', () => {
         ] as Upload[];
         const uploadClient = {
           currentUploads: uploadClientUploads,
-          addFile: vi.fn(),
+          addFile: vi.fn<() => void>(),
           currentProgress: 10,
           hasErrors: false,
           isUploading: true,

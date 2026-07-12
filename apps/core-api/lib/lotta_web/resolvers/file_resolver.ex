@@ -1,8 +1,6 @@
 defmodule LottaWeb.FileResolver do
   @moduledoc false
 
-  require Logger
-
   import Ecto.Query
   import Absinthe.Resolution.Helpers, only: [batch: 3]
   import Lotta.Accounts.Permissions

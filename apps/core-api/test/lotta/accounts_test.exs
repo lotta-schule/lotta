@@ -65,7 +65,7 @@ defmodule Lotta.AccountsTest do
 
       assert user.email == "some@email.de"
       assert user.name == "Alberta Smith"
-      refute is_nil(user.password)
+      assert user.password != []
       assert Accounts.Authentication.verify_user_pass(user, user.password)
     end
 

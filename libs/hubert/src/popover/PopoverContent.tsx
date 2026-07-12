@@ -8,7 +8,7 @@ import { Overlay } from './Overlay';
 export const PopoverContent = ({
   style,
   ref: refProp,
-  role = undefined,
+  role,
   ...props
 }: React.HTMLProps<HTMLDivElement>) => {
   const {

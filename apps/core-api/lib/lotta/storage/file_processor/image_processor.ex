@@ -88,7 +88,7 @@ defmodule Lotta.Storage.FileProcessor.ImageProcessor do
     end
   end
 
-  defp get_image_from_file_data(%FileData{_path: path}),
+  defp get_image_from_file_data(%FileData{_path: path}) when not is_nil(path),
     do: image_module().open(path)
 
   defp get_image_from_file_data(%FileData{} = file_data),

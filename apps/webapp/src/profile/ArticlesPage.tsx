@@ -78,7 +78,7 @@ export const ArticlesPage = React.memo(
           Math.max(window.pageYOffset, document.documentElement.scrollTop) >
         document.documentElement.offsetHeight - FETCH_MORE_OFFSET
       ) {
-        loadOlderArticles();
+        void loadOlderArticles();
       }
     }, [loadOlderArticles]);
 

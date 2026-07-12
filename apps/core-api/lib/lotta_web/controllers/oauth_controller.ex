@@ -251,7 +251,7 @@ defmodule LottaWeb.OAuthController do
     do: Application.get_env(:lotta, :auth_code_strategy_module, Lotta.Eduplaces.AuthCodeStrategy)
 
   defp maybe_put_mobile_app_cookie(conn) do
-    if (get_req_header(conn, "x-lotta-app-version") || []) != [] do
+    if get_req_header(conn, "x-lotta-app-version") != [] do
       put_resp_cookie(conn, "mobile_app", "true",
         http_only: true,
         same_site: "Lax",

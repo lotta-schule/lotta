@@ -8,7 +8,7 @@ import { CreateMessageDialog } from './CreateMessageDialog';
 import styles from './MessageToolbar.module.scss';
 
 export interface MessageToolbarProps {
-  onRequestNewMessage(subject: NewMessageDestination): void;
+  onRequestNewMessage: (subject: NewMessageDestination) => void;
 }
 
 export const MessageToolbar = React.memo<MessageToolbarProps>(

@@ -6,7 +6,7 @@ import styles from './ImageCaption.module.scss';
 interface ImageCaptionProps {
   isEditModeEnabled: boolean;
   value: string;
-  onUpdate(caption: string): void;
+  onUpdate: (caption: string) => void;
 }
 
 export const ImageCaption = React.memo<ImageCaptionProps>(

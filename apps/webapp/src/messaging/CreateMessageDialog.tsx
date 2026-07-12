@@ -10,7 +10,6 @@ import {
 } from '@lotta-schule/hubert';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
-import { UserGroupModel } from '#/model';
 import { NewMessageDestination } from './Message';
 import { SearchUserField } from '#/component/form';
 import { useCurrentUser } from '#/util/user/useCurrentUser';
@@ -22,8 +21,8 @@ import styles from './CreateMessageDialog.module.scss';
 
 export interface CreateMessageDialogProps {
   isOpen: boolean;
-  onConfirm(subject: NewMessageDestination): void;
-  onAbort(): void;
+  onConfirm: (subject: NewMessageDestination) => void;
+  onAbort: () => void;
 }
 
 export const CreateMessageDialog = React.memo(
@@ -88,7 +87,8 @@ export const CreateMessageDialog = React.memo(
                       hidePublicGroupSelection
                       label={'Gruppe wählen'}
                       selectedGroups={[]}
-                      suggestionFilter={(group: UserGroupModel) =>
+                      suggestionFilter={(group) =>
+                        group !== null &&
                         !!currentUser!.groups.find((g) => g.id === group.id)
                       }
                       onSelectGroups={([group]) => {

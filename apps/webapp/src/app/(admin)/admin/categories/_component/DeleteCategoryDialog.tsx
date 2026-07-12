@@ -18,8 +18,8 @@ import GetArticlesQuery from '#/api/query/GetArticlesQuery.graphql';
 export interface DeleteCategoryDialogProps {
   isOpen: boolean;
   categoryToDelete: CategoryModel;
-  onRequestClose(): void;
-  onConfirm(): void;
+  onRequestClose: () => void;
+  onConfirm: () => void;
 }
 
 export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(

@@ -84,9 +84,9 @@ describe('LoadingButton', () => {
     it('should call the handler and show the success state', async () => {
       const fireEvent = userEvent.setup();
       const { promise, resolve } = createPromise();
-      const onAction = vi.fn(() => promise);
-      const onComplete = vi.fn();
-      const onError = vi.fn();
+      const onAction = vi.fn<() => Promise<any>>(() => promise);
+      const onComplete = vi.fn<() => void>();
+      const onError = vi.fn<() => void>();
       const screen = render(
         <LoadingButton
           label="Click Me"
@@ -120,9 +120,9 @@ describe('LoadingButton', () => {
     it('should call the handler and show the error state', async () => {
       const fireEvent = userEvent.setup();
       const { promise, reject } = createPromise();
-      const onAction = vi.fn(() => promise);
-      const onComplete = vi.fn();
-      const onError = vi.fn();
+      const onAction = vi.fn<() => Promise<any>>(() => promise);
+      const onComplete = vi.fn<() => void>();
+      const onError = vi.fn<() => void>();
       const screen = render(
         <LoadingButton
           label="Click Me"
@@ -159,7 +159,7 @@ describe('LoadingButton', () => {
 
           return false;
         });
-        const onAction = vi.fn();
+        const onAction = vi.fn<() => void>();
         const screen = render(
           <form method="get" onSubmit={onSubmit}>
             <input type="text" defaultValue="" />
@@ -181,7 +181,7 @@ describe('LoadingButton', () => {
 
       it("should run the onAction handle when it's in a form that is being submitted", async () => {
         const user = userEvent.setup();
-        const onAction = vi.fn(() => Promise.resolve());
+        const onAction = vi.fn<() => Promise<void>>(() => Promise.resolve());
         const screen = render(
           <form>
             <input type="text" />
@@ -216,7 +216,7 @@ describe('LoadingButton', () => {
         vi.useFakeTimers({ shouldAdvanceTime: true });
 
         const user = userEvent.setup();
-        const onAction = vi.fn(async () => void 0);
+        const onAction = vi.fn<() => Promise<void>>(async () => void 0);
         const screen = render(
           <LoadingButton label="Click Me" onAction={onAction} />
         );
@@ -242,7 +242,7 @@ describe('LoadingButton', () => {
         vi.useFakeTimers({ shouldAdvanceTime: true });
 
         const user = userEvent.setup();
-        const onAction = vi.fn(() => Promise.resolve());
+        const onAction = vi.fn<() => Promise<void>>(() => Promise.resolve());
         const screen = render(
           <LoadingButton
             label="Click Me"

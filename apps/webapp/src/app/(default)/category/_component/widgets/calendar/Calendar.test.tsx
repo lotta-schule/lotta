@@ -15,7 +15,7 @@ describe('shared/widgets/Calendar', () => {
     },
   ];
 
-  beforeAll(() => {
+  it('requires CEST timezone (UTC+2)', () => {
     expect(new Date(2024, 8, 1).getTimezoneOffset()).toEqual(-120);
   });
 

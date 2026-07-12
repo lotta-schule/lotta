@@ -13,7 +13,9 @@ describe('DraggableListItem', () => {
     const screen = render(
       <DraggableListItem id="1" title="Selected Item" selected />
     );
-    expect(screen.getByRole('button')).toHaveClass(styles.selected);
+    expect(screen.getByRole('button', { name: 'Selected Item' })).toHaveClass(
+      styles.selected
+    );
   });
 
   describe('draghable', () => {
@@ -34,7 +36,7 @@ describe('DraggableListItem', () => {
 
   it('calls onClick when clicked', async () => {
     const user = userEvent.setup();
-    const handleClick = vi.fn();
+    const handleClick = vi.fn<() => void>();
     const screen = render(
       <DraggableListItem id="1" title="Clickable Item" onClick={handleClick} />
     );
@@ -45,8 +47,8 @@ describe('DraggableListItem', () => {
   it('renders icon and handles icon click', async () => {
     const user = userEvent.setup();
 
-    const onClick = vi.fn();
-    const onClickIcon = vi.fn();
+    const onClick = vi.fn<() => void>();
+    const onClickIcon = vi.fn<() => void>();
 
     const screen = render(
       <DraggableListItem
