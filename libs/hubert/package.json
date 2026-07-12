@@ -18,9 +18,9 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@epic-web/invariant": "^1.0.0",
-    "@floating-ui/react": "^0.27.19",
+    "@floating-ui/react": "^0.27.20",
     "clsx": "^2.1.1",
-    "colorjs.io": "^0.6.1",
+    "colorjs.io": "^0.7.0",
     "lodash": "^4.18.1",
     "react-aria": "^3.50.0",
     "react-dropzone": "^15.0.0",
@@ -28,7 +28,7 @@
     "react-use": "^17.6.1"
   },
   "peerDependencies": {
-    "framer-motion": ">=12.42.0",
+    "framer-motion": ">=12.42.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "sass": "^1.101.0"
@@ -53,6 +53,6 @@
     ]
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "4.1.9"
+    "@vitest/coverage-v8": "4.1.10"
   }
 }

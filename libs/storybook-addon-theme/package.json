@@ -42,16 +42,16 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
-    "@types/node": "^26.0.1",
+    "@types/node": "^26.1.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "tsdown": "^0.22.3"
+    "tsdown": "^0.22.5"
   },
   "peerDependencies": {
-    "storybook": "^10.4.6"
+    "storybook": "^10.5.0"
   },
   "dependencies": {
-    "@storybook/addon-docs": "^10.4.6"
+    "@storybook/addon-docs": "^10.5.0"
   },
   "lint-staged": {
     "$schema": "https://json.schemastore.org/lint-staged",

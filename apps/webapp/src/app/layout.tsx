@@ -1,6 +1,5 @@
 import '../styles/globals.scss';
 import '../styles/fonts.css';
-import '@fortawesome/fontawesome-svg-core/styles.css';
 
 import * as React from 'react';
 import { config as faConfig } from '@fortawesome/fontawesome-svg-core';
@@ -31,8 +30,7 @@ export default async function RootLayout({
   const tenant = await loadTenant().catch(() => null);
 
   const customTheme = tenant?.configuration.customTheme as
-    | Record<string, any>
-    | undefined;
+    Record<string, any> | undefined;
 
   const theme = {
     ...DefaultThemes.standard,
