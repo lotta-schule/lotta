@@ -22,3 +22,5 @@ config :lotta, CockpitWeb.Endpoint,
   check_origin: config_env() != :dev
 
 config :lotta, :zammad, []
+
+config :lotta, :accounts_list, []

@@ -73,6 +73,8 @@ defmodule SystemConfig do
 
   defp default("TCP_HEALTH_CHECK_PORT", _), do: "4321"
 
+  defp default("COCKPIT_ACCOUNTS_LIST_JSON", _), do: nil
+
   defp default("TCP_HEALTH_CHECK_ENABLED", _), do: "true"
 
   defp default("PORT", _), do: "4000"
@@ -314,6 +316,14 @@ config :lotta, :cockpit,
   endpoint: SystemConfig.get("COCKPIT_HOST"),
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
+
+if json = SystemConfig.get("COCKPIT_ACCOUNTS_LIST_JSON") do
+  config :lotta,
+         :accounts_list,
+         json
+         |> Jason.decode!()
+         |> Enum.map(fn account -> [iban: account["iban"], name: account["name"]] end)
+end
 
 config :lotta, :zammad,
   endpoint: SystemConfig.get("ZAMMAD_ENDPOINT"),
