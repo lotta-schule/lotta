@@ -22,6 +22,9 @@
     <Backpex.HTML.Layout.sidebar_item current_url={@current_url} navigate={~p"/invoices"}>
       <.icon name="hero-document-currency-euro" class="size-5" /> Rechnungen
     </Backpex.HTML.Layout.sidebar_item>
+    <Backpex.HTML.Layout.sidebar_item current_url={@current_url} navigate={~p"/bank-transactions"}>
+      <.icon name="hero-banknotes" class="size-5" /> Kontobewegungen
+    </Backpex.HTML.Layout.sidebar_item>
   </:sidebar>
   <:footer></:footer>
   <Backpex.HTML.Layout.flash_messages flash={@flash} />

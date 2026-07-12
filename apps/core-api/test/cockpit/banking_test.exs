@@ -211,4 +211,160 @@ defmodule Cockpit.BankingTest do
       end
     end
   end
+
+  describe "list_current_balances/1" do
+    test "returns empty list when no balances exist" do
+      assert Banking.list_current_balances() == []
+    end
+
+    test "returns only the most recent balance for an IBAN" do
+      insert_balance!(%{date: ~D[2025-09-01], value: Decimal.new("100.00")})
+      insert_balance!(%{date: ~D[2025-11-01], value: Decimal.new("300.00")})
+      insert_balance!(%{date: ~D[2025-10-01], value: Decimal.new("200.00")})
+
+      assert [balance] = Banking.list_current_balances()
+      assert balance.date == ~D[2025-11-01]
+      assert Decimal.eq?(balance.value, Decimal.new("300.00"))
+    end
+
+    test "returns one entry per IBAN" do
+      insert_balance!(%{iban: @iban, date: ~D[2025-11-01], value: Decimal.new("100.00")})
+      insert_balance!(%{iban: @other_iban, date: ~D[2025-11-01], value: Decimal.new("200.00")})
+
+      balances = Banking.list_current_balances()
+      assert length(balances) == 2
+      assert Enum.map(balances, & &1.iban) |> Enum.sort() == Enum.sort([@iban, @other_iban])
+    end
+
+    test "filters by balance_type" do
+      insert_balance!(%{
+        date: ~D[2025-11-01],
+        balance_type: "booked",
+        value: Decimal.new("100.00")
+      })
+
+      insert_balance!(%{
+        date: ~D[2025-11-02],
+        balance_type: "noted",
+        value: Decimal.new("999.00")
+      })
+
+      assert [booked] = Banking.list_current_balances("booked")
+      assert Decimal.eq?(booked.value, Decimal.new("100.00"))
+
+      assert [noted] = Banking.list_current_balances("noted")
+      assert Decimal.eq?(noted.value, Decimal.new("999.00"))
+    end
+  end
+
+  describe "combined_balance_history/1" do
+    test "returns empty list when no balances exist" do
+      assert Banking.combined_balance_history() == []
+    end
+
+    test "carries forward the most recent value and backfills dates before an IBAN's history" do
+      insert_balance!(%{iban: @iban, date: ~D[2025-01-01], value: Decimal.new("100.00")})
+      insert_balance!(%{iban: @iban, date: ~D[2025-01-03], value: Decimal.new("150.00")})
+      insert_balance!(%{iban: @other_iban, date: ~D[2025-01-02], value: Decimal.new("200.00")})
+      insert_balance!(%{iban: @other_iban, date: ~D[2025-01-04], value: Decimal.new("250.00")})
+
+      history = Banking.combined_balance_history()
+
+      assert Enum.map(history, & &1.date) == [
+               ~D[2025-01-01],
+               ~D[2025-01-02],
+               ~D[2025-01-03],
+               ~D[2025-01-04]
+             ]
+
+      # 2025-01-01: iban = 100 (own value), other_iban backfilled to its earliest (200)
+      # 2025-01-02: iban carried forward (100), other_iban = 200 (own value)
+      # 2025-01-03: iban = 150 (own value), other_iban carried forward (200)
+      # 2025-01-04: iban carried forward (150), other_iban = 250 (own value)
+      expected = ["300.00", "300.00", "350.00", "400.00"]
+
+      assert Enum.map(history, &Decimal.to_string(&1.value, :normal)) == expected
+    end
+
+    # No test for averaging same-IBAN-same-date rows: AccountBalance's
+    # unique_hash is SHA256(iban|date|balance_type) with a DB unique index,
+    # so two such rows can never coexist to exercise that branch.
+
+    test "filters by balance_type" do
+      insert_balance!(%{
+        date: ~D[2025-01-01],
+        balance_type: "booked",
+        value: Decimal.new("100.00")
+      })
+
+      insert_balance!(%{
+        date: ~D[2025-01-02],
+        balance_type: "noted",
+        value: Decimal.new("999.00")
+      })
+
+      assert [%{date: ~D[2025-01-01], value: booked_value}] = Banking.combined_balance_history()
+      assert Decimal.eq?(booked_value, Decimal.new("100.00"))
+
+      assert [%{date: ~D[2025-01-02], value: noted_value}] =
+               Banking.combined_balance_history("noted")
+
+      assert Decimal.eq?(noted_value, Decimal.new("999.00"))
+    end
+  end
+
+  describe "balance_history_by_iban/1" do
+    test "returns empty map when no balances exist" do
+      assert Banking.balance_history_by_iban() == %{}
+    end
+
+    test "aligns each IBAN's own carried-forward/backfilled series to the shared dates" do
+      insert_balance!(%{iban: @iban, date: ~D[2025-01-01], value: Decimal.new("100.00")})
+      insert_balance!(%{iban: @iban, date: ~D[2025-01-03], value: Decimal.new("150.00")})
+      insert_balance!(%{iban: @other_iban, date: ~D[2025-01-02], value: Decimal.new("200.00")})
+      insert_balance!(%{iban: @other_iban, date: ~D[2025-01-04], value: Decimal.new("250.00")})
+
+      by_iban = Banking.balance_history_by_iban()
+
+      assert Map.keys(by_iban) |> Enum.sort() == Enum.sort([@iban, @other_iban])
+
+      assert Enum.map(by_iban[@iban], & &1.date) == [
+               ~D[2025-01-01],
+               ~D[2025-01-02],
+               ~D[2025-01-03],
+               ~D[2025-01-04]
+             ]
+
+      assert Enum.map(by_iban[@iban], &Decimal.to_string(&1.value, :normal)) ==
+               ["100.00", "100.00", "150.00", "150.00"]
+
+      assert Enum.map(by_iban[@other_iban], &Decimal.to_string(&1.value, :normal)) ==
+               ["200.00", "200.00", "200.00", "250.00"]
+    end
+  end
+
+  describe "account_name/1" do
+    setup do
+      original = Application.get_env(:lotta, :accounts_list, [])
+      on_exit(fn -> Application.put_env(:lotta, :accounts_list, original) end)
+    end
+
+    test "returns the configured name for a known IBAN" do
+      Application.put_env(:lotta, :accounts_list, [[iban: @iban, name: "Girokonto"]])
+
+      assert Banking.account_name(@iban) == "Girokonto"
+    end
+
+    test "falls back to the IBAN when unconfigured" do
+      Application.put_env(:lotta, :accounts_list, [])
+
+      assert Banking.account_name(@iban) == @iban
+    end
+
+    test "falls back to the IBAN when the entry has no name" do
+      Application.put_env(:lotta, :accounts_list, [[iban: @iban]])
+
+      assert Banking.account_name(@iban) == @iban
+    end
+  end
 end
