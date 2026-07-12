@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { skipToken, useMutation, useQuery } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
 import { useTranslation } from 'react-i18next';
-import { ID, UserGroupModel, UserModel } from '#/model';
 import {
   Button,
   Dialog,
@@ -9,62 +8,49 @@ import {
   DialogContent,
   Divider,
   ErrorMessage,
-  LinearProgress,
+  FileSize,
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { GroupSelect } from '#/shared/edit/GroupSelect';
 import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
 import { DeleteUserDialog } from './DeleteUserDialog';
+import { type SEARCH_USERS_RESULT } from '../_graphql/SearchUsersAsAdmin';
 
 import UpdateUserMutation from '#/api/mutation/UpdateUserMutation.graphql';
-import GetUserQuery from '#/api/query/GetUserQuery.graphql';
 
 import styles from './EditUserPermissionDialog.module.scss';
 
-export interface EditUserPermissionsDialogProps {
-  selectedUser: UserModel | null;
+export type EditUserPermissionsDialogProps = {
+  selectedUser: SEARCH_USERS_RESULT[number] | null;
   onRequestClose: () => void;
-}
+};
 
 export const EditUserPermissionsDialog = React.memo(
   ({ selectedUser, onRequestClose }: EditUserPermissionsDialogProps) => {
     const { t } = useTranslation();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
     const [assignedUserRoles, setAssignedUserRoles] = React.useState<
-      UserGroupModel[]
+      Exclude<typeof selectedUser, null>['assignedGroups']
     >([]);
 
-    const { data, loading, error } = useQuery<{ user: UserModel }, { id: ID }>(
-      GetUserQuery,
-      selectedUser
-        ? {
-            variables: { id: selectedUser.id },
-            fetchPolicy: 'network-only',
-            nextFetchPolicy: 'cache-first',
-          }
-        : skipToken
-    );
-
     React.useEffect(() => {
-      if (data?.user) {
-        setAssignedUserRoles(data.user.assignedGroups ?? []);
+      if (selectedUser?.assignedGroups) {
+        setAssignedUserRoles(selectedUser.assignedGroups);
       }
-    }, [data]);
+    }, [selectedUser]);
 
-    const [updateUser, { error: updateUserError }] = useMutation<
-      { user: UserModel },
-      { id: ID; groups?: { id: ID }[] }
-    >(UpdateUserMutation);
+    const [updateUser, { error: updateUserError }] =
+      useMutation(UpdateUserMutation);
 
     const dynamicGroups = React.useMemo(
       () =>
-        data?.user?.groups?.filter(
+        selectedUser?.groups?.filter(
           (group) =>
-            !(data.user?.assignedGroups ?? []).find(
+            !(selectedUser?.assignedGroups ?? []).find(
               (assignedGroup) => assignedGroup?.id === group?.id
             )
         ) ?? [],
-      [data]
+      [selectedUser]
     );
 
     return (
@@ -76,7 +62,7 @@ export const EditUserPermissionsDialog = React.memo(
           title={t('Edit {{username}}', { username: selectedUser?.name })}
         >
           <DialogContent>
-            <ErrorMessage error={error || updateUserError} />
+            <ErrorMessage error={updateUserError} />
             {selectedUser && (
               <div className={styles.header}>
                 <UserAvatar user={selectedUser} size={100} />
@@ -91,16 +77,16 @@ export const EditUserPermissionsDialog = React.memo(
                   {selectedUser.class && (
                     <p data-testid="UserClass">Klasse: {selectedUser.class}</p>
                   )}
+                  {selectedUser.usedStorageSize !== null && (
+                    <p data-testid="UsedStorageSize">
+                      Speichernutzung:{' '}
+                      {new FileSize(selectedUser.usedStorageSize).humanize()}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
-            {loading && (
-              <LinearProgress
-                isIndeterminate
-                aria-label={'Nutzer wird geladen'}
-              />
-            )}
-            {data && (
+            {selectedUser && (
               <>
                 <Divider />
                 <section data-testid="GroupSelectSection">

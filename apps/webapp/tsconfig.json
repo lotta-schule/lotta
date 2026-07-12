@@ -8,19 +8,29 @@
     "resolveJsonModule": true,
     "module": "esnext",
     "moduleResolution": "bundler",
-    "lib": ["esnext", "dom", "dom.iterable"],
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
     "paths": {
-      "@lotta-schule/hubert": ["../../libs/hubert/src/index.ts"],
-      "@lotta-schule/theme": ["../../libs/theme/src/index.ts"],
-      "#/*": ["./src/*"]
+      "@lotta-schule/hubert": [
+        "../../libs/hubert/src/index.ts"
+      ],
+      "@lotta-schule/theme": [
+        "../../libs/theme/src/index.ts"
+      ],
+      "#/*": [
+        "./src/*"
+      ]
     },
     "plugins": [
       {
         "name": "next"
       },
       {
-        "name": "gql.tada/ts-plugin",
-        "schema": "${GRAPHQL_SCHEMA_URL:-http://127.0.0.1:4000/api}",
+        "name": "@0no-co/graphqlsp",
+        "schema": "./src/api/graphql-schema.graphql",
         "tadaOutputLocation": "./src/api/graphql-env.ts"
       }
     ],
@@ -36,6 +46,9 @@
     }
   ],
   "files": [],
-  "include": [".next/types/**/*.ts", "src/**/*.d.ts"],
+  "include": [
+    ".next/types/**/*.ts",
+    "src/**/*.d.ts"
+  ],
   "exclude": []
 }

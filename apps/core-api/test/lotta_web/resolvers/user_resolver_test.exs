@@ -370,6 +370,87 @@ defmodule LottaWeb.UserResolverTest do
     end
   end
 
+  describe "resolve used storage size" do
+    @query """
+    query GetUser($id: ID!) {
+      user(id: $id) {
+        used_storage_size
+      }
+    }
+    """
+
+    setup %{user: user} do
+      user_dir = insert(:directory, user_id: user.id)
+
+      insert(:file, user_id: user.id, parent_directory_id: user_dir.id, filesize: 1000)
+      insert(:file, user_id: user.id, parent_directory_id: user_dir.id, filesize: 2000)
+
+      # a file in a public directory must not count towards the used storage
+      public_dir = insert(:directory)
+      insert(:file, user_id: user.id, parent_directory_id: public_dir.id, filesize: 9999)
+
+      :ok
+    end
+
+    test "returns the user's used storage size for self", %{user: user, user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "used_storage_size" => 3000
+                 }
+               }
+             }
+    end
+
+    test "returns the user's used storage size for admin", %{user: user, admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "used_storage_size" => 3000
+                 }
+               }
+             }
+    end
+
+    test "does not return the used storage size for others", %{user2: user2, user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query, variables: %{id: user2.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "used_storage_size" => nil
+                 }
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 5, "line" => 3}],
+                   "message" => "Die Dateigröße des Nutzers ist geheim.",
+                   "path" => ["user", "used_storage_size"]
+                 }
+               ]
+             }
+    end
+  end
+
   describe "resolve assigned_groups" do
     @query """
     query GetUser($id: ID!) {

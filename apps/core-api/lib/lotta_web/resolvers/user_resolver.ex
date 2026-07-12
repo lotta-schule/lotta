@@ -7,7 +7,7 @@ defmodule LottaWeb.UserResolver do
   import LottaWeb.ErrorHelpers
 
   alias LottaWeb.Auth.AccessToken
-  alias Lotta.Accounts.User
+  alias Lotta.Accounts.{FileManagment, User}
   alias Lotta.{Accounts, Repo, Mailer, Messages, Storage}
 
   def resolve_name(%User{} = user, _args, %{
@@ -72,6 +72,14 @@ defmodule LottaWeb.UserResolver do
 
   def resolve_unread_messages(_user, _args, _info),
     do: {:error, "Die Nachrichten des Nutzers sind geheim."}
+
+  def resolve_used_storage_size(user, _args, %{context: %{current_user: current_user}})
+      when current_user.is_admin? or user.id == current_user.id do
+    {:ok, FileManagment.total_user_files_size(user)}
+  end
+
+  def resolve_used_storage_size(_user, _args, _info),
+    do: {:error, "Die Dateigröße des Nutzers ist geheim."}
 
   def get_current(_args, %{context: %{current_user: current_user}}) do
     if current_user do

@@ -1,10 +1,10 @@
 import { FragmentOf } from '#/api/graphql';
-import { UserGroupModel, UserModel } from '#/model';
+import { UserModel } from '#/model';
 import { User } from '#/util/model';
 import { CONVERSATION_FRAGMENT } from './_graphql/fragments';
 
 export type NewMessageDestination =
-  | { group: UserGroupModel; user?: never }
+  | { group: { id: string; name?: string }; user?: never }
   | { user: UserModel; group?: never };
 
 export const Message = {
