@@ -48,7 +48,7 @@ const nextConfig = {
         },
         {
           source: '/api',
-          destination: `http://localhost:4000/api`,
+          destination: `${process.env.API_URL ?? 'http://localhost:4000'}/api`,
         },
         // web manifest
         {

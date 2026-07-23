@@ -26,8 +26,22 @@ const isStaticAssetRequest = (pathname: string) => {
 export async function middleware(request: NextRequest) {
   if (isRequestToApi(request.nextUrl.pathname)) {
     const targetUrl = request.nextUrl.clone();
-    targetUrl.host = new URL(appConfig.get('API_URL')).host;
-    return NextResponse.rewrite(targetUrl);
+    const apiUrl = new URL(appConfig.get('API_URL'));
+    targetUrl.protocol = apiUrl.protocol;
+    targetUrl.hostname = apiUrl.hostname;
+    targetUrl.port = apiUrl.port;
+
+    const currentHost =
+      request.headers.get('x-forwarded-host') ||
+      request.headers.get('host') ||
+      request.nextUrl.host;
+
+    const modifiedHeaders = new Headers(request.headers);
+    modifiedHeaders.set('x-lotta-originary-host', currentHost);
+
+    return NextResponse.rewrite(targetUrl, {
+      request: { headers: modifiedHeaders },
+    });
   }
 
   if (isStaticAssetRequest(request.nextUrl.pathname)) {
