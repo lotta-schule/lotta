@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Theme } from '@lotta-schule/theme';
+import { CSSVariables } from '@lotta-schule/hubert';
 
 export type PagePreviewProps = {
   theme: Theme;
@@ -21,6 +22,10 @@ export const PagePreview = React.memo(
       {...props}
     >
       <defs>
+        <CSSVariables
+          theme={_theme}
+          rootSelector="[data-testid=page-preview]"
+        />
         <style>{`
             .cls-1,
 .cls-23,
