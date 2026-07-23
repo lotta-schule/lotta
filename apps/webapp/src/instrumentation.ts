@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
+import { registerOTel } from '@vercel/otel';
 import { appConfig } from '#/config';
 
 export const onRequestError = Sentry.captureRequestError;

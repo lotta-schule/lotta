@@ -14,15 +14,20 @@ import {
   useTheme,
 } from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client/react';
-import { AdminPageSection } from '../_component/AdminPageSection.js';
-import { ResponsiveImage } from '#/util/image/ResponsiveImage.js';
-import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay.js';
-import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage.js';
-import { ColorSettingRow, SelectTemplateButton } from './_component/index.js';
-import { TenantModel } from '#/model/index.js';
-import { headerFonts, textFonts } from '#/styles/fonts.js';
+import { AdminPageSection } from '../_component/AdminPageSection';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage';
+import {
+  ColorSettingRow,
+  SelectTemplateButton,
+  PagePreview,
+  PagePreviewMobile,
+} from './_component';
+import { TenantModel } from '#/model';
+import { headerFonts, textFonts } from '#/styles/fonts';
 import { useRouter } from 'next/navigation';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import { faCheck, faClose, faTrash } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 
@@ -86,9 +91,6 @@ export const Presentation = React.memo(
         <AdminPageSection title="Schriftarten">
           <div className={styles.stylingSection}>
             <div className={styles.editStyleSection}>
-              {headerFonts.concat(textFonts).map(({ url }) => (
-                <link rel={'stylesheet'} href={url} key={url} />
-              ))}
               <div className={styles.fontSelect}>
                 <Select
                   fullWidth
@@ -269,7 +271,9 @@ export const Presentation = React.memo(
             <div className={styles.previewHorizontally}>
               <PagePreview
                 theme={customTheme}
-                backgroundImageSrc={backgroundImage?.formats[0]?.url}
+                backgroundImageSrc={
+                  backgroundImage?.formats[0]?.url ?? undefined
+                }
                 style={{ width: '69%', marginRight: '2%' }}
               />
               <PagePreviewMobile theme={customTheme} style={{ width: '29%' }} />
@@ -511,8 +515,6 @@ export const Presentation = React.memo(
                 ))}
               </Select>
             </div>
-          </div>
-        </AdminPageSection>
           </div>
         </AdminPageSection>
 

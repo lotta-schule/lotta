@@ -16,8 +16,6 @@ export const standardTheme: Theme = {
   highlightColor: '#e0e0e0',
   bannerBackgroundColor: '#cacaca',
   accentGreyColor: 'rgb(227, 227, 227)',
-  badgeBackgroundColor: '#0076ff',
-  badgeTextColor: '#e4eeff',
 
   spacing: `8px`,
   borderRadius: `4px`,

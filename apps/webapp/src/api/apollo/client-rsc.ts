@@ -8,6 +8,7 @@ import { createCache } from './cache';
 import { createErrorLink } from './links/errorLink';
 import { createAuthLink } from './links/authLink';
 import { createOtelLink } from './links/otelLink';
+import { createSentryTracingLink } from './links/sentryTracingLink';
 import { createHttpLink } from './links/httpLink';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
 import { CustomFetchAgents } from './customFetch';
