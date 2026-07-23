@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Theme } from '@lotta-schule/theme';
+import { CSSVariables } from '@lotta-schule/hubert';
 
 export type PagePreviewMobileProps = {
   theme: Theme;
@@ -14,6 +15,10 @@ export const PagePreviewMobile = React.memo(
       data-testid="page-preview-mobile"
       {...props}
     >
+      <CSSVariables
+        theme={_theme}
+        rootSelector="[data-testid=page-preview-mobile]"
+      />
       <style type="text/css">{`
         .st0{clip-path:url(#SVGID_2_);}
         .st1{fill:rgb(var(--lotta-page-background-color));}
@@ -266,7 +271,7 @@ export const PagePreviewMobile = React.memo(
         <g className="st16">
           <polygon
             className="st10"
-            points="50.1,118 44.9,124.8 42.3,121.4 38.2,126.8 36.5,124.5 29.3,133.9 32.8,133.9 37.9,133.9 
+            points="50.1,118 44.9,124.8 42.3,121.4 38.2,126.8 36.5,124.5 29.3,133.9 32.8,133.9 37.9,133.9
 			43.6,133.9 51.8,133.9 62.2,133.9 		"
           />
         </g>
@@ -281,7 +286,7 @@ export const PagePreviewMobile = React.memo(
         <g className="st17">
           <polygon
             className="st10"
-            points="100.6,124.4 105.7,117.6 108.3,121 112.4,115.7 114.2,117.9 121.4,108.6 117.9,108.6 112.7,108.6 
+            points="100.6,124.4 105.7,117.6 108.3,121 112.4,115.7 114.2,117.9 121.4,108.6 117.9,108.6 112.7,108.6
 			107,108.6 98.8,108.6 88.4,108.6 		"
           />
         </g>
@@ -329,7 +334,7 @@ export const PagePreviewMobile = React.memo(
         <g className="st21">
           <polygon
             className="st10"
-            points="43.5,184.9 36.8,193.7 33.4,189.3 28.1,196.2 25.8,193.3 16.5,205.5 21,205.5 27.7,205.5 
+            points="43.5,184.9 36.8,193.7 33.4,189.3 28.1,196.2 25.8,193.3 16.5,205.5 21,205.5 27.7,205.5
 			35.2,205.5 45.9,205.5 59.4,205.5 		"
           />
         </g>
@@ -974,7 +979,7 @@ export const PagePreviewMobile = React.memo(
         <g className="st29">
           <polygon
             className="st10"
-            points="159.2,117.1 154,123.8 151.4,120.4 147.3,125.8 145.6,123.5 138.4,132.9 141.9,132.9 147.1,132.9 
+            points="159.2,117.1 154,123.8 151.4,120.4 147.3,125.8 145.6,123.5 138.4,132.9 141.9,132.9 147.1,132.9
 			152.8,132.9 161,132.9 171.4,132.9 		"
           />
         </g>
@@ -989,7 +994,7 @@ export const PagePreviewMobile = React.memo(
         <g className="st30">
           <polygon
             className="st10"
-            points="200.6,124.4 205.7,117.6 208.3,121 212.4,115.7 214.2,117.9 221.4,108.6 217.9,108.6 212.7,108.6 
+            points="200.6,124.4 205.7,117.6 208.3,121 212.4,115.7 214.2,117.9 221.4,108.6 217.9,108.6 212.7,108.6
 			207,108.6 198.8,108.6 188.4,108.6 		"
           />
         </g>
