@@ -375,4 +375,4 @@ jobs:
 
       - name: Run build task
         if: ${{ github.ref_name != 'main' && !contains(github.event.pull_request.labels.*.name, 'preview') }}
-        run: bunx nx affected -t build
+        run: bunx nx run-many -t build

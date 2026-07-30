@@ -376,7 +376,7 @@ defmodule LottaWeb.CoreComponentsTest do
       js_command = show(initial_js, "#modal")
 
       assert %JS{} = js_command
-      assert length(js_command.ops) >= 1
+      refute js_command.ops == []
     end
 
     test "chains hide JS command" do
@@ -384,7 +384,7 @@ defmodule LottaWeb.CoreComponentsTest do
       js_command = hide(initial_js, "#modal")
 
       assert %JS{} = js_command
-      assert length(js_command.ops) >= 1
+      refute js_command.ops == []
     end
   end
 

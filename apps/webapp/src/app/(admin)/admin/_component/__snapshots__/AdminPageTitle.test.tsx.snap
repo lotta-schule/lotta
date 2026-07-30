@@ -18,7 +18,7 @@ exports[`AdminPageTitle > should render correctly 1`] = `
     --lotta-page-background-color: 202, 205, 215;
     --lotta-divider-color: 224, 224, 224;
     --lotta-highlight-color: 224, 224, 224;
-    --lotta-banner-background-color: 54, 123, 240;
+    --lotta-banner-background-color: 202, 202, 202;
     --lotta-accent-grey-color: 227, 227, 227;
     --lotta-spacing: 8px;
     --lotta-border-radius: 4px;
