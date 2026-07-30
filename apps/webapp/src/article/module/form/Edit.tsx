@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Icon } from '#/shared/Icon';
 import {
   faArrowsUpDown,
+  faCalendar,
   faCircleExclamation,
   faPlus,
   faTrash,
@@ -27,8 +28,21 @@ import {
 import { ContentModuleModel } from '#/model';
 import { FormConfiguration, FormElement as FormElementInterface } from './Form';
 import { FormElement } from './FormElement';
+import { EditableText } from './EditableText';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
 
 import styles from './Edit.module.scss';
+
+const getDefaultFieldName = (base: string, existingNames: string[]): string => {
+  if (!existingNames.includes(base)) {
+    return base;
+  }
+  let n = 2;
+  while (existingNames.includes(`${base} (${n})`)) {
+    n += 1;
+  }
+  return `${base} (${n})`;
+};
 
 export type EditProps = {
   contentModule: ContentModuleModel;
@@ -38,6 +52,7 @@ export type EditProps = {
 export const Edit = React.memo(
   ({ contentModule, onUpdateModule }: EditProps) => {
     const { t } = useTranslation();
+    const currentUser = useCurrentUser();
     const defaultElements: {
       key: string;
       label: string;
@@ -65,7 +80,7 @@ export const Edit = React.memo(
       {
         key: 'date',
         label: t('date field'),
-        icon: null,
+        icon: <Icon icon={faCalendar} size={'lg'} />,
         element: { name: 'Textfeld', element: 'input', type: 'date' },
       },
       {
@@ -137,6 +152,17 @@ export const Edit = React.memo(
         configuration: { ...configuration, ...partialConfig },
       });
 
+    const hasFileField = configuration.elements.some(
+      (el) => el.element === 'file'
+    );
+
+    React.useEffect(() => {
+      if (hasFileField && configuration.destination === undefined) {
+        updateConfiguration({ destination: currentUser?.email ?? '' });
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasFileField, configuration.destination]);
+
     return (
       <div className={styles.root}>
         {configuration.elements.length > 0 && (
@@ -158,7 +184,21 @@ export const Edit = React.memo(
           }}
           items={configuration.elements.map((element, index) => ({
             id: `field-${index}`,
-            title: element.name,
+            title: (
+              <EditableText
+                value={element.name}
+                ariaLabel={'Feldname'}
+                editButtonLabel={'Feldnamen bearbeiten'}
+                onChange={(name) =>
+                  updateConfiguration({
+                    elements: configuration.elements.map((el, i) =>
+                      i === index ? { ...el, name } : el
+                    ),
+                  })
+                }
+              />
+            ),
+            tooltip: element.name,
             icon: <Icon icon={faTrash} />,
             onClickIcon: () => {
               updateConfiguration({
@@ -228,19 +268,21 @@ export const Edit = React.memo(
             icon: <Icon icon={faPlus} size={'lg'} />,
           }}
           onAction={(key) => {
-            const newElement = defaultElements.find(
-              (el) => el.key === key
-            )?.element;
-            if (!newElement) {
+            const defaultElement = defaultElements.find((el) => el.key === key);
+            if (!defaultElement) {
               return;
             }
+            const name = getDefaultFieldName(
+              defaultElement.label,
+              configuration.elements.map((el) => el.name)
+            );
+            const newElement = { ...defaultElement.element, name };
             updateConfiguration({
-              elements: [
-                ...configuration.elements,
-                Object.assign({}, newElement, {
-                  name: `feld${configuration.elements.length + 1}`,
-                }),
-              ],
+              elements: [...configuration.elements, newElement],
+              ...(newElement.element === 'file' &&
+              configuration.destination === undefined
+                ? { destination: currentUser?.email ?? '' }
+                : {}),
             });
           }}
         >
@@ -259,6 +301,7 @@ export const Edit = React.memo(
             <h3>{t('Form settings')}</h3>
             <Checkbox
               isSelected={configuration.destination !== undefined}
+              isDisabled={hasFileField}
               onChange={(isSelected) =>
                 updateConfiguration({
                   destination: isSelected ? '' : undefined,
@@ -279,28 +322,11 @@ export const Edit = React.memo(
                 }
               />
             </Label>
-            <Checkbox
-              isSelected={configuration.save_internally === true}
-              onChange={(isSelected) =>
-                updateConfiguration({
-                  save_internally: isSelected,
-                })
-              }
-              aria-label={t('save form data')}
-            >
-              <div>
-                <span style={{ display: 'block' }}>{t('save form data')}</span>
-                {!!configuration.elements.find(
-                  (el) => el.element === 'file'
-                ) && (
-                  <small>
-                    {t(
-                      'file attachments are only sent by email and not stored'
-                    )}
-                  </small>
-                )}
-              </div>
-            </Checkbox>
+            {hasFileField && (
+              <small>
+                {t('file attachments are only sent by email and not stored')}
+              </small>
+            )}
           </div>
         </div>
         <p className={styles.clear}></p>

@@ -584,14 +584,27 @@ describe('shared/article/module/ContentModule', () => {
                 query: GetContentModuleResults,
                 variables: { contentModuleId: formContentModule.id },
               },
-              result: { data: { contentModuleResults: [] } },
+              result: {
+                data: {
+                  contentModuleResults: [
+                    {
+                      id: 'CMR001',
+                      insertedAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString(),
+                      result: { responses: {} },
+                    },
+                  ],
+                },
+              },
             },
           ],
         }
       );
-      expect(
-        screen.getByRole('button', { name: /einsendungen sehen/i })
-      ).toBeVisible();
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /einsendungen sehen/i })
+        ).toBeEnabled();
+      });
       await fireEvent.click(
         screen.getByRole('button', { name: /einsendungen sehen/i })
       );

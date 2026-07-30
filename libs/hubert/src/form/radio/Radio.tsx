@@ -1,5 +1,4 @@
 import * as React from 'react';
-import clsx from 'clsx';
 
 import styles from './radio.module.scss';
 
@@ -26,7 +25,7 @@ export const Radio = React.forwardRef<any, RadioProps>(
             props['aria-label'] ||
             (!props['aria-labelledby'] ? label : undefined)
           }
-          className={clsx(className, styles.root)}
+          className={className}
           type={'radio'}
         />
       </label>

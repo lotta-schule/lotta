@@ -16,11 +16,8 @@ import { FileModel } from '#/model';
 
 import { useCurrentUser } from '#/util/user/useCurrentUser';
 import { Icon } from '#/shared/Icon';
-import {
-  faCirclePlus,
-  faPencil,
-  faXmark,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlus, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { EditableText } from './EditableText';
 
 import styles from './FormElement.module.scss';
 
@@ -31,76 +28,6 @@ export interface FormElementProps {
   onSetValue: (value: string | string[]) => void;
   onUpdateElement?: (element: Partial<FormElementInterface>) => void;
 }
-
-const EditableText = ({
-  value,
-  ariaLabel,
-  onChange,
-}: {
-  value: string;
-  ariaLabel?: string;
-  onChange: (value: string) => void;
-}) => {
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [draft, setDraft] = React.useState(value);
-
-  React.useEffect(() => {
-    if (!isEditing) {
-      setDraft(value);
-    }
-  }, [value, isEditing]);
-
-  const commit = () => {
-    setIsEditing(false);
-    const next = draft.trim();
-    if (next && next !== value) {
-      onChange(next);
-    } else {
-      setDraft(value);
-    }
-  };
-
-  if (isEditing) {
-    return (
-      <Input
-        inline
-        autoFocus
-        className={styles.editableInput}
-        aria-label={ariaLabel}
-        value={draft}
-        onClick={(e: any) => e.stopPropagation()}
-        onChange={(e: any) => setDraft(e.currentTarget.value)}
-        onBlur={commit}
-        onKeyDown={(e: any) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            commit();
-          } else if (e.key === 'Escape') {
-            setDraft(value);
-            setIsEditing(false);
-          }
-        }}
-      />
-    );
-  }
-
-  return (
-    <span className={styles.editableText}>
-      {value}
-      <Button
-        small
-        className={styles.editButton}
-        title={'bearbeiten'}
-        icon={<Icon icon={faPencil} color={'secondary'} />}
-        onClick={(e: any) => {
-          e.stopPropagation();
-          e.preventDefault();
-          setIsEditing(true);
-        }}
-      />
-    </span>
-  );
-};
 
 export const FormElement = React.memo<FormElementProps>(
   ({ element, isEditModeEnabled, value, onSetValue, onUpdateElement }) => {
@@ -143,6 +70,7 @@ export const FormElement = React.memo<FormElementProps>(
         <EditableText
           value={labelText}
           ariaLabel={'Bezeichnung'}
+          allowEmpty
           onChange={(label) => onUpdateElement!({ label })}
         />
       ) : (
@@ -237,6 +165,7 @@ export const FormElement = React.memo<FormElementProps>(
             <Select
               fullWidth
               title={labelText}
+              hideLabel={isEditable}
               value={
                 (value as string) ??
                 element.options?.find((o) => o.selected)?.value ??
@@ -305,9 +234,10 @@ export const FormElement = React.memo<FormElementProps>(
         return (
           <>
             <ButtonGroup style={{ width: '100%' }}>
-              <Button style={{ flex: '0 0 50%' }}>
+              <Button style={{ flex: '0 0 50%' }} disabled={isEditModeEnabled}>
                 <input
                   type={'file'}
+                  disabled={isEditModeEnabled}
                   style={{
                     position: 'absolute',
                     left: 0,
@@ -346,6 +276,7 @@ export const FormElement = React.memo<FormElementProps>(
                     style: { flex: '0 0 50%' },
                     variant: 'contained',
                     color: 'primary',
+                    disabled: isEditModeEnabled,
                   }}
                   onSelect={(file: FileModel) => {
                     if (!file.filesize || file.filesize > maxSize) {
