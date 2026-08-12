@@ -26,6 +26,33 @@ describe('Menu', () => {
     expect(onOpenChange).toHaveBeenCalledWith(true);
   });
 
+  it('should call onOpenChange with false when the menu is closed', async () => {
+    const fireEvent = userEvent.setup();
+    const onOpenChange = vi.fn<() => void>();
+    const screen = render(
+      <MenuButton
+        title={'Test Menu'}
+        buttonProps={{ label: 'Click' }}
+        onOpenChange={onOpenChange}
+      >
+        <Item key={'a'}>A</Item>
+        <Item key={'b'}>B</Item>
+        <Item key={'c'}>C</Item>
+      </MenuButton>
+    );
+    await fireEvent.click(screen.getByRole('button'));
+    await waitFor(() => {
+      expect(screen.getByRole('menu')).toBeVisible();
+    });
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+
+    await fireEvent.keyboard('{Escape}');
+    await waitFor(() => {
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    });
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+  });
+
   it('should close the menu after an item is selected', async () => {
     const fireEvent = userEvent.setup();
     const onAction = vi.fn();
