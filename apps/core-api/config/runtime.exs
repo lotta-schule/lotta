@@ -236,7 +236,9 @@ config :opentelemetry, :resource,
   deployment: %{
     environment: SystemConfig.get("APP_ENVIRONMENT"),
     version: SystemConfig.get("IMAGE_NAME")
-  },
+  }
+
+config :opentelemetry,
   span_processor: :batch,
   traces_exporter: :otlp
 
