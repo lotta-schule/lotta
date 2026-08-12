@@ -82,7 +82,7 @@ defmodule Lotta.MixProject do
       {:phoenix_html, "~> 4.2"},
       {:phoenix_html_helpers, "~> 1.0"},
       {:phoenix_view, "~> 2.0"},
-      {:ecto_sql, "~> 3.6"},
+      {:ecto_sql, "~> 3.13"},
       {:ecto_psql_extras, "~> 0.6"},
       {:absinthe, "~> 1.11"},
       {:absinthe_plug, "~> 1.5"},
