@@ -27,6 +27,8 @@ export type SelectProps = React.AriaAttributes &
 
     title: string;
 
+    hideLabel?: boolean;
+
     name?: string;
 
     id?: string;
@@ -60,6 +62,7 @@ export const Select = ({
   className,
   disabled,
   title,
+  hideLabel,
   name,
   value,
   required,
@@ -115,6 +118,7 @@ export const Select = ({
       <Label
         {...labelProps}
         label={title || 'Bitte wählen ...'}
+        hide={hideLabel}
         className={clsx(className, styles.root, {
           [styles.isFullWidth]: fullWidth,
         })}

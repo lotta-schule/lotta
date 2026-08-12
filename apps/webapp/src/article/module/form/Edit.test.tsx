@@ -54,10 +54,6 @@ describe('shared/article/modules/form/Edit', () => {
     expect(
       screen.getByRole('textbox', { name: /an folgende e-mail/i })
     ).toHaveValue('a@b.de');
-
-    expect(
-      screen.getByRole('checkbox', { name: /formulardaten speichern/i })
-    ).toBeChecked();
   });
 
   it('should be able to disable the destination mail', async () => {
@@ -83,34 +79,6 @@ describe('shared/article/modules/form/Edit', () => {
         destination: undefined,
       },
     });
-    expect(
-      screen.getByRole('checkbox', { name: /formulardaten speichern/i })
-    ).toBeChecked();
-  });
-
-  it('should be able to disable the internal database saving', async () => {
-    const fireEvent = userEvent.setup();
-    const onUpdateModuleFn = vi.fn();
-    const screen = render(
-      <Edit contentModule={contentModule} onUpdateModule={onUpdateModuleFn} />
-    );
-    expect(
-      screen.getByRole('checkbox', { name: /formulardaten speichern/i })
-    ).toBeChecked();
-    await fireEvent.click(
-      screen.getByRole('checkbox', { name: /formulardaten speichern/i })
-    );
-
-    expect(onUpdateModuleFn).toHaveBeenCalledWith({
-      ...contentModule,
-      configuration: {
-        ...contentModule.configuration,
-        save_internally: false,
-      },
-    });
-    expect(
-      screen.getByRole('checkbox', { name: /formulardaten speichern/i })
-    ).toBeChecked();
   });
 
   it('should update an element label when editing it inline', async () => {
@@ -120,7 +88,7 @@ describe('shared/article/modules/form/Edit', () => {
       <Edit contentModule={contentModule} onUpdateModule={onUpdateModuleFn} />
     );
     await fireEvent.click(
-      screen.getAllByRole('button', { name: /bearbeiten/i })[0]
+      screen.getAllByRole('button', { name: 'bearbeiten' })[0]
     );
     const input = screen.getByRole('textbox', { name: /bezeichnung/i });
     await fireEvent.clear(input);
@@ -134,6 +102,56 @@ describe('shared/article/modules/form/Edit', () => {
               name: 'kontakt',
               label: 'Neue Bezeichnung',
             }),
+            expect.objectContaining({ name: 'groesse' }),
+          ],
+        }),
+      })
+    );
+  });
+
+  it('should allow clearing an element label (caption) to empty', async () => {
+    const fireEvent = userEvent.setup();
+    const onUpdateModuleFn = vi.fn();
+    const screen = render(
+      <Edit contentModule={contentModule} onUpdateModule={onUpdateModuleFn} />
+    );
+    await fireEvent.click(
+      screen.getAllByRole('button', { name: 'bearbeiten' })[0]
+    );
+    const input = screen.getByRole('textbox', { name: /bezeichnung/i });
+    await fireEvent.clear(input);
+    await fireEvent.type(input, '{enter}');
+
+    expect(onUpdateModuleFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        configuration: expect.objectContaining({
+          elements: [
+            expect.objectContaining({ name: 'kontakt', label: '' }),
+            expect.objectContaining({ name: 'groesse' }),
+          ],
+        }),
+      })
+    );
+  });
+
+  it('should update an element name when editing it inline in the header', async () => {
+    const fireEvent = userEvent.setup();
+    const onUpdateModuleFn = vi.fn();
+    const screen = render(
+      <Edit contentModule={contentModule} onUpdateModule={onUpdateModuleFn} />
+    );
+    await fireEvent.click(
+      screen.getAllByRole('button', { name: 'Feldnamen bearbeiten' })[0]
+    );
+    const input = screen.getByRole('textbox', { name: /feldname/i });
+    await fireEvent.clear(input);
+    await fireEvent.type(input, 'kontaktperson{enter}');
+
+    expect(onUpdateModuleFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        configuration: expect.objectContaining({
+          elements: [
+            expect.objectContaining({ name: 'kontaktperson' }),
             expect.objectContaining({ name: 'groesse' }),
           ],
         }),
@@ -189,15 +207,85 @@ describe('shared/article/modules/form/Edit', () => {
         elements: [
           ...contentModule.configuration!.elements,
           {
-            name: 'feld3',
+            name: 'Textzeile',
             element: 'input',
             type: 'text',
           },
         ],
       },
     });
-    expect(
-      screen.getByRole('checkbox', { name: /formulardaten speichern/i })
-    ).toBeChecked();
+  });
+
+  it('should suffix the default field name when it is already in use', async () => {
+    const fireEvent = userEvent.setup();
+    const onUpdateModuleFn = vi.fn();
+    const contentModuleWithTextField: ContentModuleModel<
+      any,
+      FormConfiguration
+    > = {
+      ...contentModule,
+      configuration: {
+        ...contentModule.configuration!,
+        elements: [
+          ...contentModule.configuration!.elements,
+          { name: 'Textzeile', element: 'input', type: 'text' },
+        ],
+      },
+    };
+    const screen = render(
+      <Edit
+        contentModule={contentModuleWithTextField}
+        onUpdateModule={onUpdateModuleFn}
+      />
+    );
+    await fireEvent.click(
+      screen.getByRole('button', { name: /feld hinzufügen/i })
+    );
+    await fireEvent.click(screen.getByRole('menuitem', { name: /textzeile/i }));
+
+    expect(onUpdateModuleFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        configuration: expect.objectContaining({
+          elements: expect.arrayContaining([
+            expect.objectContaining({ name: 'Textzeile (2)' }),
+          ]),
+        }),
+      })
+    );
+  });
+
+  it('should force a destination email and disable the checkbox once a file field is added', async () => {
+    const fireEvent = userEvent.setup();
+    const onUpdateModuleFn = vi.fn();
+    const contentModuleWithoutDestination: ContentModuleModel<
+      any,
+      FormConfiguration
+    > = {
+      ...contentModule,
+      configuration: {
+        ...contentModule.configuration!,
+        destination: undefined,
+      },
+    };
+    const screen = render(
+      <Edit
+        contentModule={contentModuleWithoutDestination}
+        onUpdateModule={onUpdateModuleFn}
+      />
+    );
+    await fireEvent.click(
+      screen.getByRole('button', { name: /feld hinzufügen/i })
+    );
+    await fireEvent.click(
+      screen.getByRole('menuitem', { name: /datei-upload/i })
+    );
+
+    expect(onUpdateModuleFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        configuration: expect.objectContaining({
+          destination: expect.any(String),
+        }),
+      })
+    );
   });
 });

@@ -43,6 +43,7 @@ describe('/api/auth/callback', () => {
 
     await import('#/pages/api/auth/callback');
 
+    // oxlint-disable-next-line typescript/unbound-method
     expect(appConfig.get).toHaveBeenCalledWith('API_URL');
   });
 });

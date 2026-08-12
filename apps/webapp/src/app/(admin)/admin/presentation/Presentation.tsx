@@ -26,7 +26,7 @@ import {
 } from './_component';
 import { TenantModel } from '#/model';
 import { headerFonts, textFonts } from '#/styles/fonts';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import { Icon } from '#/shared/Icon';
 import { faCheck, faClose, faTrash } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';

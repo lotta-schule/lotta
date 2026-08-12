@@ -8,7 +8,10 @@ import clsx from 'clsx';
 
 import styles from './DraggableListItem.module.scss';
 
-export type DraggableListItemProps = React.HTMLProps<HTMLDivElement> & {
+export type DraggableListItemProps = Omit<
+  React.HTMLProps<HTMLDivElement>,
+  'title'
+> & {
   id: string;
   isDraggable?: boolean;
   onClick?: React.MouseEventHandler<HTMLLIElement>;
@@ -16,11 +19,14 @@ export type DraggableListItemProps = React.HTMLProps<HTMLDivElement> & {
   icon?: React.ReactNode;
   iconTitle?: string;
   selected?: boolean;
-  title: string;
+  title: React.ReactNode;
+  /** Native tooltip text for the `<li title=…>` attribute; defaults to `title` when it's a string. */
+  tooltip?: string;
 };
 
 export const DraggableListItem = ({
   title,
+  tooltip,
   className,
   isDraggable = true,
   selected,
@@ -33,6 +39,8 @@ export const DraggableListItem = ({
 }: DraggableListItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props.id, disabled: !isDraggable });
+  const tooltipText =
+    tooltip ?? (typeof title === 'string' ? title : undefined);
 
   return (
     <div
@@ -57,7 +65,7 @@ export const DraggableListItem = ({
     >
       {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- <li> is the interactive surface; a nested button would require significant DOM restructuring */}
       <li
-        title={title}
+        title={tooltipText}
         onClick={onClick}
         onKeyDown={
           onClick

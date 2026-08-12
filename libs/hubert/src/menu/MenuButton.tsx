@@ -54,7 +54,10 @@ export const MenuButton = ({
   const { buttonProps: ariaButtonProps } = useButton(menuTriggerProps, ref);
 
   return (
-    <Popover>
+    <Popover
+      open={state.isOpen}
+      onOpenChange={(isOpen) => state.setOpen(isOpen)}
+    >
       <PopoverTrigger {...buttonProps} {...ariaButtonProps} />
       <PopoverContent>
         <Menu

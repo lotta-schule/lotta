@@ -304,6 +304,26 @@ describe('shared/article/module/form/FormElement', () => {
       });
     });
 
+    it('should disable file picking while in the form builder (edit mode)', () => {
+      const setValueFn = vi.fn();
+      const screen = render(
+        <FormElement
+          element={{
+            element: 'file',
+            name: 'blabla1',
+          }}
+          isEditModeEnabled
+          value={''}
+          onSetValue={setValueFn}
+        />
+      );
+      const fileInput = document.querySelector('input[type=file]')!;
+      expect(fileInput).toBeDisabled();
+      expect(
+        screen.getByRole('button', { name: /datei hochladen/i })
+      ).toBeDisabled();
+    });
+
     it('should show a filename for a selected local file, file should be removable', async () => {
       const fireEvent = userEvent.setup();
       const setValueFn = vi.fn();

@@ -104,8 +104,18 @@ describe('middleware', () => {
       const request = createMockRequest(`http://localhost:3000${path}`);
       await middleware(request);
       expect(mockNextResponseRewrite).toHaveBeenCalledWith(
-        expect.objectContaining({ hostname: 'api.example.com' })
+        expect.objectContaining({ hostname: 'api.example.com' }),
+        expect.objectContaining({
+          request: { headers: expect.any(Headers) },
+        })
       );
+
+      const [, callArgs] = mockNextResponseRewrite.mock.calls[0];
+      const requestHeaders = (callArgs as any)?.request?.headers as Headers;
+      expect(requestHeaders.get('x-lotta-originary-host')).toBe(
+        'localhost:3000'
+      );
+
       expect(mockNextResponseNext).not.toHaveBeenCalled();
     });
   });
