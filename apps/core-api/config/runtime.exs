@@ -243,10 +243,6 @@ config :opentelemetry, :resource,
 config :opentelemetry_exporter,
   otlp_protocol: :http_protobuf
 
-config :opentelemetry,
-  span_processor: {Sentry.OpenTelemetry.SpanProcessor, []},
-  sampler: {Sentry.OpenTelemetry.Sampler, []}
-
 config :lotta,
        Lotta.Repo,
        username: SystemConfig.get("POSTGRES_USER"),
