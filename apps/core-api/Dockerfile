@@ -5,6 +5,8 @@ ARG OTP_VERSION="29.0.2"
 ARG REBAR3_VERSION="3.27.0"
 ARG PDFIUM_VERSION="chromium%2F7906"
 ARG VIPS_VERSION="8.18.3"
+# Keep in sync with the `:tailwind` version in config/config/tailwind.exs
+ARG TAILWIND_VERSION="4.1.10"
 
 ARG OTP_DOWNLOAD_SHA256="b9a7714fdd282c4a7113651b1e2728a58799e60ffe20e545f5cc94c621527b15"
 ARG REBAR3_DOWNLOAD_SHA256="985cae6e957334cfa549190b9f5efb9185c184a18fc181c87b8dde096ba79f38"
@@ -217,6 +219,8 @@ RUN set -xe \
 FROM elixir AS builder
 
 ARG SENTRY_DSN
+ARG TAILWIND_VERSION
+ARG TARGETARCH
 
 # set build ENV
 ENV MIX_ENV=prod
@@ -231,6 +235,7 @@ RUN set -xe && \
   apk update && \
   apk upgrade --no-cache && \
   apk add --no-cache --virtual .build-deps \
+  curl \
   git \
   nodejs npm \
   rust cargo \
@@ -239,6 +244,24 @@ RUN set -xe && \
 # install hex + rebar
 RUN mix local.hex --force && \
   mix local.rebar --force
+
+# Vendor the tailwind CLI binary ourselves instead of letting `mix
+# assets.deploy` download it from GitHub releases at build time: that
+# download has no retry logic and is a single point of flakiness for the
+# whole image build (see socket_closed_remotely failures in CI). Placing
+# the binary at the exact path the `tailwind` mix task expects makes it
+# skip its own download.
+RUN set -xe && \
+  case "${TARGETARCH}" in \
+  amd64) tailwind_target="linux-x64-musl" ;; \
+  arm64) tailwind_target="linux-arm64-musl" ;; \
+  *) echo "Unsupported architecture for tailwind: ${TARGETARCH}" >&2 && exit 1 ;; \
+  esac && \
+  mkdir -p /app/_build && \
+  curl -fSL --retry 5 --retry-all-errors --retry-delay 3 \
+  -o "/app/_build/tailwind-${tailwind_target}-${TAILWIND_VERSION}" \
+  "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-${tailwind_target}" && \
+  chmod +x "/app/_build/tailwind-${tailwind_target}-${TAILWIND_VERSION}"
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
