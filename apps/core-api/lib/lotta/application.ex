@@ -65,6 +65,14 @@ defmodule Lotta.Application do
 
   def handle_repo_query(_event, _measurements, %{source: "oban" <> _}, _config), do: :ok
 
+  def handle_repo_query(event, measurements, %{options: options} = metadata, config) do
+    if Keyword.keyword?(options) and Keyword.has_key?(options, :oban_conf) do
+      :ok
+    else
+      LoggerJSON.Ecto.telemetry_logging_handler(event, measurements, metadata, config)
+    end
+  end
+
   def handle_repo_query(event, measurements, metadata, config),
     do: LoggerJSON.Ecto.telemetry_logging_handler(event, measurements, metadata, config)
 
