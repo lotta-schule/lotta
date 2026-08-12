@@ -31,7 +31,7 @@ vi.mock('#/shared/edit/SelectFileOverlay', () => ({
   ),
 }));
 
-vi.mock('util/image/ResponsiveImage.js', () => ({
+vi.mock('#/util/image/ResponsiveImage.js', () => ({
   ResponsiveImage: ({ src, alt }: ResponsiveImageProps) => (
     // oxlint-disable-next-line next/no-img-element
     <img src={src} alt={alt} data-testid="responsive-image" />

@@ -5,7 +5,7 @@ import {
   useRequestConversion,
 } from './useRequestConversion';
 
-describe('util/userAvatar/useCurrentUser', () => {
+describe('#/util/userAvatar/useCurrentUser', () => {
   it('should request a file to be converted', async () => {
     const onRequestResult = vitest.fn(() => ({
       data: { requestFileConversion: true },

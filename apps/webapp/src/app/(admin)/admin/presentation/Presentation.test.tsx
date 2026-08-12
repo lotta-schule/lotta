@@ -4,8 +4,14 @@ import { imageFile, tenant } from '#/test/fixtures';
 import { render, fireEvent, waitFor, userEvent } from '#/test/util';
 import { TenantModel } from '#/model';
 import { Presentation } from './Presentation';
+import { useRouter } from 'next/navigation.js';
+import { Mock, vi } from 'vitest';
 
 import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
+
+vi.mock('next/navigation.js', () => ({
+  useRouter: vi.fn(),
+}));
 
 const mockTenant: TenantModel = {
   ...tenant,
@@ -37,15 +43,27 @@ const mockTenant: TenantModel = {
 };
 
 describe('Presentation', () => {
+  const mockRouter = {
+    refresh: vi.fn(),
+  };
+
+  beforeEach(() => {
+    (useRouter as Mock).mockReturnValue(mockRouter);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('should render correctly', () => {
     const screen = render(
       <Presentation tenant={mockTenant} additionalThemes={[]} />
     );
 
     expect(screen.getByText('Vorlagen')).toBeInTheDocument();
-    expect(screen.getByText('Farben')).toBeInTheDocument();
-    expect(screen.getByText('Maße')).toBeInTheDocument();
-    expect(screen.getByText('Schriftarten')).toBeInTheDocument();
+    expect(screen.getByText('Website')).toBeInTheDocument();
+    expect(screen.getByText('Abstände')).toBeInTheDocument();
+    expect(screen.getAllByText('Schriftarten').length).toBeGreaterThan(0);
   });
 
   it('should update the color settings', async () => {
@@ -53,7 +71,7 @@ describe('Presentation', () => {
       <Presentation tenant={mockTenant} additionalThemes={[]} />
     );
 
-    const colorInput = screen.getByLabelText('Akzente');
+    const colorInput = screen.getByLabelText('Button & Akzente');
     fireEvent.change(colorInput, { target: { value: '#123123' } });
 
     await waitFor(() => {
@@ -70,7 +88,7 @@ describe('Presentation', () => {
     const spacingInput = screen.getByLabelText('Abstand');
     await user.fill(spacingInput, '20px');
 
-    const borderRadiusInput = screen.getByLabelText('Rundungen');
+    const borderRadiusInput = screen.getByLabelText('Rundungen für Buttons');
     await user.fill(borderRadiusInput, '10px');
 
     expect(spacingInput).toHaveValue('20px');

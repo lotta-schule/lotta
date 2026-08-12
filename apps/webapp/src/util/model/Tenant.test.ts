@@ -1,7 +1,7 @@
 import { tenant } from '#/test/fixtures';
 import { Tenant } from './Tenant';
 
-describe('util/model/Tenant', () => {
+describe('#/util/model/Tenant', () => {
   it("Should give the tnenat's url", () => {
     expect(Tenant.getMainUrl(tenant)).toEqual('https://info.lotta.schule');
   });

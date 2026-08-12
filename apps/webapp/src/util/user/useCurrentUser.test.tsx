@@ -6,7 +6,7 @@ import { useCurrentUser, GET_CURRENT_USER } from './useCurrentUser';
 import { SomeUser } from '#/test/fixtures';
 import pick from 'lodash/pick';
 
-describe('util/userAvatar/useCurrentUser', () => {
+describe('#/util/userAvatar/useCurrentUser', () => {
   const createWrapperForUser = (currentUser: UserModel | null = null) => {
     const WrapperComponent = ({ children }: { children: any }) => (
       <MockedProvider
