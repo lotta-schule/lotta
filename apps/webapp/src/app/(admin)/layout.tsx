@@ -21,7 +21,9 @@ export default async function AdminLayout({
       socketUrl={socketUrl}
       accessToken={accessToken ?? undefined}
     >
-      <TenantLayout fullSizeScrollable>{children}</TenantLayout>
+      <TenantLayout hideNavbar fullSizeScrollable>
+        {children}
+      </TenantLayout>
     </ApolloProvider>
   );
 }
