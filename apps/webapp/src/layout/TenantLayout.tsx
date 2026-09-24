@@ -16,11 +16,14 @@ export type TenantLayoutProps = React.PropsWithChildren<{
    * its content having a scrollable overflow.
    */
   fullSizeScrollable?: boolean;
+
+  hideNavbar?: boolean;
 }>;
 
 export const TenantLayout = async ({
   children,
   fullSizeScrollable,
+  hideNavbar = false,
 }: TenantLayoutProps) => {
   const [tenant, categories] = await Promise.all([
     loadTenant(),
@@ -50,7 +53,7 @@ export const TenantLayout = async ({
           <h1>{tenant.title}</h1>
         </div>
       </header>
-      <Navbar categories={categories} />
+      {!hideNavbar && <Navbar categories={categories} />}
       <main className={styles.main}>
         {children}
         {!fullSizeScrollable && (
