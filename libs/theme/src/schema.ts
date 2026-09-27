@@ -77,6 +77,10 @@ export const schema: Record<
     type: 'length',
     description: 'Border radius',
   },
+  backgroundImageOpacity: {
+    type: 'number',
+    description: 'Opacity of the background image',
+  },
   textFontFamily: {
     type: 'font-family',
     description: 'font family for text',

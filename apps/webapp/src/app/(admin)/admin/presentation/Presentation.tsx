@@ -263,7 +263,12 @@ export const Presentation = React.memo(
                     min="0"
                     max="1"
                     step={0.01}
-                    defaultValue=".5"
+                    value={customTheme.backgroundImageOpacity}
+                    onChange={(e) =>
+                      updateThemeProperties({
+                        backgroundImageOpacity: Number(e.target.value),
+                      })
+                    }
                   ></input>
                 </div>
               </AdminPageSection>

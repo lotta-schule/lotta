@@ -20,6 +20,8 @@ export const standardTheme: Theme = {
   spacing: `8px`,
   borderRadius: `4px`,
 
+  backgroundImageOpacity: 1,
+
   textFontFamily: 'Muli',
   titleFontFamily: "'Schoolbell', cursive",
 

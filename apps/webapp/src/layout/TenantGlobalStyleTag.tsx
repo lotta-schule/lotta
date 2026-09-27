@@ -29,11 +29,13 @@ export const TenantGlobalStyleTag = ({ tenant }: TenantGlobalStyleTagProps) => {
         __html: `@media screen and (min-width: 600px) {
       body::after {
         ${cssBackgroundImage(1024, 1920)}
+        opacity: var(--lotta-background-image-opacity, 1);
       }
   }
   @media screen and (min-width: 1280px) {
       body::after {
         ${cssBackgroundImage(1280, 2560)}
+        opacity: var(--lotta-background-image-opacity, 1);
       }
   }`,
       }}

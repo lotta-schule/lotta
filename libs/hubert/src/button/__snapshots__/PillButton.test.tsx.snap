@@ -25,6 +25,7 @@ exports[`PillButton > renders correctly 1`] = `
     --lotta-accent-grey-color: 227, 227, 227;
     --lotta-spacing: 8px;
     --lotta-border-radius: 4px;
+    --lotta-background-image-opacity: 1;
     --lotta-text-font-family: Muli;
     --lotta-title-font-family: 'Schoolbell', cursive;
     --lotta-badge-background-color: 255, 87, 34;
