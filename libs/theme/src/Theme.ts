@@ -18,6 +18,8 @@ export type Theme = {
   spacing: string;
   borderRadius: string;
 
+  backgroundImageOpacity: number;
+
   textFontFamily: string;
   titleFontFamily: string;
 

@@ -34,11 +34,13 @@ describe('TenantGlobalStyleTag', () => {
         "@media screen and (min-width: 600px) {
               body::after {
                 background-image: image-set(url(https://example.com/123/pagebg_1024) 1x, url(https://example.com/123/pagebg_1920) 2x);
+                opacity: var(--lotta-background-image-opacity, 1);
               }
           }
           @media screen and (min-width: 1280px) {
               body::after {
                 background-image: image-set(url(https://example.com/123/pagebg_1280) 1x, url(https://example.com/123/pagebg_2560) 2x);
+                opacity: var(--lotta-background-image-opacity, 1);
               }
           }"
       `);

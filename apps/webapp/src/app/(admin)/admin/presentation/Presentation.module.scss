@@ -73,11 +73,9 @@
       margin-right: var(--lotta-spacing);
     }
   }
-  input[type="range"],
-  meter,
-  progress {
-    margin-block-end: 20px;
-    writing-mode: vertical-rl;
+  input[type="range"] {
+    writing-mode: sideways-lr;
+    margin-block-start: 20px;
   }
   .imageSettings {
     max-width: 50%;

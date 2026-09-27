@@ -41,7 +41,7 @@ export const PagePreview = React.memo(
   fill: rgb(var(--lotta-page-background-color));
 }
 .page-bg-wrapper image {
-  opacity: .5;
+  opacity: var(--lotta-background-image-opacity);
 }
 .cls-4 {
   clip-path: url(#clip-path-2);
