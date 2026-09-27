@@ -29,8 +29,14 @@ export interface FormElementProps {
   onUpdateElement?: (element: Partial<FormElementInterface>) => void;
 }
 
-export const FormElement = React.memo<FormElementProps>(
-  ({ element, isEditModeEnabled, value, onSetValue, onUpdateElement }) => {
+export const FormElement = React.memo(
+  ({
+    element,
+    isEditModeEnabled,
+    value,
+    onSetValue,
+    onUpdateElement,
+  }: FormElementProps) => {
     const currentUser = useCurrentUser();
     const isEditable = !!isEditModeEnabled && !!onUpdateElement;
 
@@ -74,7 +80,7 @@ export const FormElement = React.memo<FormElementProps>(
           onChange={(label) => onUpdateElement!({ label })}
         />
       ) : (
-        labelText
+        labelText + (element.required ? ' *' : '')
       )) as unknown as string;
       if (element.element === 'selection') {
         if (element.type === 'checkbox') {

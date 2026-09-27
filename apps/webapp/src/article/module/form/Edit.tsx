@@ -237,7 +237,11 @@ export const Edit = React.memo(
                       <Icon
                         icon={faCircleExclamation}
                         size={'lg'}
-                        color={element.required ? 'secondary' : 'primary'}
+                        color={'primary'}
+                        style={{
+                          opacity: element.required ? 1 : 0.3,
+                          filter: element.required ? 'none' : 'grayscale(1)',
+                        }}
                       />
                     }
                     onClick={() =>

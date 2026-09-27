@@ -54,6 +54,39 @@ describe('shared/article/module/form/FormElement', () => {
         screen.getByRole('textbox', { name: /Bla Bla 1/i })
       ).toHaveProperty('type', 'email');
     });
+
+    it('should append an asterisk to the label when the field is required', () => {
+      const setValueFn = vi.fn();
+      const screen = render(
+        <FormElement
+          element={{
+            element: 'input',
+            name: 'blabla1',
+            label: 'Bla Bla 1',
+            required: true,
+          }}
+          value={''}
+          onSetValue={setValueFn}
+        />
+      );
+      expect(screen.getByText('Bla Bla 1 *')).toBeInTheDocument();
+    });
+
+    it('should not append an asterisk to the label when the field is not required', () => {
+      const setValueFn = vi.fn();
+      const screen = render(
+        <FormElement
+          element={{
+            element: 'input',
+            name: 'blabla1',
+            label: 'Bla Bla 1',
+          }}
+          value={''}
+          onSetValue={setValueFn}
+        />
+      );
+      expect(screen.getByText('Bla Bla 1')).toBeInTheDocument();
+    });
   });
 
   describe('selection element', () => {

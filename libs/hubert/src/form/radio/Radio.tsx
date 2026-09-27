@@ -16,8 +16,6 @@ export const Radio = React.forwardRef<any, RadioProps>(
       } as React.CSSProperties);
     return (
       <label style={customStyle} className={styles.root} aria-label={label}>
-        {label}
-        {children}
         <input
           {...props}
           ref={ref}
@@ -28,6 +26,8 @@ export const Radio = React.forwardRef<any, RadioProps>(
           className={className}
           type={'radio'}
         />
+        {label}
+        {children}
       </label>
     );
   }
