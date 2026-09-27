@@ -81,6 +81,35 @@ describe('shared/article/modules/form/Edit', () => {
     });
   });
 
+  it('should toggle the required state of a field and its icon styling', async () => {
+    const fireEvent = userEvent.setup();
+    const onUpdateModuleFn = vi.fn();
+    const screen = render(
+      <Edit contentModule={contentModule} onUpdateModule={onUpdateModuleFn} />
+    );
+    const requiredToggle = screen.getAllByRole('checkbox', {
+      name: /erforderlich/i,
+    })[0];
+
+    expect(requiredToggle.querySelector('svg')).toHaveStyle({
+      opacity: '0.3',
+      filter: 'grayscale(1)',
+    });
+
+    await fireEvent.click(requiredToggle);
+
+    expect(onUpdateModuleFn).toHaveBeenCalledWith({
+      ...contentModule,
+      configuration: {
+        ...contentModule.configuration,
+        elements: [
+          { ...contentModule.configuration.elements[0], required: true },
+          contentModule.configuration.elements[1],
+        ],
+      },
+    });
+  });
+
   it('should update an element label when editing it inline', async () => {
     const fireEvent = userEvent.setup();
     const onUpdateModuleFn = vi.fn();
