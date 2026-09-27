@@ -12,6 +12,15 @@ export interface ScheduleWidgetConfigurationProps {
 export const ScheduleWidgetConfiguration =
   React.memo<ScheduleWidgetConfigurationProps>(
     ({ configuration, setConfiguration }) => {
+      React.useEffect(() => {
+        if (!configuration.type) {
+          setConfiguration({
+            ...configuration,
+            type: 'IndiwareStudent',
+          });
+        }
+      }, [configuration, setConfiguration]);
+
       return (
         <div data-testid={'ScheduleWidgetConfiguration'}>
           <Select
