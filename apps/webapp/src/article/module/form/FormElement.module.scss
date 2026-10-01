@@ -8,3 +8,9 @@
 .addOptionButton {
   align-self: flex-start;
 }
+
+.labelText {
+  font-size: 13pt;
+  color: rgb(var(--lotta-text-color));
+  text-transform: none;
+}

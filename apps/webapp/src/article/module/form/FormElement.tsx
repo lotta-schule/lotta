@@ -70,20 +70,21 @@ export const FormElement = React.memo(
 
     const formElement = (() => {
       const labelText = element.label ?? element.name ?? 'Beschreibung';
-      // hubert's `Label` types `label` as `ReactNode & string` (it extends
-      // HTMLProps), so a JSX node has to be cast through to satisfy it.
-      const label = (isEditable ? (
-        <EditableText
-          value={labelText}
-          ariaLabel={'Bezeichnung'}
-          allowEmpty
-          onChange={(label) => onUpdateElement!({ label })}
-        />
-      ) : (
-        labelText + (element.required ? ' *' : '')
-      )) as unknown as string;
+      const plainLabel = (labelText +
+        (element.required ? ' *' : '')) as unknown as string;
       if (element.element === 'selection') {
         if (element.type === 'checkbox') {
+          const label = (isEditable ? (
+            <EditableText
+              className={styles.labelText}
+              value={labelText}
+              ariaLabel={'Bezeichnung'}
+              allowEmpty
+              onChange={(label) => onUpdateElement!({ label })}
+            />
+          ) : (
+            <span className={styles.labelText}>{plainLabel}</span>
+          )) as unknown as string;
           return (
             <Label label={label}>
               <div className={isEditable ? styles.optionList : undefined}>
@@ -130,6 +131,17 @@ export const FormElement = React.memo(
             </Label>
           );
         } else if (element.type === 'radio') {
+          const label = (isEditable ? (
+            <EditableText
+              className={styles.labelText}
+              value={labelText}
+              ariaLabel={'Bezeichnung'}
+              allowEmpty
+              onChange={(label) => onUpdateElement!({ label })}
+            />
+          ) : (
+            <span className={styles.labelText}>{plainLabel}</span>
+          )) as unknown as string;
           return (
             <Label label={label}>
               <div className={isEditable ? styles.optionList : undefined}>
@@ -167,6 +179,17 @@ export const FormElement = React.memo(
             </Label>
           );
         } else if (element.type === 'select') {
+          const label = (isEditable ? (
+            <EditableText
+              className={styles.labelText}
+              value={labelText}
+              ariaLabel={'Bezeichnung'}
+              allowEmpty
+              onChange={(label) => onUpdateElement!({ label })}
+            />
+          ) : (
+            <span className={styles.labelText}>{plainLabel}</span>
+          )) as unknown as string;
           const selectField = (
             <Select
               fullWidth
@@ -193,7 +216,7 @@ export const FormElement = React.memo(
             </Select>
           );
           if (!isEditable) {
-            return selectField;
+            return <Label label={label}>{selectField}</Label>;
           }
           return (
             <Label label={label}>
@@ -217,7 +240,7 @@ export const FormElement = React.memo(
       }
       if (element.element === 'input') {
         return (
-          <Label label={label}>
+          <Label label={plainLabel}>
             <Input
               disabled={isEditModeEnabled}
               name={element.name}
