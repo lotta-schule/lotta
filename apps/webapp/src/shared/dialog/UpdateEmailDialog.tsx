@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Button,
   Dialog,
@@ -11,11 +11,11 @@ import {
 } from '@lotta-schule/hubert';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 
-import UpdateEmailMutation from 'api/mutation/UpdateEmailMutation.graphql';
+import UpdateEmailMutation from '#/api/mutation/UpdateEmailMutation.graphql';
 
 export interface UpdateEmailDialogProps {
   isOpen: boolean;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
@@ -87,7 +87,8 @@ export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
           onRequestClose={(authToken) => {
             setShowRequestHisecToken(false);
             if (authToken) {
-              updateEmail({
+              void updateEmail({
+                variables: { newEmail },
                 context: { authToken },
               });
             }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Usage } from './Usage';
-import { loadTenant, loadTenantUsage } from 'loader';
+import { loadTenant, loadTenantUsage } from '#/loader';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { AdminPage } from '../_component/AdminPage';
 

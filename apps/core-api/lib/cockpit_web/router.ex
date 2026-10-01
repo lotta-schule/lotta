@@ -16,6 +16,14 @@ defmodule CockpitWeb.Router do
       fetch_current_user: 2
     ]
 
+  pipeline :json_api do
+    plug(:accepts, ~w(json))
+  end
+
+  pipeline :basic_auth do
+    plug(:admin_basic_auth)
+  end
+
   pipeline :browser do
     plug(:accepts, ["html"])
     plug(:fetch_session)
@@ -24,6 +32,14 @@ defmodule CockpitWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(:fetch_current_user)
+  end
+
+  scope "/api" do
+    pipe_through([:basic_auth, :json_api])
+
+    scope "/banking" do
+      post("/ingest", CockpitWeb.BankingApiController, :ingest)
+    end
   end
 
   scope "/" do
@@ -48,7 +64,19 @@ defmodule CockpitWeb.Router do
         live("/", CockpitWeb.Live.IndexLive)
         live_resources("/tenants", CockpitWeb.Live.TenantLive)
         live_resources("/invoices", CockpitWeb.Live.InvoiceLive)
+
+        live_resources("/bank-transactions", CockpitWeb.Live.BankTransactionLive,
+          only: [:index, :show]
+        )
       end
     end
+  end
+
+  defp admin_basic_auth(conn, _opts) do
+    Plug.BasicAuth.basic_auth(
+      conn,
+      Application.get_env(:lotta, :cockpit)
+      |> Keyword.take([:username, :password])
+    )
   end
 end

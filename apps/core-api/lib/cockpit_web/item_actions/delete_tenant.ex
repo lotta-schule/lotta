@@ -19,7 +19,7 @@ defmodule CockpitWeb.ItemActions.DeleteTenant do
 
   @impl Backpex.ItemAction
   def handle(socket, [item | _items], _data) do
-    case Lotta.Tenants.delete_tenant(item) do
+    case tenants_admin_module().delete_tenant(item) do
       {:ok, _tenant} ->
         {:ok,
          socket
@@ -48,4 +48,7 @@ defmodule CockpitWeb.ItemActions.DeleteTenant do
 
   @impl Backpex.ItemAction
   def cancel_label(_assigns), do: "Cancel"
+
+  defp tenants_admin_module,
+    do: Application.get_env(:lotta, :tenants_admin_module, Lotta.Tenants)
 end

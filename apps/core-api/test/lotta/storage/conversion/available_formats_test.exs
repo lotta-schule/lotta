@@ -1,12 +1,12 @@
 defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
-  import Ecto.Query
+  import Lotta.Factory
   import Lotta.Storage.Conversion.AvailableFormats, only: [is_valid_category?: 1]
 
-  alias Lotta.Storage.{File, FileData}
+  alias Lotta.Storage.{FileData}
   alias Lotta.Storage.Conversion.AvailableFormats
 
   @prefix "tenant_test"
@@ -39,20 +39,11 @@ defmodule Lotta.Storage.Conversion.AvailableFormatsTest do
   setup do
     Repo.put_prefix(@prefix)
 
-    image_file =
-      Repo.one!(from(f in File, where: f.filename == ^"ich_schoen.jpg"))
-
-    video_file =
-      Repo.one!(from(f in File, where: f.filename == ^"podcast5.mp4"))
-
-    audio_file =
-      Repo.one!(from(f in File, where: f.filename == ^"eoa2.mp3"))
-
-    pdf_file =
-      Repo.one!(from(f in File, where: f.filename == ^"wettbewerb.pdf"))
-
-    binary_file =
-      Repo.one!(from(f in File, where: f.filename == ^"secrets.zip"))
+    image_file = insert(:file, file_type: "image", mime_type: "image/jpg")
+    video_file = insert(:file, file_type: "video", mime_type: "video/mp4")
+    audio_file = insert(:file, file_type: "audio", mime_type: "audio/mp3")
+    pdf_file = insert(:file, file_type: "binary", mime_type: "application/pdf")
+    binary_file = insert(:file, file_type: "binary", mime_type: "application/zip")
 
     {:ok,
      %{

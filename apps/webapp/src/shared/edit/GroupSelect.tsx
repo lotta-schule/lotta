@@ -2,18 +2,19 @@
 
 import * as React from 'react';
 import { Checkbox, ComboBox, NoSsr, Tag } from '@lotta-schule/hubert';
-import { UserGroupModel } from 'model';
-import { useUserGroups } from 'util/tenant/useUserGroups';
+import { useUserGroups, type UserGroup } from '#/util/tenant/useUserGroups';
 import clsx from 'clsx';
 
 import styles from './GroupSelect.module.scss';
 
-export interface GroupSelectProps<
-  AllowNoneSelection extends boolean | undefined,
-  Model = AllowNoneSelection extends true
-    ? UserGroupModel | null
-    : UserGroupModel,
-> {
+export type BaseUserGroupModel = Pick<UserGroup, 'id' | 'name'> &
+  Partial<Pick<UserGroup, 'sortKey' | 'isAdminGroup'>>;
+
+export type GroupSelectProps<
+  AllowNoneSelection extends boolean,
+  GroupModel extends BaseUserGroupModel = BaseUserGroupModel,
+  Model = AllowNoneSelection extends true ? GroupModel | null : GroupModel,
+> = {
   /**
    * If true, a none selection is allowed,
    * meaning it is possible to select 'no group'.
@@ -89,12 +90,12 @@ export interface GroupSelectProps<
   row?: boolean;
 
   selectedGroups: Model[];
-  suggestionFilter?(group: Model, i: number, allGroups: Model[]): boolean;
-  onSelectGroups(groups: Model[]): void;
-}
+  suggestionFilter?: (group: Model, i: number, allGroups: Model[]) => boolean;
+  onSelectGroups: (groups: Model[]) => void;
+};
 
 export const GroupSelect = React.memo(
-  <T extends GroupSelectProps<boolean | undefined>>({
+  <T extends GroupSelectProps<boolean>>({
     allowNoneSelection = false,
     className,
     disableAdminGroupsExclusivity,
@@ -105,13 +106,16 @@ export const GroupSelect = React.memo(
     label = 'Gruppe suchen',
     row = false,
     selectedGroups,
-    suggestionFilter,
+    suggestionFilter = () => true,
     onSelectGroups,
   }: T) => {
     const availableGroups = useUserGroups();
 
     const groupSorter = React.useCallback(
-      (group1: UserGroupModel | null, group2: UserGroupModel | null) => {
+      (
+        group1: BaseUserGroupModel | null,
+        group2: BaseUserGroupModel | null
+      ) => {
         if (!group1) {
           return -1;
         }
@@ -124,7 +128,7 @@ export const GroupSelect = React.memo(
     );
 
     const isAdminGroup = React.useCallback(
-      (group: UserGroupModel | null | undefined) =>
+      (group: BaseUserGroupModel) =>
         !!(
           group && availableGroups.find((g) => g.id === group.id)?.isAdminGroup
         ),
@@ -133,7 +137,7 @@ export const GroupSelect = React.memo(
 
     const groups = React.useMemo(() => {
       const sortedGroups = availableGroups
-        .filter((suggestionFilter as T['suggestionFilter']) ?? (() => true))
+        .filter(suggestionFilter)
         .sort(groupSorter);
 
       if (allowNoneSelection) {
@@ -148,6 +152,15 @@ export const GroupSelect = React.memo(
       nonSelectionLabel,
     ]);
 
+    const items = React.useMemo(
+      () =>
+        groups.map((group) => ({
+          label: group.name,
+          key: group.id ?? 'no-group',
+        })),
+      [groups]
+    );
+
     return (
       <NoSsr>
         <div className={clsx(styles.root, className)} data-testid="GroupSelect">
@@ -155,10 +168,7 @@ export const GroupSelect = React.memo(
             fullWidth
             disabled={disabled || !groups.length}
             title={label}
-            items={groups.map((group) => ({
-              label: group.name,
-              key: group.id ?? 'no-group',
-            }))}
+            items={items}
             onSelect={(groupId) => {
               if (groupId === 'no-group' && allowNoneSelection === true) {
                 const noneSelectionAlreadySelected =
@@ -197,7 +207,7 @@ export const GroupSelect = React.memo(
                       groups
                         // make 'no group' back from `{ id: null, name: nonSelectionLabel}` to `null`
                         .map((g) => (g.id === null ? null : g))
-                        .filter(isAdminGroup)
+                        .filter((g) => !!g && g?.id !== null && isAdminGroup(g))
                     );
                   }
                 }
@@ -222,34 +232,32 @@ export const GroupSelect = React.memo(
                 <i>{publicGroupSelectionLabel}</i>
               </Checkbox>
             )}
-            {[...selectedGroups]
-              .sort(groupSorter)
-              .map((group: UserGroupModel | null, i: number) => {
-                return (
-                  <Tag
-                    key={i}
-                    className={clsx(styles.tag, {
-                      [styles.row]: row,
-                      'is-admin-group': isAdminGroup(group),
-                    })}
-                    onDelete={
-                      disabled
-                        ? undefined
-                        : () => {
-                            onSelectGroups(
-                              selectedGroups.filter((selectedGroup) =>
-                                group
-                                  ? selectedGroup?.id !== group.id
-                                  : selectedGroup !== null
-                              )
-                            );
-                          }
-                    }
-                  >
-                    {group?.name ?? nonSelectionLabel}
-                  </Tag>
-                );
-              })}
+            {selectedGroups.toSorted(groupSorter).map((group, i) => {
+              return (
+                <Tag
+                  key={i}
+                  className={clsx(styles.tag, {
+                    [styles.row]: row,
+                    'is-admin-group': !!group && isAdminGroup(group),
+                  })}
+                  onDelete={
+                    disabled
+                      ? undefined
+                      : () => {
+                          onSelectGroups(
+                            selectedGroups.filter((selectedGroup) =>
+                              group
+                                ? selectedGroup?.id !== group.id
+                                : selectedGroup !== null
+                            )
+                          );
+                        }
+                  }
+                >
+                  {group?.name ?? nonSelectionLabel}
+                </Tag>
+              );
+            })}
           </div>
         </div>
       </NoSsr>

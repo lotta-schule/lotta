@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Box,
   ErrorMessage,
@@ -11,17 +11,18 @@ import {
   ListItem,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { Tenant } from 'util/tenant';
-import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
+import { FileModel } from '#/model';
+import { Tenant } from '#/util/tenant';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage';
 import { AdminPageSection } from '../_component/AdminPageSection';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation.js';
+import Link from 'next/link.js';
 
 import styles from './GeneralSettings.module.scss';
 
-import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
+import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
 
 export type GeneralSettingsProps = {
   tenant: Tenant;
@@ -30,7 +31,9 @@ export type GeneralSettingsProps = {
 export const GeneralSettings = ({ tenant }: GeneralSettingsProps) => {
   const router = useRouter();
   const [title, setTitle] = React.useState(tenant.title);
-  const [logo, setLogo] = React.useState(tenant.logoImageFile);
+  const [logo, setLogo] = React.useState<FileModel | null>(
+    tenant.logoImageFile
+  );
 
   const [updateTenant, { error }] = useMutation(UpdateTenantMutation);
 

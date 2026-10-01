@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, waitFor } from '../../test-utils';
+import { render, userEvent, waitFor } from '../../test-utils';
 import { Option, Select } from './Select';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/general/form/select', () => {
   it('should render and show options', async () => {
@@ -19,6 +18,19 @@ describe('shared/general/form/select', () => {
     );
     await fireEvent.click(screen.getByRole('button', { name: /Select/ }));
     expect(screen.getAllByRole('option')).toHaveLength(4);
+  });
+
+  it('should visually hide the label but keep it accessible when hideLabel is set', () => {
+    const screen = render(
+      <Select title={'Select'} hideLabel value={'0'}>
+        <Option value={'0'}>Option 0</Option>
+        <Option value={'1'}>Option 1</Option>
+      </Select>
+    );
+    expect(screen.getByRole('button', { name: /Select/ })).toBeInTheDocument();
+    const labelSpan = screen.getByText('Select', { selector: 'span' });
+    expect(getComputedStyle(labelSpan).position).toEqual('absolute');
+    expect(getComputedStyle(labelSpan).overflow).toEqual('hidden');
   });
 
   it('should have the correct option preset', () => {
@@ -56,7 +68,7 @@ describe('shared/general/form/select', () => {
 
   it('should call onChange callback with the new value', async () => {
     const fireEvent = userEvent.setup();
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     const screen = render(
       <Select title={'Select'} value={'2'} onChange={onChange}>
         <Option value={'0'}>Option 0</Option>

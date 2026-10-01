@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { ComboBox, NoSsr } from '@lotta-schule/hubert';
-import { useLazyQuery } from '@apollo/client';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
-import { UserModel } from 'model';
-import { User } from 'util/model';
+import { useLazyQuery } from '@apollo/client/react';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
+import { UserModel, UserPreviewModel } from '#/model';
+import { User } from '#/util/model';
 import clsx from 'clsx';
 
 import styles from './SearchUserField.module.scss';
 
-import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
+import SearchUsersQuery from '#/api/query/SearchUsersQuery.graphql';
 
 export interface SearchUserFieldProps {
   style?: React.CSSProperties;
@@ -23,9 +23,9 @@ export interface SearchUserFieldProps {
    * Only needed when the users should be marked as 'selected'
    * on the search results listbox.
    */
-  selectedUsers?: UserModel[];
+  selectedUsers?: UserPreviewModel[];
 
-  onSelectUser(user: UserModel): void;
+  onSelectUser: (user: UserModel) => void;
 }
 
 export const SearchUserField = React.memo(

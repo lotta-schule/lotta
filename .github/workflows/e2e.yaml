@@ -32,23 +32,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24.5
-          cache: 'pnpm'
+          node-version: 25.2
 
       - name: Install node dependencies
-        run: pnpm install
+        run: bun install
         working-directory: apps/e2e
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
+        run: bunx playwright install --with-deps
         working-directory: apps/e2e
 
       - name: Run lotta as a service from docker-compose.yml
@@ -63,7 +60,7 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          ./scripts/test.sh --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          bun run e2e --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         working-directory: apps/e2e
 
       - uses: actions/upload-artifact@v4
@@ -74,7 +71,7 @@ jobs:
           retention-days: 1
 
       - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && hashFiles('apps/e2e/screenshot/**') != '' }}
         with:
           name: screenshot-${{ matrix.shardIndex }}
           path: apps/e2e/screenshot
@@ -90,19 +87,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24.5
-          cache: 'pnpm'
+          node-version: 25.2
 
       - name: Install node dependencies
-        run: pnpm install
+        run: bun install
         working-directory: apps/e2e
 
       - name: Download blob reports from GitHub Actions Artifacts
@@ -113,7 +107,7 @@ jobs:
           merge-multiple: true
 
       - name: Merge into HTML Report
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        run: bunx playwright merge-reports --reporter html ./all-blob-reports
         working-directory: apps/e2e
 
       - name: Upload HTML report
@@ -154,13 +148,8 @@ jobs:
         run: |
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/playwright-report/ \
-            s3://public-lotta-assets/playwright-reports/${{ github.run_number }}/
-
-          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
-            /tmp/playwright-report/ \
             s3://public-lotta-assets/playwright-reports/${{ github.base_ref || github.ref_name }}/
 
-          echo 'run_report_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/playwright-reports/${{ github.run_number }}/index.html' >> $GITHUB_OUTPUT
           echo 'ref_report_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/playwright-reports/${{ github.base_ref || github.ref_name }}/index.html' >> $GITHUB_OUTPUT
 
       - name: Download blob reports from GitHub Actions Artifacts
@@ -181,17 +170,12 @@ jobs:
 
       - name: Upload screenshots to S3
         id: upload-screenshots
-        if: ${{ steps.check-screenshots.outputs.screenshots_exist == 'true' }}
+        if: ${{ hashFiles('tmp/screenshot/**') != '' }}
         run: |
-          s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
-            /tmp/screenshot/ \
-            s3://public-lotta-assets/screenshots/${{ github.run_number }}/
-
           s3cmd sync --acl-public --recursive --no-mime-magic --guess-mime-type  \
             /tmp/screenshot/ \
             s3://public-lotta-assets/screenshots/${{ github.base_ref || github.ref_name }}/
 
-          echo 'run_screenshots_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/screenshots/${{ github.run_number }}/index.html' >> $GITHUB_OUTPUT
           echo 'ref_screenshots_url=https://public-lotta-assets.s3-website.nl-ams.scw.cloud/screenshots/${{ github.base_ref || github.ref_name }}/index.html' >> $GITHUB_OUTPUT
 
       - name: Comment PR with execution number
@@ -199,19 +183,23 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         with:
           message: |
+            ## End-to-End Test Report
+
             ### Test summary
-            See [Playwright Report](${{ steps.upload-report.outputs.run_report_url }})
+            See [Playwright Report](${{ steps.upload-report.outputs.ref_report_url }})
 
             ### Screenshots
-            See [Screenshots](${{ steps.upload-screenshots.outputs.run_screenshots_url }})
+            See [Screenshots](${{ steps.upload-screenshots.outputs.ref_screenshots_url }})
           comment-tag: playwright-report
       - name: Create commit comment
         uses: peter-evans/commit-comment@v3
         if: ${{ github.event_name == 'push' }}
         with:
-          body: |-
+          body: |
+            ## End-to-End Test Report
+
             ### Test summary
-            See [Playwright Report](${{ steps.upload-report.outputs.run_report_url }})
+            See [Playwright Report](${{ steps.upload-report.outputs.ref_report_url }})
 
             ### Screenshots
-            See [Screenshots](${{ steps.upload-screenshots.outputs.run_screenshots_url }})
+            See [Screenshots](${{ steps.upload-screenshots.outputs.ref_screenshots_url }})

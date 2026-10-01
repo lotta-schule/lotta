@@ -1,28 +1,86 @@
 import * as React from 'react';
-import { render } from '../test-utils';
+import { render, screen } from '@testing-library/react';
 import { CircularProgress } from './CircularProgress';
-
 import styles from './CircularProgress.module.scss';
 
 describe('CircularProgress', () => {
-  it('should render a progress bar', () => {
-    const screen = render(
-      <CircularProgress isIndeterminate aria-label={'test-progress'} />
-    );
-    expect(screen.getByRole('progressbar')).toBeVisible();
+  it('should render with default props', () => {
+    render(<CircularProgress />);
+
+    const progress = screen.getByRole('progressbar');
+    expect(progress).toBeInTheDocument();
+    expect(progress).toHaveAttribute('aria-valuenow', '0');
   });
 
-  it('should have indeterminate class if isIndeterminate is set', () => {
-    const screen = render(
-      <CircularProgress isIndeterminate aria-label={'test-progress'} />
-    );
-    expect(screen.getByRole('progressbar')).toHaveClass(styles.indeterminate);
+  it('should display value when provided', () => {
+    render(<CircularProgress value={75} />);
+
+    const progress = screen.getByRole('progressbar');
+    expect(progress).toHaveAttribute('aria-valuenow', '75');
+    expect(progress).toHaveAttribute('aria-valuemin', '0');
+    expect(progress).toHaveAttribute('aria-valuemax', '100');
   });
 
-  it('should show the text value when showValue is true', () => {
-    const screen = render(
-      <CircularProgress showValue value={45} aria-label={'test-progress'} />
+  it('should show percentage text when showValue is true', () => {
+    render(<CircularProgress value={50} showValue />);
+
+    expect(screen.getByText('50%')).toBeInTheDocument();
+  });
+
+  it('should not show percentage text when showValue is false', () => {
+    render(<CircularProgress value={50} showValue={false} />);
+
+    expect(screen.queryByText('50%')).not.toBeInTheDocument();
+  });
+
+  it('should apply custom size', () => {
+    const { container } = render(<CircularProgress size="100px" />);
+
+    const root = container.firstChild as HTMLElement;
+    expect(root).toHaveStyle({ width: '100px', height: '100px' });
+  });
+
+  it('should apply custom color', () => {
+    const { container } = render(<CircularProgress color="red" />);
+
+    const root = container.firstChild as HTMLElement;
+    expect(root.style.getPropertyValue('--lotta-circular-progress-color')).toBe(
+      'red'
     );
-    expect(screen.getByRole('progressbar')).toHaveTextContent('45%');
+  });
+
+  it('should apply indeterminate class when isIndeterminate is true', () => {
+    const { container } = render(<CircularProgress isIndeterminate />);
+
+    const root = container.firstChild as HTMLElement;
+    expect(root).toHaveClass(styles.indeterminate);
+  });
+
+  it('should not apply indeterminate class when isIndeterminate is false', () => {
+    const { container } = render(<CircularProgress isIndeterminate={false} />);
+
+    const root = container.firstChild as HTMLElement;
+    expect(root).not.toHaveClass(styles.indeterminate);
+  });
+
+  it('should apply custom className', () => {
+    const { container } = render(<CircularProgress className="custom-class" />);
+
+    const root = container.firstChild as HTMLElement;
+    expect(root).toHaveClass('custom-class');
+  });
+
+  it('should spread additional props', () => {
+    render(<CircularProgress data-testid="progress" aria-label="Loading" />);
+
+    const progress = screen.getByTestId('progress');
+    expect(progress).toHaveAttribute('aria-label', 'Loading');
+  });
+
+  it('should set CSS variable for value', () => {
+    const { container } = render(<CircularProgress value={25} />);
+
+    const root = container.firstChild as HTMLElement;
+    expect(root.style.getPropertyValue('--value')).toBe('0.25');
   });
 });

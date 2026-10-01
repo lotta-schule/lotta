@@ -1,13 +1,12 @@
-import { render, waitFor } from 'test/util';
-import { MockedResponse } from '@apollo/client/testing';
-import { lehrerGroup, schuelerGroup, userGroups } from 'test/fixtures';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { render, waitFor, userEvent } from '#/test/util';
+import { MockLink } from '@apollo/client/testing';
+import { lehrerGroup, schuelerGroup, userGroups } from '#/test/fixtures';
+import { useParams, useRouter, useSearchParams } from 'next/navigation.js';
 import { Mock } from 'vitest';
-import { userEvent } from '@testing-library/user-event';
 import { DraggableGroupList } from './DraggableGroupList';
 import { GET_USER_GROUPS } from '../_graphql';
 
-vi.mock('next/navigation', () => ({
+vi.mock('next/navigation.js', () => ({
   useRouter: vi.fn(),
   usePathname: vi.fn(),
   useSearchParams: vi.fn(),
@@ -19,7 +18,7 @@ describe('DraggableGroupList', () => {
     push: vi.fn(),
     replace: vi.fn(),
   };
-  const additionalMocks: MockedResponse[] = [
+  const additionalMocks: MockLink.MockedResponse[] = [
     {
       request: {
         query: GET_USER_GROUPS,
@@ -55,7 +54,7 @@ describe('DraggableGroupList', () => {
       expect(screen.getByRole('list')).toBeVisible();
     });
 
-    expect(screen.getAllByRole('button')).toHaveLength(userGroups.length);
+    expect(screen.getAllByRole('listitem')).toHaveLength(userGroups.length);
   });
 
   it('should have the current group selected', async () => {
@@ -147,7 +146,7 @@ describe('DraggableGroupList', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getAllByRole('button')).toHaveLength(userGroups.length);
+      expect(screen.getAllByRole('listitem')).toHaveLength(userGroups.length);
     });
 
     const lehrerGroupItem = screen.getByTitle('Lehrer');

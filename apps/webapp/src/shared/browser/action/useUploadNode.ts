@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { useMutation, ApolloCache } from '@apollo/client';
+import { ApolloCache } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { BrowserNode, BrowserProps } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from 'model';
-import { graphql, ResultOf } from 'api/graphql';
+import { graphql, ResultOf } from '#/api/graphql';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
+import { GetDirectoriesAndFilesQuery } from '../_graphql/GetDirectoriesAndFiles';
 
 export const UPLOAD_FILE_MUTATION = graphql(`
   mutation UploadFile($file: Upload!, $parentDirectoryId: ID!) {
     file: uploadFile(file: $file, parentDirectoryId: $parentDirectoryId) {
       id
       insertedAt
-      updatedAt
       filename
       filesize
       mimeType
@@ -36,24 +35,20 @@ export const UPLOAD_FILE_MUTATION = graphql(`
 `);
 
 const updateCache = (
-  client: ApolloCache<any>,
+  client: ApolloCache,
   parentNode: BrowserNode<'directory'>,
   file: NonNullable<ResultOf<typeof UPLOAD_FILE_MUTATION>['file']>
 ) => {
-  const cache = client.readQuery<{
-    files: FileModel[];
-    directories: DirectoryModel[];
-  }>({
+  // readQuery uses parentDirectoryId only (no filter) — the cache field policy's
+  // keyArgs: ['parentDirectoryId'] maps this to the same merged entry as the
+  // paginated reads, so `cache` contains the full accumulated file list.
+  const cache = client.readQuery({
     query: GetDirectoriesAndFilesQuery,
-    variables: {
-      parentDirectoryId: parentNode.id,
-    },
+    variables: { parentDirectoryId: parentNode.id },
   });
   client.writeQuery({
     query: GetDirectoriesAndFilesQuery,
-    variables: {
-      parentDirectoryId: parentNode.id,
-    },
+    variables: { parentDirectoryId: parentNode.id },
     data: {
       files: [...(cache?.files ?? []), file],
       directories: [...(cache?.directories ?? [])],
@@ -66,7 +61,7 @@ export const useUploadNode = () => {
 
   return React.useCallback<Required<BrowserProps>['uploadNode']>(
     (upload, parent, update) => {
-      uploadFile({
+      void uploadFile({
         variables: {
           parentDirectoryId: parent.id,
           file: upload.file,

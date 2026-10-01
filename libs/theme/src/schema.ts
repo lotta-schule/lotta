@@ -77,6 +77,10 @@ export const schema: Record<
     type: 'length',
     description: 'Border radius',
   },
+  backgroundImageOpacity: {
+    type: 'number',
+    description: 'Opacity of the background image',
+  },
   textFontFamily: {
     type: 'font-family',
     description: 'font family for text',
@@ -84,5 +88,13 @@ export const schema: Record<
   titleFontFamily: {
     type: 'font-family',
     description: 'font family for titles',
+  },
+  badgeBackgroundColor: {
+    type: 'color',
+    description: 'Badge background color',
+  },
+  badgeTextColor: {
+    type: 'color',
+    description: 'Badge text color',
   },
 };

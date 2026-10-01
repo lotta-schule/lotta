@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { MockedProvider } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { renderHook, waitFor } from '@testing-library/react';
-import { UserModel } from 'model';
+import { UserModel } from '#/model';
 import { useCurrentUser, GET_CURRENT_USER } from './useCurrentUser';
-import { SomeUser } from 'test/fixtures';
+import { SomeUser } from '#/test/fixtures';
 import pick from 'lodash/pick';
 
-describe('util/userAvatar/useCurrentUser', () => {
+describe('#/util/userAvatar/useCurrentUser', () => {
   const createWrapperForUser = (currentUser: UserModel | null = null) => {
     const WrapperComponent = ({ children }: { children: any }) => (
       <MockedProvider
@@ -16,7 +16,6 @@ describe('util/userAvatar/useCurrentUser', () => {
             result: { data: { currentUser } },
           },
         ]}
-        addTypename={false}
       >
         <div>{children}</div>
       </MockedProvider>

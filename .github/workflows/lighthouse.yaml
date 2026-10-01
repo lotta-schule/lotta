@@ -33,23 +33,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PNPM package manager
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24.5
-          cache: 'pnpm'
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install node dependencies
-        run: pnpm install
+        run: bun install
         working-directory: apps/e2e
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
+        run: bunx playwright install --with-deps
         working-directory: apps/e2e
 
       - name: Run lotta as a service from docker-compose.yml
@@ -65,7 +57,7 @@ jobs:
       - name: Setup lighthouse-tenant
         run: |
           if [ -n "${{ inputs.image_tag }}" ]; then
-            node -r ts-node/register scripts/lh_tenant/setup
+            bun run scripts/lh_tenant/setup.ts
           fi
         env:
           BASE_URI_HOST: local.lotta.schule

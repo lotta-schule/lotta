@@ -1,11 +1,10 @@
-import * as React from 'react';
-import * as Sentry from '@sentry/nextjs';
-import { useServerData } from 'shared/ServerDataContext';
-import { graphql, ResultOf } from 'api/graphql';
+import { useServerData } from '#/shared/ServerDataContext';
+import { graphql, ResultOf } from '#/api/graphql';
 
 export const TENANT_COMMON_FIELDS = graphql(`
   fragment TenantCommonFields on Tenant @_unmask {
     id
+    insertedAt
     slug
     title
     type
@@ -65,12 +64,6 @@ export const useTenant = () => {
   if (!tenant) {
     throw new Error('Tenant not found');
   }
-
-  React.useEffect(() => {
-    if (tenant) {
-      Sentry.setContext('tenant', tenant);
-    }
-  }, [tenant]);
 
   return tenant;
 };

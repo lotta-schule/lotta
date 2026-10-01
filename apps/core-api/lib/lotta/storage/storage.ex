@@ -2,6 +2,9 @@ defmodule Lotta.Storage do
   @moduledoc """
   Handles storage for files uploaded by the user.
   """
+
+  @behaviour Lotta.StorageBehaviour
+
   require Logger
 
   import Ecto.Query
@@ -31,7 +34,7 @@ defmodule Lotta.Storage do
   end
 
   def query(FileConversion, _params) do
-    File
+    FileConversion
     |> preload([:remote_storage_entity])
   end
 
@@ -80,38 +83,37 @@ defmodule Lotta.Storage do
           do: [Metadata.await_completion_task(metadata_job)],
           else: []
 
-      file
-      |> AvailableFormats.get_immediate_formats()
-      # A good place for a metadata job
-      |> Enum.map(&Conversion.get_or_create_conversion_job(file, &1))
-      |> Enum.filter(&(elem(&1, 0) == :ok))
-      # they their own timeout
-      |> then(fn await_conversion_tasks ->
-        await_conversion_tasks =
-          if Keyword.get(opts, :skip_wait, false) do
-            []
-          else
-            await_conversion_tasks
-            |> Enum.map(&Conversion.await_completion_task(elem(&1, 1)))
-          end
+      skip_wait = Keyword.get(opts, :skip_wait, false)
 
-        await_conversion_tasks ++ await_metadata_tasks
-      end)
-      |> then(fn tasks ->
-        try do
-          Task.await_many(tasks, :timer.seconds(120))
-        catch
-          :exit, error ->
-            Logger.warning("Error awaiting conversion / metadata tasks: #{inspect(error)}")
-            []
+      conversion_jobs =
+        file
+        |> AvailableFormats.get_immediate_formats()
+        |> Enum.map(&Conversion.get_or_create_conversion_job(file, &1))
+        |> Enum.filter(&(elem(&1, 0) == :ok))
+
+      await_conversion_tasks =
+        if skip_wait do
+          []
+        else
+          Enum.map(conversion_jobs, &Conversion.await_completion_task(elem(&1, 1)))
         end
-      end)
+
+      try do
+        Task.await_many(await_conversion_tasks ++ await_metadata_tasks, :timer.seconds(120))
+      catch
+        :exit, error ->
+          Logger.warning("Error awaiting conversion / metadata tasks: #{inspect(error)}")
+          []
+      end
 
       {:ok, Repo.reload(file)}
     else
       error ->
         Logger.error("Error creating file: #{inspect(error)}")
-        FileData.clear(file_data)
+
+        if opts[:skip_cleanup] != true do
+          FileData.clear(file_data)
+        end
 
         error
     end
@@ -425,13 +427,41 @@ defmodule Lotta.Storage do
 
   """
   @doc since: "2.5.0"
-  @spec list_files(Directory.t()) :: [Directory.t()]
-  def list_files(%Directory{} = parent_directory) do
+  @spec list_files(Directory.t(), filter :: map() | nil) :: [File.t()]
+  def list_files(%Directory{} = parent_directory, filter \\ nil) do
     from(f in File,
       where: f.parent_directory_id == ^parent_directory.id,
-      order_by: [:filename]
+      order_by: [:filename, :id]
     )
+    |> apply_file_filter(filter)
     |> Repo.all()
+  end
+
+  defp apply_file_filter(query, nil), do: query
+
+  defp apply_file_filter(query, filter) when is_map(filter) do
+    query
+    |> maybe_limit_files(filter[:first])
+    |> maybe_after_id_files(filter[:after_id])
+  end
+
+  defp maybe_limit_files(query, nil), do: query
+  defp maybe_limit_files(query, first), do: from(q in query, limit: ^first)
+
+  defp maybe_after_id_files(query, nil), do: query
+
+  defp maybe_after_id_files(query, after_id) do
+    case Repo.get(File, after_id) do
+      nil ->
+        query
+
+      cursor ->
+        from(q in query,
+          where:
+            q.filename > ^cursor.filename or
+              (q.filename == ^cursor.filename and q.id > ^after_id)
+        )
+    end
   end
 
   @doc """

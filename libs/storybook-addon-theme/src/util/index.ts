@@ -1,1 +1,1 @@
-export * from './generateArgsTableRows';
+export * from './generateArgsTableRows.js';

@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render, waitFor, within } from '../test-utils';
+import { render, userEvent, waitFor, within } from '../test-utils';
 import { Browser } from './Browser';
 import { NodeList } from './NodeList';
 import { BrowserNode } from './BrowserStateContext';
-import userEvent from '@testing-library/user-event';
 
 describe('Browser', () => {
   it('should render the Browser', async () => {
@@ -43,10 +42,10 @@ describe('Browser', () => {
         className="test"
         renderNodeList={({ path }) => <NodeList path={path} nodes={[]} />}
         onRequestChildNodes={async () => []}
-        searchNodes={vi.fn().mockResolvedValue([])}
+        searchNodes={vi.fn<() => Promise<any>>().mockResolvedValue([])}
       />
     );
-    await user.type(
+    await user.fill(
       within(screen.getByRole('toolbar')).getByRole('textbox'),
       'search'
     );

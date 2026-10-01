@@ -1,10 +1,12 @@
+'use client';
+
 import * as React from 'react';
 import { Avatar, AvatarProps } from '@lotta-schule/hubert';
-import { UserModel } from 'model';
-import { User } from 'util/model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { UserModel } from '#/model';
+import { User } from '#/util/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
 import { useTranslation } from 'react-i18next';
-import { useResponsiveProps } from 'util/image/ResponsiveImage';
+import { useResponsiveProps } from '#/util/image/ResponsiveImage';
 
 export type UserAvatarProps = Omit<AvatarProps, 'src' | 'alt'> & {
   user: Pick<UserModel, 'avatarImageFile' | 'name' | 'nickname'>;
@@ -31,7 +33,6 @@ export const UserAvatar = React.memo(
 
     return (
       <Avatar
-        loading="lazy"
         data-testid={'Avatar'}
         src={User.getDefaultAvatarUrl(user)}
         style={size ? { width: size, height: size } : {}}

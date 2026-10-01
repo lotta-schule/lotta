@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
+import { ContentModuleModel } from '#/model';
 import { AudioAudio } from './AudioAudio';
 
 interface ShowProps {

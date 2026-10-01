@@ -1,6 +1,6 @@
 import React from 'react';
-import { render } from 'test/util';
-import { Klausurenplan } from 'test/fixtures';
+import { render } from '#/test/util';
+import { Klausurenplan } from '#/test/fixtures';
 import { Title } from './Title';
 
 const titleContentModule = Klausurenplan.contentModules[0];

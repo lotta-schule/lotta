@@ -90,7 +90,7 @@ export const DeleteDirectoryDialog = React.memo(() => {
     } else if (currentNode) {
       setFilesToDelete([]);
       setDirectoriesToDelete([]);
-      getDirectoriesAndFilesForDirectory(currentNode);
+      void getDirectoriesAndFilesForDirectory(currentNode);
     }
   }, [isOpen, currentNode, getDirectoriesAndFilesForDirectory]);
 

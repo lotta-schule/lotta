@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Mocked, MockedFunction } from 'vitest';
 import { createHeaders, createCustomFetch } from './customFetch';
-import { appConfig } from 'config';
+import { appConfig } from '#/config';
 
 vi.mock('axios');
 const appConfigGet = vi.spyOn(appConfig, 'get');
@@ -122,6 +122,47 @@ describe('createCustomFetch', () => {
     expect(response.statusText).toBe('OK');
     const responseBody = await response.json();
     expect(responseBody).toEqual(mockResponseData);
+  });
+
+  it('should forward keep-alive agents to axios when provided', async () => {
+    const httpAgent = { __type: 'httpAgent' };
+    const httpsAgent = { __type: 'httpsAgent' };
+    const customFetchWithAgents = createCustomFetch({
+      requestExtraHeaders: mockRequestExtraHeaders,
+      agents: { httpAgent, httpsAgent },
+    });
+
+    mockAxios.mockResolvedValue({
+      data: { success: true },
+      status: 200,
+      statusText: 'OK',
+      headers: { 'content-type': 'application/json' },
+    });
+
+    await customFetchWithAgents('http://example.com', {
+      method: 'POST',
+      headers: {},
+      body: { key: 'value' } as any,
+    });
+
+    expect(mockAxios).toHaveBeenCalledWith(
+      expect.objectContaining({ httpAgent, httpsAgent })
+    );
+  });
+
+  it('should not pass agent keys to axios when none are provided', async () => {
+    mockAxios.mockResolvedValue({
+      data: { success: true },
+      status: 200,
+      statusText: 'OK',
+      headers: { 'content-type': 'application/json' },
+    });
+
+    await customFetch('http://example.com', { method: 'GET', headers: {} });
+
+    const lastCallArg = mockAxios.mock.calls.at(-1)?.[0];
+    expect(lastCallArg).not.toHaveProperty('httpAgent');
+    expect(lastCallArg).not.toHaveProperty('httpsAgent');
   });
 
   it('should handle request with tenantSlugOverwrite', async () => {

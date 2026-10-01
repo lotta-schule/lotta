@@ -8,7 +8,7 @@
   .gridContainer {
     display: flex;
 
-    &>div:first-child {
+    & > div:first-child {
       min-width: 100%;
 
       @media screen and (max-width: $max-sm) {

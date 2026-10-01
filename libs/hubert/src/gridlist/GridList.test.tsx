@@ -26,7 +26,7 @@ describe('GridList', () => {
 
     expect(screen.getByRole('list')).toMatchInlineSnapshot(`
       <ul
-        class="_root_3a93af"
+        class="_root_iu0h6_1"
       >
         <li>
           <img

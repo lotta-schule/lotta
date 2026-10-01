@@ -468,7 +468,7 @@ defmodule CockpitWeb.CoreComponentsTest do
       js_command = show(initial_js, "#modal")
 
       assert %JS{} = js_command
-      assert length(js_command.ops) >= 1
+      assert js_command.ops != []
     end
 
     test "chains hide JS command" do
@@ -476,7 +476,7 @@ defmodule CockpitWeb.CoreComponentsTest do
       js_command = hide(initial_js, "#modal")
 
       assert %JS{} = js_command
-      assert length(js_command.ops) >= 1
+      assert js_command.ops != []
     end
   end
 

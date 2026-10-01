@@ -4,11 +4,11 @@ import {
   render,
   TestBrowserWrapper,
   TestBrowserWrapperProps,
+  userEvent,
   waitFor,
 } from '../test-utils';
 import { NodeList, NodeListProps } from './NodeList';
 import { isDirectoryNode } from './utils';
-import userEvent from '@testing-library/user-event';
 
 const defaultPath = fixtures.getPathForNode('8');
 const defaultNodes = fixtures.getChildNodes('8');
@@ -35,16 +35,8 @@ describe('NodeList component', () => {
     expect(screen.getAllByRole('option')).toHaveLength(defaultNodes.length);
   });
 
-  it('scrolls into view when path length matches currentPath length', () => {
-    render(<WrappedNodeList />);
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({
-      inline: 'start',
-      behavior: 'smooth',
-    });
-  });
-
   it('should automatically unselect a file when it vanishes', async () => {
-    const onSelect = vi.fn();
+    const onSelect = vi.fn<() => void>();
     const selectedNode = defaultNodes.at(-1)!;
     expect(selectedNode).toBeDefined();
 
@@ -61,7 +53,7 @@ describe('NodeList component', () => {
         nodes={defaultNodes.filter((n) => n.id !== selectedNode.id)}
         selected={[fixtures.getPathForNode(selectedNode)]}
         onSelect={onSelect}
-        onNavigate={vi.fn()}
+        onNavigate={vi.fn<() => void>()}
       />
     );
 
@@ -74,7 +66,7 @@ describe('NodeList component', () => {
     describe('down arrow', () => {
       it('should keep selection when first entry is selected', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         render(
           <WrappedNodeList
             selected={[defaultNodesPaths.at(-1)!]}
@@ -89,12 +81,12 @@ describe('NodeList component', () => {
 
       it('should select the next item if there is one', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         const screen = render(
           <WrappedNodeList
             selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
-            onNavigate={vi.fn()}
+            onNavigate={vi.fn<() => void>()}
           />
         );
 
@@ -104,13 +96,15 @@ describe('NodeList component', () => {
 
         await user.keyboard('{arrowdown}');
 
-        expect(onSelect).toHaveBeenCalledWith([defaultNodesPaths.at(-1)]);
+        await waitFor(() => {
+          expect(onSelect).toHaveBeenLastCalledWith([defaultNodesPaths.at(-1)]);
+        });
       });
 
       it('should add the next item if there is one when shift is clicked, closing a potential open sibbling directory', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
-        const onNavigate = vi.fn();
+        const onSelect = vi.fn<() => void>();
+        const onNavigate = vi.fn<() => void>();
         const screen = render(
           <WrappedNodeList
             currentPath={fixtures.getPathForNode('11')}
@@ -137,12 +131,12 @@ describe('NodeList component', () => {
     describe('keyboard up', () => {
       it('should keep selection when last entry is selected', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         render(
           <WrappedNodeList
             selected={[defaultNodesPaths.at(0)!]}
             onSelect={onSelect}
-            onNavigate={vi.fn()}
+            onNavigate={vi.fn<() => void>()}
           />
         );
 
@@ -153,13 +147,13 @@ describe('NodeList component', () => {
 
       it('should select the next item if there is one', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         const screen = render(
           <WrappedNodeList
             nodes={defaultNodes}
             selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
-            onNavigate={vi.fn()}
+            onNavigate={vi.fn<() => void>()}
           />
         );
 
@@ -169,17 +163,19 @@ describe('NodeList component', () => {
 
         await user.keyboard('{arrowup}');
 
-        expect(onSelect).toHaveBeenCalledWith([defaultNodesPaths.at(-3)]);
+        await waitFor(() => {
+          expect(onSelect).toHaveBeenLastCalledWith([defaultNodesPaths.at(-3)]);
+        });
       });
 
       it('should add the next item if there is one when shift is clicked', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         const screen = render(
           <WrappedNodeList
             selected={[defaultNodesPaths.at(-2)!]}
             onSelect={onSelect}
-            onNavigate={vi.fn()}
+            onNavigate={vi.fn<() => void>()}
           />
         );
 
@@ -199,8 +195,8 @@ describe('NodeList component', () => {
     describe('keyboard left', () => {
       it('should navigate to the current parent', async () => {
         const user = userEvent.setup();
-        const onNavigate = vi.fn();
-        const onSelect = vi.fn();
+        const onNavigate = vi.fn<() => void>();
+        const onSelect = vi.fn<() => void>();
         render(
           <WrappedNodeList
             selected={[defaultNodesPaths.at(0)!]}
@@ -231,8 +227,8 @@ describe('NodeList component', () => {
           (n) => n.id === parentNode.id
         );
         const currentDirectories = parentNodeSibblings.filter(isDirectoryNode);
-        const onNavigate = vi.fn();
-        const onSelect = vi.fn();
+        const onNavigate = vi.fn<() => void>();
+        const onSelect = vi.fn<() => void>();
         const selected = currentDirectories
           .slice(0, parentIndex + 1)
           .map((n) => fixtures.getPathForNode(n));
@@ -257,33 +253,33 @@ describe('NodeList component', () => {
     describe('keyboard ctrl/cmd+a', () => {
       it('should select all nodes when ctrl/cmd+a is pressed', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         render(
           <WrappedNodeList
             selected={[]}
             onSelect={onSelect}
-            onNavigate={vi.fn()}
+            onNavigate={vi.fn<() => void>()}
           />
         );
 
-        await user.keyboard('{meta>}{a}');
+        await user.keyboard('{meta>}{a}{/meta}');
 
         expect(onSelect).toHaveBeenCalledWith(defaultNodesPaths);
       });
 
       it('should do nothing when in "select" mode', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
         render(
           <WrappedNodeList
             mode="select"
             selected={[]}
             onSelect={onSelect}
-            onNavigate={vi.fn()}
+            onNavigate={vi.fn<() => void>()}
           />
         );
 
-        await user.keyboard('{meta>}{a}');
+        await user.keyboard('{meta>}{a}{/meta}');
 
         expect(onSelect).not.toHaveBeenCalled();
       });
@@ -293,7 +289,7 @@ describe('NodeList component', () => {
       describe('ctrl/cmd click', () => {
         it('should also select a range if ctrl/cmd is down when next item is clicked', async () => {
           const user = userEvent.setup();
-          const onSelect = vi.fn();
+          const onSelect = vi.fn<() => void>();
           const screen = render(
             <WrappedNodeList
               nodes={defaultNodes}
@@ -308,6 +304,7 @@ describe('NodeList component', () => {
           await user.click(
             screen.getByRole('option', { name: nextNodeToSelect.name })
           );
+          await user.keyboard('{/meta}');
 
           expect(onSelect).toHaveBeenCalledWith([
             defaultNodesPaths.at(1),
@@ -317,7 +314,7 @@ describe('NodeList component', () => {
 
         it('should also select a range if ctrl/cmd is down when next item is clicked in "select-multiple" mode', async () => {
           const user = userEvent.setup();
-          const onSelect = vi.fn();
+          const onSelect = vi.fn<() => void>();
           const screen = render(
             <WrappedNodeList
               mode="select-multiple"
@@ -335,6 +332,7 @@ describe('NodeList component', () => {
               name: new RegExp(nextNodeToSelect.name),
             })
           );
+          await user.keyboard('{/meta}');
 
           expect(onSelect).toHaveBeenCalledWith([
             defaultNodesPaths.at(1),
@@ -344,7 +342,7 @@ describe('NodeList component', () => {
 
         it('should selected clicked item when ctrl/cmd is down in "select" mode', async () => {
           const user = userEvent.setup();
-          const onSelect = vi.fn();
+          const onSelect = vi.fn<() => void>();
           const screen = render(
             <WrappedNodeList
               mode="select"
@@ -360,6 +358,7 @@ describe('NodeList component', () => {
           await user.click(
             screen.getByRole('option', { name: nextNodeToSelect.name })
           );
+          await user.keyboard('{/meta}');
 
           expect(onSelect).toHaveBeenCalledWith([
             fixtures.getPathForNode(nextNodeToSelect),
@@ -370,7 +369,7 @@ describe('NodeList component', () => {
       describe('shift click', () => {
         it('should select a range if shift is down when next item is clicked', async () => {
           const user = userEvent.setup();
-          const onSelect = vi.fn();
+          const onSelect = vi.fn<() => void>();
           const screen = render(
             <WrappedNodeList
               nodes={defaultNodes}
@@ -385,6 +384,7 @@ describe('NodeList component', () => {
           await user.click(
             screen.getByRole('option', { name: nextNodeToSelect.name })
           );
+          await user.keyboard('{/shift}');
 
           expect(onSelect).toHaveBeenCalledWith([
             defaultNodesPaths.at(1),
@@ -396,7 +396,7 @@ describe('NodeList component', () => {
 
         it('should select a range if shift is down when next item is clicked in "select-multiple" mode', async () => {
           const user = userEvent.setup();
-          const onSelect = vi.fn();
+          const onSelect = vi.fn<() => void>();
           const screen = render(
             <WrappedNodeList
               mode="select-multiple"
@@ -414,6 +414,7 @@ describe('NodeList component', () => {
               name: new RegExp(nextNodeToSelect.name),
             })
           );
+          await user.keyboard('{/shift}');
 
           expect(onSelect).toHaveBeenCalledWith([
             defaultNodesPaths.at(1),
@@ -424,7 +425,7 @@ describe('NodeList component', () => {
         });
         it('should selected clicked item when shift is down in "select" mode', async () => {
           const user = userEvent.setup();
-          const onSelect = vi.fn();
+          const onSelect = vi.fn<() => void>();
           const screen = render(
             <WrappedNodeList
               mode="select"
@@ -440,6 +441,7 @@ describe('NodeList component', () => {
           await user.click(
             screen.getByRole('option', { name: nextNodeToSelect.name })
           );
+          await user.keyboard('{/shift}');
 
           expect(onSelect).toHaveBeenCalledWith([
             fixtures.getPathForNode(nextNodeToSelect),

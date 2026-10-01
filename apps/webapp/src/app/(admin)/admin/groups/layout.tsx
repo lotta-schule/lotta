@@ -7,12 +7,12 @@ import {
   TwoColumnLayout,
   TwoColumnLayoutContent,
   TwoColumnLayoutSidebar,
-} from 'component/layout';
+} from '#/component/layout';
 import { LinearProgress } from '@lotta-schule/hubert';
 
 async function GroupsLayout({
   children,
-}: React.PropsWithChildren<{ params: { groupId?: string } }>) {
+}: React.PropsWithChildren<{ params: Promise<{ groupId?: string }> }>) {
   return (
     <AdminPage icon={faUserGroup} title={'Gruppen'} hasHomeLink takesFullSpace>
       <TwoColumnLayout>

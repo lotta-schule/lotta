@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
-import { render, waitFor } from '../../test-utils';
+import { render, userEvent, waitFor } from '../../test-utils';
 import { SplitView } from './SplitView';
 import { SplitViewButton } from './SplitViewButton';
 import { SplitViewContent } from './SplitViewContent';
 import { SplitViewNavigation } from './SplitViewNavigation';
-import userEvent from '@testing-library/user-event';
 
 describe('SplitView', () => {
   describe('desktop', () => {
@@ -50,7 +49,7 @@ describe('SplitView', () => {
     beforeEach(() => {
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
-        value: vi.fn().mockImplementation((query) => {
+        value: vi.fn<(query: string) => any>().mockImplementation((query) => {
           const listeners: ((...args: any[]) => void)[] = [];
           return {
             matches: true,
@@ -74,7 +73,7 @@ describe('SplitView', () => {
     afterEach(() => {
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
-        value: vi.fn().mockImplementation((query) => {
+        value: vi.fn<(query: string) => any>().mockImplementation((query) => {
           const listeners: ((...args: any[]) => void)[] = [];
           return {
             matches: false,
@@ -99,25 +98,27 @@ describe('SplitView', () => {
     it('should render only sidebar', async () => {
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
-        value: vi.fn().mockImplementation((query: string) => {
-          const listeners: ((...args: any[]) => void)[] = [];
-          return {
-            matches: true,
-            media: query,
-            onchange: null,
-            addListener: (listener: (...args: any[]) => void) =>
-              listeners.push(listener),
-            removeListener: (listener: (...args: any[]) => void) =>
-              listeners.splice(listeners.indexOf(listener), 1),
-            addEventListener: (listener: (...args: any[]) => void) =>
-              listeners.push(listener),
-            removeEventListener: (listener: (...args: any[]) => void) =>
-              listeners.splice(listeners.indexOf(listener), 1),
-            dispatchEvent: () => {
-              listeners.forEach((listener) => listener('change'));
-            },
-          };
-        }),
+        value: vi
+          .fn<(query: string) => any>()
+          .mockImplementation((query: string) => {
+            const listeners: ((...args: any[]) => void)[] = [];
+            return {
+              matches: true,
+              media: query,
+              onchange: null,
+              addListener: (listener: (...args: any[]) => void) =>
+                listeners.push(listener),
+              removeListener: (listener: (...args: any[]) => void) =>
+                listeners.splice(listeners.indexOf(listener), 1),
+              addEventListener: (listener: (...args: any[]) => void) =>
+                listeners.push(listener),
+              removeEventListener: (listener: (...args: any[]) => void) =>
+                listeners.splice(listeners.indexOf(listener), 1),
+              dispatchEvent: () => {
+                listeners.forEach((listener) => listener('change'));
+              },
+            };
+          }),
       });
 
       const screen = render(

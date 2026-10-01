@@ -1,13 +1,13 @@
-import { ArticleModel } from 'model';
-import { ID } from 'model/ID';
-import { useQuery } from '@apollo/client';
-import { useRouter } from 'next/router';
+'use client';
+import { ArticleModel } from '#/model';
+import { ID } from '#/model/ID';
+import { useQuery } from '@apollo/client/react';
+import { usePathname } from 'next/navigation.js';
 
-import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
+import GetArticleQuery from '#/api/query/GetArticleQuery.graphql';
 
 export const useCurrentCategoryId = (): ID | null => {
-  const router = useRouter();
-  const path = router.asPath;
+  const path = usePathname();
   const matchesCategoryUrl = path?.match(/^\/c?\/(\d*)/);
   const matchesArticleUrl = path?.match(/^\/a?\/(\d*)/);
   const { data } = useQuery<{ article: ArticleModel }, { id: ID }>(

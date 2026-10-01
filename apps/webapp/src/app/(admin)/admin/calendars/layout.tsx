@@ -4,7 +4,7 @@ import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 
 async function CalendarsLayout({
   children,
-}: React.PropsWithChildren<{ params: { groupId?: string } }>) {
+}: React.PropsWithChildren<{ params: Promise<{ groupId?: string }> }>) {
   return (
     <AdminPage icon={faCalendar} title={'Kalender'} hasHomeLink takesFullSpace>
       {children}

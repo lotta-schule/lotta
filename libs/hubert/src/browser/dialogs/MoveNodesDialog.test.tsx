@@ -6,9 +6,9 @@ import {
   waitFor,
   within,
   fixtures,
+  userEvent,
 } from '../../test-utils';
 import { MoveNodesDialog } from './MoveNodesDialog';
-import userEvent from '@testing-library/user-event';
 
 const WrappedMoveNodesDialog = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>
@@ -28,7 +28,7 @@ describe('Browser/MoveNodesDialog', () => {
     vi.useRealTimers();
   });
   it('should open the dialog on action and close it when aborted', async () => {
-    const onSetCurrentAction = vi.fn();
+    const onSetCurrentAction = vi.fn<() => void>();
     const user = userEvent.setup();
     const screen = render(<WrappedMoveNodesDialog />);
 
@@ -66,9 +66,9 @@ describe('Browser/MoveNodesDialog', () => {
     });
   });
 
-  it('should open the "create new directory" dialog when clicking "new directory", and create a new directory in the current path\'s parent', async () => {
+  it('should open "create directory" dialog on button click, then create directory in parent path', async () => {
     const user = userEvent.setup();
-    const onMoveNode = vi.fn();
+    const onMoveNode = vi.fn<() => void>();
 
     const screen = render(
       <WrappedMoveNodesDialog
@@ -95,7 +95,7 @@ describe('Browser/MoveNodesDialog', () => {
       expect(createNewDirectoryDialog).toBeVisible();
     });
 
-    await user.type(
+    await user.fill(
       within(createNewDirectoryDialog).getByLabelText(/name des ordners/i),
       'bla'
     );
@@ -160,8 +160,8 @@ describe('Browser/MoveNodesDialog', () => {
   it('should move the nodes', async () => {
     const user = userEvent.setup();
 
-    const onMoveNode = vi.fn();
-    const onSetCurrentAction = vi.fn();
+    const onMoveNode = vi.fn<() => void>();
+    const onSetCurrentAction = vi.fn<() => void>();
 
     const screen = render(
       <WrappedMoveNodesDialog

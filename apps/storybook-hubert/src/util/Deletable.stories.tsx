@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { expect, fn, userEvent, within } from '@storybook/test';
-import { Meta, StoryObj } from '@storybook/react';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { Meta, StoryObj } from '@storybook/react-vite';
 import { Avatar, Deletable } from '@lotta-schule/hubert';
 
 export default {
@@ -27,10 +27,10 @@ export const Default: StoryObj<typeof Deletable> = {
     const fireEvent = userEvent.setup({ delay: 200 });
     const screen = within(canvasElement);
 
-    expect(screen.getByRole('button')).toHaveStyle({ opacity: 0 });
+    void expect(screen.getByRole('button')).toHaveStyle({ opacity: 0 });
 
     await fireEvent.click(screen.getByRole('button'));
 
-    expect(initialArgs.onDelete).toHaveBeenCalled();
+    void expect(initialArgs.onDelete).toHaveBeenCalled();
   },
 };

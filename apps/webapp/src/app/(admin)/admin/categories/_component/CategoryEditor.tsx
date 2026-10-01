@@ -1,9 +1,8 @@
 'use client';
-
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import { faFloppyDisk, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
   Button,
   Checkbox,
@@ -19,21 +18,21 @@ import {
   LinearProgress,
 } from '@lotta-schule/hubert';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/navigation';
-import { CategoryModel, WidgetModel, ID, UserGroupModel } from 'model';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { useCategories } from 'util/categories/useCategories';
-import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
-import { GroupSelect } from 'shared/edit/GroupSelect';
-import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
+import { useRouter } from 'next/navigation.js';
+import { CategoryModel, WidgetModel, ID, UserGroupModel } from '#/model';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
+import { useCategories } from '#/util/categories/useCategories';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay';
+import { GroupSelect } from '#/shared/edit/GroupSelect';
+import { PlaceholderImage } from '#/shared/placeholder/PlaceholderImage';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
-import { Category, RedirectType } from 'util/model';
+import { Category, RedirectType } from '#/util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
 import { AdminPageSection } from '../../_component/AdminPageSection';
 
-import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
-import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
+import UpdateCategoryMutation from '#/api/mutation/UpdateCategoryMutation.graphql';
+import GetCategoryWidgetsQuery from '#/api/query/GetCategoryWidgetsQuery.graphql';
 
 export interface CategoryEditorProps {
   category: CategoryModel;
@@ -65,13 +64,12 @@ export const CategoryEditor = React.memo(
         },
       ],
     });
-    const { data: currentWidgetsData, error: currentWidgetsError } = useQuery(
-      GetCategoryWidgetsQuery,
-      {
-        variables: { categoryId: categoryOptions?.id },
-        skip: !categoryOptions?.id,
-      }
-    );
+    const { data: currentWidgetsData, error: currentWidgetsError } = useQuery<{
+      widgets: WidgetModel[];
+    }>(GetCategoryWidgetsQuery, {
+      variables: { categoryId: categoryOptions?.id },
+      skip: !categoryOptions?.id,
+    });
     React.useEffect(() => {
       if (currentWidgetsData) {
         setSelectedWidgets(currentWidgetsData.widgets);
@@ -130,8 +128,11 @@ export const CategoryEditor = React.memo(
             >
               <GroupSelect
                 selectedGroups={categoryOptions.groups || []}
-                onSelectGroups={(groups: UserGroupModel[]) => {
-                  setCategoryOptions({ ...categoryOptions, groups });
+                onSelectGroups={(groups) => {
+                  setCategoryOptions({
+                    ...categoryOptions,
+                    groups: groups as UserGroupModel[],
+                  });
                 }}
               />
             </React.Suspense>

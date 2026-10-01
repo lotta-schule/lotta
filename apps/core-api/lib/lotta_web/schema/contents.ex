@@ -36,6 +36,8 @@ defmodule LottaWeb.Schema.Contents do
     field(:own_articles, list_of(:article)) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
+      arg(:filter, :article_filter)
+
       resolve(&LottaWeb.ArticleResolver.own/2)
     end
 

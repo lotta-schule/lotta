@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render } from 'test/util';
+import { render } from '#/test/util';
 import { Usage } from './Usage';
-import { TenantUsage } from 'loader';
-import { TenantModel } from 'model';
+import { TenantUsage } from '#/loader';
+import { TenantModel } from '#/model';
 
 vi.useFakeTimers({
   shouldAdvanceTime: true,

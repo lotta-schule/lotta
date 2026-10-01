@@ -1,11 +1,11 @@
-import { renderHook, waitFor } from 'test/util';
-import { movieFile } from 'test/fixtures';
+import { renderHook, waitFor } from '#/test/util';
+import { movieFile } from '#/test/fixtures';
 import {
   REQUEST_FILE_CONVERSION,
   useRequestConversion,
 } from './useRequestConversion';
 
-describe('util/userAvatar/useCurrentUser', () => {
+describe('#/util/userAvatar/useCurrentUser', () => {
   it('should request a file to be converted', async () => {
     const onRequestResult = vitest.fn(() => ({
       data: { requestFileConversion: true },
@@ -29,7 +29,7 @@ describe('util/userAvatar/useCurrentUser', () => {
 
     expect(onRequestResult).not.toHaveBeenCalled();
 
-    requestFileConversion(movieFile);
+    void requestFileConversion(movieFile);
     await waitFor(() => {
       expect(onRequestResult).toHaveBeenCalledWith({
         id: movieFile.id,

@@ -1,0 +1,40 @@
+.root {
+  position: relative;
+
+  .icon {
+    text-align: center;
+  }
+
+  .iconSvg {
+    padding: 5px;
+    box-sizing: border-box;
+    width: 1em !important;
+    height: 1em !important;
+  }
+
+  .overlayText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    span {
+      color: rgba(var(--lotta-box-background-color), 1);
+      vertical-align: middle;
+      font-weight: bold;
+      font-size: 0.3em;
+      padding-top: 2px;
+      line-height: 1;
+      text-shadow: 0px 0px 2px #000;
+    }
+  }
+  &.primaryColor .overlayText span {
+    color: rgba(var(--lotta-primary-color), 1);
+  }
+  &.secondaryColor .overlayText span {
+    color: rgba(var(--lotta-text-color), 1);
+  }
+}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@lotta-schule/hubert';
 
@@ -9,8 +9,8 @@ interface EditOverlayProps {
   label: string;
   description?: string;
   style?: React.CSSProperties;
-  onClick(event: React.MouseEvent<HTMLButtonElement>): void;
-  onClickRemove?(event: React.MouseEvent<HTMLButtonElement>): void;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickRemove?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   children?: any;
 }
 

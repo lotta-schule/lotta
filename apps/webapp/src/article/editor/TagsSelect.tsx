@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { Tag, ComboBox } from '@lotta-schule/hubert';
-import { uniq } from 'lodash';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 
-import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
+import GetTagsQuery from '#/api/query/GetTagsQuery.graphql';
 
 import styles from './TagsSelect.module.scss';
 
 export interface TagsSelectProps {
   value: string[];
-  onChange(value: string[]): void;
+  onChange: (value: string[]) => void;
 }
 
 export const TagsSelect = React.memo(({ value, onChange }: TagsSelectProps) => {
@@ -52,7 +51,13 @@ export const TagsSelect = React.memo(({ value, onChange }: TagsSelectProps) => {
             if (!data?.tags.includes(tag.toString())) {
               updateQuery((previousResult) => ({
                 ...previousResult,
-                tags: uniq([...(previousResult?.tags ?? []), tag.toString()]),
+                tags: Array.from(
+                  new Set(
+                    (
+                      previousResult?.tags?.filter((t) => t !== undefined) ?? []
+                    ).concat([tag.toString()])
+                  )
+                ),
               }));
             }
           }

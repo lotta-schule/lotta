@@ -8,19 +8,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@lotta-schule/hubert';
-import { useMutation, useSuspenseQuery } from '@apollo/client';
-import { ArticleModel, ArticleReactionType } from 'model';
-import { Icon } from 'shared/Icon';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { useMutation, useSuspenseQuery } from '@apollo/client/react';
+import { ArticleModel, ArticleReactionType } from '#/model';
+import { Icon } from '#/shared/Icon';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
 import { ReactionCountButtons } from './ReactionCountButtons';
 import { iconForReactionType } from './supportedReactionIcons';
 import { ReactionUserList } from './RactionUserList';
-import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic.js';
 
 import styles from './ArticleReactions.module.scss';
 
-import GetArticleReactionCounts from 'api/query/GetArticleReactionCounts.graphql';
-import ReactToArticleMutation from 'api/mutation/ReactToArticleMutation.graphql';
+import GetArticleReactionCounts from '#/api/query/GetArticleReactionCounts.graphql';
+import ReactToArticleMutation from '#/api/mutation/ReactToArticleMutation.graphql';
 
 const DynamicReactionSelector = dynamic(() => import('./ReactionSelector'));
 
@@ -79,7 +79,7 @@ export const ArticleReactions = React.memo(
             <DynamicReactionSelector
               onSelect={(reaction) => {
                 if (reaction) {
-                  reactToArticle({
+                  void reactToArticle({
                     variables: {
                       id: article.id,
                       reaction: reaction.toUpperCase(),

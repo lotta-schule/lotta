@@ -1,5 +1,4 @@
 'use client';
-
 import * as React from 'react';
 import {
   format,
@@ -17,10 +16,10 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { invariant } from '@epic-web/invariant';
 import { useTranslation } from 'react-i18next';
 import { CalendarToolbar } from './CalendarToolbar';
-import { useLazyQuery, useApolloClient } from '@apollo/client';
+import { useApolloClient, useLazyQuery } from '@apollo/client/react';
 import { CalendarContext } from './CalendarContext';
 import { useUnfoldedEvents } from '../_hook';
-import { ResultOf } from 'api/graphql';
+import { ResultOf } from '#/api/graphql';
 import { EditEventDialog } from './EditEventDialog';
 import { CalendarEventWrapper } from './CalendarEventWrapper';
 
@@ -98,7 +97,7 @@ export const CalendarView = React.memo(
               setEvents((events) => {
                 return events
                   .filter((ev) => ev.calendar.id !== calendarId)
-                  .concat(data.calendarEvents);
+                  .concat(data.calendarEvents as typeof events);
               });
             }
           });
@@ -110,7 +109,7 @@ export const CalendarView = React.memo(
 
     React.useEffect(() => {
       let mounted = true;
-      fetchAllEvents().then((events) => {
+      void fetchAllEvents().then((events) => {
         if (mounted) {
           setEvents(
             events.map((ev) => ({ ...ev, start: ev.start, end: ev.end }))

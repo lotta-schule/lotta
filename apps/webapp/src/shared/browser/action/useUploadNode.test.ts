@@ -1,11 +1,9 @@
-import { MockedResponse } from '@apollo/client/testing';
-import { currentApolloCache, renderHook, waitFor } from 'test/util';
-import { SomeUser, logosDirectory } from 'test/fixtures';
-import { DirectoryModel, FileModel } from 'model';
+import { MockLink } from '@apollo/client/testing';
+import { currentApolloCache, renderHook, waitFor } from '#/test/util';
+import { SomeUser, logosDirectory } from '#/test/fixtures';
 import { BrowserNode, Upload } from '@lotta-schule/hubert';
 import { useUploadNode, UPLOAD_FILE_MUTATION } from './useUploadNode';
-
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
+import { GetDirectoriesAndFilesQuery } from '../_graphql/GetDirectoriesAndFiles';
 
 const parentDirectoryNode = {
   id: logosDirectory.id,
@@ -15,26 +13,26 @@ const parentDirectoryNode = {
   parent: logosDirectory.parentDirectory?.id ?? null,
 } satisfies BrowserNode<'directory'>;
 
-export const additionalMocks: MockedResponse[] = [
+export const additionalMocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: UPLOAD_FILE_MUTATION,
+      variables: (vars) =>
+        vars.file instanceof File &&
+        vars.parentDirectoryId === logosDirectory.id,
     },
-    variableMatcher: (variables: any) =>
-      variables.file instanceof File &&
-      variables.parentDirectoryId === logosDirectory.id,
     result: (variables) => ({
       data: {
         file: {
+          __typename: 'File',
           id: 'new-id',
           insertedAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
           filename: variables.file.name,
           filesize: variables.file.size,
           mimeType: variables.file.type,
           fileType: 'MISC',
           userId: SomeUser.id,
-          parentDirectory: logosDirectory,
+          parentDirectory: { __typename: 'Directory', id: logosDirectory.id },
           metadata: {},
           formats: [],
         },
@@ -87,10 +85,7 @@ describe('useUploadNode', () => {
       });
     });
 
-    const cached = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const cached = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: parentDirectoryNode.id },
     });

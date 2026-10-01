@@ -1,5 +1,5 @@
 import { ApolloLink } from '@apollo/client';
-import { isBrowser } from 'util/isBrowser';
+import { isBrowser } from '#/util/isBrowser';
 
 export const createVariableInputMutationsLink = () =>
   new ApolloLink((operation, forward) => {
@@ -17,7 +17,7 @@ export const mutateVariableInputObject = (
   propToDelete: string
 ): any => {
   if (obj instanceof Array) {
-    return [...obj.map((o) => mutateVariableInputObject(o, propToDelete))];
+    return obj.map((o) => mutateVariableInputObject(o, propToDelete));
   } else if (obj !== null && obj !== undefined && typeof obj === 'object') {
     return Object.keys(obj).reduce((newObj, key) => {
       if (
@@ -33,7 +33,7 @@ export const mutateVariableInputObject = (
       }
       if (
         typeof obj[key] === 'object' &&
-        !(isBrowser && obj[key] instanceof File)
+        !(isBrowser() && obj[key] instanceof File)
       ) {
         return {
           ...newObj,

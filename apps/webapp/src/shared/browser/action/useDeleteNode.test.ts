@@ -1,13 +1,12 @@
-import { MockedResponse } from '@apollo/client/testing';
-import { currentApolloCache, renderHook } from 'test/util';
-import { SomeUser, imageFile, logosDirectory } from 'test/fixtures';
-import { DirectoryModel, FileModel } from 'model';
+import { MockLink } from '@apollo/client/testing';
+import { currentApolloCache, renderHook } from '#/test/util';
+import { SomeUser, imageFile, logosDirectory } from '#/test/fixtures';
 import { BrowserNode } from '../../../../../../libs/hubert/src/browser';
 import { useDeleteNode } from './useDeleteNode';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import DeleteDirectoryMutation from 'api/mutation/DeleteDirectoryMutation.graphql';
-import DeleteFileMutation from 'api/mutation/DeleteFileMutation.graphql';
+import { GetDirectoriesAndFilesQuery } from '../_graphql/GetDirectoriesAndFiles';
+import DeleteDirectoryMutation from '#/api/mutation/DeleteDirectoryMutation.graphql';
+import DeleteFileMutation from '#/api/mutation/DeleteFileMutation.graphql';
 
 const directory = {
   ...logosDirectory,
@@ -36,7 +35,7 @@ const fileNode = {
   meta: file,
 } as BrowserNode<'file'>;
 
-export const additionalMocks: MockedResponse[] = [
+export const additionalMocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: GetDirectoriesAndFilesQuery,
@@ -108,10 +107,7 @@ describe('useDeleteNode', () => {
 
     await result.current(directoryNode);
 
-    const cached = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const cached = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: null },
     });
@@ -141,10 +137,7 @@ describe('useDeleteNode', () => {
 
     await result.current(fileNode);
 
-    const cached = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const cached = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: directory.id },
     });

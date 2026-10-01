@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from 'test/util';
+import { renderHook, waitFor } from '#/test/util';
 import {
   StartseiteCategory,
   FaecherCategory,
@@ -8,7 +8,7 @@ import {
   MatheCategory,
   SportCategory,
   KunstCategory,
-} from 'test/fixtures';
+} from '#/test/fixtures';
 import { useCategories } from './useCategories';
 
 describe('useCategories', () => {

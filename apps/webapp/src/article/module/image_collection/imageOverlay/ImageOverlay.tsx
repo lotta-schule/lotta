@@ -5,10 +5,10 @@ import {
   faChevronRight,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { FileModel } from 'model';
-import { useLockBodyScroll } from 'util/useLockBodyScroll';
-import { Icon } from 'shared/Icon';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
+import { FileModel } from '#/model';
+import { useLockBodyScroll } from '#/util/useLockBodyScroll';
+import { Icon } from '#/shared/Icon';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
 
 import styles from './ImageOverlay.module.scss';
 
@@ -16,15 +16,15 @@ export interface ImageOverlayProps {
   selectedUrl?: string | null;
   selectedFile?: FileModel | null;
   caption?: string;
-  onPrevious?(
+  onPrevious?: (
     e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<Window>
-  ): void;
-  onNext?(
+  ) => void;
+  onNext?: (
     e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<Window>
-  ): void;
-  onClose(
+  ) => void;
+  onClose: (
     e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<Window>
-  ): void;
+  ) => void;
 }
 
 export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> =

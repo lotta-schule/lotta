@@ -1,21 +1,23 @@
 import * as React from 'react';
-import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
-import { FileModel } from 'model';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay';
+import { FileModel } from '#/model';
 import { ImageContent, ImageContentProps } from './ImageContent';
 import { ImageCaption } from './ImageCaption';
 
 import styles from './ImageImage.module.scss';
 
-interface ImageImageProps
-  extends Omit<ImageContentProps, 'onClick' | 'alt' | 'file'> {
+interface ImageImageProps extends Omit<
+  ImageContentProps,
+  'onClick' | 'alt' | 'file'
+> {
   animateOnLoad?: boolean;
   isEditModeEnabled: boolean;
   file?: FileModel | null;
   caption: string;
   isUsingFullHeight?: boolean;
-  onUpdateFile(file: FileModel): void;
-  onUpdateCaption(caption: string): void;
-  onSelect?(e: React.MouseEvent<HTMLImageElement>): void;
+  onUpdateFile: (file: FileModel) => void;
+  onUpdateCaption: (caption: string) => void;
+  onSelect?: (e: React.MouseEvent<HTMLImageElement>) => void;
 }
 
 export const ImageImage = React.memo(
@@ -33,9 +35,9 @@ export const ImageImage = React.memo(
       () =>
         isEditModeEnabled ? (
           <SelectFileOverlay
-            label={'Bild auswechseln'}
+            label={'Bild wechseln'}
             fileFilter={(f) => f.fileType === 'IMAGE'}
-            onSelectFile={onUpdateFile}
+            onSelectFile={(file) => file && onUpdateFile(file)}
           >
             <ImageContent alt={caption} file={file} {...otherProps} />
           </SelectFileOverlay>

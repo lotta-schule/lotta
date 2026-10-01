@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, waitFor } from '../test-utils';
+import { render, userEvent, waitFor } from '../test-utils';
 import { Dialog } from './Dialog';
-import userEvent from '@testing-library/user-event';
 
 describe('general/dialog', () => {
   it('should not show the dialog when not open', () => {
@@ -37,7 +36,7 @@ describe('general/dialog', () => {
 
     it('should show the close button when "onRequestClose" prop is set', async () => {
       const user = userEvent.setup();
-      const onClose = vi.fn();
+      const onClose = vi.fn<() => void>();
 
       const screen = render(
         <Dialog title={'Achtung!'} open onRequestClose={onClose}>
@@ -53,7 +52,7 @@ describe('general/dialog', () => {
     });
 
     it('should call "onRequestClose" prop when dialog closes', async () => {
-      const onClose = vi.fn();
+      const onClose = vi.fn<() => void>();
 
       const screen = render(
         <Dialog title={'Achtung!'} open onRequestClose={onClose}>

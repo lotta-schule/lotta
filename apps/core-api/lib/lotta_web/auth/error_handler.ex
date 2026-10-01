@@ -3,9 +3,7 @@ defmodule LottaWeb.Auth.ErrorHandler do
     Authentication error handler for Guardian
   """
 
-  require Logger
-
-  import Plug.Conn
+  alias LottaWeb.Auth.CookieHelper
 
   @behaviour Guardian.Plug.ErrorHandler
   @impl Guardian.Plug.ErrorHandler
@@ -19,10 +17,6 @@ defmodule LottaWeb.Auth.ErrorHandler do
       }
     )
 
-    conn
-    |> delete_resp_cookie("SignInRefreshToken",
-      http_only: true,
-      same_site: "Lax"
-    )
+    CookieHelper.delete_tokens(conn)
   end
 end

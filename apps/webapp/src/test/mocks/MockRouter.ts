@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 export class MockRouter {
   public _pathname = '/';
 
@@ -58,7 +60,7 @@ export class MockRouter {
   }
 
   push(pathname: string, asPath: string = pathname, options?: any) {
-    this._push(pathname, asPath, options);
+    void this._push(pathname, asPath, options);
     this._pathname = pathname;
     this._history.add(pathname);
     this._emitter.emit('routeChangeStart', pathname);
@@ -66,7 +68,11 @@ export class MockRouter {
     this._emitter.emit('routeChangeEnd', pathname);
   }
 
-  refresh = vi.fn();
+  refresh: () => void = vi.fn();
+
+  prefetch: () => Promise<void> = vi.fn().mockResolvedValue(undefined);
+
+  replace: (url: string) => Promise<boolean> = vi.fn().mockResolvedValue(true);
 
   events = this._emitter;
 }

@@ -1,22 +1,21 @@
 'use client';
-
 import * as React from 'react';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client/react';
 import {
   Browser,
   BrowserMode,
   BrowserNode,
   BrowserProps,
+  FileSize,
   isDirectoryNode,
   isFileNode,
 } from '@lotta-schule/hubert';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
-import { DirectoryModel, FileModel } from 'model';
-import { File, User } from 'util/model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { FileSize } from '@lotta-schule/hubert';
+import { FileModel, DirectoryModel } from '#/model';
+import { File, User } from '#/util/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
@@ -29,25 +28,28 @@ import {
   useUploadNode,
 } from './action';
 import {
-  GetDirectoriesAndFilesQueryResult,
+  BrowserDirectoryData,
+  BrowserFileData,
   makeBrowserNodes,
 } from './makeBrowserNodes';
 import { RenderNodeList } from './RenderNodeList';
 import { FileUsageOverview } from './FileUsageOverview';
 
-import GetDirectoriesAndFilesQuery from '../../api/query/GetDirectoriesAndFiles.graphql';
+import { GetDirectoriesAndFilesQuery } from './_graphql/GetDirectoriesAndFiles';
 
 declare module '@lotta-schule/hubert' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  export interface DefaultFileMetadata extends FileModel {}
+  export interface DefaultFileMetadata extends BrowserFileData {}
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  export interface DefaultDirectoryMetadata extends DirectoryModel {}
+  export interface DefaultDirectoryMetadata extends BrowserDirectoryData {}
 }
 
 export type UserBrowserProps = {
   style?: React.CSSProperties;
   multiple?: boolean;
   isNodeDisabled?: (node: BrowserNode) => boolean;
+  // Public API still typed FileModel[] for backwards compatibility with SelectFile* consumers.
+  // Cast happens inside the callback; runtime shape is identical (BrowserFileData ≈ FileModel).
   onSelect?: (file: FileModel[]) => void;
 };
 
@@ -63,23 +65,33 @@ export const UserBrowser = React.memo(
     const uploadNode = useUploadNode();
     const searchNodes = useSearchNodes();
 
-    const [fetchDirectoriesAndFiles] =
-      useLazyQuery<GetDirectoriesAndFilesQueryResult>(
-        GetDirectoriesAndFilesQuery
-      );
+    const [fetchDirectoriesAndFiles] = useLazyQuery(
+      GetDirectoriesAndFilesQuery,
+      // Apollo v4 dropped per-exec `fetchPolicy`; the mutation `update` handlers keep
+      // this query's cache in sync, so cache-first reflects writes without a refetch.
+      // No filter arg here — onRequestChildNodes needs all children for the tree walk.
+      { fetchPolicy: 'cache-first' }
+    );
     const onRequestChildNodes: BrowserProps['onRequestChildNodes'] =
       React.useCallback(
-        async (node, options) => {
-          const result = await fetchDirectoriesAndFiles({
-            variables: { parentDirectoryId: node?.id ?? null },
-            fetchPolicy: options?.refetch ? 'network-only' : 'cache-first',
-          });
+        async (node) => {
+          try {
+            const result = await fetchDirectoriesAndFiles({
+              variables: { parentDirectoryId: node?.id ?? null },
+            });
 
-          if (result.error) {
-            throw result.error;
+            return makeBrowserNodes(result.data) ?? [];
+          } catch (error: unknown) {
+            if (
+              Error.isError(error) &&
+              'code' in error &&
+              error.code === DOMException.ABORT_ERR
+            ) {
+              console.warn('file fetching aborted');
+              return [];
+            }
+            throw error;
           }
-
-          return makeBrowserNodes(result.data) ?? [];
         },
         [fetchDirectoriesAndFiles]
       );
@@ -89,13 +101,24 @@ export const UserBrowser = React.memo(
         const node = nodePath?.at(-1);
 
         if (isDirectoryNode(node)) {
-          return File.canEditDirectory(node.meta, currentUser) || false;
+          // Cast: BrowserDirectoryData → DirectoryModel boundary; only .user.id is accessed
+          return (
+            File.canEditDirectory(
+              node.meta as unknown as DirectoryModel,
+              currentUser
+            ) || false
+          );
         } else if (isFileNode(node)) {
           const parent = nodePath.at(-2) as BrowserNode<'directory'> | null;
           if (!parent) {
             return User.isAdmin(currentUser);
           }
-          return File.canEditDirectory(parent.meta, currentUser) || false;
+          return (
+            File.canEditDirectory(
+              parent.meta as unknown as DirectoryModel,
+              currentUser
+            ) || false
+          );
         }
         return User.isAdmin(currentUser);
       },
@@ -106,7 +129,8 @@ export const UserBrowser = React.memo(
       Exclude<BrowserProps['getDownloadUrl'], undefined>
     >((node) => {
       if (isFileNode(node)) {
-        return File.getRemoteUrl(node.meta, 'original');
+        // Cast: BrowserFileData → Pick<FileModel, '__typename'|'id'|'formats'> boundary
+        return File.getRemoteUrl(node.meta as unknown as FileModel, 'original');
       }
       return null;
     }, []);
@@ -141,7 +165,9 @@ export const UserBrowser = React.memo(
             [t('duration')]:
               node.meta.metadata?.duration &&
               Math.floor(node.meta.metadata.duration) + 's',
-            [t('usage')]: <FileUsageOverview file={node.meta} />,
+            [t('usage')]: (
+              <FileUsageOverview file={node.meta as unknown as FileModel} />
+            ),
           };
         } else if (isDirectoryNode(node)) {
           result = {
@@ -170,7 +196,12 @@ export const UserBrowser = React.memo(
       <Browser
         onSelect={React.useCallback(
           (nodes: BrowserNode[]) => {
-            onSelect?.(nodes.filter(isFileNode).map((n) => n.meta));
+            // Cast BrowserFileData → FileModel at the public onSelect boundary
+            onSelect?.(
+              nodes
+                .filter(isFileNode)
+                .map((n) => n.meta as unknown as FileModel)
+            );
           },
           [onSelect]
         )}

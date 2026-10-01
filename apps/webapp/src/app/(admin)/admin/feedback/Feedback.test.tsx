@@ -1,9 +1,25 @@
 import * as React from 'react';
-import { render, waitFor, within } from 'test/util';
+import { render, waitFor, within, userEvent } from '#/test/util';
 import { Feedback } from './Feedback';
-import { feedbacks } from 'test/fixtures';
+import { feedbacks } from '#/test/fixtures';
 import { DeleteFeedbackDialogProps } from './_component/DeleteFeedbackDialog';
-import userEvent from '@testing-library/user-event';
+
+vi.mock('./_component/DeleteFeedbackDialog', async () => {
+  const React = await import('react');
+  return {
+    DeleteFeedbackDialog: ({
+      isOpen,
+      onConfirm,
+    }: DeleteFeedbackDialogProps) => {
+      React.useEffect(() => {
+        if (isOpen) {
+          onConfirm();
+        }
+      }, [isOpen, onConfirm]);
+      return null;
+    },
+  };
+});
 
 describe('Feedback', () => {
   it('should list all feedbacks', async () => {
@@ -36,20 +52,6 @@ describe('Feedback', () => {
   });
 
   it('should set the row inactive when onDelete was called', async () => {
-    vi.mock('./_component/DeleteFeedbackDialog', () => ({
-      DeleteFeedbackDialog: ({
-        isOpen,
-        onConfirm,
-      }: DeleteFeedbackDialogProps) => {
-        React.useEffect(() => {
-          if (isOpen) {
-            onConfirm();
-          }
-        }, [isOpen, onConfirm]);
-        return null;
-      },
-    }));
-
     const user = userEvent.setup();
     const screen = render(<Feedback feedbacks={feedbacks} />);
 

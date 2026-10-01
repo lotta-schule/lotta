@@ -1,11 +1,10 @@
 defmodule LottaWeb.UserDeviceResolverTest do
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
-  import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants, Accounts}
-  alias Lotta.Accounts.User
 
   @prefix "tenant_test"
 
@@ -14,16 +13,10 @@ defmodule LottaWeb.UserDeviceResolverTest do
 
     Repo.put_prefix(@prefix)
 
-    user =
-      Repo.one!(from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: tenant.prefix
-      )
+    user = insert(:user, email: "udr-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
 
     user2 =
-      Repo.one!(
-        from(u in User, where: u.email == ^"billy@lotta.schule"),
-        prefix: tenant.prefix
-      )
+      insert(:user, email: "udr-billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
 
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
     {:ok, user2_jwt, _} = AccessToken.encode_and_sign(user2)

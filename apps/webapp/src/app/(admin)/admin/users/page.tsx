@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { loadCurrentUser, loadTenant } from 'loader';
+import { loadCurrentUser, loadTenant } from '#/loader';
 import { UserList } from './UserList';
 import { AdminPage } from '../_component/AdminPage';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';

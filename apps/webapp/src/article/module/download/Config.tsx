@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Checkbox } from '@lotta-schule/hubert';
-import { ContentModuleModel } from 'model';
+import { ContentModuleModel } from '#/model';
 import get from 'lodash/get';
 
 interface ConfigProps {
   contentModule: ContentModuleModel;
-  onUpdateModule(contentModule: ContentModuleModel): void;
-  onRequestClose(): void;
+  onUpdateModule: (contentModule: ContentModuleModel) => void;
+  onRequestClose: () => void;
 }
 
 export const Config = React.memo<ConfigProps>(

@@ -5,8 +5,7 @@ defmodule CockpitWeb.Live.TenantLive do
       repo: Lotta.Repo,
       update_changeset: &__MODULE__.update_changeset/3,
       create_changeset: &__MODULE__.create_changeset/3
-    ],
-    layout: {CockpitWeb.Layouts, :admin}
+    ]
 
   import Ecto.Query
   import CockpitWeb.CoreComponents
@@ -41,6 +40,9 @@ defmodule CockpitWeb.Live.TenantLive do
 
   @impl Backpex.LiveResource
   def plural_name, do: "Tenants"
+
+  @impl Backpex.LiveResource
+  def layout(_assigns), do: {CockpitWeb.Layouts, :admin}
 
   @impl Backpex.LiveResource
   def can?(_, :new, _), do: false
@@ -134,9 +136,12 @@ defmodule CockpitWeb.Live.TenantLive do
   end
 
   defp fetch_current_tenant_usage(assigns, tenant) do
-    case Lotta.Tenants.Usage.get_usage(tenant) do
+    case usage_query_module().get_usage(tenant) do
       {:ok, usages} -> assign(assigns, :usages, usages)
       _ -> assign(assigns, :usages, [])
     end
   end
+
+  defp usage_query_module,
+    do: Application.get_env(:lotta, :usage_query_module, Lotta.Tenants.Usage)
 end

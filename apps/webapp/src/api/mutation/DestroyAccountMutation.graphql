@@ -1,5 +1,0 @@
-mutation DestroyAccount($userId: ID!, $transferFileIds: [ID!]) {
-  user: destroyAccount(userId: $userId, transferFileIds: $transferFileIds) {
-    id
-  }
-}

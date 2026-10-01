@@ -48,7 +48,7 @@
     }
 
     span:first-child {
-      margin: calc(2 * var(--lotta-spacing));
+      margin: calc(2 * var(--lotta-spacing)) calc(1 * var(--lotta-spacing));
     }
 
     svg {

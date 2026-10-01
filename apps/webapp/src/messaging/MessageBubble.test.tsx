@@ -1,17 +1,15 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from '#/test/util';
 import {
   SomeUser,
   SomeUserin,
   createConversation,
   imageFile,
   documentFile,
-} from 'test/fixtures';
-import { FileModel } from 'model';
+} from '#/test/fixtures';
 import { MessageBubble } from './MessageBubble';
-import userEvent from '@testing-library/user-event';
 
-import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
+import { DELETE_MESSAGE_MUTATION } from './_graphql/DeleteMessageMutation';
 
 const message = {
   ...createConversation(SomeUser, { user: SomeUserin }).messages[0],
@@ -40,7 +38,7 @@ describe('messaging/MessageBubble', () => {
     it('should show download button and image preview if file is given', () => {
       const messageWithFiles = {
         ...message,
-        files: [imageFile, documentFile] as any as FileModel[],
+        files: [imageFile, documentFile] as any,
       };
       const screen = render(<MessageBubble message={messageWithFiles} />);
       expect(screen.getByTestId('message-attachments')).toBeVisible();
@@ -82,7 +80,7 @@ describe('messaging/MessageBubble', () => {
         additionalMocks: [
           {
             request: {
-              query: DeleteMessageMutation,
+              query: DELETE_MESSAGE_MUTATION,
               variables: { id: message.id },
             },
             result: resultFn,

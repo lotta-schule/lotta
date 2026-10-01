@@ -6,6 +6,16 @@
     width: 100%;
   }
 
+  /* I am very very sure that there is something very wrong with this combobox on dialogs,
+      probably because of of the background, some z-index or overflow hidden on some parent
+      element or maybe the top-level portal is not working as expected.
+     As this is driving me absolutely nuts, I am limiting the width of the combobox in dialogs
+     to 400px for now, so at least it is usable.
+  */
+  &:is(dialog *) {
+    max-width: 500px;
+  }
+
   .listbox {
     overflow: auto;
     max-height: min(300px, 50vh);

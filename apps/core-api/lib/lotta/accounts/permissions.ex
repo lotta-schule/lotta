@@ -110,7 +110,7 @@ defmodule Lotta.Accounts.Permissions do
 
   @spec user_is_in_groups_list?(User.t() | nil, [UserGroup.t() | pos_integer()]) :: boolean
 
-  def user_is_in_groups_list?(%User{all_groups: user_groups}, groups) when length(groups) > 0 do
+  def user_is_in_groups_list?(%User{all_groups: user_groups}, groups) when groups != [] do
     user_group_ids =
       user_groups
       |> Enum.map(& &1.id)

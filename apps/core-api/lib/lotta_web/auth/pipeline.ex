@@ -10,7 +10,6 @@ defmodule LottaWeb.Auth.Pipeline do
 
   plug(Guardian.Plug.VerifyHeader,
     verify_type_one_of: ["access", "hisec"],
-    refresh_from_cookie: true,
     halt: false
   )
 

@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, waitFor } from '../test-utils';
+import { render, userEvent, waitFor } from '../test-utils';
 import { Drawer } from './Drawer';
-import userEvent from '@testing-library/user-event';
 
 describe('general/Drawer', () => {
   it('should not show drawer when not open', async () => {
@@ -34,7 +33,7 @@ describe('general/Drawer', () => {
   describe('close', () => {
     it('should call onClose when close button is clicked', async () => {
       const user = userEvent.setup();
-      const onClose = vi.fn();
+      const onClose = vi.fn<() => void>();
 
       const screen = render(
         <Drawer isOpen onClose={() => onClose()}>
@@ -48,7 +47,7 @@ describe('general/Drawer', () => {
 
     it('should call onClose when the ESC key is pressed', async () => {
       const user = userEvent.setup();
-      const onClose = vi.fn();
+      const onClose = vi.fn<() => void>();
 
       const screen = render(
         <Drawer isOpen onClose={() => onClose()}>

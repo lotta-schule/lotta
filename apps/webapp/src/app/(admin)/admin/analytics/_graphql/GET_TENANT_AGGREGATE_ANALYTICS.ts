@@ -1,4 +1,4 @@
-import { graphql } from 'api/graphql';
+import { graphql } from '#/api/graphql';
 
 export const GET_TENANT_AGGREGATE_ANALYTICS = graphql(`
   query GetTenantAggregateAnalytics($date: Date!, $period: AnalyticsPeriod!) {

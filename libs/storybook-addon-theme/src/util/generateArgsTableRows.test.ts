@@ -1,4 +1,4 @@
-import { generateArgsTableRows } from './generateArgsTableRows';
+import { generateArgsTableRows } from './generateArgsTableRows.js';
 
 describe('genearteArgsTableRows', () => {
   it('should generate the correct rows from a schema', () => {

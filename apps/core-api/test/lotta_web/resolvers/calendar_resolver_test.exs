@@ -1,7 +1,7 @@
 defmodule LottaWeb.CalendarResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   import Lotta.Factory
 

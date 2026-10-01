@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
-import { UserGroupModel } from 'model';
+import { useMutation } from '@apollo/client/react';
+import { UserGroupModel } from '#/model';
 import {
   Button,
   Dialog,
@@ -10,7 +10,7 @@ import {
   Input,
   Label,
 } from '@lotta-schule/hubert';
-import { graphql } from 'api/graphql';
+import { graphql } from '#/api/graphql';
 import { GET_USER_GROUPS } from '../_graphql';
 
 export const CREATE_USER_GROUP = graphql(`
@@ -23,6 +23,7 @@ export const CREATE_USER_GROUP = graphql(`
       isAdminGroup
       canReadFullName
       sortKey
+      eduplacesId
       enrollmentTokens
     }
   }
@@ -30,8 +31,8 @@ export const CREATE_USER_GROUP = graphql(`
 
 export interface CreateUserGroupDialogProps {
   isOpen: boolean;
-  onAbort(): void;
-  onConfirm(group: UserGroupModel): void;
+  onAbort: () => void;
+  onConfirm: (group: UserGroupModel) => void;
 }
 
 export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
@@ -73,7 +74,7 @@ export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            createUserGroup({
+            void createUserGroup({
               variables: {
                 group: {
                   name,

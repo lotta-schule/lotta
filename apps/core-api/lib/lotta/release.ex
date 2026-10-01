@@ -14,6 +14,17 @@ defmodule Lotta.Release do
   alias Lotta.Storage
   alias Ecto.Migrator
 
+  @start_apps [
+    :logger,
+    :runtime_tools,
+    :crypto,
+    :ssl,
+    :inets,
+    :con_cache,
+    :timex,
+    :os_mon
+  ]
+
   def migrate do
     start_app()
 
@@ -165,11 +176,20 @@ defmodule Lotta.Release do
 
     {:ok, count} = Oban.delete_all_jobs(Oban.Job)
     Logger.info("Deleted #{count} Oban jobs")
+  rescue
+    e ->
+      Logger.error("Failed to delete Oban jobs: #{inspect(e)}")
+      {:error, e}
   end
 
   defp on_each_tenant_repo(fun) do
     Repo.with_new_dynamic_repo(fn pid ->
-      customers = Repo.all(Tenant, prefix: "public", dynamic_repo: pid)
+      customers =
+        Repo.all(Tenant,
+          select: [:id, :title, :prefix, :slug],
+          prefix: "public",
+          dynamic_repo: pid
+        )
 
       Logger.notice(
         "Executing database operation on #{Enum.count(customers)} customer schemas ..."
@@ -183,5 +203,5 @@ defmodule Lotta.Release do
 
   defp repos, do: Application.fetch_env!(:lotta, :ecto_repos)
 
-  defp start_app(), do: Application.ensure_all_started(:lotta)
+  defp start_app(), do: Enum.map(@start_apps, &Application.ensure_all_started/1)
 end

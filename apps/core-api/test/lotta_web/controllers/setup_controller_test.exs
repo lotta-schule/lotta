@@ -1,5 +1,5 @@
 defmodule LottaWeb.SetupControllerTest do
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   alias Lotta.Repo
   alias Lotta.Tenants.Tenant

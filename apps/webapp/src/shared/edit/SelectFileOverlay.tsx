@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { FileModel } from 'model';
+import { FileModel } from '#/model';
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
 } from '@lotta-schule/hubert';
-import { UserBrowser } from 'shared/browser';
+import { UserBrowser } from '#/shared/browser';
 import { EditOverlay } from './EditOverlay';
 
 export type SelectFileOverlayProps = {
@@ -15,8 +15,8 @@ export type SelectFileOverlayProps = {
   allowDeletion?: boolean;
   style?: React.CSSProperties;
   children?: React.ReactNode | Iterable<React.ReactNode>;
-  fileFilter?(file: FileModel): boolean;
-  onSelectFile(file: FileModel | null): void;
+  fileFilter?: (file: FileModel) => boolean;
+  onSelectFile: (file: FileModel | null) => void;
 };
 
 export const SelectFileOverlay = ({

@@ -8,22 +8,30 @@ import clsx from 'clsx';
 
 import styles from './DraggableListItem.module.scss';
 
-export type DraggableListItemProps = React.HTMLProps<HTMLDivElement> & {
+export type DraggableListItemProps = Omit<
+  React.HTMLProps<HTMLDivElement>,
+  'title'
+> & {
   id: string;
   isDraggable?: boolean;
   onClick?: React.MouseEventHandler<HTMLLIElement>;
   onClickIcon?: React.MouseEventHandler<HTMLDivElement>;
   icon?: React.ReactNode;
+  iconTitle?: string;
   selected?: boolean;
-  title: string;
+  title: React.ReactNode;
+  /** Native tooltip text for the `<li title=…>` attribute; defaults to `title` when it's a string. */
+  tooltip?: string;
 };
 
 export const DraggableListItem = ({
   title,
+  tooltip,
   className,
   isDraggable = true,
   selected,
   icon,
+  iconTitle,
   onClick,
   onClickIcon,
   children,
@@ -31,6 +39,8 @@ export const DraggableListItem = ({
 }: DraggableListItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props.id, disabled: !isDraggable });
+  const tooltipText =
+    tooltip ?? (typeof title === 'string' ? title : undefined);
 
   return (
     <div
@@ -43,14 +53,33 @@ export const DraggableListItem = ({
         transition,
       }}
       aria-current={selected ? 'page' : undefined}
+      aria-disabled={
+        props['aria-disabled'] || onClick
+          ? undefined
+          : attributes['aria-disabled']
+      }
       className={clsx(className, styles.root, {
         [styles.selected]: selected,
         [styles.isClickable]: onClick,
       })}
     >
-      <li title={title} onClick={onClick}>
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- <li> is the interactive surface; a nested button would require significant DOM restructuring */}
+      <li
+        title={tooltipText}
+        onClick={onClick}
+        onKeyDown={
+          onClick
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onClick(e as unknown as React.MouseEvent<HTMLLIElement>);
+                }
+              }
+            : undefined
+        }
+      >
         {isDraggable && (
-          <div
+          <button
+            type="button"
             className={styles.dragHandle}
             aria-label="Reihenfolge ändern"
             data-testid="drag-handle"
@@ -58,22 +87,45 @@ export const DraggableListItem = ({
             onClick={(e) => {
               e.stopPropagation();
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation();
+              }
+            }}
           >
             <MoveArrow className={styles.moveCategoryHandlerIcon} />
-          </div>
+          </button>
         )}
         <div className={styles.titleWrapper}>{title}</div>
         {icon && (
+          // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- role and handlers are conditionally set together; linter can't evaluate ternary
           <div
             className={clsx(styles.icon, {
               [styles.isIconClickable]: onClickIcon,
             })}
-            onClick={(e) => {
-              if (onClickIcon) {
-                e.stopPropagation();
-                onClickIcon(e);
-              }
-            }}
+            role={onClickIcon ? 'button' : undefined}
+            tabIndex={onClickIcon ? 0 : undefined}
+            aria-label={iconTitle}
+            onClick={
+              onClickIcon
+                ? (e) => {
+                    e.stopPropagation();
+                    onClickIcon(e);
+                  }
+                : undefined
+            }
+            onKeyDown={
+              onClickIcon
+                ? (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.stopPropagation();
+                      onClickIcon(
+                        e as unknown as React.MouseEvent<HTMLDivElement>
+                      );
+                    }
+                  }
+                : undefined
+            }
           >
             {icon}
           </div>

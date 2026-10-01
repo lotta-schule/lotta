@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ArticleModel } from 'model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User } from 'util/model';
+import { ArticleModel } from '#/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { User } from '#/util/model';
 import { RadioGroup, Radio } from '@lotta-schule/hubert';
 
 export interface ArticleStateEditorProps {

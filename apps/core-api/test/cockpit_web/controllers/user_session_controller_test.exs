@@ -1,5 +1,5 @@
 defmodule CockpitWeb.UserSessionControllerTest do
-  use CockpitWeb.ConnCase
+  use CockpitWeb.ConnCase, async: true
 
   describe "GET /users/login" do
     test "renders login page", %{conn: conn} do

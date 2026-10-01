@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { StoryObj } from '@storybook/react';
-import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
-import { action } from '@storybook/addon-actions';
+import { StoryObj } from '@storybook/react-vite';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
+import { action } from 'storybook/actions';
 import {
   SplitView,
   SplitViewNavigation,
@@ -13,20 +13,27 @@ import {
   Close,
   ExpandMore,
 } from '@lotta-schule/hubert';
-import { expect, fireEvent, waitFor, within } from '@storybook/test';
+import { expect, fireEvent, waitFor, within } from 'storybook/test';
 
 export default {
   title: 'Layout/SplitView',
   component: SplitView,
   argTypes: {},
+
   parameters: {
     viewport: {
       viewports: INITIAL_VIEWPORTS,
-      defaultViewport: 'iphone14',
     },
     chromatic: {
       delay: 500,
       viewports: [500],
+    },
+  },
+
+  globals: {
+    viewport: {
+      value: 'iphone14',
+      isRotated: false,
     },
   },
 };
@@ -73,7 +80,7 @@ export const Default: Story = {
     });
     await expect(closeButton).toBeVisible();
 
-    fireEvent.click(closeButton);
+    void fireEvent.click(closeButton);
 
     await waitFor(async () => {
       await expect(
@@ -86,10 +93,10 @@ export const Default: Story = {
     const openButton = screen.getByRole('button', {
       name: /öffnen/,
     });
-    fireEvent.click(openButton);
+    void fireEvent.click(openButton);
 
     await waitFor(async () => {
-      expect(openButton).not.toBeVisible();
+      void expect(openButton).not.toBeVisible();
       await expect(
         screen.getByRole('button', {
           name: /schließen/,

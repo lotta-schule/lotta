@@ -1,6 +1,6 @@
 import React from 'react';
-import { render } from 'test/util';
-import { LehrerListe } from 'test/fixtures';
+import { render } from '#/test/util';
+import { LehrerListe } from '#/test/fixtures';
 import { Show } from './Show';
 
 const tableContentModule = LehrerListe.contentModules[0];

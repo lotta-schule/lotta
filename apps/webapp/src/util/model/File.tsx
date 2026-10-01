@@ -1,4 +1,4 @@
-import { DirectoryModel, FileModel } from 'model';
+import { DirectoryModel, FileModel } from '#/model';
 import { User } from './User';
 
 export const File = {

@@ -2,12 +2,10 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "src/",
     "composite": true,
-    "types": [
-      "node",
-      "vite/client"
-    ],
+    "noEmit": false,
+    "rootDir": "../..",
+    "types": ["node", "vite/client"],
     "outDir": "../../dist/app/web/app"
   },
   "include": [
@@ -21,6 +19,6 @@
     "**/*.test.ts",
     "**/*.test.ts?",
     "src/test/**/*.ts",
-    "src/test/**/*.ts?",
-  ],
+    "src/test/**/*.ts?"
+  ]
 }

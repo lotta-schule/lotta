@@ -1,13 +1,13 @@
 'use client';
 
-import { useSuspenseQuery } from '@apollo/client';
+import { useSuspenseQuery } from '@apollo/client/react';
 import { List, ListItem, ListItemSecondaryText } from '@lotta-schule/hubert';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation.js';
 import { t } from 'i18next';
-import { WidgetModel } from 'model';
-import { WidgetIcon } from 'category/widgets/WidgetIcon';
+import { WidgetModel } from '#/model';
+import { WidgetIcon } from '#/category/widgets/WidgetIcon';
 
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 
 export const WidgetsNavigation = () => {
   const router = useRouter();

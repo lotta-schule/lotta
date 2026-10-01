@@ -14,12 +14,17 @@ export const standardTheme: Theme = {
   pageBackgroundColor: '#cacdd7',
   dividerColor: '#e0e0e0',
   highlightColor: '#e0e0e0',
-  bannerBackgroundColor: 'rgb(54, 123, 240)',
+  bannerBackgroundColor: '#cacaca',
   accentGreyColor: 'rgb(227, 227, 227)',
 
   spacing: `8px`,
   borderRadius: `4px`,
 
+  backgroundImageOpacity: 1,
+
   textFontFamily: 'Muli',
   titleFontFamily: "'Schoolbell', cursive",
+
+  badgeBackgroundColor: '#ff5722',
+  badgeTextColor: '#ffffff',
 };

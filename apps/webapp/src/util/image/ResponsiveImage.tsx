@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { FileModel } from 'model';
-import { File } from 'util/model';
+import { FileModel } from '#/model';
+import { File } from '#/util/model';
 
 import styles from './ResponsiveImage.module.scss';
 import clsx from 'clsx';

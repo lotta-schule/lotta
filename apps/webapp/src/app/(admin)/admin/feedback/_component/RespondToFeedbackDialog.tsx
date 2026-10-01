@@ -9,18 +9,18 @@ import {
   Label,
 } from '@lotta-schule/hubert';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { useMutation } from '@apollo/client';
-import { FeedbackModel } from 'model';
-import { Icon } from 'shared/Icon';
+import { useMutation } from '@apollo/client/react';
+import { FeedbackModel } from '#/model';
+import { Icon } from '#/shared/Icon';
 
 import styles from './RespondToFeedbackDialog.module.scss';
 
-import RespondToFeedbackMutation from 'api/mutation/RespondToFeedbackMutation.graphql';
+import RespondToFeedbackMutation from '#/api/mutation/RespondToFeedbackMutation.graphql';
 
 export interface RespondToFeedbackDialogProps {
   feedback: FeedbackModel;
   isOpen: boolean;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const RespondToFeedbackDialog = React.memo(
@@ -42,7 +42,7 @@ export const RespondToFeedbackDialog = React.memo(
           onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
-            sendFeedback({
+            void sendFeedback({
               variables: {
                 id: feedback.id,
                 subject: formData.get('subject') as string,

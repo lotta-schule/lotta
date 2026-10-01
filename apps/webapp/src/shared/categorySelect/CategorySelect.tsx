@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useCategories } from 'util/categories/useCategories';
-import { CategoryModel } from 'model';
+import { useCategories } from '#/util/categories/useCategories';
+import { CategoryModel } from '#/model';
 import { Option, Select } from '@lotta-schule/hubert';
 
 export interface CategorySelectProps {
@@ -10,7 +10,7 @@ export interface CategorySelectProps {
   hideSubCategories?: boolean;
   hideSidenav?: boolean;
   selectedCategory: CategoryModel | null;
-  onSelectCategory(category: CategoryModel | null): void;
+  onSelectCategory: (category: CategoryModel | null) => void;
 }
 
 export const CategorySelect = React.memo(

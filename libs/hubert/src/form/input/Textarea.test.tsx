@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { describe, expect, it } from 'vitest';
-import { render, waitFor } from '../../test-utils';
+import { render, userEvent, waitFor } from '../../test-utils';
 import { Textarea } from './Textarea';
-import userEvent from '@testing-library/user-event';
 
 describe('general/form/input/Textarea', () => {
   it('should grow when entering text', async () => {

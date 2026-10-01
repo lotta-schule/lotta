@@ -1,6 +1,6 @@
 import { CircularProgress } from '@lotta-schule/hubert';
 import { AdminPage } from './_component/AdminPage';
-import { serverTranslations } from 'i18n/server';
+import { serverTranslations } from '#/i18n/server';
 
 export default async function Loading() {
   const { t } = await serverTranslations();

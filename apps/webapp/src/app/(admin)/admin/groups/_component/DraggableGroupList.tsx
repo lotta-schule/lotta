@@ -1,15 +1,14 @@
 'use client';
-
 import * as React from 'react';
 import {
   Eduplaces as EduplacesIcon,
   SortableDraggableList,
 } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
-import { ID, UserGroupInputModel, UserGroupModel } from 'model';
-import { useUserGroups } from 'util/tenant/useUserGroups';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import { isBrowser } from 'util/isBrowser';
+import { useMutation } from '@apollo/client/react';
+import { ID, UserGroupInputModel, UserGroupModel } from '#/model';
+import { useUserGroups } from '#/util/tenant/useUserGroups';
+import { useRouter, useParams, useSearchParams } from 'next/navigation.js';
+import { isBrowser } from '#/util/isBrowser';
 import { UPDATE_USER_GROUP } from '../_graphql';
 
 import styles from './DraggableGroupList.module.scss';
@@ -89,7 +88,7 @@ export const DraggableGroupList = () => {
         );
 
         groupsToUpdate.map((group) => {
-          updateGroup({
+          void updateGroup({
             variables: {
               id: group.id,
               group: {

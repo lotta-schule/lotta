@@ -4,11 +4,11 @@ defmodule Lotta.MixProject do
   def project do
     [
       app: :lotta,
-      version: "6.1.17",
+      version: "6.1.21",
       name: "Lotta API Server",
       source_url: "https://github.com/lotta-schule/core",
       homepage_url: "https://lotta.schule",
-      elixir: "~> 1.18",
+      elixir: "~> 1.20",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers() ++ [:phoenix_live_view, :rambo],
       listeners: [Phoenix.CodeReloader],
@@ -25,13 +25,6 @@ defmodule Lotta.MixProject do
         tool: ExCoveralls,
         output: "coverage"
       ],
-      preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.json": :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test
-      ],
       docs: [
         main: "Lotta",
         logo: "priv/static/logo.png",
@@ -40,6 +33,18 @@ defmodule Lotta.MixProject do
       dialyzer: []
     ]
   end
+
+  def cli,
+    do: [
+      preferred_cli_env: [
+        test: :test,
+        coveralls: :test,
+        "coveralls.json": :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
+    ]
 
   # Configuration for the OTP application.
   #
@@ -72,14 +77,14 @@ defmodule Lotta.MixProject do
       {:phoenix, "~> 1.8"},
       {:phoenix_pubsub, "~> 2.1"},
       {:phoenix_live_dashboard, "~> 0.8"},
-      {:phoenix_live_view, "~> 1.1.0"},
+      {:phoenix_live_view, "~> 1.2.3"},
       {:phoenix_ecto, "~> 4.2"},
       {:phoenix_html, "~> 4.2"},
       {:phoenix_html_helpers, "~> 1.0"},
       {:phoenix_view, "~> 2.0"},
-      {:ecto_sql, "~> 3.6"},
+      {:ecto_sql, "~> 3.13"},
       {:ecto_psql_extras, "~> 0.6"},
-      {:absinthe, "~> 1.7.5"},
+      {:absinthe, "~> 1.11"},
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_phoenix, "~> 2.0"},
       {:absinthe_graphql_ws, github: "geometerio/absinthe_graphql_ws"},
@@ -87,18 +92,18 @@ defmodule Lotta.MixProject do
       {:corsica, "~> 2.1.2"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.26.0"},
-      {:jason, "~> 1.4.0"},
-      {:bandit, "~> 1.0"},
+      {:jason, "~> 1.4"},
+      {:bandit, "~> 1.12"},
       {:oauth2, "~> 2.1"},
       {:argon2_elixir, "~> 4.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:guardian, "~> 2.4.0"},
       {:joken, "~> 2.6.2"},
-      {:ex_aws, "~> 2.1"},
+      {:ex_aws, "~> 2.7"},
       {:ex_aws_s3, "~> 2.1"},
-      {:hackney, "~> 1.20"},
-      {:finch, "~> 0.19"},
-      {:tesla, "~> 1.15"},
+      {:hackney, "~> 4.0", override: true},
+      {:finch, "~> 0.23"},
+      {:tesla, "~> 1.20"},
       {:sweet_xml, "~> 0.7"},
       {:poison, "~> 6.0"},
       {:qr_code, "~> 3.2.0"},
@@ -111,26 +116,26 @@ defmodule Lotta.MixProject do
       {:goth, "~> 1.4.3"},
       {:timex, "~> 3.7"},
       {:file_size, "~> 3.0.1"},
-      {:sentry, "~> 11.0"},
+      {:sentry, "~> 13.2"},
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},
       {:libcluster, "~> 3.2"},
       {:file_type, "~> 0.1"},
-      {:image, "~> 0.55"},
-      {:exile, "~> 0.12.0"},
+      {:image, "~> 0.69"},
+      {:exile, "~> 0.14"},
       {:ffmpex, "~> 0.11"},
-      {:oban, "~> 2.19"},
-      {:oban_web, "~> 2.11"},
-      {:backpex, "~> 0.16.3"},
+      {:oban, "~> 2.23"},
+      {:oban_web, "~> 2.12"},
+      {:backpex, "~> 0.18"},
       # Test
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.14", only: :test},
       {:junit_formatter, "~> 3.2", only: :test},
-      {:mock, "~> 0.3", only: :test},
+      {:mox, "~> 1.0", only: :test},
       # Development
       {:phoenix_live_reload, "~> 1.6", only: :dev},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.5", runtime: Mix.env() == :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.2.0",
@@ -138,9 +143,9 @@ defmodule Lotta.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.40", only: [:dev, :test], runtime: false},
       # Telemetry & OpenTelemetry
       {:tcp_health_check, "~> 0.1.0"},
       {:telemetry_metrics, "~> 1.0"},
@@ -154,9 +159,11 @@ defmodule Lotta.MixProject do
       {:opentelemetry_exporter, "~> 1.6"},
       {:opentelemetry_oban, "~> 1.1"},
       {:opentelemetry_phoenix, "~> 2.0"},
-      {:opentelemetry_tesla, "~> 2.4.0"},
+      {:opentelemetry_tesla, "~> 2.5.0"},
       {:opentelemetry_semantic_conventions, "~> 1.27", override: true},
-      {:kadabra, github: "ptitmouton/kadabra", branch: "otp-28-support", override: true}
+      {:kadabra, github: "ptitmouton/kadabra", branch: "otp-28-support", override: true},
+      # logging
+      {:logger_json, "~> 7.0"}
     ]
   end
 
@@ -179,7 +186,7 @@ defmodule Lotta.MixProject do
       sentry_recompile: ["compile", "deps.compile sentry --force"],
       "assets.copy": [
         "cmd mkdir -p priv/static/images",
-        "cmd cp assets/images/* priv/static/images/"
+        "cmd --shell cp assets/images/* priv/static/images/"
       ],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": [

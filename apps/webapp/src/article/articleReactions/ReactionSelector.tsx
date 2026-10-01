@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, PopoverContent } from '@lotta-schule/hubert';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import {
   supportedReactionIconNames,
   supportedReactionIcons,

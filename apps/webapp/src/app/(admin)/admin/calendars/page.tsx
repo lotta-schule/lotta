@@ -1,6 +1,6 @@
 import React from 'react';
-import dynamic from 'next/dynamic';
-import { getClient } from 'api/client';
+import dynamic from 'next/dynamic.js';
+import { getClient } from '#/api/client';
 import { GET_CALENDARS } from './_graphql';
 import { CircularProgress } from '@lotta-schule/hubert';
 import { t } from 'i18next';
@@ -11,11 +11,10 @@ const DynamicCalendarView = dynamic(
 
 async function CalendarPage() {
   const client = await getClient();
-  const {
-    data: { calendars },
-  } = await client.query({
+  const { data } = await client.query({
     query: GET_CALENDARS,
   });
+  const calendars = data?.calendars ?? [];
 
   return (
     <div

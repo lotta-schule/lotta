@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Stepper, SwipeableViews } from '@lotta-schule/hubert';
-import { ContentModuleModel, FileModel } from 'model';
-import { ResponsiveImage } from 'util/image/ResponsiveImage';
+import { ContentModuleModel, FileModel } from '#/model';
+import { ResponsiveImage } from '#/util/image/ResponsiveImage';
 import { FileSorter } from '../Config';
 
 import styles from './ImageCarousel.module.scss';

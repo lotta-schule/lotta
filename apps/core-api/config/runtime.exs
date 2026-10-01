@@ -48,6 +48,7 @@ defmodule SystemConfig do
   defp default("APP_ENVIRONMENT", _), do: "development"
   defp default("LOG_LEVEL", _), do: nil
   defp default("WEB_HOST", env) when env in [:dev, :test], do: "localhost"
+  defp default("BASE_URI_HOST", :test), do: "lotta.schule"
   defp default("BASE_URI_HOST", :dev), do: "local.lotta.schule,lotta.lvh.me,lotta.schule"
   defp default("BASE_URI_HOST", _), do: "lotta.schule"
   defp default("BASE_URI_PORT", :dev), do: "3000"
@@ -72,6 +73,8 @@ defmodule SystemConfig do
 
   defp default("TCP_HEALTH_CHECK_PORT", _), do: "4321"
 
+  defp default("COCKPIT_ACCOUNTS_LIST_JSON", _), do: nil
+
   defp default("TCP_HEALTH_CHECK_ENABLED", _), do: "true"
 
   defp default("PORT", _), do: "4000"
@@ -81,24 +84,25 @@ defmodule SystemConfig do
   defp default("POSTGRES_DB", :test), do: "api_test"
   defp default("POSTGRES_DB", :dev), do: "lotta"
   defp default("POSTGRES_HOST", _), do: "localhost"
+  defp default("POSTGRES_POOL_SIZE", :test), do: "100"
   defp default("POSTGRES_POOL_SIZE", _), do: "50"
 
   defp default("REDIS_HOST", env) when env in [:dev, :test], do: "localhost"
   defp default("REDIS_PASSWORD", env) when env in [:dev, :test], do: "lotta"
 
   defp default("UGC_S3_COMPAT_ENDPOINT", env) when env in [:dev, :test],
-    do: "http://localhost:9000"
+    do: "http://localhost:9100"
 
-  defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "AKIAIOSFODNN7EXAMPLE"
+  defp default("AWS_ACCESS_KEY_ID", env) when env in [:dev, :test], do: "minio"
 
   defp default("AWS_SECRET_ACCESS_KEY", env) when env in [:dev, :test],
-    do: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+    do: "miniosecret"
 
   defp default("REMOTE_STORAGE_DEFAULT_STORE", env) when env in [:dev, :test], do: "minio"
   defp default("REMOTE_STORAGE_PREFIX", _), do: nil
   defp default("REMOTE_STORAGE_STORES", env) when env in [:dev, :test], do: "minio"
-  defp default("REMOTE_STORAGE_MINIO_ENDPOINT", _), do: "http://localhost:9000/lotta-dev-ugc"
-  defp default("REMOTE_STORAGE_MINIO_BUCKET", _), do: "lotta-dev-ugc"
+  defp default("REMOTE_STORAGE_MINIO_ENDPOINT", env), do: "http://localhost:9100/lotta-#{env}"
+  defp default("REMOTE_STORAGE_MINIO_BUCKET", env), do: "lotta-#{env}"
 
   defp default("MAILER_ADAPTER", :test), do: "test"
   defp default("MAILER_ADAPTER", _), do: "local"
@@ -135,10 +139,9 @@ defmodule SystemConfig do
 
   defp default("SLACK_WEBHOOK_URL", _), do: nil
 
-  defp default("DISABLE_CHROMIC", :test), do: "true"
+  defp default("DISABLE_CHROMIC", env) when env in [:dev, :test], do: "true"
   defp default("DISABLE_CHROMIC", _), do: "false"
-  defp default("DEBUG_CHROMIC", :prod), do: "false"
-  defp default("DEBUG_CHROMIC", _), do: "true"
+  defp default("DEBUG_CHROMIC", _), do: "false"
 
   defp default("SENTRY_DSN", _), do: nil
 
@@ -175,6 +178,7 @@ defmodule SystemConfig do
 end
 
 config :lotta, :environment, SystemConfig.get("APP_ENVIRONMENT", cast: :environment)
+config :lotta, :release_name, SystemConfig.get("IMAGE_NAME", cast: :docker_image_tag)
 
 [host | alias] = SystemConfig.get("BASE_URI_HOST", cast: :string_list)
 
@@ -219,7 +223,7 @@ case SystemConfig.get("LOG_LEVEL") do
   "debug" -> config :logger, level: :debug
   "notice" -> config :logger, level: :notice
   "info" -> config :logger, level: :info
-  "warn" -> config :logger, level: :warn
+  "warn" -> config :logger, level: :warning
   "error" -> config :logger, level: :error
   _ -> :ok
 end
@@ -235,8 +239,11 @@ config :opentelemetry, :resource,
   }
 
 config :opentelemetry,
-  span_processor: {Sentry.OpenTelemetry.SpanProcessor, []},
-  sampler: {Sentry.OpenTelemetry.Sampler, []}
+  span_processor: :batch,
+  traces_exporter: :otlp
+
+config :opentelemetry_exporter,
+  otlp_protocol: :http_protobuf
 
 config :lotta,
        Lotta.Repo,
@@ -291,9 +298,13 @@ config :lotta,
        :schedule_provider_url,
        SystemConfig.get("SCHEDULE_PROVIDER_URL", cast: :url_with_scheme)
 
-config :lotta, :analytics,
-  endpoint: SystemConfig.get("ANALYTICS_ENDPOINT"),
-  api_key: SystemConfig.get("ANALYTICS_API_KEY")
+if config_env() == :test do
+  config :lotta, :analytics, endpoint: "https://plausible.io", api_key: "test"
+else
+  config :lotta, :analytics,
+    endpoint: SystemConfig.get("ANALYTICS_ENDPOINT"),
+    api_key: SystemConfig.get("ANALYTICS_API_KEY")
+end
 
 config :lotta, LottaWeb.Auth.AccessToken,
   secret_key: SystemConfig.get("SECRET_KEY_JWT"),
@@ -303,6 +314,14 @@ config :lotta, :cockpit,
   endpoint: SystemConfig.get("COCKPIT_HOST"),
   username: SystemConfig.get("COCKPIT_ADMIN_API_USERNAME"),
   password: SystemConfig.get("COCKPIT_ADMIN_API_KEY")
+
+if json = SystemConfig.get("COCKPIT_ACCOUNTS_LIST_JSON") do
+  config :lotta,
+         :accounts_list,
+         json
+         |> Jason.decode!()
+         |> Enum.map(fn account -> [iban: account["iban"], name: account["name"]] end)
+end
 
 config :lotta, :zammad,
   endpoint: SystemConfig.get("ZAMMAD_ENDPOINT"),
@@ -355,7 +374,6 @@ config :sentry,
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()],
   filter: Lotta.SentryFilter,
-  traces_sample_rate: 0.15,
   integrations: [
     oban: [
       capture_errors: true,

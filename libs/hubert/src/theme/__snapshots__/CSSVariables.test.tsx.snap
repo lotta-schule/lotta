@@ -18,12 +18,15 @@ exports[`CSSVariables > should output the correct css variable definitions for t
     --lotta-page-background-color: 202, 205, 215;
     --lotta-divider-color: 224, 224, 224;
     --lotta-highlight-color: 224, 224, 224;
-    --lotta-banner-background-color: 54, 123, 240;
+    --lotta-banner-background-color: 202, 202, 202;
     --lotta-accent-grey-color: 227, 227, 227;
     --lotta-spacing: 8px;
     --lotta-border-radius: 4px;
+    --lotta-background-image-opacity: 1;
     --lotta-text-font-family: Muli;
     --lotta-title-font-family: 'Schoolbell', cursive;
+    --lotta-badge-background-color: 255, 87, 34;
+    --lotta-badge-text-color: 255, 255, 255;
 }
 </style>
 `;

@@ -1,29 +1,146 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-
+import { Icon } from '#/shared/Icon';
 import {
+  faArrowsUpDown,
+  faCalendar,
+  faCircleExclamation,
+  faPlus,
+  faTrash,
+  faGear,
+} from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
+import {
+  AttachFile as AttachFileIcon,
   Button,
   Checkbox,
-  Divider,
+  CheckboxIcon,
+  Checklist as ChecklistIcon,
   Input,
+  Item,
   Label,
+  Mail as MailIcon,
+  MenuButton,
+  RadioButton as RadioButtonIcon,
   SortableDraggableList,
+  TextFormat as TextFormatIcon,
+  TextLines as TextLinesIcon,
 } from '@lotta-schule/hubert';
-import { ContentModuleModel } from 'model';
-import { FormConfiguration } from './Form';
+import { ContentModuleModel } from '#/model';
+import { FormConfiguration, FormElement as FormElementInterface } from './Form';
 import { FormElement } from './FormElement';
-import { FormElementConfiguration } from './FormElementConfiguration';
+import { EditableText } from './EditableText';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
 
 import styles from './Edit.module.scss';
 
-export interface EditProps {
+const getDefaultFieldName = (base: string, existingNames: string[]): string => {
+  if (!existingNames.includes(base)) {
+    return base;
+  }
+  let n = 2;
+  while (existingNames.includes(`${base} (${n})`)) {
+    n += 1;
+  }
+  return `${base} (${n})`;
+};
+
+export type EditProps = {
   contentModule: ContentModuleModel;
-  onUpdateModule(contentModule: ContentModuleModel): void;
-}
+  onUpdateModule: (contentModule: ContentModuleModel) => void;
+};
 
 export const Edit = React.memo(
   ({ contentModule, onUpdateModule }: EditProps) => {
+    const { t } = useTranslation();
+    const currentUser = useCurrentUser();
+    const defaultElements: {
+      key: string;
+      label: string;
+      icon: React.ReactNode;
+      element: FormElementInterface;
+    }[] = [
+      {
+        key: 'email',
+        label: t('email address'),
+        icon: <MailIcon />,
+        element: { name: 'Textfeld', element: 'input', type: 'email' },
+      },
+      {
+        key: 'input',
+        label: t('text field'),
+        icon: <TextFormatIcon />,
+        element: { name: 'Textfeld', element: 'input', type: 'text' },
+      },
+      {
+        key: 'textarea',
+        label: t('text area'),
+        icon: <TextLinesIcon />,
+        element: { name: 'Textbereich', element: 'input', multiline: true },
+      },
+      {
+        key: 'date',
+        label: t('date field'),
+        icon: <Icon icon={faCalendar} size={'lg'} />,
+        element: { name: 'Textfeld', element: 'input', type: 'date' },
+      },
+      {
+        key: 'checkbox',
+        label: t('checkbox'),
+        icon: <CheckboxIcon />,
+        element: {
+          name: 'Checkbox',
+          element: 'selection',
+          type: 'checkbox',
+          options: [
+            { label: 'Option 1', value: 'option1', selected: false },
+            { label: 'Option 2', value: 'option2', selected: false },
+          ],
+        },
+      },
+      {
+        key: 'radio',
+        label: t('radio buttons'),
+        icon: <RadioButtonIcon />,
+        element: {
+          name: 'Auswahl',
+          element: 'selection',
+          type: 'radio',
+          options: [
+            { label: 'Option 1', value: 'option1', selected: false },
+            { label: 'Option 2', value: 'option2', selected: false },
+          ],
+        },
+      },
+      {
+        key: 'select',
+        label: t('dropdown'),
+        icon: <ChecklistIcon />,
+        element: {
+          name: 'Dropdown',
+          element: 'selection',
+          type: 'select',
+          options: [
+            { label: 'Option 1', value: 'option1', selected: false },
+            { label: 'Option 2', value: 'option2', selected: false },
+          ],
+        },
+      },
+      {
+        key: 'file',
+        label: t('file upload'),
+        icon: <AttachFileIcon />,
+        element: { name: 'Datei-Upload', element: 'file', type: '' },
+      },
+    ];
+
+    const getElementIcon = (element: FormElementInterface) =>
+      defaultElements.find(
+        ({ element: defaultElement }) =>
+          defaultElement.element === element.element &&
+          defaultElement.type === element.type &&
+          !!defaultElement.multiline === !!element.multiline
+      )?.icon ?? <Icon icon={faArrowsUpDown} size={'lg'} />;
+
     const configuration: FormConfiguration = {
       destination: '',
       elements: [],
@@ -35,19 +152,53 @@ export const Edit = React.memo(
         configuration: { ...configuration, ...partialConfig },
       });
 
+    const hasFileField = configuration.elements.some(
+      (el) => el.element === 'file'
+    );
+
+    React.useEffect(() => {
+      if (hasFileField && configuration.destination === undefined) {
+        updateConfiguration({ destination: currentUser?.email ?? '' });
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasFileField, configuration.destination]);
+
     return (
       <div className={styles.root}>
+        {configuration.elements.length > 0 && (
+          <div className={styles.listHeader}>
+            <span>{t('required?')}</span>
+          </div>
+        )}
         <SortableDraggableList
           id={`from-${contentModule.id}`}
           onChange={(updatedItems) => {
-            const elements = updatedItems.map(
-              (item) => configuration.elements[Number(item.id)]
-            );
+            const elements = updatedItems
+              .map((item) =>
+                configuration.elements.at(
+                  parseInt(item.id.replace('field-', ''))
+                )
+              )
+              .filter((element) => element !== undefined);
             updateConfiguration({ elements });
           }}
           items={configuration.elements.map((element, index) => ({
-            id: String(index),
-            title: element.name,
+            id: `field-${index}`,
+            title: (
+              <EditableText
+                value={element.name}
+                ariaLabel={'Feldname'}
+                editButtonLabel={'Feldnamen bearbeiten'}
+                onChange={(name) =>
+                  updateConfiguration({
+                    elements: configuration.elements.map((el, i) =>
+                      i === index ? { ...el, name } : el
+                    ),
+                  })
+                }
+              />
+            ),
+            tooltip: element.name,
             icon: <Icon icon={faTrash} />,
             onClickIcon: () => {
               updateConfiguration({
@@ -58,24 +209,48 @@ export const Edit = React.memo(
             },
             children: (
               <div className={styles.inputWrapper}>
+                <div className={styles.iconWrapper}>
+                  {' '}
+                  {getElementIcon(element)}
+                </div>
                 <div>
                   <FormElement
                     element={element}
                     isEditModeEnabled
                     value={''}
                     onSetValue={() => {}}
+                    onUpdateElement={(updatedElement) =>
+                      updateConfiguration({
+                        elements: configuration.elements.map((el, i) =>
+                          i === index ? { ...el, ...updatedElement } : el
+                        ),
+                      })
+                    }
                   />
                 </div>
-                <div>
-                  <FormElementConfiguration
-                    element={element}
-                    updateElement={(updatedElementOptions) =>
+                <div className={styles.iconWrapper}>
+                  <Button
+                    title={element.required ? t('not required') : t('required')}
+                    aria-checked={element.required}
+                    role={'checkbox'}
+                    icon={
+                      <Icon
+                        icon={faCircleExclamation}
+                        size={'lg'}
+                        color={'primary'}
+                        style={{
+                          opacity: element.required ? 1 : 0.3,
+                          filter: element.required ? 'none' : 'grayscale(1)',
+                        }}
+                      />
+                    }
+                    onClick={() =>
                       updateConfiguration({
                         elements: configuration.elements.map((el, i) => {
                           if (i === index) {
                             return {
                               ...element,
-                              ...updatedElementOptions,
+                              required: !element.required,
                             };
                           }
                           return el;
@@ -88,24 +263,58 @@ export const Edit = React.memo(
             ),
           }))}
         />
-        <div className={styles.inputWrapper}>
+        <MenuButton
+          title={t('add field')}
+          buttonProps={{
+            label: t('add field'),
+            style: { margin: '0 auto' },
+            variant: 'fill',
+            icon: <Icon icon={faPlus} size={'lg'} />,
+          }}
+          onAction={(key) => {
+            const defaultElement = defaultElements.find((el) => el.key === key);
+            if (!defaultElement) {
+              return;
+            }
+            const name = getDefaultFieldName(
+              defaultElement.label,
+              configuration.elements.map((el) => el.name)
+            );
+            const newElement = { ...defaultElement.element, name };
+            updateConfiguration({
+              elements: [...configuration.elements, newElement],
+              ...(newElement.element === 'file' &&
+              configuration.destination === undefined
+                ? { destination: currentUser?.email ?? '' }
+                : {}),
+            });
+          }}
+        >
+          {defaultElements.map(({ key, label, icon }) => (
+            <Item key={key} textValue={label}>
+              <div>{icon}</div>
+              <span>{label}</span>
+            </Item>
+          ))}
+        </MenuButton>
+        <div className={styles.settingsWrapper}>
           <div>
-            <Button type={'submit'} disabled>
-              Senden
-            </Button>
+            <Icon icon={faGear} size={'xl'} />
           </div>
           <div>
+            <h3>{t('Form settings')}</h3>
             <Checkbox
               isSelected={configuration.destination !== undefined}
+              isDisabled={hasFileField}
               onChange={(isSelected) =>
                 updateConfiguration({
                   destination: isSelected ? '' : undefined,
                 })
               }
             >
-              Formulardaten per Email versenden
+              {t('send form data by email')}
             </Checkbox>
-            <Label label={'Formular an folgende Email senden:'}>
+            <Label label={t('Send form to the following mail address:')}>
               <Input
                 id={'form-destination'}
                 value={configuration.destination ?? ''}
@@ -117,50 +326,13 @@ export const Edit = React.memo(
                 }
               />
             </Label>
-            <Divider />
-            <Checkbox
-              isSelected={configuration.save_internally === true}
-              onChange={(isSelected) =>
-                updateConfiguration({
-                  save_internally: isSelected,
-                })
-              }
-              aria-label={'Formulardaten speichern'}
-            >
-              <div>
-                <span style={{ display: 'block' }}>
-                  Formulardaten speichern
-                </span>
-                {!!configuration.elements.find(
-                  (el) => el.element === 'file'
-                ) && (
-                  <small>
-                    Datei-Anhänge werden nur per Email versandt und nicht
-                    gespeichert.
-                  </small>
-                )}
-              </div>
-            </Checkbox>
+            {hasFileField && (
+              <small>
+                {t('file attachments are only sent by email and not stored')}
+              </small>
+            )}
           </div>
         </div>
-        <Button
-          style={{ float: 'right' }}
-          icon={<Icon icon={faPlus} size={'lg'} />}
-          onClick={() =>
-            updateConfiguration({
-              elements: [
-                ...configuration.elements,
-                {
-                  name: `feld${configuration.elements.length + 1}`,
-                  element: 'input',
-                  type: 'text',
-                },
-              ],
-            })
-          }
-        >
-          Feld hinzufügen
-        </Button>
         <p className={styles.clear}></p>
       </div>
     );

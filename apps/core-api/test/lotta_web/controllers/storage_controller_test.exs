@@ -5,11 +5,18 @@ defmodule LottaWeb.StorageControllerTest do
   use Lotta.WorkerCase
 
   import Phoenix.ConnTest
-  import Mock
+  import Mox
+  import Lotta.Factory
 
-  alias Lotta.Fixtures
+  alias Lotta.Repo
+
+  @prefix "tenant_test"
+
+  setup :verify_on_exit!
 
   setup do
+    Repo.put_prefix(@prefix)
+
     Tesla.Mock.mock(fn
       %{method: :get} ->
         %Tesla.Env{
@@ -21,8 +28,7 @@ defmodule LottaWeb.StorageControllerTest do
 
   describe "File / FileConversion proxy" do
     test "Should return a cache-control header" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_image_file, user)
+      file = real_image_file(insert(:user))
 
       conn =
         build_tenant_conn()
@@ -32,8 +38,7 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should redirect to the file when requested" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_image_file, user)
+      file = real_image_file(insert(:user))
 
       conn =
         build_tenant_conn()
@@ -43,8 +48,7 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should respond with the correct format generated if requested" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_image_file, user)
+      file = real_image_file(insert(:user))
 
       conn =
         build_tenant_conn()
@@ -54,37 +58,35 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should respond with the correct existing file_conversion generated if requested" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(insert(:user))
 
-      with_mock(
-        Exile,
-        stream!: fn _cmd, _opts ->
-          create_file_stream("test/support/fixtures/eoa2.mp3")
-          |> Stream.map(&{:stdout, &1})
-        end
-      ) do
-        assert {:ok, conversion} =
-                 file
-                 |> Lotta.Storage.get_file_conversion("audioplay_aac")
+      Application.put_env(:lotta, :exile_module, Lotta.ExileMock)
+      on_exit(fn -> Application.delete_env(:lotta, :exile_module) end)
 
-        conversion =
-          Lotta.Repo.preload(conversion, :remote_storage_entity)
+      stub(Lotta.ExileMock, :stream!, fn _cmd, _opts ->
+        create_file_stream("test/support/fixtures/eoa2.mp3")
+        |> Stream.map(&{:stdout, &1})
+      end)
 
-        assert not is_nil(conversion)
-        assert not is_nil(conversion.remote_storage_entity)
+      assert {:ok, conversion} =
+               file
+               |> Lotta.Storage.get_file_conversion("audioplay_aac")
 
-        conn =
-          build_tenant_conn()
-          |> get("/data/storage/f/#{file.id}/audioplay_aac")
+      conversion =
+        Lotta.Repo.preload(conversion, :remote_storage_entity)
 
-        assert response(conn, 200)
-      end
+      assert not is_nil(conversion)
+      assert not is_nil(conversion.remote_storage_entity)
+
+      conn =
+        build_tenant_conn()
+        |> get("/data/storage/f/#{file.id}/audioplay_aac")
+
+      assert response(conn, 200)
     end
 
     test "Should respond with the original format if requested" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_image_file, user)
+      file = real_image_file(insert(:user))
 
       conn =
         build_tenant_conn()
@@ -108,8 +110,7 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should respond with a 404 if the format does not exist" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_image_file, user)
+      file = real_image_file(insert(:user))
 
       conn =
         build_tenant_conn()
@@ -125,8 +126,7 @@ defmodule LottaWeb.StorageControllerTest do
     end
 
     test "Should respond with a 428 if a format neither ready nor available is requested" do
-      user = Fixtures.fixture(:admin_user)
-      file = Fixtures.fixture(:real_audio_file, user)
+      file = real_audio_file(insert(:user))
 
       conn =
         build_tenant_conn()

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StoryFn, Meta } from '@storybook/react';
+import { StoryFn, Meta } from '@storybook/react-vite';
 import { Stepper, StepperProps } from '@lotta-schule/hubert';
 
 export default {
@@ -20,7 +20,7 @@ const Template: StoryFn<{
       <Stepper currentStep={step} onStep={setStep} {...args} />
       <img
         src={getRandomAvatarUrl(step)}
-        alt={`Image Step ${step}`}
+        alt={`Step ${step}`}
         style={{ width: 300 }}
       />
     </div>

@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { ApolloNextAppProvider } from '@apollo/experimental-nextjs-app-support';
+import { ApolloNextAppProvider } from '@apollo/client-integration-nextjs';
 import { createSSRClient } from '../../api/apollo/client-ssr';
-import { TenantModel } from 'model';
+import { TenantModel } from '#/model';
 
 export type ApolloProviderProps = React.PropsWithChildren<{
   tenant: Pick<TenantModel, 'id'>;

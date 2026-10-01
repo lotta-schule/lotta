@@ -1,9 +1,9 @@
-import { useQuery } from '@apollo/client';
-import { FeedbackModel } from 'model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User } from 'util/model';
+import { useQuery } from '@apollo/client/react';
+import { FeedbackModel } from '#/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { User } from '#/util/model';
 
-import GetFeedbackOverviewQuery from 'api/query/GetFeedbackOverviewQuery.graphql';
+import GetFeedbackOverviewQuery from '#/api/query/GetFeedbackOverviewQuery.graphql';
 
 export const useNewFeedbackCount = () => {
   const currentUser = useCurrentUser();

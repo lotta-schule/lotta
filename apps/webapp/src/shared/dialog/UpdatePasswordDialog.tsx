@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Button,
   Dialog,
@@ -11,13 +11,13 @@ import {
 } from '@lotta-schule/hubert';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 
-import UpdatePasswordMutation from 'api/mutation/UpdatePasswordMutation.graphql';
+import UpdatePasswordMutation from '#/api/mutation/UpdatePasswordMutation.graphql';
 
 export interface UpdatePasswordDialogProps {
   isOpen: boolean;
   isFirstPasswordChange?: boolean;
   withCurrentPassword?: string;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const UpdatePasswordDialog = React.memo(
@@ -32,6 +32,20 @@ export const UpdatePasswordDialog = React.memo(
     const [newPassword, setNewPassword] = React.useState('');
     const [newPasswordRepetition, setNewPasswordRepetition] =
       React.useState('');
+
+    const hasHisecToken = React.useMemo(() => {
+      if (typeof window === 'undefined') return false;
+      const cookies = document.cookie.split(';').reduce(
+        (acc, cookie) => {
+          const [key, value] = cookie.trim().split('=');
+          acc[key] = value;
+          return acc;
+        },
+        {} as Record<string, string>
+      );
+      return cookies['request_pw_reset'] === '1';
+    }, []);
+
     const resetForm = () => {
       setNewPassword('');
       setNewPasswordRepetition('');
@@ -40,7 +54,6 @@ export const UpdatePasswordDialog = React.memo(
       { updatePassword: boolean },
       { newPassword: string }
     >(UpdatePasswordMutation, {
-      variables: { newPassword },
       onCompleted: () => {
         resetForm();
         onRequestClose();
@@ -58,7 +71,11 @@ export const UpdatePasswordDialog = React.memo(
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              setShowRequestHisecToken(true);
+              if (hasHisecToken) {
+                void updatePassword({ variables: { newPassword } });
+              } else {
+                setShowRequestHisecToken(true);
+              }
             }}
             data-testid="UpdatePasswordDialog"
           >
@@ -129,7 +146,8 @@ export const UpdatePasswordDialog = React.memo(
           onRequestClose={(authToken) => {
             setShowRequestHisecToken(false);
             if (authToken) {
-              updatePassword({
+              void updatePassword({
+                variables: { newPassword },
                 context: { authToken },
               });
             }

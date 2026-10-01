@@ -19,6 +19,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
           }
         }
 
+  @impl true
   def create(%FileData{} = file_data, path, config, metadata \\ []) do
     FileData.stream!(file_data, 8 * 1024 * 1024)
     |> ExAws.S3.upload(
@@ -43,6 +44,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
     end
   end
 
+  @impl true
   def delete(path, config) do
     with {:ok, _result} <-
            config[:config][:bucket]
@@ -52,6 +54,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
     end
   end
 
+  @impl true
   def exists?(%RemoteStorageEntity{} = entity, config),
     do:
       config[:config][:bucket]
@@ -59,6 +62,7 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
       |> ExAws.request(build_request_config(config))
       |> elem(0) == :ok
 
+  @impl true
   def get_http_url(%RemoteStorageEntity{path: path}, config, options) do
     Keyword.get(options, :signed, false)
     |> case do

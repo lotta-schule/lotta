@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { CollectionChildren } from '@react-types/shared';
-import { useTreeState } from 'react-stately';
+import { useTreeState, type TreeState } from 'react-stately';
 import { mergeProps, useMenu } from 'react-aria';
 import { MenuItem } from './MenuItem';
 import { List, ListProps } from '../list';
@@ -21,7 +21,7 @@ export type WithDescription =
   | { 'aria-label': string }
   | { 'aria-labelledby': string };
 
-export type MenuProps = ListProps &
+export type MenuProps = Omit<ListProps, 'children'> &
   WithDescription & {
     children: CollectionChildren<object>;
     ref?: React.Ref<HTMLElement>;
@@ -47,7 +47,7 @@ export const Menu = ({
     children: props.children,
     selectionMode: 'none',
     onAction,
-  } as any);
+  } as any) as TreeState<object>;
 
   const { menuProps } = useMenu(
     {
@@ -74,7 +74,7 @@ export const Menu = ({
           onClose={onClose}
         />
       ))}
-      {props.children}
+      {props.children as React.ReactNode}
     </List>
   );
 };

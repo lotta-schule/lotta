@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArticleModel, ContentModuleModel } from 'model';
+import { ArticleModel, ContentModuleModel } from '#/model';
 import { ArticleTitle } from './ArticleTitle';
 import { ContentModule } from './module/ContentModule';
 

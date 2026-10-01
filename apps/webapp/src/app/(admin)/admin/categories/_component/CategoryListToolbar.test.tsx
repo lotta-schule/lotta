@@ -1,12 +1,11 @@
-import * as React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { Mock, vi } from 'vitest';
 import { CategoryListToolbar } from './CategoryListToolbar';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import { CreateCategoryDialogProps } from './CreateCategoryDialog';
 
 // Mock the router
-vi.mock('next/navigation', () => ({
+vi.mock('next/navigation.js', () => ({
   useRouter: vi.fn(),
 }));
 

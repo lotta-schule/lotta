@@ -5,15 +5,32 @@ defmodule Lotta.Tenants.DefaultContentTest do
   use Bamboo.Test
 
   import Ecto.Query
+  import Mox
 
   alias Lotta.{Tenants, Repo}
-  alias Lotta.Tenants.{Category, Tenant}
+  alias Lotta.Tenants.{Category, DefaultContent, Tenant}
   alias Lotta.Content.Article
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.{File, Directory}
   alias Lotta.Accounts.Authentication
 
+  setup :verify_on_exit!
+
   setup do
+    stub_with(Lotta.Tenants.DefaultContentMock, DefaultContent)
+    stub(Lotta.AnalyticsMock, :create_site, fn _tenant -> :ok end)
+    stub(Lotta.Administration.Notification.SlackMock, :send, fn _msg -> {:ok, nil} end)
+
+    stub(Lotta.Administration.Notification.SlackMock, :new_lotta_notification, fn _t, _u ->
+      %{}
+    end)
+
+    stub(
+      Lotta.Administration.Notification.SlackMock,
+      :new_lotta_invoices_to_issue_notification,
+      fn _i -> %{} end
+    )
+
     Tesla.Mock.mock(fn
       %{url: "https://plausible.io/" <> _rest} = env ->
         %Tesla.Env{env | status: 200, body: "OK"}
@@ -29,6 +46,7 @@ defmodule Lotta.Tenants.DefaultContentTest do
   end
 
   describe "default content" do
+    @tag creates_tenant: true
     test "should create a tenant with all the default content" do
       tenant = %Tenant{
         slug: "default-content-test",
@@ -142,6 +160,7 @@ defmodule Lotta.Tenants.DefaultContentTest do
       assert Enum.count(public_directory.files) == 17
     end
 
+    @tag creates_tenant: true
     test "should create tenant without eduplaces_id and skip external sync" do
       tenant = %Tenant{
         slug: "no-eduplaces-test",
@@ -162,6 +181,7 @@ defmodule Lotta.Tenants.DefaultContentTest do
       assert is_nil(tenant.eduplaces_id)
     end
 
+    @tag creates_tenant: true
     test "should create tenant with empty eduplaces_id and skip external sync" do
       tenant = %Tenant{
         slug: "empty-eduplaces-test",
@@ -181,6 +201,7 @@ defmodule Lotta.Tenants.DefaultContentTest do
       assert tenant.state == :active
     end
 
+    @tag creates_tenant: true
     test "should create tenant with eduplaces_id and call external sync successfully" do
       tenant = %Tenant{
         slug: "with-eduplaces-test",
@@ -213,6 +234,7 @@ defmodule Lotta.Tenants.DefaultContentTest do
       assert tenant.eduplaces_id == "test-eduplaces-id"
     end
 
+    @tag creates_tenant: true
     test "should create tenant even when external sync fails with 404" do
       tenant = %Tenant{
         slug: "eduplaces-404-test",
@@ -245,6 +267,7 @@ defmodule Lotta.Tenants.DefaultContentTest do
       assert tenant.eduplaces_id == "failing-eduplaces-id"
     end
 
+    @tag creates_tenant: true
     test "should create tenant even when external sync task crashes" do
       tenant = %Tenant{
         slug: "eduplaces-crash-test",

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor } from '#/test/util';
 import { MetricsChart } from './MetricsChart';
 import { Period } from '../Analytics';
 import { GET_TENANT_TIMESERIES_ANALYTICS } from '../_graphql';

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
-import { FileModel, ID } from 'model';
+import { FileModel, ID } from '#/model';
 import { FileUsageModal } from './FileUsageModal';
 
-import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
+import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';
 
 export type FileUsageOverviewProps = {
   file: FileModel;

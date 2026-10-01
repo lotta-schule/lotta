@@ -29,6 +29,7 @@ export const Stepper = React.memo(
     };
     return (
       <div
+        // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- composite spinbutton widget cannot use <input>
         role="spinbutton"
         {...ariaAttrs}
         className={clsx(styles.root, className)}

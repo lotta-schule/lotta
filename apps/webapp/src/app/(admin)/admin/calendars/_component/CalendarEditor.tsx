@@ -12,19 +12,19 @@ import {
   LoadingButton,
   SuccessMessage,
 } from '@lotta-schule/hubert';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import { useTranslation } from 'react-i18next';
 import { CALENDAR_FRAGMENT, UPDATE_CALENDAR } from '../_graphql';
 import { BasicCalendarFormElement } from './BasicCalendarFormElement';
 import { FragmentOf } from 'gql.tada';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { invariant } from '@epic-web/invariant';
 
 import styles from './CalendarEditor.module.scss';
 
 export type CalendarEditorProps = {
   calendar: FragmentOf<typeof CALENDAR_FRAGMENT>;
-  onClose(): void;
+  onClose: () => void;
 };
 
 export const CalendarEditor = React.memo(
@@ -90,7 +90,7 @@ export const CalendarEditor = React.memo(
                             calendar.subscriptionUrl,
                             'subscriptionUrl is missing'
                           );
-                          navigator.clipboard.writeText(
+                          void navigator.clipboard.writeText(
                             calendar.subscriptionUrl
                           );
                         }}

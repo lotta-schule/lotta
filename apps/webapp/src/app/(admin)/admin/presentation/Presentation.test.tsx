@@ -1,12 +1,17 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
-import { imageFile, tenant } from 'test/fixtures';
-import { render, fireEvent, waitFor } from 'test/util';
-import { TenantModel } from 'model';
+import { MockLink } from '@apollo/client/testing';
+import { imageFile, tenant } from '#/test/fixtures';
+import { render, fireEvent, waitFor, userEvent } from '#/test/util';
+import { TenantModel } from '#/model';
 import { Presentation } from './Presentation';
-import userEvent from '@testing-library/user-event';
+import { useRouter } from 'next/navigation.js';
+import { Mock, vi } from 'vitest';
 
-import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
+import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
+
+vi.mock('next/navigation.js', () => ({
+  useRouter: vi.fn(),
+}));
 
 const mockTenant: TenantModel = {
   ...tenant,
@@ -38,15 +43,27 @@ const mockTenant: TenantModel = {
 };
 
 describe('Presentation', () => {
+  const mockRouter = {
+    refresh: vi.fn(),
+  };
+
+  beforeEach(() => {
+    (useRouter as Mock).mockReturnValue(mockRouter);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('should render correctly', () => {
     const screen = render(
       <Presentation tenant={mockTenant} additionalThemes={[]} />
     );
 
     expect(screen.getByText('Vorlagen')).toBeInTheDocument();
-    expect(screen.getByText('Farben')).toBeInTheDocument();
-    expect(screen.getByText('Maße')).toBeInTheDocument();
-    expect(screen.getByText('Schriftarten')).toBeInTheDocument();
+    expect(screen.getByText('Website')).toBeInTheDocument();
+    expect(screen.getByText('Abstände')).toBeInTheDocument();
+    expect(screen.getAllByText('Schriftarten').length).toBeGreaterThan(0);
   });
 
   it('should update the color settings', async () => {
@@ -54,7 +71,7 @@ describe('Presentation', () => {
       <Presentation tenant={mockTenant} additionalThemes={[]} />
     );
 
-    const colorInput = screen.getByLabelText('Akzente');
+    const colorInput = screen.getByLabelText('Button & Akzente');
     fireEvent.change(colorInput, { target: { value: '#123123' } });
 
     await waitFor(() => {
@@ -69,16 +86,10 @@ describe('Presentation', () => {
     );
 
     const spacingInput = screen.getByLabelText('Abstand');
-    await user.type(spacingInput, '{backspace}20px', {
-      initialSelectionStart: 0,
-      initialSelectionEnd: 4,
-    });
+    await user.fill(spacingInput, '20px');
 
-    const borderRadiusInput = screen.getByLabelText('Rundungen');
-    await user.type(borderRadiusInput, '{backspace}10px', {
-      initialSelectionStart: 0,
-      initialSelectionEnd: 4,
-    });
+    const borderRadiusInput = screen.getByLabelText('Rundungen für Buttons');
+    await user.fill(borderRadiusInput, '10px');
 
     expect(spacingInput).toHaveValue('20px');
     expect(borderRadiusInput).toHaveValue('10px');
@@ -107,11 +118,13 @@ describe('Presentation', () => {
     const onResult = vi.fn(() => ({
       data: { tenant: { ...mockTenant, logoImageFile: null } },
     }));
-    const additionalMocks: MockedResponse[] = [
+    const additionalMocks: MockLink.MockedResponse[] = [
       {
-        variableMatcher: () => true,
         request: {
           query: UpdateTenantMutation,
+          variables(_vars) {
+            return true;
+          },
         },
         result: onResult,
       },
@@ -126,6 +139,8 @@ describe('Presentation', () => {
     const saveButton = screen.getByText('speichern');
     await user.click(saveButton);
 
-    expect(onResult).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(onResult).toHaveBeenCalled();
+    });
   });
 });

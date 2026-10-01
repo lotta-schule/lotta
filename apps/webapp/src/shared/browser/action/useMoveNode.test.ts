@@ -1,18 +1,17 @@
-import { MockedResponse } from '@apollo/client/testing';
-import { currentApolloCache, renderHook } from 'test/util';
+import { MockLink } from '@apollo/client/testing';
+import { currentApolloCache, renderHook } from '#/test/util';
 import {
   SomeUser,
   imageFile,
   logosDirectory,
   profilDirectory,
-} from 'test/fixtures';
-import { DirectoryModel, FileModel } from 'model';
-import { BrowserNode } from '../../../../../../libs/hubert/src/browser';
+} from '#/test/fixtures';
+import { BrowserNode } from '@lotta-schule/hubert';
 import { useMoveNode } from './useMoveNode';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import UpdateDirectoryMutation from 'api/mutation/UpdateDirectoryMutation.graphql';
-import UpdateFileMutation from 'api/mutation/UpdateFileMutation.graphql';
+import { GetDirectoriesAndFilesQuery } from '../_graphql/GetDirectoriesAndFiles';
+import UpdateDirectoryMutation from '#/api/mutation/UpdateDirectoryMutation.graphql';
+import UpdateFileMutation from '#/api/mutation/UpdateFileMutation.graphql';
 
 const targetDirectory = {
   ...profilDirectory,
@@ -53,7 +52,7 @@ const fileNode = {
   meta: file,
 } as BrowserNode<'file'>;
 
-export const additionalMocks: MockedResponse[] = [
+export const additionalMocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: GetDirectoriesAndFilesQuery,
@@ -147,10 +146,7 @@ describe('useMoveNode', () => {
 
     await result.current(directoryNode, targetDirectoryNode);
 
-    const fromCache = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const fromCache = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: null },
     });
@@ -161,10 +157,7 @@ describe('useMoveNode', () => {
 
     expect(cachedFromDirectory).toBeUndefined();
 
-    const targetCached = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const targetCached = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: targetDirectory.id },
     });
@@ -203,10 +196,7 @@ describe('useMoveNode', () => {
 
     await result.current(fileNode, targetDirectoryNode);
 
-    const fromCache = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const fromCache = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: directory.id },
     });
@@ -215,10 +205,7 @@ describe('useMoveNode', () => {
 
     expect(cachedFromFile).toBeUndefined();
 
-    const targetCached = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const targetCached = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: targetDirectory.id },
     });

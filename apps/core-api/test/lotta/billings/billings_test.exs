@@ -1,7 +1,7 @@
 defmodule Lotta.BillingsTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   alias Lotta.{Billings, Tenants, Repo}
   alias Lotta.Billings.{AdditionalItem, Invoice}
@@ -698,8 +698,8 @@ defmodule Lotta.BillingsTest do
       additional_items =
         Enum.filter(invoice.items, fn item -> item.type == "additional_item" end)
 
-      assert length(additional_items) >= 1,
-             "Expected at least 1 additional item, got #{length(additional_items)}"
+      assert additional_items != [],
+             "Expected at least 1 additional item, got #{inspect(additional_items)}"
 
       email_item =
         Enum.find(additional_items, fn item ->
@@ -863,8 +863,7 @@ defmodule Lotta.BillingsTest do
       custom_time = DateTime.utc_now() |> DateTime.add(-1, :day)
       {:ok, paid} = Billings.mark_as_paid(invoice, custom_time)
 
-      # Compare dates/times with truncation since DB may truncate microseconds
-      assert DateTime.diff(paid.paid_at, custom_time, :second) == 0
+      assert paid.paid_at == DateTime.truncate(custom_time, :second)
     end
 
     test "fails to mark draft invoice as paid", %{tenant: tenant} do
@@ -990,7 +989,7 @@ defmodule Lotta.BillingsTest do
       invoices_2025 = Billings.list_invoices(tenant, year: 2025)
       invoices_2024 = Billings.list_invoices(tenant, year: 2024)
 
-      assert length(invoices_2025) >= 1
+      assert invoices_2025 != []
       assert Enum.empty?(invoices_2024)
     end
 
@@ -1000,7 +999,7 @@ defmodule Lotta.BillingsTest do
       invoices_nov = Billings.list_invoices(tenant, month: 11)
       invoices_dec = Billings.list_invoices(tenant, month: 12)
 
-      assert length(invoices_nov) >= 1
+      assert invoices_nov != []
       assert Enum.all?(invoices_dec, fn inv -> inv.month == 12 end)
     end
 
@@ -1082,7 +1081,7 @@ defmodule Lotta.BillingsTest do
         end)
 
       assert length(plan_items) == 1
-      assert length(additional_items) >= 1
+      assert additional_items != []
     end
   end
 

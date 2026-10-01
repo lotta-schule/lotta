@@ -4,29 +4,27 @@
   align-items: center;
   position: relative;
   padding: var(--lotta-spacing) 0;
-  &:not(:has(.isDisabled)) {
+
+  &:not(:has(.isDisabled)):not(:has(.isReadOnly)) {
     cursor: pointer;
   }
 
-  .input {
-    font-size: 1rem;
-    position: absolute;
-    left: var(--lotta-spacing);
-    z-index: -1;
-    opacity: 0;
-  }
+  input[type="checkbox"] {
+    appearance: none;
+    cursor: inherit;
 
-  .controlIndicator {
-    border-radius: 20%;
-    flex: 0 0 auto;
-    top: 0;
-    left: 0;
-    height: 1.2em;
-    width: 1.2em;
-    margin: 0 var(--lotta-spacing);
-    background: rgba(var(--lotta-box-background-color), 1);
-    border: 1px solid rgba(var(--lotta-label-text-color), 1);
     position: relative;
+    width: 1.2em;
+    height: 1.2em;
+    flex: 0 0 auto;
+
+    background: rgba(var(--lotta-box-background-color), 1);
+
+    border: 1px solid rgba(var(--lotta-label-text-color), 1);
+    border-radius: 20%;
+
+    margin: 0 var(--lotta-spacing);
+
     &::before {
       animation: s-ripple 200ms ease-out;
       content: "";
@@ -45,6 +43,7 @@
       transform: scale(0);
       box-shadow: 0px 0px 5px rgba(var(--control-indicator-color), 0.8);
     }
+
     &::after {
       animation: s-ripple 200ms ease-out;
       box-sizing: unset;
@@ -63,7 +62,7 @@
       text-align: center;
       line-height: 1.3em;
     }
-    &.isSelected {
+    &:checked {
       background: rgba(var(--lotta-box-background-color), 1);
       border-color: transparent;
       &::before {
@@ -73,12 +72,13 @@
         display: block;
       }
     }
-    &.isDisabled {
+
+    &:disabled {
       background: rgba(var(--lotta-page-background-color), 0.7);
       opacity: 0.6;
       pointer-events: none;
     }
-    &.isFocusVisible {
+    &:focus:not(:active) {
       border-color: l_color(label-text);
     }
   }

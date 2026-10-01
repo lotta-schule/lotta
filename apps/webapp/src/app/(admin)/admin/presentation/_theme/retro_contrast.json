@@ -9,5 +9,10 @@
   "errorColor": "#ff0067",
   "successColor": "#00ff71",
   "borderRadius": "0px",
-  "dividerColor": "#8d9091"
+  "dividerColor": "#8d9091",
+  "textFontFamily": "Montserrat",
+  "titleFontFamily": "Ubuntu Condensed",
+  "bannerBackgroundColor": "#005c7f",
+  "badgeBackgroundColor": "#ff1900",
+  "badgeTextColor": "#edd1d6"
 }

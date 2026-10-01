@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import {
   faTrash,
   faGear,
@@ -12,7 +12,7 @@ import {
   DialogActions,
   DialogContent,
 } from '@lotta-schule/hubert';
-import { ArticleModel, ContentModuleModel, ContentModuleType } from 'model';
+import { ArticleModel, ContentModuleModel, ContentModuleType } from '#/model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
 import { Config as TitleConfig } from './title/Config';
@@ -27,8 +27,8 @@ import { Download } from './download/Download';
 import { Form } from './form/Form';
 import { Table } from './table/Table';
 import { Divider as DividerCM } from './divider/Divider';
-import { User } from 'util/model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { User } from '#/util/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
 import clsx from 'clsx';
 
 import styles from './ContentModule.module.scss';

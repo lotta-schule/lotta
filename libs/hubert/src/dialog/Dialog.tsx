@@ -16,6 +16,7 @@ export type DialogProps = React.PropsWithChildren<{
   title?: string;
   open?: boolean;
   wide?: boolean;
+  closeLabel?: string;
   onRequestClose?: () => void | null;
 }>;
 
@@ -25,6 +26,7 @@ export const Dialog = ({
   onRequestClose,
   className,
   wide,
+  closeLabel = 'schließen',
   children,
   ...props
 }: DialogProps) => {
@@ -42,7 +44,6 @@ export const Dialog = ({
   return (
     <ButtonGroupContextProvider reset>
       <dialog
-        role="dialog"
         ref={dialogRef}
         title={title}
         onClose={(e) => {
@@ -58,7 +59,7 @@ export const Dialog = ({
               {onRequestClose && (
                 <Button
                   small
-                  title={'schließen'}
+                  title={closeLabel}
                   className={styles.close}
                   onClick={() => onRequestClose()}
                   icon={<Close />}

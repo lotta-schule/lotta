@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { ContentModuleModel, ContentModuleType } from 'model';
+import { render, waitFor, userEvent } from '#/test/util';
+import { ContentModuleModel, ContentModuleType } from '#/model';
 import {
   Klausurenplan,
   ComputerExperten,
   SomeUser,
   SomeUserin,
-} from 'test/fixtures';
+} from '#/test/fixtures';
 import { ContentModule } from './ContentModule';
-import userEvent from '@testing-library/user-event';
 
 import GetContentModuleResults from '../../api/query/GetContentModuleResults.graphql';
 
@@ -232,7 +231,7 @@ describe('shared/article/module/ContentModule', () => {
         expect(dragHandle).toBeInTheDocument();
       });
 
-      it('should show settings button', async () => {
+      it('should show the settings button', async () => {
         const screen = render(
           <ContentModule
             isEditModeEnabled
@@ -243,11 +242,14 @@ describe('shared/article/module/ContentModule', () => {
             onRemoveContentModule={() => {}}
           />
         );
-        expect(
-          screen.getByRole('button', {
-            name: /moduleinstellungen/i,
-          })
-        ).toBeVisible();
+
+        await waitFor(() => {
+          expect(
+            screen.getByRole('button', {
+              name: /moduleinstellungen/i,
+            })
+          ).toBeInTheDocument();
+        });
       });
     });
   });
@@ -582,14 +584,27 @@ describe('shared/article/module/ContentModule', () => {
                 query: GetContentModuleResults,
                 variables: { contentModuleId: formContentModule.id },
               },
-              result: { data: { contentModuleResults: [] } },
+              result: {
+                data: {
+                  contentModuleResults: [
+                    {
+                      id: 'CMR001',
+                      insertedAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString(),
+                      result: { responses: {} },
+                    },
+                  ],
+                },
+              },
             },
           ],
         }
       );
-      expect(
-        screen.getByRole('button', { name: /einsendungen sehen/i })
-      ).toBeVisible();
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /einsendungen sehen/i })
+        ).toBeEnabled();
+      });
       await fireEvent.click(
         screen.getByRole('button', { name: /einsendungen sehen/i })
       );

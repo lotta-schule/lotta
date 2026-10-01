@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
+import { ContentModuleModel } from '#/model';
 import { Option, Select } from '@lotta-schule/hubert';
 
 const DEFAULT_LEVEL = 4;
 
 interface ConfigProps {
   contentModule: ContentModuleModel;
-  onUpdateModule(contentModule: ContentModuleModel): void;
+  onUpdateModule: (contentModule: ContentModuleModel) => void;
 }
 
 export const Config = React.memo<ConfigProps>(

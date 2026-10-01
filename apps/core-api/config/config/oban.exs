@@ -4,6 +4,7 @@ config :lotta, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.PG,
   repo: Lotta.Repo,
+  log: false,
   prefix: "oban",
   plugins: [
     {Oban.Plugins.Lifeline, rescue_after: :timer.minutes(30)},

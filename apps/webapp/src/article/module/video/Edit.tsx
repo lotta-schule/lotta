@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
-import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
+import { ContentModuleModel } from '#/model';
+import { SelectFileOverlay } from '#/shared/edit/SelectFileOverlay';
 import { VideoVideo } from './VideoVideo';
 import { useRequestConversion } from '../useRequestConversion';
 import { ConversionProgress } from '../ConversionProgress';
@@ -9,9 +9,9 @@ import styles from './Video.module.scss';
 
 interface EditProps {
   contentModule: ContentModuleModel<{ captions: string[] }>;
-  onUpdateModule(
+  onUpdateModule: (
     contentModule: ContentModuleModel<{ captions: string[] }>
-  ): void;
+  ) => void;
 }
 
 export const Edit = React.memo(
@@ -25,7 +25,7 @@ export const Edit = React.memo(
     return (
       <figure className={styles.edit}>
         <SelectFileOverlay
-          label={'Video auswechseln'}
+          label={'Video wechseln'}
           fileFilter={(f) => f.fileType === 'VIDEO'}
           onSelectFile={(file) => {
             onUpdateModule({
@@ -33,7 +33,7 @@ export const Edit = React.memo(
               files: file ? [file] : [],
             });
             if (file) {
-              requestFileConversion(file);
+              void requestFileConversion(file);
             }
           }}
         >

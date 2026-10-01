@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DefaultThemes } from '@lotta-schule/hubert';
 import { faPalette } from '@fortawesome/free-solid-svg-icons';
 import { AdminPage } from '../_component/AdminPage';
-import { loadTenant } from 'loader';
+import { loadTenant } from '#/loader';
 import * as themes from './_theme';
 import { Presentation } from './Presentation';
 

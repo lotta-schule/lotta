@@ -7,7 +7,7 @@ export interface ColorSettingRowProps {
   label: string;
   hint?: string;
   value: string;
-  onChange(value: string): void;
+  onChange: (value: string) => void;
 }
 
 export const ColorSettingRow = React.memo<ColorSettingRowProps>(
@@ -20,7 +20,7 @@ export const ColorSettingRow = React.memo<ColorSettingRowProps>(
           <Input
             type={'color'}
             value={value}
-            style={{ padding: 0 }}
+            style={{}}
             onChange={(e) => onChange(e.currentTarget.value)}
             aria-labelledby={labelId}
             aria-describedby={hint && hintId}

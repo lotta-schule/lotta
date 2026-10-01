@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { commands } from '@vitest/browser/context';
+import { render, waitFor, userEvent } from '#/test/util';
 import { FormElement } from './FormElement';
-import { imageFile, logosDirectory, SomeUser } from 'test/fixtures';
-import userEvent from '@testing-library/user-event';
+import { imageFile, logosDirectory, SomeUser } from '#/test/fixtures';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
+import { GetDirectoriesAndFilesQuery } from '#/shared/browser/_graphql/GetDirectoriesAndFiles';
+import GetFileDetailsQuery from '#/api/query/GetFileDetailsQuery.graphql';
 
 describe('shared/article/module/form/FormElement', () => {
   describe('input element', () => {
@@ -53,6 +53,39 @@ describe('shared/article/module/form/FormElement', () => {
       expect(
         screen.getByRole('textbox', { name: /Bla Bla 1/i })
       ).toHaveProperty('type', 'email');
+    });
+
+    it('should append an asterisk to the label when the field is required', () => {
+      const setValueFn = vi.fn();
+      const screen = render(
+        <FormElement
+          element={{
+            element: 'input',
+            name: 'blabla1',
+            label: 'Bla Bla 1',
+            required: true,
+          }}
+          value={''}
+          onSetValue={setValueFn}
+        />
+      );
+      expect(screen.getByText('Bla Bla 1 *')).toBeInTheDocument();
+    });
+
+    it('should not append an asterisk to the label when the field is not required', () => {
+      const setValueFn = vi.fn();
+      const screen = render(
+        <FormElement
+          element={{
+            element: 'input',
+            name: 'blabla1',
+            label: 'Bla Bla 1',
+          }}
+          value={''}
+          onSetValue={setValueFn}
+        />
+      );
+      expect(screen.getByText('Bla Bla 1')).toBeInTheDocument();
     });
   });
 
@@ -175,15 +208,13 @@ describe('shared/article/module/form/FormElement', () => {
 
   describe('file element', () => {
     const user = { ...SomeUser };
-    let didCallFiles = false;
-    const filesMocks = [
+    const createFilesMocks = () => [
       {
         request: {
           query: GetDirectoriesAndFilesQuery,
-          variables: { parentDirectoryId: null },
+          variables: { parentDirectoryId: null, filter: { first: 25 } },
         },
-        result: () => {
-          didCallFiles = true;
+        result: vi.fn(() => {
           return {
             data: {
               files: [
@@ -206,12 +237,35 @@ describe('shared/article/module/form/FormElement', () => {
               ],
             },
           };
+        }),
+      },
+      {
+        // onRequestChildNodes in UserBrowser fires without a filter (cache-first, for tree walk)
+        request: {
+          query: GetDirectoriesAndFilesQuery,
+          variables: { parentDirectoryId: null },
         },
+        result: vi.fn(() => ({
+          data: {
+            files: [
+              {
+                ...imageFile,
+                userId: user.id,
+                parentDirectory: {
+                  ...logosDirectory,
+                  user,
+                  parentDirectory: null,
+                },
+              },
+            ],
+            directories: [{ ...logosDirectory, user, parentDirectory: null }],
+          },
+        })),
       },
       {
         request: {
           query: GetDirectoriesAndFilesQuery,
-          variables: { parentDirectoryId: '8743' },
+          variables: { parentDirectoryId: '8743', filter: { first: 25 } },
         },
         result: () => {
           return {
@@ -221,6 +275,14 @@ describe('shared/article/module/form/FormElement', () => {
             },
           };
         },
+      },
+      {
+        // onRequestChildNodes for logosDirectory fires without filter (cache-first)
+        request: {
+          query: GetDirectoriesAndFilesQuery,
+          variables: { parentDirectoryId: '8743' },
+        },
+        result: () => ({ data: { files: [], directories: [] } }),
       },
       {
         request: {
@@ -243,13 +305,11 @@ describe('shared/article/module/form/FormElement', () => {
       },
     ];
 
-    beforeEach(() => {
-      didCallFiles = false;
-    });
-
     it('should render a local file input and select a file as an anonymous userAvatar', async () => {
-      const fireEvent = userEvent.setup();
-      global.URL.createObjectURL = vi.fn(() => 'http://localhost/0');
+      vi.spyOn(URL, 'createObjectURL').mockReturnValueOnce(
+        'http://localhost/0'
+      );
+
       const setValueFn = vi.fn();
       const screen = render(
         <FormElement
@@ -263,15 +323,38 @@ describe('shared/article/module/form/FormElement', () => {
       );
       expect(screen.getAllByRole('button')).toHaveLength(1);
       expect(screen.getByRole('button')).toHaveTextContent(/datei hochladen/i);
-      await fireEvent.upload(
-        document.querySelector('input[type=file]')!,
-        new File(['hello world'], 'hello.txt', { type: 'text/plain' })
-      );
+      const uploadButton = document.querySelector('input[type=file]')!;
+      expect(uploadButton).toBeInTheDocument();
+      await commands.setFile('input[type=file]', {
+        name: 'hello.txt',
+        type: 'text/plain',
+        content: 'Hello World',
+      });
       await waitFor(() => {
         expect(setValueFn).toHaveBeenCalledWith(
           'file-upload://{"filesize":11,"filename":"hello.txt","filetype":"text/plain","blob":"http://localhost/0"}'
         );
       });
+    });
+
+    it('should disable file picking while in the form builder (edit mode)', () => {
+      const setValueFn = vi.fn();
+      const screen = render(
+        <FormElement
+          element={{
+            element: 'file',
+            name: 'blabla1',
+          }}
+          isEditModeEnabled
+          value={''}
+          onSetValue={setValueFn}
+        />
+      );
+      const fileInput = document.querySelector('input[type=file]')!;
+      expect(fileInput).toBeDisabled();
+      expect(
+        screen.getByRole('button', { name: /datei hochladen/i })
+      ).toBeDisabled();
     });
 
     it('should show a filename for a selected local file, file should be removable', async () => {
@@ -302,6 +385,7 @@ describe('shared/article/module/form/FormElement', () => {
     it('should render a userfile select button and select a file as a userAvatar', async () => {
       const fireEvent = userEvent.setup();
       const setValueFn = vi.fn();
+      const additionalMocks = createFilesMocks();
       const screen = render(
         <FormElement
           element={{
@@ -314,7 +398,7 @@ describe('shared/article/module/form/FormElement', () => {
         {},
         {
           currentUser: user,
-          additionalMocks: filesMocks,
+          additionalMocks,
         }
       );
       expect(
@@ -326,8 +410,12 @@ describe('shared/article/module/form/FormElement', () => {
       await fireEvent.click(
         screen.getByRole('button', { name: /meine dateien/i })
       );
-      await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
-      await waitFor(() => expect(didCallFiles).toEqual(true));
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeVisible();
+      });
+      await waitFor(() => {
+        expect(additionalMocks[0].result).toHaveBeenCalled();
+      });
       await waitFor(() =>
         expect(screen.getByRole('option', { name: /logos/i })).toBeVisible()
       );
@@ -343,9 +431,9 @@ describe('shared/article/module/form/FormElement', () => {
       await fireEvent.click(screen.getByRole('button', { name: /auswählen/ }));
       expect(setValueFn).toHaveBeenCalledWith(
         'lotta-file-id://' +
-          '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15",' +
+          '{"id":"123","insertedAt":"2001-01-01 14:15",' +
           '"filename":"Dateiname.jpg","filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
-          '"userId":"1","parentDirectory":{"id":"8743"}}'
+          '"userId":"1","parentDirectory":{"id":"8743"},"size":123123}'
       );
     });
 

@@ -1,22 +1,22 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
+import { render, waitFor } from '#/test/util';
 import {
   Weihnachtsmarkt,
   ComputerExperten,
   VivaLaRevolucion,
   SomeUser,
-} from 'test/fixtures';
+} from '#/test/fixtures';
 import { ArticlesByUser } from './ArticlesByUser';
-import { FetchResult } from '@apollo/client';
-import { ArticleModel } from 'model';
+import { ApolloLink } from '@apollo/client';
+import { ArticleModel } from '#/model';
 
-import GetArticlesByUser from 'api/query/GetArticlesByUserQuery.graphql';
+import GetArticlesByUser from '#/api/query/GetArticlesByUserQuery.graphql';
 
 describe('shared/article/ArticlesByUser', () => {
   const getAdditionalMocks = (
     result:
-      | FetchResult<{ articles: ArticleModel[] }>
-      | (() => FetchResult<{ articles: ArticleModel[] }>)
+      | ApolloLink.Result<{ articles: ArticleModel[] }>
+      | (() => ApolloLink.Result<{ articles: ArticleModel[] }>)
   ) => [
     {
       request: {

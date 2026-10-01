@@ -1,16 +1,17 @@
+'use client';
 import * as React from 'react';
 import { Checkbox, ErrorMessage, LinearProgress } from '@lotta-schule/hubert';
-import { WidgetModel } from 'model';
-import { useQuery } from '@apollo/client';
-import { WidgetIcon } from 'category/widgets/WidgetIcon';
+import { WidgetModel } from '#/model';
+import { useQuery } from '@apollo/client/react';
+import { WidgetIcon } from '#/category/widgets/WidgetIcon';
 
 import styles from './CategoryWidgetSelector.module.scss';
 
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 
 export interface CategoryWidgetSelectorProps {
   selectedWidgets: WidgetModel[];
-  setSelectedWidgets(widgets: WidgetModel[]): void;
+  setSelectedWidgets: (widgets: WidgetModel[]) => void;
 }
 
 export const CategoryWidgetSelector = React.memo<CategoryWidgetSelectorProps>(

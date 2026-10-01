@@ -4,7 +4,7 @@
 //
 import * as React from 'react';
 import { Table } from '@lotta-schule/hubert';
-import { FeedbackModel } from 'model';
+import { FeedbackModel } from '#/model';
 import { CreateLottaFeedback, FeedbackRow } from './_component';
 
 import styles from './Feedback.module.scss';

@@ -3,7 +3,7 @@ import { Upload, useUploadClient } from './useUploadClient';
 import { BrowserNode } from '../BrowserStateContext';
 
 describe('useUploadClient', () => {
-  const uploadNode = vi.fn();
+  const uploadNode = vi.fn<(...args: any[]) => any>();
 
   afterEach(() => {
     vi.clearAllMocks();
@@ -24,7 +24,7 @@ describe('useUploadClient', () => {
         parent: null,
         meta: {},
       };
-      result.current.addFile(file, parentNode);
+      void result.current.addFile(file, parentNode);
     });
 
     expect(uploadNode).toHaveBeenCalled();
@@ -63,7 +63,7 @@ describe('useUploadClient', () => {
         parent: null,
         meta: {},
       };
-      result.current.addFile(file, parentNode);
+      void result.current.addFile(file, parentNode);
     });
 
     expect(uploadNode).toHaveBeenCalled();

@@ -1,5 +1,5 @@
-import { render } from 'test/util';
-import { createFormats } from 'test/fixtures';
+import { render } from '#/test/util';
+import { createFormats } from '#/test/fixtures';
 import { Image } from './Image';
 
 describe('Image ContentModule', () => {

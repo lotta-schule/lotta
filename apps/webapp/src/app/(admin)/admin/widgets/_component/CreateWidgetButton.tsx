@@ -1,16 +1,15 @@
 'use client';
-
 import * as React from 'react';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton, Item } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
-import { useRouter } from 'next/navigation';
-import { WidgetModel, WidgetModelType } from 'model';
-import { Widget } from 'util/model';
-import { Icon } from 'shared/Icon';
+import { useMutation } from '@apollo/client/react';
+import { useRouter } from 'next/navigation.js';
+import { WidgetModel, WidgetModelType } from '#/model';
+import { Widget } from '#/util/model';
+import { Icon } from '#/shared/Icon';
 
-import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import CreateWidgetMutation from '#/api/mutation/CreateWidgetMutation.graphql';
+import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 
 export const CreateWidgetButton = React.memo(() => {
   const router = useRouter();
@@ -25,7 +24,7 @@ export const CreateWidgetButton = React.memo(() => {
   });
 
   const onClickCreateWidget = (title: string, type: WidgetModelType) => {
-    createWidget({
+    void createWidget({
       variables: {
         title,
         type,

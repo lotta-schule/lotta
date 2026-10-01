@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { saveAs } from 'file-saver';
-import { ContentModuleModel, ID, ContentModuleResultModel } from 'model';
+import { ContentModuleModel, ID, ContentModuleResultModel } from '#/model';
 import {
   Button,
   Dialog,
@@ -13,11 +13,11 @@ import {
 } from '@lotta-schule/hubert';
 import { FormConfiguration } from './Form';
 
-import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
+import GetContentModuleResults from '#/api/query/GetContentModuleResults.graphql';
 
 export interface FormResultsDialogProps {
   isOpen: boolean;
-  onRequestClose(): void;
+  onRequestClose: () => void;
   contentModule: ContentModuleModel<Record<string, string>, FormConfiguration>;
 }
 

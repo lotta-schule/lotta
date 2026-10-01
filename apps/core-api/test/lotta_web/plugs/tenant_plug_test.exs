@@ -1,7 +1,7 @@
 defmodule LottaWeb.TenantPlugTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
 
   import Plug.Conn
 

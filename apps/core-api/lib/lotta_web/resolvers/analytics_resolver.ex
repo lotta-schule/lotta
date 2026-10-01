@@ -3,8 +3,6 @@ defmodule LottaWeb.AnalyticsResolver do
 
   alias Lotta.Analytics
 
-  require Logger
-
   def realtime(_, %{context: %{tenant: tenant}}) do
     Analytics.get_realtime_users(tenant)
   end

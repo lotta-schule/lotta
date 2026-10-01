@@ -1,7 +1,7 @@
 defmodule Lotta.CalendarTest do
   @moduledoc false
 
-  use Lotta.DataCase
+  use Lotta.DataCase, async: true
 
   import Lotta.Factory
 

@@ -1,9 +1,9 @@
 import { Mocked, MockedFunction } from 'vitest';
-import { headers } from 'next/headers';
-import { appConfig } from 'config';
+import { headers } from 'next/headers.js';
+import { appConfig } from '#/config';
 import { getBaseUrlString, getBaseUrl } from './baseUrl';
 
-vi.mock('next/headers', () => {
+vi.mock('next/headers.js', () => {
   const headers = new Map();
   const getHeaders = vi.fn(() => Promise.resolve(headers));
 
@@ -19,8 +19,8 @@ vi.mock('../loader', () => ({
   })),
   loadCurrentUser: vi.fn(async () => null),
 }));
-vi.mock('config');
-vi.mock('api/client', () => ({
+vi.mock('#/config');
+vi.mock('#/api/client', () => ({
   getClient: vi.fn(),
 }));
 

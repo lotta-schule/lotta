@@ -1,8 +1,7 @@
 'use client';
-
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
-import { ID, UserGroupModel, WidgetModel, WidgetModelType } from 'model';
+import { useMutation } from '@apollo/client/react';
+import { ID, UserGroupModel, WidgetModel, WidgetModelType } from '#/model';
 import {
   Button,
   ErrorMessage,
@@ -12,17 +11,17 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { faFloppyDisk, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
-import { GroupSelect } from 'shared/edit/GroupSelect';
+import { Icon } from '#/shared/Icon';
+import { GroupSelect } from '#/shared/edit/GroupSelect';
 import { IFrameWidgetConfiguration } from './configuration/IFrameWidgetConfiguration';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
-import { AdminPageSection } from 'app/(admin)/admin/_component/AdminPageSection';
-import { useRouter } from 'next/navigation';
+import { AdminPageSection } from '#/app/(admin)/admin/_component/AdminPageSection';
+import { useRouter } from 'next/navigation.js';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
 import { WidgetIconSelection } from './WidgetIconSelection';
 
-import UpdateWidgetMutation from 'api/mutation/UpdateWidgetMutation.graphql';
+import UpdateWidgetMutation from '#/api/mutation/UpdateWidgetMutation.graphql';
 
 export interface WidgetEditorProps {
   widget: WidgetModel;
@@ -99,8 +98,11 @@ export const WidgetEditor = React.memo(({ widget }: WidgetEditorProps) => {
           <GroupSelect
             selectedGroups={widgetConfig.groups || []}
             disableAdminGroupsExclusivity
-            onSelectGroups={(groups: UserGroupModel[]) => {
-              setWidgetConfig({ ...widgetConfig, groups });
+            onSelectGroups={(groups) => {
+              setWidgetConfig({
+                ...widgetConfig,
+                groups: groups as UserGroupModel[],
+              });
             }}
           />
         </React.Suspense>

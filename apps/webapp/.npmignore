@@ -1,0 +1,8 @@
+src/*
+Dockerfile
+*.md
+.gitignore
+.env*
+*.tsbuildinfo
+vitest.config.ts
+tsconfig*.json

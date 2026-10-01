@@ -1,6 +1,6 @@
-import { File } from 'util/model';
+import { File } from '#/util/model';
 import * as React from 'react';
-import { Tenant } from 'util/tenant';
+import { Tenant } from '#/util/tenant';
 
 export type TenantGlobalStyleTagProps = {
   tenant: Tenant;
@@ -16,7 +16,7 @@ export const TenantGlobalStyleTag = ({ tenant }: TenantGlobalStyleTagProps) => {
       const urls = [defaultWidth, retinaWidth].map((width) => ({
         url: File.getRemoteUrl(tenant.backgroundImageFile!, 'pagebg', width),
       }));
-      return `background-image: image-set(${urls.map(({ url }, i) => `url(${url}) ${i + 1}x`)});`;
+      return `background-image: image-set(${urls.map(({ url }, i) => `url(${url}) ${i + 1}x`).join(', ')});`;
     },
     [tenant.backgroundImageFile]
   );
@@ -29,11 +29,13 @@ export const TenantGlobalStyleTag = ({ tenant }: TenantGlobalStyleTagProps) => {
         __html: `@media screen and (min-width: 600px) {
       body::after {
         ${cssBackgroundImage(1024, 1920)}
+        opacity: var(--lotta-background-image-opacity, 1);
       }
   }
   @media screen and (min-width: 1280px) {
       body::after {
         ${cssBackgroundImage(1280, 2560)}
+        opacity: var(--lotta-background-image-opacity, 1);
       }
   }`,
       }}

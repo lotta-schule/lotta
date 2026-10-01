@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import { FeedbackModel } from 'model';
+import { render, waitFor, userEvent } from '#/test/util';
+import { FeedbackModel } from '#/model';
 import { FeedbackRow } from './FeedbackRow';
-import { SomeUser } from 'test/fixtures';
-import userEvent from '@testing-library/user-event';
+import { SomeUser } from '#/test/fixtures';
 
-import DeleteFeedbackMutation from 'api/mutation/DeleteFeedbackMutation.graphql';
+import DeleteFeedbackMutation from '#/api/mutation/DeleteFeedbackMutation.graphql';
 
 const feedback: FeedbackModel = {
   id: '6543-feed-back-1234',

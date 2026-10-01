@@ -7,16 +7,16 @@ import {
   ErrorMessage,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
-import { FeedbackModel } from 'model';
+import { useMutation } from '@apollo/client/react';
+import { FeedbackModel } from '#/model';
 
-import DeleteFeedbackMutation from 'api/mutation/DeleteFeedbackMutation.graphql';
+import DeleteFeedbackMutation from '#/api/mutation/DeleteFeedbackMutation.graphql';
 
 export interface DeleteFeedbackDialogProps {
   feedback: FeedbackModel;
   isOpen: boolean;
-  onRequestClose(): void;
-  onConfirm(): void;
+  onRequestClose: () => void;
+  onConfirm: () => void;
 }
 
 export const DeleteFeedbackDialog = React.memo(
@@ -51,7 +51,7 @@ export const DeleteFeedbackDialog = React.memo(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            deleteFeedback({
+            void deleteFeedback({
               variables: {
                 id: feedback.id,
               },

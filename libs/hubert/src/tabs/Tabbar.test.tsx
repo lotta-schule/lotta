@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { render } from '../test-utils';
+import { render, userEvent } from '../test-utils';
 import { Tab } from './Tab';
 import { Tabbar } from './Tabbar';
-import userEvent from '@testing-library/user-event';
 
 describe('tabs/Tabbar', () => {
   it('snapshot test', () => {
@@ -35,7 +34,7 @@ describe('tabs/Tabbar', () => {
 
   it('should call onChange with the correct value', async () => {
     const user = userEvent.setup();
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
 
     const screen = render(
       <Tabbar value={'2'} onChange={onChange}>

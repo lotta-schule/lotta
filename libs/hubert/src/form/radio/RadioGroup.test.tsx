@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render } from '../../test-utils';
+import { render, userEvent } from '../../test-utils';
 import { Radio } from './Radio';
 import { RadioGroup } from './RadioGroup';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/general/form/radio', () => {
   it('should render with correct name', () => {
@@ -34,7 +33,7 @@ describe('shared/general/form/radio', () => {
 
   it('should call onChange with the newly selected value', async () => {
     const user = userEvent.setup();
-    const onChange = vi.fn((ev, val) => {
+    const onChange = vi.fn<(...args: any[]) => void>((ev, val) => {
       expect(ev.type).toEqual('change');
       expect(val).toEqual('3');
     });

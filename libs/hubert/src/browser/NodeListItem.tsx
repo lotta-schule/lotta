@@ -70,7 +70,7 @@ export const NodeListItem = React.memo(
       (files: File[]) => {
         onNavigate(nodePath as BrowserPath<'directory'>);
         for (const file of files) {
-          uploadClient?.addFile?.(file, node as BrowserNode<'directory'>);
+          void uploadClient?.addFile?.(file, node as BrowserNode<'directory'>);
         }
       },
       [node, nodePath, onNavigate, uploadClient]
@@ -168,8 +168,18 @@ export const NodeListItem = React.memo(
         onOpenChange={setIsContextMenuOpen}
         placement="bottom-start"
       >
+        {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- <li> is the interactive surface for file browser; restructuring to a nested button would require significant DOM changes */}
         <li
           {...dropzoneProps}
+          onKeyDown={(e) => {
+            if (
+              (e.key === 'Enter' || e.key === ' ') &&
+              !isDisabled &&
+              !isRenaming
+            ) {
+              onClick?.(e as unknown as React.MouseEvent);
+            }
+          }}
           onContextMenu={(e) => {
             currentContextMenuCloseFn?.();
             e.preventDefault();

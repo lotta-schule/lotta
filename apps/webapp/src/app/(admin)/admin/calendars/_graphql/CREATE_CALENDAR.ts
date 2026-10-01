@@ -1,4 +1,4 @@
-import { graphql } from 'api/graphql';
+import { graphql } from '#/api/graphql';
 import { CALENDAR_FRAGMENT } from './GET_CALENDARS';
 
 export const CREATE_CALENDAR = graphql(

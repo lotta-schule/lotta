@@ -6,13 +6,13 @@ import {
   DialogContent,
 } from '@lotta-schule/hubert';
 import { ArticlesByTag } from '../relatedArticlesList';
-import { isBrowser } from 'util/isBrowser';
+import { isBrowser } from '#/util/isBrowser';
 
 import styles from './TagDetailsDialog.module.scss';
 
 export interface TagDetailsDialogProps {
   tag: string | null;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const TagDetailsDialog = React.memo(

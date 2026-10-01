@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Button, SplitViewButton, Toolbar } from '@lotta-schule/hubert';
 import { faAdd, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import { NewMessageDestination } from 'model';
-import { Icon } from 'shared/Icon';
+import { NewMessageDestination } from './Message';
+import { Icon } from '#/shared/Icon';
 import { CreateMessageDialog } from './CreateMessageDialog';
 
 import styles from './MessageToolbar.module.scss';
 
 export interface MessageToolbarProps {
-  onRequestNewMessage(subject: NewMessageDestination): void;
+  onRequestNewMessage: (subject: NewMessageDestination) => void;
 }
 
 export const MessageToolbar = React.memo<MessageToolbarProps>(

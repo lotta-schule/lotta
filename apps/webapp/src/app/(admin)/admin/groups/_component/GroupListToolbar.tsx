@@ -9,7 +9,7 @@ import {
   Select,
   Toolbar,
 } from '@lotta-schule/hubert';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation.js';
 import { CreateUserGroupDialog } from './CreateUserGroupDialog';
 
 import styles from './GroupListToolbar.module.scss';

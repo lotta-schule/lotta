@@ -4,23 +4,26 @@ import { toCSSVariableName, toCSSVariableValue } from '../util';
 
 export type CSSVariablesProps = {
   theme: Theme;
+  rootSelector?: string;
 };
 
-export const CSSVariables = React.memo(({ theme }: CSSVariablesProps) => {
-  const cssVarsInit = Object.entries(theme)
-    .map(
-      ([key, val]) =>
-        `    ${toCSSVariableName(key)}: ${toCSSVariableValue(val)};`
-    )
-    .join('\n');
+export const CSSVariables = React.memo(
+  ({ theme, rootSelector = ':root' }: CSSVariablesProps) => {
+    const cssVarsInit = Object.entries(theme)
+      .map(
+        ([key, val]) =>
+          `    ${toCSSVariableName(key)}: ${toCSSVariableValue(val)};`
+      )
+      .join('\n');
 
-  const cssContent = ':root {\n' + cssVarsInit + '\n}';
+    const cssContent = rootSelector + ' {\n' + cssVarsInit + '\n}';
 
-  return (
-    <style
-      data-hubert-css-variables-def
-      dangerouslySetInnerHTML={{ __html: cssContent }}
-    />
-  );
-});
+    return (
+      <style
+        data-hubert-css-variables-def
+        dangerouslySetInnerHTML={{ __html: cssContent }}
+      />
+    );
+  }
+);
 CSSVariables.displayName = 'CSSVariables';

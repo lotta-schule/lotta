@@ -5,13 +5,13 @@ exports[`Stepper > should render a stepper 1`] = `
   aria-valuemax="3"
   aria-valuemin="1"
   aria-valuenow="1"
-  class="_root_64ceba"
+  class="_root_bmp3y_1"
   role="spinbutton"
 >
   <button
     aria-current="false"
     aria-label="Vorheriger Schritt"
-    class="_root_0977c5 _root_3de4f3 _root_70a42a _small_3de4f3"
+    class="_root_ybf73_1 _root_z0q9c_1 _root_cfn1r_1 _small_z0q9c_7"
     data-variant="default"
     disabled=""
     role="button"
@@ -19,11 +19,11 @@ exports[`Stepper > should render a stepper 1`] = `
     type="button"
   >
     <span
-      class="_icon_3de4f3 _icon_70a42a"
+      class="_icon_z0q9c_10 _icon_cfn1r_31"
     >
       <svg
         aria-hidden="true"
-        class="_root_2ade80"
+        class="_root_1lr2i_1"
         data-testid="keyboard-arrow-left-icon"
         focusable="false"
         viewBox="0 0 24 24"
@@ -35,7 +35,7 @@ exports[`Stepper > should render a stepper 1`] = `
       </svg>
     </span>
     <span
-      class="_label_3de4f3 _label_70a42a"
+      class="_label_z0q9c_14 _label_cfn1r_35"
     >
       vorheriges
     </span>
@@ -48,18 +48,18 @@ exports[`Stepper > should render a stepper 1`] = `
   <button
     aria-current="false"
     aria-label="Nächster Schritt"
-    class="_root_0977c5 _root_3de4f3 _root_70a42a _small_3de4f3"
+    class="_root_ybf73_1 _root_z0q9c_1 _root_cfn1r_1 _small_z0q9c_7"
     data-variant="default"
     role="button"
     style="color: rgba(var(--lotta-text-color), 1);"
     type="button"
   >
     <span
-      class="_icon_3de4f3 _icon_70a42a"
+      class="_icon_z0q9c_10 _icon_cfn1r_31"
     >
       <svg
         aria-hidden="true"
-        class="_root_2ade80"
+        class="_root_1lr2i_1"
         data-testid="keyboard-arrow-right-icon"
         focusable="false"
         viewBox="0 0 24 24"
@@ -71,7 +71,7 @@ exports[`Stepper > should render a stepper 1`] = `
       </svg>
     </span>
     <span
-      class="_label_3de4f3 _label_70a42a"
+      class="_label_z0q9c_14 _label_cfn1r_35"
     >
       nächstes
     </span>

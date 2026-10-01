@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { loadCategories } from 'loader';
-import { notFound } from 'next/navigation';
+import { loadCategories } from '#/loader';
+import { notFound } from 'next/navigation.js';
 import { AdminPageTitle } from '../../_component/AdminPageTitle';
 import { CategoryEditor } from '../_component';
 

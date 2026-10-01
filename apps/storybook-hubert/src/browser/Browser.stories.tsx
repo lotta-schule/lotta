@@ -1,7 +1,7 @@
-import { StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
+import { StoryObj } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 import { Browser, BrowserNode, NodeList } from '@lotta-schule/hubert';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 const getChildNodes = (node: BrowserNode | null): BrowserNode[] => {
   const parent = node?.id ?? null;
@@ -52,12 +52,12 @@ export default {
 
 export const Default: StoryObj<typeof Browser> = {
   play: async ({ canvasElement }) => {
-    const user = await userEvent.setup({ delay: 25 });
+    const user = userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
-    user.click(await screen.findByRole('option', { name: 'folder 1' }));
-    user.click(await screen.findByRole('option', { name: 'folder 8' }));
-    user.click(await screen.findByRole('option', { name: 'ich.jpg' }));
+    void user.click(await screen.findByRole('option', { name: 'folder 1' }));
+    void user.click(await screen.findByRole('option', { name: 'folder 8' }));
+    void user.click(await screen.findByRole('option', { name: 'ich.jpg' }));
 
     await waitFor(async () => {
       await expect(
@@ -91,12 +91,12 @@ export const Select: StoryObj<typeof Browser> = {
     mode: 'select',
   },
   play: async ({ canvasElement }) => {
-    const user = await userEvent.setup({ delay: 25 });
+    const user = userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
-    user.click(await screen.findByRole('option', { name: 'folder 1' }));
-    user.click(await screen.findByRole('option', { name: 'folder 8' }));
-    user.click(await screen.findByRole('option', { name: 'ich.jpg' }));
+    void user.click(await screen.findByRole('option', { name: 'folder 1' }));
+    void user.click(await screen.findByRole('option', { name: 'folder 8' }));
+    void user.click(await screen.findByRole('option', { name: 'ich.jpg' }));
 
     await waitFor(async () => {
       await expect(
@@ -112,12 +112,12 @@ export const SelectMultiple: StoryObj<typeof Browser> = {
     mode: 'select-multiple',
   },
   play: async ({ canvasElement }) => {
-    const user = await userEvent.setup({ delay: 25 });
+    const user = userEvent.setup({ delay: 25 });
     const screen = within(canvasElement);
 
-    user.click(await screen.findByRole('option', { name: 'folder 1' }));
-    user.click(await screen.findByRole('option', { name: 'folder 8' }));
-    user.click(await screen.findByLabelText(/ich\.jpg/i));
+    void user.click(await screen.findByRole('option', { name: 'folder 1' }));
+    void user.click(await screen.findByRole('option', { name: 'folder 8' }));
+    void user.click(await screen.findByLabelText(/ich\.jpg/i));
 
     await waitFor(async () => {
       await expect(
@@ -127,7 +127,6 @@ export const SelectMultiple: StoryObj<typeof Browser> = {
   },
 };
 
-// eslint-disable-next-line no-var
 var browserNodes = [
   {
     id: '1',

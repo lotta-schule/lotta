@@ -5,12 +5,10 @@
 
   "compilerOptions": {
     "composite": true,
+    "incremental": true,
     "outDir": "../../dist/lib/sb-addon-theme/lib",
-    "types": ["node", "vite/client"],
+    "types": ["node", "vite/client"]
   },
-  "exclude": [
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"],
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

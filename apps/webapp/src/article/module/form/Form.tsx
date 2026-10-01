@@ -1,11 +1,14 @@
 import * as React from 'react';
+import { useQuery } from '@apollo/client/react';
 import { Button } from '@lotta-schule/hubert';
 import { FormResultsDialog } from './FormResultsDialog';
 import { Show } from './Show';
 import { Edit } from './Edit';
 import { faInbox } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import { ContentModuleComponentProps } from '../ContentModule';
+import { ContentModuleResultModel, ID } from '#/model';
+import GetContentModuleResults from '#/api/query/GetContentModuleResults.graphql';
 
 export interface FormElementOption {
   selected?: boolean;
@@ -41,6 +44,14 @@ export const Form = React.memo(
   }: ContentModuleComponentProps) => {
     const [isFormResultsDialogOpen, setIsFormResultsDialogOpen] =
       React.useState(false);
+    const { data } = useQuery<
+      { contentModuleResults: ContentModuleResultModel[] },
+      { contentModuleId: ID }
+    >(GetContentModuleResults, {
+      variables: { contentModuleId: contentModule.id },
+      skip: !userCanEditArticle,
+    });
+    const hasSubmissions = (data?.contentModuleResults.length ?? 0) > 0;
     return (
       <div data-testid="FormContentModule">
         {isEditModeEnabled && onUpdateModule && (
@@ -53,9 +64,15 @@ export const Form = React.memo(
               onClick={() => setIsFormResultsDialogOpen(true)}
               icon={<Icon icon={faInbox} size={'lg'} />}
               style={{
-                marginLeft: 'auto',
-                marginRight: 'calc(var(--lotta-spacing) + 16.6%)',
+                margin: '0 auto',
               }}
+              variant={'fill'}
+              disabled={!hasSubmissions}
+              title={
+                hasSubmissions
+                  ? undefined
+                  : 'Es liegen noch keine Formulareinsendungen vor'
+              }
             >
               Formulareinsendungen sehen
             </Button>

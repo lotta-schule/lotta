@@ -8,6 +8,8 @@ export const extractFontNamesFromTheme = (theme: Theme) => {
         schema[key as keyof Theme]?.type === 'font-family'
     )
     .flatMap(([, val]) =>
-      val.split(',').map((v) => v.replace(/^[\s']*/, '').replace(/[\s']*$/, ''))
+      (val as string)
+        .split(',')
+        .map((v) => v.replace(/^[\s']*/, '').replace(/[\s']*$/, ''))
     );
 };

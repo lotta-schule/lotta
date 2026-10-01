@@ -3,3 +3,11 @@
   flex-grow: 1;
   flex-shrink: 1;
 }
+
+.noMessagesWrapper {
+  display: flex;
+  flex: 1 1;
+  align-items: center;
+  justify-content: center;
+  color: rgba(var(--lotta-disabled-color), 1);
+}

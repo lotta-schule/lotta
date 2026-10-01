@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render } from '../../test-utils';
+import { render, userEvent } from '../../test-utils';
 import { Checkbox } from './Checkbox';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/general/form/checkbox', () => {
   it('should show the correct label', () => {
@@ -11,7 +10,7 @@ describe('shared/general/form/checkbox', () => {
 
   it('should show a selected checkbox and unselect it on click', async () => {
     const fireEvent = userEvent.setup();
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     const screen = render(
       <Checkbox isSelected onChange={onChange}>
         A label

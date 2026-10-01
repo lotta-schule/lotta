@@ -1,13 +1,16 @@
 import { BrowserNode, BrowserPath } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from 'model';
+import { ResultOf } from 'gql.tada';
+import {
+  BrowserDirectoryFragment,
+  BrowserFileFragment,
+} from './_graphql/GetDirectoriesAndFiles';
 
-export type GetDirectoriesAndFilesQueryResult = {
-  directories: DirectoryModel[];
-  files: FileModel[];
-};
+// With @_unmask on both fragments, FragmentOf<> == ResultOf<> (no masking).
+export type BrowserDirectoryData = ResultOf<typeof BrowserDirectoryFragment>;
+export type BrowserFileData = ResultOf<typeof BrowserFileFragment>;
 
 const makeDirectoryNode = (
-  directory: DirectoryModel
+  directory: BrowserDirectoryData
 ): BrowserNode<'directory'> => ({
   id: directory.id,
   name: directory.name,
@@ -16,44 +19,54 @@ const makeDirectoryNode = (
   meta: directory,
 });
 
-const makeFileNode = (file: FileModel): BrowserNode<'file'> => ({
+const makeFileNode = (file: BrowserFileData): BrowserNode<'file'> => ({
   id: file.id,
-  name: file.filename,
+  name: file.filename ?? '',
   type: 'file',
   parent: file.parentDirectory?.id ?? null,
-  meta: file,
+  meta: {
+    ...file,
+    mimeType: file.mimeType ?? '',
+    size: file.filesize ?? 0,
+    metadata: {},
+  },
 });
 
-export const makeBrowserNodes = (result?: {
-  files: FileModel[];
-  directories: DirectoryModel[];
-}) => {
+export const makeBrowserNodes = (
+  result?: {
+    files?: BrowserFileData[] | null;
+    directories?: BrowserDirectoryData[] | null;
+  } | null
+) => {
   if (!result) {
     return null;
   }
 
-  const directoryNodes = result.directories.map(makeDirectoryNode);
-
-  const fileNodes = result.files.map(makeFileNode);
+  const directoryNodes = (result.directories ?? []).map(makeDirectoryNode);
+  const fileNodes = (result.files ?? []).map(makeFileNode);
 
   return [...directoryNodes, ...fileNodes] as BrowserNode[];
 };
 
-export const makeDirectoryPaths = (result?: {
-  files: (FileModel & { path: DirectoryModel[] })[];
-  directories: (DirectoryModel & { path: DirectoryModel[] })[];
-}) => {
+export const makeDirectoryPaths = (
+  result?: {
+    files?: (BrowserFileData & { path: BrowserDirectoryData[] })[] | null;
+    directories?:
+      | (BrowserDirectoryData & { path: BrowserDirectoryData[] })[]
+      | null;
+  } | null
+) => {
   if (!result) {
     return null;
   }
 
-  const directoryPaths = result.directories.map(
+  const directoryPaths = (result.directories ?? []).map(
     ({ path, ...directory }) =>
       [...path, directory].map(makeDirectoryNode) as BrowserPath
   );
-  const filePaths = result.files.map(
-    ({ path, ...directory }) =>
-      [...path.map(makeDirectoryNode), makeFileNode(directory)] as BrowserPath
+  const filePaths = (result.files ?? []).map(
+    ({ path, ...file }) =>
+      [...path.map(makeDirectoryNode), makeFileNode(file)] as BrowserPath
   );
 
   return Array.prototype.concat([], directoryPaths, filePaths);

@@ -20,7 +20,7 @@ export const toCSSVariableValue = (
   }
   try {
     const color = new Color(originalValue);
-    const { r, g, b } = color.srgb;
+    const [r, g, b] = color.to('srgb').coords.map((c) => c || 0);
     return [r, g, b].map((c) => (c * 255).toFixed(0)).join(', ');
   } catch {
     return originalValue;

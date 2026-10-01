@@ -1,32 +1,36 @@
 defmodule LottaWeb.CategoryResolver do
   @moduledoc false
 
-  import Ecto.Query
   import LottaWeb.ErrorHelpers
+  import Absinthe.Resolution.Helpers, only: [batch: 3]
 
   alias Lotta.Repo
   alias Lotta.Tenants
-  alias Lotta.Accounts.User
-  alias Lotta.Tenants.{Category, Widget}
+  alias Lotta.Tenants.Category
 
   def resolve_widgets(_args, %{
-        context: %{current_user: %User{all_groups: groups, is_admin?: is_admin}},
+        context: %{current_user: user},
         source: %Category{} = category
       }) do
-    widgets =
-      from(w in Widget,
-        left_join: wug in "widgets_user_groups",
-        on: wug.widget_id == w.id,
-        join: cw in "categories_widgets",
-        on: w.id == cw.widget_id,
-        where:
-          (^is_admin or wug.group_id in ^Enum.map(groups, & &1.id) or is_nil(wug.group_id)) and
-            cw.category_id == ^category.id,
-        distinct: w.id
-      )
-      |> Repo.all()
+    # Batch the widget lookups for every category in the same resolution into a
+    # single query (the current user is constant within a request, so it is part
+    # of the batch key), avoiding an N+1 of one `widgets` query per category.
+    #
+    # The tenant prefix is captured here (in the request process) and threaded
+    # through the batch key, because the batch function runs in a separate
+    # process where the process-local prefix is no longer available.
+    batch(
+      {__MODULE__, :batch_widgets_by_category, {user, Repo.get_prefix()}},
+      category.id,
+      fn widgets_by_category_id ->
+        {:ok, Map.get(widgets_by_category_id, category.id, [])}
+      end
+    )
+  end
 
-    {:ok, widgets}
+  @doc false
+  def batch_widgets_by_category({user, prefix}, category_ids) do
+    Tenants.list_widgets_by_categories(category_ids, user, prefix)
   end
 
   def all(_args, %{context: %{current_user: current_user}}) do

@@ -1,8 +1,8 @@
 import { cache } from 'react';
-import { getClient } from 'api/client';
-import { WidgetModel } from 'model';
+import { getClient } from '#/api/client';
+import { WidgetModel } from '#/model';
 
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import GetWidgetsQuery from '#/api/query/GetWidgetsQuery.graphql';
 
 export const loadWidgets = cache(async () => {
   const client = await getClient();

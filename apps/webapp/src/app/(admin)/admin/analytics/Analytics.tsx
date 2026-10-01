@@ -8,7 +8,6 @@ import { de } from 'date-fns/locale';
 import { AdminPageSection } from '../_component/AdminPageSection';
 import {
   MetricsOverview,
-  MetricsChart,
   PropertyBreakdown,
   CurrentOnlineUserCounter,
   MetricType,
@@ -16,6 +15,8 @@ import {
 import { formatDate } from './_util';
 
 import styles from './Analytics.module.scss';
+
+const MetricsChart = React.lazy(() => import('./_component/MetricsChart'));
 
 export type Period = ({ type: 'month'; date: Date } | { type: '30d' }) & {
   key: string;

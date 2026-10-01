@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
-import { WidgetModel, ID } from 'model';
+import { useMutation } from '@apollo/client/react';
+import { WidgetModel, ID } from '#/model';
 import {
   Button,
   LoadingButton,
@@ -10,14 +10,14 @@ import {
   ErrorMessage,
 } from '@lotta-schule/hubert';
 
-import DeleteWidgetMutation from 'api/mutation/DeleteWidgetMutation.graphql';
-import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
+import DeleteWidgetMutation from '#/api/mutation/DeleteWidgetMutation.graphql';
+import GetCategoriesQuery from '#/api/query/GetCategoriesQuery.graphql';
 
 export interface DeleteWidgetDialogProps {
   isOpen: boolean;
   widget: WidgetModel;
-  onRequestClose(): void;
-  onConfirm(): void;
+  onRequestClose: () => void;
+  onConfirm: () => void;
 }
 
 export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
@@ -60,7 +60,7 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
           </Button>
           <LoadingButton
             onAction={async () => {
-              await deleteWidget();
+              await deleteWidget({ variables: { id: widget.id } });
             }}
             onComplete={onConfirm}
           >

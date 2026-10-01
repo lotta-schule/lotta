@@ -1,4 +1,4 @@
-import { BrowserNode, BrowserPath } from 'browser';
+import { BrowserNode, BrowserPath } from '#/browser';
 
 export const browserNodes = [
   {

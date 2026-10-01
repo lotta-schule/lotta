@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
+import { ContentModuleModel } from '#/model';
 import { VideoVideo } from './VideoVideo';
 
 import styles from './Video.module.scss';

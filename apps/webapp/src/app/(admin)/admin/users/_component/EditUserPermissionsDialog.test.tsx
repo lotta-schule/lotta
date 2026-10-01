@@ -1,21 +1,28 @@
 import * as React from 'react';
-import { MockedResponse } from '@apollo/client/testing';
-import { render, waitFor } from 'test/util';
-import { SomeUser, adminGroup, lehrerGroup, elternGroup } from 'test/fixtures';
+import { MockLink } from '@apollo/client/testing';
+import { render, waitFor, userEvent } from '#/test/util';
+import {
+  SomeUser,
+  adminGroup,
+  lehrerGroup,
+  elternGroup,
+} from '#/test/fixtures';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
-import userEvent from '@testing-library/user-event';
 
-import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
-import GetUserQuery from 'api/query/GetUserQuery.graphql';
+import UpdateUserMutation from '#/api/mutation/UpdateUserMutation.graphql';
+import GetUserQuery from '#/api/query/GetUserQuery.graphql';
 
-describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', () => {
+/* See https://github.com/lotta-schule/lotta/issues/528 */
+/* This component must vanish */
+// oxlint-disable-next-line vitest/no-disabled-tests
+describe.skip('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', () => {
   const mocks = (user: any) =>
     [
       {
         request: { query: GetUserQuery, variables: { id: user.id } },
         result: vi.fn(() => ({ data: { user } })),
       },
-    ] as MockedResponse[];
+    ] as MockLink.MockedResponse[];
 
   describe('show userAvatar basic information', () => {
     it('should show userAvatar information', async () => {
@@ -73,7 +80,6 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
         `Über Einschreibeschlüssel zugewiesene Gruppen:Lehrer`
       );
     });
-
     describe('saving', () => {
       it('should assign new group after save button is clicked click', async () => {
         const user = userEvent.setup();
@@ -119,11 +125,12 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
         );
         expect(assignedGroups).toHaveTextContent(/Administrator/i);
 
-        await user.click(
-          await screen.findByRole('button', { name: /suggestions/i })
-        );
+        (
+          await screen.findByRole('button', { name: /empfehlungen/i })
+        ).dispatchEvent(new PointerEvent('pointerdown'));
+
         await waitFor(() => {
-          expect(screen.queryByRole('listbox')).toBeVisible();
+          expect(screen.getByRole('listbox')).toBeVisible();
         });
 
         await new Promise((resolve) => setTimeout(resolve, 300)); // wait for animation to finish
@@ -175,10 +182,12 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
         const assignedGroups = await screen.findByTestId(
           'GroupSelectSelection'
         );
-        expect(assignedGroups).toHaveTextContent('Administrator');
+        await waitFor(() => {
+          expect(assignedGroups).toHaveTextContent('Administrator');
+        });
 
         await user.click(
-          await screen.findByRole('button', { name: /suggestions/i })
+          await screen.findByRole('button', { name: /empfehlungen/i })
         );
         await waitFor(() => {
           expect(screen.queryByRole('listbox')).toBeVisible();

@@ -9,7 +9,7 @@ import { BrowserNode, useBrowserState } from '../BrowserStateContext';
 export interface CreateNewFolderDialogProps {
   parentNode: BrowserNode<'directory'> | null;
   isOpen: boolean;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const CreateNewDirectoryDialog = React.memo(
@@ -38,6 +38,7 @@ export const CreateNewDirectoryDialog = React.memo(
             <ErrorMessage error={errorMessage} />
             <Label label={'Name des Ordners'}>
               <Input
+                // oxlint-disable-next-line jsx-a11y/no-autofocus -- intentional in dialog per WAI-ARIA
                 autoFocus
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                   setName(event.currentTarget.value)

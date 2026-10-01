@@ -4,10 +4,9 @@ import {
   SomeUser,
   SomeUserin,
   Weihnachtsmarkt,
-} from 'test/fixtures';
-import { render } from 'test/util';
+} from '#/test/fixtures';
+import { render, userEvent } from '#/test/util';
 import { ArticleStateEditor } from './ArticleStateEditor';
-import userEvent from '@testing-library/user-event';
 
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 

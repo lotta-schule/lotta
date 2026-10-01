@@ -4,11 +4,11 @@ import {
   TestBrowserWrapperProps,
   fixtures,
   render,
+  userEvent,
   waitFor,
   within,
 } from '../../test-utils';
 import { DeleteDirectoryDialog } from './DeleteDirectoryDialog';
-import userEvent from '@testing-library/user-event';
 
 const WrappedDeleteDirectoryDialog = (props: TestBrowserWrapperProps) => (
   <TestBrowserWrapper {...props}>
@@ -21,7 +21,7 @@ const deepNonEmptyDirectoryPath = fixtures.getPathForNode('8');
 
 describe('Browser/DeleteDirectoryDialog', () => {
   it('should open the dialog on action and close it when aborted', async () => {
-    const onSetCurrentAction = vi.fn();
+    const onSetCurrentAction = vi.fn<() => void>();
     const user = userEvent.setup();
     const screen = render(<WrappedDeleteDirectoryDialog />);
 
@@ -59,8 +59,8 @@ describe('Browser/DeleteDirectoryDialog', () => {
   it('should delete an empty directory', async () => {
     const user = userEvent.setup();
 
-    const onDeleteNode = vi.fn().mockResolvedValue(null);
-    const onSetCurrentAction = vi.fn();
+    const onDeleteNode = vi.fn<() => Promise<any>>().mockResolvedValue(null);
+    const onSetCurrentAction = vi.fn<() => void>();
 
     const screen = render(
       <WrappedDeleteDirectoryDialog
@@ -102,8 +102,8 @@ describe('Browser/DeleteDirectoryDialog', () => {
   it('should delete a non-empty directory with all its files and directories', async () => {
     const user = userEvent.setup();
 
-    const onDeleteNode = vi.fn().mockResolvedValue(null);
-    const onSetCurrentAction = vi.fn();
+    const onDeleteNode = vi.fn<() => Promise<any>>().mockResolvedValue(null);
+    const onSetCurrentAction = vi.fn<() => void>();
 
     const screen = render(
       <WrappedDeleteDirectoryDialog

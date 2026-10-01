@@ -23,10 +23,13 @@ import { flushSync } from 'react-dom';
 
 export type SortableItem = {
   id: string;
-  title: string;
+  title: React.ReactNode;
+  /** Native tooltip text for the item's header; defaults to `title` when it's a string. */
+  tooltip?: string;
   description?: string;
   selected?: boolean;
   icon?: React.ReactNode;
+  iconTitle?: string;
   testId?: string;
   children?: React.ReactNode | React.ReactNode[];
   onClick?: () => void;
@@ -108,8 +111,10 @@ export const SortableDraggableList = ({
               {
                 id,
                 title,
+                tooltip,
                 selected,
                 icon,
+                iconTitle,
                 onClick,
                 onClickIcon,
                 testId,
@@ -121,7 +126,9 @@ export const SortableDraggableList = ({
                 key={i}
                 id={id}
                 icon={icon}
+                iconTitle={iconTitle}
                 title={title}
+                tooltip={tooltip}
                 isDraggable={!disabled}
                 selected={selected}
                 data-testid={testId}

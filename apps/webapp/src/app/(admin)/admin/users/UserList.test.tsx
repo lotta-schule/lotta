@@ -1,35 +1,21 @@
-import * as React from 'react';
-import { render, waitFor } from 'test/util';
-import {
-  SomeUser,
-  SomeUserin,
-  KeinErSieEsUser,
-  adminGroup,
-  tenant,
-} from 'test/fixtures';
+import { render, waitFor, userEvent } from '#/test/util';
+import { SomeUser, KeinErSieEsUser, adminGroup, tenant } from '#/test/fixtures';
 import { UserList } from './UserList';
-import userEvent from '@testing-library/user-event';
-
-import GetUserQuery from 'api/query/GetUserQuery.graphql';
-import SearchUsersQuery from 'api/query/SearchUsersAsAdminQuery.graphql';
+import { SEARCH_USERS } from './_graphql/SearchUsersAsAdmin';
 
 const adminUser = { ...SomeUser, groups: [adminGroup] };
 
 const additionalMocks = [
-  ...[KeinErSieEsUser, SomeUserin].map((user) => ({
-    request: { query: GetUserQuery, variables: { id: user.id } },
-    result: { data: { user } },
-  })),
   ...['Michel']
     .map((fullTerm) => {
-      return new Array(fullTerm.length)
+      return Array.from({ length: fullTerm.length })
         .fill(null)
         .map((_, i) => fullTerm.slice(0, i + 1));
     })
     .flat()
     .map((searchtext) => ({
       request: {
-        query: SearchUsersQuery,
+        query: SEARCH_USERS,
         variables: { searchtext, groups: null, lastSeen: null },
       },
       result: {
@@ -40,7 +26,7 @@ const additionalMocks = [
     })),
   {
     request: {
-      query: SearchUsersQuery,
+      query: SEARCH_USERS,
       variables: { searchtext: null, groups: [{ id: '1' }], lastSeen: null },
     },
     result: {
@@ -51,7 +37,7 @@ const additionalMocks = [
   },
   {
     request: {
-      query: SearchUsersQuery,
+      query: SEARCH_USERS,
       variables: { searchtext: null, groups: [{ id: '1' }], lastSeen: 30 },
     },
     result: {
@@ -75,7 +61,7 @@ describe('pages/admin/users/list', () => {
     ...additionalMocks,
     {
       request: {
-        query: SearchUsersQuery,
+        query: SEARCH_USERS,
         variables: { searchtext: 'Michel' },
       },
       result: () => {

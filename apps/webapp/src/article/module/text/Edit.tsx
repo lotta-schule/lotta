@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
+import { ContentModuleModel } from '#/model';
 import { Slate, withReact, Editable } from 'slate-react';
 import { Node } from './SlateCustomTypes';
 import { createEditor, Descendant } from 'slate';
@@ -15,7 +15,9 @@ import { EditToolbar } from './EditToolbar';
 
 interface EditProps {
   contentModule: ContentModuleModel<{ nodes: Node[] }>;
-  onUpdateModule(contentModule: ContentModuleModel<{ nodes: Node[] }>): void;
+  onUpdateModule: (
+    contentModule: ContentModuleModel<{ nodes: Node[] }>
+  ) => void;
 }
 
 export const Edit = React.memo<EditProps>(

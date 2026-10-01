@@ -58,7 +58,9 @@ export const DeleteFilesDialog = React.memo(() => {
             try {
               setErrors([]);
               const results = await Promise.allSettled(
-                filesToDelete.map((fileNode) => deleteNode?.(fileNode))
+                filesToDelete.map(
+                  (fileNode) => deleteNode?.(fileNode) ?? Promise.resolve()
+                )
               );
               setErrors(
                 results

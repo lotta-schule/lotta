@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { ContentModuleModel } from 'model';
+import { ContentModuleModel } from '#/model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { Button, SuccessMessage } from '@lotta-schule/hubert';
-import SendFormResponseMutation from 'api/mutation/SendFormResponseMutation.graphql';
+import SendFormResponseMutation from '#/api/mutation/SendFormResponseMutation.graphql';
 
 import styles from './Show.module.scss';
 
@@ -84,7 +84,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
       }
       transformedResponse[key] = value;
     }
-    sendFormResponse({
+    void sendFormResponse({
       variables: {
         id: contentModule.id,
         response: JSON.stringify(transformedResponse),

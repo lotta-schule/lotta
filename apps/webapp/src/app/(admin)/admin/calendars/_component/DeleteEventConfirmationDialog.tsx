@@ -6,19 +6,18 @@ import {
   DialogContent,
   ErrorMessage,
 } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { useTranslation } from 'react-i18next';
 import { differenceInCalendarDays, format } from 'date-fns';
-import { ResultOf } from 'api/graphql';
+import { ResultOf } from '#/api/graphql';
 import { type GET_CALENDAR_EVENTS, DELETE_CALENDAR_EVENT } from '../_graphql';
 
 import styles from './DeleteEventConfirmationDialog.module.scss';
 
 export type DeleteEventConfirmationDialogProps = {
   eventToDelete:
-    | ResultOf<typeof GET_CALENDAR_EVENTS>['calendarEvents'][number]
-    | null;
-  onClose(deleted: boolean): void;
+    ResultOf<typeof GET_CALENDAR_EVENTS>['calendarEvents'][number] | null;
+  onClose: (deleted: boolean) => void;
 };
 
 export const DeleteEventConfirmationDialog = React.memo(

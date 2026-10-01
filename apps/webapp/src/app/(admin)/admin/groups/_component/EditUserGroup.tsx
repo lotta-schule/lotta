@@ -1,7 +1,6 @@
 'use client';
-
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Button,
   Checkbox,
@@ -11,13 +10,13 @@ import {
   LoadingButton,
   Eduplaces as EduplacesIcon,
 } from '@lotta-schule/hubert';
-import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
+import { EnrollmentTokensEditor } from '#/profile/component/EnrollmentTokensEditor';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
-import { AdminPageSection } from 'app/(admin)/admin/_component/AdminPageSection';
-import { useRouter } from 'next/navigation';
+import { AdminPageSection } from '#/app/(admin)/admin/_component/AdminPageSection';
+import { useRouter } from 'next/navigation.js';
 import { UPDATE_USER_GROUP } from '../_graphql';
 import { ResultOf } from 'gql.tada';
-import { type GET_GROUP_QUERY } from 'loader';
+import { type GET_GROUP_QUERY } from '#/loader';
 
 import styles from './EditUserGroup.module.scss';
 

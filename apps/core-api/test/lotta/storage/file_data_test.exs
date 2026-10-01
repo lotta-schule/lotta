@@ -1,9 +1,7 @@
 defmodule Lotta.Storage.FileDataTest do
   @moduledoc false
 
-  use Lotta.DataCase
-
-  import Mock
+  use Lotta.DataCase, async: true
 
   alias Lotta.Storage
   alias Lotta.Storage.FileData
@@ -66,10 +64,10 @@ defmodule Lotta.Storage.FileDataTest do
       assert File.exists?(path)
       assert String.starts_with?(path, System.tmp_dir())
 
-      with_mock System, tmp_dir: fn -> nil end do
-        assert {:error, "Failed to get cache path"} =
-                 FileData.cache(file_data, for: file)
-      end
+      Application.put_env(:lotta, :tmp_dir_fn, fn -> nil end)
+      on_exit(fn -> Application.delete_env(:lotta, :tmp_dir_fn) end)
+      assert {:error, "Failed to get cache path"} = FileData.cache(file_data, for: file)
+      Application.delete_env(:lotta, :tmp_dir_fn)
 
       assert %FileData{_path: path, metadata: metadata} =
                FileData.get_cached(for: file)

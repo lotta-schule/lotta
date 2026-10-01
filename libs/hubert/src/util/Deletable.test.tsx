@@ -1,27 +1,49 @@
 import * as React from 'react';
-import { render } from '../test-utils';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Deletable } from './Deletable';
-import userEvent from '@testing-library/user-event';
 
-describe('shared/general/util/Deletable', () => {
-  it('should show a Delete button when onDelete is given', async () => {
-    const fireEvent = userEvent.setup();
-    const onDelete = vi.fn();
-    const screen = render(
-      <Deletable onDelete={onDelete}>
-        <img width={300} height={300} alt={''} />
-      </Deletable>
-    );
-    expect(screen.getByRole('button')).toBeVisible();
-    await fireEvent.click(screen.getByRole('button'));
-    expect(onDelete).toHaveBeenCalled();
-  });
-  it('should not show a Delete button when onDelete is not given', () => {
-    const screen = render(
+describe('Deletable', () => {
+  it('should render children', () => {
+    render(
       <Deletable>
-        <img width={300} height={300} alt={''} />
+        <span>Content</span>
       </Deletable>
     );
-    expect(screen.queryByRole('button')).toBeNull();
+
+    expect(screen.getByText('Content')).toBeInTheDocument();
+  });
+
+  it('should not render delete button when onDelete is not provided', () => {
+    render(
+      <Deletable>
+        <span>Content</span>
+      </Deletable>
+    );
+
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+  });
+
+  it('should render delete button when onDelete is provided', () => {
+    render(
+      <Deletable onDelete={vi.fn<() => void>()}>
+        <span>Content</span>
+      </Deletable>
+    );
+
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('should call onDelete when button is clicked', () => {
+    const onDelete = vi.fn<() => void>();
+
+    render(
+      <Deletable onDelete={onDelete}>
+        <span>Content</span>
+      </Deletable>
+    );
+
+    fireEvent.click(screen.getByRole('button'));
+
+    expect(onDelete).toHaveBeenCalled();
   });
 });

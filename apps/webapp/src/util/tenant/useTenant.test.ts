@@ -1,6 +1,6 @@
-import { renderHook } from 'test/util';
+import { renderHook } from '#/test/util';
 import { useTenant } from './useTenant';
-import { tenant } from 'test/fixtures';
+import { tenant } from '#/test/fixtures';
 
 describe('useTenant', () => {
   it('should return tenant with eduplacesId support', () => {

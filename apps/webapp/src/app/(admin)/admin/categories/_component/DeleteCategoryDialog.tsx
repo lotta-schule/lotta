@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useQuery, useMutation } from '@apollo/client';
-import { ArticleModel, CategoryModel, ID } from 'model';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { ArticleModel, CategoryModel, ID } from '#/model';
 import {
   Button,
   Dialog,
@@ -10,16 +10,16 @@ import {
   LinearProgress,
   LoadingButton,
 } from '@lotta-schule/hubert';
-import { useCategories } from 'util/categories/useCategories';
+import { useCategories } from '#/util/categories/useCategories';
 
-import DeleteCategoryMutation from 'api/mutation/DeleteCategoryMutation.graphql';
-import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
+import DeleteCategoryMutation from '#/api/mutation/DeleteCategoryMutation.graphql';
+import GetArticlesQuery from '#/api/query/GetArticlesQuery.graphql';
 
 export interface DeleteCategoryDialogProps {
   isOpen: boolean;
   categoryToDelete: CategoryModel;
-  onRequestClose(): void;
-  onConfirm(): void;
+  onRequestClose: () => void;
+  onConfirm: () => void;
 }
 
 export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(

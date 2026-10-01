@@ -8,17 +8,17 @@ import {
   Input,
   Label,
 } from '@lotta-schule/hubert';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { FeedbackModel } from 'model';
-import { Icon } from 'shared/Icon';
+import { FeedbackModel } from '#/model';
+import { Icon } from '#/shared/Icon';
 
-import SendFeedbackToLottaMutation from 'api/mutation/SendFeedbackToLottaMutation.graphql';
+import SendFeedbackToLottaMutation from '#/api/mutation/SendFeedbackToLottaMutation.graphql';
 
 export interface ForwardFeedbackDialogProps {
   isOpen: boolean;
   feedback: FeedbackModel;
-  onRequestClose(): void;
+  onRequestClose: () => void;
 }
 
 export const ForwardFeedbackDialog = React.memo(
@@ -37,7 +37,7 @@ export const ForwardFeedbackDialog = React.memo(
           onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
-            forwardFeedback({
+            void forwardFeedback({
               variables: {
                 id: feedback.id,
                 message: formData.get('message') || undefined,

@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { CalendarWidgetCalendarConfig, CalendarWidgetConfig } from 'model';
+import { CalendarWidgetCalendarConfig, CalendarWidgetConfig } from '#/model';
 import { Button, Divider, ErrorMessage } from '@lotta-schule/hubert';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import { useTranslation } from 'react-i18next';
 import { CalendarConfiguration } from './CalendarConfiguration';
-import { useQuery } from '@apollo/client';
-import { GET_CALENDARS } from 'app/(admin)/admin/calendars/_graphql';
+import { useQuery } from '@apollo/client/react';
+import { GET_CALENDARS } from '#/app/(admin)/admin/calendars/_graphql';
 
 export interface CalendarWidgetConfigurationProps {
   configuration: CalendarWidgetConfig;
-  setConfiguration(configuration: CalendarWidgetConfig): void;
+  setConfiguration: (configuration: CalendarWidgetConfig) => void;
 }
 
 export const CalendarWidgetConfiguration = React.memo(

@@ -5,7 +5,7 @@ import { Input, Label } from '@lotta-schule/hubert';
 export type BasicCalendarFormElementProps = {
   calendar: { name: string; color: string };
   disabled?: boolean;
-  onChange(calendar: { name: string; color: string }): void;
+  onChange: (calendar: { name: string; color: string }) => void;
 };
 export const BasicCalendarFormElement = React.memo(
   ({ calendar, disabled, onChange }: BasicCalendarFormElementProps) => {

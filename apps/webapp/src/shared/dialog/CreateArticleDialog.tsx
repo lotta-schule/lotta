@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Button,
   Dialog,
@@ -9,15 +9,18 @@ import {
   ErrorMessage,
   Label,
 } from '@lotta-schule/hubert';
-import { ArticleModel, ArticleModelInput } from 'model';
+import { ArticleModel, ArticleModelInput } from '#/model';
+import {
+  GET_OWN_ARTICLES_QUERY,
+  OWN_ARTICLES_INITIAL_FILTER,
+} from '#/profile/_graphql/GetOwnArticles';
 
-import CreateArticleMutation from 'api/mutation/CreateArticleMutation.graphql';
-import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
+import CreateArticleMutation from '#/api/mutation/CreateArticleMutation.graphql';
 
 export interface CreateArticleDialogProps {
   isOpen: boolean;
-  onConfirm(article: ArticleModel): void;
-  onAbort(): void;
+  onConfirm: (article: ArticleModel) => void;
+  onAbort: () => void;
 }
 
 export const CreateArticleDialog = React.memo(
@@ -34,7 +37,10 @@ export const CreateArticleDialog = React.memo(
           try {
             const readOwnArticlesResult = cache.readQuery<{
               articles: ArticleModel[];
-            }>({ query: GetOwnArticlesQuery });
+            }>({
+              query: GET_OWN_ARTICLES_QUERY,
+              variables: { filter: OWN_ARTICLES_INITIAL_FILTER },
+            });
             if (readOwnArticlesResult && readOwnArticlesResult.articles) {
               ownArticles = [...readOwnArticlesResult.articles];
             }
@@ -42,7 +48,8 @@ export const CreateArticleDialog = React.memo(
             console.debug(e);
           }
           cache.writeQuery<{ articles: ArticleModel[] }>({
-            query: GetOwnArticlesQuery,
+            query: GET_OWN_ARTICLES_QUERY,
+            variables: { filter: OWN_ARTICLES_INITIAL_FILTER },
             data: {
               articles: [...ownArticles, data.article],
             },
@@ -65,7 +72,7 @@ export const CreateArticleDialog = React.memo(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            createArticle();
+            void createArticle({ variables: { article: { title } } });
           }}
         >
           <DialogContent>

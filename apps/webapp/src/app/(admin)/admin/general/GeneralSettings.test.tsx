@@ -1,26 +1,26 @@
-import { render, waitFor } from 'test/util';
+import { render, waitFor, userEvent } from '#/test/util';
 import { GeneralSettings } from './GeneralSettings';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation.js';
 import { Mock, vi } from 'vitest';
-import { SelectFileOverlayProps } from 'shared/edit/SelectFileOverlay';
-import { imageFile, tenant } from 'test/fixtures';
-import { ResponsiveImageProps } from 'util/image/ResponsiveImage';
-import { MockedResponse } from '@apollo/client/testing';
+import { SelectFileOverlayProps } from '#/shared/edit/SelectFileOverlay';
+import { imageFile, tenant } from '#/test/fixtures';
+import { ResponsiveImageProps } from '#/util/image/ResponsiveImage';
+import { MockLink } from '@apollo/client/testing';
 
-import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
-import userEvent from '@testing-library/user-event';
+import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
 
-vi.mock('next/navigation', () => ({
+vi.mock('next/navigation.js', () => ({
   useRouter: vi.fn(),
 }));
 
-vi.mock('shared/edit/SelectFileOverlay', () => ({
+vi.mock('#/shared/edit/SelectFileOverlay', () => ({
   SelectFileOverlay: ({
     children,
     onSelectFile,
     label,
     allowDeletion: _allowDeletion,
   }: SelectFileOverlayProps) => (
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       data-testid="select-file-overlay"
       onClick={() => onSelectFile(imageFile)}
@@ -31,17 +31,20 @@ vi.mock('shared/edit/SelectFileOverlay', () => ({
   ),
 }));
 
-vi.mock('util/image/ResponsiveImage', () => ({
+vi.mock('#/util/image/ResponsiveImage.js', () => ({
   ResponsiveImage: ({ src, alt }: ResponsiveImageProps) => (
+    // oxlint-disable-next-line next/no-img-element
     <img src={src} alt={alt} data-testid="responsive-image" />
   ),
 }));
 
 describe('GeneralSettings', () => {
-  const additionalMocks: MockedResponse[] = [
+  const additionalMocks: MockLink.MockedResponse[] = [
     {
-      request: { query: UpdateTenantMutation },
-      variableMatcher: (_var) => true,
+      request: {
+        query: UpdateTenantMutation,
+        variables: (_var) => true,
+      },
       result: { data: { tenant: { ...tenant, title: 'A new Name' } } },
     },
   ];
@@ -88,8 +91,11 @@ describe('GeneralSettings', () => {
 
     vi.advanceTimersByTime(2000);
 
-    await waitFor(() => {
-      expect(mockRouter.refresh).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockRouter.refresh).toHaveBeenCalled();
+      },
+      { timeout: 4000 }
+    );
   });
 });

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, waitFor } from '../../test-utils';
+import { render, userEvent, waitFor } from '../../test-utils';
 import { ComboBox } from './ComboBox';
-import userEvent from '@testing-library/user-event';
 
 import styles from './ComboBox.module.scss';
 
@@ -43,7 +42,7 @@ describe('Combobox', () => {
         <ComboBox title={'Choose something'} items={defaultItems} />
       );
 
-      await user.type(screen.getByRole('combobox'), 'Do');
+      await user.fill(screen.getByRole('combobox'), 'Do');
       await waitFor(() => {
         expect(screen.getByRole('listbox')).toBeVisible();
       });
@@ -58,7 +57,9 @@ describe('Combobox', () => {
 
   describe('With fetched items', () => {
     it('should hide button when items is a function', () => {
-      const onItems = vi.fn(async () => [{ key: 'A', label: 'A' }]);
+      const onItems = vi.fn<() => Promise<any>>(async () => [
+        { key: 'A', label: 'A' },
+      ]);
 
       const screen = render(
         <ComboBox title={'Choose something'} items={onItems} />
@@ -68,7 +69,7 @@ describe('Combobox', () => {
     });
 
     it('should show all options when clicking on the button', async () => {
-      const onItems = vi.fn(async () => defaultItems);
+      const onItems = vi.fn<() => Promise<any>>(async () => defaultItems);
 
       const user = userEvent.setup();
 
@@ -76,7 +77,7 @@ describe('Combobox', () => {
         <ComboBox title={'Choose something'} items={onItems} />
       );
 
-      await user.type(screen.getByRole('combobox'), 'D');
+      await user.fill(screen.getByRole('combobox'), 'D');
       expect(screen.getByRole('combobox')).toBeVisible();
       await waitFor(() => {
         expect(onItems).toHaveBeenCalledWith('D');
@@ -112,7 +113,7 @@ describe('Combobox', () => {
   describe('onSelect', () => {
     it('should be possible to add a custom value', async () => {
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
 
       const screen = render(
         <ComboBox
@@ -122,12 +123,13 @@ describe('Combobox', () => {
         />
       );
 
-      await user.type(screen.getByRole('combobox'), 'Papaya{Enter}');
+      await user.fill(screen.getByRole('combobox'), 'Papaya');
+      await user.keyboard('{Enter}');
       expect(onSelect).toHaveBeenCalledWith('Papaya');
     });
     it('should call onSelect with item key when a proposed option is selected', async () => {
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
 
       const screen = render(
         <ComboBox
@@ -150,7 +152,7 @@ describe('Combobox', () => {
 
     it('should call onSelect with item key when the value of a proposed item is typed', async () => {
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
 
       const screen = render(
         <ComboBox
@@ -160,7 +162,8 @@ describe('Combobox', () => {
         />
       );
 
-      await user.type(screen.getByRole('combobox'), 'Apple{Enter}');
+      await user.fill(screen.getByRole('combobox'), 'Apple');
+      await user.keyboard('{Enter}');
       await waitFor(() => {
         expect(onSelect).toHaveBeenCalledWith('Apple');
       });
@@ -168,7 +171,7 @@ describe('Combobox', () => {
 
     it('should call onSelect when typing a key from the "additionalConfirmChars" array', async () => {
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
 
       const screen = render(
         <ComboBox
@@ -187,7 +190,7 @@ describe('Combobox', () => {
 
     it('should not call onSelect when the value of an unpropsed item is entered', async () => {
       const user = userEvent.setup();
-      const onSelect = vi.fn();
+      const onSelect = vi.fn<() => void>();
 
       const screen = render(
         <ComboBox
@@ -197,14 +200,15 @@ describe('Combobox', () => {
         />
       );
 
-      await user.type(screen.getByRole('combobox'), 'Dragonfruit{Enter}');
+      await user.fill(screen.getByRole('combobox'), 'Dragonfruit');
+      await user.keyboard('{Enter}');
       expect(onSelect).not.toHaveBeenCalled();
     });
 
     describe('custom properties', () => {
       it('should call onSelect when selecting an unpropsed item when allowsCustomValue is passed', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
 
         const screen = render(
           <ComboBox
@@ -215,7 +219,8 @@ describe('Combobox', () => {
           />
         );
 
-        await user.type(screen.getByRole('combobox'), 'Dragonfruit{Enter}');
+        await user.fill(screen.getByRole('combobox'), 'Dragonfruit');
+        await user.keyboard('{Enter}');
 
         await waitFor(() => {
           expect(onSelect).toHaveBeenCalledWith('Dragonfruit');
@@ -226,7 +231,7 @@ describe('Combobox', () => {
     describe('closing the listbox', () => {
       it('should close the listbox on select when predefined items are passed (as array)', async () => {
         const user = userEvent.setup();
-        const onSelect = vi.fn();
+        const onSelect = vi.fn<() => void>();
 
         const screen = render(
           <ComboBox

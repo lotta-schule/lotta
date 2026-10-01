@@ -1,36 +1,105 @@
 import { ApolloClient, ApolloLink } from '@apollo/client';
+import { LocalState } from '@apollo/client/local-state';
+import { Defer20220824Handler } from '@apollo/client/incremental';
+import { cookies, headers } from 'next/headers.js';
+import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers.js';
+import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies.js';
 import { createCache } from './cache';
 import { createErrorLink } from './links/errorLink';
 import { createAuthLink } from './links/authLink';
-import { createHttpLink } from './links/httpLink';
+import { createOtelLink } from './links/otelLink';
 import { createSentryTracingLink } from './links/sentryTracingLink';
-import { headers } from 'next/headers';
+import { createHttpLink } from './links/httpLink';
 import { createVariableInputMutationsLink } from './links/variableInputMutationsLink';
-import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
+import { CustomFetchAgents } from './customFetch';
+import { isBrowser } from '#/util/isBrowser';
 
-export const getAuthTokenFromHeader = (headerValues: ReadonlyHeaders) => {
+export const getAuthTokenFromHeader = (
+  headerValues: ReadonlyHeaders,
+  cookieValues: ReadonlyRequestCookies
+) => {
   const authHeader = headerValues.get('authorization');
   if (authHeader?.startsWith('Bearer ')) {
     return authHeader.slice(7);
   }
 
+  const authCookie = cookieValues.get('SignInAccessToken');
+  if (authCookie) {
+    return authCookie.value;
+  }
+
   return null;
 };
 
+/**
+ * Lazily-created keep-alive agents shared across every server-side request to
+ * the core API. Reusing one connection pool removes the ~200ms `tcp.connect`
+ * that the staging traces showed on every GraphQL POST.
+ *
+ * The `node:http`/`node:https` modules are imported dynamically and only when
+ * running server-side, so they never reach the browser bundle (this module is
+ * server-only in Next.js, but the test runner evaluates it in a browser
+ * environment, where the guard short-circuits before the import).
+ */
+const keepAliveAgentOptions = {
+  keepAlive: true,
+  keepAliveMsecs: 1000,
+  maxSockets: 64,
+  maxFreeSockets: 16,
+  timeout: 60_000,
+};
+
+let serverAgentsPromise: Promise<CustomFetchAgents> | undefined;
+
+const getServerAgents = async (): Promise<CustomFetchAgents | undefined> => {
+  if (isBrowser()) {
+    return undefined;
+  }
+  if (!serverAgentsPromise) {
+    serverAgentsPromise = Promise.all([
+      import('node:http'),
+      import('node:https'),
+    ]).then(([http, https]) => ({
+      httpAgent: new http.Agent(keepAliveAgentOptions),
+      httpsAgent: new https.Agent(keepAliveAgentOptions),
+    }));
+  }
+  return serverAgentsPromise;
+};
+
+const getForwardedHeaders = (headerValues: ReadonlyHeaders) => ({
+  'x-lotta-tenant': headerValues.get('x-lotta-tenant'),
+  'x-lotta-originary-host':
+    headerValues.get('x-lotta-originary-host') ||
+    headerValues.get('x-forwarded-host') ||
+    headerValues.get('host'),
+});
+
 export const createRSCClient = async () => {
   const headerValues = await headers();
+  const cookieValues = await cookies();
+  const agents = await getServerAgents();
   return new ApolloClient({
     cache: createCache(),
+
     link: ApolloLink.from([
+      createOtelLink({
+        headers: {
+          ...getForwardedHeaders(headerValues),
+          'user-agent': headerValues.get('user-agent'),
+        },
+      }),
       createErrorLink(),
       createAuthLink({
-        initialToken: getAuthTokenFromHeader(headerValues) ?? undefined,
+        initialToken:
+          getAuthTokenFromHeader(headerValues, cookieValues) ?? undefined,
       }),
       createSentryTracingLink(),
       createVariableInputMutationsLink(),
       createHttpLink({
+        agents,
         requestExtraHeaders: () => ({
-          'x-lotta-originary-host': headerValues.get('host'),
+          ...getForwardedHeaders(headerValues),
           'user-agent': [
             process.env.npm_package_name,
             process.env.npm_package_version,
@@ -38,5 +107,14 @@ export const createRSCClient = async () => {
         }),
       }),
     ]),
+
+    incrementalHandler: new Defer20220824Handler(),
+
+    /*
+    Inserted by Apollo Client 3->4 migration codemod.
+    If you are not using the `@client` directive in your application,
+    you can safely remove this option.
+    */
+    localState: new LocalState({}),
   });
 };

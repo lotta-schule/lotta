@@ -2,6 +2,7 @@ defmodule Lotta.Billings do
   @moduledoc """
   Context for managing billing-related operations, including additional items and invoices.
   """
+  @behaviour Lotta.BillingsWorkerBehaviour
 
   import Ecto.Query
 

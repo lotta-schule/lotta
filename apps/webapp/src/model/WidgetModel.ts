@@ -1,8 +1,8 @@
 import { ID } from './ID';
 import { FileModel } from './FileModel';
 import { UserGroupModel } from './UserGroupModel';
-import { GET_CALENDAR_EVENTS } from 'app/(admin)/admin/calendars/_graphql';
-import { ResultOf } from 'api/graphql';
+import { GET_CALENDAR_EVENTS } from '#/app/(admin)/admin/calendars/_graphql';
+import { ResultOf } from '#/api/graphql';
 
 export enum WidgetModelType {
   UserNavigationMobile = '{0}',
@@ -43,7 +43,6 @@ export type TypedWidgetConfiguration<
         configuration?: CalendarWidgetConfig;
       }
     | { type: WidgetModelType.UserNavigationMobile }
-    | never
   );
 
 export interface CalendarWidgetConfig {
@@ -51,8 +50,7 @@ export interface CalendarWidgetConfig {
 }
 
 export type CalendarWidgetCalendarConfig =
-  | CalendarWidgetInternalCalendarConfig
-  | CalendarWidgetExternalCalendarConfig;
+  CalendarWidgetInternalCalendarConfig | CalendarWidgetExternalCalendarConfig;
 
 export type CalendarWidgetExternalCalendarConfig = {
   type?: 'external';

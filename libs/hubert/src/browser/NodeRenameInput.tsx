@@ -65,6 +65,7 @@ export const NodeRenameInput = React.memo(
           }}
         >
           <Input
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- intentional for inline rename UX
             autoFocus
             title={`${node.name} umbenennen`}
             ref={setRenamingInput}
@@ -72,6 +73,15 @@ export const NodeRenameInput = React.memo(
             value={newNodeName}
             onBlur={onRequestClose}
             onChange={(e) => setNewNodeName(e.currentTarget.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                onRequestClose();
+              }
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                renamingInput?.form?.requestSubmit();
+              }
+            }}
           />
           <PopoverContent style={{ width: renamingInput?.clientWidth }}>
             <ErrorMessage error={errorMessage} />

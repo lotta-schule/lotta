@@ -1,17 +1,18 @@
+'use client';
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import {
   faCaretDown,
   faCalendar,
   faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { CategorySelect } from '../../shared/categorySelect/CategorySelect';
-import { ArticleModel, ID, UserGroupModel } from 'model';
-import { Category, User } from 'util/model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { ArticleStateEditor } from 'article/editor/ArticleStateEditor';
-import { GroupSelect } from 'shared/edit/GroupSelect';
+import { ArticleModel, ID, UserGroupModel } from '#/model';
+import { Category, User } from '#/util/model';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { ArticleStateEditor } from '#/article/editor/ArticleStateEditor';
+import { GroupSelect } from '#/shared/edit/GroupSelect';
 import {
   Button,
   ButtonGroup,
@@ -24,10 +25,10 @@ import {
   Checkbox,
 } from '@lotta-schule/hubert';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation.js';
 import clsx from 'clsx';
 
-import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
+import DeleteArticleMutation from '#/api/mutation/DeleteArticleMutation.graphql';
 
 import styles from './EditArticleFooter.module.scss';
 
@@ -35,8 +36,8 @@ interface EditArticleFooterProps {
   article: ArticleModel;
   isLoading?: boolean;
   style?: React.CSSProperties;
-  onUpdate(article: ArticleModel): void;
-  onSave(additionalProps?: Partial<ArticleModel>): void;
+  onUpdate: (article: ArticleModel) => void;
+  onSave: (additionalProps?: Partial<ArticleModel>) => void;
 }
 
 export const EditArticleFooter = React.memo<EditArticleFooterProps>(
@@ -81,8 +82,8 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                   label={undefined}
                   aria-label={'Gruppenauswahl'}
                   selectedGroups={article.groups}
-                  onSelectGroups={(groups: UserGroupModel[]) =>
-                    onUpdate({ ...article, groups })
+                  onSelectGroups={(groups) =>
+                    onUpdate({ ...article, groups: groups as UserGroupModel[] })
                   }
                 />
               </React.Suspense>
@@ -218,7 +219,10 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
             <Button onClick={() => setIsDeleteModalOpen(false)}>
               Beitrag behalten
             </Button>
-            <Button variant={'error'} onClick={() => deleteArticle()}>
+            <Button
+              variant={'error'}
+              onClick={() => deleteArticle({ variables: { id: article.id } })}
+            >
               Beitrag endgültig löschen
             </Button>
           </DialogActions>

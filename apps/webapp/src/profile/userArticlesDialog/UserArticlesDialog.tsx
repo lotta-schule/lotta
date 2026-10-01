@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import {
   Button,
@@ -7,18 +8,18 @@ import {
   Tab,
   Tabbar,
 } from '@lotta-schule/hubert';
-import { UserModel } from 'model';
-import { User } from 'util/model';
-import { ArticlesByUser } from 'article/relatedArticlesList';
-import { isBrowser } from 'util/isBrowser';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
+import { UserPreviewModel } from '#/model';
+import { User } from '#/util/model';
+import { ArticlesByUser } from '#/article/relatedArticlesList';
+import { isBrowser } from '#/util/isBrowser';
+import { UserAvatar } from '#/shared/userAvatar/UserAvatar';
 import { useTranslation } from 'react-i18next';
 
 import styles from './UserArticlesDialog.module.scss';
 
 export interface UserArticlesDialogProps {
-  users: UserModel[] | null;
-  onRequestClose(): void;
+  users: UserPreviewModel[] | null;
+  onRequestClose: () => void;
 }
 
 export const UserArticlesDialog = React.memo(

@@ -1,4 +1,4 @@
-import { render } from 'test-utils';
+import { render } from '#/test-utils';
 import { FileIcon } from './FileIcon';
 
 describe('browser/FileIcon', () => {

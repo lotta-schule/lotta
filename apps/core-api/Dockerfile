@@ -1,10 +1,16 @@
 # The version of Alpine to use for the final image
 ARG ALPINE_VERSION="3.22"
-ARG ELIXIR_VERSION="v1.18.4"
-ARG OTP_VERSION="28.0.2"
-ARG REBAR3_VERSION="3.25.0"
-ARG PDFIUM_VERSION="chromium%2F7047"
-ARG VIPS_VERSION="8.17.0"
+ARG ELIXIR_VERSION="v1.20.2"
+ARG OTP_VERSION="29.0.2"
+ARG REBAR3_VERSION="3.27.0"
+ARG PDFIUM_VERSION="chromium%2F7906"
+ARG VIPS_VERSION="8.18.3"
+# Keep in sync with the `:tailwind` version in config/config/tailwind.exs
+ARG TAILWIND_VERSION="4.1.10"
+
+ARG OTP_DOWNLOAD_SHA256="b9a7714fdd282c4a7113651b1e2728a58799e60ffe20e545f5cc94c621527b15"
+ARG REBAR3_DOWNLOAD_SHA256="985cae6e957334cfa549190b9f5efb9185c184a18fc181c87b8dde096ba79f38"
+ARG ELIXIR_DOWNLOAD_SHA256="1a25bbf9a9016651fc332eecc02bb9681d0b8e722c2e256e73ddb88fbce6e6b0"
 
 ARG SENTRY_DSN=""
 
@@ -114,11 +120,13 @@ RUN apk del .build-deps
 FROM base AS erlang
 
 ARG OTP_VERSION
+ARG OTP_DOWNLOAD_SHA256
 ARG REBAR3_VERSION
+ARG REBAR3_DOWNLOAD_SHA256
 
 RUN set -xe \
   && OTP_DOWNLOAD_URL="https://github.com/erlang/otp/releases/download/OTP-${OTP_VERSION}/otp_src_${OTP_VERSION}.tar.gz" \
-  && OTP_DOWNLOAD_SHA256="ce43dc8a29ad6bc1b6dbfc97f053d2e850b4a4c290eca065058d6b33ce476db5" \
+  && OTP_DOWNLOAD_SHA256="${OTP_DOWNLOAD_SHA256}" \
   && apk add --no-cache --virtual .fetch-deps \
   curl \
   ca-certificates \
@@ -161,7 +169,7 @@ RUN set -xe \
   | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
   )" \
   && REBAR3_DOWNLOAD_URL="https://github.com/erlang/rebar3/archive/${REBAR3_VERSION}.tar.gz" \
-  && REBAR3_DOWNLOAD_SHA256="7d3f42dc0e126e18fb73e4366129f11dd37bad14d404f461e0a3129ce8903440" \
+  && REBAR3_DOWNLOAD_SHA256="${REBAR3_DOWNLOAD_SHA256}" \
   && curl -fSL -o rebar3-src.tar.gz "$REBAR3_DOWNLOAD_URL" \
   && echo "${REBAR3_DOWNLOAD_SHA256}  rebar3-src.tar.gz" | sha256sum -c - \
   && mkdir -p /usr/src/rebar3-src \
@@ -181,12 +189,13 @@ RUN set -xe \
 FROM erlang AS elixir
 
 ARG ELIXIR_VERSION
+ARG ELIXIR_DOWNLOAD_SHA256
 ENV MIX_ENV=prod
 
 # Install elixir
 RUN set -xe \
   && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/${ELIXIR_VERSION}.tar.gz" \
-  && ELIXIR_DOWNLOAD_SHA256="8e136c0a92160cdad8daa74560e0e9c6810486bd232fbce1709d40fcc426b5e0" \
+  && ELIXIR_DOWNLOAD_SHA256="${ELIXIR_DOWNLOAD_SHA256}" \
   && buildDeps=' \
   ca-certificates \
   curl \
@@ -210,6 +219,8 @@ RUN set -xe \
 FROM elixir AS builder
 
 ARG SENTRY_DSN
+ARG TAILWIND_VERSION
+ARG TARGETARCH
 
 # set build ENV
 ENV MIX_ENV=prod
@@ -224,6 +235,7 @@ RUN set -xe && \
   apk update && \
   apk upgrade --no-cache && \
   apk add --no-cache --virtual .build-deps \
+  curl \
   git \
   nodejs npm \
   rust cargo \
@@ -232,6 +244,24 @@ RUN set -xe && \
 # install hex + rebar
 RUN mix local.hex --force && \
   mix local.rebar --force
+
+# Vendor the tailwind CLI binary ourselves instead of letting `mix
+# assets.deploy` download it from GitHub releases at build time: that
+# download has no retry logic and is a single point of flakiness for the
+# whole image build (see socket_closed_remotely failures in CI). Placing
+# the binary at the exact path the `tailwind` mix task expects makes it
+# skip its own download.
+RUN set -xe && \
+  case "${TARGETARCH}" in \
+  amd64) tailwind_target="linux-x64-musl" ;; \
+  arm64) tailwind_target="linux-arm64-musl" ;; \
+  *) echo "Unsupported architecture for tailwind: ${TARGETARCH}" >&2 && exit 1 ;; \
+  esac && \
+  mkdir -p /app/_build && \
+  curl -fSL --retry 5 --retry-all-errors --retry-delay 3 \
+  -o "/app/_build/tailwind-${tailwind_target}-${TAILWIND_VERSION}" \
+  "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-${tailwind_target}" && \
+  chmod +x "/app/_build/tailwind-${tailwind_target}-${TAILWIND_VERSION}"
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
@@ -251,7 +281,13 @@ COPY rel rel
 
 # Compress source code for sentry
 RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
-  mix sentry.package_source_code || false
+  /bin/sh -c '\
+  if [ -n "$SENTRY_AUTH_TOKEN" ]; then \
+  echo "Sentry auth token found, uploading source code..."; \
+  mix sentry.package_source_code \
+  else \
+  echo "No Sentry auth token found, skipping source code upload."; \
+  fi'
 
 # build release
 RUN mix release

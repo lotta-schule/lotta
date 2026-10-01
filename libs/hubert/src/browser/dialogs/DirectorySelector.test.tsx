@@ -1,16 +1,13 @@
 import { render, waitFor } from '@testing-library/react';
 import { DirectorySelector } from './DirectorySelector'; // Adjust the import path as necessary
-import { BrowserNode, BrowserPath } from 'browser/BrowserStateContext';
-import { fixtures } from 'test-utils';
-import userEvent from '@testing-library/user-event';
+import { BrowserNode, BrowserPath } from '#/browser/BrowserStateContext';
+import { fixtures, userEvent } from '#/test-utils';
 
-const getNodesForParent = vi.fn(
-  async (parent: BrowserNode<'directory'> | null) => {
-    return fixtures.browserNodes.filter(
-      (n) => n.parent === (parent?.id ?? null)
-    );
-  }
-);
+const getNodesForParent = vi.fn<
+  (parent: BrowserNode<'directory'> | null) => Promise<BrowserNode[]>
+>(async (parent) => {
+  return fixtures.browserNodes.filter((n) => n.parent === (parent?.id ?? null));
+});
 
 const parentNode = fixtures.getNode('8');
 const parentNodePath = fixtures.getPathForNode(parentNode);
@@ -21,7 +18,7 @@ describe('DirectorySelector Component', () => {
       <DirectorySelector
         getNodesForParent={getNodesForParent}
         value={parentNodePath}
-        onChange={vi.fn()}
+        onChange={vi.fn<() => void>()}
       />
     );
     expect(screen.container).toBeInTheDocument();
@@ -32,7 +29,7 @@ describe('DirectorySelector Component', () => {
       <DirectorySelector
         getNodesForParent={getNodesForParent}
         value={parentNodePath}
-        onChange={vi.fn()}
+        onChange={vi.fn<() => void>()}
       />
     );
     expect(screen.getByText('/folder 1/folder 8')).toBeInTheDocument();
@@ -43,7 +40,7 @@ describe('DirectorySelector Component', () => {
       <DirectorySelector
         getNodesForParent={getNodesForParent}
         value={parentNodePath}
-        onChange={vi.fn()}
+        onChange={vi.fn<() => void>()}
       />
     );
     await waitFor(() =>
@@ -56,7 +53,7 @@ describe('DirectorySelector Component', () => {
       <DirectorySelector
         getNodesForParent={getNodesForParent}
         value={parentNodePath}
-        onChange={vi.fn()}
+        onChange={vi.fn<() => void>()}
       />
     );
     expect(
@@ -72,14 +69,14 @@ describe('DirectorySelector Component', () => {
   });
 
   it('filters out result returning true from the filter fn', async () => {
-    const filter = vi.fn(
-      (nodePath: BrowserPath) => nodePath.at(-1)!.name !== 'math'
+    const filter = vi.fn<(nodePath: BrowserPath) => boolean>(
+      (nodePath) => nodePath.at(-1)!.name !== 'math'
     );
     const screen = render(
       <DirectorySelector
         getNodesForParent={getNodesForParent}
         value={parentNodePath}
-        onChange={vi.fn()}
+        onChange={vi.fn<() => void>()}
         filter={filter}
       />
     );
@@ -97,7 +94,7 @@ describe('DirectorySelector Component', () => {
 
   it('calls onChange with the new path when a child node is clicked', async () => {
     const user = userEvent.setup();
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     const screen = render(
       <DirectorySelector
         getNodesForParent={getNodesForParent}
@@ -112,10 +109,9 @@ describe('DirectorySelector Component', () => {
   });
 
   it('calls onChange with the parent path when the back item is clicked', async () => {
-    const user = userEvent.setup();
     const childNode = fixtures.getNode('13');
     const childNodePath = fixtures.getPathForNode(childNode);
-    const onChange = vi.fn();
+    const onChange = vi.fn<() => void>();
     const screen = render(
       <DirectorySelector
         getNodesForParent={getNodesForParent}
@@ -124,7 +120,7 @@ describe('DirectorySelector Component', () => {
       />
     );
 
-    await user.click(await screen.findByText('../folder 8'));
+    (await screen.findByText('../folder 8')).click();
     await waitFor(() => expect(onChange).toHaveBeenCalledWith(parentNodePath));
   });
 });

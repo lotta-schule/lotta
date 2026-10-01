@@ -1,6 +1,79 @@
 defmodule LottaWeb.SitemapTest do
   @moduledoc false
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: false
+
+  import Lotta.Factory
+
+  alias Lotta.Repo
+
+  @prefix "tenant_test"
+
+  setup do
+    Repo.put_prefix(@prefix)
+
+    insert(:category, title: "Start")
+    insert(:category, title: "Podcast")
+    insert(:category, title: "Sport")
+    insert(:category, title: "Offene Kunst AG")
+    insert(:category, title: "Kunst")
+    insert(:category, title: "Schülerzeitung")
+    insert(:category, title: "Projekt")
+    insert(:category, title: "Oskar Reime Chor")
+    insert(:category, title: "Schüler-Radio")
+    insert(:category, title: "Galerien")
+    insert(:category, title: "Impressum")
+    article_category = insert(:category, title: "Oskar")
+
+    insert(:article,
+      title: "And the oskar goes to ...",
+      published: true,
+      category_id: article_category.id,
+      inserted_at: ~U[2019-09-01 10:00:00Z],
+      updated_at: ~U[2019-09-01 10:00:00Z]
+    )
+
+    insert(:article,
+      title: "Landesfinale Volleyball WK IV",
+      published: true,
+      category_id: article_category.id,
+      inserted_at: ~U[2019-09-01 11:00:00Z],
+      updated_at: ~U[2019-09-01 11:00:00Z]
+    )
+
+    insert(:article,
+      title: "\u{201E}Nipple Jesus\u{201D}- eine extreme Erfahrung",
+      published: true,
+      category_id: article_category.id,
+      inserted_at: ~U[2019-09-01 12:00:00Z],
+      updated_at: ~U[2019-09-01 12:00:00Z]
+    )
+
+    insert(:article,
+      title: "Beitrag Projekt 1",
+      published: true,
+      category_id: article_category.id,
+      inserted_at: ~U[2019-09-01 13:00:00Z],
+      updated_at: ~U[2019-09-01 13:00:00Z]
+    )
+
+    insert(:article,
+      title: "Beitrag Projekt 2",
+      published: true,
+      category_id: article_category.id,
+      inserted_at: ~U[2019-09-01 14:00:00Z],
+      updated_at: ~U[2019-09-01 14:00:00Z]
+    )
+
+    insert(:article,
+      title: "Beitrag Projekt 3",
+      published: true,
+      category_id: article_category.id,
+      inserted_at: ~U[2019-09-01 15:00:00Z],
+      updated_at: ~U[2019-09-01 15:00:00Z]
+    )
+
+    :ok
+  end
 
   describe "sitemaps" do
     test "returns an index sitemap" do
@@ -53,7 +126,7 @@ defmodule LottaWeb.SitemapTest do
                ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Landesfinale-Volleyball-WK-IV<\/loc>/
 
       assert res =~
-               ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Nipple-Jesus\"-eine-extreme-Erfahrung<\/loc>/
+               ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Nipple-Jesus"-eine-extreme-Erfahrung<\/loc>/
 
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Beitrag-Projekt-1<\/loc>/
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Beitrag-Projekt-2<\/loc>/

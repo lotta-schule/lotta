@@ -9,7 +9,8 @@ defmodule Lotta.Content do
   alias Lotta.Repo
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.File
-  alias Lotta.Content.{Article, ArticleReaction, Category, ContentModule, ContentModuleResult}
+  alias Lotta.Content.{Article, ArticleReaction, ContentModule, ContentModuleResult}
+  alias Lotta.Tenants.Category
 
   @type filter() :: %{
           optional(:first) => pos_integer(),
@@ -30,23 +31,25 @@ defmodule Lotta.Content do
 
   ## Examples
 
-      iex> list_articles(nil, %User{id: 1}, [], false)
+      iex> list_articles(%Category{id: 1}, %User{id: 1}, [])
       [%Article{}, ...]
 
   """
   @doc since: "1.0.0"
-  @spec list_articles(Category.id(), User.t(), filter()) :: [
+  @spec list_articles(Category.t(), User.t(), filter()) :: [
           Article.t()
         ]
-  def list_articles(category_id, user, filter) do
+  def list_articles(category, user, filter) do
     query =
       user
       |> Article.get_published_articles_query()
 
-    if is_nil(category_id) do
-      from([..., c] in query, where: c.hide_articles_from_homepage != true)
-    else
-      from(a in query, where: a.category_id == ^category_id)
+    case category do
+      %Category{is_homepage: true} ->
+        from([..., c] in query, where: c.hide_articles_from_homepage != true)
+
+      %Category{id: category_id} ->
+        from(a in query, where: a.category_id == ^category_id)
     end
     |> filter_query(filter)
     |> Repo.all()
@@ -144,17 +147,23 @@ defmodule Lotta.Content do
   """
   @doc since: "1.0.0"
   @spec list_user_articles(User.t()) :: list(Article.t())
-  @spec list_user_articles(User.t(), [{:base_query, Ecto.Query.t()}]) :: list(Article.t())
+  @spec list_user_articles(User.t(), [{:base_query, Ecto.Query.t()} | {:filter, filter()}]) ::
+          list(Article.t())
   def list_user_articles(user, opts \\ []) do
     base_query = Keyword.get(opts, :base_query, Article)
+    filter = Keyword.get(opts, :filter)
 
-    from(a in base_query,
-      join: au in "article_users",
-      on: au.article_id == a.id,
-      where: au.user_id == ^user.id,
-      order_by: [desc: :updated_at, desc: :id],
-      limit: 75
-    )
+    query =
+      from(a in base_query,
+        join: au in "article_users",
+        on: au.article_id == a.id,
+        where: au.user_id == ^user.id
+      )
+
+    case filter do
+      nil -> from(q in query, order_by: [desc: :updated_at, desc: :id], limit: 75)
+      filter -> filter_query(query, filter)
+    end
     |> Repo.all()
   end
 

@@ -1,0 +1,10 @@
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--lotta-spacing) / 2);
+  margin-top: calc(var(--lotta-spacing) / 2);
+}
+
+.addOptionButton {
+  align-self: flex-start;
+}

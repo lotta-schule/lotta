@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react-vite';
 import { Avatar, BaseButton } from '@lotta-schule/hubert';
 
 export default {
   title: 'Buttons/BaseButton',
   component: BaseButton,
   argTypes: {},
-  parameters: {},
 };
 
 export const General: StoryObj<typeof BaseButton> = {
@@ -63,7 +62,7 @@ export const Complex: StoryObj<typeof BaseButton> = {
     children: (
       <div style={{ display: 'flex' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label>Der Vorteil am BaseButton</label>
+          <span>Der Vorteil am BaseButton</span>
           <strong>Er ist sehr flexibel</strong>
         </div>
         <div

@@ -1,4 +1,3 @@
-/* eslint-disable react-compiler/react-compiler */
 'use client';
 
 import * as React from 'react';
@@ -98,9 +97,11 @@ export const ComboBox = React.memo(
       ) => {
         const rightValue = searchText.toLocaleLowerCase();
         const results = allItems.filter((item) => {
-          const leftValue = (item.textValue ?? item.label)
-            ?.toString()
-            .toLocaleLowerCase();
+          const rawValue = item.textValue ?? item.label;
+          const leftValue =
+            typeof rawValue === 'string' || typeof rawValue === 'number'
+              ? String(rawValue).toLocaleLowerCase()
+              : undefined;
 
           if (!leftValue) {
             return false;
@@ -128,9 +129,13 @@ export const ComboBox = React.memo(
       isDisabled: disabled,
       autoFocus,
       label: title,
+      allowsEmptyCollection: true,
+      shouldCloseOnBlur: false,
       onOpenChange: (isOpen) => {
         if (!isOpen && !state.isFocused) {
-          state.setInputValue('');
+          if (state.inputValue.length) {
+            state.setInputValue('');
+          }
           cancelDebounce();
         }
       },
@@ -155,7 +160,7 @@ export const ComboBox = React.memo(
         }
 
         setIsLoading(true);
-        items(state.inputValue)
+        void items(state.inputValue)
           .then((newItems) => {
             setCalculatedItems(newItems);
             if (newItems.length) {
@@ -171,12 +176,13 @@ export const ComboBox = React.memo(
     );
 
     React.useEffect(() => {
-      const item = findItem(state.inputValue);
-      if (item) {
-        state.selectionManager.setFocusedKey(item.key as string | number);
+      if (state.inputValue.length) {
+        const item = findItem(state.inputValue);
+        if (item) {
+          state.selectionManager.setFocusedKey(item.key as string | number);
+        }
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state.inputValue]);
+    }, [state.inputValue, findItem, state.selectionManager]);
 
     const inputRef = React.useRef<HTMLInputElement>(null);
     const buttonRef = React.useRef<HTMLButtonElement>(null);
@@ -227,12 +233,12 @@ export const ComboBox = React.memo(
           event.continuePropagation();
         },
         onOpenChange: (isOpen) => {
-          if (!isOpen) {
+          if (!isOpen && state.setInputValue.length) {
             state.setInputValue('');
           }
         },
         onFocusChange: (isFocused) => {
-          if (!isFocused) {
+          if (!isFocused && state.inputValue.length) {
             state.setInputValue('');
           }
         },
@@ -252,7 +258,7 @@ export const ComboBox = React.memo(
     return (
       <Popover
         open={state.isOpen}
-        onOpenChange={state.setOpen}
+        onOpenChange={(open) => state.setOpen(open)}
         placement={'bottom-end'}
       >
         <Label
@@ -299,6 +305,7 @@ export const ComboBox = React.memo(
             className={styles.listbox}
             aria-label={title}
             {...listBoxProps}
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- intentional in combobox listbox per WAI-ARIA
             autoFocus={!!listBoxProps.autoFocus}
             ref={listBoxRef}
             label={title}

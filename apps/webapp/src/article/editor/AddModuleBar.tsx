@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import {
   faMusic,
   faImages,
@@ -12,14 +12,14 @@ import {
   faTable,
   faFont,
 } from '@fortawesome/free-solid-svg-icons';
-import { ContentModuleModel, ContentModuleType, ID } from 'model';
+import { ContentModuleModel, ContentModuleType, ID } from '#/model';
 import { AddModuleButton } from './AddModuleButton';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { useCurrentUser } from '#/util/user/useCurrentUser';
 
 import styles from './AddModuleBar.module.scss';
 
 export interface AddModuleBarProps {
-  onAddModule(module: ContentModuleModel): void;
+  onAddModule: (module: ContentModuleModel) => void;
 }
 
 export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {

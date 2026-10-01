@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { IFrameWidgetConfig } from 'model';
+import { IFrameWidgetConfig } from '#/model';
 import { Input, Label } from '@lotta-schule/hubert';
 
 import styles from './WidgetConfiguration.module.scss';
 
 export interface IFrameWidgetConfigurationProps {
   configuration: IFrameWidgetConfig;
-  setConfiguration(configuration: IFrameWidgetConfig): void;
+  setConfiguration: (configuration: IFrameWidgetConfig) => void;
 }
 
 export const IFrameWidgetConfiguration =

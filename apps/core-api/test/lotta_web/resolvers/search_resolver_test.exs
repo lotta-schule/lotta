@@ -1,15 +1,15 @@
 defmodule LottaWeb.SearchResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: false
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
-  alias Lotta.Accounts.User
+  alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Content.Article
-  alias Lotta.Tenants.Category
 
   @prefix "tenant_test"
 
@@ -24,30 +24,48 @@ defmodule LottaWeb.SearchResolverTest do
         prefix: @prefix
       )
 
+    lehrer_group =
+      Repo.one!(from(ug in UserGroup, where: ug.name == ^"Lehrer"), prefix: @prefix)
+
     lehrer =
-      Repo.one!(
-        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: @prefix
+      insert(:user,
+        email: "eike.wiewiorra@lotta.schule",
+        name: "Eike Wiewiorra",
+        nickname: "Chef"
       )
+
+    {:ok, lehrer} = Lotta.Accounts.update_user(lehrer, %{groups: [lehrer_group]})
 
     user =
-      Repo.one!(
-        from(u in User, where: u.email == ^"doro@lotta.schule"),
-        prefix: @prefix
+      insert(:user, email: "doro@lotta.schule", name: "Dorothea Musterfrau", nickname: "Doro")
+
+    search_category = insert(:category, title: "Suche")
+
+    nipple =
+      insert(:article,
+        title: "\u{201E}Nipple Jesus\u{201D}- eine extreme Erfahrung",
+        published: true,
+        category_id: search_category.id
       )
 
-    article =
-      Repo.one!(
-        from(a in Article,
-          where: a.title == ^"Beitrag Projekt 1"
-        ),
-        prefix: @prefix
+    insert(:content_module, article_id: nipple.id)
+
+    podcast_preview =
+      "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert."
+
+    podcast =
+      insert(:article,
+        title: "Der Podcast zum WB 2",
+        preview: podcast_preview,
+        published: true,
+        category_id: search_category.id
       )
+      |> with_groups([lehrer_group])
+
+    insert(:content_module, article_id: podcast.id)
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
-
     {:ok, lehrer_jwt, _} = AccessToken.encode_and_sign(lehrer)
-
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
     {:ok,
@@ -58,7 +76,6 @@ defmodule LottaWeb.SearchResolverTest do
        lehrer_jwt: lehrer_jwt,
        user_account: user,
        user_jwt: user_jwt,
-       article: article,
        tenant: tenant
      }}
   end
@@ -88,7 +105,7 @@ defmodule LottaWeb.SearchResolverTest do
 
       assert Enum.any?(
                results,
-               &(Map.get(&1, "title") == "„Nipple Jesus“- eine extreme Erfahrung")
+               &(Map.get(&1, "title") == "„Nipple Jesus”- eine extreme Erfahrung")
              )
     end
 
@@ -180,13 +197,28 @@ defmodule LottaWeb.SearchResolverTest do
       admin_jwt: jwt,
       tenant: t
     } do
-      category =
-        Repo.one!(
-          from(c in Category,
-            where: c.title == ^"Projekt"
-          ),
-          prefix: t.prefix
+      projekt_category = insert(:category, title: "Projekt")
+      other_category = insert(:category, title: "Other")
+
+      a1 =
+        insert(:article,
+          title: "Der Vorausscheid",
+          preview: "Kunst Projekt",
+          category_id: projekt_category.id,
+          published: true
         )
+
+      insert(:content_module, article_id: a1.id)
+
+      a2 =
+        insert(:article,
+          title: "Vorausscheid Kunst",
+          preview: "in a different category",
+          category_id: other_category.id,
+          published: true
+        )
+
+      insert(:content_module, article_id: a2.id)
 
       res =
         build_conn()
@@ -196,7 +228,7 @@ defmodule LottaWeb.SearchResolverTest do
           query: @query,
           variables: %{
             searchText: "Vorausscheid Kunst",
-            options: %{category_id: category.id}
+            options: %{category_id: projekt_category.id}
           }
         )
         |> json_response(200)
@@ -214,7 +246,7 @@ defmodule LottaWeb.SearchResolverTest do
                    prefix: t.prefix
                  )
 
-               article.category_id == category.id
+               article.category_id == projekt_category.id
              end)
     end
 
@@ -238,7 +270,7 @@ defmodule LottaWeb.SearchResolverTest do
 
       assert Enum.any?(
                results,
-               &(Map.get(&1, "title") == "„Nipple Jesus“- eine extreme Erfahrung")
+               &(Map.get(&1, "title") == "„Nipple Jesus”- eine extreme Erfahrung")
              )
     end
   end

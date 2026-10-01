@@ -139,7 +139,7 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
                     />
                   ) : undefined
                 }
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
                   setIsActiveUploadsDialogOpen(true);
                 }}
@@ -178,7 +178,7 @@ export const Toolbar = React.memo(({ className }: ToolbarProps) => {
                     }
 
                     for (const file of event.target.files) {
-                      uploadClient.addFile(file, parentNode);
+                      void uploadClient.addFile(file, parentNode);
                     }
                   }}
                 />

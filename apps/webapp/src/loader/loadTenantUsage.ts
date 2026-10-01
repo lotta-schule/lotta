@@ -1,6 +1,6 @@
 import { cache } from 'react';
-import { getClient } from 'api/client';
-import { graphql, ResultOf } from 'api/graphql';
+import { getClient } from '#/api/client';
+import { graphql, ResultOf } from '#/api/graphql';
 
 export const GET_USAGE = graphql(`
   query GetUsage {

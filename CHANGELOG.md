@@ -1,3 +1,49 @@
+## 6.1.21 (2026-05-02)
+
+### 🚀 Features
+
+- **core:** cockpit - sort invoices by created_at instead of issued_at ([e4a65cb8](https://github.com/lotta-schule/lotta/commit/e4a65cb8))
+- **core:** cockpit - allow banking data ingestion ([#537](https://github.com/lotta-schule/lotta/pull/537))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.1.20 (2026-05-01)
+
+### 🚀 Features
+
+- **core:** cockpit: sort invoices by issuance by default ([61c3ee66](https://github.com/lotta-schule/lotta/commit/61c3ee66))
+- **core:** oauth callback: allow redirecting to lotta:// scheme if x-lotta-app-version header is set ([#536](https://github.com/lotta-schule/lotta/pull/536))
+
+### 🩹 Fixes
+
+- **cockpit:** show pdf invoices in correct size ([c24c92b8](https://github.com/lotta-schule/lotta/commit/c24c92b8))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
+## 6.1.19 (2026-04-02)
+
+### 🩹 Fixes
+
+- **core:** strip null bytes from metadata ([009766f6](https://github.com/lotta-schule/lotta/commit/009766f6))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni
+
+## 6.1.18 (2026-01-26)
+
+### 🩹 Fixes
+
+- **core:** Allow eduplaces students to login when the tenant exists ([#530](https://github.com/lotta-schule/lotta/pull/530))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 ## 6.1.17 (2026-01-10)
 
 This was a version bump only, there were no code changes.

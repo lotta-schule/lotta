@@ -1,10 +1,11 @@
 defmodule LottaWeb.FeedbackResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
   use Bamboo.Test
 
   import Ecto.Query
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Email, Repo, Tenants}
@@ -24,13 +25,30 @@ defmodule LottaWeb.FeedbackResolverTest do
         prefix: tenant.prefix
       )
 
-    user =
-      Repo.one!(
-        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: tenant.prefix
-      )
+    user = insert(:user, email: "fb-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
 
-    feedbacks = Repo.all(from(f in Feedback, prefix: ^tenant.prefix))
+    dr_evil = insert(:user, email: "fb-drevil@lotta.schule", name: "Dr Evil", nickname: "drEvil")
+
+    {:ok, feedback1} =
+      Tenants.create_feedback(user, %{
+        topic: "Test",
+        content: "Hallo, ich bin ein Test",
+        metadata: "Test"
+      })
+
+    {:ok, feedback2} =
+      Tenants.create_feedback(user, %{
+        topic: "Test",
+        content: "Hallo, ich bin ein zweiter Test",
+        metadata: "Test"
+      })
+
+    {:ok, feedback3} =
+      Tenants.create_feedback(dr_evil, %{
+        topic: "Anfrage",
+        content: "Weil ich böse bin, will ich auch einen Account mit Admin-Rechten",
+        metadata: "Test"
+      })
 
     {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
@@ -42,7 +60,7 @@ defmodule LottaWeb.FeedbackResolverTest do
        admin_jwt: admin_jwt,
        user: user,
        user_jwt: user_jwt,
-       feedbacks: feedbacks,
+       feedbacks: [feedback1, feedback2, feedback3],
        tenant: tenant
      }}
   end

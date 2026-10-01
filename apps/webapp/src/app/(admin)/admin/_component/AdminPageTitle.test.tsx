@@ -1,8 +1,8 @@
-import { render } from 'test/util';
+import { render } from '#/test/util';
 import { AdminPageTitle } from './AdminPageTitle';
 
 vi.mock('@fortawesome/react-fontawesome', async () => ({
-  ...vi.importActual('@fortawesome/react-fontawesome'),
+  ...(await vi.importActual('@fortawesome/react-fontawesome')),
   FontAwesomeIcon: vi.fn(() => null),
 }));
 

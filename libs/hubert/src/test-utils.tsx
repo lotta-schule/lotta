@@ -4,9 +4,9 @@ import { render, type RenderOptions } from '@testing-library/react';
 import { MotionConfig } from 'framer-motion';
 import { HubertProvider } from './HubertProvider';
 import { GlobalStyles } from './theme';
-import { BrowserNode, BrowserState, NodeList } from 'browser';
-import { BrowserStateContext } from 'browser/BrowserStateContext';
-import * as fixtures from 'test-fixtures';
+import { BrowserNode, BrowserState, NodeList } from '#/browser';
+import { BrowserStateContext } from '#/browser/BrowserStateContext';
+import * as fixtures from '#/test-fixtures';
 
 const theme = DefaultThemes.standard;
 
@@ -130,4 +130,7 @@ export const TestBrowserWrapper = ({
   );
 };
 
+export const waitForPosition = () => React.act(async () => {});
+
+export { userEvent } from '@vitest/browser/context';
 export * as fixtures from './test-fixtures';

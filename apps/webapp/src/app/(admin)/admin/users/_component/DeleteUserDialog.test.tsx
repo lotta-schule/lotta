@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { ComputerExperten, SomeUser } from 'test/fixtures';
-import { render, waitFor } from 'test/util';
+import { ComputerExperten, SomeUser } from '#/test/fixtures';
+import { render, waitFor, userEvent } from '#/test/util';
 import { DeleteUserDialog } from './DeleteUserDialog';
-import userEvent from '@testing-library/user-event';
-
-import GetArticlesWithUserFiles from 'api/query/GetArticlesWithUserFiles.graphql';
-import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
+import {
+  GET_ARTICLES_WITH_USER_FILES,
+  PERMANENTLY_DELETE_USER_ACCOUNT,
+} from '../queries';
 
 describe('administration/users/DeleteUserDialog', () => {
   it('should show a warning on the first page', async () => {
@@ -40,7 +40,7 @@ describe('administration/users/DeleteUserDialog', () => {
         additionalMocks: [
           {
             request: {
-              query: GetArticlesWithUserFiles,
+              query: GET_ARTICLES_WITH_USER_FILES,
               variables: { userId: SomeUser.id },
             },
             result: { data: { articles: [ComputerExperten] } },
@@ -70,7 +70,7 @@ describe('administration/users/DeleteUserDialog', () => {
         additionalMocks: [
           {
             request: {
-              query: GetArticlesWithUserFiles,
+              query: GET_ARTICLES_WITH_USER_FILES,
               variables: { userId: SomeUser.id },
             },
             result: { data: { articles: [] } },
@@ -100,14 +100,14 @@ describe('administration/users/DeleteUserDialog', () => {
         additionalMocks: [
           {
             request: {
-              query: GetArticlesWithUserFiles,
+              query: GET_ARTICLES_WITH_USER_FILES,
               variables: { userId: SomeUser.id },
             },
             result: { data: { articles: [] } },
           },
           {
             request: {
-              query: DestroyAccountMutation,
+              query: PERMANENTLY_DELETE_USER_ACCOUNT,
               variables: {
                 userId: SomeUser.id,
                 transferFileIds: [],

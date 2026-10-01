@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Dialog,
   DialogContent,
@@ -17,9 +17,8 @@ import { DeleteEventConfirmationDialog } from './DeleteEventConfirmationDialog';
 
 export type EditEventDialogProps = {
   eventToBeEdited:
-    | ResultOf<typeof GET_CALENDAR_EVENTS>['calendarEvents'][number]
-    | null;
-  onClose(): void;
+    ResultOf<typeof GET_CALENDAR_EVENTS>['calendarEvents'][number] | null;
+  onClose: () => void;
 };
 
 export const EditEventDialog = React.memo(

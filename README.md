@@ -64,8 +64,8 @@ For monorepo managing, we use [nx](https://nx.dev/).
 - Have nodejs installed (See [.tool-versions](.tool-versions)) to see which one
 - Have elixir installed (See [.tool-versions](.tool-versions)) to see which one.
   Take care to have the same version of [OTP](https://en.wikipedia.org/wiki/Open_Telecom_Platform) installed as well.
-- This is a monorepo taking advantage of [pnpm workspaces](https://pnpm.io/workspaces).
-  You will have to have [pnpm installed](https://pnpm.io/installation) on your machine.
+- This is a monorepo taking advantage of [bun workspaces](https://bun.sh/docs/install/workspaces).
+  You will have to have [bun installed](https://bun.sh/docs/installation) on your machine.
 - Either have a local postgres database and redis cache running,
   or just have a docker daemon running.
   The services you'll need are defined in `apps/core-api/docker-compose.services.yml`.
@@ -78,7 +78,7 @@ If you are interested in contributing, or have any questions, feel free to reach
 1. Install the necessary dependencies. In the project's root folder, run:
 
 ```sh
-pnpm install
+bun install
 ```
 
 2. Make sure you have the necessary services running. If you have docker installed, you can start them with:
@@ -90,20 +90,20 @@ docker-compose -f apps/core-api/docker-compose.services.yml up -d
 3. Run all available tests (this will take a few minutes, depending on the machine you run it on):
 
 ```sh
-pnpm test
+bun test
 ```
 
 4. Run all available linters / typecheckers:
 
 ```sh
-pnpm lint
-pnpm typecheck
+bun lint
+bun typecheck
 ```
 
 5. Start the Development environment:
 
 ```sh
-pnpm dev:full
+bun dev:full
 ```
 
 This will start:

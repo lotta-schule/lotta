@@ -1,5 +1,5 @@
 import { InitOptions } from 'i18next';
-import de from 'locale/de.json';
+import de from '#/locale/de.json';
 
 export const options: InitOptions = {
   lng: 'de',

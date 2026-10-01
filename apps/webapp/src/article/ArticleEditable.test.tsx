@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { ArticleModel, ContentModuleType } from 'model';
+import { ArticleModel, ContentModuleType } from '#/model';
 import { ArticleEditable } from './ArticleEditable';
-import { Weihnachtsmarkt } from 'test/fixtures';
-import { render } from 'test/util';
-import userEvent from '@testing-library/user-event';
+import { Weihnachtsmarkt } from '#/test/fixtures';
+import { render, userEvent } from '#/test/util';
 
 const articleWithManyModules = {
   ...Weihnachtsmarkt,

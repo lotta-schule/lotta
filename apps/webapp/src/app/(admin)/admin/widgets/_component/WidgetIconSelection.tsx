@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { WidgetIconModel } from 'model';
-import { iconNameMapping, WidgetIcon } from 'category/widgets/WidgetIcon';
+import { WidgetIconModel } from '#/model';
+import { iconNameMapping, WidgetIcon } from '#/category/widgets/WidgetIcon';
 import { Button, Input, Label, Option, Select } from '@lotta-schule/hubert';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 
 import styles from './WidgetIconSelection.module.scss';
 
 export interface WidgetIconSelectionProps {
   icon: WidgetIconModel;
-  onSelectIcon(icon: WidgetIconModel): void;
+  onSelectIcon: (icon: WidgetIconModel) => void;
 }
 
 export const WidgetIconSelection = React.memo(

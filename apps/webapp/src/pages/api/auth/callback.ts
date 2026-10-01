@@ -1,4 +1,4 @@
-import { appConfig } from 'config';
+import { appConfig } from '#/config';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
 export default createProxyMiddleware({

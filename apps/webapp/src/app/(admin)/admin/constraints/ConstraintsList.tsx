@@ -1,7 +1,6 @@
 'use client';
-
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
+import { Icon } from '#/shared/Icon';
 import { faSdCard } from '@fortawesome/free-solid-svg-icons';
 import {
   Checkbox,
@@ -11,11 +10,11 @@ import {
   LoadingButton,
 } from '@lotta-schule/hubert';
 import { t } from 'i18next';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { motion } from 'framer-motion';
-import { Tenant } from 'util/tenant';
+import { Tenant } from '#/util/tenant';
 
-import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
+import UpdateTenantMutation from '#/api/mutation/UpdateTenantMutation.graphql';
 
 import styles from './ConstraintsList.module.scss';
 import { AdminPageSection } from '../_component/AdminPageSection';

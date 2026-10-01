@@ -249,10 +249,16 @@ const introspection = {
           {
             "name": "contentModules",
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "ofType": {
-                "kind": "OBJECT",
-                "name": "ContentModule"
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "ContentModule"
+                  }
+                }
               }
             },
             "args": [],
@@ -261,10 +267,16 @@ const introspection = {
           {
             "name": "groups",
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "ofType": {
-                "kind": "OBJECT",
-                "name": "UserGroup"
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "UserGroup"
+                  }
+                }
               }
             },
             "args": [],
@@ -273,8 +285,11 @@ const introspection = {
           {
             "name": "id",
             "type": {
-              "kind": "SCALAR",
-              "name": "ID"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -282,8 +297,11 @@ const introspection = {
           {
             "name": "insertedAt",
             "type": {
-              "kind": "SCALAR",
-              "name": "DateTime"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -338,8 +356,11 @@ const introspection = {
             "type": {
               "kind": "LIST",
               "ofType": {
-                "kind": "OBJECT",
-                "name": "ArticleReactionCount"
+                "kind": "NON_NULL",
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ArticleReactionCount"
+                }
               }
             },
             "args": [],
@@ -372,8 +393,11 @@ const introspection = {
           {
             "name": "title",
             "type": {
-              "kind": "SCALAR",
-              "name": "String"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -381,8 +405,11 @@ const introspection = {
           {
             "name": "updatedAt",
             "type": {
-              "kind": "SCALAR",
-              "name": "DateTime"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime"
+              }
             },
             "args": [],
             "isDeprecated": false
@@ -390,10 +417,16 @@ const introspection = {
           {
             "name": "users",
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "ofType": {
-                "kind": "OBJECT",
-                "name": "User"
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "User"
+                  }
+                }
               }
             },
             "args": [],
@@ -1546,7 +1579,15 @@ const introspection = {
                 }
               }
             },
-            "args": [],
+            "args": [
+              {
+                "name": "filter",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "MessageFilter"
+                }
+              }
+            ],
             "isDeprecated": false
           },
           {
@@ -2561,6 +2602,27 @@ const introspection = {
         "interfaces": []
       },
       {
+        "kind": "INPUT_OBJECT",
+        "name": "FileFilter",
+        "inputFields": [
+          {
+            "name": "afterId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID"
+            }
+          },
+          {
+            "name": "first",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int"
+            }
+          }
+        ],
+        "isOneOf": false
+      },
+      {
         "kind": "OBJECT",
         "name": "FileSystemUsageLocation",
         "fields": [
@@ -2832,6 +2894,27 @@ const introspection = {
           }
         ],
         "interfaces": []
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "MessageFilter",
+        "inputFields": [
+          {
+            "name": "before",
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID"
+            }
+          },
+          {
+            "name": "first",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int"
+            }
+          }
+        ],
+        "isOneOf": false
       },
       {
         "kind": "INPUT_OBJECT",
@@ -4946,6 +5029,13 @@ const introspection = {
             },
             "args": [
               {
+                "name": "filter",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "FileFilter"
+                }
+              },
+              {
                 "name": "parentDirectoryId",
                 "type": {
                   "kind": "SCALAR",
@@ -5017,7 +5107,15 @@ const introspection = {
                 "name": "Article"
               }
             },
-            "args": [],
+            "args": [
+              {
+                "name": "filter",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "ArticleFilter"
+                }
+              }
+            ],
             "isDeprecated": false
           },
           {
@@ -6327,6 +6425,15 @@ const introspection = {
                 "kind": "SCALAR",
                 "name": "DateTime"
               }
+            },
+            "args": [],
+            "isDeprecated": false
+          },
+          {
+            "name": "usedStorageSize",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int"
             },
             "args": [],
             "isDeprecated": false

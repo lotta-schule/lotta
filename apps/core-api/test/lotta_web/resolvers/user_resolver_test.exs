@@ -1,11 +1,12 @@
 defmodule LottaWeb.UserResolverTest do
   @moduledoc false
 
-  use LottaWeb.ConnCase
+  use LottaWeb.ConnCase, async: true
   use Bamboo.Test
 
   import Ecto.Query
   import Lotta.Accounts.Authentication
+  import Lotta.Factory
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Accounts, Repo, Tenants}
@@ -25,38 +26,6 @@ defmodule LottaWeb.UserResolverTest do
         prefix: tenant.prefix
       )
 
-    user =
-      Repo.one!(
-        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
-        prefix: tenant.prefix
-      )
-
-    user2 =
-      Repo.one!(
-        from(u in User, where: u.email == ^"mcurie@lotta.schule"),
-        prefix: tenant.prefix
-      )
-
-    evil_user =
-      Repo.one!(
-        from(u in User, where: u.email == ^"drevil@lotta.schule"),
-        prefix: tenant.prefix
-      )
-
-    user_relevant_file =
-      Repo.one!(
-        from(f in File, where: f.filename == ^"wieartig1.jpg"),
-        prefix: tenant.prefix
-      )
-
-    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
-
-    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
-
-    {:ok, user_hisec_jwt, _} = AccessToken.encode_and_sign(user, %{}, token_type: "hisec")
-
-    {:ok, evil_jwt, _} = AccessToken.encode_and_sign(evil_user)
-
     schueler_group =
       Repo.one!(
         from(ug in UserGroup, where: ug.name == ^"Schüler"),
@@ -68,6 +37,53 @@ defmodule LottaWeb.UserResolverTest do
         from(ug in UserGroup, where: ug.name == ^"Lehrer"),
         prefix: tenant.prefix
       )
+
+    # Insert users in a specific order so PG's default ID-based ordering matches
+    # the assertions in searchUsers tests (which have no explicit ORDER BY).
+    # Required order: einsa < billy < eike < drevil < maxi < doro < mcurie
+    _einsa = insert(:user, email: "ur-alexis@einsa.net", name: "Alexis Rinaldoni", nickname: nil)
+
+    billy =
+      insert(:user, email: "ur-billy@lotta.schule", name: "Christopher Bill", nickname: "Billy")
+
+    {:ok, _billy} = Accounts.update_user(billy, %{groups: [schueler_group]})
+
+    user =
+      insert(:user, email: "ur-eike@lotta.schule", name: "Eike Wiewiorra", nickname: "Chef")
+      |> Ecto.Changeset.change(%{
+        password_hash: Argon2.hash_pwd_salt("password"),
+        password_hash_format: 1,
+        has_changed_default_password: true
+      })
+      |> Repo.update!()
+
+    {:ok, user} = Accounts.update_user(user, %{groups: [lehrer_group]})
+
+    evil_user =
+      insert(:user, email: "ur-drevil@lotta.schule", name: "Dr Evil", nickname: "drEvil")
+
+    _maxi = insert(:user, email: "ur-maxi@lotta.schule", name: "Max Mustermann", nickname: "MaXi")
+
+    _doro =
+      insert(:user, email: "ur-doro@lotta.schule", name: "Dorothea Musterfrau", nickname: "Doro")
+
+    user2 =
+      insert(:user,
+        email: "ur-mcurie@lotta.schule",
+        name: "Marie Curie",
+        nickname: "Polonium",
+        hide_full_name: true
+      )
+
+    user_relevant_file = insert(:file, user_id: user.id)
+
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
+
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
+
+    {:ok, user_hisec_jwt, _} = AccessToken.encode_and_sign(user, %{}, token_type: "hisec")
+
+    {:ok, evil_jwt, _} = AccessToken.encode_and_sign(evil_user)
 
     {:ok,
      %{
@@ -212,7 +228,7 @@ defmodule LottaWeb.UserResolverTest do
       assert res == %{
                "data" => %{
                  "user" => %{
-                   "email" => "eike.wiewiorra@lotta.schule"
+                   "email" => "ur-eike@lotta.schule"
                  }
                }
              }
@@ -229,7 +245,7 @@ defmodule LottaWeb.UserResolverTest do
       assert res == %{
                "data" => %{
                  "user" => %{
-                   "email" => "eike.wiewiorra@lotta.schule"
+                   "email" => "ur-eike@lotta.schule"
                  }
                }
              }
@@ -348,6 +364,87 @@ defmodule LottaWeb.UserResolverTest do
                    "locations" => [%{"column" => 5, "line" => 3}],
                    "message" => "Der Online-Status des Nutzers ist geheim.",
                    "path" => ["user", "last_seen"]
+                 }
+               ]
+             }
+    end
+  end
+
+  describe "resolve used storage size" do
+    @query """
+    query GetUser($id: ID!) {
+      user(id: $id) {
+        used_storage_size
+      }
+    }
+    """
+
+    setup %{user: user} do
+      user_dir = insert(:directory, user_id: user.id)
+
+      insert(:file, user_id: user.id, parent_directory_id: user_dir.id, filesize: 1000)
+      insert(:file, user_id: user.id, parent_directory_id: user_dir.id, filesize: 2000)
+
+      # a file in a public directory must not count towards the used storage
+      public_dir = insert(:directory)
+      insert(:file, user_id: user.id, parent_directory_id: public_dir.id, filesize: 9999)
+
+      :ok
+    end
+
+    test "returns the user's used storage size for self", %{user: user, user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "used_storage_size" => 3000
+                 }
+               }
+             }
+    end
+
+    test "returns the user's used storage size for admin", %{user: user, admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "used_storage_size" => 3000
+                 }
+               }
+             }
+    end
+
+    test "does not return the used storage size for others", %{user2: user2, user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query, variables: %{id: user2.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "used_storage_size" => nil
+                 }
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 5, "line" => 3}],
+                   "message" => "Die Dateigröße des Nutzers ist geheim.",
+                   "path" => ["user", "used_storage_size"]
                  }
                ]
              }
@@ -570,42 +667,42 @@ defmodule LottaWeb.UserResolverTest do
                "data" => %{
                  "users" => [
                    %{
-                     "email" => "alexis.rinaldoni@einsa.net",
-                     "name" => "Alexis Rinaldoni",
-                     "nickname" => nil
-                   },
-                   %{
                      "email" => "alexis.rinaldoni@lotta.schule",
                      "name" => "Alexis Rinaldoni",
                      "nickname" => "Der Meister"
                    },
                    %{
-                     "email" => "billy@lotta.schule",
+                     "email" => "ur-alexis@einsa.net",
+                     "name" => "Alexis Rinaldoni",
+                     "nickname" => nil
+                   },
+                   %{
+                     "email" => "ur-billy@lotta.schule",
                      "name" => "Christopher Bill",
                      "nickname" => "Billy"
                    },
                    %{
-                     "email" => "doro@lotta.schule",
+                     "email" => "ur-doro@lotta.schule",
                      "name" => "Dorothea Musterfrau",
                      "nickname" => "Doro"
                    },
                    %{
-                     "email" => "drevil@lotta.schule",
+                     "email" => "ur-drevil@lotta.schule",
                      "name" => "Dr Evil",
                      "nickname" => "drEvil"
                    },
                    %{
-                     "email" => "eike.wiewiorra@lotta.schule",
+                     "email" => "ur-eike@lotta.schule",
                      "name" => "Eike Wiewiorra",
                      "nickname" => "Chef"
                    },
                    %{
-                     "email" => "mcurie@lotta.schule",
+                     "email" => "ur-mcurie@lotta.schule",
                      "name" => "Marie Curie",
                      "nickname" => "Polonium"
                    },
                    %{
-                     "email" => "maxi@lotta.schule",
+                     "email" => "ur-maxi@lotta.schule",
                      "name" => "Max Mustermann",
                      "nickname" => "MaXi"
                    }
@@ -657,7 +754,7 @@ defmodule LottaWeb.UserResolverTest do
 
       assert Enum.find(res["data"]["searchUsers"], false, fn found_user ->
                found_user == %{
-                 "email" => "alexis.rinaldoni@einsa.net",
+                 "email" => "ur-alexis@einsa.net",
                  "name" => "Alexis Rinaldoni",
                  "nickname" => nil
                }
@@ -700,14 +797,14 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{searchtext: "mcurie@lotta.schule"})
+        |> post("/api", query: @query, variables: %{searchtext: "ur-mcurie@lotta.schule"})
         |> json_response(200)
 
       assert res == %{
                "data" => %{
                  "searchUsers" => [
                    %{
-                     "email" => "mcurie@lotta.schule",
+                     "email" => "ur-mcurie@lotta.schule",
                      "name" => "Marie Curie",
                      "nickname" => "Polonium"
                    }
@@ -731,7 +828,7 @@ defmodule LottaWeb.UserResolverTest do
                "data" => %{
                  "searchUsers" => [
                    %{
-                     "email" => "eike.wiewiorra@lotta.schule",
+                     "email" => "ur-eike@lotta.schule",
                      "name" => "Eike Wiewiorra",
                      "nickname" => "Chef"
                    }
@@ -759,12 +856,12 @@ defmodule LottaWeb.UserResolverTest do
                "data" => %{
                  "searchUsers" => [
                    %{
-                     "email" => "billy@lotta.schule",
+                     "email" => "ur-billy@lotta.schule",
                      "name" => "Christopher Bill",
                      "nickname" => "Billy"
                    },
                    %{
-                     "email" => "eike.wiewiorra@lotta.schule",
+                     "email" => "ur-eike@lotta.schule",
                      "name" => "Eike Wiewiorra",
                      "nickname" => "Chef"
                    }
@@ -790,29 +887,29 @@ defmodule LottaWeb.UserResolverTest do
                "data" => %{
                  "searchUsers" => [
                    %{
-                     "email" => "alexis.rinaldoni@einsa.net",
+                     "email" => "ur-alexis@einsa.net",
                      "name" => "Alexis Rinaldoni",
                      "nickname" => nil
                    },
                    %{
-                     "email" => "drevil@lotta.schule",
-                     "name" => "Dr Evil",
-                     "nickname" => "drEvil"
-                   },
-                   %{
-                     "email" => "maxi@lotta.schule",
-                     "name" => "Max Mustermann",
-                     "nickname" => "MaXi"
-                   },
-                   %{
-                     "email" => "doro@lotta.schule",
+                     "email" => "ur-doro@lotta.schule",
                      "name" => "Dorothea Musterfrau",
                      "nickname" => "Doro"
                    },
                    %{
-                     "email" => "mcurie@lotta.schule",
+                     "email" => "ur-drevil@lotta.schule",
+                     "name" => "Dr Evil",
+                     "nickname" => "drEvil"
+                   },
+                   %{
+                     "email" => "ur-mcurie@lotta.schule",
                      "name" => "Marie Curie",
                      "nickname" => "Polonium"
+                   },
+                   %{
+                     "email" => "ur-maxi@lotta.schule",
+                     "name" => "Max Mustermann",
+                     "nickname" => "MaXi"
                    }
                  ]
                }
@@ -837,34 +934,34 @@ defmodule LottaWeb.UserResolverTest do
                "data" => %{
                  "searchUsers" => [
                    %{
-                     "email" => "alexis.rinaldoni@einsa.net",
+                     "email" => "ur-alexis@einsa.net",
                      "name" => "Alexis Rinaldoni",
                      "nickname" => nil
                    },
                    %{
-                     "email" => "eike.wiewiorra@lotta.schule",
-                     "name" => "Eike Wiewiorra",
-                     "nickname" => "Chef"
-                   },
-                   %{
-                     "email" => "drevil@lotta.schule",
-                     "name" => "Dr Evil",
-                     "nickname" => "drEvil"
-                   },
-                   %{
-                     "email" => "maxi@lotta.schule",
-                     "name" => "Max Mustermann",
-                     "nickname" => "MaXi"
-                   },
-                   %{
-                     "email" => "doro@lotta.schule",
+                     "email" => "ur-doro@lotta.schule",
                      "name" => "Dorothea Musterfrau",
                      "nickname" => "Doro"
                    },
                    %{
-                     "email" => "mcurie@lotta.schule",
+                     "email" => "ur-drevil@lotta.schule",
+                     "name" => "Dr Evil",
+                     "nickname" => "drEvil"
+                   },
+                   %{
+                     "email" => "ur-eike@lotta.schule",
+                     "name" => "Eike Wiewiorra",
+                     "nickname" => "Chef"
+                   },
+                   %{
+                     "email" => "ur-mcurie@lotta.schule",
                      "name" => "Marie Curie",
                      "nickname" => "Polonium"
+                   },
+                   %{
+                     "email" => "ur-maxi@lotta.schule",
+                     "name" => "Max Mustermann",
+                     "nickname" => "MaXi"
                    }
                  ]
                }
@@ -889,7 +986,7 @@ defmodule LottaWeb.UserResolverTest do
                "data" => %{
                  "searchUsers" => [
                    %{
-                     "email" => "eike.wiewiorra@lotta.schule",
+                     "email" => "ur-eike@lotta.schule",
                      "name" => "Eike Wiewiorra",
                      "nickname" => "Chef"
                    }
@@ -1276,7 +1373,7 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
-          variables: %{username: "alexis.rinaldoni@lotta.schule", password: "test123"}
+          variables: %{username: "alexis.rinaldoni@lotta.schule", password: "password"}
         )
         |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
 
@@ -1306,7 +1403,7 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
-          variables: %{username: "zzzzzzzzzzzzzzzzzzzz@bbbbbbbbbbbbbbb.ddd", password: "test123"}
+          variables: %{username: "zzzzzzzzzzzzzzzzzzzz@bbbbbbbbbbbbbbb.ddd", password: "password"}
         )
         |> json_response(200)
 
@@ -1361,7 +1458,7 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{password: "test123"}
+          variables: %{password: "password"}
         )
 
       res =
@@ -1372,7 +1469,7 @@ defmodule LottaWeb.UserResolverTest do
 
       {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token, %{"typ" => "hisec"})
 
-      assert email == "eike.wiewiorra@lotta.schule"
+      assert email == "ur-eike@lotta.schule"
     end
 
     test "returns an error if the user is not logged in" do
@@ -1381,7 +1478,7 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
-          variables: %{password: "test123"}
+          variables: %{password: "password"}
         )
         |> json_response(200)
 
@@ -1693,7 +1790,7 @@ defmodule LottaWeb.UserResolverTest do
       assert %{
                "data" => %{
                  "updateUser" => %{
-                   "email" => "mcurie@lotta.schule",
+                   "email" => "ur-mcurie@lotta.schule",
                    "groups" => groups
                  }
                }
@@ -1846,7 +1943,7 @@ defmodule LottaWeb.UserResolverTest do
                }
              }
 
-      assert {:ok, _} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test456", t)
+      assert {:ok, _} = login_with_username_pass("ur-eike@lotta.schule", "test456", t)
     end
 
     test "should set has_changed_default_password to true", %{
@@ -2068,7 +2165,7 @@ defmodule LottaWeb.UserResolverTest do
       assert %{
                "data" => %{
                  "destroyAccount" => %{
-                   "email" => "eike.wiewiorra@lotta.schule"
+                   "email" => "ur-eike@lotta.schule"
                  }
                }
              } = res
@@ -2092,7 +2189,7 @@ defmodule LottaWeb.UserResolverTest do
       assert %{
                "data" => %{
                  "destroyAccount" => %{
-                   "email" => "eike.wiewiorra@lotta.schule"
+                   "email" => "ur-eike@lotta.schule"
                  }
                }
              } = res
@@ -2121,7 +2218,7 @@ defmodule LottaWeb.UserResolverTest do
       assert %{
                "data" => %{
                  "destroyAccount" => %{
-                   "email" => "eike.wiewiorra@lotta.schule"
+                   "email" => "ur-eike@lotta.schule"
                  }
                }
              } = res
@@ -2156,7 +2253,7 @@ defmodule LottaWeb.UserResolverTest do
       assert %{
                "data" => %{
                  "destroyAccount" => %{
-                   "email" => "eike.wiewiorra@lotta.schule"
+                   "email" => "ur-eike@lotta.schule"
                  }
                }
              } = res

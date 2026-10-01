@@ -1,13 +1,12 @@
-import { MockedResponse } from '@apollo/client/testing';
-import { currentApolloCache, renderHook } from 'test/util';
-import { SomeUser, imageFile, logosDirectory } from 'test/fixtures';
-import { DirectoryModel, FileModel } from 'model';
+import { MockLink } from '@apollo/client/testing';
+import { currentApolloCache, renderHook } from '#/test/util';
+import { SomeUser, imageFile, logosDirectory } from '#/test/fixtures';
 import { BrowserNode } from '../../../../../../libs/hubert/src/browser';
 import { useRenameNode } from './useRenameNode';
 
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
-import UpdateDirectoryMutation from 'api/mutation/UpdateDirectoryMutation.graphql';
-import UpdateFileMutation from 'api/mutation/UpdateFileMutation.graphql';
+import { GetDirectoriesAndFilesQuery } from '../_graphql/GetDirectoriesAndFiles';
+import UpdateDirectoryMutation from '#/api/mutation/UpdateDirectoryMutation.graphql';
+import UpdateFileMutation from '#/api/mutation/UpdateFileMutation.graphql';
 
 const directory = {
   ...logosDirectory,
@@ -37,7 +36,7 @@ const fileNode = {
   meta: file,
 } as BrowserNode<'file'>;
 
-export const additionalMocks: MockedResponse[] = [
+export const additionalMocks: MockLink.MockedResponse[] = [
   {
     request: {
       query: GetDirectoriesAndFilesQuery,
@@ -111,10 +110,7 @@ describe('useRenameNode', () => {
 
     await result.current(directoryNode, 'renamed-directory');
 
-    const fromCache = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const fromCache = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: null },
     });
@@ -140,10 +136,7 @@ describe('useRenameNode', () => {
 
     await result.current(fileNode, 'renamed-file');
 
-    const fromCache = currentApolloCache!.readQuery<{
-      directories: DirectoryModel[];
-      files: FileModel[];
-    }>({
+    const fromCache = currentApolloCache!.readQuery({
       query: GetDirectoriesAndFilesQuery,
       variables: { parentDirectoryId: directory.id },
     });

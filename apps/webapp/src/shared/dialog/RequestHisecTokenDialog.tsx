@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   Button,
   Dialog,
@@ -10,12 +10,12 @@ import {
   Label,
 } from '@lotta-schule/hubert';
 
-import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
+import RequestHisecTokenMutation from '#/api/mutation/RequestHisecTokenMutation.graphql';
 
 export interface RequestHisecTokenDialogProps {
   isOpen: boolean;
   withCurrentPassword?: string;
-  onRequestClose(token: string | null): void;
+  onRequestClose: (token: string | null) => void;
 }
 
 export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
@@ -35,7 +35,7 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
     }, [isOpen]);
     React.useEffect(() => {
       if (isOpen && withCurrentPassword) {
-        requestHisecToken({
+        void requestHisecToken({
           variables: { password: withCurrentPassword },
         });
       }
@@ -50,7 +50,9 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            requestHisecToken();
+            void requestHisecToken({
+              variables: { password },
+            });
           }}
           data-testid="RequestHisecTokenDialog"
         >
@@ -59,7 +61,6 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
             <ErrorMessage error={error} />
             <Label label={'Passwort:'}>
               <Input
-                autoFocus
                 id="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.currentTarget.value)}

@@ -1,17 +1,26 @@
 import * as React from 'react';
-import { ScheduleWidgetConfig } from 'model';
+import { ScheduleWidgetConfig } from '#/model';
 import { Input, Label, Option, Select } from '@lotta-schule/hubert';
 
 import styles from './WidgetConfiguration.module.scss';
 
 export interface ScheduleWidgetConfigurationProps {
   configuration: ScheduleWidgetConfig;
-  setConfiguration(configuration: ScheduleWidgetConfig): void;
+  setConfiguration: (configuration: ScheduleWidgetConfig) => void;
 }
 
 export const ScheduleWidgetConfiguration =
   React.memo<ScheduleWidgetConfigurationProps>(
     ({ configuration, setConfiguration }) => {
+      React.useEffect(() => {
+        if (!configuration.type) {
+          setConfiguration({
+            ...configuration,
+            type: 'IndiwareStudent',
+          });
+        }
+      }, [configuration, setConfiguration]);
+
       return (
         <div data-testid={'ScheduleWidgetConfiguration'}>
           <Select
