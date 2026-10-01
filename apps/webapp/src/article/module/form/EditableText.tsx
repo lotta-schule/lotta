@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, Input } from '@lotta-schule/hubert';
 import { Icon } from '#/shared/Icon';
 import { faPencil } from '@fortawesome/free-solid-svg-icons';
+import clsx from 'clsx';
 
 import styles from './EditableText.module.scss';
 
@@ -10,6 +11,7 @@ export interface EditableTextProps {
   ariaLabel?: string;
   editButtonLabel?: string;
   allowEmpty?: boolean;
+  className?: string;
   onChange: (value: string) => void;
 }
 
@@ -18,6 +20,7 @@ export const EditableText = ({
   ariaLabel,
   editButtonLabel,
   allowEmpty,
+  className,
   onChange,
 }: EditableTextProps) => {
   const [isEditing, setIsEditing] = React.useState(false);
@@ -64,7 +67,7 @@ export const EditableText = ({
   }
 
   return (
-    <span className={styles.editableText}>
+    <span className={clsx(styles.editableText, className)}>
       {value}
       <Button
         small
