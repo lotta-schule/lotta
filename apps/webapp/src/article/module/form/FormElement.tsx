@@ -70,18 +70,23 @@ export const FormElement = React.memo(
 
     const formElement = (() => {
       const labelText = element.label ?? element.name ?? 'Beschreibung';
-      // hubert's `Label` types `label` as `ReactNode & string` (it extends
-      // HTMLProps), so a JSX node has to be cast through to satisfy it.
-      const label = (isEditable ? (
-        <EditableText
-          value={labelText}
-          ariaLabel={'Bezeichnung'}
-          allowEmpty
-          onChange={(label) => onUpdateElement!({ label })}
-        />
-      ) : (
-        labelText + (element.required ? ' *' : '')
-      )) as unknown as string;
+      const plainLabel = (labelText +
+        (element.required ? ' *' : '')) as unknown as string;
+      const renderLabel = (className?: string) =>
+        (isEditable ? (
+          <EditableText
+            className={className}
+            value={labelText}
+            ariaLabel={'Bezeichnung'}
+            allowEmpty
+            onChange={(label) => onUpdateElement!({ label })}
+          />
+        ) : className ? (
+          <span className={className}>{plainLabel}</span>
+        ) : (
+          plainLabel
+        )) as unknown as string;
+      const label = renderLabel(styles.labelText);
       if (element.element === 'selection') {
         if (element.type === 'checkbox') {
           return (
@@ -193,7 +198,7 @@ export const FormElement = React.memo(
             </Select>
           );
           if (!isEditable) {
-            return selectField;
+            return <Label label={label}>{selectField}</Label>;
           }
           return (
             <Label label={label}>
@@ -217,7 +222,7 @@ export const FormElement = React.memo(
       }
       if (element.element === 'input') {
         return (
-          <Label label={label}>
+          <Label label={renderLabel()}>
             <Input
               disabled={isEditModeEnabled}
               name={element.name}
