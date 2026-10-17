@@ -49,6 +49,8 @@ export const Calendar = React.memo(({ widget }: CalendarProps) => {
 
   const days = calendars.find((calendar) => calendar.days)?.days || 180;
 
+  const [now] = React.useState(() => new Date());
+
   const unfoldedEvents = useUnfoldedEvents(
     widget.calendarEvents?.map((event) => ({
       ...event,
@@ -58,8 +60,8 @@ export const Calendar = React.memo(({ widget }: CalendarProps) => {
           calendarConfig.calendarId === event.calendar.id
       ) as CalendarWidgetInternalCalendarConfig,
     })) ?? [],
-    new Date(),
-    addDays(new Date(), days)
+    now,
+    addDays(now, days)
   );
 
   const apolloClient = useApolloClient();

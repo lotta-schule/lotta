@@ -35,12 +35,13 @@ export const MetricsChart = React.memo(
       () => gqlCompatibleMetricType(metricType),
       [metricType]
     );
+    const [now] = React.useState(() => new Date());
 
     const {
       data: { metrics },
     } = useSuspenseQuery(GET_TENANT_TIMESERIES_ANALYTICS, {
       variables: {
-        date: formatDate(period.type === '30d' ? new Date() : period.date),
+        date: formatDate(period.type === '30d' ? now : period.date),
         metric,
         period: period.type,
       },

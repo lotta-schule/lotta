@@ -27,6 +27,8 @@ export const PropertyBreakdown = React.memo(
       possibleProperties[0]
     );
 
+    const [now] = React.useState(() => new Date());
+
     const metrics = React.useMemo(
       () =>
         (metric === 'viewsPerVisit' ? (['visits'] as const) : [metric]).map(
@@ -39,7 +41,7 @@ export const PropertyBreakdown = React.memo(
       data: { properties },
     } = useSuspenseQuery(GET_TENANT_BREAKDOWN_ANALYTICS, {
       variables: {
-        date: formatDate(period.type === '30d' ? new Date() : period.date),
+        date: formatDate(period.type === '30d' ? now : period.date),
         period: period.type,
         property: selectedProperty.name as any,
         metrics,

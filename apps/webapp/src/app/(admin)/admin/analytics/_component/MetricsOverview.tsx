@@ -14,6 +14,8 @@ export type MetricsOverviewProps = {
 
 export const MetricsOverview = React.memo(
   ({ period }: MetricsOverviewProps) => {
+    const [now] = React.useState(() => new Date());
+
     const {
       data: {
         analytics: {
@@ -27,7 +29,7 @@ export const MetricsOverview = React.memo(
       },
     } = useSuspenseQuery(GET_TENANT_AGGREGATE_ANALYTICS, {
       variables: {
-        date: formatDate(period.type === '30d' ? new Date() : period.date),
+        date: formatDate(period.type === '30d' ? now : period.date),
         period: period.type,
       },
     });
