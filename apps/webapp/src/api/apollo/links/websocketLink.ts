@@ -1,8 +1,7 @@
 'use client';
 
-import * as AbsintheSocket from '@absinthe/socket';
-import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
-import { Socket as PhoenixSocket } from 'phoenix';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { createClient } from 'graphql-ws';
 import { TenantModel } from '#/model';
 import { isBrowser } from '#/util/isBrowser';
 
@@ -25,17 +24,18 @@ export const createWebsocketLink = (
     return null;
   }
 
-  const phoenixSocket = new PhoenixSocket(createAbsoluteSocketUrl(socketUrl), {
-    params: () => {
+  const client = createClient({
+    url: createAbsoluteSocketUrl(socketUrl),
+    connectionParams: () => {
       if (accessToken) {
         return { token: accessToken, tid: tenant?.id };
       } else {
         return { tid: tenant?.id };
       }
     },
+    lazy: true,
+    retryAttempts: Infinity,
   });
 
-  const absintheSocket = AbsintheSocket.create(phoenixSocket);
-
-  return createAbsintheSocketLink(absintheSocket);
+  return new GraphQLWsLink(client);
 };

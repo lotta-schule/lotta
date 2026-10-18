@@ -26,7 +26,7 @@ defmodule LottaWeb.Endpoint do
   )
 
   socket("/api/graphql-socket", LottaWeb.GraphQLSocket,
-    websocket: [check_origin: false],
+    websocket: [check_origin: false, subprotocols: ["graphql-transport-ws"]],
     longpoll: [check_origin: false]
   )
 
