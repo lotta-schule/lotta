@@ -31,17 +31,19 @@ export const Analytics = React.memo(() => {
     []
   );
 
+  const [now] = React.useState(() => new Date());
+
   const availableMonths = React.useMemo(() => {
     const months = [new Date('2024-03-01T12:00:00+01:00')];
     while (
-      !isSameMonth(new Date(), months.slice(-1)[0] ?? new Date()) &&
+      !isSameMonth(now, months.slice(-1)[0] ?? now) &&
       months.length < 120
     ) {
       months.push(addMonths(months.slice(-1)[0], 1));
     }
 
     return months.reverse();
-  }, []);
+  }, [now]);
 
   const possiblePeriods = React.useMemo(
     () => [

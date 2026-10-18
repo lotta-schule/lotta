@@ -14,6 +14,8 @@ export interface UsageProps {
 }
 
 export const Usage = React.memo(({ tenant, usage }: UsageProps) => {
+  const [now] = React.useState(() => new Date());
+
   const getMediaConversionTimeFormatted = (usage: TenantUsage[number]) => {
     if (!usage) {
       return null;
@@ -57,7 +59,7 @@ export const Usage = React.memo(({ tenant, usage }: UsageProps) => {
             <div
               role={'row'}
               className={clsx(styles.gridContainer, styles.usageTable, {
-                [styles.isCurrentMonth]: isSameMonth(date, new Date()),
+                [styles.isCurrentMonth]: isSameMonth(date, now),
               })}
               key={`${usage.year}-${usage.month}`}
             >

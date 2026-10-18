@@ -40,17 +40,19 @@ export const CreateEventDialog = React.memo(
       fetchPolicy: 'cache-first',
     });
 
+    const [now] = React.useState(() => new Date());
+
     const EMPTY_EVENT = React.useMemo<EditEventInput>(() => {
       return {
         summary: '',
         description: '',
         calendarId: calendars.at(0)?.id ?? '',
-        start: startOfHour(new Date()),
-        end: subMilliseconds(addHours(startOfHour(new Date()), 1), 1),
+        start: startOfHour(now),
+        end: subMilliseconds(addHours(startOfHour(now), 1), 1),
         isFullDay: true,
         recurrence: null as FragmentOf<typeof RECURRENCE_FRAGMENT> | null,
       };
-    }, [calendars]);
+    }, [calendars, now]);
 
     const { t } = useTranslation();
     const [eventData, setEventData] = React.useState(EMPTY_EVENT);

@@ -25,11 +25,7 @@ defmodule LottaWeb.GraphQLSocket do
               tenant: tenant
             )
 
-          {:ok,
-           Context.new(
-             tenant_id: tenant.id,
-             current_user_id: user.id
-           ), socket}
+          {:ok, %{}, socket}
 
         e ->
           Logger.error(inspect(e))
@@ -37,4 +33,20 @@ defmodule LottaWeb.GraphQLSocket do
       end
     end
   end
+
+  def handle_init(%{"tid" => tenant_id}, socket) do
+    tenant = Tenants.get_tenant(tenant_id)
+
+    if is_nil(tenant) do
+      {:error, %{reason: "Invalid tenant"}, socket}
+    else
+      Repo.put_prefix(tenant.prefix)
+
+      socket = Absinthe.GraphqlWS.Util.assign_context(socket, Context.new(tenant: tenant))
+
+      {:ok, %{}, socket}
+    end
+  end
+
+  def handle_init(_payload, socket), do: {:error, %{reason: "Invalid params"}, socket}
 end

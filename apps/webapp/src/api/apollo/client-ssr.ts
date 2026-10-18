@@ -35,7 +35,7 @@ export const createSSRClient = (
           );
         },
 
-        websocketLink as any as ApolloLink,
+        websocketLink,
         httpLink
       )
     : httpLink;
