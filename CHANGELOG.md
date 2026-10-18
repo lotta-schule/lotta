@@ -1,3 +1,78 @@
+# 7.0.0 (2026-10-18)
+
+### 🚀 Features
+
+- Add Eduplaces support ([#490](https://github.com/lotta-schule/lotta/pull/490))
+- Sync eduplaces groups and group users ([#500](https://github.com/lotta-schule/lotta/pull/500))
+- Allow login/registration via email to be disabled by admin ([#508](https://github.com/lotta-schule/lotta/pull/508))
+- usage data is now more precise and includes active user count ([#512](https://github.com/lotta-schule/lotta/pull/512))
+- nextjs app router ([#492](https://github.com/lotta-schule/lotta/pull/492))
+- better otel support and structured logging, use bun & oxlint ([#538](https://github.com/lotta-schule/lotta/pull/538))
+- **core:** Add support for more image formats via graphicsmagick ([#484](https://github.com/lotta-schule/lotta/pull/484))
+- **core:** Replace graphicsmagick with imagemagick for better compatibility ([fe882e89](https://github.com/lotta-schule/lotta/commit/fe882e89))
+- **core:** Add support for presigned URLs from S3 remote storages ([#493](https://github.com/lotta-schule/lotta/pull/493))
+- **core:** Log daily storage/usercount usage and media conversion time ([#502](https://github.com/lotta-schule/lotta/pull/502))
+- **core:** Add billing (plans + invoices) ([#516](https://github.com/lotta-schule/lotta/pull/516))
+- **core:** Use tcp-healthcheck instead of http ([#519](https://github.com/lotta-schule/lotta/pull/519))
+- **core:** Generate pdf invoices ([#520](https://github.com/lotta-schule/lotta/pull/520))
+- **core:** performance optimization on category load ([#551](https://github.com/lotta-schule/lotta/pull/551))
+- **core:** show transactions in cockpit ([#560](https://github.com/lotta-schule/lotta/pull/560))
+- **core:** Remove sentry tracing ([9359d624](https://github.com/lotta-schule/lotta/commit/9359d624))
+- **core:** bundle in tailwind ([3d7968f6](https://github.com/lotta-schule/lotta/commit/3d7968f6))
+- **core,webapp:** message pagination and lazy-load older messages ([#553](https://github.com/lotta-schule/lotta/pull/553), [#291](https://github.com/lotta-schule/lotta/issues/291))
+- **core,webapp:** lazily load 'own articles' ([#554](https://github.com/lotta-schule/lotta/pull/554))
+- **hubert,webapp,core:** add file lazy-loading (pagination) ([#555](https://github.com/lotta-schule/lotta/pull/555))
+- **web:** Make article pins more distinguishible ([#487](https://github.com/lotta-schule/lotta/pull/487), [#474](https://github.com/lotta-schule/lotta/issues/474))
+- **web:** Optimize avatar-style for interaction ([#486](https://github.com/lotta-schule/lotta/pull/486))
+- **web:** Open external sidebar categories in extra window ([#506](https://github.com/lotta-schule/lotta/pull/506))
+- **web:** add docs link to admin menu ([#507](https://github.com/lotta-schule/lotta/pull/507), [#501](https://github.com/lotta-schule/lotta/issues/501))
+- **web:** better category select, sorted and with subcategories indent ([#509](https://github.com/lotta-schule/lotta/pull/509), [#72](https://github.com/lotta-schule/lotta/issues/72))
+- **web:** redesign of contentmodule for forms ([#431](https://github.com/lotta-schule/lotta/pull/431))
+- **webapp:** move fonts from public/ to assets ([#557](https://github.com/lotta-schule/lotta/pull/557))
+- **webapp:** hide navbar in admin section ([#570](https://github.com/lotta-schule/lotta/pull/570))
+- **webapp:** image module: center image for all device sizes ([#532](https://github.com/lotta-schule/lotta/pull/532))
+- **webapp:** forms: enlarge label for checkbox, radios and select ([#578](https://github.com/lotta-schule/lotta/pull/578), [#569](https://github.com/lotta-schule/lotta/issues/569))
+- **webapp, core:** user schema now can return totalStorageSize over graphql api ([#561](https://github.com/lotta-schule/lotta/pull/561))
+- **webapp,hubert:** make page bg image opacity configurable ([#576](https://github.com/lotta-schule/lotta/pull/576))
+
+### 🩹 Fixes
+
+- Breaking bug in tracing ([dfc72bb8](https://github.com/lotta-schule/lotta/commit/dfc72bb8))
+- **core:** Limit user articles fetching to 75 articles because of performance ([#485](https://github.com/lotta-schule/lotta/pull/485), [#467](https://github.com/lotta-schule/lotta/issues/467))
+- **core:** Strip out invalid characters from exif (and other) metadata ([#488](https://github.com/lotta-schule/lotta/pull/488))
+- **core:** fix error returning usergroup's eduplacesId ([e92800d3](https://github.com/lotta-schule/lotta/commit/e92800d3))
+- **core:** login user on tenant creation when from eduplaces ([#498](https://github.com/lotta-schule/lotta/pull/498))
+- **core:** responsive error pages ([76e08307](https://github.com/lotta-schule/lotta/commit/76e08307))
+- **core:** send slack notification on new tenant ([26c54f1f](https://github.com/lotta-schule/lotta/commit/26c54f1f))
+- **core:** Use correct setup status path after tenant ceduspaces reation ([461953f5](https://github.com/lotta-schule/lotta/commit/461953f5))
+- **core:** Use correct setup status path after eduspace tenant creation ([affbe82b](https://github.com/lotta-schule/lotta/commit/affbe82b))
+- **core:** Do not try to sync eduplaces when tenant has no eduplaces_id ([1c415bd2](https://github.com/lotta-schule/lotta/commit/1c415bd2))
+- **core:** update eduplaces to correct /schools/:id endpoint ([#517](https://github.com/lotta-schule/lotta/pull/517))
+- **core:** skip oban query-level logging ([526a5e8b](https://github.com/lotta-schule/lotta/commit/526a5e8b))
+- **core,webapp:** refresh tokens correctly ([#541](https://github.com/lotta-schule/lotta/pull/541))
+- **hubert:** use correct srcSet for user-avatars ([2615ffb2](https://github.com/lotta-schule/lotta/commit/2615ffb2))
+- **hubert:** improve type safety and i18n ([#547](https://github.com/lotta-schule/lotta/pull/547))
+- **web:** user space constraint is now saved with correct value ([#478](https://github.com/lotta-schule/lotta/pull/478), [#476](https://github.com/lotta-schule/lotta/issues/476))
+- **web:** Get format availability for file search results ([#481](https://github.com/lotta-schule/lotta/pull/481), [#475](https://github.com/lotta-schule/lotta/issues/475))
+- **web:** UserList: Correctly filter for users without groups ([#482](https://github.com/lotta-schule/lotta/pull/482))
+- **web:** UserList: Show 'last seen' selection + make 'less than 30 days' an option ([#483](https://github.com/lotta-schule/lotta/pull/483), [#480](https://github.com/lotta-schule/lotta/issues/480), [#409](https://github.com/lotta-schule/lotta/issues/409))
+- **web:** EnrollmentTokensEditor now emits token currently being edited ([#510](https://github.com/lotta-schule/lotta/pull/510), [#292](https://github.com/lotta-schule/lotta/issues/292))
+- **web:** Fix user avatars not being shown ([#513](https://github.com/lotta-schule/lotta/issues/513))
+- **webapp:** fix onsave being called with wrong params ([88cc0f86](https://github.com/lotta-schule/lotta/commit/88cc0f86))
+- **webapp:** implement HILO improvements ([#548](https://github.com/lotta-schule/lotta/pull/548))
+- **webapp:** pass on tenant headers to api in middleware.ts ([98703af6](https://github.com/lotta-schule/lotta/commit/98703af6))
+- **webapp:** set correct margin in admin menu ([#572](https://github.com/lotta-schule/lotta/pull/572))
+- **webapp:** remove duplicate font entry from admin presentation settings ([#574](https://github.com/lotta-schule/lotta/pull/574))
+- **webapp:** set default type config for widgetconfiguration ([#575](https://github.com/lotta-schule/lotta/pull/575), [#567](https://github.com/lotta-schule/lotta/issues/567))
+- **webapp, hubert:** swap radio label/input order + form mod color change ([#577](https://github.com/lotta-schule/lotta/pull/577))
+- **webapp,hubert:** better forms ([#562](https://github.com/lotta-schule/lotta/pull/562))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+- Billy
+- ptitmouton @ptitmouton
+
 ## 6.1.21 (2026-05-02)
 
 ### 🚀 Features

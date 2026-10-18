@@ -1,6 +1,6 @@
 {
   "name": "playwright-e2e-tests",
-  "version": "6.1.21",
+  "version": "7.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
