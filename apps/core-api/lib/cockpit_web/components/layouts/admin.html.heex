@@ -1,4 +1,8 @@
-<Backpex.HTML.Layout.app_shell fluid={@fluid?}>
+<Backpex.HTML.Layout.app_shell
+  fluid={@fluid?}
+  socket={@socket}
+  preferences_manifest={@preferences_manifest}
+>
   <:topbar>
     <span class="mr-auto">Lotta Cockpit</span>
     <Backpex.HTML.Layout.topbar_dropdown class="mr-2 md:mr-0">

@@ -15,6 +15,12 @@ defmodule CockpitWeb.Layouts do
   attr(:flash, :map, required: true, doc: "the map of flash messages")
   attr(:fluid?, :boolean, default: true, doc: "if the content uses full width")
   attr(:current_url, :string, required: true, doc: "the current url")
+  attr(:socket, :any, required: true, doc: "the LiveView socket, needed by the Backpex app shell")
+
+  attr(:preferences_manifest, :map,
+    default: nil,
+    doc: "the preferences manifest assigned by `Backpex.InitAssigns`"
+  )
 
   attr(:current_scope, :map,
     default: nil,
