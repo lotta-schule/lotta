@@ -1,3 +1,13 @@
+## 7.0.1 (2026-11-01)
+
+### 🩹 Fixes
+
+- **core:** fix crashing cockpit (backpex breaking changes) ([#581](https://github.com/lotta-schule/lotta/pull/581))
+
+### ❤️ Thank You
+
+- Alexis Rinaldoni @ptitmouton
+
 # 7.0.0 (2026-10-18)
 
 ### 🚀 Features
