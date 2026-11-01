@@ -61,8 +61,6 @@ defmodule LottaWeb.Router do
   scope "/data" do
     forward("/sitemap.xml", LottaWeb.SitemapPlug)
 
-    forward("/sitemap.xml", LottaWeb.SitemapPlug)
-
     scope "/storage" do
       get("/f/:id/:format", LottaWeb.StorageController, :get_file_format)
     end
