@@ -21,8 +21,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  /* Every worker gets its own tenant (= its own DB schema), so tests can safely run in parallel. */
+  workers: process.env.CI ? 4 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
 
   timeout: 60_000,
@@ -31,22 +31,17 @@ export default defineConfig({
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    screenshot: 'on',
-    video: 'on',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on',
+    trace: 'on-first-retry',
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'setup tenant',
-      testMatch: 'global.setup.ts',
-    },
-    {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      dependencies: ['setup tenant'],
     },
 
     {
@@ -67,7 +62,6 @@ export default defineConfig({
     {
       name: 'MobileSafari',
       use: { ...devices['iPhone 12'] },
-      dependencies: ['setup tenant'],
     },
   ],
 

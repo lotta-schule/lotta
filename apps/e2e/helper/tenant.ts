@@ -108,9 +108,6 @@ export const createTenantSetup = async (
   const defaultPassword = passwordMatcher![1];
 
   const newBrowserContext = await browser.newContext();
-  await newBrowserContext.storageState({
-    path: `.auth/storage/${encodeURIComponent(admin.email)}`,
-  });
   const page = await newBrowserContext.newPage();
   const isMobile = (page.viewportSize()?.width ?? 1000) < 768;
 
@@ -126,6 +123,8 @@ export const createTenantSetup = async (
       newPassword: admin.password,
     }
   );
+
+  await newBrowserContext.close();
 
   return { tenant };
 };

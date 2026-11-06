@@ -24,7 +24,12 @@ const setupLighthouseTenant = async () => {
   return tenant;
 };
 
-setupLighthouseTenant().then((tenant) => {
-  console.log(JSON.stringify(tenant));
-  process.exit(0);
-});
+setupLighthouseTenant()
+  .then((tenant) => {
+    console.log(JSON.stringify(tenant));
+    process.exit(0);
+  })
+  .catch((error: unknown) => {
+    console.error(error);
+    process.exit(1);
+  });

@@ -13,14 +13,11 @@ export const loginUser = async (
 ) => {
   await page.goto(baseURL);
 
-  await page.waitForLoadState('domcontentloaded');
-
   if (isMobile) {
-    await page.waitForLoadState('networkidle');
     await expect(
       page.getByRole('button', { name: /nutzermenü öffnen/i })
     ).toBeVisible();
-    page.getByRole('button', { name: /menü öffnen/i }).click();
+    await page.getByRole('button', { name: /menü öffnen/i }).click();
     await expect(page.getByTestId('BaseLayoutSidebar')).toBeVisible();
   }
 
@@ -28,8 +25,7 @@ export const loginUser = async (
   await loginButton.click();
 
   const loginDialog = page.getByRole('dialog', { name: /anmelden/i });
-  await loginDialog.waitFor({ state: 'visible' });
-  expect(loginDialog).toBeVisible();
+  await expect(loginDialog).toBeVisible();
 
   await loginDialog.getByRole('textbox', { name: /e-mail/i }).fill(user.email);
 
@@ -41,9 +37,6 @@ export const loginUser = async (
   await loginDialog.getByRole('button', { name: /anmelden/i }).click();
 
   await page.waitForURL((url) => url.hostname === new URL(baseURL).hostname);
-  await expect(loginDialog).not.toBeVisible();
-
-  await page.waitForLoadState('domcontentloaded');
   await expect(loginDialog).not.toBeVisible();
 
   return {

@@ -27,7 +27,7 @@ export const uploadAndSelect = async (
   await browserDialog.getByRole('button', { name: 'Datei hochladen' }).click();
 
   const fileChooser = await fileChooserPromise;
-  fileChooser.setFiles(file);
+  await fileChooser.setFiles(file);
 
   const newFileOption = browserDialog
     .getByRole('listbox')

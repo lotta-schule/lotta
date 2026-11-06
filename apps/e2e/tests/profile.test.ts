@@ -20,10 +20,10 @@ test.describe('Profile', () => {
     );
 
     test('should show correct basic information', async ({ page, admin }) => {
-      expect(
+      await expect(
         page.getByRole('textbox', { name: 'Dein Vor- und Nachname' })
       ).toHaveValue(admin.name);
-      expect(page.getByRole('textbox', { name: /email/i })).toHaveValue(
+      await expect(page.getByRole('textbox', { name: /email/i })).toHaveValue(
         admin.email
       );
 

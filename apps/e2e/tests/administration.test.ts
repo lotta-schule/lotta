@@ -1,5 +1,10 @@
 import { expect, test } from '../fixtures';
-import { createTenantSetup, loginUser, TenantDescriptor } from '../helper';
+import {
+  createTenantSetup,
+  deleteTenant,
+  loginUser,
+  TenantDescriptor,
+} from '../helper';
 import { uploadAndSelect } from '../helper/fileManager';
 
 const getBaseURL = ({ slug }: { slug: string }) =>
@@ -19,6 +24,12 @@ test.describe('Tenant administration', () => {
         }
       );
       tenant = result.tenant;
+    });
+
+    test.afterAll(async () => {
+      if (tenant) {
+        await deleteTenant(tenant.id);
+      }
     });
 
     test.beforeEach(async ({ page, isMobile, admin, takeScreenshot }) => {

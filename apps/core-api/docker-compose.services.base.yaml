@@ -56,17 +56,11 @@ services:
       HOME: /tmp
     entrypoint: >
       /bin/sh -c "
+      set -e;
       sleep 5;
       mc alias set dockerminio http://minio:9100 minio miniosecret;
-      mc mb dockerminio/lotta-dev;
-      mc anonymous set download dockerminio/lotta-dev;
-
-      mc alias set dockerminio http://minio:9100 minio miniosecret;
-      mc mb dockerminio/lotta-test;
-      mc anonymous set download dockerminio/lotta-test;
-
-      mc alias set dockerminio http://minio:9100 minio miniosecret;
-      mc mb dockerminio/lotta-e2e;
-      mc anonymous set download dockerminio/lotta-e2e;
-      exit 0;
+      for bucket in lotta-dev lotta-test lotta-e2e; do
+      mc mb --ignore-existing dockerminio/$$bucket;
+      mc anonymous set download dockerminio/$$bucket;
+      done;
       "
