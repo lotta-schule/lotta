@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useCurrentUser } from '#/util/user/useCurrentUser';
 import { useIsMobile } from '@lotta-schule/hubert';
 import { useApolloClient } from '@apollo/client/react';
-import { useRouter } from 'next/navigation.js';
 import { Header, Main, Sidebar } from '#/layout';
 import { isBrowser } from '#/util/isBrowser';
 import { FragmentOf } from '#/api/graphql';
@@ -21,7 +20,6 @@ export const MessagingPage = React.memo(
     const didWriteCache = React.useRef(false);
     const apolloClient = useApolloClient();
     const currentUser = useCurrentUser();
-    const router = useRouter();
 
     const isMobile = useIsMobile();
 
@@ -36,8 +34,9 @@ export const MessagingPage = React.memo(
       didWriteCache.current = true;
     }
 
+    // Visitors who are not logged in are turned away by the route (on the
+    // server). Here, the current user may simply not be loaded yet.
     if (currentUser === null) {
-      router.replace('/');
       return null;
     }
 

@@ -29,56 +29,56 @@ test.describe('Tenant isolation', () => {
     }
   });
 
-  test('a user of one tenant cannot log in on another tenant', async ({
-    playwright,
-    baseURL,
-    users,
-  }) => {
-    const request = await playwright.request.newContext();
+  test(
+    'a user of one tenant cannot log in on another tenant',
+    { tag: '@smoke' },
+    async ({ playwright, baseURL, users }) => {
+      const request = await playwright.request.newContext();
 
-    // works on the user's own tenant …
-    await loginViaApi(request, baseURL, users.student);
-    expect(await getCurrentUserEmail(request, baseURL)).toBe(
-      users.student.email
-    );
+      // works on the user's own tenant …
+      await loginViaApi(request, baseURL, users.student);
+      expect(await getCurrentUserEmail(request, baseURL)).toBe(
+        users.student.email
+      );
 
-    // … but the same credentials are unknown on the other tenant
-    await expect(
-      loginViaApi(request, getTenantURL(otherTenant), users.student)
-    ).rejects.toThrow();
+      // … but the same credentials are unknown on the other tenant
+      await expect(
+        loginViaApi(request, getTenantURL(otherTenant), users.student)
+      ).rejects.toThrow();
 
-    await request.dispose();
-  });
-
-  test('a session of one tenant is not valid on another tenant', async ({
-    playwright,
-    baseURL,
-    users,
-  }) => {
-    const request = await playwright.request.newContext();
-    await loginViaApi(request, baseURL, users.admin);
-
-    const { cookies } = await request.storageState();
-    const accessToken = cookies.find(
-      (cookie) => cookie.name === 'SignInAccessToken'
-    )?.value;
-    expect(accessToken, 'access token cookie after login').toBeTruthy();
-
-    // The admin user exists (with the same email) in both tenants, so this
-    // makes sure the token itself is bound to the tenant it was issued for.
-    const otherTenantURL = getTenantURL(otherTenant);
-    for (const headers of <Record<string, string>[]>[
-      { Cookie: `SignInAccessToken=${accessToken}` },
-      { Authorization: `Bearer ${accessToken}` },
-    ]) {
-      const otherRequest = await playwright.request.newContext();
-      expect(
-        await getCurrentUserEmail(otherRequest, otherTenantURL, headers),
-        `currentUser on other tenant with ${Object.keys(headers)[0]} header`
-      ).toBeNull();
-      await otherRequest.dispose();
+      await request.dispose();
     }
+  );
 
-    await request.dispose();
-  });
+  test(
+    'a session of one tenant is not valid on another tenant',
+    { tag: '@smoke' },
+    async ({ playwright, baseURL, users }) => {
+      const request = await playwright.request.newContext();
+      await loginViaApi(request, baseURL, users.admin);
+
+      const { cookies } = await request.storageState();
+      const accessToken = cookies.find(
+        (cookie) => cookie.name === 'SignInAccessToken'
+      )?.value;
+      expect(accessToken, 'access token cookie after login').toBeTruthy();
+
+      // The admin user exists (with the same email) in both tenants, so this
+      // makes sure the token itself is bound to the tenant it was issued for.
+      const otherTenantURL = getTenantURL(otherTenant);
+      for (const headers of <Record<string, string>[]>[
+        { Cookie: `SignInAccessToken=${accessToken}` },
+        { Authorization: `Bearer ${accessToken}` },
+      ]) {
+        const otherRequest = await playwright.request.newContext();
+        expect(
+          await getCurrentUserEmail(otherRequest, otherTenantURL, headers),
+          `currentUser on other tenant with ${Object.keys(headers)[0]} header`
+        ).toBeNull();
+        await otherRequest.dispose();
+      }
+
+      await request.dispose();
+    }
+  );
 });

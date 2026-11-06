@@ -7,6 +7,8 @@ import {
 import {
   createTenantFixture,
   getTenantURL,
+  graphql,
+  GraphqlClient,
   loginViaApi,
   saveScreenshot,
   SeedResult,
@@ -17,7 +19,7 @@ import {
 
 export * from '@playwright/test';
 
-type StorageState = Exclude<
+export type StorageState = Exclude<
   BrowserContextOptions['storageState'],
   string | undefined
 >;
@@ -82,6 +84,8 @@ export const tenantTest = test.extend<
     baseURL: string;
     loginAs: Role;
     seed: (input: Parameters<typeof seedTenant>[1]) => Promise<SeedResult>;
+    /** A GraphQL client acting as the given role, e.g. to create content as admin */
+    graphqlAs: (role: Exclude<Role, 'guest'>) => Promise<GraphqlClient>;
   },
   {
     tenant: TenantDescriptor;
@@ -159,6 +163,31 @@ export const tenantTest = test.extend<
 
   storageState: async ({ loginAs, getAuthState }, use) => {
     await use(loginAs === 'guest' ? undefined : await getAuthState(loginAs));
+  },
+
+  graphqlAs: async ({ playwright, baseURL, getAuthState }, use) => {
+    const contexts: { dispose: () => Promise<void> }[] = [];
+
+    await use(async (role) => {
+      const request = await playwright.request.newContext({
+        storageState: await getAuthState(role),
+      });
+      contexts.push(request);
+
+      return async (query, variables) => {
+        const { status, body } = await graphql(request, baseURL, query, {
+          variables,
+        });
+        if (status !== 200 || body?.errors?.length || !body?.data) {
+          throw new Error(
+            `GraphQL request as ${role} failed (${status}): ${JSON.stringify(body)}`
+          );
+        }
+        return body.data as any;
+      };
+    });
+
+    await Promise.all(contexts.map((c) => c.dispose()));
   },
 
   seed: async ({ tenant }, use) => {

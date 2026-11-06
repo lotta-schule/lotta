@@ -26,3 +26,18 @@ IMAGE_TAG=<someother> docker compose up -d
 # Test options can be passed to the script. For example to test with UI:
 ./scripts/test.sh --ui
 ```
+
+## Writing tests
+
+Lotta is multi-tenant: every tenant has its own database schema. The suite uses this for isolation:
+
+- **One tenant per worker.** Use `tenantTest` from `fixtures.ts`. Each Playwright worker gets a fresh,
+  ready-to-use tenant (created through the core admin API, deleted afterwards), so tests can run fully in parallel.
+  Tests of the same worker share that tenant, so don't rely on state other tests may change (e.g. the tenant's title).
+- **Users per role.** Every tenant has `users.admin`, `users.teacher` and `users.student`.
+  `test.use({ loginAs: 'teacher' })` starts each test already logged in (the login happens once per worker, via API).
+  Tests that change a user (password, email, …) create their own with `seed({ users: [...] })`.
+- **Seed data through APIs, not the UI.** `seed()` creates users and groups (core `/admin/api/seed`, enabled by
+  `ENABLE_E2E_API`). `graphqlAs('admin')` together with `helper/content.ts` creates categories and articles.
+  Only use the UI for the part a test is actually about.
+- **Tags.** Tests tagged `@smoke` cover the most important journeys: `bun run e2e:smoke`.

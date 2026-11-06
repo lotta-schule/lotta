@@ -27,6 +27,10 @@ export default defineConfig({
 
   timeout: 60_000,
 
+  /* The whole stack (web, core, db, s3) runs in docker, shared by all workers:
+   * under parallel load, 5s (the default) is too tight for some UI updates. */
+  expect: { timeout: 10_000 },
+
   reporter: process.env.CI ? [['github'], ['blob']] : [['list']],
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

@@ -173,16 +173,11 @@ const ArticlePreviewComponent = <A extends ArticlePreviewModel>({
                   });
                 }}
                 className={styles.title}
-                aria-label={'Article title'}
+                aria-label={'Titel des Beitrags'}
               />
             )}
             {!onUpdateArticle && (
-              <div
-                className={styles.title}
-                role={'heading'}
-                aria-level={1}
-                aria-label={'Article title'}
-              >
+              <div className={styles.title} role={'heading'} aria-level={1}>
                 {!isEmbedded &&
                   currentUser?.lastSeen &&
                   isBefore(

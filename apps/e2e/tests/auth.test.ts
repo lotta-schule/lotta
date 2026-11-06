@@ -9,18 +9,17 @@ import {
 } from '../helper';
 
 test.describe('Authentication', () => {
-  test('a user can log in with email and password', async ({
-    page,
-    baseURL,
-    isMobile,
-    users,
-  }) => {
-    await loginUser({ page, baseURL, isMobile }, users.teacher);
+  test(
+    'a user can log in with email and password',
+    { tag: '@smoke' },
+    async ({ page, baseURL, isMobile, users }) => {
+      await loginUser({ page, baseURL, isMobile }, users.teacher);
 
-    expect(await getCurrentUserEmail(page.request, baseURL)).toBe(
-      users.teacher.email
-    );
-  });
+      expect(await getCurrentUserEmail(page.request, baseURL)).toBe(
+        users.teacher.email
+      );
+    }
+  );
 
   test('a user cannot log in with a wrong password', async ({
     page,

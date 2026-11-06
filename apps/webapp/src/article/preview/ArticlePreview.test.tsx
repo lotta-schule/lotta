@@ -19,10 +19,10 @@ describe('shared/article/ArticlePreview', () => {
         { currentUser: SomeUser }
       );
       expect(
-        screen.getByRole('heading', { name: /article title/i })
+        screen.getByRole('heading', { name: 'Weihnachtsmarkt' })
       ).toBeVisible();
       expect(
-        screen.getByRole('heading', { name: /article title/i })
+        screen.getByRole('heading', { name: 'Weihnachtsmarkt' })
       ).toHaveTextContent('Weihnachtsmarkt');
       expect(
         screen.queryByRole('link', { name: /weihnachtsmarkt/i })
@@ -36,10 +36,10 @@ describe('shared/article/ArticlePreview', () => {
         { currentUser: SomeUser }
       );
       expect(
-        screen.getByRole('heading', { name: /article title/i })
+        screen.getByRole('heading', { name: 'Weihnachtsmarkt' })
       ).toBeVisible();
       expect(
-        screen.getByRole('heading', { name: /article title/i })
+        screen.getByRole('heading', { name: 'Weihnachtsmarkt' })
       ).toHaveTextContent('Weihnachtsmarkt');
       expect(
         screen.getByRole('link', { name: /weihnachtsmarkt/i })
@@ -53,10 +53,10 @@ describe('shared/article/ArticlePreview', () => {
         { currentUser: SomeUser }
       );
       expect(
-        screen.getByRole('textbox', { name: /article title/i })
+        screen.getByRole('textbox', { name: /titel des beitrags/i })
       ).toBeVisible();
       expect(
-        screen.getByRole('textbox', { name: /article title/i })
+        screen.getByRole('textbox', { name: /titel des beitrags/i })
       ).toHaveValue('Weihnachtsmarkt');
     });
 
@@ -69,7 +69,7 @@ describe('shared/article/ArticlePreview', () => {
         { currentUser: SomeUser }
       );
       const titleInput = screen.getByRole('textbox', {
-        name: /article title/i,
+        name: /titel des beitrags/i,
       }) as HTMLInputElement;
       await user.fill(titleInput, 'A');
       expect(fn).toHaveBeenCalledWith({ ...Weihnachtsmarkt, title: 'A' });
