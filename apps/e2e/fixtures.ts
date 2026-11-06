@@ -9,6 +9,8 @@ import {
   getTenantURL,
   loginViaApi,
   saveScreenshot,
+  SeedResult,
+  seedTenant,
   TenantAdmin,
   TenantDescriptor,
 } from './helper';
@@ -20,7 +22,9 @@ type StorageState = Exclude<
   string | undefined
 >;
 
-export type Role = 'guest' | 'admin';
+export type Role = 'guest' | 'admin' | 'teacher' | 'student';
+
+export type TenantUser = { name: string; email: string; password: string };
 
 export const test = base.extend<
   { takeScreenshot: (name: string, target?: Page | Locator) => Promise<void> },
@@ -66,12 +70,22 @@ export const test = base.extend<
  * tenant, so they must not rely on state that other tests may change
  * (e.g. the tenant's title).
  *
- * Use `test.use({ loginAs: 'admin' })` to start every test already logged in.
+ * Every tenant has one user per role (`users.admin`, `users.teacher`,
+ * `users.student`). Use `test.use({ loginAs: 'teacher' })` to start every test
+ * already logged in as that user.
+ *
+ * Tests that change a user (password, email, …) should create their own user
+ * with `seed()` instead of changing the shared ones.
  */
 export const tenantTest = test.extend<
-  { baseURL: string; loginAs: Role },
+  {
+    baseURL: string;
+    loginAs: Role;
+    seed: (input: Parameters<typeof seedTenant>[1]) => Promise<SeedResult>;
+  },
   {
     tenant: TenantDescriptor;
+    users: Record<Exclude<Role, 'guest'>, TenantUser>;
     getAuthState: (role: Exclude<Role, 'guest'>) => Promise<StorageState>;
   }
 >({
@@ -86,11 +100,35 @@ export const tenantTest = test.extend<
     { scope: 'worker' },
   ],
 
+  users: [
+    async ({ tenant, admin }, use) => {
+      const {
+        users: [teacher, student],
+      } = await seedTenant(tenant.id, {
+        users: [
+          {
+            name: 'Gandalf der Graue',
+            email: `gandalf-${tenant.slug}@e2e.lotta.schule`,
+            password: 'you-shall-not-pass',
+            groups: ['Lehrer'],
+          },
+          {
+            name: 'Frodo Beutlin',
+            email: `frodo-${tenant.slug}@e2e.lotta.schule`,
+            password: 'my-precious',
+            groups: ['Schüler'],
+          },
+        ],
+      });
+      await use({ admin, teacher, student });
+    },
+    { scope: 'worker' },
+  ],
+
   // Log in once per worker and role, then reuse the cookies for every test.
   getAuthState: [
-    async ({ browser, tenant, admin }, use) => {
+    async ({ browser, tenant, users }, use) => {
       const cache = new Map<string, Promise<StorageState>>();
-      const users = { admin };
 
       await use((role) => {
         if (!cache.has(role)) {
@@ -121,6 +159,10 @@ export const tenantTest = test.extend<
 
   storageState: async ({ loginAs, getAuthState }, use) => {
     await use(loginAs === 'guest' ? undefined : await getAuthState(loginAs));
+  },
+
+  seed: async ({ tenant }, use) => {
+    await use((input) => seedTenant(tenant.id, input));
   },
 
   baseURL: async ({ tenant }, use) => {

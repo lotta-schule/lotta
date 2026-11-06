@@ -98,6 +98,7 @@ defmodule LottaWeb.Router do
 
       post("/create-test", LottaWeb.TenantController, :create_test)
       post("/delete-tenant", LottaWeb.TenantController, :delete_tenant)
+      post("/seed", LottaWeb.E2EController, :seed)
     end
   end
 

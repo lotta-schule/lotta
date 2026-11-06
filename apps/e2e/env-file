@@ -50,3 +50,5 @@ APNS_USE_PRODUCTION='false'
 DISABLE_CHROMIC='true'
 COCKPIT_ADMIN_API_USERNAME='admin'
 COCKPIT_ADMIN_API_KEY='secretapikey'
+# Enables /admin/api/seed (test data for e2e tests). Never enable in production.
+ENABLE_E2E_API='true'
