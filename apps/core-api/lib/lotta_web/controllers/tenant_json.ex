@@ -24,6 +24,7 @@ defmodule LottaWeb.TenantJSON do
       id: tenant.id,
       slug: tenant.slug,
       title: tenant.title,
+      state: tenant.state,
       backgroundImageFile: tenant.background_image_file_id,
       logoImageFile: tenant.logo_image_file_id,
       insertedAt: tenant.inserted_at,

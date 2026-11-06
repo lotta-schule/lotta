@@ -1,23 +1,15 @@
 import { expect, tenantTest as test } from '../fixtures';
-import { loginUser } from '../helper';
 
 test.describe('Profile', () => {
   test.describe('as admin', () => {
-    test.beforeEach(
-      async ({ page, baseURL, isMobile, admin, takeScreenshot }) => {
-        const { loginDialog } = await loginUser(
-          { page, baseURL, isMobile },
-          admin
-        );
-        await expect(loginDialog).not.toBeVisible();
-        await page.goto(`${baseURL}/profile`, {
-          waitUntil: 'domcontentloaded',
-        });
-        await expect(page.locator('h4')).toContainText('Meine Daten');
+    test.use({ loginAs: 'admin' });
 
-        await takeScreenshot('profile-basic-information');
-      }
-    );
+    test.beforeEach(async ({ page, takeScreenshot }) => {
+      await page.goto('/profile');
+      await expect(page.locator('h4')).toContainText('Meine Daten');
+
+      await takeScreenshot('profile-basic-information');
+    });
 
     test('should show correct basic information', async ({ page, admin }) => {
       await expect(

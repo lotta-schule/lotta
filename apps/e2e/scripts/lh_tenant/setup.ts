@@ -1,6 +1,4 @@
 import * as process from 'node:process';
-import { chromium } from 'playwright';
-import { Browser } from '@playwright/test';
 import { createTenantSetup } from '../../helper';
 
 const setupLighthouseTenant = async () => {
@@ -11,10 +9,8 @@ const setupLighthouseTenant = async () => {
   };
 
   console.log(`create tenant and assign admin user ${admin.name}`);
-  const browser = await chromium.launch();
-
   const { tenant } = await createTenantSetup(
-    { browser: browser as Browser, admin },
+    { admin },
     {
       name: `Lighthouse Test`,
       slug: `lighthouse`,

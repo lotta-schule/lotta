@@ -230,19 +230,37 @@ defmodule Lotta.Worker.Tenant do
 
   @spec setup_default_content(Tenant.t(), User.t()) ::
           {:ok, Oban.Job.t()} | {:error, String.t()}
-  def setup_default_content(%Tenant{id: id}, %User{
-        email: email,
-        password: password,
-        eduplaces_id: eduplaces_id
-      }) do
-    __MODULE__.new(%{
+  def setup_default_content(tenant, user) do
+    tenant
+    |> setup_args(user)
+    |> __MODULE__.new()
+    |> Oban.insert()
+  end
+
+  @doc """
+  Like `setup_default_content/2`, but runs the setup in the calling process
+  instead of enqueuing a job. Returns once the tenant is ready.
+  """
+  @spec run_setup_default_content(Tenant.t(), User.t()) :: :ok | {:error, any()}
+  def run_setup_default_content(tenant, user) do
+    case perform(%Oban.Job{args: setup_args(tenant, user)}) do
+      :ok -> :ok
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp setup_args(%Tenant{id: id}, %User{
+         email: email,
+         password: password,
+         eduplaces_id: eduplaces_id
+       }) do
+    %{
       "type" => "setup",
       "id" => id,
       "user_email" => email,
       "user_password" => password,
       "eduplaces_id" => eduplaces_id
-    })
-    |> Oban.insert()
+    }
   end
 
   @spec init_analytics(Tenant.t()) ::

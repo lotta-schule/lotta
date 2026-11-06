@@ -1,4 +1,44 @@
-import { Page, expect } from '@playwright/test';
+import { APIRequestContext, Page, expect } from '@playwright/test';
+
+const LOGIN_MUTATION = `
+  mutation Login($username: String, $password: String) {
+    login(username: $username, password: $password) {
+      accessToken
+    }
+  }
+`;
+
+/**
+ * Logs in by sending the GraphQL `login` mutation to the tenant's webapp
+ * (which proxies `/api` to core). The auth cookies are stored in the cookie jar
+ * of the given request context, so passing `context.request` logs in the
+ * whole browser context.
+ */
+export const loginViaApi = async (
+  request: APIRequestContext,
+  baseURL: string,
+  user: { email: string; password: string }
+) => {
+  const response = await request.post(new URL('/api', baseURL).toString(), {
+    data: {
+      query: LOGIN_MUTATION,
+      variables: { username: user.email, password: user.password },
+    },
+  });
+
+  if (!response.ok()) {
+    throw new Error(
+      `Login request for ${user.email} failed with status ${response.status()}`
+    );
+  }
+
+  const body = await response.json();
+  if (body.errors?.length || !body.data?.login?.accessToken) {
+    throw new Error(
+      `Login for ${user.email} failed: ${JSON.stringify(body.errors ?? body)}`
+    );
+  }
+};
 
 export const loginUser = async (
   {

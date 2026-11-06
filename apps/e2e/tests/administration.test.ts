@@ -1,53 +1,17 @@
-import { expect, test } from '../fixtures';
-import {
-  createTenantSetup,
-  deleteTenant,
-  loginUser,
-  TenantDescriptor,
-} from '../helper';
+import { expect, tenantTest as test } from '../fixtures';
 import { uploadAndSelect } from '../helper/fileManager';
-
-const getBaseURL = ({ slug }: { slug: string }) =>
-  `http://${slug}.local.lotta.schule:3000`;
 
 test.describe('Tenant administration', () => {
   test.describe('general settings', () => {
-    test.describe.configure({ mode: 'serial' });
-    const somewhatUniqueIdentifier = Math.random().toString(36).substring(7);
-    let tenant: TenantDescriptor = undefined!;
-    test.beforeAll(async ({ browser, admin, browserName }) => {
-      const result = await createTenantSetup(
-        { browser, admin },
-        {
-          name: `AdminSettings General Lotta ${browserName} ${somewhatUniqueIdentifier}`,
-          slug: `adminsettings-general-lotta-${browserName}-${somewhatUniqueIdentifier}`,
-        }
-      );
-      tenant = result.tenant;
-    });
+    test.use({ loginAs: 'admin' });
 
-    test.afterAll(async () => {
-      if (tenant) {
-        await deleteTenant(tenant.id);
-      }
-    });
-
-    test.beforeEach(async ({ page, isMobile, admin, takeScreenshot }) => {
-      const baseURL = getBaseURL({ slug: tenant.slug });
-      const { loginDialog } = await loginUser(
-        { page, baseURL: baseURL!, isMobile },
-        admin
-      );
-      await expect(loginDialog).not.toBeVisible();
-
-      await page.goto(`${baseURL}/admin`, { waitUntil: 'domcontentloaded' });
+    test.beforeEach(async ({ page, takeScreenshot }) => {
+      await page.goto('/admin');
 
       await takeScreenshot('admin-settings');
 
       await page.getByRole('button', { name: /allgemein/i }).click();
-      await page.waitForURL(`${baseURL}/admin/general`, {
-        waitUntil: 'domcontentloaded',
-      });
+      await page.waitForURL('**/admin/general');
 
       await takeScreenshot('admin-settings-general');
     });
@@ -55,43 +19,41 @@ test.describe('Tenant administration', () => {
     test('should be able to update the tenant name', async ({
       page,
       browser,
+      baseURL,
     }) => {
-      const baseURL = getBaseURL({ slug: tenant.slug });
+      // The tenant is shared by all tests of this worker, so don't assume its current title
+      const newTitle = `Example Lotta Schule ${test.info().testId}`;
+      const titleInput = page.getByRole('textbox', { name: 'Name der Seite' });
 
-      await expect(
-        page.getByRole('textbox', { name: 'Name der Seite' })
-      ).toHaveValue(tenant.title);
-      await page
-        .getByRole('textbox', { name: 'Name der Seite' })
-        .fill('Example Lotta Schule');
+      await expect(titleInput).not.toHaveValue('');
+      await titleInput.fill(newTitle);
+
       const saveButton = page.getByRole('button', { name: /speichern/i });
       await saveButton.click();
       await expect(saveButton).toBeDisabled();
-
       await expect(saveButton).not.toBeDisabled();
 
       await page.reload();
-      await expect(
-        page.getByRole('textbox', { name: 'Name der Seite' })
-      ).toHaveValue('Example Lotta Schule');
+      await expect(titleInput).toHaveValue(newTitle);
 
-      const newBrowserContext = await browser.newContext();
-      const newPage = await newBrowserContext.newPage();
+      // A visitor (not logged in) should see the new title
+      const guestContext = await browser.newContext();
+      const guestPage = await guestContext.newPage();
 
-      await newPage.goto(baseURL, { waitUntil: 'domcontentloaded' });
+      await guestPage.goto(baseURL);
 
-      await expect(newPage).toHaveTitle('Example Lotta Schule');
-      await expect(newPage.getByRole('banner')).toContainText(
-        'Example Lotta Schule'
-      );
+      await expect(guestPage).toHaveTitle(newTitle);
+      await expect(guestPage.getByRole('banner')).toContainText(newTitle);
+
+      await guestContext.close();
     });
 
     test('should be able to update the tenant logo', async ({
       page,
       browser,
+      baseURL,
       isMobile,
     }) => {
-      const baseURL = getBaseURL({ slug: tenant.slug });
       const editOverlay = page
         .getByLabel('Logo der Seite')
         .getByTestId('EditOverlay');
@@ -107,16 +69,23 @@ test.describe('Tenant administration', () => {
       // TODO: Find smth better
       await expect(editOverlay.locator('img')).toBeVisible();
 
-      await page.getByRole('button', { name: /speichern/i }).click();
+      const saveButton = page.getByRole('button', { name: /speichern/i });
+      await saveButton.click();
+      await expect(saveButton).toBeDisabled();
+      await expect(saveButton).not.toBeDisabled();
 
-      const newBrowserContext = await browser.newContext();
-      const newPage = await newBrowserContext.newPage();
+      const guestContext = await browser.newContext();
+      const guestPage = await guestContext.newPage();
 
-      await newPage.goto(baseURL, { waitUntil: 'domcontentloaded' });
+      await guestPage.goto(baseURL);
 
       if (!isMobile) {
-        await expect(newPage.getByRole('banner').locator('img')).toBeVisible();
+        await expect(
+          guestPage.getByRole('banner').locator('img')
+        ).toBeVisible();
       }
+
+      await guestContext.close();
     });
   });
 });
