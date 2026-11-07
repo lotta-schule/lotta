@@ -200,4 +200,83 @@ defmodule Lotta.Observability do
     do: Tenants.get_tenant_by_prefix(prefix)
 
   defp tenant_for_job(_job), do: nil
+
+  @expected_graphql_error_codes ~w(UNAUTHENTICATED FORBIDDEN HISEC_REQUIRED TENANT_NOT_FOUND NOT_FOUND BAD_USER_INPUT)
+
+  # Resolvers mostly return plain (German) messages without an error code.
+  # These patterns catch the common "user did something not allowed / asked
+  # for something that doesn't exist / sent invalid input" cases. Prefer
+  # adding an `extensions: %{code: ...}` from the list above for new errors.
+  @expected_graphql_error_message ~r/nicht gefunden|existiert nicht|not found|keine? (nötigen )?Rechte|nicht die (nötigen )?Rechte|darfst|unauthori[sz]ed|forbidden|Falsche Zugangsdaten|ist geheim|ungültig|not valid|invalid/iu
+
+  @doc """
+  Span status for a GraphQL operation's errors (`error_status` option of
+  `OpentelemetryAbsinthe`).
+
+  Expected errors (not authenticated, forbidden, not found, invalid input)
+  are normal user behaviour, not failures: marking them as span errors would
+  make the tail sampler keep all of them and inflate error dashboards.
+  Only operations with at least one unexpected error get status `:error`.
+  """
+  @spec graphql_error_status([map()]) :: :ok | :error
+  def graphql_error_status(errors) when is_list(errors) do
+    if Enum.all?(errors, &expected_graphql_error?/1) do
+      OpenTelemetry.Tracer.set_attribute(:"graphql.error.expected", true)
+      :ok
+    else
+      :error
+    end
+  end
+
+  def graphql_error_status(_errors), do: :error
+
+  @doc false
+  @spec expected_graphql_error?(map()) :: boolean()
+  def expected_graphql_error?(error) when is_map(error) do
+    code = get_in(error, [Access.key(:extensions, %{}), Access.key(:code)])
+    message = Map.get(error, :message)
+
+    cond do
+      code in @expected_graphql_error_codes -> true
+      not is_nil(code) -> false
+      # Absinthe's own errors (parse/validation, no path) mean the client
+      # sent a query that doesn't match the schema: a bug, not user behaviour
+      is_nil(Map.get(error, :path)) -> false
+      is_binary(message) -> Regex.match?(@expected_graphql_error_message, message)
+      true -> false
+    end
+  end
+
+  def expected_graphql_error?(_error), do: false
+
+  @doc """
+  Trace Ecto queries via `OpentelemetryEcto`, except Oban's own queries
+  (job fetching, pruning, leader election, …), which would otherwise create
+  a constant stream of single-span traces.
+  """
+  @spec setup_ecto_tracing(Keyword.t()) :: :ok | {:error, :already_exists}
+  def setup_ecto_tracing(config \\ []) do
+    :telemetry.attach(
+      "lotta-opentelemetry-ecto",
+      [:lotta, :repo, :query],
+      &__MODULE__.handle_repo_query/4,
+      config
+    )
+  end
+
+  @doc false
+  def handle_repo_query(event, measurements, metadata, config) do
+    if oban_query?(metadata),
+      do: :ok,
+      else: OpentelemetryEcto.handle_event(event, measurements, metadata, config)
+  end
+
+  @doc false
+  @spec oban_query?(map()) :: boolean()
+  def oban_query?(%{source: "oban" <> _}), do: true
+
+  def oban_query?(%{options: options}) when is_list(options),
+    do: Keyword.keyword?(options) and Keyword.has_key?(options, :oban_conf)
+
+  def oban_query?(_metadata), do: false
 end

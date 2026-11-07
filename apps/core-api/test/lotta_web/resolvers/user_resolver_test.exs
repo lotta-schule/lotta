@@ -1085,6 +1085,7 @@ defmodule LottaWeb.UserResolverTest do
                "errors" => [
                  %{
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["searchUsers"]
                  }
                ]
@@ -1172,6 +1173,7 @@ defmodule LottaWeb.UserResolverTest do
                "errors" => [
                  %{
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["user"]
                  }
                ]
@@ -1489,6 +1491,7 @@ defmodule LottaWeb.UserResolverTest do
                "errors" => [
                  %{
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["requestHisecToken"]
                  }
                ]
@@ -1908,6 +1911,7 @@ defmodule LottaWeb.UserResolverTest do
                "errors" => [
                  %{
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["updateProfile"]
                  }
                ],
@@ -2118,6 +2122,7 @@ defmodule LottaWeb.UserResolverTest do
                "errors" => [
                  %{
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["destroyAccount"],
                    "locations" => [%{"column" => 3, "line" => 2}]
                  }

@@ -200,6 +200,7 @@ defmodule LottaWeb.MessagesResolverTest do
                  %{
                    "locations" => [%{"column" => 3, "line" => 2}],
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["conversations"]
                  }
                ]
@@ -367,6 +368,7 @@ defmodule LottaWeb.MessagesResolverTest do
                  %{
                    "locations" => [%{"column" => 3, "line" => 2}],
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["conversation"]
                  }
                ]
@@ -596,6 +598,7 @@ defmodule LottaWeb.MessagesResolverTest do
                  %{
                    "locations" => [%{"column" => 3, "line" => 2}],
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["createMessage"]
                  }
                ]
@@ -739,6 +742,7 @@ defmodule LottaWeb.MessagesResolverTest do
                  %{
                    "locations" => [%{"column" => 3, "line" => 2}],
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["deleteMessage"]
                  }
                ]

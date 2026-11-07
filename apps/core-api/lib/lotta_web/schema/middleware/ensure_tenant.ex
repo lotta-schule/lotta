@@ -15,6 +15,8 @@ defmodule LottaWeb.Schema.Middleware.EnsureTenant do
 
   def call(resolution, _config) do
     resolution
-    |> Absinthe.Resolution.put_result({:error, "Lotta nicht gefunden."})
+    |> Absinthe.Resolution.put_result(
+      {:error, message: "Lotta nicht gefunden.", extensions: %{code: "TENANT_NOT_FOUND"}}
+    )
   end
 end

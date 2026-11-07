@@ -157,4 +157,44 @@ defmodule Lotta.ObservabilityTest do
       refute Logger.metadata()[:tenant_id]
     end
   end
+
+  describe "graphql_error_status/1" do
+    test "is :ok when all errors are expected" do
+      assert :ok =
+               Observability.graphql_error_status([
+                 %{message: "x", path: ["a"], extensions: %{code: "UNAUTHENTICATED"}},
+                 %{message: "Beitrag mit der id 5 nicht gefunden.", path: ["article"]},
+                 %{message: "Du hast nicht die Rechte, diese Datei zu lesen.", path: ["file"]}
+               ])
+    end
+
+    test "is :error when any error is unexpected" do
+      assert :error =
+               Observability.graphql_error_status([
+                 %{message: "Beitrag nicht gefunden.", path: ["article"]},
+                 %{message: "Conversion job errored", path: ["file"]}
+               ])
+    end
+
+    test "treats unknown error codes and schema validation errors as unexpected" do
+      refute Observability.expected_graphql_error?(%{
+               message: "nicht gefunden",
+               path: ["a"],
+               extensions: %{code: "INTERNAL"}
+             })
+
+      refute Observability.expected_graphql_error?(%{
+               message: "Cannot query field \"foo\" on type \"RootQueryType\".",
+               locations: [%{line: 1, column: 3}]
+             })
+    end
+  end
+
+  describe "oban_query?/1" do
+    test "detects Oban's own queries" do
+      assert Observability.oban_query?(%{source: "oban_jobs"})
+      assert Observability.oban_query?(%{source: nil, options: [oban_conf: %{}]})
+      refute Observability.oban_query?(%{source: "users", options: []})
+    end
+  end
 end
