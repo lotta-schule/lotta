@@ -22,6 +22,11 @@ const createCategory = async (
   }
   await dialog.getByRole('button', { name: 'Kategorie erstellen' }).click();
   await expect(dialog).toBeHidden();
+  // the new category opens in the editor: wait for it, before navigating anywhere else
+  await page.waitForURL(/\/admin\/categories\/\d+$/);
+  await expect(
+    page.getByRole('textbox', { name: 'Name der Kategorie' })
+  ).toHaveValue(title);
 };
 
 /** The category buttons of the main navigation (first) and subnavigation (second) */

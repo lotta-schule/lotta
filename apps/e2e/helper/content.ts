@@ -7,6 +7,13 @@ export type GraphqlClient = <T = any>(
   variables?: Record<string, unknown>
 ) => Promise<T>;
 
+export type ContentModuleInput = {
+  type: 'TEXT' | 'TITLE' | 'IMAGE' | 'FORM' | 'DIVIDER';
+  content?: Record<string, unknown>;
+  /** sent as JSON string, like the webapp does */
+  configuration?: Record<string, unknown>;
+};
+
 export type SeededCategory = { id: string; title: string; path: string };
 export type SeededArticle = { id: string; title: string; path: string };
 
@@ -52,11 +59,15 @@ export const createArticle = async (
     categoryId,
     groupIds = [],
     published = true,
+    contentModules = [],
+    isReactionsEnabled = false,
   }: {
     title: string;
     categoryId?: string;
     groupIds?: (string | number)[];
     published?: boolean;
+    contentModules?: ContentModuleInput[];
+    isReactionsEnabled?: boolean;
   }
 ): Promise<SeededArticle> => {
   const { createArticle: article } = await gql<{
@@ -78,8 +89,18 @@ export const createArticle = async (
         title,
         published,
         readyToPublish: published,
+        isReactionsEnabled,
         category: categoryId ? { id: categoryId } : null,
         groups: groupIds.map((id) => ({ id: String(id) })),
+        contentModules: contentModules.map(
+          ({ configuration, ...module }, sortKey) => ({
+            ...module,
+            sortKey,
+            ...(configuration
+              ? { configuration: JSON.stringify(configuration) }
+              : {}),
+          })
+        ),
       },
     }
   );
