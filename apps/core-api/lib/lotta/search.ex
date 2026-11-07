@@ -28,7 +28,8 @@ defmodule Lotta.Search do
 
   def filter_articles_search_query(query, searchtext) do
     from(a in query,
-      join: cm in ContentModule,
+      # left join: articles without any content module must be found by their title, too
+      left_join: cm in ContentModule,
       on: cm.article_id == a.id,
       select_merge: %{
         rank:
@@ -36,7 +37,7 @@ defmodule Lotta.Search do
             fragment(
               """
                   coalesce((ts_rank(?.search, websearch_to_tsquery('german', ?))) +
-                  coalesce(avg(ts_rank(?.search, websearch_to_tsquery('german', ?)))), 0) -
+                  coalesce(avg(ts_rank(?.search, websearch_to_tsquery('german', ?))), 0), 0) -
                   ((date_part('year', now()) - date_part('year', ?.updated_at)) * 0.033)
               """,
               a,

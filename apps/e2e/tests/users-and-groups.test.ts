@@ -1,5 +1,5 @@
 import { APIRequestContext, PlaywrightWorkerArgs } from '@playwright/test';
-import { expect, tenantTest as test } from '../fixtures';
+import { expect, GUEST_STATE, tenantTest as test } from '../fixtures';
 import {
   createArticle,
   graphql,
@@ -165,7 +165,9 @@ test.describe('Users and groups', () => {
     expect(await canRead(playwright, baseURL, user, article.id)).toBe(false);
 
     await test.step('the user enters the enrollment key in their profile', async () => {
-      const context = await browser.newContext();
+      const context = await browser.newContext({
+        storageState: GUEST_STATE,
+      });
       await loginViaApi(context.request, baseURL, user);
       const userPage = await context.newPage();
       await userPage.goto(baseURL + '/profile');

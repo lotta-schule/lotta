@@ -1,5 +1,6 @@
 import {
   test as base,
+  BrowserContext,
   BrowserContextOptions,
   Locator,
   Page,
@@ -24,9 +25,29 @@ export type StorageState = Exclude<
   string | undefined
 >;
 
+/**
+ * A storage state without any session. Pass it to `browser.newContext()` for a
+ * visitor: without it, a new context inherits `test.use({ loginAs })`'s session.
+ */
+export const GUEST_STATE: StorageState = { cookies: [], origins: [] };
+
 export type Role = 'guest' | 'admin' | 'teacher' | 'student';
 
 export type TenantUser = { name: string; email: string; password: string };
+
+/**
+ * In docker, file URLs point to the storage service as `minio:9100`, which is
+ * not resolvable from the test runner: send those requests to localhost.
+ */
+const routeStorageToLocalhost = (context: BrowserContext) =>
+  context.route('http://minio:9100/**', (route) =>
+    route.continue({
+      url: route
+        .request()
+        .url()
+        .replace('http://minio:9100', 'http://localhost:9100'),
+    })
+  );
 
 export const test = base.extend<
   { takeScreenshot: (name: string, target?: Page | Locator) => Promise<void> },
@@ -35,14 +56,7 @@ export const test = base.extend<
   }
 >({
   context: async ({ context }, use) => {
-    await context.route('http://minio:9100/**', (route) =>
-      route.continue({
-        url: route
-          .request()
-          .url()
-          .replace('http://minio:9100', 'http://localhost:9100'),
-      })
-    );
+    await routeStorageToLocalhost(context);
     await use(context);
   },
   takeScreenshot: async ({ browserName, isMobile, page }, use) => {
@@ -84,6 +98,11 @@ export const tenantTest = test.extend<
     baseURL: string;
     loginAs: Role;
     seed: (input: Parameters<typeof seedTenant>[1]) => Promise<SeedResult>;
+    /**
+     * Opens a page in a new browser context with the given role's session
+     * (or none, for 'guest'). Use it when a test needs several users at once.
+     */
+    openPageAs: (role: Role) => Promise<Page>;
     /** A GraphQL client acting as the given role, e.g. to create content as admin */
     graphqlAs: (role: Exclude<Role, 'guest'>) => Promise<GraphqlClient>;
   },
@@ -163,6 +182,21 @@ export const tenantTest = test.extend<
 
   storageState: async ({ loginAs, getAuthState }, use) => {
     await use(loginAs === 'guest' ? undefined : await getAuthState(loginAs));
+  },
+
+  openPageAs: async ({ browser, getAuthState }, use) => {
+    const contexts: BrowserContext[] = [];
+
+    await use(async (role) => {
+      const context = await browser.newContext({
+        storageState: role === 'guest' ? GUEST_STATE : await getAuthState(role),
+      });
+      await routeStorageToLocalhost(context);
+      contexts.push(context);
+      return context.newPage();
+    });
+
+    await Promise.all(contexts.map((c) => c.close()));
   },
 
   graphqlAs: async ({ playwright, baseURL, getAuthState }, use) => {

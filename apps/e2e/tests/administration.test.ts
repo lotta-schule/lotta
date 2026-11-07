@@ -18,7 +18,7 @@ test.describe('Tenant administration', () => {
 
     test('should be able to update the tenant name', async ({
       page,
-      browser,
+      openPageAs,
       baseURL,
     }) => {
       // The tenant is shared by all tests of this worker, so don't assume its current title
@@ -37,20 +37,17 @@ test.describe('Tenant administration', () => {
       await expect(titleInput).toHaveValue(newTitle);
 
       // A visitor (not logged in) should see the new title
-      const guestContext = await browser.newContext();
-      const guestPage = await guestContext.newPage();
+      const guestPage = await openPageAs('guest');
 
       await guestPage.goto(baseURL);
 
       await expect(guestPage).toHaveTitle(newTitle);
       await expect(guestPage.getByRole('banner')).toContainText(newTitle);
-
-      await guestContext.close();
     });
 
     test('should be able to update the tenant logo', async ({
       page,
-      browser,
+      openPageAs,
       baseURL,
       isMobile,
     }) => {
@@ -74,8 +71,7 @@ test.describe('Tenant administration', () => {
       await expect(saveButton).toBeDisabled();
       await expect(saveButton).not.toBeDisabled();
 
-      const guestContext = await browser.newContext();
-      const guestPage = await guestContext.newPage();
+      const guestPage = await openPageAs('guest');
 
       await guestPage.goto(baseURL);
 
@@ -84,8 +80,6 @@ test.describe('Tenant administration', () => {
           guestPage.getByRole('banner').locator('img')
         ).toBeVisible();
       }
-
-      await guestContext.close();
     });
   });
 });
