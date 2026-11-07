@@ -25,9 +25,8 @@ jobs:
       fail-fast: false
       matrix:
         # Each shard pays ~2 min of fixed setup (browsers, docker compose).
-        # Add shards again once the suite is big enough to make that worth it.
-        shardIndex: [1]
-        shardTotal: [1]
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
