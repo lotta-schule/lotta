@@ -4,15 +4,12 @@ import { createArticle, createCategory } from '../helper';
 
 const search = async (page: Page, baseURL: string, term: string) => {
   await page.goto(baseURL + '/search');
-  // Text typed before the page is hydrated is reset by React, so fill again
-  // until the (debounced) search shows its result count.
-  // Full-text search is the slowest query of the suite: allow more time under load.
-  await expect(async () => {
-    await page.getByRole('searchbox', { name: 'Suchbegriff' }).fill(term);
-    await expect(page.getByText(/Es wurden \d+ Beiträge gefunden/)).toBeVisible(
-      { timeout: 10_000 }
-    );
-  }).toPass({ timeout: 30_000 });
+  await page.getByRole('searchbox', { name: 'Suchbegriff' }).fill(term);
+  // the search is debounced: wait for the result count
+  // full-text search is the slowest query of the suite: allow more time under load
+  await expect(page.getByText(/Es wurden \d+ Beiträge gefunden/)).toBeVisible({
+    timeout: 20_000,
+  });
 };
 
 test.describe('Search', () => {
@@ -87,4 +84,36 @@ test.describe('Search', () => {
       });
     }
   );
+
+  test('keeps what was typed before the page was hydrated', async ({
+    page,
+    baseURL,
+    graphqlAs,
+  }) => {
+    const word = `Fruehstarter${Date.now().toString(36)}`;
+    const gql = await graphqlAs('admin');
+    const category = await createCategory(gql, { title: `Suche ${word}` });
+    const article = await createArticle(gql, {
+      title: `Artikel ${word}`,
+      categoryId: category.id,
+    });
+
+    // hold back the JavaScript until the user has typed
+    let releaseScripts!: () => void;
+    const scriptsReleased = new Promise<void>((r) => (releaseScripts = r));
+    await page.route('**/_next/static/chunks/**/*.js', async (route) => {
+      await scriptsReleased;
+      await route.continue();
+    });
+
+    await page.goto(baseURL + '/search', { waitUntil: 'commit' });
+    const searchbox = page.getByRole('searchbox', { name: 'Suchbegriff' });
+    await searchbox.fill(word);
+    releaseScripts();
+
+    await expect(
+      page.getByRole('main').getByRole('link', { name: article.title })
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(searchbox).toHaveValue(word);
+  });
 });
