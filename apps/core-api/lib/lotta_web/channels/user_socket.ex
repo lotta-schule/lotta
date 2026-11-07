@@ -34,6 +34,8 @@ defmodule LottaWeb.UserSocket do
 
       case AccessToken.resource_from_token(token) do
         {:ok, user, _claims} ->
+          Lotta.Observability.put_context(tenant: tenant, user: user)
+
           socket =
             socket
             |> Socket.put_options(
@@ -60,6 +62,7 @@ defmodule LottaWeb.UserSocket do
       :error
     else
       Repo.put_prefix(tenant.prefix)
+      Lotta.Observability.put_context(tenant: tenant)
 
       socket =
         Socket.put_options(socket,

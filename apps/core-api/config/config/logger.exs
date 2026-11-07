@@ -6,7 +6,7 @@ IO.inspect(config_env(), label: "Config environment")
 
 default_log_level =
   cond do
-    json_logging -> :warning
+    json_logging -> :info
     config_env() == :test -> :warning
     true -> :debug
   end
@@ -51,6 +51,8 @@ if not json_logging do
     format: "[$level] $message\n",
     metadata: metadata_keys
 else
+  config :logger, level: default_log_level
+
   config :logger, :default_handler,
-    formatter: {LoggerJSON.Formatters.Basic, [metadata: metadata_keys, level: default_log_level]}
+    formatter: {LoggerJSON.Formatters.Basic, [metadata: metadata_keys]}
 end

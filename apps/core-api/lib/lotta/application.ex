@@ -82,6 +82,10 @@ defmodule Lotta.Application do
     OpentelemetryPhoenix.setup(adapter: :bandit)
     OpentelemetryAbsinthe.setup()
     OpentelemetryEcto.setup([:lotta, :repo])
+
+    # after the instrumentation above, so their spans are current when
+    # tenant/user attributes are set on them
+    Lotta.Observability.attach()
   end
 
   defp get_libcluster_app_child() do

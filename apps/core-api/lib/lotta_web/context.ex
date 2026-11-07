@@ -94,24 +94,7 @@ defmodule LottaWeb.Context do
             |> set_virtual_user_fields()
             |> Map.put(:access_level, access_level)
 
-          Sentry.Context.set_user_context(%{
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            tenant_id: context.tenant.id,
-            is_admin: user.is_admin?,
-            all_groups:
-              Enum.map(
-                user.all_groups,
-                &%{
-                  id: &1.id,
-                  name: &1.name,
-                  is_admin_group: &1.is_admin_group
-                }
-              )
-          })
-
-          OpenTelemetry.Tracer.set_attributes(%{"user.id" => user.id})
+          Lotta.Observability.put_context(user: user)
 
           context
           |> Map.put(:current_user, user)
@@ -128,11 +111,7 @@ defmodule LottaWeb.Context do
       context
       |> Map.put(:tenant, tenant)
 
-    Sentry.Context.set_tags_context(%{
-      "tenant.id" => tenant.id,
-      "tenant.slug" => tenant.slug,
-      "tenant.prefix" => tenant.prefix
-    })
+    Lotta.Observability.put_context(tenant: tenant)
 
     context
   end
