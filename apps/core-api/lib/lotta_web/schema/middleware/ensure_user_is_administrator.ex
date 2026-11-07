@@ -12,6 +12,9 @@ defmodule LottaWeb.Schema.Middleware.EnsureUserIsAdministrator do
 
   def call(resolution, _config) do
     resolution
-    |> Absinthe.Resolution.put_result({:error, "Du musst Administrator sein um das zu tun."})
+    |> Absinthe.Resolution.put_result(
+      {:error,
+       message: "Du musst Administrator sein um das zu tun.", extensions: %{code: "FORBIDDEN"}}
+    )
   end
 end

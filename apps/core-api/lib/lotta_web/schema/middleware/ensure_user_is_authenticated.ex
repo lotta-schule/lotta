@@ -13,6 +13,9 @@ defmodule LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated do
 
   def call(resolution, _config) do
     resolution
-    |> Absinthe.Resolution.put_result({:error, "Du musst angemeldet sein um das zu tun."})
+    |> Absinthe.Resolution.put_result(
+      {:error,
+       message: "Du musst angemeldet sein um das zu tun.", extensions: %{code: "UNAUTHENTICATED"}}
+    )
   end
 end
