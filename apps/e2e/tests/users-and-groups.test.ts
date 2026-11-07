@@ -39,13 +39,10 @@ test.describe('Users and groups', () => {
   test("an admin assigns a user to a group, which gives access to the group's content", async ({
     page,
     baseURL,
-    isMobile,
     playwright,
     graphqlAs,
     seed,
   }) => {
-    test.skip(isMobile, 'The user administration is not tested on mobile yet');
-
     const name = `Samweis Gamdschie ${Date.now().toString(36)}`;
     const {
       users: [user],
@@ -97,13 +94,10 @@ test.describe('Users and groups', () => {
     page,
     browser,
     baseURL,
-    isMobile,
     playwright,
     graphqlAs,
     seed,
   }) => {
-    test.skip(isMobile, 'The group administration is not tested on mobile yet');
-
     const id = Date.now().toString(36);
     const groupName = `Klasse 7b ${id}`;
     const enrollmentKey = `geheim-7b-${id}`;

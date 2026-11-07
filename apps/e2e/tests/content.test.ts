@@ -1,5 +1,5 @@
 import { expect, Role, tenantTest as test } from '../fixtures';
-import { createArticle, createCategory } from '../helper';
+import { createArticle, createCategory, openMobileDrawer } from '../helper';
 
 const uniqueTitle = (prefix: string) =>
   `${prefix} ${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
@@ -9,7 +9,6 @@ test.describe('Content visibility', () => {
   // the navigation. Access to the articles in it depends on the articles' own groups.
   test('a category restricted to a group is only shown to its members', async ({
     baseURL,
-    isMobile,
     graphqlAs,
     openPageAs,
     seed,
@@ -38,15 +37,13 @@ test.describe('Content visibility', () => {
       await test.step(`${role} ${canSee ? 'can' : 'cannot'} see it`, async () => {
         const page = await openPageAs(role);
 
-        if (!isMobile) {
-          await page.goto(baseURL);
-          await expect(
-            page
-              .getByRole('navigation')
-              .first()
-              .getByRole('button', { name: category.title })
-          ).toHaveCount(canSee ? 1 : 0);
-        }
+        await page.goto(baseURL);
+        await expect(
+          page
+            .getByRole('navigation')
+            .first()
+            .getByRole('button', { name: category.title })
+        ).toHaveCount(canSee ? 1 : 0);
 
         // the article has no groups of its own, so it can be opened by everyone
         await page.goto(baseURL + article.path);
@@ -119,8 +116,6 @@ test.describe('Article lifecycle', () => {
     'a teacher writes an article, an admin publishes it, visitors can read it',
     { tag: '@smoke' },
     async ({ baseURL, isMobile, graphqlAs, openPageAs }) => {
-      test.skip(isMobile, 'The article editor is not tested on mobile yet');
-
       const category = await createCategory(await graphqlAs('admin'), {
         title: uniqueTitle('Projekte'),
       });
@@ -131,7 +126,14 @@ test.describe('Article lifecycle', () => {
         const page = await openPageAs('teacher');
         await page.goto(baseURL);
 
-        await page.getByRole('button', { name: /neuer beitrag/i }).click();
+        if (isMobile) {
+          const drawer = await openMobileDrawer(page);
+          await drawer
+            .getByRole('button', { name: 'Beitrag', exact: true })
+            .click();
+        } else {
+          await page.getByRole('button', { name: /neuer beitrag/i }).click();
+        }
         const dialog = page.getByRole('dialog', { name: /beitrag erstellen/i });
         await dialog
           .getByRole('textbox', { name: /titel des beitrags/i })

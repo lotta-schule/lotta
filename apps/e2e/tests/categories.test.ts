@@ -58,9 +58,7 @@ test.describe('Category administration', () => {
   test(
     'an admin creates, renames and deletes categories, the navigation follows',
     { tag: '@smoke' },
-    async ({ page, baseURL, isMobile, openPageAs }) => {
-      test.skip(isMobile, 'The navigation is a sidebar on mobile');
-
+    async ({ page, baseURL, openPageAs }) => {
       const id = Date.now().toString(36);
       const parent = `Arbeitsgemeinschaften ${id}`;
       const child = `Theater AG ${id}`;

@@ -20,8 +20,13 @@ const createDirectory = async (page: Page, name: string) => {
 
 /** Selects a file, which opens its preview panel with the file's actions */
 const selectFile = async (page: Page, name: string) => {
-  await currentDirectory(page).getByRole('option', { name }).click();
-  await expect(page.getByRole('heading', { name, level: 2 })).toBeVisible();
+  const preview = page.getByRole('heading', { name, level: 2 });
+  // on mobile, the file browser shows one column at a time: the preview
+  // replaces the directory listing and may already be open
+  if (!(await preview.isVisible())) {
+    await currentDirectory(page).getByRole('option', { name }).click();
+  }
+  await expect(preview).toBeVisible();
 };
 
 test.describe('Files', () => {
@@ -30,9 +35,7 @@ test.describe('Files', () => {
   test(
     'a user can upload, move and delete their files',
     { tag: '@smoke' },
-    async ({ page, isMobile }) => {
-      test.skip(isMobile, 'The file manager is not tested on mobile yet');
-
+    async ({ page }) => {
       const source = unique('Quelle');
       const target = unique('Ziel');
 
@@ -56,20 +59,31 @@ test.describe('Files', () => {
         await page.getByRole('button', { name: 'Datei hochladen' }).click();
         await (await fileChooser).setFiles('fixtures/images/logo.png');
 
+        // exactly once (it was listed twice once under load; a lasting duplicate fails here)
         await expect(
           currentDirectory(page).getByRole('option', { name: 'logo.png' })
-        ).toBeVisible();
+        ).toHaveCount(1);
       });
 
       await test.step('the uploaded image is served', async () => {
         await selectFile(page, 'logo.png');
         const preview = page.getByRole('img', { name: 'logo.png' });
         await expect(preview).toBeVisible();
-        await expect
-          .poll(() =>
-            preview.evaluate((img: HTMLImageElement) => img.naturalWidth)
+        // the preview format is converted asynchronously after the upload, so the
+        // first request may fail: poll until the image is served
+        const src = (
+          await preview.evaluate(
+            (img: HTMLImageElement) => img.currentSrc || img.src
           )
-          .toBeGreaterThan(0);
+        ).replace('http://minio:9100', 'http://localhost:9100');
+        // (served directly from the storage, or as a redirect to it)
+        await expect
+          .poll(
+            async () =>
+              (await page.request.get(src, { maxRedirects: 0 })).status(),
+            { timeout: 20_000 }
+          )
+          .toBeLessThan(400);
       });
 
       await test.step('move the file into the second folder', async () => {

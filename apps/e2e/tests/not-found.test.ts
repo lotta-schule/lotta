@@ -1,4 +1,5 @@
 import { expect, tenantTest as test } from '../fixtures';
+import { openMobileDrawer } from '../helper';
 
 test.describe('Not found', () => {
   for (const path of ['/gibt-es-nicht', '/a/999999-gibt-es-nicht']) {
@@ -21,11 +22,17 @@ test.describe('Not found', () => {
         })
       ).toBeVisible();
       if (isMobile) {
-        await page.getByRole('button', { name: /menü öffnen/i }).click();
+        // the user menu is in the drawer: check it, then close it again
+        const drawer = await openMobileDrawer(page);
+        await expect(
+          drawer.getByRole('button', { name: /anmelden/i })
+        ).toBeVisible();
+        await drawer.getByRole('button', { name: 'Leiste schließen' }).click();
+      } else {
+        await expect(
+          page.getByRole('button', { name: /anmelden/i })
+        ).toBeVisible();
       }
-      await expect(
-        page.getByRole('button', { name: /anmelden/i })
-      ).toBeVisible();
 
       await main.getByRole('link', { name: 'Zur Startseite' }).click();
       await page.waitForURL(baseURL + '/');

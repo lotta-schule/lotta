@@ -7,9 +7,7 @@ test.describe('Article content', () => {
   test(
     'an author adds text and an image to an article, visitors see both',
     { tag: '@smoke' },
-    async ({ page, baseURL, isMobile, graphqlAs, openPageAs }) => {
-      test.skip(isMobile, 'The article editor is not tested on mobile yet');
-
+    async ({ page, baseURL, graphqlAs, openPageAs }) => {
       const id = Date.now().toString(36);
       // plain ASCII on purpose: typing umlauts crashes the editor in Firefox (see below)
       const text = `Im Schulgarten wachsen dieses Jahr Kartoffeln ${id}.`;
@@ -33,7 +31,11 @@ test.describe('Article content', () => {
         await expect(textEditor).toHaveText(text);
 
         await page.getByRole('button', { name: 'Bild', exact: true }).click();
-        await page.getByTestId('EditOverlay').last().click();
+        await page
+          .getByTestId('EditOverlay')
+          .last()
+          .getByRole('button', { name: 'Bild wechseln' })
+          .click();
         await uploadAndSelect(
           { page },
           'Meine Bilder',
@@ -74,10 +76,8 @@ test.describe('Article content', () => {
   test('typing umlauts into a text module does not break the editor', async ({
     page,
     browserName,
-    isMobile,
     graphqlAs,
   }) => {
-    test.skip(isMobile, 'The article editor is not tested on mobile yet');
     test.fail(browserName === 'firefox', 'Known Slate bug in Firefox');
 
     const id = Date.now().toString(36);

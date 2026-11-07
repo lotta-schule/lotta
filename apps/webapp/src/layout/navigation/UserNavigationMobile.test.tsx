@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { MockLink } from '@apollo/client/testing';
-import { render, waitFor } from '#/test/util';
+import { render, userEvent, waitFor } from '#/test/util';
+import { redirectTo } from '#/util/browserLocation';
 import { UserNavigationMobile } from './UserNavigationMobile';
 import { SomeUser, adminGroup } from '#/test/fixtures';
 
@@ -63,6 +64,19 @@ describe('shared/layouts/UserNavigationMobile', () => {
 
       // admin and profile button should not be visible
       expect(screen.queryByTestId('AdminButton')).toBeNull();
+    });
+
+    it('should log out with a full page load when clicking "Abmelden"', async () => {
+      const user = userEvent.setup();
+      const screen = render(
+        <UserNavigationMobile />,
+        {},
+        { currentUser: SomeUser }
+      );
+
+      await user.click(screen.getByTestId('LogoutButton'));
+
+      expect(vi.mocked(redirectTo)).toHaveBeenCalledWith('/auth/logout');
     });
   });
 

@@ -6,12 +6,7 @@ test.describe('Calendar', () => {
   test(
     'an admin creates a public calendar with an event, which can be subscribed to',
     { tag: '@smoke' },
-    async ({ page, isMobile, playwright }) => {
-      test.skip(
-        isMobile,
-        'The calendar administration is not tested on mobile yet'
-      );
-
+    async ({ page, playwright }) => {
       const id = Date.now().toString(36);
       const calendarName = `Schulkalender ${id}`;
       const eventName = `Elternabend ${id}`;

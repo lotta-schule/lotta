@@ -1,5 +1,5 @@
 import { expect, tenantTest as test } from '../fixtures';
-import { createCategory } from '../helper';
+import { createCategory, openMobileDrawer } from '../helper';
 
 test.describe('Widgets', () => {
   test.use({ loginAs: 'admin' });
@@ -8,11 +8,6 @@ test.describe('Widgets', () => {
     "an admin adds a calendar widget to a category, visitors see the calendar's events",
     { tag: '@smoke' },
     async ({ page, baseURL, isMobile, graphqlAs, openPageAs }) => {
-      test.skip(
-        isMobile,
-        'Widgets are in the sidebar, which is hidden on mobile'
-      );
-
       const id = Date.now().toString(36);
       const calendarName = `Termine ${id}`;
       const eventName = `Projekttag ${id}`;
@@ -94,7 +89,9 @@ test.describe('Widgets', () => {
       await test.step("a visitor sees the widget with the calendar's event", async () => {
         const guestPage = await openPageAs('guest');
         await guestPage.goto(baseURL + category.path);
-        const sidebar = guestPage.getByRole('complementary');
+        const sidebar = isMobile
+          ? await openMobileDrawer(guestPage)
+          : guestPage.getByRole('complementary');
         await expect(sidebar.getByText(widgetTitle)).toBeVisible();
         await expect(sidebar.getByText(eventName)).toBeVisible();
       });

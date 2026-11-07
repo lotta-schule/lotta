@@ -1,13 +1,11 @@
 import { expect, tenantTest as test } from '../fixtures';
-import { waitForSentMail } from '../helper';
+import { clickUserMenuEntry, waitForSentMail } from '../helper';
 
 test.describe('Feedback', () => {
   test(
     'a user sends feedback, an admin answers it and the user gets the answer by mail',
     { tag: '@smoke' },
     async ({ baseURL, isMobile, openPageAs, users }) => {
-      test.skip(isMobile, 'The user menu is a different component on mobile');
-
       const id = Date.now().toString(36);
       const topic = `Heizung im Raum 104 ${id}`;
       const message = 'Im Raum 104 ist es seit Tagen kalt.';
@@ -16,8 +14,10 @@ test.describe('Feedback', () => {
       await test.step('a student sends feedback to the administrators', async () => {
         const page = await openPageAs('student');
         await page.goto(baseURL);
-        await page.getByRole('button', { name: /mein profil/i }).click();
-        await page.getByRole('menuitem', { name: 'Feedback' }).click();
+        await clickUserMenuEntry(page, isMobile, {
+          desktop: 'Feedback',
+          mobile: 'Feedback',
+        });
 
         const dialog = page.getByRole('dialog', { name: 'Feedback schreiben' });
         await dialog

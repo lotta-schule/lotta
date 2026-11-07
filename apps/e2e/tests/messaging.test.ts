@@ -15,9 +15,7 @@ test.describe('Messaging', () => {
   test(
     'a user can send a message to another user, who can read and answer it',
     { tag: '@smoke' },
-    async ({ browser, baseURL, isMobile, getAuthState, users }) => {
-      test.skip(isMobile, 'Messaging is not tested on mobile yet');
-
+    async ({ browser, baseURL, getAuthState, users }) => {
       const message = `Hallo Frodo, wie geht es dir? ${Date.now().toString(36)}`;
       const answer = `Danke, gut! ${Date.now().toString(36)}`;
 

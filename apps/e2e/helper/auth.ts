@@ -1,4 +1,5 @@
 import { APIRequestContext, Page, expect } from '@playwright/test';
+import { openMobileDrawer } from './navigation';
 
 const LOGIN_MUTATION = `
   mutation Login($username: String, $password: String) {
@@ -54,11 +55,7 @@ export const loginUser = async (
   await page.goto(baseURL);
 
   if (isMobile) {
-    await expect(
-      page.getByRole('button', { name: /nutzermenü öffnen/i })
-    ).toBeVisible();
-    await page.getByRole('button', { name: /menü öffnen/i }).click();
-    await expect(page.getByTestId('BaseLayoutSidebar')).toBeVisible();
+    await openMobileDrawer(page);
   }
 
   const loginButton = page.getByRole('button', { name: /anmelden/i });

@@ -36,12 +36,9 @@ test.describe('Account deletion', () => {
   test('a user deletes their own account', async ({
     browser,
     baseURL,
-    isMobile,
     playwright,
     seed,
   }) => {
-    test.skip(isMobile, 'Not tested on mobile yet');
-
     const {
       users: [user],
     } = await seed({
@@ -86,15 +83,9 @@ test.describe('Account deletion', () => {
     test('an admin deletes a user', async ({
       page,
       baseURL,
-      isMobile,
       playwright,
       seed,
     }) => {
-      test.skip(
-        isMobile,
-        'The user administration is not tested on mobile yet'
-      );
-
       const name = `Lobelia Sackheim ${Date.now().toString(36)}`;
       const {
         users: [user],

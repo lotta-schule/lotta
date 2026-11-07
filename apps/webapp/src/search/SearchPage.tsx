@@ -22,16 +22,6 @@ import styles from './SearchPage.module.scss';
 
 export const SearchPage = () => {
   const [searchText, setSearchText] = React.useState('');
-  const searchInputRef = React.useRef<HTMLInputElement>(null);
-
-  // The search field is focused on page load, so users may type before the
-  // page is hydrated. Take over what they typed instead of resetting it.
-  React.useLayoutEffect(() => {
-    const typedText = searchInputRef.current?.value;
-    if (typedText) {
-      setSearchText(typedText);
-    }
-  }, []);
   const [isAdvancedSearchFormVisible, setIsAdvancedSearchFormVisible] =
     React.useState(false);
   const [category, setCategory] = React.useState<CategoryModel | null>(null);
@@ -62,7 +52,6 @@ export const SearchPage = () => {
           </div>
           <Label label={'Suchbegriff'}>
             <Input
-              ref={searchInputRef}
               autoFocus
               id={'searchfield'}
               type={'search'}

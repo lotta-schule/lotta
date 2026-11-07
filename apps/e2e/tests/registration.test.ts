@@ -4,6 +4,7 @@ import {
   graphql,
   loginUserRequiringPWUpdate,
   loginViaApi,
+  openMobileDrawer,
   uniqueEmail,
   waitForSentMail,
 } from '../helper';
@@ -11,6 +12,7 @@ import {
 /** Registers through the "Registrieren" dialog, returns the password from the mail */
 const register = async (
   page: Page,
+  isMobile: boolean,
   {
     email,
     firstName,
@@ -24,6 +26,9 @@ const register = async (
   }
 ) => {
   await page.goto('/');
+  if (isMobile) {
+    await openMobileDrawer(page);
+  }
   await page.getByRole('button', { name: 'Registrieren' }).click();
 
   const dialog = page.getByRole('dialog', { name: 'Benutzerkonto erstellen' });
@@ -58,13 +63,8 @@ test.describe('Registration', () => {
     'a visitor registers, gets a password by mail and has to change it on first login',
     { tag: '@smoke' },
     async ({ page, baseURL, isMobile, playwright }) => {
-      test.skip(
-        isMobile,
-        'The registration dialog is opened from the sidebar on mobile'
-      );
-
       const email = uniqueEmail('merry');
-      const password = await register(page, {
+      const password = await register(page, isMobile, {
         email,
         firstName: 'Meriadoc',
         lastName: 'Brandybock',
@@ -88,11 +88,6 @@ test.describe('Registration', () => {
     playwright,
     seed,
   }) => {
-    test.skip(
-      isMobile,
-      'The registration dialog is opened from the sidebar on mobile'
-    );
-
     const id = Date.now().toString(36);
     const enrollmentKey = `chor-${id}`;
     await seed({
@@ -100,7 +95,7 @@ test.describe('Registration', () => {
     });
 
     const email = uniqueEmail('pippin');
-    const password = await register(page, {
+    const password = await register(page, isMobile, {
       email,
       firstName: 'Peregrin',
       lastName: 'Tuk',

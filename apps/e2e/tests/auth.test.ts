@@ -1,5 +1,6 @@
 import { expect, tenantTest as test } from '../fixtures';
 import {
+  clickUserMenuEntry,
   getCurrentUserEmail,
   loginUser,
   loginUserRequiringPWUpdate,
@@ -98,15 +99,15 @@ test.describe('Authentication', () => {
     test.use({ loginAs: 'student' });
 
     test('a user can log out', async ({ page, baseURL, isMobile, users }) => {
-      test.skip(isMobile, 'The user menu is a different component on mobile');
-
       await page.goto('/');
       expect(await getCurrentUserEmail(page.request, baseURL)).toBe(
         users.student.email
       );
 
-      await page.getByRole('button', { name: /mein profil/i }).click();
-      await page.getByRole('menuitem', { name: /abmelden/i }).click();
+      await clickUserMenuEntry(page, isMobile, {
+        desktop: /abmelden/i,
+        mobile: 'Abmelden',
+      });
 
       await expect(
         page.getByRole('button', { name: /anmelden/i })

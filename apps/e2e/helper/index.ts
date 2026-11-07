@@ -6,3 +6,4 @@ export * from './tenant';
 export * from './graphql';
 export * from './seed';
 export * from './content';
+export * from './navigation';
