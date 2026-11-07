@@ -5,7 +5,11 @@ import { Locator, Page, expect } from '@playwright/test';
  * opened from the navigation bar. Opens it and returns it.
  */
 export const openMobileDrawer = async (page: Page) => {
-  const drawer = page.getByTestId('BaseLayoutSidebar');
+  // Before hydration, the page shows the desktop sidebar (same test id) until it
+  // knows it's on mobile: only accept the drawer itself.
+  const drawer = page.locator(
+    '[data-testid="BaseLayoutSidebar"][role="presentation"]'
+  );
   // The closed drawer is faded out and moved out of view, but counts as
   // visible: wait for it to be fully shown. A tap right after loading can be
   // lost: tap again then.
