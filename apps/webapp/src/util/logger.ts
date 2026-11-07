@@ -1,3 +1,5 @@
+import { getTraceContext } from './observability';
+
 type LogLevel = 'debug' | 'info' | 'warning' | 'error';
 
 type LogContext = {
@@ -12,6 +14,7 @@ const log = (level: LogLevel, message: string, context?: LogContext) => {
     message,
     context: context || {},
     timestamp: new Date().toISOString(),
+    ...getTraceContext(),
   });
 };
 

@@ -6,6 +6,17 @@ import {
   SpanStatusCode,
   trace,
 } from '@opentelemetry/api';
+import { isExpectedGraphQLError } from '#/util/observability';
+
+/**
+ * Request headers that may be recorded on spans. Everything else (notably
+ * authorization and cookie headers) is dropped.
+ */
+const RECORDED_HEADERS = new Set([
+  'x-lotta-tenant',
+  'x-lotta-originary-host',
+  'user-agent',
+]);
 
 const tracer = trace.getTracer('lotta-webapp-apollo');
 
@@ -26,7 +37,10 @@ export const createOtelLink = ({
           'graphql.document': operation.query.loc?.source.body,
           ...Object.fromEntries(
             Object.entries(headers)
-              .filter(([, value]) => value != null)
+              .filter(
+                ([key, value]) =>
+                  value != null && RECORDED_HEADERS.has(key.toLowerCase())
+              )
               .map(([key, value]) => [`http.request.header.${key}`, value])
           ),
         },
@@ -59,7 +73,16 @@ export const createOtelLink = ({
       context.with(activeCtx, () => {
         sub = forward(operation).subscribe({
           next: (result) => {
-            if (result.errors?.length) {
+            if (
+              result.errors?.length &&
+              result.errors.every((graphqlError) =>
+                isExpectedGraphQLError(graphqlError)
+              )
+            ) {
+              // Not logged in / not allowed / not found / invalid input:
+              // normal user behaviour, not a failure (same rule as core-api)
+              span.setAttribute('graphql.error.expected', true);
+            } else if (result.errors?.length) {
               span.setStatus({ code: SpanStatusCode.ERROR });
               span.setAttribute(
                 'graphql.errors',
@@ -68,8 +91,7 @@ export const createOtelLink = ({
               for (const graphqlError of result.errors) {
                 const stacktrace = (
                   graphqlError.extensions?.exception as
-                    | { stacktrace?: string[] }
-                    | undefined
+                    { stacktrace?: string[] } | undefined
                 )?.stacktrace;
 
                 span.recordException({

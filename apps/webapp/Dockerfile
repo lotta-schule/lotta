@@ -76,6 +76,8 @@ RUN addgroup --system --gid 1001 nodejs \
 COPY --from=builder --chown=nextjs:nodejs /app/apps/webapp/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/webapp/.next/static     apps/webapp/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/apps/webapp/public            apps/webapp/public
+# next-logger looks for its config in the working directory
+COPY --from=builder --chown=nextjs:nodejs /app/apps/webapp/next-logger.config.cjs ./
 
 USER nextjs
 

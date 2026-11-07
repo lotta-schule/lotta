@@ -1,6 +1,7 @@
 import { cache } from 'react';
 import { getClient } from '#/api/client';
 import { GET_CURRENT_USER } from '#/util/user/useCurrentUser';
+import { setUserSpanAttributes } from '#/util/observability';
 
 export class UnauthenticatedError extends Error {
   name = 'UnauthenticatedError';
@@ -21,6 +22,7 @@ export const loadCurrentUser = cache(
       query: GET_CURRENT_USER,
     });
     const user = data?.currentUser ?? null;
+    setUserSpanAttributes(user);
 
     if (!user && forceAuthenticated) {
       throw new UnauthenticatedError();

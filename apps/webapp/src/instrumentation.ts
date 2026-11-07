@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/nextjs';
 import { registerOTel } from '@vercel/otel';
 import { appConfig } from '#/config';
+import { isIgnoredIncomingRequest } from '#/util/observability';
 
 export const onRequestError = Sentry.captureRequestError;
 
@@ -12,7 +13,10 @@ export async function register() {
     console.warn('Sentry DSN not configured, error tracking disabled');
   }
 
-  await Promise.all([setupLogging(), setupTracing()]);
+  // Tracing first: the pino instrumentation must be registered before pino
+  // is loaded, so that log lines get trace_id/span_id injected.
+  await setupTracing();
+  await setupLogging();
 
   if (dsn) {
     try {
@@ -22,7 +26,8 @@ export async function register() {
         environment: appConfig.get('APP_ENVIRONMENT'),
         release,
         enabled: appConfig.get('NODE_ENV') === 'production',
-        sendDefaultPii: true,
+        // Users are school members, many of them minors: send no personal data
+        sendDefaultPii: false,
         skipOpenTelemetrySetup: true,
       });
     } catch (error) {
@@ -30,14 +35,18 @@ export async function register() {
     }
   }
 
-  registerOTel({
-    serviceName: appConfig.get('SERVICE_NAME'),
-    attributes: {
-      env: appConfig.get('APP_ENVIRONMENT'),
-      'service.name': appConfig.get('SERVICE_NAME'),
-      'node.env': appConfig.get('NODE_ENV'),
-    },
-  });
+  // The Node.js runtime is traced by the NodeSDK in setupTracing. Only the
+  // edge runtime (middleware) needs @vercel/otel; registering both in Node.js
+  // made two tracer providers compete for the global registration.
+  if (process.env.NEXT_RUNTIME === 'edge') {
+    registerOTel({
+      serviceName: appConfig.get('SERVICE_NAME'),
+      attributes: {
+        'deployment.environment': appConfig.get('APP_ENVIRONMENT'),
+        'node.env': appConfig.get('NODE_ENV'),
+      },
+    });
+  }
 }
 
 const setupLogging = async () => {
@@ -60,17 +69,16 @@ const setupTracing = async () => {
     const { getNodeAutoInstrumentations } =
       await import('@opentelemetry/auto-instrumentations-node');
     const { resourceFromAttributes } = await import('@opentelemetry/resources');
-    const {
-      ATTR_SERVICE_NAME,
-      ATTR_SERVICE_VERSION,
-      SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
-    } = await import('@opentelemetry/semantic-conventions');
+    const { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } =
+      await import('@opentelemetry/semantic-conventions');
 
     const sdk = new NodeSDK({
       resource: resourceFromAttributes({
         [ATTR_SERVICE_NAME]: appConfig.get('SERVICE_NAME'),
         [ATTR_SERVICE_VERSION]: appConfig.get('NEXT_PUBLIC_RELEASE_NAME'),
-        [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: appConfig.get('APP_ENVIRONMENT'),
+        // Same key as core-api; the collector's tail sampler keeps all
+        // staging/preview traces based on it.
+        'deployment.environment': appConfig.get('APP_ENVIRONMENT'),
       }),
       traceExporter: new OTLPTraceExporter(),
       metricReader: new PeriodicExportingMetricReader({
@@ -82,6 +90,13 @@ const setupTracing = async () => {
           '@opentelemetry/instrumentation-fs': { enabled: false },
           // DNS is also noisy and rarely actionable
           '@opentelemetry/instrumentation-dns': { enabled: false },
+          '@opentelemetry/instrumentation-http': {
+            ignoreIncomingRequestHook: (request) =>
+              isIgnoredIncomingRequest(request.url),
+          },
+          // Injects trace_id/span_id into pino (next-logger) log lines.
+          // Logs keep going to stdout only; no OTLP log export.
+          '@opentelemetry/instrumentation-pino': { disableLogSending: true },
         }),
       ],
     });

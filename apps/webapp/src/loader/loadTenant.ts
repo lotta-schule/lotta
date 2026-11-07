@@ -2,6 +2,7 @@ import { cache } from 'react';
 import { getClient } from '../api/client';
 import { GET_TENANT_QUERY, TENANT_COMMON_FIELDS } from '#/util/tenant';
 import { graphql, ResultOf } from '#/api/graphql';
+import { setTenantSpanAttributes } from '#/util/observability';
 
 export const GET_TENANT_WITH_STATS_QUERY = graphql(
   `
@@ -50,6 +51,7 @@ const loadTenantImpl = cache(
         if (!tenant) {
           throw new TenantNotFoundError();
         }
+        setTenantSpanAttributes(tenant);
         return tenant;
       });
   }
