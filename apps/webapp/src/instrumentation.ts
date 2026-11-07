@@ -54,6 +54,12 @@ const setupLogging = async () => {
     await import('pino');
     // @ts-expect-error - No types for this package
     await import('next-logger/presets/all');
+    // next-logger creates its pino instance at level `debug`; only log
+    // `info` and above unless LOG_LEVEL says otherwise. Same module instance
+    // the presets above patched console and Next's logger with.
+    // @ts-expect-error - No types for this package
+    const { default: nextLogger } = await import('next-logger/lib/logger');
+    nextLogger.level = process.env.LOG_LEVEL || 'info';
   }
 };
 
