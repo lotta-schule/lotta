@@ -85,9 +85,16 @@ test.describe('Category administration', () => {
         await page
           .getByRole('textbox', { name: 'Name der Kategorie' })
           .fill(renamed);
+        // wait for the save before a visitor opens the page
+        const saveCategory = page.waitForResponse(
+          (res) =>
+            res.url().endsWith('/api') &&
+            (res.request().postData() ?? '').includes('updateCategory')
+        );
         await page
           .getByRole('button', { name: 'speichern', exact: true })
           .click();
+        expect((await saveCategory).ok()).toBe(true);
 
         const guestPage = await openPageAs('guest');
         await guestPage.goto(baseURL);

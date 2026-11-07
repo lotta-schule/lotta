@@ -25,7 +25,15 @@ export const createCache = () => {
             ) {
               // First page (no cursor) replaces; subsequent pages append.
               if (!args?.filter?.afterId) return incoming;
-              return [...(existing ?? []), ...incoming];
+              // a file can be in an already loaded page as well (e.g. one that
+              // was just uploaded): keep it once
+              const existingRefs = new Set(
+                (existing ?? []).map((ref) => ref.__ref)
+              );
+              return [
+                ...(existing ?? []),
+                ...incoming.filter((ref) => !existingRefs.has(ref.__ref)),
+              ];
             },
           },
         },

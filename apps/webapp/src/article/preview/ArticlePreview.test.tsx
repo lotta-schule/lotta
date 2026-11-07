@@ -5,10 +5,13 @@ import {
   imageFile,
   KeinErSieEsUser,
   SomeUser,
+  Schulfest,
   SomeUserin,
   Weihnachtsmarkt,
 } from '#/test/fixtures';
 import { ArticlePreview } from './ArticlePreview';
+
+import ToggleArticlePinMutation from '#/api/mutation/ToggleArticlePin.graphql';
 
 describe('shared/article/ArticlePreview', () => {
   describe('should render title', () => {
@@ -490,6 +493,54 @@ describe('shared/article/ArticlePreview', () => {
       expect(
         screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
       ).toBeVisible();
+    });
+
+    it('should tell whether the article is pinned', () => {
+      const screen = render(
+        <>
+          <ArticlePreview
+            article={{ ...Weihnachtsmarkt, isPinnedToTop: false }}
+          />
+          <ArticlePreview article={{ ...Schulfest, isPinnedToTop: true }} />
+        </>,
+        {},
+        { currentUser: admin }
+      );
+      expect(
+        screen
+          .getAllByRole('button', { name: /beitrag .+ anpinnen/i })
+          .map((button) => button.getAttribute('aria-pressed'))
+      ).toEqual(['false', 'true']);
+    });
+
+    it('should show the article as pinned after pinning it', async () => {
+      const user = userEvent.setup();
+      const article = { ...Weihnachtsmarkt, isPinnedToTop: false };
+      const screen = render(
+        <ArticlePreview article={article} />,
+        {},
+        {
+          currentUser: admin,
+          additionalMocks: [
+            {
+              request: {
+                query: ToggleArticlePinMutation,
+                variables: { id: article.id },
+              },
+              result: {
+                data: { article: { ...article, isPinnedToTop: true } },
+              },
+            },
+          ],
+        }
+      );
+      const pinButton = screen.getByRole('button', {
+        name: /beitrag .+ anpinnen/i,
+      });
+      await user.click(pinButton);
+      await waitFor(() => {
+        expect(pinButton).toHaveAttribute('aria-pressed', 'true');
+      });
     });
 
     it('should not be shown for admin if disablePin is set', () => {

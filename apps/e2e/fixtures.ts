@@ -36,11 +36,14 @@ export type Role = 'guest' | 'admin' | 'teacher' | 'student';
 export type TenantUser = { name: string; email: string; password: string };
 
 /**
- * In docker, file URLs point to the storage service as `minio:9100`, which is
- * not resolvable from the test runner: send those requests to localhost.
+ * Applied to every browser context (see the `browser` fixture):
+ * - In docker, file URLs point to the storage service as `minio:9100`, which is
+ *   not resolvable from the test runner: send those requests to localhost.
+ * - Analytics (`/p/script.js`, `/p/e`, proxied to Plausible by the web app) is
+ *   answered locally, so test runs never reach the real analytics service.
  */
-const routeStorageToLocalhost = (context: BrowserContext) =>
-  context.route('http://minio:9100/**', (route) =>
+const setupContext = async (context: BrowserContext) => {
+  await context.route('http://minio:9100/**', (route) =>
     route.continue({
       url: route
         .request()
@@ -48,6 +51,12 @@ const routeStorageToLocalhost = (context: BrowserContext) =>
         .replace('http://minio:9100', 'http://localhost:9100'),
     })
   );
+  await context.route(/\/p\/(script\.js|e)(\?.*)?$/, (route) =>
+    route.request().method() === 'GET'
+      ? route.fulfill({ contentType: 'text/javascript', body: '' })
+      : route.fulfill({ status: 202, body: '' })
+  );
+};
 
 export const test = base.extend<
   { takeScreenshot: (name: string, target?: Page | Locator) => Promise<void> },
@@ -55,10 +64,19 @@ export const test = base.extend<
     admin: TenantAdmin;
   }
 >({
-  context: async ({ context }, use) => {
-    await routeStorageToLocalhost(context);
-    await use(context);
-  },
+  // every context is set up, including the ones tests create themselves
+  browser: [
+    async ({ browser }, use) => {
+      const newContext = browser.newContext.bind(browser);
+      browser.newContext = async (options) => {
+        const context = await newContext(options);
+        await setupContext(context);
+        return context;
+      };
+      await use(browser);
+    },
+    { scope: 'worker' },
+  ],
   takeScreenshot: async ({ browserName, isMobile, page }, use) => {
     const fullBrowserName = isMobile ? `${browserName}-mobile` : browserName;
     await use(
@@ -191,7 +209,6 @@ export const tenantTest = test.extend<
       const context = await browser.newContext({
         storageState: role === 'guest' ? GUEST_STATE : await getAuthState(role),
       });
-      await routeStorageToLocalhost(context);
       contexts.push(context);
       return context.newPage();
     });

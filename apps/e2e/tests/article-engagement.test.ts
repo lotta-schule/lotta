@@ -90,8 +90,8 @@ test.describe('Article engagement', () => {
         .getByRole('button', { name: 'Beitrag an der Kategorie anpinnen' })
         .click();
       await expect(
-        page.getByRole('button', { name: /anpinnen|lösen/ })
-      ).toBeVisible();
+        page.getByRole('button', { name: 'Beitrag an der Kategorie anpinnen' })
+      ).toHaveAttribute('aria-pressed', 'true');
 
       await expect(async () => {
         await guestPage.reload();

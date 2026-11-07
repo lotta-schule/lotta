@@ -177,10 +177,10 @@ test.describe('Users and groups', () => {
       const updateProfile = userPage.waitForResponse(
         (res) =>
           res.url().endsWith('/api') &&
-          (res.request().postData() ?? '').includes('enrollmentTokens')
+          (res.request().postData() ?? '').includes('"UpdateProfile"')
       );
       await userPage.getByRole('button', { name: 'Speichern' }).click();
-      await updateProfile;
+      expect((await updateProfile).ok()).toBe(true);
 
       await userPage.reload();
       await expect(userPage.getByText(enrollmentKey)).toBeVisible();

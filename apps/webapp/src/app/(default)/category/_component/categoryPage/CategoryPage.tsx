@@ -22,7 +22,14 @@ export const CategoryPage = React.memo(
     const twoColumnsLayout = category?.layoutName === '2-columns';
     const articles =
       initialArticles?.filter((article) => article !== null) ?? [];
+    // (the date of the last article in the server's order, from which on more are loaded)
     const lastArticleDate = articles.at(-1)?.updatedAt;
+    // pinned articles come first, except on the homepage
+    const sortedArticles = category.isHomepage
+      ? articles
+      : [...articles].sort(
+          (a1, a2) => Number(a2.isPinnedToTop) - Number(a1.isPinnedToTop)
+        );
 
     return (
       <>
@@ -31,7 +38,7 @@ export const CategoryPage = React.memo(
             <h2 data-testid="title">{category.title}</h2>
           </Header>
           <div className={styles.articles}>
-            {articles.map((article) => (
+            {sortedArticles.map((article) => (
               <div
                 className={clsx(styles.gridItem, {
                   [styles['two-columns']]: twoColumnsLayout,
