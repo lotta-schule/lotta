@@ -147,47 +147,49 @@ defmodule Lotta.Observability do
 
   @doc false
   def handle_absinthe_operation_start(_event, _measurements, metadata, _config) do
-    with %{options: options} when is_list(options) <- metadata,
-         context when is_map(context) <- Keyword.get(options, :context) do
-      put_context(
-        tenant: Map.get(context, :tenant),
-        user: Map.get(context, :current_user)
-      )
-    end
-
-    :ok
-  rescue
-    # A crashing handler would be detached by :telemetry
-    e ->
-      Logger.warning("Could not set observability context for GraphQL operation: #{inspect(e)}")
-      :ok
+    safely("GraphQL operation", fn ->
+      with %{options: options} when is_list(options) <- metadata,
+           context when is_map(context) <- Keyword.get(options, :context) do
+        put_context(
+          tenant: Map.get(context, :tenant),
+          user: Map.get(context, :current_user)
+        )
+      end
+    end)
   end
 
   @doc false
   def handle_oban_job_start(_event, _measurements, %{job: %Oban.Job{} = job}, _config) do
-    put_context(tenant: tenant_for_job(job))
+    safely("Oban job", fn ->
+      put_context(tenant: tenant_for_job(job))
 
-    case job.args do
-      %{"user_id" => user_id} when not is_nil(user_id) ->
-        Logger.metadata(user_id: user_id)
+      case job.args do
+        %{"user_id" => user_id} when not is_nil(user_id) ->
+          Logger.metadata(user_id: user_id)
 
-        OpenTelemetry.Tracer.set_attributes(%{
-          "enduser.id" => user_id,
-          "user.id" => user_id
-        })
+          OpenTelemetry.Tracer.set_attributes(%{
+            "enduser.id" => user_id,
+            "user.id" => user_id
+          })
 
-      _ ->
-        :ok
-    end
-
-    :ok
-  rescue
-    e ->
-      Logger.warning("Could not set observability context for Oban job: #{inspect(e)}")
-      :ok
+        _ ->
+          :ok
+      end
+    end)
   end
 
   def handle_oban_job_start(_event, _measurements, _metadata, _config), do: :ok
+
+  # Telemetry handlers that raise are detached by :telemetry, so a failure to
+  # set the context must never escape.
+  defp safely(what, fun) do
+    fun.()
+    :ok
+  rescue
+    e ->
+      Logger.warning("Could not set observability context for #{what}: #{inspect(e)}")
+      :ok
+  end
 
   defp tenant_for_job(%Oban.Job{args: %{"tenant_id" => tenant_id}}) when not is_nil(tenant_id),
     do: Tenants.get_tenant(tenant_id)

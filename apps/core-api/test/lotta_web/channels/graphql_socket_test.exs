@@ -54,10 +54,14 @@ defmodule LottaWeb.GraphQLSocketTest do
       assert %{current_user: %User{id: user_id}, tenant: %{id: tenant_id}} = context(socket)
       assert user_id == admin.id
       assert tenant_id == tenant.id
+
+      assert Logger.metadata()[:tenant_id] == tenant.id
+      assert Logger.metadata()[:user_id] == admin.id
     end
 
     test "assigns only the tenant when no token is given", %{tenant: tenant, socket: socket} do
       assert {:ok, %{}, socket} = GraphQLSocket.handle_init(%{"tid" => tenant.id}, socket)
+      assert Logger.metadata()[:tenant_id] == tenant.id
 
       assert %{current_user: nil, tenant: %{id: tenant_id}} = context(socket)
       assert tenant_id == tenant.id

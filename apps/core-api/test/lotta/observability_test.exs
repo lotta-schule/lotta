@@ -197,4 +197,71 @@ defmodule Lotta.ObservabilityTest do
       refute Observability.oban_query?(%{source: "users", options: []})
     end
   end
+
+  describe "defensive clauses" do
+    test "add_trace_context/2 never raises and passes through unknown events" do
+      assert Observability.add_trace_context(:not_an_event, []) == :not_an_event
+
+      # meta that is not a map would raise inside the filter
+      event = %{level: :info, msg: {:string, "x"}, meta: :broken}
+      assert Observability.add_trace_context(event, []) == event
+    end
+
+    test "put_context/1 ignores unknown keys and values" do
+      assert :ok = Observability.put_context(foo: :bar, tenant: :not_a_tenant)
+      assert Logger.metadata() == []
+    end
+
+    test "handle_oban_job_start/4 resolves the tenant from tenant_id" do
+      tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+      Observability.handle_oban_job_start(
+        [:oban, :job, :start],
+        %{},
+        %{job: %Oban.Job{worker: "Some.Worker", args: %{"tenant_id" => tenant.id}}},
+        nil
+      )
+
+      assert Logger.metadata()[:tenant_id] == tenant.id
+    end
+
+    test "handle_oban_job_start/4 does not raise when the tenant lookup fails" do
+      log =
+        ExUnit.CaptureLog.capture_log([level: :warning], fn ->
+          assert :ok =
+                   Observability.handle_oban_job_start(
+                     [:oban, :job, :start],
+                     %{},
+                     %{job: %Oban.Job{worker: "Some.Worker", args: %{"tenant_id" => "no-id"}}},
+                     nil
+                   )
+        end)
+
+      assert log =~ "Could not set observability context for Oban job"
+    end
+
+    test "handle_oban_job_start/4 ignores events without a job" do
+      assert :ok = Observability.handle_oban_job_start([:oban, :job, :start], %{}, %{}, nil)
+    end
+
+    test "graphql error classification copes with unexpected input" do
+      assert :error = Observability.graphql_error_status(nil)
+      refute Observability.expected_graphql_error?("not a map")
+      refute Observability.expected_graphql_error?(%{message: nil, path: ["a"]})
+    end
+
+    test "handle_repo_query/4 skips Oban's queries" do
+      assert :ok =
+               Observability.handle_repo_query(
+                 [:lotta, :repo, :query],
+                 %{total_time: 1},
+                 %{source: "oban_jobs"},
+                 []
+               )
+    end
+
+    test "oban_query?/1 is false for unrelated metadata" do
+      refute Observability.oban_query?(%{})
+    end
+  end
 end

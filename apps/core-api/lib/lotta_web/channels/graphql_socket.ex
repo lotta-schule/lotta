@@ -18,6 +18,8 @@ defmodule LottaWeb.GraphQLSocket do
 
       case AccessToken.resource_from_token(token) do
         {:ok, user, _claims} ->
+          Lotta.Observability.put_context(tenant: tenant, user: user)
+
           socket =
             socket
             |> Absinthe.GraphqlWS.Util.assign_context(
@@ -41,6 +43,7 @@ defmodule LottaWeb.GraphQLSocket do
       {:error, %{reason: "Invalid tenant"}, socket}
     else
       Repo.put_prefix(tenant.prefix)
+      Lotta.Observability.put_context(tenant: tenant)
 
       socket = Absinthe.GraphqlWS.Util.assign_context(socket, Context.new(tenant: tenant))
 
