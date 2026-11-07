@@ -30,8 +30,10 @@ export type CalendarEditorProps = {
 export const CalendarEditor = React.memo(
   ({ calendar, onClose }: CalendarEditorProps) => {
     const { t } = useTranslation();
-    const [updateCalendar, { error, data: result, reset }] =
-      useMutation(UPDATE_CALENDAR);
+    const [updateCalendar, { error, reset }] = useMutation(UPDATE_CALENDAR);
+
+    // Whether to keep the editor open after saving, to show the newly created link
+    const keepOpenAfterSaveRef = React.useRef(false);
 
     const [data, setData] = React.useState({ ...calendar });
 
@@ -125,7 +127,8 @@ export const CalendarEditor = React.memo(
             style={{ marginLeft: 'auto' }}
             onAction={async (e: React.MouseEvent<any> | SubmitEvent) => {
               e.preventDefault();
-              await updateCalendar({
+              const hadSubscriptionUrl = !!calendar.subscriptionUrl;
+              const { data: result } = await updateCalendar({
                 variables: {
                   id: calendar.id,
                   data: {
@@ -135,13 +138,15 @@ export const CalendarEditor = React.memo(
                   },
                 },
               });
+              // Decide here, with the state from before saving: in onComplete,
+              // `calendar` may already contain the new link (from the cache).
+              keepOpenAfterSaveRef.current =
+                !hadSubscriptionUrl && !!result?.calendar?.subscriptionUrl;
             }}
             onComplete={() => {
-              // If the calendar just got a subscriptionUrl, keep the dialog open. Otherwise, close it.
-              if (
-                !result?.calendar.subscriptionUrl ||
-                calendar.subscriptionUrl
-              ) {
+              // If the calendar just got a subscriptionUrl, keep the dialog open
+              // to show it. Otherwise, close it.
+              if (!keepOpenAfterSaveRef.current) {
                 close();
               }
             }}

@@ -1,12 +1,8 @@
 import { notFound } from 'next/navigation.js';
-import { getClient } from '#/api/client';
 import { Main, Sidebar } from '#/layout';
-import { ArticleModel, ID } from '#/model';
 import { EditArticlePageWrapper } from '#/article/EditArticlePageWrapper';
-import { loadCurrentUser } from '#/loader';
+import { loadArticle, loadCurrentUser } from '#/loader';
 import { User } from '#/util/model';
-
-import GetArticleQuery from '#/api/query/GetArticleQuery.graphql';
 
 export default async function EditArticleRoute({
   params,
@@ -20,19 +16,15 @@ export default async function EditArticleRoute({
     notFound();
   }
 
-  const client = await getClient();
-  const { data } = await client.query<{ article: ArticleModel }, { id: ID }>({
-    query: GetArticleQuery,
-    variables: { id: articleId },
-  });
+  const article = await loadArticle(articleId);
 
-  if (!data?.article) {
+  if (!article) {
     notFound();
   }
 
   const currentUser = await loadCurrentUser();
   const canEditArticle =
-    User.canEditArticle(currentUser, data.article) || User.isAdmin(currentUser);
+    User.canEditArticle(currentUser, article) || User.isAdmin(currentUser);
 
   if (!canEditArticle) {
     notFound();
@@ -41,7 +33,7 @@ export default async function EditArticleRoute({
   return (
     <>
       <Main>
-        <EditArticlePageWrapper article={data.article} />
+        <EditArticlePageWrapper article={article} />
       </Main>
       <Sidebar isEmpty />
     </>

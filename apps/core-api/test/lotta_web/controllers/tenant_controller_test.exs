@@ -152,6 +152,54 @@ defmodule LottaWeb.TenantControllerTest do
       assert is_integer(body["tenant"]["id"])
     end
 
+    test "sets the given admin password and creates the default content synchronously" do
+      mock(fn
+        %{method: :post, url: url} when is_binary(url) ->
+          %Tesla.Env{status: 200, body: %{}}
+      end)
+
+      expect(Lotta.Tenants.DefaultContentMock, :create_default_content, fn tenant, user ->
+        assert user.password == "e2e-secret"
+        {:ok, _} = Tenants.update_state(tenant, :active)
+        :ok
+      end)
+
+      conn =
+        build_conn()
+        |> put_req_header("accept", "application/json")
+        |> put_req_header("authorization", "Basic " <> Base.encode64("admin:test123"))
+        |> post("/admin/api/create-test", %{
+          "tenant" => %{"title" => "Sync School", "slug" => "sync-school"},
+          "user" => %{
+            "name" => "Sync Admin",
+            "email" => "admin@sync-school.example",
+            "password" => "e2e-secret"
+          },
+          "sync" => true
+        })
+
+      body = json_response(conn, 200)
+      assert body["success"] == true
+      assert body["tenant"]["state"] == "active"
+
+      tenant = Tenants.get_tenant(body["tenant"]["id"])
+
+      on_exit(fn ->
+        Lotta.Repo.with_new_dynamic_repo(fn _ ->
+          Lotta.Repo.query!("DROP SCHEMA IF EXISTS \"#{tenant.prefix}\" CASCADE")
+        end)
+      end)
+
+      assert {:ok, user} =
+               Lotta.Accounts.Authentication.login_with_username_pass(
+                 "admin@sync-school.example",
+                 "e2e-secret",
+                 tenant
+               )
+
+      assert user.has_changed_default_password == true
+    end
+
     test "returns error when tenant parameters are invalid" do
       mock(fn
         %{method: :post, url: url} when is_binary(url) ->

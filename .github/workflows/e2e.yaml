@@ -24,6 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Each shard pays ~2 min of fixed setup (browsers, docker compose).
         shardIndex: [1, 2, 3]
         shardTotal: [3]
     timeout-minutes: 60
@@ -44,8 +45,26 @@ jobs:
         run: bun install
         working-directory: apps/e2e
 
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(bunx playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+        working-directory: apps/e2e
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
       - name: Install Playwright Browsers
-        run: bunx playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: bunx playwright install --with-deps chromium firefox webkit
+        working-directory: apps/e2e
+
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: bunx playwright install-deps chromium firefox webkit
         working-directory: apps/e2e
 
       - name: Run lotta as a service from docker-compose.yml

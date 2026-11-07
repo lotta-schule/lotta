@@ -399,6 +399,52 @@ defmodule LottaWeb.ArticleResolverTest do
              } = res
     end
 
+    test "does not return an unpublished article to a visitor", %{draft: draft} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> get("/api", query: @query, variables: %{id: draft.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"article" => nil},
+               "errors" => [
+                 %{"message" => "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}
+               ]
+             } = res
+    end
+
+    test "does not return an unpublished article to a user who is not an author", %{
+      draft: draft,
+      schueler_jwt: schueler_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{schueler_jwt}")
+        |> get("/api", query: @query, variables: %{id: draft.id})
+        |> json_response(200)
+
+      assert %{"data" => %{"article" => nil}, "errors" => [_]} = res
+    end
+
+    test "returns an unpublished article to its author and to admins", %{
+      draft: draft,
+      lehrer_jwt: lehrer_jwt,
+      admin_jwt: admin_jwt
+    } do
+      for jwt <- [lehrer_jwt, admin_jwt] do
+        res =
+          build_conn()
+          |> put_req_header("tenant", "slug:test")
+          |> put_req_header("authorization", "Bearer #{jwt}")
+          |> get("/api", query: @query, variables: %{id: draft.id})
+          |> json_response(200)
+
+        assert %{"data" => %{"article" => %{"title" => "Draft2"}}} = res
+      end
+    end
+
     test "returns an error if article id does not exist" do
       res =
         build_conn()

@@ -21,6 +21,7 @@ export const additionalMocks: MockLink.MockedResponse[] = [
         vars.file instanceof File &&
         vars.parentDirectoryId === logosDirectory.id,
     },
+    maxUsageCount: 2,
     result: (variables) => ({
       data: {
         file: {
@@ -97,5 +98,46 @@ describe('useUploadNode', () => {
     expect(cachedFile).toBeDefined();
     expect(cachedFile!.id).toEqual('new-id');
     expect(cachedFile!.filename).toEqual('test-file.txt');
+  });
+
+  it('should list a file only once when it is already in the directory', async () => {
+    const { result } = renderHook(
+      () => useUploadNode(),
+      {},
+      { additionalMocks, currentUser: SomeUser }
+    );
+    const file = new File(['This is content.'], 'test-file.txt', {
+      type: 'text/plain',
+    });
+    const upload = (onDone: () => void) =>
+      result.current(
+        {
+          __id: 1,
+          file,
+          error: null,
+          status: 'pending',
+          progress: 0,
+          startTime: new Date().getTime(),
+          endTime: undefined,
+          parentNode: parentDirectoryNode,
+          transferSpeed: 0,
+          transferedBytes: 0,
+        },
+        parentDirectoryNode,
+        (updater) => {
+          if (updater({} as Upload).status === 'done') onDone();
+        }
+      );
+
+    // the second response returns the same file, as a directory listing
+    // loaded after the upload was saved already contains it
+    await new Promise<void>((resolve) => upload(resolve));
+    await new Promise<void>((resolve) => upload(resolve));
+
+    const cached = currentApolloCache!.readQuery({
+      query: GetDirectoriesAndFilesQuery,
+      variables: { parentDirectoryId: parentDirectoryNode.id },
+    });
+    expect(cached?.files.filter((f) => f.id === 'new-id')).toHaveLength(1);
   });
 });

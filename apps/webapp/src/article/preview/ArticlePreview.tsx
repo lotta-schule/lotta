@@ -88,9 +88,13 @@ const ArticlePreviewComponent = <A extends ArticlePreviewModel>({
   const [isSelfRemovalDialogOpen, setIsSelfRemovalDialogOpen] =
     React.useState(false);
 
-  const [toggleArticlePin] = useMutation<{ article: ArticleModel }, { id: ID }>(
-    ToggleArticlePinMutation
-  );
+  const [toggleArticlePin, { data: toggledPinData }] = useMutation<
+    { article: ArticleModel },
+    { id: ID }
+  >(ToggleArticlePinMutation);
+  // `article` is what the page was loaded with: after toggling, show the new state
+  const isPinnedToTop =
+    toggledPinData?.article.isPinnedToTop ?? article.isPinnedToTop;
 
   const maybeLinked = (content: any) =>
     disableLink ? (
@@ -173,16 +177,11 @@ const ArticlePreviewComponent = <A extends ArticlePreviewModel>({
                   });
                 }}
                 className={styles.title}
-                aria-label={'Article title'}
+                aria-label={'Titel des Beitrags'}
               />
             )}
             {!onUpdateArticle && (
-              <div
-                className={styles.title}
-                role={'heading'}
-                aria-level={1}
-                aria-label={'Article title'}
-              >
+              <div className={styles.title} role={'heading'} aria-level={1}>
                 {!isEmbedded &&
                   currentUser?.lastSeen &&
                   isBefore(
@@ -340,8 +339,9 @@ const ArticlePreviewComponent = <A extends ArticlePreviewModel>({
                 {User.isAdmin(currentUser) && !disablePin && (
                   <Button
                     aria-label="Beitrag an der Kategorie anpinnen"
+                    aria-pressed={!!isPinnedToTop}
                     className={clsx(styles.pinButton, {
-                      [styles.active]: article.isPinnedToTop,
+                      [styles.active]: isPinnedToTop,
                     })}
                     onClick={() =>
                       toggleArticlePin({ variables: { id: article.id } })

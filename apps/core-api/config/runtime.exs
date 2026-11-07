@@ -71,6 +71,10 @@ defmodule SystemConfig do
 
   defp default("ISSUER_JWT", _), do: "lotta"
 
+  # Enables the /admin/api/seed endpoint used by the e2e test suite. Never enable in production.
+  defp default("ENABLE_E2E_API", :test), do: "true"
+  defp default("ENABLE_E2E_API", _), do: "false"
+
   defp default("TCP_HEALTH_CHECK_PORT", _), do: "4321"
 
   defp default("COCKPIT_ACCOUNTS_LIST_JSON", _), do: nil
@@ -309,6 +313,8 @@ end
 config :lotta, LottaWeb.Auth.AccessToken,
   secret_key: SystemConfig.get("SECRET_KEY_JWT"),
   issuer: "lotta"
+
+config :lotta, :e2e_api_enabled, SystemConfig.get("ENABLE_E2E_API", cast: :boolean)
 
 config :lotta, :cockpit,
   endpoint: SystemConfig.get("COCKPIT_HOST"),

@@ -46,16 +46,13 @@ defmodule Lotta.Accounts.Permissions do
   @spec can_read?(User.t() | nil, Article.t() | Directory.t() | Conversation.t()) :: boolean()
   def can_read?(user, object)
 
+  # Unpublished articles (drafts, or submitted for review) can only be read by
+  # the people who can edit them: their authors and administrators.
+  # Group restrictions of the article's category only affect navigation and
+  # listings; access to the article itself depends on the article's own groups.
   def can_read?(user, %Article{} = article) do
     can_write?(user, article) ||
-      (fn ->
-         groups =
-           article
-           |> Repo.preload(:groups)
-           |> Map.get(:groups, [])
-
-         Enum.empty?(groups) || user_is_in_groups_list?(user, groups)
-       end).()
+      (article.published == true && in_article_groups?(user, article))
   end
 
   def can_read?(user, %Directory{} = directory) do
@@ -130,4 +127,14 @@ defmodule Lotta.Accounts.Permissions do
   end
 
   def user_is_in_groups_list?(_, _), do: false
+
+  # Articles without groups are visible to everyone
+  defp in_article_groups?(user, article) do
+    groups =
+      article
+      |> Repo.preload(:groups)
+      |> Map.get(:groups, [])
+
+    Enum.empty?(groups) || user_is_in_groups_list?(user, groups)
+  end
 end

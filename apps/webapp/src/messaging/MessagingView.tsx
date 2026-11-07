@@ -138,11 +138,14 @@ export const MessagingView = React.memo(() => {
             )}
             {createMessageDestination?.user && (
               <div className={styles.noMessagesWrapper}>
-                Schreibe deine erste Nachricht an{' '}
-                <strong>
-                  {Message.getDestinationName(createMessageDestination)}
-                </strong>
-                .
+                {/* one flex item, else the space before the name collapses */}
+                <p>
+                  Schreibe deine erste Nachricht an{' '}
+                  <strong>
+                    {Message.getDestinationName(createMessageDestination)}
+                  </strong>
+                  .
+                </p>
               </div>
             )}
             {(selectedConversation || createMessageDestination) && (

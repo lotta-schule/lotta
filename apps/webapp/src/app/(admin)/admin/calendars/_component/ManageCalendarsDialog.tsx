@@ -9,13 +9,12 @@ import {
   List,
   ListItem,
 } from '@lotta-schule/hubert';
-import { CALENDAR_FRAGMENT, GET_CALENDARS } from '../_graphql';
+import { GET_CALENDARS } from '../_graphql';
 import { t } from 'i18next';
 import { Icon } from '#/shared/Icon';
 import { faAdd, faCircle, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { CreateCalendarDialog } from './CreateCalendarDialog';
 import { CalendarEditor } from './CalendarEditor';
-import { FragmentOf } from 'gql.tada';
 
 export interface ManageCalendarsDialogProps {
   isOpen: boolean;
@@ -28,8 +27,13 @@ export const ManageCalendarsDialog = React.memo(
 
     const [isCreateCalendarDialogOpen, setIsCreateCalendarDialogOpen] =
       React.useState(false);
-    const [calendarBeingEdited, setCalendarBeingEdited] =
-      React.useState<FragmentOf<typeof CALENDAR_FRAGMENT> | null>(null);
+    // Keep only the id: the calendar itself is read from the query, so the
+    // editor gets updates (e.g. the subscriptionUrl created when saving).
+    const [calendarIdBeingEdited, setCalendarIdBeingEdited] = React.useState<
+      string | null
+    >(null);
+    const calendarBeingEdited =
+      data?.calendars.find(({ id }) => id === calendarIdBeingEdited) ?? null;
 
     return (
       <Dialog
@@ -41,7 +45,7 @@ export const ManageCalendarsDialog = React.memo(
           <CalendarEditor
             key={calendarBeingEdited.id}
             calendar={calendarBeingEdited}
-            onClose={() => setCalendarBeingEdited(null)}
+            onClose={() => setCalendarIdBeingEdited(null)}
           />
         )}
         {!calendarBeingEdited && (
@@ -69,7 +73,7 @@ export const ManageCalendarsDialog = React.memo(
                             icon={<Icon icon={faEdit} />}
                             title={t('edit')}
                             onClick={() => {
-                              setCalendarBeingEdited(calendar);
+                              setCalendarIdBeingEdited(calendar.id);
                             }}
                           />
                         }

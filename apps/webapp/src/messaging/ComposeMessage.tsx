@@ -177,7 +177,7 @@ export const ComposeMessage = React.memo(
               ref={inputRef}
               className={styles.textField}
               maxHeight={'30vh'}
-              label={'Nachricht schreiben'}
+              aria-label={'Nachricht schreiben'}
               disabled={isLoading}
               value={content}
               onChange={(e) => setContent(e.currentTarget.value)}

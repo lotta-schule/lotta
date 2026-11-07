@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render, waitFor, userEvent } from '#/test/util';
+import { render, waitFor, userEvent, within } from '#/test/util';
 import { MockLink } from '@apollo/client/testing';
 import { ManageCalendarsDialog } from './ManageCalendarsDialog';
-import { GET_CALENDARS } from '../_graphql';
+import { GET_CALENDARS, UPDATE_CALENDAR } from '../_graphql';
 
 const additionalMocks = [
   {
@@ -105,5 +105,57 @@ describe('ManageCalendarsDialog', () => {
     await user.click(screen.getByText('abbrechen'));
 
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('shows the public link right after making a calendar public', async () => {
+    const user = userEvent.setup();
+    const subscriptionUrl = 'https://lotta.schule/data/calendar/1/ics';
+    const screen = render(
+      <ManageCalendarsDialog isOpen onClose={vi.fn()} />,
+      {},
+      {
+        additionalMocks: [
+          ...additionalMocks,
+          {
+            request: {
+              query: UPDATE_CALENDAR,
+              variables: {
+                id: '1',
+                data: {
+                  name: 'Work',
+                  color: '#FF0000',
+                  isPubliclyAvailable: true,
+                },
+              },
+            },
+            result: {
+              data: {
+                calendar: {
+                  __typename: 'Calendar',
+                  id: '1',
+                  name: 'Work',
+                  color: '#FF0000',
+                  isPubliclyAvailable: true,
+                  subscriptionUrl,
+                },
+              },
+            },
+          },
+        ] satisfies MockLink.MockedResponse[],
+      }
+    );
+
+    const [workCalendar] = await screen.findAllByRole('listitem');
+    await user.click(
+      within(workCalendar).getByRole('button', { name: /bearbeiten/i })
+    );
+    await user.click(screen.getByRole('checkbox'));
+    await user.click(screen.getByRole('button', { name: /speichern/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', { name: /öffentlicher link/i })
+      ).toHaveValue(subscriptionUrl);
+    });
   });
 });

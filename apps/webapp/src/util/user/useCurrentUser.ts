@@ -47,3 +47,14 @@ export const useCurrentUser = () => {
 
   return data?.currentUser ?? null;
 };
+
+/**
+ * Like `useCurrentUser`, but also tells whether the current user is still being
+ * loaded. Use it to tell "not logged in" (null, not loading) apart from "not
+ * known yet" (null, loading), e.g. before redirecting a user away.
+ */
+export const useCurrentUserState = () => {
+  const { data, loading } = useQuery(GET_CURRENT_USER);
+
+  return { currentUser: data?.currentUser ?? null, isLoading: loading };
+};

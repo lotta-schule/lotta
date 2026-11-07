@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { ApolloCache } from '@apollo/client';
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { BrowserProps } from '@lotta-schule/hubert';
 
 import { GetDirectoriesAndFilesQuery } from '../_graphql/GetDirectoriesAndFiles';
 import { BrowserDirectoryData, BrowserFileData } from '../makeBrowserNodes';
 import UpdateDirectoryMutation from '#/api/mutation/UpdateDirectoryMutation.graphql';
 import UpdateFileMutation from '#/api/mutation/UpdateFileMutation.graphql';
+import { refreshDirectoryListings } from '../refreshDirectoryListings';
 
 const updateCache = <T extends BrowserFileData | BrowserDirectoryData>(
   client: ApolloCache,
@@ -55,14 +56,15 @@ const updateCache = <T extends BrowserFileData | BrowserDirectoryData>(
         files:
           'file' in updateResult
             ? [
-                ...data.files,
+                // (a listing loaded after the move may contain it already)
+                ...data.files.filter((f) => f.id !== initialModel.id),
                 { ...(initialModel as BrowserFileData), ...updateResult.file },
               ]
             : data.files,
         directories:
           'directory' in updateResult
             ? [
-                ...data.directories,
+                ...data.directories.filter((d) => d.id !== initialModel.id),
                 {
                   ...(initialModel as BrowserDirectoryData),
                   ...updateResult.directory,
@@ -75,6 +77,7 @@ const updateCache = <T extends BrowserFileData | BrowserDirectoryData>(
 };
 
 export const useMoveNode = () => {
+  const apolloClient = useApolloClient();
   const [moveDirectory] = useMutation<{ directory: BrowserDirectoryData }>(
     UpdateDirectoryMutation
   );
@@ -85,6 +88,7 @@ export const useMoveNode = () => {
       if (node.type === 'file') {
         await moveFile({
           variables: { id: node.id, parentDirectoryId: newParent?.id ?? null },
+          onCompleted: () => void refreshDirectoryListings(apolloClient),
           update: (client, { data }) => {
             if (data) {
               updateCache(client, node.meta, data);
@@ -94,6 +98,7 @@ export const useMoveNode = () => {
       } else {
         await moveDirectory({
           variables: { id: node.id, parentDirectoryId: newParent?.id ?? null },
+          onCompleted: () => void refreshDirectoryListings(apolloClient),
           update: (client, { data }) => {
             if (data) {
               updateCache(client, node.meta, data);
@@ -102,6 +107,6 @@ export const useMoveNode = () => {
         });
       }
     },
-    [moveDirectory, moveFile]
+    [moveDirectory, moveFile, apolloClient]
   );
 };

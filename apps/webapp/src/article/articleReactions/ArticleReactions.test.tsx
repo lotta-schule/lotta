@@ -104,7 +104,9 @@ describe('ArticleReactions Component', () => {
       );
       await user.click(reactionButton);
 
-      const pepperReactionButton = screen.getByTestId('reaction-PEPPER');
+      const pepperReactionButton = screen.getByRole('button', {
+        name: 'Mit "Peperoni" reagieren',
+      });
       await user.click(pepperReactionButton);
 
       await waitFor(() =>
@@ -139,11 +141,17 @@ describe('ArticleReactions Component', () => {
       screen.rerender(<ArticleReactions article={Weihnachtsmarkt} />);
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /5/ })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /3/ })).toBeInTheDocument();
+        expect(
+          screen.getByRole('button', { name: 'Peperoni: 5 Reaktionen' })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('button', { name: 'Zitrone: 3 Reaktionen' })
+        ).toBeInTheDocument();
       });
 
-      const reactionButton = screen.getByRole('button', { name: /5/ });
+      const reactionButton = screen.getByRole('button', {
+        name: 'Peperoni: 5 Reaktionen',
+      });
       await user.click(reactionButton);
 
       screen.rerender(<ArticleReactions article={Weihnachtsmarkt} />);

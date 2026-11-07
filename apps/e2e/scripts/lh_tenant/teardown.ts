@@ -7,4 +7,7 @@ import { argv } from 'node:process';
     throw new Error('No tenant id given!');
   }
   await deleteTenant(tenantId);
-})();
+})().catch((error: unknown) => {
+  console.error(error);
+  process.exit(1);
+});

@@ -183,10 +183,12 @@ defmodule Lotta.Email do
           Bamboo.Email.t()
   def send_feedback_response_mail(%Feedback{} = feedback, %User{} = user, subject, message) do
     tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(user, :prefix))
+    # `user` is the administrator who responds, the mail goes to the feedback's author
+    feedback = Repo.preload(feedback, :user)
 
     base_mail(tenant: tenant)
     |> from(mailer_config!(:feedback_sender, :default_sender))
-    |> to(user.email)
+    |> to(feedback.user.email)
     |> subject("Dein Feedback für #{tenant.title} wurde beantwortet.")
     |> render(
       :respond_to_feedback,

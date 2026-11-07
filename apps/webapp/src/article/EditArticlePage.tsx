@@ -10,7 +10,7 @@ import {
 } from '@lotta-schule/hubert';
 import { AddModuleBar } from '#/article/editor/AddModuleBar';
 import { ArticleEditable as Article } from '#/article/ArticleEditable';
-import { useCurrentUser } from '#/util/user/useCurrentUser';
+import { useCurrentUserState } from '#/util/user/useCurrentUser';
 import { Article as ArticleUtil } from '#/util/model/Article';
 import { EditArticleFooter } from './editor/EditArticleFooter';
 import { Main } from '#/layout';
@@ -28,7 +28,8 @@ export interface EditArticlePageProps {
 export const EditArticlePage = React.memo(
   ({ article }: EditArticlePageProps) => {
     const router = useRouter();
-    const currentUser = useCurrentUser();
+    const { currentUser, isLoading: isCurrentUserLoading } =
+      useCurrentUserState();
 
     const [isArticleDirty, setIsArticleDirty] = React.useState(false);
     const [editedArticle, setEditedArticle] = React.useState(article);
@@ -104,11 +105,13 @@ export const EditArticlePage = React.memo(
       }
     );
 
+    // Leave the editor when the user logs out. Wait for the current user to be
+    // loaded first: on a direct page load, it is null until then.
     React.useEffect(() => {
-      if (!currentUser) {
+      if (!currentUser && !isCurrentUserLoading) {
         router.push(ArticleUtil.getPath(article));
       }
-    }, [article, currentUser, router]);
+    }, [article, currentUser, isCurrentUserLoading, router]);
 
     const changeArticle = React.useCallback(
       (article: React.SetStateAction<ArticleModel>) => {

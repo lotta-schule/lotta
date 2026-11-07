@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  ErrorMessage,
   Label,
   Input,
 } from '@lotta-schule/hubert';
@@ -25,6 +26,8 @@ export const LoginDialog = React.memo(
     const tenant = useTenant();
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
+    const [error, setError] = React.useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
     const formRef = React.useRef<HTMLFormElement>(null);
 
     const isEduplacesEnabled = !!tenant.eduplacesId;
@@ -35,8 +38,41 @@ export const LoginDialog = React.memo(
       if (isOpen === false) {
         setEmail('');
         setPassword('');
+        setError(null);
       }
     }, [isOpen]);
+
+    // Submit via fetch so a failed login can be shown in the dialog.
+    // Without JavaScript, the form is posted as usual.
+    const onSubmit = React.useCallback(
+      async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError(null);
+        setIsSubmitting(true);
+        try {
+          const response = await fetch(e.currentTarget.action, {
+            method: 'POST',
+            body: new URLSearchParams({ username: email, password }),
+            credentials: 'same-origin',
+            // on success, the server sets the cookies and redirects
+            redirect: 'manual',
+          });
+          if (response.type === 'opaqueredirect' || response.ok) {
+            window.location.assign('/');
+            return;
+          }
+          setError(
+            response.status === 401
+              ? t('Wrong email or password.')
+              : t('Login failed. Please try again later.')
+          );
+        } catch {
+          setError(t('Login failed. Please try again later.'));
+        }
+        setIsSubmitting(false);
+      },
+      [email, password, t]
+    );
 
     return (
       <Dialog
@@ -46,8 +82,14 @@ export const LoginDialog = React.memo(
         title={t('Login')}
         onRequestClose={onRequestClose}
       >
-        <form ref={formRef} action="/auth/login" method="POST">
+        <form
+          ref={formRef}
+          action="/auth/login"
+          method="POST"
+          onSubmit={onSubmit}
+        >
           <DialogContent>
+            <ErrorMessage error={error} />
             {isEmailRegistrationEnabled && (
               <>
                 {t('Login with your email and password.')}
@@ -100,7 +142,9 @@ export const LoginDialog = React.memo(
               <EduplacesLoginButton />
             )}
             {isEmailRegistrationEnabled && (
-              <Button type={'submit'}>{t('Login')}</Button>
+              <Button type={'submit'} disabled={isSubmitting}>
+                {t('Login')}
+              </Button>
             )}
           </DialogActions>
         </form>

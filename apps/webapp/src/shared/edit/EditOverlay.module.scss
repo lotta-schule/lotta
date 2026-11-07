@@ -9,6 +9,13 @@
   margin: 0 auto;
   position: relative;
 
+  // min-content lets wide content (e.g. a placeholder image) grow the overlay
+  // beyond the screen: on small screens, use the available width instead
+  @media screen and (max-width: $max-sm) {
+    min-width: 0;
+    width: auto;
+  }
+
   .overlay {
     background-color: rgba(var(--lotta-highlight-color), 0);
     backdrop-filter: blur(0px);
@@ -25,6 +32,12 @@
       display: flex;
       background-color: rgba(var(--lotta-highlight-color), 0.4);
       backdrop-filter: blur(10px);
+    }
+
+    // touch devices have no hover: always show the buttons (without hiding
+    // the content), so they can be tapped directly
+    @media (hover: none) {
+      display: flex;
     }
   }
 

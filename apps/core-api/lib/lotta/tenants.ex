@@ -133,14 +133,23 @@ defmodule Lotta.Tenants do
 
   @doc """
   Create a new tenant.
+
+  ## Options
+
+    * `:password` - set this password for the admin user instead of generating one.
+      The user will not be asked to change it on first login. Meant for automated
+      (e2e) test setups.
+    * `:sync` - when `true`, the default content is created before this function
+      returns (instead of in a background job), so the tenant is `:active` and
+      ready to use right away.
   """
   @doc since: "2.6.0"
-  @spec create_tenant(tenant :: Tenant.empty(), user :: User.empty()) ::
+  @spec create_tenant(tenant :: Tenant.empty(), user :: User.empty(), opts :: keyword()) ::
           {:ok, Tenant.t()} | {:error, Ecto.Changese.t()} | {:error, String.t()}
-  def create_tenant(tenant, user) do
-    with {:ok, tenant, user} <- setup_tenant(tenant, user),
-         {:ok, _job} <- Lotta.Worker.Tenant.setup_default_content(tenant, user) do
-      {:ok, tenant}
+  def create_tenant(tenant, user, opts \\ []) do
+    with {:ok, tenant, user} <- setup_tenant(tenant, user, Keyword.get(opts, :password)),
+         :ok <- setup_default_content(tenant, user, Keyword.get(opts, :sync, false)) do
+      {:ok, Repo.reload(tenant, prefix: "public")}
     else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:error, changeset}
@@ -151,9 +160,22 @@ defmodule Lotta.Tenants do
     end
   end
 
-  @spec setup_tenant(tenant :: Tenant.empty(), user :: User.empty()) ::
-          {:ok, Tenant.t()} | {:error, term()}
-  defp setup_tenant(tenant, user) do
+  defp setup_default_content(tenant, user, true = _sync),
+    do: Lotta.Worker.Tenant.run_setup_default_content(tenant, user)
+
+  defp setup_default_content(tenant, user, _sync) do
+    with {:ok, _job} <- Lotta.Worker.Tenant.setup_default_content(tenant, user) do
+      :ok
+    end
+  end
+
+  @spec setup_tenant(
+          tenant :: Tenant.empty(),
+          user :: User.empty(),
+          password :: String.t() | nil
+        ) ::
+          {:ok, Tenant.t(), User.t()} | {:error, term()}
+  defp setup_tenant(tenant, user, password) do
     tenant_params = Map.from_struct(tenant)
     user_params = Map.from_struct(user)
 
@@ -186,8 +208,11 @@ defmodule Lotta.Tenants do
     |> Multi.run(:migrations, fn _repo, %{tenant: tenant} ->
       TenantDbManager.create_tenant_database_schema(tenant)
     end)
-    |> Multi.run(:user, fn _repo, %{tenant: tenant, user_params: user_params} ->
+    |> Multi.run(:registered_user, fn _repo, %{tenant: tenant, user_params: user_params} ->
       register_and_setup_admin_user(tenant, user_params)
+    end)
+    |> Multi.run(:user, fn _repo, %{tenant: tenant, registered_user: user} ->
+      put_admin_password(tenant, user, password)
     end)
     |> Repo.transaction()
     |> case do
@@ -225,6 +250,18 @@ defmodule Lotta.Tenants do
         ]
       })
       |> Repo.update(prefix: tenant.prefix)
+    end
+  end
+
+  defp put_admin_password(_tenant, user, nil), do: {:ok, user}
+
+  defp put_admin_password(tenant, user, password) when is_binary(password) do
+    user
+    |> User.update_password_changeset(password)
+    |> Repo.update(prefix: tenant.prefix)
+    |> case do
+      {:ok, user} -> {:ok, Map.put(user, :password, password)}
+      error -> error
     end
   end
 

@@ -1,5 +1,7 @@
 .root {
   max-height: 100%;
+  // a fixed height with an aspect ratio would otherwise overflow narrow screens
+  max-width: 100%;
   background-color: rgba(var(--lotta-box-background-color), 1);
   background-repeat: no-repeat;
   text-align: center;

@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { ApolloCache } from '@apollo/client';
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { BrowserNode, BrowserProps } from '@lotta-schule/hubert';
 import { graphql, ResultOf } from '#/api/graphql';
 
 import { GetDirectoriesAndFilesQuery } from '../_graphql/GetDirectoriesAndFiles';
+import { refreshDirectoryListings } from '../refreshDirectoryListings';
 
 export const UPLOAD_FILE_MUTATION = graphql(`
   mutation UploadFile($file: Upload!, $parentDirectoryId: ID!) {
@@ -50,13 +51,18 @@ const updateCache = (
     query: GetDirectoriesAndFilesQuery,
     variables: { parentDirectoryId: parentNode.id },
     data: {
-      files: [...(cache?.files ?? []), file],
+      // the list may already contain the file: it was loaded after the upload
+      // was saved (e.g. when the directory was just opened)
+      files: cache?.files.some((f) => f.id === file.id)
+        ? cache.files
+        : [...(cache?.files ?? []), file],
       directories: [...(cache?.directories ?? [])],
     },
   });
 };
 
 export const useUploadNode = () => {
+  const apolloClient = useApolloClient();
   const [uploadFile] = useMutation(UPLOAD_FILE_MUTATION);
 
   return React.useCallback<Required<BrowserProps>['uploadNode']>(
@@ -79,6 +85,7 @@ export const useUploadNode = () => {
           },
         },
         onCompleted: () => {
+          void refreshDirectoryListings(apolloClient);
           update(() => ({
             status: 'done',
             endTime: new Date().getTime(),
@@ -95,6 +102,6 @@ export const useUploadNode = () => {
         },
       });
     },
-    [uploadFile]
+    [uploadFile, apolloClient]
   );
 };

@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { ApolloCache } from '@apollo/client';
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { BrowserNode, BrowserProps } from '@lotta-schule/hubert';
 
 import DeleteDirectoryMutation from '#/api/mutation/DeleteDirectoryMutation.graphql';
 import DeleteFileMutation from '#/api/mutation/DeleteFileMutation.graphql';
+import { refreshDirectoryListings } from '../refreshDirectoryListings';
 
 const updateCache = (client: ApolloCache, node: BrowserNode) => {
   const normalizedId = client.identify(node.meta as any);
@@ -17,6 +18,7 @@ const updateCache = (client: ApolloCache, node: BrowserNode) => {
 };
 
 export const useDeleteNode = () => {
+  const apolloClient = useApolloClient();
   const [deleteDirectory] = useMutation(DeleteDirectoryMutation);
   const [deleteFile] = useMutation(DeleteFileMutation);
 
@@ -25,6 +27,7 @@ export const useDeleteNode = () => {
       if (node.type === 'directory') {
         await deleteDirectory({
           variables: { id: node.id },
+          onCompleted: () => void refreshDirectoryListings(apolloClient),
           update: (client, { data, errors }) => {
             if (data && !errors) {
               updateCache(client, node);
@@ -34,6 +37,7 @@ export const useDeleteNode = () => {
       } else {
         await deleteFile({
           variables: { id: node.id },
+          onCompleted: () => void refreshDirectoryListings(apolloClient),
           update: (client, { data, errors }) => {
             if (data && !errors) {
               updateCache(client, node);
@@ -42,6 +46,6 @@ export const useDeleteNode = () => {
         });
       }
     },
-    [deleteDirectory, deleteFile]
+    [deleteDirectory, deleteFile, apolloClient]
   );
 };

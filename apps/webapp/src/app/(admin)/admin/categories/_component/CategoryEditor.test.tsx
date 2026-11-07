@@ -5,6 +5,7 @@ import {
   StartseiteCategory,
   KunstCategory,
   ComputerExperten,
+  CalendarKlassenarbeiten,
 } from '#/test/fixtures';
 import { render, waitFor, userEvent } from '#/test/util';
 import { CategoryEditor } from './CategoryEditor';
@@ -477,6 +478,41 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
       await waitFor(() => {
         expect(onSave).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('widgets', () => {
+    it("keeps the user's selection when the category's widgets load afterwards", async () => {
+      const user = userEvent.setup();
+      const screen = render(
+        <CategoryEditor category={FaecherCategory} />,
+        {},
+        {
+          additionalMocks: [
+            {
+              ...allWidgetsMock,
+              result: { data: { widgets: [CalendarKlassenarbeiten] } },
+            },
+            {
+              ...getCategoryWidgetsMock(FaecherCategory.id),
+              delay: 500,
+            },
+            getArticlesMock(FaecherCategory.id),
+          ],
+        }
+      );
+
+      const checkbox = await screen.findByRole('checkbox', {
+        name: CalendarKlassenarbeiten.title,
+      });
+      await user.click(checkbox);
+      expect(checkbox).toBeChecked();
+
+      // the category's (empty) widgets arrive after the user's click
+      await new Promise((resolve) => setTimeout(resolve, 700));
+      expect(
+        screen.getByRole('checkbox', { name: CalendarKlassenarbeiten.title })
+      ).toBeChecked();
     });
   });
 
