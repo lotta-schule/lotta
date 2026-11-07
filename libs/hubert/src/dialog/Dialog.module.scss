@@ -5,11 +5,18 @@
 
   opacity: 0;
   transform: translateY(0);
-  transition: opacity 0.15s ease-out,
+  transition:
+    opacity 0.15s ease-out,
     transform 0.15s ease-out,
     overlay 0.15s ease-out allow-discrete,
     display 0.15s ease-out allow-discrete;
-  transition-delay: 0.2s;
+  // no delay: the dialog must not rest at its start position before sliding in,
+  // or a click there is lost when it moves away under the pointer
+
+  // while it fades out after closing, it must not catch clicks meant for the page
+  &:not([open]) {
+    pointer-events: none;
+  }
 
   border-width: 0;
   font-size: 0.8rem;

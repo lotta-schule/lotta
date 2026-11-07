@@ -50,9 +50,11 @@ export const CategoryEditor = React.memo(
     const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] =
       React.useState(false);
 
-    const [selectedWidgets, setSelectedWidgets] = React.useState<WidgetModel[]>(
-      []
-    );
+    // null until the user changes the selection: until then, the category's
+    // current widgets are shown (they may load after the list of all widgets)
+    const [editedWidgets, setEditedWidgets] = React.useState<
+      WidgetModel[] | null
+    >(null);
     const [mutateCategory, { error }] = useMutation<
       { category: CategoryModel },
       { id: ID; category: any }
@@ -70,11 +72,10 @@ export const CategoryEditor = React.memo(
       variables: { categoryId: categoryOptions?.id },
       skip: !categoryOptions?.id,
     });
-    React.useEffect(() => {
-      if (currentWidgetsData) {
-        setSelectedWidgets(currentWidgetsData.widgets);
-      }
-    }, [currentWidgetsData]);
+    const selectedWidgets = React.useMemo(
+      () => editedWidgets ?? currentWidgetsData?.widgets ?? [],
+      [editedWidgets, currentWidgetsData]
+    );
 
     const updateCategory = React.useCallback(() => {
       if (!category || !categoryOptions) {
@@ -326,7 +327,7 @@ export const CategoryEditor = React.memo(
         <AdminPageSection title="Marginalen">
           <CategoryWidgetSelector
             selectedWidgets={selectedWidgets}
-            setSelectedWidgets={(widgets) => setSelectedWidgets(widgets)}
+            setSelectedWidgets={(widgets) => setEditedWidgets(widgets)}
           />
         </AdminPageSection>
 

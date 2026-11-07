@@ -85,9 +85,13 @@ defmodule LottaWeb.FeedbackResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert %{
-               "data" => %{
-                 "feedbacks" => [
+      assert %{"data" => %{"feedbacks" => feedbacks}} = res
+
+      # sorted by creation time, which is the same second for all of them here:
+      # compare without relying on the order
+      assert Enum.sort_by(feedbacks, & &1["content"]) ==
+               Enum.sort_by(
+                 [
                    %{
                      "content" => "Hallo, ich bin ein Test",
                      "topic" => "Test",
@@ -104,9 +108,9 @@ defmodule LottaWeb.FeedbackResolverTest do
                      "topic" => "Anfrage",
                      "user" => %{"name" => "Dr Evil"}
                    }
-                 ]
-               }
-             } = res
+                 ],
+                 & &1["content"]
+               )
     end
   end
 
@@ -323,6 +327,14 @@ defmodule LottaWeb.FeedbackResolverTest do
                  }
                }
              } = res
+
+      # the answer goes to the feedback's author, not to the responding admin
+      assert_delivered_email_matches(%{
+        to: [nil: "fb-eike@lotta.schule"],
+        text_body: text_body
+      })
+
+      assert text_body =~ "Hier hast du deine Antwort"
     end
 
     test "Returns an error when id does not exist", %{

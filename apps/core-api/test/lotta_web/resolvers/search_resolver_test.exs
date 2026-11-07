@@ -76,6 +76,7 @@ defmodule LottaWeb.SearchResolverTest do
        lehrer_jwt: lehrer_jwt,
        user_account: user,
        user_jwt: user_jwt,
+       search_category: search_category,
        tenant: tenant
      }}
   end
@@ -107,6 +108,25 @@ defmodule LottaWeb.SearchResolverTest do
                results,
                &(Map.get(&1, "title") == "„Nipple Jesus”- eine extreme Erfahrung")
              )
+    end
+
+    test "finds an article without content modules by its title", %{
+      search_category: search_category
+    } do
+      insert(:article,
+        title: "Kartoffelernte im Schulgarten",
+        published: true,
+        category_id: search_category.id
+      )
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> get("/api", query: @query, variables: %{searchText: "Kartoffelernte"})
+        |> json_response(200)
+
+      assert %{"data" => %{"search" => [%{"title" => "Kartoffelernte im Schulgarten"}]}} =
+               res
     end
 
     test "search for restricted articles should not return them when user is not in the right group",

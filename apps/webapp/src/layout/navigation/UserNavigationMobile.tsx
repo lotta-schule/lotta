@@ -28,6 +28,7 @@ import { RegisterDialog } from '#/shared/dialog/RegisterDialog';
 import { FeedbackDialog } from '#/shared/dialog/FeedbackDialog';
 import { useNewFeedbackCount } from '#/util/feedback';
 import { useRouter } from 'next/navigation.js';
+import { redirectTo } from '#/util/browserLocation';
 import Link from 'next/link.js';
 
 import GetUnpublishedArticlesQuery from '#/api/query/GetUnpublishedArticlesQuery.graphql';
@@ -62,16 +63,19 @@ export const UserNavigationMobile = React.memo(() => {
       {!!currentUser && (
         <>
           <nav className={styles.root}>
-            <Link href="/auth/logout" prefetch={false} passHref legacyBehavior>
-              <BaseButton
-                variant={'borderless'}
-                className={styles.button}
-                data-testid="LogoutButton"
-              >
-                <Icon icon={faArrowRightFromBracket} size="xl" />
-                <span className={styles.label}>Abmelden</span>
-              </BaseButton>
-            </Link>
+            {/*
+              /auth/logout is served by core: it needs a full page load,
+              a client-side navigation does not log out
+            */}
+            <BaseButton
+              variant={'borderless'}
+              className={styles.button}
+              data-testid="LogoutButton"
+              onClick={() => redirectTo('/auth/logout')}
+            >
+              <Icon icon={faArrowRightFromBracket} size="xl" />
+              <span className={styles.label}>Abmelden</span>
+            </BaseButton>
             <BaseButton
               variant={'borderless'}
               className={styles.button}

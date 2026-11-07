@@ -15,6 +15,11 @@ export interface SidebarProps {
   children?: any;
 }
 
+// The last path a sidebar was shown on, shared by all sidebars: every page
+// mounts its own sidebar, and on the same page a sidebar can be replaced, e.g.
+// when the Suspense boundary around it resolves.
+let lastPathname: string | null = null;
+
 export const Sidebar = React.memo<SidebarProps>(({ children, isEmpty }) => {
   const pathname = usePathname();
   const isMobile = useIsMobile();
@@ -22,8 +27,13 @@ export const Sidebar = React.memo<SidebarProps>(({ children, isEmpty }) => {
   const isMobileDrawerOpen = useReactiveVar(isMobileDrawerOpenVar);
   const closeMobileDrawer = () => isMobileDrawerOpenVar(false);
 
+  // close the drawer after navigating, but not when a sidebar is replaced on
+  // the same page: that would close a drawer the user has just opened
   React.useEffect(() => {
-    closeMobileDrawer();
+    if (lastPathname !== null && lastPathname !== pathname) {
+      closeMobileDrawer();
+    }
+    lastPathname = pathname;
   }, [pathname]);
 
   if (isMobile) {

@@ -1,5 +1,5 @@
 import { basename } from 'node:path';
-import { Page } from '@playwright/test';
+import { FileChooser, Page, expect } from '@playwright/test';
 
 export const uploadAndSelect = async (
   { page }: { page: Page },
@@ -23,11 +23,19 @@ export const uploadAndSelect = async (
     await currentDir.getByRole('option', { name: segment }).click();
   }
 
-  const fileChooserPromise = page.waitForEvent('filechooser');
-  await browserDialog.getByRole('button', { name: 'Datei hochladen' }).click();
-
-  const fileChooser = await fileChooserPromise;
-  fileChooser.setFiles(file);
+  // Until the directory's content is loaded, there is no open directory to
+  // upload into, and the button does nothing: click again then.
+  let fileChooser: FileChooser | undefined;
+  await expect(async () => {
+    const fileChooserPromise = page.waitForEvent('filechooser', {
+      timeout: 3_000,
+    });
+    await browserDialog
+      .getByRole('button', { name: 'Datei hochladen' })
+      .click();
+    fileChooser = await fileChooserPromise;
+  }).toPass({ timeout: 20_000 });
+  await fileChooser!.setFiles(file);
 
   const newFileOption = browserDialog
     .getByRole('listbox')

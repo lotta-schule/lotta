@@ -19,6 +19,8 @@ const ReactionSelector = React.memo(({ onSelect }: ReactionSelectorProps) => {
         <Button
           key={iconName}
           data-testid={`reaction-${iconName}`}
+          aria-label={`Mit "${supportedReactionIcons[iconName].label}" reagieren`}
+          title={supportedReactionIcons[iconName].label}
           icon={<Icon icon={supportedReactionIcons[iconName].icon} />}
           onClick={() => onSelect(iconName)}
         />

@@ -28,9 +28,10 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
   const formRef = React.useRef<HTMLFormElement | null>(null);
 
   React.useEffect(() => {
-    // find initial data
-    setFormData(
-      configuration.elements.reduce(
+    // find initial data, keeping what was entered already (e.g. typed before
+    // the page was hydrated, which the fields report when they are mounted)
+    setFormData((enteredData) => ({
+      ...configuration.elements.reduce(
         (data, element) => ({
           ...data,
           [element.name]:
@@ -43,8 +44,9 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
             (element.type === 'checkbox' ? [] : ''),
         }),
         {}
-      )
-    );
+      ),
+      ...enteredData,
+    }));
   }, [configuration.elements]);
 
   const isValid = React.useMemo(() => {
@@ -109,7 +111,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
             element={element}
             value={formData[element.name]}
             onSetValue={(v) =>
-              setFormData({ ...formData, [element.name]: v as string })
+              setFormData((data) => ({ ...data, [element.name]: v as string }))
             }
           />
         </section>

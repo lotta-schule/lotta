@@ -1,4 +1,45 @@
-import { Page, expect } from '@playwright/test';
+import { APIRequestContext, Page, expect } from '@playwright/test';
+import { openMobileDrawer } from './navigation';
+
+const LOGIN_MUTATION = `
+  mutation Login($username: String, $password: String) {
+    login(username: $username, password: $password) {
+      accessToken
+    }
+  }
+`;
+
+/**
+ * Logs in by sending the GraphQL `login` mutation to the tenant's webapp
+ * (which proxies `/api` to core). The auth cookies are stored in the cookie jar
+ * of the given request context, so passing `context.request` logs in the
+ * whole browser context.
+ */
+export const loginViaApi = async (
+  request: APIRequestContext,
+  baseURL: string,
+  user: { email: string; password: string }
+) => {
+  const response = await request.post(new URL('/api', baseURL).toString(), {
+    data: {
+      query: LOGIN_MUTATION,
+      variables: { username: user.email, password: user.password },
+    },
+  });
+
+  if (!response.ok()) {
+    throw new Error(
+      `Login request for ${user.email} failed with status ${response.status()}`
+    );
+  }
+
+  const body = await response.json();
+  if (body.errors?.length || !body.data?.login?.accessToken) {
+    throw new Error(
+      `Login for ${user.email} failed: ${JSON.stringify(body.errors ?? body)}`
+    );
+  }
+};
 
 export const loginUser = async (
   {
@@ -13,23 +54,15 @@ export const loginUser = async (
 ) => {
   await page.goto(baseURL);
 
-  await page.waitForLoadState('domcontentloaded');
-
   if (isMobile) {
-    await page.waitForLoadState('networkidle');
-    await expect(
-      page.getByRole('button', { name: /nutzermenü öffnen/i })
-    ).toBeVisible();
-    page.getByRole('button', { name: /menü öffnen/i }).click();
-    await expect(page.getByTestId('BaseLayoutSidebar')).toBeVisible();
+    await openMobileDrawer(page);
   }
 
   const loginButton = page.getByRole('button', { name: /anmelden/i });
   await loginButton.click();
 
   const loginDialog = page.getByRole('dialog', { name: /anmelden/i });
-  await loginDialog.waitFor({ state: 'visible' });
-  expect(loginDialog).toBeVisible();
+  await expect(loginDialog).toBeVisible();
 
   await loginDialog.getByRole('textbox', { name: /e-mail/i }).fill(user.email);
 
@@ -41,9 +74,6 @@ export const loginUser = async (
   await loginDialog.getByRole('button', { name: /anmelden/i }).click();
 
   await page.waitForURL((url) => url.hostname === new URL(baseURL).hostname);
-  await expect(loginDialog).not.toBeVisible();
-
-  await page.waitForLoadState('domcontentloaded');
   await expect(loginDialog).not.toBeVisible();
 
   return {

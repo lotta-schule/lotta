@@ -41,6 +41,8 @@ export const ReactionCountButtons = React.memo(
           <PillButton
             className={styles.button}
             icon={<Icon icon={icon!.icon} />}
+            aria-label={`${icon!.label}: ${count} ${count === 1 ? 'Reaktion' : 'Reaktionen'}`}
+            title={icon!.label}
             disabled={!count || !onSelect}
             onClick={() => onSelect?.(type)}
             key={type}
