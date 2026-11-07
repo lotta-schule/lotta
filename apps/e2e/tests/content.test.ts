@@ -95,6 +95,19 @@ test.describe('Content visibility', () => {
           await expect(main.getByText(restrictedArticle.title)).toHaveCount(
             canSee ? 1 : 0
           );
+
+          // opening the article directly gives a 404 to non-members
+          const response = await page.goto(baseURL + restrictedArticle.path);
+          expect(response?.status()).toBe(canSee ? 200 : 404);
+          const articleTitle = page
+            .getByRole('main')
+            .getByText(restrictedArticle.title);
+          if (canSee) {
+            await expect(articleTitle).not.toHaveCount(0);
+          } else {
+            await expect(page.getByText('Seite nicht gefunden')).toBeVisible();
+            await expect(articleTitle).toHaveCount(0);
+          }
         });
       }
     }
@@ -143,7 +156,8 @@ test.describe('Article lifecycle', () => {
         await expect(page.getByRole('main').getByText(title)).toHaveCount(0);
 
         // not even when opening the article directly
-        await page.goto(editURL.replace(/\/edit$/, ''));
+        const response = await page.goto(editURL.replace(/\/edit$/, ''));
+        expect(response?.status()).toBe(404);
         await expect(page.getByRole('main').getByText(title)).toHaveCount(0);
       });
 

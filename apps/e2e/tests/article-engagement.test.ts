@@ -6,8 +6,7 @@ const reactWithHeart = async (page: Page, articleTitle: string) => {
   await page
     .getByRole('button', { name: `Auf "${articleTitle}" reagieren` })
     .click();
-  // the reaction buttons only have an icon and no accessible name
-  await page.getByTestId('reaction-HEART').click();
+  await page.getByRole('button', { name: 'Mit "Herz" reagieren' }).click();
 };
 
 test.describe('Article engagement', () => {
@@ -49,8 +48,8 @@ test.describe('Article engagement', () => {
           .and(page.locator(':enabled'))
       ).toHaveCount(0);
       await expect(
-        page.getByRole('main').getByText('2', { exact: true })
-      ).toBeVisible();
+        page.getByRole('button', { name: 'Herz: 2 Reaktionen' })
+      ).toBeDisabled();
     });
   });
 

@@ -4,12 +4,15 @@ import { createArticle, createCategory } from '../helper';
 
 const search = async (page: Page, baseURL: string, term: string) => {
   await page.goto(baseURL + '/search');
-  await page.getByRole('searchbox', { name: 'Suchbegriff' }).fill(term);
-  // the search is debounced: wait for the result count
-  // full-text search is the slowest query of the suite: allow more time under load
-  await expect(page.getByText(/Es wurden \d+ Beiträge gefunden/)).toBeVisible({
-    timeout: 20_000,
-  });
+  // Text typed before the page is hydrated is reset by React, so fill again
+  // until the (debounced) search shows its result count.
+  // Full-text search is the slowest query of the suite: allow more time under load.
+  await expect(async () => {
+    await page.getByRole('searchbox', { name: 'Suchbegriff' }).fill(term);
+    await expect(page.getByText(/Es wurden \d+ Beiträge gefunden/)).toBeVisible(
+      { timeout: 10_000 }
+    );
+  }).toPass({ timeout: 30_000 });
 };
 
 test.describe('Search', () => {

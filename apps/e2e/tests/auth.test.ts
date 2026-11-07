@@ -51,6 +51,14 @@ test.describe('Authentication', () => {
     await loginDialog.getByRole('button', { name: /anmelden/i }).click();
 
     expect((await loginResponse).status()).toBe(401);
+
+    // the dialog stays open, shows the error and keeps the email
+    await expect(loginDialog.getByRole('alert')).toHaveText(
+      'E-Mail-Adresse oder Passwort ist falsch.'
+    );
+    await expect(
+      loginDialog.getByRole('textbox', { name: /e-mail/i })
+    ).toHaveValue(users.teacher.email);
     expect(await getCurrentUserEmail(page.request, baseURL)).toBeNull();
   });
 

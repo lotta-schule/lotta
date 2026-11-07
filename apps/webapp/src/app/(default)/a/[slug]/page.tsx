@@ -1,10 +1,7 @@
 import { notFound } from 'next/navigation.js';
-import { getClient } from '#/api/client';
 import { Main, Sidebar } from '#/layout';
-import { ArticleModel, ID } from '#/model';
 import { ArticlePage } from '#/article/ArticlePage';
-
-import GetArticleQuery from '#/api/query/GetArticleQuery.graphql';
+import { loadArticle } from '#/loader';
 
 export default async function ArticleRoute({
   params,
@@ -18,20 +15,16 @@ export default async function ArticleRoute({
     notFound();
   }
 
-  const client = await getClient();
-  const { data } = await client.query<{ article: ArticleModel }, { id: ID }>({
-    query: GetArticleQuery,
-    variables: { id: articleId },
-  });
+  const article = await loadArticle(articleId);
 
-  if (!data?.article) {
+  if (!article) {
     notFound();
   }
 
   return (
     <>
       <Main>
-        <ArticlePage article={data.article} />
+        <ArticlePage article={article} />
       </Main>
       <Sidebar isEmpty />
     </>

@@ -70,6 +70,63 @@ describe('shared/dialog/LoginDialog', () => {
     });
   });
 
+  describe('submitting', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    const submit = async (screen: ReturnType<typeof render>) => {
+      const user = userEvent.setup();
+      await user.fill(
+        screen.getByRole('textbox', { name: /e-mail/i }),
+        'test@example.com'
+      );
+      await user.fill(screen.getByLabelText(/passwort/i), 'wrong');
+      await user.click(screen.getByRole('button', { name: /^anmelden$/i }));
+    };
+
+    it('should show an error in the dialog when the credentials are wrong', async () => {
+      const fetchMock = vi
+        .spyOn(window, 'fetch')
+        .mockResolvedValue(new Response('{"success":false}', { status: 401 }));
+      const screen = render(
+        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+        {}
+      );
+
+      await submit(screen);
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'E-Mail-Adresse oder Passwort ist falsch.'
+      );
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringMatching(/\/auth\/login$/),
+        expect.objectContaining({ method: 'POST', redirect: 'manual' })
+      );
+      const body = fetchMock.mock.calls[0][1]!.body as URLSearchParams;
+      expect(body.get('username')).toBe('test@example.com');
+      expect(body.get('password')).toBe('wrong');
+      // the dialog stays open and keeps the entered email
+      expect(screen.getByRole('textbox', { name: /e-mail/i })).toHaveValue(
+        'test@example.com'
+      );
+    });
+
+    it('should show a generic error when the server fails', async () => {
+      vi.spyOn(window, 'fetch').mockRejectedValue(new TypeError('offline'));
+      const screen = render(
+        <LoginDialog isOpen={true} onRequestClose={vi.fn()} />,
+        {}
+      );
+
+      await submit(screen);
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'Die Anmeldung ist fehlgeschlagen.'
+      );
+    });
+  });
+
   describe('email registration disabled', () => {
     it('should not show email/password fields when isEmailRegistrationEnabled is false', async () => {
       const screen = render(
