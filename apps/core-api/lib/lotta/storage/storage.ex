@@ -742,6 +742,77 @@ defmodule Lotta.Storage do
   def get_path(file_or_directory, user), do: get_path(file_or_directory, user, [])
 
   @doc """
+  Batched `get_path/2`: the paths of many files and directories, loading all
+  their ancestor directories with one recursive query.
+  Returns a map of `{struct module, id}` to the path.
+  """
+  @doc since: "7.1.0"
+  @spec get_paths([Directory.t() | File.t()], User.id() | nil, String.t() | nil) :: %{
+          {module(), String.t()} => [Directory.t()]
+        }
+  def get_paths(files_or_directories, user_id, prefix \\ nil) do
+    prefix = prefix || Repo.get_prefix()
+
+    directories =
+      files_or_directories
+      |> Enum.map(& &1.parent_directory_id)
+      |> Enum.reject(&is_nil/1)
+      |> Enum.uniq()
+      |> list_directories_with_ancestors(prefix)
+      |> Map.new(&{&1.id, &1})
+
+    Map.new(files_or_directories, fn item ->
+      {{item.__struct__, item.id}, build_path(item.parent_directory_id, directories, user_id, [])}
+    end)
+  end
+
+  # The given directories and all their ancestors, in one recursive query.
+  defp list_directories_with_ancestors([], _prefix), do: []
+
+  defp list_directories_with_ancestors(directory_ids, prefix) do
+    # The prefix is interpolated as a schema name, so only allow plain identifiers.
+    unless is_binary(prefix) and prefix =~ ~r/\A[a-z0-9_]+\z/ do
+      raise ArgumentError, "invalid tenant prefix: #{inspect(prefix)}"
+    end
+
+    directory_ids = Enum.map(directory_ids, &UUID.string_to_binary!/1)
+
+    Repo.query!(
+      """
+      WITH RECURSIVE ancestors AS (
+        SELECT d.id, d.parent_directory_id FROM "#{prefix}".directories d WHERE d.id = ANY($1)
+        UNION
+        SELECT p.id, p.parent_directory_id
+        FROM "#{prefix}".directories p
+        JOIN ancestors a ON p.id = a.parent_directory_id
+      )
+      SELECT id FROM ancestors
+      """,
+      [directory_ids]
+    )
+    |> Map.fetch!(:rows)
+    |> Enum.map(fn [id] -> UUID.binary_to_string!(id) end)
+    |> then(&from(d in Directory, where: d.id in ^&1))
+    |> Repo.all(prefix: prefix)
+  end
+
+  defp build_path(nil, _directories, _user_id, path), do: path
+
+  defp build_path(directory_id, directories, user_id, path) do
+    case Map.get(directories, directory_id) do
+      nil ->
+        path
+
+      # Stop at another user's private directory, like get_path/3 does.
+      %{user_id: owner_id} when owner_id != user_id and not is_nil(owner_id) ->
+        path
+
+      directory ->
+        build_path(directory.parent_directory_id, directories, user_id, [directory | path])
+    end
+  end
+
+  @doc """
   Checks if a directory has a minimum of `required_space` bytes available.
   Returns `:ok` if the directory has enough space, otherwise `{:error, :not_enough_space}`.
   """

@@ -11,8 +11,7 @@ import { faAlignLeft, faAlignRight } from '@fortawesome/free-solid-svg-icons';
 import { Element, Transforms } from 'slate';
 import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
 import { Image } from '../SlateCustomTypes';
-import { graphql } from '#/api/graphql';
-import { useQuery } from '@apollo/client/react';
+import { useImageElement } from './useImageElement';
 import { ResponsiveImage } from '#/util/image/ResponsiveImage';
 import clsx from 'clsx';
 
@@ -22,21 +21,7 @@ export type SlateImageProps = Omit<RenderElementProps, 'children'> & {
   children: any;
 };
 
-export const GET_FILE_FORMATS = graphql(`
-  query GET_FILE($id: ID!) {
-    file(id: $id) {
-      id
-      formats(category: "PREVIEW") {
-        availability {
-          status
-        }
-        name
-        type
-        url
-      }
-    }
-  }
-`);
+export { GET_FILE_FORMATS } from './useImageElement';
 
 export const SlateImage = React.memo(
   ({ element, attributes, children }: SlateImageProps) => {
@@ -46,26 +31,7 @@ export const SlateImage = React.memo(
     const isSelected = useSelected();
     const [showOverlay, setShowOverlay] = React.useState(false);
 
-    const { data } = useQuery(GET_FILE_FORMATS, {
-      variables: {
-        id: imageElement.fileId as string,
-      },
-      fetchPolicy: 'cache-first',
-      nextFetchPolicy: 'cache-only',
-      skip: !imageElement.fileId,
-    });
-
-    const imageWidth = React.useMemo(() => {
-      switch (imageElement.size) {
-        case 'large':
-          return 500;
-        case 'small':
-          return 200;
-        default:
-          // case 'middle'
-          return 300;
-      }
-    }, [imageElement.size]);
+    const { file, style } = useImageElement(imageElement);
 
     const setElementOptions = React.useCallback(
       (options: Partial<Image>) => {
@@ -78,11 +44,6 @@ export const SlateImage = React.memo(
       },
       [editor]
     );
-
-    const style: React.CSSProperties = {
-      float: imageElement.alignment === 'left' ? 'left' : 'right',
-      width: imageWidth,
-    };
 
     return (
       <span
@@ -97,14 +58,14 @@ export const SlateImage = React.memo(
           <ResponsiveImage
             lazy
             src={imageElement.fileId ? undefined : imageElement.src}
-            file={data?.file as any}
+            file={file as any}
             alt={''}
             format="preview"
             onClick={isEditing ? undefined : () => setShowOverlay(true)}
           />
           {showOverlay && (
             <ImageOverlay
-              selectedFile={showOverlay ? data?.file : null}
+              selectedFile={showOverlay ? file : null}
               onClose={() => setShowOverlay(false)}
             />
           )}

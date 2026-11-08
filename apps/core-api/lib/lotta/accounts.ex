@@ -271,7 +271,10 @@ defmodule Lotta.Accounts do
   If no tenant is passed to the function, the current
   process' tenant will be taken.
   """
-  @spec list_groups_for_enrollment_tokens([String.t()], Tenant.t() | nil) :: [
+  @spec list_groups_for_enrollment_tokens(
+          [String.t()],
+          Tenant.t() | %{prefix: String.t()} | nil
+        ) :: [
           UserGroup.t()
         ]
   def list_groups_for_enrollment_tokens(tokens, tenant \\ nil) when is_list(tokens) do
@@ -281,6 +284,69 @@ defmodule Lotta.Accounts do
       where: fragment("? && ?", g.enrollment_tokens, ^tokens)
     )
     |> Repo.all(prefix: prefix)
+  end
+
+  @doc """
+  Returns the groups of a user in one query: the groups the user is assigned to
+  and the groups the user is in through one of their enrollment tokens.
+
+  Returns `{assigned_groups, all_groups}`. The join only matches this user's
+  assignments, so a group the user is in both ways appears once in `all_groups`.
+  """
+  @spec list_user_groups(User.t()) :: {[UserGroup.t()], [UserGroup.t()]}
+  def list_user_groups(%User{id: user_id, enrollment_tokens: tokens} = user) do
+    prefix = Ecto.get_meta(user, :prefix) || Repo.get_prefix()
+
+    groups =
+      from(g in UserGroup,
+        left_join: uug in "user_user_group",
+        on: uug.user_group_id == g.id and uug.user_id == ^user_id,
+        where:
+          not is_nil(uug.user_id) or
+            fragment("? && ?", g.enrollment_tokens, ^(tokens || [])),
+        select: {g, not is_nil(uug.user_id)}
+      )
+      |> Repo.all(prefix: prefix)
+
+    assigned = for {group, true} <- groups, do: group
+    {assigned, Enum.map(groups, &elem(&1, 0))}
+  end
+
+  @doc """
+  Batched version of `list_user_groups/1` for many users: two queries in total,
+  instead of two per user. Returns a map of user id to
+  `%{assigned: [UserGroup.t()], dynamic: [UserGroup.t()]}`, where `dynamic` are
+  the groups the user is in through an enrollment token.
+  """
+  @spec list_groups_for_users([User.t()], String.t() | nil) :: %{
+          User.id() => %{assigned: [UserGroup.t()], dynamic: [UserGroup.t()]}
+        }
+  def list_groups_for_users(users, prefix \\ nil) do
+    users = Enum.uniq_by(users, & &1.id)
+    prefix = prefix || Repo.get_prefix()
+
+    users = Repo.preload(users, :groups, prefix: prefix)
+
+    tokens =
+      users
+      |> Enum.flat_map(&(&1.enrollment_tokens || []))
+      |> Enum.uniq()
+
+    token_groups =
+      if tokens == [],
+        do: [],
+        else: list_groups_for_enrollment_tokens(tokens, %{prefix: prefix})
+
+    Map.new(users, fn user ->
+      user_tokens = MapSet.new(user.enrollment_tokens || [])
+
+      dynamic =
+        Enum.filter(token_groups, fn group ->
+          Enum.any?(group.enrollment_tokens || [], &MapSet.member?(user_tokens, &1))
+        end)
+
+      {user.id, %{assigned: user.groups, dynamic: dynamic}}
+    end)
   end
 
   @doc """

@@ -168,6 +168,31 @@ defmodule Lotta.Worker.Conversion do
     )
   end
 
+  @doc """
+  Batched `get_current_jobs/1`: the unfinished conversion jobs of many files,
+  with one query per tenant prefix. Returns a map of file id to jobs.
+  """
+  @spec get_current_jobs_for_files([File.t()]) :: %{File.id() => [Oban.Job.t()]}
+  def get_current_jobs_for_files(files) do
+    files
+    |> Enum.group_by(&Ecto.get_meta(&1, :prefix), & &1.id)
+    |> Enum.flat_map(fn {prefix, file_ids} ->
+      Oban
+      |> Oban.config()
+      |> Oban.Repo.all(
+        from(
+          j in Oban.Job,
+          where:
+            j.worker == ^Oban.Worker.to_string(__MODULE__) and
+              j.state not in ["completed", "cancelled"] and
+              args_contain(j.args, %{"prefix" => prefix}) and
+              fragment("?->>'file_id' = ANY(?)", j.args, ^Enum.uniq(file_ids))
+        )
+      )
+    end)
+    |> Enum.group_by(& &1.args["file_id"])
+  end
+
   @spec get_conversion_job(File.t(), atom() | String.t()) :: Oban.Job.t() | nil
   def get_conversion_job(%{id: file_id} = file, format) do
     format_category = to_string(AvailableFormats.get_category(format))

@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { ReactEditor, RenderElementProps, RenderLeafProps } from 'slate-react';
 import { Editor, Element, Range, Text, Transforms, Node } from 'slate';
-import {
-  SlatePre050Document,
-  SlatePre050Node,
-} from './interface/SlatePre050Document';
+import { isSameHostLink } from './slateDocument';
 import { SlateImage } from './elements/SlateImage';
 import { BlockElement, CustomText, Image, Link } from './SlateCustomTypes';
 import { FileModel } from '#/model';
@@ -55,13 +52,7 @@ export const renderElement =
         );
       case 'link': {
         const href = element.href;
-        let isSameHost = false;
-        try {
-          const url = new URL(href);
-          isSameHost = window.location.host === url.host;
-        } catch {
-          console.warn('Invalid URL:', href);
-        }
+        const isSameHost = isSameHostLink(href);
         return (
           <a
             {...attributes}
@@ -142,34 +133,10 @@ export const toggleBlock = (editor: Editor, block: BlockElement['type']) => {
   }
 };
 
-export const getNormalizedSlateState = (state: any): Node[] => {
-  if (state.document) {
-    return migrateFromPreSlate050(state.document);
-  } else {
-    return state;
-  }
-};
-export const migrateFromPreSlate050 = (
-  document: SlatePre050Document
-): Node[] => {
-  const convertNode = (oldNode: SlatePre050Node): Node =>
-    ({
-      ...(oldNode.text !== undefined ? { text: oldNode.text } : {}),
-      ...(oldNode.type !== undefined ? { type: oldNode.type } : {}),
-      ...(oldNode.nodes?.length
-        ? { children: oldNode.nodes.map(convertNode) }
-        : {}),
-      ...oldNode.data,
-      ...oldNode.marks?.reduce(
-        (acc, mark) => ({
-          ...acc,
-          [mark.type]: true,
-        }),
-        {}
-      ),
-    }) as Node;
-  return document.nodes.map(convertNode);
-};
+export {
+  getNormalizedSlateState,
+  migrateFromPreSlate050,
+} from './slateDocument';
 
 //
 //  LINKS
