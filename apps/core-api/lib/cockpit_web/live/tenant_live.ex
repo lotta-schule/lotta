@@ -22,6 +22,14 @@ defmodule CockpitWeb.Live.TenantLive do
   def create_changeset(_tenant, params, _ \\ []),
     do: Lotta.Tenants.Tenant.create_changeset(params)
 
+  # Tenant edits through the cockpit bypass Lotta.Tenants, so drop the cached
+  # tenant lookups here as well.
+  @impl Backpex.LiveResource
+  def on_item_updated(socket, _item) do
+    Lotta.Tenants.TenantCache.invalidate_all()
+    socket
+  end
+
   @impl Backpex.LiveResource
   def item_actions(default_actions) do
     default_actions

@@ -22,6 +22,7 @@ defmodule Lotta.Tenants do
     Feedback,
     MonthlyUsageLog,
     Tenant,
+    TenantCache,
     TenantDbManager,
     Usage,
     UsageLog,
@@ -297,7 +298,10 @@ defmodule Lotta.Tenants do
       end
     )
 
-    result = Repo.delete(tenant, prefix: "public")
+    result =
+      tenant
+      |> Repo.delete(prefix: "public")
+      |> invalidate_tenant_cache()
 
     TenantDbManager.delete_tenant_schema(tenant)
 
@@ -373,6 +377,7 @@ defmodule Lotta.Tenants do
     tenant
     |> Tenant.update_changeset(args)
     |> Repo.update()
+    |> invalidate_tenant_cache()
   end
 
   @doc """
@@ -385,6 +390,7 @@ defmodule Lotta.Tenants do
     tenant
     |> Ecto.Changeset.change(state: state)
     |> Repo.update()
+    |> invalidate_tenant_cache()
   end
 
   @doc """
@@ -1037,6 +1043,7 @@ defmodule Lotta.Tenants do
       next_plan_name: next_plan_name
     })
     |> Repo.update(prefix: "public")
+    |> invalidate_tenant_cache()
   end
 
   @doc """
@@ -1075,11 +1082,24 @@ defmodule Lotta.Tenants do
       next_plan_name: nil
     })
     |> Repo.update(prefix: "public")
+    |> invalidate_tenant_cache()
   end
 
   def renew_plan(%Tenant{next_plan_name: next_plan} = tenant) do
     update_plan(tenant, next_plan)
   end
+
+  @doc """
+  Drop all cached tenant lookups (see `Lotta.Tenants.TenantCache`) after a
+  successful tenant write. Returns the given result unchanged.
+  """
+  @spec invalidate_tenant_cache(result) :: result when result: term()
+  def invalidate_tenant_cache({:ok, _} = result) do
+    TenantCache.invalidate_all()
+    result
+  end
+
+  def invalidate_tenant_cache(result), do: result
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
