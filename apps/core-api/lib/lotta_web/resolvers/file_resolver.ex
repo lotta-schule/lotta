@@ -18,65 +18,110 @@ defmodule LottaWeb.FileResolver do
   alias Lotta.Repo
   alias UUID
 
-  def resolve_file_usage(%{parent_directory_id: parent_directory_id, id: id}, _args, %{
+  def resolve_file_usage(%{parent_directory_id: parent_directory_id} = file, _args, %{
         context: %{current_user: current_user}
       })
       when not is_nil(parent_directory_id) do
-    parent_directory = Storage.get_directory(parent_directory_id)
+    # The usage of all files in the response is loaded with one query per kind
+    # of usage, instead of five queries per file.
+    prefix = Ecto.get_meta(file, :prefix) || Repo.get_prefix()
 
-    cond do
-      is_nil(parent_directory) ->
-        {:error, "Ordner nicht gefunden."}
+    batch({__MODULE__, :batch_file_usage, prefix}, file, fn usage_by_file ->
+      %{directory: parent_directory, usages: usages} = Map.fetch!(usage_by_file, file.id)
 
-      not can_read?(current_user, parent_directory) ->
-        {:error, "Du hast nicht die Berechtigung, diese Datei zu lesen."}
+      cond do
+        is_nil(parent_directory) ->
+          {:error, "Ordner nicht gefunden."}
 
-      true ->
-        categories =
-          from(c in Category,
-            where: c.banner_image_file_id == ^id,
-            order_by: [desc: :updated_at, asc: :title]
-          )
-          |> Repo.all()
-          |> Enum.map(&%{usage: "banner", category: &1})
+        not can_read?(current_user, parent_directory) ->
+          {:error, "Du hast nicht die Berechtigung, diese Datei zu lesen."}
 
-        articles =
-          from(a in Article,
-            where: a.preview_image_file_id == ^id,
-            order_by: [desc: :updated_at, asc: :title]
-          )
-          |> Repo.all()
-          |> Enum.map(&%{usage: "preview", article: &1})
+        true ->
+          {:ok, usages}
+      end
+    end)
+  end
 
-        content_modules =
-          from(cm in ContentModule,
-            join: cmf in "content_module_file",
-            on: cmf.content_module_id == cm.id,
-            preload: :article,
-            where: cmf.file_id == ^UUID.string_to_binary!(id),
-            order_by: [desc: cm.updated_at, desc: cm.inserted_at, desc: cm.id]
-          )
-          |> Repo.all()
-          |> Enum.map(&%{usage: "file", content_module: &1, article: &1.article})
+  @doc false
+  def batch_file_usage(prefix, files) do
+    files = Enum.uniq_by(files, & &1.id)
+    file_ids = Enum.map(files, & &1.id)
 
-        users =
-          from(u in User,
-            where: u.avatar_image_file_id == ^id,
-            order_by: [:name, :nickname, :inserted_at]
-          )
-          |> Repo.all()
-          |> Enum.map(&%{usage: "avatar", user: &1})
+    directories =
+      from(d in Directory, where: d.id in ^Enum.uniq(Enum.map(files, & &1.parent_directory_id)))
+      |> Repo.all(prefix: prefix)
+      |> Map.new(&{&1.id, &1})
 
-        usages = categories ++ articles ++ content_modules ++ users
-        {:ok, usages}
-    end
+    categories =
+      from(c in Category,
+        where: c.banner_image_file_id in ^file_ids,
+        order_by: [desc: :updated_at, asc: :title]
+      )
+      |> Repo.all(prefix: prefix)
+      |> Enum.map(&{&1.banner_image_file_id, %{usage: "banner", category: &1}})
+
+    articles =
+      from(a in Article,
+        where: a.preview_image_file_id in ^file_ids,
+        order_by: [desc: :updated_at, asc: :title]
+      )
+      |> Repo.all(prefix: prefix)
+      |> Enum.map(&{&1.preview_image_file_id, %{usage: "preview", article: &1}})
+
+    content_modules =
+      from(cm in ContentModule,
+        join: cmf in "content_module_file",
+        on: cmf.content_module_id == cm.id,
+        preload: :article,
+        where: cmf.file_id in ^Enum.map(file_ids, &UUID.string_to_binary!/1),
+        order_by: [desc: cm.updated_at, desc: cm.inserted_at, desc: cm.id],
+        select: {type(cmf.file_id, Ecto.UUID), cm}
+      )
+      |> Repo.all(prefix: prefix)
+      |> Enum.map(fn {file_id, cm} ->
+        {file_id, %{usage: "file", content_module: cm, article: cm.article}}
+      end)
+
+    users =
+      from(u in User,
+        where: u.avatar_image_file_id in ^file_ids,
+        order_by: [:name, :nickname, :inserted_at]
+      )
+      |> Repo.all(prefix: prefix)
+      |> Enum.map(&{&1.avatar_image_file_id, %{usage: "avatar", user: &1}})
+
+    # Same order as before: banners, previews, content modules, avatars.
+    usages =
+      Enum.group_by(
+        categories ++ articles ++ content_modules ++ users,
+        &elem(&1, 0),
+        &elem(&1, 1)
+      )
+
+    Map.new(files, fn file ->
+      {file.id,
+       %{
+         directory: Map.get(directories, file.parent_directory_id),
+         usages: Map.get(usages, file.id, [])
+       }}
+    end)
   end
 
   def resolve_path(file_or_directory, _args, %{
         context: %{current_user: user}
       }) do
-    {:ok, Storage.get_path(file_or_directory, user)}
+    # One recursive query for the paths of all files and directories in the response.
+    prefix = Ecto.get_meta(file_or_directory, :prefix) || Repo.get_prefix()
+    user_id = if user, do: user.id
+
+    batch({__MODULE__, :batch_paths, {prefix, user_id}}, file_or_directory, fn paths ->
+      {:ok, Map.fetch!(paths, {file_or_directory.__struct__, file_or_directory.id})}
+    end)
   end
+
+  @doc false
+  def batch_paths({prefix, user_id}, files_or_directories),
+    do: Storage.get_paths(files_or_directories, user_id, prefix)
 
   def resolve_available_formats(file, args, _info) do
     # Batch the conversion preloads for every file in the resolution into a
@@ -84,20 +129,34 @@ defmodule LottaWeb.FileResolver do
     # `Storage.get_http_url/1` would otherwise load one-by-one). This removes
     # the per-file `file_conversions` and per-conversion `remote_storage_entity`
     # N+1s observed in the staging traces.
+    # The unfinished conversion jobs of those files are loaded in the same batch.
     batch({__MODULE__, :batch_preload_file_conversions}, file, fn files_by_id ->
-      file = Map.get(files_by_id, file.id, file)
-      {:ok, build_available_formats(file, args)}
+      {file, jobs} = Map.get(files_by_id, file.id, {file, []})
+      {:ok, build_available_formats(file, args, jobs)}
     end)
   end
 
   @doc false
   def batch_preload_file_conversions(_batch_info, files) do
-    files
-    |> Repo.preload(file_conversions: :remote_storage_entity)
-    |> Map.new(&{&1.id, &1})
+    files = Repo.preload(files, file_conversions: :remote_storage_entity)
+
+    jobs =
+      files
+      |> Enum.filter(&has_requestable_formats?/1)
+      |> Conversion.get_current_jobs_for_files()
+
+    Map.new(files, &{&1.id, {&1, Map.get(jobs, &1.id, [])}})
   end
 
-  defp build_available_formats(file, args) do
+  defp has_requestable_formats?(file) do
+    file
+    |> AvailableFormats.available_formats_with_config()
+    |> Enum.any?(fn {format_name, _} ->
+      AvailableFormats.get_default_availability(format_name) == "requestable"
+    end)
+  end
+
+  defp build_available_formats(file, args, current_jobs) do
     category_filter = args[:category]
 
     category_filter_fn = fn format_name ->
@@ -132,7 +191,7 @@ defmodule LottaWeb.FileResolver do
            Enum.any?(requestable_formats, fn {format_name, _} ->
              Enum.all?(conversions, &(&1.name != to_string(format_name)))
            end) do
-        Conversion.get_current_jobs(file)
+        current_jobs
         |> Enum.map(fn job ->
           {job,
            Enum.filter(requestable_formats, fn {format_name, _} ->
@@ -222,17 +281,29 @@ defmodule LottaWeb.FileResolver do
 
   def resolve_remote_location(file, _args, _info)
       when is_struct(file, Storage.File) or is_struct(file, Storage.FileConversion) do
-    case Storage.get_http_url(file) do
-      nil ->
-        {:error, "Datei nicht gefunden."}
+    # Preload the storage entities of all files in the response in one query
+    # per struct type, instead of one query per file.
+    batch({__MODULE__, :batch_preload_remote_storage_entity}, file, fn loaded ->
+      case Storage.get_http_url(Map.get(loaded, {file.__struct__, file.id}, file)) do
+        nil ->
+          {:error, "Datei nicht gefunden."}
 
-      url ->
-        {:ok, url}
-    end
+        url ->
+          {:ok, url}
+      end
+    end)
   end
 
   def resolve_remote_location(_file, _args, _info) do
     {:error, "Ungültige Datei."}
+  end
+
+  @doc false
+  def batch_preload_remote_storage_entity(_batch_info, files) do
+    files
+    |> Enum.group_by(& &1.__struct__)
+    |> Enum.flat_map(fn {_struct, files} -> Repo.preload(files, :remote_storage_entity) end)
+    |> Map.new(&{{&1.__struct__, &1.id}, &1})
   end
 
   def file(%{id: id}, %{context: %{current_user: current_user}}) do
