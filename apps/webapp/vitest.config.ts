@@ -69,7 +69,7 @@ export default defineConfig({
           name: { label: 'unit', color: 'green' },
           environment: 'node',
           setupFiles: ['./src/test/unit.setup.ts'],
-          include: ['src/**/*.unit.test.{ts,tsx}'],
+          include: ['src/**/*.unit.test.{ts,tsx}', 'scripts/**/*.unit.test.ts'],
         },
       },
     ],

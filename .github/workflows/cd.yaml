@@ -100,6 +100,19 @@ jobs:
     secrets:
       lhci_token: '${{ secrets.LHCI_GITHUB_APP_TOKEN }}'
 
+  load-test:
+    name: Run load test
+    needs:
+      - publish-docker-images
+      - env_calculator
+    if: |
+      always() &&
+      !failure() &&
+      !cancelled()
+    uses: ./.github/workflows/load-test.yaml
+    with:
+      image_tag: ${{ needs.publish-docker-images.outputs.release_name }}
+
   run-e2e-tests:
     name: Run end-to-end tests
     needs:

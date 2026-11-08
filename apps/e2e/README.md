@@ -41,3 +41,24 @@ Lotta is multi-tenant: every tenant has its own database schema. The suite uses 
   `ENABLE_E2E_API`). `graphqlAs('admin')` together with `helper/content.ts` creates categories and articles.
   Only use the UI for the part a test is actually about.
 - **Tags.** Tests tagged `@smoke` cover the most important journeys: `bun run e2e:smoke`.
+
+## Load testing
+
+`load/smoke.js` is a [k6](https://grafana.com/docs/k6/latest/) load test. Every virtual user loads the home, a
+category and an article page and sends the GraphQL queries those pages send. The script finds a category and an
+article itself, so any tenant with some content works.
+
+```bash
+# Against the docker compose setup above (after creating the tenant, see scripts/lh_tenant/setup.ts)
+k6 run load/smoke.js
+
+# Against any deployment, with more load
+BASE_URL=https://test.lotta.schule VUS=20 DURATION=2m k6 run load/smoke.js
+```
+
+It prints median / p95 / p99 latency per request and writes the same as Markdown to `load/load-test-report.md`.
+The p95 limits per request are in `REQUESTS` in `load/smoke.js`.
+
+In CI, the `Load test` workflow runs it against every image CD builds and posts the result as a PR comment. The
+thresholds don't fail the pipeline, because shared runners are too noisy for that. Only compare runs on the same kind
+of machine. The workflow can also be started by hand against any URL (e.g. staging).

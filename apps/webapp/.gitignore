@@ -1,3 +1,8 @@
 # next
 .next
 
+
+# bundle size report (scripts/bundle-size)
+bundle-stats.json
+bundle-report.md
+/base

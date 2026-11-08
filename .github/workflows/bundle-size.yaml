@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+---
+# Reports the first-load JS size of every webapp route.
+# - On main: stores the numbers as the `bundle-stats` artifact (the baseline).
+# - On pull requests: compares against the latest baseline and keeps one
+#   sticky comment up to date. The report also goes to the job summary.
+# Script: apps/webapp/scripts/bundle-size
+name: Bundle size
+
+on:
+  pull_request:
+    paths:
+      - 'apps/webapp/**'
+      - 'libs/**'
+      - 'bun.lock'
+      - 'package.json'
+      - '.github/workflows/bundle-size.yaml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/webapp/**'
+      - 'libs/**'
+      - 'bun.lock'
+      - 'package.json'
+      - '.github/workflows/bundle-size.yaml'
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+
+concurrency:
+  group: bundle-size-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bundle-size:
+    name: Measure bundle size
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: apps/webapp
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.5
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build webapp
+        run: bun run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Collect bundle stats
+        run: bun scripts/bundle-size/cli.ts collect --out bundle-stats.json
+
+      - name: Store baseline
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-stats
+          path: apps/webapp/bundle-stats.json
+          retention-days: 90
+
+      - name: Download baseline from main
+        if: github.event_name == 'pull_request'
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: bundle-size.yaml
+          branch: main
+          event: push
+          name: bundle-stats
+          path: apps/webapp/base
+          if_no_artifact_found: warn
+
+      - name: Build report
+        run: |
+          bun scripts/bundle-size/cli.ts report \
+            --head bundle-stats.json \
+            --base base/bundle-stats.json \
+            --out bundle-report.md
+          cat bundle-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment on pull request
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: bundle-size
+          path: apps/webapp/bundle-report.md

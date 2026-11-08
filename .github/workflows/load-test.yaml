@@ -1,0 +1,103 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+---
+# k6 load test (apps/e2e/load/smoke.js).
+# - Called from CD with the freshly built image tag: runs the docker-compose
+#   stack, creates a tenant and reports on the pull request (sticky comment).
+# - Can be started by hand against any deployment (e.g. staging).
+# Thresholds are reported, but do not fail the pipeline: shared CI runners are
+# too noisy for that. Compare numbers between runs on the same kind of runner.
+name: Load test
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      image_tag:
+        description: The image tag to run locally
+        type: string
+        required: true
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: URL of the tenant to test, e.g. https://test.lotta.schule
+        type: string
+        required: true
+      vus:
+        description: Virtual users
+        type: string
+        default: '10'
+      duration:
+        description: Duration (k6 format, e.g. 1m, 30s)
+        type: string
+        default: '1m'
+
+jobs:
+  load-test:
+    name: Run k6 load test
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ inputs.base_url || 'http://lighthouse.local.lotta.schule:3000' }}
+      VUS: ${{ inputs.vus || '10' }}
+      DURATION: ${{ inputs.duration || '1m' }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Bun
+        if: ${{ inputs.image_tag }}
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install node dependencies
+        if: ${{ inputs.image_tag }}
+        run: bun install
+        working-directory: apps/e2e
+
+      - name: Run lotta as a service from docker-compose.yml
+        if: ${{ inputs.image_tag }}
+        uses: hoverkraft-tech/compose-action@v2.0.2
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        with:
+          cwd: ${{ github.workspace }}/apps/e2e
+          compose-file: docker-compose.yaml
+          up-flags: --force-recreate --wait
+
+      - name: Create test tenant
+        if: ${{ inputs.image_tag }}
+        run: bun run scripts/lh_tenant/setup.ts
+        env:
+          BASE_URI_HOST: local.lotta.schule
+          BASE_URI_SCHEME: http
+          BASE_URI_PORT: 3000
+          CORE_URL: http://localhost:4000
+          ADMIN_USERNAME: admin
+          ADMIN_PASSWORD: secretapikey
+        working-directory: apps/e2e
+
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Run load test
+        id: k6
+        continue-on-error: true
+        run: k6 run --quiet smoke.js
+        working-directory: apps/e2e/load
+
+      - name: Write job summary
+        if: ${{ always() }}
+        run: |
+          if [ -f load-test-report.md ]; then
+            cat load-test-report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            printf '### 🏋️ Load test\n\n❌ k6 did not produce a report, see the job log.\n' >> "$GITHUB_STEP_SUMMARY"
+          fi
+        working-directory: apps/e2e/load
+
+      - name: Comment on pull request
+        if: ${{ always() && github.event.pull_request.number && hashFiles('apps/e2e/load/load-test-report.md') != '' }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          number: ${{ github.event.pull_request.number }}
+          header: load-test
+          path: apps/e2e/load/load-test-report.md
