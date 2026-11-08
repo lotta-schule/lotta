@@ -3,6 +3,7 @@ defmodule LottaWeb.UserResolver do
 
   require Logger
 
+  import Absinthe.Resolution.Helpers, only: [batch: 3]
   import Lotta.Accounts.Authentication
   import LottaWeb.ErrorHelpers
 
@@ -89,19 +90,39 @@ defmodule LottaWeb.UserResolver do
     {:ok, current_user}
   end
 
-  def resolve_groups(user, _args, %{context: %{tenant: _t}}) do
-    user = Repo.preload(user, [:groups])
+  # The current user's groups were already loaded by LottaWeb.Context.
+  def resolve_groups(%User{id: id}, _args, %{
+        context: %{tenant: _t, current_user: %User{id: id, all_groups: all_groups}}
+      }),
+      do: {:ok, all_groups}
 
-    {:ok,
-     user.groups ++
-       Accounts.list_groups_for_enrollment_tokens(user.enrollment_tokens)}
+  def resolve_groups(user, _args, %{context: %{tenant: _t}}) do
+    batch_user_groups(user, fn %{assigned: assigned, dynamic: dynamic} ->
+      {:ok, assigned ++ dynamic}
+    end)
   end
+
+  def resolve_assigned_groups(%User{groups: groups}, _args, _info) when is_list(groups),
+    do: {:ok, groups}
 
   def resolve_assigned_groups(user, _args, _info) do
-    user = Repo.preload(user, :groups)
-
-    {:ok, user.groups}
+    batch_user_groups(user, fn %{assigned: assigned} -> {:ok, assigned} end)
   end
+
+  # Loads the groups of all users in the response with two queries in total.
+  # Batch functions run in another process, so the prefix is passed explicitly.
+  defp batch_user_groups(user, callback) do
+    prefix = Ecto.get_meta(user, :prefix) || Repo.get_prefix()
+
+    batch({__MODULE__, :groups_by_user, prefix}, user, fn groups_by_user ->
+      groups_by_user
+      |> Map.get(user.id, %{assigned: [], dynamic: []})
+      |> callback.()
+    end)
+  end
+
+  @doc false
+  def groups_by_user(prefix, users), do: Accounts.list_groups_for_users(users, prefix)
 
   def resolve_enrollment_tokens(user, _args, %{context: %{current_user: current_user}}) do
     tokens =

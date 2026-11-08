@@ -4,7 +4,6 @@ defmodule LottaWeb.Context do
     Will provide user account information
   """
 
-  alias Lotta.Repo
   alias Lotta.Accounts
   alias Lotta.Accounts.User
   alias Lotta.Tenants.Tenant
@@ -42,16 +41,13 @@ defmodule LottaWeb.Context do
   """
   @spec set_virtual_user_fields(User.t()) :: User.t()
   def set_virtual_user_fields(%User{} = user) do
-    user =
-      user
-      |> Repo.preload([:groups])
-
-    groups =
-      all_user_groups(user)
+    # One query for the assigned and the enrollment-token groups.
+    {assigned_groups, all_groups} = Accounts.list_user_groups(user)
 
     user
-    |> Map.put(:all_groups, groups)
-    |> Map.put(:is_admin?, Enum.any?(groups, & &1.is_admin_group))
+    |> Map.put(:groups, assigned_groups)
+    |> Map.put(:all_groups, all_groups)
+    |> Map.put(:is_admin?, Enum.any?(all_groups, & &1.is_admin_group))
   end
 
   @impl true
@@ -117,10 +113,4 @@ defmodule LottaWeb.Context do
   end
 
   defp maybe_put_tenant(context, _conn), do: context
-
-  defp get_dynamic_groups(%User{enrollment_tokens: enrollment_tokens}),
-    do: Accounts.list_groups_for_enrollment_tokens(enrollment_tokens)
-
-  defp all_user_groups(%User{groups: assigned_groups} = user),
-    do: assigned_groups ++ get_dynamic_groups(user)
 end
