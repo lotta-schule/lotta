@@ -78,19 +78,21 @@ defmodule Lotta.Tenants.TenantCache do
 
   defp fetch(key, loader) do
     if enabled?() and cache_running?() do
-      case ConCache.fetch_or_store(@cache, key, fn ->
-             case loader.() do
-               nil -> {:error, :not_found}
-               tenant -> {:ok, tenant}
-             end
-           end) do
-        {:ok, tenant} -> tenant
-        {:error, :not_found} -> nil
-      end
+      @cache
+      |> ConCache.fetch_or_store(key, fn -> to_cache_result(loader.()) end)
+      |> from_cache_result()
     else
       loader.()
     end
   end
+
+  # ConCache.fetch_or_store/3 stores `{:ok, value}` and skips `{:error, _}`,
+  # so misses are not cached.
+  defp to_cache_result(nil), do: {:error, :not_found}
+  defp to_cache_result(tenant), do: {:ok, tenant}
+
+  defp from_cache_result({:ok, tenant}), do: tenant
+  defp from_cache_result({:error, :not_found}), do: nil
 
   defp enabled?(),
     do: Keyword.get(Application.get_env(:lotta, __MODULE__, []), :enabled, true)
