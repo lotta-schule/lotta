@@ -50,6 +50,40 @@ defmodule LottaWeb.TenantPlugTest do
       assert %{private: %{lotta_tenant: %{id: ^id}}} = conn
     end
 
+    test "setting tenant via a custom domain host", %{conn: conn, tenant: tenant} do
+      id = tenant.id
+
+      Lotta.Repo.insert!(
+        %Lotta.Tenants.CustomDomain{host: "plug-test.example.com", tenant_id: id},
+        prefix: "public"
+      )
+
+      conn =
+        conn
+        |> put_req_header("x-forwarded-host", "plug-test.example.com")
+        |> TenantPlug.call(%{})
+
+      assert %{private: %{lotta_tenant: %{id: ^id}}} = conn
+    end
+
+    test "only matches subdomains of the base host", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("x-forwarded-host", "testXlotta.schule")
+        |> TenantPlug.call(%{})
+
+      refute Map.has_key?(conn.private, :lotta_tenant)
+    end
+
+    test "ignores an id header that is not an integer", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("x-lotta-tenant", "id:abc")
+        |> TenantPlug.call(%{})
+
+      refute Map.has_key?(conn.private, :lotta_tenant)
+    end
+
     test "no tenant found", %{conn: conn} do
       assert %{private: private_map, status: nil, resp_body: nil} = TenantPlug.call(conn, %{})
       refute Map.has_key?(private_map, :lotta_tenant)

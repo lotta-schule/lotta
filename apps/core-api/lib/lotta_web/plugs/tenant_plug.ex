@@ -11,7 +11,8 @@ defmodule LottaWeb.TenantPlug do
   require OpenTelemetry.Tracer
   import Plug.Conn
 
-  alias Lotta.{Repo, Tenants}
+  alias Lotta.Repo
+  alias Lotta.Tenants.TenantCache
 
   @behaviour Plug
 
@@ -53,12 +54,12 @@ defmodule LottaWeb.TenantPlug do
   defp fetch_tenant_from_header(conn, header_name) do
     case get_req_header(conn, header_name) do
       ["slug:" <> slug] ->
-        Tenants.get_tenant_by_slug(slug)
+        TenantCache.get_tenant_by_slug(slug)
 
       ["id:" <> id] ->
         case Integer.parse(id) do
           {tenant_id, ""} ->
-            Tenants.get_tenant(tenant_id)
+            TenantCache.get_tenant(tenant_id)
 
           _ ->
             nil
@@ -82,32 +83,32 @@ defmodule LottaWeb.TenantPlug do
   defp tenant_by_host(nil), do: nil
 
   defp tenant_by_host(host_to_check) do
-    base_uri = Application.fetch_env!(:lotta, :base_uri)
+    host_without_port = String.replace(host_to_check, ~r/:[0-9]{4,5}$/, "")
 
-    Enum.reduce(
-      [
-        Keyword.get(base_uri, :host)
-        | Keyword.get(base_uri, :alias, [])
-      ],
-      nil,
-      fn
-        base_host, nil ->
-          case Regex.run(
-                 Regex.compile!("(.*)\.#{Regex.escape(base_host)}"),
-                 String.replace(host_to_check, ~r/:[0-9]{4,5}$/, "")
-               ) do
-            [_, slug] ->
-              Tenants.get_tenant_by_slug(slug)
-
-            nil ->
-              nil
-          end
-
-        _, tenant ->
-          tenant
+    Enum.find_value(base_host_regexes(), fn regex ->
+      case Regex.run(regex, host_without_port) do
+        [_, slug] -> TenantCache.get_tenant_by_slug(slug)
+        nil -> nil
       end
-    )
+    end)
     # Not a slug.<base-url> domain, so check if there is a CustomDomain
-    |> then(&(&1 || Tenants.get_by_custom_domain(host_to_check)))
+    |> then(&(&1 || TenantCache.get_by_custom_domain(host_to_check)))
+  end
+
+  # The base hosts come from the (runtime) config, so the regexes are compiled
+  # once and kept in :persistent_term instead of on every request.
+  defp base_host_regexes() do
+    base_uri = Application.fetch_env!(:lotta, :base_uri)
+    base_hosts = [Keyword.get(base_uri, :host) | Keyword.get(base_uri, :alias, [])]
+
+    case :persistent_term.get({__MODULE__, :base_host_regexes}, nil) do
+      {^base_hosts, regexes} ->
+        regexes
+
+      _ ->
+        regexes = Enum.map(base_hosts, &Regex.compile!("(.*)\\.#{Regex.escape(&1)}"))
+        :persistent_term.put({__MODULE__, :base_host_regexes}, {base_hosts, regexes})
+        regexes
+    end
   end
 end

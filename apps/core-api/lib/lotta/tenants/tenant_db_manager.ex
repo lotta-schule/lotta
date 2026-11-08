@@ -111,7 +111,8 @@ defmodule Lotta.Tenants.TenantDbManager do
     {20_250_627_065_517, Lotta.Repo.TenantMigrations.AddPagesToFileAndRemoveFullMetadata},
     {20_250_629_003_832, Lotta.Repo.TenantMigrations.MakeConversionFormatsUnique},
     {20_250_711_004_039, Lotta.Repo.TenantMigrations.MakeUsergroupEnrollmenttokensArrayNonNull},
-    {20_250_803_132_452, Lotta.Repo.TenantMigrations.AddEduplacesIdsToUsersAndGroups}
+    {20_250_803_132_452, Lotta.Repo.TenantMigrations.AddEduplacesIdsToUsersAndGroups},
+    {20_261_108_120_000, Lotta.Repo.TenantMigrations.AddPerformanceIndexes}
   ]
 
   @spec create_tenant_database_schema(Tenant.t()) :: {:ok, [integer()]}

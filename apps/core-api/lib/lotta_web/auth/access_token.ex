@@ -14,6 +14,7 @@ defmodule LottaWeb.Auth.AccessToken do
   require Logger
 
   alias Lotta.{Accounts, Repo, Tenants}
+  alias Lotta.Tenants.TenantCache
   alias Lotta.Accounts.User
   alias LottaWeb.Urls
 
@@ -26,7 +27,7 @@ defmodule LottaWeb.Auth.AccessToken do
 
   @spec resource_from_claims(map()) :: {:ok, User.t()} | {:error, :user_not_found}
   def resource_from_claims(%{"sub" => subject_id, "tid" => tid}) do
-    tenant = Tenants.get_tenant(tid)
+    tenant = TenantCache.get_tenant(tid)
 
     cond do
       is_nil(tenant) ->

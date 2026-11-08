@@ -23,6 +23,7 @@ defmodule Lotta.Application do
         LottaWeb.Telemetry,
         Lotta.Repo,
         {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
+        Lotta.Tenants.TenantCache,
         LottaWeb.Endpoint,
         Lotta.PushNotification,
         {Absinthe.Subscription, LottaWeb.Endpoint},
