@@ -59,6 +59,30 @@ defmodule Lotta.Tenants.TenantCacheTest do
     end
   end
 
+  describe "supervision" do
+    test "restarts with an empty cache and a resubscribed invalidator", %{tenant: tenant} do
+      assert TenantCache.get_tenant(tenant.id)
+
+      :ok = Supervisor.terminate_child(Lotta.Supervisor, TenantCache)
+      # Without the cache process, lookups go straight to the database.
+      assert %Tenant{} = TenantCache.get_tenant(tenant.id)
+      assert :ok = TenantCache.invalidate_all()
+
+      assert {:ok, _pid} = Supervisor.restart_child(Lotta.Supervisor, TenantCache)
+
+      assert TenantCache.get_tenant(tenant.id)
+
+      Repo.update_all(from(t in Tenant, where: t.id == ^tenant.id), [set: [title: "Restarted"]],
+        prefix: "public"
+      )
+
+      Phoenix.PubSub.broadcast(Lotta.PubSub, TenantCache.topic(), :invalidate_all)
+      :sys.get_state(TenantCache.Invalidator)
+
+      assert TenantCache.get_tenant(tenant.id).title == "Restarted"
+    end
+  end
+
   describe "invalidation" do
     test "updating a tenant through Lotta.Tenants clears the cache", %{tenant: tenant} do
       assert TenantCache.get_tenant_by_slug(tenant.slug).title == tenant.title
@@ -73,6 +97,19 @@ defmodule Lotta.Tenants.TenantCacheTest do
       assert TenantCache.get_tenant(tenant.id)
       assert {:error, _} = Tenants.update_tenant(tenant, %{title: nil})
       assert TenantCache.get_tenant(tenant.id).title == tenant.title
+    end
+
+    test "editing a tenant in the cockpit clears the cache", %{tenant: tenant} do
+      assert TenantCache.get_tenant(tenant.id)
+
+      Repo.update_all(from(t in Tenant, where: t.id == ^tenant.id), [set: [title: "Cockpit"]],
+        prefix: "public"
+      )
+
+      socket = %Phoenix.LiveView.Socket{}
+      assert ^socket = CockpitWeb.Live.TenantLive.on_item_updated(socket, tenant)
+
+      assert TenantCache.get_tenant(tenant.id).title == "Cockpit"
     end
 
     test "invalidations broadcast by other nodes clear the local cache", %{tenant: tenant} do
