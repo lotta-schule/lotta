@@ -76,6 +76,8 @@ jobs:
             dockerfile: apps/docs/Dockerfile
             context: .
             sentry_dsn: ''
+            # public slug of the Keystatic GitHub App (https://github.com/apps/lotta-keystatic)
+            build_args: PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=lotta-keystatic
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}
@@ -85,6 +87,7 @@ jobs:
       platforms: '["linux/amd64","linux/arm64"]'
       push: true
       sentry_dsn: ${{ matrix.image.sentry_dsn }}
+      build_args: ${{ matrix.image.build_args }}
     secrets:
       password: ${{ secrets.GITHUB_TOKEN }}
       sentry_auth_token: ${{ secrets.SENTRY_AUTH_TOKEN }}
