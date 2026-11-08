@@ -10,3 +10,11 @@
 
 ## Tweak GC to run more often
 ##-env ERL_FULLSWEEP_AFTER 10
+
+## Do not busy-wait for work when schedulers run out of it. The pods run with
+## hard CPU limits, and busy-waiting burns the CFS quota, so the BEAM gets
+## throttled exactly when real work arrives. Trades a little latency for
+## lower CPU usage and less throttling.
++sbwt none
++sbwtdcpu none
++sbwtdio none
