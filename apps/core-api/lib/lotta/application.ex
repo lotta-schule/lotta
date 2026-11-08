@@ -23,6 +23,7 @@ defmodule Lotta.Application do
         LottaWeb.Telemetry,
         Lotta.Repo,
         {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
+        Lotta.Tenants.TenantCache,
         LottaWeb.Endpoint,
         Lotta.PushNotification,
         {Absinthe.Subscription, LottaWeb.Endpoint},
@@ -80,8 +81,12 @@ defmodule Lotta.Application do
     OpentelemetryOban.setup()
     OpentelemetryBandit.setup()
     OpentelemetryPhoenix.setup(adapter: :bandit)
-    OpentelemetryAbsinthe.setup()
-    OpentelemetryEcto.setup([:lotta, :repo])
+    OpentelemetryAbsinthe.setup(error_status: &Lotta.Observability.graphql_error_status/1)
+    Lotta.Observability.setup_ecto_tracing()
+
+    # after the instrumentation above, so their spans are current when
+    # tenant/user attributes are set on them
+    Lotta.Observability.attach()
   end
 
   defp get_libcluster_app_child() do

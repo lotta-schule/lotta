@@ -38,14 +38,15 @@ Configure your application to send OTLP traces to:
 - gRPC: `localhost:4317`
 - HTTP: `localhost:4318`
 
-For the core-api (Elixir/OpenTelemetry), add to your config:
+For the core-api (Elixir/OpenTelemetry), export over OTLP/HTTP like production:
 
-```elixir
-config :opentelemetry, traces_exporter: :otlp
-config :opentelemetry_exporter,
-  otlp_endpoint: "http://localhost:4317",
-  otlp_headers: []
+```bash
+OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:4318/v1/traces mix phx.server
 ```
+
+Production exports with head sampling `always_on` to the in-cluster Alloy
+traces collector; Alloy's tail sampler decides what is kept (all errors, all
+traces > 2s, all staging/preview, 1% of the rest).
 
 ### Metrics
 
@@ -57,6 +58,12 @@ The core-api exposes Prometheus metrics on port 9567. Prometheus is configured t
 ### Logs
 
 Alloy automatically collects Docker container logs via the Docker socket and forwards them to Loki.
+
+Log lines carry `trace_id`/`span_id` of the active span (core-api: `Lotta.Observability`
+log filter, webapp: pino instrumentation) plus `tenant_id`/`user_id`. Alloy extracts
+them into Loki structured metadata, so a trace's logs can be found by adding
+`| trace_id="<trace id>"` to any stream selector. In production the "Errors & Trace
+Drill-down" dashboard links both ways between error traces and their logs.
 
 ## Dashboards
 

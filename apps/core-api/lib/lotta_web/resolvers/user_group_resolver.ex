@@ -1,29 +1,50 @@
 defmodule LottaWeb.UserGroupResolver do
   @moduledoc false
 
+  import Absinthe.Resolution.Helpers, only: [on_load: 2]
   import LottaWeb.ErrorHelpers
 
-  alias Lotta.Repo
   alias Lotta.Accounts
   alias Lotta.Accounts.User
 
+  @doc """
+  Resolves the `groups` of an article, category or widget, limited to the
+  groups the current user may see.
+
+  The groups of all models in the same GraphQL response are loaded in one
+  batched query (via Dataloader) instead of one query per model.
+  """
   def resolve_model_groups(
         model,
         _args,
         %{
-          context: %{current_user: user}
+          context: %{current_user: user} = context
         }
       ) do
+    case Ecto.assoc_loaded?(model.groups) do
+      true ->
+        {:ok, filter_visible_groups(model.groups, user)}
+
+      false ->
+        context.loader
+        |> Dataloader.load(Lotta.Accounts, :groups, model)
+        |> on_load(fn loader ->
+          loader
+          |> Dataloader.get(Lotta.Accounts, :groups, model)
+          |> filter_visible_groups(user)
+          |> then(&{:ok, &1})
+        end)
+    end
+  end
+
+  defp filter_visible_groups(groups, user) do
     group_ids = if user, do: Enum.map(user.all_groups, & &1.id), else: []
     is_admin = user && user.is_admin?
 
-    model
-    |> Repo.preload(:groups)
-    |> Map.fetch!(:groups)
+    groups
     |> Enum.sort_by(& &1.sort_key)
     |> Enum.reverse()
     |> Enum.filter(&(is_admin || &1.id in group_ids))
-    |> then(&{:ok, &1})
   end
 
   def resolve_enrollment_tokens(_user_group, _args, %{

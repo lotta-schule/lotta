@@ -1042,6 +1042,7 @@ defmodule LottaWeb.FileResolverTest do
                "errors" => [
                  %{
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["relevantFilesInUsage"]
                  }
                ]
@@ -1421,6 +1422,7 @@ defmodule LottaWeb.FileResolverTest do
                %{
                  "locations" => [%{"column" => 3, "line" => 2}],
                  "message" => "Du musst angemeldet sein um das zu tun.",
+                 "extensions" => %{"code" => "UNAUTHENTICATED"},
                  "path" => ["uploadFile"]
                }
              ]

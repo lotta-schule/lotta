@@ -8,6 +8,13 @@ defmodule LottaWeb.StorageController do
   alias Lotta.Storage
   alias Lotta.Storage.Conversion.AvailableFormats
 
+  # Files are addressed by UUID and only need the tenant, not a user session,
+  # so shared caches (CDN, proxies) may store them. An original never changes
+  # for a given id; converted formats may be regenerated, so they are not
+  # marked immutable.
+  @cache_control "public, max-age=604800"
+  @cache_control_original "public, max-age=604800, immutable"
+
   def get_file_format(
         %{private: %{lotta_tenant: tenant}} = conn,
         %{"id" => id, "format" => "original"}
@@ -26,7 +33,7 @@ defmodule LottaWeb.StorageController do
         |> copy_header(env.headers, "content-type")
         |> copy_header(env.headers, "etag")
         |> copy_header(env.headers, "last-modified")
-        |> put_resp_header("cache-control", "max-age=604800")
+        |> put_resp_header("cache-control", @cache_control_original)
         |> send_chunked(200)
 
       stream_body(env.body, conn)
@@ -61,7 +68,7 @@ defmodule LottaWeb.StorageController do
         |> copy_header(env.headers, "content-type")
         |> copy_header(env.headers, "etag")
         |> copy_header(env.headers, "last-modified")
-        |> put_resp_header("cache-control", "max-age=604800")
+        |> put_resp_header("cache-control", @cache_control)
         |> send_chunked(200)
 
       stream_body(env.body, conn)
@@ -102,7 +109,7 @@ defmodule LottaWeb.StorageController do
              processing: build_processing_options(params)
            ) do
       conn
-      |> put_resp_header("cache-control", "max-age=604800")
+      |> put_resp_header("cache-control", @cache_control)
       |> redirect(external: http_url)
     else
       _ ->
@@ -122,7 +129,7 @@ defmodule LottaWeb.StorageController do
       |> respond_with(:not_found)
     else
       conn
-      |> put_resp_header("cache-control", "max-age=604800")
+      |> put_resp_header("cache-control", @cache_control)
       |> redirect(
         external:
           Storage.get_http_url(

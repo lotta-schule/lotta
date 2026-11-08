@@ -70,7 +70,8 @@ defmodule Lotta.Content do
 
     from([a, ...] in query,
       where: not is_nil(a.tags),
-      select: a.tags
+      select: a.tags,
+      distinct: true
     )
     |> Repo.all()
   end

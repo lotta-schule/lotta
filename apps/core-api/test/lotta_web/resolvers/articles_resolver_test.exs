@@ -2471,6 +2471,7 @@ defmodule LottaWeb.ArticleResolverTest do
                "errors" => [
                  %{
                    "message" => "Du musst angemeldet sein um das zu tun.",
+                   "extensions" => %{"code" => "UNAUTHENTICATED"},
                    "path" => ["ownArticles"]
                  }
                ]

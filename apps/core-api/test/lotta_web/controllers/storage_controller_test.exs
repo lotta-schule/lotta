@@ -34,7 +34,7 @@ defmodule LottaWeb.StorageControllerTest do
         build_tenant_conn()
         |> get("/storage/f/#{file.id}")
 
-      assert ["max-age=604800"] = Plug.Conn.get_resp_header(conn, "cache-control")
+      assert ["public, max-age=604800"] = Plug.Conn.get_resp_header(conn, "cache-control")
     end
 
     test "Should redirect to the file when requested" do

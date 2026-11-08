@@ -1,14 +1,17 @@
 import * as React from 'react';
+import dynamic from 'next/dynamic.js';
 import { useQuery } from '@apollo/client/react';
 import { Button } from '@lotta-schule/hubert';
 import { FormResultsDialog } from './FormResultsDialog';
 import { Show } from './Show';
-import { Edit } from './Edit';
 import { faInbox } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from '#/shared/Icon';
 import { ContentModuleComponentProps } from '../ContentModule';
 import { ContentModuleResultModel, ID } from '#/model';
 import GetContentModuleResults from '#/api/query/GetContentModuleResults.graphql';
+
+// The editor is only needed in edit mode, so keep it out of the reader bundle.
+const Edit = dynamic(() => import('./Edit').then((m) => m.Edit));
 
 export interface FormElementOption {
   selected?: boolean;

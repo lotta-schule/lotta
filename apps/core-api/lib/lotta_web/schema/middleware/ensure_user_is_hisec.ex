@@ -13,7 +13,9 @@ defmodule LottaWeb.Schema.Middleware.EnsureUserIsHisec do
   def call(resolution, _config) do
     resolution
     |> Absinthe.Resolution.put_result(
-      {:error, "Du musst die Anfrage gesondert bestätigen, um das zu tun."}
+      {:error,
+       message: "Du musst die Anfrage gesondert bestätigen, um das zu tun.",
+       extensions: %{code: "HISEC_REQUIRED"}}
     )
   end
 end
