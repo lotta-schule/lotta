@@ -1,4 +1,5 @@
 import * as React from 'react';
+import dynamic from 'next/dynamic.js';
 import { Icon } from '#/shared/Icon';
 import {
   faTrash,
@@ -15,12 +16,8 @@ import {
 import { ArticleModel, ContentModuleModel, ContentModuleType } from '#/model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
-import { Config as TitleConfig } from './title/Config';
-import { Config as DownloadConfig } from './download/Config';
 import { Image as ImageModule } from './image/Image';
-import { Config as ImageConfig } from './image/Config';
 import { ImageCollection } from './image_collection/ImageCollection';
-import { Config as ImageCollectionConfig } from './image_collection/Config';
 import { Video } from './video/Video';
 import { Audio } from './audio/Audio';
 import { Download } from './download/Download';
@@ -32,6 +29,20 @@ import { useCurrentUser } from '#/util/user/useCurrentUser';
 import clsx from 'clsx';
 
 import styles from './ContentModule.module.scss';
+
+// Config dialogs are only shown in edit mode, so keep them out of the reader bundle.
+const TitleConfig = dynamic(() =>
+  import('./title/Config').then((m) => m.Config)
+);
+const DownloadConfig = dynamic(() =>
+  import('./download/Config').then((m) => m.Config)
+);
+const ImageConfig = dynamic(() =>
+  import('./image/Config').then((m) => m.Config)
+);
+const ImageCollectionConfig = dynamic(() =>
+  import('./image_collection/Config').then((m) => m.Config)
+);
 
 export type ContentModuleProps = {
   contentModule: ContentModuleModel;
