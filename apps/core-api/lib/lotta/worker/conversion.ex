@@ -143,6 +143,14 @@ defmodule Lotta.Worker.Conversion do
     end
   end
 
+  # jsonb containment (`@>`) can use Oban's GIN index on `args`;
+  # `args->>'key' = value` comparisons cannot.
+  defmacrop args_contain(args, values) do
+    quote do
+      fragment("? @> ?", unquote(args), type(^unquote(values), :map))
+    end
+  end
+
   @spec get_current_jobs(File.t()) :: Oban.Job.t() | nil
   def get_current_jobs(%{id: file_id} = file) do
     prefix = Ecto.get_meta(file, :prefix)
@@ -155,8 +163,7 @@ defmodule Lotta.Worker.Conversion do
         where:
           j.worker == ^Oban.Worker.to_string(__MODULE__) and
             j.state not in ["completed", "cancelled"] and
-            fragment("?->>? = ?", j.args, "prefix", ^prefix) and
-            fragment("?->>? = ?", j.args, "file_id", ^file_id)
+            args_contain(j.args, %{"prefix" => prefix, "file_id" => file_id})
       )
     )
   end
@@ -172,9 +179,11 @@ defmodule Lotta.Worker.Conversion do
       from(
         j in Oban.Job,
         where:
-          fragment("?->>? = ?", j.args, "prefix", ^prefix) and
-            fragment("?->>? = ?", j.args, "file_id", ^file_id) and
-            fragment("?->>? = ?", j.args, "format_category", ^format_category)
+          args_contain(j.args, %{
+            "prefix" => prefix,
+            "file_id" => file_id,
+            "format_category" => format_category
+          })
       )
     )
   end

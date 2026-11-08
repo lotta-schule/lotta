@@ -77,16 +77,29 @@ defmodule Lotta.Content.Article do
     groups = if user, do: user.all_groups, else: []
     is_admin = if user, do: user.is_admin?, else: false
 
+    group_ids = Enum.map(groups, & &1.id)
+
+    # Semi-joins instead of LEFT JOIN + DISTINCT: an article is visible if it is
+    # restricted to none of the groups or to at least one of the user's groups.
     from(a in Article,
-      left_join: aug in "articles_user_groups",
-      on: aug.article_id == a.id,
+      as: :article,
       join: c in Category,
       on: c.id == a.category_id,
       where:
         a.published == true and
-          (is_nil(aug.group_id) or aug.group_id in ^Enum.map(groups, & &1.id) or
-             ^is_admin),
-      distinct: true
+          (^is_admin or
+             not exists(
+               from(aug in "articles_user_groups",
+                 where: aug.article_id == parent_as(:article).id,
+                 select: 1
+               )
+             ) or
+             exists(
+               from(aug in "articles_user_groups",
+                 where: aug.article_id == parent_as(:article).id and aug.group_id in ^group_ids,
+                 select: 1
+               )
+             ))
     )
     |> then(fn query ->
       case opts[:category_id] do
