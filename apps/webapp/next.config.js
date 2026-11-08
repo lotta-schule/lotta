@@ -70,6 +70,21 @@ const nextConfig = {
       ],
     };
   },
+  async headers() {
+    return [
+      {
+        // Self-hosted web fonts (public/fonts). They are not content-hashed,
+        // so give them a new file name when replacing a font file.
+        source: '/fonts/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {

@@ -7,6 +7,7 @@ import {
   DefaultThemes,
 } from '@lotta-schule/hubert';
 import { ServerDownErrorPage } from '#/layout/error/ServerDownErrorPage';
+import { withThemeFontFallbacks } from '#/styles/fonts';
 
 export default function GlobalError({
   error,
@@ -18,7 +19,7 @@ export default function GlobalError({
   return (
     <html>
       <head>
-        <GlobalStyles theme={DefaultThemes.standard} />
+        <GlobalStyles theme={withThemeFontFallbacks(DefaultThemes.standard)} />
       </head>
       <body>
         <HubertProvider>
