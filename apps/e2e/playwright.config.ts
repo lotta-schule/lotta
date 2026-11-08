@@ -7,6 +7,19 @@ import { defineConfig, devices } from '@playwright/test';
 // import dotenv from 'dotenv';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+/** Shared by the 'docs' projects: stable, German, light rendering for reproducible assets */
+const docsProject = {
+  testDir: './docs',
+  testMatch: '**/*.docs.ts',
+  retries: 0,
+  use: {
+    locale: 'de-DE',
+    timezoneId: 'Europe/Berlin',
+    colorScheme: 'light' as const,
+    video: 'off' as const,
+  },
+};
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -66,6 +79,20 @@ export default defineConfig({
     {
       name: 'MobileSafari',
       use: { ...devices['iPhone 12'] },
+    },
+
+    /* Screenshots and videos for the documentation (apps/docs), see docs/README.md.
+     * Not part of the regular runs: CI runs these projects explicitly (`bun run docs:capture`).
+     * They live in their own testDir, so the projects above never pick them up. */
+    {
+      name: 'docs',
+      ...docsProject,
+      use: { ...devices['Desktop Chrome'], ...docsProject.use },
+    },
+    {
+      name: 'docs-mobile',
+      ...docsProject,
+      use: { ...devices['Pixel 7'], ...docsProject.use },
     },
   ],
 

@@ -72,6 +72,10 @@ jobs:
             dockerfile: Dockerfile
             context: apps/core-api
             sentry_dsn: ${{ vars.CORE_SENTRY_DSN }}
+          - name: docs
+            dockerfile: apps/docs/Dockerfile
+            context: .
+            sentry_dsn: ''
     uses: ./.github/workflows/__deploy_dockerfile.yaml
     with:
       name: ${{ matrix.image.name }}

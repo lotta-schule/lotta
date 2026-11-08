@@ -9,6 +9,7 @@ export type GraphqlClient = <T = any>(
 
 export type ContentModuleInput = {
   type: 'TEXT' | 'TITLE' | 'IMAGE' | 'FORM' | 'DIVIDER';
+  /** sent as JSON string, like the webapp does */
   content?: Record<string, unknown>;
   /** sent as JSON string, like the webapp does */
   configuration?: Record<string, unknown>;
@@ -93,9 +94,10 @@ export const createArticle = async (
         category: categoryId ? { id: categoryId } : null,
         groups: groupIds.map((id) => ({ id: String(id) })),
         contentModules: contentModules.map(
-          ({ configuration, ...module }, sortKey) => ({
+          ({ content, configuration, ...module }, sortKey) => ({
             ...module,
             sortKey,
+            ...(content ? { content: JSON.stringify(content) } : {}),
             ...(configuration
               ? { configuration: JSON.stringify(configuration) }
               : {}),

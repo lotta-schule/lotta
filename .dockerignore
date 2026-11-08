@@ -13,3 +13,6 @@ dist
 .env.*
 
 .DS_Store
+
+# needed by the docs build (changelog page)
+!CHANGELOG.md
