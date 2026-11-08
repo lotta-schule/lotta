@@ -1,0 +1,38 @@
+---
+/**
+ * Replaces Starlight's "Edit page" link: opens the page in the Keystatic
+ * visual editor instead of GitHub, so non-technical editors never touch git.
+ */
+import { Icon } from '@astrojs/starlight/components';
+
+const { filePath } = Astro.locals.starlightRoute.entry;
+const slug = filePath
+  ?.replace(/^src\/content\/docs\//, '')
+  .replace(/\.mdx?$/, '');
+
+const base = import.meta.env.PROD ? '/keystatic/branch/main' : '/keystatic';
+const href = slug
+  ? `${base}/collection/docs/item/${encodeURIComponent(slug)}`
+  : undefined;
+---
+
+{
+  href && (
+    <a href={href} class="sl-flex print:hidden">
+      <Icon name="pencil" size="1.2em" />
+      Diese Seite bearbeiten
+    </a>
+  )
+}
+
+<style>
+  a {
+    gap: 0.5rem;
+    align-items: center;
+    text-decoration: none;
+    color: var(--sl-color-gray-3);
+  }
+  a:hover {
+    color: var(--sl-color-white);
+  }
+</style>

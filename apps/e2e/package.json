@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "e2e": "./scripts/test.sh",
-    "e2e:smoke": "./scripts/test.sh --grep @smoke"
+    "e2e:smoke": "./scripts/test.sh --grep @smoke",
+    "docs:capture": "./scripts/test.sh --project=docs --project=docs-mobile",
+    "lint": "oxlint --fix . --format $([[ -n $GITHUB_ACTIONS ]] && echo 'github' || echo 'default')"
   },
   "keywords": [],
   "author": "",
