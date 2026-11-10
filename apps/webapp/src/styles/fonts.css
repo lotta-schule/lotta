@@ -22,3 +22,4 @@
 @import "./fonts/assistant/style.css";
 @import "./fonts/ibarra-real-nova/style.css";
 @import "./fonts/cormorant/style.css";
+@import "./fonts-fallback.css";

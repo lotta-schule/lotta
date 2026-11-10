@@ -1,4 +1,8 @@
-import { toCSSVariableName, toCSSVariableValue } from './cssHelpers';
+import {
+  toCSSVariableName,
+  toCSSVariableValue,
+  withGenericFontFamily,
+} from './cssHelpers';
 
 describe('cssHelpers', () => {
   describe('toCSSVariableName', () => {
@@ -58,6 +62,30 @@ describe('cssHelpers', () => {
       const cssValue = '4px';
 
       expect(toCSSVariableValue(originalValue, 'length')).toEqual(cssValue);
+    });
+  });
+
+  describe('withGenericFontFamily', () => {
+    it('should append sans-serif to a font-family without a generic family', () => {
+      expect(withGenericFontFamily('Muli')).toEqual('Muli, sans-serif');
+    });
+
+    it('should keep a font-family which already ends with a generic family', () => {
+      expect(withGenericFontFamily("'Schoolbell', cursive")).toEqual(
+        "'Schoolbell', cursive"
+      );
+    });
+
+    it('should use the given generic family', () => {
+      expect(withGenericFontFamily('Vollkorn', 'serif')).toEqual(
+        'Vollkorn, serif'
+      );
+    });
+
+    it('should be used by toCSSVariableValue for font-families', () => {
+      expect(toCSSVariableValue('Muli', 'font-family')).toEqual(
+        'Muli, sans-serif'
+      );
     });
   });
 });

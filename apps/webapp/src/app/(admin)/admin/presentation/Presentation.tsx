@@ -25,7 +25,12 @@ import {
   PagePreviewMobile,
 } from './_component';
 import { TenantModel } from '#/model';
-import { headerFonts, textFonts } from '#/styles/fonts';
+import {
+  headerFonts,
+  getPrimaryFontName,
+  textFonts,
+  withFontFallbacks,
+} from '#/styles/fonts';
 import { useRouter } from 'next/navigation.js';
 import { Icon } from '#/shared/Icon';
 import { faCheck, faClose, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -95,7 +100,10 @@ export const Presentation = React.memo(
                 <Select
                   fullWidth
                   title={'Überschriften'}
-                  value={customTheme.titleFontFamily}
+                  value={
+                    customTheme.titleFontFamily &&
+                    getPrimaryFontName(customTheme.titleFontFamily)
+                  }
                   onChange={(titleFontFamily) => {
                     updateThemeProperties({
                       titleFontFamily,
@@ -108,7 +116,7 @@ export const Presentation = React.memo(
                       aria-label={name}
                       key={name}
                       style={{
-                        fontFamily: name,
+                        fontFamily: withFontFallbacks(name),
                       }}
                     >
                       {name}
@@ -118,7 +126,10 @@ export const Presentation = React.memo(
                 <Select
                   fullWidth
                   title={'Fließtext'}
-                  value={customTheme.textFontFamily}
+                  value={
+                    customTheme.textFontFamily &&
+                    getPrimaryFontName(customTheme.textFontFamily)
+                  }
                   onChange={(textFontFamily) =>
                     updateThemeProperties({
                       textFontFamily,
@@ -131,7 +142,7 @@ export const Presentation = React.memo(
                       aria-label={name}
                       key={name}
                       style={{
-                        fontFamily: name,
+                        fontFamily: withFontFallbacks(name),
                       }}
                     >
                       {name}

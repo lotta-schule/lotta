@@ -1,4 +1,4 @@
-import { Theme } from '@lotta-schule/theme';
+import { Theme, schema } from '@lotta-schule/theme';
 import * as React from 'react';
 import { toCSSVariableName, toCSSVariableValue } from '../util';
 
@@ -12,7 +12,14 @@ export const CSSVariables = React.memo(
     const cssVarsInit = Object.entries(theme)
       .map(
         ([key, val]) =>
-          `    ${toCSSVariableName(key)}: ${toCSSVariableValue(val)};`
+          `    ${toCSSVariableName(key)}: ${toCSSVariableValue(
+            val,
+            // only font-families get their type: lengths and numbers are
+            // used unitless in the stylesheets
+            schema[key as keyof Theme]?.type === 'font-family'
+              ? 'font-family'
+              : undefined
+          )};`
       )
       .join('\n');
 

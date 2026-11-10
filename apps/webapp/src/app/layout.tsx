@@ -13,6 +13,10 @@ import { loadTenant, loadCategories, loadCurrentUser } from '#/loader';
 import { TranslationsProvider } from '#/i18n/client';
 import { TenantGlobalStyleTag } from '#/layout/TenantGlobalStyleTag';
 import { ServerDataContextProvider } from '#/shared/ServerDataContext';
+import {
+  getThemeFontPreloadUrls,
+  withThemeFontFallbacks,
+} from '#/styles/fonts';
 
 faConfig.autoAddCss = false;
 
@@ -32,10 +36,16 @@ export default async function RootLayout({
   const customTheme = tenant?.configuration.customTheme as
     Record<string, any> | undefined;
 
-  const theme = {
+  const theme = withThemeFontFallbacks({
     ...DefaultThemes.standard,
     ...customTheme,
-  };
+  });
+
+  // Fetch the tenant's fonts right away instead of only after the stylesheet
+  // has been parsed and the browser found out they are needed.
+  // Rendered as plain tags: `ReactDOM.preload` only ends up in the RSC payload
+  // here, which is too late to help.
+  const fontPreloadUrls = getThemeFontPreloadUrls(theme);
 
   const allHost = `all.${process.env.NEXT_PUBLIC_BASE_HOST}`;
   const identifier = tenant
@@ -46,6 +56,16 @@ export default async function RootLayout({
     <html lang="de">
       <head>
         <meta charSet="utf-8" />
+        {fontPreloadUrls.map((href) => (
+          <link
+            key={href}
+            rel="preload"
+            href={href}
+            as="font"
+            type="font/woff2"
+            crossOrigin="anonymous"
+          />
+        ))}
         <link
           rel="apple-touch-icon"
           sizes="180x180"
