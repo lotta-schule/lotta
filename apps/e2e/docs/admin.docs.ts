@@ -94,39 +94,43 @@ test.describe('Administration', () => {
     });
   });
 
-  test('categories', async ({ page, school }) => {
+  test('category list', async ({ page, school }) => {
     await page.goto('/admin/categories');
     const main = page.getByRole('main').last();
     await expect(
-      main.getByText(school.categories.aktuelles.title, { exact: true })
+      main.getByText(school.categories.aktuelles.title, { exact: true }).first()
     ).toBeVisible();
     await capture(page, 'admin-categories', { locator: main });
+  });
 
-    await page.getByRole('button', { name: 'Kategorie erstellen' }).click();
+  test('creating a category', async ({ page }) => {
+    await page.goto('/admin/categories');
+    await page
+      .getByRole('button', { name: 'Kategorie erstellen' })
+      .filter({ visible: true })
+      .first()
+      .click();
     const dialog = page.getByRole('dialog', { name: 'Kategorie erstellen' });
     await dialog
       .getByRole('textbox', { name: 'Name der Kategorie:' })
       .fill('Elternrat');
     await capture(page, 'admin-categories-create', { locator: dialog });
-    await dialog.getByRole('button', { name: 'Abbrechen' }).click();
-    await expect(dialog).toBeHidden();
+  });
 
-    await main
-      .getByText(school.categories.aktuelles.title, { exact: true })
-      .click();
+  test('category settings', async ({ page, school }) => {
+    await page.goto(`/admin/categories/${school.categories.aktuelles.id}`);
     await expect(
       page.getByRole('textbox', { name: 'Name der Kategorie' })
     ).toHaveValue(school.categories.aktuelles.title);
     await capture(page, 'admin-category-settings', { fullPage: true });
 
-    const widgetCheckbox = page.getByRole('checkbox', {
-      name: school.widget.title,
-    });
-    await widgetCheckbox.scrollIntoViewIfNeeded();
-    await capture(page, 'admin-category-widgets', {
-      locator: page.getByTestId('WidgetsSelectionList'),
-      highlight: widgetCheckbox,
-    });
+    const widget = page
+      .getByRole('main')
+      .last()
+      .getByText(school.widget.title, { exact: true })
+      .last();
+    await widget.scrollIntoViewIfNeeded();
+    await capture(page, 'admin-category-widgets', { highlight: widget });
   });
 
   test('widgets', async ({ page, school }) => {
@@ -140,7 +144,7 @@ test.describe('Administration', () => {
   test('calendar', async ({ page }) => {
     await page.goto('/admin/calendars');
     await expect(
-      page.getByText('Elternabend Klassenstufe 7').first()
+      page.getByRole('button', { name: 'Ereignis erstellen' })
     ).toBeVisible();
     await capture(page, 'admin-calendar', {
       locator: page.getByRole('main').last(),

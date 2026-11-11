@@ -224,7 +224,9 @@ test.describe('Module', () => {
       });
       await expect(settings).toBeVisible();
       await capture(adminPage, 'module-title', { locator: settings });
-      await settings.getByRole('button', { name: 'Schließen' }).click();
+      await settings
+        .getByRole('button', { name: 'Schließen', exact: true })
+        .click();
     });
   });
 

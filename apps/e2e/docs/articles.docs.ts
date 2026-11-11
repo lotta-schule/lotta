@@ -131,7 +131,11 @@ test.describe('Beiträge', () => {
       test.setTimeout(120_000);
       await recordVideo('article-create', { as: 'teacher' }, async (page) => {
         await page.goto('/');
-        await page.getByTestId('CreateArticleButton').click();
+        await page
+          .getByRole('button', { name: 'Neuer Beitrag' })
+          .filter({ visible: true })
+          .first()
+          .click();
         const dialog = page.getByRole('dialog', { name: 'Beitrag erstellen' });
         await dialog
           .getByRole('textbox', { name: /Titel des Beitrags/ })
