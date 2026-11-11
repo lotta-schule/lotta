@@ -1,0 +1,116 @@
+---
+title: Marginalen
+description: >-
+  Marginalen (Widgets) neben den Beiträgen: Kalender (Lotta-Kalender oder externer
+  iCal-Kalender), Webseite (iFrame) und Vertretungsplan (Indiware) erstellen,
+  Sichtbarkeit festlegen und Kategorien zuordnen.
+sidebar:
+  order: 110
+---
+
+Marginalen sind kleine Fenster neben den Beiträgen einer Kategorie (auf dem Smartphone im Menü).
+Lotta bietet drei Arten:
+
+| Marginale           | Zeigt                                                                                     |
+| ------------------- | ----------------------------------------------------------------------------------------- |
+| **Kalender**        | die nächsten Termine aus Lotta-Kalendern oder externen Kalendern (iCal)                   |
+| **Webseite**        | eine andere Website, z.B. eine Anmeldung zum Newsletter oder einen Veranstaltungskalender |
+| **Vertretungsplan** | den persönlichen Stunden- und Vertretungsplan aus Indiware                                |
+
+<Screenshot
+  name="admin-widgets"
+  alt="Die Verwaltung der Marginalen mit den Einstellungen einer Kalender-Marginale"
+/>
+
+Eine Marginale erscheint erst, wenn Sie sie einer oder mehreren Kategorien
+[zuordnen](#einer-kategorie-zuordnen).
+
+## Eine Marginale erstellen
+
+<Steps>
+
+1. Öffnen Sie **Seite verwalten** → **Marginale**.
+2. Klicken Sie auf **Marginale erstellen** und wählen Sie **Kalender-Marginale erstellen**, **Webseite-Marginale erstellen** oder **Vertretungsplan-Marginale erstellen**.
+3. Legen Sie unter **Darstellung** den Namen und ein Icon fest. Das Icon können Sie um einen Buchstaben oder eine Zahl ergänzen, um ähnliche Marginalen zu unterscheiden.
+4. Wählen Sie unter **Zugriff**, wer die Marginale sieht: alle oder nur bestimmte Gruppen.
+5. Richten Sie unter **Konfiguration** den Inhalt ein (siehe unten).
+6. Klicken Sie auf **Marginale speichern**.
+
+</Steps>
+
+## Kalender-Marginale
+
+Klicken Sie unter **Konfiguration** auf **Kalender hinzufügen** und wählen Sie den
+**Kalendertyp**:
+
+- **Lotta Kalender**: einer der Kalender, die Sie unter [Kalender](/verwalten/kalender/) angelegt
+  haben.
+- **Externer Kalender (Abonnement im iCal-Format)**: Tragen Sie die Adresse des Kalenders ein,
+  einen Link zu einer `.ics`-Datei, z.B. aus Google Kalender, Outlook oder dem Schulverwaltungsprogramm.
+
+Wählen Sie außerdem, wie weit im Voraus Termine angezeigt werden (7 Tage bis ein Jahr). Eine
+Marginale kann mehrere Kalender zusammen anzeigen, jeweils in eigener Farbe: Klicken Sie dafür
+erneut auf **Kalender hinzufügen**.
+
+<Screenshot
+  name="admin-widget-calendar"
+  alt="Die Konfiguration einer Kalender-Marginale mit zwei Kalendern"
+/>
+
+<Aside type="tip">
+
+Bewährt hat sich ein öffentlicher Kalender für alle Termine der Schule und ein interner Kalender für das Kollegium, dessen Marginale nur die Gruppe der Lehrkräfte sieht.
+
+</Aside>
+
+## Webseite-Marginale
+
+Tragen Sie unter **URL** die vollständige Adresse der Seite ein, z.B.
+`https://www.beispiel.de/termine`. Die Seite wird in der Marginale angezeigt.
+
+<Aside type="caution">
+
+Viele Websites verbieten aus Sicherheitsgründen, in andere Seiten eingebettet zu werden. Bleibt die Marginale leer, lässt die Seite das nicht zu. Fragen Sie beim Anbieter nach einer Version zum Einbetten (oft „Embed“ oder „Widget“ genannt).
+
+</Aside>
+
+## Vertretungsplan-Marginale
+
+Lotta zeigt jedem Mitglied seinen persönlichen Stunden- und Vertretungsplan aus der Software von
+Indiware. Meist legen Sie zwei Marginalen an:
+
+<Steps>
+
+1. Eine Marginale mit dem **Typ** **Indiware - Schüler**, sichtbar für die Gruppe der Schülerinnen und Schüler.
+2. Eine Marginale mit dem **Typ** **Indiware - Lehrer**, sichtbar für die Gruppe der Lehrkräfte.
+3. Tragen Sie jeweils **Schulnummer**, **Nutzername** und **Passwort** Ihres Indiware-Zugangs ein (für Schüler und Lehrkräfte unterschiedlich).
+
+</Steps>
+
+<Aside type="caution" title="Wichtig für die Mitglieder">
+
+Der Plan erscheint nur, wenn jedes Mitglied in seinem Profil unter **Meine Klasse / Mein Kürzel** seine Klasse oder sein Kürzel einträgt, genau so geschrieben wie im Vertretungsplan (siehe [Kalender & Vertretungsplan](/nutzen/kalender-und-vertretungsplan/)). Teilen Sie den Mitgliedern mit, wie die Angabe lauten muss.
+
+</Aside>
+
+## Einer Kategorie zuordnen
+
+<Steps>
+
+1. Öffnen Sie **Seite verwalten** → **Kategorien** und wählen Sie die Kategorie aus.
+2. Setzen Sie ganz unten unter **Marginalen** die Haken bei den gewünschten Marginalen, oder wählen Sie **Alle Marginalen aktivieren**.
+3. Klicken Sie auf **speichern**.
+
+</Steps>
+
+<Screenshot
+  name="admin-category-widgets"
+  alt="Die Auswahl der Marginalen in den Einstellungen einer Kategorie"
+/>
+
+Wiederholen Sie das für jede Kategorie, in der die Marginale erscheinen soll, auch für die
+Startseite.
+
+## Eine Marginale löschen
+
+Klicken Sie auf **Marginale löschen** und bestätigen Sie mit **Marginale endgültig löschen**.
