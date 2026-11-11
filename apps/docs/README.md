@@ -18,7 +18,9 @@ bunx nx run docs:build   # also validates all internal links
 - `src/assets/screenshots/`, `src/assets/videos/`: **generated** by the `docs` Playwright project in
   `apps/e2e`. Do not edit by hand. `<Screenshot name="x">` shows a placeholder until `x.png` exists.
 - `src/assets/uploads/`: images uploaded manually through the editor.
-- Changelog: `src/pages/changelog.astro` renders the root `CHANGELOG.md` (written by `nx release changelog`).
+- Changelog: [starlight-changelogs](https://github.com/HiDeoo/starlight-changelogs) renders the root `CHANGELOG.md`
+  (written by `nx release changelog` in the release pull request) at `/changelog/`, one page per version
+  (`changelogs` collection in `src/content.config.ts`).
 
 ## Visual editor (Keystatic)
 
