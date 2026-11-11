@@ -70,6 +70,28 @@ defmodule Lotta.ContentTest do
       |> Repo.update!()
     end
 
+    test "update_article/2 keeps an explicitly given updated_at, even if it is unchanged" do
+      user = insert(:user)
+      updated_at = ~U[2020-11-23 17:30:00Z]
+      article = insert_article_with_updated_at(user, updated_at)
+
+      {:ok, updated} =
+        Content.update_article(article, %{title: "Korrigierter Titel", updated_at: updated_at})
+
+      assert updated.title == "Korrigierter Titel"
+      assert updated.updated_at == updated_at
+    end
+
+    test "update_article/2 without updated_at sets it to the current time" do
+      user = insert(:user)
+      updated_at = ~U[2020-11-23 17:30:00Z]
+      article = insert_article_with_updated_at(user, updated_at)
+
+      {:ok, updated} = Content.update_article(article, %{title: "Korrigierter Titel"})
+
+      assert DateTime.compare(updated.updated_at, updated_at) == :gt
+    end
+
     test "list_user_articles/2 with a :first filter limits the number of results" do
       user = insert(:user)
 

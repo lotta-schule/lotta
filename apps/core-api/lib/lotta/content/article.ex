@@ -136,6 +136,7 @@ defmodule Lotta.Content.Article do
       :tags
     ])
     |> validate_required([:title])
+    |> keep_explicit_updated_at()
     |> put_assoc_users(attrs)
     |> put_assoc_category(attrs)
     |> put_assoc_preview_image_file(attrs)
@@ -179,6 +180,18 @@ defmodule Lotta.Content.Article do
   end
 
   defp put_assoc_groups(changeset, _), do: changeset
+
+  # An `updated_at` sent by the client (e.g. "save without changing the update
+  # time") must be kept. A value equal to the stored one is no change, so
+  # `timestamps()` would overwrite it with the current time on update: force it.
+  defp keep_explicit_updated_at(changeset) do
+    with nil <- get_change(changeset, :updated_at),
+         given when not is_nil(given) <- Map.get(changeset.params || %{}, "updated_at") do
+      force_change(changeset, :updated_at, changeset.data.updated_at)
+    else
+      _ -> changeset
+    end
+  end
 
   defp maybe_send_admin_notification(changeset) do
     if changeset.valid? && get_change(changeset, :ready_to_publish) do

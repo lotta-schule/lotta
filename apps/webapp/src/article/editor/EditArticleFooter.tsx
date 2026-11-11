@@ -166,6 +166,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
               <MenuButton
                 title={'Speicheroptionen'}
                 buttonProps={{
+                  'aria-label': 'Speicheroptionen',
                   className: 'is-first-button-group-button',
                   variant: 'fill',
                   children: <Icon icon={faCaretDown} />,
@@ -173,7 +174,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                 placement={'top'}
                 onAction={(action) => {
                   switch (action) {
-                    case 'save-no-pudated-at':
+                    case 'save-no-updated-at':
                       return onSave({
                         updatedAt: new Date(article.updatedAt).toISOString(),
                       });
@@ -185,10 +186,10 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                 }}
               >
                 <Item key={'save-no-updated-at'}>
-                  Ohne Aktualisierszeit zu ändern
+                  Ohne Aktualisierungszeit zu ändern
                 </Item>
                 <Item key={'save-updated-on-created'}>
-                  Aktualisierszeit auf Erstellszeit setzen
+                  Aktualisierungszeit auf Erstellungszeit setzen
                 </Item>
               </MenuButton>
               <Button

@@ -61,6 +61,52 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
       await fireEvent.click(screen.getByRole('button', { name: /speichern/i }));
       expect(onSave).toHaveBeenCalled();
     });
+
+    describe('save options', () => {
+      const article = {
+        ...Weihnachtsmarkt,
+        readyToPublish: false,
+        insertedAt: '2020-11-01T09:00:00Z',
+        updatedAt: '2020-11-23T17:30:00Z',
+      };
+
+      const chooseSaveOption = async (name: string) => {
+        const fireEvent = userEvent.setup();
+        const onSave = vi.fn();
+        const screen = render(
+          <EditArticleFooter
+            article={article}
+            onUpdate={() => {}}
+            onSave={onSave}
+          />,
+          {},
+          { currentUser: { ...SomeUser } }
+        );
+        await fireEvent.click(
+          screen.getByRole('button', { name: /speicheroptionen/i })
+        );
+        await fireEvent.click(await screen.findByRole('menuitem', { name }));
+        return onSave;
+      };
+
+      it('saves without changing the update time', async () => {
+        const onSave = await chooseSaveOption(
+          'Ohne Aktualisierungszeit zu ändern'
+        );
+        expect(onSave).toHaveBeenCalledWith({
+          updatedAt: '2020-11-23T17:30:00.000Z',
+        });
+      });
+
+      it('sets the update time to the creation time', async () => {
+        const onSave = await chooseSaveOption(
+          'Aktualisierungszeit auf Erstellungszeit setzen'
+        );
+        expect(onSave).toHaveBeenCalledWith({
+          updatedAt: '2020-11-01T09:00:00Z',
+        });
+      });
+    });
   });
 
   describe('delete article', () => {
