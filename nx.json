@@ -61,5 +61,23 @@
     ]
   },
   "defaultBase": "main",
-  "analytics": false
+  "analytics": false,
+  "release": {
+    "projectsRelationship": "fixed",
+    "releaseTag": {
+      "pattern": "v{version}"
+    },
+    "changelog": {
+      "git": {
+        "commitMessage": "chore(release): publish {version}"
+      },
+      "projectChangelogs": false,
+      "workspaceChangelog": {
+        "createRelease": false,
+        "renderOptions": {
+          "authors": false
+        }
+      }
+    }
+  }
 }

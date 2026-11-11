@@ -7,6 +7,7 @@ import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 import keystatic from '@keystatic/astro';
 import AutoImport from 'astro-auto-import';
+import starlightChangelogs from 'starlight-changelogs';
 import starlightLinksValidator from 'starlight-links-validator';
 
 // https://astro.build/config
@@ -57,7 +58,10 @@ export default defineConfig({
         { label: 'Administration', items: [{ autogenerate: { directory: 'administration' } }] },
         { label: 'Änderungen', link: '/changelog/' },
       ],
-      plugins: [starlightLinksValidator({ errorOnLocalLinks: false })],
+      plugins: [
+        starlightChangelogs(),
+        starlightLinksValidator({ errorOnLocalLinks: false }),
+      ],
     }),
     // Listed explicitly (after AutoImport) so astro-auto-import can hook into it;
     // Starlight would otherwise add it too late.
