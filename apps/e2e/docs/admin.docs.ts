@@ -141,10 +141,14 @@ test.describe('Administration', () => {
     await capture(page, 'admin-widget-calendar', { locator: configuration });
   });
 
-  test('calendar', async ({ page }) => {
+  // `school` creates the calendar and its events
+  test('calendar', async ({ page, school: _school }) => {
     await page.goto('/admin/calendars');
     await expect(
       page.getByRole('button', { name: 'Ereignis erstellen' })
+    ).toBeEnabled();
+    await expect(
+      page.getByText('Elternabend Klassenstufe 7').first()
     ).toBeVisible();
     await capture(page, 'admin-calendar', {
       locator: page.getByRole('main').last(),
