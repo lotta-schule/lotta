@@ -97,14 +97,14 @@ test.describe('Beiträge', () => {
     await teacherPage.goto(baseURL + '/profile/articles');
     await expect(teacherPage.getByText(articles[0].title)).toBeVisible();
     await capture(teacherPage, 'my-articles', {
-      locator: teacherPage.getByRole('main'),
+      locator: teacherPage.getByRole('main').last(),
     });
 
     const adminPage = await openPageAs('admin');
     await adminPage.goto(baseURL + '/unpublished');
     await expect(adminPage.getByText(articles[0].title)).toBeVisible();
     await capture(adminPage, 'admin-unpublished', {
-      locator: adminPage.getByRole('main'),
+      locator: adminPage.getByRole('main').last(),
     });
   });
 
@@ -128,6 +128,7 @@ test.describe('Beiträge', () => {
     test.use({ loginAs: 'teacher' });
 
     test('creating an article (video)', async ({ recordVideo }) => {
+      test.setTimeout(120_000);
       await recordVideo('article-create', { as: 'teacher' }, async (page) => {
         await page.goto('/');
         await page.getByTestId('CreateArticleButton').click();

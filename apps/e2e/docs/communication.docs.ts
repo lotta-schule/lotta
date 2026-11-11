@@ -43,9 +43,10 @@ test.describe('Nachrichten und Dateien', () => {
   test('files', async ({ page }) => {
     await page.goto('/profile/files');
     const currentDirectory = () => page.getByRole('listbox').last();
-    await expect(
-      currentDirectory().getByRole('option', { name: 'Meine Bilder' })
-    ).toBeVisible();
+    // folders can only be created inside a folder, not at the top level
+    await currentDirectory()
+      .getByRole('option', { name: 'Meine Bilder' })
+      .click();
 
     await page
       .getByRole('button', { name: 'Ordner erstellen' })
@@ -78,7 +79,7 @@ test.describe('Nachrichten und Dateien', () => {
     });
 
     await capture(page, 'files', {
-      locator: page.getByRole('main'),
+      locator: page.getByRole('main').last(),
       markers: [
         {
           locator: page

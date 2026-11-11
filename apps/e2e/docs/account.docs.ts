@@ -7,7 +7,11 @@ test.describe('Konto und Profil', () => {
 
   test('register dialog', async ({ page }) => {
     await page.goto('/');
-    await page.getByTestId('RegisterButton').click();
+    await page
+      .getByRole('button', { name: 'Registrieren' })
+      .filter({ visible: true })
+      .first()
+      .click();
     const dialog = page.getByRole('dialog', {
       name: 'Benutzerkonto erstellen',
     });
@@ -31,7 +35,9 @@ test.describe('Konto und Profil', () => {
 
     test('profile', async ({ page }) => {
       await page.goto('/profile');
-      await expect(page.getByTestId('UserName')).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: 'Meine Einschreibeschlüssel' })
+      ).toBeVisible();
 
       await capture(page, 'profile', { fullPage: true });
     });

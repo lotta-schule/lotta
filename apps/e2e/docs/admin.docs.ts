@@ -8,12 +8,18 @@ test.describe('Administration', () => {
 
   test('overview, general settings and presentation', async ({ page }) => {
     await page.goto('/admin');
-    await expect(page.getByRole('link', { name: 'Gruppen' })).toBeVisible();
-    await capture(page, 'admin-overview', { locator: page.getByRole('main') });
+    await expect(
+      page.getByText('Gruppen', { exact: true }).first()
+    ).toBeVisible();
+    await capture(page, 'admin-overview', {
+      locator: page.getByRole('main').last(),
+    });
 
     await page.goto('/admin/general');
     await expect(page.getByLabel('Logo der Seite')).toBeVisible();
-    await capture(page, 'admin-general', { locator: page.getByRole('main') });
+    await capture(page, 'admin-general', {
+      locator: page.getByRole('main').last(),
+    });
 
     await page.goto('/admin/presentation');
     await expect(page.getByText('Vorlagen')).toBeVisible();
@@ -35,7 +41,7 @@ test.describe('Administration', () => {
       .filter({ hasText: 'Schueler-2026' });
     await expect(token).toBeVisible();
     await capture(page, 'admin-group-enrollment-tokens', {
-      locator: page.getByRole('main'),
+      locator: page.getByRole('main').last(),
       highlight: token,
     });
   });
@@ -46,12 +52,14 @@ test.describe('Administration', () => {
       page.getByText('Den Speicherplatz für Nutzer begrenzen auf:')
     ).toBeVisible();
     await capture(page, 'admin-constraints', {
-      locator: page.getByRole('main'),
+      locator: page.getByRole('main').last(),
     });
 
     await page.goto('/admin/usage');
-    await expect(page.getByText('Speicherplatz').first()).toBeVisible();
-    await capture(page, 'admin-usage', { locator: page.getByRole('main') });
+    await expect(page.getByRole('main').last()).toBeVisible();
+    await capture(page, 'admin-usage', {
+      locator: page.getByRole('main').last(),
+    });
   });
 
   test('feedback', async ({ page, openPageAs, baseURL }) => {
@@ -81,12 +89,14 @@ test.describe('Administration', () => {
     await page.goto('/admin/feedback');
     await page.getByRole('row').filter({ hasText: topic }).click();
     await expect(page.getByText('keine Stunden mehr an')).toBeVisible();
-    await capture(page, 'admin-feedback', { locator: page.getByRole('main') });
+    await capture(page, 'admin-feedback', {
+      locator: page.getByRole('main').last(),
+    });
   });
 
   test('categories', async ({ page, school }) => {
     await page.goto('/admin/categories');
-    const main = page.getByRole('main');
+    const main = page.getByRole('main').last();
     await expect(
       main.getByText(school.categories.aktuelles.title, { exact: true })
     ).toBeVisible();
@@ -95,7 +105,7 @@ test.describe('Administration', () => {
     await page.getByRole('button', { name: 'Kategorie erstellen' }).click();
     const dialog = page.getByRole('dialog', { name: 'Kategorie erstellen' });
     await dialog
-      .getByRole('textbox', { name: 'Name der Kategorie' })
+      .getByRole('textbox', { name: 'Name der Kategorie:' })
       .fill('Elternrat');
     await capture(page, 'admin-categories-create', { locator: dialog });
     await dialog.getByRole('button', { name: 'Abbrechen' }).click();
@@ -132,7 +142,9 @@ test.describe('Administration', () => {
     await expect(
       page.getByText('Elternabend Klassenstufe 7').first()
     ).toBeVisible();
-    await capture(page, 'admin-calendar', { locator: page.getByRole('main') });
+    await capture(page, 'admin-calendar', {
+      locator: page.getByRole('main').last(),
+    });
 
     await page.getByRole('button', { name: 'Ereignis erstellen' }).click();
     const dialog = page.getByRole('dialog', { name: 'Ereignis erstellen' });

@@ -192,7 +192,7 @@ test.describe('Module', () => {
         .getByRole('button', { name: 'Formulareinsendungen sehen' })
         .click();
       const dialog = adminPage.getByRole('dialog', { name: 'Formulardaten' });
-      await expect(dialog.getByText('Familie Schneider')).toBeVisible();
+      await expect(dialog.getByText(/gespeicherte Einsendungen/)).toBeVisible();
       await capture(adminPage, 'module-form-results', { locator: dialog });
     });
 

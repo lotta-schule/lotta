@@ -10,7 +10,7 @@ test.describe('Überblick und Navigation', () => {
   test.describe('as a visitor', () => {
     test('home page', async ({ page, school }) => {
       await page.goto('/');
-      const main = page.getByRole('main');
+      const main = page.getByRole('main').last();
       await expect(
         main.getByText(school.articles.projektwoche.title)
       ).toBeVisible();
@@ -35,7 +35,7 @@ test.describe('Überblick und Navigation', () => {
     test('two-column layout', async ({ page, school }) => {
       await page.goto(school.categories.projekte.path);
       await expect(
-        page.getByRole('main').getByText(school.articles.garten.title)
+        page.getByRole('main').last().getByText(school.articles.garten.title)
       ).toBeVisible();
 
       await capture(page, 'category-layouts');
@@ -56,7 +56,7 @@ test.describe('Überblick und Navigation', () => {
       ).toBeVisible();
 
       await capture(page, 'navigation-article-previews', {
-        locator: page.getByRole('main'),
+        locator: page.getByRole('main').last(),
       });
     });
 
