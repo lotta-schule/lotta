@@ -1,0 +1,79 @@
+---
+title: Formular
+description: >-
+  Das Formularmodul: Kontaktformulare, Anmeldungen und Umfragen erstellen,
+  Feldtypen, Pflichtfelder, Versand per E-Mail, Einsendungen als CSV herunterladen.
+sidebar:
+  order: 80
+---
+
+Mit dem Formularmodul sammeln Sie Angaben von Lesenden: Kontaktanfragen, Anmeldungen zu einer
+Veranstaltung, Rückmeldungen oder kleine Umfragen.
+
+## Ein Formular anlegen
+
+<Steps>
+
+1. Klicken Sie auf **Formular**.
+2. Klicken Sie auf **Feld hinzufügen** und wählen Sie die Art des Feldes (siehe unten).
+3. Klicken Sie auf den Namen des Feldes, um ihn zu ändern, z.B. „Ihr Name“.
+4. Legen Sie mit dem Schalter unter **erforderlich?** fest, ob das Feld ausgefüllt werden muss.
+5. Wiederholen Sie das für alle Felder und speichern Sie den Beitrag.
+
+</Steps>
+
+<Screenshot
+  name="module-form"
+  alt="Ein Formularmodul im Bearbeitungsmodus mit mehreren Feldern"
+/>
+
+## Feldarten
+
+| Feld               | Wofür?                                                           |
+| ------------------ | ---------------------------------------------------------------- |
+| **E-Mail-Adresse** | eine E-Mail-Adresse, z.B. für Rückfragen; Lotta prüft das Format |
+| **Textzeile**      | kurze Angaben wie Name oder Klasse                               |
+| **Textbereich**    | längere Texte, z.B. eine Nachricht                               |
+| **Datumsfeld**     | ein Datum                                                        |
+| **Checkbox**       | Ja/Nein-Fragen, z.B. eine Einverständniserklärung                |
+| **Radio-Buttons**  | genau eine Antwort aus mehreren Möglichkeiten                    |
+| **Auswahl**        | eine Antwort aus einer aufklappbaren Liste                       |
+| **Datei-Upload**   | eine Datei (bis 15 MB), die mit dem Formular gesendet wird       |
+
+Bei Radio-Buttons und Auswahl legen Sie die Möglichkeiten mit **Option hinzufügen** fest.
+
+## Was passiert mit den Einsendungen?
+
+In den **Formulareinstellungen** setzen Sie den Haken bei **Formulardaten per E-Mail
+versenden** und tragen die E-Mail-Adresse ein, an die jede Einsendung geschickt wird.
+
+Zusätzlich speichert Lotta alle Einsendungen. Im Bearbeitungsmodus öffnen Sie sie mit
+**Formulareinsendungen sehen** und laden sie mit **Einsendungen als CSV herunterladen** herunter,
+z.B. um sie in einer Tabellenkalkulation auszuwerten.
+
+<Screenshot
+  name="module-form-results"
+  alt="Das Fenster „Formulardaten“ mit den bisherigen Einsendungen"
+/>
+
+<Aside type="caution">
+
+Dateien aus **Datei-Upload**-Feldern werden nur per E-Mail verschickt und nicht in Lotta gespeichert. Hat Ihr Formular ein solches Feld, ist der E-Mail-Versand deshalb immer eingeschaltet.
+
+</Aside>
+
+## So sieht es für Lesende aus
+
+Lesende füllen das Formular aus und klicken auf **Senden**. Lotta bestätigt mit „Das Formular
+wurde erfolgreich versendet.“
+
+<Screenshot
+  name="module-form-filled"
+  alt="Ein ausgefülltes Kontaktformular aus Sicht der Lesenden"
+/>
+
+<Aside type="tip">
+
+Formulare sind auch für Besuchende ohne Benutzerkonto nutzbar, wenn der Beitrag öffentlich ist. Fragen Sie nur die Daten ab, die Sie wirklich brauchen, und verweisen Sie bei personenbezogenen Daten auf Ihre Datenschutzerklärung.
+
+</Aside>

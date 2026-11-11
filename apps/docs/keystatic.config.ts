@@ -42,6 +42,18 @@ export default config({
           description: 'Erscheint in Suchergebnissen und Vorschauen.',
           multiline: true,
         }),
+        sidebar: fields.object(
+          {
+            order: fields.integer({
+              label: 'Reihenfolge in der Navigation',
+              description:
+                'Kleinere Zahlen stehen weiter oben in ihrem Abschnitt (z.B. 10, 20, 30).',
+              defaultValue: 100,
+              validation: { isRequired: true },
+            }),
+          },
+          { label: 'Navigation' }
+        ),
         content: fields.mdx({
           label: 'Inhalt',
           options: {
@@ -71,6 +83,43 @@ export default config({
               label: 'Schritt-für-Schritt',
               description: 'Enthält eine nummerierte Liste.',
               schema: {},
+            }),
+            CardGrid: wrapper({
+              label: 'Kachel-Raster',
+              description:
+                'Ordnet Kacheln (Link-Kacheln, Kacheln) nebeneinander an.',
+              schema: {},
+            }),
+            Card: wrapper({
+              label: 'Kachel',
+              schema: {
+                title: fields.text({
+                  label: 'Titel',
+                  validation: { isRequired: true },
+                }),
+                icon: fields.text({
+                  label: 'Symbol (optional)',
+                  description:
+                    'Name eines Starlight-Symbols, z.B. rocket, pencil, setting, information',
+                }),
+              },
+            }),
+            LinkCard: block({
+              label: 'Link-Kachel',
+              description:
+                'Eine hervorgehobene Verlinkung auf eine andere Seite.',
+              schema: {
+                title: fields.text({
+                  label: 'Titel',
+                  validation: { isRequired: true },
+                }),
+                href: fields.text({
+                  label: 'Ziel',
+                  description: 'z.B. /nutzen/profil/',
+                  validation: { isRequired: true },
+                }),
+                description: fields.text({ label: 'Beschreibung (optional)' }),
+              },
             }),
             Screenshot: block({
               label: 'Screenshot (automatisch)',

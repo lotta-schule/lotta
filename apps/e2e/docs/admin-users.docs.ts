@@ -1,7 +1,8 @@
-import { capture, docsTest as test, expect } from './fixtures';
+import { capture, desktopOnly, docsTest as test, expect } from './fixtures';
 
 /** Docs: "Nutzer verwalten" (apps/docs) */
 test.describe('Nutzer verwalten', () => {
+  desktopOnly();
   test.use({ loginAs: 'admin' });
 
   test('user administration', async ({ page, seed }) => {
@@ -33,13 +34,11 @@ test.describe('Nutzer verwalten', () => {
 
     await page.goto('/admin/users');
     const search = page.getByRole('textbox', { name: 'Nach Namen suchen:' });
-    await expect(search).toBeVisible();
-    await capture(page, 'admin-users');
-
+    // the list shows members once there is a search criterion
     await search.fill('Sophie');
     const row = page.getByRole('row').filter({ hasText: 'Sophie Wagner' });
     await expect(row).toBeVisible();
-    await capture(page, 'admin-users-search', { highlight: search });
+    await capture(page, 'admin-users', { highlight: search });
 
     await row.click();
     const dialog = page.getByRole('dialog', {

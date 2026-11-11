@@ -1,18 +1,17 @@
-import { capture, docsTest as test, expect } from './fixtures';
+import { capture, desktopOnly, docsTest as test, expect } from './fixtures';
 import { openMobileDrawer } from '../helper';
 
 /** Docs: "Anmelden" (apps/docs) */
 test.describe('Anmelden', () => {
+  desktopOnly();
+
   test('login dialog', async ({ page, users, isMobile }) => {
     await page.goto('/');
 
     if (isMobile) {
       await openMobileDrawer(page);
     }
-    const loginButton = page.getByRole('button', { name: /anmelden/i });
-    await capture(page, 'login-button', { highlight: loginButton });
-
-    await loginButton.click();
+    await page.getByRole('button', { name: /anmelden/i }).click();
     const dialog = page.getByRole('dialog', { name: /anmelden/i });
     await expect(dialog).toBeVisible();
 
