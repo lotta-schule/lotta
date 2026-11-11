@@ -46,18 +46,12 @@ test.describe('Administration', () => {
     });
   });
 
-  test('constraints and usage', async ({ page }) => {
+  test('constraints', async ({ page }) => {
     await page.goto('/admin/constraints');
     await expect(
       page.getByText('Den Speicherplatz für Nutzer begrenzen auf:')
     ).toBeVisible();
     await capture(page, 'admin-constraints', {
-      locator: page.getByRole('main').last(),
-    });
-
-    await page.goto('/admin/usage');
-    await expect(page.getByRole('main').last()).toBeVisible();
-    await capture(page, 'admin-usage', {
       locator: page.getByRole('main').last(),
     });
   });

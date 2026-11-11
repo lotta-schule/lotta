@@ -201,9 +201,13 @@ test.describe('Module', () => {
       await adminPage.goto(baseURL + article.path + '/edit');
       await expect(adminPage.getByTestId('EditArticleFooter')).toBeVisible();
 
-      await capture(adminPage, 'module-text', {
-        locator: adminPage.getByTestId('TextContentModule').first(),
-      });
+      // the toolbar of the text module appears while editing the text
+      const textModule = adminPage
+        .getByTestId('ContentModule')
+        .filter({ has: adminPage.getByTestId('TextContentModule') })
+        .first();
+      await textModule.locator('[contenteditable="true"]').first().click();
+      await capture(adminPage, 'module-text', { locator: textModule });
       await capture(adminPage, 'module-table', {
         locator: adminPage.getByTestId('TableContentModule').first(),
       });

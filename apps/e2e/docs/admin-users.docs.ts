@@ -34,7 +34,11 @@ test.describe('Nutzer verwalten', () => {
 
     await page.goto('/admin/users');
     const search = page.getByRole('textbox', { name: 'Nach Namen suchen:' });
-    await expect(search).toBeVisible();
+    // the list shows members once there is a search criterion
+    await search.fill('er');
+    await expect(
+      page.getByRole('row').filter({ hasText: 'Sophie Wagner' })
+    ).toBeVisible();
     await capture(page, 'admin-users');
 
     await search.fill('Sophie');
