@@ -1,10 +1,15 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
 ---
+# Opens the release pull request `release/vX.Y.Z` against main, containing:
+# - the new version in every package.json / mix.exs and the CHANGELOG.md entry (scripts/release.sh)
+# - the screenshots and videos of the documentation, captured against main's images (docs-assets.yaml)
+# Merging it tags the merge commit and creates the GitHub release (release-publish.yaml).
 name: 'Release: Create new version'
 on:
   workflow_dispatch:
     inputs:
       release_level:
-        description: 'Wether to release a major, minor or patch version'
+        description: 'Whether to release a major, minor or patch version'
         required: true
         type: choice
         options:
@@ -12,15 +17,82 @@ on:
           - minor
           - major
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
-  create-release:
-    name: 'Create release'
+  prepare:
+    name: 'Determine version'
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     outputs:
-      version: ${{ steps.bump.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
+      sha: ${{ steps.version.outputs.sha }}
     steps:
+      - name: Only from main
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          echo "::error::Releases are created from main (selected: ${{ github.ref }})"
+          exit 1
+
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine next version
+        id: version
+        env:
+          RELEASE_LEVEL: ${{ inputs.release_level }}
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*')
+          NEXT_VERSION=$(npx --yes semver@7 -i "$RELEASE_LEVEL" "${LAST_TAG#v}")
+          echo "Last release: $LAST_TAG, next: v$NEXT_VERSION"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/v$NEXT_VERSION" > /dev/null; then
+            echo "::error::Tag v$NEXT_VERSION already exists"
+            exit 1
+          fi
+          if git ls-remote --exit-code --heads origin "refs/heads/release/v$NEXT_VERSION" > /dev/null; then
+            echo "::error::Branch release/v$NEXT_VERSION already exists. Merge or close its pull request and delete the branch first."
+            exit 1
+          fi
+
+          echo "version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  # The release branch is main + version bump, so main's images (built by CD
+  # for every push, tagged with the commit SHA) show exactly the released UI.
+  docs-assets:
+    name: 'Docs assets'
+    needs: prepare
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: read
+    uses: ./.github/workflows/docs-assets.yaml
+    with:
+      image_tag: ${{ needs.prepare.outputs.sha }}
+      open_pr: false
+
+  open-pr:
+    name: 'Open release pull request'
+    needs:
+      - prepare
+      - docs-assets
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      BRANCH: release/v${{ needs.prepare.outputs.version }}
+    steps:
+      # Pushes and PRs made with the default GITHUB_TOKEN do not trigger other
+      # workflows (CI), so use the release GitHub App.
       - uses: actions/create-github-app-token@v1
-        name: Create GitHub App Token to bypass restricions on committing to a protected branch
+        name: Create GitHub App Token
         id: app-token
         with:
           app-id: ${{ vars.GH_RELEASE_APP_ID }}
@@ -29,14 +101,9 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
+          ref: ${{ needs.prepare.outputs.sha }}
+          fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
-
-      - name: Find Tag
-        id: tagger
-        uses: jimschubert/query-tag-action@v1
-        with:
-          include: 'v*'
-          commit-ish: 'HEAD~'
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -47,22 +114,60 @@ jobs:
           node-version: 24.5
 
       - name: Install node dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Setup Git User
         run: |
           git config user.name "GitHub Actions"
           git config user.email "github-actions@users.noreply.github.com"
 
-      - name: Prepare next version
-        id: bump
+      - name: Bump version and write changelog
         run: |
-          LAST_TAG=$(echo ${{ steps.tagger.outputs.tag }} | cut -c 2-)
-          NEXT_VERSION=$(bunx semver -i ${{ inputs.release_level }} $LAST_TAG)
-          bun run release:prepare $NEXT_VERSION
-          echo ::set-output name=version::$NEXT_VERSION
+          git switch -c "$BRANCH"
+          bun run release:prepare "$VERSION"
 
-      - name: Push Git Tag
+      - name: Download docs assets
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-assets
+          path: apps/docs/src/assets
+
+      - name: Commit docs assets
         run: |
-          git push origin $(git branch --show-current)
-          git push origin tag v${{ steps.bump.outputs.version }}
+          git add apps/docs/src/assets/screenshots apps/docs/src/assets/videos
+          if git diff --cached --quiet; then
+            echo "Screenshots and videos are unchanged"
+          else
+            git commit --no-verify -m "docs: update screenshots and videos (v$VERSION)"
+          fi
+
+      - name: Push branch and open pull request
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git push origin "$BRANCH"
+
+          {
+            echo "Release **v$VERSION**. Merging this pull request tags the merge commit \`v$VERSION\`,"
+            echo "which builds and publishes the release images, and creates the GitHub release."
+            echo
+            echo "Docs screenshots and videos captured against the images of \`${{ needs.prepare.outputs.sha }}\`."
+            echo
+            echo "## Changes"
+            echo
+            ./scripts/changelog-section.sh "$VERSION"
+          } > "$RUNNER_TEMP/pr-body.md"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "chore(release): publish $VERSION" \
+            --body-file "$RUNNER_TEMP/pr-body.md" \
+            --label release \
+            || gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "chore(release): publish $VERSION" \
+              --body-file "$RUNNER_TEMP/pr-body.md"
+
+          echo "Opened $(gh pr view "$BRANCH" --json url --jq .url)" >> "$GITHUB_STEP_SUMMARY"

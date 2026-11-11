@@ -124,3 +124,21 @@ the data from some prod or test system. As lotta recognizes its tenants
 via the host url, we suggest you use `http://<tenant-slug>.local.lotta.schule:3000`;
 It's pointed directly to your localhost, but with the extra of having
 a multitenant-capable hostname
+
+## Releasing
+
+Releases are made through a pull request, so every release is reviewed before it ships:
+
+1. Run the **Release: Create new version** workflow (Actions tab, on `main`) and pick `patch`, `minor` or `major`.
+   It opens the pull request `release/vX.Y.Z`, which contains:
+   - the new version in every `package.json` and `mix.exs` and the new `CHANGELOG.md` entry,
+     generated from the conventional commits since the last tag (`scripts/release.sh`, `nx release changelog`)
+   - the documentation's screenshots and videos, captured against the images of `main`
+     (`.github/workflows/docs-assets.yaml`)
+2. Review and merge it. **Release: Publish version** then tags the merge commit `vX.Y.Z`,
+   which makes CD build and publish the `X.Y.Z` images, and creates the GitHub release
+   from the `CHANGELOG.md` entry.
+
+Both workflows use the release GitHub App (`GH_RELEASE_APP_ID` / `GH_RELEASE_APP_PRIVKEY`),
+since pull requests and tags created with the default `GITHUB_TOKEN` do not start other workflows.
+The App needs read & write access to contents and pull requests.

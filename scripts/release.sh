@@ -27,4 +27,5 @@ done
 # Update changelog
 
 export HUSKY_SKIP_HOOKS=true
-bunx nx release changelog $NEW_VERSION --git-commit-args="--no-verify"
+# Commit only: the tag is set on the merge commit of the release PR (release-publish.yaml)
+bunx nx release changelog "$NEW_VERSION" --git-commit=true --git-tag=false --git-push=false --git-commit-args="--no-verify"
