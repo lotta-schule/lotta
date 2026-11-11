@@ -11,19 +11,11 @@
 - batch groups resolver, cache tenants, add indexes, lazy-load editors ([#584](https://github.com/lotta-schule/lotta/pull/584))
 - batch remaining N+1 resolvers, single-query user groups, render article text without Slate ([#587](https://github.com/lotta-schule/lotta/pull/587))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-
 ## 7.0.1 (2026-11-01)
 
 ### 🩹 Fixes
 
 - **core:** fix crashing cockpit (backpex breaking changes) ([#581](https://github.com/lotta-schule/lotta/pull/581))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 # 7.0.0 (2026-10-18)
 
@@ -94,22 +86,12 @@
 - **webapp, hubert:** swap radio label/input order + form mod color change ([#577](https://github.com/lotta-schule/lotta/pull/577))
 - **webapp,hubert:** better forms ([#562](https://github.com/lotta-schule/lotta/pull/562))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-- Billy
-- ptitmouton @ptitmouton
-
 ## 6.1.21 (2026-05-02)
 
 ### 🚀 Features
 
 - **core:** cockpit - sort invoices by created_at instead of issued_at ([e4a65cb8](https://github.com/lotta-schule/lotta/commit/e4a65cb8))
 - **core:** cockpit - allow banking data ingestion ([#537](https://github.com/lotta-schule/lotta/pull/537))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 ## 6.1.20 (2026-05-01)
 
@@ -122,29 +104,17 @@
 
 - **cockpit:** show pdf invoices in correct size ([c24c92b8](https://github.com/lotta-schule/lotta/commit/c24c92b8))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-
 ## 6.1.19 (2026-04-02)
 
 ### 🩹 Fixes
 
 - **core:** strip null bytes from metadata ([009766f6](https://github.com/lotta-schule/lotta/commit/009766f6))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni
-
 ## 6.1.18 (2026-01-26)
 
 ### 🩹 Fixes
 
 - **core:** Allow eduplaces students to login when the tenant exists ([#530](https://github.com/lotta-schule/lotta/pull/530))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 ## 6.1.17 (2026-01-10)
 
@@ -156,19 +126,11 @@ This was a version bump only, there were no code changes.
 
 - **core:** eduplaces - add fallback to 'school' prop for official_id ([6ab9c933](https://github.com/lotta-schule/lotta/commit/6ab9c933))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni
-
 ## 6.1.15 (2026-01-09)
 
 ### 🩹 Fixes
 
 - **core:** Add eduplaces prod issuer ([30c3036c](https://github.com/lotta-schule/lotta/commit/30c3036c))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni
 
 ## 6.1.14 (2026-01-02)
 
@@ -176,19 +138,11 @@ This was a version bump only, there were no code changes.
 
 - **core:** fix tenant worker uniqueness bug ([67883b16](https://github.com/lotta-schule/lotta/commit/67883b16))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni
-
 ## 6.1.13 (2025-12-24)
 
 ### 🩹 Fixes
 
 - **webapp:** udpate next ([c21c118a](https://github.com/lotta-schule/lotta/commit/c21c118a))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni
 
 ## 6.1.12 (2025-12-24)
 
@@ -196,19 +150,11 @@ This was a version bump only, there were no code changes.
 
 - update react ([9a1f9030](https://github.com/lotta-schule/lotta/commit/9a1f9030))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni
-
 ## 6.1.11 (2025-12-05)
 
 ### 🩹 Fixes
 
 - **core:** output correct invoice pdf data ([bfb9d501](https://github.com/lotta-schule/lotta/commit/bfb9d501))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni
 
 ## 6.1.10 (2025-12-02)
 
@@ -216,29 +162,17 @@ This was a version bump only, there were no code changes.
 
 - **core:** issue invoices from cockpit ([#524](https://github.com/lotta-schule/lotta/pull/524))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-
 ## 6.1.9 (2025-11-29)
 
 ### 🚀 Features
 
 - **core:** redesign usage overview in cockpit ([327bab20](https://github.com/lotta-schule/lotta/commit/327bab20))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni
-
 ## 6.1.8 (2025-11-29)
 
 ### 🩹 Fixes
 
 - **core:** fix cockpit plan selection ([eed1f269](https://github.com/lotta-schule/lotta/commit/eed1f269))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni
 
 ## 6.1.7 (2025-11-29)
 
@@ -251,10 +185,6 @@ This was a version bump only, there were no code changes.
 - **core:** include image assets to bundle ([b93dc529](https://github.com/lotta-schule/lotta/commit/b93dc529))
 - **core:** fix cockpit image asset path ([f18a25d2](https://github.com/lotta-schule/lotta/commit/f18a25d2))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni
-
 ## 6.1.6 (2025-11-29)
 
 ### 🚀 Features
@@ -262,10 +192,6 @@ This was a version bump only, there were no code changes.
 - **core:** Generate pdf invoices ([#520](https://github.com/lotta-schule/lotta/pull/520))
 - **core:** add an admin-interface over backpex for middle-term cockpit replacement ([#521](https://github.com/lotta-schule/lotta/pull/521))
 - **core:** move zammad ticket creation into core ([#523](https://github.com/lotta-schule/lotta/pull/523))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 ## 6.1.5 (2025-11-19)
 
@@ -278,19 +204,11 @@ This was a version bump only, there were no code changes.
 
 - **core:** update eduplaces to correct /schools/:id endpoint ([#517](https://github.com/lotta-schule/lotta/pull/517))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-
 ## 6.1.4 (2025-11-04)
 
 ### 🩹 Fixes
 
 - **hubert:** use correct srcSet for user-avatars ([d222fca9](https://github.com/lotta-schule/lotta/commit/d222fca9))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni
 
 ## 6.1.3 (2025-11-03)
 
@@ -306,10 +224,6 @@ This was a version bump only, there were no code changes.
 
 - **core:** Do not try to sync eduplaces when tenant has no eduplaces_id ([692d0d90](https://github.com/lotta-schule/lotta/commit/692d0d90))
 - **web:** Fix user avatars not being shown ([be17a1b0](https://github.com/lotta-schule/lotta/commit/be17a1b0))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni
 
 ## 6.1.0 (2025-11-01)
 
@@ -338,11 +252,6 @@ This was a version bump only, there were no code changes.
 - **core:** Use correct setup status path after eduspace tenant creation ([c25d2f31](https://github.com/lotta-schule/lotta/commit/c25d2f31))
 - **web:** EnrollmentTokensEditor now emits token currently being edited ([#510](https://github.com/lotta-schule/lotta/pull/510))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-- Copilot @Copilot
-
 ## 6.0.24 (2025-08-15)
 
 ### 🚀 Features
@@ -355,10 +264,6 @@ This was a version bump only, there were no code changes.
 - **core:** Limit user articles fetching to 75 articles because of performance ([#485](https://github.com/lotta-schule/lotta/pull/485))
 - **core:** Strip out invalid characters from exif (and other) metadata ([#488](https://github.com/lotta-schule/lotta/pull/488))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-
 ## 6.0.23 (2025-08-14)
 
 ### 🩹 Fixes
@@ -368,19 +273,11 @@ This was a version bump only, there were no code changes.
 - **web:** UserList: Correctly filter for users without groups ([#482](https://github.com/lotta-schule/lotta/pull/482))
 - **web:** UserList: Show 'last seen' selection + make 'less than 30 days' an option ([#483](https://github.com/lotta-schule/lotta/pull/483))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-
 ## 6.0.22 (2025-08-07)
 
 ### 🩹 Fixes
 
 - **core:** Fix FCM push notifications ([#471](https://github.com/lotta-schule/lotta/pull/471))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 ## 6.0.21 (2025-08-06)
 
@@ -388,19 +285,11 @@ This was a version bump only, there were no code changes.
 
 - **hubert:** Make Badges themable ([#468](https://github.com/lotta-schule/lotta/pull/468))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-
 ## 6.0.20 (2025-08-04)
 
 ### 🩹 Fixes
 
 - **core:** PushNotification were not sent ([4b23ac05](https://github.com/lotta-schule/lotta/commit/4b23ac05))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni
 
 ## 6.0.19 (2025-08-03)
 
@@ -409,19 +298,11 @@ This was a version bump only, there were no code changes.
 - UserGroups can now be updated again ([#466](https://github.com/lotta-schule/lotta/pull/466))
 - **webapp:** Make SearchUserField suggestions visible again ([#465](https://github.com/lotta-schule/lotta/pull/465))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-
 ## 6.0.18 (2025-07-17)
 
 ### 🩹 Fixes
 
 - **core:** Reenable Push Notifications to iOS ([#461](https://github.com/lotta-schule/lotta/pull/461))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 ## 6.0.17 (2025-07-13)
 
@@ -457,19 +338,11 @@ This was a version bump only, there were no code changes.
 
 - **core:** Small adjustments on file_uuid and remote_location removal ([468aa5d0](https://github.com/lotta-schule/lotta/commit/468aa5d0))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni
-
 ## 6.0.9 (2025-07-12)
 
 ### 🚀 Features
 
 - **core:** split up migrations into schema and db content for easier biting ([43dfcc78](https://github.com/lotta-schule/lotta/commit/43dfcc78))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni
 
 ## 6.0.8 (2025-07-11)
 
@@ -480,10 +353,6 @@ This was a version bump only, there were no code changes.
 ### 🩹 Fixes
 
 - **core:** set correct file name when migrating storage to new paths ([3b80a37d](https://github.com/lotta-schule/lotta/commit/3b80a37d))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni
 
 ## 6.0.6 (2025-07-11)
 
@@ -554,20 +423,11 @@ This was a version bump only, there were no code changes.
 - **webapp:** Fix wrong ArticlePreview image size ([fda4f343](https://github.com/lotta-schule/lotta/commit/fda4f343))
 - **webapp:** Add correct margin to paragraphs in (Slate Editor) ([#453](https://github.com/lotta-schule/lotta/pull/453))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-- Billy
-
 ## 5.0.11 (2024-09-12)
 
 ### 🩹 Fixes
 
 - **webapp:** Fix wrong token expiration comparison ([#384](https://github.com/lotta-schule/lotta/pull/384))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 ## 5.0.10 (2024-09-12)
 
@@ -575,10 +435,6 @@ This was a version bump only, there were no code changes.
 
 - **core-api:** Remove expired refreshtoken cookies to avoid failing refresh ([#382](https://github.com/lotta-schule/lotta/pull/382))
 - **webapp:** Remove white background from text contentModule edittoolbar ([#383](https://github.com/lotta-schule/lotta/pull/383))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 ## 5.0.9 (2024-09-12)
 
@@ -599,11 +455,6 @@ This was a version bump only, there were no code changes.
 - **webapp:** Corrected two column view for article preview in user/tag article list ([#380](https://github.com/lotta-schule/lotta/pull/380))
 - **webapp:** Fix EditMode GridList overlapping page layout ([#381](https://github.com/lotta-schule/lotta/pull/381))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-- Billy
-
 ## 5.0.8 (2024-09-04)
 
 ### 🚀 Features
@@ -614,20 +465,12 @@ This was a version bump only, there were no code changes.
 
 - **core-api:** Make subscription of calendars work again ([#364](https://github.com/lotta-schule/lotta/pull/364))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-
 ## 5.0.7 (2024-09-03)
 
 ### 🩹 Fixes
 
 - **core-api:** articles: Better error handling on string -> int conversion d4027c ([#361](https://github.com/lotta-schule/lotta/pull/361))
 - **core-api:** file search: Return error instead of crashing for unauthenticated users ([#362](https://github.com/lotta-schule/lotta/pull/362))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 ## 5.0.6 (2024-09-02)
 
@@ -640,19 +483,11 @@ This was a version bump only, there were no code changes.
 - **core-api:** Correctly handle bad response from analytics tool ([#359](https://github.com/lotta-schule/lotta/pull/359))
 - **core-api:** Send 404 when file has not been found, check id format ([#360](https://github.com/lotta-schule/lotta/pull/360))
 
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-
 ## 5.0.5 (2024-09-01)
 
 ### 🩹 Fixes
 
 - **core-api:** Apply SQL.Sandbox pooling for ecto only in test env ([d879ed4f](https://github.com/lotta-schule/lotta/commit/d879ed4f))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni
 
 ## 5.0.4 (2024-09-01)
 
@@ -661,10 +496,6 @@ This was a version bump only, there were no code changes.
 - **core-api:** Use correct adapter for every env except test ([#356](https://github.com/lotta-schule/lotta/pull/356))
 - **webapp:** Add back availability to see events outside of own month, fix eslint setup ([#351](https://github.com/lotta-schule/lotta/pull/351))
 - **webapp:** Fix safari shrunking contents of UserArticlesDialog ([#355](https://github.com/lotta-schule/lotta/pull/355))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 ## 5.0.3 (2024-09-01)
 
@@ -680,10 +511,6 @@ This was a version bump only, there were no code changes.
 
 - **webapp:** Stop ArticleReaction dialog from disappearing from mobile viewport ([#348](https://github.com/lotta-schule/lotta/pull/348))
 - **webapp:** Stop UserArticlesDialog from scrolling everywhere ([#349](https://github.com/lotta-schule/lotta/pull/349))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
 
 ## 5.0.1 (2024-09-01)
 
@@ -755,11 +582,6 @@ This was a version bump only, there were no code changes.
 - **webapp:** set correct multipart header ([#334](https://github.com/lotta-schule/lotta/pull/334))
 - **webapp:** AdminSection / Users: Make Popovers on Safari not overflow ([#339](https://github.com/lotta-schule/lotta/pull/339))
 - **webapp:** AdminPage: Make AdminPage scrollable again ([#347](https://github.com/lotta-schule/lotta/pull/347))
-
-### ❤️ Thank You
-
-- Alexis Rinaldoni @ptitmouton
-- Billy
 
 # Change Log
 
