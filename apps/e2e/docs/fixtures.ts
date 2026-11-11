@@ -1,10 +1,18 @@
 import { Page } from '@playwright/test';
 import { tenantTest } from '../fixtures';
-import { createTenantFixture, seedTenant } from '../helper';
+import {
+  createTenantFixture,
+  getTenantURL,
+  graphql,
+  GraphqlClient,
+  seedTenant,
+} from '../helper';
 import { recordVideo } from '../helper/docsCapture';
+import { createSchool, School } from './school';
 
 export * from '../fixtures';
 export { capture } from '../helper/docsCapture';
+export type { School } from './school';
 
 /**
  * Like `tenantTest`, with content that reads well in the documentation: a
@@ -24,7 +32,10 @@ export const docsTest = tenantTest.extend<
       flow: (page: Page) => Promise<void>
     ) => Promise<string>;
   },
-  {}
+  {
+    /** The content of the school website (categories, articles, calendar …), created once per worker */
+    school: School;
+  }
 >({
   admin: [
     {
@@ -69,6 +80,30 @@ export const docsTest = tenantTest.extend<
     { scope: 'worker' },
   ],
 
+  school: [
+    async ({ playwright, tenant, users: _users, getAuthState }, use) => {
+      const request = await playwright.request.newContext({
+        storageState: await getAuthState('admin'),
+      });
+      const baseURL = getTenantURL(tenant);
+      const gql: GraphqlClient = async (query, variables) => {
+        const { status, body } = await graphql(request, baseURL, query, {
+          variables,
+        });
+        if (status !== 200 || body?.errors?.length || !body?.data) {
+          throw new Error(
+            `GraphQL request for the docs school failed (${status}): ${JSON.stringify(body)}`
+          );
+        }
+        return body.data as any;
+      };
+      const school = await createSchool(gql);
+      await request.dispose();
+      await use(school);
+    },
+    { scope: 'worker' },
+  ],
+
   recordVideo: async (
     {
       browser,
@@ -109,3 +144,13 @@ export const docsTest = tenantTest.extend<
     );
   },
 });
+
+/**
+ * Most docs screenshots are only shown in their desktop version: call this at
+ * the top of a `describe` to skip it in the `docs-mobile` project.
+ */
+export const desktopOnly = () =>
+  docsTest.skip(
+    ({ isMobile }) => isMobile,
+    'only the desktop version is used in the docs'
+  );

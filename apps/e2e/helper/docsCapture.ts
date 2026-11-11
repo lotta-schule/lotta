@@ -19,6 +19,7 @@ export const DOCS_SCREENSHOTS_DIR = path.join(DOCS_ASSETS_DIR, 'screenshots');
 export const DOCS_VIDEOS_DIR = path.join(DOCS_ASSETS_DIR, 'videos');
 
 const HIGHLIGHT_ATTRIBUTE = 'data-docs-highlight';
+const MARKER_ATTRIBUTE = 'data-docs-marker';
 
 /** The date shown instead of the real ones (creation dates of seeded content change every run) */
 export const DOCS_DATE = { day: '14', month: '09', year: '2026' };
@@ -118,13 +119,66 @@ export const waitForStablePosition = async (locator: Locator) => {
   );
 };
 
+/** A numbered badge drawn on an element, referenced in the docs text as ①, ② … */
+export type Marker = {
+  locator: Locator;
+  /** Text of the badge, usually a number ('1', '2', …) */
+  label: string;
+};
+
+/**
+ * Draws the markers as absolutely positioned badges on top of the page, at the
+ * top-left corner of each element (inside it, so element screenshots keep them).
+ * Returns a function removing them again.
+ */
+const drawMarkers = async (page: Page, markers: Marker[]) => {
+  for (const { locator, label } of markers) {
+    await locator.evaluate(
+      (el, { label, attr }) => {
+        const rect = el.getBoundingClientRect();
+        const badge = document.createElement('div');
+        badge.setAttribute(attr, '');
+        badge.textContent = label;
+        Object.assign(badge.style, {
+          position: 'absolute',
+          left: `${Math.max(rect.left + window.scrollX - 6, 0)}px`,
+          top: `${Math.max(rect.top + window.scrollY - 6, 0)}px`,
+          zIndex: '2147483647',
+          minWidth: '22px',
+          height: '22px',
+          padding: '0 4px',
+          boxSizing: 'border-box',
+          borderRadius: '11px',
+          background: '#e5004f',
+          color: '#fff',
+          font: 'bold 13px/22px system-ui, sans-serif',
+          textAlign: 'center',
+          boxShadow: '0 0 0 2px #fff',
+          pointerEvents: 'none',
+        });
+        document.body.appendChild(badge);
+      },
+      { label, attr: MARKER_ATTRIBUTE }
+    );
+  }
+
+  return () =>
+    page.evaluate((attr) => {
+      for (const badge of Array.from(document.querySelectorAll(`[${attr}]`))) {
+        badge.remove();
+      }
+    }, MARKER_ATTRIBUTE);
+};
+
 export type CaptureOptions = {
   /** Only screenshot this element (default: the viewport) */
   locator?: Locator;
   /** Elements to cover, e.g. dates or other values that change between runs */
   mask?: Locator[];
-  /** An element to draw an outline around, e.g. the button the docs talk about */
-  highlight?: Locator;
+  /** Elements to draw an outline around, e.g. the button the docs talk about */
+  highlight?: Locator | Locator[];
+  /** Numbered badges on elements, which the docs text refers to (①, ② …) */
+  markers?: Marker[];
   /** Screenshot the whole scrollable page instead of the viewport */
   fullPage?: boolean;
   /** Show DOCS_DATE instead of the real dates in `<time>` elements (default: true) */
@@ -142,6 +196,7 @@ export const capture = async (
     locator,
     mask = [],
     highlight,
+    markers = [],
     fullPage = false,
     fixedDates = true,
   }: CaptureOptions = {}
@@ -149,18 +204,34 @@ export const capture = async (
   const file = path.join(DOCS_SCREENSHOTS_DIR, `${assetName(name)}.png`);
   await mkdir(DOCS_SCREENSHOTS_DIR, { recursive: true });
 
+  const highlights = highlight
+    ? Array.isArray(highlight)
+      ? highlight
+      : [highlight]
+    : [];
+
   await waitForStableRendering(page);
-  for (const target of [locator, highlight]) {
+  // Playwright scrolls element screenshots into view: do it before drawing the
+  // markers, so they stay on their elements.
+  await locator?.scrollIntoViewIfNeeded();
+  for (const target of [
+    locator,
+    ...highlights,
+    ...markers.map((marker) => marker.locator),
+  ]) {
     if (target) await waitForStablePosition(target);
   }
 
   const restoreDates = fixedDates ? await fixDates(page) : undefined;
-  if (highlight) {
-    await highlight.evaluate(
+  for (const target of highlights) {
+    await target.evaluate(
       (el, attr) => el.setAttribute(attr, ''),
       HIGHLIGHT_ATTRIBUTE
     );
   }
+  const removeMarkers = markers.length
+    ? await drawMarkers(page, markers)
+    : undefined;
 
   try {
     const options = {
@@ -179,9 +250,10 @@ export const capture = async (
       await page.screenshot({ ...options, fullPage });
     }
   } finally {
+    await removeMarkers?.();
     await restoreDates?.();
-    if (highlight) {
-      await highlight.evaluate(
+    for (const target of highlights) {
+      await target.evaluate(
         (el, attr) => el.removeAttribute(attr),
         HIGHLIGHT_ATTRIBUTE
       );
