@@ -81,10 +81,15 @@ One-time setup:
 
 1. Run the docs locally in production mode with the GitHub storage and open `/keystatic`;
    Keystatic's wizard creates the GitHub App and prints the values below.
-   Set the App's callback URL to `https://docs.lotta.schule/api/keystatic/github/oauth/callback`.
-2. Runtime env for the `docs` container: `KEYSTATIC_GITHUB_CLIENT_ID`,
+   Add a callback URL `https://<host>/api/keystatic/github/oauth/callback` for every host
+   the docs are served on (docs.lotta.schule, docs.staging.lotta.schule, docs-preview.lotta.schule).
+2. Every such host must also be listed in `security.allowedDomains` in `astro.config.mjs`.
+   Astro only trusts the `Host`/`X-Forwarded-*` headers for those hosts; for any other host the
+   request URL, and so the callback URL Keystatic sends to GitHub, is `http://localhost:4321`.
+   The list is built into the server: changing it needs a new image.
+3. Runtime env for the `docs` container: `KEYSTATIC_GITHUB_CLIENT_ID`,
    `KEYSTATIC_GITHUB_CLIENT_SECRET`, `KEYSTATIC_SECRET` (≥ 32 chars).
-3. Build arg `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` (the App's public slug).
+4. Build arg `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` (the App's public slug).
 
 ## Deployment
 

@@ -17,6 +17,17 @@ export default defineConfig({
   // Pages are prerendered; only the Keystatic editor routes run on demand.
   adapter: node({ mode: 'standalone' }),
   server: { host: true, port: 4321 },
+  security: {
+    // Behind the gateway, Astro only trusts the Host and X-Forwarded-* headers for
+    // these hosts; otherwise request URLs (and so Keystatic's GitHub redirect_uri)
+    // become http://localhost:4321. Built into the server, so add new hosts here
+    // (and as callback URLs in the GitHub App).
+    allowedDomains: [
+      { hostname: 'docs.lotta.schule', protocol: 'https' },
+      { hostname: 'docs.staging.lotta.schule', protocol: 'https' },
+      { hostname: 'docs-preview.lotta.schule', protocol: 'https' },
+    ],
+  },
   vite: {
     // Starlight's <Steps>/<Tabs> use satteri (native binding) at render time.
     // Bundling it breaks the platform-specific binding lookup, so keep it external
